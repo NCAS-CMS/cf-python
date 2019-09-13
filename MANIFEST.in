@@ -1,0 +1,12 @@
+include MANIFEST.in		
+include Changelog.rst
+include README.md
+recursive-include cf *
+recursive-include scripts *
+recursive-exclude * *~ *.gz *.pyc
+recursive-exclude cf *.o *.so .nfs*
+recursive-exclude cf/test *.nc *.nca
+recursive-exclude cf *.a
+exclude cf/test/*coverage*
+recursive-exclude cf/test/cf_coverage_report *
+recursive-include cf/test test_file[2-4].nc file[1-9].nc
