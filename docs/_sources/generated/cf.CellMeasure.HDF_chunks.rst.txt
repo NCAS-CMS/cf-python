@@ -1,0 +1,7 @@
+cf.CellMeasure.HDF_chunks
+=========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CellMeasure.HDF_chunks

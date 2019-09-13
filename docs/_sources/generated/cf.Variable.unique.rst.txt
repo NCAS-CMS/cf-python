@@ -1,0 +1,7 @@
+cf.Variable.unique
+==================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Variable.unique

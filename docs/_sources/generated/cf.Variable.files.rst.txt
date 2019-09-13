@@ -1,0 +1,7 @@
+cf.Variable.files
+=================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Variable.files

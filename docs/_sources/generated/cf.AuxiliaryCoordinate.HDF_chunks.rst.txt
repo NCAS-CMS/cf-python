@@ -1,0 +1,7 @@
+cf.AuxiliaryCoordinate.HDF_chunks
+=================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.AuxiliaryCoordinate.HDF_chunks

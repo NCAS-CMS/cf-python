@@ -1,0 +1,7 @@
+cf.CellMeasure.mean
+===================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CellMeasure.mean

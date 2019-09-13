@@ -1,0 +1,14 @@
+.. currentmodule:: cfdm
+.. default-role:: obj
+
+**Older releases**
+==================
+
+----
+
+**CF-1.7**
+----------
+
+----
+
+* `Version 3.0.0 <https://ncas-cms.github.io/cf-python/3.0.0>`_

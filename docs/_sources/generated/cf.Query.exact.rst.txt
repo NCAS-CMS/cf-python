@@ -1,0 +1,7 @@
+cf.Query.exact
+==============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.Query.exact

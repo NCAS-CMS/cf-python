@@ -1,0 +1,7 @@
+cf.Field.insert_cell_methods
+============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Field.insert_cell_methods

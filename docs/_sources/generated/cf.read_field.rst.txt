@@ -1,0 +1,7 @@
+cf.read_field
+=============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autofunction:: cf.read_field
