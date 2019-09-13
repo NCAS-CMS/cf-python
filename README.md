@@ -70,37 +70,21 @@ The cf package can:
 
 Powerful, flexible, and very simple to produce visualizations of field
 constructs are available with the cfplot package
-http(://ajheaps.github.io/cf-plot), that needs to be installed
+(http://ajheaps.github.io/cf-plot), that needs to be installed
 seprately to cf.
 
 See the cfplot gallery (http://ajheaps.github.io/cf-plot/gallery.html)
 for the full range range plotting possibilities with example code.
 
-----------------------------------------------------------------------
+# Command line utilities
 
-Command line utilities
-======================
-
-The ``cfdump`` tool generates text representations on standard output
-of the CF fields contained in the input files. 
-
-The ``cfa`` tool creates and writes to disk the CF fields contained in
-the input files.
-
-During the installation described above, these scripts will be copied
-automatically to a location given by the ``PATH`` environment
-variable.
-
-For usage instructions, use the ``-h`` option to display the manual
-pages:
-
-    cfa -h
+TODO
 
 # Tests
 
-Tests are run from within the cf-python/test directory:
+Tests are run from within the ``cf-python/test`` directory:
 
-   $ python run_tests.py
+    python run_tests.py
 
 # Code license
 
