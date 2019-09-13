@@ -4,11 +4,12 @@ version 3.0.0 (*first Python 3 version*)
 
 **2019-10-01**
 
-* Complete refactor for Python 3, including some API changes. Version
-  2 scripts should either work as expected, or provide informative
-  error mesages on the new API usage. However, it is advised that the
-  outputs of older scripts be checked when running with Python 3
-  versions of the cf library.
+* Complete refactor for Python 3, including some API changes.
+
+  Version 2 scripts should either work as expected, or provide
+  informative error mesages on the new API usage. However, it is
+  advised that the outputs of older scripts be checked when running
+  with Python 3 versions of the cf library.
 
 version 2.3.5 (*last Python 2 version*)
 ---------------------------------------
