@@ -1,7 +1,8 @@
-**DEVELOPMENT VERSION FOR PYTHON3 - LIABLE TO CHANGE WITHOUT NOTICE**
+# DEVELOPMENT VERSION FOR PYTHON3 - LIABLE TO CHANGE WITHOUT NOTICE
 
-**STABLE RELEASE DATE: 2019-10-01**
+# STABLE RELEASE DATE: 2019-10-01
 
+------------------------------------------------------------------
 
 The Python cf package is an Earth science data analysis library that
 is built on a complete implementation of the CF data model
