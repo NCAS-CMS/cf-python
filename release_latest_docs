@@ -16,7 +16,7 @@ cd docs
 rm -fr .doctrees
 make html .
 
-mv _downloads/*/*.nc _downloads
+#mv _downloads/*/*.nc _downloads
 
 # --------------------------------------------------------------------
 # Add and commit the latest
@@ -27,11 +27,11 @@ git add \
     function/*.html \
     method/*.html \
     attribute/*.html \
-    _downloads/*.nc \
     *.inv \
     *.js \
     _sources \
-    _static
+    _static \
+#    _downloads/*.nc
 
 git commit -a -m "v$version latest documentation"
 

@@ -1,0 +1,7 @@
+cf.FieldAncillary.__ilshift__
+=============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.FieldAncillary.__ilshift__

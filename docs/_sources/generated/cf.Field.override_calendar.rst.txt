@@ -1,0 +1,7 @@
+cf.Field.override_calendar
+==========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Field.override_calendar

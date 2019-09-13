@@ -1,0 +1,7 @@
+cf.Field.auxiliary_coordinate
+=============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Field.auxiliary_coordinate

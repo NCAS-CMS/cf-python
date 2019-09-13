@@ -1,0 +1,7 @@
+cf.CoordinateReference.structural_signature
+===========================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CoordinateReference.structural_signature

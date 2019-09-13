@@ -1,0 +1,7 @@
+cf.Field.regrids
+================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Field.regrids

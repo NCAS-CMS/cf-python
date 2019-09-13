@@ -1,0 +1,221 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Installation &#8212; Documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/copybutton.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Tutorial" href="tutorial.html" />
+    <link rel="prev" title="CF conventions" href="cf_conventions.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><b><a href="index.html">cf 3.0.0b9</a></b></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="cf_conventions.html"><strong>CF conventions</strong></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="releases.html"><strong>Older releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Changelog.html"><strong>Change log</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="cf_conventions.html" title="previous chapter"><strong>CF conventions</strong></a></li>
+      <li>Next: <a href="tutorial.html" title="next chapter"><strong>Tutorial</strong></a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/installation.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="installation">
+<span id="id1"></span><h1><strong>Installation</strong><a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<hr class="docutils" />
+<p>Version 3.0.0b9 for version 1.7 of the CF conventions.</p>
+<div class="section" id="python-versions">
+<span id="id2"></span><h2><strong>Python versions</strong><a class="headerlink" href="#python-versions" title="Permalink to this headline">¶</a></h2>
+<p>As of version 3.0.0, cf works for Python 3 only.</p>
+<p>(Versions 2.x of cf work for Python 2 only.)</p>
+</div>
+<div class="section" id="pip">
+<span id="id3"></span><h2><strong>pip</strong><a class="headerlink" href="#pip" title="Permalink to this headline">¶</a></h2>
+<hr class="docutils" />
+<p>To install cf and all of its <a class="reference internal" href="#dependencies"><span class="std std-ref">dependencies</span></a> run,
+for example:</p>
+<div class="literal-block-wrapper docutils container" id="id9">
+<div class="code-block-caption"><span class="caption-text"><em>Install as root, with any missing dependencies.</em></span><a class="headerlink" href="#id9" title="Permalink to this code">¶</a></div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip install cf-python
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text"><em>Install as a user, with any missing dependencies.</em></span><a class="headerlink" href="#id10" title="Permalink to this code">¶</a></div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip install cf-python --user
+</pre></div>
+</div>
+</div>
+<p>To install cf without any of its dependencies then run, for example:</p>
+<div class="literal-block-wrapper docutils container" id="id11">
+<div class="code-block-caption"><span class="caption-text"><em>Install as root without installing any of the
+dependencies.</em></span><a class="headerlink" href="#id11" title="Permalink to this code">¶</a></div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip install cf-python --no-deps
+</pre></div>
+</div>
+</div>
+<p>See the <a class="reference external" href="https://pip.pypa.io/en/stable/reference/pip_install/">documentation for pip install</a> for further
+options.</p>
+</div>
+<div class="section" id="source">
+<span id="id4"></span><h2><strong>Source</strong><a class="headerlink" href="#source" title="Permalink to this headline">¶</a></h2>
+<hr class="docutils" />
+<p>To install from source:</p>
+<ol class="arabic">
+<li><p class="first">Download the cf-python package from <a class="reference external" href="https://pypi.org/project/cf-python">https://pypi.org/project/cf-python</a></p>
+</li>
+<li><p class="first">Unpack the library (replacing <code class="docutils literal notranslate"><span class="pre">&lt;version&gt;</span></code> with the version that
+you want to install, e.g. <code class="docutils literal notranslate"><span class="pre">1.7.0</span></code>):</p>
+<div class="code bash highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tar</span> <span class="n">zxvf</span> <span class="n">cf</span><span class="o">-</span><span class="n">python</span><span class="o">-&lt;</span><span class="n">version</span><span class="o">&gt;.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
+<span class="n">cd</span> <span class="n">cf</span><span class="o">-</span><span class="n">python</span><span class="o">-&lt;</span><span class="n">version</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Install the package:</p>
+</li>
+</ol>
+<blockquote>
+<div><ul>
+<li><p class="first">To install the cf-python package to a central location:</p>
+<div class="code bash highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">install</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">To install the cf-python package locally to the user in the default
+location:</p>
+<div class="code bash highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">install</span> <span class="o">--</span><span class="n">user</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">To install the cf-python package in the &lt;directory&gt; of your choice:</p>
+<div class="code bash highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">install</span> <span class="o">--</span><span class="n">home</span><span class="o">=&lt;</span><span class="n">directory</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="cfdump-utility">
+<span id="id5"></span><h2><strong>cfdump utility</strong><a class="headerlink" href="#cfdump-utility" title="Permalink to this headline">¶</a></h2>
+<hr class="docutils" />
+<p>During installation the <span class="xref std std-ref">cfdump command line utility</span> is
+also installed, which generates text descriptions of the field
+constructs contained in a netCDF dataset.</p>
+</div>
+<div class="section" id="tests">
+<span id="id6"></span><h2><strong>Tests</strong><a class="headerlink" href="#tests" title="Permalink to this headline">¶</a></h2>
+<hr class="docutils" />
+<p>Tests are run from within the <code class="docutils literal notranslate"><span class="pre">cf-python/test</span></code> directory:</p>
+<div class="code bash highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">run_tests</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="dependencies">
+<span id="id7"></span><h2><strong>Dependencies</strong><a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
+<hr class="docutils" />
+<p>The cf-python package requires:</p>
+<ul class="simple">
+<li><a class="reference external" href="https://www.python.org/">Python</a>, version 3 or newer,</li>
+<li><a class="reference external" href="http://www.numpy.org/">numpy</a>, version 1.15 or newer,</li>
+<li><a class="reference external" href="http://unidata.github.io/netcdf4-python/">netCDF4</a>, version 1.4.0
+or newer, and</li>
+<li><a class="reference external" href="http://unidata.github.io/netcdf4-python/">cftime</a>, version 1.0.2</li>
+</ul>
+<p>or newer - this package is installed with netCDF,</p>
+<ul class="simple">
+<li><a class="reference external" href="https://pypi.org/project/cfdm/">cfdm</a>, version 1.7.7 or newer,</li>
+<li><a class="reference external" href="https://pypi.org/project/cfunits/">cfunits</a>, version 3.0.0 or newer, and</li>
+<li><a class="reference external" href="https://pypi.org/project/psutil/">psutil</a>, version 0.6.0 or newer.</li>
+</ul>
+</div>
+<div class="section" id="code-repository">
+<span id="id8"></span><h2><strong>Code repository</strong><a class="headerlink" href="#code-repository" title="Permalink to this headline">¶</a></h2>
+<hr class="docutils" />
+<p>The complete source code is available at <a class="reference external" href="https://github.com/NCAS-CMS/cf-python">https://github.com/NCAS-CMS/cf-python</a></p>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2019, David Hassell.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/installation.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

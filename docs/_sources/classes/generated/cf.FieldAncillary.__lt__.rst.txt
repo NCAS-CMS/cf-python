@@ -1,0 +1,7 @@
+cf.FieldAncillary.__lt__
+========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.FieldAncillary.__lt__

@@ -1,0 +1,7 @@
+cf.Field.Y
+==========
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.Field.Y

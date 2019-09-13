@@ -1,0 +1,7 @@
+cf.CellMeasure.inspect
+======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CellMeasure.inspect
