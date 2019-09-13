@@ -1,0 +1,38 @@
+#!/bin/bash
+
+set -x
+
+if [[ ! $1 ]] ; then 
+  echo "No version \$1 (e.g. 3.0.0)"
+  exit 1
+fi
+
+version=$1
+
+# --------------------------------------------------------------------
+# Make the latest docs    
+# --------------------------------------------------------------------
+cd docs
+rm -fr .doctrees
+make html .
+
+mv _downloads/*/*.nc _downloads
+
+# --------------------------------------------------------------------
+# Add and commit the latest
+# --------------------------------------------------------------------
+git add \
+    *.html \
+    class/*.html \
+    function/*.html \
+    method/*.html \
+    attribute/*.html \
+    _downloads/*.nc \
+    *.inv \
+    *.js \
+    _sources \
+    _static
+
+git commit -a -m "v$version latest documentation"
+
+set +x

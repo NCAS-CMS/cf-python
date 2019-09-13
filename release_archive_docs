@@ -1,0 +1,39 @@
+#!/bin/bash
+
+set -x
+
+if [[ ! $1 ]] ; then 
+  echo "No version \$1 (e.g. 3.0.0)"
+  exit 1
+fi
+
+version=$1
+
+
+# --------------------------------------------------------------------
+# Make the archive docs    
+# --------------------------------------------------------------------
+cd docs
+
+make html $version
+
+mv $version/_downloads/*/*.nc $version/_downloads
+
+# --------------------------------------------------------------------
+# Add and commit the archive
+# --------------------------------------------------------------------
+git add \
+    $version/*.html \
+    $version/class/*.html \
+    $version/function/*.html \
+    $version/method/*.html \
+    $version/attribute/*.html \
+    $version/_downloads/*.nc \
+    $version/*.inv \
+    $version/*.js \
+    $version/_sources \
+    $version/_static
+
+git commit -a -m "v$version archive documentation"
+
+set +x
