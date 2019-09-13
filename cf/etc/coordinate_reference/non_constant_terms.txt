@@ -1,0 +1,16 @@
+# Coordinate reference types and their non-constant coordinate
+# conversion terms.
+# Column  1 : Coordinate reference construct name
+# Columns 2+: Coordinate conversion terms which have non-constant
+#             values, i.e. the values are either Coordinate objects or
+#             non-scalar Field objects.
+# See appendices D and F in the CF conventions for details.
+atmosphere_ln_pressure_coordinate lev
+atmosphere_sigma_coordinate ps sigma
+atmosphere_hybrid_sigma_pressure_coordinate a b ps
+atmosphere_hybrid_height_coordinate a b orog
+atmosphere_sleve_coordinate a b1 b2 zsurf1 zsurf2
+ocean_sigma_coordinate depth eta sigma
+ocean_s_coordinate depth eta s
+ocean_sigma_z_coordinate depth eta sigma zlev
+ocean_double_sigma_coordinate depth sigma

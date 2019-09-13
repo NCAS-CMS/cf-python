@@ -1,0 +1,25 @@
+
+For source files in the subdirectory type-dep, two versions of each object
+file will be built, one compiled with -DSINGLE, the other compiled with
+-DDOUBLE, and this will cause INTEGER and REAL and other dependent data types
+to be typedef-ed accordingly, meaning that they are suitable for data read in
+from 32- or 64-bit UM files without doing any casting.  Functions should be
+prototyped in bits/type_dep_protos.h.  The symbol names in these
+type-dependent functions will be renamed from 'foo' to 'foo_sgl' and 'foo_dbl'
+as appropriate for the two compiled versions.  This happens automatically by
+the build process.  This also includes renaming of external symbols where the
+functions called are provided by other source files also in the type-dep
+directory.
+
+Files in this (the parent) directory will be built without either -DSINGLE or
+-DDOUBLE, and no renaming of objects will take place, and the symbol names are
+unmodified.  They should be protyped in bits/type_indep_protos.h.
+
+In the few places where a type-independent function calls a type-dependent
+function, the "_sgl" or "_dbl" part of the symbol name must be included
+explicitly (this will usually be in a 'switch' statement in a despatch
+function).  These entry points into the type dependent code should be
+prototyped in bits/type_dep_entry_protos.h, using the processor macro
+WITH_LEN(foo), which expands to foo_sgl or foo_dbl; the header file is
+included twice with different defines, so a single prototype statement using
+this macro will suffice to prototype both versions of the function.

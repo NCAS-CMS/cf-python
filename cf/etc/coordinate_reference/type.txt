@@ -1,0 +1,25 @@
+# Col 0: Coordinate reference name. Col 1: CF type
+albers_conical_equal_area grid_mapping
+azimuthal_equidistant grid_mapping
+geostationary grid_mapping
+lambert_azimuthal_equal_area grid_mapping
+lambert_conformal_conic grid_mapping
+lambert_cylindrical_equal_area grid_mapping
+latitude_longitude grid_mapping
+mercator grid_mapping
+orthographic grid_mapping
+polar_stereographic grid_mapping
+rotated_latitude_longitude grid_mapping
+sinusoidal grid_mapping
+stereographic grid_mapping
+transverse_mercator grid_mapping
+vertical_perspective grid_mapping
+atmosphere_ln_pressure_coordinate formula_terms
+atmosphere_sigma_coordinate formula_terms
+atmosphere_hybrid_sigma_pressure_coordinate formula_terms
+atmosphere_hybrid_height_coordinate formula_terms
+atmosphere_sleve_coordinate formula_terms
+ocean_sigma_coordinate formula_terms
+ocean_s_coordinate formula_terms
+ocean_sigma_z_coordinate formula_terms
+ocean_double_sigma_coordinate formula_terms

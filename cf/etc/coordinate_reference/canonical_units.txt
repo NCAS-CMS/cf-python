@@ -1,0 +1,22 @@
+# Col 0: Parameter name
+# Col 1: Canonical units
+earth_radius m
+false_easting m
+projection_x_coordinate m
+false_northing m
+projection_y_coordinate m
+grid_north_pole_latitude degrees_north
+grid_north_pole_longitude degrees_east
+inverse_flattening 1
+latitude_of_projection_origin degrees_north
+longitude_of_central_meridian degrees_east
+longitude_of_prime_meridian degrees_east
+longitude_of_projection_origin degrees_east
+north_pole_grid_longitude degrees
+perspective_point_height m
+scale_factor_at_central_meridian 1
+scale_factor_at_projection_origin 1
+semi_major_axis m
+semi_minor_axis m
+standard_parallel degrees_north
+straight_vertical_longitude_from_pole degrees_north

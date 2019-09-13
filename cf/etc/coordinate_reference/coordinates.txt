@@ -1,0 +1,95 @@
+_coordinates = {
+    'grid_mapping_name:albers_conical_equal_area': ('projection_x_coordinate',
+                                                    'projection_y_coordinate',
+                                                    'latitude',
+                                                    'longitude'),
+    'grid_mapping_name:azimuthal_equidistant': ('projection_x_coordinate',
+                                                'projection_y_coordinate',
+                                                'latitude',
+                                                'longitude'),
+    'grid_mapping_name:geostationary': ('projection_x_coordinate',
+                                        'projection_y_coordinate',
+                                        'latitude',
+                                        'longitude'),
+    'grid_mapping_name:lambert_azimuthal_equal_area': ('projection_x_coordinate',
+                                                       'projection_y_coordinate',
+                                                       'latitude',
+                                                       ' longitude'),
+    'grid_mapping_name:lambert_conformal_conic': ('projection_x_coordinate',
+                                                  'projection_y_coordinate',
+                                                  'latitude',
+                                                  'longitude'),
+    'grid_mapping_name:lambert_cylindrical_equal_area': ('projection_x_coordinate',
+                                                         'projection_y_coordinate',
+                                                         'latitude',
+                                                         'longitude'),
+    'grid_mapping_name:latitude_longitude': ('latitude',
+                                             'longitude'),
+    'grid_mapping_name:mercator': ('projection_x_coordinate',
+                                   'projection_y_coordinate',
+                                   'latitude',
+                                   'longitude'),
+    'grid_mapping_name:orthographic': ('projection_x_coordinate',
+                                       'projection_y_coordinate',
+                                       'latitude',
+                                       'longitude'),
+    'grid_mapping_name:polar_stereographic': ('projection_x_coordinate',
+                                              'projection_y_coordinate',
+                                              'latitude',
+                                              'longitude'),
+    'grid_mapping_name:rotated_latitude_longitude': ('grid_latitude',
+                                                     'grid_longitude',
+                                                     'latitude',
+                                                     'longitude'),
+    'grid_mapping_name:sinusoidal': ('projection_x_coordinate',
+                                     'projection_y_coordinate',
+                                     'latitude',
+                                     'longitude'),
+    'grid_mapping_name:stereographic': ('projection_x_coordinate',
+                                        'projection_y_coordinate',
+                                        'latitude',
+                                        'longitude'),
+    'grid_mapping_name:transverse_mercator': ('projection_x_coordinate',
+                                              'projection_y_coordinate',
+                                              'latitude',
+                                              'longitude'),
+    'standard_name:vertical_perspective': ('projection_x_coordinate',
+                                           'projection_y_coordinate',
+                                           'latitude',
+                                           'longitude'),
+    'standard_name:atmosphere_ln_pressure_coordinate': ('atmosphere_ln_pressure_coordinate',),
+    'standard_name:atmosphere_sigma_coordinate': ('atmosphere_sigma_coordinate',),
+    'standard_name:atmosphere_hybrid_sigma_pressure_coordinate': ('atmosphere_hybrid_sigma_pressure_coordinate',),
+    'standard_name:atmosphere_hybrid_height_coordinate': ('atmosphere_hybrid_height_coordinate',),
+    'standard_name:atmosphere_sleve_coordinate': ('atmosphere_sleve_coordinate',),
+    'standard_name:ocean_sigma_coordinate': ('ocean_sigma_coordinate',),
+    'standard_name:ocean_s_coordinate': ('ocean_s_coordinate',),
+    'standard_name:ocean_sigma_z_coordinate': ('ocean_sigma_z_coordinate',),
+    'standard_name:ocean_double': ('_sigma_coordinate ocean_double_sigma_coordinate',),
+}
+
+# Col 0: Georeference name Col 1+: Set of coordinate identites to which it applies
+albers_conical_equal_area projection_x_coordinate projection_y_coordinate latitude longitude
+azimuthal_equidistant projection_x_coordinate projection_y_coordinate latitude longitude
+geostationary projection_x_coordinate projection_y_coordinate latitude longitude
+lambert_azimuthal_equal_area projection_x_coordinate projection_y_coordinate latitude longitude
+lambert_conformal_conic projection_x_coordinate projection_y_coordinate latitude longitude
+lambert_cylindrical_equal_area projection_x_coordinate projection_y_coordinate latitude longitude
+latitude_longitude latitude longitude
+mercator projection_x_coordinate projection_y_coordinate latitude longitude
+orthographic projection_x_coordinate projection_y_coordinate latitude longitude
+polar_stereographic projection_x_coordinate projection_y_coordinate latitude longitude
+rotated_latitude_longitude grid_latitude grid_longitude latitude longitude
+sinusoidal projection_x_coordinate projection_y_coordinate latitude longitude
+stereographic projection_x_coordinate projection_y_coordinate latitude longitude
+transverse_mercator projection_x_coordinate projection_y_coordinate latitude longitude
+vertical_perspective projection_x_coordinate projection_y_coordinate latitude longitude
+atmosphere_ln_pressure_coordinate atmosphere_ln_pressure_coordinate 
+atmosphere_sigma_coordinate atmosphere_sigma_coordinate
+atmosphere_hybrid_sigma_pressure_coordinate atmosphere_hybrid_sigma_pressure_coordinate
+atmosphere_hybrid_height_coordinate atmosphere_hybrid_height_coordinate
+atmosphere_sleve_coordinate atmosphere_sleve_coordinate
+ocean_sigma_coordinate ocean_sigma_coordinate
+ocean_s_coordinate ocean_s_coordinate
+ocean_sigma_z_coordinate ocean_sigma_z_coordinate
+ocean_double_sigma_coordinate ocean_double_sigma_coordinate

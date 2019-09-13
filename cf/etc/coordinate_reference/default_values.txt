@@ -1,0 +1,30 @@
+# Coordinate conversion terms and their default values.
+# Column  1 : Coordinate conversion term
+# Columns 2+: Default values
+# See appendices D and F in the CF conventions for details.
+a 0
+b 0 
+b1 0
+b2 0
+depth 0
+depth_c 0
+eta 0
+href 0
+k_c 0
+lev 0
+longitude_of_prime_meridian 0
+north_pole_grid_longitude 0
+nsigma 0
+orog 0
+p0 0
+ps 0
+ptop 0
+s 0
+sigma 0
+z1 0
+z2 0
+zlev 0
+zsurf1 0
+zsurf2 0
+ztop 0
+

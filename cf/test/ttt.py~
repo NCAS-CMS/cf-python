@@ -1,0 +1,6 @@
+import cf; b=cf.read('../../docs/_downloads/precip*nc')[0]
+import cf; a=cf.read('../../docs/_downloads/air_temper*nc')[0]
+lat = b.dimension_coordinate('X')
+lon = b.dimension_coordinate('Y')
+c = a.regrids({'latitude': lat, 'longitude': lon}, 'bilinear')
+print(c)

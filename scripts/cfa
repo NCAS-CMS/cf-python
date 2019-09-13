@@ -1,0 +1,1333 @@
+#!/home/david/anaconda3/bin/python3
+#!/usr/bin/python3
+#-*-python-*-
+
+if __name__ == '__main__':
+
+    from getopt import getopt, GetoptError
+    import sys
+    import os
+    import cf
+    from re import sub as re_sub
+    
+    def print_help(version, date):
+        import subprocess
+        
+        manpage = '''\
+.TH "CFA" "1" "{0}" "{1}" "cfa"
+.
+.
+.
+.SH NAME
+cfa \- view or create aggregated CF datasets
+.
+.
+.
+.SH SYNOPSIS
+.
+cfa [\-1] [\-D] [\-d dir] [\-e file] [\-f format] [\-h] [\-i] [\-n] [\-o file] [\-s property] [\-u] [\-v mode] [\-x] [OPTIONS] INPUTS
+.
+.
+.SH DESCRIPTION
+.
+.
+The cfa tool creates CF fields contained in files or directories
+specified by
+.ft B
+INPUTS
+.ft P
+
+Sub-directories of given directories will also be read if the
+.ft B
+\-\-recursive
+.ft P
+option is set.
+
+Accepts CF\-netCDF and CFA\-netCDF files (or URLs if DAP access is
+enabled), Met Office (UK) PP files and Met Office (UK) fields files as
+input. Multiple input files in a mixture of formats may be given and
+normal UNIX file globbing rules apply.
+
+By default the contents of an input file are aggregated
+(i.e. combined) into as few multi\-dimensional CF fields as
+possible. Alternatively all of the input files may be treated
+collectively as a single CF dataset, in this case aggregation is
+attempted within and between the input files (see the
+.ft B
+VIEW
+.ft P
+and
+.ft B
+OUTPUT FILES
+.ft P
+sections).
+
+Unaggregatable fields in the input files may be omitted from the
+output (see the
+.ft B
+\-x
+.ft P
+option). Information on which fields are unaggregatable, and why, may
+be displayed (see the
+.ft B
+\-\-info
+.ft P
+option). All aggregation may be turned off with the
+.ft B
+\-n
+.ft P
+option, in which case all input fields are output without
+modification.
+
+See the
+.ft B
+AGGREGATION
+.ft P
+section for details on the aggregation process and unaggregatable
+fields.
+
+The CF fields may be either viewed on standard output (see the
+.ft B
+VIEW
+.ft P
+section) or
+written to one or more output datasets (see the
+.ft B
+OUTPUT FILES
+.ft P
+section).
+.
+.
+.
+.SH VIEW
+.
+.
+.
+If no output file options have been set (see the
+.ft B
+OUTPUT FILES
+.ft P
+section), or the 
+.ft B
+\-v
+.ft P
+option is set, then text descriptions of the CF field constructs
+contained in the input files are displayed on standard out. Short,
+medium-length, and complete descriptions are available via the  
+.ft B
+\-v
+.ft P
+option.
+
+If the
+.ft B
+\-1
+.ft P
+option is also set then all input files are treated collectively as a
+single CF dataset and aggregation is attempted within and between the
+input files.
+.
+.
+.
+.
+.SH OUTPUT FILES
+.
+.
+.
+Output files are in CF\-netCDF or CFA\-netCDF format (see the
+.ft B
+\-f
+.ft P
+option).
+
+Both output types are available in netCDF3 and netCDF4 formats. Note
+that the netCDF3 formats are generally slower to write than the
+netCDF4 formats, by several orders of magnitude if files with many
+data variables are involved, and do not always support the full range
+of data types. However, not all software can read netCDF4, so it is
+advisable to check before writing in this format.
+
+There are two modes of output: 1) one output file is created per input
+file, or 2) all of the input files are be treated collectively as a
+single CF dataset and written to a single output file.
+
+For mode 1) the contents of each file is aggregated independently of
+the others. Output file names are created by removing the suffix \.pp,
+\.nc or \.nca, if there is one, from each input file name and then
+adding a new suffix of \.nc or \.nca for CF\-netCDF and CFA\-netCDF
+output formats respectively. If the
+.ft B
+\-d
+.ft P
+option is set then all output files will be written to the specified
+directory. If the
+.ft B
+\-D
+.ft P
+option is set then each output file will be written to
+the same directory as its input file.
+
+For mode 2) aggregation is attempted within and between the input
+files(see the
+.ft B
+\-o
+.ft P
+option).
+
+An error occurs if an output file has the same full name as any of the
+input files or any other output file..
+.
+.
+.
+.SH AGGREGATION
+.
+.
+.
+Aggregation of input fields into as few multi\-dimensional CF fields
+as possible is carried out according to the aggregation rules
+documented in CF ticket #78 (http://kitt.llnl.gov/trac/ticket/78). For
+each input field, the aggregation process creates a
+.ft I
+structural signature
+.ft P
+which is essentially a subset of the metadata of the field, including
+some coordinate metadata and other domain information, but which
+contains no data values. The structural signature accounts for the
+following standard CF properties:
+  
+.RS
+add_offset, calendar, cell_methods, _FillValue, flag_masks,
+flag_meanings, flag_values, missing_value, scale_factor,
+standard_error_multiplier, standard_name, units, valid_max, valid_min,
+valid_range
+.RE
+
+Aggregation is then attempted on each group of fields with the same
+structural signature, and will succeed where the actual coordinate
+data values imply a safe combination into a single dataset.
+
+Not all fields are aggregatable. Unaggregatable fields are those
+without a well defined structural signature; or those with the same
+structural signature when at least two of them either can't be
+unambiguously distinguished by coordinates or other domain
+information; or contain coordinate reference fields or ancillary
+variable fields which themselves can't be unambiguously aggregated.
+.
+.
+.SH EXAMPLES
+.
+.
+Create a new netCDF file containing the aggregatable fields in all of
+the input files:
+
+.RS
+cfa \-o newfile.nc *.nc
+.RE
+
+Create, in an existing directory and overwriting any existing files,
+new netCDF files containing the aggregatable fields in each input
+file:
+
+.RS
+cfa \-d directory \-\-overwrite *.pp
+.RE
+
+Create a new netCDF3 classic file containing all fields in all of the
+input files:
+
+.RS
+cfa \-f NETCDF3_CLASSIC \-o newfile.nc *.nc
+.RE
+
+Create a new CFA-netCDF4 file containing all fields in all of the
+input files and allow long names or netCDF variable names to identify
+fields and their components:
+
+.RS
+cfa \-i \-f CFA4 \-o newfile.nc *.nc
+.RE
+.
+.
+.
+.SH OPTIONS
+.
+.
+.
+.TP
+.B \-1, \-\-one
+Treat all input files collectively as a single CF dataset. In this
+case aggregation is attempted within and between the input
+files. Only applies if
+.ft B
+\-v
+.ft P
+is also set.
+.
+.
+.
+.TP
+.B \-\-axis=property
+Aggregation configuration: Create a new axis for each input field
+which has given property. If an input field has the property then,
+prior to aggregation, a new axis is created with an auxiliary
+coordinate whose data array is the property's value. This allows for
+the possibility of aggregation along the new axis. The property itself
+is deleted from that field. No axis is created for input fields which
+do not have the specified property.
+
+Multiple axes may be created by specifying more than one
+.ft B
+\-\-axis
+.ft P
+option.
+
+For example, if you wish to aggregate an ensemble of model
+experiments that are distinguished by the source property, you can use
+.ft B
+\-\-axis=source
+.ft P
+to create an ensemble axis which has an auxiliary coordinate variable
+containing the source property values.
+.
+.
+.TP
+.B \-\-cfa_base=[value]
+For output CFA\-netCDF files only. File names referenced by an output
+CFA\-netCDF file have relative, as opposed to absolute, paths or URL
+bases. This may be useful when relocating a CFA\-netCDF file together
+with the datasets referenced by it.
+.PP
+.RS
+If set with no value (\-\-cfa_base=) or the value is empty then file
+names are given relative to the directory or URL base containing the
+output CFA\-netCDF file. If set with a non\-empty value then file
+names are given relative to the directory or URL base described by the
+value.
+.PP
+By default, file names within CFA\-netCDF files are stored with
+absolute paths. Ignored for output files of any other format.
+.RE
+.RE
+.
+.
+.TP
+.B \-\-compress=N
+Regulate the speed and efficiency of compression. Must be an integer
+between
+.ft B
+0
+.ft P
+and
+.ft B
+9
+.ft P
+By default N is
+.ft B
+0
+.ft P
+meaning no compression;
+.ft B
+1
+.ft P
+is the
+fastest, but has the lowest compression ratio;
+.ft B
+9
+.ft P
+is the slowest but
+best compression ratio.
+
+.
+.
+.TP
+.B \-\-contiguous
+Aggregation configuration: Requires that aggregated fields have
+adjacent dimension coordinate cells which partially overlap or share
+common boundary values. Ignored if the dimension coordinates do not
+have bounds.
+..
+.
+.TP
+.B \-D, \-\-Directory
+Each output file will be written to the same directory as its input file.
+.
+.
+.
+.TP
+.B \-d dir, \-\-directory=dir
+Specify the output directory for all output files.
+.
+.
+.TP
+.B \-\-double
+Write 32-bit floats as 64-bit floats and 32-bit integers as 64-bit
+integers. By default, input data types are preserved.
+.
+.
+.TP
+.B \-e file, \-\-external=file
+Read external variables from the given external file. Multiple
+external files may be provided by specifying more than one
+.ft B
+\-e 
+.ft P
+option.
+.
+
+.
+.TP
+.B \-\-equal=property
+Aggregation configuration: Require that an input field may only be
+aggregated with other fields if they all have the given CF property
+(standard or non-standard) with equal values. Ignored for any input
+field which does not have this property, or if the property is already
+accounted for in the structural signature.
+
+Supersedes the behaviour for the given property that may be implied by
+the
+.ft B
+\-\-exist_all
+.ft P
+option.
+
+Multiple properties may be set by specifying more than one
+.ft B
+\-\-equal
+.ft P
+option.
+.
+.
+.TP
+.B \-\-equal_all
+Aggregation configuration: Require that an input field may only be
+aggregated with other fields that have the same set of CF properties
+(excluding those already accounted for in the structural signature)
+with equal sets of values.
+
+The behaviour for individual properties may be overridden by the
+.ft B
+\-\-exist \-\-ignore
+.ft P
+options.
+
+For example, to insist that a group of aggregated input fields must
+all have the same CF properties (other than those accounted for in the
+structural signature) with matching values, but allowing the long_name
+properties have unequal values, you can use
+.ft B
+\-\-equal_all \-\-exist=long_name
+.ft P
+.
+.
+.TP
+.B \-\-exist=property
+Aggregation configuration: Require that an input field may only be
+aggregated with other fields if they all have the given CF property
+(standard or non-standard), but not requiring the values to be the
+same. Ignored for any input field which does not have this property,
+or if the property is already accounted for in the structural
+signature.
+
+Supersedes the behaviour for the given property that may be implied by
+the
+.ft B
+\-\-equal_all
+.ft P
+option.
+
+Multiple properties may be set by specifying more than one
+.ft B
+\-\-exist
+.ft P
+option.
+.
+.
+.TP
+.B \-\-exist_all
+Aggregation configuration: Require that an input field may only be
+aggregated with other fields that have the same set of CF properties
+(excluding those already accounted for in the structural signature),
+but not requiring the values to be the same.
+
+The behaviour for individual properties may be overridden by the
+.ft B
+\-\-equal \-\-ignore
+.ft P
+options.
+
+For example, to insist that a group of aggregated input fields must
+all have the same CF properties (other than those accounted for in the
+structural signature), regardless of their values, but also insisting
+that the long_name properties have equal values, you can use
+.ft B
+\-\-exist_all \-\-equal=long_name
+.ft P
+.
+.
+.TP
+.B \-f format, \-\-format=format
+Set the format of the output file(s). Valid choices are
+NETCDF3_CLASSIC, NETCDF3_64BIT, NETCDF4, NETCDF4_CLASSIC and
+NETCDF3_64BIT for outputting CF\-netCDF files in those netCDF formats
+and CFA3 or CFA4 for outputting CFA\-netCDF files in NETCDF3_CLASSIC
+or NETCDF4 formats respectively. By default, NETCDF4 is assumed.
+.PP
+.RS
+Note that the netCDF3 formats are generally slower to write than the
+netCDF4 formats, by several orders of magnitude if files with many
+data variables are involved. However, not all software can read
+netCDF4, so it is advisable to check before writing in this format.
+.RE
+.
+.
+.TP
+.B \-h, \-\-help
+Display this man page.
+.
+.
+.TP
+.B \-i, \-\-relaxed_identities
+Aggregation configuration: In the absence of standard names, allow
+fields and their components (such as coordinates) to be identified by
+their long_name CF properties or else their netCDF file variable
+names.
+.
+.
+.TP
+.B \-\-ignore=property
+Aggregation configuration: An input field may be aggregated with other
+fields regardless of whether or not they have the given CF property
+(standard or non-standard) and regardless of its values. Ignored for
+any input field which does not have this property, or if the property
+is already accounted for in the structural signature.
+
+This is the default behaviour in the absence of all the
+.ft B
+\-\-exist \-\-equal \-\-exist_all \-\-equal_all
+.ft P
+options and supersedes the behaviour for the given property that may
+be implied if any of these options are set.
+
+Multiple properties may be set by specifying more than one
+.ft B
+\-\-ignore
+.ft P
+option.
+
+For example, to insist that a group of aggregated input fields must
+all have the same CF properties (other than those accounted for in the
+structural signature) with the same values, but with no restrictions
+on the existence or values of the long_name property you can use
+.ft B
+\-\-equal_all \-\-ignore=long_name
+.ft P
+.
+.
+.TP
+.B \-\-fletcher32
+Activate the Fletcher-32 HDF5 checksum algorithm to detect compression
+errors. Ignored if there is no compression (see the
+.ft B
+\-\-compress
+.ft P
+option).
+.
+.
+.TP
+.B \-\-follow_symlinks
+In combination with
+.ft B
+\-\-recursive
+.ft P
+also search for files in directories which resolve to symbolic
+links. Files specified by the
+.ft B
+INPUTS
+.ft P
+which are symbolic links are always followed. Note that setting
+.ft B
+\-\-recursive --follow_symlinks
+.ft P
+can lead to infinite recursion if a directory which resolves to a
+symbolic link points to a parent directory of itself.
+.
+.
+.TP
+.B \-\-ignore_read_error
+Ignore, without failing, any input file which causes an error whilst
+being read, as would be the case for an empty file, unknown file
+format, etc. By default an error occurs in this case.
+.
+.
+.TP
+.B \-\-info=N
+Aggregation configuration: Print information about the aggregation
+process. If N is
+.ft B
+0
+.ft P
+then no information is displayed. If N is
+.ft B
+1
+.ft P
+or more
+then display information on which fields are unaggregatable, and
+why. If N is
+.ft B
+2
+.ft P
+or more then display the field structural signatures
+and, when there is more than one field with the same structural
+signature, their canonical first and last coordinate values. If N is
+.ft B
+3
+.ft P
+or more then display the field complete aggregation metadata.
+
+By default N is
+.ft B
+0
+.ft P
+.
+.
+.TP
+.B \-\-least_sig_digit=N
+Truncate the input field data arrays. For a positive integer N the
+precision that is retained in the compressed data is '10 to the power
+-N'. For example, if N is 2 then a precision of 0.01 is retained. In
+conjunction with compression this produces 'lossy', but significantly
+more efficient compression (see the
+.ft B
+\-\-compress
+.ft P
+option).
+.
+.
+.TP
+.B \-\-ncvar_identities
+Aggregation configuration: Force fields and their components (such as
+coordinates) to be identified by their netCDF file variable names.
+.
+.
+.TP
+.B \-n, \-\-no_aggregation
+Aggregation configuration: Do not aggregate fields. Writes the input
+fields as they exist in the input files.
+.
+.
+.TP
+.B \-\-no_overlap
+Aggregation configuration: Requires that aggregated fields have
+adjacent dimension coordinate cells which do not overlap (but they may
+share common boundary values). Ignored if the dimension coordinates do
+not have bounds.
+.
+.
+.TP
+.B \-\-no_shuffle
+Turn off the HDF5 shuffle filter, which de-interlaces a block of data
+before compression by reordering the bytes by storing the first byte
+of all of a variable's values in the chunk contiguously, followed by
+all the second bytes, and so on. By default the filter is applied
+because if the data array values are not all wildly different, using
+the filter can make the data more easily compressible. Ignored if
+there is no compression (see the
+.ft B
+\-\-compress
+.ft P
+option).
+.
+.
+.TP
+.B \-o file, \-\-outfile=file
+Treat all input files collectively as a single CF dataset. In this
+case aggregation is attempted within and between the input files and
+all outputs are written to the specified file.
+.
+.
+.TP
+.B \-\-overwrite
+Allow pre\-existing output files to be overwritten.
+.
+.
+.TP
+.B \-\-promote=component
+Promote field components to independent top-level fields. If component
+is ancillary then ancillary data fields are promoted. If component is
+auxiliary then auxiliary coordinate variables are promoted. If
+component is measure then cell measure variables are promoted. If
+component is reference then fields pointed to from formula_terms
+attributes are promoted. If component is field then all component
+fields are promoted.
+
+Multiple component types may be promoted by specifying more than one
+.ft B
+\-\-promote
+.ft P
+option.
+
+For example, promote to ancillary data field and cell measure
+variables to independent, top-level fields you can use
+.ft B
+\-\-promote=ancillary --promote=measure
+.ft P
+.
+.
+.TP
+.B \-\-recursive
+Recursively read sub-directories of any directories specified as
+.ft B
+INPUTS
+.ft P
+parameters. All files in the top-level of a given directory are
+always processed. Set the
+.ft B
+\-\-ignore_read_error
+.ft P
+option to bypass any unreadable files and the
+.ft B
+\-\-follow_symlinks
+.ft P
+option to allow directories to be symbolic links.
+.
+.
+.TP
+.B \-\-reference_datetime=datetime
+Set the reference date-time of time coordinate units to an ISO
+8601-like date-time. Changing the reference date-time does not change
+the absolute date-times of the coordinates. Ignored for non-reference
+date-time coordinates. Some examples of valid date-times: 1830-12-1,
+"1830-12-09 2:34:45Z".
+.
+.
+.TP
+.B \-\-respect_valid
+Aggregation configuration: Take into account the CF properties
+valid_max, valid_min and valid_range during aggregation. By default
+they are ignored for the purposes of aggregation and deleted from any
+aggregated output CF fields.
+.
+.
+.TP
+.B \-s property, --select=property
+Select a subset of fields from the input files. The selection property
+is either the standard name of a field or the value of any other
+property. In the latter case the value is preceded by the property's
+name followed by a colon.
+
+Multiple selections be made by specifying more than one option. For
+example, to select fields with standard name of air_temperature as
+well as those with a stash_code property of 3217 you could use
+.ft B
+\-s air_temperature \-s stash_code=3217
+.ft P
+.
+.
+.TP
+.B \-\-shared_nc_domain
+Aggregation configuration: Match axes between a field and its
+contained ancillary variable and coordinate reference fields via their
+netCDF dimension names and not via their domains.
+.
+.
+.TP
+.B \-\-single
+Write 64-bit floats as 32-bit floats and 64-bit integers as 32-bit
+integers. By default, input data types are preserved.
+.
+.
+.TP
+.B \-\-squeeze
+Remove size 1 axes from the output field data arrays. If a size one
+axis has any one dimensional coordinates then these are converted to
+CF scalar coordinates.
+.
+.
+.TP
+.B \-u, \-\-relaxed_units
+Aggregation configuration: Assume that fields or their components
+(such as coordinates) with the same standard name (or other
+identifiers, see the
+.ft B
+\-i
+.ft P
+option) but missing units all have equivalent (but unspecified) units,
+so that aggregation may occur. This is the default for Met Office (UK)
+PP files and Met Office (UK) fields files, but not for other formats.
+.
+.
+.TP
+.B \-\-unsqueeze
+Include size 1 axes in the output field data arrays. If a size one
+axis has any CF scalar coordinates then these are converted to one
+dimensional coordinates.
+.
+.
+.TP
+.B \-\-um_version=version
+Deprecated. Use --um instead.
+.
+.
+.TP
+.B \-\-um=option
+For Met Office (UK) PP files and Met Office (UK) fields files only,
+provide extra instructions for interpreting the files. This option is
+ignored for input files which are not PP or fields files. Valid
+options are:
+
+UM version: The Unified Model version to be used when decoding the
+header. Valid versions are, for example, 4.2, 6.6.3 and 8.2. The
+default version is 4.5. In general, the given version is ignored if it
+can be inferred from the header (which is usually the case for files
+created by the UM at versions 5.3 and later). The exception to this is
+when the given version has a third element (such as the 3 in 6.6.3),
+in which case any version in the header is ignored. For example
+.ft B
+\-\-um=version=5.2
+.ft P
+
+UM format: The file format (PP or FF), word size in bytes (4 or 8) and
+byte order (big or little) of the file in the rare cases that they can
+not be automatically detected. If the format is given as PP then the
+word size and byte order default to 4 and big respectively. For example
+.ft B
+\-\-um=format=PP
+.ft P
+
+Multiple instructions may be chosen specifying more than one option. For
+example, to specify that UM files are 32-bit, big endian PP files for UM version 5.1:
+.ft B
+\-\-um=format=PP \-\-um=endian=little --um=version=5.1
+.ft P
+.
+.
+.TP
+.B \-\-unlimited=axis
+Create an unlimited dimension (a dimension that can be appended to). A
+dimension is identified by either a standard name; one of T, Z, Y, X
+denoting time, height or horizontal axes (as defined by the CF
+conventions); or the value of an arbitrary CF property preceded by
+the property name and a colon. For example:
+
+Multiple unlimited axes may be defined by specifying more than one
+.ft B
+\-\-unlimited
+.ft P
+option. Note, however, that only netCDF4 formats support multiple
+unlimited dimensions. For example, to set the time and Z dimensions to
+be unlimited you could use
+.ft B
+\-\-unlimited=time \-\-unlimited=Z 
+.ft P
+
+An example of defining an axis by an arbitrary CF property could be
+.ft B
+\-\-unlimited=long_name:pseudo_level
+.ft P
+.
+.
+.TP
+.B \-v mode, \-\-view=mode
+Display text descriptions on standard output of the CF field
+constructs contained in the input files, instead of writing them to
+disk. If mode is
+.ft B
+m
+.ft P
+then a medium-length summary of each CF field is
+displayed. If mode is
+.ft B
+s
+.ft P
+then short, one-line summaries are displayed. If mode is
+.ft B
+c
+.ft P
+then complete dumps are displayed.
+
+By default mode is
+.ft B
+m
+.ft P
+.
+.
+.TP
+.B \-x, \-\-exclude
+Aggregation configuration: Omit unaggregatable fields from the
+output. Ignored if the
+.ft B
+\-n
+.ft P
+option is set. See the AGGREGATION section for the definition of an
+unaggregatable field.
+.
+.
+.
+.SH SEE ALSO
+cfdump(1), ncdump(1)
+.
+.
+.
+.SH LIBRARY
+cf\-python library version {0} at {2}
+.
+.
+.
+.SH BUGS
+Reports of bugs are welcome at https://github.com/NCAS-CMS/cf-python
+.
+.
+.
+.SH LICENSE
+Open Source Initiative MIT License
+.
+.
+.
+.SH AUTHOR
+Written by David Hassell
+'''.format(version, date, os.path.dirname(os.path.abspath(cf.__file__)))
+
+        p = subprocess.Popen(['man', '-r',
+                              ' Manual page cfa(1)\ ?ltline\ %lt?L/%L.:',
+                              '-l', '-'],
+                             stdin=subprocess.PIPE,
+                             universal_newlines=True)
+        p.communicate(input=manpage)
+
+        
+    def _check_overwrite(outfile, files, overwrite):
+        '''
+        '''
+        if not os.path.isfile(outfile):
+            return
+
+        if not overwrite:
+            print("{} ERROR: Can't overwrite output file {} unless --overwrite is set".format(
+                iam, outfile))
+            sys.exit(2) 
+             
+        if not os.access(outfile, os.W_OK):
+            print("{} ERROR: Can't overwrite output file {} without permission".format(iam, outfile))
+            sys.exit(2) 
+    
+        if set((outfile,)).intersection(files):
+            print("{} ERROR: Can't overwrite input file {}".format(iam, outfile))
+            sys.exit(2) 
+                
+        # Remove the pre-existing output file
+        os.remove(outfile)
+        
+
+    iam   = os.path.basename(sys.argv[0])
+    usage = "USAGE: {0} [-1] [-D] [-d dir] [-e file] [-f format] [-h] [-i] [-n] [-o file] [-s property] [-u] [-v mode] [-x] [OPTIONS] INPUTS".format(
+        iam)
+
+    short_help = '''\
+{0} 
+  [-1]                   View all input files as a single dataset
+  [-D]                   Write to the same directories as its input files
+  [-d dir]               Directory for output files
+  [-e file]              External file
+  [-f format]            Set the output file format
+  [-h]                   Display the full man page
+  [-i]                   Configure field aggregation
+  [-n]                   Do not aggregate fields
+  [-o file]              Output all fields to a single file
+  [-s property]          Output only fields with this property  
+  [-u]                   Configure field aggregation
+  [-v mode]              Display a summary of each field (do not write to disk)
+  [-x]                   Do not output unaggregatable fields
+  [--ignore_read_error]  Ignore bad input files
+  [--recursive]          Recursively search input directories for files
+  [--follow_symlinks]    Allow input directories which are symbolic links
+  [--squeeze]            Remove size 1 axes from output field data arrays
+  [--unsqueeze]          Include size 1 axes in  output field data arrays
+  [--promote]            Promote components to top-level fields
+  [--reference_datetime] Override coordinate reference date-times
+  [--overwrite]          Overwrite pre-existing output files
+  [--unlimited=axis      Create an unlimited dimension
+  [--cfa_base=[value]]   Configure CFA-netCDF output files
+  [--single]             Write out as single precision
+  [--double]             Write out as double precision
+  [--compress=N]         Compress the output data
+  [--least_sig_digit=N]  Truncate output data arrays
+  [--no_shuffle]         Turn off the HDF5 shuffle filter
+  [--fletcher32]         Turn on the Fletcher32 HDF5 checksum algorithm
+  [--info=N]             Display information about field aggregation 
+  [--axis=property]      Configure field aggregation
+  [--equal=property]     Configure field aggregation
+  [--ignore=property]    Configure field aggregation
+  [--exist=property]     Configure field aggregation
+  [--equal_all]          Configure field aggregation
+  [--exist_all]          Configure field aggregation
+  [--contiguous]         Configure field aggregation
+  [--ncvar_identities]   Configure field aggregation
+  [--no_overlap]         Configure field aggregation
+  [--respect_valid]      Configure field aggregation
+  [--shared_nc_domain]   Configure field aggregation
+  [--um=option]          Extra decoding instructions for PP and fields files
+  INPUTS                 Input files and directories
+
+Using cf-python library version {1} at {2}'''.format(
+    usage, cf.__version__, os.path.dirname(os.path.abspath(cf.__file__)))
+ 
+    # --------------------------------------------------------------------
+    # Parse command line options
+    # --------------------------------------------------------------------
+    try:
+        opts, infiles = getopt(sys.argv[1:], "1aDd:f:hino:r:s:uv:x:",
+                               longopts=['axis=',
+                                         'cfa_base=',
+                                         'compress=',
+                                         'contiguous',
+                                         'Directory',
+                                         'directory=',
+                                         'double',
+                                         'equal=',
+                                         'equal_all',
+                                         'exclude=',
+                                         'exist=',
+                                         'exist_all',
+                                         'external=',
+                                         'fletcher32',
+                                         'follow_symlinks',
+                                         'format=',
+                                         'help',
+                                         'ignore=',
+                                         'ignore_read_error', 
+                                         'info=',
+                                         'least_sig_digit=',
+                                         'ncvar_identities',
+                                         'no_aggregation',
+                                         'no_overlap',
+                                         'no_shuffle',
+                                         'one',
+                                         'outfile=',
+                                         'overwrite',
+                                         'promote=',
+                                         'recursive',
+                                         'reference_datetime=',
+                                         'relaxed_identities',
+                                         'relaxed_units',
+                                         'respect_valid',
+                                         'select=',
+                                         'single',
+                                         'shared_nc_domain',
+                                         'squeeze',
+                                         'unlimited=',
+                                         'um_version=',
+                                         'um=',
+                                         'unsqueeze',
+                                         'view=',
+                                         # Deprecated options
+                                         'all', 'aggregate=', 'read=', 'write=', 'verbose=',
+                                         ])
+    except GetoptError as err:
+        # print help information and exit:
+        print("{} ERROR: {}".format(iam, str(err)))
+        sys.exit(2)
+    
+    if not (infiles or opts):
+        print(short_help)
+        sys.exit(0)
+ 
+    # Defaults
+    fmt                = 'NETCDF4'
+    one_to_one         = True
+    one                = False
+    exclude            = False  # By default unaggregatable fields are output
+    no_aggregation     = False  # By default fields are aggregated
+    overwrite          = False  # By default existing output files are not overwritten
+    directory_output   = False
+    view               = None
+    Directory          = None
+    directory          = None
+    outfile            = None
+    info               = 0      # By default no info is printed to STDOUT
+    axes               = []
+    equal              = []
+    exist              = []
+    ignore             = []
+    promote            = []
+    unlimited          = []
+    aggregate_options  = {}
+    read_options       = {}     # Keyword parameters to cf.read
+    write_options      = {}     # Keyword parameters to cf.write
+
+    for option, arg in opts:
+        if option in ('-h', '--help'):
+            print_help(cf.__version__, cf.__date__)
+            sys.exit(0)
+        elif option in ('-o', '--outfile'):
+            outfile = arg
+            one_to_one = False
+        elif option in ('-f', '--format'):
+            fmt = arg              
+        elif option in ('-D', '--Directory'):
+            Directory = True
+            directory_output = True
+        elif option in ('-d', '--directory'):
+            directory = arg           
+            directory_output = True
+        elif option == '--axis':
+            axes.append(arg)
+        elif option == '--overwrite':
+            overwrite = True
+        elif option == '--info':
+            info = int(arg)
+        elif option in ('-x', '--exclude'):
+            exclude = True
+        elif option == '--contiguous':
+            aggregate_options['contiguous'] = True
+        elif option == '--equal':
+            equal.append(arg)
+        elif option == '--exist':
+            exist.append(arg)
+        elif option == '--ignore':
+            ignore.append(arg)
+        elif option == '--promote':
+            promote.append(arg)
+        elif option == '--equal_all':
+            aggregate_options['equal_all'] = True
+        elif option == '--exist_all':
+            aggregate_options['exist_all'] = True
+        elif option == '--no_overlap':
+            aggregate_options['no_overlap'] = True
+        elif option in ('-1', '--one'):
+            one = True
+        elif option in ('-i', '--relaxed_identities'):
+            aggregate_options['relaxed_identities'] = True
+        elif option in ('-u', '--relaxed_units'):
+            aggregate_options['relaxed_units'] = True 
+        elif option == '--respect_valid':
+            aggregate_options['respect_valid'] = True
+        elif option == '--ncvar_identities':
+            aggregate_options['ncvar_identities'] = True
+        elif option == '--shared_nc_domain':
+            aggregate_options['shared_nc_domain'] = True
+        elif option in ('-e', '--external'):
+            read_options.setdefault('external', []).append(arg)
+        elif option == '--unsqueeze':
+            read_options['unsqueeze'] = True
+        elif option == '--recursive':
+            read_options['recursive'] = True
+        elif option == '--follow_symlinks':
+            read_options['follow_symlinks'] = True
+        elif option  in ('-s', '--select'):
+            read_options.setdefault('select', []).append(arg)
+        elif option in ('-n', '--no_aggregation'):
+            no_aggregation = True
+        elif option == '--squeeze':
+            read_options['squeeze'] = True
+        elif option == '--um_version':
+            print("{} ERROR: The {} option has been removed. Use --um=version=VN instead.".format(
+                iam, option))
+            sys.exit(2)
+        elif option == '--um':
+            read_options.setdefault('um', []).append(arg)
+        elif option == '--ignore_read_error':
+            read_options['ignore_read_error'] = True
+        elif option == '--reference_datetime':
+            write_options['reference_datetime'] = arg
+        elif option == '--compress':
+            write_options['compress'] = int(arg)
+        elif option == '--no_shuffle':
+            write_options['no_shuffle'] = True
+        elif option == '--fletcher32':
+            write_options['fletcher32'] = True
+        elif option == '--least_sig_digit':
+            write_options['least_significant_digit'] = int(arg)
+        elif option == '--single':
+            write_options['single'] = True
+        elif option == '--double':
+            write_options['double'] = True
+        elif option == '--cfa_base':
+            write_options['cfa_options'] = {'base': arg}
+        elif option == '--unlimited':
+            unlimited.append(arg)
+        elif option in ('-v', '--view'):
+            view = arg
+            if view not in 'smc':
+                print("{} ERROR: The {} option must have an argument of either s, m or c".format(iam, option))
+                sys.exit(2)
+        elif option in ('-a', '--all'):
+            print("{} ERROR: The {} option has been deprecated and is now the default behaviour. See the -x option.".format(
+                iam, option))
+            sys.exit(2)
+        elif option in ('-r', '-w', '--aggregate', '--read', '--write', '--verbose'):
+            print("{} ERROR: The {} option has been deprecated.".format(
+                iam, option))
+            sys.exit(2)
+        else:
+            print(usage)
+            assert False, "Unknown option: "+option
+    #--- End: for
+
+    if outfile is None and not directory_output and view is None:
+        # No output file or directory options are set, then output a
+        # short view.
+        view = 's'
+
+    if one and view is None:
+        print("{} ERROR: Can only set the -1 option if the -v option is also set.".format(iam))
+        sys.exit(2)
+    
+    if promote:
+        read_options['promote'] = promote
+
+    if no_aggregation:
+        read_options['aggregate'] = False
+    else:
+        aggregate_options['info']    = info
+        aggregate_options['exclude'] = exclude
+        
+        if axes:
+            aggregate_options['dimension'] = axes
+
+        if equal:
+            aggregate_options['equal'] = equal
+
+        if exist:
+            aggregate_options['exist'] = exist
+
+        if ignore:
+            aggregate_options['ignore'] = ignore
+
+#        if aggregate_options:
+#            read_options['aggregate'] = aggregate_options
+
+        read_options['aggregate'] = aggregate_options
+
+#    if read_options.get('select'):
+#        read_options['select_options'] = {'exact': True}
+
+    um = read_options.pop('um', None)
+    if um:
+        read_options['um'] = {}
+        for key in um:
+            if key.startswith('version='):
+                read_options['um']['version'] = key.lstrip('version=')
+            if key.startswith('format='):
+                read_options['um']['fmt'] = key.lstrip('format=')
+            if key.startswith('endian='):
+                read_options['um']['endian'] = key.lstrip('endian=')
+            if key.startswith('word_size='):
+                read_options['um']['word_size'] = int(key.lstrip('word_size='))
+            if key.startswith('stash_table='):
+                stash_table = key.lstrip('stash_table=')
+                stash_table = os.path.expanduser(os.path.expandvars(stash_table))
+                cf.um.read.load_stash2standard_name(stash_table, delimiter='!', merge=True)
+    #--- End: if
+
+    write_options['fmt'] = fmt
+
+    if unlimited:
+        write_options['unlimited'] = unlimited
+
+    if fmt == 'CFA':
+        print("{} ERROR: '-f CFA' has been replaced by '-f CFA3' or '-f CFA4' for netCDF3 classic and netCDF4 CFA output formats respectively".format(
+            iam))
+        sys.exit(2) 
+
+    if not infiles:
+        print("{} ERROR: Must provide at least one input file".format(iam))
+        sys.exit(2)
+
+    if sum([outfile is not None, directory is not None, Directory is not None]) > 1:
+        print("{} ERROR: Can only set one of the -o, -d and -D options".format(iam))
+        sys.exit(2) 
+    
+    if directory is not None:
+        # Check that the directory is ok and replace it with its
+        # absolute, normalised path.
+        if (not os.path.isdir(directory) or
+            not os.access(directory, os.W_OK)):
+            print("{} ERROR: Can't write to output directory {}".format(iam, directory))
+            sys.exit(2) 
+
+        directory = cf.abspath(directory)
+
+    # Replace the input files with their absolute, normalised paths
+    # and recursively scan input directories
+    recursive       = read_options.get('recursive', False)
+    follow_symlinks = read_options.get('follow_symlinks', False)
+    if follow_symlinks and not recursive:
+        print("{} ERROR: Can't set --follow_symlinks without setting --recursive".format(iam))
+        sys.exit(2) 
+
+    infiles2 = []
+    for x in (cf.abspath(f) for f in infiles):
+        if not os.path.isdir(x):
+            infiles2.append(x)
+        else:
+            # Walk through directories
+            for path, subdirs, filenames in os.walk(x, followlinks=follow_symlinks):
+                infiles2.extend([os.path.join(path, f) for f in filenames])
+                if not recursive:                            
+                    break
+    #--- End: for
+    infiles = infiles2
+
+    # Initialise the set of all input and output files
+    files = set(infiles)
+
+    if outfile is not None:
+        outfile = cf.abspath(outfile)
+        infiles = (infiles,)
+    elif view is not None and one:
+        infiles = (infiles,)
+
+    if view is None and not one_to_one:
+        _check_overwrite(outfile, infiles[0], overwrite)
+
+    for infile in infiles:
+        # ------------------------------------------------------------
+        # Find the output file name, if required, and check that it
+        # can be created.
+        # ------------------------------------------------------------
+        if view is None and one_to_one:
+            outfile = re_sub('(\.pp|\.nc|\.nca)$', '.nc', infile)
+            if fmt in ('CFA3', 'CFA4'):
+                outfile += 'a'
+
+            if directory is not None:
+                outfile = cf.pathjoin(directory, os.path.basename(outfile))
+        
+            _check_overwrite(outfile, files, overwrite)
+
+            files.add(outfile)
+
+        # ------------------------------------------------------------
+        # Read
+        # ------------------------------------------------------------
+        try:        
+            f = cf.read(infile, **read_options)
+        except Exception as error:
+            print("{} ERROR reading {}: {}".format(iam, infile, error))
+            sys.exit(1)
+
+        if view is not None:
+            # --------------------------------------------------------
+            # View
+            # --------------------------------------------------------
+            for g in f:            
+                if view == 's':
+                    # Omit the angled brackets from the repr output
+                    print(repr(g)[1:-1])
+                elif view == 'm':
+                    print(g)
+                elif view == 'c':
+                    g.dump()
+        else:        
+            # --------------------------------------------------------
+            # Write
+            # -------------------------------------------------------- 
+            if one_to_one and write_options.get('verbose', False) and f:
+                print('\nOUTPUT FILE:', outfile)
+    
+            try:        
+                cf.write(f, outfile, **write_options)
+            except Exception as error:
+                print("{} ERROR writing {}: {}".format(iam, outfile, error))
+                sys.exit(1)
+    #--- End: for
