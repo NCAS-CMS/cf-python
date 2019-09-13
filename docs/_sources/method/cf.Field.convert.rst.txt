@@ -1,7 +1,0 @@
-cf.Field.convert
-================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Field.convert
