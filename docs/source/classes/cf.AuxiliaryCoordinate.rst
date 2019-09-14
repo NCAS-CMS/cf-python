@@ -4,6 +4,8 @@
 cf.AuxiliaryCoordinate
 ======================
 
+----
+
 .. autoclass:: cf.AuxiliaryCoordinate
    :no-members:
    :no-inherited-members:

@@ -6,6 +6,8 @@
 cf.FieldList
 ============
 
+----
+
 .. autoclass:: cf.FieldList
    :no-members:
    :no-inherited-members:

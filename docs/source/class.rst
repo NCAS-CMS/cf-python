@@ -50,6 +50,15 @@ Coordinate component classes
    cf.Bounds
    cf.CoordinateConversion
    cf.Datum  
+      
+Domain class
+------------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: classes/
+
+   cf.Domain
    
 Data classes
 ------------
