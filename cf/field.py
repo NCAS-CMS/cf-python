@@ -13574,7 +13574,7 @@ The axes are inserted into the slowest varying data array positions.
     def axis_name(self, *args, **kwargs):
         '''Return the canonical name for an axis.
 
-    Deprecated at version 3.0.0. Use 'domain_axis_identity' method instead.
+    Deprecated at version 3.0.0. Use `domain_axis_identity` method instead.
 
         ''' 
         _DEPRECATION_ERROR_METHOD(self, 'axis_name',
@@ -13584,7 +13584,7 @@ The axes are inserted into the slowest varying data array positions.
     def data_axes(self):
         '''Return the domain axes for the data array dimensions.
 
-    Deprecated at version 3.0.0. Use 'get_data_axes' method instead.
+    Deprecated at version 3.0.0. Use `get_data_axes` method instead.
 
         '''
         _DEPRECATION_ERROR_METHOD(
@@ -13604,7 +13604,7 @@ The axes are inserted into the slowest varying data array positions.
     def expand_dims(self, position=0, axes=None, i=False, **kwargs):
         '''Insert a size 1 axis into the data array.
 
-    Deprecated at version 3.0.0. Use 'insert_dimension' method instead.
+    Deprecated at version 3.0.0. Use `insert_dimension` method instead.
 
         '''
         _DEPRECATION_ERROR_METHOD(

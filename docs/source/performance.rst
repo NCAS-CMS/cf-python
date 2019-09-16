@@ -4,13 +4,13 @@
 **Performance**
 ===============
 
+----
+
 Version |release| for version |version| of the CF conventions.
 
 .. contents::
    :local:
    :backlinks: entry
-
-----
 
 
 **Lazy operations**

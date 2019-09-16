@@ -2,22 +2,27 @@
 
 # STABLE RELEASE DATE: 2019-10-01
 
+
 # CF Python
 
 The Python cf package is an Earth science data analysis library that
 is built on a complete implementation of the CF data model
 
+
 # Documentation
 
 http://ncas-cms.github.io/cf-python
+
 
 # Installation
 
 http://ncas-cms.github.io/cf-python/installation.html
 
+
 # Functionality
 
-The cf package implements the CF data model [1] for its internal data
+The cf package implements the CF data model
+(https://doi.org/10.5194/gmd-10-4619-2017) for its internal data
 structures and so is able to process any CF-compliant dataset. It is
 not strict about CF-compliance, however, so that partially conformant
 datasets may be ingested from existing datasets and written to new
@@ -62,6 +67,7 @@ The cf package can:
   * Create field constructs to create derived quantities (such as
     vorticity).
 
+
 # Visualization
 
 Powerful, flexible, and very simple to produce visualizations of field
@@ -72,9 +78,17 @@ seprately to cf.
 See the cfplot gallery (http://ajheaps.github.io/cf-plot/gallery.html)
 for the full range range plotting possibilities with example code.
 
+
 # Command line utilities
 
-TODO
+During installation the ``cfa`` command line utility is also
+installed, which
+
+  * generates text descriptions of field constructs contained in
+    files, and
+
+  * creates new datasets aggregated from existing files.
+
 
 # Tests
 

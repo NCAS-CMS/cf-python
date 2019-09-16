@@ -10,6 +10,10 @@
 
 Version |release| for version |version| of the CF conventions.
 
+.. contents::
+   :local:
+   :backlinks: entry
+
 .. _Python-versions:
 
 **Python versions**
@@ -19,13 +23,16 @@ As of version 3.0.0, cf works for Python 3 only.
 
 (Versions 2.x of cf work for Python 2 only.)
 
+----
+
 .. _pip:
   
 **pip**
 -------
 
-----
-
+cf-python is in the Python package index:
+https://pypi.org/project/cf-python
+  
 To install cf and all of its :ref:`dependencies <Dependencies>` run,
 for example:
 
@@ -51,12 +58,12 @@ See the `documentation for pip install
 <https://pip.pypa.io/en/stable/reference/pip_install/>`_ for further
 options.
 
+----
+
 .. _Source:
 
 **Source**
 ----------
-
-----
 
 To install from source:
 
@@ -91,23 +98,28 @@ To install from source:
 
        python setup.py install --home=<directory>
 
-.. _cfdump-utility:
-
-**cfdump utility**
-------------------
-
 ----
 
-During installation the :ref:`cfdump command line utility <cfdump>` is
-also installed, which generates text descriptions of the field
-constructs contained in a netCDF dataset.
+.. _cfa-utility:
+
+**cfa utility**
+---------------
+
+During installation the ``cfa`` command line utility is also
+installed, which
+
+* :ref:`generates text descriptions of field constructs contained in
+  files <File-inspection-with-cfa>`, and 
+
+* :ref:`creates new datasets aggregated from existing files
+  <Creation-with-cfa>`.
+
+----
 
 .. _Tests:
 
 **Tests**
 ---------
-
-----
 
 Tests are run from within the ``cf-python/test`` directory:
 
@@ -115,38 +127,38 @@ Tests are run from within the ``cf-python/test`` directory:
  
    python run_tests.py
        
+----
+
 .. _Dependencies:
 
 **Dependencies**
 ----------------
 
-----
-
 The cf-python package requires:
 
-* `Python <https://www.python.org/>`_, version 3 or newer,
+* `Python <https://www.python.org/>`_, version 3 or newer.
 
-* `numpy <http://www.numpy.org/>`_, version 1.15 or newer,
+* `numpy <https://pypi.org/project/numpy/>`_, version 1.15 or newer.
 
-* `netCDF4 <http://unidata.github.io/netcdf4-python/>`_, version 1.4.0
-  or newer, and
+* `netCDF4 <https://pypi.org/project/netcdf4/>`_, version 1.4.0 or
+  newer.
 
-* `cftime <http://unidata.github.io/netcdf4-python/>`_, version 1.0.2
-or newer - this package is installed with netCDF,
+* `cftime <https://pypi.org/project/cftime/>`_, version 1.0.2 or
+  newer. (Note that this package is installed with netCDF.)
 
-* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.7.7 or newer,
+* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.7.7 or newer.
   
-* `cfunits <https://pypi.org/project/cfunits/>`_, version 3.0.0 or newer, and
+* `cfunits <https://pypi.org/project/cfunits/>`_, version 3.2.1 or newer.
   
 * `psutil <https://pypi.org/project/psutil/>`_, version 0.6.0 or newer.
 
+
+----
 
 .. _Code-repository:
 
 **Code repository**
 -------------------
-
-----
 
 The complete source code is available at https://github.com/NCAS-CMS/cf-python
 

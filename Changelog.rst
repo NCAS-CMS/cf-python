@@ -44,15 +44,21 @@ version 2.3.3
 * Fixed bug in Field.convolution_filter giving false error over
   units.
 	
-Version 2.3.2 - 10 December 2018
---------------------------------
+version 2.3.2
+-------------
+----
+
+**2018-12-10**
 
 * regridc now compares the units of the source and destination
   grids and converts between them if possible or raises an error
   if they are not equivalent.
 	
-Version 2.3.1 - 07 November 2018
---------------------------------
+version 2.3.1
+-------------
+----
+
+**2018-11-07**
 
 * Fixed bug in regridc that caused it to fail when regridding a
   multidimensional field along only one dimension.
@@ -60,8 +66,11 @@ Version 2.3.1 - 07 November 2018
 * Fixed bug which in which the default logarithm base 10, rather
   than base e
 	
-Version 2.3.0 - 22 October 2018
--------------------------------
+version 2.3.0
+-------------
+----
+
+**2018-10-22**
 
 * The collapse method can now be parallelised by running any
   cf-python script with mpirun if mpi4py is installed. This is an
@@ -69,8 +78,11 @@ Version 2.3.0 - 22 October 2018
   use. None of the parallel code is executed when a script is run in
   serial.
 	
-Version 2.2.8 - 28 August 2018
-------------------------------
+version 2.2.8
+-------------
+----
+
+**2018-08-28**
 
 * Bug fix: better handle subspacing by multiple multidimensional
   items
