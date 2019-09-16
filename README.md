@@ -21,7 +21,7 @@ http://ncas-cms.github.io/cf-python/installation.html
 
 # Functionality
 
-The cf package implements the CF data model
+The `cf` package implements the CF data model
 (https://doi.org/10.5194/gmd-10-4619-2017) for its internal data
 structures and so is able to process any CF-compliant dataset. It is
 not strict about CF-compliance, however, so that partially conformant
@@ -29,7 +29,7 @@ datasets may be ingested from existing datasets and written to new
 datasets. This is so that datasets which are partially conformant may
 nonetheless be modified in memory.
 
-The cf package can:
+The `cf` package can:
 
   * read field constructs from netCDF, PP and UM datasets,
   
@@ -73,7 +73,7 @@ The cf package can:
 Powerful, flexible, and very simple to produce visualizations of field
 constructs are available with the `cfplot` package
 (http://ajheaps.github.io/cf-plot), that needs to be installed
-seprately to cf.
+seprately to the `cf` package.
 
 See the `cfplot` gallery (http://ajheaps.github.io/cf-plot/gallery.html)
 for the full range range plotting possibilities with example code.
