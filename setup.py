@@ -120,7 +120,8 @@ Dependencies
 
 * The package runs on Linux and Mac OS operating systems.
 
-* Requires Python version 3.5 or later
+* Requires Python version 3.6
+ or later
  
 * Requires cfdm version 1.7.5 or later
 

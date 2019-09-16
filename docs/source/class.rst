@@ -31,8 +31,8 @@ Metadata component classes
    cf.DomainAxis
    cf.FieldAncillary
 
-Constructs classes
-------------------
+Constructs class
+----------------
 
 .. autosummary::
    :nosignatures:

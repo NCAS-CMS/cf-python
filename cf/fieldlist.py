@@ -361,7 +361,7 @@ that when a field element needs to be assesed for equality its
 
 
 
-    def _deepcopy__(self, memo):
+    def __deepcopy__(self, memo):
         '''Called by the `copy.deepcopy` standard library function.
 
         '''

@@ -12,29 +12,22 @@ cf.FieldList
    :no-members:
    :no-inherited-members:
 
-.. _fieldlist_methods:
-
-Inspection
-----------
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../generated/
-   :template: method.rst
-
-   ~cf.FieldList.dump
-   
-Selection
+Filtering
 ---------
 
 .. autosummary::
    :nosignatures:
    :toctree: ../generated/
    :template: method.rst
-
-   ~cf.FieldList.select
-   ~cf.FieldList.select_field
-
+  
+   ~cf.FieldList.filter_by_construct
+   ~cf.FieldList.filter_by_identity
+   ~cf.FieldList.filter_by_naxes
+   ~cf.FieldList.filter_by_ncvar
+   ~cf.FieldList.filter_by_property
+   ~cf.FieldList.filter_by_rank
+   ~cf.FieldList.filter_by_units
+    
 Comparison
 ----------
 
@@ -44,7 +37,6 @@ Comparison
    :template: method.rst
 
    ~cf.FieldList.equals
-   ~cf.FieldList.set_equals
 
 Miscellaneous
 -------------
@@ -54,6 +46,7 @@ Miscellaneous
    :toctree: ../generated/
    :template: method.rst
 
+   ~cf.FieldList.close
    ~cf.FieldList.concatenate
    ~cf.FieldList.copy 
 
@@ -89,6 +82,7 @@ is equivalent to
    :template: method.rst
 
    ~cf.FieldList.append
+   ~cf.FieldList.clear
    ~cf.FieldList.count
    ~cf.FieldList.extend
    ~cf.FieldList.index

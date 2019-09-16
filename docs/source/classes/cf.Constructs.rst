@@ -1,52 +1,124 @@
+.. currentmodule:: cf
+.. default-role:: obj
+
 cf.Constructs
 =============
 
-.. currentmodule:: cf
+----
 
-.. autoclass:: Constructs
+.. autoclass:: cf.Constructs
+   :no-members:
+   :no-inherited-members:
 
-   
-   .. automethod:: __init__
+Filtering
+---------
 
-   
-   .. rubric:: Methods
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
 
-   .. autosummary::
-   
-      ~Constructs.__init__
-      ~Constructs.clear_filters_applied
-      ~Constructs.construct_type
-      ~Constructs.construct_types
-      ~Constructs.copy
-      ~Constructs.data_axes
-      ~Constructs.domain_axis_identity
-      ~Constructs.equals
-      ~Constructs.filter_by_axis
-      ~Constructs.filter_by_axisX
-      ~Constructs.filter_by_data
-      ~Constructs.filter_by_identity
-      ~Constructs.filter_by_key
-      ~Constructs.filter_by_measure
-      ~Constructs.filter_by_method
-      ~Constructs.filter_by_naxes
-      ~Constructs.filter_by_ncdim
-      ~Constructs.filter_by_ncvar
-      ~Constructs.filter_by_property
-      ~Constructs.filter_by_size
-      ~Constructs.filter_by_type
-      ~Constructs.filters_applied
-      ~Constructs.get
-      ~Constructs.inverse_filter
-      ~Constructs.items
-      ~Constructs.key
-      ~Constructs.keys
-      ~Constructs.new_identifier
-      ~Constructs.ordered
-      ~Constructs.replace
-      ~Constructs.shallow_copy
-      ~Constructs.unfilter
-      ~Constructs.value
-      ~Constructs.values
+   ~cf.Constructs.filter_by_identity
+   ~cf.Constructs.filter_by_property
+   ~cf.Constructs.filter_by_measure
+   ~cf.Constructs.filter_by_method
+   ~cf.Constructs.filter_by_axis
+   ~cf.Constructs.filter_by_naxes
+   ~cf.Constructs.filter_by_size
+   ~cf.Constructs.filter_by_data
+   ~cf.Constructs.filter_by_type
+   ~cf.Constructs.filter_by_key
+   ~cf.Constructs.filter_by_ncdim
+   ~cf.Constructs.filter_by_ncvar
+   ~cf.Constructs.filters_applied
+   ~cf.Constructs.clear_filters_applied
+   ~cf.Constructs.inverse_filter
+   ~cf.Constructs.unfilter
+
+Constructs and keys
+-------------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Constructs.key
+   ~cf.Constructs.value
+
+Data axes
+---------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Constructs.data_axes
+
+Miscellaneous
+-------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Constructs.copy
+   ~cf.Constructs.shallow_copy
+   ~cf.Constructs.equals
+   ~cf.Constructs.ordered
+
+Dictionary-access methods
+-------------------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Constructs.get
+   ~cf.Constructs.items
+   ~cf.Constructs.keys
+   ~cf.Constructs.values
+   ~cf.Constructs.__getitem__
+
+Special
+-------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Constructs.__call__
+   ~cf.Constructs.__contains__
+   ~cf.Constructs.__copy__
+   ~cf.Constructs.__deepcopy__
+   ~cf.Constructs.__getitem__
+   ~cf.Constructs.__iter__
+   ~cf.Constructs.__len__
+   ~cf.Constructs.__repr__
+   ~cf.Constructs.__str__
+
+.. ~Constructs.construct_type
+   ~Constructs.construct_types
+   ~Constructs.domain_axis_identity
+   ~Constructs.filter_by_axisX
+   ~Constructs.new_identifier
+   ~Constructs.replace
    
    
 

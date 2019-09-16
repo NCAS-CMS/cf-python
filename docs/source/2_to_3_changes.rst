@@ -18,55 +18,49 @@ work at version 3.x.
 Python
 ------
 
-.. note:: Version 3.x only works for Python 3.5 or later.
+Version 3.x only works for Python 3.5 or later. Version 2.x only works
+for python version 2.7.
 
-Version 2.x only works for python version 2.7.
 
+New methods and attributes
+--------------------------
 
-Deprecated methods and attributes
----------------------------------
+Version 3.x methods and the deprecated version 2.x methods and
+attributes that they replace:
 
-===============================  =======================================================================
-Version 2.x                      Version 3.x                                     
-===============================  =======================================================================
-`cf.Field.axis_name`             Use `cf.Field.domain_axis_identity` method.
-			         
-`cf.Field.CellMethods`           Use `cf.Field.cell_methods.ordered` method.
+========================================================  ===============================  
+Version 3.x                                      	  Version 2.x                      
+========================================================  ===============================  
+`cf.Field.cell_methods.ordered`			 	  `cf.Field.CellMethods`           
+						 	                                 
+`cf.Field.convert`				 	  `cf.Field.field`                 
+						 	                                   
+`cf.Field.domain_axis_identity`			 	  `cf.Field.axis_name`             
+						 		                                   
+`cf.Field.get_data_axes`			 	  `cf.Field.data_axes`             
+						 	                                   
+`cf.Field.del_construct`			 	  `cf.Field.remove_item`           
 
-`cf.Field.data_axes`             Use `cf.Field.get_data_axes` method.
-			         
-`cf.Field.expand_dims`           Use `cf.Field.insert_dimension` method.
-			         
-`cf.Field.field`                 Use `cf.Field.convert` method.
-			         
-`cf.Field.HDF_chunks`            Use
-                                 `cf.Field.data.nc_hdf5_chunksizes`,
-                                 `cf.Field.data.nc_set_hdf5_chunksizes`,
-			         `cf.Field.data.nc_clear_hdf5_chunksizes`
-                                 methods.
-			         
-`cf.Field.insert_axis`           Use `cf.Field.set_construct` method.
-			         
-`cf.Field.insert_aux`            Use `cf.Field.set_construct` method.
-			         
-`cf.Field.insert_data`           Use `cf.Field.set_data` method.
-			         
-`cf.Field.insert_dim`            Use `cf.Field.set_construct` method.
+`cf.Field.get_data_axes`			 	  `cf.Field.item_axes`             
+						 	                                   
+`cf.Field.insert_dimension`			 	  `cf.Field.expand_dims`           
+						 	                                   
+`cf.Field.set_construct`			 	  `cf.Field.insert_aux`,            
+                           			 	  `cf.Field.insert_axis`,          
+                           			 	  `cf.Field.insert_dim`,            
+                           			 	  `cf.Field.insert_domain_anc`,     
+                           			 	  `cf.Field.insert_field_anc`,      
+                           			 	  `cf.Field.insert_item`,           
+                           			 	  `cf.Field.insert_measure`,        
+                           			 	  `cf.Field.insert_ref`            
 
-`cf.Field.insert_domain_anc`     Use `cf.Field.set_construct` method.
+`cf.Field.set_data`				 	  `cf.Field.insert_data`           
 
-`cf.Field.insert_field_anc`      Use `cf.Field.set_construct` method.
+`cf.Constructs.data_axes`	   	 	          `cf.Field.items_axes`            
 
-`cf.Field.insert_item`           Use `cf.Field.set_construct` method.
-
-`cf.Field.item_axes`             Use `cf.Field.get_data_axes` method.
-
-`cf.Field.items_axes`            Use the `~cf.Construct.data_axes` method of the `cf.Field.constructs`
-                                 attribute.
-
-`cf.Field.insert_measure`        Use `cf.Field.set_construct` method.
-			         
-`cf.Field.insert_ref`            Use `cf.Field.set_construct` method.
-
-`cf.Field.remove_item`           Use `cf.Field.del_construct` method.
-===============================  =======================================================================
+`cf.Data.nc_hdf5_chunksizes`	    	 	          `cf.Field.HDF_chunks`            
+    
+`cf.Data.nc_set_hdf5_chunksizes`	           	  `cf.Field.HDF_chunks`    	                           
+    
+`cf.Data.nc_clear_hdf5_chunksizes`	 	          `cf.Field.HDF_chunks`
+========================================================  ===============================  
