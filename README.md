@@ -71,11 +71,11 @@ The cf package can:
 # Visualization
 
 Powerful, flexible, and very simple to produce visualizations of field
-constructs are available with the cfplot package
+constructs are available with the `cfplot` package
 (http://ajheaps.github.io/cf-plot), that needs to be installed
 seprately to cf.
 
-See the cfplot gallery (http://ajheaps.github.io/cf-plot/gallery.html)
+See the `cfplot` gallery (http://ajheaps.github.io/cf-plot/gallery.html)
 for the full range range plotting possibilities with example code.
 
 
