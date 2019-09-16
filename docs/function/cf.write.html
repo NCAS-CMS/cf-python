@@ -9,14 +9,12 @@
     <title>cf.write &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.load_stash2standard_name" href="cf.load_stash2standard_name.html" />
@@ -32,7 +30,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.0b9</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.0b10</a></b></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_conventions.html"><strong>CF conventions</strong></a></li>
@@ -80,15 +78,13 @@
       </div>
       <div class="documentwrapper">
         <div class="bodywrapper">
-          
-
           <div class="body" role="main">
             
   <div class="section" id="cf-write">
 <h1>cf.write<a class="headerlink" href="#cf-write" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.write">
-<code class="descclassname">cf.</code><code class="descname">write</code><span class="sig-paren">(</span><em>fields</em>, <em>filename</em>, <em>fmt='NETCDF4'</em>, <em>overwrite=True</em>, <em>global_attributes=None</em>, <em>file_descriptors=None</em>, <em>external=None</em>, <em>Conventions=None</em>, <em>datatype=None</em>, <em>least_significant_digit=None</em>, <em>endian='native'</em>, <em>compress=0</em>, <em>fletcher32=False</em>, <em>shuffle=True</em>, <em>reference_datetime=None</em>, <em>verbose=False</em>, <em>cfa_options=None</em>, <em>mode='w'</em>, <em>no_shuffle=False</em>, <em>single=False</em>, <em>double=False</em>, <em>variable_attributes=None</em>, <em>HDF_chunksizes=None</em>, <em>unlimited=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b9/cf/read_write/write.py#L19"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.write" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">cf.</code><code class="descname">write</code><span class="sig-paren">(</span><em>fields</em>, <em>filename</em>, <em>fmt='NETCDF4'</em>, <em>overwrite=True</em>, <em>global_attributes=None</em>, <em>file_descriptors=None</em>, <em>external=None</em>, <em>Conventions=None</em>, <em>datatype=None</em>, <em>least_significant_digit=None</em>, <em>endian='native'</em>, <em>compress=0</em>, <em>fletcher32=False</em>, <em>shuffle=True</em>, <em>reference_datetime=None</em>, <em>verbose=False</em>, <em>cfa_options=None</em>, <em>mode='w'</em>, <em>no_shuffle=False</em>, <em>single=False</em>, <em>double=False</em>, <em>variable_attributes=None</em>, <em>HDF_chunksizes=None</em>, <em>unlimited=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b10/cf/read_write/write.py#L19"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write fields to a netCDF file.</p>
 <p>NetCDF dimension and variable names will be taken, if present, from
 variables’ <code class="xref py py-obj docutils literal notranslate"><span class="pre">ncvar</span></code> attributes and the domain axis <code class="xref py py-obj docutils literal notranslate"><span class="pre">ncdim</span></code>
@@ -110,7 +106,7 @@ which have equal values across all input fields.</p>
 </tr>
 </tbody>
 </table>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">new_file</span><span class="o">.</span><span class="n">nc</span><span class="s1">&#39;)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">new_file</span><span class="o">.</span><span class="n">nc</span><span class="s1">&#39;)</span>
 </pre></div>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
@@ -410,7 +406,7 @@ a colon.</p>
 </tr>
 </tbody>
 </table>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span>
 <span class="go">[&lt;CF Field: air_pressure(30, 24)&gt;,</span>
 <span class="go"> &lt;CF Field: u_compnt_of_wind(19, 29, 24)&gt;,</span>
 <span class="go"> &lt;CF Field: v_compnt_of_wind(19, 29, 24)&gt;,</span>
@@ -418,7 +414,7 @@ a colon.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">write</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s1">&#39;file&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">write</span><span class="p">([</span><span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">],</span> <span class="s1">&#39;file.nc&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">write</span><span class="p">([</span><span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">],</span> <span class="s1">&#39;file.nc&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="go">[&lt;CF Field: air_pressure(30, 24)&gt;,</span>
 <span class="go"> &lt;CF Field: u_compnt_of_wind(19, 29, 24)&gt;,</span>
 <span class="go"> &lt;CF Field: v_compnt_of_wind(19, 29, 24)&gt;,</span>
@@ -431,7 +427,6 @@ a colon.</p>
 
 
           </div>
-          
         </div>
       </div>
     <div class="clearer"></div>
@@ -440,8 +435,8 @@ a colon.</p>
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/function/cf.write.rst.txt"

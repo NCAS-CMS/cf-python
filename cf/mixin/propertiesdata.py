@@ -53,7 +53,7 @@ class PropertiesData(Properties):
 
         raise ValueError("%s has no data" %
                          self.__class__.__name__)
-    #--- End: def
+
 
     def __contains__(self, value):
         '''Called to implement membership test operators.
@@ -234,7 +234,7 @@ class PropertiesData(Properties):
 
         '''
         return self._binary_operation(y, '__ifloordiv__')
-    #--- End: def
+
 
     def __rfloordiv__(self, y):
         '''The binary arithmetic operation ``//`` with reflected operands
@@ -243,7 +243,7 @@ class PropertiesData(Properties):
 
         '''
         return self._binary_operation(y, '__rfloordiv__')
-    #--- End: def
+
 
     def __truediv__(self, y):
         '''The binary arithmetic operation ``/`` (true division)
@@ -252,7 +252,7 @@ class PropertiesData(Properties):
 
         '''
         return self._binary_operation(y, '__truediv__')
-    #--- End: def
+
 
     def __itruediv__(self, y):
         '''The augmented arithmetic assignment ``/=`` (true division)
@@ -261,7 +261,7 @@ class PropertiesData(Properties):
 
         '''
         return self._binary_operation(y, '__itruediv__')
-   #--- End: def
+
 
     def __rtruediv__(self, y):
         '''The binary arithmetic operation ``/`` (true division) with
@@ -271,7 +271,7 @@ class PropertiesData(Properties):
 
         '''    
         return self._binary_operation(y, '__rtruediv__')
-    #--- End: def
+
 
     def __pow__(self, y, modulo=None):
         '''The binary arithmetic operations ``**`` and ``pow``
@@ -284,7 +284,7 @@ class PropertiesData(Properties):
                                       self.__class__.__name__)
 
         return self._binary_operation(y, '__pow__')
-    #--- End: def
+
 
     def __ipow__(self, y, modulo=None):
         '''The augmented arithmetic assignment ``**=``
@@ -297,7 +297,7 @@ class PropertiesData(Properties):
                                       self.__class__.__name__)
 
         return self._binary_operation(y, '__ipow__')
-    #--- End: def
+
 
     def __rpow__(self, y, modulo=None):
         '''The binary arithmetic operations ``**`` and ``pow`` with reflected
@@ -311,7 +311,7 @@ class PropertiesData(Properties):
                                       self.__class__.__name__)
 
         return self._binary_operation(y, '__rpow__')
-    #--- End: def
+
 
     def __mod__(self, y):
         '''The binary arithmetic operation ``%``
@@ -322,7 +322,7 @@ class PropertiesData(Properties):
 
         '''
         return self._binary_operation(y, '__mod__')
-    #--- End: def
+
 
     def __imod__(self, y):
         '''The binary arithmetic operation ``%=``
@@ -333,7 +333,7 @@ class PropertiesData(Properties):
         
         '''
         return self._binary_operation(y, '__imod__')
-    #--- End: def
+
 
     def __rmod__(self, y):
         '''The binary arithmetic operation ``%`` with reflected operands
@@ -344,7 +344,7 @@ class PropertiesData(Properties):
 
         '''
         return self._binary_operation(y, '__rmod__')
-    #--- End: def
+
 
     def __eq__(self, y):
         '''The rich comparison operator ``==``
@@ -353,7 +353,7 @@ class PropertiesData(Properties):
 
         '''
         return self._binary_operation(y, '__eq__')
-    #--- End: def
+
 
     def __ne__(self, y):
         '''The rich comparison operator ``!=``
@@ -362,8 +362,8 @@ class PropertiesData(Properties):
 
         '''
         return self._binary_operation(y, '__ne__')
-    #--- End: def
 
+    
     def __ge__(self, y):
         '''The rich comparison operator ``>=``
 
@@ -371,7 +371,7 @@ class PropertiesData(Properties):
 
         '''
         return self._binary_operation(y, '__ge__')
-    #--- End: def
+
 
     def __gt__(self, y):
         '''The rich comparison operator ``>``
@@ -380,7 +380,7 @@ class PropertiesData(Properties):
 
         '''
         return self._binary_operation(y, '__gt__')
-    #--- End: def
+
 
     def __le__(self, y):
         '''The rich comparison operator ``<=``
@@ -389,7 +389,7 @@ class PropertiesData(Properties):
 
         '''
         return self._binary_operation(y, '__le__')
-    #--- End: def
+
 
     def __lt__(self, y):
         '''The rich comparison operator ``<``
@@ -398,8 +398,8 @@ class PropertiesData(Properties):
 
         '''
         return self._binary_operation(y, '__lt__')
-    #--- End: def
 
+    
     def __and__(self, y):
         '''The binary bitwise operation ``&``
 
@@ -407,7 +407,7 @@ class PropertiesData(Properties):
 
         '''
         return self._binary_operation(y, '__and__')
-    #--- End: def
+
 
     def __iand__(self, y):
         '''The augmented bitwise assignment ``&=``
@@ -416,7 +416,7 @@ class PropertiesData(Properties):
 
         '''
         return self._binary_operation(y, '__iand__')
-    #--- End: def
+
 
     def __rand__(self, y):
         '''The binary bitwise operation ``&`` with reflected operands
@@ -425,7 +425,7 @@ class PropertiesData(Properties):
 
         '''
         return self._binary_operation(y, '__rand__')
-    #--- End: def
+
 
     def __or__(self, y):
         '''The binary bitwise operation ``|``
@@ -434,7 +434,7 @@ class PropertiesData(Properties):
 
         '''
         return self._binary_operation(y, '__or__')
-    #--- End: def
+
 
     def __ior__(self, y):
         '''The augmented bitwise assignment ``|=``
@@ -443,7 +443,7 @@ class PropertiesData(Properties):
 
         '''
         return self._binary_operation(y, '__ior__')
-    #--- End: def
+
 
     def __ror__(self, y):
         '''The binary bitwise operation ``|`` with reflected operands
@@ -515,7 +515,7 @@ class PropertiesData(Properties):
         
         '''
         return self._binary_operation(y, '__rshift__')
-    #--- End: def
+
 
     def __irshift__(self, y):
         '''The augmented bitwise assignment ``>>=``
@@ -524,7 +524,7 @@ class PropertiesData(Properties):
 
         '''
         return self._binary_operation(y, '__irshift__')
-    #--- End: def
+
 
     def __rrshift__(self, y):
         '''The binary bitwise operation ``>>`` with reflected operands
@@ -533,7 +533,7 @@ class PropertiesData(Properties):
 
         '''
         return self._binary_operation(y, '__rrshift__')
-    #--- End: def
+
 
     def __abs__(self):
         '''The unary arithmetic operation ``abs``
@@ -542,7 +542,7 @@ class PropertiesData(Properties):
 
         '''       
         return self._unary_operation('__abs__')
-    #--- End: def
+
 
     def __neg__(self):
         '''The unary arithmetic operation ``-``
@@ -551,7 +551,7 @@ class PropertiesData(Properties):
 
         '''
         return self._unary_operation('__neg__')
-    #--- End: def
+
 
     def __invert__(self):
         '''The unary bitwise operation ``~``
@@ -560,7 +560,7 @@ class PropertiesData(Properties):
 
         '''
         return self._unary_operation('__invert__')
-    #--- End: def
+
 
     def __pos__(self):
         '''The unary arithmetic operation ``+``
@@ -642,7 +642,6 @@ class PropertiesData(Properties):
 #        data = self.get_data(None)
 #        if data is not None:
 #            data.change_axis_names(dim_name_map)
-#    #--- End: def
 
 
     def _conform_for_assignment(self, other):
@@ -712,7 +711,7 @@ class PropertiesData(Properties):
             return False
 
         return True
-    #--- End: def
+
 
     def _parse_axes(self, axes):
         '''TODO
@@ -726,7 +725,7 @@ class PropertiesData(Properties):
         
         ndim = self.ndim
         return [(i + ndim if i < 0 else i) for i in axes]
-    #--- End: def
+
     
     def _parse_match(self, match):
         '''Called by `match`
@@ -768,7 +767,7 @@ class PropertiesData(Properties):
         #--- End: for
 
         return matches
-    #--- End: def
+
 
     def __query_set__(self, values):
         '''TODO
@@ -777,7 +776,7 @@ class PropertiesData(Properties):
         new = self.copy()
         new.set_data(self.data.__query_set__(values), copy=False)
         return new
-    #--- End: def
+
 
 #    def _query_contain(self, value):
 #        '''TODO#
@@ -786,7 +785,7 @@ class PropertiesData(Properties):
 #        new = self.copy()
 #        new.set_data(self.data._query_contain(value), copy=False)
 #        return new
-#    #--- End: def
+
 
 #    def _query_contains(self, value):
 #        '''TODO
@@ -795,7 +794,7 @@ class PropertiesData(Properties):
 #        new = self.copy()
 #        new.set_data(self.data._query_contains(value), copy=False)
 #        return new
-#    #--- End: def
+
 
     def __query_wi__(self, value):
         '''TODO
@@ -804,7 +803,7 @@ class PropertiesData(Properties):
         new = self.copy()
         new.set_data(self.data.__query_wi__(value), copy=False)
         return new
-    #--- End: def
+
 
     def __query_wo__(self, value):
         '''TODO
@@ -813,7 +812,7 @@ class PropertiesData(Properties):
         new = self.copy()
         new.set_data(self.data.__query_wo__(value), copy=False)
         return new
-    #--- End: def
+
 
     def _unary_operation(self, method):
         '''Implement unary arithmetic operations on the data array.
@@ -876,7 +875,7 @@ class PropertiesData(Properties):
         out.override_units(Units(), inplace=True)
         
         return out
-    #--- End: def
+
 
 #    def _hmmm(self, method):
 #        data = self.get_data(None)
@@ -890,7 +889,7 @@ class PropertiesData(Properties):
 #
 #        raise ValueError(
 #            "ERROR: Can't get {0} when there is no data array".format(method))        
-#    #--- End: def
+
 
     # ----------------------------------------------------------------
     # Attributes
@@ -911,7 +910,7 @@ class PropertiesData(Properties):
 
         '''              
         return False
-    #--- End: def
+
 
     @property
     def X(self):
@@ -926,7 +925,7 @@ class PropertiesData(Properties):
 
         '''              
         return False
-    #--- End: def
+
 
     @property
     def Y(self):
@@ -941,7 +940,7 @@ class PropertiesData(Properties):
 
         '''              
         return False
-    #--- End: def
+
 
     @property
     def Z(self):
@@ -956,7 +955,7 @@ class PropertiesData(Properties):
 
         '''              
         return False
-    #--- End: def
+
 
     @property
     def binary_mask(self):
@@ -1018,7 +1017,7 @@ class PropertiesData(Properties):
 #        '''
 #        _DEPRECATION_WARNING_METHOD(self, 'hasbounds', "Use 'has_bounds' method instead")
 #        return self.has_bounds()
-#    #--- End: def
+
 
 
     @property
@@ -1074,7 +1073,7 @@ class PropertiesData(Properties):
         except KeyError:
             self._custom['Units'] = _units_None
             return _units_None
-    #--- End: def
+
     @Units.setter
     def Units(self, value):
         data = self.get_data(None)
@@ -1090,7 +1089,7 @@ class PropertiesData(Properties):
 #        calendar = getattr(value, 'calendar', None)
 #        if calendar is not None:
 #            self.set_property('calendar', calendar)
-    #--- End: def
+
     @Units.deleter
     def Units(self):
         raise AttributeError(
@@ -1134,7 +1133,7 @@ class PropertiesData(Properties):
 
         '''
         return self._YMDhms('month')
-    #--- End: def
+
 
     @property
     def day(self):
@@ -1153,7 +1152,7 @@ class PropertiesData(Properties):
 
         '''
         return self._YMDhms('day')
-    #--- End: def
+
 
     @property
     def hour(self):
@@ -1172,8 +1171,8 @@ class PropertiesData(Properties):
 
         '''
         return self._YMDhms('hour')
-    #--- End: def
 
+    
     @property
     def minute(self):
         '''The minute of each date-time data array element.
@@ -1191,7 +1190,7 @@ class PropertiesData(Properties):
 
         '''
         return self._YMDhms('minute')
-    #--- End: def
+
 
     @property
     def second(self):
@@ -1210,7 +1209,7 @@ class PropertiesData(Properties):
 
         '''
         return self._YMDhms('second')
-    #--- End: def
+
 
     @property
     def mask(self):
@@ -1278,18 +1277,18 @@ class PropertiesData(Properties):
 
         '''
         return self.get_property('add_offset', default=AttributeError())
-    #--- End: def
+
     @add_offset.setter
     def add_offset(self, value):
         self.set_property('add_offset', value)
         self.dtype = numpy_result_type(self.dtype, numpy_array(value).dtype)
-    #--- End: def
+
     @add_offset.deleter
     def add_offset(self):
         self.delprop('add_offset', default=AttributeError())
         if not self.has_property('scale_factor'):
             del self.dtype
-    #--- End: def
+
 
     @property
     def calendar(self):
@@ -1317,12 +1316,12 @@ class PropertiesData(Properties):
                 "{} doesn't have CF property 'calendar'".format(
                     self.__class__.__name__))
         return value
-    #--- End: def
+
 
     @calendar.setter
     def calendar(self, value):
         self.Units = Units(getattr(self, 'units', None), value)
-    #--- End: def
+
 
     @calendar.deleter
     def calendar(self):
@@ -1332,7 +1331,7 @@ class PropertiesData(Properties):
                     self.__class__.__name__))
         
         self.Units = Units(getattr(self, 'units', None))
-    #--- End: def
+
 
     @property
     def scale_factor(self):
@@ -1357,7 +1356,7 @@ class PropertiesData(Properties):
 
         '''
         return self.get_property('scale_factor', default=AttributeError())
-    #--- End: def
+    
     @scale_factor.setter
     def scale_factor(self, value): self.set_property('scale_factor', value)
     @scale_factor.deleter
@@ -1391,12 +1390,12 @@ class PropertiesData(Properties):
                 self.__class__.__name__))
         
         return value
-    #--- End: def
+    
 
     @units.setter
     def units(self, value):
         self.Units = Units(value, getattr(self, 'calendar', None))
-    #--- End: def
+    
     @units.deleter
     def units(self):
         if getattr(self, 'units', None) is None:
@@ -1405,7 +1404,7 @@ class PropertiesData(Properties):
                     self.__class__.__name__))
         
         self.Units = Units(None, getattr(self, 'calendar', None))
-    #--- End: def
+    
 
     # ----------------------------------------------------------------
     # Methods
@@ -1488,7 +1487,7 @@ class PropertiesData(Properties):
         if inplace:
             v = None
         return v
-    #--- End: def
+    
     
     def max(self):
         '''The maximum of the data array.
@@ -1517,7 +1516,7 @@ class PropertiesData(Properties):
           
         raise ValueError(
             "ERROR: Can't get the maximum when there is no data array")       
-    #--- End: def
+    
 
     def mean(self):
         '''The unweighted mean the data array.
@@ -1546,7 +1545,7 @@ class PropertiesData(Properties):
           
         raise ValueError(
             "ERROR: Can't get the mean when there is no data array")       
-    #--- End: def
+    
 
     def mid_range(self):
         '''The unweighted average of the maximum and minimum of the data
@@ -1577,7 +1576,7 @@ class PropertiesData(Properties):
           
         raise ValueError(
             "ERROR: Can't get the mid-range when there is no data array")       
-    #--- End: def
+    
 
     def min(self):
         '''The minimum of the data array.
@@ -1606,7 +1605,7 @@ class PropertiesData(Properties):
           
         raise ValueError(
             "ERROR: Can't get the minimum when there is no data array")       
-    #--- End: def
+    
 
     def range(self):
         '''The absolute difference between the maximum and minimum of the data
@@ -1666,7 +1665,7 @@ class PropertiesData(Properties):
           
         raise ValueError(
             "ERROR: Can't get the sample size when there is no data array")
-    #--- End: def
+    
 
     def sd(self):
         '''The unweighted sample standard deviation of the data array.
@@ -1695,7 +1694,7 @@ class PropertiesData(Properties):
           
         raise ValueError(
             "ERROR: Can't get the standard deviation when there is no data array")
-    #--- End: def
+    
 
     def sum(self):
        	'''The sum of the data array.
@@ -1724,7 +1723,7 @@ class PropertiesData(Properties):
           
         raise ValueError(
             "ERROR: Can't get the sum when there is no data array")       
-    #--- End: def
+    
 
     def var(self):
         '''The unweighted sample variance of the data array.
@@ -1753,7 +1752,7 @@ class PropertiesData(Properties):
                 "ERROR: Can't get the variance when there is no data array")
                 
         return data.var(squeeze=True, ddof=0)          
-    #--- End: def
+    
 
     @property
     def subspace(self):
@@ -1788,7 +1787,7 @@ TODO
 
         '''
         return Subspace(self)
-    #--- End: def
+    
 
     @property
     def shape(self):
@@ -1817,7 +1816,7 @@ TODO
 
         '''
         return self.data.shape
-    #--- End: def
+    
 
     @property
     def ndim(self):
@@ -1841,7 +1840,7 @@ TODO
 
         '''
         return self.data.ndim
-    #--- End: def
+    
 
     @property
     def size(self):
@@ -1877,7 +1876,7 @@ TODO
 
         '''
         return self.data.size
-    #--- End: def
+    
 
     @property
     def datetime_array(self):
@@ -1902,7 +1901,7 @@ TODO
                 "{} has no data array".format(self.__class__.__name__))
         
         return data.datetime_array
-    #--- End: def
+    
 
     @property
     def dtype(self):
@@ -1965,20 +1964,20 @@ TODO
                 self.__class__.__name__))
         
         return data.dtype
-    #--- End: def
+    
     @dtype.setter
     def dtype(self, value):
 # DCH - allow dtype to be set before data c.f.  Units
         data = self.get_data(None)
         if data is not None:
             data.dtype = value
-    #--- End: def
+    
     @dtype.deleter
     def dtype(self):
         data = self.get_data(None)
         if data is not None:
             del data.dtype
-    #--- End: def
+    
 
     @property
     def hardmask(self):
@@ -2008,7 +2007,7 @@ TODO
                 "{} doesn't have attribute 'hardmask'".format(self.__class__.__name__))
         
         return data.hardmask
-    #--- End: def
+    
     
     @hardmask.setter
     def hardmask(self, value):
@@ -2018,12 +2017,12 @@ TODO
                 "{} doesn't have attribute 'hardmask'".format(self.__class__.__name__))
                     
         data.hardmask = value
-    #--- End: def
+    
     @hardmask.deleter
     def hardmask(self):
         raise AttributeError(
             "Won't delete {} attribute 'hardmask'".format(self.__class__.__name__))
-    #--- End: def
+    
 
     @property
     def array(self):
@@ -2056,7 +2055,7 @@ TODO
             raise AttributeError("{} has no data array".format(self.__class__.__name__))
 
         return data.array
-    #--- End: def
+    
 
     @property
     def varray(self):
@@ -2089,7 +2088,7 @@ TODO
             raise AttributeError("{} has no data array".format(self.__class__.__name__))
 
         return data.varray
-    #--- End: def
+    
 
     @property
     def isauxiliary(self): 
@@ -2105,7 +2104,7 @@ TODO
 
         '''
         return False
-    #--- End: def
+    
 
     @property
     def isdimension(self): 
@@ -2121,7 +2120,7 @@ TODO
 
         '''
         return False
-    #--- End: def
+    
 
     @property
     def isdomainancillary(self): 
@@ -2137,7 +2136,7 @@ TODO
 
         '''
         return False
-    #--- End: def
+    
 
     @property
     def isfieldancillary(self): 
@@ -2153,7 +2152,7 @@ TODO
 
         '''
         return False
-    #--- End: def
+    
 
     @property
     def ismeasure(self): 
@@ -2169,7 +2168,7 @@ TODO
 
         '''
         return False
-    #--- End: def
+    
 
     @property
     def isscalar(self):
@@ -2200,7 +2199,7 @@ TODO
             return False
 
         return data.isscalar
-    #--- End: def
+    
 
     def ceil(self, inplace=False, i=False):
         '''The ceiling of the data, element-wise.
@@ -2251,7 +2250,7 @@ TODO
         if inplace:
             v = None
         return v
-    #--- End: def
+    
 
     def chunk(self, chunksize=None):
         '''Partition the data array.
@@ -2268,7 +2267,7 @@ TODO
         data = self.get_data(None)
         if data is not None:
             data.chunk(chunksize)
-    #--- End: def
+    
 
     def clip(self, a_min, a_max, units=None, inplace=False, i=False):
         '''Limit the values in the data.
@@ -2326,7 +2325,7 @@ TODO
         if inplace:
             v = None
         return v
-    #--- End: def
+    
 
     def close(self):
         '''Close all files referenced by the construct.
@@ -2348,7 +2347,7 @@ TODO
         data = self.get_data(None)
         if data is not None:
             data.close()
-    #--- End: def
+    
 
     @classmethod
     def concatenate(cls, variables, axis=0, _preserve=True):
@@ -2378,7 +2377,7 @@ TODO
         out.set_data(data, copy=False)
         
         return out
-    #--- End: def
+    
 
     def cos(self, bounds=True, inplace=False, i=False):
         '''Take the trigonometric cosine of the data, element-wise.
@@ -2443,7 +2442,7 @@ TODO
         if inplace:
             v = None
         return v
-    #--- End: def
+    
 
     def count(self):
         '''Count the non-masked elements of the data.
@@ -2464,7 +2463,7 @@ TODO
                 "Can't count when there are data")
             
         return data.count()
-    #--- End: def
+    
 
     def count_masked(self):
         '''Count the masked elements of the data.
@@ -2485,7 +2484,7 @@ TODO
                 "Can't count masked when there are data")
             
         return data.count_masked()
-    #--- End: def
+    
 
     def cyclic(self, axes=None, iscyclic=True):
         '''Set the cyclicity of an axis.
@@ -2521,7 +2520,7 @@ TODO
             return set()
        
         return data.cyclic(axes, iscyclic)
-    #--- End: def
+    
             
     def datum(self, *index):
         '''Return an element of the data array as a standard Python scalar.
@@ -2619,7 +2618,7 @@ TODO
                 "ERROR: Can't return an element when there is no data array")
         
         return data.datum(*index)
-    #--- End: def
+    
     
     def equivalent(self, other, rtol=None, atol=None, traceback=False):
         '''True if two constructs are equal, False otherwise.
@@ -2696,7 +2695,7 @@ TODO
             return False
             
         return True
-    #--- End: def
+    
 
     def convert_reference_time(self, units=None,
                                calendar_months=False,
@@ -2796,7 +2795,7 @@ TODO
     <Units: days since 2000-1-1>
 
         '''
-        def _convert_reftime_units(value, units, reftime, calendar):
+        def _convert_reftime_units(value, units, reftime): #, calendar):
             '''sads
 
     :Parameters:
@@ -2815,7 +2814,7 @@ TODO
                 return t.interval(reftime, end=False)[1]
             else:
                 return t.interval(reftime, end=True)[0]
-        #--- End: def
+        
 
         if i:
             _DEPRECATION_ERROR_KWARGS(self, 'convert_reference_time', i=True) # pragma: no cover
@@ -2842,27 +2841,27 @@ TODO
             raise ValueError(
                 "New units must be reference time units, not {0!r}".format(units))
            
-        if units0._utime.units in _month_units:
+        if units0._units_since_reftime in _month_units:
             if calendar_months:
                 units0 = Units('calendar_'+units0.units, calendar=units0._calendar)
             else:
                 units0 = Units('days since '+units0.units.split(' since ')[1],
                                 calendar=units0._calendar)
                 v.Units = units0
-        elif units0._utime.units in _year_units:
+        elif units0._units_since_reftime in _year_units:
             if calendar_years:
                 units0 = Units('calendar_'+units0.units, calendar=units0._calendar)
             else:
                 units0 = Units('days since '+units0.units.split(' since ')[1],
                                 calendar=units0._calendar)
                 v.Units = units0
-        #--- End: def
+        
 
         # Not LAMAed!
         v.set_data(Data(            
             numpy_vectorize(
                 functools_partial(_convert_reftime_units,
-                                  units=units0._utime.units,
+                                  units=units0._units_since_reftime,
                                   reftime=dt(units0.reftime, calendar=units0._calendar),
                                   ),
                 otypes=[object])(v),
@@ -2923,7 +2922,7 @@ TODO
         if inplace:
             v = None
         return v
-    #--- End: def
+    
 
     def match_by_naxes(self, *naxes):
         '''Whether or not the data has a given dimensionality.
@@ -2978,7 +2977,7 @@ TODO
         #--- End: for
 
         return False
-    #--- End: def
+    
 
     def match_by_units(self, *units, exact=True):
         '''Whether or not the construct has given units.
@@ -3060,7 +3059,7 @@ TODO
         #--- End: for
 
         return ok
-    #--- End: def
+    
 
     # ----------------------------------------------------------------
     # Methods
@@ -3096,7 +3095,7 @@ TODO
             return data.all()
 
         return False
-    #--- End: def
+    
 
     def allclose(self, y, atol=None, rtol=None):
         '''Test whether all data are element-wise equal to other,
@@ -3160,7 +3159,7 @@ TODO
         #--- End: if
         
         return data.allclose(y_data, rtol=rtol, atol=atol)
-    #--- End: def
+    
 
     def any(self):
         '''Test whether any data elements evaluate to True.
@@ -3198,7 +3197,7 @@ TODO
             return data.any()
 
         return False
-    #--- End: def
+    
 
     def asdatetime(self, i=False): #TODO
         '''Convert the internal representation of data array elements to
@@ -3236,7 +3235,7 @@ dtype('O')
         raise NotImplementedError(
             "asdatetime is dead. Consider {0}.datetime_array instead".format(
                 self.__class__.__name__))
-    #--- End: def
+    
 
     def asreftime(self, i=False): # TODOx
         '''Convert the internal representation of data array elements
@@ -3272,7 +3271,7 @@ dtype('float64')
         raise NotImplementedError(
             "asreftime is dead. Consider {0}.array instead".format(
                 self.__class__.__name__))   
-    #--- End: def
+    
 
     def files(self):
         '''Return the names of any files containing parts of the data array.
@@ -3303,7 +3302,7 @@ dtype('float64')
             out = data.files()
 
         return out
-    #--- End: def
+    
 
     def fill_value(self, default=None):
         '''Return the data array missing data value.
@@ -3369,7 +3368,7 @@ dtype('float64')
         #--- End: if
 
         return fillval
-    #--- End: def
+    
 
     def flip(self, axes=None, inplace=False, i=False):
         '''Flip (reverse the direction of) data dimensions.
@@ -3423,7 +3422,7 @@ dtype('float64')
         if inplace:
             v = None            
         return v
-    #--- End: def
+    
 
     def exp(self, inplace=False, i=False):
         '''The exponential of the data, element-wise.
@@ -3476,7 +3475,7 @@ dtype('float64')
         if inplace:
             v = None
         return v
-    #--- End: def
+    
 
     def sin(self, inplace=False, i=False):
         '''The trigonometric sine of the data, element-wise.
@@ -3541,7 +3540,7 @@ dtype('float64')
         if inplace:
             v = None
         return v
-    #--- End: def
+    
 
     def tan(self, inplace=False, i=False):
         '''The trigonometric tangent of the data, element-wise.

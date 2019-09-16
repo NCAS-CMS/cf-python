@@ -9,14 +9,12 @@
     <title>Incompatible differences between versions 1.x and 2.x &#8212; Documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
     <script type="text/javascript" src="_static/copybutton.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
    
@@ -30,7 +28,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="index.html">cf 3.0.0b9</a></b></h3>
+<h3><b><a href="index.html">cf 3.0.0b10</a></b></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_conventions.html"><strong>CF conventions</strong></a></li>
@@ -72,8 +70,6 @@
       </div>
       <div class="documentwrapper">
         <div class="bodywrapper">
-          
-
           <div class="body" role="main">
             
   <div class="section" id="incompatible-differences-between-versions-1-x-and-2-x">
@@ -94,7 +90,7 @@ coincide with the updated CF data model structure.</p>
 <p class="first admonition-title">Note</p>
 <p>At version 2.x <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.attributes</span></code> is callable and allows
 the attributes to be updated inplace.</p>
-<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">__version__</span>
+<div class="last highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">__version__</span>
 <span class="go">2.0</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">attributes</span><span class="p">()</span>
 <span class="go">{&#39;ncvar&#39;: &#39;tas&#39;}</span>
@@ -111,7 +107,7 @@ attributes.</p>
 <p>At version 2.x <a class="reference internal" href="generated/cf.Field.axes.html#cf.Field.axes" title="cf.Field.axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.axes</span></code></a> returns, by default, a
 <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>. If the <code class="xref py py-obj docutils literal notranslate"><span class="pre">ordered</span></code> parameter is <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> then
 it returns an <a class="reference external" href="https://docs.python.org/3/library/collections.html#collections.OrderedDict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OrderedDict</span></code></a>.</p>
-<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">__version__</span>
+<div class="last highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">__version__</span>
 <span class="go">2.0</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span>
 <span class="go">&lt;CF Field: air_temperature(time(12), latitude(64), longitude(128)) K&gt;</span>
@@ -120,7 +116,7 @@ it returns an <a class="reference external" href="https://docs.python.org/3/libr
 <span class="go"> &#39;dim1&#39;: &lt;CF DomainAxis: 64&gt;,</span>
 <span class="go"> &#39;dim2&#39;: &lt;CF DomainAxis: 128&gt;,</span>
 <span class="go"> &#39;dim3&#39;: &lt;CF DomainAxis: 1&gt;}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">axes</span><span class="p">(</span><span class="n">ordered</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">axes</span><span class="p">(</span><span class="n">ordered</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="go">OrderedDict([(&#39;dim3&#39;, &lt;CF DomainAxis: 1&gt;),</span>
 <span class="go">             (&#39;dim0&#39;, &lt;CF DomainAxis: 12&gt;),</span>
 <span class="go">             (&#39;dim1&#39;, &lt;CF DomainAxis: 64&gt;),</span>
@@ -139,13 +135,13 @@ parameter was <a class="reference external" href="https://docs.python.org/3/libr
 <a class="reference internal" href="classes/cf.DomainAxis.html#cf.DomainAxis" title="cf.DomainAxis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.DomainAxis</span></code></a> object. A domain axis identifier (such as
 “dim2”) may be returned by setting the <code class="xref py py-obj docutils literal notranslate"><span class="pre">key</span></code> parameter to
 <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>.</p>
-<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">__version__</span>
+<div class="last highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">__version__</span>
 <span class="go">2.0</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span>
 <span class="go">&lt;CF Field: air_temperature(time(12), latitude(64), longitude(128)) K&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span>
 <span class="go">&lt;CF DomainAxis: 128&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="go">&#39;dim2&#39;</span>
 </pre></div>
 </div>
@@ -163,23 +159,23 @@ library could produce scientifically different results.</p>
 <p class="first admonition-title">Note</p>
 <p>At version 2.x performing arithmetic on coordinates also
 modifies the coordinate bounds, if present.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">__version__</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">__version__</span>
 <span class="go">2.0</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span>
 <span class="go">&lt;CF Field: air_temperature(time(12), latitude(64), longitude(128)) K&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="n">t</span><span class="o">.</span><span class="n">array</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">t</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">t</span><span class="o">.</span><span class="n">array</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">t</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 <span class="go">164569.0 [ 164554.  164584.]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">-=</span> <span class="mi">1000000</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="n">t</span><span class="o">.</span><span class="n">array</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">t</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">t</span><span class="o">.</span><span class="n">array</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">t</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 <span class="go">-835431.0 [-835446. -835416.]</span>
 </pre></div>
 </div>
 <p>If the bounds are not to be changed, just the coordinate
 values, then the arithmetic may be applied to the coordinate
 object’s data array.</p>
-<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">data</span> <span class="o">+=</span> <span class="mi">1000000</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="n">t</span><span class="o">.</span><span class="n">array</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">t</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<div class="last highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">data</span> <span class="o">+=</span> <span class="mi">1000000</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">t</span><span class="o">.</span><span class="n">array</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">t</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 <span class="go">164569.0 [-835446. -835416.]</span>
 </pre></div>
 </div>
@@ -199,21 +195,21 @@ library could produce scientifically different results.</p>
 <p>At version 2.x <a class="reference internal" href="generated/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.collapse</span></code></a> does not, by default,
 weight the calculations, i.e. the <code class="xref py py-obj docutils literal notranslate"><span class="pre">weights</span></code> parameter
 defaults to <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">__version__</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">__version__</span>
 <span class="go">2.0</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span>
 <span class="go">&lt;CF Field: air_temperature(time(12), latitude(64), longitude(128)) K&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;mean&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">datum</span><span class="p">()</span>
 <span class="go">279.1922</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">datum</span><span class="p">()</span>
 <span class="go">279.1922</span>
 </pre></div>
 </div>
 <p>Non-equal weighting has to be specifically requested with
 the <code class="xref py py-obj docutils literal notranslate"><span class="pre">weights</span></code> parameter.</p>
-<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">h</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">,</span> <span class="s1">&#39;area&#39;</span><span class="p">])</span>
+<div class="last highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">h</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">,</span> <span class="s1">&#39;area&#39;</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">h</span><span class="o">.</span><span class="n">datum</span><span class="p">()</span>
 <span class="go">288.6733</span>
 </pre></div>
@@ -243,7 +239,7 @@ library could produce scientifically different results.</p>
 <p>At version 2.x <a class="reference internal" href="classes/cf.FieldList.html#cf.FieldList" title="cf.FieldList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.FieldList</span></code></a> is not a subclass of
 <a class="reference internal" href="classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a>, therefore <a class="reference internal" href="classes/cf.FieldList.html#cf.FieldList" title="cf.FieldList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.FieldList</span></code></a> does not inherit any
 methods from <a class="reference internal" href="classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a>.</p>
-<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">__version__</span>
+<div class="last highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">__version__</span>
 <span class="go">2.0</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span>
 <span class="go">[&lt;CF Field: specific_humidity(latitude(73), longitude(96)) K&gt;,</span>
@@ -265,7 +261,7 @@ field (such as <a class="reference internal" href="generated/cf.Field.collapse.h
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p>At version 2.x <a class="reference internal" href="function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a> always returns a <a class="reference internal" href="classes/cf.FieldList.html#cf.FieldList" title="cf.FieldList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.FieldList</span></code></a>.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">__version__</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">__version__</span>
 <span class="go">2.0</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file[12].nc&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span>
@@ -278,7 +274,7 @@ field (such as <a class="reference internal" href="generated/cf.Field.collapse.h
 </div>
 <p>The new function <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read_field</span></code> will always return a <a class="reference internal" href="classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a>
 if there is only one identified in the input file(s).</p>
-<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read_field</span><span class="p">(</span><span class="s1">&#39;file3.nc&#39;</span><span class="p">)</span>
+<div class="last highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read_field</span><span class="p">(</span><span class="s1">&#39;file3.nc&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span>
 <span class="go">&lt;CF Field: air_temperature(time(12), latitude(64), longitude(128)) K&gt;</span>
 </pre></div>
@@ -294,7 +290,7 @@ found in the input files(s), otherwise it returned a <a class="reference interna
 <p>At version 2.x <a class="reference internal" href="generated/cf.Field.regridc.html#cf.Field.regridc" title="cf.Field.regridc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.regridc</span></code></a> the regridding method must
 be specified. The <code class="xref py py-obj docutils literal notranslate"><span class="pre">method</span></code> parameter does not have an
 <code class="docutils literal notranslate"><span class="pre">'auto'</span></code> option.</p>
-<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">__version__</span>
+<div class="last highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">__version__</span>
 <span class="go">2.0</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span>
 <span class="go">&lt;CF Field: air_temperature(time(12), latitude(64), longitude(128)) K&gt;</span>
@@ -317,7 +313,7 @@ field.</p>
 <p>At version 2.x <a class="reference internal" href="generated/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.regrids</span></code></a> the regridding method must
 be specified. The <code class="xref py py-obj docutils literal notranslate"><span class="pre">method</span></code> parameter does not have an
 <code class="docutils literal notranslate"><span class="pre">'auto'</span></code> option.</p>
-<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">__version__</span>
+<div class="last highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">__version__</span>
 <span class="go">2.0</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span>
 <span class="go">&lt;CF Field: air_temperature(time(12), latitude(64), longitude(128)) K&gt;</span>
@@ -339,7 +335,7 @@ field.</p>
 <p class="first admonition-title">Note</p>
 <p>At version 2.x <a class="reference internal" href="method/cf.Field.properties.html#cf.Field.properties" title="cf.Field.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.properties</span></code></a> is callable and allows
 the CF properties to be updated inplace.</p>
-<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">__version__</span>
+<div class="last highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">__version__</span>
 <span class="go">2.0</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">properties</span><span class="p">()</span>
 <span class="go">{&#39;Conventions&#39;: &#39;CF-1.6&#39;,</span>
@@ -361,7 +357,7 @@ CF properties.</p>
 <p>At version 2.x <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.select</span></code> has been removed. Use
 <a class="reference internal" href="generated/cf.Field.match.html#cf.Field.match" title="cf.Field.match"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.match</span></code></a> to see if an individual field meets given
 criteria.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">__version__</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">__version__</span>
 <span class="go">2.0</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span>
 <span class="go">&lt;CF Field: air_temperature(time(12), latitude(64), longitude(128)) K&gt;</span>
@@ -370,7 +366,7 @@ criteria.</p>
 </pre></div>
 </div>
 <p><a class="reference internal" href="generated/cf.FieldList.select.html#cf.FieldList.select" title="cf.FieldList.select"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.FieldList.select</span></code></a> always returns another field list.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span>
 <span class="go">[&lt;CF Field: specific_humidity(latitude(73), longitude(96)) K&gt;,</span>
 <span class="go"> &lt;CF Field: air_pressure(height(17), latitude(145), longitude(196)) K&gt;]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;specific_humidity|air_pressure&#39;</span><span class="p">)</span>
@@ -385,7 +381,7 @@ criteria.</p>
 <p>The new method <a class="reference internal" href="generated/cf.FieldList.select_field.html#cf.FieldList.select_field" title="cf.FieldList.select_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.FieldList.select_field</span></code></a> will always return a
 <a class="reference internal" href="classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a> if there is only one identified in the field
 list.</p>
-<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span><span class="o">.</span><span class="n">select_field</span><span class="p">(</span><span class="s1">&#39;specific_humidity&#39;</span><span class="p">)</span>
+<div class="last highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span><span class="o">.</span><span class="n">select_field</span><span class="p">(</span><span class="s1">&#39;specific_humidity&#39;</span><span class="p">)</span>
 <span class="go">&lt;CF Field: specific_humidity(latitude(73), longitude(96)) K&gt;</span>
 </pre></div>
 </div>
@@ -407,7 +403,7 @@ library could produce scientifically different results.</p>
 <p>At version 2.x indexing on a field object returns a subspace
 of the field, in exactly the way that indexing the
 <a class="reference internal" href="generated/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.subspace</span></code></a> attribute does.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">__version__</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">__version__</span>
 <span class="go">2.0</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span>
 <span class="go">&lt;CF Field: air_temperature(time(12), latitude(64), longitude(128)) K&gt;</span>
@@ -426,7 +422,7 @@ of the field, in exactly the way that indexing the
 <p>Assignment to a subspace of the data array may either be
 done to a subspace defined by direct indexing or to one
 defined by indexing the <a class="reference internal" href="generated/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.subspace</span></code></a> attribute.</p>
-<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<div class="last highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">99</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">h</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">h</span><span class="o">.</span><span class="n">subspace</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">99</span>
@@ -437,7 +433,7 @@ defined by indexing the <a class="reference internal" href="generated/cf.Field.s
 </div>
 <p>At version 1.x direct indexing on a field returned the field itself,
 with no subspacing.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">__version__</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">__version__</span>
 <span class="go">1.5</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span>
 <span class="go">&lt;CF Field: air_temperature(time(12), latitude(64), longitude(128)) K&gt;</span>
@@ -450,7 +446,6 @@ with no subspacing.</p>
 
 
           </div>
-          
         </div>
       </div>
     <div class="clearer"></div>
@@ -459,8 +454,8 @@ with no subspacing.</p>
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="_sources/1_to_2_changes.rst.txt"

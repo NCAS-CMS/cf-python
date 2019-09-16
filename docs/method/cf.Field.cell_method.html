@@ -9,14 +9,12 @@
     <title>cf.Field.cell_method &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.Field.coordinate" href="cf.Field.coordinate.html" />
@@ -32,7 +30,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.0b9</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.0b10</a></b></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_conventions.html"><strong>CF conventions</strong></a></li>
@@ -82,15 +80,13 @@
       </div>
       <div class="documentwrapper">
         <div class="bodywrapper">
-          
-
           <div class="body" role="main">
             
   <div class="section" id="cf-field-cell-method">
 <h1>cf.Field.cell_method<a class="headerlink" href="#cf-field-cell-method" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.cell_method">
-<code class="descclassname">Field.</code><code class="descname">cell_method</code><span class="sig-paren">(</span><em>identity</em>, <em>default=ValueError()</em>, <em>key=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b9/cf/field.py#L10069"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.cell_method" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">cell_method</code><span class="sig-paren">(</span><em>identity</em>, <em>default=ValueError()</em>, <em>key=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b10/cf/field.py#L10067"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.cell_method" title="Permalink to this definition">¶</a></dt>
 <dd><p>Select a cell method construct by its identity.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
@@ -124,7 +120,7 @@ if any of them match any of those provided. A construct’s
 identities are those returned by its <code class="xref py py-obj docutils literal notranslate"><span class="pre">identities</span></code>
 method. In the following example, the construct <code class="docutils literal notranslate"><span class="pre">c</span></code> has
 one identity:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">identities</span><span class="p">()</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">identities</span><span class="p">()</span>
 <span class="go">[&#39;method:minimum&#39;]</span>
 </pre></div>
 </div>
@@ -179,7 +175,6 @@ it will be raised instead.</p>
 
 
           </div>
-          
         </div>
       </div>
     <div class="clearer"></div>
@@ -188,8 +183,8 @@ it will be raised instead.</p>
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/method/cf.Field.cell_method.rst.txt"

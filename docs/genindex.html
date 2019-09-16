@@ -10,14 +10,12 @@
     <title>Index &#8212; Documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
     <script type="text/javascript" src="_static/copybutton.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" />
    
@@ -31,7 +29,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="index.html">cf 3.0.0b9</a></b></h3>
+<h3><b><a href="index.html">cf 3.0.0b10</a></b></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_conventions.html"><strong>CF conventions</strong></a></li>
@@ -66,8 +64,6 @@
       </div>
       <div class="documentwrapper">
         <div class="bodywrapper">
-          
-
           <div class="body" role="main">
             
 
@@ -147,6 +143,10 @@
       <li><a href="classes/generated/cf.Data.__deepcopy__.html#cf.Data.__deepcopy__">__deepcopy__() (cf.Data method)</a>
 
       <ul>
+        <li><a href="method/cf.Domain.__deepcopy__.html#cf.Domain.__deepcopy__">(cf.Domain method)</a>
+</li>
+        <li><a href="method/cf.DomainAxis.__deepcopy__.html#cf.DomainAxis.__deepcopy__">(cf.DomainAxis method)</a>
+</li>
         <li><a href="method/cf.Field.__deepcopy__.html#cf.Field.__deepcopy__">(cf.Field method)</a>
 </li>
         <li><a href="method/cf.FieldAncillary.__deepcopy__.html#cf.FieldAncillary.__deepcopy__">(cf.FieldAncillary method)</a>
@@ -205,7 +205,11 @@
 </li>
       </ul></li>
       <li><a href="classes/generated/cf.Data.__hash__.html#cf.Data.__hash__">__hash__() (cf.Data method)</a>
+
+      <ul>
+        <li><a href="method/cf.DomainAxis.__hash__.html#cf.DomainAxis.__hash__">(cf.DomainAxis method)</a>
 </li>
+      </ul></li>
       <li><a href="classes/generated/cf.Data.__iadd__.html#cf.Data.__iadd__">__iadd__() (cf.Data method)</a>
 
       <ul>
@@ -278,8 +282,6 @@
         <li><a href="classes/cf.Datum.html#cf.Datum.__init__">(cf.Datum method)</a>
 </li>
         <li><a href="classes/cf.DomainAncillary.html#cf.DomainAncillary.__init__">(cf.DomainAncillary method)</a>
-</li>
-        <li><a href="classes/cf.DomainAxis.html#cf.DomainAxis.__init__">(cf.DomainAxis method)</a>
 </li>
         <li><a href="class/cf.GatheredArray.html#cf.GatheredArray.__init__">(cf.GatheredArray method)</a>
 </li>
@@ -364,14 +366,14 @@
         <li><a href="classes/generated/cf.FieldAncillary.__le__.html#cf.FieldAncillary.__le__">(cf.FieldAncillary method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="classes/generated/cf.Data.__len__.html#cf.Data.__len__">__len__() (cf.Data method)</a>
 
       <ul>
         <li><a href="generated/cf.FieldList.__len__.html#cf.FieldList.__len__">(cf.FieldList method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="classes/generated/cf.Data.__lshift__.html#cf.Data.__lshift__">__lshift__() (cf.Data method)</a>
 
       <ul>
@@ -479,6 +481,10 @@
       <li><a href="classes/generated/cf.Data.__repr__.html#cf.Data.__repr__">__repr__() (cf.Data method)</a>
 
       <ul>
+        <li><a href="method/cf.Domain.__repr__.html#cf.Domain.__repr__">(cf.Domain method)</a>
+</li>
+        <li><a href="method/cf.DomainAxis.__repr__.html#cf.DomainAxis.__repr__">(cf.DomainAxis method)</a>
+</li>
         <li><a href="method/cf.Field.__repr__.html#cf.Field.__repr__">(cf.Field method)</a>
 </li>
         <li><a href="method/cf.FieldAncillary.__repr__.html#cf.FieldAncillary.__repr__">(cf.FieldAncillary method)</a>
@@ -587,6 +593,10 @@
       <li><a href="classes/generated/cf.Data.__str__.html#cf.Data.__str__">__str__() (cf.Data method)</a>
 
       <ul>
+        <li><a href="method/cf.Domain.__str__.html#cf.Domain.__str__">(cf.Domain method)</a>
+</li>
+        <li><a href="method/cf.DomainAxis.__str__.html#cf.DomainAxis.__str__">(cf.DomainAxis method)</a>
+</li>
         <li><a href="method/cf.Field.__str__.html#cf.Field.__str__">(cf.Field method)</a>
 </li>
         <li><a href="method/cf.FieldAncillary.__str__.html#cf.FieldAncillary.__str__">(cf.FieldAncillary method)</a>
@@ -801,11 +811,7 @@
 </li>
       </ul></li>
       <li><a href="function/cf.ATOL.html#cf.ATOL">ATOL() (in module cf)</a>, <a href="generated/cf.ATOL.html#cf.ATOL">[1]</a>
-
-      <ul>
-        <li><a href="function/cf.cfdm.ATOL.html#cf.cfdm.ATOL">(in module cf.cfdm)</a>
 </li>
-      </ul></li>
       <li><a href="generated/cf.Query.attr.html#cf.Query.attr">attr (cf.Query attribute)</a>
 </li>
       <li><a href="classes/cf.Bounds.html#cf.Bounds.attributes">attributes (cf.Bounds attribute)</a>
@@ -836,8 +842,12 @@
 </li>
       <li><a href="method/cf.Field.auxiliary_coordinate.html#cf.Field.auxiliary_coordinate">auxiliary_coordinate() (cf.Field method)</a>
 </li>
-      <li><a href="attribute/cf.Field.auxiliary_coordinates.html#cf.Field.auxiliary_coordinates">auxiliary_coordinates (cf.Field attribute)</a>
+      <li><a href="attribute/cf.Domain.auxiliary_coordinates.html#cf.Domain.auxiliary_coordinates">auxiliary_coordinates (cf.Domain attribute)</a>
+
+      <ul>
+        <li><a href="attribute/cf.Field.auxiliary_coordinates.html#cf.Field.auxiliary_coordinates">(cf.Field attribute)</a>
 </li>
+      </ul></li>
       <li><a href="classes/cf.AuxiliaryCoordinate.html#cf.AuxiliaryCoordinate">AuxiliaryCoordinate (class in cf)</a>
 </li>
       <li><a href="generated/cf.Field.auxs.html#cf.Field.auxs">auxs() (cf.Field method)</a>
@@ -962,8 +972,12 @@
 </li>
       <li><a href="method/cf.Field.cell_measure.html#cf.Field.cell_measure">cell_measure() (cf.Field method)</a>
 </li>
-      <li><a href="attribute/cf.Field.cell_measures.html#cf.Field.cell_measures">cell_measures (cf.Field attribute)</a>
+      <li><a href="attribute/cf.Domain.cell_measures.html#cf.Domain.cell_measures">cell_measures (cf.Domain attribute)</a>
+
+      <ul>
+        <li><a href="attribute/cf.Field.cell_measures.html#cf.Field.cell_measures">(cf.Field attribute)</a>
 </li>
+      </ul></li>
       <li><a href="method/cf.Field.cell_method.html#cf.Field.cell_method">cell_method() (cf.Field method)</a>
 </li>
       <li><a href="attribute/cf.Field.cell_methods.html#cf.Field.cell_methods">cell_methods (cf.Field attribute)</a>, <a href="generated/cf.Field.cell_methods.html#cf.Field.cell_methods">[1]</a>
@@ -995,11 +1009,7 @@
       <li><a href="generated/cf.cellwo.html#cf.cellwo">cellwo() (in module cf)</a>
 </li>
       <li><a href="function/cf.CF.html#cf.CF">CF() (in module cf)</a>
-
-      <ul>
-        <li><a href="function/cf.cfdm.CF.html#cf.cfdm.CF">(in module cf.cfdm)</a>
 </li>
-      </ul></li>
       <li><a href="constant.html#cf.cf.masked">cf.masked (in module cf)</a>
 </li>
       <li><a href="generated/cf.Field.chunk.html#cf.Field.chunk">chunk (cf.Field attribute)</a>
@@ -1156,8 +1166,6 @@
         <li><a href="class/cf.RaggedIndexedContiguousArray.html#cf.RaggedIndexedContiguousArray.compressed_array">(cf.RaggedIndexedContiguousArray attribute)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="classes/cf.Bounds.html#cf.Bounds.concatenate">concatenate() (cf.Bounds class method)</a>
 
       <ul>
@@ -1174,16 +1182,26 @@
         <li><a href="class/cf.List.html#cf.List.concatenate">(cf.List class method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="generated/cf.Units.conform.html#cf.Units.conform">conform() (cf.Units static method)</a>
 </li>
-      <li><a href="method/cf.Field.construct.html#cf.Field.construct">construct() (cf.Field method)</a>
+      <li><a href="method/cf.Domain.construct.html#cf.Domain.construct">construct() (cf.Domain method)</a>
+
+      <ul>
+        <li><a href="method/cf.Field.construct.html#cf.Field.construct">(cf.Field method)</a>
 </li>
-      <li><a href="method/cf.Field.construct_key.html#cf.Field.construct_key">construct_key() (cf.Field method)</a>
+      </ul></li>
+      <li><a href="method/cf.Domain.construct_key.html#cf.Domain.construct_key">construct_key() (cf.Domain method)</a>
+
+      <ul>
+        <li><a href="method/cf.Field.construct_key.html#cf.Field.construct_key">(cf.Field method)</a>
 </li>
+      </ul></li>
       <li><a href="classes/cf.DomainAncillary.html#cf.DomainAncillary.construct_type">construct_type (cf.DomainAncillary attribute)</a>
 
       <ul>
-        <li><a href="classes/cf.DomainAxis.html#cf.DomainAxis.construct_type">(cf.DomainAxis attribute)</a>
+        <li><a href="attribute/cf.DomainAxis.construct_type.html#cf.DomainAxis.construct_type">(cf.DomainAxis attribute)</a>
 </li>
         <li><a href="attribute/cf.Field.construct_type.html#cf.Field.construct_type">(cf.Field attribute)</a>
 </li>
@@ -1194,8 +1212,12 @@
 </li>
       <li><a href="classes/cf.Constructs.html#cf.Constructs.construct_types">construct_types() (cf.Constructs method)</a>
 </li>
-      <li><a href="attribute/cf.Field.constructs.html#cf.Field.constructs">constructs (cf.Field attribute)</a>
+      <li><a href="attribute/cf.Domain.constructs.html#cf.Domain.constructs">constructs (cf.Domain attribute)</a>
+
+      <ul>
+        <li><a href="attribute/cf.Field.constructs.html#cf.Field.constructs">(cf.Field attribute)</a>
 </li>
+      </ul></li>
       <li><a href="classes/cf.Constructs.html#cf.Constructs">Constructs (class in cf)</a>
 </li>
       <li><a href="generated/cf.AuxiliaryCoordinate.contiguous.html#cf.AuxiliaryCoordinate.contiguous">contiguous() (cf.AuxiliaryCoordinate method)</a>
@@ -1244,14 +1266,22 @@
 </li>
       <li><a href="method/cf.Field.coordinate_reference.html#cf.Field.coordinate_reference">coordinate_reference() (cf.Field method)</a>
 </li>
-      <li><a href="attribute/cf.Field.coordinate_references.html#cf.Field.coordinate_references">coordinate_references (cf.Field attribute)</a>
+      <li><a href="attribute/cf.Domain.coordinate_references.html#cf.Domain.coordinate_references">coordinate_references (cf.Domain attribute)</a>
+
+      <ul>
+        <li><a href="attribute/cf.Field.coordinate_references.html#cf.Field.coordinate_references">(cf.Field attribute)</a>
 </li>
+      </ul></li>
       <li><a href="classes/cf.CoordinateConversion.html#cf.CoordinateConversion">CoordinateConversion (class in cf)</a>
 </li>
       <li><a href="classes/cf.CoordinateReference.html#cf.CoordinateReference">CoordinateReference (class in cf)</a>
 </li>
-      <li><a href="attribute/cf.Field.coordinates.html#cf.Field.coordinates">coordinates (cf.Field attribute)</a>
+      <li><a href="attribute/cf.Domain.coordinates.html#cf.Domain.coordinates">coordinates (cf.Domain attribute)</a>
+
+      <ul>
+        <li><a href="attribute/cf.Field.coordinates.html#cf.Field.coordinates">(cf.Field attribute)</a>
 </li>
+      </ul></li>
       <li><a href="generated/cf.Field.coords.html#cf.Field.coords">coords() (cf.Field method)</a>
 </li>
       <li><a href="generated/cf.AuxiliaryCoordinate.copy.html#cf.AuxiliaryCoordinate.copy">copy() (cf.AuxiliaryCoordinate method)</a>
@@ -1275,9 +1305,11 @@
 </li>
         <li><a href="generated/cf.DimensionCoordinate.copy.html#cf.DimensionCoordinate.copy">(cf.DimensionCoordinate method)</a>
 </li>
+        <li><a href="method/cf.Domain.copy.html#cf.Domain.copy">(cf.Domain method)</a>
+</li>
         <li><a href="classes/cf.DomainAncillary.html#cf.DomainAncillary.copy">(cf.DomainAncillary method)</a>
 </li>
-        <li><a href="classes/cf.DomainAxis.html#cf.DomainAxis.copy">(cf.DomainAxis method)</a>
+        <li><a href="method/cf.DomainAxis.copy.html#cf.DomainAxis.copy">(cf.DomainAxis method)</a>
 </li>
         <li><a href="method/cf.Field.copy.html#cf.Field.copy">(cf.Field method)</a>
 </li>
@@ -1528,8 +1560,12 @@
 </li>
       <li><a href="classes/cf.DomainAncillary.html#cf.DomainAncillary.del_bounds">del_bounds() (cf.DomainAncillary method)</a>
 </li>
-      <li><a href="method/cf.Field.del_construct.html#cf.Field.del_construct">del_construct() (cf.Field method)</a>
+      <li><a href="method/cf.Domain.del_construct.html#cf.Domain.del_construct">del_construct() (cf.Domain method)</a>
+
+      <ul>
+        <li><a href="method/cf.Field.del_construct.html#cf.Field.del_construct">(cf.Field method)</a>
 </li>
+      </ul></li>
       <li><a href="classes/cf.Bounds.html#cf.Bounds.del_data">del_data() (cf.Bounds method)</a>
 
       <ul>
@@ -1546,8 +1582,12 @@
         <li><a href="class/cf.List.html#cf.List.del_data">(cf.List method)</a>
 </li>
       </ul></li>
-      <li><a href="method/cf.Field.del_data_axes.html#cf.Field.del_data_axes">del_data_axes() (cf.Field method)</a>
+      <li><a href="method/cf.Domain.del_data_axes.html#cf.Domain.del_data_axes">del_data_axes() (cf.Domain method)</a>
+
+      <ul>
+        <li><a href="method/cf.Field.del_data_axes.html#cf.Field.del_data_axes">(cf.Field method)</a>
 </li>
+      </ul></li>
       <li><a href="classes/cf.CoordinateConversion.html#cf.CoordinateConversion.del_domain_ancillary">del_domain_ancillary() (cf.CoordinateConversion method)</a>
 </li>
       <li><a href="classes/cf.DomainAncillary.html#cf.DomainAncillary.del_geometry">del_geometry() (cf.DomainAncillary method)</a>
@@ -1578,7 +1618,7 @@
         <li><a href="class/cf.List.html#cf.List.del_property">(cf.List method)</a>
 </li>
       </ul></li>
-      <li><a href="classes/cf.DomainAxis.html#cf.DomainAxis.del_size">del_size() (cf.DomainAxis method)</a>
+      <li><a href="method/cf.DomainAxis.del_size.html#cf.DomainAxis.del_size">del_size() (cf.DomainAxis method)</a>
 </li>
       <li><a href="generated/cf.AuxiliaryCoordinate.delprop.html#cf.AuxiliaryCoordinate.delprop">delprop() (cf.AuxiliaryCoordinate method)</a>
 
@@ -1608,8 +1648,12 @@
 </li>
       <li><a href="method/cf.Field.dimension_coordinate.html#cf.Field.dimension_coordinate">dimension_coordinate() (cf.Field method)</a>
 </li>
-      <li><a href="attribute/cf.Field.dimension_coordinates.html#cf.Field.dimension_coordinates">dimension_coordinates (cf.Field attribute)</a>
+      <li><a href="attribute/cf.Domain.dimension_coordinates.html#cf.Domain.dimension_coordinates">dimension_coordinates (cf.Domain attribute)</a>
+
+      <ul>
+        <li><a href="attribute/cf.Field.dimension_coordinates.html#cf.Field.dimension_coordinates">(cf.Field attribute)</a>
 </li>
+      </ul></li>
       <li><a href="classes/cf.DimensionCoordinate.html#cf.DimensionCoordinate">DimensionCoordinate (class in cf)</a>
 </li>
       <li><a href="generated/cf.Field.dims.html#cf.Field.dims">dims() (cf.Field method)</a>
@@ -1626,24 +1670,38 @@
 </li>
       <li><a href="attribute/cf.Field.domain.html#cf.Field.domain">domain (cf.Field attribute)</a>
 </li>
+      <li><a href="classes/cf.Domain.html#cf.Domain">Domain (class in cf)</a>
+</li>
       <li><a href="generated/cf.Field.domain_anc.html#cf.Field.domain_anc">domain_anc() (cf.Field method)</a>
 </li>
-      <li><a href="attribute/cf.Field.domain_ancillaries.html#cf.Field.domain_ancillaries">domain_ancillaries (cf.Field attribute)</a>
+      <li><a href="attribute/cf.Domain.domain_ancillaries.html#cf.Domain.domain_ancillaries">domain_ancillaries (cf.Domain attribute)</a>
+
+      <ul>
+        <li><a href="attribute/cf.Field.domain_ancillaries.html#cf.Field.domain_ancillaries">(cf.Field attribute)</a>
 </li>
+      </ul></li>
       <li><a href="classes/cf.CoordinateConversion.html#cf.CoordinateConversion.domain_ancillaries">domain_ancillaries() (cf.CoordinateConversion method)</a>
 </li>
       <li><a href="method/cf.Field.domain_ancillary.html#cf.Field.domain_ancillary">domain_ancillary() (cf.Field method)</a>
 </li>
       <li><a href="generated/cf.Field.domain_ancs.html#cf.Field.domain_ancs">domain_ancs() (cf.Field method)</a>
 </li>
-      <li><a href="attribute/cf.Field.domain_axes.html#cf.Field.domain_axes">domain_axes (cf.Field attribute)</a>
+      <li><a href="attribute/cf.Domain.domain_axes.html#cf.Domain.domain_axes">domain_axes (cf.Domain attribute)</a>
+
+      <ul>
+        <li><a href="attribute/cf.Field.domain_axes.html#cf.Field.domain_axes">(cf.Field attribute)</a>
 </li>
+      </ul></li>
       <li><a href="method/cf.Field.domain_axis.html#cf.Field.domain_axis">domain_axis() (cf.Field method)</a>
 </li>
       <li><a href="classes/cf.Constructs.html#cf.Constructs.domain_axis_identity">domain_axis_identity() (cf.Constructs method)</a>
 </li>
-      <li><a href="method/cf.Field.domain_axis_key.html#cf.Field.domain_axis_key">domain_axis_key() (cf.Field method)</a>
+      <li><a href="method/cf.Domain.domain_axis_key.html#cf.Domain.domain_axis_key">domain_axis_key() (cf.Domain method)</a>
+
+      <ul>
+        <li><a href="method/cf.Field.domain_axis_key.html#cf.Field.domain_axis_key">(cf.Field method)</a>
 </li>
+      </ul></li>
       <li><a href="classes/cf.DomainAncillary.html#cf.DomainAncillary">DomainAncillary (class in cf)</a>
 </li>
       <li><a href="classes/cf.DomainAxis.html#cf.DomainAxis">DomainAxis (class in cf)</a>
@@ -1739,6 +1797,8 @@
 </li>
         <li><a href="generated/cf.DimensionCoordinate.dump.html#cf.DimensionCoordinate.dump">(cf.DimensionCoordinate method)</a>
 </li>
+        <li><a href="method/cf.Domain.dump.html#cf.Domain.dump">(cf.Domain method)</a>
+</li>
         <li><a href="classes/cf.DomainAncillary.html#cf.DomainAncillary.dump">(cf.DomainAncillary method)</a>
 </li>
         <li><a href="method/cf.Field.dump.html#cf.Field.dump">(cf.Field method)</a>
@@ -1789,9 +1849,11 @@
 </li>
         <li><a href="generated/cf.DimensionCoordinate.equals.html#cf.DimensionCoordinate.equals">(cf.DimensionCoordinate method)</a>
 </li>
+        <li><a href="method/cf.Domain.equals.html#cf.Domain.equals">(cf.Domain method)</a>
+</li>
         <li><a href="classes/cf.DomainAncillary.html#cf.DomainAncillary.equals">(cf.DomainAncillary method)</a>
 </li>
-        <li><a href="classes/cf.DomainAxis.html#cf.DomainAxis.equals">(cf.DomainAxis method)</a>
+        <li><a href="method/cf.DomainAxis.equals.html#cf.DomainAxis.equals">(cf.DomainAxis method)</a>
 </li>
         <li><a href="generated/cf.Field.equals.html#cf.Field.equals">(cf.Field method)</a>, <a href="method/cf.Field.equals.html#cf.Field.equals">[1]</a>
 </li>
@@ -1962,6 +2024,8 @@
 </li>
       <li><a href="classes/cf.Constructs.html#cf.Constructs.filter_by_axis">filter_by_axis() (cf.Constructs method)</a>
 </li>
+      <li><a href="classes/cf.Constructs.html#cf.Constructs.filter_by_axisX">filter_by_axisX() (cf.Constructs method)</a>
+</li>
       <li><a href="classes/cf.Constructs.html#cf.Constructs.filter_by_data">filter_by_data() (cf.Constructs method)</a>
 </li>
       <li><a href="classes/cf.Constructs.html#cf.Constructs.filter_by_identity">filter_by_identity() (cf.Constructs method)</a>
@@ -2066,6 +2130,8 @@
       </ul></li>
       <li><a href="generated/cf.FM_THRESHOLD.html#cf.FM_THRESHOLD">FM_THRESHOLD() (in module cf)</a>
 </li>
+      <li><a href="method/cf.Domain.fromconstructs.html#cf.Domain.fromconstructs">fromconstructs() (cf.Domain class method)</a>
+</li>
       <li><a href="generated/cf.Data.func.html#cf.Data.func">func() (cf.Data method)</a>
 </li>
   </ul></td>
@@ -2124,8 +2190,12 @@
         <li><a href="class/cf.RaggedIndexedContiguousArray.html#cf.RaggedIndexedContiguousArray.get_compression_type">(cf.RaggedIndexedContiguousArray method)</a>
 </li>
       </ul></li>
-      <li><a href="method/cf.Field.get_construct.html#cf.Field.get_construct">get_construct() (cf.Field method)</a>
+      <li><a href="method/cf.Domain.get_construct.html#cf.Domain.get_construct">get_construct() (cf.Domain method)</a>
+
+      <ul>
+        <li><a href="method/cf.Field.get_construct.html#cf.Field.get_construct">(cf.Field method)</a>
 </li>
+      </ul></li>
       <li><a href="class/cf.RaggedContiguousArray.html#cf.RaggedContiguousArray.get_count">get_count() (cf.RaggedContiguousArray method)</a>
 
       <ul>
@@ -2148,16 +2218,20 @@
         <li><a href="class/cf.List.html#cf.List.get_data">(cf.List method)</a>
 </li>
       </ul></li>
-      <li><a href="method/cf.Field.get_data_axes.html#cf.Field.get_data_axes">get_data_axes() (cf.Field method)</a>
+      <li><a href="method/cf.Domain.get_data_axes.html#cf.Domain.get_data_axes">get_data_axes() (cf.Domain method)</a>
+
+      <ul>
+        <li><a href="method/cf.Field.get_data_axes.html#cf.Field.get_data_axes">(cf.Field method)</a>
 </li>
+      </ul></li>
       <li><a href="method/cf.Field.get_domain.html#cf.Field.get_domain">get_domain() (cf.Field method)</a>
 </li>
       <li><a href="classes/cf.CoordinateConversion.html#cf.CoordinateConversion.get_domain_ancillary">get_domain_ancillary() (cf.CoordinateConversion method)</a>
 </li>
-      <li><a href="classes/cf.NetCDFArray.html#cf.NetCDFArray.get_filename">get_filename() (cf.NetCDFArray method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="classes/cf.NetCDFArray.html#cf.NetCDFArray.get_filename">get_filename() (cf.NetCDFArray method)</a>
+</li>
       <li><a href="classes/cf.DomainAncillary.html#cf.DomainAncillary.get_geometry">get_geometry() (cf.DomainAncillary method)</a>
 </li>
       <li><a href="class/cf.RaggedIndexedArray.html#cf.RaggedIndexedArray.get_index">get_index() (cf.RaggedIndexedArray method)</a>
@@ -2198,7 +2272,7 @@
         <li><a href="class/cf.List.html#cf.List.get_property">(cf.List method)</a>
 </li>
       </ul></li>
-      <li><a href="classes/cf.DomainAxis.html#cf.DomainAxis.get_size">get_size() (cf.DomainAxis method)</a>
+      <li><a href="method/cf.DomainAxis.get_size.html#cf.DomainAxis.get_size">get_size() (cf.DomainAxis method)</a>
 </li>
       <li><a href="class/cf.GatheredArray.html#cf.GatheredArray.get_subspace">get_subspace() (cf.GatheredArray class method)</a>
 
@@ -2286,8 +2360,12 @@
         <li><a href="class/cf.List.html#cf.List.has_bounds">(cf.List method)</a>
 </li>
       </ul></li>
-      <li><a href="method/cf.Field.has_construct.html#cf.Field.has_construct">has_construct() (cf.Field method)</a>
+      <li><a href="method/cf.Domain.has_construct.html#cf.Domain.has_construct">has_construct() (cf.Domain method)</a>
+
+      <ul>
+        <li><a href="method/cf.Field.has_construct.html#cf.Field.has_construct">(cf.Field method)</a>
 </li>
+      </ul></li>
       <li><a href="classes/cf.Bounds.html#cf.Bounds.has_data">has_data() (cf.Bounds method)</a>
 
       <ul>
@@ -2304,8 +2382,12 @@
         <li><a href="class/cf.List.html#cf.List.has_data">(cf.List method)</a>
 </li>
       </ul></li>
-      <li><a href="method/cf.Field.has_data_axes.html#cf.Field.has_data_axes">has_data_axes() (cf.Field method)</a>
+      <li><a href="method/cf.Domain.has_data_axes.html#cf.Domain.has_data_axes">has_data_axes() (cf.Domain method)</a>
+
+      <ul>
+        <li><a href="method/cf.Field.has_data_axes.html#cf.Field.has_data_axes">(cf.Field method)</a>
 </li>
+      </ul></li>
       <li><a href="classes/cf.CoordinateConversion.html#cf.CoordinateConversion.has_domain_ancillary">has_domain_ancillary() (cf.CoordinateConversion method)</a>
 </li>
       <li><a href="classes/cf.DomainAncillary.html#cf.DomainAncillary.has_geometry">has_geometry() (cf.DomainAncillary method)</a>
@@ -2338,8 +2420,10 @@
         <li><a href="class/cf.List.html#cf.List.has_property">(cf.List method)</a>
 </li>
       </ul></li>
-      <li><a href="classes/cf.DomainAxis.html#cf.DomainAxis.has_size">has_size() (cf.DomainAxis method)</a>
+      <li><a href="method/cf.DomainAxis.has_size.html#cf.DomainAxis.has_size">has_size() (cf.DomainAxis method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="generated/cf.AuxiliaryCoordinate.hasbounds.html#cf.AuxiliaryCoordinate.hasbounds">hasbounds (cf.AuxiliaryCoordinate attribute)</a>
 
       <ul>
@@ -2360,8 +2444,6 @@
         <li><a href="class/cf.List.html#cf.List.hasbounds">(cf.List attribute)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="classes/cf.Bounds.html#cf.Bounds.hasdata">hasdata (cf.Bounds attribute)</a>
 
       <ul>
@@ -2475,7 +2557,7 @@
 </li>
         <li><a href="classes/cf.DomainAncillary.html#cf.DomainAncillary.identities">(cf.DomainAncillary method)</a>
 </li>
-        <li><a href="classes/cf.DomainAxis.html#cf.DomainAxis.identities">(cf.DomainAxis method)</a>
+        <li><a href="method/cf.DomainAxis.identities.html#cf.DomainAxis.identities">(cf.DomainAxis method)</a>
 </li>
         <li><a href="method/cf.Field.identities.html#cf.Field.identities">(cf.Field method)</a>
 </li>
@@ -2503,7 +2585,7 @@
 </li>
         <li><a href="classes/cf.DomainAncillary.html#cf.DomainAncillary.identity">(cf.DomainAncillary method)</a>
 </li>
-        <li><a href="classes/cf.DomainAxis.html#cf.DomainAxis.identity">(cf.DomainAxis method)</a>
+        <li><a href="method/cf.DomainAxis.identity.html#cf.DomainAxis.identity">(cf.DomainAxis method)</a>
 </li>
         <li><a href="method/cf.Field.identity.html#cf.Field.identity">(cf.Field method)</a>
 </li>
@@ -2571,7 +2653,7 @@
 </li>
         <li><a href="classes/cf.DomainAncillary.html#cf.DomainAncillary.inspect">(cf.DomainAncillary method)</a>
 </li>
-        <li><a href="classes/cf.DomainAxis.html#cf.DomainAxis.inspect">(cf.DomainAxis method)</a>
+        <li><a href="method/cf.DomainAxis.inspect.html#cf.DomainAxis.inspect">(cf.DomainAxis method)</a>
 </li>
         <li><a href="class/cf.Index.html#cf.Index.inspect">(cf.Index method)</a>
 </li>
@@ -3271,7 +3353,7 @@
       <ul>
         <li><a href="class/cf.Count.html#cf.Count.nc_del_dimension">(cf.Count method)</a>
 </li>
-        <li><a href="classes/cf.DomainAxis.html#cf.DomainAxis.nc_del_dimension">(cf.DomainAxis method)</a>
+        <li><a href="method/cf.DomainAxis.nc_del_dimension.html#cf.DomainAxis.nc_del_dimension">(cf.DomainAxis method)</a>
 </li>
         <li><a href="class/cf.Index.html#cf.Index.nc_del_dimension">(cf.Index method)</a>
 </li>
@@ -3305,7 +3387,7 @@
       <ul>
         <li><a href="class/cf.Count.html#cf.Count.nc_get_dimension">(cf.Count method)</a>
 </li>
-        <li><a href="classes/cf.DomainAxis.html#cf.DomainAxis.nc_get_dimension">(cf.DomainAxis method)</a>
+        <li><a href="method/cf.DomainAxis.nc_get_dimension.html#cf.DomainAxis.nc_get_dimension">(cf.DomainAxis method)</a>
 </li>
         <li><a href="class/cf.Index.html#cf.Index.nc_get_dimension">(cf.Index method)</a>
 </li>
@@ -3341,7 +3423,7 @@
       <ul>
         <li><a href="class/cf.Count.html#cf.Count.nc_has_dimension">(cf.Count method)</a>
 </li>
-        <li><a href="classes/cf.DomainAxis.html#cf.DomainAxis.nc_has_dimension">(cf.DomainAxis method)</a>
+        <li><a href="method/cf.DomainAxis.nc_has_dimension.html#cf.DomainAxis.nc_has_dimension">(cf.DomainAxis method)</a>
 </li>
         <li><a href="class/cf.Index.html#cf.Index.nc_has_dimension">(cf.Index method)</a>
 </li>
@@ -3372,14 +3454,14 @@
         <li><a href="class/cf.List.html#cf.List.nc_has_variable">(cf.List method)</a>
 </li>
       </ul></li>
-      <li><a href="classes/cf.DomainAxis.html#cf.DomainAxis.nc_is_unlimited">nc_is_unlimited() (cf.DomainAxis method)</a>
+      <li><a href="method/cf.DomainAxis.nc_is_unlimited.html#cf.DomainAxis.nc_is_unlimited">nc_is_unlimited() (cf.DomainAxis method)</a>
 </li>
       <li><a href="classes/cf.Bounds.html#cf.Bounds.nc_set_dimension">nc_set_dimension() (cf.Bounds method)</a>
 
       <ul>
         <li><a href="class/cf.Count.html#cf.Count.nc_set_dimension">(cf.Count method)</a>
 </li>
-        <li><a href="classes/cf.DomainAxis.html#cf.DomainAxis.nc_set_dimension">(cf.DomainAxis method)</a>
+        <li><a href="method/cf.DomainAxis.nc_set_dimension.html#cf.DomainAxis.nc_set_dimension">(cf.DomainAxis method)</a>
 </li>
         <li><a href="class/cf.Index.html#cf.Index.nc_set_dimension">(cf.Index method)</a>
 </li>
@@ -3392,7 +3474,7 @@
         <li><a href="class/cf.Index.html#cf.Index.nc_set_sample_dimension">(cf.Index method)</a>
 </li>
       </ul></li>
-      <li><a href="classes/cf.DomainAxis.html#cf.DomainAxis.nc_set_unlimited">nc_set_unlimited() (cf.DomainAxis method)</a>
+      <li><a href="method/cf.DomainAxis.nc_set_unlimited.html#cf.DomainAxis.nc_set_unlimited">nc_set_unlimited() (cf.DomainAxis method)</a>
 </li>
       <li><a href="classes/cf.Bounds.html#cf.Bounds.nc_set_variable">nc_set_variable() (cf.Bounds method)</a>
 
@@ -3627,11 +3709,7 @@
       <li><a href="generated/cf.Field.rank.html#cf.Field.rank">rank (cf.Field attribute)</a>
 </li>
       <li><a href="function/cf.read.html#cf.read">read() (in module cf)</a>
-
-      <ul>
-        <li><a href="function/cf.cfdm.read.html#cf.cfdm.read">(in module cf.cfdm)</a>
 </li>
-      </ul></li>
       <li><a href="generated/cf.Field.ref.html#cf.Field.ref">ref() (cf.Field method)</a>
 </li>
       <li><a href="classes/cf.Bounds.html#cf.Bounds.reference_datetime">reference_datetime (cf.Bounds attribute)</a>
@@ -3876,8 +3954,12 @@
 </li>
       <li><a href="classes/cf.DomainAncillary.html#cf.DomainAncillary.set_bounds">set_bounds() (cf.DomainAncillary method)</a>
 </li>
-      <li><a href="method/cf.Field.set_construct.html#cf.Field.set_construct">set_construct() (cf.Field method)</a>
+      <li><a href="method/cf.Domain.set_construct.html#cf.Domain.set_construct">set_construct() (cf.Domain method)</a>
+
+      <ul>
+        <li><a href="method/cf.Field.set_construct.html#cf.Field.set_construct">(cf.Field method)</a>
 </li>
+      </ul></li>
       <li><a href="classes/cf.Bounds.html#cf.Bounds.set_data">set_data() (cf.Bounds method)</a>
 
       <ul>
@@ -3894,8 +3976,12 @@
         <li><a href="class/cf.List.html#cf.List.set_data">(cf.List method)</a>
 </li>
       </ul></li>
-      <li><a href="method/cf.Field.set_data_axes.html#cf.Field.set_data_axes">set_data_axes() (cf.Field method)</a>
+      <li><a href="method/cf.Domain.set_data_axes.html#cf.Domain.set_data_axes">set_data_axes() (cf.Domain method)</a>
+
+      <ul>
+        <li><a href="method/cf.Field.set_data_axes.html#cf.Field.set_data_axes">(cf.Field method)</a>
 </li>
+      </ul></li>
       <li><a href="classes/cf.CoordinateConversion.html#cf.CoordinateConversion.set_domain_ancillaries">set_domain_ancillaries() (cf.CoordinateConversion method)</a>
 </li>
       <li><a href="classes/cf.CoordinateConversion.html#cf.CoordinateConversion.set_domain_ancillary">set_domain_ancillary() (cf.CoordinateConversion method)</a>
@@ -3954,7 +4040,7 @@
         <li><a href="class/cf.List.html#cf.List.set_property">(cf.List method)</a>
 </li>
       </ul></li>
-      <li><a href="classes/cf.DomainAxis.html#cf.DomainAxis.set_size">set_size() (cf.DomainAxis method)</a>
+      <li><a href="method/cf.DomainAxis.set_size.html#cf.DomainAxis.set_size">set_size() (cf.DomainAxis method)</a>
 </li>
       <li><a href="generated/cf.Data.seterr.html#cf.Data.seterr">seterr() (cf.Data static method)</a>
 </li>
@@ -4061,7 +4147,7 @@
 </li>
         <li><a href="classes/cf.DomainAncillary.html#cf.DomainAncillary.size">(cf.DomainAncillary attribute)</a>
 </li>
-        <li><a href="classes/cf.DomainAxis.html#cf.DomainAxis.size">(cf.DomainAxis attribute)</a>
+        <li><a href="attribute/cf.DomainAxis.size.html#cf.DomainAxis.size">(cf.DomainAxis attribute)</a>
 </li>
         <li><a href="attribute/cf.Field.size.html#cf.Field.size">(cf.Field attribute)</a>
 </li>
@@ -4613,11 +4699,7 @@
       <li><a href="generated/cf.wo.html#cf.wo">wo() (in module cf)</a>
 </li>
       <li><a href="function/cf.write.html#cf.write">write() (in module cf)</a>
-
-      <ul>
-        <li><a href="function/cf.cfdm.write.html#cf.cfdm.write">(in module cf.cfdm)</a>
 </li>
-      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -4744,7 +4826,6 @@
 
 
           </div>
-          
         </div>
       </div>
     <div class="clearer"></div>
@@ -4753,8 +4834,8 @@
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
     </div>
 

@@ -134,7 +134,8 @@ Tests are run from within the ``cf-python/test`` directory:
 **Dependencies**
 ----------------
 
-The cf-python package requires:
+Always required
+^^^^^^^^^^^^^^^
 
 * `Python <https://www.python.org/>`_, version 3 or newer.
 
@@ -144,14 +145,58 @@ The cf-python package requires:
   newer.
 
 * `cftime <https://pypi.org/project/cftime/>`_, version 1.0.2 or
-  newer. (Note that this package is installed with netCDF.)
+  newer. (Note that this package is installed with netCDF4.)
 
 * `cfdm <https://pypi.org/project/cfdm/>`_, version 1.7.7 or newer.
   
-* `cfunits <https://pypi.org/project/cfunits/>`_, version 3.2.1 or newer.
+* `cfunits <https://pypi.org/project/cfunits/>`_, version 3.2.2 or newer.
   
 * `psutil <https://pypi.org/project/psutil/>`_, version 0.6.0 or newer.
 
+* The `UNIDATA UDUNITS-2 library
+  <http://www.unidata.ucar.edu/software/udunits>`_, version 2.2.20 or
+  newer.
+
+  This is a C library which provides support for units of physical
+  quantities. If the UDUNITS-2 shared library file
+  (``libudunits2.so.0`` on GNU/Linux or ``libudunits2.0.dylibfile`` on
+  MacOS) is in a non-standard location then its path should be added
+  to the ``LD_LIBRARY_PATH`` environment variable. It may also be
+  necessary to specify the location of the ``udunits2.xml`` file in
+  the ``UDUNITS2_XML_PATH`` environment variable (although the default
+  location is usually correct).
+
+  
+Optional
+^^^^^^^^
+
+Some further dependencies that, enable further functionality, are
+optional. This to faciliate cf-python being installed in restricted
+environments:
+
+**Regridding**
+
+* `ESMF <https://www.earthsystemcog.org/projects/esmpy/>`_, version
+  7.1.0r or newer. This is easily installed via conda with
+
+  .. code:: bash
+
+     conda install -c conda-forge mpich esmpy
+
+  or may be installed from source.
+
+**Convolution filters, derivatives and relative vorticity**
+
+* `scipy <https://pypi.org/project/scipy>`_, version 1.3.0 or newer.
+
+**Subspacing based on N-d construct cells (N > 1) containing a given value**
+
+* `matplotlib <https://pypi.org/project/matplotlib>`_, version 3.0.0
+  or newer.
+
+**Parallel processing**
+
+* `mpi4py <https://pypi.org/project/mpi4py>`_
 
 ----
 

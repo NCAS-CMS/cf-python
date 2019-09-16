@@ -9,14 +9,12 @@
     <title>cf.FieldAncillary.__getitem__ &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.FieldAncillary.del_data" href="cf.FieldAncillary.del_data.html" />
@@ -32,7 +30,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.0b9</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.0b10</a></b></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_conventions.html"><strong>CF conventions</strong></a></li>
@@ -82,15 +80,13 @@
       </div>
       <div class="documentwrapper">
         <div class="bodywrapper">
-          
-
           <div class="body" role="main">
             
   <div class="section" id="cf-fieldancillary-getitem">
 <h1>cf.FieldAncillary.__getitem__<a class="headerlink" href="#cf-fieldancillary-getitem" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.FieldAncillary.__getitem__">
-<code class="descclassname">FieldAncillary.</code><code class="descname">__getitem__</code><span class="sig-paren">(</span><em>indices</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b9/cf/../../cfdm/cfdm/mixin/propertiesdata.py#L14"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.FieldAncillary.__getitem__" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">FieldAncillary.</code><code class="descname">__getitem__</code><span class="sig-paren">(</span><em>indices</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b10/cf/../../cfdm/cfdm/mixin/propertiesdata.py#L14"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.FieldAncillary.__getitem__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a subspace defined by indices</p>
 <p>f.__getitem__(indices) &lt;==&gt; f[indices]</p>
 <p>Indexing follows rules that are very similar to the numpy indexing
@@ -115,7 +111,7 @@ behaviour as indexing on a Variable object of the netCDF4 package.</li>
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span>
 <span class="go">(1, 10, 9)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span>
 <span class="go">(1, 10, 1)</span>
@@ -135,7 +131,6 @@ behaviour as indexing on a Variable object of the netCDF4 package.</li>
 
 
           </div>
-          
         </div>
       </div>
     <div class="clearer"></div>
@@ -144,8 +139,8 @@ behaviour as indexing on a Variable object of the netCDF4 package.</li>
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/method/cf.FieldAncillary.__getitem__.rst.txt"

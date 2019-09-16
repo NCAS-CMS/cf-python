@@ -9,14 +9,12 @@
     <title>cf.Field.construct_key &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.Field.del_construct" href="cf.Field.del_construct.html" />
@@ -32,7 +30,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.0b9</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.0b10</a></b></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_conventions.html"><strong>CF conventions</strong></a></li>
@@ -82,15 +80,13 @@
       </div>
       <div class="documentwrapper">
         <div class="bodywrapper">
-          
-
           <div class="body" role="main">
             
   <div class="section" id="cf-field-construct-key">
 <h1>cf.Field.construct_key<a class="headerlink" href="#cf-field-construct-key" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.construct_key">
-<code class="descclassname">Field.</code><code class="descname">construct_key</code><span class="sig-paren">(</span><em>identity</em>, <em>default=ValueError()</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b9/cf/../../cfdm/cfdm/mixin/constructaccess.py#L400"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.construct_key" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">construct_key</code><span class="sig-paren">(</span><em>identity</em>, <em>default=ValueError()</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b10/cf/../../cfdm/cfdm/mixin/constructaccess.py#L400"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.construct_key" title="Permalink to this definition">¶</a></dt>
 <dd><p>Select the key of a metadata construct by its identity.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.0.</span></p>
@@ -118,7 +114,7 @@ any of them match any of those provided. A construct’s
 identities are those returned by its <code class="xref py py-obj docutils literal notranslate"><span class="pre">identities</span></code> method. In
 the following example, the construct <code class="docutils literal notranslate"><span class="pre">c</span></code> has four
 identities:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">identities</span><span class="p">()</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">identities</span><span class="p">()</span>
 <span class="go">[&#39;time&#39;, &#39;long_name=Time&#39;, &#39;foo=bar&#39;, &#39;ncvar%T&#39;]</span>
 </pre></div>
 </div>
@@ -147,7 +143,7 @@ will be raised instead.</p>
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">constructs</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">constructs</span><span class="p">)</span>
 <span class="go">Constructs:</span>
 <span class="go">{&#39;cellmethod0&#39;: &lt;CellMethod: area: mean&gt;,</span>
 <span class="go"> &#39;dimensioncoordinate0&#39;: &lt;DimensionCoordinate: latitude(5) degrees_north&gt;,</span>
@@ -159,18 +155,18 @@ will be raised instead.</p>
 </pre></div>
 </div>
 <p>Select the construct that has the “standard_name” property of ‘latitude’:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">construct_key</span><span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">construct_key</span><span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">)</span>
 <span class="go"> &#39;dimensioncoordinate0&#39;</span>
 </pre></div>
 </div>
 <p>Select the cell method construct that has a “method” of ‘mean’:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">construct_key</span><span class="p">(</span><span class="s1">&#39;method:mean&#39;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">construct_key</span><span class="p">(</span><span class="s1">&#39;method:mean&#39;</span><span class="p">)</span>
 <span class="go">&#39;cellmethod0&#39;</span>
 </pre></div>
 </div>
 <p>Attempt to select the construct whose “standard_name” start with the
 letter ‘l’:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">re</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">re</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">construct_key</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;^l&#39;</span><span class="p">))</span>
 <span class="go">ValueError: Can&#39;t return the key of 2 constructs</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">construct_key</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;^l&#39;</span><span class="p">),</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;no construct&#39;</span><span class="p">)</span>
@@ -183,7 +179,6 @@ letter ‘l’:</p>
 
 
           </div>
-          
         </div>
       </div>
     <div class="clearer"></div>
@@ -192,8 +187,8 @@ letter ‘l’:</p>
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/method/cf.Field.construct_key.rst.txt"

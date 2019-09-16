@@ -36,9 +36,56 @@ class DimensionCoordinateTest(unittest.TestCase):
 
            
     def test_DimensionCoordinate_convert_reference_time(self):
-        self.assertTrue(False)
+        d = cf.DimensionCoordinate()
+        d.set_data(cf.Data([1, 2, 3], 'months since 2004-1-1', calendar='gregorian'))
+        self.assertTrue((d.array == [1., 2, 3]).all())
 
-           
+        e = d.copy()
+        self.assertTrue(e.convert_reference_time(calendar_months=True, inplace=True) is None)
+                                
+        f = d.convert_reference_time(calendar_months=True)
+
+        for x in (e, f):
+            self.assertTrue((x.array == [31., 60., 91.]).all())
+            self.assertTrue((x.datetime_array == [cf.dt('2004-02-01 00:00:00', calendar='gregorian'),
+                                                  cf.dt('2004-03-01 00:00:00', calendar='gregorian'),
+                                                  cf.dt('2004-04-01 00:00:00', calendar='gregorian')]).all())
+
+        self.assertTrue((d.array == [1., 2, 3]).all())
+
+        
+        d = cf.DimensionCoordinate()
+        d.set_data(cf.Data([1, 2, 3], 'months since 2004-1-1', calendar='360_day'))
+        e = d.copy()
+        self.assertTrue(e.convert_reference_time(calendar_months=True, inplace=True) is None)
+                                
+        f = d.convert_reference_time(calendar_months=True)
+
+        for x in (e, f):
+            self.assertTrue((x.array == [30., 60., 90.]).all())
+            self.assertTrue((x.datetime_array == [cf.dt('2004-02-01 00:00:00', calendar='360_day'),
+                                                  cf.dt('2004-03-01 00:00:00', calendar='360_day'),
+                                                  cf.dt('2004-04-01 00:00:00', calendar='360_day')]).all())
+
+        self.assertTrue((d.array == [1., 2, 3]).all())
+
+                      
+        d = cf.DimensionCoordinate()
+        d.set_data(cf.Data([1, 2, 3], 'months since 2004-1-1', calendar='noleap'))
+        e = d.copy()
+        self.assertTrue(e.convert_reference_time(calendar_months=True, inplace=True) is None)
+                                
+        f = d.convert_reference_time(calendar_months=True)
+
+        for x in (e, f):
+            self.assertTrue((x.array == [31., 59., 90.]).all())
+            self.assertTrue((x.datetime_array == [cf.dt('2004-02-01 00:00:00', calendar='noleap'),
+                                                  cf.dt('2004-03-01 00:00:00', calendar='noleap'),
+                                                  cf.dt('2004-04-01 00:00:00', calendar='noleap')]).all())
+
+        self.assertTrue((d.array == [1., 2, 3]).all())
+
+                        
     def test_DimensionCoordinate_roll(self):
         f = cf.read(self.filename)[0]
         x = f.dimension_coordinates('X').value()

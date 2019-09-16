@@ -18,6 +18,9 @@ class Properties:
 
     _special_properties = ()
 
+    # ----------------------------------------------------------------
+    # Private attributes
+    # ----------------------------------------------------------------
     @property
     def _ATOL(self):
         '''TODO
@@ -698,8 +701,9 @@ class Properties:
                                       "Use 'match_by_*' methods instead.") # pragma: no cover
 
         if identities and isinstance(identities[0], (list, tuple, set)):
-            _DEPRECATION_ERROR("Use of a {!r} for identities has been deprecated. Use the * operator to unpack the arguments instead.".format(
-                identities[0].__class__.__name__)) # pragma: no cover
+            _DEPRECATION_ERROR(
+                "Use of a {!r} for identities has been deprecated. Use the * operator to unpack the arguments instead.".format(
+                    identities[0].__class__.__name__)) # pragma: no cover
             
         for i in identities:
            if isinstance(i, dict):

@@ -8244,8 +8244,6 @@ False
                 bounds = [item.bounds.array[ind] for item in constructs
                           if item.has_bounds()]
 
-#                print ( 'bounds=', bounds)
-                
                 contains = False
                 if bounds:
                     points2 = []
@@ -8266,7 +8264,6 @@ False
                             v.Units = construct.Units
                         
                         points2.append(v.datum())
-                    #--- End: for
                 #--- End: if
 
                 if contains:
@@ -8278,7 +8275,8 @@ False
                         Path
                     except NameError:
                         raise ImportError(
-                            "Must install matplotlib to create indices based on a 'contains' Query object")
+                            "Must install matplotlib to create indices based on a {}-d construct and a 'contains' Query object".format(
+                                constructs[0].ndim))
                     
                     if n_items != 2:
                         raise IndexError(
