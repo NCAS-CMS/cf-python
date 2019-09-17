@@ -35,29 +35,25 @@ The netCDF variable name of the construct may be accessed with the
     def __repr__(self):
         '''Called by the `repr` built-in function.
 
-x.__repr__() <==> repr(x)
-
+        x.__repr__() <==> repr(x)
+        
         '''
         return super().__repr__().replace('<', '<CF ', 1)
-    #--- End: def
 
 
     @property
     def isfieldancillary(self):
         '''True, denoting that the variable is a field ancillary object.
 
-.. versionadded:: 2.0
-
-.. seealso:: `isauxiliary`, `isdimension`, `isdomainancillary`,
-             `ismeasure`
-
-:Examples:
-
->>> f.isfieldancillary
-True
+    .. versionadded:: 2.0
+    
+    **Examples:**
+    
+    >>> f.isfieldancillary
+    True
 
         '''
         return True
-    #--- End: def
+
 
 #--- End: class

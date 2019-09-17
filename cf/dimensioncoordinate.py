@@ -2,11 +2,10 @@ from numpy import empty       as numpy_empty
 from numpy import result_type as numpy_result_type
 
 import cfdm
-#from cfunits import Units
 
 from . import Bounds
 
-from .functions        import parse_indices, _DEPRECATION_ERROR_KWARGS
+from .functions        import parse_indices
 from .timeduration     import TimeDuration
 from .units            import Units
 
@@ -14,6 +13,12 @@ from .data.data import Data
 
 from . import mixin
 from . import abstract
+
+from .functions import (_DEPRECATION_ERROR_KWARGS,
+                        _DEPRECATION_ERROR_ATTRIBUTE,
+                        _DEPRECATION_ERROR_METHOD,
+                        )
+
 
 class DimensionCoordinate(abstract.Coordinate,
                           mixin.PropertiesDataBounds,                          
@@ -35,7 +40,7 @@ constructs.
 The dimension coordinate construct consists of a data array of the
 coordinate values which spans a subset of the domain axis constructs,
 an optional array of cell bounds recording the extents of each cell
-(stored in a `Bounds` object), and properties to describe the
+(stored in a `cf.Bounds` object), and properties to describe the
 coordinates. An array of cell bounds spans the same domain axes as its
 coordinate array, with the addition of an extra dimension whose size
 is that of the number of vertices of each cell. This extra dimension
@@ -864,17 +869,17 @@ None
     #--- End: def
 
     # ----------------------------------------------------------------
-    # Deprecated methods
+    # Deprecated attributes and methods
     # ----------------------------------------------------------------
     @property
     def role(self):
         '''Deprecated at version 3.0.0. Use attribute 'construct_type'
-instead.
+    instead.
 
         '''
-        _DEPRECATION_ERROR_METHOD(self, 'role',
-                                  "Use attribute 'construct_type' instead") # pragma: no cover
-    #--- End: def
+        _DEPRECATION_ERROR_ATTRIBUTE(
+            self, 'role',
+            "Use attribute 'construct_type' instead") # pragma: no cover
 
 #--- End: class
 

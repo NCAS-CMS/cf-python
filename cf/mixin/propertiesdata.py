@@ -3027,13 +3027,13 @@ TODO
     True
     >>> f.match_by_units('km', exact=False)
     True
-    >>> f.match_by_units(Units('km'), exact=False)
+    >>> f.match_by_units(cf.Units('km'), exact=False)
     True
     >>> f.match_by_units(re.compile('^met'))
     True
-    >>> f.match_by_units(Units('km'))
+    >>> f.match_by_units(cf.Units('km'))
     False
-    >>> f.match_by_units(Units('kg m-2'))
+    >>> f.match_by_units(cf.Units('kg m-2'))
     False
 
         '''

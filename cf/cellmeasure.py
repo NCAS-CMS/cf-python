@@ -36,33 +36,32 @@ The netCDF variable name of the construct may be accessed with the
     def __repr__(self):
         '''Called by the `repr` built-in function.
 
-x.__repr__() <==> repr(x)
+        x.__repr__() <==> repr(x)
 
         '''
         return super().__repr__().replace('<', '<CF ', 1)
-    #--- End: def
+
 
     @property
     def ismeasure(self): 
         '''Always True.
 
-.. seealso:: `isauxiliary`, `isdimension`
+    .. seealso:: `isauxiliary`, `isdimension`
 
-:Examples: 
+    **Examples:**
 
->>> c.ismeasure
-True
-
+    >>> c.ismeasure
+    True
+        
         '''
         return True
-    #--- End: def
+
 
     @property
     def measure(self):
         '''TODO
         '''
         return self.get_measure(default=AttributeError())
-    #--- End: def
     @measure.setter
     def measure(self, value): self.set_measure(value)
     @measure.deleter
@@ -85,6 +84,6 @@ True
 
         return super().identity(default=default, strict=strict,
                                 nc_only=nc_only)
-    #--- End: def
+
 
 #--- End: class

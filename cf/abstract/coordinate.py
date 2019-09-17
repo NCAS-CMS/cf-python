@@ -1,6 +1,3 @@
-#from . import PropertiesDataBounds
-
-
 from .. import mixin
 
 from ..data.data import Data
@@ -15,33 +12,31 @@ class Coordinate(mixin.PropertiesDataBounds):
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
-    # 0
     @property
     def ctype(self):
         '''The CF coordinate type.
 
-One of ``'T'``, ``'X'``, ``'Y'`` or ``'Z'`` if the coordinate object
-is for the respective CF axis type, otherwise None.
-
-.. seealso:: `T`, `X`, `~cf.Coordinate.Y`, `Z`
-
-**Examples:**
-
->>> c.X
-True
->>> c.ctype
-'X'
-
->>> c.T
-True
->>> c.ctype
-'T'
+    One of ``'T'``, ``'X'``, ``'Y'`` or ``'Z'`` if the coordinate
+    construct is for the respective CF axis type, otherwise `None`.
+    
+    .. seealso:: `T`, `X`, `~cf.Coordinate.Y`, `Z`
+    
+    **Examples:**
+    
+    >>> c.X
+    True
+    >>> c.ctype
+    'X'
+    
+    >>> c.T
+    True
+    >>> c.ctype
+    'T'
 
         '''
         for t in ('T', 'X', 'Y', 'Z'):
             if getattr(self, t):
                 return t
-    #--- End: def
 
     
     @property
@@ -253,43 +248,40 @@ horizontal coordinates).
     def positive(self):
         '''The positive CF property.
 
-The direction of positive (i.e., the direction in which the coordinate
-values are increasing), whether up or down, cannot in all cases be
-inferred from the `units`. The direction of positive is useful for
-applications displaying the data. The `positive` attribute may have
-the value `'up'` or `'down'` (case insensitive).
-
-For example, if ocean depth coordinates encode the depth of the
-surface as `0` and the depth of 1000 meters as `1000` then the
-`postive` property will have the value `'down'`.
-      
-**Examples:**
-
->>> c.positive = 'up'
->>> c.positive
-'up'
->>> del c.positive
-
->>> c.set_property('positive', 'down')
->>> c.get_property('positive')
-'down' 
->>> c.del_property('positive')
+    The direction of positive (i.e., the direction in which the
+    coordinate values are increasing), whether up or down, cannot in
+    all cases be inferred from the `units`. The direction of positive
+    is useful for applications displaying the data. The `positive`
+    attribute may have the value ``'up'`` or ``'down'`` (case
+    insensitive).
+    
+    For example, if ocean depth coordinates encode the depth of the
+    surface as 0 and the depth of 1000 meters as 1000 then the
+    `postive` property will have the value `'down'`.
+          
+    **Examples:**
+    
+    >>> c.positive = 'up'
+    >>> c.positive
+    'up'
+    >>> del c.positive
+    
+    >>> c.set_property('positive', 'down')
+    >>> c.get_property('positive')
+    'down' 
+    >>> c.del_property('positive')
 
         '''
         return self.get_property('positive', default=AttributeError())
-    #--- End: def
-
     @positive.setter
     def positive(self, value):
         self.set_property('positive', value)  
         self._direction = None
-   #--- End: def
- 
     @positive.deleter
     def positive(self):
         self.del_property('positive')       
         self._direction = None
-   #--- End: def
+
 
     # ----------------------------------------------------------------
     # Methods

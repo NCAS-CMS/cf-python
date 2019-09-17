@@ -19,9 +19,9 @@ Attributes
    :template: attribute.rst
    
    ~cf.Query.attr
-   ~cf.Query.isquery
    ~cf.Query.operator
    ~cf.Query.value
+   ~cf.Query.isquery
    
 Methods
 -------

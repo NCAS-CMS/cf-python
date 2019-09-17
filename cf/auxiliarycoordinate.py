@@ -25,7 +25,7 @@ coordinate constructs.
 The auxiliary coordinate construct consists of a data array of the
 coordinate values which spans a subset of the domain axis constructs,
 an optional array of cell bounds recording the extents of each cell
-(stored in a `Bounds` object), and properties to describe the
+(stored in a `cf.Bounds` object), and properties to describe the
 coordinates. An array of cell bounds spans the same domain axes as its
 coordinate array, with the addition of an extra dimension whose size
 is that of the number of vertices of each cell. This extra dimension

@@ -14,9 +14,9 @@ of a coordinate reference construct. It contains a data array which
 depends on zero or more of the domain axes.
 
 It also contains an optional array of cell bounds, stored in a
-`Bounds` object, recording the extents of each cell (only applicable
-if the array contains coordinate data), and properties to describe the
-data.
+`cf.Bounds` object, recording the extents of each cell (only
+applicable if the array contains coordinate data), and properties to
+describe the data.
 
 An array of cell bounds spans the same domain axes as the data array,
 with the addition of an extra dimension whose size is that of the
@@ -32,29 +32,25 @@ The netCDF variable name of the construct may be accessed with the
     def __repr__(self):
         '''Called by the `repr` built-in function.
 
-x.__repr__() <==> repr(x)
+    x.__repr__() <==> repr(x)
 
         '''
         return super().__repr__().replace('<', '<CF ', 1)
-    #--- End: def
 
-    # 0
+
     @property
     def isdomainancillary(self):
         '''True, denoting that the variable is a domain ancillary object.
 
-.. versionadded:: 2.0
+    .. versionadded:: 2.0
 
-.. seealso:: `isauxiliary`, `isdimension`, `isfieldancillary`,
-             `ismeasure`
-
-:Examples:
-
->>> f.isdomainancillary
-True
+    **Examples:**
+    
+    >>> f.isdomainancillary
+    True
 
         '''
         return True
-    #--- End: def
 
+    
 #--- End: class

@@ -39,22 +39,10 @@ _year_units  = ('year', 'years', 'yr')
 
 
 class PropertiesDataBounds(PropertiesData):
+    '''Mixin class for a data array with descriptive properties and cell
+bounds.
+
     '''
-
-Base class for storing a data array with metadata.
-
-A variable contains a data array and metadata comprising properties to
-describe the physical nature of the data.
-
-All components of a variable are optional.
-
-'''
-
-#    __metaclass__ = RewriteDocstringMeta
-
-#    # Do not ever change this:
-#    _list = False
-
     # Define the reserved attributes. These are methods which can't be
     # overwritten, as well as a few attributes.
     _reserved_attrs = ('_reserved_attrs',
@@ -77,7 +65,9 @@ All components of a variable are optional.
                        )
 
     def __getitem__(self, indices):
-        '''x.__getitem__(indices) <==> x[indices]
+        '''Return a subspace of the field construct defined by indices.
+
+        x.__getitem__(indices) <==> x[indices]
 
         '''
         if indices is Ellipsis:
@@ -121,10 +111,10 @@ All components of a variable are optional.
 
         if _debug:
             cname = self.__class__.__name__
-            print('{}.__getitem__: shape    = {}'.format(cname, self.shape))
-            print('{}.__getitem__: indices2 = {}'.format(cname, indices2))
-            print('{}.__getitem__: indices  = {}'.format(cname, indices))
-            print('{}.__getitem__: findices = {}'.format(cname, findices))
+            print('{}.__getitem__: shape    = {}'.format(cname, self.shape)) # Pragma: no cover
+            print('{}.__getitem__: indices2 = {}'.format(cname, indices2)) # Pragma: no cover
+            print('{}.__getitem__: indices  = {}'.format(cname, indices)) # Pragma: no cover
+            print('{}.__getitem__: findices = {}'.format(cname, findices)) # Pragma: no cover
 
         new.set_data(data[findices], copy=False)
 
@@ -135,7 +125,6 @@ All components of a variable are optional.
             if bounds_data is not None:
                 findices = list(findices)
                 if data.ndim <= 1:
-#                    indices = list(indices)
                     index = indices[0]
                     if isinstance(index, slice):
                         if index.step < 0:
@@ -154,7 +143,8 @@ All components of a variable are optional.
                     findices[1] = [mask.insert_dimension(-1) for mask in findices[1]]
 
                 if _debug:
-                    print('{}.__getitem__: findices for bounds ='.format(self.__class__.__name__, findices))
+                    print('{}.__getitem__: findices for bounds ='.format(
+                        self.__class__.__name__, findices)) # pragma: no cover
 
                 new.bounds.set_data(bounds_data[tuple(findices)], copy=False)
         #--- End: if
@@ -164,7 +154,7 @@ All components of a variable are optional.
 
         # Return the new bounded variable
         return new
-    #--- End: def
+
 
     def __eq__(self, y):
         '''
@@ -816,24 +806,26 @@ x``.
         return v
     #--- End: def
 
-    # 1
+    # ----------------------------------------------------------------
+    # Methods
+    # ----------------------------------------------------------------
     def chunk(self, chunksize=None):
         '''Partition the data array.
 
-:Parameters:
-
-    chunksize: `int`, optional
-        Set the new chunksize, in bytes.
-
-:Returns:
-
-    `None`
-
-**Examples:**
-
->>> c.chunksize()
-
->>> c.chunksize(1e8)
+    :Parameters:
+    
+        chunksize: `int`, optional
+            Set the new chunksize, in bytes.
+    
+    :Returns:
+    
+        `None`
+    
+    **Examples:**
+    
+    >>> c.chunksize()
+    
+    >>> c.chunksize(1e8)
 
         '''
         super().chunk(chunksize)
@@ -842,53 +834,52 @@ x``.
         bounds = self.get_bounds(None)
         if bounds is not None:
             bounds.chunk(chunksize)
-    #--- End: def
 
-    # 1
+            
     def clip(self, a_min, a_max, units=None, bounds=True,
              inplace=False, i=False):
         '''Limit the values in the data.
 
-Given an interval, values outside the interval are clipped to the
-interval edges. For example, if an interval of ``[0, 1]`` is
-specified, values smaller than 0 become 0, and values larger than 1
-become 1.
-
-:Parameters:
- 
-    a_min:
-        Minimum value. If `None`, clipping is not performed on lower
-        interval edge. Not more than one of `a_min` and `a_max` may be
-        `None`.
-
-    a_max:
-        Maximum value. If `None`, clipping is not performed on upper
-        interval edge. Not more than one of `a_min` and `a_max` may be
-        `None`.
-
-    units: `str` or `Units`
-        Specify the units of *a_min* and *a_max*. By default the same
-        units as the data are assumed.
-
-    bounds: `bool`, optional
-        If False then do not alter any bounds. By default any bounds
-        are also altered.
-
-    inplace: `bool`, optional
-        If True then do the operation in-place and return `None`.
-
-    i: deprecated at version 3.0.0
-        Use *inplace* parameter instead.
-
-:Returns: 
-
-        The construct with clipped data. If the operation was
-        in-place then `None` is returned.
-
-**Examples:**
-
->>> g = f.clip(-90, 90)
->>> g = f.clip(-90, 90, 'degrees_north')
+    Given an interval, values outside the interval are clipped to the
+    interval edges. For example, if an interval of ``[0, 1]`` is
+    specified, values smaller than 0 become 0, and values larger than
+    1 become 1.
+    
+    :Parameters:
+     
+        a_min:
+            Minimum value. If `None`, clipping is not performed on
+            lower interval edge. Not more than one of `a_min` and
+            `a_max` may be `None`.
+    
+        a_max:
+            Maximum value. If `None`, clipping is not performed on
+            upper interval edge. Not more than one of `a_min` and
+            `a_max` may be `None`.
+    
+        units: `str` or `Units`
+            Specify the units of *a_min* and *a_max*. By default the
+            same units as the data are assumed.
+    
+        bounds: `bool`, optional
+            If `False` then do not alter any bounds. By default any bounds
+            are also altered.
+    
+        inplace: `bool`, optional
+            If `True` then do the operation in-place and return `None`.
+    
+        i: deprecated at version 3.0.0
+            Use *inplace* parameter instead.
+    
+    :Returns: 
+    
+            The construct with clipped data. If the operation was
+            in-place then `None` is returned.
+    
+    **Examples:**
+    
+    >>> g = f.clip(-90, 90)
+    >>> g = f.clip(-90, 90, 'degrees_north')
 
         '''
         if i:
@@ -907,8 +898,8 @@ become 1.
         if inplace:
             v = None
         return v
-    #--- End: def
 
+    
     # 0
     def close(self):
         '''Close all files referenced by the construct.
@@ -1394,24 +1385,24 @@ The floor of ``x`` is the largest integer ``n``, such that ``n <= x``.
         return v
     #--- End: def
 
-    def direction(self):
-        '''Return None, indicating that it is not specified whether the
-values are increasing or decreasing.
-
-.. versionadded:: 2.0 
-
-:Returns:
-
-    None
-        
-**Examples:**
-
->>> print c.direction()
-None
-
-        ''' 
-        return
-    #--- End: def
+#    def direction(self):
+#        '''Return None, indicating that it is not specified whether the
+#values are increasing or decreasing.
+#
+#.. versionadded:: 2.0 
+#
+#:Returns:
+#
+#    None
+#        
+#**Examples:**
+#
+#>>> print c.direction()
+#None
+#
+#        ''' 
+#        return
+#    #--- End: def
     
     def _matching_values(self, value0, value1, units=False):
         '''
@@ -1520,41 +1511,7 @@ properties.
         return ok
     #--- End: def
 
-    def match_by_Units(self, *units):
-        '''Determine whether or not a variable satisfies conditions.
 
-Conditions may be specified on the variable's attributes and CF
-properties.
-
-:Parameters:
-
-:Returns:
-
-    out: `bool`
-        Whether or not the variable matches the given criteria.
-
-**Examples:**
-
-        '''
-        # Return all constructs if no identities have been provided
-        if not units:
-            return True
-
-        units = self.Units
-        
-        ok = False
-        for value0 in units:
-            ok = Units(value0).equivalent(value1)
-            if ok:
-                break
-        #--- End: for
-
-        return ok
-    #--- End: def
-
-    # ----------------------------------------------------------------
-    # Methods
-    # ----------------------------------------------------------------
     # 0
     def files(self):
         '''Return the names of any files containing parts of the data array.

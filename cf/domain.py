@@ -2,6 +2,7 @@ import cfdm
 
 from . import mixin
 
+
 class Domain(cfdm.Domain):
     '''A domain of the CF data model.
 
@@ -17,3 +18,4 @@ constructs.
 
     '''
     pass
+#--- End: class

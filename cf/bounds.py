@@ -29,21 +29,20 @@ The netCDF variable name of the bounds may be accessed with the
 `nc_has_variable` methods.
 
 '''
-    # 0
     def contiguous(self, overlap=True, direction=None):
         '''Return True if the bounds are contiguous.
 
-Bounds are contiguous if the cell boundaries match up, or
-overlap, with the boundaries of adjacent cells.
-
-In general, it is only possible for 1 or 0 variable dimensional
-variables with bounds to be contiguous, but size 1 variables with any
-number of dimensions are always contiguous.
-
-An exception is raised if the variable is multdimensional and has more
-than one element.
-
-.. versionadded:: 2.0
+    Bounds are contiguous if the cell boundaries match up, or overlap,
+    with the boundaries of adjacent cells.
+    
+    In general, it is only possible for 1 or 0 variable dimensional
+    variables with bounds to be contiguous, but size 1 variables with
+    any number of dimensions are always contiguous.
+    
+    An exception is raised if the variable is multdimensional and has
+    more than one element.
+    
+    .. versionadded:: 2.0
 
         '''
         data = self.get_data(None)
@@ -90,6 +89,6 @@ than one element.
                 return (data[1:, 0] <= data[:-1, 1]).all()
             else:
                 return (data[1:, 0] >= data[:-1, 1]).all()
-    #--- End: def
+
 
 #--- End: class

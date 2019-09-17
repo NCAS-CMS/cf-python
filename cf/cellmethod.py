@@ -3,15 +3,18 @@ from re import search as re_search
 from ast import literal_eval as ast_literal_eval
 import re
 
+from numpy import argsort as numpy_argsort
+
 import cfdm
 
 from .functions import equals
-from .functions import _DEPRECATION_ERROR_KWARGS, _DEPRECATION_ERROR_METHOD
 from .functions import inspect as cf_inspect
 
 from .data.data import Data
 
-from numpy import argsort as numpy_argsort
+from .functions import (_DEPRECATION_ERROR_KWARGS,
+                        _DEPRECATION_ERROR_METHOD)
+
 
 _collapse_cell_methods = {
     'max'            : 'maximum',
@@ -48,32 +51,28 @@ or the fact that the method was applied only over El Nino years).
     def __repr__(self):
         '''Called by the `repr` built-in function.
 
-x.__repr__() <==> repr(x)
+    x.__repr__() <==> repr(x)
 
         '''
         return super().__repr__().replace('<', '<CF ', 1)
-    #--- End: def
+
     
     @classmethod
     def create(cls, cell_methods_string=None):
-        '''Parse a CF-like cell_methods string.
-
-:Examples 1:
-
->>> cell_methods = c.parse_cell_methods('time: mean')
-
-:Parameters:
-
-    cell_methods_string: `str`
-        A CF cell_methods string.
-
-:Returns:
-
-    `list`
-
-:Examples 2:
-
->>> x = c._parse_cell_methods('t: minimum within years t: mean over ENSO years)')
+        '''Parse a CF-like cell_methods string.   
+    
+    :Parameters:
+    
+        cell_methods_string: `str`
+            A CF cell_methods string.
+    
+    :Returns:
+    
+        `list`
+    
+    **Examples:**
+    
+    TODO
 
         '''
         incorrect_interval = 'Cell method interval is incorrectly formatted'
@@ -196,184 +195,52 @@ x.__repr__() <==> repr(x)
         #--- End: while
 
         return out
-    #--- End: def
-#    def __init__(self, *cell_method):
-#        '''
-#'''
-#        if cell_method:
-#            cell_method = CellMethods(*cell_method)
-#            if len(cell_method) > 1:
-#                raise ValueError(" e5y 6sdf ")
-#
-#            cell_method = cell_method[0]
-#            self.__dict__ = cell_method[0].__dict__.copy()
-#        else:
-#            self._axes      = ()
-#            self._intervals = ()
-#            self._method    = None
-#            self._comment   = None
-#            self._where     = None
-#            self._within    = None
-#            self._over      = None
-#    #--- End: def
-#
-#    def __deepcopy__(self, memo):
-#        '''
-#
-#Used if copy.deepcopy is called on the variable.
-#
-#'''
-#        return self.copy()
-#    #--- End: def
 
-#    def __getitem__(self, index):
-#        '''Called to implement evaluation of c[index].
-#
-#c.__getitem__(index) <==> c[index]
-#
-#The cell method is treated as if it were a single element cell methods
-#list containing itself, i.e. ``c[index]`` is equivalent to
-#``cf.CellMethods(c)[index]``.
-#
-#:Examples 1:
-#
-#>>> d = c[0]
-#>>> d = c[:1]
-#>>> d = c[1:]
-#
-#:Returns:
-#
-#    out : cf.CellMethod or cf.CellMethods
-#        If *index* is the integer 0 or -1 then the cell method itself
-#        is returned. If *index* is a slice then a cell methods list is
-#        returned which is either empty or else contains a single
-#        element of the cell method itself.
-#          
-#.. seealso:: `cf.CellMethods.__getitem__`
-#
-#:Examples 2:
-#
-#>>> c[0] is c[-1] is c
-#True
-#>>> c[0:1].equals(cf.FieldList(f))   
-#True
-#>>> c[0:1][0] is c
-#True
-#>>> c[1:].equals(cf.CellMethods())
-#True
-#>>> c[1:]       
-#[]
-#>>> c[-1::3][0] is c
-#True
-#
-#        '''
-#        return CellMethods((self,))[index]
-#    #--- End: def
 
     def __hash__(self):
         '''
 
-x.__hash__() <==> hash(x)
+    x.__hash__() <==> hash(x)
 
-'''
+        '''
         return hash(str(self))
-    #--- End: def
 
-#    def __repr__(self):
-#        '''
-#
-#x.__repr__() <==> repr(x)
-#
-#'''
-#        return '<CF CellMethod: {0}>'.format(str(self))
-#    #--- End: def
-#
-#    def __str__(self):
-#        '''
-#
-#x.__str__() <==> str(x)
-#
-#Return a CF-netCDF-like string of the cell method.
-#
-#Note that if the intention use this string in a CF-netCDF cell_methods
-#attribute then the cell method's `!name` attribute may need to be
-#modified, where appropriate, to reflect netCDF variable names.
-#
-#'''
-#        return self.dump(display=False, prefix='')
-#        string = ['{0}:'.format(axis) for axis in self._axes]
-#
-#        method = self.method
-#        if method is None:
-#            method = ''
-#
-#        string.append(method)
-#
-#        for portion in ('within', 'where', 'over'):
-#            p = getattr(self, portion, None)
-#            if p is not None:
-#                string.extend((portion, p))
-#        #--- End: for
-#
-#        intervals = self.intervals
-#        if intervals:
-#            x = ['(']
-#
-#            y = ['interval: {0}'.format(data) for data in intervals]
-#            x.append(' '.join(y))
-#
-#            if self.comment is not None:
-#                x.append(' comment: {0}'.format(self.comment))
-#
-#            x.append(')')
-#
-#            string.append(''.join(x))
-#
-#        elif self.comment is not None:
-#            string.append('({0})'.format(self.comment))
-#
-#        return ' '.join(string)
-#    #--- End: def
 
     def __eq__(self, y):
+        '''x.__eq__(y) <==> x==y
+
         '''
-
-x.__eq__(y) <==> x==y
-
-'''
         return self.equals(y)
-    #--- End: def
+
 
     def __ne__(self, other):
+        '''x.__ne__(y) <==> x!=y
+
         '''
-
-x.__ne__(y) <==> x!=y
-
-'''
         return not self.__eq__(other)
-    #--- End: def
+
 
     @property
     def within(self):
         '''The cell method's within keyword.
-
-These describe how climatological statistics have been derived.
-
-.. seealso:: `over`
-
-:Examples:
-
->>> c
->>> c
-<CF CellMethod: time: minimum>
->>> print c.within
-None
->>> c.within = 'years'
->>> c
-<CF CellMethod: time: minimum within years>
->>> del c.within
->>> c
-<CF CellMethod: time: minimum>
+    
+    These describe how climatological statistics have been derived.
+    
+    .. seealso:: `over`
+    
+    **Examples:**
+    
+    >>> c
+    >>> c
+    <CF CellMethod: time: minimum>
+    >>> print c.within
+    None
+    >>> c.within = 'years'
+    >>> c
+    <CF CellMethod: time: minimum within years>
+    >>> del c.within
+    >>> c
+    <CF CellMethod: time: minimum>
 
         '''
         return self.get_qualifier('within', default=AttributeError())
@@ -386,23 +253,23 @@ None
     def where(self):
         '''The cell method's where keyword.
 
-These describe how climatological statistics have been derived.
-
-.. seealso:: `over`
-
-:Examples:
-
->>> c
->>> c
-<CF CellMethod: time: minimum>
->>> print c.where
-None
->>> c.where = 'land'
->>> c
-<CF CellMethod: time: minimum where years>
->>> del c.where
->>> c
-<CF CellMethod: time: minimum>
+    These describe how climatological statistics have been derived.
+    
+    .. seealso:: `over`
+    
+    **Examples:**
+    
+    >>> c
+    >>> c
+    <CF CellMethod: time: minimum>
+    >>> print c.where
+    None
+    >>> c.where = 'land'
+    >>> c
+    <CF CellMethod: time: minimum where years>
+    >>> del c.where
+    >>> c
+    <CF CellMethod: time: minimum>
 
         '''
         return self.get_qualifier('where', default=AttributeError())

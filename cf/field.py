@@ -257,10 +257,10 @@ The netCDF variable name of the construct may be accessed with the
 
 
     def __getitem__(self, indices):
-        '''f.__getitem__(indices) <==> f[indices]
+        '''Return a subspace of the field construct defined by indices.
 
-    Return a subspace of the field defined by index values
-    
+    f.__getitem__(indices) <==> f[indices]
+
     Subspacing by axis indices uses an extended Python slicing syntax,
     which is similar to :ref:`numpy array indexing
     <numpy:arrays.indexing>`. There are extensions to the numpy

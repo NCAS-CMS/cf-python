@@ -201,8 +201,10 @@ Data
 
    ~cf.FieldAncillary.chunk
    ~cf.FieldAncillary.close
+   ~cf.FieldAncillary.convert_reference_time
    ~cf.FieldAncillary.cyclic
    ~cf.FieldAncillary.files
+   ~cf.FieldAncillary.has_bounds
 
 Miscellaneous
 -------------
@@ -214,8 +216,21 @@ Miscellaneous
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.FieldAncillary.concatenate
    ~cf.FieldAncillary.copy
    ~cf.FieldAncillary.equals
+
+.. rubric:: Attributes
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: attirbute.rst
+
+   ~cf.FieldAncillary.T
+   ~cf.FieldAncillary.X
+   ~cf.FieldAncillary.Y
+   ~cf.FieldAncillary.Z
 
 Mathematical operations
 -----------------------
@@ -343,23 +358,8 @@ NetCDF
    ~cf.FieldAncillary.nc_get_variable
    ~cf.FieldAncillary.nc_has_variable
    ~cf.FieldAncillary.nc_set_variable 
-   ~cf.FieldAncillary.reference_datetime
 
-Miscellaneous
--------------
 
-.. rubric:: Methods
-	    
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.FieldAncillary.has_bounds
-   ~cf.FieldAncillary.T
-   ~cf.FieldAncillary.X
-   ~cf.FieldAncillary.Y
-   ~cf.FieldAncillary.Z
 Aliases
 -------
 
