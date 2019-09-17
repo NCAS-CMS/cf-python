@@ -4,6 +4,8 @@
 cf.FieldAncillary
 =================
 
+----
+
 .. autoclass:: cf.FieldAncillary
    :no-members:
    :no-inherited-members:

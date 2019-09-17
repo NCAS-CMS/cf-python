@@ -1385,24 +1385,24 @@ The floor of ``x`` is the largest integer ``n``, such that ``n <= x``.
         return v
     #--- End: def
 
-#    def direction(self):
-#        '''Return None, indicating that it is not specified whether the
-#values are increasing or decreasing.
-#
-#.. versionadded:: 2.0 
-#
-#:Returns:
-#
-#    None
-#        
-#**Examples:**
-#
-#>>> print c.direction()
-#None
-#
-#        ''' 
-#        return
-#    #--- End: def
+    def direction(self):
+        '''Return None, indicating that it is not specified whether the
+values are increasing or decreasing.
+
+.. versionadded:: 2.0 
+
+:Returns:
+
+    None
+        
+**Examples:**
+
+>>> print c.direction()
+None
+
+        ''' 
+        return
+    #--- End: def
     
     def _matching_values(self, value0, value1, units=False):
         '''

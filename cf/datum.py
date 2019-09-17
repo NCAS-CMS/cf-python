@@ -15,7 +15,7 @@ may be required for both horizontal and vertical coordinate systems.
 
 Elements of the datum not specified may be implied by the properties
 of the dimension and auxiliary coordinate constructs referenced by the
-`CoordinateReference` instance that contains the datum.
+`cf.CoordinateReference` instance that contains the datum.
 
 .. versionadded:: 3.0.0
 
