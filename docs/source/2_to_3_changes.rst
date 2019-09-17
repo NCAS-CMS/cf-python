@@ -21,6 +21,22 @@ Python
 Version 3.x only works for Python 3.5 or later. Version 2.x only works
 for python version 2.7.
 
+In-place operations
+-------------------
+
+At version 3.x, in-place operations return `None`, rather than the
+modified construct. The keyword that defines the operation to be
+in-place is now *inplace* (rather than *i*).
+
+.. code:: python
+
+   >>> g = f.tranpose()
+   >>> print(type(g))
+   <class 'cf.field.Field'>
+   >>> x = f.tranpose(inplace=True)
+   >>> print(x)
+   None
+	  
 
 New methods and attributes
 --------------------------

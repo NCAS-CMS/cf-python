@@ -30,6 +30,7 @@ from ..functions import (_DEPRECATION_ERROR_KWARGS,
                          _DEPRECATION_WARNING_METHOD,
                          _DEPRECATION_ERROR_METHOD)
 
+
 _units_None = Units()
 
 _month_units = ('month', 'months')
@@ -43,6 +44,49 @@ class PropertiesData(Properties):
     _special_properties = ('units',
                            'calendar')
 
+#    def __init__(self, properties=None, data=None, source=None,
+#                 copy=True, _use_data=True):
+#        '''**Initialization**
+#
+#    :Parameters:
+#    
+#        properties: `dict`, optional
+#            Set descriptive properties. The dictionary keys are
+#            property names, with corresponding values. Ignored if the
+#            *source* parameter is set.
+#    
+#            *Parameter example:*
+#              ``properties={'standard_name': 'altitude'}``
+#            
+#            Properties may also be set after initialisation with the
+#            `set_properties` and `set_property` methods.
+#    
+#        data: `Data`, optional
+#            Set the data. Ignored if the *source* parameter is set.
+#            
+#            The data also may be set after initialisation with the
+#            `set_data` method.
+#            
+#        source: optional
+#            Initialize the properties and data from those of *source*.
+#    
+#        copy: `bool`, optional
+#
+#            If `False` then do not deep copy input parameters prior to
+#            initialization. By default arguments are deep copied.
+#
+#        '''
+#        if _use_data and data is not None and properties:
+#            if not data.Units:
+#                units = properties.get('units')
+#                if units is not None:
+#                    data = data.override_units(Units(units, properties.get('calendar')))
+#        #--- End: if
+#        
+#        super().__init__(properties=properties, data=data, source=source,
+#                         copy=copy, _use_data=_use_data)
+
+        
     def __array__(self, *dtype):
         '''TODO
 
@@ -80,18 +124,18 @@ class PropertiesData(Properties):
     **Examples:**
 
     >>> f.data
-    <CF Data(12): [12, ..., 56] km)
+    <CF Data(12): [14, ..., 56] km)
     >>> cf.Data(f)
-    <CF Data(12): [12, ..., 56] km)
+    <CF Data(12): [14, ..., 56] km)
     >>> cf.Data.asdata(f)
-    <CF Data(12): [12, ..., 56] km)
+    <CF Data(12): [14, ..., 56] km)
 
         '''
         data =self.get_data(None)
         if data is not None:
             return data
 
-        raise ValueError("{0} has no data".format(self.__class__.__name__))
+        raise ValueError("{} has no data".format(self.__class__.__name__))
 
     
     def __setitem__(self, indices, value):
@@ -4225,6 +4269,63 @@ dtype('float64')
         if inplace:
             v = None
         return v
+
+
+    def set_data(self, data, copy=True):
+        '''Set the data.
+
+    The units, calendar and fill value of the incoming `Data` instance
+    are removed prior to insertion.
+    
+    .. versionadded:: 3.0.0
+    
+    .. seealso:: `data`, `del_data`, `get_data`, `has_data`
+    
+    :Parameters:
+    
+        data: `Data`
+            The data to be inserted.
+    
+        copy: `bool`, optional
+            If `False` then do not copy the data prior to
+            insertion. By default the data are copied.
+    
+    :Returns:
+    
+        `None`
+    
+    **Examples:**
+    
+    >>> d = Data(range(10))
+    >>> f.set_data(d)
+    >>> f.has_data()
+    True
+    >>> f.get_data()
+    <Data(10): [0, ..., 9]>
+    >>> f.del_data()
+    <Data(10): [0, ..., 9]>
+    >>> f.has_data()
+    False
+    >>> print(f.get_data(None))
+    None
+    >>> print(f.del_data(None))
+    None
+
+        '''
+        if not data.Units:
+            units = getattr(self, 'Units', None)
+            if units is not None:
+                if copy:
+                    copy = False
+                    data = data.override_units(units, inplace=False)
+                else:
+                    data.override_units(units, inplace=True)
+        #--- End: if
+
+        if copy:
+            data = data.copy()
+   
+        self._set_component('data', data, copy=False)
 
 
     def where(self, condition, x=None, y=None, inplace=False, i=False,

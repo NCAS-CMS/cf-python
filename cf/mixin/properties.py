@@ -1010,7 +1010,7 @@ class Properties:
             if value is not None:
                 setattr(self, prop, value)
 
-
+                
     def set_property(self, prop, value, copy=True):
         '''Set a property.
 

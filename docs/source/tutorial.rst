@@ -930,12 +930,12 @@ the field construct. For example, the data of the field construct
    ('domainaxis0', 'domainaxis1', 'domainaxis2')
 
 The data may be set with the `~Field.set_data` method of the field
-construct. The domain axis constructs spanned by the data may also be
-set by explicitly providing them via their construct keys; or they can
-be inferred from the existing domain axis constructs, provided that
-there rare no ambiguities such as two dimensions of the same size. In
-any case, the data axes may be set at any time with the
-`~Field.set_data_axes` method of the field construct.
+construct. The domain axis constructs spanned by the data are inferred
+from the existing domain axis constructs, provided that there are no
+ambiguities (such as two dimensions of the same size), in which case
+thay can be explicitly provided via their construct keys. In any case,
+the data axes may be set at any time with the `~Field.set_data_axes`
+method of the field construct.
 
 .. code-block:: python
    :caption: *Delete the data and then reinstate it, using the
@@ -944,7 +944,7 @@ any case, the data axes may be set at any time with the
    >>> data = t.del_data()
    >>> t.has_data()
    False
-   >>> t.set_data(data, axes=None)
+   >>> t.set_data(data)
    >>> t.data
    <CF Data(1, 10, 9): [[[262.8, ..., 269.7]]] K>
 
@@ -1441,10 +1441,9 @@ must be done manually, and the other field construct's `cf.Data` instance
 The field construct, and any metadata construct that contains data,
 has units which are described by the `~Field.Units` attribute that
 stores a `cf.Units` object (which is identical to the ``Units`` object
-of the `cfunits package <https://ncas-cms.github.io/cfunits>`_ (TODO1:
-link doesn't look good)). The `~Field.units` property provides the
-units contained in the `cf.Units` instance, and changes in one are
-reflected in the other.
+of the `cfunits package <https://ncas-cms.github.io/cfunits>`_). The
+`~Field.units` property provides the units contained in the `cf.Units`
+instance, and changes in one are reflected in the other.
 
 .. code-block:: python
    :caption: *Inspection and changing of units.*
@@ -3419,7 +3418,7 @@ methods:
    >>> dc
    <CF DimensionCoordinate: long_name=Longitude(3) >
    >>> fa = cf.FieldAncillary(
-   ...        data=cf.Data(numpy.array([0, 0, 2], dtype='int8')))
+   ...             data=cf.Data(numpy.array([0, 0, 2], dtype='int8')))
    >>> fa
    <CF FieldAncillary: (3) >
    >>> fa.set_property('standard_name', 'precipitation_flux status_flag')
@@ -3428,14 +3427,16 @@ methods:
 
 For **stage 3**, the `~cf.Field.set_construct` method of the field
 construct is used for setting metadata constructs and mapping data
-array dimensions to domain axis constructs. This method returns the
-construct key for the metadata construct which can be used when other
-metadata constructs are added to the field (e.g. to specify which
-domain axis constructs correspond to a data array), or when other
-metadata constructs are created (e.g. to identify the domain ancillary
+array dimensions to domain axis constructs. The domain axis constructs
+spanned by the data are inferred from the existing domain axis
+constructs, provided that there are no ambiguities (such as two
+dimensions of the same size), in which case thay can be explicitly
+provided via their construct keys. This method returns the construct
+key for the metadata construct which can be used when other metadata
+constructs are added to the field (e.g. to specify which domain axis
+constructs correspond to a data array), or when other metadata
+constructs are created (e.g. to identify the domain ancillary
 constructs forming part of a coordinate reference construct):
-
-TODO1: inferred axes
 
 .. code-block:: python
    :caption: *Set a domain axis construct and use its construct key
@@ -3493,7 +3494,7 @@ the field construct.
 
    # Create and insert the field construct data
    data = cf.Data(numpy.arange(40.).reshape(5, 8))
-   Q.set_data(data, axes=[axisY, axisX])
+   Q.set_data(data)
 
    # Create the cell method constructs
    cell_method1 = cf.CellMethod(axes='area', method='mean')
@@ -3523,7 +3524,7 @@ the field construct.
 
    # Create a "longitude" dimension coordinate construct
    dimY = cf.DimensionCoordinate(properties={'standard_name': 'latitude',
-		                               'units': 'degrees_north'})
+		                             'units'        : 'degrees_north'})
    array = numpy.arange(5.)
    dimY.set_data(cf.Data(array))
 
@@ -3535,10 +3536,10 @@ the field construct.
    dimY.set_bounds(bounds)
 
    # Insert the dimension coordinate constructs into the field,
-   # specifying to # which domain axis each one corresponds
-   Q.set_construct(dimT, axes=axisT)
-   Q.set_construct(dimY, axes=axisY)
-   Q.set_construct(dimX, axes=axisX)
+   # specifying to which domain axis each one corresponds
+   Q.set_construct(dimT)
+   Q.set_construct(dimY)
+   Q.set_construct(dimX)
 
 .. code-block:: python
    :caption: *Inspect the new field construct.* 
@@ -3629,8 +3630,7 @@ been generated with dummy values using `numpy.arange`):
    axis_X = tas.set_construct(cf.DomainAxis(9))
    
    # Set the field construct data
-   tas.set_data(cf.Data(numpy.arange(90.).reshape(10, 9)),
-                axes=[axis_Y, axis_X])
+   tas.set_data(cf.Data(numpy.arange(90.).reshape(10, 9)))
    
    # Create and set the cell method constructs
    cell_method1 = cf.CellMethod(
@@ -3650,7 +3650,7 @@ been generated with dummy values using `numpy.arange`):
                              'units': 'K'},
                 data=cf.Data(numpy.arange(90.).reshape(10, 9)))
    
-   tas.set_construct(field_ancillary, axes=[axis_Y, axis_X])
+   tas.set_construct(field_ancillary)
    
    # Create and set the dimension coordinate constructs
    dimension_coordinate_T = cf.DimensionCoordinate(
@@ -3679,8 +3679,8 @@ been generated with dummy values using `numpy.arange`):
    
    dim_T = tas.set_construct(dimension_coordinate_T, axes=axis_T)
    dim_Z = tas.set_construct(dimension_coordinate_Z, axes=axis_Z)
-   dim_Y = tas.set_construct(dimension_coordinate_Y, axes=axis_Y)
-   dim_X = tas.set_construct(dimension_coordinate_X, axes=axis_X)
+   dim_Y = tas.set_construct(dimension_coordinate_Y)
+   dim_X = tas.set_construct(dimension_coordinate_X)
    
    # Create and set the auxiliary coordinate constructs
    auxiliary_coordinate_lat = cf.AuxiliaryCoordinate(
@@ -3699,9 +3699,9 @@ been generated with dummy values using `numpy.arange`):
                           properties={'long_name': 'Grid latitude name'},
                           data=cf.Data(array))
    
-   aux_LAT  = tas.set_construct(auxiliary_coordinate_lat, axes=[axis_Y, axis_X])
-   aux_LON  = tas.set_construct(auxiliary_coordinate_lon, axes=[axis_X, axis_Y])
-   aux_NAME = tas.set_construct(auxiliary_coordinate_name, axes=[axis_Y])
+   aux_LAT  = tas.set_construct(auxiliary_coordinate_lat) 
+   aux_LON  = tas.set_construct(auxiliary_coordinate_lon) 
+   aux_NAME = tas.set_construct(auxiliary_coordinate_name)
    
    # Create and set domain ancillary constructs
    domain_ancillary_a = cf.DomainAncillary(
@@ -3721,8 +3721,7 @@ been generated with dummy values using `numpy.arange`):
    
    domain_anc_A    = tas.set_construct(domain_ancillary_a, axes=axis_Z)
    domain_anc_B    = tas.set_construct(domain_ancillary_b, axes=axis_Z)
-   domain_anc_OROG = tas.set_construct(domain_ancillary_orog,
-                                       axes=[axis_Y, axis_X])
+   domain_anc_OROG = tas.set_construct(domain_ancillary_orog)
 
    # Create the datum for the coordinate reference constructs
    datum = cf.Datum(parameters={'earth_radius': 6371007.})
@@ -3767,7 +3766,7 @@ been generated with dummy values using `numpy.arange`):
                     properties={'units': 'km2'},
                     data=cf.Data(numpy.arange(90.).reshape(9, 10)))
    
-   tas.set_construct(cell_measure, axes=[axis_X, axis_Y])
+   tas.set_construct(cell_measure)
 
 The new field construct may now be inspected:
 
@@ -5646,8 +5645,6 @@ often used for regridding along the time dimension. A plane projection
 coordinate system can be regridded with Cartesian regridding, which
 will produce similar results to using using spherical regridding.
 
-TODO1 example with Cartesian regridding to another field
-
 .. code-block:: python
    :caption: *TODO*
 
@@ -5684,6 +5681,14 @@ TODO1 example with Cartesian regridding to another field
                    : latitude(73) = [-90.0, ..., 90.0] degrees_north
                    : longitude(96) = [0.0, ..., 356.25] degrees_east
                    : height(1) = [2.0] m
+
+
+.. code-block:: python
+   :caption: *TODO*
+		   
+   >>> c = a.regridc(TODO (field arg), axes='T', method='conservative')
+   >>> print(c)
+   TODO
 
 
 .. _Regridding-masked-data:
@@ -6280,7 +6285,7 @@ field construct with an underlying contiguous ragged array:
    Y = T.set_construct(cf.DomainAxis(2))
    
    # Set the data for the field
-   T.set_data(cf.Data(array), axes=[Y, X])
+   T.set_data(cf.Data(array))
 				
 The new field construct can now be inspected and written to a netCDF file:
 

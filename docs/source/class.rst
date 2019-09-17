@@ -24,7 +24,7 @@ Metadata component classes
 
    cf.AuxiliaryCoordinate
    cf.CellMeasure
-   cf.CellMethods
+   cf.CellMethod
    cf.CoordinateReference
    cf.DimensionCoordinate
    cf.DomainAncillary

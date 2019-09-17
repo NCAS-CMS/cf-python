@@ -1829,7 +1829,7 @@ x.__repr__() <==> repr(x)
             # gathered between procesors, otherwise this will result
             # in incorrect handling of the removal of temporary files
             for partition in self.partitions.matrix.flat:
-                if partition.in_temporary_file:
+                if partition.in_cached_file:
                     # The subarray is in a temporary file
                     lock_file = partition._register_temporary_file()
                     lock_files = mpi_comm.allgather(lock_file)
@@ -5482,35 +5482,35 @@ dimensions.
     def _collapse_create_weights(array, indices, master_indices, master_shape,
                                  master_weights, n_non_collapse_axes,
                                  n_collapse_axes):
-        '''
+        '''TODO
         
-:Parameters:
+    :Parameters:
+    
+        array : numpy array
+    
+        indices : tuple
+    
+        master_indices : tuple
+    
+        master_shape : tuple
+    
+        master_weights : dict
+    
+        n_non_collapse_axes : int
+            The number of array axes which are not being collapsed. It
+            is assumed that they are in the slowest moving positions.
+    
+        n_collapse_axes : int
+            The number of array axes which are being collapsed. It is
+            assumed that they are in the fastest moving positions.
+    
+    :Returns:
+    
+        `numpy array or `None`
+    
+    **Examples:**
 
-    array : numpy array
-
-    indices : tuple
-
-    master_indices : tuple
-
-    master_shape : tuple
-
-    master_weights : dict
-
-    n_non_collapse_axes : int
-        The number of array axes which are not being collapsed. It is
-        assumed that they are in the slowest moving positions.
-
-    n_collapse_axes : int
-        The number of array axes which are being collapsed. It is
-        assumed that they are in the fastest moving positions.
-
-:Returns:
-
-    `numpy array or `None`
-
-**Examples:**
-
-'''
+        '''
         array_shape = array.shape
         array_ndim  = array.ndim
         
@@ -5534,7 +5534,6 @@ dimensions.
             stop   = start + (size2-1)*step + 1
     
             weights_indices.append(slice(start, stop, step))
-        #--- End: for
     
         base_shape = (1,) * array_ndim
     
@@ -5548,7 +5547,6 @@ dimensions.
             for i in key:
                 shape[i] = array_shape[i]
                 index.append(weights_indices[i])
-            #--- End: for
     
             weight = weight[tuple(index)].array
                 
@@ -5562,7 +5560,6 @@ dimensions.
                 weight = weight.reshape(shape)
     
             weights.append(weight)
-        #--- End: for
     
         weights_out = weights[0]
     
@@ -5594,9 +5591,10 @@ dimensions.
             if masked and numpy_ma_isMA(array):
                 if not (array.mask | weights_out.mask == array.mask).all():
                     raise ValueError("weights mask is duff")
+        #--- End: if
     
         return weights_out
-    #--- End: def
+
 
     def _collapse_optimize_weights(self, weights):
         '''Optimise when weights span only non-partitioned axes.

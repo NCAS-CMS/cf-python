@@ -15,7 +15,6 @@ from numpy import result_type as numpy_result_type
 from numpy import size        as numpy_size
 from numpy import vectorize   as numpy_vectorize
 
-#from cfunits import Units
 
 from . import PropertiesData
 
@@ -63,6 +62,119 @@ bounds.
                        'subspace',
                        'where',
                        )
+
+#    def __init__(self, properties=None, data=None, bounds=None,
+#                 geometry=None, interior_ring=None, source=None,
+#                 copy=True, _use_data=True):
+#        '''**Initialization**
+#
+#    :Parameters:
+#    
+#        properties: `dict`, optional
+#            Set descriptive properties. The dictionary keys are
+#            property names, with corresponding values. Ignored if the
+#            *source* parameter is set.
+#    
+#            *Parameter example:*
+#               ``properties={'standard_name': 'longitude'}``
+#            
+#            Properties may also be set after initialisation with the
+#            `set_properties` and `set_property` methods.
+#      
+#        data: `Data`, optional
+#            Set the data array. Ignored if the *source* parameter is
+#            set.
+#            
+#            The data array may also be set after initialisation with
+#            the `set_data` method.
+#      
+#        bounds: `Bounds`, optional
+#            Set the bounds array. Ignored if the *source* parameter is
+#            set.
+#            
+#            The bounds array may also be set after initialisation with
+#            the `set_bounds` method.
+#      
+#        geometry: `str`, optional
+#            Set the geometry type. Ignored if the *source* parameter
+#            is set.
+#            
+#            *Parameter example:*
+#               ``geometry='polygon'``
+#            
+#            The geometry type may also be set after initialisation
+#            with the `set_geometry` method.
+#      
+#        interior_ring: `InteriorRing`, optional
+#            Set the interior ring variable. Ignored if the *source*
+#            parameter is set.
+#            
+#            The interior ring variable may also be set after
+#            initialisation with the `set_interior_ring` method.
+#      
+#        source: optional
+#            Initialize the properties, geometry type, data, bounds and
+#            interior ring from those of *source*.
+#     
+#        copy: `bool`, optional
+#            If `False` then do not deep copy input parameters prior to
+#            initialization. By default arguments are deep copied.
+#
+#        '''
+#        if _use_data and data is not None and properties:
+#            if not data.Units:
+#                units = properties.get('units')
+#                if units is not None:
+#                    data = data.override_units(Units(units, properties.get('calendar')))
+#        #--- End: if
+#        
+#        super().__init__(properties=properties, data=data,
+#                         bounds=bounds, source=source,
+#                         geometry=geometry,
+#                         interior_ring=interior_ring, copy=copy,
+#                         _use_data=_use_data)
+#
+#        # Initialise properties and data
+#        super().__init__(properties=properties, data=data,
+#                         source=source, copy=copy,
+#                         _use_data=_use_data)
+#
+#        # Get bounds, geometry type and interior ring from source
+#        if source is not None:
+#            try:
+#                bounds = source.get_bounds(None)
+#            except AttributeError:
+#                bounds = None
+#                
+#            try:
+#                geometry = source.get_geometry(None)
+#            except AttributeError:
+#                geometry = None
+#                
+#            try:
+#                interior_ring = source.get_interior_ring(None)
+#            except AttributeError:
+#                interior_ring = None
+#        #--- End: if
+#
+#        # Initialise bounds
+#        if bounds is not None:
+#            if copy or not _use_data:
+#                bounds = bounds.copy(data=_use_data)
+#                
+#            self.set_bounds(bounds, copy=False)
+#
+#        # Initialise the geometry type
+#        if geometry is not None:
+#            self.set_geometry(geometry)
+#            
+#        # Initialise interior ring
+#        if interior_ring is not None:
+#            if copy or not _use_data:
+#                interior_ring = interior_ring.copy(data=_use_data)
+#                
+#            self.set_interior_ring(interior_ring, copy=False)
+
 
     def __getitem__(self, indices):
         '''Return a subspace of the field construct defined by indices.

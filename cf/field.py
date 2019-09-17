@@ -1656,6 +1656,14 @@ Coord refs     : <CF CoordinateReference: rotated_latitude_longitude>
     def _set_construct_parse_axes(self, item, axes=None, allow_scalar=True):
         '''TODO
 
+    :Parameters:
+
+        item: metadata construct
+
+        axes: (sequence of) `str or `int`, optional
+
+        allow_scalar: `bool`, optional
+
     :Returns:
 
         `list`
@@ -1694,11 +1702,17 @@ Coord refs     : <CF CoordinateReference: rotated_latitude_longitude>
             # --------------------------------------------------------
             # Axes have been provided
             # --------------------------------------------------------
+            if isinstance(axes, (str, int)):
+                axes = (axes,)
+                    
             if axes and data is not None:
                 ndim = item.ndim
                 if not ndim and not allow_scalar:
                     ndim = 1
-    
+
+                if isinstance(axes, (str, int)):
+                    axes = (axes,)
+                    
                 if len(axes) != ndim or len(set(axes)) != ndim:
                     raise ValueError(
                         "Can't insert {} {}: Incorrect number of given axes (got {}, expected {})".format(
@@ -8460,7 +8474,7 @@ False
 
         '''
         if not set_axes:
-            super().set_data(data, axes=None, copy=copy)
+            super(cfdm.Field, self).set_data(data, axes=None, copy=copy)
             return
             
         if data.isscalar:
@@ -8558,7 +8572,17 @@ False
             #--- End: for
         #--- End: if
 
-        super().set_data(data, axes=axes, copy=copy)
+        if not data.Units:
+            units = getattr(self, 'Units', None)
+            if units is not None:
+                if copy:
+                    copy = False
+                    data = data.override_units(units, inplace=False)
+                else:
+                    data.override_units(units, inplace=True)
+        #--- End: if
+            
+        super(cfdm.Field, self).set_data(data, axes=axes, copy=copy)
 
 
     def domain_mask(self, **kwargs):

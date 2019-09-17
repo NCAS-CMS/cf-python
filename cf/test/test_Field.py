@@ -26,7 +26,7 @@ class FieldTest(unittest.TestCase):
         self.test_only = []
 #        self.test_only = ['NOTHING!!!!']
 #        self.test_only = ['test_Field_replace_construct']
-#        self.test_only = ['test_Field_ATOL_RTOL']
+#        self.test_only = ['test_Field__add__']
 #        self.test_only = ['test_Field_indices']
 #        self.test_only = ['test_Field_item']
 #        self.test_only = ['test_Field_field_ancillary']
@@ -42,7 +42,7 @@ class FieldTest(unittest.TestCase):
 #        self.test_only = ['test_Field_item']
 #        self.test_only = ['test_Field_section']
 #        self.test_only = ['test_Field_flip']
-#        self.test_only = ['test_Field_test_Field_domain_mask']
+#        self.test_only = ['test_Field_Field_domain_mask']
 
 
 #    def test_Field_properties(self):
