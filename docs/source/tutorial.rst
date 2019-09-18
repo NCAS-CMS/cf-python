@@ -5966,7 +5966,7 @@ field construct from field constructs containing the wind components
 using finite differences to approximate the derivatives.
 
 .. code-block:: python
-   :caption: *TODO*
+..   :caption: *TODO*
 
    >>> u, v = cf.read('wind_components.nc')
    >>> zeta = cf.relative_vorticity(u, v)
