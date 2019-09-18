@@ -76,7 +76,7 @@ that when a field element needs to be assesed for equality its
     # Overloaded list methods
     # ----------------------------------------------------------------
     def __add__(self, x):
-        '''Called to implement evaluation of f + x
+        '''The binary arithmetic operation ``+``
 
     f.__add__(x) <==> f + x
     
@@ -93,8 +93,28 @@ that when a field element needs to be assesed for equality its
         return type(self)(list.__add__(self, x))
 
 
+
+    def __contains__(self, y):
+        '''Called to implement membership test operators.
+
+    x.__contains__(y) <==> y in x
+    
+    Each field in the field list is compared with the field's
+    `~cf.Field.equals` method, as opposed to the ``==`` operator.
+    
+    Note that ``y in fl`` is equivalent to ``any(f.equals(y) for f in fl)``.
+
+        '''
+        for f in self:
+            if f.equals(y):
+                return True
+        #--- End: for
+            
+        return False
+
+    
     def __mul__(self, x):
-        '''Called to implement evaluation of f * x
+        '''The binary arithmetic operation ``*``
 
     f.__mul__(x) <==> f * x
     
@@ -109,6 +129,24 @@ that when a field element needs to be assesed for equality its
 
         '''
         return type(self)(list.__mul__(self, x))
+
+    
+    def __eq__(self, other):
+        '''The rich comparison operator ``==``
+
+    f.__eq__(x) <==> f==x
+
+    Each field in the field list is compared with the field's
+    `~cf.Field.equals` method, as opposed to the ``==`` operator.
+    
+    Note that ``f==x`` is equivalent to ``f.equals(x)``.
+
+    :Returns:
+    
+        `bool`
+    
+        '''
+        return self.equals(other)
 
 
     def __getslice__(self, i, j):
@@ -157,6 +195,24 @@ that when a field element needs to be assesed for equality its
 
         return out
 
+
+    def __ne__(self, other):
+        '''The rich comparison operator ``!=``
+
+    f.__ne__(x) <==> f!=x
+
+    Each field in the field list is compared with the field's
+    `~cf.Field.equals` method, as opposed to the ``==`` operator.
+    
+    Note that ``f!=x`` is equivalent to ``not f.equals(x)``.
+
+    :Returns:
+    
+        `bool`
+    
+        '''
+        return not self.equals(other)
+
     # ???
     __len__     = list.__len__
     __setitem__ = list.__setitem__    
@@ -167,23 +223,6 @@ that when a field element needs to be assesed for equality its
     reverse     = list.reverse
     sort        = list.sort
 
-    def __contains__(self, y):
-        '''Called to implement membership test operators.
-
-    x.__contains__(y) <==> y in x
-    
-    Each field in the field list is compared with the field's
-    `~cf.Field.equals` method, as aopposed to the ``==`` operator.
-    
-    Note that ``y in fl`` is equivalent to ``any(f.equals(y) for f in fl)``.
-
-        '''
-        for f in self:
-            if f.equals(y):
-                return True
-        #--- End: for
-            
-        return False
 
 
     # ----------------------------------------------------------------
@@ -237,7 +276,7 @@ that when a field element needs to be assesed for equality its
         '''Return first index of value.
 
     Each field in the field list is compared with the field's
-    `~cf.Field.equals` method, as aopposed to the ``==`` operator.
+    `~cf.Field.equals` method, as opposed to the ``==`` operator.
     
     It is an error if there is no such field.
     
