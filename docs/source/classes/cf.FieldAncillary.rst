@@ -32,7 +32,6 @@ Inspection
    :template: attribute.rst
 
    ~cf.FieldAncillary.construct_type
-   ~cf.FieldAncillary.id
 
 Selection
 ---------
@@ -227,12 +226,13 @@ Miscellaneous
 .. autosummary::
    :nosignatures:
    :toctree: ../method/
-   :template: attirbute.rst
+   :template: attribute.rst
 
    ~cf.FieldAncillary.T
    ~cf.FieldAncillary.X
    ~cf.FieldAncillary.Y
    ~cf.FieldAncillary.Z
+   ~cf.FieldAncillary.id
 
 Mathematical operations
 -----------------------

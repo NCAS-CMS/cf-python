@@ -23,7 +23,7 @@ make html .
 # --------------------------------------------------------------------
 git add \
     *.html \
-    class/*.html \
+    classes/*.html \
     function/*.html \
     method/*.html \
     attribute/*.html \

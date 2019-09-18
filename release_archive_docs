@@ -24,7 +24,7 @@ mv $version/_downloads/*/*.nc $version/_downloads
 # --------------------------------------------------------------------
 git add \
     $version/*.html \
-    $version/class/*.html \
+    $version/classes/*.html \
     $version/function/*.html \
     $version/method/*.html \
     $version/attribute/*.html \
