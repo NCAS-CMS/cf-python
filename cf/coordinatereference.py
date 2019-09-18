@@ -493,25 +493,8 @@ frame and consists of the following:
 
 
     def match(self, *identities):
-        '''Determine whether or not one of the identities matches.
-        
-    `match` is an alias for `match_by_identity`
-    
-    .. seealso:: `identities`, `match_by_identity`
-    
-    :Parameters:
-    
-    TODO
-    
-    :Returns:
-    
-        `bool`
-            Whether or not the coordinate reference matches one of the
-            given identities.
-    
-    **Examples:**
-    
-    TODO
+        '''Alias for `cf.CoordinateReference.match_by_identity`
+
         '''
         return self.match_by_identity(*identities)
 
