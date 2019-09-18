@@ -44,9 +44,6 @@ Dictionary-access methods
    :template: method.rst
 
    ~cf.CoordinateReference.get 	
-   ~cf.CoordinateReference.items
-   ~cf.CoordinateReference.keys 
-   ~cf.CoordinateReference.values
    ~cf.CoordinateReference.__getitem__
 
 Selection

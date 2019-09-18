@@ -55,6 +55,29 @@ frame and consists of the following:
   relevant to the coordinate reference construct, only their
   properties.
 
+..
+
+* A definition of a datum specifying the zeroes of the dimension and
+  auxiliary coordinate constructs which define the coordinate
+  system. The datum may be implied by the metadata of the referenced
+  dimension and auxiliary coordinate constructs, or explicitly
+  provided.
+
+..
+
+* A coordinate conversion, which defines a formula for converting
+  coordinate values taken from the dimension or auxiliary coordinate
+  constructs to a different coordinate system. A coordinate reference
+  construct relates the coordinate values of the field to locations in
+  a planetary reference frame.
+
+
+**NetCDF interface**
+
+The netCDF grid mapping variable name of a coordinate reference
+construct may be accessed with the `nc_set_variable`,
+`nc_get_variable`, `nc_del_variable` and `nc_has_variable` methods.
+
     '''
     def __new__(cls, *args, **kwargs):
         instance = super().__new__(cls)
