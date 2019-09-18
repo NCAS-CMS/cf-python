@@ -53,11 +53,10 @@ Version 3.x                                      	  Version 2.x
 						 	                                   
 `cf.Field.domain_axis_identity`			 	  `cf.Field.axis_name`             
 						 		                                   
-`cf.Field.get_data_axes`			 	  `cf.Field.data_axes`             
-						 	                                   
-`cf.Field.del_construct`			 	  `cf.Field.remove_item`           
+`cf.Field.del_construct`			 	  `cf.Field.remove_item`
 
-`cf.Field.get_data_axes`			 	  `cf.Field.item_axes`             
+`cf.Field.get_data_axes`			 	  `cf.Field.data_axes`,
+                                                          `cf.Field.item_axes`            
 						 	                                   
 `cf.Field.insert_dimension`			 	  `cf.Field.expand_dims`           
 						 	                                   
