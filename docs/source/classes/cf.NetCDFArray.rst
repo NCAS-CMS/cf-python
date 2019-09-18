@@ -30,7 +30,7 @@ Inspection
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../attribute/
+   :toctree: ../attribute/	    
    :template: attribute.rst
    
    ~cf.NetCDFArray.array
