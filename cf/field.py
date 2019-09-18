@@ -2765,7 +2765,7 @@ Coord refs     : <CF CoordinateReference: rotated_latitude_longitude>
 #                if f.domain_anc(key, axes_all=('X', 'Y')):# v2
                 x = self.domain_axis('X', key=True)
                 y = self.domain_axis('Y', key=True)
-                if f.domain_ancillaries.filter_by_key(key).filter_by_axis('exact', x, y):
+                if self.domain_ancillaries.filter_by_key(key).filter_by_axis('exact', x, y):
                     # Convert the domain ancillary into an independent
                     # field
                     value = self.convert(key)
@@ -2797,7 +2797,14 @@ Coord refs     : <CF CoordinateReference: rotated_latitude_longitude>
             #--- End: for
         #--- End: for
 
-        
+        ### ppp
+#        In [1]: import cf; u = cf.read('ua.nc')[0]
+#
+#In [2]: v =  cf.read('va.nc')[0]
+#
+#
+#In [3]: u2=u.regrids(v, method='bilinear')
+
     def _regrid_copy_coordinate_references(self, dst, dst_axis_keys):
         '''Copy coordinate references from the destination field to the new,
     regridded field.

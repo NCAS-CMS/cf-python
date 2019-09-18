@@ -5963,10 +5963,11 @@ the Earth; and :math:`\phi` is the latitude at each point.
 
 The `cf.relative_vorticity` function creates a relative vorticity
 field construct from field constructs containing the wind components
-using finite differences to approximate the derivatives.
+using finite differences to approximate the derivatives. Dimensions
+other than 'X' and 'Y' remain unchanged by te operation.
 
-.. code-block:: python
 ..   :caption: *TODO*
+.. code-block:: python
 
    >>> u, v = cf.read('wind_components.nc')
    >>> zeta = cf.relative_vorticity(u, v)
