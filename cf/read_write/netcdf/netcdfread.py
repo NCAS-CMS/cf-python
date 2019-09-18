@@ -13,31 +13,30 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
     def _ncdimensions(self, ncvar):
         '''Return a list of the netCDF dimensions corresponding to a netCDF
-variable.
-
-If the variable has been compressed then the *implied uncompressed*
-dimensions are returned.
+    variable.
     
-For a CFA variable, the netCDF dimensions are taken from the
-'cfa_dimensions' netCDF attribute.
-
-.. versionadded:: 3.0.0
-
-:Parameters:
-
-    ncvar: `str`
-        The netCDF variable name.
-
-:Returns:
-
-    `list`
-        The list of netCDF dimension names spanned by the netCDF
-        variable.
-
-**Examples:**
-
->>> n._ncdimensions('humidity')
-['time', 'lat', 'lon']
+    If the variable has been compressed then the *implied
+    uncompressed* dimensions are returned.
+        
+    For a CFA variable, the netCDF dimensions are taken from the
+    'cfa_dimensions' netCDF attribute.
+    
+    .. versionadded:: 3.0.0
+    
+    :Parameters:
+    
+        ncvar: `str`
+            The netCDF variable name.
+    
+    :Returns:
+    
+        `list`
+            The netCDF dimension names spanned by the netCDF variable.
+    
+    **Examples:**
+    
+    >>> n._ncdimensions('humidity')
+    ['time', 'lat', 'lon']
 
         '''
         g = self.read_vars
@@ -53,35 +52,35 @@ For a CFA variable, the netCDF dimensions are taken from the
         ncdimensions = g['variable_attributes'][ncvar].get('cfa_dimensions', '').split()
 
         return list(map(str, ncdimensions))
-    #--- End: def
+
     
     def _get_domain_axes(self, ncvar, allow_external=False):
         '''Return the domain axis identifiers that correspond to a netCDF
-variable's netCDF dimensions.
-
-For a CFA variable, the netCDF dimensions are taken from the
-'cfa_dimensions' netCDF attribute.
-
-:Parameter:
-
-    ncvar: `str`
-        The netCDF variable name.
-
-    allow_external: `bool`
-        If True and *ncvar* is an external variable then return an
-        empty list.
-
-:Returns:
-
-    `list`
-
-**Examples:**
-
->>> r._get_domain_axes('areacello')
-['domainaxis0', 'domainaxis1']
-
->>> r._get_domain_axes('areacello', allow_external=True)
-[]
+    variable's netCDF dimensions.
+    
+    For a CFA variable, the netCDF dimensions are taken from the
+    'cfa_dimensions' netCDF attribute.
+    
+    :Parameter:
+    
+        ncvar: `str`
+            The netCDF variable name.
+    
+        allow_external: `bool`
+            If `True` and *ncvar* is an external variable then return an
+            empty list.
+    
+    :Returns:
+    
+        `list`
+    
+    **Examples:**
+    
+    >>> r._get_domain_axes('areacello')
+    ['domainaxis0', 'domainaxis1']
+    
+    >>> r._get_domain_axes('areacello', allow_external=True)
+    []
 
         '''
         g = self.read_vars
@@ -100,16 +99,15 @@ For a CFA variable, the netCDF dimensions are taken from the
         axes = [ncdim_to_axis[ncdim] for ncdim in cfa_dimensions
                 if ncdim in ncdim_to_axis]
 
-#        print (cfa_dimensions, axes)
         return axes
-    #--- End: def
+
 
     def _create_data(self, ncvar, construct=None,
                      unpacked_dtype=False, uncompress_override=None,
                      parent_ncvar=None):
         '''TODO
 
-.. versionadded:: 3.0.0
+    .. versionadded:: 3.0.0
         '''
         g = self.read_vars
 
@@ -227,13 +225,13 @@ For a CFA variable, the netCDF dimensions are taken from the
         out = self._create_Data(loadd=cfa_data)
 #        print ('out =', repr(out))
         return out
-    #--- End: def
+
     
     def _create_Data(self, array=None, units=None, calendar=None,
                      ncvar=None, loadd=None, **kwargs):
         '''TODO
         
-.. versionadded:: 3.0.0
+    .. versionadded:: 3.0.0
 
         '''
         try:
@@ -250,12 +248,12 @@ For a CFA variable, the netCDF dimensions are taken from the
         return super()._create_Data(array=array, units=units,
                                     calendar=calendar, ncvar=ncvar,
                                     loadd=loadd, **kwargs)
-    #--- End: def
+
     
     def _customize_read_vars(self):
         '''TODO
 
-.. versionadded:: 3.0.0
+    .. versionadded:: 3.0.0
 
         '''
         super()._customize_read_vars()        
@@ -274,7 +272,7 @@ For a CFA variable, the netCDF dimensions are taken from the
             for ncvar in g['variables']:
                 if g['variable_attributes'][ncvar].get('cf_role', None) == 'cfa_private':
                     g['do_not_create_field'].add(ncvar)                
-    #--- End: def
+
     
 #--- End: class
 

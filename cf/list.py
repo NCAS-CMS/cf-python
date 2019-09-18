@@ -14,6 +14,12 @@ reducing the number of values that need to be stored.
 The information needed to uncompress the data is stored in a list
 variable that gives the indices of the required points.
 
+**NetCDF interface**
+
+The netCDF variable name of the list variable may be accessed with the
+`nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
+`nc_has_variable` methods.
+
 .. versionadded:: 3.0.0
 
     '''

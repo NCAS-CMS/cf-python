@@ -1,171 +1,534 @@
+.. currentmodule:: cf
+.. default-role:: obj
+
 cf.Count
 ========
 
-.. currentmodule:: cf
+----
 
-.. autoclass:: Count
+.. autoclass:: cf.Count
+   :no-members:
+   :no-inherited-members:
 
-   
-   .. automethod:: __init__
+Inspection
+----------
 
-   
-   .. rubric:: Methods
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
 
-   .. autosummary::
+   ~cf.Count.dump
+   ~cf.Count.identity  
+   ~cf.Count.identities
    
-      ~Count.__init__
-      ~Count.all
-      ~Count.allclose
-      ~Count.any
-      ~Count.asdatetime
-      ~Count.asreftime
-      ~Count.ceil
-      ~Count.chunk
-      ~Count.clear_properties
-      ~Count.clip
-      ~Count.close
-      ~Count.concatenate
-      ~Count.convert_reference_time
-      ~Count.copy
-      ~Count.cos
-      ~Count.count
-      ~Count.count_masked
-      ~Count.cyclic
-      ~Count.datum
-      ~Count.del_data
-      ~Count.del_property
-      ~Count.delprop
-      ~Count.dump
-      ~Count.equals
-      ~Count.equivalent
-      ~Count.exp
-      ~Count.expand_dims
-      ~Count.files
-      ~Count.fill_value
-      ~Count.flip
-      ~Count.floor
-      ~Count.get_data
-      ~Count.get_property
-      ~Count.getprop
-      ~Count.has_bounds
-      ~Count.has_data
-      ~Count.has_property
-      ~Count.hasprop
-      ~Count.identities
-      ~Count.identity
-      ~Count.insert_data
-      ~Count.insert_dimension
-      ~Count.inspect
-      ~Count.log
-      ~Count.mask_invalid
-      ~Count.match
-      ~Count.match_by_identity
-      ~Count.match_by_naxes
-      ~Count.match_by_ncvar
-      ~Count.match_by_property
-      ~Count.match_by_units
-      ~Count.max
-      ~Count.mean
-      ~Count.mid_range
-      ~Count.min
-      ~Count.name
-      ~Count.nc_del_dimension
-      ~Count.nc_del_sample_dimension
-      ~Count.nc_del_variable
-      ~Count.nc_get_dimension
-      ~Count.nc_get_sample_dimension
-      ~Count.nc_get_variable
-      ~Count.nc_has_dimension
-      ~Count.nc_has_sample_dimension
-      ~Count.nc_has_variable
-      ~Count.nc_set_dimension
-      ~Count.nc_set_sample_dimension
-      ~Count.nc_set_variable
-      ~Count.override_calendar
-      ~Count.override_units
-      ~Count.properties
-      ~Count.range
-      ~Count.remove_data
-      ~Count.rint
-      ~Count.roll
-      ~Count.round
-      ~Count.sample_size
-      ~Count.sd
-      ~Count.select
-      ~Count.set_data
-      ~Count.set_properties
-      ~Count.set_property
-      ~Count.setprop
-      ~Count.sin
-      ~Count.squeeze
-      ~Count.sum
-      ~Count.tan
-      ~Count.transpose
-      ~Count.trunc
-      ~Count.unique
-      ~Count.var
-      ~Count.where
-   
-   
+Selection
+---------
 
-   
-   
-   .. rubric:: Attributes
+.. rubric:: Methods
 
-   .. autosummary::
+.. autosummary::
+   :nosignatures:
+   :toctree: ../generated/
+   :template: method.rst
+
+   ~cf.Count.match_by_identity
+   ~cf.Count.match_by_naxes
+   ~cf.Count.match_by_ncvar
+   ~cf.Count.match_by_property
+   ~cf.Count.match_by_units
+ 
+Properties
+----------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Count.del_property
+   ~cf.Count.get_property
+   ~cf.Count.has_property
+   ~cf.Count.set_property
+   ~cf.Count.properties
+   ~cf.Count.clear_properties
+   ~cf.Count.set_properties
+
+.. rubric:: Attributes
+	    
+.. autosummary::
+   :toctree: ../generated/
+   :template: attribute.rst
+
+   ~cf.Count.add_offset
+   ~cf.Count.calendar
+   ~cf.Count.comment
+   ~cf.Count._FillValue
+   ~cf.Count.history
+   ~cf.Count.leap_month
+   ~cf.Count.leap_year
+   ~cf.Count.long_name
+   ~cf.Count.missing_value
+   ~cf.Count.month_lengths
+   ~cf.Count.scale_factor
+   ~cf.Count.standard_name
+   ~cf.Count.units
+   ~cf.Count.valid_max
+   ~cf.Count.valid_min
+   ~cf.Count.valid_range
+
+Units
+-----
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../generated/
+   :template: method.rst
+
+   ~cf.Count.override_units
+   ~cf.Count.override_calendar
+
+.. rubric:: Attributes
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../generated/
+   :template: attribute.rst
+
+   ~cf.Count.Units
+
+
+Data
+----
+
+.. rubric:: Attributes
    
-      ~Count.Data
-      ~Count.T
-      ~Count.Units
-      ~Count.X
-      ~Count.Y
-      ~Count.Z
-      ~Count.add_offset
-      ~Count.array
-      ~Count.attributes
-      ~Count.binary_mask
-      ~Count.calendar
-      ~Count.comment
-      ~Count.data
-      ~Count.datetime_array
-      ~Count.day
-      ~Count.dtarray
-      ~Count.dtvarray
-      ~Count.dtype
-      ~Count.hardmask
-      ~Count.hasbounds
-      ~Count.hasdata
-      ~Count.history
-      ~Count.hour
-      ~Count.id
-      ~Count.isauxiliary
-      ~Count.isdimension
-      ~Count.isdomainancillary
-      ~Count.isfieldancillary
-      ~Count.ismeasure
-      ~Count.isscalar
-      ~Count.leap_month
-      ~Count.leap_year
-      ~Count.long_name
-      ~Count.mask
-      ~Count.minute
-      ~Count.missing_value
-      ~Count.month
-      ~Count.month_lengths
-      ~Count.ndim
-      ~Count.reference_datetime
-      ~Count.scale_factor
-      ~Count.second
-      ~Count.shape
-      ~Count.size
-      ~Count.standard_name
-      ~Count.subspace
-      ~Count.units
-      ~Count.unsafe_array
-      ~Count.valid_max
-      ~Count.valid_min
-      ~Count.valid_range
-      ~Count.varray
-      ~Count.year
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cf.Count.array
+   ~cf.Count.data
+   ~cf.Count.datetime_array
+   ~cf.Count.datum
+   ~cf.Count.dtype
+   ~cf.Count.isscalar
+   ~cf.Count.ndim
+   ~cf.Count.shape
+   ~cf.Count.size
+   ~cf.Count.varray
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Count.__getitem__
+   ~cf.Count.del_data
+   ~cf.Count.get_data
+   ~cf.Count.has_data
+   ~cf.Count.set_data
+ 
+.. rubric:: *Rearranging elements*
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../generated/
+   :template: method.rst
+
+   ~cf.Count.flip
+   ~cf.Count.insert_dimension
+   ~cf.Count.roll
+   ~cf.Count.squeeze
+   ~cf.Count.transpose
    
+.. rubric:: *Data array mask*
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../generated/
+   :template: attribute.rst
+
+   ~cf.Count.binary_mask
+   ~cf.Count.count
+   ~cf.Count.count_masked
+   ~cf.Count.hardmask
+   ~cf.Count.fill_value
+   ~cf.Count.mask
+   ~cf.Count.mask_invalid
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../generated/
+   :template: method.rst
+
+.. rubric:: *Changing data values*
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../generated/
+   :template: method.rst
+
+   ~cf.Count.__setitem__
+   ~cf.Count.mask_invalid
+   ~cf.Count.subspace
+   ~cf.Count.where
+
+.. rubric:: *Miscellaneous*
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../generated/
+   :template: method.rst
+	      
+
+   ~cf.Count.chunk
+   ~cf.Count.close
+   ~cf.Count.convert_reference_time
+   ~cf.Count.cyclic
+   ~cf.Count.files
+   ~cf.Count.has_bounds
+
+Miscellaneous
+-------------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Count.concatenate
+   ~cf.Count.copy
+   ~cf.Count.equals
+
+.. rubric:: Attributes
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: attribute.rst
+
+   ~cf.Count.T
+   ~cf.Count.X
+   ~cf.Count.Y
+   ~cf.Count.Z
+   ~cf.Count.id
+
+Mathematical operations
+-----------------------
+
+.. http://docs.scipy.org/doc/numpy/reference/routines.math.html
+
+.. rubric:: Methods
+
+.. rubric:: *Trigonometrical functions*
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../generated/
+   :template: method.rst
+
+   ~cf.Count.cos
+   ~cf.Count.sin
+   ~cf.Count.tan
+
+.. rubric:: *Rounding and truncation*
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../generated/
+   :template: method.rst
+
+   ~cf.Count.ceil  
+   ~cf.Count.clip
+   ~cf.Count.floor
+   ~cf.Count.rint
+   ~cf.Count.round
+   ~cf.Count.trunc
+
+.. rubric:: *Statistical collapses*
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../generated/
+   :template: method.rst
+
+   ~cf.Count.max
+   ~cf.Count.mean
+   ~cf.Count.mid_range
+   ~cf.Count.min
+   ~cf.Count.range
+   ~cf.Count.sample_size
+   ~cf.Count.sum  
+   ~cf.Count.sd
+   ~cf.Count.var
+
+.. rubric:: *Exponential and logarithmic functions*
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../generated/
+   :template: method.rst
+
+   ~cf.Count.exp
+   ~cf.Count.log
+
+Date-time operations
+--------------------
+
+.. rubric:: Attributes
+.. autosummary::
+   :nosignatures:
+   :toctree: ../generated/
+   :template: attribute.rst
+
+   ~cf.Count.day
+   ~cf.Count.datetime_array
+   ~cf.Count.hour
+   ~cf.Count.minute
+   ~cf.Count.month
+   ~cf.Count.reference_datetime   
+   ~cf.Count.second
+   ~cf.Count.year
+
+Logic functions
+---------------
+
+.. http://docs.scipy.org/doc/numpy/reference/routines.logic.html#truth-value-testing
+
+.. rubric:: Truth value testing
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../generated/
+   :template: method.rst
+
+   ~cf.Count.all
+   ~cf.Count.any
+ 
+.. rubric:: Comparison
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../generated/
+   :template: method.rst
+
+   ~cf.Count.allclose
+   ~cf.Count.equals
+   ~cf.Count.equivalent
+
+.. rubric:: Set operations
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../generated/
+   :template: method.rst
+
+   ~cf.Count.unique
+
+NetCDF
+------
+
+.. rubric:: Methods
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Count.nc_del_variable
+   ~cf.Count.nc_get_variable
+   ~cf.Count.nc_has_variable
+   ~cf.Count.nc_set_variable 
+   ~cf.nc_del_dimension
+   ~cf.nc_get_dimension
+   ~cf.nc_has_dimension
+   ~cf.nc_set_dimension
+   ~cf.nc_del_sample_dimension
+   ~cf.nc_get_sample_dimension
+   ~cf.nc_has_sample_dimension
+   ~cf.nc_set_sample_dimension
+
+
+Aliases
+-------
+
+.. rubric:: Methods
+   
+.. autosummary::
+   :nosignatures:
+   :toctree: ../generated/
+   :template: method.rst  
+
+   ~cf.Count.match
+
+.. rubric:: Attributes
+   
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cf.Count.dtarray
+   
+Arithmetic and comparison operations
+------------------------------------
+
+Arithmetic, bitwise and comparison operations are defined as
+element-wise operations on the data, which yield a new construct or,
+for augmented assignments, modify the construct's data in-place.
+
+.. rubric:: Comparison operators
+
+.. autosummary::
+   :nosignatures:
+   :toctree: generated/
+   :template: method.rst
+
+   ~cf.Count.__lt__
+   ~cf.Count.__le__
+   ~cf.Count.__eq__
+   ~cf.Count.__ne__
+   ~cf.Count.__gt__
+   ~cf.Count.__ge__
+
+.. rubric:: Binary arithmetic operators
+
+.. autosummary::
+   :nosignatures:
+   :toctree: generated/
+   :template: method.rst
+
+   ~cf.Count.__add__     
+   ~cf.Count.__sub__     
+   ~cf.Count.__mul__     
+   ~cf.Count.__div__     
+   ~cf.Count.__truediv__ 
+   ~cf.Count.__floordiv__
+   ~cf.Count.__pow__     
+   ~cf.Count.__mod__     
+
+.. rubric:: Binary arithmetic operators with reflected (swapped) operands
+
+.. autosummary::
+   :nosignatures:
+   :toctree: generated/
+   :template: method.rst
+
+   ~cf.Count.__radd__     
+   ~cf.Count.__rsub__     
+   ~cf.Count.__rmul__     
+   ~cf.Count.__rdiv__     
+   ~cf.Count.__rtruediv__ 
+   ~cf.Count.__rfloordiv__
+   ~cf.Count.__rpow__   
+   ~cf.Count.__rmod__   
+
+.. rubric:: Augmented arithmetic assignments
+
+.. autosummary::
+   :nosignatures:
+   :toctree: generated/
+   :template: method.rst
+
+   ~cf.Count.__iadd__ 
+   ~cf.Count.__isub__ 
+   ~cf.Count.__imul__ 
+   ~cf.Count.__idiv__ 
+   ~cf.Count.__itruediv__
+   ~cf.Count.__ifloordiv__
+   ~cf.Count.__ipow__ 
+   ~cf.Count.__imod__ 
+
+.. rubric:: Unary arithmetic operators
+
+.. autosummary::
+   :nosignatures:
+   :toctree: generated/
+   :template: method.rst
+
+   ~cf.Count.__neg__    
+   ~cf.Count.__pos__    
+   ~cf.Count.__abs__    
+
+.. rubric:: Binary bitwise operators
+
+.. autosummary::
+   :nosignatures:
+   :toctree: generated/
+   :template: method.rst
+
+   ~cf.Count.__and__     
+   ~cf.Count.__or__
+   ~cf.Count.__xor__     
+   ~cf.Count.__lshift__
+   ~cf.Count.__rshift__     
+
+.. rubric:: Binary bitwise operators with reflected (swapped) operands
+
+.. autosummary::
+   :nosignatures:
+   :toctree: generated/
+   :template: method.rst
+
+   ~cf.Count.__rand__     
+   ~cf.Count.__ror__
+   ~cf.Count.__rxor__     
+   ~cf.Count.__rlshift__
+   ~cf.Count.__rrshift__     
+
+.. rubric:: Augmented bitwise assignments
+
+.. autosummary::
+   :nosignatures:
+   :toctree: generated/
+   :template: method.rst
+
+   ~cf.Count.__iand__     
+   ~cf.Count.__ior__
+   ~cf.Count.__ixor__     
+   ~cf.Count.__ilshift__
+   ~cf.Count.__irshift__     
+
+.. rubric:: Unary bitwise operators
+
+.. autosummary::
+   :nosignatures:
+   :toctree: generated/
+   :template: method.rst
+
+   ~cf.Count.__invert__ 
+ 
+Special
+-------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Count.__contains__
+   ~cf.Count.__deepcopy__
+   ~cf.Count.__getitem__
+   ~cf.Count.__repr__
+   ~cf.Count.__setitem__
+   ~cf.Count.__str__
+   ~cf.Count.__array__
+   ~cf.Count.__data__
+   ~cf.Count.__query_set__
+   ~cf.Count.__query_wi__
+   ~cf.Count.__query_wo__
    
