@@ -76,7 +76,12 @@ Miscellaneous
    ~cf.Constructs.shallow_copy
    ~cf.Constructs.equals
    ~cf.Constructs.ordered
-
+   ~cf.Constructs.construct_type
+   ~cf.Constructs.construct_types
+   ~cf.Constructs.domain_axis_identity
+   ~cf.Constructs.new_identifier
+   ~cf.Constructs.replace
+ 
 Dictionary-access methods
 -------------------------
 
@@ -112,16 +117,3 @@ Special
    ~cf.Constructs.__len__
    ~cf.Constructs.__repr__
    ~cf.Constructs.__str__
-
-.. ~Constructs.construct_type
-   ~Constructs.construct_types
-   ~Constructs.domain_axis_identity
-   ~Constructs.filter_by_axisX
-   ~Constructs.new_identifier
-   ~Constructs.replace
-   
-   
-
-   
-   
-   
