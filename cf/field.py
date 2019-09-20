@@ -960,6 +960,7 @@ Coord refs     : <CF CoordinateReference: rotated_latitude_longitude>
 
                 nrefs = len(refs0)
                 if nrefs > 1 or nrefs != len(refs1):
+                    print ('arse')
                     # The defining coordinate are associated with
                     # different numbers of coordinate references
                     equivalent_refs = False
@@ -983,10 +984,11 @@ Coord refs     : <CF CoordinateReference: rotated_latitude_longitude>
                         # coordinates are of size 1 => flag this axis
                         # to be omitted from the result field.
 #dch                        remove_size1_axes0.append(axis0)
-                        key0 = refs0[0]
-                        ref0 = self.coordinate_references[key0]
-                        remove_items.add(refs0[0])
-                        remove_items.update(ref0.coordinate_conversion.domain_ancillaries().values())
+                        if refs0:
+                            key0 = refs0[0]
+                            ref0 = self.coordinate_references[key0]
+                            remove_items.add(refs0[0])
+                            remove_items.update(ref0.coordinate_conversion.domain_ancillaries().values())
                     else:
                         # The defining coordinates have non-equivalent
                         # coordinate references and they are of size >
@@ -2781,17 +2783,11 @@ Coord refs     : <CF CoordinateReference: rotated_latitude_longitude>
                                           use_dst_mask=use_dst_mask,
                                           inplace=True)
                     except ValueError:
-#                        ref[term] = None
-#                        self.remove_item(key)
                         ref.coordinate_conversion.set_domain_ancillary(term, None)
                         self.del_construct(key)
                     else:
-#                        ref[term] = key
-#                        self.remove_item(key)
-#                        self.insert_domain_anc(value, key=key, axes=d_axes, copy=False)
                         ref.coordinate_conversion.set_domain_ancillary(term, key)
                         d_axes = self.get_data_axes(key)
-                        self.del_construct(key)
                         
                         for k_s, new_size in zip(src_axis_keys, dst_axis_sizes):
                             self.domain_axes[k_s].set_size(new_size)
