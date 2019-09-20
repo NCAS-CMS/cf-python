@@ -2750,9 +2750,9 @@ Coord refs     : <CF CoordinateReference: rotated_latitude_longitude>
             ref_axes = []
             for k in ref.coordinates():
                 ref_axes.extend(self.get_data_axes(k))                
-            
+
             if set(ref_axes).intersection(src_axis_keys):
-                self.remove_item(key)
+                self.del_construct(key)
                 continue
 
             for term, value in ref.coordinate_conversion.domain_ancillaries().items():
@@ -13110,9 +13110,12 @@ The axes are inserted into the slowest varying data array positions.
         
         ## Update ancillary variables of new field
         #f._conform_ancillary_variables(src_axis_keys, keep_size_1=False)
+
+        dst_axis_sizes = [c.size for c in dst_coords]
         
         # Update coordinate references of new field
         f._regrid_update_coordinate_references(dst, src_axis_keys,
+                                               dst_axis_sizes,
                                                method, use_dst_mask,
                                                cartesian=True,
                                                axes=axes,
