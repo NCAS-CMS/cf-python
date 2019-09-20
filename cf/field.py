@@ -44,6 +44,7 @@ from . import Bounds
 from . import CellMethod
 from . import DimensionCoordinate
 from . import Domain
+from . import DomainAncillary
 from . import DomainAxis
 from . import Flags
 from . import Constructs
@@ -217,8 +218,8 @@ The netCDF variable name of the construct may be accessed with the
                             'flag_masks',
                             'flag_meanings')
         
-    def __init__(self, properties=None, source=None, auto_cyclic=True,
-                 copy=True, _use_data=True):
+    def __init__(self, properties=None, source=None, copy=True,
+                 _use_data=True):
         '''**Initialization**
 
 :Parameters:
@@ -238,11 +239,6 @@ The netCDF variable name of the construct may be accessed with the
         Initialize the properties, data and metadata constructs
         from those of *source*.
         
-    autocyclic: `bool`, optional
-        If `False` then do not auto-detect cyclic axes. By default
-        cyclic axes are auto-detected with the `autocyclic`
-        method.
-
     copy: `bool`, optional
         If `False` then do not deep copy input parameters prior to
         initialization. By default arguments are deep copied.
@@ -251,9 +247,8 @@ The netCDF variable name of the construct may be accessed with the
         super().__init__(properties=properties, source=source,
                          copy=copy, _use_data=_use_data)
         
-        # Cyclic axes
-        if auto_cyclic and source is None:
-            self.autocyclic()
+#        if auto_cyclic and source is None:
+#            self.autocyclic()
 
 
     def __getitem__(self, indices):
@@ -2701,6 +2696,7 @@ Coord refs     : <CF CoordinateReference: rotated_latitude_longitude>
 
 
     def _regrid_update_coordinate_references(self, dst, src_axis_keys,
+                                             dst_axis_sizes,
                                              method, use_dst_mask,
                                              cartesian=False,
                                              axes=('X', 'Y'),
@@ -2716,6 +2712,9 @@ Coord refs     : <CF CoordinateReference: rotated_latitude_longitude>
         
         src_axis_keys: sequence of `str`
             The keys of the source regridding axes.
+            
+        dst_axis_sizes: sequence, optional
+            The sizes of the destination axes.
             
         method: `bool`
             The regridding method.
@@ -2740,8 +2739,8 @@ Coord refs     : <CF CoordinateReference: rotated_latitude_longitude>
             regridding.
             
         dst_cyclic: `bool`, optional
-            Whether the destination longitude is cyclic for
-            spherical regridding.
+            Whether the destination longitude is cyclic for spherical
+            regridding.
 
         '''
         for key, ref in self.coordinate_references.items():
@@ -2771,40 +2770,39 @@ Coord refs     : <CF CoordinateReference: rotated_latitude_longitude>
                     value = self.convert(key)
                     try:
                         if cartesian:
-                            new_value = value.regridc(dst, axes=axes,
-                                                      method=method,
-                                                      use_dst_mask=use_dst_mask,
-                                                      inplace=True)
+                            value.regridc(dst, axes=axes,
+                                          method=method,
+                                          use_dst_mask=use_dst_mask,
+                                          inplace=True)
                         else:
-                            new_value = value.regrids(dst,
-                                                      src_cyclic=src_cyclic,
-                                                      dst_cyclic=dst_cyclic,
-                                                      method=method,
-                                                      use_dst_mask=use_dst_mask,
-                                                      inplace=True)
+                            value.regrids(dst, src_cyclic=src_cyclic,
+                                          dst_cyclic=dst_cyclic,
+                                          method=method,
+                                          use_dst_mask=use_dst_mask,
+                                          inplace=True)
                     except ValueError:
-                        ref[term] = None
+#                        ref[term] = None
 #                        self.remove_item(key)
+                        ref.coordinate_conversion.set_domain_ancillary(term, None)
                         self.del_construct(key)
                     else:
-                        ref[term] = key
-                        d_axes = self.axes(key)
+#                        ref[term] = key
 #                        self.remove_item(key)
+#                        self.insert_domain_anc(value, key=key, axes=d_axes, copy=False)
+                        ref.coordinate_conversion.set_domain_ancillary(term, key)
+                        d_axes = self.get_data_axes(key)
                         self.del_construct(key)
-#                        self.remove_item(key)
-                        self.insert_domain_anc(new_value, key=key, axes=d_axes, copy=False)
+                        
+                        for k_s, new_size in zip(src_axis_keys, dst_axis_sizes):
+                            self.domain_axes[k_s].set_size(new_size)
+
+                        self.set_construct(DomainAncillary(source=value),
+                                           key=key, axes=d_axes, copy=False)
                 #--- End: if
             #--- End: for
         #--- End: for
 
-        ### ppp
-#        In [1]: import cf; u = cf.read('ua.nc')[0]
-#
-#In [2]: v =  cf.read('va.nc')[0]
-#
-#
-#In [3]: u2=u.regrids(v, method='bilinear')
-
+        
     def _regrid_copy_coordinate_references(self, dst, dst_axis_keys):
         '''Copy coordinate references from the destination field to the new,
     regridded field.
@@ -2902,7 +2900,8 @@ Coord refs     : <CF CoordinateReference: rotated_latitude_longitude>
 
         # Remove the source coordinates of new field
 #        self.remove_items(axes=src_axis_keys)
-        for key in self.constructs.filter_by_axis('or', *src_axis_keys):
+#        for key in self.constructs.filter_by_axis('or', *src_axis_keys):
+        for key in self.coordinates.filter_by_axis('or', *src_axis_keys):
             self.del_construct(key)
             
         if cartesian:
@@ -9440,49 +9439,62 @@ False
 #        return f
 #    #--- End: def
 
-    # 1
-    def autocyclic(self):
+
+    def autocyclic(self, verbose=False):
         '''Set dimensions to be cyclic.
 
-A dimension is set to be cyclic if it has a unique longitude (or grid
-longitude) dimension coordinate construct with bounds and the first
-and last bounds values differ by 360 degrees (or an equivalent amount
-in other units).
-   
-.. versionadded:: 1.0
+    A dimension is set to be cyclic if it has a unique longitude (or
+    grid longitude) dimension coordinate construct with bounds and the
+    first and last bounds values differ by 360 degrees (or an
+    equivalent amount in other units).
+       
+    .. versionadded:: 1.0
+    
+    .. seealso:: `cyclic`, `iscyclic`, `period`
+    
+    :Parameters:
 
-.. seealso:: `cyclic`, `iscyclic`, `period`
+        verbose: `bool`, optional
+            TODO
 
-:Returns:
-
-   `None`
-
-**Examples:**
-
->>> f.autocyclic()
+    :Returns:
+    
+       `bool`
+    
+    **Examples:**
+    
+    >>> f.autocyclic()
 
         '''
         dims = self.dimension_coordinates('X')
 
         if len(dims) != 1:
-            return
+            if verbose:
+                print ("Not one 'X' dimension coordinate construct:", len(dims)) # pragma: no cover
+            return False
 
         key, dim = dict(dims).popitem()
 
+
         if not dim.Units.islongitude:
+            if verbose: print (0)
             if dim.get_property('standard_name', None) not in ('longitude', 'grid_longitude'):
                 self.cyclic(key, iscyclic=False)
-                return
-
+                if verbose: print (1)
+                return False
+        #--- End: if
+        
         bounds = dim.get_bounds(None)
         if bounds is None:
             self.cyclic(key, iscyclic=False)
-            return
+            if verbose: print (2)
+            return False
 
         bounds_data = bounds.get_data(None)
         if bounds_data is None:
             self.cyclic(key, iscyclic=False)
-            return 
+            if verbose: print (3)
+            return False
 
         bounds = bounds_data.array
         
@@ -9492,10 +9504,14 @@ in other units).
 
         if abs(bounds[-1, -1] - bounds[0, 0]) != period.array:
             self.cyclic(key, iscyclic=False)
-            return
+            if verbose: print (4)
+            return False
 
         self.cyclic(key, iscyclic=True, period=period)
-    #--- End: def
+        if verbose: print (5)
+
+        return True
+    
 
     def axes(self, axes=None, **kwargs):
         '''Return domain axis constructs.
@@ -12588,12 +12604,16 @@ The axes are inserted into the slowest varying data array positions.
         # Update ancillary variables of new field
         #f._conform_ancillary_variables(src_axis_keys, keep_size_1=False)
 
+#        for k_s, new_size in zip(src_axis_keys, dst_axis_sizes):
+#            f.domain_axes[k_s].set_size(new_size)
+            
         # Update coordinate references of new field
         f._regrid_update_coordinate_references(dst, src_axis_keys,
+                                               dst_axis_sizes,
                                                method, use_dst_mask,
                                                src_cyclic=False,
                                                dst_cyclic=False)
-        
+
         # Update coordinates of new field
         f._regrid_update_coordinates(dst, dst_dict, dst_coords,
                                      src_axis_keys, dst_axis_keys,
@@ -12626,6 +12646,8 @@ The axes are inserted into the slowest varying data array positions.
 #        if f.data.fits_in_one_chunk_in_memory(f.data.dtype.itemsize):
 #            f.varray
 
+        if inplace:
+            f = None
         return f
 
 
@@ -13120,7 +13142,9 @@ The axes are inserted into the slowest varying data array positions.
         srcfield.destroy()
         dstgrid.destroy()
         srcgrid.destroy()
-        
+
+        if inplace:
+            f = None
         return f
 
     

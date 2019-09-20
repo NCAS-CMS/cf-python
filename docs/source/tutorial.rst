@@ -17,10 +17,10 @@ Version |release| for version |version| of the CF conventions.
 .. http://docutils.sourceforge.net/docs/ref/rst/directives.html#list-table
   
 
-.. warning:: There are :ref:`incompatible differences between versions
-             2.x and 3.x <2_to_3_changes>`. For version 2.x
-             documentation, see the `documentation archive
-             <https://cfpython.bitbucket.io/docs/archive.html>`_.
+.. note:: There are :ref:`incompatible differences between versions
+          2.x and 3.x <2_to_3_changes>`. For version 2.x
+          documentation, see the `documentation archive
+          <https://cfpython.bitbucket.io/docs/archive.html>`_.
 
 .. contents::
    :local:

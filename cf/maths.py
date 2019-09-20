@@ -166,8 +166,9 @@ with missing values or calculated with off-centre finite differences.
             raise ValueError(
                 "Invalid units for radius: {!r}".format(radius.Units))
 
-        # Calculate the relative vorticity
-        rv = v - u + corr
+        # Calculate the relative vorticity. Do v-(u-corr) rather than
+        # v-u+corr to be nice with coordinate reference corner cases.
+        rv = v - (u - corr)
         rv.data /= radius
 
         # Convert the units of latitude and longitude to canonical units

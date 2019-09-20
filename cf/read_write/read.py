@@ -640,6 +640,12 @@ def _read_a_file(filename, aggregate=True, aggregate_options={},
         fields = ()
 
     # ----------------------------------------------------------------
+    # Check for cyclic dimensions
+    # ----------------------------------------------------------------
+    for f in fields:
+        f.autocyclic()
+    
+    # ----------------------------------------------------------------
     # Return the fields
     # ----------------------------------------------------------------
     return FieldList(fields)
