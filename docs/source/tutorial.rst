@@ -35,7 +35,7 @@ Version |release| for version |version| of the CF conventions.
 
 This tutorial uses a number of small sample datasets, all of which can
 be found in the zip file ``cf_tutorial_files.zip``
-(:download:`download <../source/sample_files/cf_tutorial_files.zip>`, 160kB):
+(:download:`download <../source/sample_files/cf_tutorial_files.zip>`, 164kB):
 		    
 .. code-block:: shell
    :caption: *Unpack the sample datasets.*
@@ -169,11 +169,17 @@ sequence of file names (each element of which may also contain wild
 cards). Shell environment variables are also permitted.
 
 .. code-block:: python
-   :caption: *TODO*
+   :caption: *Read the ten sample netCDF files, noting that they
+             contain more than ten field constructs.*
 		
    >>> y = cf.read('*.nc')
    >>> len(y)
-   10
+   12
+
+.. code-block:: python
+   :caption: *Read two particular files, noting that they contain more
+             than two field constructs.*
+		
    >>> z = cf.read(['file.nc', 'precipitation_flux.nc'])
    >>> len(z)
    3
@@ -182,16 +188,16 @@ All of the datasets in one more directories may also be read by
 replacing any file name with a directory name. An attempt will be made
 to read all files in the directory, which will result in an error if
 any have a non-supported format. Non-supported files may be ignored
-witeh teh *ignore_read_error* keyword.
+with the *ignore_read_error* keyword.
 
 .. code-block:: python
-   :caption: *TODO*
+   :caption: *Read all of the files in the current working directory.*
 
    >>> y = cf.read('$PWD')
    Exception: Can't determine format of file cf_tutorial_files.zip
    >>> y = cf.read('$PWD', ignore_read_error=True)
    >>> len(y)
-   11
+   13
 
 In all cases, the default behaviour is to aggregate the contents of
 all input datasets into as few field constructs as possible, and it is
@@ -276,7 +282,7 @@ The built-in `repr` function returns a short, one-line description:
 This gives the identity of the field construct
 (e.g. "specific_humidity"), the identities and sizes of the dimensions
 spanned by the data array ("latitude" and "longitude" with sizes 5 and
-8 respectively) and the units of the data ("1").
+8 respectively) and the units of the data ("1", i.e. dimensionless).
 
 .. _Medium-detail:
 
@@ -511,7 +517,7 @@ files <External-variables-with-cfa>`.
 Powerful, flexible, and very simple to produce visualizations of field
 constructs are available with the `cfplot package
 <http://ajheaps.github.io/cf-plot>`_ (that needs to be installed
-seprately to cf).
+separately to cf).
 
 .. figure:: images/cfplot_example.png
 
@@ -948,7 +954,7 @@ The data may be set with the `~Field.set_data` method of the field
 construct. The domain axis constructs spanned by the data are inferred
 from the existing domain axis constructs, provided that there are no
 ambiguities (such as two dimensions of the same size), in which case
-thay can be explicitly provided via their construct keys. In any case,
+they can be explicitly provided via their construct keys. In any case,
 the data axes may be set at any time with the `~Field.set_data_axes`
 method of the field construct.
 
@@ -1034,27 +1040,32 @@ any other date-time object that has an equivalent API.
     
 .. code-block:: python
    :caption: *Creating Data instances from date-time strings. If no
-             units are provided then the "dt" keyword is required.*
+             units or calendar are provided then the "dt" keyword is
+             required.*
 
    >>> d = cf.Data(['2004-02-29', '2004-02-30', '2004-03-01'], calendar='360_day')
+   >>> d.Units
+   <Units: days since 2004-02-29 360_day>
    >>> print(d.array)
    [0., 1., 2.]
-   >>> print(e.datetime_array)
+   >>> print(d.datetime_array)
    [cftime.Datetime360Day(2004-02-29 00:00:00)
     cftime.Datetime360Day(2004-02-30 00:00:00)
     cftime.Datetime360Day(2004-03-01 00:00:00)]
-   >>> e = cf.Data(['2004-02-29', '2004-03-01', '2004-03-02'])
+   >>> e = cf.Data(['2004-02-29', '2004-03-01', '2004-03-02'], dt=True)
    >>> e.Units
-   <Units: >
-   >>> print(e.datetime_array)
-   ValueError: Can't create date-time array from units <Units: >
-   >>> f = cf.Data(['2004-02-29', '2004-03-01', '2004-03-02'], dt=True)
-   >>> f.Units
    <Units: days since 2004-02-29>
-   >>> print(f.datetime_array)
+   >>> print(e.datetime_array)
    [cftime.DatetimeGregorian(2004-02-29 00:00:00)
     cftime.DatetimeGregorian(2004-03-01 00:00:00)
     cftime.DatetimeGregorian(2004-03-02 00:00:00)]
+   >>> f = cf.Data(['2004-02-29', '2004-03-01', '2004-03-02'])
+   >>> print(f.array)
+   ['2004-02-29' '2004-03-01' '2004-03-02']
+   >>> f.Units
+   <Units: >
+   >>> print(f.datetime_array)
+   ValueError: Can't create date-time array from units <Units: >
 
     
 .. _Manipulating-dimensions:
@@ -1189,7 +1200,8 @@ the only differences being:
    :caption: *Create new field constructs with a variety of indexing
              techniques.*
 
-   >>> q   <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>
+   >>> q
+   <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>
    >>> t[:, :, 1]
    <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(1)) K>
    >>> t[:, 0]
@@ -1412,7 +1424,7 @@ data to ensure that they are broadcastable.
    :caption: *Broadcasting is carried out after transforms to ensure
              field construct compatibility.*
 	     
-   >>> t[:, :, 1:3]] = u[2]
+   >>> t[:, :, 1:3] = u[2]
    >>> print(t[:, :, 1:3].array)
    [[[ -2. , 279.8]
      [ -2. , 279.5]
@@ -1527,12 +1539,14 @@ the Gregorian calender is assumed, as per the CF conventions.  The
    :caption: *The calendar of date-times is available as a property or
              via the Units instance.*
 	     
-   >>> t.units
-   'days since 2000-2-1'
-   >>> t.calendar
-   'gregorian'
-   >>> t.Units
-   <Units: days since 2000-2-1 gregorian>
+   >>> tas = cf.read('air_temperature.nc')[0]
+   >>> time = tas.coordinate('time')
+   >>> time.units
+   'days since 1860-1-1'
+   >>> time.calendar
+   '360_day'
+   >>> time.Units
+   <Units: days since 1860-1-1 360_day>
 
 ----
 
@@ -1675,7 +1689,7 @@ A construct's identity may be any one of the following
   <NetCDF-interface>`), 
 * The netCDF dimension name, preceded by "ncdim%" e.g. ``'ncdim%z'``
   (see the :ref:`netCDF interface <NetCDF-interface>`), and 
-* The construct key, optionally precedeed by "key%",
+* The construct key, optionally proceeded by "key%",
   e.g. ``'auxiliarycoordinate2'`` or ``'key%auxiliarycoordinate2'``.
 
 .. code-block:: python
@@ -1985,6 +1999,7 @@ construct <Data>` as the field construct for accessing their data:
    >>> lon.data[2] = 133.33
    >>> print(lon.array)
    [22.5 67.5 133.33 157.5 202.5 247.5 292.5 337.5]
+   >>> lon.data[2] = 112.5
 
 The domain axis constructs spanned by a particular metadata
 construct's data are found with the `~Constructs.get_data_axes` method
@@ -1997,7 +2012,7 @@ of the field construct:
    >>> key = t.construct_key('latitude')
    >>> key
    'auxiliarycoordinate0'
-   >>> t.get_data_axes(key=key)
+   >>> t.get_data_axes(key)
    ('domainaxis1', 'domainaxis2')
     
 The domain axis constructs spanned by all the data of all metadata
@@ -2071,7 +2086,7 @@ Time duration
 ^^^^^^^^^^^^^
 
 A period of time may stored in a `cf.TimeDuration` object. For many
-applications, a `cf.Data` instance with appropiate units (such as
+applications, a `cf.Data` instance with appropriate units (such as
 ``seconds``) is equivalent, but a `cf.TimeDuration` instance also
 allows units of calendar years or months; and may be relative to a
 date-time offset.
@@ -2528,7 +2543,7 @@ Anchoring a cyclic axis
 
 The field construct may be rolled by specifying a dimension coordinate
 value that should be contained in the first element of the data for
-the corresponding axis, by specifying the corodinate value via the
+the corresponding axis, by specifying the coordinate value via the
 `~cf.Field.anchor` method if the field construct.
 
 .. code-block:: python
@@ -2716,11 +2731,11 @@ date-time objects.
    :caption: *Create a new field construct whose domain's time axis
               contains a single cell for 2019-01-01. TODO*
 	  
-   >>> print(f.coordinate('T').array) TODO
+   >>> print(f.coordinate('T').array) #TODO
    TODO
-   >>> print(f.coordinate('T').datetime_array) TODO
+   >>> print(f.coordinate('T').datetime_array) #TODO
    TODO
-   >>> print(q.subspace(T=TODO (float))
+   >>> print(q.subspace(T=TODO (float)))
    Field: specific_humidity (ncvar%q)
    ----------------------------------
    Data            : specific_humidity(latitude(5), longitude(8)) 1
@@ -3106,7 +3121,7 @@ object.
    >>> lt5 = cf.Query('lt', 5)
    >>> c = ge3 & lt5
    >>> c 
-   >>> <CF Query: [(ge 3) & (lt 5)]>
+   <CF Query: [(ge 3) & (lt 5)]>
    >>> c == 2
    False
    >>> c != 2
@@ -3311,7 +3326,7 @@ metadata construct's data:
    :caption: *Where the 'Y' coordinates are greater than 0.5, set the
              field construct data to missing data.*
 
-   >>> print(t.where(cf.gt(0.5), x=cf.masked, construct='Y').array
+   >>> print(t.where(cf.gt(0.5), x=cf.masked, construct='Y').array)
    [[[   --    --    --    --    --    --    --    --    --]
      [   --    --    --    --    --    --    --    --    --]
      [   --    --    --    --    --    --    --    --    --]
@@ -3444,7 +3459,7 @@ construct is used for setting metadata constructs and mapping data
 array dimensions to domain axis constructs. The domain axis constructs
 spanned by the data are inferred from the existing domain axis
 constructs, provided that there are no ambiguities (such as two
-dimensions of the same size), in which case thay can be explicitly
+dimensions of the same size), in which case they can be explicitly
 provided via their construct keys. This method returns the construct
 key for the metadata construct which can be used when other metadata
 constructs are added to the field (e.g. to specify which domain axis
@@ -3974,7 +3989,7 @@ variables <External-variables>` may be incorporated.
    TODO
    $ cfa TODO
    TODO
-   $ cfa -o new_dataset.nc TODO TODO # TODO see aggreation 
+   $ cfa -o new_dataset.nc TODO TODO # TODO see aggregation 
    $ cfa new_dataset.nc
    TODO
 
@@ -4034,7 +4049,7 @@ fast.
 Field list copying
 ^^^^^^^^^^^^^^^^^^
 
-A :ref:`field list <Field-lists>` also has a `~FiledList.copy` method
+A :ref:`field list <Field-lists>` also has a `~FieldList.copy` method
 that creates a new field list containing copies all of the field
 construct elements.
 
@@ -5639,7 +5654,7 @@ method of the field construct, or to manually set its cyclicity use
 the `cyclic` method. If the destination domain has been defined by a
 dictionary of dimension coordinate constructs, then cyclicity can be
 registered by setting a period of cyclicity with the
-`~DimensionCooridinate.period` method of the dimension coordinate
+`~DimensionCoordinate.period` method of the dimension coordinate
 construct.
 
 .. _Cartesian-regridding:
@@ -5648,7 +5663,7 @@ Cartesian regridding
 ^^^^^^^^^^^^^^^^^^^^
 
 Cartesian regridding with the `~cf.Field.regridc` method is very
-similar to :ref:`spherical regridding <Spherical-regidding>`, except
+similar to :ref:`spherical regridding <Spherical-regridding>`, except
 regridding dimensions are not restricted to the horizontal plane, the
 source and destination domains are assumed to be `Euclidian spaces
 <https://en.wikipedia.org/wiki/Euclidean_space>`_ for the purpose of
@@ -5701,7 +5716,7 @@ will produce similar results to using using spherical regridding.
 .. code-block:: python
    :caption: *TODO*
 		   
-   >>> c = a.regridc(TODO (field arg), axes='T', method='conservative')
+   >>> # c = a.regridc(TODO (field arg), axes='T', method='conservative')
    >>> print(c)
    TODO
 
@@ -5734,7 +5749,7 @@ The only option for regridding along a vertical axis is to use
 Cartesian regridding. However, care must be taken to ensure that the
 vertical axis is transformed so that it's coordinate values are vary
 linearly. For example, to regrid a data on one set of vertical
-pressure corodinates to another set, the pressure coordinates may
+pressure coordinates to another set, the pressure coordinates may
 first be transformed into the logarithm of pressure, and then changed
 back to pressure coordinates after the regridding operation.
 
@@ -5791,7 +5806,7 @@ construct key.
 **Mathematical operations**
 ---------------------------
 
-Trigonemtrical functions
+Trigonometrical functions
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 The field construct and metadata constructs have `~Field.cos`,
@@ -5979,7 +5994,7 @@ the Earth; and :math:`\phi` is the latitude at each point.
 The `cf.relative_vorticity` function creates a relative vorticity
 field construct from field constructs containing the wind components
 using finite differences to approximate the derivatives. Dimensions
-other than 'X' and 'Y' remain unchanged by te operation.
+other than 'X' and 'Y' remain unchanged by the operation.
 
 ..   :caption: *TODO*
 .. code-block:: python
@@ -5987,12 +6002,33 @@ other than 'X' and 'Y' remain unchanged by te operation.
    >>> u, v = cf.read('wind_components.nc')
    >>> zeta = cf.relative_vorticity(u, v)
    >>> print(zeta)
-   TODO
+   Field: atmosphere_relative_vorticity (ncvar%va)
+   -----------------------------------------------
+   Data            : atmosphere_relative_vorticity(time(1), atmosphere_hybrid_height_coordinate(1), latitude(9), longitude(8)) s-1
+   Dimension coords: time(1) = [1978-09-01 06:00:00] 360_day
+                   : atmosphere_hybrid_height_coordinate(1) = [9.9982] m
+                   : latitude(9) = [-90, ..., 70] degrees_north
+                   : longitude(8) = [0, ..., 315] degrees_east
+   Coord references: standard_name:atmosphere_hybrid_height_coordinate
+   Domain ancils   : atmosphere_hybrid_height_coordinate(atmosphere_hybrid_height_coordinate(1)) = [9.9982] m
+                   : long_name=vertical coordinate formula term: b(k)(atmosphere_hybrid_height_coordinate(1)) = [0.9989]
+                   : surface_altitude(latitude(9), longitude(8)) = [[2816.25, ..., 2325.98]] m
+   >>> print(zeta.array.round(8))
+   [[[[--        --        --        --        --        --        --        --       ]
+      [-2.04e-06  1.58e-06  5.19e-06  4.74e-06 -4.76e-06 -2.27e-06  9.55e-06 -3.64e-06]
+      [-8.4e-07  -4.37e-06 -3.55e-06 -2.31e-06 -3.6e-07  -8.58e-06 -2.45e-06  6.5e-07 ]
+      [ 4.08e-06  4.55e-06  2.75e-06  4.15e-06  5.16e-06  4.17e-06  4.67e-06 -7e-07   ]
+      [-1.4e-07  -3.5e-07  -1.27e-06 -1.29e-06  2.01e-06  4.4e-07  -2.5e-06   2.05e-06]
+      [-7.3e-07  -1.59e-06 -1.77e-06 -3.13e-06 -7.9e-07  -5.1e-07  -2.79e-06  1.12e-06]
+      [-3.7e-07   7.1e-07   1.52e-06  6.5e-07  -2.75e-06 -4.3e-07   1.62e-06 -6.6e-07 ]
+      [ 9.5e-07  -8e-07     6.6e-07   7.2e-07  -2.13e-06 -4.5e-07  -7.5e-07  -1.11e-06]
+      [--        --        --        --        --        --        --        --       ]]]]
 
-If the longitudinal axis is :ref:`cyclic <Cyclic-domain-axes>` then the
-derivative wraps around by default, otherwise it may be forced to wrap
-around; a one-sided difference is calculated at the edges; or missing
-data is inserted.
+For axes that are not :ref:`cyclic <Cyclic-domain-axes>`, missing data
+is inserted at the edges by default; otherwise it may be forced to
+wrap around, or a one-sided difference is calculated at the edges. If
+the longitudinal axis is :ref:`cyclic <Cyclic-domain-axes>` then the
+derivative wraps around by default.
 
 ----
   
@@ -6042,9 +6078,9 @@ These parameters are also available to the `cf.read` function via its
    :caption: *Aggregation configuration parameters can be applied to
              both the `cf.read` and `cf.aggregate` functions.*
 
-   >>> WWW = cf.read(TODO, aggregate={'info': 1, 'overlap': False})
-   >>> XXX = cf.aggregate(AAA TODO, info=1, overlap=False)
-   >>> WWW.equals(XXX TODO)
+   >>> #WWW = cf.read(TODO, aggregate={'info': 1, 'overlap': False})
+   >>> #XXX = cf.aggregate(AAA TODO, info=1, overlap=False)
+   >>> #WWW.equals(XXX TODO)
    True
 
 Note that when reading :ref:`PP and UM fields files
@@ -6600,7 +6636,7 @@ carried out by the `cf.read` function.
 .. code-block:: python
    :caption: *TODO*
    
-   >>> TODO read PP file
+   >>> #TODO read PP file
 
 Converting PP and UM fields files to netCDF files
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -6706,9 +6742,9 @@ is straight forward with the `cf.load_stash2standard_name` function.
    False
    >>> with open('new_STASH.txt', 'w') as new:  
    ...     new.write('1!999!My STASH code!1!!!ultraviolet_index!!') 
-   ...
+   ... 
    >>> _ = cf.load_stash2standard_name('new_STASH.txt', merge=True)
-   >>> cf.read_write.um.umread.stash2standard_name(1, 999)]
+   >>> cf.read_write.um.umread.stash2standard_name[(1, 999)]
    (['My STASH code',
      '1',
      None,
@@ -6730,30 +6766,6 @@ is straight forward with the `cf.load_stash2standard_name` function.
          all zero for the first header in a 32-bit PP file, the file
          format can not reliably be detected automatically.
 
-.. .. [#files] The tutorial files may be also found in the `downloads
-               directory
-               <https://github.com/NCAS-CMS/cf-python/tree/master/docs/_downloads>`_
-               of the on-line code repository.
-
-.. .. [#notebook] The Jupyter notebook is quite long. To aid navigation
-                  it has been written so that it may optionally be used
-                  with the "Collapsible Headings" Jupyter notebook
-                  extension. See
-                  https://jupyter-contrib-nbextensions.readthedocs.io/en/latest
-                  for details.
-
-.. .. [#language] In the terminology of the CF data model, a
-                  "construct" is an abstract concept which is distinct
-                  from its realization, e.g. a `cf.Field` instance is
-                  not, strictly speaking, a field construct. However,
-                  the distinction is moot and the descriptive language
-                  used in this tutorial is greatly simplified by
-                  allowing the term "construct" to mean "class
-                  instance" (e.g. "field construct" means "`cf.Field`
-                  instance"), and this convention is applied
-                  throughout this tutorial. The phrase "CF data model
-                  construct" is used on the few occasions when the
-                  original abstract meaning is intended.
 
 .. External links
 

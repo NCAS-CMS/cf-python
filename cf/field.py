@@ -3894,8 +3894,8 @@ Coord refs     : <CF CoordinateReference: rotated_latitude_longitude>
             ``f.domain_axis(identity)``.
     
         iscyclic: `bool`, optional
-            If `False` then the axis is set to be non-cyclic. By default
-            the selected axis is set to be cyclic.
+            If `False` then the axis is set to be non-cyclic. By
+            default the selected axis is set to be cyclic.
     
         period: optional       
             The period for a dimension coordinate object which spans
@@ -9782,7 +9782,6 @@ The axes are inserted into the slowest varying data array positions.
         return f
     #--- End: def
 
-    # 1
     def auxiliary_coordinate(self, identity, default=ValueError(),
                              key=False):
         '''Return an auxiliary coordinate construct, or its key.
@@ -10985,12 +10984,12 @@ The axes are inserted into the slowest varying data array positions.
         out = super().set_construct(construct, key=key, axes=axes, copy=copy)
     
         if construct_type == 'dimension_coordinate':
-            self._conform_coordinate_references(out) #, coordinate=True)
+            self._conform_coordinate_references(out)
             self.autocyclic()
             self._conform_cell_methods()
             
         elif construct_type == 'auxiliary_coordinate':
-            self._conform_coordinate_references(out) #, coordinate=True)
+            self._conform_coordinate_references(out)
             self._conform_cell_methods()
 
         elif construct_type == 'cell_method':
@@ -10998,7 +10997,7 @@ The axes are inserted into the slowest varying data array positions.
 
         elif construct_type == 'coordinate_reference':
             for ckey in self.coordinates:
-                self._conform_coordinate_references(ckey) #, coordinate=True)
+                self._conform_coordinate_references(ckey)
         #--- End: if
 
         # Return the construct key
@@ -12426,7 +12425,10 @@ The axes are inserted into the slowest varying data array positions.
         # dst is not a dictionary and dst_cyclic is None
         if not dst_dict and dst_cyclic is None:
             dst_cyclic = dst.iscyclic(dst_axis_keys[0])
-        elif dst_dict and dst_cyclic is None:            
+        elif dst_dict and dst_cyclic is None:
+            dst = dst.copy()
+            dst['longitude'] = dst['longitude'].copy()
+            dst['longitude'].autoperiod()
             dst_cyclic = dst['longitude'].isperiodic
 
         # Get the axis indices and their order for the source field
@@ -12607,8 +12609,8 @@ The axes are inserted into the slowest varying data array positions.
         f._regrid_update_coordinate_references(dst, src_axis_keys,
                                                dst_axis_sizes,
                                                method, use_dst_mask,
-                                               src_cyclic=False,
-                                               dst_cyclic=False)
+                                               src_cyclic=src_cyclic,
+                                               dst_cyclic=dst_cyclic)
 
         # Update coordinates of new field
         f._regrid_update_coordinates(dst, dst_dict, dst_coords,
@@ -12641,6 +12643,8 @@ The axes are inserted into the slowest varying data array positions.
         
 #        if f.data.fits_in_one_chunk_in_memory(f.data.dtype.itemsize):
 #            f.varray
+
+        f.autocyclic()
 
         if inplace:
             f = None

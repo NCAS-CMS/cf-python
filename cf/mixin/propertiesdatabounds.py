@@ -568,14 +568,14 @@ If there are no cell bounds then the cell sizes are all zero.
     def dtype(self):
         '''Numpy data-type of the data array.
 
-.. versionadded:: 2.0 
-
-**Examples:**
-
->>> c.dtype
-dtype('float64')
->>> import numpy
->>> c.dtype = numpy.dtype('float32')
+    .. versionadded:: 2.0 
+    
+    **Examples:**
+    
+    >>> c.dtype
+    dtype('float64')
+    >>> import numpy
+    >>> c.dtype = numpy.dtype('float32')
 
         '''
         data = self.get_data(None)
@@ -586,9 +586,8 @@ dtype('float64')
         if bounds is not None:
             return bounds.dtype
 
-        raise AttributeError("%s doesn't have attribute 'dtype'" %
-                             self.__class__.__name__)
-    #--- End: def
+        raise AttributeError("{} doesn't have attribute 'dtype'".format(
+            self.__class__.__name__))
     @dtype.setter
     def dtype(self, value):
         data = self.get_data(None)
@@ -598,56 +597,56 @@ dtype('float64')
         bounds = self.get_bounds(None)
         if bounds is not None:
             bounds.dtype = value
-    #--- End: def
+
+
     @property
     def isperiodic(self): 
         '''
 
-.. versionadded:: 2.0 
-
->>> print(c.period())
-None
->>> c.isperiodic
-False
->>> print(c.period(cf.Data(360, 'degeres_east')))
-None
->>> c.isperiodic
-True
->>> c.period(None)
-<CF Data(): 360 degrees_east>
->>> c.isperiodic
-False
-
-'''
+    .. versionadded:: 2.0 
+    
+    >>> print(c.period())
+    None
+    >>> c.isperiodic
+    False
+    >>> print(c.period(cf.Data(360, 'degeres_east')))
+    None
+    >>> c.isperiodic
+    True
+    >>> c.period(None)
+    <CF Data(): 360 degrees_east>
+    >>> c.isperiodic
+    False
+    
+    '''
         return self._custom.get('period', None) is not None
-    #--- End: def
 
-    # 1
+
     @property
     def lower_bounds(self):
         '''The lower bounds of cells.
 
-If there are no cell bounds then the coordinates are used as the lower
-bounds.
+    If there are no cell bounds then the coordinates are used as the
+    lower bounds.
+    
+    .. versionadded:: 2.0 
+    
+    .. seealso:: `upper_bounds`
+    
+    **Examples:**
+    
+    >>> print(c.array)
+    [4  2  0]
+    >>> print(c.bounds.array)
+    [[ 5  3]
+     [ 3  1]
+     [ 1 -1]]
+    >>> c.lower_bounds
+    <CF Data(3): [3, 1, -1]>
+    >>> b = c.del_bounds()
+    >>> c.lower_bounds
+    <CF Data(3): [4, 2, 0]>
 
-.. versionadded:: 2.0 
-
-.. seealso:: `upper_bounds`
-
-**Examples:**
-
->>> print(c.array)
-[4  2  0]
->>> print(c.bounds.array)
-[[ 5  3]
- [ 3  1]
- [ 1 -1]]
->>> c.lower_bounds
-<CF Data(3): [3, 1, -1]>
->>> b = c.del_bounds()
->>> c.lower_bounds
-<CF Data(3): [4, 2, 0]>
- 
         '''
         data = self.get_bounds_data(None)
         if data is not None:            
@@ -662,33 +661,32 @@ bounds.
                 
         raise AttributeError(
             "Can't get lower bounds when there are no bounds nor coordinate data")
-    #--- End: def
 
-    # 1
+
     @property
     def upper_bounds(self):
         '''The upper bounds of cells.
 
-If there are no cell bounds then the coordinates are used as the upper
-bounds.
-
-.. versionadded:: 2.0 
-
-.. seealso:: `lower_bounds`
-
-**Examples:**
-
->>> print(c.array)
-[4  2  0]
->>> print(c.bounds.array)
-[[ 5  3]
- [ 3  1]
- [ 1 -1]]
->>> c.upper_bounds
-<CF Data(3): [5, 3, 1]>
->>> b = c.del_bounds()
->>> c.upper_bounds
-<CF Data(3): [4, 2, 0]>
+    If there are no cell bounds then the coordinates are used as the
+    upper bounds.
+    
+    .. versionadded:: 2.0 
+    
+    .. seealso:: `lower_bounds`
+    
+    **Examples:**
+    
+    >>> print(c.array)
+    [4  2  0]
+    >>> print(c.bounds.array)
+    [[ 5  3]
+     [ 3  1]
+     [ 1 -1]]
+    >>> c.upper_bounds
+    <CF Data(3): [5, 3, 1]>
+    >>> b = c.del_bounds()
+    >>> c.upper_bounds
+    <CF Data(3): [4, 2, 0]>
 
         '''
         data = self.get_bounds_data(None)
@@ -704,7 +702,7 @@ bounds.
         
         raise AttributeError(
             "Can't get upper bounds when there are no bounds nor coordinate data")
-    #--- End: def
+
 
     def mask_invalid(self, inplace=False, i=False):
         '''Mask the array where invalid values occur.

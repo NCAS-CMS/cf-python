@@ -19,7 +19,7 @@ class QueryTest(unittest.TestCase):
                          numpy.array([0,1,0,0,0,0,0,0,0], bool)).all())
         self.assertTrue(((cf.contains(999)==c).array == 
                          numpy.array([0,0,0,0,0,0,0,0,0], bool)).all())
-    #--- End: def
+
 
     def test_Query(self):
         f = cf.read(self.filename)[0]
@@ -76,12 +76,10 @@ class QueryTest(unittest.TestCase):
         _ = cf.cellwo(1, 2)
             
 
-    #--- End: def
-
     def test_Query_datetime1(self):
-        d = cf.Data([[1., 5.], [6, 2]], 'days since 2000-12-29 21:00:00')
+        d = cf.Data([[1., 5.], [6, 2]], 'days since 2000-12-29 21:00:00', calendar='standard')
         
-        message = 'Diff ='+str((d-cf.Data(cf.dt('2001-01-03 21:00:00', calendar='standard'))).array)
+        message = 'Diff ='+str( (d-cf.Data(cf.dt('2001-01-03 21:00:00', calendar='standard'))).array)
         
         self.assertTrue((d==cf.eq(cf.dt('2001-01-03 21:00:00'))).equals(cf.Data([[False, True], [False, False]])), message)
         self.assertTrue((d==cf.ne(cf.dt('2001-01-03 21:00:00'))).equals(cf.Data([[True, False], [True, True]])), message)
@@ -104,11 +102,11 @@ class QueryTest(unittest.TestCase):
         _ = cf.djf()
         _ = cf.jja()
         _ = cf.son()
-            
-    #--- End: def
 
+        
     def test_Query_year_month_day_hour_minute_second(self):
-        d = cf.Data([[1., 5.], [6, 2]], 'days since 2000-12-29 21:57:57')   
+        d = cf.Data([[1., 5.], [6, 2]], 'days since 2000-12-29 21:57:57', calendar='gregorian')
+
         self.assertTrue((d==cf.year(2000)).equals(cf.Data([[True, False], [False, True]])))
         self.assertTrue((d==cf.month(12)).equals(cf.Data([[True, False], [False, True]])))
         self.assertTrue((d==cf.day(3)).equals(cf.Data([[False, True], [False, False]])))
@@ -129,7 +127,7 @@ class QueryTest(unittest.TestCase):
         self.assertTrue((d==cf.minute(cf.ne(-1))).equals(cf.Data([[True, True], [True, True]])))
         d = cf.Data([[1., 5], [6, 2]], 'seconds since 2000-12-29 21:57:57')
         self.assertTrue((d==cf.second(cf.ne(-1))).equals(cf.Data([[True, True], [True, True]]))) 
-    #--- End: def
+
 
     def test_Query_dteq_dtne_dtge_dtgt_dtle_dtlt(self):
         d = cf.Data([[1., 5.], [6, 2]], 'days since 2000-12-29 21:00:00')
@@ -185,7 +183,7 @@ class QueryTest(unittest.TestCase):
         self.assertFalse(cf.lt(cf.dt(2002, 6, 16)) == d)
         self.assertTrue(cf.lt(cf.dt('2100-1-1')) == d)
         self.assertFalse(cf.lt(cf.dt('2001-1-1')) & cf.lt(cf.dt(2010, 12, 31)) == d)
-    #--- End: def
+
 
     def test_Query_evaluate(self):
         for x in (5, cf.Data(5, 'kg m-2'), cf.Data([5], 'kg m-2 s-1')):
@@ -273,7 +271,7 @@ class QueryTest(unittest.TestCase):
         self.assertTrue(x != cf.eq(re.compile('.*RTY'   )))
         self.assertTrue(x != cf.eq(re.compile('.*RTY$'  )))
         self.assertTrue(x != cf.eq(re.compile('^.*RTY$' )))
-    #--- End: def
+
 
 #--- End: class
 

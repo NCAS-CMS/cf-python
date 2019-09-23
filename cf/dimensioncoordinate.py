@@ -713,47 +713,47 @@ None
         return super().get_bounds(default=default)
     #--- End: def
 
-    # 0
+
     def period(self, *value):
         '''Set the period for cyclic coordinates.
 
-:Parameters:
-
-    value: data-like or `None`, optional
-        The period. The absolute value is used.
-
-        {+data-like-scalar}
-
-:Returns:
-
-    out: `cf.Data` or `None`
-        The period prior to the change, or the current period if no
-        *value* was specified. In either case, None is returned if the
-        period had not been set previously.
-
-**Examples:**
-
->>> print(c.period())
-None
->>> c.Units
-<Units: degrees_east>
->>> print(c.period(360))
-None
->>> c.period()
-<CF Data(): 360.0 'degrees_east'>
->>> import math
->>> c.period(cf.Data(2*math.pi, 'radians'))
-<CF Data(): 360.0 degrees_east>
->>> c.period()
-<CF Data(): 6.28318530718 radians>
->>> c.period(None)
-<CF Data:() 6.28318530718 radians>
->>> print(c.period())
-None
->>> print(c.period(-360))
-None
->>> c.period()
-<CF Data(): 360.0 degrees_east>
+    :Parameters:
+    
+        value: data-like or `None`, optional
+            The period. The absolute value is used.
+    
+            {+data-like-scalar} TODO
+    
+    :Returns:
+    
+        out: `cf.Data` or `None`
+            The period prior to the change, or the current period if
+            no *value* was specified. In either case, None is returned
+            if the period had not been set previously.
+    
+    **Examples:**
+    
+    >>> print(c.period())
+    None
+    >>> c.Units
+    <Units: degrees_east>
+    >>> print(c.period(360))
+    None
+    >>> c.period()
+    <CF Data(): 360.0 'degrees_east'>
+    >>> import math
+    >>> c.period(cf.Data(2*math.pi, 'radians'))
+    <CF Data(): 360.0 degrees_east>
+    >>> c.period()
+    <CF Data(): 6.28318530718 radians>
+    >>> c.period(None)
+    <CF Data:() 6.28318530718 radians>
+    >>> print(c.period())
+    None
+    >>> print(c.period(-360))
+    None
+    >>> c.period()
+    <CF Data(): 360.0 degrees_east>
 
         '''     
         old = self._custom.get('period')
@@ -794,7 +794,64 @@ None
         self._custom['period'] = value
 
         return old
-    #--- End: def
+
+    def autoperiod(self, verbose=False):
+        '''TODO Set dimensions to be cyclic.
+
+    TODO A dimension is set to be cyclic if it has a unique longitude (or
+    grid longitude) dimension coordinate construct with bounds and the
+    first and last bounds values differ by 360 degrees (or an
+    equivalent amount in other units).
+       
+    .. versionadded:: 3.0.0
+    
+    .. seealso:: `isperiodic`, `period`
+    
+    :Parameters:
+
+        verbose: `bool`, optional
+            TODO
+
+    :Returns:
+    
+       `bool`
+    
+    **Examples:**
+    
+    >>> f.autocyclic()
+
+        '''
+        if not self.Units.islongitude:
+            if verbose: print (0)
+            if self.get_property('standard_name', None) not in ('longitude', 'grid_longitude'):
+                if verbose: print (1)
+                return False
+        #--- End: if
+        
+        bounds = self.get_bounds(None)
+        if bounds is None:
+            if verbose: print (2)
+            return False
+
+        bounds_data = bounds.get_data(None)
+        if bounds_data is None:
+            if verbose: print (3)
+            return False
+
+        bounds = bounds_data.array
+        
+        period = Data(360.0, units='degrees')
+
+        period.Units = bounds_data.Units
+
+        if abs(bounds[-1, -1] - bounds[0, 0]) != period.array:
+            if verbose: print (4)
+            return False
+
+        self.period(period)
+
+        return True
+    
 
     # 0
     def roll(self, axis, shift, inplace=False, i=False):

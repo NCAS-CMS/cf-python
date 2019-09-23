@@ -1,0 +1,16 @@
+grep -e "^ *>>>" \
+     -e "^ *\.\.\." \
+     -e "^\*\*" \
+     tutorial.rst > test_tutorial.py
+
+# Strip >>>
+sed 's/^\s*>>>\s*//' test_tutorial.py > tmp.$$
+
+# Strip ...
+sed 's/^\s*\.\.\.//' tmp.$$ > test_tutorial.py
+
+sed 's/^\*\*\(.*\)/\nprint("**\1")\n/' test_tutorial.py > tmp.$$
+cp tmp.$$ test_tutorial.py
+
+cat  test_tutorial.py
+rm tmp.$$
