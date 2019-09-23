@@ -32,8 +32,8 @@ for Python 2.7.)
 cf-python is in the Python package index:
 https://pypi.org/project/cf-python
   
-To install cf and all of its :ref:`dependencies <Dependencies>` run,
-for example:
+To install cf and all of its :ref:`required dependencies <Required>`
+run, for example:
 
 .. code-block:: shell
    :caption: *Install as root, with any missing dependencies.*
@@ -56,6 +56,9 @@ To install cf without any of its dependencies then run, for example:
 See the `documentation for pip install
 <https://pip.pypa.io/en/stable/reference/pip_install/>`_ for further
 options.
+
+The :ref:`optional dependencies <Optional>` are **not** automatically
+installed via ``pip``.
 
 ----
 
@@ -133,8 +136,10 @@ Tests are run from within the ``cf-python/test`` directory:
 **Dependencies**
 ----------------
 
-Always required
-^^^^^^^^^^^^^^^
+.. _Required:
+
+Required
+^^^^^^^^
 
 * `Python <https://www.python.org/>`_, version 3 or newer.
 
@@ -152,7 +157,7 @@ Always required
   
 * `psutil <https://pypi.org/project/psutil/>`_, version 0.6.0 or newer.
 
-* The `UNIDATA UDUNITS-2 library
+* `UNIDATA UDUNITS-2 library
   <http://www.unidata.ucar.edu/software/udunits>`_, version 2.2.20 or
   newer.
 
@@ -165,7 +170,8 @@ Always required
   the ``UDUNITS2_XML_PATH`` environment variable (although the default
   location is usually correct).
 
-  
+.. _Optional:
+
 Optional
 ^^^^^^^^
 

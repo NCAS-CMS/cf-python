@@ -869,7 +869,6 @@ Special
    'new_identifier',
    'period',
    'properties',
-   'rank',
    'reference_datetime',
    'second',
    'section',

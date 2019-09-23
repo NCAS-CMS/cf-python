@@ -5,6 +5,8 @@
 cf.TimeDuration
 ===============
 
+----
+
 .. autoclass:: cf.TimeDuration
    :no-members:
    :no-inherited-members:
@@ -31,9 +33,10 @@ Methods
 
    ~cf.TimeDuration.bounds
    ~cf.TimeDuration.copy
+   ~cf.TimeDuration.days_in_month
    ~cf.TimeDuration.equals
    ~cf.TimeDuration.equivalent
    ~cf.TimeDuration.inspect
    ~cf.TimeDuration.interval
    ~cf.TimeDuration.is_day_factor
-   
+

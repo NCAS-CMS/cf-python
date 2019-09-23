@@ -9,12 +9,14 @@
     <title>Tutorial &#8212; Documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
     <script type="text/javascript" src="_static/copybutton.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="API reference" href="api_reference.html" />
@@ -33,14 +35,14 @@
 <h3><b><a href="index.html">cf 3.0.0b10</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="cf_conventions.html"><strong>CF conventions</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="releases.html"><strong>Older releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="Changelog.html"><strong>Change log</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
@@ -74,17 +76,19 @@
       </div>
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="tutorial">
 <span id="id1"></span><h1><strong>Tutorial</strong><a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
 <p>Version 3.0.0b10 for version 1.7 of the CF conventions.</p>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">There are <a class="reference internal" href="2_to_3_changes.html#to-3-changes"><span class="std std-ref">incompatible differences between versions
-2.x and 3.x</span></a>. For version 2.x
-documentation, see the <a class="reference external" href="https://cfpython.bitbucket.io/docs/archive.html">documentation archive</a>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><strong>This version of cf is for Python 3 only</strong>, and there are
+<a class="reference internal" href="2_to_3_changes.html#to-3-changes"><span class="std std-ref">incompatible differences between versions 2.x and 3.x</span></a>. For version 2.x documentation, see the
+<a class="reference external" href="https://cfpython.bitbucket.io/docs/archive.html">documentation archive</a>.</p>
 </div>
 <div class="contents local topic" id="contents">
 <ul class="simple">
@@ -282,8 +286,8 @@ of the on-line code repository.</p>
 <div class="section" id="cf-version">
 <span id="id4"></span><h3><a class="toc-backref" href="#id302">CF version</a><a class="headerlink" href="#cf-version" title="Permalink to this headline">¶</a></h3>
 <p>The version of the <a class="reference external" href="http://cfconventions.org">CF conventions</a> and
-the <a class="reference internal" href="cf_conventions.html#cf-data-model"><span class="std std-ref">CF data model</span></a> being used may be found with
-the <a class="reference internal" href="function/cf.CF.html#cf.CF" title="cf.CF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.CF</span></code></a> function:</p>
+the <a class="reference internal" href="cf_data_model.html#cf-data-model"><span class="std std-ref">CF data model</span></a> being used may be found with
+the <a class="reference internal" href="generated/cf.CF.html#cf.CF" title="cf.CF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.CF</span></code></a> function:</p>
 <div class="literal-block-wrapper docutils container" id="id92">
 <div class="code-block-caption"><span class="caption-text"><em>Retrieve the version of the CF conventions.</em></span><a class="headerlink" href="#id92" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">CF</span><span class="p">()</span>
@@ -324,7 +328,7 @@ instance”.</p>
 a <a class="reference internal" href="classes/cf.FieldList.html#cf.FieldList" title="cf.FieldList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.FieldList</span></code></a> instance that contains zero or more <a class="reference internal" href="classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a>
 instances, each of which represents a field construct. Henceforth, the
 phrase “field list” will be assumed to mean a <a class="reference internal" href="classes/cf.FieldList.html#cf.FieldList" title="cf.FieldList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.FieldList</span></code></a> instance.</p>
-<p>A <a class="reference internal" href="#field-lists"><span class="std std-ref">field list</span></a> is very much like a Python <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>,
+<p>A <a class="reference internal" href="#field-lists"><span class="std std-ref">field list</span></a> is very much like a Python <a class="reference internal" href="generated/cf.list.html#cf.list" title="cf.list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>,
 with the addition of extra methods that operate on its field construct
 elements.</p>
 <p>All formats of netCDF3 and netCDF4 files (including <a class="reference external" href="http://www.met.reading.ac.uk/~david/cfa/0.4/index.html">CFA-netCDF</a> files),
@@ -669,10 +673,26 @@ files</span></a>.</p>
 <div class="section" id="visualization">
 <h2><a class="toc-backref" href="#id311"><strong>Visualization</strong></a><a class="headerlink" href="#visualization" title="Permalink to this headline">¶</a></h2>
 <p>Powerful, flexible, and very simple to produce visualizations of field
-constructs are available with the <a class="reference external" href="http://ajheaps.github.io/cf-plot">cfplot</a> package (that needs to be
-installed seprately to cf).</p>
-<p>See the <a class="reference external" href="http://ajheaps.github.io/cf-plot/gallery.html">cfplot gallery</a> for the full range
-range plotting possibilities with example code.</p>
+constructs are available with the <a class="reference external" href="http://ajheaps.github.io/cf-plot">cfplot package</a> (that needs to be installed
+seprately to cf).</p>
+<p>See the <a class="reference external" href="http://ajheaps.github.io/cf-plot/gallery.html">cfplot gallery</a> for the wide range
+range plotting possibilities with example code. These include, but are
+not limited to:</p>
+<ul class="simple">
+<li>Cylindrical projection</li>
+<li>Polar stereographic</li>
+<li>Latitude or longitude vs. height</li>
+<li>Hovmuller</li>
+<li>Vectors</li>
+<li>Stipples</li>
+<li>Multiple plots on a page</li>
+<li>Colour scales</li>
+<li>User defined axes</li>
+<li>Rotated pole</li>
+<li>Irregular grids</li>
+<li>Plane projections</li>
+<li>Trajectories</li>
+</ul>
 <div class="figure" id="id100">
 <img alt="_images/cfplot_example.png" src="_images/cfplot_example.png" />
 <p class="caption"><span class="caption-text"><em>Example output of cfplot displaying a cf field construct.</em></span></p>
@@ -682,7 +702,7 @@ range plotting possibilities with example code.</p>
 <div class="section" id="field-lists">
 <span id="id12"></span><h2><a class="toc-backref" href="#id312"><strong>Field lists</strong></a><a class="headerlink" href="#field-lists" title="Permalink to this headline">¶</a></h2>
 <p>A field list, contained in a <a class="reference internal" href="classes/cf.FieldList.html#cf.FieldList" title="cf.FieldList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.FieldList</span></code></a> instance, is an ordered
-sequence of field constructs. It supports all of the Python <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>
+sequence of field constructs. It supports all of the Python <a class="reference internal" href="generated/cf.list.html#cf.list" title="cf.list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>
 operations, such as indexing, iteration, and methods like
 <a class="reference internal" href="generated/cf.FieldList.append.html#cf.FieldList.append" title="cf.FieldList.append"><code class="xref py py-obj docutils literal notranslate"><span class="pre">append</span></code></a>.</p>
 <div class="literal-block-wrapper docutils container" id="id101">
@@ -832,7 +852,7 @@ field construct.</em></span><a class="headerlink" href="#id105" title="Permalink
 <div class="section" id="metadata-constructs">
 <span id="id15"></span><h2><a class="toc-backref" href="#id315"><strong>Metadata constructs</strong></a><a class="headerlink" href="#metadata-constructs" title="Permalink to this headline">¶</a></h2>
 <p>The metadata constructs describe the field construct that contains
-them. Each <a class="reference internal" href="cf_conventions.html#cf-data-model"><span class="std std-ref">CF data model metadata construct</span></a> has
+them. Each <a class="reference internal" href="cf_data_model.html#cf-data-model"><span class="std std-ref">CF data model metadata construct</span></a> has
 a corresponding cf class:</p>
 <table border="1" class="colwidths-auto docutils align-left">
 <thead valign="bottom">
@@ -866,11 +886,11 @@ a corresponding cf class:</p>
 <td>Cell measure</td>
 <td>Domain cell size or shape</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="classes/cf.PropertiesData.html#cf.FieldAncillary" title="cf.FieldAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.FieldAncillary</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="classes/cf.FieldAncillary.html#cf.FieldAncillary" title="cf.FieldAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.FieldAncillary</span></code></a></td>
 <td>Field ancillary</td>
 <td>Ancillary metadata which vary within the domain</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.CellMethod</span></code></td>
+<tr class="row-odd"><td><a class="reference internal" href="classes/cf.CellMethod.html#cf.CellMethod" title="cf.CellMethod"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.CellMethod</span></code></a></td>
 <td>Cell method</td>
 <td>Describes how data represent variation within cells</td>
 </tr>
@@ -920,10 +940,10 @@ maps metadata constructs to unique identifiers called “construct
 keys”. A <a class="reference internal" href="classes/cf.Constructs.html#cf.Constructs" title="cf.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Constructs</span></code></a> instance has methods for selecting constructs
 that meet particular criteria (see
 <a class="reference internal" href="#filtering-metadata-constructs"><span class="std std-ref">Filtering metadata constructs</span></a>). It also behaves like a
-“read-only” Python dictionary, in that it has <a class="reference internal" href="classes/cf.Constructs.html#cf.Constructs.items" title="cf.Constructs.items"><code class="xref py py-obj docutils literal notranslate"><span class="pre">items</span></code></a>,
-<a class="reference internal" href="classes/cf.Constructs.html#cf.Constructs.keys" title="cf.Constructs.keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keys</span></code></a> and <a class="reference internal" href="classes/cf.Constructs.html#cf.Constructs.values" title="cf.Constructs.values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">values</span></code></a> methods that work exactly
+“read-only” Python dictionary, in that it has <a class="reference internal" href="method/cf.Constructs.items.html#cf.Constructs.items" title="cf.Constructs.items"><code class="xref py py-obj docutils literal notranslate"><span class="pre">items</span></code></a>,
+<a class="reference internal" href="method/cf.Constructs.keys.html#cf.Constructs.keys" title="cf.Constructs.keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keys</span></code></a> and <a class="reference internal" href="method/cf.Constructs.values.html#cf.Constructs.values" title="cf.Constructs.values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">values</span></code></a> methods that work exactly
 like their corresponding <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> methods. It also has a
-<a class="reference internal" href="classes/cf.Constructs.html#cf.Constructs.get" title="cf.Constructs.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a> method and indexing like a Python dictionary (see
+<a class="reference internal" href="method/cf.Constructs.get.html#cf.Constructs.get" title="cf.Constructs.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a> method and indexing like a Python dictionary (see
 <a class="reference internal" href="#metadata-construct-access"><span class="std std-ref">Metadata construct access</span></a> for details).</p>
 <div class="literal-block-wrapper docutils container" id="id106">
 <div class="code-block-caption"><span class="caption-text"><em>Retrieve the field construct’s coordinate reference
@@ -1091,19 +1111,19 @@ construct’s data.</em></span><a class="headerlink" href="#id112" title="Permal
 </div>
 </div>
 <p>The data may be set with the <a class="reference internal" href="method/cf.Field.set_data.html#cf.Field.set_data" title="cf.Field.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a> method of the field
-construct. The domain axis constructs spanned by the data may also be
-set by explicitly providing them via their construct keys; or they can
-be inferred from the existing domain axis constructs, provided that
-there rare no ambiguities such as two dimensions of the same size. In
-any case, the data axes may be set at any time with the
-<a class="reference internal" href="method/cf.Field.set_data_axes.html#cf.Field.set_data_axes" title="cf.Field.set_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data_axes</span></code></a> method of the field construct.</p>
+construct. The domain axis constructs spanned by the data are inferred
+from the existing domain axis constructs, provided that there are no
+ambiguities (such as two dimensions of the same size), in which case
+thay can be explicitly provided via their construct keys. In any case,
+the data axes may be set at any time with the <a class="reference internal" href="method/cf.Field.set_data_axes.html#cf.Field.set_data_axes" title="cf.Field.set_data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data_axes</span></code></a>
+method of the field construct.</p>
 <div class="literal-block-wrapper docutils container" id="id113">
 <div class="code-block-caption"><span class="caption-text"><em>Delete the data and then reinstate it, using the
 existing data axes.</em></span><a class="headerlink" href="#id113" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">del_data</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">has_data</span><span class="p">()</span>
 <span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">data</span>
 <span class="go">&lt;CF Data(1, 10, 9): [[[262.8, ..., 269.7]]] K&gt;</span>
 </pre></div>
@@ -1125,52 +1145,52 @@ the data as an array of date-time objects.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[1 2 3]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">datetime_array</span><span class="p">)</span>
-<span class="go">[datetime.datetime(2004, 2, 29, 0, 0)</span>
-<span class="go"> datetime.datetime(2004, 3, 1, 0, 0)</span>
-<span class="go"> datetime.datetime(2004, 3, 2, 0, 0)]</span>
+<span class="go">[cftime.DatetimeGregorian(2004-02-29 00:00:00)</span>
+<span class="go"> cftime.DatetimeGregorian(2004-03-01 00:00:00)</span>
+<span class="go"> cftime.DatetimeGregorian(2004-03-02 00:00:00)]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">e</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;days since 2004-2-28&#39;</span><span class="p">,</span> <span class="n">calendar</span><span class="o">=</span><span class="s1">&#39;360_day&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[1 2 3]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">dtarray</span><span class="p">)</span>
-<span class="go">[cftime._cftime.Datetime360Day(2004, 2, 29, 0, 0, 0, 0, -1, 59)</span>
-<span class="go"> cftime._cftime.Datetime360Day(2004, 2, 30, 0, 0, 0, 0, -1, 60)</span>
-<span class="go"> cftime._cftime.Datetime360Day(2004, 3, 1, 0, 0, 0, 0, -1, 61)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">datetime_array</span><span class="p">)</span>
+<span class="go">[cftime.Datetime360Day(2004-02-29 00:00:00)</span>
+<span class="go"> cftime.Datetime360Day(2004-02-30 00:00:00)</span>
+<span class="go"> cftime.Datetime360Day(2004-03-01 00:00:00)]</span>
 </pre></div>
 </div>
 </div>
 <p>Alternatively, date-time data may be created by providing date-time
 objects or <a class="reference external" href="https://en.wikipedia.org/wiki/ISO_8601">ISO 8601-like date-time strings</a>. Date-time objects may be
-Python <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime.datetime</span></code></a> instances, <code class="xref py py-obj docutils literal notranslate"><span class="pre">cftime.datetime</span></code> instances (as
-returned by the <a class="reference internal" href="generated/cf.dt.html#cf.dt" title="cf.dt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.dt</span></code></a> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.dtarray</span></code> functions), or any other
-date-time object that has an equivalent API.</p>
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">cftime.datetime</span></code> instances (as returned by the <a class="reference internal" href="generated/cf.dt.html#cf.dt" title="cf.dt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.dt</span></code></a> and
+<a class="reference internal" href="generated/cf.dt_vector.html#cf.dt_vector" title="cf.dt_vector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.dt_vector</span></code></a> functions), Python <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime.datetime</span></code></a> instances, or
+any other date-time object that has an equivalent API.</p>
 <div class="literal-block-wrapper docutils container" id="id115">
 <div class="code-block-caption"><span class="caption-text"><em>Creating a Data instance from a date-time objects.</em></span><a class="headerlink" href="#id115" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">date_time</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">dt</span><span class="p">(</span><span class="mi">2004</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">29</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">date_time</span>
-<span class="go">cftime._cftime.DatetimeGregorian(2004, 2, 29, 0, 0, 0, 0, -1, 1)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">date_time</span><span class="p">)</span>
+<span class="go">cftime.DatetimeGregorian(2004-02-29 00:00:00)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">date_time</span><span class="p">,</span> <span class="n">calendar</span><span class="o">=</span><span class="s1">&#39;gregorian&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">0.0</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">datetime_array</span>
-<span class="go">array(datetime.datetime(2004, 2, 29, 0, 0), dtype=object)</span>
+<span class="go">array(cftime.DatetimeGregorian(2004-02-29 00:00:00), dtype=object)</span>
 </pre></div>
 </div>
 </div>
 <div class="literal-block-wrapper docutils container" id="id116">
 <div class="code-block-caption"><span class="caption-text"><em>Creating Data instances from date-time an array of
 date-time objects.</em></span><a class="headerlink" href="#id116" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">date_times</span>  <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">dtarray</span><span class="p">([</span><span class="s1">&#39;2004-02-29&#39;</span><span class="p">,</span> <span class="s1">&#39;2004-02-30&#39;</span><span class="p">,</span> <span class="s1">&#39;2004-03-01&#39;</span><span class="p">],</span> <span class="n">calendar</span><span class="o">=</span><span class="s1">&#39;360_day&#39;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">date_times</span>  <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">dt_vector</span><span class="p">([</span><span class="s1">&#39;2004-02-29&#39;</span><span class="p">,</span> <span class="s1">&#39;2004-02-30&#39;</span><span class="p">,</span> <span class="s1">&#39;2004-03-01&#39;</span><span class="p">],</span> <span class="n">calendar</span><span class="o">=</span><span class="s1">&#39;360_day&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="p">(</span><span class="n">date_times</span><span class="p">)</span>
-<span class="go">[cftime._cftime.Datetime360Day(2004, 2, 29, 0, 0, 0, 0, -1, 1)</span>
-<span class="go"> cftime._cftime.Datetime360Day(2004, 2, 30, 0, 0, 0, 0, -1, 1)</span>
-<span class="go"> cftime._cftime.Datetime360Day(2004, 3, 1, 0, 0, 0, 0, -1, 1)]</span>
+<span class="go">[cftime.Datetime360Day(2004-02-29 00:00:00)</span>
+<span class="go"> cftime.Datetime360Day(2004-02-30 00:00:00)</span>
+<span class="go"> cftime.Datetime360Day(2004-03-01 00:00:00)]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">e</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">date_times</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[0. 1. 2.]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">dtarray</span><span class="p">)</span>
-<span class="go">[cftime._cftime.Datetime360Day(2004, 2, 29, 0, 0, 0, 0, -1, 59)</span>
-<span class="go"> cftime._cftime.Datetime360Day(2004, 2, 30, 0, 0, 0, 0, -1, 60)</span>
-<span class="go"> cftime._cftime.Datetime360Day(2004, 3, 1, 0, 0, 0, 0, -1, 61)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">datetime_array</span><span class="p">)</span>
+<span class="go">[cftime.Datetime360Day(2004-02-29 00:00:00)</span>
+<span class="go"> cftime.Datetime360Day(2004-02-30 00:00:00)</span>
+<span class="go"> cftime.Datetime360Day(2004-03-01 00:00:00)]</span>
 </pre></div>
 </div>
 </div>
@@ -1180,22 +1200,22 @@ units are provided then the “dt” keyword is required.</em></span><a class="h
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="s1">&#39;2004-02-29&#39;</span><span class="p">,</span> <span class="s1">&#39;2004-02-30&#39;</span><span class="p">,</span> <span class="s1">&#39;2004-03-01&#39;</span><span class="p">],</span> <span class="n">calendar</span><span class="o">=</span><span class="s1">&#39;360_day&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[0., 1., 2.]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">dtarray</span><span class="p">)</span>
-<span class="go">[cftime._cftime.Datetime360Day(2004, 2, 29, 0, 0, 0, 0, -1, 59)</span>
-<span class="go"> cftime._cftime.Datetime360Day(2004, 2, 30, 0, 0, 0, 0, -1, 60)</span>
-<span class="go"> cftime._cftime.Datetime360Day(2004, 3, 1, 0, 0, 0, 0, -1, 61)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">datetime_array</span><span class="p">)</span>
+<span class="go">[cftime.Datetime360Day(2004-02-29 00:00:00)</span>
+<span class="go"> cftime.Datetime360Day(2004-02-30 00:00:00)</span>
+<span class="go"> cftime.Datetime360Day(2004-03-01 00:00:00)]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">e</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="s1">&#39;2004-02-29&#39;</span><span class="p">,</span> <span class="s1">&#39;2004-03-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2004-03-02&#39;</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">e</span><span class="o">.</span><span class="n">Units</span>
 <span class="go">&lt;Units: &gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">dtarray</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">datetime_array</span><span class="p">)</span>
 <span class="go">ValueError: Can&#39;t create date-time array from units &lt;Units: &gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="s1">&#39;2004-02-29&#39;</span><span class="p">,</span> <span class="s1">&#39;2004-03-01&#39;</span><span class="p">,</span> <span class="s1">&#39;2004-03-02&#39;</span><span class="p">],</span> <span class="n">dt</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">Units</span>
 <span class="go">&lt;Units: days since 2004-02-29&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">datetime_array</span><span class="p">)</span>
-<span class="go">[datetime.datetime(2004, 2, 29, 0, 0)</span>
-<span class="go"> datetime.datetime(2004, 3, 1, 0, 0)</span>
-<span class="go"> datetime.datetime(2004, 3, 2, 0, 0)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">datetime_array</span><span class="p">)</span>
+<span class="go">[cftime.DatetimeGregorian(2004-02-29 00:00:00)</span>
+<span class="go"> cftime.DatetimeGregorian(2004-03-01 00:00:00)</span>
+<span class="go"> cftime.DatetimeGregorian(2004-03-02 00:00:00)]</span>
 </pre></div>
 </div>
 </div>
@@ -1477,7 +1497,7 @@ the shape defined by the indices, using the <a class="reference external" href="
 <div class="section" id="masked-values">
 <span id="id24"></span><h3><a class="toc-backref" href="#id322">Masked values</a><a class="headerlink" href="#masked-values" title="Permalink to this headline">¶</a></h3>
 <p>Data array elements may be set to missing values by assigning them to
-the <a class="reference internal" href="constant.html#cf.cf.masked" title="cf.cf.masked"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.masked</span></code></a> constant.</p>
+the <a class="reference internal" href="generated/cf.masked.html#cf.masked" title="cf.masked"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.masked</span></code></a> constant.</p>
 <div class="literal-block-wrapper docutils container" id="id129">
 <div class="code-block-caption"><span class="caption-text"><em>Set a column of elements to missing values.</em></span><a class="headerlink" href="#id129" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">masked</span>
@@ -1585,10 +1605,9 @@ must be done manually, and the other field construct’s <a class="reference int
 <p>The field construct, and any metadata construct that contains data,
 has units which are described by the <a class="reference internal" href="generated/cf.Field.Units.html#cf.Field.Units" title="cf.Field.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a> attribute that
 stores a <a class="reference internal" href="classes/cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Units</span></code></a> object (which is identical to the <code class="docutils literal notranslate"><span class="pre">Units</span></code> object
-of the <a class="reference external" href="https://ncas-cms.github.io/cfunits">cfunits package</a> (TODO1:
-link doesn’t look good)). The <a class="reference internal" href="generated/cf.Field.units.html#cf.Field.units" title="cf.Field.units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">units</span></code></a> property provides the
-units contained in the <a class="reference internal" href="classes/cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Units</span></code></a> instance, and changes in one are
-reflected in the other.</p>
+of the <a class="reference external" href="https://ncas-cms.github.io/cfunits">cfunits package</a>). The
+<a class="reference internal" href="generated/cf.Field.units.html#cf.Field.units" title="cf.Field.units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">units</span></code></a> property provides the units contained in the <a class="reference internal" href="classes/cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Units</span></code></a>
+instance, and changes in one are reflected in the other.</p>
 <div class="literal-block-wrapper docutils container" id="id133">
 <div class="code-block-caption"><span class="caption-text"><em>Inspection and changing of units.</em></span><a class="headerlink" href="#id133" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">units</span>
@@ -1679,40 +1698,40 @@ constructs that meet various criteria:</p>
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td><a class="reference internal" href="classes/cf.Constructs.html#cf.Constructs.filter_by_identity" title="cf.Constructs.filter_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_identity</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="method/cf.Constructs.filter_by_identity.html#cf.Constructs.filter_by_identity" title="cf.Constructs.filter_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_identity</span></code></a></td>
 <td>Metadata construct identity</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="classes/cf.Constructs.html#cf.Constructs.filter_by_type" title="cf.Constructs.filter_by_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_type</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="method/cf.Constructs.filter_by_type.html#cf.Constructs.filter_by_type" title="cf.Constructs.filter_by_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_type</span></code></a></td>
 <td>Metadata construct type</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="classes/cf.Constructs.html#cf.Constructs.filter_by_property" title="cf.Constructs.filter_by_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_property</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="method/cf.Constructs.filter_by_property.html#cf.Constructs.filter_by_property" title="cf.Constructs.filter_by_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_property</span></code></a></td>
 <td>Property values</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="classes/cf.Constructs.html#cf.Constructs.filter_by_axis" title="cf.Constructs.filter_by_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_axis</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="method/cf.Constructs.filter_by_axis.html#cf.Constructs.filter_by_axis" title="cf.Constructs.filter_by_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_axis</span></code></a></td>
 <td>The domain axis constructs spanned by the data</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="classes/cf.Constructs.html#cf.Constructs.filter_by_naxes" title="cf.Constructs.filter_by_naxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_naxes</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="method/cf.Constructs.filter_by_naxes.html#cf.Constructs.filter_by_naxes" title="cf.Constructs.filter_by_naxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_naxes</span></code></a></td>
 <td>The number of domain axis constructs spanned by the data</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="classes/cf.Constructs.html#cf.Constructs.filter_by_size" title="cf.Constructs.filter_by_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_size</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="method/cf.Constructs.filter_by_size.html#cf.Constructs.filter_by_size" title="cf.Constructs.filter_by_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_size</span></code></a></td>
 <td>The size domain axis constructs</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="classes/cf.Constructs.html#cf.Constructs.filter_by_measure" title="cf.Constructs.filter_by_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_measure</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="method/cf.Constructs.filter_by_measure.html#cf.Constructs.filter_by_measure" title="cf.Constructs.filter_by_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_measure</span></code></a></td>
 <td>Measure value (for cell measure constructs)</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="classes/cf.Constructs.html#cf.Constructs.filter_by_method" title="cf.Constructs.filter_by_method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_method</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="method/cf.Constructs.filter_by_method.html#cf.Constructs.filter_by_method" title="cf.Constructs.filter_by_method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_method</span></code></a></td>
 <td>Method value (for cell method constructs)</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="classes/cf.Constructs.html#cf.Constructs.filter_by_data" title="cf.Constructs.filter_by_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_data</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="method/cf.Constructs.filter_by_data.html#cf.Constructs.filter_by_data" title="cf.Constructs.filter_by_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_data</span></code></a></td>
 <td>Whether or not there could be be data.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="classes/cf.Constructs.html#cf.Constructs.filter_by_key" title="cf.Constructs.filter_by_key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_key</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="method/cf.Constructs.filter_by_key.html#cf.Constructs.filter_by_key" title="cf.Constructs.filter_by_key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_key</span></code></a></td>
 <td>Construct key</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="classes/cf.Constructs.html#cf.Constructs.filter_by_ncvar" title="cf.Constructs.filter_by_ncvar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_ncvar</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="method/cf.Constructs.filter_by_ncvar.html#cf.Constructs.filter_by_ncvar" title="cf.Constructs.filter_by_ncvar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_ncvar</span></code></a></td>
 <td>NetCDF variable name (see the <a class="reference internal" href="#netcdf-interface"><span class="std std-ref">netCDF interface</span></a>)</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="classes/cf.Constructs.html#cf.Constructs.filter_by_ncdim" title="cf.Constructs.filter_by_ncdim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_ncdim</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="method/cf.Constructs.filter_by_ncdim.html#cf.Constructs.filter_by_ncdim" title="cf.Constructs.filter_by_ncdim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_ncdim</span></code></a></td>
 <td>NetCDF dimension name (see the <a class="reference internal" href="#netcdf-interface"><span class="std std-ref">netCDF interface</span></a>)</td>
 </tr>
 </tbody>
@@ -1929,7 +1948,7 @@ means:</p>
 </div>
 </div>
 <p>The constructs that were <em>not</em> selected by a filter may be returned by
-the <a class="reference internal" href="classes/cf.Constructs.html#cf.Constructs.inverse_filter" title="cf.Constructs.inverse_filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inverse_filter</span></code></a> method applied to the results of
+the <a class="reference internal" href="method/cf.Constructs.inverse_filter.html#cf.Constructs.inverse_filter" title="cf.Constructs.inverse_filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inverse_filter</span></code></a> method applied to the results of
 filters:</p>
 <div class="literal-block-wrapper docutils container" id="id147">
 <div class="code-block-caption"><span class="caption-text"><em>Get the constructs that were not selected by a filter.</em></span><a class="headerlink" href="#id147" title="Permalink to this code">¶</a></div>
@@ -1991,7 +2010,7 @@ identity and use the key to get the construct itself</em></span><a class="header
 </div>
 </div>
 <ul class="simple">
-<li>with the <a class="reference internal" href="classes/cf.Constructs.html#cf.Constructs.value" title="cf.Constructs.value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">value</span></code></a> method of a <a class="reference internal" href="classes/cf.Constructs.html#cf.Constructs" title="cf.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Constructs</span></code></a> instance
+<li>with the <a class="reference internal" href="method/cf.Constructs.value.html#cf.Constructs.value" title="cf.Constructs.value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">value</span></code></a> method of a <a class="reference internal" href="classes/cf.Constructs.html#cf.Constructs" title="cf.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Constructs</span></code></a> instance
 that contains one construct,</li>
 </ul>
 <div class="literal-block-wrapper docutils container" id="id151">
@@ -2003,7 +2022,7 @@ and the ‘value’ method.</em></span><a class="headerlink" href="#id151" title
 </div>
 </div>
 <ul class="simple">
-<li>with the <a class="reference internal" href="classes/cf.Constructs.html#cf.Constructs.get" title="cf.Constructs.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a> method of a <a class="reference internal" href="classes/cf.Constructs.html#cf.Constructs" title="cf.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Constructs</span></code></a> instance, or</li>
+<li>with the <a class="reference internal" href="method/cf.Constructs.get.html#cf.Constructs.get" title="cf.Constructs.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a> method of a <a class="reference internal" href="classes/cf.Constructs.html#cf.Constructs" title="cf.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Constructs</span></code></a> instance, or</li>
 </ul>
 <div class="literal-block-wrapper docutils container" id="id152">
 <div class="code-block-caption"><span class="caption-text"><em>Get the “latitude” metadata construct via its construct
@@ -2077,7 +2096,7 @@ its construct identity, and also its key.</em></span><a class="headerlink" href=
 </div>
 <p>The <a class="reference internal" href="method/cf.Field.construct.html#cf.Field.construct" title="cf.Field.construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct</span></code></a> method of the field construct, the above
 methods for finding a construct of a particular type, and the
-<a class="reference internal" href="classes/cf.Constructs.html#cf.Constructs.value" title="cf.Constructs.value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">value</span></code></a> method of the <a class="reference internal" href="classes/cf.Constructs.html#cf.Constructs" title="cf.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Constructs</span></code></a> instance will all
+<a class="reference internal" href="method/cf.Constructs.value.html#cf.Constructs.value" title="cf.Constructs.value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">value</span></code></a> method of the <a class="reference internal" href="classes/cf.Constructs.html#cf.Constructs" title="cf.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Constructs</span></code></a> instance will all
 raise an exception of there is not a unique metadata construct to
 return, but this may be replaced with returning a default value or
 raising a customised exception:</p>
@@ -2108,7 +2127,7 @@ the value of the “default” parameter is returned.</em></span><a class="heade
 </pre></div>
 </div>
 </div>
-<p>The <a class="reference internal" href="classes/cf.Constructs.html#cf.Constructs.get" title="cf.Constructs.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a> method of a <a class="reference internal" href="classes/cf.Constructs.html#cf.Constructs" title="cf.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Constructs</span></code></a> instance accepts an
+<p>The <a class="reference internal" href="method/cf.Constructs.get.html#cf.Constructs.get" title="cf.Constructs.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a> method of a <a class="reference internal" href="classes/cf.Constructs.html#cf.Constructs" title="cf.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Constructs</span></code></a> instance accepts an
 optional second argument to be returned if the construct key does not
 exist, exactly like the Python <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict.get" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict.get</span></code></a> method.</p>
 <div class="section" id="metadata-construct-properties">
@@ -2180,7 +2199,7 @@ spanned by the data of each metadata construct.</em></span><a class="headerlink"
 </div>
 </div>
 <p>The domain axis constructs spanned by all the data of all metadata
-construct may be found with the <a class="reference internal" href="classes/cf.Constructs.html#cf.Constructs.data_axes" title="cf.Constructs.data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data_axes</span></code></a> method of the
+construct may be found with the <a class="reference internal" href="method/cf.Constructs.data_axes.html#cf.Constructs.data_axes" title="cf.Constructs.data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data_axes</span></code></a> method of the
 field construct’s <a class="reference internal" href="classes/cf.Constructs.html#cf.Constructs" title="cf.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Constructs</span></code></a> instance:</p>
 <div class="literal-block-wrapper docutils container" id="id160">
 <div class="code-block-caption"><span class="caption-text"><em>Find the construct keys of the domain axis constructs
@@ -2286,7 +2305,7 @@ the offset.</em></span><a class="headerlink" href="#id164" title="Permalink to t
 </div>
 <div class="section" id="domain">
 <span id="id35"></span><h2><a class="toc-backref" href="#id333"><strong>Domain</strong></a><a class="headerlink" href="#domain" title="Permalink to this headline">¶</a></h2>
-<p>The <a class="reference internal" href="cf_conventions.html#cf-data-model"><span class="std std-ref">domain of the CF data model</span></a> is <em>not</em> a
+<p>The <a class="reference internal" href="cf_data_model.html#cf-data-model"><span class="std std-ref">domain of the CF data model</span></a> is <em>not</em> a
 construct, but is defined collectively by various other metadata
 constructs included in the field construct. It is represented by the
 <a class="reference internal" href="classes/cf.Domain.html#cf.Domain" title="cf.Domain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Domain</span></code></a> class. The domain instance may be accessed with the
@@ -2469,22 +2488,22 @@ constructs alone (as is the case for the field construct <code class="docutils l
 <ul class="simple">
 <li>references (by construct keys) to the dimension and auxiliary
 coordinate constructs to which it applies, accessed with the
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinates</span></code> method of the coordinate
+<a class="reference internal" href="method/cf.CoordinateReference.coordinates.html#cf.CoordinateReference.coordinates" title="cf.CoordinateReference.coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinates</span></code></a> method of the coordinate
 reference construct;</li>
 </ul>
 <ul class="simple">
 <li>the zeroes of the dimension and auxiliary coordinate constructs
-which define the coordinate system, stored in a <a class="reference internal" href="classes/cf.Datum.html#cf.Datum" title="cf.Datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Datum</span></code></a> instance,
-which is accessed with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">datum</span></code> attribute,
-or <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_datum</span></code> method, of the coordinate
+which define the coordinate system, stored in a <a class="reference internal" href="generated/cf.Datum.html#cf.Datum" title="cf.Datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Datum</span></code></a> instance,
+which is accessed with the <a class="reference internal" href="attribute/cf.CoordinateReference.datum.html#cf.CoordinateReference.datum" title="cf.CoordinateReference.datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datum</span></code></a> attribute,
+or <a class="reference internal" href="method/cf.CoordinateReference.get_datum.html#cf.CoordinateReference.get_datum" title="cf.CoordinateReference.get_datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_datum</span></code></a> method, of the coordinate
 reference construct; and</li>
 </ul>
 <ul class="simple">
 <li>a formula for converting coordinate values taken from the dimension
 or auxiliary coordinate constructs to a different coordinate system,
 stored in a <a class="reference internal" href="classes/cf.CoordinateConversion.html#cf.CoordinateConversion" title="cf.CoordinateConversion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.CoordinateConversion</span></code></a> class instance, which is
-accessed with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinate_conversion</span></code>
-attribute, or <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_coordinate_conversion</span></code>
+accessed with the <a class="reference internal" href="attribute/cf.CoordinateReference.coordinate_conversion.html#cf.CoordinateReference.coordinate_conversion" title="cf.CoordinateReference.coordinate_conversion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinate_conversion</span></code></a>
+attribute, or <a class="reference internal" href="method/cf.CoordinateReference.get_coordinate_conversion.html#cf.CoordinateReference.get_coordinate_conversion" title="cf.CoordinateReference.get_coordinate_conversion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_coordinate_conversion</span></code></a>
 method, of the coordinate reference construct.</li>
 </ul>
 <div class="literal-block-wrapper docutils container" id="id172">
@@ -2536,7 +2555,7 @@ and referenced domain ancillary constructs.</em></span><a class="headerlink" hre
 <span id="id42"></span><h3><a class="toc-backref" href="#id340">Cell methods</a><a class="headerlink" href="#cell-methods" title="Permalink to this headline">¶</a></h3>
 <p>A cell method construct describes how the data represent the variation
 of the physical quantity within the cells of the domain and is stored
-in a <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.CellMethod</span></code> instance. A field constructs allows multiple
+in a <a class="reference internal" href="classes/cf.CellMethod.html#cf.CellMethod" title="cf.CellMethod"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.CellMethod</span></code></a> instance. A field constructs allows multiple
 cell method constructs to be recorded.</p>
 <div class="literal-block-wrapper docutils container" id="id175">
 <div class="code-block-caption"><span class="caption-text"><em>Inspect the cell methods. The description follows the CF
@@ -2552,7 +2571,7 @@ names for cell method axes identification.</em></span><a class="headerlink" href
 </div>
 <p>The application of cell methods is not commutative (e.g. a mean of
 variances is generally not the same as a variance of means), so a
-<a class="reference internal" href="classes/cf.Constructs.html#cf.Constructs" title="cf.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Constructs</span></code></a> instance has an <a class="reference internal" href="classes/cf.Constructs.html#cf.Constructs.ordered" title="cf.Constructs.ordered"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ordered</span></code></a> method to retrieve
+<a class="reference internal" href="classes/cf.Constructs.html#cf.Constructs" title="cf.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Constructs</span></code></a> instance has an <a class="reference internal" href="method/cf.Constructs.ordered.html#cf.Constructs.ordered" title="cf.Constructs.ordered"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ordered</span></code></a> method to retrieve
 the cell method constructs in the same order that they were were added
 to the field construct during <a class="reference internal" href="#field-creation"><span class="std std-ref">field construct creation</span></a>.</p>
 <div class="literal-block-wrapper docutils container" id="id176">
@@ -2566,8 +2585,8 @@ that they were applied.</em></span><a class="headerlink" href="#id176" title="Pe
 </div>
 <p>The axes to which the method applies, the method itself, and any
 qualifying properties are accessed with the
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">get_axes</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_method</span></code>, ,
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">get_qualifier</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">qualifiers</span></code>
+<a class="reference internal" href="method/cf.CellMethod.get_axes.html#cf.CellMethod.get_axes" title="cf.CellMethod.get_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_axes</span></code></a>, <a class="reference internal" href="method/cf.CellMethod.get_method.html#cf.CellMethod.get_method" title="cf.CellMethod.get_method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_method</span></code></a>, ,
+<a class="reference internal" href="method/cf.CellMethod.get_qualifier.html#cf.CellMethod.get_qualifier" title="cf.CellMethod.get_qualifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_qualifier</span></code></a> and <a class="reference internal" href="method/cf.CellMethod.qualifiers.html#cf.CellMethod.qualifiers" title="cf.CellMethod.qualifiers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">qualifiers</span></code></a>
 methods of the cell method construct.</p>
 <div class="literal-block-wrapper docutils container" id="id177">
 <div class="code-block-caption"><span class="caption-text"><em>Get the domain axes constructs to which the cell method
@@ -2839,7 +2858,7 @@ date-time objects.</p>
 contains a single cell for 2019-01-01. TODO</em></span><a class="headerlink" href="#id187" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">array</span><span class="p">)</span> <span class="n">TODO</span>
 <span class="go">TODO</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">dtarray</span><span class="p">)</span> <span class="n">TODO</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">datetime_array</span><span class="p">)</span> <span class="n">TODO</span>
 <span class="go">TODO</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">subspace</span><span class="p">(</span><span class="n">T</span><span class="o">=</span><span class="n">TODO</span> <span class="p">(</span><span class="nb">float</span><span class="p">))</span>
 <span class="go">Field: specific_humidity (ncvar%q)</span>
@@ -3029,25 +3048,25 @@ field constructs that meet various criteria:</p>
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_identity</span></code></td>
+<tr class="row-even"><td><a class="reference internal" href="generated/cf.FieldList.filter_by_identity.html#cf.FieldList.filter_by_identity" title="cf.FieldList.filter_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_identity</span></code></a></td>
 <td>Field construct identity</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_property</span></code></td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/cf.FieldList.filter_by_property.html#cf.FieldList.filter_by_property" title="cf.FieldList.filter_by_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_property</span></code></a></td>
 <td>Property values</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_units</span></code></td>
+<tr class="row-even"><td><a class="reference internal" href="generated/cf.FieldList.filter_by_units.html#cf.FieldList.filter_by_units" title="cf.FieldList.filter_by_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_units</span></code></a></td>
 <td>Units values.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_rank</span></code></td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/cf.FieldList.filter_by_rank.html#cf.FieldList.filter_by_rank" title="cf.FieldList.filter_by_rank"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_rank</span></code></a></td>
 <td>The total number of domain axis constructs in the domain</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_naxes</span></code></td>
+<tr class="row-even"><td><a class="reference internal" href="generated/cf.FieldList.filter_by_naxes.html#cf.FieldList.filter_by_naxes" title="cf.FieldList.filter_by_naxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_naxes</span></code></a></td>
 <td>The number of domain axis constructs spanned by the data</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_construct</span></code></td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/cf.FieldList.filter_by_construct.html#cf.FieldList.filter_by_construct" title="cf.FieldList.filter_by_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_construct</span></code></a></td>
 <td>Existence and values of metadata constructs</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_ncvar</span></code></td>
+<tr class="row-even"><td><a class="reference internal" href="generated/cf.FieldList.filter_by_ncvar.html#cf.FieldList.filter_by_ncvar" title="cf.FieldList.filter_by_ncvar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_ncvar</span></code></a></td>
 <td>NetCDF variable name (see the <a class="reference internal" href="#netcdf-interface"><span class="std std-ref">netCDF interface</span></a>)</td>
 </tr>
 </tbody>
@@ -3090,7 +3109,7 @@ instance directly.</em></span><a class="headerlink" href="#id193" title="Permali
 </div>
 </div>
 <p>A field list may be sorted in-place using the same syntax as a Python
-<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>. By default the field list is sorted by the values of the field
+<a class="reference internal" href="generated/cf.list.html#cf.list" title="cf.list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>. By default the field list is sorted by the values of the field
 constructs identities, but any sorting criteria are possible.</p>
 <div class="literal-block-wrapper docutils container" id="id194">
 <div class="code-block-caption"><span class="caption-text"><em>Sort a field list by the field construct identities, and
@@ -3439,7 +3458,7 @@ following <a class="reference internal" href="classes/cf.Query.html#cf.Query" ti
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.contains</span></code></td>
+<tr class="row-odd"><td><a class="reference internal" href="generated/cf.contains.html#cf.contains" title="cf.contains"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.contains</span></code></a></td>
 <td>A <a class="reference internal" href="classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Query</span></code></a> object for a “cell contains” condition</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="generated/cf.cellsize.html#cf.cellsize" title="cf.cellsize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.cellsize</span></code></a></td>
@@ -3665,7 +3684,7 @@ and data after instantiation.</em></span><a class="headerlink" href="#id206" tit
 <span class="gp">&gt;&gt;&gt; </span><span class="n">dc</span>
 <span class="go">&lt;CF DimensionCoordinate: long_name=Longitude(3) &gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fa</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">FieldAncillary</span><span class="p">(</span>
-<span class="gp">... </span>       <span class="n">data</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;int8&#39;</span><span class="p">)))</span>
+<span class="gp">... </span>            <span class="n">data</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;int8&#39;</span><span class="p">)))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fa</span>
 <span class="go">&lt;CF FieldAncillary: (3) &gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fa</span><span class="o">.</span><span class="n">set_property</span><span class="p">(</span><span class="s1">&#39;standard_name&#39;</span><span class="p">,</span> <span class="s1">&#39;precipitation_flux status_flag&#39;</span><span class="p">)</span>
@@ -3676,13 +3695,16 @@ and data after instantiation.</em></span><a class="headerlink" href="#id206" tit
 </div>
 <p>For <strong>stage 3</strong>, the <a class="reference internal" href="method/cf.Field.set_construct.html#cf.Field.set_construct" title="cf.Field.set_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_construct</span></code></a> method of the field
 construct is used for setting metadata constructs and mapping data
-array dimensions to domain axis constructs. This method returns the
-construct key for the metadata construct which can be used when other
-metadata constructs are added to the field (e.g. to specify which
-domain axis constructs correspond to a data array), or when other
-metadata constructs are created (e.g. to identify the domain ancillary
+array dimensions to domain axis constructs. The domain axis constructs
+spanned by the data are inferred from the existing domain axis
+constructs, provided that there are no ambiguities (such as two
+dimensions of the same size), in which case thay can be explicitly
+provided via their construct keys. This method returns the construct
+key for the metadata construct which can be used when other metadata
+constructs are added to the field (e.g. to specify which domain axis
+constructs correspond to a data array), or when other metadata
+constructs are created (e.g. to identify the domain ancillary
 constructs forming part of a coordinate reference construct):</p>
-<p>TODO1: inferred axes</p>
 <div class="literal-block-wrapper docutils container" id="id207">
 <div class="code-block-caption"><span class="caption-text"><em>Set a domain axis construct and use its construct key
 when setting the dimension coordinate construct. Also
@@ -3737,7 +3759,7 @@ dummy values using numpy.arange).</em></span><a class="headerlink" href="#id208"
 
 <span class="c1"># Create and insert the field construct data</span>
 <span class="n">data</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">40.</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
-<span class="n">Q</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="n">axisY</span><span class="p">,</span> <span class="n">axisX</span><span class="p">])</span>
+<span class="n">Q</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
 <span class="c1"># Create the cell method constructs</span>
 <span class="n">cell_method1</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">CellMethod</span><span class="p">(</span><span class="n">axes</span><span class="o">=</span><span class="s1">&#39;area&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">)</span>
@@ -3767,7 +3789,7 @@ dummy values using numpy.arange).</em></span><a class="headerlink" href="#id208"
 
 <span class="c1"># Create a &quot;longitude&quot; dimension coordinate construct</span>
 <span class="n">dimY</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">DimensionCoordinate</span><span class="p">(</span><span class="n">properties</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;latitude&#39;</span><span class="p">,</span>
-                                            <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;degrees_north&#39;</span><span class="p">})</span>
+                                          <span class="s1">&#39;units&#39;</span>        <span class="p">:</span> <span class="s1">&#39;degrees_north&#39;</span><span class="p">})</span>
 <span class="n">array</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">5.</span><span class="p">)</span>
 <span class="n">dimY</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">array</span><span class="p">))</span>
 
@@ -3779,10 +3801,10 @@ dummy values using numpy.arange).</em></span><a class="headerlink" href="#id208"
 <span class="n">dimY</span><span class="o">.</span><span class="n">set_bounds</span><span class="p">(</span><span class="n">bounds</span><span class="p">)</span>
 
 <span class="c1"># Insert the dimension coordinate constructs into the field,</span>
-<span class="c1"># specifying to # which domain axis each one corresponds</span>
-<span class="n">Q</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">dimT</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="n">axisT</span><span class="p">)</span>
-<span class="n">Q</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">dimY</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="n">axisY</span><span class="p">)</span>
-<span class="n">Q</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">dimX</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="n">axisX</span><span class="p">)</span>
+<span class="c1"># specifying to which domain axis each one corresponds</span>
+<span class="n">Q</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">dimT</span><span class="p">)</span>
+<span class="n">Q</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">dimY</span><span class="p">)</span>
+<span class="n">Q</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">dimX</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -3827,7 +3849,7 @@ dummy values using numpy.arange).</em></span><a class="headerlink" href="#id208"
 <p>The “Conventions” property does not need to be set because it is
 automatically included in output files as a netCDF global
 “Conventions” attribute, either as the CF version of the cf package
-(as returned by the <a class="reference internal" href="function/cf.CF.html#cf.CF" title="cf.CF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.CF</span></code></a> function), or else specified via the
+(as returned by the <a class="reference internal" href="generated/cf.CF.html#cf.CF" title="cf.CF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.CF</span></code></a> function), or else specified via the
 <em>Conventions</em> keyword of the <a class="reference internal" href="function/cf.write.html#cf.write" title="cf.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.write</span></code></a> function. See
 <a class="reference internal" href="#writing-to-disk"><span class="std std-ref">Writing to disk</span></a> for details on how to specify additional
 conventions.</p>
@@ -3873,8 +3895,7 @@ instance of each type of metadata construct.</em></span><a class="headerlink" hr
 <span class="n">axis_X</span> <span class="o">=</span> <span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">DomainAxis</span><span class="p">(</span><span class="mi">9</span><span class="p">))</span>
 
 <span class="c1"># Set the field construct data</span>
-<span class="n">tas</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">90.</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">9</span><span class="p">)),</span>
-             <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="n">axis_Y</span><span class="p">,</span> <span class="n">axis_X</span><span class="p">])</span>
+<span class="n">tas</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">90.</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">9</span><span class="p">)))</span>
 
 <span class="c1"># Create and set the cell method constructs</span>
 <span class="n">cell_method1</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">CellMethod</span><span class="p">(</span>
@@ -3894,7 +3915,7 @@ instance of each type of metadata construct.</em></span><a class="headerlink" hr
                           <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;K&#39;</span><span class="p">},</span>
              <span class="n">data</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">90.</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">9</span><span class="p">)))</span>
 
-<span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">field_ancillary</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="n">axis_Y</span><span class="p">,</span> <span class="n">axis_X</span><span class="p">])</span>
+<span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">field_ancillary</span><span class="p">)</span>
 
 <span class="c1"># Create and set the dimension coordinate constructs</span>
 <span class="n">dimension_coordinate_T</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">DimensionCoordinate</span><span class="p">(</span>
@@ -3923,8 +3944,8 @@ instance of each type of metadata construct.</em></span><a class="headerlink" hr
 
 <span class="n">dim_T</span> <span class="o">=</span> <span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">dimension_coordinate_T</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="n">axis_T</span><span class="p">)</span>
 <span class="n">dim_Z</span> <span class="o">=</span> <span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">dimension_coordinate_Z</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="n">axis_Z</span><span class="p">)</span>
-<span class="n">dim_Y</span> <span class="o">=</span> <span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">dimension_coordinate_Y</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="n">axis_Y</span><span class="p">)</span>
-<span class="n">dim_X</span> <span class="o">=</span> <span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">dimension_coordinate_X</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="n">axis_X</span><span class="p">)</span>
+<span class="n">dim_Y</span> <span class="o">=</span> <span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">dimension_coordinate_Y</span><span class="p">)</span>
+<span class="n">dim_X</span> <span class="o">=</span> <span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">dimension_coordinate_X</span><span class="p">)</span>
 
 <span class="c1"># Create and set the auxiliary coordinate constructs</span>
 <span class="n">auxiliary_coordinate_lat</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">AuxiliaryCoordinate</span><span class="p">(</span>
@@ -3943,9 +3964,9 @@ instance of each type of metadata construct.</em></span><a class="headerlink" hr
                        <span class="n">properties</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="s1">&#39;Grid latitude name&#39;</span><span class="p">},</span>
                        <span class="n">data</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">array</span><span class="p">))</span>
 
-<span class="n">aux_LAT</span>  <span class="o">=</span> <span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">auxiliary_coordinate_lat</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="n">axis_Y</span><span class="p">,</span> <span class="n">axis_X</span><span class="p">])</span>
-<span class="n">aux_LON</span>  <span class="o">=</span> <span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">auxiliary_coordinate_lon</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="n">axis_X</span><span class="p">,</span> <span class="n">axis_Y</span><span class="p">])</span>
-<span class="n">aux_NAME</span> <span class="o">=</span> <span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">auxiliary_coordinate_name</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="n">axis_Y</span><span class="p">])</span>
+<span class="n">aux_LAT</span>  <span class="o">=</span> <span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">auxiliary_coordinate_lat</span><span class="p">)</span>
+<span class="n">aux_LON</span>  <span class="o">=</span> <span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">auxiliary_coordinate_lon</span><span class="p">)</span>
+<span class="n">aux_NAME</span> <span class="o">=</span> <span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">auxiliary_coordinate_name</span><span class="p">)</span>
 
 <span class="c1"># Create and set domain ancillary constructs</span>
 <span class="n">domain_ancillary_a</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">DomainAncillary</span><span class="p">(</span>
@@ -3965,8 +3986,7 @@ instance of each type of metadata construct.</em></span><a class="headerlink" hr
 
 <span class="n">domain_anc_A</span>    <span class="o">=</span> <span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">domain_ancillary_a</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="n">axis_Z</span><span class="p">)</span>
 <span class="n">domain_anc_B</span>    <span class="o">=</span> <span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">domain_ancillary_b</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="n">axis_Z</span><span class="p">)</span>
-<span class="n">domain_anc_OROG</span> <span class="o">=</span> <span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">domain_ancillary_orog</span><span class="p">,</span>
-                                    <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="n">axis_Y</span><span class="p">,</span> <span class="n">axis_X</span><span class="p">])</span>
+<span class="n">domain_anc_OROG</span> <span class="o">=</span> <span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">domain_ancillary_orog</span><span class="p">)</span>
 
 <span class="c1"># Create the datum for the coordinate reference constructs</span>
 <span class="n">datum</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Datum</span><span class="p">(</span><span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;earth_radius&#39;</span><span class="p">:</span> <span class="mf">6371007.</span><span class="p">})</span>
@@ -4011,7 +4031,7 @@ instance of each type of metadata construct.</em></span><a class="headerlink" hr
                  <span class="n">properties</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;km2&#39;</span><span class="p">},</span>
                  <span class="n">data</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">90.</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">)))</span>
 
-<span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">cell_measure</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="n">axis_X</span><span class="p">,</span> <span class="n">axis_Y</span><span class="p">])</span>
+<span class="n">tas</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">cell_measure</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -4468,49 +4488,49 @@ metadata constructs.</em></span><a class="headerlink" href="#id227" title="Perma
 <tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></td>
 <td><a class="reference internal" href="classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a>, <a class="reference internal" href="classes/cf.DimensionCoordinate.html#cf.DimensionCoordinate" title="cf.DimensionCoordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.DimensionCoordinate</span></code></a>,
 <a class="reference internal" href="classes/cf.AuxiliaryCoordinate.html#cf.AuxiliaryCoordinate" title="cf.AuxiliaryCoordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.AuxiliaryCoordinate</span></code></a>, <a class="reference internal" href="classes/cf.CellMeasure.html#cf.CellMeasure" title="cf.CellMeasure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CellMeasure</span></code></a>,
-<a class="reference internal" href="classes/cf.DomainAncillary.html#cf.DomainAncillary" title="cf.DomainAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.DomainAncillary</span></code></a>, <a class="reference internal" href="classes/cf.PropertiesData.html#cf.FieldAncillary" title="cf.FieldAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.FieldAncillary</span></code></a>,
+<a class="reference internal" href="classes/cf.DomainAncillary.html#cf.DomainAncillary" title="cf.DomainAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.DomainAncillary</span></code></a>, <a class="reference internal" href="classes/cf.FieldAncillary.html#cf.FieldAncillary" title="cf.FieldAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.FieldAncillary</span></code></a>,
 <a class="reference internal" href="classes/cf.CoordinateReference.html#cf.CoordinateReference" title="cf.CoordinateReference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.CoordinateReference</span></code></a>, <a class="reference internal" href="classes/cf.Bounds.html#cf.Bounds" title="cf.Bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Bounds</span></code></a>,
-<a class="reference internal" href="classes/cf.Datum.html#cf.Datum" title="cf.Datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Datum</span></code></a>, <a class="reference internal" href="class/cf.Count.html#cf.Count" title="cf.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Count</span></code></a>, <a class="reference internal" href="class/cf.Index.html#cf.Index" title="cf.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Index</span></code></a>, <a class="reference internal" href="class/cf.List.html#cf.List" title="cf.List"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.List</span></code></a></td>
+<a class="reference internal" href="generated/cf.Datum.html#cf.Datum" title="cf.Datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Datum</span></code></a>, <a class="reference internal" href="classes/cf.Count.html#cf.Count" title="cf.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Count</span></code></a>, <a class="reference internal" href="classes/cf.Index.html#cf.Index" title="cf.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Index</span></code></a>, <a class="reference internal" href="classes/cf.List.html#cf.List" title="cf.List"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.List</span></code></a></td>
 <td>Variable name</td>
 </tr>
 <tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></td>
 <td><a class="reference internal" href="classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a>, <a class="reference internal" href="classes/cf.DimensionCoordinate.html#cf.DimensionCoordinate" title="cf.DimensionCoordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.DimensionCoordinate</span></code></a>,
 <a class="reference internal" href="classes/cf.AuxiliaryCoordinate.html#cf.AuxiliaryCoordinate" title="cf.AuxiliaryCoordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.AuxiliaryCoordinate</span></code></a>, <a class="reference internal" href="classes/cf.CellMeasure.html#cf.CellMeasure" title="cf.CellMeasure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CellMeasure</span></code></a>,
-<a class="reference internal" href="classes/cf.DomainAncillary.html#cf.DomainAncillary" title="cf.DomainAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.DomainAncillary</span></code></a>, <a class="reference internal" href="classes/cf.PropertiesData.html#cf.FieldAncillary" title="cf.FieldAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.FieldAncillary</span></code></a>,
+<a class="reference internal" href="classes/cf.DomainAncillary.html#cf.DomainAncillary" title="cf.DomainAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.DomainAncillary</span></code></a>, <a class="reference internal" href="classes/cf.FieldAncillary.html#cf.FieldAncillary" title="cf.FieldAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.FieldAncillary</span></code></a>,
 <a class="reference internal" href="classes/cf.CoordinateReference.html#cf.CoordinateReference" title="cf.CoordinateReference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.CoordinateReference</span></code></a>, <a class="reference internal" href="classes/cf.Bounds.html#cf.Bounds" title="cf.Bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Bounds</span></code></a>,
-<a class="reference internal" href="classes/cf.Datum.html#cf.Datum" title="cf.Datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Datum</span></code></a>, <a class="reference internal" href="class/cf.Count.html#cf.Count" title="cf.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Count</span></code></a>, <a class="reference internal" href="class/cf.Index.html#cf.Index" title="cf.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Index</span></code></a>, <a class="reference internal" href="class/cf.List.html#cf.List" title="cf.List"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.List</span></code></a></td>
+<a class="reference internal" href="generated/cf.Datum.html#cf.Datum" title="cf.Datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Datum</span></code></a>, <a class="reference internal" href="classes/cf.Count.html#cf.Count" title="cf.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Count</span></code></a>, <a class="reference internal" href="classes/cf.Index.html#cf.Index" title="cf.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Index</span></code></a>, <a class="reference internal" href="classes/cf.List.html#cf.List" title="cf.List"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.List</span></code></a></td>
 <td>Variable name</td>
 </tr>
 <tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_variable</span></code></td>
 <td><a class="reference internal" href="classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a>, <a class="reference internal" href="classes/cf.DimensionCoordinate.html#cf.DimensionCoordinate" title="cf.DimensionCoordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.DimensionCoordinate</span></code></a>,
 <a class="reference internal" href="classes/cf.AuxiliaryCoordinate.html#cf.AuxiliaryCoordinate" title="cf.AuxiliaryCoordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.AuxiliaryCoordinate</span></code></a>, <a class="reference internal" href="classes/cf.CellMeasure.html#cf.CellMeasure" title="cf.CellMeasure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CellMeasure</span></code></a>,
-<a class="reference internal" href="classes/cf.DomainAncillary.html#cf.DomainAncillary" title="cf.DomainAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.DomainAncillary</span></code></a>, <a class="reference internal" href="classes/cf.PropertiesData.html#cf.FieldAncillary" title="cf.FieldAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.FieldAncillary</span></code></a>,
+<a class="reference internal" href="classes/cf.DomainAncillary.html#cf.DomainAncillary" title="cf.DomainAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.DomainAncillary</span></code></a>, <a class="reference internal" href="classes/cf.FieldAncillary.html#cf.FieldAncillary" title="cf.FieldAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.FieldAncillary</span></code></a>,
 <a class="reference internal" href="classes/cf.CoordinateReference.html#cf.CoordinateReference" title="cf.CoordinateReference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.CoordinateReference</span></code></a>, <a class="reference internal" href="classes/cf.Bounds.html#cf.Bounds" title="cf.Bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Bounds</span></code></a>,
-<a class="reference internal" href="classes/cf.Datum.html#cf.Datum" title="cf.Datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Datum</span></code></a>, <a class="reference internal" href="class/cf.Count.html#cf.Count" title="cf.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Count</span></code></a>, <a class="reference internal" href="class/cf.Index.html#cf.Index" title="cf.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Index</span></code></a>, <a class="reference internal" href="class/cf.List.html#cf.List" title="cf.List"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.List</span></code></a></td>
+<a class="reference internal" href="generated/cf.Datum.html#cf.Datum" title="cf.Datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Datum</span></code></a>, <a class="reference internal" href="classes/cf.Count.html#cf.Count" title="cf.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Count</span></code></a>, <a class="reference internal" href="classes/cf.Index.html#cf.Index" title="cf.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Index</span></code></a>, <a class="reference internal" href="classes/cf.List.html#cf.List" title="cf.List"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.List</span></code></a></td>
 <td>Variable name</td>
 </tr>
 <tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></td>
 <td><a class="reference internal" href="classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a>, <a class="reference internal" href="classes/cf.DimensionCoordinate.html#cf.DimensionCoordinate" title="cf.DimensionCoordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.DimensionCoordinate</span></code></a>,
 <a class="reference internal" href="classes/cf.AuxiliaryCoordinate.html#cf.AuxiliaryCoordinate" title="cf.AuxiliaryCoordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.AuxiliaryCoordinate</span></code></a>, <a class="reference internal" href="classes/cf.CellMeasure.html#cf.CellMeasure" title="cf.CellMeasure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CellMeasure</span></code></a>,
-<a class="reference internal" href="classes/cf.DomainAncillary.html#cf.DomainAncillary" title="cf.DomainAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.DomainAncillary</span></code></a>, <a class="reference internal" href="classes/cf.PropertiesData.html#cf.FieldAncillary" title="cf.FieldAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.FieldAncillary</span></code></a>,
+<a class="reference internal" href="classes/cf.DomainAncillary.html#cf.DomainAncillary" title="cf.DomainAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.DomainAncillary</span></code></a>, <a class="reference internal" href="classes/cf.FieldAncillary.html#cf.FieldAncillary" title="cf.FieldAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.FieldAncillary</span></code></a>,
 <a class="reference internal" href="classes/cf.CoordinateReference.html#cf.CoordinateReference" title="cf.CoordinateReference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.CoordinateReference</span></code></a>, <a class="reference internal" href="classes/cf.Bounds.html#cf.Bounds" title="cf.Bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Bounds</span></code></a>,
-<a class="reference internal" href="classes/cf.Datum.html#cf.Datum" title="cf.Datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Datum</span></code></a>, <a class="reference internal" href="class/cf.Count.html#cf.Count" title="cf.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Count</span></code></a>, <a class="reference internal" href="class/cf.Index.html#cf.Index" title="cf.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Index</span></code></a>, <a class="reference internal" href="class/cf.List.html#cf.List" title="cf.List"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.List</span></code></a></td>
+<a class="reference internal" href="generated/cf.Datum.html#cf.Datum" title="cf.Datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Datum</span></code></a>, <a class="reference internal" href="classes/cf.Count.html#cf.Count" title="cf.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Count</span></code></a>, <a class="reference internal" href="classes/cf.Index.html#cf.Index" title="cf.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Index</span></code></a>, <a class="reference internal" href="classes/cf.List.html#cf.List" title="cf.List"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.List</span></code></a></td>
 <td>Variable name</td>
 </tr>
 <tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_dimension</span></code></td>
-<td><a class="reference internal" href="classes/cf.DomainAxis.html#cf.DomainAxis" title="cf.DomainAxis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.DomainAxis</span></code></a>, <a class="reference internal" href="class/cf.Count.html#cf.Count" title="cf.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Count</span></code></a>, <a class="reference internal" href="class/cf.Index.html#cf.Index" title="cf.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Index</span></code></a></td>
+<td><a class="reference internal" href="classes/cf.DomainAxis.html#cf.DomainAxis" title="cf.DomainAxis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.DomainAxis</span></code></a>, <a class="reference internal" href="classes/cf.Count.html#cf.Count" title="cf.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Count</span></code></a>, <a class="reference internal" href="classes/cf.Index.html#cf.Index" title="cf.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Index</span></code></a></td>
 <td>Dimension name</td>
 </tr>
 <tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_dimension</span></code></td>
-<td><a class="reference internal" href="classes/cf.DomainAxis.html#cf.DomainAxis" title="cf.DomainAxis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.DomainAxis</span></code></a>, <a class="reference internal" href="class/cf.Count.html#cf.Count" title="cf.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Count</span></code></a>, <a class="reference internal" href="class/cf.Index.html#cf.Index" title="cf.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Index</span></code></a></td>
+<td><a class="reference internal" href="classes/cf.DomainAxis.html#cf.DomainAxis" title="cf.DomainAxis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.DomainAxis</span></code></a>, <a class="reference internal" href="classes/cf.Count.html#cf.Count" title="cf.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Count</span></code></a>, <a class="reference internal" href="classes/cf.Index.html#cf.Index" title="cf.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Index</span></code></a></td>
 <td>Dimension name</td>
 </tr>
 <tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_dimension</span></code></td>
-<td><a class="reference internal" href="classes/cf.DomainAxis.html#cf.DomainAxis" title="cf.DomainAxis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.DomainAxis</span></code></a>, <a class="reference internal" href="class/cf.Count.html#cf.Count" title="cf.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Count</span></code></a>, <a class="reference internal" href="class/cf.Index.html#cf.Index" title="cf.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Index</span></code></a></td>
+<td><a class="reference internal" href="classes/cf.DomainAxis.html#cf.DomainAxis" title="cf.DomainAxis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.DomainAxis</span></code></a>, <a class="reference internal" href="classes/cf.Count.html#cf.Count" title="cf.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Count</span></code></a>, <a class="reference internal" href="classes/cf.Index.html#cf.Index" title="cf.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Index</span></code></a></td>
 <td>Dimension name</td>
 </tr>
 <tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_dimension</span></code></td>
-<td><a class="reference internal" href="classes/cf.DomainAxis.html#cf.DomainAxis" title="cf.DomainAxis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.DomainAxis</span></code></a>, <a class="reference internal" href="class/cf.Count.html#cf.Count" title="cf.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Count</span></code></a>, <a class="reference internal" href="class/cf.Index.html#cf.Index" title="cf.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Index</span></code></a></td>
+<td><a class="reference internal" href="classes/cf.DomainAxis.html#cf.DomainAxis" title="cf.DomainAxis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.DomainAxis</span></code></a>, <a class="reference internal" href="classes/cf.Count.html#cf.Count" title="cf.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Count</span></code></a>, <a class="reference internal" href="classes/cf.Index.html#cf.Index" title="cf.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Index</span></code></a></td>
 <td>Dimension name</td>
 </tr>
 <tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_global_attributes</span></code></td>
@@ -4546,19 +4566,19 @@ metadata constructs.</em></span><a class="headerlink" href="#id227" title="Perma
 <td>External variable status</td>
 </tr>
 <tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_sample_dimension</span></code></td>
-<td><a class="reference internal" href="class/cf.Count.html#cf.Count" title="cf.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Count</span></code></a>, <a class="reference internal" href="class/cf.Index.html#cf.Index" title="cf.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Index</span></code></a></td>
+<td><a class="reference internal" href="classes/cf.Count.html#cf.Count" title="cf.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Count</span></code></a>, <a class="reference internal" href="classes/cf.Index.html#cf.Index" title="cf.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Index</span></code></a></td>
 <td>Sample dimension name</td>
 </tr>
 <tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_sample_dimension</span></code></td>
-<td><a class="reference internal" href="class/cf.Count.html#cf.Count" title="cf.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Count</span></code></a>, <a class="reference internal" href="class/cf.Index.html#cf.Index" title="cf.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Index</span></code></a></td>
+<td><a class="reference internal" href="classes/cf.Count.html#cf.Count" title="cf.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Count</span></code></a>, <a class="reference internal" href="classes/cf.Index.html#cf.Index" title="cf.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Index</span></code></a></td>
 <td>Sample dimension name</td>
 </tr>
 <tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_sample_dimension</span></code></td>
-<td><a class="reference internal" href="class/cf.Count.html#cf.Count" title="cf.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Count</span></code></a>, <a class="reference internal" href="class/cf.Index.html#cf.Index" title="cf.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Index</span></code></a></td>
+<td><a class="reference internal" href="classes/cf.Count.html#cf.Count" title="cf.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Count</span></code></a>, <a class="reference internal" href="classes/cf.Index.html#cf.Index" title="cf.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Index</span></code></a></td>
 <td>Sample dimension name</td>
 </tr>
 <tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_sample_dimension</span></code></td>
-<td><a class="reference internal" href="class/cf.Count.html#cf.Count" title="cf.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Count</span></code></a>, <a class="reference internal" href="class/cf.Index.html#cf.Index" title="cf.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Index</span></code></a></td>
+<td><a class="reference internal" href="classes/cf.Count.html#cf.Count" title="cf.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Count</span></code></a>, <a class="reference internal" href="classes/cf.Index.html#cf.Index" title="cf.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Index</span></code></a></td>
 <td>Sample dimension name</td>
 </tr>
 </tbody>
@@ -4989,7 +5009,7 @@ the other constructs. There would be no “external_variables” global
 attribute.</p>
 <p>To create a reference to an external variable in an output netCDF
 file, set the status of the cell measure construct to “external” with
-its <code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_external</span></code> method.</p>
+its <a class="reference internal" href="method/cf.CellMeasure.nc_set_external.html#cf.CellMeasure.nc_set_external" title="cf.CellMeasure.nc_set_external"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_external</span></code></a> method.</p>
 <div class="literal-block-wrapper docutils container" id="id243">
 <div class="code-block-caption"><span class="caption-text"><em>Flag the cell measure as external and write the field
 construct to a new file.</em></span><a class="headerlink" href="#id243" title="Permalink to this code">¶</a></div>
@@ -5562,10 +5582,10 @@ method is to be applied.</p>
 <span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
 <span class="go">                : air_pressure(1) = [850.0] hPa</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">datetime_array</span><span class="p">)</span>
-<span class="go">[[real_datetime(1959, 12, 1, 0, 0) real_datetime(1969,  3, 1, 0, 0)]</span>
-<span class="go"> [real_datetime(1960,  3, 1, 0, 0) real_datetime(1969,  6, 1, 0, 0)]</span>
-<span class="go"> [real_datetime(1960,  6, 1, 0, 0) real_datetime(1969,  9, 1, 0, 0)]</span>
-<span class="go"> [real_datetime(1960,  9, 1, 0, 0) real_datetime(1969, 12, 1, 0, 0)]]</span>
+<span class="go">[[cftime.DatetimeGregorian(1959-12-01 00:00:00) cftime.DatetimeGregorian(1969-03-01 00:00:00)]</span>
+<span class="go"> [cftime.DatetimeGregorian(1960-03-01 00:00:00) cftime.DatetimeGregorian(1969-06-01 00:00:00)]</span>
+<span class="go"> [cftime.DatetimeGregorian(1960-06-01 00:00:00) cftime.DatetimeGregorian(1969-09-01 00:00:00)]</span>
+<span class="go"> [cftime.DatetimeGregorian(1960-09-01 00:00:00) cftime.DatetimeGregorian(1969-12-01 00:00:00)]]</span>
 </pre></div>
 </div>
 </div>
@@ -5585,10 +5605,10 @@ changed from ‘K’ to ‘K2’.</em></span><a class="headerlink" href="#id263"
 <span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
 <span class="go">                : air_pressure(1) = [850.0] hPa</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">datetime_array</span><span class="p">)</span>
-<span class="go">[[real_datetime(1959, 12, 1, 0, 0) real_datetime(1969,  3, 1, 0, 0)]</span>
-<span class="go"> [real_datetime(1960,  3, 1, 0, 0) real_datetime(1969,  6, 1, 0, 0)]</span>
-<span class="go"> [real_datetime(1960,  6, 1, 0, 0) real_datetime(1969,  9, 1, 0, 0)]</span>
-<span class="go"> [real_datetime(1960,  9, 1, 0, 0) real_datetime(1969, 12, 1, 0, 0)]]</span>
+<span class="go">[[cftime.DatetimeGregorian(1959-12-01 00:00:00) cftime.DatetimeGregorian(1969-03-01 00:00:00)]</span>
+<span class="go"> [cftime.DatetimeGregorian(1960-03-01 00:00:00) cftime.DatetimeGregorian(1969-06-01 00:00:00)]</span>
+<span class="go"> [cftime.DatetimeGregorian(1960-06-01 00:00:00) cftime.DatetimeGregorian(1969-09-01 00:00:00)]</span>
+<span class="go"> [cftime.DatetimeGregorian(1960-09-01 00:00:00) cftime.DatetimeGregorian(1969-12-01 00:00:00)]]</span>
 </pre></div>
 </div>
 </div>
@@ -5612,14 +5632,14 @@ in 5 year chunks.</em></span><a class="headerlink" href="#id264" title="Permalin
 <span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
 <span class="go">                : air_pressure(1) = [850.0] hPa</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">datetime_array</span><span class="p">)</span>
-<span class="go">[[real_datetime(1959, 12, 1, 0, 0) real_datetime(1964,  3, 1, 0, 0)]</span>
-<span class="go"> [real_datetime(1960,  3, 1, 0, 0) real_datetime(1964,  6, 1, 0, 0)]</span>
-<span class="go"> [real_datetime(1960,  6, 1, 0, 0) real_datetime(1964,  9, 1, 0, 0)]</span>
-<span class="go"> [real_datetime(1960,  9, 1, 0, 0) real_datetime(1964, 12, 1, 0, 0)]</span>
-<span class="go"> [real_datetime(1964, 12, 1, 0, 0) real_datetime(1969,  3, 1, 0, 0)]</span>
-<span class="go"> [real_datetime(1965,  3, 1, 0, 0) real_datetime(1969,  6, 1, 0, 0)]</span>
-<span class="go"> [real_datetime(1965,  6, 1, 0, 0) real_datetime(1969,  9, 1, 0, 0)]</span>
-<span class="go"> [real_datetime(1965,  9, 1, 0, 0) real_datetime(1969, 12, 1, 0, 0)]]</span>
+<span class="go">[[cftime.DatetimeGregorian(1959-12-01 00:00:00) cftime.DatetimeGregorian(1964-03-01 00:00:00)]</span>
+<span class="go"> [cftime.DatetimeGregorian(1960-03-01 00:00:00) cftime.DatetimeGregorian(1964-06-01 00:00:00)]</span>
+<span class="go"> [cftime.DatetimeGregorian(1960-06-01 00:00:00) cftime.DatetimeGregorian(1964-09-01 00:00:00)]</span>
+<span class="go"> [cftime.DatetimeGregorian(1960-09-01 00:00:00) cftime.DatetimeGregorian(1964-12-01 00:00:00)]</span>
+<span class="go"> [cftime.DatetimeGregorian(1964-12-01 00:00:00) cftime.DatetimeGregorian(1969-03-01 00:00:00)]</span>
+<span class="go"> [cftime.DatetimeGregorian(1965-03-01 00:00:00) cftime.DatetimeGregorian(1969-06-01 00:00:00)]</span>
+<span class="go"> [cftime.DatetimeGregorian(1965-06-01 00:00:00) cftime.DatetimeGregorian(1969-09-01 00:00:00)]</span>
+<span class="go"> [cftime.DatetimeGregorian(1965-09-01 00:00:00) cftime.DatetimeGregorian(1969-12-01 00:00:00)]]</span>
 </pre></div>
 </div>
 </div>
@@ -5638,10 +5658,10 @@ restricting the years from 1963 to 1968.</em></span><a class="headerlink" href="
 <span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
 <span class="go">                : air_pressure(1) = [850.0] hPa</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">datetime_array</span><span class="p">)</span>
-<span class="go">[[real_datetime(1962, 12, 1, 0, 0) real_datetime(1968,  3, 1, 0, 0)]</span>
-<span class="go"> [real_datetime(1963,  3, 1, 0, 0) real_datetime(1968,  6, 1, 0, 0)]</span>
-<span class="go"> [real_datetime(1963,  6, 1, 0, 0) real_datetime(1968,  9, 1, 0, 0)]</span>
-<span class="go"> [real_datetime(1963,  9, 1, 0, 0) real_datetime(1968, 12, 1, 0, 0)]]</span>
+<span class="go">[[cftime.DatetimeGregorian(1962-12-01 00:00:00) cftime.DatetimeGregorian(1968-03-01 00:00:00)]</span>
+<span class="go"> [cftime.DatetimeGregorian(1963-03-01 00:00:00) cftime.DatetimeGregorian(1968-06-01 00:00:00)]</span>
+<span class="go"> [cftime.DatetimeGregorian(1963-06-01 00:00:00) cftime.DatetimeGregorian(1968-09-01 00:00:00)]</span>
+<span class="go"> [cftime.DatetimeGregorian(1963-09-01 00:00:00) cftime.DatetimeGregorian(1968-12-01 00:00:00)]]</span>
 </pre></div>
 </div>
 </div>
@@ -5933,7 +5953,6 @@ non-cyclic by default.</p>
 often used for regridding along the time dimension. A plane projection
 coordinate system can be regridded with Cartesian regridding, which
 will produce similar results to using using spherical regridding.</p>
-<p>TODO1 example with Cartesian regridding to another field</p>
 <div class="literal-block-wrapper docutils container" id="id269">
 <div class="code-block-caption"><span class="caption-text"><em>TODO</em></span><a class="headerlink" href="#id269" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">time</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">DimensionCoordinate</span><span class="p">()</span>
@@ -5973,6 +5992,14 @@ will produce similar results to using using spherical regridding.</p>
 </pre></div>
 </div>
 </div>
+<div class="literal-block-wrapper docutils container" id="id271">
+<div class="code-block-caption"><span class="caption-text"><em>TODO</em></span><a class="headerlink" href="#id271" title="Permalink to this code">¶</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">regridc</span><span class="p">(</span><span class="n">TODO</span> <span class="p">(</span><span class="n">field</span> <span class="n">arg</span><span class="p">),</span> <span class="n">axes</span><span class="o">=</span><span class="s1">&#39;T&#39;</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;conservative&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<span class="go">TODO</span>
+</pre></div>
+</div>
+</div>
 </div>
 <div class="section" id="regridding-masked-data">
 <span id="id78"></span><h3><a class="toc-backref" href="#id382">Regridding masked data</a><a class="headerlink" href="#regridding-masked-data" title="Permalink to this headline">¶</a></h3>
@@ -5998,9 +6025,9 @@ linearly. For example, to regrid a data on one set of vertical
 pressure corodinates to another set, the pressure coordinates may
 first be transformed into the logarithm of pressure, and then changed
 back to pressure coordinates after the regridding operation.</p>
-<div class="literal-block-wrapper docutils container" id="id271">
+<div class="literal-block-wrapper docutils container" id="id272">
 <div class="code-block-caption"><span class="caption-text"><em>Regrid a field construct from one set of pressure levels
-to another.</em></span><a class="headerlink" href="#id271" title="Permalink to this code">¶</a></div>
+to another.</em></span><a class="headerlink" href="#id272" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">v</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;vertical.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
 <span class="go">Field: eastward_wind (ncvar%ua)</span>
@@ -6055,8 +6082,8 @@ construct key.</p>
 <a class="reference internal" href="generated/cf.Field.sin.html#cf.Field.sin" title="cf.Field.sin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sin</span></code></a> and <a class="reference internal" href="generated/cf.Field.tan.html#cf.Field.tan" title="cf.Field.tan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tan</span></code></a> methods for applying trigonometrical
 functions element-wise to the data, preserving the metadata but
 changing the construct’s units.</p>
-<div class="literal-block-wrapper docutils container" id="id272">
-<div class="code-block-caption"><span class="caption-text"><em>Find the sine of each latitude coordinate value.</em></span><a class="headerlink" href="#id272" title="Permalink to this code">¶</a></div>
+<div class="literal-block-wrapper docutils container" id="id273">
+<div class="code-block-caption"><span class="caption-text"><em>Find the sine of each latitude coordinate value.</em></span><a class="headerlink" href="#id273" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lat</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">dimension_coordinate</span><span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">lat</span><span class="o">.</span><span class="n">data</span>
 <span class="go">&lt;CF Data(5): [-75.0, ..., 75.0] degrees_north&gt;</span>
@@ -6073,8 +6100,8 @@ changing the construct’s units.</p>
 <a class="reference internal" href="generated/cf.Field.log.html#cf.Field.log" title="cf.Field.log"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log</span></code></a> methods for applying exponential and logarithmic
 functions respectively element-wise to the data, preserving the
 metadata but changing the construct’s units where required.</p>
-<div class="literal-block-wrapper docutils container" id="id273">
-<div class="code-block-caption"><span class="caption-text"><em>Find the logarithms and exponentials of field constructs.</em></span><a class="headerlink" href="#id273" title="Permalink to this code">¶</a></div>
+<div class="literal-block-wrapper docutils container" id="id274">
+<div class="code-block-caption"><span class="caption-text"><em>Find the logarithms and exponentials of field constructs.</em></span><a class="headerlink" href="#id274" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span>
 <span class="go">&lt;CF Field: specific_humidity(latitude(5), longitude(8)) 1&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">log</span><span class="p">()</span>
@@ -6135,10 +6162,10 @@ calculated, which also updates the bounds of a relevant dimension
 coordinate construct to account for the width of the
 filter. Convolution filters are carried with the
 <a class="reference internal" href="generated/cf.Field.convolution_filter.html#cf.Field.convolution_filter" title="cf.Field.convolution_filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convolution_filter</span></code></a> method of the field construct.</p>
-<div class="literal-block-wrapper docutils container" id="id274">
+<div class="literal-block-wrapper docutils container" id="id275">
 <div class="code-block-caption"><span class="caption-text"><em>Calculate a 5-point weighted mean of the ‘X’ axis. Since
 the the ‘X’ axis is cyclic, the convolution wraps by
-default.</em></span><a class="headerlink" href="#id274" title="Permalink to this code">¶</a></div>
+default.</em></span><a class="headerlink" href="#id275" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
 <span class="go">Field: specific_humidity (ncvar%q)</span>
 <span class="go">----------------------------------</span>
@@ -6188,11 +6215,11 @@ border, and</li>
 </ul>
 <p>Note that the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.3.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package has suite of window
 functions for creating weights for filtering:</p>
-<div class="literal-block-wrapper docutils container" id="id275">
+<div class="literal-block-wrapper docutils container" id="id276">
 <div class="code-block-caption"><span class="caption-text"><em>Calculate a 3-point exponential filter of the ‘Y’
 axis. Since the ‘Y’ axis is not cyclic, the convolution
 by default inserts missing data at points for which the
-filter window extends beyond the array.</em></span><a class="headerlink" href="#id275" title="Permalink to this code">¶</a></div>
+filter window extends beyond the array.</em></span><a class="headerlink" href="#id276" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy.signal</span> <span class="kn">import</span> <span class="n">windows</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">exponential_weights</span> <span class="o">=</span> <span class="n">windows</span><span class="o">.</span><span class="n">exponential</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">exponential_weights</span><span class="p">)</span>
@@ -6216,8 +6243,8 @@ method. If the axis is <a class="reference internal" href="#cyclic-domain-axes">
 derivative wraps around by default, otherwise it may be forced to wrap
 around; a one-sided difference is calculated at the edges; or missing
 data is inserted.</p>
-<div class="literal-block-wrapper docutils container" id="id276">
-<div class="code-block-caption"><span class="caption-text"><em>TODO</em></span><a class="headerlink" href="#id276" title="Permalink to this code">¶</a></div>
+<div class="literal-block-wrapper docutils container" id="id277">
+<div class="code-block-caption"><span class="caption-text"><em>TODO</em></span><a class="headerlink" href="#id277" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="n">one_sided_at_boundary</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 </pre></div>
@@ -6247,15 +6274,13 @@ components of the horizontal wind field; <span class="math notranslate nohighlig
 the Earth; and <span class="math notranslate nohighlight">\(\phi\)</span> is the latitude at each point.</p>
 <p>The <a class="reference internal" href="generated/cf.relative_vorticity.html#cf.relative_vorticity" title="cf.relative_vorticity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.relative_vorticity</span></code></a> function creates a relative vorticity
 field construct from field constructs containing the wind components
-using finite differences to approximate the derivatives.</p>
-<div class="literal-block-wrapper docutils container" id="id277">
-<div class="code-block-caption"><span class="caption-text"><em>TODO</em></span><a class="headerlink" href="#id277" title="Permalink to this code">¶</a></div>
+using finite differences to approximate the derivatives. Dimensions
+other than ‘X’ and ‘Y’ remain unchanged by te operation.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;wind_components.nc&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">zeta</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">relative_vorticity</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">zeta</span><span class="p">)</span>
 <span class="go">TODO</span>
 </pre></div>
-</div>
 </div>
 <p>If the longitudinal axis is <a class="reference internal" href="#cyclic-domain-axes"><span class="std std-ref">cyclic</span></a> then the
 derivative wraps around by default, otherwise it may be forced to wrap
@@ -6380,11 +6405,11 @@ arrays.</li>
 combining them using one of three ragged array representations:
 <a class="reference external" href="http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#_contiguous_ragged_array_representation">contiguous</a>, <a class="reference external" href="http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#_indexed_ragged_array_representation">indexed</a> or <a class="reference external" href="http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#_ragged_array_representation_of_time_series_profiles">indexed contiguous</a>.</p>
 <p>The count variable that is required to uncompress a contiguous, or
-indexed contiguous, ragged array is stored in a <a class="reference internal" href="class/cf.Count.html#cf.Count" title="cf.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Count</span></code></a> instance
+indexed contiguous, ragged array is stored in a <a class="reference internal" href="classes/cf.Count.html#cf.Count" title="cf.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Count</span></code></a> instance
 and is accessed with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_count</span></code> method of the <a class="reference internal" href="classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a>
 instance.</p>
 <p>The index variable that is required to uncompress an indexed, or
-indexed contiguous, ragged array is stored in an <a class="reference internal" href="class/cf.Index.html#cf.Index" title="cf.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Index</span></code></a> instance
+indexed contiguous, ragged array is stored in an <a class="reference internal" href="classes/cf.Index.html#cf.Index" title="cf.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Index</span></code></a> instance
 and is accessed with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_index</span></code> method of the <a class="reference internal" href="classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a>
 instance.</p>
 <p>The contiguous case is is illustrated with the file <code class="docutils literal notranslate"><span class="pre">contiguous.nc</span></code>
@@ -6505,8 +6530,8 @@ underlying array is no longer compressed.</em></span><a class="headerlink" href=
 </div>
 <p>A construct with an underlying ragged array is created by initialising
 a <a class="reference internal" href="classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> instance with a ragged array that is stored in one of three
-special array objects: <a class="reference internal" href="class/cf.RaggedContiguousArray.html#cf.RaggedContiguousArray" title="cf.RaggedContiguousArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RaggedContiguousArray</span></code></a>, <a class="reference internal" href="class/cf.RaggedIndexedArray.html#cf.RaggedIndexedArray" title="cf.RaggedIndexedArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RaggedIndexedArray</span></code></a>
-or <a class="reference internal" href="class/cf.RaggedIndexedContiguousArray.html#cf.RaggedIndexedContiguousArray" title="cf.RaggedIndexedContiguousArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RaggedIndexedContiguousArray</span></code></a>. The following code creates a simple
+special array objects: <a class="reference internal" href="classes/cf.RaggedContiguousArray.html#cf.RaggedContiguousArray" title="cf.RaggedContiguousArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RaggedContiguousArray</span></code></a>, <a class="reference internal" href="classes/cf.RaggedIndexedArray.html#cf.RaggedIndexedArray" title="cf.RaggedIndexedArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RaggedIndexedArray</span></code></a>
+or <a class="reference internal" href="classes/cf.RaggedIndexedContiguousArray.html#cf.RaggedIndexedContiguousArray" title="cf.RaggedIndexedContiguousArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RaggedIndexedContiguousArray</span></code></a>. The following code creates a simple
 field construct with an underlying contiguous ragged array:</p>
 <div class="literal-block-wrapper docutils container" id="id285">
 <div class="code-block-caption"><span class="caption-text"><em>Create a field construct with compressed data.</em></span><a class="headerlink" href="#id285" title="Permalink to this code">¶</a></div>
@@ -6542,7 +6567,7 @@ field construct with an underlying contiguous ragged array:</p>
 <span class="n">Y</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">set_construct</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">DomainAxis</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
 
 <span class="c1"># Set the data for the field</span>
-<span class="n">T</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">array</span><span class="p">),</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="n">Y</span><span class="p">,</span> <span class="n">X</span><span class="p">])</span>
+<span class="n">T</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">array</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -6603,7 +6628,7 @@ data:
 into a new, discrete axis whilst omitting the missing values and thus
 reducing the number of values that need to be stored.</p>
 <p>The list variable that is required to uncompress a gathered array is
-stored in a <a class="reference internal" href="class/cf.List.html#cf.List" title="cf.List"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.List</span></code></a> object and is retrieved with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_list</span></code>
+stored in a <a class="reference internal" href="classes/cf.List.html#cf.List" title="cf.List"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.List</span></code></a> object and is retrieved with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_list</span></code>
 method of the <a class="reference internal" href="classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> instance.</p>
 <p>This is illustrated with the file <code class="docutils literal notranslate"><span class="pre">gathered.nc</span></code> (found in the zip
 file of sample files):</p>
@@ -6711,7 +6736,7 @@ underlying array is no longer compressed.</em></span><a class="headerlink" href=
 </div>
 <p>A construct with an underlying gathered array is created by
 initializing a <a class="reference internal" href="classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> instance with a gathered array that is stored
-in the special <a class="reference internal" href="class/cf.GatheredArray.html#cf.GatheredArray" title="cf.GatheredArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.GatheredArray</span></code></a> array object. The following code
+in the special <a class="reference internal" href="classes/cf.GatheredArray.html#cf.GatheredArray" title="cf.GatheredArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.GatheredArray</span></code></a> array object. The following code
 creates a simple field construct with an underlying gathered array:</p>
 <div class="literal-block-wrapper docutils container" id="id293">
 <div class="code-block-caption"><span class="caption-text"><em>Create a field construct with compressed data.</em></span><a class="headerlink" href="#id293" title="Permalink to this code">¶</a></div>
@@ -6753,7 +6778,7 @@ creates a simple field construct with an underlying gathered array:</p>
 <p>Note that, because compression by gathering acts on a subset of the
 array dimensions, it is necessary to state the position of the
 compressed dimension in the compressed array (with the
-<code class="docutils literal notranslate"><span class="pre">compressed_dimension</span></code> parameter of the <a class="reference internal" href="class/cf.GatheredArray.html#cf.GatheredArray" title="cf.GatheredArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.GatheredArray</span></code></a>
+<code class="docutils literal notranslate"><span class="pre">compressed_dimension</span></code> parameter of the <a class="reference internal" href="classes/cf.GatheredArray.html#cf.GatheredArray" title="cf.GatheredArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.GatheredArray</span></code></a>
 initialisation).</p>
 <p>The new field construct can now be inspected and written a netCDF file:</p>
 <div class="literal-block-wrapper docutils container" id="id294">
@@ -6996,6 +7021,7 @@ format can not reliably be detected automatically.</td></tr>
 
 
           </div>
+          
         </div>
       </div>
     <div class="clearer"></div>
@@ -7004,8 +7030,8 @@ format can not reliably be detected automatically.</td></tr>
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="_sources/tutorial.rst.txt"

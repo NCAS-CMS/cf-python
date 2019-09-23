@@ -29,7 +29,13 @@ is built on a complete implementation of the CF data model [#cfdm]_.
 
 ----
 
-The cf package implements the CF data model [#cfdm]_ for its internal
+.. note:: **This version of cf is for Python 3 only**, and there are
+          :ref:`incompatible differences between versions 2.x and 3.x
+          <2_to_3_changes>`. For version 2.x documentation, see the
+          `documentation archive
+          <https://cfpython.bitbucket.io/docs/archive.html>`_.
+
+The cf package implements the :ref:`CF-data-model` for its internal
 data structures and so is able to process any CF-compliant dataset. It
 is not strict about CF-compliance, however, so that partially
 conformant datasets may be ingested from existing datasets and written
@@ -77,12 +83,12 @@ The cf package can:
 -----------------
 
 Powerful, flexible, and very simple to produce visualizations of field
-constructs are available with the `cfplot
-<http://ajheaps.github.io/cf-plot>`_ package (that needs to be
-installed seprately to cf).
+constructs are available with the `cfplot package
+<http://ajheaps.github.io/cf-plot>`_ (that needs to be installed
+seprately to cf).
 
 See the `cfplot gallery
-<http://ajheaps.github.io/cf-plot/gallery.html>`_ for the full range
+<http://ajheaps.github.io/cf-plot/gallery.html>`_ for the wide range
 range plotting possibilities with example code.
 
 .. figure:: images/cfplot_example.png

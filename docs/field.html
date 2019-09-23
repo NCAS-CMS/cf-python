@@ -9,12 +9,14 @@
     <title>Introduction to the cf.Field object &#8212; Documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
     <script type="text/javascript" src="_static/copybutton.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
    
@@ -31,14 +33,14 @@
 <h3><b><a href="index.html">cf 3.0.0b10</a></b></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="cf_conventions.html"><strong>CF conventions</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="releases.html"><strong>Older releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="Changelog.html"><strong>Change log</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
@@ -70,6 +72,8 @@
       </div>
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="introduction-to-the-cf-field-object">
@@ -87,7 +91,7 @@ object are optional.</p>
 <p>The structure may be exposed with three different levels of detail.</p>
 <p>The built-in <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> function returns a short, one-line description of
 the field:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span>
 <span class="go">&lt;CF Field: air_temperature(time(12), latitude(64), longitude(128)) K&gt;</span>
 </pre></div>
 </div>
@@ -98,7 +102,7 @@ array (K).</p>
 <p>The built-in <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> function returns the same information as the the
 one-line output, along with short descriptions of the field’s other
 components:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">f</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="n">f</span>
 <span class="go">Field: air_temperature (ncvar%tas)</span>
 <span class="go">----------------------------------</span>
 <span class="go">Data           : air_temperature(time(1200), latitude(64), longitude(128)) K</span>
@@ -169,7 +173,7 @@ array:</p>
 <span id="fs-data-array"></span><h2>Data<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h2>
 <p>A field’s data array is a <a class="reference internal" href="classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> object and is returned by its
 <a class="reference internal" href="attribute/cf.Field.data.html#cf.Field.data" title="cf.Field.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a> attribute.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">data</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">data</span>
 <span class="go">&lt;CF Data: [[[89.0, ..., 66.0]]] K&gt;</span>
 </pre></div>
 </div>
@@ -189,7 +193,7 @@ initialized with a masked array.</li>
 <p>Some of a field’s reserved attributes return information on its
 data. For example, to find the shape of the data and to retrieve the
 data array as an actual <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/index.html#module-numpy" title="(in NumPy v1.17)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">shape</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">shape</span>
 <span class="go">(1, 3, 4)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">array</span>
 <span class="go">array([[[ 89.,  80.,  71.],</span>
@@ -201,7 +205,7 @@ data array as an actual <a class="reference external" href="https://docs.scipy.o
 <p>The data array’s missing value mask may be retrieved with the
 <a class="reference internal" href="generated/cf.Field.mask.html#cf.Field.mask" title="cf.Field.mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code></a> attribute. The mask is returned as a new field with a
 boolean data array:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">mask</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">mask</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">data</span>
 <span class="go">&lt;CF Data: [[[False, ..., True]]]&gt;</span>
 </pre></div>
@@ -215,7 +219,7 @@ values is still returned.</p>
 <a class="reference internal" href="generated/cf.Field.standard_name.html#cf.Field.standard_name" title="cf.Field.standard_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_name</span></code></a>, <a class="reference internal" href="generated/cf.Field.units.html#cf.Field.units" title="cf.Field.units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">units</span></code></a>, etc.) all have reserved
 attribute names. See the <span class="xref std std-ref">list of reserved CF properties</span> for details. These properties may be set,
 retrieved and deleted like normal python object attributes:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s1">&#39;air_temperature&#39;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s1">&#39;air_temperature&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">standard_name</span>
 <span class="go">&#39;air_temperature&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">f</span><span class="o">.</span><span class="n">standard_name</span>
@@ -223,7 +227,7 @@ retrieved and deleted like normal python object attributes:</p>
 </div>
 <p>as well as with the dedicated <code class="xref py py-obj docutils literal notranslate"><span class="pre">setprop</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">getprop</span></code> and
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">delprop</span></code> field methods:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">setprop</span><span class="p">(</span><span class="s1">&#39;standard_name&#39;</span><span class="p">,</span> <span class="s1">&#39;air_temperature&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">setprop</span><span class="p">(</span><span class="s1">&#39;standard_name&#39;</span><span class="p">,</span> <span class="s1">&#39;air_temperature&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">getprop</span><span class="p">(</span><span class="s1">&#39;standard_name&#39;</span><span class="p">)</span>
 <span class="go">&#39;air_temperature&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">delprop</span><span class="p">(</span><span class="s1">&#39;standard_name&#39;</span><span class="p">)</span>
@@ -232,7 +236,7 @@ retrieved and deleted like normal python object attributes:</p>
 <p>Non-CF properties (i.e. those which are allowed by the CF conventions
 but which do not have standardised meanings) <em>must</em> be accessed using
 these three methods:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">setprop</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">,</span> <span class="s1">&#39;CMIP7&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">setprop</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">,</span> <span class="s1">&#39;CMIP7&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">getprop</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">)</span>
 <span class="go">&#39;CMIP7&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">delprop</span><span class="p">(</span><span class="s1">&#39;project&#39;</span><span class="p">)</span>
@@ -240,7 +244,7 @@ these three methods:</p>
 </div>
 <p>All of the field’s CF properties may be retrieved with the field’s
 <a class="reference internal" href="method/cf.Field.properties.html#cf.Field.properties" title="cf.Field.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a> method:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">properties</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">properties</span><span class="p">()</span>
 <span class="go">{&#39;_FillValue&#39;: 1e+20,</span>
 <span class="go"> &#39;project&#39;: &#39;CMIP7&#39;,</span>
 <span class="go"> &#39;long_name&#39;: &#39;Surface Air Temperature&#39;,</span>
@@ -278,7 +282,7 @@ standard name. See the <a class="reference internal" href="method/cf.Field.ident
 </table>
 <p>All of the field’s attributes may be retrieved with the field’s
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">attributes()</span></code> method:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">foo</span> <span class="o">=</span> <span class="s1">&#39;bar&#39;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">foo</span> <span class="o">=</span> <span class="s1">&#39;bar&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">attributes</span><span class="p">()</span>
 <span class="go">{&#39;foo&#39;: &#39;bar&#39;,</span>
 <span class="go"> &#39;ncar&#39;: &#39;tas&#39;}</span>
@@ -366,12 +370,12 @@ an actual domain item whereas the plural method form (such as
 identifiers with corresponding values of the items themselves.</p>
 <p>For example, to retrieve a unique dimension coordinate object with a
 standard name of “time”:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">dim</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">dim</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
 <span class="go">&lt;CF DimensionCoordinate: time(12) noleap&gt;</span>
 </pre></div>
 </div>
 <p>To retrieve all coordinate objects and their domain identifiers:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">coords</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">coords</span><span class="p">()</span>
 <span class="go">{&#39;dim0&#39;: &lt;CF DimensionCoordinate: time(12) noleap&gt;,</span>
 <span class="go"> &#39;dim1&#39;: &lt;CF DimensionCoordinate: latitude(64) degrees_north&gt;,</span>
 <span class="go"> &#39;dim2&#39;: &lt;CF DimensionCoordinate: longitude(128) degrees_east&gt;,</span>
@@ -379,7 +383,7 @@ standard name of “time”:</p>
 </pre></div>
 </div>
 <p>To retrieve all domain items and their domain identifiers:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
 <span class="go">{&#39;dim0&#39;: &lt;CF DimensionCoordinate: time(12) noleap&gt;,</span>
 <span class="go"> &#39;dim1&#39;: &lt;CF DimensionCoordinate: latitude(64) degrees_north&gt;,</span>
 <span class="go"> &#39;dim2&#39;: &lt;CF DimensionCoordinate: longitude(128) degrees_east&gt;,</span>
@@ -393,7 +397,7 @@ standard name of “time”:</p>
 <p>Common axes of variation in the field’s data array and the domain’s
 items are defined by the domain’s axes.</p>
 <p>Particular axes may be retrieved with the <a class="reference internal" href="generated/cf.Field.axes.html#cf.Field.axes" title="cf.Field.axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">axes</span></code></a> method:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">axes</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">axes</span><span class="p">()</span>
 <span class="go">set([&#39;dim1&#39;, &#39;dim0&#39; &#39;dim2&#39; &#39;dim3&#39;])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">axes</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">19</span><span class="p">)</span>
 <span class="go">set([&#39;dim1&#39;])</span>
@@ -404,7 +408,7 @@ items are defined by the domain’s axes.</p>
 <p>The axes spanned by a domain item or the field’s data array may be
 retrieved with the fields <a class="reference internal" href="generated/cf.Field.item_axes.html#cf.Field.item_axes" title="cf.Field.item_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">item_axes</span></code></a> or
 <a class="reference internal" href="generated/cf.Field.data_axes.html#cf.Field.data_axes" title="cf.Field.data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data_axes</span></code></a> methods respectively:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">item_axes</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">item_axes</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
 <span class="go">[&#39;dim0&#39;]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">data_axes</span><span class="p">()</span>
 <span class="go">[&#39;dim0&#39;, &#39;dim1&#39; &#39;dim2&#39; &#39;dim3&#39;]</span>
@@ -426,6 +430,7 @@ its domain.</p>
 
 
           </div>
+          
         </div>
       </div>
     <div class="clearer"></div>
@@ -434,8 +439,8 @@ its domain.</p>
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="_sources/field.rst.txt"

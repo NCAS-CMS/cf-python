@@ -9,12 +9,14 @@
     <title>API reference &#8212; Documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
     <script type="text/javascript" src="_static/copybutton.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="cf functions" href="function.html" />
@@ -33,14 +35,14 @@
 <h3><b><a href="index.html">cf 3.0.0b10</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="cf_conventions.html"><strong>CF conventions</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="releases.html"><strong>Older releases</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="Changelog.html"><strong>Change log</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 </ul>
 <div class="relations">
 <h3>Related Topics</h3>
@@ -74,17 +76,19 @@
       </div>
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="api-reference">
 <h1><strong>API reference</strong><a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
 <p>Version 3.0.0b10 for version 1.7 of the CF conventions.</p>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">There are <a class="reference internal" href="2_to_3_changes.html#to-3-changes"><span class="std std-ref">incompatible differences between versions
-2.x and 3.x</span></a>. For version 2.x
-documentation, see the <a class="reference external" href="https://cfpython.bitbucket.io/docs/archive.html">documentation archive</a>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><strong>This version of cf is for Python 3 only</strong>, and there are
+<a class="reference internal" href="2_to_3_changes.html#to-3-changes"><span class="std std-ref">incompatible differences between versions 2.x and 3.x</span></a>. For version 2.x documentation, see the
+<a class="reference external" href="https://cfpython.bitbucket.io/docs/archive.html">documentation archive</a>.</p>
 </div>
 <div class="toctree-wrapper compound">
 <ul>
@@ -92,19 +96,19 @@ documentation, see the <a class="reference external" href="https://cfpython.bitb
 <li class="toctree-l2"><a class="reference internal" href="function.html#reading-and-writing">Reading and writing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="function.html#aggregation">Aggregation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="function.html#mathematical-operations">Mathematical operations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="function.html#constants">Constants</a></li>
 <li class="toctree-l2"><a class="reference internal" href="function.html#condition-constructors">Condition constructors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="function.html#date-time">Date-time</a></li>
-<li class="toctree-l2"><a class="reference internal" href="function.html#id1">Constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="function.html#date-time-and-time-duration">Date-time and time duration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="function.html#resource-management">Resource management</a></li>
 <li class="toctree-l2"><a class="reference internal" href="function.html#miscellaneous">Miscellaneous</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="class.html"><strong>cf classes</strong></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="class.html#field-construct-class">Field construct class</a></li>
 <li class="toctree-l2"><a class="reference internal" href="class.html#metadata-component-classes">Metadata component classes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="class.html#constructs-classes">Constructs classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class.html#constructs-class">Constructs class</a></li>
 <li class="toctree-l2"><a class="reference internal" href="class.html#coordinate-component-classes">Coordinate component classes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="class.html#domain-class">Domain class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class.html#field-list-class">Field list class</a></li>
 <li class="toctree-l2"><a class="reference internal" href="class.html#data-classes">Data classes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="class.html#miscellaneous-classes">Miscellaneous classes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="class.html#data-compression-classses">Data compression classses</a></li>
@@ -117,6 +121,7 @@ documentation, see the <a class="reference external" href="https://cfpython.bitb
 
 
           </div>
+          
         </div>
       </div>
     <div class="clearer"></div>
@@ -125,8 +130,8 @@ documentation, see the <a class="reference external" href="https://cfpython.bitb
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="_sources/api_reference.rst.txt"

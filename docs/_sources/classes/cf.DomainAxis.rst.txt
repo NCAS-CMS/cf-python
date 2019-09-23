@@ -86,6 +86,7 @@ NetCDF
    ~cf.DomainAxis.nc_set_dimension 
    ~cf.DomainAxis.nc_is_unlimited
    ~cf.DomainAxis.nc_set_unlimited
+
 Arithmetic and comparison operations
 ------------------------------------
 
@@ -137,6 +138,15 @@ construct’s data in-place.
    ~cf.Field.__iadd__ 
    ~cf.Field.__isub__ 
 
+.. rubric:: Unary arithmetic operators
+
+.. autosummary::
+   :nosignatures:
+   :toctree: generated/
+   :template: method.rst
+
+   ~cf.DomainAxis.__int__    
+
 Special
 -------
 
@@ -151,5 +161,3 @@ Special
    ~cf.DomainAxis.__hash__
    ~cf.DomainAxis.__repr__
    ~cf.DomainAxis.__str__
-   
-   

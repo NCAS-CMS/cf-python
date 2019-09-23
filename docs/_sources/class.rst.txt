@@ -24,15 +24,15 @@ Metadata component classes
 
    cf.AuxiliaryCoordinate
    cf.CellMeasure
-   cf.CellMethods
+   cf.CellMethod
    cf.CoordinateReference
    cf.DimensionCoordinate
    cf.DomainAncillary
    cf.DomainAxis
    cf.FieldAncillary
 
-Constructs classes
-------------------
+Constructs class
+----------------
 
 .. autosummary::
    :nosignatures:
@@ -60,6 +60,15 @@ Domain class
 
    cf.Domain
    
+Field list class
+----------------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: classes/
+
+   cf.FieldList	              
+
 Data classes
 ------------
 
@@ -79,7 +88,6 @@ Miscellaneous classes
    :nosignatures:
    :toctree: classes/
 
-   cf.FieldList	              
    cf.Flags
    cf.Query
    cf.TimeDuration
@@ -92,7 +100,7 @@ Classes that support the creation and storage of compressed arrays.
 
 .. autosummary::
    :nosignatures:
-   :toctree: class/
+   :toctree: classes/
 
    cf.Count
    cf.Index
