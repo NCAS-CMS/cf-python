@@ -1,16 +1,31 @@
+# --------------------------------------------------------------------
+# 
+# 
+# --------------------------------------------------------------------
+
+# Files
+tutorial_source=tutorial.rst
+test_tutorial=test_tutorial.py
+temp_file=test_tutorial_tmp.$$
+
+# Get code and section headings
 grep -e "^ *>>>" \
      -e "^ *\.\.\." \
      -e "^\*\*" \
-     tutorial.rst > test_tutorial.py
+     $tutorial_source > $test_tutorial
 
-# Strip >>>
-sed 's/^\s*>>>\s*//' test_tutorial.py > tmp.$$
+# Strip >>> and ...
+sed 's/^\s*>>>\s*//' $test_tutorial > $temp_file
+sed 's/^\s*\.\.\.//' $temp_file > $test_tutorial
 
-# Strip ...
-sed 's/^\s*\.\.\.//' tmp.$$ > test_tutorial.py
+# Process headings
+sed 's/^\*\*\(.*\)/\nprint("\\n**\1\\n")\n/' $test_tutorial > $temp_file
+cp $temp_file $test_tutorial
 
-sed 's/^\*\*\(.*\)/\nprint("**\1")\n/' test_tutorial.py > tmp.$$
-cp tmp.$$ test_tutorial.py
+# Handle known exceptions
+sed 's/^\(.*\)\# Raises Exception/try:\n    \1\nexcept:\n    pass\nelse:\n    raise Exception("This should have failed!")/' $test_tutorial > $temp_file
+cp $temp_file $test_tutorial
 
-cat  test_tutorial.py
-rm tmp.$$
+rm $temp_file
+
+cat $test_tutorial

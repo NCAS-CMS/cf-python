@@ -1064,7 +1064,7 @@ any other date-time object that has an equivalent API.
    ['2004-02-29' '2004-03-01' '2004-03-02']
    >>> f.Units
    <Units: >
-   >>> print(f.datetime_array)
+   >>> print(f.datetime_array)                                # Raises Exception
    ValueError: Can't create date-time array from units <Units: >
 
     
@@ -1277,7 +1277,7 @@ the only difference being:
 
 * For a dimension that is :ref:`cyclic <Cyclic-domain-axes>`, a range
   of indices specified by a `slice` is assumed to "wrap" around the
-  edges of the data .
+  edges of the data.
 
 A single value may be assigned to any number of elements.
   
@@ -1539,8 +1539,8 @@ the Gregorian calender is assumed, as per the CF conventions.  The
    :caption: *The calendar of date-times is available as a property or
              via the Units instance.*
 	     
-   >>> tas = cf.read('air_temperature.nc')[0]
-   >>> time = tas.coordinate('time')
+   >>> air_temp = cf.read('air_temperature.nc')[0]
+   >>> time = air_temp.coordinate('time')
    >>> time.units
    'days since 1860-1-1'
    >>> time.calendar
@@ -1916,23 +1916,23 @@ raising a customised exception:
              unique construct that meets the criteria. Alternatively,
              the value of the "default" parameter is returned.*
 
-   >>> t.construct('measure:volume')
+   >>> t.construct('measure:volume')                          # Raises Exception
    ValueError: Can't return zero constructs
    >>> t.construct('measure:volume', False)
    False
    >>> c = t.constructs.filter_by_measure('volume')
    >>> len(c)
    0
-   >>> c.value()
+   >>> c.value()                                              # Raises Exception
    ValueError: Can't return zero constructs
    >>> c.value(default='No construct')
    'No construct'
-   >>> c.value(default=KeyError('My message'))
+   >>> c.value(default=KeyError('My message'))                # Raises Exception
    KeyError: 'My message'
    >>> d = t.constructs('units=degrees')
    >>> len(d)
    2
-   >>> d.value()
+   >>> d.value()                                              # Raises Exception
    ValueError: Can't return 2 constructs 
    >>> print(d.value(default=None))
    None
@@ -2730,29 +2730,57 @@ date-time objects.
 .. code-block:: python
    :caption: *Create a new field construct whose domain's time axis
               contains a single cell for 2019-01-01. TODO*
-	  
-   >>> print(f.coordinate('T').array) #TODO
-   TODO
-   >>> print(f.coordinate('T').datetime_array) #TODO
-   TODO
-   >>> print(q.subspace(T=TODO (float)))
-   Field: specific_humidity (ncvar%q)
-   ----------------------------------
-   Data            : specific_humidity(latitude(5), longitude(8)) 1
+
+   >>> a = cf.read('timeseries.nc')[0]
+   >>> print (a)     
+   Field: air_potential_temperature (ncvar%air_potential_temperature)
+   ------------------------------------------------------------------
+   Data            : air_potential_temperature(time(120), latitude(5), longitude(8)) K
    Cell methods    : area: mean
-   Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+   Dimension coords: time(120) = [1959-12-16 12:00:00, ..., 1969-11-16 00:00:00]
+                   : latitude(5) = [-75.0, ..., 75.0] degrees_north
                    : longitude(8) = [22.5, ..., 337.5] degrees_east
-                   : time(1) = [2019-01-01T00:00:00Z]
-   >>> print(q.subspace(T=cf.dt('2019-01-01')))
-   Field: specific_humidity (ncvar%q)
-   ----------------------------------
-   Data            : specific_humidity(latitude(5), longitude(8)) 1
+                   : air_pressure(1) = [850.0] hPa
+   >>> print(a.coordinate('T').array[0:9])
+   [349.5 380.5 410.5 440.5 471.  501.5 532.  562.5 593.5]
+   >>> print(a.coordinate('T').datetime_array[0:9])    
+   [cftime.DatetimeGregorian(1959-12-16 12:00:00)
+    cftime.DatetimeGregorian(1960-01-16 12:00:00)
+    cftime.DatetimeGregorian(1960-02-15 12:00:00)
+    cftime.DatetimeGregorian(1960-03-16 12:00:00)
+    cftime.DatetimeGregorian(1960-04-16 00:00:00)
+    cftime.DatetimeGregorian(1960-05-16 12:00:00)
+    cftime.DatetimeGregorian(1960-06-16 00:00:00)
+    cftime.DatetimeGregorian(1960-07-16 12:00:00)
+    cftime.DatetimeGregorian(1960-08-16 12:00:00)]
+   >>> print(a.subspace(T=410.5))
+   Field: air_potential_temperature (ncvar%air_potential_temperature)
+   ------------------------------------------------------------------
+   Data            : air_potential_temperature(time(1), latitude(5), longitude(8)) K
    Cell methods    : area: mean
-   Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+   Dimension coords: time(1) = [1960-02-15 12:00:00]
+                   : latitude(5) = [-75.0, ..., 75.0] degrees_north
                    : longitude(8) = [22.5, ..., 337.5] degrees_east
-                   : time(1) = [2019-01-01T00:00:00Z]
-   >>> print(TODO.subspace(T=cf.wi(cf.dt('0450-11-01', calendar='noleap'), cf.dt('0451-03-01', calendar='noleap'))))
-   TODO
+                   : air_pressure(1) = [850.0] hPa
+   >>> print(a.subspace(T=cf.dt('1960-04-16')))
+   Field: air_potential_temperature (ncvar%air_potential_temperature)
+   ------------------------------------------------------------------
+   Data            : air_potential_temperature(time(1), latitude(5), longitude(8)) K
+   Cell methods    : area: mean
+   Dimension coords: time(1) = [1960-04-16 00:00:00]
+                   : latitude(5) = [-75.0, ..., 75.0] degrees_north
+                   : longitude(8) = [22.5, ..., 337.5] degrees_east
+                   : air_pressure(1) = [850.0] hPa
+   >>> print(a.subspace(T=cf.wi(cf.dt('1962-11-01'), cf.dt('1967-03-17 07:30'))))
+   Field: air_potential_temperature (ncvar%air_potential_temperature)
+   ------------------------------------------------------------------
+   Data            : air_potential_temperature(time(53), latitude(5), longitude(8)) K
+   Cell methods    : area: mean
+   Dimension coords: time(53) = [1962-11-16 00:00:00, ..., 1967-03-16 12:00:00]
+                   : latitude(5) = [-75.0, ..., 75.0] degrees_north
+                   : longitude(8) = [22.5, ..., 337.5] degrees_east
+                   : air_pressure(1) = [850.0] hPa
+
 
 .. _Subspace-mode:
 
@@ -2949,6 +2977,7 @@ contains the selected field constructs.
    >>> fl.filter_by_identity('precipitation_flux')
    [<CF Field: precipitation_flux(time(2), latitude(4), longitude(5)) kg m2 s-1>,
     <CF Field: precipitation_flux(time(1), latitude(64), longitude(128)) kg m-2 day-1>]
+   >>> import re
    >>> fl.filter_by_identity(re.compile('.*potential.*'))
    [<CF Field: air_potential_temperature(time(120), latitude(5), longitude(8)) K>]
    >>> fl.filter_by_identity('relative_humidity')
@@ -3147,10 +3176,10 @@ of attributes) of an object.
              upper bounds of a coordinate construct's cells.*
 
    >>> upper_bounds_ge_minus4 = cf.Query('ge', -4, attr='upper_bounds')
-   >>> x = t.dimension_coordinate('X')
-   >>> x
+   >>> X = t.dimension_coordinate('X')
+   >>> X
    <CF DimensionCoordinate: grid_longitude(9) degrees>
-   >>> print(x.bounds.array)
+   >>> print(X.bounds.array)
    [[-4.92 -4.48]
     [-4.48 -4.04]
     [-4.04 -3.6 ]
@@ -3160,7 +3189,7 @@ of attributes) of an object.
     [-2.28 -1.84]
     [-1.84 -1.4 ]
     [-1.4  -0.96]]
-   >>> print((upper_bounds_ge_minus4 == x).array)
+   >>> print((upper_bounds_ge_minus4 == X).array)
    [False False  True  True  True  True  True  True  True]
 
 Condition constructors
@@ -3261,6 +3290,7 @@ are, and are not, met
    :caption: *Set all data elements that are less then 273.15 to
              missing data.*
 
+   >>> t = cf.read('file.nc')[1]
    >>> print(t.array)
    [[[262.8 270.5 279.8 269.5 260.9 265.  263.5 278.9 269.2]
      [272.7 268.4 279.5 278.9 263.8 263.3 274.2 265.7 279.5]
@@ -3326,7 +3356,7 @@ metadata construct's data:
    :caption: *Where the 'Y' coordinates are greater than 0.5, set the
              field construct data to missing data.*
 
-   >>> print(t.where(cf.gt(0.5), x=cf.masked, construct='Y').array)
+   >>> print(t.where(cf.gt(0.5), x=cf.masked, construct='grid_latitude').array)
    [[[   --    --    --    --    --    --    --    --    --]
      [   --    --    --    --    --    --    --    --    --]
      [   --    --    --    --    --    --    --    --    --]
@@ -4221,18 +4251,6 @@ Method                                  Description
 `~Field.nc_clear_global_attributes`     Clear the selection of properties
                                         to be written as netCDF global
                                         attributes
-				        
-`~Field.nc_unlimited_dimensions`        Return the selection of domain axis
-                                        constructs to be written as
-                                        netCDF unlimited dimensions
-
-`~Field.nc_set_unlimited_dimensions`    Set the selection of domain axis
-                                        constructs to be written as
-                                        netCDF unlimited dimensions
-
-`~Field.nc_clear_unlimited_dimensions`  Clear the selection of domain
-                                        axis constructs to be written
-                                        as netCDF unlimited dimensions
 ======================================  ======================================
 
 .. code-block:: python
@@ -4243,8 +4261,6 @@ Method                                  Description
    'q'
    >>> q.nc_global_attributes()
    {'project': None, 'Conventions': None}
-   >>> q.nc_unlimited_dimensions()
-   set()
    >>> q.nc_set_variable('humidity')
    >>> q.nc_get_variable()
    'humidity'
@@ -4288,18 +4304,16 @@ Method                            Classes                                       
 			          			                    
 `!nc_set_dimension`	          `cf.DomainAxis`, `cf.Count`, `cf.Index`         Dimension name
 			          
+`!nc_is_unlimited`	          `cf.DomainAxis`                                 Unlimited dimension
+			          			                    
+`!nc_set_unlimited`	          `cf.DomainAxis`                                 Unlimited dimension
+			          
 `!nc_global_attributes`	          `cf.Field`                                      Global attributes
 			          					          
 `!nc_set_global_attribute`        `cf.Field`                                      Global attributes
 			          					          
 `!nc_clear_global_attributes`     `cf.Field`                                      Global attributes
 			          					          
-`!nc_unlimited_dimensions`        `cf.Field`                                      Unlimited dimension names
-			     						          
-`!nc_set_unlimited_dimensions`    `cf.Field`                                      Unlimited dimension names
-			     						          
-`!nc_clear_unlimited_dimensions`  `cf.Field`                                      Unlimited dimension names
-			     						          
 `!nc_get_external`                `cf.CellMeasure`                                External variable status
 									          
 `!nc_set_external`                `cf.CellMeasure`                                External variable status
@@ -4420,7 +4434,7 @@ set then one will be generated internally (usually based on the
 standard name if it exists).
 
 It is possible to create netCDF unlimited dimensions using the
-`~Field.nc_unlimited_dimensions` method of the field construct.
+`~DomainAxis.nc_set_unlimited` method of the domain axis construct.
 
 A field construct is not transformed through being written to a file
 on disk and subsequently read back from that file.
