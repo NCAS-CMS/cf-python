@@ -513,13 +513,16 @@ constructs are available with the `cfplot package
 <http://ajheaps.github.io/cf-plot>`_ (that needs to be installed
 seprately to cf).
 
+.. figure:: images/cfplot_example.png
+
+   *Example output of cfplot displaying a cf field construct.*
+
 See the `cfplot gallery
 <http://ajheaps.github.io/cf-plot/gallery.html>`_ for the wide range
-range plotting possibilities with example code. These include, but are
+of plotting possibilities, with example code. These include, but are
 not limited to:
 
-* Cylindrical projection
-* Polar stereographic
+* Cylindrical, polar stereographic and other plane projections
 * Latitude or longitude vs. height
 * Hovmuller
 * Vectors
@@ -529,13 +532,8 @@ not limited to:
 * User defined axes
 * Rotated pole
 * Irregular grids
-* Plane projections
 * Trajectories
-  
-
-.. figure:: images/cfplot_example.png
-
-   *Example output of cfplot displaying a cf field construct.*
+* Line plots  
 
 ----
 

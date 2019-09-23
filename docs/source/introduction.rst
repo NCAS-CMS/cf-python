@@ -21,7 +21,8 @@
 Version |release| for version |version| of the CF conventions.
 
 The Python cf package is an Earth science data analysis library that
-is built on a complete implementation of the CF data model [#cfdm]_.
+is built on a complete implementation of the :ref:`CF-data-model`
+[#cfdm]_.
 
 
 **Functionality**
@@ -35,12 +36,12 @@ is built on a complete implementation of the CF data model [#cfdm]_.
           `documentation archive
           <https://cfpython.bitbucket.io/docs/archive.html>`_.
 
-The cf package implements the :ref:`CF-data-model` for its internal
-data structures and so is able to process any CF-compliant dataset. It
-is not strict about CF-compliance, however, so that partially
-conformant datasets may be ingested from existing datasets and written
-to new datasets.This is so that datasets which are partially
-conformant may nonetheless be modified in memory.
+The cf package implements the :ref:`CF-data-model` [#cfdm]_ for its
+internal data structures and so is able to process any CF-compliant
+dataset. It is not strict about CF-compliance, however, so that
+partially conformant datasets may be ingested from existing datasets
+and written to new datasets.This is so that datasets which are
+partially conformant may nonetheless be modified in memory.
 
 The cf package can:
 

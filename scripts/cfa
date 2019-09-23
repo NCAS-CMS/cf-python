@@ -31,11 +31,22 @@ cfa [\-1] [\-D] [\-d dir] [\-e file] [\-f format] [\-h] [\-i] [\-n] [\-o file] [
 .SH DESCRIPTION
 .
 .
-The cfa tool creates CF fields contained in files or directories
-specified by
+The cfa tool views or creates CF fields contained in files or
+directories specified by the
 .ft B
 INPUTS
 .ft P
+
+The CF fields may be either viewed on standard output (see the
+.ft B
+VIEW
+.ft P
+section) or
+written to one or more output datasets (see the
+.ft B
+OUTPUT FILES
+.ft P
+section).
 
 Sub-directories of given directories will also be read if the
 .ft B
@@ -85,17 +96,6 @@ AGGREGATION
 .ft P
 section for details on the aggregation process and unaggregatable
 fields.
-
-The CF fields may be either viewed on standard output (see the
-.ft B
-VIEW
-.ft P
-section) or
-written to one or more output datasets (see the
-.ft B
-OUTPUT FILES
-.ft P
-section).
 .
 .
 .

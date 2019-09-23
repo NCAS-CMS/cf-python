@@ -9,14 +9,12 @@
     <title>cf.Field.dtype &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.Field.ndim" href="cf.Field.ndim.html" />
@@ -82,8 +80,6 @@
       </div>
       <div class="documentwrapper">
         <div class="bodywrapper">
-          
-
           <div class="body" role="main">
             
   <div class="section" id="cf-field-dtype">
@@ -112,32 +108,32 @@ set (which could occur if the data array is accessed) then the
 reinstated default data type may be different to the data type
 prior to <a class="reference internal" href="#cf.Field.dtype" title="cf.Field.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a> being set.</p>
 <p><strong>Examples:</strong></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">dtype</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">dtype</span>
 <span class="go">dtype(&#39;float64&#39;)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
 <span class="go">&lt;type &#39;numpy.dtype&#39;&gt;</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="n">f</span><span class="o">.</span><span class="n">array</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">f</span><span class="o">.</span><span class="n">array</span>
 <span class="go">[0.5 1.5 2.5]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="n">f</span><span class="o">.</span><span class="n">array</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">f</span><span class="o">.</span><span class="n">array</span>
 <span class="go">[0 1 2]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="nb">bool</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="n">f</span><span class="o">.</span><span class="n">array</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">f</span><span class="o">.</span><span class="n">array</span>
 <span class="go">[False  True  True]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="s1">&#39;float64&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="n">f</span><span class="o">.</span><span class="n">array</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">f</span><span class="o">.</span><span class="n">array</span>
 <span class="go">[ 0.  1.  1.]</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="n">f</span><span class="o">.</span><span class="n">array</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">f</span><span class="o">.</span><span class="n">array</span>
 <span class="go">[0.5 1.5 2.5]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="nb">int</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="nb">bool</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="nb">float</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="n">f</span><span class="o">.</span><span class="n">array</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">f</span><span class="o">.</span><span class="n">array</span>
 <span class="go">[ 0.5  1.5  2.5]</span>
 </pre></div>
 </div>
@@ -147,7 +143,6 @@ prior to <a class="reference internal" href="#cf.Field.dtype" title="cf.Field.dt
 
 
           </div>
-          
         </div>
       </div>
     <div class="clearer"></div>
@@ -156,8 +151,8 @@ prior to <a class="reference internal" href="#cf.Field.dtype" title="cf.Field.dt
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
       
       |
       <a href="../_sources/attribute/cf.Field.dtype.rst.txt"

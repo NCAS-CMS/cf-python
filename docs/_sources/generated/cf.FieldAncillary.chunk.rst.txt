@@ -4,4 +4,4 @@ cf.FieldAncillary.chunk
 .. currentmodule:: cf
 .. default-role:: obj
 
-.. autoattribute:: cf.FieldAncillary.chunk
+.. automethod:: cf.FieldAncillary.chunk
