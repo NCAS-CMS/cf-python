@@ -6229,9 +6229,9 @@ Tuple of the data array's dimension sizes.
     .. note:: If the data array is stored as date-time objects then a
               numpy array of numeric reference times will be
               returned. A numpy array of date-time objects may be
-              returned by the `dtarray` attribute.
+              returned by the `datetime_array` attribute.
     
-    .. seealso:: `dtarray`, `varray`
+    .. seealso:: `datetime_array`, `varray`
     
     **Examples:**
     
@@ -6416,55 +6416,26 @@ Tuple of the data array's dimension sizes.
         d._dtarray = True
         return d.array
 
-    
-    @property
-    def dtarray(self):
-        '''Alias for `datetime_array`
 
-        '''
-        return self.datetime_array
-
-    # 0
-    @property
-    def dtvarray(self):
-        '''A numpy array view the data array converted to date-time objects.
-
-        Deprecated at version 3.0.0.
-        '''
-        _DEPRECATION_ERROR_ATTRIBUTE(self, 'dtvarray') # pragma: no cover
-
-    #1
-    @property
-    def unsafe_array(self):
-        '''A numpy array of the data.
-
-        Deprecated at version 3.0.0. Use 'array' attribute instead.
-
-        '''      
-        _DEPRECATION_ERROR_ATTRIBUTE(
-            self, 'unsafe_array',
-            "Use 'array' attribute instead.") # pragma: no cover
-
-    # 0
     @property
     def varray(self):
         '''A numpy array view the data array.
 
-Note that making changes to elements of the returned view changes the
-underlying data.
-
-.. seealso:: `array`, `dtarray`
-
-**Examples:**
-
->>> a = d.varray
->>> type(a)
-<type 'numpy.ndarray'>
->>> a
-array([0, 1, 2, 3, 4])
->>> a[0] = 999
->>> d.varray
-array([999, 1, 2, 3, 4])
+    Note that making changes to elements of the returned view changes
+    the underlying data.
+    
+    .. seealso:: `array`, `datetime_array`
+    
+    **Examples:**
+    
+    >>> a = d.varray
+    >>> type(a)
+    <type 'numpy.ndarray'>
+    >>> a
+    array([0, 1, 2, 3, 4])
+    >>> a[0] = 999
+    >>> d.varray
+    array([999, 1, 2, 3, 4])
 
         '''
         config = self.partition_configuration(readonly=False)
@@ -6565,7 +6536,7 @@ array([999, 1, 2, 3, 4])
         self._flip([])
 
         return array_out
-    #--- End: def
+
 
     # 0
     @property
@@ -9055,7 +9026,7 @@ array or has two or more dimensions.
 
 The returned object is of the same type as is stored internally.
 
-.. seealso:: `array`, `dtarray`
+.. seealso:: `array`, `datetime_array`
 
 :Parameters:
 
@@ -11359,6 +11330,17 @@ Missing data array elements are omitted from the calculation.
         return _section(self, axes, data=True, stop=stop, chunks=chunks,
                         min_step=min_step)
 
+    
+    # ----------------------------------------------------------------
+    # Aliases
+    # ----------------------------------------------------------------
+    @property
+    def dtarray(self):
+        '''Alias for `datetime_array`
+
+        '''
+        return self.datetime_array
+
 
     # ----------------------------------------------------------------
     # Deprecated attributes and methods
@@ -11373,7 +11355,28 @@ Missing data array elements are omitted from the calculation.
         _DEPRECATION_ERROR_ATTRIBUTE(self, 'Data',
                                      "Use attribute 'data' instead.") # pragma: no cover
 
-        
+
+    @property
+    def dtvarray(self):
+        '''A numpy array view the data array converted to date-time objects.
+
+        Deprecated at version 3.0.0.
+        '''
+        _DEPRECATION_ERROR_ATTRIBUTE(self, 'dtvarray') # pragma: no cover
+
+
+    @property
+    def unsafe_array(self):
+        '''A numpy array of the data.
+
+        Deprecated at version 3.0.0. Use 'array' attribute instead.
+
+        '''      
+        _DEPRECATION_ERROR_ATTRIBUTE(
+            self, 'unsafe_array',
+            "Use 'array' attribute instead.") # pragma: no cover
+
+
     def expand_dims(self, position=0, i=False):
         '''Expand the shape of the data array in place.
 

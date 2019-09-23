@@ -7,12 +7,6 @@
 
 ----
 
-.. note:: There are :ref:`incompatible differences between versions
-          2.x and 3.x <2_to_3_changes>`. For version 2.x
-          documentation, see the `documentation archive
-          <https://cfpython.bitbucket.io/docs/archive.html>`_.
-
-
 .. include:: introduction.rst
 
 **Contents**
@@ -24,14 +18,14 @@
    :maxdepth: 1
 
    introduction
-   cf_conventions
+   cf_data_model
    installation
    tutorial
    api_reference
+   aggregation_rules
    performance
    releases
    Changelog
-   aggregation_rules
    
 **Index and search**
 ====================

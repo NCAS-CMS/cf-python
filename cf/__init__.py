@@ -181,7 +181,7 @@ from .domain               import Domain
 from .datum                import Datum
 from .coordinateconversion import CoordinateConversion
 
-from .cfdatetime           import dt, dtarray
+from .cfdatetime           import dt, dt_vector
 from .flags                import Flags
 from .timeduration         import TimeDuration, Y, M, D, h, m, s
 from .units                import Units

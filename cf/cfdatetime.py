@@ -83,6 +83,8 @@ def dt(arg, month=1, day=1, hour=0, minute=0, second=0,
     '''Return a date-time object for a date and time according to a
     calendar.
 
+    .. seealso:: `cf.dt_vector`
+
     :Parameters:
     
         arg:
@@ -165,10 +167,12 @@ def dt(arg, month=1, day=1, hour=0, minute=0, second=0,
             calendar))
 
     
-def dtarray(arg, month=1, day=1, hour=0, minute=0, second=0,
-            microsecond=0, calendar=None):
-    '''Return an array of date-time objects.
+def dt_vector(arg, month=1, day=1, hour=0, minute=0, second=0,
+              microsecond=0, calendar=None):
+    '''Return a scalar or 1-d array of date-time objects.
 
+    .. seealso:: `cf.dt`
+    
     :Parameters:
     
         arg:
@@ -195,11 +199,10 @@ def dtarray(arg, month=1, day=1, hour=0, minute=0, second=0,
             *Parameter example:*
               ``calendar='360_day'``
         
-
     :Returns:
 
         `numpy.ndarray`
-            The new date-time objects.
+            The scalar or 1-d array of date-time objects.
     
     **Examples:**
 
@@ -237,7 +240,7 @@ def dtarray(arg, month=1, day=1, hour=0, minute=0, second=0,
         return numpy.array(out)
     
     if arg.ndim == 2 and arg.shape[1] > 7:
-        raise ValueError('TODO')
+        raise ValueError('TODO (890)')
 
     if arg.ndim == 1:
         if arg.dtype.kind in 'UOS':
@@ -245,10 +248,10 @@ def dtarray(arg, month=1, day=1, hour=0, minute=0, second=0,
             
         else:
             if len(sizes) > 2:
-                raise ValueError('TODO')
+                raise ValueError('TODO (891)')
             
             if len(sizes) == 2 and 1 not in sizes:
-                raise ValueError('TODO')
+                raise ValueError('TODO (892)')
             
             _ = numpy.empty((max(sizes), 7), dtype=int)                
             _[:, 0] = arg

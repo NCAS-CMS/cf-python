@@ -10,7 +10,6 @@ from . import mpi_on
 from . import mpi_size
 
 from .units import Units
-#from cfunits import Units
 
 
 #platform = sys.platform
@@ -116,7 +115,7 @@ CONSTANTS['CHUNKSIZE'] = (CONSTANTS['FM_THRESHOLD'] /
                           (mpi_size * CONSTANTS['WORKSPACE_FACTOR_1'] + CONSTANTS['WORKSPACE_FACTOR_2']))
 
 masked = numpy_ma_masked
-nomask = numpy_ma_nomask
+#nomask = numpy_ma_nomask
 
 repr_prefix = 'CF '
 repr_suffix = ''
@@ -126,8 +125,8 @@ _file_to_fh = {}
 _stash2standard_name = {}
 
 #---------------------------------------------------------------------
-# Coordinate reference constants
-#---------------------------------------------------------------------
+# Coordinate reference constants TODO: turn these into functions
+# ---------------------------------------------------------------------
 cr_canonical_units = {
     'earth_radius'                         : Units('m'),
     'false_easting'                        : Units('m'),

@@ -19,9 +19,8 @@ Version |release| for version |version| of the CF conventions.
 **Python versions**
 -------------------
 
-As of version 3.0.0, cf works for Python 3 only.
-
-(Versions 2.x of cf work for Python 2 only.)
+cf works only for Python 3.5 or later. (Versions 2.x of cf work only
+for Python 2.7.)
 
 ----
 

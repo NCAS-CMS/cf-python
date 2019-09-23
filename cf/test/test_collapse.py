@@ -242,7 +242,7 @@ class FieldTest(unittest.TestCase):
                       cf.M(12, day=16),
                       cf.M(12, month=11, day=27)):
             g = f.collapse('T: mean', group=group)
-            bound = g.coord('T').bounds.dtarray[0, 1]
+            bound = g.coord('T').bounds.datetime_array[0, 1]
             self.assertTrue(bound.month == group.offset.month,
                             "{}!={}, group={}".format(bound.month, group.offset.month, group))
             self.assertTrue(bound.day   == group.offset.day,
@@ -254,7 +254,7 @@ class FieldTest(unittest.TestCase):
 #                          cf.D(30, day=16),
 #                          cf.D(30, month=11, day=27)):
 #                g = f.collapse('T: mean', group=group)
-#                bound = g.coord('T').bounds.dtarray[0, 1]
+#                bound = g.coord('T').bounds.datetime_array[0, 1]
 #                self.assertTrue(bound.day == group.offset.day,
 #                                "{}!={}, bound={}, group={}".format(bound.day, group.offset.day, bound, group))
     #--- End: def

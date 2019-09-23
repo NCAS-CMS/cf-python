@@ -1,5 +1,6 @@
 import csv
 import os
+import platform
 import re
 import resource
 import copy
@@ -11,47 +12,47 @@ import warnings
 import cftime
 
 
-from numpy import __file__          as numpy__file__
-from numpy import __version__       as numpy__version__
-from numpy import all               as numpy_all
-from numpy import allclose          as numpy_allclose
-from numpy import array             as numpy_array
-from numpy import ascontiguousarray as numpy_ascontiguousarray 
-from numpy import dtype             as numpy_dtype
-from numpy import isclose           as numpy_isclose
-from numpy import ndarray           as numpy_ndarray
-from numpy import ndim              as numpy_ndim
-from numpy import number            as numpy_number
-from numpy import shape             as numpy_shape
-from numpy import sign              as numpy_sign
-from numpy import take              as numpy_take
-from numpy import tile              as numpy_tile
-from numpy import where             as numpy_where
+from numpy import __file__          as _numpy__file__
+from numpy import __version__       as _numpy__version__
+from numpy import all               as _numpy_all
+from numpy import allclose          as _x_numpy_allclose
+from numpy import array             as _numpy_array
+from numpy import ascontiguousarray as _numpy_ascontiguousarray 
+from numpy import dtype             as _numpy_dtype
+from numpy import isclose           as _x_numpy_isclose
+from numpy import ndarray           as _numpy_ndarray
+from numpy import ndim              as _numpy_ndim
+from numpy import number            as _numpy_number
+from numpy import shape             as _numpy_shape
+from numpy import sign              as _numpy_sign
+from numpy import take              as _numpy_take
+from numpy import tile              as _numpy_tile
+from numpy import where             as _numpy_where
 
-from numpy.ma import all       as numpy_ma_all
-from numpy.ma import allclose  as numpy_ma_allclose
-from numpy.ma import is_masked as numpy_ma_is_masked
-from numpy.ma import isMA      as numpy_ma_isMA
-from numpy.ma import masked    as numpy_ma_masked
+from numpy.ma import all       as _numpy_ma_all
+from numpy.ma import allclose  as _numpy_ma_allclose
+from numpy.ma import is_masked as _numpy_ma_is_masked
+from numpy.ma import isMA      as _numpy_ma_isMA
+from numpy.ma import masked    as _numpy_ma_masked
 
 from collections import Iterable
 from hashlib     import md5 as hashlib_md5
 from marshal     import dumps as marshal_dumps
 from math        import ceil as math_ceil
 from os          import getpid, listdir, mkdir, curdir
-from os.path     import isfile       as os_path_isfile
-from os.path     import abspath      as os_path_abspath
-from os.path     import commonprefix as os_path_commonprefix
-from os.path     import expanduser   as os_path_expanduser
-from os.path     import expandvars   as os_path_expandvars
-from os.path     import dirname      as os_path_dirname
-from os.path     import join         as os_path_join
-from os.path     import relpath      as os_path_relpath 
+from os.path     import isfile       as _os_path_isfile
+from os.path     import abspath      as _os_path_abspath
+from os.path     import commonprefix as _os_path_commonprefix
+from os.path     import expanduser   as _os_path_expanduser
+from os.path     import expandvars   as _os_path_expandvars
+from os.path     import dirname      as _os_path_dirname
+from os.path     import join         as _os_path_join
+from os.path     import relpath      as _os_path_relpath 
 from inspect     import getargspec
 from itertools   import product as itertools_product
-from platform    import system, platform, python_version
+#from platform    import system, platform, python_version
 from psutil      import virtual_memory, Process
-from sys         import executable as sys_executable
+from sys         import executable as _sys_executable
 import urllib.parse
 
 import cfdm
@@ -65,7 +66,7 @@ from . import mpi_size
 class DeprecationError(Exception) :pass
 
 # Are we running on GNU/Linux?
-_linux = system() == 'Linux'
+_linux = (platform.system() == 'Linux')
 
 if _linux:
     # ----------------------------------------------------------------
@@ -391,7 +392,7 @@ def TEMPDIR(*arg):
     '''
     old = CONSTANTS['TEMPDIR']
     if arg:
-        tempdir = os_path_expanduser(os_path_expandvars(arg[0]))
+        tempdir = _os_path_expanduser(_os_path_expandvars(arg[0]))
 
         # Create the directory if it does not exist.
         try:
@@ -540,7 +541,7 @@ def COLLAPSE_PARALLEL_MODE(*arg):
         CONSTANTS['COLLAPSE_PARALLEL_MODE'] = arg[0]
 
     return old
-#--- End: def
+
 
 def RELAXED_IDENTITIES(*arg):
     '''TODO
@@ -964,14 +965,14 @@ def _numpy_allclose(a, b, rtol=None, atol=None):
 
     # THIS IS WHERE SOME NUMPY FUTURE WARNINGS ARE COMING FROM
     
-    a_is_masked = numpy_ma_isMA(a)
-    b_is_masked = numpy_ma_isMA(b)
+    a_is_masked = _numpy_ma_isMA(a)
+    b_is_masked = _numpy_ma_isMA(b)
     
     if not (a_is_masked or b_is_masked):
         try:            
-            return numpy_allclose(a, b, rtol=rtol, atol=atol)
+            return _x_numpy_allclose(a, b, rtol=rtol, atol=atol)
         except (IndexError, NotImplementedError, TypeError):
-            return numpy_all(a == b)
+            return _numpy_all(a == b)
     else:
         if a_is_masked and b_is_masked:
             if (a.mask != b.mask).any():
@@ -980,10 +981,10 @@ def _numpy_allclose(a, b, rtol=None, atol=None):
             return False
 
         try:
-            return numpy_ma_allclose(a, b, rtol=rtol, atol=atol)
+            return _numpy_ma_allclose(a, b, rtol=rtol, atol=atol)
         except (IndexError, NotImplementedError, TypeError):
-            out = numpy_ma_all(a == b)
-            if out is numpy_ma_masked:
+            out = _numpy_ma_all(a == b)
+            if out is _numpy_ma_masked:
                 return True
             else:
                 return out
@@ -1017,7 +1018,7 @@ def _numpy_isclose(a, b, rtol=None, atol=None):
 
     '''      
     try:
-        return numpy_isclose(a, b, rtol=rtol, atol=atol)
+        return _x_numpy_isclose(a, b, rtol=rtol, atol=atol)
     except (IndexError, NotImplementedError, TypeError):
         return a == b
 
@@ -1187,11 +1188,11 @@ def parse_indices(shape, indices, cyclic=False, reverse=False, envelope=False):
                         "Invalid indices %s for array with shape %s" %
                         (parsed_indices, shape))
 
-                index = numpy_where(index)[0]
+                index = _numpy_where(index)[0]
                 convert2positve = False
             #--- End: if
 
-            if not numpy_ndim(index):
+            if not _numpy_ndim(index):
                 if index < 0:
                     index += size
 
@@ -1209,8 +1210,8 @@ def parse_indices(shape, indices, cyclic=False, reverse=False, envelope=False):
                 elif len_index:
                     if convert2positve:
                         # Convert to non-negative integer numpy array
-                        index = numpy_array(index)
-                        index = numpy_where(index < 0, index+size, index)
+                        index = _numpy_array(index)
+                        index = _numpy_where(index < 0, index+size, index)
     
                     steps = index[1:] - index[:-1]
                     step = steps[0]
@@ -1248,7 +1249,7 @@ def parse_indices(shape, indices, cyclic=False, reverse=False, envelope=False):
                             # index of a numpy array of integers
                             compressed_indices.append(index)
 
-                            step = numpy_sign(step)
+                            step = _numpy_sign(step)
                             if step > 0:
                                 stop = index[-1] + 1
                             else:
@@ -1309,7 +1310,7 @@ def parse_indices(shape, indices, cyclic=False, reverse=False, envelope=False):
                 # Create an envelope slice for a parsed
                 # index of a numpy array of integers                        
                 compressed_indices.append(index)
-                index = slice(start, stop, (1 if reverse else numpy_sign(step)))
+                index = slice(start, stop, (1 if reverse else _numpy_sign(step)))
         #--- End: if
                     
         parsed_indices[i] = index    
@@ -1367,10 +1368,10 @@ def get_subspace(array, indices):
         # At least two axes have list-of-integers indices so we can't
         # do a normal numpy subspace
         # ------------------------------------------------------------
-        if numpy_ma_isMA(array):
-            take = numpy_ma_take
+        if _numpy_ma_isMA(array):
+            take = _numpy_ma_take
         else:
-            take = numpy_take
+            take = _numpy_take
 
         indices = indices[:]
         for axis in gg:
@@ -1720,7 +1721,7 @@ def abspath(filename):
     if u.scheme != '':
         return filename
 
-    return os_path_abspath(filename)
+    return _os_path_abspath(filename)
 
 
 def relpath(filename, start=None):
@@ -1762,9 +1763,9 @@ def relpath(filename, start=None):
         return filename
 
     if start is not None:
-        return os_path_relpath(filename, start)
+        return _os_path_relpath(filename, start)
 
-    return os_path_relpath(filename)
+    return _os_path_relpath(filename)
 
 
 def dirname(filename):
@@ -1799,7 +1800,7 @@ def dirname(filename):
     if u.scheme != '':
         return filename.rpartition('/')[0]
 
-    return os_path_dirname(filename)
+    return _os_path_dirname(filename)
 
 
 def pathjoin(path1, path2):
@@ -1838,7 +1839,7 @@ def pathjoin(path1, path2):
     if u.scheme != '':
         return urllib.parse.urljoin(path1, path2)
 
-    return os_path_join(path1, path2)
+    return _os_path_join(path1, path2)
 
 
 def hash_array(array):
@@ -1897,11 +1898,11 @@ def hash_array(array):
     h_update(marshal_dumps(array.dtype.name))
     h_update(marshal_dumps(array.shape))
 
-    if numpy_ma_isMA(array):        
-        if numpy_ma_is_masked(array):
+    if _numpy_ma_isMA(array):        
+        if _numpy_ma_is_masked(array):
             mask = array.mask
             if not mask.flags.c_contiguous:               
-                mask = numpy_ascontiguousarray(mask)
+                mask = _numpy_ascontiguousarray(mask)
 
             h_update(mask)
             array = array.copy()
@@ -1913,7 +1914,7 @@ def hash_array(array):
 
     if not array.flags.c_contiguous:               
 #        array = array.copy()
-        array = numpy_ascontiguousarray(array)
+        array = _numpy_ascontiguousarray(array)
         
     h_update(array)
 
@@ -2018,7 +2019,7 @@ def broadcast_array(array, shape):
       [4 5 6 --]]]
 
     '''
-    a_shape = numpy_shape(array)
+    a_shape = _numpy_shape(array)
     if a_shape == shape:
         return array
 
@@ -2026,7 +2027,7 @@ def broadcast_array(array, shape):
             for n, m in zip(a_shape[::-1], shape[::-1])]
     tile = shape[0:len(shape)-len(a_shape)] + tuple(tile[::-1])
     
-    return numpy_tile(array, tile)
+    return _numpy_tile(array, tile)
 
 
 def allclose(x, y, rtol=None, atol=None):
@@ -2284,38 +2285,38 @@ def environment(display=True):
 
     '''
     out = []
-    out.append('Platform: ' + str(platform()))
+    out.append('Platform: ' + str(platform.platform()))
     out.append('HDF5 library: ' + str(netCDF4. __hdf5libversion__))
     out.append('netcdf library: ' + str(netCDF4.__netcdf4libversion__))
     out.append('udunits2: ' + str(ctypes.util.find_library('udunits2')))
-    out.append('python: ' + str(python_version() + ' ' + str(sys_executable)))
-    out.append('netCDF4: ' + str(netCDF4.__version__) + ' ' + str(os_path_abspath(netCDF4.__file__)))
-    out.append('cftime: ' + str(cftime.__version__) + ' ' + str(os_path_abspath(cftime.__file__)))
-    out.append('numpy: ' + str(numpy__version__) + ' ' + str(os_path_abspath(numpy__file__)))
-    out.append('psutil: ' + str(psutil.__version__) + ' ' + str(os_path_abspath(psutil.__file__)))
+    out.append('python: ' + str(platform.python_version() + ' ' + str(_sys_executable)))
+    out.append('netCDF4: ' + str(netCDF4.__version__) + ' ' + str(_os_path_abspath(netCDF4.__file__)))
+    out.append('cftime: ' + str(cftime.__version__) + ' ' + str(_os_path_abspath(cftime.__file__)))
+    out.append('numpy: ' + str(_numpy__version__) + ' ' + str(_os_path_abspath(_numpy__file__)))
+    out.append('psutil: ' + str(psutil.__version__) + ' ' + str(_os_path_abspath(psutil.__file__)))
 
     try:
         import matplotlib
     except:
         out.append('matplotlib: not available')
     else:
-        out.append('matplotlib: ' + str(matplotlib.__version__) + ' ' + str(os_path_abspath(matplotlib.__file__)))
+        out.append('matplotlib: ' + str(matplotlib.__version__) + ' ' + str(_os_path_abspath(matplotlib.__file__)))
 
     try:
         import ESMF
     except:
         out.append('ESMF: not available')
     else:
-        out.append('ESMF: ' + str(ESMF.__version__) + ' ' + str(os_path_abspath(ESMF.__file__)))
+        out.append('ESMF: ' + str(ESMF.__version__) + ' ' + str(_os_path_abspath(ESMF.__file__)))
 
     try:
         import cfplot
     except ImportError:
         out.append('cfplot: not available')
     else:
-        out.append('cfplot: ' + str(cfplot.__version__) + ' ' + str(os_path_abspath(cfplot.__file__)))
+        out.append('cfplot: ' + str(cfplot.__version__) + ' ' + str(_os_path_abspath(cfplot.__file__)))
             
-    out.append('cf: ' + str(__version__) + ' ' + str(os_path_abspath(__file__)))
+    out.append('cf: ' + str(__version__) + ' ' + str(_os_path_abspath(__file__)))
     
     out = '\n'.join(out)
 
@@ -2326,7 +2327,7 @@ def environment(display=True):
 
 
 def default_fillvals():
-    '''Default data array fill values for `numpy` data types.
+    '''Default data array fill values for each data type.
 
     :Returns:
 

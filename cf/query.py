@@ -1399,9 +1399,9 @@ def hour(value):
 In this context, any object which has a `!hour` attribute is
 considered to be a date-time variable.
 
-If *value* is a `cf.Query` object then ``cf.hour(value)`` is
-equivalent to ``value.addattr('hour')``. Otherwise ``cf.hour(value)``
-is equivalent to ``cf.eq(value, attr='hour')``.
+If *value* is a `Query` object then ``cf.hour(value)`` is equivalent
+to ``value.addattr('hour')``. Otherwise ``cf.hour(value)`` is
+equivalent to ``cf.eq(value, attr='hour')``.
 
 .. seealso:: `cf.year`, `cf.month`, `cf.day`, `cf.minute`,
              `cf.second`
@@ -1410,11 +1410,11 @@ is equivalent to ``cf.eq(value, attr='hour')``.
 
     value:   
        Either the value that the hour is to be compared with, or a
-       `cf.Query` object for testing the hour.
+       `Query` object for testing the hour.
 
 :Returns:
 
-    `cf.Query`
+    `Query`
         The query object.
 
 **Examples:**
@@ -1532,7 +1532,7 @@ def cellsize(value, units=None):
 
 :Returns:
 
-    `cf.Query`
+    `Query`
         The query object.
 
 **Examples:**
@@ -1707,76 +1707,80 @@ TODO
 #--- End: def
 
 def celllt(value, units=None):
-    '''A Query object for a “cell bounds strictly less than” condition.
+    '''A `Query` object for a “cell bounds strictly less than” condition.
 
-.. seealso:: `cf.cellsize`, `cf.contains`, `cf.cellge`, `cf.cellgt`,
-             `cf.cellne`, `cf.cellle`, `cf.cellwi`, `cf.cellwo`
+    .. seealso:: `cf.cellsize`, `cf.contains`, `cf.cellge`,
+                 `cf.cellgt`, `cf.cellne`, `cf.cellle`, `cf.cellwi`,
+                 `cf.cellwo`
+    
+    :Parameters:
+    
+        value:
+            The query condition's value.
+    
+        units: `str` or `Units`, optional
+            The units of *value*. By default, the same units as the
+            operand being tested are assumed, if applicable. If
+            *units* is specified and the already *value* has units
+            (such as a `Data` object`), then they must be equivalent.
+    
+        attr: `str`, optional
+            Apply the condition to the attribute, or nested
+            attributes, of the operand, rather than the operand
+            itself. Nested attributes are specified by separating them
+            with a ``.``. For example, the "month" attribute of the
+            "bounds" attribute is specified as ``'bounds.month'``.
+    
+    :Returns:
+    
+        `Query`
+            The query object.
+    
+    **Examples:**
+    
+    TODO
 
-:Parameters:
-
-    value:
-        The query condition's value.
-
-    units: `str` or `Units`, optional
-        The units of *value*. By default, the same units as the
-        operand being tested are assumed, if applicable. If *units* is
-        specified and the already *value* has units (such as a `Data`
-        object`), then they must be equivalent.
-
-    attr: `str`, optional
-        Apply the condition to the attribute, or nested attributes, of
-        the operand, rather than the operand itself. Nested attributes
-        are specified by separating them with a ``.``. For example,
-        the "month" attribute of the "bounds" attribute is specified
-        as ``'bounds.month'``.
-
-:Returns:
-
-    `Query`
-        The query object.
-
-**Examples:**
-
-TODO
     ''' 
     return Query('lt', value, units=units, attr='upper_bounds')
-#--- End: def
+
 
 def cellle(value, units=None):
-    '''A Query object for a "cell bounds less than or equal" condition.
+    '''A `Query` object for a "cell bounds less than or equal" condition.
 
-.. seealso:: `cf.cellsize`, `cf.contains`, `cf.cellge`, `cf.cellgt`,
-             `cf.cellne`, `cf.celllt`, `cf.cellwi`, `cf.cellwo`
+    .. seealso:: `cf.cellsize`, `cf.contains`, `cf.cellge`,
+                 `cf.cellgt`, `cf.cellne`, `cf.celllt`, `cf.cellwi`,
+                 `cf.cellwo`
+    
+    :Parameters:
+    
+        value:
+            The query condition's value.
+    
+        units: `str` or `Units`, optional
+            The units of *value*. By default, the same units as the
+            operand being tested are assumed, if applicable. If
+            *units* is specified and the already *value* has units
+            (such as a `Data` object`), then they must be equivalent.
+    
+        attr: `str`, optional
+            Apply the condition to the attribute, or nested
+            attributes, of the operand, rather than the operand
+            itself. Nested attributes are specified by separating them
+            with a ``.``. For example, the "month" attribute of the
+            "bounds" attribute is specified as ``'bounds.month'``.
+    
+    :Returns:
+    
+        `Query`
+            The query object.
+    
+    **Examples:**
+    
+    TODO
 
-:Parameters:
-
-    value:
-        The query condition's value.
-
-    units: `str` or `Units`, optional
-        The units of *value*. By default, the same units as the
-        operand being tested are assumed, if applicable. If *units* is
-        specified and the already *value* has units (such as a `Data`
-        object`), then they must be equivalent.
-
-    attr: `str`, optional
-        Apply the condition to the attribute, or nested attributes, of
-        the operand, rather than the operand itself. Nested attributes
-        are specified by separating them with a ``.``. For example,
-        the "month" attribute of the "bounds" attribute is specified
-        as ``'bounds.month'``.
-
-:Returns:
-
-    `Query`
-        The query object.
-
-**Examples:**
-
-TODO
     ''' 
     return Query('le', value, units=units, attr='upper_bounds')
-#--- End: def
+
 
 def jja():
     '''A `Query` object for a "month of year in June, July or August"
@@ -2001,11 +2005,11 @@ def seasons(n=4, start=12):
 # Deprecated functions
 # --------------------------------------------------------------------
 def dtge(*args, **kwargs):
-    '''Return a `cf.Query` object for a variable being not earlier
-than a date-time.
+    '''Return a `Query` object for a variable being not earlier than a
+    date-time.
 
-Deprecated at version 3.0.0. Use 'cf.ge' with a datetime object value
-instead.
+    Deprecated at version 3.0.0. Use 'cf.ge' with a datetime object
+    value instead.
 
     '''
     _DEPRECATION_ERROR_FUNCTION(
@@ -2014,7 +2018,7 @@ instead.
     
 def dtgt(*args, **kwargs):
     '''Deprecated at version 3.0.0. Use 'cf.gt' with a datetime object
-value instead.
+    value instead.
 
     '''
     _DEPRECATION_ERROR_FUNCTION(
@@ -2023,7 +2027,7 @@ value instead.
 
 def dtle(*args, **kwargs):
     '''Deprecated at version 3.0.0. Use 'cf.le' with a datetime object
-value instead.
+    value instead.
 
     '''
     _DEPRECATION_ERROR_FUNCTION(
@@ -2032,7 +2036,7 @@ value instead.
 
 def dtlt(*args, **kwargs):
     '''Deprecated at version 3.0.0. Use 'cf.lt' with a datetime object
-value instead.
+    value instead.
 
     '''
     _DEPRECATION_ERROR_FUNCTION(
@@ -2041,7 +2045,7 @@ value instead.
 
 def dteq(*args, **kwargs):
     '''Deprecated at version 3.0.0. Use 'cf.eq' with a datetime object
-value instead.
+    value instead.
 
     '''
     _DEPRECATION_ERROR_FUNCTION(
@@ -2049,7 +2053,8 @@ value instead.
 
 
 def dtne(*args, **kwargs):
-    '''Deprecated at version 3.0.0. Use 'cf.ne' with a datetime object value instead.
+    '''Deprecated at version 3.0.0. Use 'cf.ne' with a datetime object
+    value instead.
 
     '''
     _DEPRECATION_ERROR_FUNCTION(
@@ -2057,8 +2062,7 @@ def dtne(*args, **kwargs):
 
 
 def contain(value, units=None, attr=None):
-    '''Return a `cf.Query` object for coordinate cells containing a
-value.
+    '''Return a `Query` object for coordinate cells containing a value.
 
     Deprecated at version 3.0.0. Use function 'cf.contains' instead.
 

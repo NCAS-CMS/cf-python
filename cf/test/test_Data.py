@@ -568,28 +568,28 @@ class DataTest(unittest.TestCase):
         self.assertTrue((d.array == numpy.array([1., 2])).all())
         a = numpy.array([cf.dt(2000,2,1, 10,29,3,831223, calendar=calendar),
                          cf.dt(2000,3,1, 20,58,7,662447, calendar=calendar)])
-        self.assertTrue((d.dtarray == a).all(), d.dtarray)
+        self.assertTrue((d.datetime_array == a).all(), d.datetime_array)
      
         calendar = 'standard'
         d = cf.Data([1., 2], units=cf.Units('months since 2000-1-1', calendar=calendar))
         self.assertTrue((d.array == numpy.array([1., 2])).all())
         a = numpy.array([cf.dt(2000,1,31, 10,29,3,831203, calendar=calendar),
                          cf.dt(2000,3, 1, 20,58,7,662447, calendar=calendar)])
-        self.assertTrue((d.dtarray == a).all(), d.dtarray)
+        self.assertTrue((d.datetime_array == a).all(), d.datetime_array)
      
         calendar = '360_day'
         d = cf.Data([1., 2], units=cf.Units('years since 2000-1-1', calendar=calendar))
         self.assertTrue((d.array == numpy.array([1., 2])).all())
         a = numpy.array([cf.dt(2001,1, 6,  5,48,45,974677, calendar=calendar),
                          cf.dt(2002,1,11, 11,37,31,949355, calendar=calendar)])
-        self.assertTrue((d.dtarray == a).all(), d.dtarray)
+        self.assertTrue((d.datetime_array == a).all(), d.datetime_array)
      
         calendar = 'standard'
         d = cf.Data([1., 2], units=cf.Units('years since 2000-1-1', calendar=calendar))
         self.assertTrue((d.array == numpy.array([1., 2])).all())
         a = numpy.array([cf.dt(2000,12,31,  5,48,45,974687, calendar=calendar),
                          cf.dt(2001,12,31, 11,37,31,949375, calendar=calendar)])
-        self.assertTrue((d.dtarray == a).all(), d.dtarray)
+        self.assertTrue((d.datetime_array == a).all(), d.datetime_array)
      
         d = cf.Data([1., 2], units=cf.Units('years since 2000-1-1', calendar='360_day'))
         e = d * 31

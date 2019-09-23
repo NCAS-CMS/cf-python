@@ -42,19 +42,10 @@ Mathematical operations
    :toctree: generated/
    :template: function.rst
 
-   cf.relative_vorticity
-   
-Constants
----------
-
-.. autosummary::
-   :nosignatures:
-   :toctree: function/
-   :template: function.rst
-
-   cf.CF
    cf.ATOL
-   cf.RTOLa
+   cf.RTOL
+   cf.default_fillvals
+   cf.relative_vorticity
 
 Condition constructors
 ----------------------
@@ -102,7 +93,7 @@ Condition constructors
    :toctree: generated/
    :template: function.rst
 
-   cf.constains
+   cf.contains
    cf.cellsize
    cf.cellgt
    cf.cellge
@@ -111,8 +102,8 @@ Condition constructors
    cf.cellwi
    cf.cellwo
 
-Date-time
----------
+Date-time and time duration
+---------------------------
 
 .. autosummary::
    :nosignatures:
@@ -120,6 +111,7 @@ Date-time
    :template: function.rst
 
    cf.dt
+   cf.dt_vector
    cf.Y
    cf.M
    cf.D
@@ -127,24 +119,30 @@ Date-time
    cf.m
    cf.s
 
-Constants
----------
+Resource management
+-------------------
 
 .. autosummary::
    :nosignatures:
    :toctree: generated/
    :template: function.rst
 
-   cf.ATOL
-   cf.RTOL
-   cf.TEMPDIR
    cf.CHUNKSIZE
+   cf.COLLAPSE_PARALLEL_MODE
+   cf.FREE_MEMORY
+   cf.FREE_MEMORY_FACTOR
    cf.FM_THRESHOLD
    cf.MINNCFM
    cf.OF_FRACTION
    cf.REGRID_LOGGING
+   cf.SET_PERFORMANCE
+   cf.TEMPDIR
+   cf.TOTAL_MEMORY
+   cf.close_files
+   cf.close_one_file
+   cf.open_files
+   cf.open_files_threshold_exceeded
 
-  
 Miscellaneous
 -------------
 
@@ -153,18 +151,19 @@ Miscellaneous
    :toctree: generated/
    :template: function.rst
 
+   cf.CF
+   cf.IGNORE_IDENTITIES
+   cf.RELAXED_IDENTITIES
    cf.abspath
-   cf.close_files
-   cf.close_one_file
-   cf.default_fillvals
    cf.dirname
    cf.dump
    cf.environment
    cf.flat
+   cf.hash_array
    cf.implementation
-   cf.open_files
-   cf.open_files_threshold_exceeded
+   cf.inspect
    cf.pathjoin
    cf.pickle
    cf.relpath
    cf.unpickle
+

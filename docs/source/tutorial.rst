@@ -17,9 +17,10 @@ Version |release| for version |version| of the CF conventions.
 .. http://docutils.sourceforge.net/docs/ref/rst/directives.html#list-table
   
 
-.. note:: There are :ref:`incompatible differences between versions
-          2.x and 3.x <2_to_3_changes>`. For version 2.x
-          documentation, see the `documentation archive
+.. note:: **This version of cf is for Python 3 only**, and there are
+          :ref:`incompatible differences between versions 2.x and 3.x
+          <2_to_3_changes>`. For version 2.x documentation, see the
+          `documentation archive
           <https://cfpython.bitbucket.io/docs/archive.html>`_.
 
 .. contents::
@@ -508,13 +509,29 @@ files <External-variables-with-cfa>`.
 -----------------
 
 Powerful, flexible, and very simple to produce visualizations of field
-constructs are available with the `cfplot
-<http://ajheaps.github.io/cf-plot>`_ package (that needs to be
-installed seprately to cf).
+constructs are available with the `cfplot package
+<http://ajheaps.github.io/cf-plot>`_ (that needs to be installed
+seprately to cf).
 
 See the `cfplot gallery
-<http://ajheaps.github.io/cf-plot/gallery.html>`_ for the full range
-range plotting possibilities with example code.
+<http://ajheaps.github.io/cf-plot/gallery.html>`_ for the wide range
+range plotting possibilities with example code. These include, but are
+not limited to:
+
+* Cylindrical projection
+* Polar stereographic
+* Latitude or longitude vs. height
+* Hovmuller
+* Vectors
+* Stipples
+* Multiple plots on a page
+* Colour scales
+* User defined axes
+* Rotated pole
+* Irregular grids
+* Plane projections
+* Trajectories
+  
 
 .. figure:: images/cfplot_example.png
 
@@ -970,53 +987,52 @@ the data as an array of date-time objects.
    >>> print(d.array)   
    [1 2 3]
    >>> print(d.datetime_array)
-   [datetime.datetime(2004, 2, 29, 0, 0)
-    datetime.datetime(2004, 3, 1, 0, 0)
-    datetime.datetime(2004, 3, 2, 0, 0)]
+   [cftime.DatetimeGregorian(2004-02-29 00:00:00)
+    cftime.DatetimeGregorian(2004-03-01 00:00:00)
+    cftime.DatetimeGregorian(2004-03-02 00:00:00)]
    >>> e = cf.Data([1, 2, 3], units='days since 2004-2-28', calendar='360_day')
    >>> print(d.array)   
    [1 2 3]
-   >>> print(d.dtarray)
-   [cftime._cftime.Datetime360Day(2004, 2, 29, 0, 0, 0, 0, -1, 59)
-    cftime._cftime.Datetime360Day(2004, 2, 30, 0, 0, 0, 0, -1, 60)
-    cftime._cftime.Datetime360Day(2004, 3, 1, 0, 0, 0, 0, -1, 61)]
+   >>> print(d.datetime_array)
+   [cftime.Datetime360Day(2004-02-29 00:00:00)
+    cftime.Datetime360Day(2004-02-30 00:00:00)
+    cftime.Datetime360Day(2004-03-01 00:00:00)]
 
 Alternatively, date-time data may be created by providing date-time
 objects or `ISO 8601-like date-time strings
 <https://en.wikipedia.org/wiki/ISO_8601>`_. Date-time objects may be
-Python `datetime.datetime` instances, `cftime.datetime` instances (as
-returned by the `cf.dt` and `cf.dtarray` functions), or any other
-date-time object that has an equivalent API.
+`cftime.datetime` instances (as returned by the `cf.dt` and
+`cf.dt_vector` functions), Python `datetime.datetime` instances, or
+any other date-time object that has an equivalent API.
 
 .. code-block:: python
    :caption: *Creating a Data instance from a date-time objects.*
 
    >>> date_time = cf.dt(2004, 2, 29)
    >>> date_time
-   cftime._cftime.DatetimeGregorian(2004, 2, 29, 0, 0, 0, 0, -1, 1)
-   >>> d = cf.Data(date_time)
+   cftime.DatetimeGregorian(2004-02-29 00:00:00)
+   >>> d = cf.Data(date_time, calendar='gregorian')
    >>> print(d.array)   
    0.0
    >>> d.datetime_array
-   array(datetime.datetime(2004, 2, 29, 0, 0), dtype=object)
+   array(cftime.DatetimeGregorian(2004-02-29 00:00:00), dtype=object)
 
 .. code-block:: python
    :caption: *Creating Data instances from date-time an array of
              date-time objects.*
 
-   >>> date_times  = cf.dtarray(['2004-02-29', '2004-02-30', '2004-03-01'], calendar='360_day')
+   >>> date_times  = cf.dt_vector(['2004-02-29', '2004-02-30', '2004-03-01'], calendar='360_day')
    >>> print (date_times)
-   [cftime._cftime.Datetime360Day(2004, 2, 29, 0, 0, 0, 0, -1, 1)
-    cftime._cftime.Datetime360Day(2004, 2, 30, 0, 0, 0, 0, -1, 1)
-    cftime._cftime.Datetime360Day(2004, 3, 1, 0, 0, 0, 0, -1, 1)]
+   [cftime.Datetime360Day(2004-02-29 00:00:00)
+    cftime.Datetime360Day(2004-02-30 00:00:00)
+    cftime.Datetime360Day(2004-03-01 00:00:00)]
    >>> e = cf.Data(date_times)
    >>> print(e.array)   
    [0. 1. 2.]
-   >>> print(e.dtarray)
-   [cftime._cftime.Datetime360Day(2004, 2, 29, 0, 0, 0, 0, -1, 59)
-    cftime._cftime.Datetime360Day(2004, 2, 30, 0, 0, 0, 0, -1, 60)
-    cftime._cftime.Datetime360Day(2004, 3, 1, 0, 0, 0, 0, -1, 61)]
-
+   >>> print(e.datetime_array)
+   [cftime.Datetime360Day(2004-02-29 00:00:00)
+    cftime.Datetime360Day(2004-02-30 00:00:00)
+    cftime.Datetime360Day(2004-03-01 00:00:00)]
     
 .. code-block:: python
    :caption: *Creating Data instances from date-time strings. If no
@@ -1025,22 +1041,22 @@ date-time object that has an equivalent API.
    >>> d = cf.Data(['2004-02-29', '2004-02-30', '2004-03-01'], calendar='360_day')
    >>> print(d.array)
    [0., 1., 2.]
-   >>> print(e.dtarray)
-   [cftime._cftime.Datetime360Day(2004, 2, 29, 0, 0, 0, 0, -1, 59)
-    cftime._cftime.Datetime360Day(2004, 2, 30, 0, 0, 0, 0, -1, 60)
-    cftime._cftime.Datetime360Day(2004, 3, 1, 0, 0, 0, 0, -1, 61)]
+   >>> print(e.datetime_array)
+   [cftime.Datetime360Day(2004-02-29 00:00:00)
+    cftime.Datetime360Day(2004-02-30 00:00:00)
+    cftime.Datetime360Day(2004-03-01 00:00:00)]
    >>> e = cf.Data(['2004-02-29', '2004-03-01', '2004-03-02'])
    >>> e.Units
    <Units: >
-   >>> print(e.dtarray)
+   >>> print(e.datetime_array)
    ValueError: Can't create date-time array from units <Units: >
    >>> f = cf.Data(['2004-02-29', '2004-03-01', '2004-03-02'], dt=True)
    >>> f.Units
    <Units: days since 2004-02-29>
-   >>> print (f.datetime_array)
-   [datetime.datetime(2004, 2, 29, 0, 0)
-    datetime.datetime(2004, 3, 1, 0, 0)
-    datetime.datetime(2004, 3, 2, 0, 0)]
+   >>> print(f.datetime_array)
+   [cftime.DatetimeGregorian(2004-02-29 00:00:00)
+    cftime.DatetimeGregorian(2004-03-01 00:00:00)
+    cftime.DatetimeGregorian(2004-03-02 00:00:00)]
 
     
 .. _Manipulating-dimensions:
@@ -2704,7 +2720,7 @@ date-time objects.
 	  
    >>> print(f.coordinate('T').array) TODO
    TODO
-   >>> print(f.coordinate('T').dtarray) TODO
+   >>> print(f.coordinate('T').datetime_array) TODO
    TODO
    >>> print(q.subspace(T=TODO (float))
    Field: specific_humidity (ncvar%q)
@@ -5309,10 +5325,10 @@ method is to be applied.
                    : longitude(8) = [22.5, ..., 337.5] degrees_east
                    : air_pressure(1) = [850.0] hPa
    >>> print(b.coordinate('T').bounds.datetime_array)
-   [[real_datetime(1959, 12, 1, 0, 0) real_datetime(1969,  3, 1, 0, 0)]
-    [real_datetime(1960,  3, 1, 0, 0) real_datetime(1969,  6, 1, 0, 0)]
-    [real_datetime(1960,  6, 1, 0, 0) real_datetime(1969,  9, 1, 0, 0)]
-    [real_datetime(1960,  9, 1, 0, 0) real_datetime(1969, 12, 1, 0, 0)]]
+   [[cftime.DatetimeGregorian(1959-12-01 00:00:00) cftime.DatetimeGregorian(1969-03-01 00:00:00)]
+    [cftime.DatetimeGregorian(1960-03-01 00:00:00) cftime.DatetimeGregorian(1969-06-01 00:00:00)]
+    [cftime.DatetimeGregorian(1960-06-01 00:00:00) cftime.DatetimeGregorian(1969-09-01 00:00:00)]
+    [cftime.DatetimeGregorian(1960-09-01 00:00:00) cftime.DatetimeGregorian(1969-12-01 00:00:00)]]
 		   
 .. code-block:: python
    :caption: *Calculate the multiannual variance of the seasonal
@@ -5331,10 +5347,10 @@ method is to be applied.
                    : longitude(8) = [22.5, ..., 337.5] degrees_east
                    : air_pressure(1) = [850.0] hPa
    >>> print(b.coordinate('T').bounds.datetime_array)
-   [[real_datetime(1959, 12, 1, 0, 0) real_datetime(1969,  3, 1, 0, 0)]
-    [real_datetime(1960,  3, 1, 0, 0) real_datetime(1969,  6, 1, 0, 0)]
-    [real_datetime(1960,  6, 1, 0, 0) real_datetime(1969,  9, 1, 0, 0)]
-    [real_datetime(1960,  9, 1, 0, 0) real_datetime(1969, 12, 1, 0, 0)]]
+   [[cftime.DatetimeGregorian(1959-12-01 00:00:00) cftime.DatetimeGregorian(1969-03-01 00:00:00)]
+    [cftime.DatetimeGregorian(1960-03-01 00:00:00) cftime.DatetimeGregorian(1969-06-01 00:00:00)]
+    [cftime.DatetimeGregorian(1960-06-01 00:00:00) cftime.DatetimeGregorian(1969-09-01 00:00:00)]
+    [cftime.DatetimeGregorian(1960-09-01 00:00:00) cftime.DatetimeGregorian(1969-12-01 00:00:00)]]
 		      
 When collapsing over years, it is assumed by default that the each
 portion of the annual cycle is collapsed over all years that are
@@ -5358,14 +5374,15 @@ chunks, with the *over_years* keyword to `~Field.collapse`.
                    : longitude(8) = [22.5, ..., 337.5] degrees_east
                    : air_pressure(1) = [850.0] hPa
    >>> print(b.coordinate('T').bounds.datetime_array)
-   [[real_datetime(1959, 12, 1, 0, 0) real_datetime(1964,  3, 1, 0, 0)]
-    [real_datetime(1960,  3, 1, 0, 0) real_datetime(1964,  6, 1, 0, 0)]
-    [real_datetime(1960,  6, 1, 0, 0) real_datetime(1964,  9, 1, 0, 0)]
-    [real_datetime(1960,  9, 1, 0, 0) real_datetime(1964, 12, 1, 0, 0)]
-    [real_datetime(1964, 12, 1, 0, 0) real_datetime(1969,  3, 1, 0, 0)]
-    [real_datetime(1965,  3, 1, 0, 0) real_datetime(1969,  6, 1, 0, 0)]
-    [real_datetime(1965,  6, 1, 0, 0) real_datetime(1969,  9, 1, 0, 0)]
-    [real_datetime(1965,  9, 1, 0, 0) real_datetime(1969, 12, 1, 0, 0)]]
+   [[cftime.DatetimeGregorian(1959-12-01 00:00:00) cftime.DatetimeGregorian(1964-03-01 00:00:00)]
+    [cftime.DatetimeGregorian(1960-03-01 00:00:00) cftime.DatetimeGregorian(1964-06-01 00:00:00)]
+    [cftime.DatetimeGregorian(1960-06-01 00:00:00) cftime.DatetimeGregorian(1964-09-01 00:00:00)]
+    [cftime.DatetimeGregorian(1960-09-01 00:00:00) cftime.DatetimeGregorian(1964-12-01 00:00:00)]
+    [cftime.DatetimeGregorian(1964-12-01 00:00:00) cftime.DatetimeGregorian(1969-03-01 00:00:00)]
+    [cftime.DatetimeGregorian(1965-03-01 00:00:00) cftime.DatetimeGregorian(1969-06-01 00:00:00)]
+    [cftime.DatetimeGregorian(1965-06-01 00:00:00) cftime.DatetimeGregorian(1969-09-01 00:00:00)]
+    [cftime.DatetimeGregorian(1965-09-01 00:00:00) cftime.DatetimeGregorian(1969-12-01 00:00:00)]]
+
 
 .. code-block:: python
    :caption: *Calculate the multiannual average of the seasonal means,
@@ -5383,10 +5400,10 @@ chunks, with the *over_years* keyword to `~Field.collapse`.
                    : longitude(8) = [22.5, ..., 337.5] degrees_east
                    : air_pressure(1) = [850.0] hPa   
    >>> print(b.coordinate('T').bounds.datetime_array)
-   [[real_datetime(1962, 12, 1, 0, 0) real_datetime(1968,  3, 1, 0, 0)]
-    [real_datetime(1963,  3, 1, 0, 0) real_datetime(1968,  6, 1, 0, 0)]
-    [real_datetime(1963,  6, 1, 0, 0) real_datetime(1968,  9, 1, 0, 0)]
-    [real_datetime(1963,  9, 1, 0, 0) real_datetime(1968, 12, 1, 0, 0)]]
+   [[cftime.DatetimeGregorian(1962-12-01 00:00:00) cftime.DatetimeGregorian(1968-03-01 00:00:00)]
+    [cftime.DatetimeGregorian(1963-03-01 00:00:00) cftime.DatetimeGregorian(1968-06-01 00:00:00)]
+    [cftime.DatetimeGregorian(1963-06-01 00:00:00) cftime.DatetimeGregorian(1968-09-01 00:00:00)]
+    [cftime.DatetimeGregorian(1963-09-01 00:00:00) cftime.DatetimeGregorian(1968-12-01 00:00:00)]]
 
 Similarly for collapses over days, it is assumed by default that the
 each portion of the diurnal cycle is collapsed over all days that are

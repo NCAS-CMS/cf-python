@@ -772,7 +772,7 @@ Function  Description
             units = Units('{0} since {1}'.format(duration.Units.units, other),
                           calendar)
             d = op(Data(0.0, units), duration)
-            return d.dtarray.item(()) # TODO
+            return d.datetime_array.item(())
         #--- End: def
 
         duration = self.duration
@@ -1369,7 +1369,7 @@ Function  Description
             else:
                 dt1 -= duration
 
-            dt1 = dt1.dtarray.item(()) # TODO
+            dt1 = dt1.datetime_array.item(())
 
             if not end:
                 return dt, dt1 #dt.copy(), dt1

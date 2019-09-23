@@ -2984,27 +2984,27 @@ Coord refs     : <CF CoordinateReference: rotated_latitude_longitude>
     @property
     def DSG(self):
         '''True if the field contains a collection of discrete sampling
-geomtries.
-
-.. versionadded:: 2.0
-
-.. seealso:: `featureType`
-
-**Examples:**
-
->>> f.featureType
-'timeSeries'
->>> f.DSG
-True
-
->>> f.get_property('featureType', 'NOT SET')
-NOT SET
->>> f.DSG
-False
+    geomtries.
+    
+    .. versionadded:: 2.0
+    
+    .. seealso:: `featureType`
+    
+    **Examples:**
+    
+    >>> f.featureType
+    'timeSeries'
+    >>> f.DSG
+    True
+    
+    >>> f.get_property('featureType', 'NOT SET')
+    NOT SET
+    >>> f.DSG
+    False
 
         '''
         return self.has_property('featureType')
-    #--- End: def
+
 
     @property
     def Flags(self):
