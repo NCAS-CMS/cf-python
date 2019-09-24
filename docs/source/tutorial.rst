@@ -53,6 +53,7 @@ be found in the zip file ``cf_tutorial_files.zip``
    timeseries.nc
    umfile.pp
    vertical.nc
+   wind_components.nc
 
 The tutorial examples assume that the Python session is being run from
 the directory that also contains the sample files.
