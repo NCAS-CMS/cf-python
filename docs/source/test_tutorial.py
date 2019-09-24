@@ -28,6 +28,7 @@ len(y)
 
 print("\n**Inspection**\n")
 
+x = cf.read('file.nc')
 x
 q = x[0]
 t = x[1]
@@ -58,6 +59,7 @@ for f in y:
 
 print("\n**Properties**\n")
 
+q, t = cf.read('file.nc')
 t.properties()
 t.has_property('standard_name')
 t.get_property('standard_name')
@@ -78,6 +80,7 @@ t.identities()
 
 print("\n**Metadata constructs**\n")
 
+q, t = cf.read('file.nc')
 t.coordinate_references
 print(t.coordinate_references)
 list(t.coordinate_references.keys())
@@ -93,6 +96,7 @@ print(t.constructs)
 
 print("\n**Data**\n")
 
+q, t = cf.read('file.nc')
 t.data
 print(t.array)
 t.dtype
@@ -139,6 +143,7 @@ except:
     pass
 else:
     raise Exception("This should have failed!")
+q, t = cf.read('file.nc')
 t
 t2 = t.squeeze()
 t2
@@ -150,6 +155,7 @@ t4 = t.transpose([2, 0, 1], constructs=True)
 
 print("\n**Subspacing by index**\n")
 
+q, t = cf.read('file.nc')
 print(q)
 new = q[::-1, 0]
 print(new)
@@ -168,6 +174,7 @@ t.data[0, [2, 3, 9], [4, 8]]
 
 print("\n**Assignment by index**\n")
 
+q, t = cf.read('file.nc')
 t[:, 0, 0] = -1
 t[:, :, 1] = -2
 t[..., 6:3:-1, 3:6] = -3
@@ -189,12 +196,13 @@ print(t[0, 4, -2].array)
 t.hardmask = False
 t[0, 4, -2] = 99
 print(t[0, 4, -2].array)
-original = t.copy()
+q, t = cf.read('file.nc')
+t0 = t.copy()	     
 u = t.squeeze(0)
 u.transpose(inplace=True)
 u.flip(inplace=True)   
 t[...] = u
-original.allclose(t)
+t.allclose(t0)
 t[:, :, 1:3] = u[2]
 print(t[:, :, 1:3].array)
 print(u[2].array)	     
@@ -203,6 +211,7 @@ print(t[:, :, 1:3].array)
 
 print("\n**Units**\n")
 
+q, t = cf.read('file.nc')
 t.units
 t.Units
 t.units = 'degreesC'
@@ -229,6 +238,7 @@ time.Units
 
 print("\n**Filtering metadata constructs**\n")
 
+q, t = cf.read('file.nc')
 print(t.constructs.filter_by_type('dimension_coordinate'))
 print(t.constructs.filter_by_type('cell_method', 'field_ancillary'))
 print(t.constructs.filter_by_property(
@@ -557,6 +567,7 @@ key = p.set_construct(dc, axes=longitude_axis)
 key
 cm = cf.CellMethod(axes=longitude_axis, method='minimum')
 p.set_construct(cm)
+#raise Exception("To proceeed, insert code block 1")
 import numpy
 import cf
 
@@ -626,8 +637,8 @@ dimY.set_bounds(bounds)
 Q.set_construct(dimT)
 Q.set_construct(dimY)
 Q.set_construct(dimX)
-
 Q.dump()
+#raise Exception("To proceeed, insert code block 2")
 import numpy
 import cf
 
@@ -781,7 +792,6 @@ cell_measure = cf.CellMeasure(measure='area',
                  data=cf.Data(numpy.arange(90.).reshape(9, 10)))
 
 tas.set_construct(cell_measure)
-
 print(tas)
 import netCDF4
 nc = netCDF4.Dataset('file.nc', 'r')
@@ -851,7 +861,6 @@ print("\n**Writing to disk**\n")
 print(q)
 cf.write(q, 'q_file.nc')
 x
-print(x)
 cf.write(x, 'new_file.nc')
 f = cf.read('q_file.nc')[0]
 q.equals(f)
@@ -894,11 +903,11 @@ area.has_data()
 g = cf.read('parent.nc', external='external.nc')[0]
 print(g)
 area = g.construct('measure:area')
-print(area)
+area
 area.nc_get_external()
 area.nc_get_variable()
-print(area.properties())
-print(area.data)
+area.properties()
+area.data
 area.nc_set_external(True)
 cf.write(g, 'new_parent.nc')
 cf.write(g, 'new_parent.nc', external='new_external.nc')
@@ -990,16 +999,16 @@ time.set_data(cf.Data(numpy.arange(0.5, 60, 1),
 time
 c = a.regridc({'T': time}, axes='T', method='bilinear')
 try:
-     c = a.regridc({'T': time}, axes='T', method='conservative')
+    c = a.regridc({'T': time}, axes='T', method='conservative')  
 except:
-     pass
+    pass
 else:
-     raise Exception("This should fail!")
+    raise Exception("This should have failed!")
 bounds = time.create_bounds()
 time.set_bounds(bounds)
 c = a.regridc({'T': time}, axes='T', method='conservative')
 print(c)
-# c = a.regridc(TODO (field arg), axes='T', method='conservative')
+# c = a.regridc(TODO1 (field arg), axes='T', method='conservative')
 print(c)
 v = cf.read('vertical.nc')[0]
 print(v)
@@ -1016,31 +1025,32 @@ print(new_v)
 
 print("\n**Mathematical operations**\n")
 
+q, t = cf.read('file.nc')
 lat = q.dimension_coordinate('latitude')
 lat.data
-sin_lat = lat.sin()                                                                                 
-sin_lat.data                                                                                        
+sin_lat = lat.sin()
+sin_lat.data
 q
 q.log()
 q.exp()
 t   
 t.log(base=10)
 try:
-    t.exp()
+    t.exp()                                                
 except:
-     pass
+    pass
 else:
-     raise Exception("This should fail!")
+    raise Exception("This should have failed!")
 print(q)
 q.iscyclic('X')
 r = q.convolution_filter([0.1, 0.15, 0.5, 0.15, 0.1], axis='X')
-print(r)                                                                                          
+print(r)
 print(q.dimension_coordinate('X').bounds.array)
 print(r.dimension_coordinate('X').bounds.array)
 from scipy.signal import windows
-exponential_weights = windows.exponential(3)                                                      
+exponential_weights = windows.exponential(3)
 print(exponential_weights)
-r = q.convolution_filter(exponential_weights, axis='Y')                                           
+r = q.convolution_filter(exponential_weights, axis='Y')
 print(r.array)
 r = q.derivative('X')
 r = q.derivative('Y', one_sided_at_boundary=True)
@@ -1051,8 +1061,8 @@ print(zeta.array.round(8))
 
 print("\n**Aggregation**\n")
 
-#a = cf.read(TODO)
-#b = cf.read(TODO, aggregate=False)
+#a = cf.read(TODO1)
+#b = cf.read(TODO1, aggregate=False)
 #c = cf.aggregate(b)
 #a.equals(c)
 #WWW = cf.read(TODO, aggregate={'info': 1, 'overlap': False})
@@ -1076,6 +1086,40 @@ h.data.get_compression_type()
 h.data[1, 2] = -9
 print(h.array)
 h.data.get_compression_type()
+#raise Exception("To proceeed, insert code block 3")
+import numpy
+import cf
+
+# Define the ragged array values
+ragged_array = cf.Data([280, 281, 279, 278, 279.5])
+
+# Define the count array values
+count_array = [1, 4]
+
+# Create the count variable
+count_variable = cf.Count(data=cf.Data(count_array))
+count_variable.set_property('long_name', 'number of obs for this timeseries')
+
+# Create the contiguous ragged array object, specifying the
+# uncompressed shape
+array = cf.RaggedContiguousArray(
+                 compressed_array=ragged_array,
+                 shape=(2, 4), size=8, ndim=2,
+                 count_variable=count_variable)
+
+# Create the field construct with the domain axes and the ragged
+# array
+T = cf.Field()
+T.set_properties({'standard_name': 'air_temperature',
+                  'units': 'K',
+                  'featureType': 'timeSeries'})
+
+# Create the domain axis constructs for the uncompressed array
+X = T.set_construct(cf.DomainAxis(4))
+Y = T.set_construct(cf.DomainAxis(2))
+
+# Set the data for the field
+T.set_data(cf.Data(array))
 T
 print(T.array)
 T.data.get_compression_type()
@@ -1097,8 +1141,41 @@ p[1, :, 3:5]
 p.data.get_compression_type()
 p.data[1] = -9
 p.data.get_compression_type()
+#raise Exception("To proceeed, insert code block 4")
+import numpy	  
+import cf
+
+# Define the gathered values
+gathered_array = cf.Data([[2, 1, 3], [4, 0, 5]])
+
+# Define the list array values
+list_array = [1, 4, 5]
+
+# Create the list variable
+list_variable = cf.List(data=cf.Data(list_array))
+
+# Create the gathered array object, specifying the uncompressed
+# shape
+array = cf.GatheredArray(
+                 compressed_array=gathered_array,
+     	    compressed_dimension=1,
+                 shape=(2, 3, 2), size=12, ndim=3,
+                 list_variable=list_variable)
+
+# Create the field construct with the domain axes and the gathered
+# array
+P = cf.Field(properties={'standard_name': 'precipitation_flux',
+                           'units': 'kg m-2 s-1'})
+
+# Create the domain axis constructs for the uncompressed array
+T = P.set_construct(cf.DomainAxis(2))
+Y = P.set_construct(cf.DomainAxis(3))
+X = P.set_construct(cf.DomainAxis(2))
+
+# Set the data for the field
+P.set_data(cf.Data(array), axes=[T, Y, X])
 P
-print(P.data.rray)
+print(P.data.array)
 P.data.get_compression_type()
 print(P.data.compressed_array)
 list_variable = P.data.get_list()
@@ -1109,7 +1186,7 @@ cf.write(P, 'P_gathered.nc')
 print("\n**PP and UM fields files**\n")
 
 #TODO read PP file
-pp = cf.read(umfile.pp)
+pp = cf.read('umfile.pp')
 cf.write(pp, 'umfile1.nc')
 type(cf.read_write.um.umread.stash2standard_name)                       
 cf.read_write.um.umread.stash2standard_name[(1, 4)]                    

@@ -1420,11 +1420,12 @@ data to ensure that they are broadcastable.
              operation.*
 	     
    >>> q, t = cf.read('file.nc')
+   >>> t0 = t.copy()	     
    >>> u = t.squeeze(0)
    >>> u.transpose(inplace=True)
    >>> u.flip(inplace=True)   
    >>> t[...] = u
-   >>> original.allclose(t)
+   >>> t.allclose(t0)
    True
 
 .. code-block:: python
@@ -3533,6 +3534,8 @@ The domain axis constructs spanned by a metadata construct's data may
 be changed after insertion with the `~Field.set_data_axes` method of
 the field construct.
 
+.. Code Block 1
+
 .. code-block:: python
    :caption: *Create a field construct with properties; data; and
              domain axis, cell method and dimension coordinate
@@ -3678,6 +3681,8 @@ Here is a more complete example which creates a field construct that
 contains every type of metadata construct (again, data arrays have
 been generated with dummy values using `numpy.arange`):
 
+.. Code Block 2
+   
 .. code-block:: python
    :caption: *Create a field construct that contains at least one
              instance of each type of metadata construct.*
@@ -6326,6 +6331,8 @@ special array objects: `RaggedContiguousArray`, `RaggedIndexedArray`
 or `RaggedIndexedContiguousArray`. The following code creates a simple
 field construct with an underlying contiguous ragged array:
 
+.. Code Block 3
+
 .. code-block:: python
    :caption: *Create a field construct with compressed data.*
 
@@ -6534,6 +6541,8 @@ initializing a `cf.Data` instance with a gathered array that is stored
 in the special `cf.GatheredArray` array object. The following code
 creates a simple field construct with an underlying gathered array:
 
+.. Code Block 4
+
 .. code-block:: python
    :caption: *Create a field construct with compressed data.*
 
@@ -6583,7 +6592,7 @@ The new field construct can now be inspected and written a netCDF file:
    
    >>> P
    <CF Field: precipitation_flux(key%domainaxis0(2), key%domainaxis1(3), key%domainaxis2(2)) kg m-2 s-1>
-   >>> print(P.data.rray)
+   >>> print(P.data.array)
    [[[ -- 2.0]
      [ --  --]
      [1.0 3.0]]
@@ -6671,7 +6680,7 @@ written to disk as netCDF files with `cf.write`.
 .. code-block:: python
    :caption: *TODO*
    
-   >>> pp = cf.read(umfile.pp)
+   >>> pp = cf.read('umfile.pp')
    >>> cf.write(pp, 'umfile1.nc')
 
 Alternatively, the ``cfa`` command line tool may be used with PP and UM
