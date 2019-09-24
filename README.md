@@ -7,17 +7,20 @@ The Python cf package is an Earth science data analysis library that
 is built on a complete implementation of the CF data model
 
 
-# Documentation
+Documentation
+=============
 
 http://ncas-cms.github.io/cf-python
 
 
-# Installation
+Installation
+============
 
 http://ncas-cms.github.io/cf-python/installation.html
 
 
-# Functionality
+Functionality
+=============
 
 The `cf` package implements the CF data model
 (https://doi.org/10.5194/gmd-10-4619-2017) for its internal data
@@ -90,6 +93,6 @@ installed, which
 
 # Tests
 
-Tests are run from within the ``cf-python/test`` directory:
+Tests are run from within the ``cf/test`` directory:
 
     python run_tests.py
