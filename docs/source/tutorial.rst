@@ -584,6 +584,7 @@ operations, such as indexing, iteration, and methods like
    12
    >>> for f in y:
    ...     print('field:', repr(f))
+   ...
    field: <CF Field: precipitation_flux(time(1), latitude(64), longitude(128)) kg m-2 day-1>
    field: <CF Field: specific_humidity(latitude(5), longitude(8)) 1>
    field: <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>
@@ -2297,7 +2298,7 @@ The `cf.Bounds` instance inherits the descriptive properties from its
 parent coordinate construct, but it may also have its own properties
 (although setting these is not recommended).
 
-.. TODO CF-1.8 change on bounds properties all good if there are no coordinates
+.. TODO2 CF-1.8 change on bounds properties all good if there are no coordinates
 
 .. code-block:: python
    :caption: *Inspect the inherited and bespoke properties of a Bounds
@@ -4029,14 +4030,16 @@ variables <External-variables>` may be incorporated.
    :caption: *Use cfa to create new, single dataset that combines the
              field constructs from two files.*
 
-   $ cfa TODO
-   TODO
-   $ cfa TODO
-   TODO
-   $ cfa -o new_dataset.nc TODO TODO # TODO see aggregation 
-   $ cfa new_dataset.nc
-   TODO
-
+   $ cfa file.nc 
+   CF Field: specific_humidity(latitude(5), longitude(8)) 1
+   CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K
+   $ cfa air_temperature.nc 
+   CF Field: air_temperature(time(2), latitude(73), longitude(96)) K
+   $ cfa -o new_dataset.nc file.nc air_temperature.nc
+   $ cfa  new_dataset.nc
+   CF Field: specific_humidity(latitude(5), longitude(8)) 1
+   CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K
+   CF Field: air_temperature(time(2), latitude(73), longitude(96)) K
 
 ----
 
@@ -5741,12 +5744,8 @@ will produce similar results to using using spherical regridding.
                    : height(1) = [2.0] m
 
 
-.. code-block:: python
-   :caption: *TODO*
-		   
-   >>> # c = a.regridc(TODO1 (field arg), axes='T', method='conservative')
-   >>> print(c)
-   TODO
+Cartesian regridding to the dimesion of another field construct is
+also possible, similarly to spherical regridding.
 
 
 .. _Regridding-masked-data:
@@ -6025,9 +6024,9 @@ field construct from field constructs containing the wind components
 using finite differences to approximate the derivatives. Dimensions
 other than 'X' and 'Y' remain unchanged by the operation.
 
-..   :caption: *TODO*
 .. code-block:: python
-
+   :caption: *TODO*
+   
    >>> u, v = cf.read('wind_components.nc')
    >>> zeta = cf.relative_vorticity(u, v)
    >>> print(zeta)
@@ -6070,20 +6069,35 @@ Aggregation is the combination of field constructs to create a new
 field construct that occupies a "larger" domain. Using the
 :ref:`aggregation rules <Aggregation-rules>`, field constructs are
 separated into aggregatable groups and each group is then aggregated
-to a single field construct.
+to a single field construct. Note that aggregation is possible over
+multiple dimensions simultaneously.
 
 Aggregation is, by default, applied to field constructs read from
 datasets with the `cf.read` function, but may also be applied to field
 constructs in memory with the `cf.aggregate` function.
 
 .. code-block:: python
-   :caption: *Demonstrate that the aggregation applied by `cf.read` is
-             equivalent to that carried by `cf.aggregate`.*
+   :caption: *Demonstrate that the aggregation applied by 'cf.read' is
+             equivalent to that carried by 'cf.aggregate'. This is
+             done by spliting a field up into parts, writing those to
+             disk, and then reading those parts and aggregating them.*
 
-   >>> #a = cf.read(TODO1)
-   >>> #b = cf.read(TODO1, aggregate=False)
-   >>> #c = cf.aggregate(b)
-   >>> #a.equals(c)
+   >>> a = cf.read('air_temperature.nc')[0]
+   >>> a
+   <CF Field: air_temperature(time(2), latitude(73), longitude(96)) K>
+   >>> a_parts = [a[0, : , 0:30], a[0, :, 30:], a[1, :, 0:30], a[1, :, 30:]]
+   >>> a_parts
+   [<CF Field: air_temperature(time(1), latitude(73), longitude(30)) K>,
+    <CF Field: air_temperature(time(1), latitude(73), longitude(66)) K>,
+    <CF Field: air_temperature(time(1), latitude(73), longitude(30)) K>,
+    <CF Field: air_temperature(time(1), latitude(73), longitude(66)) K>]
+   >>> for i, f in enumerate(a_parts):
+   ...     cf.write(f, str(i)+'_air_temperature.nc')
+   ...
+   >>> x = cf.read('[0-3]_air_temperature.nc')
+   >>> y = cf.read('[0-3]_air_temperature.nc', aggregate=False)
+   >>> z = cf.aggregate(y)
+   >>> x.equals(z)
    True
 
 The `cf.aggregate` function has optional parameters to
@@ -6103,19 +6117,10 @@ The `cf.aggregate` function has optional parameters to
 These parameters are also available to the `cf.read` function via its
 *aggregate* parameter.
    
-.. code-block:: python
-   :caption: *Aggregation configuration parameters can be applied to
-             both the `cf.read` and `cf.aggregate` functions.*
-
-   >>> #WWW = cf.read(TODO, aggregate={'info': 1, 'overlap': False})
-   >>> #XXX = cf.aggregate(AAA TODO, info=1, overlap=False)
-   >>> #WWW.equals(XXX TODO)
-   True
-
 Note that when reading :ref:`PP and UM fields files
 <PP-and-UM-fields-files>` with `cf.read`, the *relaxed_units* option
 is `True` by default, because units are not always available to field
-constructs derived from UM fields files or PP files.
+constructs derived from :ref:`PP-and-UM-fields-files`.
 
 ----
 
@@ -6669,8 +6674,19 @@ carried out by the `cf.read` function.
 .. code-block:: python
    :caption: *TODO*
    
-   >>> #TODO read PP file
+   >>> pp = cf.read('umfile.pp')
+   >>> pp
+   [<CF Field: surface_air_pressure(time(3), latitude(73), longitude(96)) Pa>]
+   >>> print(pp[0])
+   Field: surface_air_pressure (ncvar%UM_m01s00i001_vn405)
+   -------------------------------------------------------
+   Data            : surface_air_pressure(time(3), latitude(73), longitude(96)) Pa
+   Cell methods    : time(3): mean
+   Dimension coords: time(3) = [2160-06-01 00:00:00, 2161-06-01 00:00:00, 2162-06-01 00:00:00] 360_day
+                   : latitude(73) = [90.0, ..., -90.0] degrees_north
+                   : longitude(96) = [0.0, ..., 356.25] degrees_east
 
+		   
 Converting PP and UM fields files to netCDF files
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -6680,7 +6696,6 @@ written to disk as netCDF files with `cf.write`.
 .. code-block:: python
    :caption: *TODO*
    
-   >>> pp = cf.read('umfile.pp')
    >>> cf.write(pp, 'umfile1.nc')
 
 Alternatively, the ``cfa`` command line tool may be used with PP and UM

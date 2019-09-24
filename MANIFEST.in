@@ -9,4 +9,4 @@ recursive-exclude cf/test *.nc *.nca
 recursive-exclude cf *.a
 exclude cf/test/*coverage*
 recursive-exclude cf/test/cf_coverage_report *
-recursive-include cf/test test_file[2-4].nc file[1-9].nc
+recursive-include cf/test test_file[2-4].nc file.nc file[1-9].nc
