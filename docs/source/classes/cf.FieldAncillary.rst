@@ -40,7 +40,7 @@ Selection
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.FieldAncillary.match_by_identity
@@ -70,7 +70,7 @@ Properties
 .. rubric:: Attributes
 	    
 .. autosummary::
-   :toctree: ../generated/
+   :toctree: ../attribute/
    :template: attribute.rst
 
    ~cf.FieldAncillary.add_offset
@@ -97,7 +97,7 @@ Units
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.FieldAncillary.override_units
@@ -107,7 +107,7 @@ Units
 	    
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../attribute/
    :template: attribute.rst
 
    ~cf.FieldAncillary.Units
@@ -151,7 +151,7 @@ Data
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.FieldAncillary.flip
@@ -164,7 +164,7 @@ Data
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../attribute/
    :template: attribute.rst
 
    ~cf.FieldAncillary.binary_mask
@@ -177,14 +177,14 @@ Data
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
 .. rubric:: *Changing data values*
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.FieldAncillary.__setitem__
@@ -196,7 +196,7 @@ Data
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 	      
 
@@ -245,7 +245,7 @@ Mathematical operations
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.FieldAncillary.cos
@@ -256,7 +256,7 @@ Mathematical operations
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.FieldAncillary.ceil  
@@ -270,7 +270,7 @@ Mathematical operations
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.FieldAncillary.max
@@ -287,7 +287,7 @@ Mathematical operations
 	    
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.FieldAncillary.exp
@@ -299,7 +299,7 @@ Date-time operations
 .. rubric:: Attributes
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../attribute/
    :template: attribute.rst
 
    ~cf.FieldAncillary.day
@@ -320,7 +320,7 @@ Logic functions
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.FieldAncillary.all
@@ -330,7 +330,7 @@ Logic functions
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.FieldAncillary.allclose
@@ -341,7 +341,7 @@ Logic functions
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.FieldAncillary.unique
@@ -369,7 +369,7 @@ Aliases
    
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst  
 
    ~cf.FieldAncillary.match
@@ -394,7 +394,7 @@ for augmented assignments, modify the construct's data in-place.
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.FieldAncillary.__lt__
@@ -408,7 +408,7 @@ for augmented assignments, modify the construct's data in-place.
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.FieldAncillary.__add__     
@@ -424,7 +424,7 @@ for augmented assignments, modify the construct's data in-place.
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.FieldAncillary.__radd__     
@@ -440,7 +440,7 @@ for augmented assignments, modify the construct's data in-place.
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.FieldAncillary.__iadd__ 
@@ -456,7 +456,7 @@ for augmented assignments, modify the construct's data in-place.
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.FieldAncillary.__neg__    
@@ -467,7 +467,7 @@ for augmented assignments, modify the construct's data in-place.
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.FieldAncillary.__and__     
@@ -480,7 +480,7 @@ for augmented assignments, modify the construct's data in-place.
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.FieldAncillary.__rand__     
@@ -493,7 +493,7 @@ for augmented assignments, modify the construct's data in-place.
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.FieldAncillary.__iand__     
@@ -506,7 +506,7 @@ for augmented assignments, modify the construct's data in-place.
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.FieldAncillary.__invert__ 

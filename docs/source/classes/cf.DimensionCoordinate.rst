@@ -79,7 +79,7 @@ Selection
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.DimensionCoordinate.match_by_identity
@@ -109,7 +109,7 @@ Properties
 .. rubric:: Attributes
 	    
 .. autosummary::
-   :toctree: ../generated/
+   :toctree: ../attribute/
    :template: attribute.rst
 
    ~cf.DimensionCoordinate.add_offset
@@ -138,7 +138,7 @@ Units
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.DimensionCoordinate.override_units
@@ -148,7 +148,7 @@ Units
 	    
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../attribute/
    :template: attribute.rst
 
    ~cf.DimensionCoordinate.Units
@@ -192,7 +192,7 @@ Data
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.DimensionCoordinate.flip
@@ -205,7 +205,7 @@ Data
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../attribute/
    :template: attribute.rst
 
    ~cf.DimensionCoordinate.binary_mask
@@ -218,14 +218,14 @@ Data
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
 .. rubric:: *Changing data values*
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.DimensionCoordinate.__setitem__
@@ -237,7 +237,7 @@ Data
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 	      
 
@@ -274,7 +274,7 @@ Mathematical operations
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.DimensionCoordinate.cos
@@ -285,7 +285,7 @@ Mathematical operations
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.DimensionCoordinate.ceil  
@@ -299,7 +299,7 @@ Mathematical operations
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.DimensionCoordinate.max
@@ -316,7 +316,7 @@ Mathematical operations
 	    
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.DimensionCoordinate.exp
@@ -328,7 +328,7 @@ Date-time operations
 .. rubric:: Attributes
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../attribute/
    :template: attribute.rst
 
    ~cf.DimensionCoordinate.day
@@ -349,7 +349,7 @@ Logic functions
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.DimensionCoordinate.all
@@ -359,7 +359,7 @@ Logic functions
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.DimensionCoordinate.allclose
@@ -369,7 +369,7 @@ Logic functions
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.DimensionCoordinate.unique
@@ -396,7 +396,7 @@ Aliases
    
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst  
 
    ~cf.DimensionCoordinate.match
@@ -421,7 +421,7 @@ for augmented assignments, modify the construct's data in-place.
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.DimensionCoordinate.__lt__
@@ -435,7 +435,7 @@ for augmented assignments, modify the construct's data in-place.
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.DimensionCoordinate.__add__     
@@ -451,7 +451,7 @@ for augmented assignments, modify the construct's data in-place.
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.DimensionCoordinate.__radd__     
@@ -467,7 +467,7 @@ for augmented assignments, modify the construct's data in-place.
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.DimensionCoordinate.__iadd__ 
@@ -483,7 +483,7 @@ for augmented assignments, modify the construct's data in-place.
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.DimensionCoordinate.__neg__    
@@ -494,7 +494,7 @@ for augmented assignments, modify the construct's data in-place.
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.DimensionCoordinate.__and__     
@@ -507,7 +507,7 @@ for augmented assignments, modify the construct's data in-place.
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.DimensionCoordinate.__rand__     
@@ -520,7 +520,7 @@ for augmented assignments, modify the construct's data in-place.
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.DimensionCoordinate.__iand__     
@@ -533,7 +533,7 @@ for augmented assignments, modify the construct's data in-place.
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.DimensionCoordinate.__invert__ 

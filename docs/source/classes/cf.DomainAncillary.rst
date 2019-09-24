@@ -74,7 +74,7 @@ Selection
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.DomainAncillary.match_by_identity
@@ -104,7 +104,7 @@ Properties
 .. rubric:: Attributes
 	    
 .. autosummary::
-   :toctree: ../generated/
+   :toctree: ../attribute/
    :template: attribute.rst
 
    ~cf.DomainAncillary.add_offset
@@ -131,7 +131,7 @@ Units
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.DomainAncillary.override_units
@@ -141,7 +141,7 @@ Units
 	    
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../attribute/
    :template: attribute.rst
 
    ~cf.DomainAncillary.Units
@@ -185,7 +185,7 @@ Data
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.DomainAncillary.flip
@@ -198,7 +198,7 @@ Data
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../attribute/
    :template: attribute.rst
 
    ~cf.DomainAncillary.binary_mask
@@ -211,14 +211,14 @@ Data
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
 .. rubric:: *Changing data values*
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.DomainAncillary.__setitem__
@@ -230,7 +230,7 @@ Data
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 	      
 
@@ -266,7 +266,7 @@ Mathematical operations
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.DomainAncillary.cos
@@ -277,7 +277,7 @@ Mathematical operations
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.DomainAncillary.ceil  
@@ -291,7 +291,7 @@ Mathematical operations
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.DomainAncillary.max
@@ -308,7 +308,7 @@ Mathematical operations
 	    
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.DomainAncillary.exp
@@ -320,7 +320,7 @@ Date-time operations
 .. rubric:: Attributes
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../attribute/
    :template: attribute.rst
 
    ~cf.DomainAncillary.day
@@ -341,7 +341,7 @@ Logic functions
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.DomainAncillary.all
@@ -351,7 +351,7 @@ Logic functions
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.DomainAncillary.allclose
@@ -361,7 +361,7 @@ Logic functions
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.DomainAncillary.unique
@@ -388,7 +388,7 @@ Aliases
    
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst  
 
    ~cf.DomainAncillary.match
@@ -413,7 +413,7 @@ for augmented assignments, modify the construct's data in-place.
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.DomainAncillary.__lt__
@@ -427,7 +427,7 @@ for augmented assignments, modify the construct's data in-place.
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.DomainAncillary.__add__     
@@ -443,7 +443,7 @@ for augmented assignments, modify the construct's data in-place.
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.DomainAncillary.__radd__     
@@ -459,7 +459,7 @@ for augmented assignments, modify the construct's data in-place.
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.DomainAncillary.__iadd__ 
@@ -475,7 +475,7 @@ for augmented assignments, modify the construct's data in-place.
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.DomainAncillary.__neg__    
@@ -486,7 +486,7 @@ for augmented assignments, modify the construct's data in-place.
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.DomainAncillary.__and__     
@@ -499,7 +499,7 @@ for augmented assignments, modify the construct's data in-place.
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.DomainAncillary.__rand__     
@@ -512,7 +512,7 @@ for augmented assignments, modify the construct's data in-place.
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.DomainAncillary.__iand__     
@@ -525,7 +525,7 @@ for augmented assignments, modify the construct's data in-place.
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.DomainAncillary.__invert__ 

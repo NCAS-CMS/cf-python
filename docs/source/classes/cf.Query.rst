@@ -15,7 +15,7 @@ Attributes
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../attribute/
    :template: attribute.rst
    
    ~cf.Query.attr
@@ -28,7 +28,7 @@ Methods
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
    
    ~cf.Query.addattr

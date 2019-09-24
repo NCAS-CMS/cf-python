@@ -31,7 +31,7 @@ Selection
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.Count.match_by_identity
@@ -61,7 +61,7 @@ Properties
 .. rubric:: Attributes
 	    
 .. autosummary::
-   :toctree: ../generated/
+   :toctree: ../attribute/
    :template: attribute.rst
 
    ~cf.Count.add_offset
@@ -88,7 +88,7 @@ Units
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.Count.override_units
@@ -98,7 +98,7 @@ Units
 	    
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../attribute/
    :template: attribute.rst
 
    ~cf.Count.Units
@@ -142,7 +142,7 @@ Data
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.Count.flip
@@ -155,7 +155,7 @@ Data
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../attribute/
    :template: attribute.rst
 
    ~cf.Count.binary_mask
@@ -168,14 +168,14 @@ Data
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
 .. rubric:: *Changing data values*
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.Count.__setitem__
@@ -187,7 +187,7 @@ Data
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 	      
 
@@ -236,7 +236,7 @@ Mathematical operations
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.Count.cos
@@ -247,7 +247,7 @@ Mathematical operations
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.Count.ceil  
@@ -261,7 +261,7 @@ Mathematical operations
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.Count.max
@@ -278,7 +278,7 @@ Mathematical operations
 	    
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.Count.exp
@@ -290,7 +290,7 @@ Date-time operations
 .. rubric:: Attributes
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../attribute/
    :template: attribute.rst
 
    ~cf.Count.day
@@ -311,7 +311,7 @@ Logic functions
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.Count.all
@@ -321,7 +321,7 @@ Logic functions
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.Count.allclose
@@ -332,7 +332,7 @@ Logic functions
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.Count.unique
@@ -368,7 +368,7 @@ Aliases
    
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst  
 
    ~cf.Count.match
@@ -393,7 +393,7 @@ for augmented assignments, modify the construct's data in-place.
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.Count.__lt__
@@ -407,7 +407,7 @@ for augmented assignments, modify the construct's data in-place.
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.Count.__add__     
@@ -423,7 +423,7 @@ for augmented assignments, modify the construct's data in-place.
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.Count.__radd__     
@@ -439,7 +439,7 @@ for augmented assignments, modify the construct's data in-place.
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.Count.__iadd__ 
@@ -455,7 +455,7 @@ for augmented assignments, modify the construct's data in-place.
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.Count.__neg__    
@@ -466,7 +466,7 @@ for augmented assignments, modify the construct's data in-place.
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.Count.__and__     
@@ -479,7 +479,7 @@ for augmented assignments, modify the construct's data in-place.
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.Count.__rand__     
@@ -492,7 +492,7 @@ for augmented assignments, modify the construct's data in-place.
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.Count.__iand__     
@@ -505,7 +505,7 @@ for augmented assignments, modify the construct's data in-place.
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.Count.__invert__ 
