@@ -270,7 +270,8 @@ The built-in `repr` function returns a short, one-line description:
    :caption: *Inspect the contents of the two field constructs from
              the dataset and create a Python variable for each of
              them.*
-      
+
+   >>> x = cf.read('file.nc')
    >>> x
    [<CF Field: specific_humidity(latitude(5), longitude(8)) 1>,
     <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>]
@@ -604,7 +605,8 @@ retrieved with the `~Field.properties` method:
 
 .. code-block:: python
    :caption: *Retrieve all of the descriptive properties*
-	     
+
+   >>> q, t = cf.read('file.nc')
    >>> t.properties()
    {'Conventions': 'CF-1.7',
     'project': 'research',
@@ -685,6 +687,7 @@ method.
 A field construct's identity may be any one of the following
 
 * The value of the "standard_name" property, e.g. ``'air_temperature'``,
+* The value of the "id" attribute, preceeded by ``'id%='``,
 * The value of any property, preceded by the property name and an
   equals, e.g. ``'long_name=Air Temperature'``, ``'foo=bar'``, etc.,
 * The netCDF variable name, preceded by "ncvar%", e.g. ``'ncvar%tas'``
@@ -783,6 +786,7 @@ like their corresponding `dict` methods. It also has a
    :caption: *Retrieve the field construct's coordinate reference
              constructs, and access them using dictionary methods.*
       
+   >>> q, t = cf.read('file.nc')
    >>> t.coordinate_references
    <CF Constructs: coordinate_reference(2)>
    >>> print(t.coordinate_references)
@@ -876,6 +880,7 @@ is accessed with the `~Field.data` attribute of the field construct.
    :caption: *Retrieve the data and inspect it, showing the shape and
              some illustrative values.*
 		
+   >>> q, t = cf.read('file.nc')
    >>> t.data
    <CF Data(1, 10, 9): [[[262.8, ..., 269.7]]] K>
 
@@ -1098,6 +1103,7 @@ Method                     Description
              that metadata constructs which span the corresponding
              domain axis construct are not affected.*
 
+   >>> q, t = cf.read('file.nc')
    >>> t
    <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>
    >>> t2 = t.squeeze()
@@ -1177,6 +1183,7 @@ the only differences being:
             longitude of the original, and with a reversed latitude
             axis.*
 
+   >>> q, t = cf.read('file.nc')
    >>> print(q)
    Field: specific_humidity (ncvar%q)
    ----------------------------------
@@ -1285,6 +1292,7 @@ A single value may be assigned to any number of elements.
    :caption: *Set a single element to -1, a "column" of elements
              to -2 and a "square" of elements to -3.*
 	     
+   >>> q, t = cf.read('file.nc')
    >>> t[:, 0, 0] = -1
    >>> t[:, :, 1] = -2
    >>> t[..., 6:3:-1, 3:6] = -3
@@ -1411,14 +1419,13 @@ data to ensure that they are broadcastable.
              the original field, demonstrating that this is a null
              operation.*
 	     
-   >>> original = t.copy()
+   >>> q, t = cf.read('file.nc')
    >>> u = t.squeeze(0)
    >>> u.transpose(inplace=True)
    >>> u.flip(inplace=True)   
    >>> t[...] = u
    >>> original.allclose(t)
    True
-
 
 .. code-block:: python
    :caption: *Broadcasting is carried out after transforms to ensure
@@ -1450,7 +1457,6 @@ data to ensure that they are broadcastable.
      [271.2 271.2]
      [273.  273. ]
      [277.  277. ]]]
-
      
 If either of the field constructs does not have sufficient metadata to
 create the such a mapping, then any manipulation of the dimensions
@@ -1474,6 +1480,7 @@ instance, and changes in one are reflected in the other.
 .. code-block:: python
    :caption: *Inspection and changing of units.*
 	     
+   >>> q, t = cf.read('file.nc')
    >>> t.units
    'K'
    >>> t.Units
@@ -1580,7 +1587,8 @@ contains the selected metadata constructs.
 
 .. code-block:: python
    :caption: *Get constructs by their type*.
-	  
+
+   >>> q, t = cf.read('file.nc')
    >>> print(t.constructs.filter_by_type('dimension_coordinate'))
    Constructs:
    {'dimensioncoordinate0': <CF DimensionCoordinate: atmosphere_hybrid_height_coordinate(1) >,
@@ -1676,6 +1684,7 @@ latitude name'``.
 A construct's identity may be any one of the following
 
 * The value of the "standard_name" property, e.g. ``'air_temperature'``,
+* The value of the "id" attribute, preceeded by ``'id%='``,
 * The physical nature of the construct denoted by ``'X'``, ``'Y'``,
   ``'Z'`` or ``'T'``, denoting longitude (or x-projection), latitude
   (or y-projection), vertical and temporal constructs respectively,
@@ -4516,7 +4525,7 @@ attribute from the file.
     'project': None}
    >>> cf.write(f, 'f_file.nc')
 
-Netcdf global attributes defined with the *file_descriptors* keyword
+NetCDF global attributes defined with the *file_descriptors* keyword
 of the `cf.write` function will always be written as requested,
 independently of the netCDF data variable attributes, and superceding
 any global attributes that may have been defined with the
@@ -4527,8 +4536,8 @@ constructs.
    :caption: *Insist that the "history" property is written as netCDF
              a global attribute, with the "file_descriptors" keyword.*
 	     
-   >>> cf.write(f, file_descriptors={'history': 'created in 2019'})
-   >>> f_file = cf.read('f_file')[0]
+   >>> cf.write(f, 'f_file.nc', file_descriptors={'history': 'created in 2019'})
+   >>> f_file = cf.read('f_file.nc')[0]
    >>> f_file.nc_global_attributes()
    >>> f_file.properties()
    {'Conventions': 'CF-1.7',
@@ -4761,7 +4770,7 @@ variable had been present in the parent dataset:
    Dimension coords: latitude(10) = [0.0, ..., 9.0] degrees
                    : longitude(9) = [0.0, ..., 8.0] degrees
    Cell measures   : cell_area(longitude(9), latitude(10)) = [[100000.5, ..., 100089.5]] m2
-   >>> area = u.constructs('measure:area').value()
+   >>> area = g.construct('measure:area')
    >>> area
    <CellMeasure: cell_area(9, 10) m2>
    >>> area.nc_get_external()
@@ -5711,11 +5720,11 @@ will produce similar results to using using spherical regridding.
 .. code-block:: python
    :caption: *TODO*
 		   
-   >>> c = a.regridc({'T': time}, axes='T', method='conservative')
+   >>> c = a.regridc({'T': time}, axes='T', method='conservative')  # Raises Exception
    ValueError: Destination coordinates must have contiguous, non-overlapping bounds for conservative regridding.
-   >>> bounds = d.create_bounds()
-   >>> d.set_bounds(bounds)
-   >>> c = a.regridc({'T': d}, axes='T', method='conservative')
+   >>> bounds = time.create_bounds()
+   >>> time.set_bounds(bounds)
+   >>> c = a.regridc({'T': time}, axes='T', method='conservative')
    >>> print(c)
    Field: air_temperature (ncvar%tas)
    ----------------------------------
@@ -5730,7 +5739,7 @@ will produce similar results to using using spherical regridding.
 .. code-block:: python
    :caption: *TODO*
 		   
-   >>> # c = a.regridc(TODO (field arg), axes='T', method='conservative')
+   >>> # c = a.regridc(TODO1 (field arg), axes='T', method='conservative')
    >>> print(c)
    TODO
 
@@ -5831,11 +5840,12 @@ changing the construct's units.
 .. code-block:: python
    :caption: *Find the sine of each latitude coordinate value.*
 	     
+   >>> q, t = cf.read('file.nc')
    >>> lat = q.dimension_coordinate('latitude')
    >>> lat.data
    <CF Data(5): [-75.0, ..., 75.0] degrees_north>
-   >>> sin_lat = lat.sin()                                                                                 
-   >>> sin_lat.data                                                                                        
+   >>> sin_lat = lat.sin()
+   >>> sin_lat.data
    <CF Data(5): [-0.9659258262890683, ..., 0.9659258262890683] 1>
 
 Exponential and logarithmic functions
@@ -5859,7 +5869,7 @@ metadata but changing the construct's units where required.
    <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>
    >>> t.log(base=10)
    <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) lg(re 1 K)>
-   >>> t.exp()
+   >>> t.exp()                                                # Raises Exception
    ValueError: Can't take exponential of dimensional quantities: <Units: K>
 
 Rounding and truncation
@@ -5895,7 +5905,7 @@ filter. Convolution filters are carried with the
              the the 'X' axis is cyclic, the convolution wraps by
              default.*
 
-   >>> print(r)
+   >>> print(q)
    Field: specific_humidity (ncvar%q)
    ----------------------------------
    Data            : specific_humidity(latitude(5), longitude(8)) 1
@@ -5903,10 +5913,10 @@ filter. Convolution filters are carried with the
    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
                    : longitude(8) = [22.5, ..., 337.5] degrees_east
                    : time(1) = [2019-01-01 00:00:00]
-   >>> r.iscyclic('X')
+   >>> q.iscyclic('X')
    True
    >>> r = q.convolution_filter([0.1, 0.15, 0.5, 0.15, 0.1], axis='X')
-   >>> print(r)                                                                                          
+   >>> print(r)
    Field: specific_humidity (ncvar%q)
    ----------------------------------
    Data            : specific_humidity(latitude(5), longitude(8)) 1
@@ -5951,10 +5961,10 @@ functions for creating weights for filtering:
              filter window extends beyond the array.*
 
    >>> from scipy.signal import windows
-   >>> exponential_weights = windows.exponential(3)                                                      
+   >>> exponential_weights = windows.exponential(3)
    >>> print(exponential_weights)
    [0.36787944 1.         0.36787944]
-   >>> r = q.convolution_filter(exponential_weights, axis='Y')                                           
+   >>> r = q.convolution_filter(exponential_weights, axis='Y')
    >>> print(r.array)
    [[--      --      --      --      --      --      --      --     ]
     [0.06604 0.0967  0.09172 0.12086 0.08463 0.1245  0.0358  0.08072]
@@ -6065,10 +6075,10 @@ constructs in memory with the `cf.aggregate` function.
    :caption: *Demonstrate that the aggregation applied by `cf.read` is
              equivalent to that carried by `cf.aggregate`.*
 
-   >>> a = cf.read(TODO)
-   >>> b = cf.read(TODO, aggregate=False)
-   >>> c = cf.aggregate(b)
-   >>> a.equals(c)
+   >>> #a = cf.read(TODO1)
+   >>> #b = cf.read(TODO1, aggregate=False)
+   >>> #c = cf.aggregate(b)
+   >>> #a.equals(c)
    True
 
 The `cf.aggregate` function has optional parameters to

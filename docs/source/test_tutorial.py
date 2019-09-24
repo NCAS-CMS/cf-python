@@ -866,8 +866,8 @@ f.properties()
 f.nc_set_global_attribute('information', 'global information')
 f.nc_global_attributes()
 cf.write(f, 'f_file.nc')
-cf.write(f, file_descriptors={'history': 'created in 2019'})
-f_file = cf.read('f_file')[0]
+cf.write(f, 'f_file.nc', file_descriptors={'history': 'created in 2019'})
+f_file = cf.read('f_file.nc')[0]
 f_file.nc_global_attributes()
 f_file.properties()
 f_file.nc_global_attributes()
@@ -893,12 +893,12 @@ area.properties()
 area.has_data()
 g = cf.read('parent.nc', external='external.nc')[0]
 print(g)
-area = u.constructs('measure:area').value()
-area
+area = g.construct('measure:area')
+print(area)
 area.nc_get_external()
 area.nc_get_variable()
-area.properties()
-area.data
+print(area.properties())
+print(area.data)
 area.nc_set_external(True)
 cf.write(g, 'new_parent.nc')
 cf.write(g, 'new_parent.nc', external='new_external.nc')
@@ -989,10 +989,15 @@ time.set_data(cf.Data(numpy.arange(0.5, 60, 1),
                        units='days since 1860-01-01', calendar='360_day'))
 time
 c = a.regridc({'T': time}, axes='T', method='bilinear')
+try:
+     c = a.regridc({'T': time}, axes='T', method='conservative')
+except:
+     pass
+else:
+     raise Exception("This should fail!")
+bounds = time.create_bounds()
+time.set_bounds(bounds)
 c = a.regridc({'T': time}, axes='T', method='conservative')
-bounds = d.create_bounds()
-d.set_bounds(bounds)
-c = a.regridc({'T': d}, axes='T', method='conservative')
 print(c)
 # c = a.regridc(TODO (field arg), axes='T', method='conservative')
 print(c)
@@ -1020,9 +1025,14 @@ q.log()
 q.exp()
 t   
 t.log(base=10)
-t.exp()
-print(r)
-r.iscyclic('X')
+try:
+    t.exp()
+except:
+     pass
+else:
+     raise Exception("This should fail!")
+print(q)
+q.iscyclic('X')
 r = q.convolution_filter([0.1, 0.15, 0.5, 0.15, 0.1], axis='X')
 print(r)                                                                                          
 print(q.dimension_coordinate('X').bounds.array)
@@ -1041,10 +1051,10 @@ print(zeta.array.round(8))
 
 print("\n**Aggregation**\n")
 
-a = cf.read(TODO)
-b = cf.read(TODO, aggregate=False)
-c = cf.aggregate(b)
-a.equals(c)
+#a = cf.read(TODO)
+#b = cf.read(TODO, aggregate=False)
+#c = cf.aggregate(b)
+#a.equals(c)
 #WWW = cf.read(TODO, aggregate={'info': 1, 'overlap': False})
 #XXX = cf.aggregate(AAA TODO, info=1, overlap=False)
 #WWW.equals(XXX TODO)
