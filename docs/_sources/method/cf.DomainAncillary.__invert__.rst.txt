@@ -1,0 +1,7 @@
+cf.DomainAncillary.__invert__
+=============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DomainAncillary.__invert__

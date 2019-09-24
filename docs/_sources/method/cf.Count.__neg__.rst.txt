@@ -1,0 +1,7 @@
+cf.Count.__neg__
+================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Count.__neg__

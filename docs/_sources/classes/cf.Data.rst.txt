@@ -20,7 +20,7 @@ Data attributes
    ~cf.Data.binary_mask
    ~cf.Data.data
    ~cf.Data.day
-   ~cf.Data.dtarray
+   ~cf.Data.datetime_array
    ~cf.Data.dtype
    ~cf.Data.fill_value
    ~cf.Data.hardmask
@@ -47,48 +47,98 @@ Data methods
    :toctree: ../generated/
    :template: method.rst
 
+   ~cf.Data.add_partitions
    ~cf.Data.all
    ~cf.Data.allclose
-   ~cf.Data.argmax
-   ~cf.Data.max
-   ~cf.Data.min
    ~cf.Data.any
-   ~cf.Data.chunk
+   ~cf.Data.argmax
+   ~cf.Data.asdata
    ~cf.Data.ceil
+   ~cf.Data.change_calendar
+   ~cf.Data.chunk
    ~cf.Data.clip
    ~cf.Data.close
+   ~cf.Data.concatenate
+   ~cf.Data.concatenate_data
    ~cf.Data.copy
    ~cf.Data.cos
+   ~cf.Data.count
+   ~cf.Data.count_masked
+   ~cf.Data.cyclic
    ~cf.Data.datum
+   ~cf.Data.del_calendar
+   ~cf.Data.del_fill_value
+   ~cf.Data.del_units
    ~cf.Data.dump
    ~cf.Data.dumpd
+   ~cf.Data.dumps
+   ~cf.Data.empty
    ~cf.Data.equals
-   ~cf.Data.equivalent
+   ~cf.Data.exp
    ~cf.Data.expand_dims
    ~cf.Data.files
+   ~cf.Data.first_element
+   ~cf.Data.fits_in_memory
+   ~cf.Data.fits_in_one_chunk_in_memory
    ~cf.Data.flat
    ~cf.Data.flip
    ~cf.Data.floor
-   ~cf.Data.func 
-   ~cf.Data.HDF_chunks
+   ~cf.Data.full
+   ~cf.Data.func
+   ~cf.Data.get_calendar
+   ~cf.Data.get_compressed_axes
+   ~cf.Data.get_compressed_dimension
+   ~cf.Data.get_compression_type
+   ~cf.Data.get_count
+   ~cf.Data.get_data
+   ~cf.Data.get_fill_value
+   ~cf.Data.get_index
+   ~cf.Data.get_list
+   ~cf.Data.get_units
+   ~cf.Data.has_calendar
+   ~cf.Data.has_fill_value
+   ~cf.Data.has_units
+   ~cf.Data.insert_dimension
+   ~cf.Data.inspect
    ~cf.Data.isclose
+   ~cf.Data.last_element
    ~cf.Data.loadd
+   ~cf.Data.loads
+   ~cf.Data.log
+   ~cf.Data.mask_fpe
    ~cf.Data.mask_invalid
+   ~cf.Data.max
    ~cf.Data.mean
    ~cf.Data.mid_range
+   ~cf.Data.min
+   ~cf.Data.nc_clear_hdf5_chunksizes
+   ~cf.Data.nc_hdf5_chunksizes
+   ~cf.Data.nc_set_hdf5_chunksizes
    ~cf.Data.ndindex
+   ~cf.Data.ones
    ~cf.Data.outerproduct
    ~cf.Data.override_calendar
    ~cf.Data.override_units
    ~cf.Data.partition_boundaries
+   ~cf.Data.partition_configuration
    ~cf.Data.range
+   ~cf.Data.reconstruct_sectioned_data
    ~cf.Data.rint
    ~cf.Data.roll
-   ~cf.Data.save_to_disk
+   ~cf.Data.round
    ~cf.Data.sample_size
+   ~cf.Data.save_to_disk
    ~cf.Data.sd
+   ~cf.Data.second_element
+   ~cf.Data.section
+   ~cf.Data.set_calendar
+   ~cf.Data.set_fill_value
+   ~cf.Data.set_units
+   ~cf.Data.seterr
    ~cf.Data.sin
+   ~cf.Data.source
    ~cf.Data.squeeze
+   ~cf.Data.stats
    ~cf.Data.sum
    ~cf.Data.sum_of_weights
    ~cf.Data.sum_of_weights2
@@ -96,12 +146,14 @@ Data methods
    ~cf.Data.tan
    ~cf.Data.to_disk
    ~cf.Data.to_memory
+   ~cf.Data.tolist
    ~cf.Data.transpose
    ~cf.Data.trunc
+   ~cf.Data.uncompress
    ~cf.Data.unique
    ~cf.Data.var
    ~cf.Data.where
-
+   ~cf.Data.zeros
 
 Data static methods
 -------------------
@@ -119,14 +171,13 @@ Data arithmetic and comparison operations
 
 Arithmetic, bitwise and comparison operations are defined as
 element-wise data array operations which yield a new `cf.Data` object
-or, for augmented assignments, modify the data array in-place.
+or, for augmented assignments, modify the data in-place.
 
-
-**Comparison operators**
+.. rubric:: Comparison operators
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.Data.__lt__
@@ -136,20 +187,20 @@ or, for augmented assignments, modify the data array in-place.
    ~cf.Data.__gt__
    ~cf.Data.__ge__
 
-**Truth value of an array**
+.. rubric:: Truth value of an array
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
-   ~cf.Data.__nonzero__
+   ~cf.Data.__bool__
 
-**Binary arithmetic operators**
+.. rubric:: Binary arithmetic operators
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.Data.__add__     
@@ -161,11 +212,11 @@ or, for augmented assignments, modify the data array in-place.
    ~cf.Data.__pow__     
    ~cf.Data.__mod__     
 
-**Binary arithmetic operators with reflected (swapped) operands**
+.. rubric:: Binary arithmetic operators with reflected (swapped) operands
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.Data.__radd__     
@@ -177,11 +228,11 @@ or, for augmented assignments, modify the data array in-place.
    ~cf.Data.__rpow__
    ~cf.Data.__rmod__
 
-**Augmented arithmetic assignments**
+.. rubric:: Augmented arithmetic assignments
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.Data.__iadd__ 
@@ -193,22 +244,22 @@ or, for augmented assignments, modify the data array in-place.
    ~cf.Data.__ipow__ 
    ~cf.Data.__imod__ 
 
-**Unary arithmetic operators**
+.. rubric:: Unary arithmetic operators
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.Data.__neg__    
    ~cf.Data.__pos__    
    ~cf.Data.__abs__    
 
-**Binary bitwise operators**
+.. rubric:: Binary bitwise operators
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.Data.__and__     
@@ -217,11 +268,11 @@ or, for augmented assignments, modify the data array in-place.
    ~cf.Data.__lshift__
    ~cf.Data.__rshift__     
 
-**Binary bitwise operators with reflected (swapped) operands**
+..rubric:: Binary bitwise operators with reflected (swapped) operands
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.Data.__rand__     
@@ -230,11 +281,11 @@ or, for augmented assignments, modify the data array in-place.
    ~cf.Data.__rlshift__
    ~cf.Data.__rrshift__     
 
-**Augmented bitwise assignments**
+.. rubric:: Augmented bitwise assignments
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.Data.__iand__     
@@ -243,47 +294,34 @@ or, for augmented assignments, modify the data array in-place.
    ~cf.Data.__ilshift__
    ~cf.Data.__irshift__     
 
-**Unary bitwise operators**
+.. rubric:: Unary bitwise operators
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.Data.__invert__ 
  
-Data special methods
---------------------
-
-**Standard library functions**
+Special
+-------
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
-   ~cf.Data.__deepcopy__
-   ~cf.Data.__hash__
-
-**Container customization**
-
-.. autosummary::
-   :nosignatures:
-   :toctree: generated/
-   :template: method.rst
-
-   ~cf.Data.__len__
-   ~cf.Data.__getitem__ 
-   ~cf.Data.__iter__ 
-   ~cf.Data.__setitem__ 
+   ~cf.Data.__array__
    ~cf.Data.__contains__
-
-**String representations**
-
-.. autosummary::
-   :nosignatures:
-   :toctree: generated/
-   :template: method.rst
-
+   ~cf.Data.__data__     
+   ~cf.Data.__deepcopy__
+   ~cf.Data.__getitem__ 
+   ~cf.Data.__hash__
+   ~cf.Data.__iter__ 
+   ~cf.Data.__len__
+   ~cf.Data.__query_set__
+   ~cf.Data.__query_wi__
+   ~cf.Data.__query_wo__
    ~cf.Data.__repr__
+   ~cf.Data.__setitem__ 
    ~cf.Data.__str__

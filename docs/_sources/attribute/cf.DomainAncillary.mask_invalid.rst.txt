@@ -1,0 +1,7 @@
+cf.DomainAncillary.mask_invalid
+===============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.DomainAncillary.mask_invalid

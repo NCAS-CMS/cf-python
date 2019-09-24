@@ -99,7 +99,7 @@ construct’s data in-place.
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.Field.__lt__
@@ -113,7 +113,7 @@ construct’s data in-place.
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.Field.__add__     
@@ -123,7 +123,7 @@ construct’s data in-place.
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.Field.__radd__     
@@ -132,7 +132,7 @@ construct’s data in-place.
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.Field.__iadd__ 
@@ -142,7 +142,7 @@ construct’s data in-place.
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.DomainAxis.__int__    

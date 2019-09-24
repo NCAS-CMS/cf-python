@@ -1,0 +1,7 @@
+cf.Data.__query_wo__
+====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Data.__query_wo__

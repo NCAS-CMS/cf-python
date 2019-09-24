@@ -15,7 +15,7 @@ Attributes
 ----------
 
 .. autosummary::
-   :toctree: ../generated/
+   :toctree: ../attribute/
    :template: attribute.rst
 
    ~cf.TimeDuration.Units
@@ -28,7 +28,7 @@ Methods
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.TimeDuration.bounds

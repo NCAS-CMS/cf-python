@@ -1,0 +1,7 @@
+cf.Index.tan
+============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Index.tan

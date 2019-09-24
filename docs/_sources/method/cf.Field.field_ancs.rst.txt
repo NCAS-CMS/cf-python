@@ -1,0 +1,7 @@
+cf.Field.field_ancs
+===================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Field.field_ancs

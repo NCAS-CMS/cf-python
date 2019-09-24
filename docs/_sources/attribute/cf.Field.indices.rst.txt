@@ -1,0 +1,7 @@
+cf.Field.indices
+================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.Field.indices

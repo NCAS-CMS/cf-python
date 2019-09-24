@@ -1,0 +1,7 @@
+cf.FieldAncillary.__radd__
+==========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.FieldAncillary.__radd__

@@ -19,8 +19,8 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cf.Query.attr" href="../generated/cf.Query.attr.html" />
-    <link rel="prev" title="cf.Flags.sort" href="../generated/cf.Flags.sort.html" />
+    <link rel="next" title="cf.Query.attr" href="../attribute/cf.Query.attr.html" />
+    <link rel="prev" title="cf.Flags.sort" href="../method/cf.Flags.sort.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -50,8 +50,8 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
-      <li>Previous: <a href="../generated/cf.Flags.sort.html" title="previous chapter">cf.Flags.sort</a></li>
-      <li>Next: <a href="../generated/cf.Query.attr.html" title="next chapter">cf.Query.attr</a></li>
+      <li>Previous: <a href="../method/cf.Flags.sort.html" title="previous chapter">cf.Flags.sort</a></li>
+      <li>Next: <a href="../attribute/cf.Query.attr.html" title="next chapter">cf.Query.attr</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -94,7 +94,7 @@
 <p>Encapsulate a condition.</p>
 <p>A condition that may be applied to any object may be stored in a
 <a class="reference internal" href="#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object. A <a class="reference internal" href="#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object encapulates a condition, such as
-“strictly less than 3”. When applied to an object, via its <a class="reference internal" href="../generated/cf.Query.evaluate.html#cf.Query.evaluate" title="cf.Query.evaluate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">evaluate</span></code></a>
+“strictly less than 3”. When applied to an object, via its <a class="reference internal" href="../method/cf.Query.evaluate.html#cf.Query.evaluate" title="cf.Query.evaluate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">evaluate</span></code></a>
 method or the Python <code class="xref py py-obj docutils literal notranslate"><span class="pre">==</span></code> operator, the condition is evaulated in the
 context of that object.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Query</span><span class="p">(</span><span class="s1">&#39;lt&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
@@ -314,7 +314,7 @@ attributes, of the operand, rather than the operand
 itself. Nested attributes are specified by separating them
 with a <code class="docutils literal notranslate"><span class="pre">.</span></code>. For example, the “month” attribute of the
 “bounds” attribute is specified as <code class="docutils literal notranslate"><span class="pre">'bounds.month'</span></code>. See
-also the <a class="reference internal" href="../generated/cf.Query.addattr.html#cf.Query.addattr" title="cf.Query.addattr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">addattr</span></code></a> method.</p>
+also the <a class="reference internal" href="../method/cf.Query.addattr.html#cf.Query.addattr" title="cf.Query.addattr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">addattr</span></code></a> method.</p>
 </dd>
 <dt>exact: deprecated at version 3.0.0.</dt>
 <dd><p class="first last">Use <a class="reference external" href="https://docs.python.org/3/library/re.html#re.compile" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.compile</span></code></a> objects in <em>value</em> instead.</p>
@@ -357,25 +357,25 @@ also the <a class="reference internal" href="../generated/cf.Query.addattr.html#
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../generated/cf.Query.addattr.html#cf.Query.addattr" title="cf.Query.addattr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">addattr</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.Query.addattr.html#cf.Query.addattr" title="cf.Query.addattr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">addattr</span></code></a></td>
 <td>Return a <a class="reference internal" href="#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object with a new left hand side operand attribute to be used during evaluation.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../generated/cf.Query.copy.html#cf.Query.copy" title="cf.Query.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.Query.copy.html#cf.Query.copy" title="cf.Query.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></td>
 <td>Return a deep copy.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../generated/cf.Query.dump.html#cf.Query.dump" title="cf.Query.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.Query.dump.html#cf.Query.dump" title="cf.Query.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a></td>
 <td>Return a string containing a full description of the instance.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../generated/cf.Query.equals.html#cf.Query.equals" title="cf.Query.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.Query.equals.html#cf.Query.equals" title="cf.Query.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></td>
 <td>TODO</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../generated/cf.Query.equivalent.html#cf.Query.equivalent" title="cf.Query.equivalent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equivalent</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.Query.equivalent.html#cf.Query.equivalent" title="cf.Query.equivalent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equivalent</span></code></a></td>
 <td>Deprecated at version 3.0.0.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../generated/cf.Query.evaluate.html#cf.Query.evaluate" title="cf.Query.evaluate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">evaluate</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.Query.evaluate.html#cf.Query.evaluate" title="cf.Query.evaluate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">evaluate</span></code></a></td>
 <td>Evaluate the query operation for a given left hand side operand.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../generated/cf.Query.inspect.html#cf.Query.inspect" title="cf.Query.inspect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inspect</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.Query.inspect.html#cf.Query.inspect" title="cf.Query.inspect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inspect</span></code></a></td>
 <td>Inspect the object for debugging.</td>
 </tr>
 </tbody>

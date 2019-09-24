@@ -711,7 +711,7 @@ not limited to:</p>
 <p>A field list, contained in a <a class="reference internal" href="classes/cf.FieldList.html#cf.FieldList" title="cf.FieldList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.FieldList</span></code></a> instance, is an ordered
 sequence of field constructs. It supports all of the Python <a class="reference internal" href="generated/cf.list.html#cf.list" title="cf.list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>
 operations, such as indexing, iteration, and methods like
-<a class="reference internal" href="generated/cf.FieldList.append.html#cf.FieldList.append" title="cf.FieldList.append"><code class="xref py py-obj docutils literal notranslate"><span class="pre">append</span></code></a>.</p>
+<a class="reference internal" href="method/cf.FieldList.append.html#cf.FieldList.append" title="cf.FieldList.append"><code class="xref py py-obj docutils literal notranslate"><span class="pre">append</span></code></a>.</p>
 <div class="literal-block-wrapper docutils container" id="id102">
 <div class="code-block-caption"><span class="caption-text"><em>List-like operations on field list field list
 instances.</em></span><a class="headerlink" href="#id102" title="Permalink to this code">¶</a></div>
@@ -1149,7 +1149,7 @@ more examples.</p>
 <p>Data representing date-times may be defined as elapsed times since a
 reference date-time in a particular calendar (Gregorian, by
 default). The <a class="reference internal" href="generated/cf.Data.array.html#cf.Data.array" title="cf.Data.array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a> attribute of the <a class="reference internal" href="classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> instance
-returns the elapsed times, and the <code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime_array</span></code> returns
+returns the elapsed times, and the <a class="reference internal" href="generated/cf.Data.datetime_array.html#cf.Data.datetime_array" title="cf.Data.datetime_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime_array</span></code></a> returns
 the data as an array of date-time objects.</p>
 <div class="literal-block-wrapper docutils container" id="id115">
 <div class="code-block-caption"><span class="caption-text"><em>TODO</em></span><a class="headerlink" href="#id115" title="Permalink to this code">¶</a></div>
@@ -1253,21 +1253,21 @@ by using the following field construct methods:</p>
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td><a class="reference internal" href="generated/cf.Field.flip.html#cf.Field.flip" title="cf.Field.flip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flip</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="method/cf.Field.flip.html#cf.Field.flip" title="cf.Field.flip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flip</span></code></a></td>
 <td>Reverse the direction of a data dimension</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="generated/cf.Field.insert_dimension.html#cf.Field.insert_dimension" title="cf.Field.insert_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_dimension</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.insert_dimension.html#cf.Field.insert_dimension" title="cf.Field.insert_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_dimension</span></code></a></td>
 <td>Insert a new size one data dimension. The
 new dimension must correspond to an
 existing size one domain axis construct.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="generated/cf.Field.squeeze.html#cf.Field.squeeze" title="cf.Field.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="method/cf.Field.squeeze.html#cf.Field.squeeze" title="cf.Field.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></td>
 <td>Remove size one data dimensions</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="generated/cf.Field.transpose.html#cf.Field.transpose" title="cf.Field.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.transpose.html#cf.Field.transpose" title="cf.Field.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></td>
 <td>Reorder data dimensions</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="generated/cf.Field.unsqueeze.html#cf.Field.unsqueeze" title="cf.Field.unsqueeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unsqueeze</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="method/cf.Field.unsqueeze.html#cf.Field.unsqueeze" title="cf.Field.unsqueeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unsqueeze</span></code></a></td>
 <td>Insert all missing size one data dimensions</td>
 </tr>
 </tbody>
@@ -2665,17 +2665,17 @@ geographically adjacent. For example, a longitude cell spanning 359 to
 360 degrees east is adjacent to the cell spanning 0 to 1 degrees east.</p>
 <p>When a dimension coordinate construct is set on a field construct, the
 cyclicity of its dimension is automatically determined, using the
-<a class="reference internal" href="generated/cf.Field.autocyclic.html#cf.Field.autocyclic" title="cf.Field.autocyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">autocyclic</span></code></a> method of the field construct, provided the field
+<a class="reference internal" href="method/cf.Field.autocyclic.html#cf.Field.autocyclic" title="cf.Field.autocyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">autocyclic</span></code></a> method of the field construct, provided the field
 construct has sufficient coordinate metadata for it to be inferred.</p>
-<p>To find out whether a dimension is cyclic use the <a class="reference internal" href="generated/cf.Field.iscyclic.html#cf.Field.iscyclic" title="cf.Field.iscyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iscyclic</span></code></a>
+<p>To find out whether a dimension is cyclic use the <a class="reference internal" href="method/cf.Field.iscyclic.html#cf.Field.iscyclic" title="cf.Field.iscyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iscyclic</span></code></a>
 method of the field construct, or to manually set its cyclicity use
-the <a class="reference internal" href="generated/cf.Field.cyclic.html#cf.Field.cyclic" title="cf.Field.cyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cyclic</span></code></a> method.</p>
+the <a class="reference internal" href="method/cf.Field.cyclic.html#cf.Field.cyclic" title="cf.Field.cyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cyclic</span></code></a> method.</p>
 <p>Cyclicity is used by subspacing and mathematical operations to “wrap”
 cyclic dimensions to give appropriate results.</p>
 <div class="section" id="rolling-a-cyclic-axis">
 <h3><a class="toc-backref" href="#id343">Rolling a cyclic axis</a><a class="headerlink" href="#rolling-a-cyclic-axis" title="Permalink to this headline">¶</a></h3>
 <p>The field construct may be “rolled” along a cyclic axis with the
-<a class="reference internal" href="generated/cf.Field.roll.html#cf.Field.roll" title="cf.Field.roll"><code class="xref py py-obj docutils literal notranslate"><span class="pre">roll</span></code></a> method of the field construct. This means that the
+<a class="reference internal" href="method/cf.Field.roll.html#cf.Field.roll" title="cf.Field.roll"><code class="xref py py-obj docutils literal notranslate"><span class="pre">roll</span></code></a> method of the field construct. This means that the
 data along that axis so that a given number of elements from one edge
 of the dimension are removed and re-introduced at the other edge. All
 metadata constructs whose data spans the cyclic axis are also rolled.</p>
@@ -2709,7 +2709,7 @@ has been preserved.</em></span><a class="headerlink" href="#id181" title="Permal
 <p>The field construct may be rolled by specifying a dimension coordinate
 value that should be contained in the first element of the data for
 the corresponding axis, by specifying the coordinate value via the
-<a class="reference internal" href="generated/cf.Field.anchor.html#cf.Field.anchor" title="cf.Field.anchor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">anchor</span></code></a> method if the field construct.</p>
+<a class="reference internal" href="method/cf.Field.anchor.html#cf.Field.anchor" title="cf.Field.anchor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">anchor</span></code></a> method if the field construct.</p>
 <div class="literal-block-wrapper docutils container" id="id182">
 <div class="code-block-caption"><span class="caption-text"><em>Roll the data along the ‘X’ axis so that the first
 element of the axis contains 200 degrees east, and
@@ -2747,12 +2747,12 @@ subspaces any metadata constructs of the field construct
 (e.g. coordinate metadata constructs) which span any of the domain
 axis constructs that are affected. The new field construct is created
 with the same properties as the original field construct.</p>
-<p>Subspacing by metadata uses the <a class="reference internal" href="generated/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a> method of the field
+<p>Subspacing by metadata uses the <a class="reference internal" href="method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a> method of the field
 construct to select metadata constructs and specify conditions on
 their data. Indices for subspacing are then automatically inferred
 from where the conditions are met.</p>
 <p>Metadata constructs and the conditions on their data are defined by
-keyword parameters to the <a class="reference internal" href="generated/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a> method. A keyword name is
+keyword parameters to the <a class="reference internal" href="method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a> method. A keyword name is
 <a class="reference internal" href="#metadata-construct-properties"><span class="std std-ref">an identity</span></a> of a metadata
 construct, and the keyword value provides a condition for inferring
 indices that apply to the dimension (or dimensions) spanned by the
@@ -2788,7 +2788,7 @@ remaining unchanged.</em></span><a class="headerlink" href="#id183" title="Perma
 <p>Any domain axes that have not been identified remain
 unchanged.</p>
 <p>Multiple domain axes may be subspaced simultaneously, and it doesn’t
-matter which order they are specified in the <a class="reference internal" href="generated/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a> call.</p>
+matter which order they are specified in the <a class="reference internal" href="method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a> call.</p>
 <div class="literal-block-wrapper docutils container" id="id184">
 <div class="code-block-caption"><span class="caption-text"><em>Create a new field construct whose domain spans only
 112.5 degrees east and has latitude greater than -60
@@ -2939,7 +2939,7 @@ contains a single cell for 2019-01-01. TODO</em></span><a class="headerlink" hre
 </div>
 <div class="section" id="subspace-mode">
 <span id="id46"></span><h3><a class="toc-backref" href="#id347">Subspace mode</a><a class="headerlink" href="#subspace-mode" title="Permalink to this headline">¶</a></h3>
-<p>The <a class="reference internal" href="generated/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a> has three modes of operation, each of which
+<p>The <a class="reference internal" href="method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a> has three modes of operation, each of which
 provides a different type of subspace:</p>
 <ul>
 <li><p class="first"><strong>compress mode</strong>. This is the default mode. Unselected indices are
@@ -3029,7 +3029,7 @@ locations.</p>
 </div>
 </li>
 </ul>
-<p>The <a class="reference internal" href="generated/cf.Field.where.html#cf.Field.where" title="cf.Field.where"><code class="xref py py-obj docutils literal notranslate"><span class="pre">where</span></code></a> method of the field construct also allows values
+<p>The <a class="reference internal" href="method/cf.Field.where.html#cf.Field.where" title="cf.Field.where"><code class="xref py py-obj docutils literal notranslate"><span class="pre">where</span></code></a> method of the field construct also allows values
 (including missing data) to be assigned to the data based on criteria
 applying to the field construct’s data, its metadata constructs; or
 inserted from another field construct. See
@@ -3103,25 +3103,25 @@ field constructs that meet various criteria:</p>
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td><a class="reference internal" href="generated/cf.FieldList.filter_by_identity.html#cf.FieldList.filter_by_identity" title="cf.FieldList.filter_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_identity</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="method/cf.FieldList.filter_by_identity.html#cf.FieldList.filter_by_identity" title="cf.FieldList.filter_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_identity</span></code></a></td>
 <td>Field construct identity</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="generated/cf.FieldList.filter_by_property.html#cf.FieldList.filter_by_property" title="cf.FieldList.filter_by_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_property</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="method/cf.FieldList.filter_by_property.html#cf.FieldList.filter_by_property" title="cf.FieldList.filter_by_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_property</span></code></a></td>
 <td>Property values</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="generated/cf.FieldList.filter_by_units.html#cf.FieldList.filter_by_units" title="cf.FieldList.filter_by_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_units</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="method/cf.FieldList.filter_by_units.html#cf.FieldList.filter_by_units" title="cf.FieldList.filter_by_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_units</span></code></a></td>
 <td>Units values.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="generated/cf.FieldList.filter_by_rank.html#cf.FieldList.filter_by_rank" title="cf.FieldList.filter_by_rank"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_rank</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="method/cf.FieldList.filter_by_rank.html#cf.FieldList.filter_by_rank" title="cf.FieldList.filter_by_rank"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_rank</span></code></a></td>
 <td>The total number of domain axis constructs in the domain</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="generated/cf.FieldList.filter_by_naxes.html#cf.FieldList.filter_by_naxes" title="cf.FieldList.filter_by_naxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_naxes</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="method/cf.FieldList.filter_by_naxes.html#cf.FieldList.filter_by_naxes" title="cf.FieldList.filter_by_naxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_naxes</span></code></a></td>
 <td>The number of domain axis constructs spanned by the data</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="generated/cf.FieldList.filter_by_construct.html#cf.FieldList.filter_by_construct" title="cf.FieldList.filter_by_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_construct</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="method/cf.FieldList.filter_by_construct.html#cf.FieldList.filter_by_construct" title="cf.FieldList.filter_by_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_construct</span></code></a></td>
 <td>Existence and values of metadata constructs</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="generated/cf.FieldList.filter_by_ncvar.html#cf.FieldList.filter_by_ncvar" title="cf.FieldList.filter_by_ncvar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_ncvar</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="method/cf.FieldList.filter_by_ncvar.html#cf.FieldList.filter_by_ncvar" title="cf.FieldList.filter_by_ncvar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_ncvar</span></code></a></td>
 <td>NetCDF variable name (see the <a class="reference internal" href="#netcdf-interface"><span class="std std-ref">netCDF interface</span></a>)</td>
 </tr>
 </tbody>
@@ -3200,28 +3200,28 @@ various criteria:</p>
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td><a class="reference internal" href="generated/cf.Field.match_by_identity.html#cf.Field.match_by_identity" title="cf.Field.match_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_identity</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="method/cf.Field.match_by_identity.html#cf.Field.match_by_identity" title="cf.Field.match_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_identity</span></code></a></td>
 <td>Field construct identity</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="generated/cf.Field.match.html#cf.Field.match" title="cf.Field.match"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.match.html#cf.Field.match" title="cf.Field.match"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match</span></code></a></td>
 <td>Field construct identity</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="generated/cf.Field.match_by_property.html#cf.Field.match_by_property" title="cf.Field.match_by_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_property</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="method/cf.Field.match_by_property.html#cf.Field.match_by_property" title="cf.Field.match_by_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_property</span></code></a></td>
 <td>Property values</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="generated/cf.Field.match_by_units.html#cf.Field.match_by_units" title="cf.Field.match_by_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_units</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.match_by_units.html#cf.Field.match_by_units" title="cf.Field.match_by_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_units</span></code></a></td>
 <td>Units values.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="generated/cf.Field.match_by_rank.html#cf.Field.match_by_rank" title="cf.Field.match_by_rank"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_rank</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="method/cf.Field.match_by_rank.html#cf.Field.match_by_rank" title="cf.Field.match_by_rank"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_rank</span></code></a></td>
 <td>The total number of domain axis constructs in the domain</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="generated/cf.Field.match_by_naxes.html#cf.Field.match_by_naxes" title="cf.Field.match_by_naxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_naxes</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.match_by_naxes.html#cf.Field.match_by_naxes" title="cf.Field.match_by_naxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_naxes</span></code></a></td>
 <td>The number of domain axis constructs spanned by the data</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="generated/cf.Field.match_by_construct.html#cf.Field.match_by_construct" title="cf.Field.match_by_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_construct</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="method/cf.Field.match_by_construct.html#cf.Field.match_by_construct" title="cf.Field.match_by_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_construct</span></code></a></td>
 <td>Existence and values of metadata constructs</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="generated/cf.Field.match_by_ncvar.html#cf.Field.match_by_ncvar" title="cf.Field.match_by_ncvar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_ncvar</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.match_by_ncvar.html#cf.Field.match_by_ncvar" title="cf.Field.match_by_ncvar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_ncvar</span></code></a></td>
 <td>NetCDF variable name (see the <a class="reference internal" href="#netcdf-interface"><span class="std std-ref">netCDF interface</span></a>)</td>
 </tr>
 </tbody>
@@ -3261,8 +3261,8 @@ the given criteria, or else <a class="reference external" href="https://docs.pyt
 </div>
 </div>
 <p>As a convenience, matching a field construct by identity is also
-possible with the <a class="reference internal" href="generated/cf.Field.match.html#cf.Field.match" title="cf.Field.match"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match</span></code></a> method, which is as alias for
-<a class="reference internal" href="generated/cf.Field.match_by_identity.html#cf.Field.match_by_identity" title="cf.Field.match_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_identity</span></code></a>.</p>
+possible with the <a class="reference internal" href="method/cf.Field.match.html#cf.Field.match" title="cf.Field.match"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match</span></code></a> method, which is as alias for
+<a class="reference internal" href="method/cf.Field.match_by_identity.html#cf.Field.match_by_identity" title="cf.Field.match_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_identity</span></code></a>.</p>
 <div class="literal-block-wrapper docutils container" id="id197">
 <div class="code-block-caption"><span class="caption-text"><em>Match a field construct to its identity</em>.</span><a class="headerlink" href="#id197" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s1">&#39;specific_humidity&#39;</span><span class="p">)</span>
@@ -3280,7 +3280,7 @@ possible with the <a class="reference internal" href="generated/cf.Field.match.h
 <p>A condition that may be applied to any construct (or, indeed, any
 object) may be stored in a <a class="reference internal" href="classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Query</span></code></a> object. A <a class="reference internal" href="classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Query</span></code></a> object
 encapsulates a condition, such as “strictly less than 3”. When applied
-to an object, via the <a class="reference internal" href="classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Query</span></code></a> instance’s <a class="reference internal" href="generated/cf.Query.evaluate.html#cf.Query.evaluate" title="cf.Query.evaluate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">evaluate</span></code></a> method
+to an object, via the <a class="reference internal" href="classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Query</span></code></a> instance’s <a class="reference internal" href="method/cf.Query.evaluate.html#cf.Query.evaluate" title="cf.Query.evaluate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">evaluate</span></code></a> method
 or the Python equality (<code class="xref py py-obj docutils literal notranslate"><span class="pre">==</span></code>) operator, the condition is evaluated in
 the context of that object.</p>
 <div class="literal-block-wrapper docutils container" id="id198">
@@ -3567,7 +3567,7 @@ constructors.</em></span><a class="headerlink" href="#id201" title="Permalink to
 indices of the data (see <a class="reference internal" href="#assignment-by-index"><span class="std std-ref">Assignment by index</span></a>) or by conditions
 based on the data values of the field construct or its metadata
 constructs (as described in this section).</p>
-<p>Assignment by condition uses the <a class="reference internal" href="generated/cf.Field.where.html#cf.Field.where" title="cf.Field.where"><code class="xref py py-obj docutils literal notranslate"><span class="pre">where</span></code></a> method of the field
+<p>Assignment by condition uses the <a class="reference internal" href="method/cf.Field.where.html#cf.Field.where" title="cf.Field.where"><code class="xref py py-obj docutils literal notranslate"><span class="pre">where</span></code></a> method of the field
 construct. This method automatically infers indices for assignment
 from conditions on the field construct’s data, or its metadata. In
 addition, different values can be assigned to where the conditions
@@ -3638,7 +3638,7 @@ elements of ‘t’ by -1, and at all other points set ‘t’ to
 </pre></div>
 </div>
 </div>
-<p>The <a class="reference internal" href="generated/cf.Field.where.html#cf.Field.where" title="cf.Field.where"><code class="xref py py-obj docutils literal notranslate"><span class="pre">where</span></code></a> method also allows the condition to be applied to a
+<p>The <a class="reference internal" href="method/cf.Field.where.html#cf.Field.where" title="cf.Field.where"><code class="xref py py-obj docutils literal notranslate"><span class="pre">where</span></code></a> method also allows the condition to be applied to a
 metadata construct’s data:</p>
 <div class="literal-block-wrapper docutils container" id="id205">
 <div class="code-block-caption"><span class="caption-text"><em>Where the ‘Y’ coordinates are greater than 0.5, set the
@@ -3658,10 +3658,10 @@ field construct data to missing data.</em></span><a class="headerlink" href="#id
 </div>
 </div>
 <p>The <a class="reference internal" href="#masked-values"><span class="std std-ref">hardness of the mask</span></a> is respected by the
-<a class="reference internal" href="generated/cf.Field.where.html#cf.Field.where" title="cf.Field.where"><code class="xref py py-obj docutils literal notranslate"><span class="pre">where</span></code></a> method, so missing data in the field construct can only
+<a class="reference internal" href="method/cf.Field.where.html#cf.Field.where" title="cf.Field.where"><code class="xref py py-obj docutils literal notranslate"><span class="pre">where</span></code></a> method, so missing data in the field construct can only
 be unmasked if the mask has first been made soft.</p>
 <p>There are many variants on how the condition and assignment values may
-be specified. See the <a class="reference internal" href="generated/cf.Field.where.html#cf.Field.where" title="cf.Field.where"><code class="xref py py-obj docutils literal notranslate"><span class="pre">where</span></code></a> method documentation for details.</p>
+be specified. See the <a class="reference internal" href="method/cf.Field.where.html#cf.Field.where" title="cf.Field.where"><code class="xref py py-obj docutils literal notranslate"><span class="pre">where</span></code></a> method documentation for details.</p>
 <hr class="docutils" />
 </div>
 <div class="section" id="field-creation">
@@ -4327,7 +4327,7 @@ constructs contain very large data arrays, and the copy operation is
 fast.</p>
 <div class="section" id="field-list-copying">
 <span id="id59"></span><h3><a class="toc-backref" href="#id362">Field list copying</a><a class="headerlink" href="#field-list-copying" title="Permalink to this headline">¶</a></h3>
-<p>A <a class="reference internal" href="#field-lists"><span class="std std-ref">field list</span></a> also has a <a class="reference internal" href="generated/cf.FieldList.copy.html#cf.FieldList.copy" title="cf.FieldList.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a> method
+<p>A <a class="reference internal" href="#field-lists"><span class="std std-ref">field list</span></a> also has a <a class="reference internal" href="method/cf.FieldList.copy.html#cf.FieldList.copy" title="cf.FieldList.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a> method
 that creates a new field list containing copies all of the field
 construct elements.</p>
 <hr class="docutils" />
@@ -4421,7 +4421,7 @@ behaves in a similar manner.</em></span><a class="headerlink" href="#id226" titl
 </div>
 <div class="section" id="field-list-equality">
 <span id="id61"></span><h3><a class="toc-backref" href="#id364">Field list equality</a><a class="headerlink" href="#field-list-equality" title="Permalink to this headline">¶</a></h3>
-<p>A <a class="reference internal" href="#field-lists"><span class="std std-ref">field list</span></a> also has an <a class="reference internal" href="generated/cf.FieldList.equals.html#cf.FieldList.equals" title="cf.FieldList.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a>
+<p>A <a class="reference internal" href="#field-lists"><span class="std std-ref">field list</span></a> also has an <a class="reference internal" href="method/cf.FieldList.equals.html#cf.FieldList.equals" title="cf.FieldList.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a>
 method that compares two field lists. It returns <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if and only if
 field constructs at the same index are equal. This method also has an
 <em>unordered</em> parameter that, when <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>, treats the two field lists as
@@ -4852,7 +4852,7 @@ variable.</p>
 <p>To change this so that the “time” dimension coordinate construct is
 written as a CF-netCDF size one coordinate variable, the field
 construct’s data must be expanded to span the corresponding size one
-domain axis construct, by using the <a class="reference internal" href="generated/cf.Field.insert_dimension.html#cf.Field.insert_dimension" title="cf.Field.insert_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_dimension</span></code></a> method
+domain axis construct, by using the <a class="reference internal" href="method/cf.Field.insert_dimension.html#cf.Field.insert_dimension" title="cf.Field.insert_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_dimension</span></code></a> method
 of the field construct.</p>
 <div class="literal-block-wrapper docutils container" id="id238">
 <div class="code-block-caption"><span class="caption-text"><em>Write the “time” dimension coordinate construct to a
@@ -5108,7 +5108,7 @@ option is omitted.</p>
 <p>Collapsing one or more dimensions reduces their size and replaces the
 data along those axes with representative statistical values. The
 result is a new field construct with consistent metadata for the
-collapsed values. Collapses are carried with the <a class="reference internal" href="generated/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collapse</span></code></a>
+collapsed values. Collapses are carried with the <a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collapse</span></code></a>
 method of the field construct.</p>
 <p>By default all axes with size greater than 1 are collapsed completely
 (i.e. to size 1) with a given <a class="reference internal" href="#collapse-methods"><span class="std std-ref">collapse method</span></a>.</p>
@@ -5337,7 +5337,7 @@ the axes to be weighted must be identified with the <em>weights</em> keyword.</p
 <p>Weights are either derived from the field construct’s metadata (such
 as cell sizes), or may be provided explicitly in the form of other
 field constructs containing data of weights values. In either case, the
-weights actually used are those derived by the <a class="reference internal" href="generated/cf.Field.weights.html#cf.Field.weights" title="cf.Field.weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">weights</span></code></a> method
+weights actually used are those derived by the <a class="reference internal" href="method/cf.Field.weights.html#cf.Field.weights" title="cf.Field.weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">weights</span></code></a> method
 of the field construct with the same <em>weights</em> keyword
 value. Collapsed axes that are not identified by the <em>weights</em> keyword
 are un-weighted during the collapse operation.</p>
@@ -5362,7 +5362,7 @@ are un-weighted during the collapse operation.</p>
 </pre></div>
 </div>
 </div>
-<p>To inspect the weights, call the  <a class="reference internal" href="generated/cf.Field.weights.html#cf.Field.weights" title="cf.Field.weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">weights</span></code></a> method directly.</p>
+<p>To inspect the weights, call the  <a class="reference internal" href="method/cf.Field.weights.html#cf.Field.weights" title="cf.Field.weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">weights</span></code></a> method directly.</p>
 <div class="literal-block-wrapper docutils container" id="id253">
 <div class="code-block-caption"><span class="caption-text"><em>TODO</em></span><a class="headerlink" href="#id253" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">w</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">weights</span><span class="p">(</span><span class="n">weights</span><span class="o">=</span><span class="s1">&#39;T&#39;</span><span class="p">)</span>
@@ -5417,12 +5417,12 @@ weights only applied to the latitude axis.</em></span><a class="headerlink" href
 </pre></div>
 </div>
 </div>
-<p>See the <a class="reference internal" href="generated/cf.Field.weights.html#cf.Field.weights" title="cf.Field.weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">weights</span></code></a> method for full details on how weights may be specified.</p>
+<p>See the <a class="reference internal" href="method/cf.Field.weights.html#cf.Field.weights" title="cf.Field.weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">weights</span></code></a> method for full details on how weights may be specified.</p>
 </div>
 <div class="section" id="multiple-collapses">
 <span id="id72"></span><h3><a class="toc-backref" href="#id376">Multiple collapses</a><a class="headerlink" href="#multiple-collapses" title="Permalink to this headline">¶</a></h3>
 <p>Multiple collapses normally require multiple calls to
-<a class="reference internal" href="generated/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collapse</span></code></a>: one on the original field construct and then one on
+<a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collapse</span></code></a>: one on the original field construct and then one on
 each interim field construct.</p>
 <div class="literal-block-wrapper docutils container" id="id256">
 <div class="code-block-caption"><span class="caption-text"><em>Calculate the temporal maximum of the weighted areal
@@ -5443,7 +5443,7 @@ means using two independent calls.</em></span><a class="headerlink" href="#id256
 </div>
 </div>
 <p>If preferred, multiple collapses may be carried out in a single call
-to <a class="reference internal" href="generated/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collapse</span></code></a> by using the <a class="reference external" href="http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#cell-methods">CF-netCDF cell methods</a>-like
+to <a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collapse</span></code></a> by using the <a class="reference external" href="http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#cell-methods">CF-netCDF cell methods</a>-like
 syntax (note that the colon (<code class="docutils literal notranslate"><span class="pre">:</span></code>) is only used after the construct
 identity that specifies each axis, and a space delimits the separate
 collapses).</p>
@@ -5465,7 +5465,7 @@ completely to size 1. Instead the collapse axis is partitioned into
 groups and each group is collapsed to size 1. The resulting axis will
 generally have more than one element. For example, creating 12 annual
 means from a timeseries of 120 months would be a grouped collapse.</p>
-<p>The <em>group</em> keyword of <a class="reference internal" href="generated/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collapse</span></code></a> defines the size of the
+<p>The <em>group</em> keyword of <a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collapse</span></code></a> defines the size of the
 groups. Groups can be defined in a variety of ways, including with
 <a class="reference internal" href="classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Query</span></code></a>, <a class="reference internal" href="classes/cf.TimeDuration.html#cf.TimeDuration" title="cf.TimeDuration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.TimeDuration</span></code></a> (see the <a class="reference internal" href="#time-duration"><span class="std std-ref">Time duration</span></a> section)
 and <a class="reference internal" href="classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> instances.</p>
@@ -5563,7 +5563,7 @@ hemispheres.</em></span><a class="headerlink" href="#id262" title="Permalink to 
 <p>Groups can be further described with the <em>group_span</em> (to ignore
 groups whose actual span is less than a given value) and
 <em>group_contiguous</em> (to ignore non-contiguous groups, or any contiguous
-group containing overlapping cells) keywords of <a class="reference internal" href="generated/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collapse</span></code></a>.</p>
+group containing overlapping cells) keywords of <a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collapse</span></code></a>.</p>
 </div>
 <div class="section" id="climatological-statistics">
 <span id="id74"></span><h3><a class="toc-backref" href="#id378">Climatological statistics</a><a class="headerlink" href="#climatological-statistics" title="Permalink to this headline">¶</a></h3>
@@ -5605,7 +5605,7 @@ following qualifiers,</p>
 </tr>
 </tbody>
 </table>
-<p>and the associated keyword to <a class="reference internal" href="generated/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collapse</span></code></a> specifies how the
+<p>and the associated keyword to <a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collapse</span></code></a> specifies how the
 method is to be applied.</p>
 <div class="literal-block-wrapper docutils container" id="id263">
 <div class="code-block-caption"><span class="caption-text"><em>Calculate the multiannual average of the seasonal means.</em></span><a class="headerlink" href="#id263" title="Permalink to this code">¶</a></div>
@@ -5655,7 +5655,7 @@ changed from ‘K’ to ‘K2’.</em></span><a class="headerlink" href="#id264"
 portion of the annual cycle is collapsed over all years that are
 present. This is the case in the above two examples. It is possible,
 however, to restrict the years to be included, or group them into
-chunks, with the <em>over_years</em> keyword to <a class="reference internal" href="generated/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collapse</span></code></a>.</p>
+chunks, with the <em>over_years</em> keyword to <a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collapse</span></code></a>.</p>
 <div class="literal-block-wrapper docutils container" id="id265">
 <div class="code-block-caption"><span class="caption-text"><em>Calculate the multiannual average of the seasonal means
 in 5 year chunks.</em></span><a class="headerlink" href="#id265" title="Permalink to this code">¶</a></div>
@@ -5708,7 +5708,7 @@ restricting the years from 1963 to 1968.</em></span><a class="headerlink" href="
 each portion of the diurnal cycle is collapsed over all days that are
 present, But it is possible to restrict the days to be included, or
 group them into chunks, with the <em>over_days</em> keyword to
-<a class="reference internal" href="generated/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collapse</span></code></a>.</p>
+<a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collapse</span></code></a>.</p>
 <p>The calculation can be done with multiple collapse calls, which can be
 useful if the interim stages are needed independently, but be aware
 that the interim field constructs will have non-CF-compliant cell
@@ -5748,9 +5748,9 @@ standard deviations with two separate collapse calls.</em></span><a class="heade
 <p>Regridding, also called remapping or interpolation, is the process of
 changing the domain of a field construct whilst preserving the
 qualities of the original data.</p>
-<p>The field construct has two regridding methods: <a class="reference internal" href="generated/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regrids</span></code></a> for
+<p>The field construct has two regridding methods: <a class="reference internal" href="method/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regrids</span></code></a> for
 regridding data between domains with spherical coordinate systems; and
-<a class="reference internal" href="generated/cf.Field.regridc.html#cf.Field.regridc" title="cf.Field.regridc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regridc</span></code></a> for regridding data between domains with Cartesian
+<a class="reference internal" href="method/cf.Field.regridc.html#cf.Field.regridc" title="cf.Field.regridc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regridc</span></code></a> for regridding data between domains with Cartesian
 coordinate systems. The interpolation is carried by out using the
 <a class="reference external" href="https://www.earthsystemcog.org/projects/esmpy">ESMF</a> package, a
 Python interface to the Earth System Modeling Framework regridding
@@ -5826,12 +5826,12 @@ destination point.</td>
 <div class="section" id="spherical-regridding">
 <span id="id76"></span><h3><a class="toc-backref" href="#id380">Spherical regridding</a><a class="headerlink" href="#spherical-regridding" title="Permalink to this headline">¶</a></h3>
 <p>Regridding from and to spherical coordinate systems using the
-<a class="reference internal" href="generated/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regrids</span></code></a> method is only available for the ‘X’ and ‘Y’ axes
+<a class="reference internal" href="method/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regrids</span></code></a> method is only available for the ‘X’ and ‘Y’ axes
 simultaneously. All other axes are unchanged. The calculation of the
 regridding weights is based on areas and distances on the surface of
 the sphere, rather in <a class="reference internal" href="#cartesian-regridding"><span class="std std-ref">Euclidian space</span></a>.</p>
 <p>The following combinations of spherical source and destination domain
-coordinate systems are available to the <a class="reference internal" href="generated/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regrids</span></code></a> method:</p>
+coordinate systems are available to the <a class="reference internal" href="method/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regrids</span></code></a> method:</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="50%" />
@@ -5938,7 +5938,7 @@ axes in the domains of both the source and destination field
 constructs, since they will be automatically identified by their
 metadata. However, in cases when this is not possible (such as for
 tripolar domains) the <em>src_axes</em> or <em>dst_axes</em> keywords of the
-<a class="reference internal" href="generated/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regrids</span></code></a> method can be used.</p>
+<a class="reference internal" href="method/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regrids</span></code></a> method can be used.</p>
 <p>It may be that the required destination domain does not exist in a
 field construct. In this case, the latitude and longitudes of the
 destination domain may be defined solely by dimension or auxiliary
@@ -5971,18 +5971,18 @@ cell spanning 0 to 1 degrees east.</p>
 <p>When a cyclic dimension can not be automatically detected, such as
 when its dimension coordinate construct does not have bounds,
 cyclicity may be set with the <em>src_cyclic</em> or <em>dst_cyclic</em> keywords of
-the <a class="reference internal" href="generated/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regrids</span></code></a> method.</p>
-<p>To find out whether a dimension is cyclic use the <a class="reference internal" href="generated/cf.Field.iscyclic.html#cf.Field.iscyclic" title="cf.Field.iscyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iscyclic</span></code></a>
+the <a class="reference internal" href="method/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regrids</span></code></a> method.</p>
+<p>To find out whether a dimension is cyclic use the <a class="reference internal" href="method/cf.Field.iscyclic.html#cf.Field.iscyclic" title="cf.Field.iscyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iscyclic</span></code></a>
 method of the field construct, or to manually set its cyclicity use
 the <code class="xref py py-obj docutils literal notranslate"><span class="pre">cyclic</span></code> method. If the destination domain has been defined by a
 dictionary of dimension coordinate constructs, then cyclicity can be
 registered by setting a period of cyclicity with the
-<a class="reference internal" href="generated/cf.DimensionCoordinate.period.html#cf.DimensionCoordinate.period" title="cf.DimensionCoordinate.period"><code class="xref py py-obj docutils literal notranslate"><span class="pre">period</span></code></a> method of the dimension coordinate
+<a class="reference internal" href="method/cf.DimensionCoordinate.period.html#cf.DimensionCoordinate.period" title="cf.DimensionCoordinate.period"><code class="xref py py-obj docutils literal notranslate"><span class="pre">period</span></code></a> method of the dimension coordinate
 construct.</p>
 </div>
 <div class="section" id="cartesian-regridding">
 <span id="id77"></span><h3><a class="toc-backref" href="#id381">Cartesian regridding</a><a class="headerlink" href="#cartesian-regridding" title="Permalink to this headline">¶</a></h3>
-<p>Cartesian regridding with the <a class="reference internal" href="generated/cf.Field.regridc.html#cf.Field.regridc" title="cf.Field.regridc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regridc</span></code></a> method is very
+<p>Cartesian regridding with the <a class="reference internal" href="method/cf.Field.regridc.html#cf.Field.regridc" title="cf.Field.regridc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regridc</span></code></a> method is very
 similar to <a class="reference internal" href="#spherical-regridding"><span class="std std-ref">spherical regridding</span></a>, except
 regridding dimensions are not restricted to the horizontal plane, the
 source and destination domains are assumed to be <a class="reference external" href="https://en.wikipedia.org/wiki/Euclidean_space">Euclidian spaces</a> for the purpose of
@@ -6040,7 +6040,7 @@ also possible, similarly to spherical regridding.</p>
 such that the regridded data will be masked in regions where the
 source data is masked. By default the mask of the destination field
 construct is not used, but can be taken into account by setting
-<em>use_dst_mask</em> keyword to the <a class="reference internal" href="generated/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regrids</span></code></a> or <a class="reference internal" href="generated/cf.Field.regridc.html#cf.Field.regridc" title="cf.Field.regridc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regridc</span></code></a>
+<em>use_dst_mask</em> keyword to the <a class="reference internal" href="method/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regrids</span></code></a> or <a class="reference internal" href="method/cf.Field.regridc.html#cf.Field.regridc" title="cf.Field.regridc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regridc</span></code></a>
 methods. For example, this is useful when part of the destination
 domain is not being used (such as the land portion of an ocean grid).</p>
 <p>For conservative regridding, masking is done on cells. Masking a
@@ -6111,8 +6111,8 @@ construct key.</p>
 <span id="id80"></span><h2><a class="toc-backref" href="#id384"><strong>Mathematical operations</strong></a><a class="headerlink" href="#mathematical-operations" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="trigonometrical-functions">
 <h3><a class="toc-backref" href="#id385">Trigonometrical functions</a><a class="headerlink" href="#trigonometrical-functions" title="Permalink to this headline">¶</a></h3>
-<p>The field construct and metadata constructs have <a class="reference internal" href="generated/cf.Field.cos.html#cf.Field.cos" title="cf.Field.cos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cos</span></code></a>,
-<a class="reference internal" href="generated/cf.Field.sin.html#cf.Field.sin" title="cf.Field.sin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sin</span></code></a> and <a class="reference internal" href="generated/cf.Field.tan.html#cf.Field.tan" title="cf.Field.tan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tan</span></code></a> methods for applying trigonometrical
+<p>The field construct and metadata constructs have <a class="reference internal" href="method/cf.Field.cos.html#cf.Field.cos" title="cf.Field.cos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cos</span></code></a>,
+<a class="reference internal" href="method/cf.Field.sin.html#cf.Field.sin" title="cf.Field.sin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sin</span></code></a> and <a class="reference internal" href="method/cf.Field.tan.html#cf.Field.tan" title="cf.Field.tan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tan</span></code></a> methods for applying trigonometrical
 functions element-wise to the data, preserving the metadata but
 changing the construct’s units.</p>
 <div class="literal-block-wrapper docutils container" id="id273">
@@ -6130,8 +6130,8 @@ changing the construct’s units.</p>
 </div>
 <div class="section" id="exponential-and-logarithmic-functions">
 <h3><a class="toc-backref" href="#id386">Exponential and logarithmic functions</a><a class="headerlink" href="#exponential-and-logarithmic-functions" title="Permalink to this headline">¶</a></h3>
-<p>The field construct and metadata constructs have <a class="reference internal" href="generated/cf.Field.exp.html#cf.Field.exp" title="cf.Field.exp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">exp</span></code></a> and
-<a class="reference internal" href="generated/cf.Field.log.html#cf.Field.log" title="cf.Field.log"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log</span></code></a> methods for applying exponential and logarithmic
+<p>The field construct and metadata constructs have <a class="reference internal" href="method/cf.Field.exp.html#cf.Field.exp" title="cf.Field.exp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">exp</span></code></a> and
+<a class="reference internal" href="method/cf.Field.log.html#cf.Field.log" title="cf.Field.log"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log</span></code></a> methods for applying exponential and logarithmic
 functions respectively element-wise to the data, preserving the
 metadata but changing the construct’s units where required.</p>
 <div class="literal-block-wrapper docutils container" id="id274">
@@ -6167,22 +6167,22 @@ round and truncate their data:</p>
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td><a class="reference internal" href="generated/cf.Field.ceil.html#cf.Field.ceil" title="cf.Field.ceil"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ceil</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="method/cf.Field.ceil.html#cf.Field.ceil" title="cf.Field.ceil"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ceil</span></code></a></td>
 <td>The ceiling of the data, element-wise.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="generated/cf.Field.clip.html#cf.Field.clip" title="cf.Field.clip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clip</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.clip.html#cf.Field.clip" title="cf.Field.clip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clip</span></code></a></td>
 <td>Limit the values in the data.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="generated/cf.Field.floor.html#cf.Field.floor" title="cf.Field.floor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">floor</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="method/cf.Field.floor.html#cf.Field.floor" title="cf.Field.floor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">floor</span></code></a></td>
 <td>Floor the data array, element-wise.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="generated/cf.Field.rint.html#cf.Field.rint" title="cf.Field.rint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rint</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.rint.html#cf.Field.rint" title="cf.Field.rint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rint</span></code></a></td>
 <td>Round the data to the nearest integer, element-wise.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="generated/cf.Field.round.html#cf.Field.round" title="cf.Field.round"><code class="xref py py-obj docutils literal notranslate"><span class="pre">round</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="method/cf.Field.round.html#cf.Field.round" title="cf.Field.round"><code class="xref py py-obj docutils literal notranslate"><span class="pre">round</span></code></a></td>
 <td>Round the data to the given number of decimals.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="generated/cf.Field.trunc.html#cf.Field.trunc" title="cf.Field.trunc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trunc</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.trunc.html#cf.Field.trunc" title="cf.Field.trunc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trunc</span></code></a></td>
 <td>Truncate the data, element-wise.</td>
 </tr>
 </tbody>
@@ -6195,7 +6195,7 @@ field construct data with a filter along a single domain axis can be
 calculated, which also updates the bounds of a relevant dimension
 coordinate construct to account for the width of the
 filter. Convolution filters are carried with the
-<a class="reference internal" href="generated/cf.Field.convolution_filter.html#cf.Field.convolution_filter" title="cf.Field.convolution_filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convolution_filter</span></code></a> method of the field construct.</p>
+<a class="reference internal" href="method/cf.Field.convolution_filter.html#cf.Field.convolution_filter" title="cf.Field.convolution_filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convolution_filter</span></code></a> method of the field construct.</p>
 <div class="literal-block-wrapper docutils container" id="id275">
 <div class="code-block-caption"><span class="caption-text"><em>Calculate a 5-point weighted mean of the ‘X’ axis. Since
 the the ‘X’ axis is cyclic, the convolution wraps by
@@ -6240,7 +6240,7 @@ default.</em></span><a class="headerlink" href="#id275" title="Permalink to this
 </pre></div>
 </div>
 </div>
-<p>The <a class="reference internal" href="generated/cf.Field.convolution_filter.html#cf.Field.convolution_filter" title="cf.Field.convolution_filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convolution_filter</span></code></a> method of the field construct also has
+<p>The <a class="reference internal" href="method/cf.Field.convolution_filter.html#cf.Field.convolution_filter" title="cf.Field.convolution_filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convolution_filter</span></code></a> method of the field construct also has
 options to</p>
 <ul class="simple">
 <li>Specify how the input array is extended when the filter overlaps a
@@ -6272,7 +6272,7 @@ filter window extends beyond the array.</em></span><a class="headerlink" href="#
 <div class="section" id="derivatives">
 <h3><a class="toc-backref" href="#id389">Derivatives</a><a class="headerlink" href="#derivatives" title="Permalink to this headline">¶</a></h3>
 <p>The derivative along a dimension of the field construct’s data can be
-calculated as a centred finite difference with the <a class="reference internal" href="generated/cf.Field.derivative.html#cf.Field.derivative" title="cf.Field.derivative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">derivative</span></code></a>
+calculated as a centred finite difference with the <a class="reference internal" href="method/cf.Field.derivative.html#cf.Field.derivative" title="cf.Field.derivative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">derivative</span></code></a>
 method. If the axis is <a class="reference internal" href="#cyclic-domain-axes"><span class="std std-ref">cyclic</span></a> then the
 derivative wraps around by default, otherwise it may be forced to wrap
 around; a one-sided difference is calculated at the edges; or missing
@@ -6424,7 +6424,7 @@ details, but the following access patterns and behaviours apply to
 both:</p>
 <ul class="simple">
 <li>Whether or not the data are compressed is tested with the
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compression_type</span></code> method of the <a class="reference internal" href="classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> instance.</li>
+<a class="reference internal" href="generated/cf.Data.get_compression_type.html#cf.Data.get_compression_type" title="cf.Data.get_compression_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_compression_type</span></code></a> method of the <a class="reference internal" href="classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> instance.</li>
 </ul>
 <ul class="simple">
 <li>The compressed underlying array may be retrieved as a numpy array
@@ -6469,11 +6469,11 @@ combining them using one of three ragged array representations:
 <a class="reference external" href="http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#_contiguous_ragged_array_representation">contiguous</a>, <a class="reference external" href="http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#_indexed_ragged_array_representation">indexed</a> or <a class="reference external" href="http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#_ragged_array_representation_of_time_series_profiles">indexed contiguous</a>.</p>
 <p>The count variable that is required to uncompress a contiguous, or
 indexed contiguous, ragged array is stored in a <a class="reference internal" href="classes/cf.Count.html#cf.Count" title="cf.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Count</span></code></a> instance
-and is accessed with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_count</span></code> method of the <a class="reference internal" href="classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a>
+and is accessed with the <a class="reference internal" href="generated/cf.Data.get_count.html#cf.Data.get_count" title="cf.Data.get_count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_count</span></code></a> method of the <a class="reference internal" href="classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a>
 instance.</p>
 <p>The index variable that is required to uncompress an indexed, or
 indexed contiguous, ragged array is stored in an <a class="reference internal" href="classes/cf.Index.html#cf.Index" title="cf.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Index</span></code></a> instance
-and is accessed with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_index</span></code> method of the <a class="reference internal" href="classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a>
+and is accessed with the <a class="reference internal" href="generated/cf.Data.get_index.html#cf.Data.get_index" title="cf.Data.get_index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_index</span></code></a> method of the <a class="reference internal" href="classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a>
 instance.</p>
 <p>The contiguous case is is illustrated with the file <code class="docutils literal notranslate"><span class="pre">contiguous.nc</span></code>
 (found in the zip file of sample files):</p>
@@ -6691,7 +6691,7 @@ data:
 into a new, discrete axis whilst omitting the missing values and thus
 reducing the number of values that need to be stored.</p>
 <p>The list variable that is required to uncompress a gathered array is
-stored in a <a class="reference internal" href="classes/cf.List.html#cf.List" title="cf.List"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.List</span></code></a> object and is retrieved with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_list</span></code>
+stored in a <a class="reference internal" href="classes/cf.List.html#cf.List" title="cf.List"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.List</span></code></a> object and is retrieved with the <a class="reference internal" href="generated/cf.Data.get_list.html#cf.Data.get_list" title="cf.Data.get_list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_list</span></code></a>
 method of the <a class="reference internal" href="classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> instance.</p>
 <p>This is illustrated with the file <code class="docutils literal notranslate"><span class="pre">gathered.nc</span></code> (found in the zip
 file of sample files):</p>

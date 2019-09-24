@@ -19,8 +19,8 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cf.TimeDuration.Units" href="../generated/cf.TimeDuration.Units.html" />
-    <link rel="prev" title="cf.Query.inspect" href="../generated/cf.Query.inspect.html" />
+    <link rel="next" title="cf.TimeDuration.Units" href="../attribute/cf.TimeDuration.Units.html" />
+    <link rel="prev" title="cf.Query.inspect" href="../method/cf.Query.inspect.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -50,8 +50,8 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
-      <li>Previous: <a href="../generated/cf.Query.inspect.html" title="previous chapter">cf.Query.inspect</a></li>
-      <li>Next: <a href="../generated/cf.TimeDuration.Units.html" title="next chapter">cf.TimeDuration.Units</a></li>
+      <li>Previous: <a href="../method/cf.Query.inspect.html" title="previous chapter">cf.Query.inspect</a></li>
+      <li>Next: <a href="../attribute/cf.TimeDuration.Units.html" title="next chapter">cf.TimeDuration.Units</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -122,7 +122,7 @@ equivalent units to the <a class="reference internal" href="../generated/cf.Time
 </div>
 <p><strong>Creating time intervals</strong></p>
 <p>A time interval of exactly the time duration, starting or ending at a
-particular date-time, may be produced with the <a class="reference internal" href="../generated/cf.TimeDuration.interval.html#cf.TimeDuration.interval" title="cf.TimeDuration.interval"><code class="xref py py-obj docutils literal notranslate"><span class="pre">interval</span></code></a> method. If
+particular date-time, may be produced with the <a class="reference internal" href="../method/cf.TimeDuration.interval.html#cf.TimeDuration.interval" title="cf.TimeDuration.interval"><code class="xref py py-obj docutils literal notranslate"><span class="pre">interval</span></code></a> method. If
 elements of the start or end date-time are not specified, then default
 values are taken from the <code class="xref py py-obj docutils literal notranslate"><span class="pre">year</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">month</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">day</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">hour</span></code>,
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">minute</span></code>, and <code class="xref py py-obj docutils literal notranslate"><span class="pre">second</span></code> attributes of the time duration instance:</p>
@@ -345,7 +345,7 @@ months, days, hours, minutes or seconds.</p>
 </div></blockquote>
 <dl class="last docutils">
 <dt>month, day, hour, minute, second: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional         </dt>
-<dd><p class="first">The offset used when creating, with the <a class="reference internal" href="../generated/cf.TimeDuration.bounds.html#cf.TimeDuration.bounds" title="cf.TimeDuration.bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bounds</span></code></a> method, a
+<dd><p class="first">The offset used when creating, with the <a class="reference internal" href="../method/cf.TimeDuration.bounds.html#cf.TimeDuration.bounds" title="cf.TimeDuration.bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bounds</span></code></a> method, a
 time interval containing a given date-time. Only the offset
 elements for units smaller that of the time duration are used.</p>
 <dl class="last docutils">
@@ -406,28 +406,28 @@ elements for units smaller that of the time duration are used.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../generated/cf.TimeDuration.bounds.html#cf.TimeDuration.bounds" title="cf.TimeDuration.bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bounds</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.TimeDuration.bounds.html#cf.TimeDuration.bounds" title="cf.TimeDuration.bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bounds</span></code></a></td>
 <td>Return a time interval containing a date-time.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../generated/cf.TimeDuration.copy.html#cf.TimeDuration.copy" title="cf.TimeDuration.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.TimeDuration.copy.html#cf.TimeDuration.copy" title="cf.TimeDuration.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></td>
 <td>Return a deep copy.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../generated/cf.TimeDuration.days_in_month.html#cf.TimeDuration.days_in_month" title="cf.TimeDuration.days_in_month"><code class="xref py py-obj docutils literal notranslate"><span class="pre">days_in_month</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.TimeDuration.days_in_month.html#cf.TimeDuration.days_in_month" title="cf.TimeDuration.days_in_month"><code class="xref py py-obj docutils literal notranslate"><span class="pre">days_in_month</span></code></a></td>
 <td>The number of days in a specific month in a specific year in a specific calendar.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../generated/cf.TimeDuration.equals.html#cf.TimeDuration.equals" title="cf.TimeDuration.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.TimeDuration.equals.html#cf.TimeDuration.equals" title="cf.TimeDuration.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></td>
 <td>True if two time durations are equal.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../generated/cf.TimeDuration.equivalent.html#cf.TimeDuration.equivalent" title="cf.TimeDuration.equivalent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equivalent</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.TimeDuration.equivalent.html#cf.TimeDuration.equivalent" title="cf.TimeDuration.equivalent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equivalent</span></code></a></td>
 <td>True if two time durations are logically equivalent.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../generated/cf.TimeDuration.inspect.html#cf.TimeDuration.inspect" title="cf.TimeDuration.inspect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inspect</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.TimeDuration.inspect.html#cf.TimeDuration.inspect" title="cf.TimeDuration.inspect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inspect</span></code></a></td>
 <td>Inspect the attributes.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../generated/cf.TimeDuration.interval.html#cf.TimeDuration.interval" title="cf.TimeDuration.interval"><code class="xref py py-obj docutils literal notranslate"><span class="pre">interval</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.TimeDuration.interval.html#cf.TimeDuration.interval" title="cf.TimeDuration.interval"><code class="xref py py-obj docutils literal notranslate"><span class="pre">interval</span></code></a></td>
 <td>Return a time interval of exactly the time duration.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../generated/cf.TimeDuration.is_day_factor.html#cf.TimeDuration.is_day_factor" title="cf.TimeDuration.is_day_factor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_day_factor</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.TimeDuration.is_day_factor.html#cf.TimeDuration.is_day_factor" title="cf.TimeDuration.is_day_factor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_day_factor</span></code></a></td>
 <td>Return True if an integer multiple of the time duration is equal to one day.</td>
 </tr>
 </tbody>

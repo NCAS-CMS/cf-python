@@ -1,0 +1,7 @@
+cf.Count.__rmul__
+=================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Count.__rmul__

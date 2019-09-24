@@ -17,7 +17,7 @@ Filtering
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
   
    ~cf.FieldList.filter_by_construct
@@ -33,7 +33,7 @@ Comparison
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.FieldList.equals
@@ -43,7 +43,7 @@ Miscellaneous
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.FieldList.close
@@ -55,7 +55,7 @@ Aliases
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.FieldList.filter
@@ -85,7 +85,7 @@ is equivalent to
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.FieldList.append
@@ -123,7 +123,7 @@ Special methods
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.FieldList.__call__

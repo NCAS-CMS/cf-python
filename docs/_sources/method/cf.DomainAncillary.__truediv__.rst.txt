@@ -1,0 +1,7 @@
+cf.DomainAncillary.__truediv__
+==============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DomainAncillary.__truediv__

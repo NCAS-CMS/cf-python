@@ -1,0 +1,7 @@
+cf.Data.exp
+===========
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Data.exp

@@ -1,0 +1,7 @@
+cf.AuxiliaryCoordinate.__eq__
+=============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.AuxiliaryCoordinate.__eq__

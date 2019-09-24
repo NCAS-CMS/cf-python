@@ -1,41 +1,59 @@
+.. currentmodule:: cf
+.. default-role:: obj
+
 cf.RaggedIndexedArray
 =====================
 
-.. currentmodule:: cf
+----
 
-.. autoclass:: RaggedIndexedArray
+.. autoclass:: cf.RaggedIndexedArray
+   :no-members:
+   :no-inherited-members:
+
+
+Inspection
+----------
+
+.. rubric:: Methods
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+   
+   ~cf.RaggedIndexedArray.get_compressed_axes
+   ~cf.RaggedIndexedArray.get_compressed_dimension
+   ~cf.RaggedIndexedArray.get_compression_type
+   ~cf.RaggedIndexedArray.get_index
+   ~cf.RaggedIndexedArray.get_subspace
+   ~cf.RaggedIndexedArray.source
+   
+.. rubric:: Attributes
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/	    
+   :template: attribute.rst
+   
+   ~cf.RaggedIndexedArray.array
+   ~cf.RaggedIndexedArray.compressed_array
+   ~cf.RaggedIndexedArray.dtype
+   ~cf.RaggedIndexedArray.ndim
+   ~cf.RaggedIndexedArray.shape
+   ~cf.RaggedIndexedArray.size
 
    
-   .. automethod:: __init__
+Miscellaneous
+-------------
 
-   
-   .. rubric:: Methods
+.. rubric:: Methods
 
-   .. autosummary::
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
    
-      ~RaggedIndexedArray.__init__
-      ~RaggedIndexedArray.copy
-      ~RaggedIndexedArray.get_compressed_axes
-      ~RaggedIndexedArray.get_compressed_dimension
-      ~RaggedIndexedArray.get_compression_type
-      ~RaggedIndexedArray.get_index
-      ~RaggedIndexedArray.get_subspace
-      ~RaggedIndexedArray.source
-      ~RaggedIndexedArray.to_memory
-   
-   
-
-   
-   
-   .. rubric:: Attributes
-
-   .. autosummary::
-   
-      ~RaggedIndexedArray.array
-      ~RaggedIndexedArray.compressed_array
-      ~RaggedIndexedArray.dtype
-      ~RaggedIndexedArray.ndim
-      ~RaggedIndexedArray.shape
-      ~RaggedIndexedArray.size
-   
+   ~cf.RaggedIndexedArray.copy
+   ~cf.RaggedIndexedArray.get_subspace
+   ~cf.RaggedIndexedArray.to_memory
    

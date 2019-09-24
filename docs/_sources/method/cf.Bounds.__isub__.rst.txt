@@ -1,0 +1,7 @@
+cf.Bounds.__isub__
+==================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.__isub__

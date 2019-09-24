@@ -1,0 +1,7 @@
+cf.Count.transpose
+==================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Count.transpose

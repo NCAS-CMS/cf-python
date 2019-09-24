@@ -1,0 +1,7 @@
+cf.Bounds.range
+===============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.range
