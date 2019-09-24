@@ -6,6 +6,7 @@ cf.Domain
 
 ----
 
+
 .. autoclass:: cf.Domain
    :no-members:
    :no-inherited-members:
