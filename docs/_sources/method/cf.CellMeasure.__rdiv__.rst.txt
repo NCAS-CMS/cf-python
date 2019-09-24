@@ -1,0 +1,7 @@
+cf.CellMeasure.__rdiv__
+=======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CellMeasure.__rdiv__
