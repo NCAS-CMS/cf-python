@@ -1,0 +1,7 @@
+cf.CoordinateReference.del_coordinate_conversion
+================================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CoordinateReference.del_coordinate_conversion

@@ -1,0 +1,7 @@
+cf.Count.identity
+=================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Count.identity

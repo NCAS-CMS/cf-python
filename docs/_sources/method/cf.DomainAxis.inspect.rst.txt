@@ -1,0 +1,7 @@
+cf.DomainAxis.inspect
+=====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DomainAxis.inspect

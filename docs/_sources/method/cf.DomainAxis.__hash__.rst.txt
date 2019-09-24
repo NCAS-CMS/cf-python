@@ -1,0 +1,7 @@
+cf.DomainAxis.__hash__
+======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DomainAxis.__hash__

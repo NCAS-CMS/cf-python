@@ -1,0 +1,7 @@
+cf.Index.override_calendar
+==========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Index.override_calendar

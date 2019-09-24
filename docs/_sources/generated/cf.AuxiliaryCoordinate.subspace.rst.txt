@@ -4,4 +4,4 @@ cf.AuxiliaryCoordinate.subspace
 .. currentmodule:: cf
 .. default-role:: obj
 
-.. automethod:: cf.AuxiliaryCoordinate.subspace
+.. autoattribute:: cf.AuxiliaryCoordinate.subspace

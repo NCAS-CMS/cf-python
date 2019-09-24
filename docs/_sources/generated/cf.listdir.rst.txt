@@ -1,0 +1,7 @@
+cf.listdir
+==========
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autofunction:: cf.listdir

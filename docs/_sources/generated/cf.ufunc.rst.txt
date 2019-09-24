@@ -1,0 +1,7 @@
+cf.ufunc
+========
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autofunction:: cf.ufunc

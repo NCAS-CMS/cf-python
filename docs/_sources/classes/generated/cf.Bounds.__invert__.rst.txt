@@ -1,0 +1,7 @@
+cf.Bounds.__invert__
+====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.__invert__

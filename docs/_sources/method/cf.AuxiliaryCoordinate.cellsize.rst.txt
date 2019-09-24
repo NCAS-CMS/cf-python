@@ -1,0 +1,7 @@
+cf.AuxiliaryCoordinate.cellsize
+===============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.AuxiliaryCoordinate.cellsize

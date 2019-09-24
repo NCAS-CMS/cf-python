@@ -9,12 +9,14 @@
     <title>cf.read &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.write" href="cf.write.html" />
@@ -30,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.0b10</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.0b12</a></b></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -78,13 +80,15 @@
       </div>
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="cf-read">
 <h1>cf.read<a class="headerlink" href="#cf-read" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.read">
-<code class="descclassname">cf.</code><code class="descname">read</code><span class="sig-paren">(</span><em>files</em>, <em>external=None</em>, <em>verbose=False</em>, <em>warnings=False</em>, <em>ignore_read_error=False</em>, <em>aggregate=True</em>, <em>nfields=None</em>, <em>squeeze=False</em>, <em>unsqueeze=False</em>, <em>fmt=None</em>, <em>select=None</em>, <em>extra=None</em>, <em>height_at_top_of_model=None</em>, <em>recursive=False</em>, <em>followlinks=False</em>, <em>um=None</em>, <em>chunk=True</em>, <em>field=None</em>, <em>select_options=None</em>, <em>follow_symlinks=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b10/cf/read_write/read.py#L28"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.read" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">cf.</code><code class="descname">read</code><span class="sig-paren">(</span><em>files</em>, <em>external=None</em>, <em>verbose=False</em>, <em>warnings=False</em>, <em>ignore_read_error=False</em>, <em>aggregate=True</em>, <em>nfields=None</em>, <em>squeeze=False</em>, <em>unsqueeze=False</em>, <em>fmt=None</em>, <em>select=None</em>, <em>extra=None</em>, <em>height_at_top_of_model=None</em>, <em>recursive=False</em>, <em>followlinks=False</em>, <em>um=None</em>, <em>chunk=True</em>, <em>field=None</em>, <em>select_options=None</em>, <em>follow_symlinks=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b12/cf/read_write/read.py#L28"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.read" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read fields from netCDF, PP or UM fields files.</p>
 <p>Files may be on disk or on a OPeNDAP server.</p>
 <p>Any amount of any combination of CF-netCDF and CFA-netCDF files
@@ -460,26 +464,26 @@ may be empty.</p>
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
 <span class="go">&lt;type &#39;list&#39;&gt;</span>
 </pre></div>
 </div>
 <p>Read a file and create field constructs from CF-netCDF data
 variables as well as from the netCDF variables that correspond to
 particular types metadata constructs:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="s1">&#39;domain_ancillary&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="s1">&#39;domain_ancillary&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;dimension_coordinate&#39;</span><span class="p">,</span> 
 <span class="gp">... </span>                                <span class="s1">&#39;auxiliary_coordinate&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>Read a file that contains external variables:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">h</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;parent.nc&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">h</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;parent.nc&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">i</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;parent.nc&#39;</span><span class="p">,</span> <span class="n">external</span><span class="o">=</span><span class="s1">&#39;external.nc&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">j</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;parent.nc&#39;</span><span class="p">,</span> <span class="n">external</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;external1.nc&#39;</span><span class="p">,</span> <span class="s1">&#39;external2.nc&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file*.nc&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file*.nc&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span>
 <span class="go">[&lt;CF Field: pmsl(30, 24)&gt;,</span>
 <span class="go"> &lt;CF Field: z-squared(17, 30, 24)&gt;,</span>
@@ -487,21 +491,21 @@ particular types metadata constructs:</p>
 <span class="go"> &lt;CF Field: temperature_wind(17, 29, 24)&gt;]</span>
 </pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file*.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file*.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
 <span class="go">[&lt;CF Field: pmsl(30, 24)&gt;,</span>
 <span class="go"> &lt;CF Field: z-squared(17, 30, 24)&gt;]</span>
 </pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file*.nc&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file*.nc&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 <span class="go">&lt;CF Field: temperature_wind(17, 29, 24)&gt;</span>
 </pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file*.nc&#39;</span><span class="p">,</span> <span class="n">select</span><span class="o">=</span><span class="s1">&#39;units=K)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file*.nc&#39;</span><span class="p">,</span> <span class="n">select</span><span class="o">=</span><span class="s1">&#39;units=K)</span>
 <span class="go">[&lt;CF Field: temperature(17, 30, 24)&gt;,</span>
 <span class="go"> &lt;CF Field: temperature_wind(17, 29, 24)&gt;]</span>
 </pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file*.nc&#39;</span><span class="p">,</span> <span class="n">select</span><span class="o">=</span><span class="s1">&#39;ncvar%ta&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file*.nc&#39;</span><span class="p">,</span> <span class="n">select</span><span class="o">=</span><span class="s1">&#39;ncvar%ta&#39;</span><span class="p">)</span>
 <span class="go">&lt;CF Field: temperature(17, 30, 24)&gt;</span>
 </pre></div>
 </div>
@@ -511,6 +515,7 @@ particular types metadata constructs:</p>
 
 
           </div>
+          
         </div>
       </div>
     <div class="clearer"></div>
@@ -519,8 +524,8 @@ particular types metadata constructs:</p>
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/function/cf.read.rst.txt"

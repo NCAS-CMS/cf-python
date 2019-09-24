@@ -1,0 +1,7 @@
+cf.Index.__ge__
+===============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Index.__ge__

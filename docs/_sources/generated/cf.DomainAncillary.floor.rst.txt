@@ -1,0 +1,7 @@
+cf.DomainAncillary.floor
+========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DomainAncillary.floor

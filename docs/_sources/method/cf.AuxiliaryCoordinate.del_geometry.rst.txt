@@ -1,0 +1,7 @@
+cf.AuxiliaryCoordinate.del_geometry
+===================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.AuxiliaryCoordinate.del_geometry

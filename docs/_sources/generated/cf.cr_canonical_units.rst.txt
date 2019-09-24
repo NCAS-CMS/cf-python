@@ -1,0 +1,7 @@
+cf.cr_canonical_units
+=====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autofunction:: cf.cr_canonical_units

@@ -9,12 +9,14 @@
     <title>cf.Field.set_properties &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" src="../_static/documentation_options.js"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.Field.add_offset" href="../generated/cf.Field.add_offset.html" />
@@ -30,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.0b10</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.0b12</a></b></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -80,13 +82,15 @@
       </div>
       <div class="documentwrapper">
         <div class="bodywrapper">
+          
+
           <div class="body" role="main">
             
   <div class="section" id="cf-field-set-properties">
 <h1>cf.Field.set_properties<a class="headerlink" href="#cf-field-set-properties" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.set_properties">
-<code class="descclassname">Field.</code><code class="descname">set_properties</code><span class="sig-paren">(</span><em>properties</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b10/cf/mixin/properties.py#L970"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.set_properties" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">set_properties</code><span class="sig-paren">(</span><em>properties</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b12/cf/mixin/properties.py#L970"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.set_properties" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set properties.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
@@ -122,7 +126,7 @@ default they are deep copied.</p>
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">properties</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">properties</span><span class="p">()</span>
 <span class="go">{&#39;standard_name&#39;: &#39;altitude&#39;,</span>
 <span class="go"> &#39;foo&#39;: &#39;bar&#39;}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">set_properties</span><span class="p">({</span><span class="s1">&#39;standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;air_pressure&#39;</span><span class="p">,</span> <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="s1">&#39;Air Pressure&#39;</span><span class="p">}</span>
@@ -138,6 +142,7 @@ default they are deep copied.</p>
 
 
           </div>
+          
         </div>
       </div>
     <div class="clearer"></div>
@@ -146,8 +151,8 @@ default they are deep copied.</p>
       &copy;2019, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/method/cf.Field.set_properties.rst.txt"

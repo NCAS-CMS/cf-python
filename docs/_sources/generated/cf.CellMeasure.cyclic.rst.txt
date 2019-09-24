@@ -1,0 +1,7 @@
+cf.CellMeasure.cyclic
+=====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CellMeasure.cyclic

@@ -1,0 +1,7 @@
+cf.AuxiliaryCoordinate.history
+==============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.AuxiliaryCoordinate.history

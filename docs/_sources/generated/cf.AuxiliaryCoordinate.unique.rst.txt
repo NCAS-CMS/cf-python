@@ -4,4 +4,4 @@ cf.AuxiliaryCoordinate.unique
 .. currentmodule:: cf
 .. default-role:: obj
 
-.. automethod:: cf.AuxiliaryCoordinate.unique
+.. autoattribute:: cf.AuxiliaryCoordinate.unique

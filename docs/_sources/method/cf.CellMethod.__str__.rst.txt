@@ -1,0 +1,7 @@
+cf.CellMethod.__str__
+=====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CellMethod.__str__

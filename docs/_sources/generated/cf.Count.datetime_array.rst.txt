@@ -1,0 +1,7 @@
+cf.Count.datetime_array
+=======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.Count.datetime_array

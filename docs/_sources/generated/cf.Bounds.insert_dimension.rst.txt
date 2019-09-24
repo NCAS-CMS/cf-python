@@ -1,0 +1,7 @@
+cf.Bounds.insert_dimension
+==========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.insert_dimension

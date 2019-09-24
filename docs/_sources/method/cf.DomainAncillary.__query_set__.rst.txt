@@ -1,0 +1,7 @@
+cf.DomainAncillary.__query_set__
+================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DomainAncillary.__query_set__

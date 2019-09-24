@@ -4,4 +4,4 @@ cf.CellMeasure.fill_value
 .. currentmodule:: cf
 .. default-role:: obj
 
-.. autoattribute:: cf.CellMeasure.fill_value
+.. automethod:: cf.CellMeasure.fill_value
