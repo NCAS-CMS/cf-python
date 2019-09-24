@@ -1,7 +1,8 @@
-# DEVELOPMENT VERSION FOR ``PYTHON 3`` - LIABLE TO CHANGE WITHOUT NOTICE UNTIL THE STABLE RELEASE DATE: ``2019-10-01``
+DEVELOPMENT VERSION FOR ``PYTHON 3`` - LIABLE TO CHANGE WITHOUT NOTICE UNTIL THE STABLE RELEASE DATE: ``2019-10-01``
+====================================================================================================================
 
-
-# CF Python
+CF Python
+=========
 
 The Python cf package is an Earth science data analysis library that
 is built on a complete implementation of the CF data model
@@ -69,7 +70,8 @@ The `cf` package can:
     vorticity).
 
 
-# Visualization
+Visualization
+=============
 
 Powerful, flexible, and very simple to produce visualizations of field
 constructs are available with the `cfplot` package
@@ -80,7 +82,8 @@ See the `cfplot` gallery (http://ajheaps.github.io/cf-plot/gallery.html)
 for the full range range plotting possibilities with example code.
 
 
-# Command line utilities
+Command line utilities
+======================
 
 During installation the ``cfa`` command line utility is also
 installed, which
@@ -91,7 +94,8 @@ installed, which
   * creates new datasets aggregated from existing files.
 
 
-# Tests
+Tests
+=====
 
 Tests are run from within the ``cf/test`` directory:
 
