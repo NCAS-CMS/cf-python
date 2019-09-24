@@ -135,41 +135,41 @@ nonetheless be modified in memory.
 
 The `cf` package can:
 
-  * read field constructs from netCDF, PP and UM datasets,
-  
-  * create new field constructs in memory,
-  
-  * inspect field constructs,
-  
-  * test whether two field constructs are the same,
-  
-  * modify field construct metadata and data,
-  
-  * create subspaces of field constructs,
-  
-  * write field constructs to netCDF datasets on disk,
-  
-  * incorporate, and create, metadata stored in external files,
-  
-  * read, write, and create data that have been compressed by
-    convention (i.e. ragged or gathered arrays), whilst presenting a
-    view of the data in its uncompressed form,    
-  
-  * Combine field constructs arithmetically,
-  
-  * Manipulate field construct data by arithmetical and
-    trigonometrical operations,
-  
-  * Perform statistical collapses on field constructs,
-  
-  * Regrid field constructs,
-  
-  * Apply convolution filters to field constructs,
-  
-  * Calculate derivatives of field constructs,
-  
-  * Create field constructs to create derived quantities (such as
-    vorticity).
+* read field constructs from netCDF, PP and UM datasets,
+
+* create new field constructs in memory,
+
+* inspect field constructs,
+
+* test whether two field constructs are the same,
+
+* modify field construct metadata and data,
+
+* create subspaces of field constructs,
+
+* write field constructs to netCDF datasets on disk,
+
+* incorporate, and create, metadata stored in external files,
+
+* read, write, and create data that have been compressed by convention
+  (i.e. ragged or gathered arrays), whilst presenting a view of the
+  data in its uncompressed form,
+
+* Combine field constructs arithmetically,
+
+* Manipulate field construct data by arithmetical and trigonometrical
+  operations,
+
+* Perform statistical collapses on field constructs,
+
+* Regrid field constructs,
+
+* Apply convolution filters to field constructs,
+
+* Calculate derivatives of field constructs,
+
+* Create field constructs to create derived quantities (such as
+  vorticity).
 
 
 Visualization
@@ -190,10 +190,10 @@ Command line utilities
 During installation the ``cfa`` command line utility is also
 installed, which
 
-  * generates text descriptions of field constructs contained in
-    files, and
+* generates text descriptions of field constructs contained in files,
+  and
 
-  * creates new datasets aggregated from existing files.
+* creates new datasets aggregated from existing files.
 
 
 Tests
