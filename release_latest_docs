@@ -16,10 +16,14 @@ cd docs
 rm -fr .doctrees
 make html .
 
-#mv _downloads/*/*.nc _downloads
-
+rm -fr _downloads/*
 cp source/sample_files/cf_tutorial_files.zip _downloads
 cp source/tutorial.py _downloads
+
+for download_file in cf_tutorial_files.zip tutorial.py
+do		     
+  sed -i "s/\(href=._downloads\).*\($download_file\)/\1\/\2/" tutorial.html 
+done
 
 # --------------------------------------------------------------------
 # Add and commit the latest
