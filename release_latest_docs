@@ -9,6 +9,10 @@ fi
 
 version=$1
 
+# Make zip file
+cd docs/source/sample_files
+zip cf_tutorial_files.zip *.nc *.pp
+
 # --------------------------------------------------------------------
 # Make the latest docs    
 # --------------------------------------------------------------------
