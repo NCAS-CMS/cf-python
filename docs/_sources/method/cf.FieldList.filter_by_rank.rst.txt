@@ -1,7 +1,0 @@
-cf.FieldList.filter_by_rank
-===========================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.FieldList.filter_by_rank

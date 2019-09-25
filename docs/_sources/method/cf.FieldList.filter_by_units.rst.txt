@@ -1,7 +1,0 @@
-cf.FieldList.filter_by_units
-============================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.FieldList.filter_by_units
