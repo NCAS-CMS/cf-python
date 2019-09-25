@@ -17,25 +17,31 @@ cd docs
 
 make html $version
 
-mv $version/_downloads/*/*.nc $version/_downloads
+cd $version
 
+rm -fr _downloads/*
+cp -pv ../source/sample_files/cf_tutorial_files.zip _downloads
+cp -pv ../source/tutorial.py _downloads
 
+for download_file in cf_tutorial_files.zip tutorial.py
+do		     
+  sed -i "s/\(href=._downloads\).*\($download_file\)/\1\/\2/" tutorial.html 
+done
 
 # --------------------------------------------------------------------
 # Add and commit the archive
 # --------------------------------------------------------------------
 git add \
-    $version/*.html \
-    $version/classes/*.html \
-    $version/function/*.html \
-    $version/method/*.html \
-    $version/attribute/*.html \
-    $version/*.inv \
-    $version/*.js \
-    $version/_sources \
-    $version/_static \
-    $version/_downloads/cf_tutorial_files.zip \
-    $version/_downloads/tutorial.py
+    *.html \
+    classes/*.html \
+    function/*.html \
+    method/*.html \
+    attribute/*.html \
+    *.inv \
+    *.js \
+    _sources \
+    _static \
+    _downloads/*
 
 git commit -a -m "v$version archive documentation"
 
