@@ -7,8 +7,8 @@
 
 # Files
 tutorial_source=tutorial.rst
-test_tutorial=test_tutorial.py
-temp_file=test_tutorial_tmp.$$
+test_tutorial=tutorial.py
+temp_file=tutorial_tmp.$$
 
 # Get code and section headings
 grep -e "^ *>>>" \

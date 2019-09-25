@@ -28,11 +28,12 @@ git add \
     $version/function/*.html \
     $version/method/*.html \
     $version/attribute/*.html \
-    $version/_downloads/*.nc \
     $version/*.inv \
     $version/*.js \
     $version/_sources \
-    $version/_static
+    $version/_static \
+    $version/_downloads/cf_tutorial_files.zip \
+    $version/_downloads/tutorial.py
 
 git commit -a -m "v$version archive documentation"
 

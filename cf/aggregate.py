@@ -5,12 +5,10 @@ from numpy import sort    as numpy_sort
 from collections import namedtuple
 from operator    import attrgetter, itemgetter
 
-#from cfunits import Units
-
 from .auxiliarycoordinate import AuxiliaryCoordinate
 from .coordinatereference import CoordinateReference
 from .domainaxis          import DomainAxis
-from .field               import Field #, FieldList
+from .field               import Field
 from .fieldlist           import FieldList
 from .query               import gt
 from .functions           import (flat, RTOL, ATOL, equals,
@@ -20,7 +18,7 @@ from .functions           import inspect as cf_inspect
 from .units               import Units
 
 from .data.data      import Data
-#from .data.filearray import FileArray
+
 
 _dtype_float = numpy_dtype(float)
 
@@ -78,36 +76,32 @@ and first and last cell bounds
     #--- End: def
 
     def inspect(self):
+        '''Inspect the object for debugging.
+    
+    .. seealso:: `cf.inspect`
+    
+    :Returns: 
+    
+        `None`
+    
+    **Examples:**
+    
+    >>> f.inspect()
+
         '''
-
-Inspect the object for debugging.
-
-.. seealso:: `cf.inspect`
-
-:Returns: 
-
-    None
-
-:Examples:
-
->>> f.inspect()
-
-'''
         print(cf_inspect(self))
-    #--- End: def
+
 
 #--- End: class
 
 
 class _Meta:
-    '''
-
-A summary of a field.
+    '''A summary of a field.
 
 This object contains everything you need to know in order to aggregate
 the field.
 
-'''
+    '''
     #
     _canonical_units = {}
 
@@ -150,35 +144,33 @@ the field.
                  ncvar_identities=False,
                  field_long_name_identities=False,
     ):
+        '''**initialization**
+
+    :Parameters:
+    
+        f: `cf.Field`
+    
+        info: `int`, optional
+            See the `aggregate` function for details.
+    
+        relaxed_units: `bool`, optional
+            See the `aggregate` function for details.
+    
+        allow_no_identity: `bool`, optional
+            See the `aggregate` function for details.
+    
+        rtol: `float`, optional
+            See the `aggregate` function for details.
+    
+        atol: `float`, optional
+            See the `aggregate` function for details.
+       
+        dimension: (sequence of) `str`, optional
+            See the `aggregate` function for details.
+    
+    **Examples:**
+
         '''
-
-**initialization**
-
-:Parameters:
-
-    f: `cf.Field`
-
-    info: `int`, optional
-        See the `aggregate` function for details.
-
-    relaxed_units: `bool`, optional
-        See the `aggregate` function for details.
-
-    allow_no_identity: `bool`, optional
-        See the `aggregate` function for details.
-
-    rtol: `float`, optional
-        See the `aggregate` function for details.
-
-    atol: `float`, optional
-        See the `aggregate` function for details.
-   
-    dimension: (sequence of) `str`, optional
-        See the `aggregate` function for details.
-
-:Examples:
-
-'''
         self._bool       = False
         self.cell_values = False
 
@@ -295,9 +287,8 @@ the field.
 
         # Dictionaries mapping auxiliary coordinate identifiers
         # to their auxiliary coordinate objects
-#        aux_1d = items(role='a', ndim=1)
         aux_1d = dict(f.auxiliary_coordinates.filter_by_naxes(1))
-#        print ('aux_1d=',aux_1d  )
+
         # A set containing the identity of each coordinate
         #
         # For example: set(['time', 'height', 'latitude',
@@ -393,7 +384,7 @@ the field.
                      'coordrefs': self.find_coordrefs(key)})
 #                     'size'     : None})
             #--- End: for
-#            print ('info_aux=', info_aux)
+
             # Sort the 1-d auxiliary coordinate information
             info_aux.sort(key=itemgetter('identity'))
     
@@ -1085,17 +1076,17 @@ axis {0!r} has no netCDF dimension name".format(f.axis_name(axis)) # TODO
     def print_info(self, info, signature=True):
         '''TODO
     
-:Parameters:
-
-    m: `_Meta`
-
-    info: `int`
-
-:Returns:
-
-    `None`
-
-'''
+    :Parameters:
+    
+        m: `_Meta`
+    
+        info: `int`
+    
+    :Returns:
+    
+        `None`
+    
+    '''
         if info >= 2:
             if signature:
                 print('STRUCTURAL SIGNATURE:\n' + self.string_structural_signature())
@@ -1104,32 +1095,32 @@ axis {0!r} has no netCDF dimension name".format(f.axis_name(axis)) # TODO
             
         if info >= 3:
             print('COMPLETE AGGREGATION METADATA:\n', self)
-    #--- End: def
+
 
     def string_structural_signature(self):
         '''TODO
 
-:Returns:
+    :Returns:
 
-    `str`
+        `str`
 
-'''
+        '''
         string = []
 
         for key, value in self.signature._asdict().items():
             string.append('-> {0}: {1!r}'.format(key, value))
         
         return '\n'.join(string)
-    #--- End: def
+
 
     def structural_signature(self):
         '''TODO
 
-:Returns:
+    :Returns:
 
-    `tuple`
+        `tuple`
 
-'''        
+        '''   
         f = self.field    
       
         # Initialize the structual signature with:
@@ -1274,26 +1265,26 @@ axis {0!r} has no netCDF dimension name".format(f.axis_name(axis)) # TODO
             Domain_ancillaries        = Domain_ancillaries,   
             Field_ancillaries         = Field_ancillaries,  
             )
-    #--- End: def
+
 
     def find_coordrefs(self, key):
         '''TODO
 
-:Parameters:
-
-    key: `str`
-        The key of the coordinate consrtuct.
-
-:Returns:
-
-    `tuple` or `None`
-
-:Examples:
-
->>> m.find_coordrefs('dim0')
->>> m.find_coordrefs('aux1')
-
-'''    
+    :Parameters:
+    
+        key: `str`
+            The key of the coordinate consrtuct.
+    
+    :Returns:
+    
+        `tuple` or `None`
+    
+    **Examples:**
+    
+    >>> m.find_coordrefs('dim0')
+    >>> m.find_coordrefs('aux1')
+    
+    '''    
         coordrefs = self.coordrefs
 
         if not coordrefs:
@@ -1307,7 +1298,7 @@ axis {0!r} has no netCDF dimension name".format(f.axis_name(axis)) # TODO
             return None
 
         return tuple(sorted(names))
-    #--- End: def
+
 
 #--- End: class
 
@@ -1336,217 +1327,219 @@ def aggregate(fields,
               no_overlap=False,
               shared_nc_domain=False,
               ):
-    r'''Aggregate field constructs into as few field constructs as
-possible.
-
-Aggregation is the combination of field constructs to create a new
-field construct that occupies a "larger" domain. Using the aggregation
-rules (https://ncas-cms.github.io/cf-python/aggregation_rules.html),
-field constructs are separated into aggregatable groups and each group
-is then aggregated to a single field construct.
-
-**Identifying field and metadata constructs**
-
-In order to ascertain whether or not field constructs are
-aggregatable, the aggregation rules rely on field constructs (and
-their metadata constructs where applicable) being identified by
-standard name properties. However, it is sometimes the case that
-standard names are not available. In such cases the "id" attribute
-(which is not a CF property) may be set on any construct, which
-will be treated like a standard name if one doesn't
-exist. Alternatively the *relaxed_identities* parameter allows long
-name properties or netCDF variable names to be used when standard
-names are missing.
-
-**Units**
-
-
-
-
-:Parameters:
-
-    fields: `FieldList` or sequence of `Field`
-        The field constructs to aggregated.
-
-    info: `int`, optional
-        Print information about the aggregation process. By default
-        *info* is 0 and no information is displayed. If *info* is 1 or
-        more then display information on which fields are
-        unaggregatable, and why. If *info* is 2 or more then also
-        display the structural signatures of the fields and, when
-        there is more than one field construct with the same
-        structural signature, their canonical first and last
-        coordinate values. If *info* is 3 or more then display the
-        field construct's complete aggregation metadata.
-
-    overlap: `bool`, optional
-        If `False` then require that aggregated field constructs have
-        adjacent dimension coordinate construct cells which do not
-        overlap (but they may share common boundary values). Ignored
-        for a dimension coordinate construct that does not have
-        bounds. See also the *contiguous* parameter.
-
-    contiguous: `bool`, optional
-        If `True` then require that aggregated field constructs have
-        adjacent dimension coordinate construct cells which overlap or
-        share common boundary values. Ignored for a dimension
-        coordinate construct that does not have bounds. See also the
-        *overlap* parameter.
-
-    relaxed_units: `bool`, optional
-        If `True` then assume that field and metadata constructs with
-        the same identity but missing units actually have equivalent
-        (but unspecified) units, so that aggregation may occur. By
-        default such field constructs are not aggregatable.
-
-    allow_no_identity: `bool`, optional
-        If `True` then assume that field and metadata constructs with
-        no identity (see the *relaxed_identities* parameter) actually
-        have the same (but unspecified) identity, so that aggregation
-        may occur. By default such field constructs are not
-        aggregatable.
-
-    relaxed_identities: `bool`, optional
-        If `True` and there is no standard name property nor "id"
-        attribute, then allow field and metadata constructs to be
-        identifiable by long name properties or netCDF variable names.
-
-    ncvar_identities: `bool`, optional
-        If `True` then force field and metadata constructs to be
-        identified by their netCDF file variable names See also the
-        *relaxed_identies* parameter.
-
-    equal_all: `bool`, optional
-        If True then require that aggregated fields have the same set
-        of non-standard CF properties (including
-        `~cf.Field.long_name`), with the same values. See the
-        *concatenate* parameter.
-
-    equal_ignore: (sequence of) `str`, optional
-        Specify CF properties to omit from any properties specified by
-        or implied by the *equal_all* and *equal* parameters.
-
-    equal: (sequence of) `str`, optional
-        Specify CF properties for which it is required that aggregated
-        fields all contain the properties, with the same values. See
-        the *concatenate* parameter.
-
-    exist_all: `bool`, optional
-        If True then require that aggregated fields have the same set
-        of non-standard CF properties (including, in this case,
-        long_name), but not requiring the values to be the same. See
-        the *concatenate* parameter.
-
-    exist_ignore: (sequence of) `str`, optional
-        Specify CF properties to omit from the properties specified by
-        or implied by the *exist_all* and *exist* parameters.
-
-    exist: (sequence of) `str`, optional
-        Specify CF properties for which it is required that aggregated
-        fields all contain the properties, but not requiring the
-        values to be the same. See the *concatenate* parameter.
-
-    respect_valid: `bool`, optional
-        If True then the CF properties `~cf.Field.valid_min`,
-        `~cf.Field.valid_max` and `~cf.Field.valid_range` are taken
-        into account during aggregation. I.e. a requirement for
-        aggregation is that fields have identical values for each
-        these attributes, if set. By default these CF properties are
-        ignored and are not set in the output fields.
-
-    dimension: (sequence of) `str`, optional
-        Create new axes for each input field which has one or more of
-        the given properties. For each CF property name specified, if
-        an input field has the property then, prior to aggregation, a
-        new axis is created with an auxiliary coordinate whose datum
-        is the property's value and the property itself is deleted
-        from that field.
-
-    concatenate: `bool`, optional
-        If False then a CF property is omitted from an aggregated
-        field if the property has unequal values across constituent
-        fields or is missing from at least one constituent field. By
-        default a CF property in an aggregated field is the
-        concatenated collection of the distinct values from the
-        constituent fields, delimited with the string
-        ``' :AGGREGATED: '``.
-
-    copy: `bool`, optional
-        If False then do not copy fields prior to aggregation.
-        Setting this option to False may change input fields in place,
-        and the output fields may not be independent of the
-        inputs. However, if it is known that the input fields are
-        never to accessed again (such as in this case: ``f =
-        cf.aggregate(f)``) then setting *copy* to False can reduce the
-        time taken for aggregation.
-
-    axes: (sequence of) `str`, optional
-        Select axes to aggregate over. Aggregation will only occur
-        over as large a subset as possible of these axes. Each axis is
-        identified by the exact identity of a one dimensional
-        coordinate object, as returned by its `!identity`
-        method. Aggregations over more than one axis will occur in the
-        order given. By default, aggregation will be over as many axes
-        as possible.
-
-    donotchecknonaggregatingaxes: `bool`, optional
-        If True, and *axes* is set, then checks for consistent data
-        array values will only be made for one dimensional coordinate
-        objects which span the any of the given aggregating axes. This
-        can reduce the time taken for aggregation, but if any those
-        checks would have failed then this clearly allows the
-        possibility of an incorrect result. Therefore, this option
-        should only be used in cases for which it is known that the
-        non-aggregating axes are in fact already entirely consistent.
-
-    atol: float, optional
-        The absolute tolerance for all numerical comparisons. The
-        tolerance is a non-negative, typically very small number. Two
-        numbers, x and y, are considered the same if :math:`|x-y| \le
-        atol + rtol*|y|`. By default the value returned by the `ATOL`
-        function is used.
-
-    rtol: float, optional
-        The relative tolerance for all numerical comparisons. The
-        tolerance is a non-negative, typically very small number. Two
-        numbers, x and y, are considered the same if :math:`|x-y| \le
-        atol + rtol*|y|`. By default the value returned by the `RTOL`
-        function is used.
-
-    no_overlap: 
-        Use the *overlap* parameter instead.
-
-    shared_nc_domain: deprecated at version 3.0.0
-        No longer required due to updated CF data model.
-
-:Returns:
-
-    `FieldList`
-        The aggregated field constructs.
+    '''Aggregate field constructs into as few field constructs as
+    possible.
     
-**Examples:**
+    Aggregation is the combination of field constructs to create a new
+    field construct that occupies a "larger" domain. Using the
+    aggregation rules
+    (https://ncas-cms.github.io/cf-python/aggregation_rules.html),
+    field constructs are separated into aggregatable groups and each
+    group is then aggregated to a single field construct.
+    
+    **Identifying field and metadata constructs**
+    
+    In order to ascertain whether or not field constructs are
+    aggregatable, the aggregation rules rely on field constructs (and
+    their metadata constructs where applicable) being identified by
+    standard name properties. However, it is sometimes the case that
+    standard names are not available. In such cases the "id" attribute
+    (which is not a CF property) may be set on any construct, which
+    will be treated like a standard name if one doesn't
+    exist. Alternatively the *relaxed_identities* parameter allows
+    long name properties or netCDF variable names to be used when
+    standard names are missing.
+    
+    **Units**
+    
+    
+    
+    
+    :Parameters:
+    
+        fields: `FieldList` or sequence of `Field`
+            The field constructs to aggregated.
+    
+        info: `int`, optional
+            Print information about the aggregation process. By
+            default *info* is 0 and no information is displayed. If
+            *info* is 1 or more then display information on which
+            fields are unaggregatable, and why. If *info* is 2 or more
+            then also display the structural signatures of the fields
+            and, when there is more than one field construct with the
+            same structural signature, their canonical first and last
+            coordinate values. If *info* is 3 or more then display the
+            field construct's complete aggregation metadata.
+    
+        overlap: `bool`, optional
+            If `False` then require that aggregated field constructs
+            have adjacent dimension coordinate construct cells which
+            do not overlap (but they may share common boundary
+            values). Ignored for a dimension coordinate construct that
+            does not have bounds. See also the *contiguous* parameter.
+    
+        contiguous: `bool`, optional
+            If `True` then require that aggregated field constructs
+            have adjacent dimension coordinate construct cells which
+            overlap or share common boundary values. Ignored for a
+            dimension coordinate construct that does not have
+            bounds. See also the *overlap* parameter.
+    
+        relaxed_units: `bool`, optional
+            If `True` then assume that field and metadata constructs
+            with the same identity but missing units actually have
+            equivalent (but unspecified) units, so that aggregation
+            may occur. By default such field constructs are not
+            aggregatable.
+    
+        allow_no_identity: `bool`, optional
+            If `True` then assume that field and metadata constructs with
+            no identity (see the *relaxed_identities* parameter) actually
+            have the same (but unspecified) identity, so that aggregation
+            may occur. By default such field constructs are not
+            aggregatable.
+    
+        relaxed_identities: `bool`, optional
+            If `True` and there is no standard name property nor "id"
+            attribute, then allow field and metadata constructs to be
+            identifiable by long name properties or netCDF variable names.
+    
+        ncvar_identities: `bool`, optional
+            If `True` then force field and metadata constructs to be
+            identified by their netCDF file variable names See also the
+            *relaxed_identies* parameter.
+    
+        equal_all: `bool`, optional
+            If True then require that aggregated fields have the same set
+            of non-standard CF properties (including
+            `~cf.Field.long_name`), with the same values. See the
+            *concatenate* parameter.
+    
+        equal_ignore: (sequence of) `str`, optional
+            Specify CF properties to omit from any properties specified by
+            or implied by the *equal_all* and *equal* parameters.
+    
+        equal: (sequence of) `str`, optional
+            Specify CF properties for which it is required that aggregated
+            fields all contain the properties, with the same values. See
+            the *concatenate* parameter.
+    
+        exist_all: `bool`, optional
+            If True then require that aggregated fields have the same set
+            of non-standard CF properties (including, in this case,
+            long_name), but not requiring the values to be the same. See
+            the *concatenate* parameter.
+    
+        exist_ignore: (sequence of) `str`, optional
+            Specify CF properties to omit from the properties specified by
+            or implied by the *exist_all* and *exist* parameters.
+    
+        exist: (sequence of) `str`, optional
+            Specify CF properties for which it is required that aggregated
+            fields all contain the properties, but not requiring the
+            values to be the same. See the *concatenate* parameter.
+    
+        respect_valid: `bool`, optional
+            If True then the CF properties `~cf.Field.valid_min`,
+            `~cf.Field.valid_max` and `~cf.Field.valid_range` are taken
+            into account during aggregation. I.e. a requirement for
+            aggregation is that fields have identical values for each
+            these attributes, if set. By default these CF properties are
+            ignored and are not set in the output fields.
+    
+        dimension: (sequence of) `str`, optional
+            Create new axes for each input field which has one or more of
+            the given properties. For each CF property name specified, if
+            an input field has the property then, prior to aggregation, a
+            new axis is created with an auxiliary coordinate whose datum
+            is the property's value and the property itself is deleted
+            from that field.
+    
+        concatenate: `bool`, optional
+            If False then a CF property is omitted from an aggregated
+            field if the property has unequal values across constituent
+            fields or is missing from at least one constituent field. By
+            default a CF property in an aggregated field is the
+            concatenated collection of the distinct values from the
+            constituent fields, delimited with the string
+            ``' :AGGREGATED: '``.
+    
+        copy: `bool`, optional
+            If False then do not copy fields prior to aggregation.
+            Setting this option to False may change input fields in place,
+            and the output fields may not be independent of the
+            inputs. However, if it is known that the input fields are
+            never to accessed again (such as in this case: ``f =
+            cf.aggregate(f)``) then setting *copy* to False can reduce the
+            time taken for aggregation.
+    
+        axes: (sequence of) `str`, optional
+            Select axes to aggregate over. Aggregation will only occur
+            over as large a subset as possible of these axes. Each axis is
+            identified by the exact identity of a one dimensional
+            coordinate object, as returned by its `!identity`
+            method. Aggregations over more than one axis will occur in the
+            order given. By default, aggregation will be over as many axes
+            as possible.
+    
+        donotchecknonaggregatingaxes: `bool`, optional
+            If True, and *axes* is set, then checks for consistent data
+            array values will only be made for one dimensional coordinate
+            objects which span the any of the given aggregating axes. This
+            can reduce the time taken for aggregation, but if any those
+            checks would have failed then this clearly allows the
+            possibility of an incorrect result. Therefore, this option
+            should only be used in cases for which it is known that the
+            non-aggregating axes are in fact already entirely consistent.
+    
+        atol: float, optional
+            The absolute tolerance for all numerical comparisons. The
+            tolerance is a non-negative, typically very small number. Two
+            numbers, x and y, are considered the same if :math:`|x-y| \le
+            atol + rtol*|y|`. By default the value returned by the `ATOL`
+            function is used.
+    
+        rtol: float, optional
+            The relative tolerance for all numerical comparisons. The
+            tolerance is a non-negative, typically very small number. Two
+            numbers, x and y, are considered the same if :math:`|x-y| \le
+            atol + rtol*|y|`. By default the value returned by the `RTOL`
+            function is used.
+    
+        no_overlap: 
+            Use the *overlap* parameter instead.
+    
+        shared_nc_domain: deprecated at version 3.0.0
+            No longer required due to updated CF data model.
+    
+    :Returns:
+    
+        `FieldList`
+            The aggregated field constructs.
+        
+    **Examples:**
+    
+    The following six fields comprise eastward wind at two different times
+    and for three different atmospheric heights for each time:
+    
+    >>> f
+    [<CF Field: eastward_wind(latitude(73), longitude(96)>,
+     <CF Field: eastward_wind(latitude(73), longitude(96)>,
+     <CF Field: eastward_wind(latitude(73), longitude(96)>,
+     <CF Field: eastward_wind(latitude(73), longitude(96)>,
+     <CF Field: eastward_wind(latitude(73), longitude(96)>,
+     <CF Field: eastward_wind(latitude(73), longitude(96)>]
+    >>> g = cf.aggregate(f)
+    >>> g
+    [<CF Field: eastward_wind(height(3), time(2), latitude(73), longitude(96)>]
+    >>> g[0].source
+    'Model A'
+    >>> g = cf.aggregate(f, dimension=('source',))
+    [<CF Field: eastward_wind(source(1), height(3), time(2), latitude(73), longitude(96)>]
+    >>> g[0].source
+    AttributeError: 'Field' object has no attribute 'source'
 
-The following six fields comprise eastward wind at two different times
-and for three different atmospheric heights for each time:
-
->>> f
-[<CF Field: eastward_wind(latitude(73), longitude(96)>,
- <CF Field: eastward_wind(latitude(73), longitude(96)>,
- <CF Field: eastward_wind(latitude(73), longitude(96)>,
- <CF Field: eastward_wind(latitude(73), longitude(96)>,
- <CF Field: eastward_wind(latitude(73), longitude(96)>,
- <CF Field: eastward_wind(latitude(73), longitude(96)>]
->>> g = cf.aggregate(f)
->>> g
-[<CF Field: eastward_wind(height(3), time(2), latitude(73), longitude(96)>]
->>> g[0].source
-'Model A'
->>> g = cf.aggregate(f, dimension=('source',))
-[<CF Field: eastward_wind(source(1), height(3), time(2), latitude(73), longitude(96)>]
->>> g[0].source
-AttributeError: 'Field' object has no attribute 'source'
-
-'''
+    '''
     if no_overlap:
         _DEPRECATION_ERROR_FUNCTION_KWARGS(
             'cf.aggregate', {'no_overlap': no_overlap},
@@ -1675,8 +1668,6 @@ AttributeError: 'Field' object has no attribute 'source'
     #    of input fields return fields in the same order.
     # ================================================================
 
-#    print ('DCH', len(signatures))
-#
 #    x = []
 #    for signature in signatures:
 #        x.append(signature)
@@ -1787,25 +1778,24 @@ AttributeError: 'Field' object has no attribute 'source'
             # fields' domains differ only long the axis or each group
             # contains only one field.
             #
-            # Note that the 'a_identity' attribute is set in the
-            # _group_fields function.
+            # Note that the 'a_identity' attribute, that gives the
+            # identity of the aggregating axis, is set in
+            # _group_fields().
             # --------------------------------------------------------
             grouped_meta = _group_fields(meta, axis)
 
             if not grouped_meta:                
                 if info:
-                    print(
-"Unaggregatable {0!r} fields have{1} been output: {2}".format( 
-    meta[0].field.identity(), exclude, meta[0].message))
+                    print("Unaggregatable {0!r} fields have{1} been output: {2}".format( 
+                        meta[0].field.identity(), exclude, meta[0].message))
 
                 unaggregatable = True
                 break
 
             if len(grouped_meta) == number_of_fields:
                 if info >= 3:
-                    print(
-"{0!r} fields can't be aggregated along their {1!r} axis".format(
-    meta[0].field.identity(), axis))
+                    print("{0!r} fields can't be aggregated along their {1!r} axis".format(
+                        meta[0].field.identity(), axis))
                 continue
 
             # --------------------------------------------------------
@@ -1831,9 +1821,8 @@ AttributeError: 'Field' object has no attribute 'source'
                 if not _ok_coordinate_arrays(m, axis, overlap, contiguous,
                                              info):
                     if info:
-                        print(
-"Unaggregatable {!r} fields have{} been output: {}".format( 
-    m[0].field.identity(), exclude, m[0].message))
+                        print("Unaggregatable {!r} fields have{} been output: {}".format( 
+                            m[0].field.identity(), exclude, m[0].message))
 
                     unaggregatable = True
                     break
@@ -1863,9 +1852,8 @@ AttributeError: 'Field' object has no attribute 'source'
                         # this structural signature, including those
                         # already done.
                         if info:
-                            print(
-"Unaggregatable {!r} fields have{} been output: {}".format( 
-    m1.field.identity(), exclude, m1.message))
+                            print("Unaggregatable {!r} fields have{} been output: {}".format( 
+                                m1.field.identity(), exclude, m1.message))
 
                         unaggregatable = True
                         break
@@ -1904,7 +1892,7 @@ AttributeError: 'Field' object has no attribute 'source'
         print('')
 
     return output_fields
-#--- End: def
+
 
 # --------------------------------------------------------------------
 # Initialise the status
@@ -1915,23 +1903,22 @@ def _create_hash_and_first_values(meta, axes, donotchecknonaggregatingaxes,
                                   hfl_cache, rtol, atol):
     '''Updates each field's _Meta object.
 
-:Parameters:
-
-    meta: `list` of `_Meta`
-
-    axes: `None` or `list`
-
-    donotchecknonaggregatingaxes: `bool`
-
-:Returns:
-
-    `None`
-
+    :Parameters:
+    
+        meta: `list` of `_Meta`
+    
+        axes: `None` or `list`
+    
+        donotchecknonaggregatingaxes: `bool`
+    
+    :Returns:
+    
+        `None`
+    
     '''
     for m in meta:
         field = m.field
 
-#        item_axes = m.field.Items._axes
         item_axes = m.field.constructs.data_axes()
 
         m_sort_keys    = m.sort_keys
@@ -1942,6 +1929,7 @@ def _create_hash_and_first_values(meta, axes, donotchecknonaggregatingaxes,
         m_last_values  = m.last_values
 
         m_id_to_axis = m.id_to_axis
+
         # --------------------------------------------------------
         # Create a hash value for each metadata array
         # --------------------------------------------------------
@@ -1950,7 +1938,6 @@ def _create_hash_and_first_values(meta, axes, donotchecknonaggregatingaxes,
         # 1-d coordinates
         # --------------------------------------------------------
         for identity in m.axis_ids:
-
             if (axes is not None and donotchecknonaggregatingaxes and
                 identity not in axes):
                 x = [None] * len(m.axis[identity]['keys'])
@@ -1968,7 +1955,6 @@ def _create_hash_and_first_values(meta, axes, donotchecknonaggregatingaxes,
             # domain axis object
             axis_size = m_axis_identity['size']
             if axis_size is not None:
-#                m_hash_values[identity]  = [hash(field.axis(axis))]
                 m_hash_values[identity]  = [hash(field.constructs[axis])]
                 m_first_values[identity] = [None]
                 m_last_values[identity]  = [None]
@@ -1976,7 +1962,6 @@ def _create_hash_and_first_values(meta, axes, donotchecknonaggregatingaxes,
                 continue
 
             # Still here?
-#            dim_coord = m.field.item(axis)
             dim_coord = m.field.dimension_coordinates.filter_by_axis('and', axis)
 
             # Find the sort indices for this axis ...
@@ -1995,7 +1980,6 @@ def _create_hash_and_first_values(meta, axes, donotchecknonaggregatingaxes,
                 # ... or which doesn't have a dimension coordinate but
                 # does have one or more 1-d auxiliary coordinates
                 aux = m_axis_identity['keys'][0]
-#                sort_indices = numpy_argsort(field.item(aux).array)
                 sort_indices = numpy_argsort(field.constructs[aux].array)
                 m_sort_keys[axis] = aux 
                 null_sort = False
@@ -2008,8 +1992,6 @@ def _create_hash_and_first_values(meta, axes, donotchecknonaggregatingaxes,
 
             for key, canonical_units in zip(m_axis_identity['keys'],
                                             m_axis_identity['units']):
-
-#                coord = field.item(key)
                 coord = field.constructs[key]
 
                 # Get the hash of the data array and its first and
@@ -2038,7 +2020,9 @@ def _create_hash_and_first_values(meta, axes, donotchecknonaggregatingaxes,
                                        False, False, hfl_cache, rtol, atol)
 
                     h = (h, hb)
-                
+                else:
+                    h = (h,)
+                    
                 hash_values.append(h)
 ##                else:
 ##                    coord_units = coord.Units
@@ -2089,7 +2073,7 @@ def _create_hash_and_first_values(meta, axes, donotchecknonaggregatingaxes,
 ##                    # Reinstate the coordinate's original units
 ##                    coord.Units = coord_units
             #--- End: for
-                
+
             m_hash_values[identity]  = hash_values
             m_first_values[identity] = first_values
             m_last_values[identity]  = last_values
@@ -2100,7 +2084,7 @@ def _create_hash_and_first_values(meta, axes, donotchecknonaggregatingaxes,
         # ------------------------------------------------------------
         if donotchecknonaggregatingaxes:
             for aux in m.nd_aux.values():
-                aux['hash_value'] = None
+                aux['hash_value'] = (None,)
         else:
             for aux in m.nd_aux.values():
                 key             = aux['key']
@@ -2127,9 +2111,10 @@ def _create_hash_and_first_values(meta, axes, donotchecknonaggregatingaxes,
                                    sort_indices,
                                    False, False, False, hfl_cache, rtol, atol)
                     h = (h, hb)
+                else:
+                    h = (h,)
                     
                 aux['hash_value'] = h
-            #--- End: for
         #--- End: if
             
         # ------------------------------------------------------------
@@ -2137,12 +2122,11 @@ def _create_hash_and_first_values(meta, axes, donotchecknonaggregatingaxes,
         # ------------------------------------------------------------
         if donotchecknonaggregatingaxes:
             for msr in m.msr.values():            
-                msr['hash_values'] = [None] * len(msr['keys'])
+                msr['hash_values'] = [(None,) * len(msr['keys'])]
         else:
             for canonical_units, msr in m.msr.items():                
                 hash_values = []           
                 for key, axes in zip(msr['keys'], msr['axes']):            
-#                    coord = field.item(key) 
                     coord = field.constructs[key]
          
                     axes = tuple([m_id_to_axis[identity] for identity in axes])
@@ -2160,10 +2144,9 @@ def _create_hash_and_first_values(meta, axes, donotchecknonaggregatingaxes,
                                  tuple(sort_indices),
                                  False, False, False, hfl_cache, rtol, atol)
 
-                    hash_values.append(h)
-            
+                    hash_values.append((h,))
+                    
                 msr['hash_values'] = hash_values
-            #--- End: for
         #--- End: if
 
         # ------------------------------------------------------------
@@ -2171,13 +2154,13 @@ def _create_hash_and_first_values(meta, axes, donotchecknonaggregatingaxes,
         # ------------------------------------------------------------
         if donotchecknonaggregatingaxes:
             for anc in m.field_anc.values():
-                anc['hash_value'] = None
+                anc['hash_value'] = (None,)
         else:
             for anc in m.field_anc.values():
                 key             = anc['key']
                 canonical_units = anc['units']
 
-                field_anc = field.item(key)
+                field_anc = field.construct(key)
                 
                 axes = tuple([m_id_to_axis[identity] for identity in anc['axes']])
                 domain_axes = item_axes[key]
@@ -2192,7 +2175,7 @@ def _create_hash_and_first_values(meta, axes, donotchecknonaggregatingaxes,
                 h = _get_hfl(field_anc, canonical_units, sort_indices, 
                              False, False, False, hfl_cache, rtol, atol)
                 
-                anc['hash_value'] = h
+                anc['hash_value'] = (h,)
         #--- End: if
             
         # ------------------------------------------------------------
@@ -2200,33 +2183,64 @@ def _create_hash_and_first_values(meta, axes, donotchecknonaggregatingaxes,
         # ------------------------------------------------------------
         if donotchecknonaggregatingaxes:
             for anc in m.domain_anc.values():
-                anc['hash_value'] = None
+                anc['hash_value'] = (None,)
         else:
             for anc in m.domain_anc.values():
                 key             = anc['key']
                 canonical_units = anc['units']
 
-                field_anc = field.item(key)
+                domain_anc = field.construct(key)
                 
                 axes = tuple([m_id_to_axis[identity] for identity in anc['axes']])
                 domain_axes = item_axes[key]
                 if axes != domain_axes:
-                    field_anc = field_anc.copy() #_only_Data=True)                        # TODO
+                    domain_anc = domain_anc.copy() #_only_Data=True)                        # TODO
                     iaxes = [domain_axes.index(axis) for axis in axes]
-                    field_anc.transpose(iaxes, inplace=True)
+                    domain_anc.transpose(iaxes, inplace=True)
                 
                 sort_indices = tuple([m_sort_indices[axis] for axis in axes])
                     
                 # Get the hash of the data array
-                h = _get_hfl(field_anc, canonical_units, sort_indices, 
-                             False, False, False, hfl_cache, rtol, atol)
+                h = _get_hfl(domain_anc, canonical_units,
+                             sort_indices, False, False, False,
+                             hfl_cache, rtol, atol)
                 
+                if domain_anc.has_bounds():
+                    # Get the hash of the bounds data array
+                    hb = _get_hfl(domain_anc.bounds, canonical_units,
+                                  sort_indices, False, False, False,
+                                  hfl_cache, rtol, atol)
+                    h = (h, hb)
+                else:
+                    h = (h,)
+                    
                 anc['hash_value'] = h
+            
+#            for anc in m.domain_anc.values():
+#                key             = anc['key']
+#                canonical_units = anc['units']
+#
+#                field_anc = field.item(key)
+#                
+#                axes = tuple([m_id_to_axis[identity] for identity in anc['axes']])
+#                domain_axes = item_axes[key]
+#                if axes != domain_axes:
+#                    field_anc = field_anc.copy() #_only_Data=True)                        # TODO
+#                    iaxes = [domain_axes.index(axis) for axis in axes]
+#                    field_anc.transpose(iaxes, inplace=True)
+#                
+#                sort_indices = tuple([m_sort_indices[axis] for axis in axes])
+#                    
+#                # Get the hash of the data array
+#                h = _get_hfl(field_anc, canonical_units, sort_indices, 
+#                             False, False, False, hfl_cache, rtol, atol)
+#                
+#                anc['hash_value'] = h
         #--- End: if
 
         m.cell_values = True
     #--- End: for
-#--- End: def
+
 
 def _get_hfl(v, canonical_units, sort_indices, null_sort, 
              first_and_last_values, first_and_last_bounds,
@@ -2336,18 +2350,18 @@ def _get_hfl(v, canonical_units, sort_indices, null_sort,
 def _group_fields(meta, axis):
     '''TODO
 
-:Parameters:
+    :Parameters:
+    
+        meta: `list` of `_Meta`
+    
+        axis: `str`
+            The name of the axis to group for aggregation.
+    
+    :Returns:
+    
+        `list` of cf.FieldList
 
-    meta: `list` of `_Meta`
-
-    axis: `str`
-        The name of the axis to group for aggregation.
-
-:Returns:
-
-    `list` of cf.FieldList
-
-'''
+    '''
     axes = meta[0].axis_ids
 
     if axes:
@@ -2360,7 +2374,8 @@ def _group_fields(meta, axis):
         sort_by_axis_ids = itemgetter(*axes)            
         def _hash_values(m):
             return sort_by_axis_ids(m.hash_values)
-        
+        #--- End: def        
+
         meta.sort(key=_hash_values)
 
     # Create a new group of potentially aggregatable fields (which
@@ -2450,8 +2465,7 @@ def _group_fields(meta, axis):
             # Zero axes have different 1-d coordinate values, so don't
             # aggregate anything in this entire group.
             # --------------------------------------------------------
-            meta[0].message = \
-"indistinguishable coordinates or other domain information"
+            meta[0].message = "indistinguishable coordinates or other domain information"
             return ()
 
         else:
@@ -2464,7 +2478,7 @@ def _group_fields(meta, axis):
     #--- End: for
 
     return groups_of_fields
-#--- End: def
+
 
 def _sorted_by_first_values(meta, axis):
     '''Sort fields inplace
@@ -2649,115 +2663,41 @@ by the canonical first values of their 1-d coordinates.
 def _aggregate_2_fields(m0, m1,
                         rtol=None, atol=None,
                         info=0,    
-#                        respect_valid=False,
-#                        relaxed_units=False,
-#                        overlap=True, 
-#                        contiguous=False,
                         concatenate=True,
                         copy=True,
-#                        relaxed_identities=False,
-#                        ncvar_identities=False
 ):
     '''TODO
 
-:Parameters:
+    :Parameters:
+    
+        m0: `_Meta`
+    
+        m1: `_Meta`
+    
+        rtol: `float`, optional
+            See the `cf.aggregate` function for details.
+    
+        atol: `float`, optional
+            See the `cf.aggregate` function for details.
+       
+        info: `int`, optional
+            See the `cf.aggregate` function for details.
+       
+    :Returns:
+    
+        out: `_Meta` or `bool`
 
-    m0: `_Meta`
-
-    m1: `_Meta`
-
-#    contiguous: `bool`, optional
-#        See the `cf.aggregate` function for details.
-   
-    rtol: `float`, optional
-        See the `cf.aggregate` function for details.
-
-    atol: `float`, optional
-        See the `cf.aggregate` function for details.
-   
-    info: `int`, optional
-        See the `cf.aggregate` function for details.
-   
-#    overlap: `bool`, optional
-#        See the `cf.aggregate` function for details.
-#  
-#    relaxed_units: `bool`, optional
-#        See the `cf.aggregate` function for details.
-#
-#    relaxed_identities: `bool`, optional
-#        See the `cf.aggregate` function for details.
-#
-#    ncvar_identities: `bool`, optional
-#        See the `cf.aggregate` function for details.
-
-:Returns:
-
-    out : _Meta or bool
-  
-''' 
+    ''' 
 #    if copy and not m0.aggregated_field:
 #        m0.field = m0.field.copy()
 
     a_identity = m0.a_identity
     
-#    # ----------------------------------------------------------------
-#    # Aggregate coordinate references
-#    # ----------------------------------------------------------------
-#    if m0.coordref_signatures:
-#        t = _aggregate_coordrefs(m0, m1,
-#                                 axis=a_identity,
-#                                 rtol=rtol, atol=atol,
-#                                 respect_valid=respect_valid,
-#                                 relaxed_units=relaxed_units,
-#                                 overlap=overlap, info=info,
-#                                 contiguous=contiguous,
-#                                 relaxed_identities=relaxed_identities,
-#                                 ncvar_identities=ncvar_identities)
-#        if not t:
-#            return
-#    else:
-#        t = None
-#
-#    # ----------------------------------------------------------------
-#    # Aggregate ancillary variables
-#    # ----------------------------------------------------------------
-#    if m0.ancillary_variables:
-#        av = _aggregate_ancillary_variables(m0, m1,
-#                                            axis=a_identity,
-#                                            rtol=rtol, atol=atol,
-#                                            respect_valid=respect_valid,
-#                                            relaxed_units=relaxed_units,
-#                                            overlap=overlap,
-#                                            info=info,
-#                                            contiguous=contiguous,
-#                                            relaxed_identities=relaxed_identities,
-#                                            ncvar_identities=ncvar_identities)
-#        if not av:
-#            return
-#    else:
-#        av = None
- 
     # Still here?
     field0 = m0.field
     field1 = m1.field
     if copy:
         field1 = field1.copy()
-
-#    domain0 = field0.domain
-#    domain1 = field1.domain
-
-#    if t:
-#        # ------------------------------------------------------------
-#        # Update coordinate references
-#        # ------------------------------------------------------------
-#        for key, ref in t.items():
-#            field0.insert_ref(ref, key=key, copy=False, replace=True)
-#
-#    if av:
-#        # ------------------------------------------------------------
-#        # Update ancillary variables
-#        # ------------------------------------------------------------
-#        field0.ancillary_variables = av
 
     # ----------------------------------------------------------------
     # Map the axes of field1 to those of field0
@@ -2789,21 +2729,19 @@ def _aggregate_2_fields(m0, m1,
     # the aggregating axis
     # ----------------------------------------------------------------
     # 1-d coordinates
-#    spanning_variables = [(key0, key1, field0.item(key0), field1.item(key1))
     spanning_variables = [(key0, key1, field0.constructs[key0], field1.constructs[key1])
                           for key0, key1 in zip(m0.axis[a_identity]['keys'],
                                                 m1.axis[a_identity]['keys'])] 
-   
-#    print (spanning_variables)
-    
+
     hash_values0 = m0.hash_values[a_identity]
     hash_values1 = m1.hash_values[a_identity]
+
     for i, (hash0, hash1) in enumerate(zip(hash_values0, hash_values1)):
-        try:
-            hash_values0[i].append(hash_values1[i])
-        except AttributeError:
-            hash_values0[i] = [hash_values0[i], hash_values1[i]]
-    #--- End: for
+#        try:
+#            hash_values0[i].append(hash_values1[i])
+#        except AttributeError:
+#            hash_values0[i] = [hash_values0[i], hash_values1[i]]
+        hash_values0[i] = hash_values0[i] + hash_values1[i]
 
     # N-d auxiliary coordinates
     for identity in m0.nd_aux:
@@ -2815,15 +2753,14 @@ def _aggregate_2_fields(m0, m1,
             spanning_variables.append((key0, key1,
                                        field0.constructs[key0],
                                        field1.constructs[key1]))
-#                                       field0.item(key0),
-#                                       field1.item(key1)))
 
             hash_value0 = aux0['hash_value']
             hash_value1 = aux1['hash_value']
-            try:
-                hash_value0.append(hash_value1)
-            except AttributeError:
-                aux0['hash_value'] = [hash_value0, hash_value1]
+
+#            try:
+#                hash_value0.append(hash_value1)
+#            except AttributeError:
+            aux0['hash_value'] = hash_value0 + hash_value1
     #--- End: for
     
     # Cell measures                
@@ -2837,13 +2774,11 @@ def _aggregate_2_fields(m0, m1,
                 spanning_variables.append((key0, key1,
                                            field0.constructs[key0],
                                            field1.constructs[key1]))
-#                                           field0.item(key0),
-#                                           field1.item(key1)))
 
-                try:
-                    hash_values0[i].append(hash_values1[i])
-                except AttributeError:
-                    hash_values0[i] = [hash_values0[i], hash_values1[i]]
+#                try:
+#                    hash_values0[i].append(hash_values1[i])
+#                except AttributeError:
+                hash_values0[i] = hash_values0[i] + hash_values1[i]
     #--- End: for
 
     # Field ancillaries
@@ -2856,15 +2791,13 @@ def _aggregate_2_fields(m0, m1,
             spanning_variables.append((key0, key1,
                                        field0.constructs[key0],
                                        field1.constructs[key1]))
-#                                       field0.item(key0),
-#                                       field1.item(key1)))
 
             hash_value0 = anc0['hash_value']
             hash_value1 = anc1['hash_value']
-            try:
-                hash_value0.append(hash_value1)
-            except AttributeError:
-                anc0['hash_value'] = [hash_value0, hash_value1]
+#            try:
+#                hash_value0.append(hash_value1)
+#            except AttributeError:
+            anc0['hash_value'] = hash_value0 + hash_value1
     #--- End: for
 
     # Domain ancillaries
@@ -2877,15 +2810,13 @@ def _aggregate_2_fields(m0, m1,
             spanning_variables.append((key0, key1,
                                        field0.constructs[key0],
                                        field1.constructs[key1]))
-#                                       field0.item(key0),
-#                                       field1.item(key1)))
 
             hash_value0 = anc0['hash_value']
             hash_value1 = anc1['hash_value']
-            try:
-                hash_value0.append(hash_value1)
-            except AttributeError:
-                anc0['hash_value'] = [hash_value0, hash_value1]
+#            try:
+#                hash_value0.append(hash_value1)
+#            except AttributeError:
+            anc0['hash_value'] = hash_value0 + hash_value1
     #--- End: for
 
     # ----------------------------------------------------------------
@@ -2893,45 +2824,35 @@ def _aggregate_2_fields(m0, m1,
     # domain ancillaries which span the aggregating axis, insert the
     # one from field1 into the one from field0
     # ----------------------------------------------------------------
-    for key0, key1, item0, item1 in spanning_variables:
-#        item_axes0 = field0.item_axes(key0)
-#        item_axes1 = field1.item_axes(key1)
-        item_axes0 = field0.get_data_axes(key0)
-        item_axes1 = field1.get_data_axes(key1)
+    for key0, key1, construct0, construct1 in spanning_variables:
+        construct_axes0 = field0.get_data_axes(key0)
+        construct_axes1 = field1.get_data_axes(key1)
 
-        # Ensure that the axis orders are the same in both items
-        iaxes = [item_axes1.index(dim0_name_map[axis0]) for axis0 in item_axes0]
-        item1.transpose(iaxes, inplace=True)
+        # Ensure that the axis orders are the same in both constructs
+        iaxes = [construct_axes1.index(dim0_name_map[axis0]) for axis0 in construct_axes0]
+        construct1.transpose(iaxes, inplace=True)
 
         # Find the position of the concatenating axis
-        axis = item_axes0.index(adim0)
+        axis = construct_axes0.index(adim0)
 
         if direction0:
             # The fields are increasing along the aggregating axis
-#            item0.Data = Data.concatenate((item0.Data, item1.Data), axis, _preserve=False)
-            data = Data.concatenate((item0.get_data(), item1.get_data()), axis,
+            data = Data.concatenate((construct0.get_data(), construct1.get_data()), axis,
                                     _preserve=False)
-            item0.set_data(data, copy=False)
-            if item0.has_bounds():            
-#                item0.bounds.Data = Data.concatenate((item0.bounds.Data,
-#                                                      item1.bounds.Data),
-#                                                     axis, _preserve=False)
-                data = Data.concatenate((item0.bounds.get_data(), item1.bounds.get_data()),
+            construct0.set_data(data, copy=False)
+            if construct0.has_bounds():            
+                data = Data.concatenate((construct0.bounds.get_data(), construct1.bounds.get_data()),
                                         axis, _preserve=False)
-                item0.bounds.set_data(data, copy=False)
+                construct0.bounds.set_data(data, copy=False)
         else:
             # The fields are decreasing along the aggregating axis
-#            item0.Data = Data.concatenate((item1.Data, item0.Data), axis, _preserve=False)
-            data = Data.concatenate((item1.get_data(), item0.get_data()), axis,
+            data = Data.concatenate((construct1.get_data(), construct0.get_data()), axis,
                                     _preserve=False)
-            item0.set_data(data)
-            if item0.has_bounds():            
-#                item0.bounds.Data = Data.concatenate((item1.bounds.Data,
-#                                                      item0.bounds.Data),
-#                                                     axis, _preserve=False)
-                data = Data.concatenate((item1.bounds.get_data(), item0.bounds.get_data()),
+            construct0.set_data(data)
+            if construct0.has_bounds():            
+                data = Data.concatenate((construct1.bounds.get_data(), construct0.bounds.get_data()),
                                         axis, _preserve=False)
-                item0.bounds.set_data(data)
+                construct0.bounds.set_data(data)
     #--- End: for        
         
     # ----------------------------------------------------------------
@@ -2947,13 +2868,14 @@ def _aggregate_2_fields(m0, m1,
             axis0 = dim1_name_map[axis1]
             if axis0 not in data_axes0:
                 field0.insert_dimension(axis0, position=0, inplace=True)
-#                data_axes0.append(axis0)
                 data_axes0.insert(0, axis0)
-
+        #--- End: for
+        
         for axis0 in data_axes0:
             axis1 = dim0_name_map[axis0]
             if axis1 not in data_axes1:
                 field1.insert_dimension(axis1, position=0, inplace=True)
+        #--- End: for
                 
         # Find the position of the concatenating axis
         if adim0 not in data_axes0:
@@ -2976,16 +2898,12 @@ def _aggregate_2_fields(m0, m1,
 
         if direction0:
             # The fields are increasing along the aggregating axis
-#            field0.Data = Data.concatenate((field0.Data, field1.Data), axis, _preserve=False)
             data = Data.concatenate((field0.get_data(), field1.get_data()),
                                     axis, _preserve=False)
-#            field0.set_data(data, copy=False)
         else:
             # The fields are decreasing along the aggregating axis
-#            field0.Data = Data.concatenate((field1.Data, field0.Data), axis, _preserve=False)
             data = Data.concatenate((field1.get_data(), field0.get_data()), axis,
                                     _preserve=False)
-#            field0.set_data(data, copy=False)
 
         # Update the size of the aggregating axis in field0
         domain_axis = field0.constructs[adim0]
@@ -2994,11 +2912,6 @@ def _aggregate_2_fields(m0, m1,
         # Insert the concatentated data into the field
         field0.set_data(data, set_axes=False, copy=False)
     #--- End: if
-
-#    # Update the size of the aggregating axis in field0
-#    domain0._axes_sizes[adim0] += domain1._axes_sizes[adim1]
-#    field0.Axes[adim0] += field1.axis_size(adim1)
-#    field0.axes()[adim0] += field1.axis_size(adim1)
 
     # Make sure that field0 has a standard_name, if possible.
     if getattr(field0, 'id', None) is not None:
@@ -3011,7 +2924,6 @@ def _aggregate_2_fields(m0, m1,
     #-----------------------------------------------------------------
     # Update the properties in field0
     #-----------------------------------------------------------------
-#    for prop in set(field0._simple_properties()) | set(field1._simple_properties()):
     for prop in set(field0.properties()).difference(field0._special_properties):
         value0 = field0.get_property(prop, None)
         value1 = field1.get_property(prop, None)
@@ -3069,7 +2981,6 @@ def _aggregate_2_fields(m0, m1,
     # Return the _Meta object containing the aggregated field
     # ----------------------------------------------------------------
     return m0
-#--- End: def
 
 
 def ensemble(f, prop, **kwargs):

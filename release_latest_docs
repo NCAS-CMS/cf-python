@@ -19,6 +19,7 @@ make html .
 #mv _downloads/*/*.nc _downloads
 
 cp source/sample_files/cf_tutorial_files.zip _downloads
+cp source/tutorial.py _downloads
 
 # --------------------------------------------------------------------
 # Add and commit the latest
@@ -33,7 +34,8 @@ git add \
     *.js \
     _sources \
     _static \
-    _downloads/cf_tutorial_files.zip
+    _downloads/cf_tutorial_files.zip \
+    _downloads/tutorial.py
 
 git commit -a -m "v$version latest documentation"
 

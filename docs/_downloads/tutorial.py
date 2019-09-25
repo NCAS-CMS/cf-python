@@ -22,7 +22,12 @@ y = cf.read('*.nc')
 len(y)
 z = cf.read(['file.nc', 'precipitation_flux.nc'])
 len(z)
-y = cf.read('$PWD')
+try:
+    y = cf.read('$PWD')                                    
+except:
+    pass
+else:
+    raise Exception("This should have failed!")
 y = cf.read('$PWD', ignore_read_error=True)
 len(y)
 
@@ -56,6 +61,7 @@ len(y + y)
 len(y * 4)
 for f in y:
      print('field:', repr(f))
+
 
 print("\n**Properties**\n")
 
@@ -567,7 +573,7 @@ key = p.set_construct(dc, axes=longitude_axis)
 key
 cm = cf.CellMethod(axes=longitude_axis, method='minimum')
 p.set_construct(cm)
-#raise Exception("To proceeed, insert code block 1")
+
 import numpy
 import cf
 
@@ -637,8 +643,9 @@ dimY.set_bounds(bounds)
 Q.set_construct(dimT)
 Q.set_construct(dimY)
 Q.set_construct(dimX)
+
 Q.dump()
-#raise Exception("To proceeed, insert code block 2")
+
 import numpy
 import cf
 
@@ -792,6 +799,7 @@ cell_measure = cf.CellMeasure(measure='area',
                  data=cf.Data(numpy.arange(90.).reshape(9, 10)))
 
 tas.set_construct(cell_measure)
+
 print(tas)
 import netCDF4
 nc = netCDF4.Dataset('file.nc', 'r')
@@ -1008,8 +1016,6 @@ bounds = time.create_bounds()
 time.set_bounds(bounds)
 c = a.regridc({'T': time}, axes='T', method='conservative')
 print(c)
-# c = a.regridc(TODO1 (field arg), axes='T', method='conservative')
-print(c)
 v = cf.read('vertical.nc')[0]
 print(v)
 z_p = v.construct('Z')
@@ -1061,13 +1067,17 @@ print(zeta.array.round(8))
 
 print("\n**Aggregation**\n")
 
-#a = cf.read(TODO1)
-#b = cf.read(TODO1, aggregate=False)
-#c = cf.aggregate(b)
-#a.equals(c)
-#WWW = cf.read(TODO, aggregate={'info': 1, 'overlap': False})
-#XXX = cf.aggregate(AAA TODO, info=1, overlap=False)
-#WWW.equals(XXX TODO)
+a = cf.read('air_temperature.nc')[0]
+a
+a_parts = [a[0, : , 0:30], a[0, :, 30:], a[1, :, 0:30], a[1, :, 30:]]
+a_parts
+for i, f in enumerate(a_parts):
+     cf.write(f, str(i)+'_air_temperature.nc')
+
+x = cf.read('[0-3]_air_temperature.nc')
+y = cf.read('[0-3]_air_temperature.nc', aggregate=False)
+z = cf.aggregate(y)
+x.equals(z)
 
 print("\n**Compression**\n")
 
@@ -1086,7 +1096,7 @@ h.data.get_compression_type()
 h.data[1, 2] = -9
 print(h.array)
 h.data.get_compression_type()
-#raise Exception("To proceeed, insert code block 3")
+
 import numpy
 import cf
 
@@ -1120,6 +1130,7 @@ Y = T.set_construct(cf.DomainAxis(2))
 
 # Set the data for the field
 T.set_data(cf.Data(array))
+
 T
 print(T.array)
 T.data.get_compression_type()
@@ -1141,7 +1152,7 @@ p[1, :, 3:5]
 p.data.get_compression_type()
 p.data[1] = -9
 p.data.get_compression_type()
-#raise Exception("To proceeed, insert code block 4")
+
 import numpy	  
 import cf
 
@@ -1173,7 +1184,8 @@ Y = P.set_construct(cf.DomainAxis(3))
 X = P.set_construct(cf.DomainAxis(2))
 
 # Set the data for the field
-P.set_data(cf.Data(array), axes=[T, Y, X])
+P.set_data(cf.Data(array), axes=[T, Y, X])			      
+
 P
 print(P.data.array)
 P.data.get_compression_type()
@@ -1185,8 +1197,9 @@ cf.write(P, 'P_gathered.nc')
 
 print("\n**PP and UM fields files**\n")
 
-#TODO read PP file
 pp = cf.read('umfile.pp')
+pp
+print(pp[0])
 cf.write(pp, 'umfile1.nc')
 type(cf.read_write.um.umread.stash2standard_name)                       
 cf.read_write.um.umread.stash2standard_name[(1, 4)]                    
