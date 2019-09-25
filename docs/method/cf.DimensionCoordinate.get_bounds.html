@@ -90,7 +90,7 @@
 <h1>cf.DimensionCoordinate.get_bounds<a class="headerlink" href="#cf-dimensioncoordinate-get-bounds" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.DimensionCoordinate.get_bounds">
-<code class="descclassname">DimensionCoordinate.</code><code class="descname">get_bounds</code><span class="sig-paren">(</span><em>default=ValueError()</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b12/cf/dimensioncoordinate.py#L670"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DimensionCoordinate.get_bounds" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">DimensionCoordinate.</code><code class="descname">get_bounds</code><span class="sig-paren">(</span><em>default=ValueError()</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b12/cf/dimensioncoordinate.py#L668"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DimensionCoordinate.get_bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the bounds.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 3.0.0.</span></p>
@@ -106,14 +106,18 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
 <dt>default: optional</dt>
-<dd><p class="first last">Return the value of the default parameter if bounds have not
-been set. If set to an <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code></a> instance then it will be
-raised instead.</p>
+<dd><p class="first last">Return the value of the default parameter if bounds have
+not been set. If set to an <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code></a> instance then it
+will be raised instead.</p>
 </dd>
 </dl>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The bounds.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><a class="reference internal" href="../classes/cf.Bounds.html#cf.Bounds" title="cf.Bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Bounds</span></code></a></dt>
+<dd><p class="first last">The bounds.</p>
+</dd>
+</dl>
 </td>
 </tr>
 </tbody>

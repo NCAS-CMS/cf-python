@@ -91,25 +91,23 @@
 <dl class="method">
 <dt id="cf.DimensionCoordinate.create_bounds">
 <code class="descclassname">DimensionCoordinate.</code><code class="descname">create_bounds</code><span class="sig-paren">(</span><em>bound=None</em>, <em>cellsize=None</em>, <em>flt=0.5</em>, <em>max=None</em>, <em>min=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b12/cf/dimensioncoordinate.py#L353"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DimensionCoordinate.create_bounds" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get or create the cell bounds.</p>
-<p>Either return its existing bounds or, if there are none, optionally
-create bounds based on the coordinate array values.</p>
+<dd><p>Create cell bounds.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
 <dt>bound: optional</dt>
-<dd><p class="first last">If set to a value larger (smaller) than the largest (smallest)
-coordinate value then bounds are created which include this
-value and for which each coordinate is in the centre of its
-bounds. Ignored if <em>create</em> is False.</p>
+<dd><p class="first last">If set to a value larger (smaller) than the largest
+(smallest) coordinate value then bounds are created which
+include this value and for which each coordinate is in the
+centre of its bounds. Ignored if <em>create</em> is False.</p>
 </dd>
 <dt>cellsize: optional</dt>
-<dd><p class="first">Define the exact size of each cell that is created. Created
-cells are allowed to overlap do not have to be contigious.
-Ignored if <em>create</em> is False. The <em>cellsize</em> parameter may be
-one of:</p>
+<dd><p class="first">Define the exact size of each cell that is
+created. Created cells are allowed to overlap do not have
+to be contigious.  Ignored if <em>create</em> is False. The
+<em>cellsize</em> parameter may be one of:</p>
 <blockquote>
 <div><ul>
 <li><p class="first">A data-like scalar (see below) that defines the cell size,
@@ -139,8 +137,8 @@ of <code class="docutils literal notranslate"><span class="pre">(-1.5,</span> <s
 </dd>
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last">For decreasing coordinates <code class="docutils literal notranslate"><span class="pre">2,</span> <span class="pre">0,</span> <span class="pre">-12</span></code> setting,
-<code class="docutils literal notranslate"><span class="pre">cellsize=2</span></code> will result in bounds of <code class="docutils literal notranslate"><span class="pre">(3,</span> <span class="pre">1),</span> <span class="pre">(1,</span>
-<span class="pre">-1),</span> <span class="pre">(-11,</span> <span class="pre">-13)</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">cellsize=2</span></code> will result in bounds of <code class="docutils literal notranslate"><span class="pre">(3,</span> <span class="pre">1),</span>
+<span class="pre">(1,</span> <span class="pre">-1),</span> <span class="pre">(-11,</span> <span class="pre">-13)</span></code>.</p>
 </dd>
 </dl>
 </li>
@@ -157,26 +155,27 @@ calendar month, starting and ending on the 15th day:
 that the <em>flt</em> parameter is ignored in this case.</p>
 <dl class="docutils">
 <dt><em>Parameter example:</em></dt>
-<dd><p class="first last">For coordinates <code class="docutils literal notranslate"><span class="pre">1984-12-01</span> <span class="pre">12:00,</span> <span class="pre">1984-12-02</span> <span class="pre">12:00,</span>
-<span class="pre">2000-04-15</span> <span class="pre">12:00</span></code> setting, <code class="docutils literal notranslate"><span class="pre">cellsize=cf.D()</span></code> will
+<dd><p class="first last">For coordinates <code class="docutils literal notranslate"><span class="pre">1984-12-01</span> <span class="pre">12:00,</span> <span class="pre">1984-12-02</span>
+<span class="pre">12:00,</span> <span class="pre">2000-04-15</span> <span class="pre">12:00</span></code> setting,
+<code class="docutils literal notranslate"><span class="pre">cellsize=cf.D()</span></code> will result in bounds of
+<code class="docutils literal notranslate"><span class="pre">(1984-12-01,</span> <span class="pre">1984-12-02),</span> <span class="pre">(1984-12-02,</span>
+<span class="pre">1984-12-03),</span> <span class="pre">(2000-05-15,</span> <span class="pre">2000-04-16)</span></code> (see <a class="reference internal" href="../generated/cf.D.html#cf.D" title="cf.D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.D</span></code></a>
+for details).</p>
+</dd>
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last">For coordinates <code class="docutils literal notranslate"><span class="pre">1984-12-01,</span> <span class="pre">1984-12-02,</span>
+<span class="pre">2000-04-15</span></code> setting, <code class="docutils literal notranslate"><span class="pre">cellsize=cf.D()</span></code> will
 result in bounds of <code class="docutils literal notranslate"><span class="pre">(1984-12-01,</span> <span class="pre">1984-12-02),</span>
 <span class="pre">(1984-12-02,</span> <span class="pre">1984-12-03),</span> <span class="pre">(2000-05-15,</span> <span class="pre">2000-04-16)</span></code>
 (see <a class="reference internal" href="../generated/cf.D.html#cf.D" title="cf.D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.D</span></code></a> for details).</p>
 </dd>
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last">For coordinates <code class="docutils literal notranslate"><span class="pre">1984-12-01,</span> <span class="pre">1984-12-02,</span>
-<span class="pre">2000-04-15</span></code> setting, <code class="docutils literal notranslate"><span class="pre">cellsize=cf.D()</span></code> will result
-in bounds of <code class="docutils literal notranslate"><span class="pre">(1984-12-01,</span> <span class="pre">1984-12-02),</span> <span class="pre">(1984-12-02,</span>
-<span class="pre">1984-12-03),</span> <span class="pre">(2000-05-15,</span> <span class="pre">2000-04-16)</span></code> (see <a class="reference internal" href="../generated/cf.D.html#cf.D" title="cf.D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.D</span></code></a>
-for details).</p>
-</dd>
-<dt><em>Parameter example:</em></dt>
-<dd><p class="first last">For coordinates <code class="docutils literal notranslate"><span class="pre">1984-12-01,</span> <span class="pre">1984-12-02,</span>
-<span class="pre">2000-04-15</span></code> setting, <code class="docutils literal notranslate"><span class="pre">cellsize=cf.D(hour=12)</span></code> will
-result in bounds of <code class="docutils literal notranslate"><span class="pre">(1984-11:30</span> <span class="pre">12:00,</span> <span class="pre">1984-12-01</span>
-<span class="pre">12:00),</span> <span class="pre">(1984-12-01</span> <span class="pre">12:00,</span> <span class="pre">1984-12-02</span> <span class="pre">12:00),</span>
-<span class="pre">(2000-05-14</span> <span class="pre">12:00,</span> <span class="pre">2000-04-15</span> <span class="pre">12:00)</span></code> (see <a class="reference internal" href="../generated/cf.D.html#cf.D" title="cf.D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.D</span></code></a>
-for details).</p>
+<span class="pre">2000-04-15</span></code> setting, <code class="docutils literal notranslate"><span class="pre">cellsize=cf.D(hour=12)</span></code>
+will result in bounds of <code class="docutils literal notranslate"><span class="pre">(1984-11:30</span> <span class="pre">12:00,</span>
+<span class="pre">1984-12-01</span> <span class="pre">12:00),</span> <span class="pre">(1984-12-01</span> <span class="pre">12:00,</span> <span class="pre">1984-12-02</span>
+<span class="pre">12:00),</span> <span class="pre">(2000-05-14</span> <span class="pre">12:00,</span> <span class="pre">2000-04-15</span> <span class="pre">12:00)</span></code> (see
+<a class="reference internal" href="../generated/cf.D.html#cf.D" title="cf.D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.D</span></code></a> for details).</p>
 </dd>
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last">For coordinates <code class="docutils literal notranslate"><span class="pre">1984-12-16</span> <span class="pre">12:00,</span> <span class="pre">1985-01-16</span>
@@ -201,23 +200,23 @@ result in bounds of <code class="docutils literal notranslate"><span class="pre"
 <code class="docutils literal notranslate"><span class="pre">cellsize=cf.Y()</span></code> will result in bounds of
 <code class="docutils literal notranslate"><span class="pre">(1984-01-01,</span> <span class="pre">1985-01-01),</span> <span class="pre">(1984-01-01,</span>
 <span class="pre">1985-01-01)</span></code> (see <a class="reference internal" href="../generated/cf.Y.html#cf.Y" title="cf.Y"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Y</span></code></a> for details). Note that in
-this case each cell has the same bounds. This because
-<code class="docutils literal notranslate"><span class="pre">cf.Y()</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">cf.Y(month=1,</span> <span class="pre">day=1)</span></code>
-and the closest 1st January to both coordinates is
-1st January 1984.</p>
+this case each cell has the same bounds. This
+because <code class="docutils literal notranslate"><span class="pre">cf.Y()</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">cf.Y(month=1,</span>
+<span class="pre">day=1)</span></code> and the closest 1st January to both
+coordinates is 1st January 1984.</p>
 </dd>
 </dl>
 </li>
 </ul>
 </div></blockquote>
-<p class="last">{+data-like-scalar}</p>
+<p class="last">{+data-like-scalar} TODO</p>
 </dd>
 <dt>flt: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>, optional</dt>
 <dd><p class="first">When creating cells with sizes specified by the <em>cellsize</em>
-parameter, define the fraction of the each cell which is less
-its coordinate value. By default <em>flt</em> is 05, so that each
-cell has its coordinate at it’s centre. Ignored if <em>cellsize</em>
-is not set.</p>
+parameter, define the fraction of the each cell which is
+less its coordinate value. By default <em>flt</em> is 05, so that
+each cell has its coordinate at it’s centre. Ignored if
+<em>cellsize</em> is not set.</p>
 <dl class="last docutils">
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last">For coordinates <code class="docutils literal notranslate"><span class="pre">1,</span> <span class="pre">2,</span> <span class="pre">10</span></code>, setting <code class="docutils literal notranslate"><span class="pre">cellsize=1,</span>
@@ -226,13 +225,13 @@ is not set.</p>
 </dd>
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last">For coordinates <code class="docutils literal notranslate"><span class="pre">1,</span> <span class="pre">2,</span> <span class="pre">10</span></code>, setting <code class="docutils literal notranslate"><span class="pre">cellsize=1,</span>
-<span class="pre">flt=0.25</span></code> will result in bounds of <code class="docutils literal notranslate"><span class="pre">(0.75,</span> <span class="pre">1.75),</span> <span class="pre">(1.75,</span>
-<span class="pre">2.75),</span> <span class="pre">(9.75,</span> <span class="pre">10.75)</span></code>.</p>
+<span class="pre">flt=0.25</span></code> will result in bounds of <code class="docutils literal notranslate"><span class="pre">(0.75,</span> <span class="pre">1.75),</span>
+<span class="pre">(1.75,</span> <span class="pre">2.75),</span> <span class="pre">(9.75,</span> <span class="pre">10.75)</span></code>.</p>
 </dd>
 <dt><em>Parameter example:</em> </dt>
 <dd><p class="first last">For decreasing coordinates <code class="docutils literal notranslate"><span class="pre">2,</span> <span class="pre">0,</span> <span class="pre">-12</span></code>, setting
-<code class="docutils literal notranslate"><span class="pre">cellsize=6,</span> <span class="pre">flt=0.9</span></code> will result in bounds of <code class="docutils literal notranslate"><span class="pre">(2.6,</span>
-<span class="pre">-3.4),</span> <span class="pre">(0.6,</span> <span class="pre">-5.4),</span> <span class="pre">(-11.4,</span> <span class="pre">-17.4)</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">cellsize=6,</span> <span class="pre">flt=0.9</span></code> will result in bounds of
+<code class="docutils literal notranslate"><span class="pre">(2.6,</span> <span class="pre">-3.4),</span> <span class="pre">(0.6,</span> <span class="pre">-5.4),</span> <span class="pre">(-11.4,</span> <span class="pre">-17.4)</span></code>.</p>
 </dd>
 </dl>
 </dd>
@@ -255,10 +254,10 @@ is not set.</p>
 </dl>
 </dd>
 <dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If False then the returned bounds are not independent of the
-existing bounds, if any, or those inserted, if <em>create</em> and
-<em>insert</em> are both True. By default the returned bounds are
-independent.</p>
+<dd><p class="first last">If <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> then the returned bounds are not independent of
+the existing bounds, if any, or those inserted, if
+<em>create</em> and <em>insert</em> are both True. By default the
+returned bounds are independent.</p>
 </dd>
 </dl>
 </td>

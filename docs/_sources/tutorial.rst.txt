@@ -62,9 +62,8 @@ The tutorial files may be also found in the `downloads directory
 <https://github.com/NCAS-CMS/cf-python/tree/master/docs/_downloads>`_
 of the on-line code repository.
 
-This tutorial uses a number of small sample datasets, all of which can
-be found in the zip file ``cf_tutorial_files.zip``
-(:download:`asdasdsads <tutorial.py>`, 36kB):
+All of the Python code in this tutorial is available in an executable
+script (:download:`download <../source/tutorial.py>`, 36kB).
 
 
 ----
