@@ -15,6 +15,10 @@
 * Test the tarball release using `test_release <vn>`
   (e.g. ./test_release 3.0.0).
 
+* Test tutorial code:
+
+cd docs/source; ./reset_test_tutorial; cd test_tutorial; python ../tutorial.py
+  
 * Update the latest documentation using `./release_latest_docs <vn>`
   (e.g. ./release_latest_docs 3.0.0)
 
