@@ -607,6 +607,8 @@ Aliases
 
    ~cf.Field.dtarray
 
+.. _Field-arithmetic:
+
 Arithmetic and comparison operations
 ------------------------------------
 
@@ -616,10 +618,12 @@ field construct or, for augmented assignments, modify the field
 construct's data in-place.
 
 
-.. rubric:: Comparison operators
+.. _Field-comparison:
+
+.. rubric:: Relational operators
 
 .. autosummary::
-   :nosignatures`:
+   :nosignatures:
    :toctree: ../method/
    :template: method.rst
 
@@ -629,6 +633,8 @@ construct's data in-place.
    ~cf.Field.__ne__
    ~cf.Field.__gt__
    ~cf.Field.__ge__
+
+.. _Field-binary-arithmetic:
 
 .. rubric:: Binary arithmetic operators
 
@@ -678,6 +684,8 @@ construct's data in-place.
    ~cf.Field.__ipow__ 
    ~cf.Field.__imod__ 
 
+.. _Field-unary-arithmetic:
+   
 .. rubric:: Unary arithmetic operators
 
 .. autosummary::
@@ -688,6 +696,8 @@ construct's data in-place.
    ~cf.Field.__neg__    
    ~cf.Field.__pos__    
    ~cf.Field.__abs__    
+
+.. _Field-bitwise:
 
 .. rubric:: Binary bitwise operators
 

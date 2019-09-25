@@ -5838,8 +5838,153 @@ construct key.
 **Mathematical operations**
 ---------------------------
 
+Arithmetic
+^^^^^^^^^^
+
+A field construct may be arithmetically combined with another field
+construct, or any other object that is broadcastable to its data. See
+the :ref:`comprehensive list of available binary operations
+<Field-binary-arithmetic>`.
+
+When combining with another field construct, its data is actually
+combined, but only after being transformed so that it is broadcastable
+to the first field construct's data. This is done by using the
+metadata constructs of the two field constructs to create a mapping of
+physically compatible dimensions between the fields, and then
+:ref:`manipulating the dimensions <Manipulating-dimensions>` of the
+other field construct's data to ensure that they are broadcastable.
+
+In any case, a field construct may appear as the left or right
+operand, and augmented assignments are possible.
+
+Automatic units conversions are also carried out between operands
+during operations.
+
+.. code-block:: python
+  :caption: *TODO*
+
+   >>> q, t = cf.read('file.nc')
+   >>> t.data.stats()   
+   {'min': <CF Data(): 260.0 K>,
+    'mean': <CF Data(): 269.9244444444445 K>,
+    'max': <CF Data(): 280.0 K>,
+    'range': <CF Data(): 20.0 K>,
+    'mid_range': <CF Data(): 270.0 K>,
+    'standard_deviation': <CF Data(): 5.942452002538104 K>,
+    'sample_size': 90}
+   >>> x = t + t
+   >>> x
+   <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>
+   >>> x.min()
+   <CF Data(): 520.0 K>
+   >>> (t - 2).min()
+   <CF Data(): 258.0 K>
+   >>> (2 + t).min()
+   <CF Data(): 262.0 K>
+   >>> (t * list(range(9))).min()                                                                    
+   <CF Data(): 0.0 K>
+   >>> (t + cf.Data(numpy.arange(20, 29), '0.1 K')).min()          
+   <CF Data(): 262.6 K>
+
+.. code-block:: python
+  :caption: *TODO*
+
+   >>> u = t.copy()                                                                                  
+   >>> u.transpose(inplace=True)
+   >>> u.Units -= 273.15
+   >>> u[0]                         
+   <CF Field: air_temperature(grid_longitude(1), grid_latitude(10), atmosphere_hybrid_height_coordinate(1)) K @ 273.15>
+   >>> t + u[0]
+   <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>
+
+   
+Unary operations
+^^^^^^^^^^^^^^^^
+
+Pythion unary operators also work on the field construct's data,
+returning a new field construct with modified data values. See the
+:ref:`comprehensive list of available unary operations
+<Field-unary-arithmetic>`.
+
+.. code-block:: python
+  :caption: *TODO*
+
+   >>> q, t = cf.read('file.nc')
+   >>> print(q.array)  
+   [[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]
+    [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
+    [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
+    [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
+    [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]   
+   >>> print(-q.array)                    
+   [[-0.007 -0.034 -0.003 -0.014 -0.018 -0.037 -0.024 -0.029]
+    [-0.023 -0.036 -0.045 -0.062 -0.046 -0.073 -0.006 -0.066]
+    [-0.11  -0.131 -0.124 -0.146 -0.087 -0.103 -0.057 -0.011]
+    [-0.029 -0.059 -0.039 -0.07  -0.058 -0.072 -0.009 -0.017]
+    [-0.006 -0.036 -0.019 -0.035 -0.018 -0.037 -0.034 -0.013]]
+   >>> print(abs(-q.array))  
+   [[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]
+    [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
+    [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
+    [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
+    [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]
+
+    
+Relational operations
+^^^^^^^^^^^^^^^^^^^^^
+
+A field construct may compared with another field construct, or any
+other object that is broadcastable to its data. See the
+:ref:`comprehensive list of available relational operations
+<Field-comparison>`. The result is a field construct with a boolean
+data values.
+
+When comparing with another field construct, its data is actually
+combined, but only after being transformed so that it is broadcastable
+to the first field construct's data. This is done by using the
+metadata constructs of the two field constructs to create a mapping of
+physically compatible dimensions between the fields, and then
+:ref:`manipulating the dimensions <Manipulating-dimensions>` of the
+other field construct's data to ensure that they are broadcastable.
+
+In any case, a field construct may appear as the left or right
+operand.
+
+Automatic units conversions are also carried out between operands
+during operations.
+
+.. code-block:: python
+  :caption: *TODO*
+
+   >>> q, t = cf.read('file.nc')
+   >>> print(q.array)         
+   [[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]
+    [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
+    [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
+    [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
+    [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]
+   >>> print((q == q).array)                                   
+   [[ True  True  True  True  True  True  True  True]
+    [ True  True  True  True  True  True  True  True]
+    [ True  True  True  True  True  True  True  True]
+    [ True  True  True  True  True  True  True  True]
+    [ True  True  True  True  True  True  True  True]]
+   >>> print((q < 0.05).array)                                                                      
+   [[ True  True  True  True  True  True  True  True]
+    [ True  True  True False  True False  True False]
+    [False False False False False False False  True]
+    [ True False  True False False False  True  True]
+    [ True  True  True  True  True  True  True  True]]
+   >>> print((q >= q[0]).array) 
+   [[ True  True  True  True  True  True  True  True]
+    [ True  True  True  True  True  True False  True]
+    [ True  True  True  True  True  True  True False]
+    [ True  True  True  True  True  True False False]
+    [False  True  True  True  True  True  True False]]
+
+    
 Trigonometrical functions
-^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The field construct and metadata constructs have `~Field.cos`,
 `~Field.sin` and `~Field.tan` methods for applying trigonometrical

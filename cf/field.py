@@ -25,6 +25,7 @@ from numpy import finfo       as numpy_finfo
 from numpy import isnan       as numpy_isnan
 from numpy import nan         as numpy_nan
 from numpy import ndarray     as numpy_ndarray
+from numpy import shape       as numpy_shape
 from numpy import size        as numpy_size
 from numpy import squeeze     as numpy_squeeze
 from numpy import tile        as numpy_tile
@@ -203,6 +204,10 @@ and institution).
 The netCDF variable name of the construct may be accessed with the
 `nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
 `nc_has_variable` methods.
+
+The selection of properties to be written as netCDF global attributes
+may be accessed with the `nc_global_attributes`,
+`nc_clear_global_attributes` and `nc_set_global_attribute` methods.
 
     '''
     def __new__(cls, *args, **kwargs):
@@ -492,78 +497,76 @@ The netCDF variable name of the construct may be accessed with the
         self.data[indices] = value
 
 
-    # 0
     def analyse_items(self, relaxed_identities=None):
+        '''Analyse a domain.
+
+    :Returns:
+    
+        `dict`
+            A description of the domain.
+    
+    **Examples:**
+    
+    >>> print(f)
+    Axes           : time(3) = [1979-05-01 12:00:00, ..., 1979-05-03 12:00:00] gregorian
+                   : air_pressure(5) = [850.000061035, ..., 50.0000038147] hPa
+                   : grid_longitude(106) = [-20.5400109887, ..., 25.6599887609] degrees
+                   : grid_latitude(110) = [23.3200002313, ..., -24.6399995089] degrees
+    Aux coords     : latitude(grid_latitude(110), grid_longitude(106)) = [[67.1246607722, ..., 22.8886948065]] degrees_N
+                   : longitude(grid_latitude(110), grid_longitude(106)) = [[-45.98136251, ..., 35.2925499052]] degrees_E
+    Coord refs     : <CF CoordinateReference: rotated_latitude_longitude>
+    
+    >>> f.analyse_items()
+    {
+     'dim_coords': {'dim0': <CF Dim ....>,
+    
+     'aux_coords': {'N-d': {'aux0': <CF AuxiliaryCoordinate: latitude(110, 106) degrees_N>,
+                            'aux1': <CF AuxiliaryCoordinate: longitude(110, 106) degrees_E>},
+                    'dim0': {'1-d': {},
+                             'N-d': {}},
+                    'dim1': {'1-d': {},
+                             'N-d': {}},
+                    'dim2': {'1-d': {},
+                             'N-d': {'aux0': <CF AuxiliaryCoordinate: latitude(110, 106) degrees_N>,
+                                     'aux1': <CF AuxiliaryCoordinate: longitude(110, 106) degrees_E>}},
+                    'dim3': {'1-d': {},
+                             'N-d': {'aux0': <CF AuxiliaryCoordinate: latitude(110, 106) degrees_N>,
+                                     'aux1': <CF AuxiliaryCoordinate: longitude(110, 106) degrees_E>}}},
+     'axis_to_coord': {'dim0': <CF DimensionCoordinate: time(3) gregorian>,
+                       'dim1': <CF DimensionCoordinate: air_pressure(5) hPa>,
+                       'dim2': <CF DimensionCoordinate: grid_latitude(110) degrees>,
+                       'dim3': <CF DimensionCoordinate: grid_longitude(106) degrees>},
+     'axis_to_id': {'dim0': 'time',
+                    'dim1': 'air_pressure',
+                    'dim2': 'grid_latitude',
+                    'dim3': 'grid_longitude'},
+     'cell_measures': {'N-d': {},
+                       'dim0': {'1-d': {},
+                                'N-d': {}},
+                       'dim1': {'1-d': {},
+                                'N-d': {}},
+                       'dim2': {'1-d': {},
+                                'N-d': {}},
+                       'dim3': {'1-d': {},
+                                'N-d': {}}},
+     'id_to_aux': {},
+     'id_to_axis': {'air_pressure': 'dim1',
+                    'grid_latitude': 'dim2',
+                    'grid_longitude': 'dim3',
+                    'time': 'dim0'},
+     'id_to_coord': {'air_pressure': <CF DimensionCoordinate: air_pressure(5) hPa>,
+                     'grid_latitude': <CF DimensionCoordinate: grid_latitude(110) degrees>,
+                     'grid_longitude': <CF DimensionCoordinate: grid_longitude(106) degrees>,
+                     'time': <CF DimensionCoordinate: time(3) gregorian>},
+     'id_to_key': {'air_pressure': 'dim1',
+                   'grid_latitude': 'dim2',
+                   'grid_longitude': 'dim3',
+                   'time': 'dim0'},
+     'undefined_axes': [],
+     'warnings': [],
+    }
+
         '''
-Analyse a domain.
-
-:Returns:
-
-    `dict`
-        A description of the domain.
-
-**Examples:**
-
->>> print(f)
-Axes           : time(3) = [1979-05-01 12:00:00, ..., 1979-05-03 12:00:00] gregorian
-               : air_pressure(5) = [850.000061035, ..., 50.0000038147] hPa
-               : grid_longitude(106) = [-20.5400109887, ..., 25.6599887609] degrees
-               : grid_latitude(110) = [23.3200002313, ..., -24.6399995089] degrees
-Aux coords     : latitude(grid_latitude(110), grid_longitude(106)) = [[67.1246607722, ..., 22.8886948065]] degrees_N
-               : longitude(grid_latitude(110), grid_longitude(106)) = [[-45.98136251, ..., 35.2925499052]] degrees_E
-Coord refs     : <CF CoordinateReference: rotated_latitude_longitude>
-
->>> f.analyse_items()
-{
- 'dim_coords': {'dim0': <CF Dim ....>,
-
- 'aux_coords': {'N-d': {'aux0': <CF AuxiliaryCoordinate: latitude(110, 106) degrees_N>,
-                        'aux1': <CF AuxiliaryCoordinate: longitude(110, 106) degrees_E>},
-                'dim0': {'1-d': {},
-                         'N-d': {}},
-                'dim1': {'1-d': {},
-                         'N-d': {}},
-                'dim2': {'1-d': {},
-                         'N-d': {'aux0': <CF AuxiliaryCoordinate: latitude(110, 106) degrees_N>,
-                                 'aux1': <CF AuxiliaryCoordinate: longitude(110, 106) degrees_E>}},
-                'dim3': {'1-d': {},
-                         'N-d': {'aux0': <CF AuxiliaryCoordinate: latitude(110, 106) degrees_N>,
-                                 'aux1': <CF AuxiliaryCoordinate: longitude(110, 106) degrees_E>}}},
- 'axis_to_coord': {'dim0': <CF DimensionCoordinate: time(3) gregorian>,
-                   'dim1': <CF DimensionCoordinate: air_pressure(5) hPa>,
-                   'dim2': <CF DimensionCoordinate: grid_latitude(110) degrees>,
-                   'dim3': <CF DimensionCoordinate: grid_longitude(106) degrees>},
- 'axis_to_id': {'dim0': 'time',
-                'dim1': 'air_pressure',
-                'dim2': 'grid_latitude',
-                'dim3': 'grid_longitude'},
- 'cell_measures': {'N-d': {},
-                   'dim0': {'1-d': {},
-                            'N-d': {}},
-                   'dim1': {'1-d': {},
-                            'N-d': {}},
-                   'dim2': {'1-d': {},
-                            'N-d': {}},
-                   'dim3': {'1-d': {},
-                            'N-d': {}}},
- 'id_to_aux': {},
- 'id_to_axis': {'air_pressure': 'dim1',
-                'grid_latitude': 'dim2',
-                'grid_longitude': 'dim3',
-                'time': 'dim0'},
- 'id_to_coord': {'air_pressure': <CF DimensionCoordinate: air_pressure(5) hPa>,
-                 'grid_latitude': <CF DimensionCoordinate: grid_latitude(110) degrees>,
-                 'grid_longitude': <CF DimensionCoordinate: grid_longitude(106) degrees>,
-                 'time': <CF DimensionCoordinate: time(3) gregorian>},
- 'id_to_key': {'air_pressure': 'dim1',
-               'grid_latitude': 'dim2',
-               'grid_longitude': 'dim3',
-               'time': 'dim0'},
- 'undefined_axes': [],
- 'warnings': [],
-}
-
-'''
         a = {}
 
         # ------------------------------------------------------------
@@ -717,8 +720,53 @@ Coord refs     : <CF CoordinateReference: rotated_latitude_longitude>
                 'undefined_axes': undefined_axes,
                 'warnings'      : warnings,                
                 }    
-    #--- End def
 
+    def _is_broadcastable(self, shape):
+        '''TODO
+        
+    :Parameters:
+        
+        shape1: sequence of `int`
+        
+    :Returns:
+        
+        `bool`
+
+        '''        
+        shape0 = getattr(self, 'shape', None)
+        if shape is None:
+            return False
+
+        shape1 = shape
+        
+        if tuple(shape1) == tuple(shape0):
+            # Same shape
+            return True
+    
+        ndim0 = len(shape0)
+        ndim1 = len(shape1)
+        if not ndim0 or not ndim1:
+            # Either or both is scalar
+            return True
+        
+        set0 = set(shape0)
+        if len(set0) == 1 and 1 in set0:
+            return True
+        
+        set1 = set(shape1)
+        if len(set1) == 1 and 1 in set1:
+            return True
+        
+        if ndim1 > ndim0:
+            return False
+        
+        for n, m in zip(shape1[::-1], shape0[::-1]):
+            if n != m and n != 1:
+                return False
+        #--- End: for
+        
+        return True
+        
 
     def _binary_operation(self, other, method):
         '''Implement binary arithmetic and comparison operations on the master
@@ -749,7 +797,7 @@ Coord refs     : <CF CoordinateReference: rotated_latitude_longitude>
     >>> f._binary_operation(g, '__isub__')
     >>> f._binary_operation(g, '__rdiv__')
 
-        '''
+        '''        
         _debug = False
 
 #        if IGNORE_IDENTITIES():
@@ -791,11 +839,18 @@ Coord refs     : <CF CoordinateReference: rotated_latitude_longitude>
             # ========================================================
             return NotImplemented
 
-        if not isinstance(other, self.__class__):
-            raise ValueError(
-                "Can't combine {!r} with {!r}".format(
-                    self.__class__.__name__, other.__class__.__name__))
+#        if not isinstance(other, self.__class__):
+#            raise ValueError(
+#                "Can't combine {!r} with {!r}".format(
+#                    self.__class__.__name__, other.__class__.__name__))
 
+        if not isinstance(other, self.__class__):
+            if self._is_broadcastable(numpy_shape(other)):
+                return super()._binary_operation(other, method)
+            
+            raise ValueError(
+                "Can't combine {!r} with {!r} (incompatible shapes)".format(
+                    self.__class__.__name__, other.__class__.__name__))
 
         # ============================================================
         # Still here? Then combine the field with another field
@@ -826,6 +881,7 @@ Coord refs     : <CF CoordinateReference: rotated_latitude_longitude>
                 "Can't combine fields: Both fields have undefined axes: {!r}, {!r}".format(
                     tuple(self.constructs.domain_axis_identity(a) for a in s['undefined_axes']),
                     tuple(other.constructs.domain_axis_identity(a) for a in v['undefined_axes'])))
+        #--- End: if
         
         # Find the axis names which are present in both fields
         matching_ids = set(s['id_to_axis']).intersection(v['id_to_axis'])
@@ -839,8 +895,8 @@ Coord refs     : <CF CoordinateReference: rotated_latitude_longitude>
         for identity in set(s['id_to_aux']).symmetric_difference(v['id_to_aux']):
             if identity in matching_ids:
                 raise ValueError(
-"Can't combine fields: {!r} axis defined by auxiliary in only 1 field".format(
-    standard_name)) ########~WRONG
+                    "Can't combine fields: {!r} axis defined by auxiliary in only 1 field".format(
+                        standard_name)) ########~WRONG
         #--- End: for
 
         # ------------------------------------------------------------
@@ -929,8 +985,8 @@ Coord refs     : <CF CoordinateReference: rotated_latitude_longitude>
                 else:
                     # Can't broadcast
                     raise ValueError(
-"Can't combine fields: Can't broadcast {!r} axes with sizes {} and {}".format(
-    identity, size0, size1))
+                        "Can't combine fields: Can't broadcast {!r} axes with sizes {} and {}".format(
+                            identity, size0, size1))
 
                 # Move on to the next identity if the defining
                 # coordinates have different sizes
@@ -3393,8 +3449,8 @@ Coord refs     : <CF CoordinateReference: rotated_latitude_longitude>
         '''The standard_error_multiplier CF property.
 
     If a data variable with a `standard_name` modifier of
-    ``'standard_error'`` has this attribute, it indicates that the values
-    are the stated multiple of one standard error. See
+    ``'standard_error'`` has this attribute, it indicates that the
+    values are the stated multiple of one standard error. See
     http://cfconventions.org/latest.html for details.
     
     **Examples:**
@@ -13266,9 +13322,9 @@ The axes are inserted into the slowest varying data array positions.
         long_name     = getattr(f, 'long_name', None)
         if standard_name is not None:
             del f.standard_name
-            f.long_name = 'derivative of ' + standard_name
+            f.long_name = 'derivative of {}'.format(standard_name)
         elif long_name is not None:
-            f.long_name = 'derivative of ' + long_name
+            f.long_name = 'derivative of {}'.format(long_name)
 
         if inplace:
             f = None
@@ -14539,12 +14595,12 @@ any units, then the units of the named item are assumed.
 #    
 #        atol: float, optional
 #            The tolerance on absolute differences between real
-#            numbers. The default value is set by the `cfdm.ATOL`
+#            numbers. The default value is set by the `cf.ATOL`
 #            function.
 #            
 #        rtol: float, optional
 #            The tolerance on relative differences between real
-#            numbers. The default value is set by the `cfdm.RTOL`
+#            numbers. The default value is set by the `cf.RTOL`
 #            function.
 #    
 #        ignore_fill_value: `bool`, optional

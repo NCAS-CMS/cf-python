@@ -89,7 +89,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.Field">
-<em class="property">class </em><code class="descclassname">cf.</code><code class="descname">Field</code><span class="sig-paren">(</span><em>properties=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b12/cf/field.py#L174"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cf.</code><code class="descname">Field</code><span class="sig-paren">(</span><em>properties=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b12/cf/field.py#L175"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.field.Field</span></code></p>
 <p>A field construct of the CF data model.</p>
 <p>The field construct is central to the CF data model, and includes all
@@ -116,6 +116,9 @@ and institution).</p>
 <p>The netCDF variable name of the construct may be accessed with the
 <a class="reference internal" href="../method/cf.Field.nc_set_variable.html#cf.Field.nc_set_variable" title="cf.Field.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a>, <a class="reference internal" href="../method/cf.Field.nc_get_variable.html#cf.Field.nc_get_variable" title="cf.Field.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a>, <a class="reference internal" href="../method/cf.Field.nc_del_variable.html#cf.Field.nc_del_variable" title="cf.Field.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a> and
 <a class="reference internal" href="../method/cf.Field.nc_has_variable.html#cf.Field.nc_has_variable" title="cf.Field.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_variable</span></code></a> methods.</p>
+<p>The selection of properties to be written as netCDF global attributes
+may be accessed with the <a class="reference internal" href="../method/cf.Field.nc_global_attributes.html#cf.Field.nc_global_attributes" title="cf.Field.nc_global_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_global_attributes</span></code></a>,
+<a class="reference internal" href="../method/cf.Field.nc_clear_global_attributes.html#cf.Field.nc_clear_global_attributes" title="cf.Field.nc_clear_global_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_global_attributes</span></code></a> and <a class="reference internal" href="../method/cf.Field.nc_set_global_attribute.html#cf.Field.nc_set_global_attribute" title="cf.Field.nc_set_global_attribute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_global_attribute</span></code></a> methods.</p>
 <p><strong>Initialization</strong></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1215,13 +1218,39 @@ initialization. By default arguments are deep copied.</p>
 </table>
 </div>
 <div class="section" id="arithmetic-and-comparison-operations">
-<h2>Arithmetic and comparison operations<a class="headerlink" href="#arithmetic-and-comparison-operations" title="Permalink to this headline">¶</a></h2>
+<span id="field-arithmetic"></span><h2>Arithmetic and comparison operations<a class="headerlink" href="#arithmetic-and-comparison-operations" title="Permalink to this headline">¶</a></h2>
 <p>Arithmetic, bitwise and comparison operations are defined on a field
 construct as element-wise operations on its data which yield a new
 field construct or, for augmented assignments, modify the field
 construct’s data in-place.</p>
-<p class="rubric">Comparison operators</p>
-<p class="rubric">Binary arithmetic operators</p>
+<p class="rubric" id="field-comparison">Relational operators</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.Field.__lt__.html#cf.Field.__lt__" title="cf.Field.__lt__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__lt__</span></code></a></td>
+<td>The rich comparison operator <code class="docutils literal notranslate"><span class="pre">&lt;</span></code></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.Field.__le__.html#cf.Field.__le__" title="cf.Field.__le__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__le__</span></code></a></td>
+<td>The rich comparison operator <code class="docutils literal notranslate"><span class="pre">&lt;=</span></code></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.Field.__eq__.html#cf.Field.__eq__" title="cf.Field.__eq__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__eq__</span></code></a></td>
+<td>The rich comparison operator <code class="docutils literal notranslate"><span class="pre">==</span></code></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.Field.__ne__.html#cf.Field.__ne__" title="cf.Field.__ne__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__ne__</span></code></a></td>
+<td>The rich comparison operator <code class="docutils literal notranslate"><span class="pre">!=</span></code></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.Field.__gt__.html#cf.Field.__gt__" title="cf.Field.__gt__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__gt__</span></code></a></td>
+<td>The rich comparison operator <code class="docutils literal notranslate"><span class="pre">&gt;</span></code></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.Field.__ge__.html#cf.Field.__ge__" title="cf.Field.__ge__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__ge__</span></code></a></td>
+<td>The rich comparison operator <code class="docutils literal notranslate"><span class="pre">&gt;=</span></code></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric" id="field-binary-arithmetic">Binary arithmetic operators</p>
 <table border="1" class="longtable docutils">
 <colgroup>
 <col width="10%" />
@@ -1320,7 +1349,7 @@ construct’s data in-place.</p>
 </tr>
 </tbody>
 </table>
-<p class="rubric">Unary arithmetic operators</p>
+<p class="rubric" id="field-unary-arithmetic">Unary arithmetic operators</p>
 <table border="1" class="longtable docutils">
 <colgroup>
 <col width="10%" />
@@ -1338,7 +1367,7 @@ construct’s data in-place.</p>
 </tr>
 </tbody>
 </table>
-<p class="rubric">Binary bitwise operators</p>
+<p class="rubric" id="field-bitwise">Binary bitwise operators</p>
 <table border="1" class="longtable docutils">
 <colgroup>
 <col width="10%" />

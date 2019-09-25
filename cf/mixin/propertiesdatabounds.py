@@ -18,7 +18,7 @@ from numpy import vectorize   as numpy_vectorize
 
 from . import PropertiesData
 
-from ..functions    import RTOL, ATOL, RELAXED_IDENTITIES, parse_indices
+from ..functions    import parse_indices
 from ..functions    import equivalent as cf_equivalent
 from ..functions    import inspect    as cf_inspect
 from ..functions    import (_DEPRECATION_ERROR_KWARGS,

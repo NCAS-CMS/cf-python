@@ -15,7 +15,7 @@ from numpy import vectorize   as numpy_vectorize
 
 
 from ..cfdatetime   import dt
-from ..functions    import RTOL, ATOL, RELAXED_IDENTITIES
+from ..functions    import RTOL, ATOL
 from ..functions    import equivalent as cf_equivalent
 from ..functions    import inspect    as cf_inspect
 from ..query        import Query

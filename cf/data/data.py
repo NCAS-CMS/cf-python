@@ -9894,24 +9894,24 @@ given indices.
 
         def _is_broadcastable(data0, data1, do_not_broadcast, is_scalar):
             '''Check that the data1 is broadcastable to data0 and return data1, as
-a python scalar if possible.
-
-.. note:: The input lists are updated inplace.
-
-:Parameters:
-
-    data0: `cf.Data`
-
-    data1: `cf.Data`
-
-    do_not_broadcast: `list`
-
-    is_scalar: `list`
-
-:Returns:
-
-    `Data` or scalar
-        Return *data1* or, if possible, ``data1.datum(0)``.
+        a python scalar if possible.
+        
+        .. note:: The input lists are updated inplace.
+        
+        :Parameters:
+        
+            data0: `cf.Data`
+        
+            data1: `cf.Data`
+        
+            do_not_broadcast: `list`
+        
+            is_scalar: `list`
+        
+        :Returns:
+        
+            `Data` or scalar
+                Return *data1* or, if possible, ``data1.datum(0)``.
 
             '''
             shape0 = data0._shape
@@ -9934,12 +9934,12 @@ a python scalar if possible.
                 for n, m in zip(shape1[::-1], shape0[::-1]):
                     if n != m and n != 1:
                         raise ValueError(
-"where: Can't broadcast data with shape {} to shape {}".format(
-    shape1, shape0))
+                            "where: Can't broadcast data with shape {} to shape {}".format(
+                                shape1, shape0))
             else:
                 raise ValueError(
-"where: Can't broadcast data with shape {} to shape {}".format(
-    shape1, shape0))
+                    "where: Can't broadcast data with shape {} to shape {}".format(
+                        shape1, shape0))
 
             return data1
         #--- End: def
