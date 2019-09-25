@@ -12,7 +12,7 @@ cf.FieldList
    :no-members:
    :no-inherited-members:
 
-Filtering
+Selecting
 ---------
 
 .. autosummary::
@@ -20,13 +20,15 @@ Filtering
    :toctree: ../method/
    :template: method.rst
   
-   ~cf.FieldList.filter_by_construct
-   ~cf.FieldList.filter_by_identity
-   ~cf.FieldList.filter_by_naxes
-   ~cf.FieldList.filter_by_ncvar
-   ~cf.FieldList.filter_by_property
-   ~cf.FieldList.filter_by_rank
-   ~cf.FieldList.filter_by_units
+   ~cf.FieldList.select_by_construct
+   ~cf.FieldList.select_by_identity
+   ~cf.FieldList.select_by_naxes
+   ~cf.FieldList.select_by_ncvar
+   ~cf.FieldList.select_by_property
+   ~cf.FieldList.select_by_rank
+   ~cf.FieldList.select_by_units
+   ~cf.FieldList.select
+   ~cf.FieldList.__call__
     
 Comparison
 ----------
@@ -58,7 +60,6 @@ Aliases
    :toctree: ../method/
    :template: method.rst
 
-   ~cf.FieldList.filter
    ~cf.FieldList.select
    ~cf.FieldList.__call__
 

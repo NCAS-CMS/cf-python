@@ -377,6 +377,7 @@ def read(files, external=None, verbose=False, warnings=False,
                                            {'follow_symlinks': follow_symlinks},
                                            "Use keyword 'followlink' instead.") # pragma: no cover
 
+       
     # Parse select
     if isinstance(select, str):
         select = (select,)

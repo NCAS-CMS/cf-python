@@ -316,7 +316,7 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(h is f[0])
     #--- End: def
 
-    def test_FieldList_filter(self):
+    def test_FieldList_select(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -348,27 +348,27 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(isinstance(g, cf.FieldList))
         self.assertTrue(len(g) == 2)
 
-        # filter_by_Units
+        # select_by_Units
         f[1] = f[1].override_units(cf.Units('watt'))
         f[3] = f[3].override_units(cf.Units('mile hour-1'))
 
-        self.assertTrue(len(f.filter_by_units()) == 9)
-        self.assertTrue(len(f.filter_by_units(cf.Units('m s-1'))) == 7)
-        self.assertTrue(len(f.filter_by_units(cf.Units('m s-1'), exact=False)) == 8)
-        self.assertTrue(len(f.filter_by_units('m s-1')) == 7)
-        self.assertTrue(len(f.filter_by_units('m s-1', exact=False)) == 8)
-        self.assertTrue(len(f.filter_by_units(re.compile('^mile|watt'))) == 2)
+        self.assertTrue(len(f.select_by_units()) == 9)
+        self.assertTrue(len(f.select_by_units(cf.Units('m s-1'))) == 7)
+        self.assertTrue(len(f.select_by_units(cf.Units('m s-1'), exact=False)) == 8)
+        self.assertTrue(len(f.select_by_units('m s-1')) == 7)
+        self.assertTrue(len(f.select_by_units('m s-1', exact=False)) == 8)
+        self.assertTrue(len(f.select_by_units(re.compile('^mile|watt'))) == 2)
 
-        # filter_by_Units
+        # select_by_Units
         f[1] = f[1].override_units(cf.Units('watt'))
         f[3] = f[3].override_units(cf.Units('mile hour-1'))
 
-        self.assertTrue(len(f.filter_by_units()) == 9)
-        self.assertTrue(len(f.filter_by_units(cf.Units('m s-1'))) == 7)
-        self.assertTrue(len(f.filter_by_units(cf.Units('m s-1'), exact=False)) == 8)
-        self.assertTrue(len(f.filter_by_units('m s-1')) == 7)
-        self.assertTrue(len(f.filter_by_units('m s-1', exact=False)) == 8)
-        self.assertTrue(len(f.filter_by_units(re.compile('^mile|watt'))) == 2)
+        self.assertTrue(len(f.select_by_units()) == 9)
+        self.assertTrue(len(f.select_by_units(cf.Units('m s-1'))) == 7)
+        self.assertTrue(len(f.select_by_units(cf.Units('m s-1'), exact=False)) == 8)
+        self.assertTrue(len(f.select_by_units('m s-1')) == 7)
+        self.assertTrue(len(f.select_by_units('m s-1', exact=False)) == 8)
+        self.assertTrue(len(f.select_by_units(re.compile('^mile|watt'))) == 2)
     #--- End: def
 
     def test_FieldList_concatenate(self):

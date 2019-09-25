@@ -54,10 +54,10 @@ that when a field element needs to be assesed for equality its
 
 
     def __call__(self, *identities):
-        '''Alias for `cf.FieldList.filter_by_identity`.
+        '''Alias for `cf.FieldList.select_by_identity`.
 
         '''        
-        return self.filter_by_identity(*identities)
+        return self.select_by_identity(*identities)
 
     
     def __repr__(self):
@@ -689,14 +689,14 @@ that when a field element needs to be assesed for equality its
         return True	    
 
 
-    def filter_by_construct(self, *mode, **constructs):
+    def select_by_construct(self, *mode, **constructs):
         '''TODO
 
         '''    
         return type(self)(f for f in self if f.match_by_construct(*mode, **constructs))
 
     
-    def filter_by_identity(self, *identities):
+    def select_by_identity(self, *identities):
         '''Select field constructs by identity.
 
     To find the inverse of the selection, use a list comprehension
@@ -708,9 +708,9 @@ that when a field element needs to be assesed for equality its
     
     .. versionadded:: 3.0.0
     
-    .. seealso:: `select`, `filter_by_units`, `filter_by_construct`,
-                 `filter_by_naxes`, `filter_by_rank`,
-                 `filter_by_property`, `cf.Field.match_by_identity`
+    .. seealso:: `select`, `select_by_units`, `select_by_construct`,
+                 `select_by_naxes`, `select_by_rank`,
+                 `select_by_property`, `cf.Field.match_by_identity`
     
         identities: optional
             Select field constructs. By default all field constructs
@@ -755,7 +755,7 @@ that when a field element needs to be assesed for equality its
         return type(self)(f for f in self if f.match_by_identity(*identities))
 
     
-    def filter_by_naxes(self, *naxes):
+    def select_by_naxes(self, *naxes):
         '''Select field constructs by property.
 
     To find the inverse of the selection, use a list comprehension
@@ -767,9 +767,11 @@ that when a field element needs to be assesed for equality its
     
     .. versionadded:: 3.0.0
     
-    .. seealso:: `select`, `filter_by_identity`,
-                 `filter_by_construct`, `filter_by_property`,
-                 `filter_by_rank`, `filter_by_units` :Parameters:
+    .. seealso:: `select`, `select_by_identity`,
+                 `select_by_construct`, `select_by_property`,
+                 `select_by_rank`, `select_by_units`
+
+    :Parameters:
     
         naxes: optional
             Select field constructs whose data spans a particular
@@ -793,13 +795,13 @@ that when a field element needs to be assesed for equality its
         return type(self)(f for f in self if f.match_by_naxes(*naxes))
 
     
-    def filter_by_rank(self, *ranks):
+    def select_by_rank(self, *ranks):
         '''TODO'''
         
         return type(self)(f for f in self if f.match_by_rank(*ranks))
 
     
-    def filter_by_ncvar(self, *rank):
+    def select_by_ncvar(self, *rank):
         '''Select field constructs by netCDF variable name.
     
     To find the inverse of the selection, use a list comprehension
@@ -811,10 +813,12 @@ that when a field element needs to be assesed for equality its
     
     .. versionadded:: 3.0.0
     
-    .. seealso:: `select`, `filter_by_identity`,
-                 `filter_by_construct`, `filter_by_naxes`,
-                 `filter_by_rank`, `filter_by_units`
+    .. seealso:: `select`, `select_by_identity`,
+                 `select_by_construct`, `select_by_naxes`,
+                 `select_by_rank`, `select_by_units`
     
+    :Parameters:
+
         ncvars: optional
             Select field constructs. May be one or more:
     
@@ -846,7 +850,7 @@ that when a field element needs to be assesed for equality its
         return type(self)(f for f in self if f.match_by_ncvar(*ncvars))
 
     
-    def filter_by_property(self, *mode, **properties):
+    def select_by_property(self, *mode, **properties):
         '''Select field constructs by property.
 
     To find the inverse of the selection, use a list comprehension
@@ -858,10 +862,12 @@ that when a field element needs to be assesed for equality its
     
     .. versionadded:: 3.0.0
     
-    .. seealso:: `select`, `filter_by_identity`,
-                 `filter_by_construct`, `filter_by_naxes`,
-                 `filter_by_rank`, `filter_by_units`
+    .. seealso:: `select`, `select_by_identity`,
+                 `select_by_construct`, `select_by_naxes`,
+                 `select_by_rank`, `select_by_units`
     
+    :Parameters:
+
         mode: optional
             Define the behaviour when multiple properties are
             provided.
@@ -902,7 +908,7 @@ that when a field element needs to be assesed for equality its
         return type(self)(f for f in self if f.match_by_property(*mode, **properties))
 
     
-    def filter_by_units(self, *units, exact=True):
+    def select_by_units(self, *units, exact=True):
         '''Select field constructs by units.
 
     To find the inverse of the selection, use a list comprehension
@@ -914,10 +920,12 @@ that when a field element needs to be assesed for equality its
     
     .. versionadded:: 3.0.0
     
-    .. seealso:: `select`, `filter_by_identity`,
-                 `filter_by_construct`, `filter_by_naxes`,
-                 `filter_by_rank`, `filter_by_property`
+    .. seealso:: `select`, `select_by_identity`,
+                 `select_by_construct`, `select_by_naxes`,
+                 `select_by_rank`, `select_by_property`
     
+    :Parameters:
+
         units: optional
             Select field constructs. By default all field constructs
             are selected. May be one or more of:
@@ -945,15 +953,15 @@ that when a field element needs to be assesed for equality its
     
     **Examples:**
     
-    >>> gl = fl.filter_by_units('metres')
-    >>> gl = fl.filter_by_units('m')
-    >>> gl = fl.filter_by_units('m', 'kilogram')
-    >>> gl = fl.filter_by_units(Units('m'))
-    >>> gl = fl.filter_by_units('km', exact=False)
-    >>> gl = fl.filter_by_units(Units('km'), exact=False)
-    >>> gl = fl.filter_by_units(re.compile('^met'))
-    >>> gl = fl.filter_by_units(Units('km'))
-    >>> gl = fl.filter_by_units(Units('kg m-2'))
+    >>> gl = fl.select_by_units('metres')
+    >>> gl = fl.select_by_units('m')
+    >>> gl = fl.select_by_units('m', 'kilogram')
+    >>> gl = fl.select_by_units(Units('m'))
+    >>> gl = fl.select_by_units('km', exact=False)
+    >>> gl = fl.select_by_units(Units('km'), exact=False)
+    >>> gl = fl.select_by_units(re.compile('^met'))
+    >>> gl = fl.select_by_units(Units('km'))
+    >>> gl = fl.select_by_units(Units('kg m-2'))
 
         '''
         return type(self)(f for f in self
@@ -963,21 +971,14 @@ that when a field element needs to be assesed for equality its
     # ----------------------------------------------------------------
     # Aliases
     # ----------------------------------------------------------------
-    def filter(self, *identities):
-        '''Alias for `cf.FieldList.filter_by_identity`.
-
-        '''
-        return self.filter_by_identity(*identities)
-    
-
     def select(self, *identities, **kwargs):
-        '''Alias of `cf.FieldList.filter_by_identity`.
+        '''Alias of `cf.FieldList.select_by_identity`.
 
         '''
         if kwargs:
             _DEPRECATION_ERROR_KWARGS(
                 self, 'select', kwargs,
-                "Use methods 'filter_by_units',  'filter_by_construct', 'filter_by_properties', 'filter_by_naxes', 'filter_by_rank' instead.") # pragma: no cover
+                "Use methods 'select_by_units', 'select_by_construct', 'select_by_properties', 'select_by_naxes', 'select_by_rank' instead.") # pragma: no cover
 
         if identities and isinstance(identities[0], (list, tuple, set)):
             _DEPRECATION_ERROR(
@@ -987,7 +988,7 @@ that when a field element needs to be assesed for equality its
         for i in identities:
             if isinstance(i, dict):
                 _DEPRECATION_ERROR_DICT(
-                    "Use methods 'filter_by_units', 'filter_by_construct', 'filter_by_properties', 'filter_by_naxes', 'filter_by_rank' instead.") # pragma: no cover
+                    "Use methods 'select_by_units', 'select_by_construct', 'select_by_properties', 'select_by_naxes', 'select_by_rank' instead.") # pragma: no cover
             try:
                 if ':' in i:
                     new = i.replace(':', '=', 1)
@@ -997,7 +998,7 @@ that when a field element needs to be assesed for equality its
                 pass
         #--- End: for
         
-        return self.filter_by_identity(*identities)
+        return self.select_by_identity(*identities)
 
     
     # ----------------------------------------------------------------
@@ -1029,19 +1030,19 @@ that when a field element needs to be assesed for equality its
 
 
     def select_field(self, *args, **kwargs):
-        '''Deprecated at version 3.0.0. Use 'fl.filter_by_*' methods instead.
+        '''Deprecated at version 3.0.0. Use method 'fl.select' instead.
 
         '''
         _DEPRECATION_ERROR_METHOD(self, 'select_field',
-                                  "Use 'fl.filter_by_*' methods instead.") # pragma: no cover
+                                  " Use method 'fl.select' instead.") # pragma: no cover
 
 
     def select1(self, *args, **kwargs):
-        '''Deprecated at version 3.0.0. Use 'fl.filter_by_*' methods instead.
+        '''Deprecated at version 3.0.0. Use method 'fl.select' instead.
 
         '''
         _DEPRECATION_ERROR_METHOD(self, 'select1', 
-                                  "Use 'fl.filter_by_*' methods instead.") # pragma: no cover
+                                  "Use method 'fl.select' instead.") # pragma: no cover
 
 
 #--- End: class
