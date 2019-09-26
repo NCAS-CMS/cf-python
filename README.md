@@ -32,16 +32,16 @@ datasets. This is so that datasets which are partially conformant may
 nonetheless be modified in memory.
 
 
-   >>> f = cf.read('file.nc')
-   >>> print(f)
-   Field: air_temperature (ncvar%tas)
-   ----------------------------------
-   Data            : air_temperature(time(12), latitude(64), longitude(128)) K
-   Cell methods    : time(12): mean (interval: 1.0 month)
-   Dimension coords: time(12) = [0450-11-16 00:00:00, ..., 0451-10-16 12:00:00] noleap
-                   : latitude(64) = [-87.86380004882812, ..., 87.86380004882812] degrees_north
-                   : longitude(128) = [0.0, ..., 357.1875] degrees_east
-                   : height(1) = [2.0] m
+    >>> f = cf.read('file.nc')
+    >>> print(f)
+    Field: air_temperature (ncvar%tas)
+    ----------------------------------
+    Data            : air_temperature(time(12), latitude(64), longitude(128)) K
+    Cell methods    : time(12): mean (interval: 1.0 month)
+    Dimension coords: time(12) = [0450-11-16 00:00:00, ..., 0451-10-16 12:00:00] noleap
+                    : latitude(64) = [-87.86380004882812, ..., 87.86380004882812] degrees_north
+                    : longitude(128) = [0.0, ..., 357.1875] degrees_east
+                    : height(1) = [2.0] m
 
 The `cf` package can:
 
