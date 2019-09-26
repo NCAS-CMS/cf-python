@@ -31,7 +31,7 @@ datasets may be ingested from existing datasets and written to new
 datasets. This is so that datasets which are partially conformant may
 nonetheless be modified in memory.
 
-A simple example of reading a field construct froma file and
+A simple example of reading a field construct from a file and
 inspecting it:
 
     >>> import cf
