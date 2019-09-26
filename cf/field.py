@@ -849,8 +849,9 @@ may be accessed with the `nc_global_attributes`,
                 return super()._binary_operation(other, method)
             
             raise ValueError(
-                "Can't combine {!r} with {!r} (incompatible shapes)".format(
-                    self.__class__.__name__, other.__class__.__name__))
+                "Can't combine {!r} with {!r} (incompatible shapes: {}, {})".format(
+                    self.__class__.__name__, other.__class__.__name__,
+                    self.shape, numpy_shape(other)))
 
         # ============================================================
         # Still here? Then combine the field with another field

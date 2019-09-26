@@ -1,7 +1,0 @@
-cf.Query.__init__
-=================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.Query.__init__

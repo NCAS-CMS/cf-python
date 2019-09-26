@@ -597,7 +597,7 @@ operations, such as indexing, iteration, and methods like
 
 The field list also has some additional methods for :ref:`copying
 <Field-list-copying>`, :ref:`testing equality <Field-list-equality>`,
-:ref:`sorting and filtering <Filtering-and-sorting-field-lists>`.
+:ref:`sorting and selection <Sorting-and-selecting-from-field-lists>`.
 
 ----
      
@@ -2953,24 +2953,46 @@ case in this example.
 
 ----
 
-.. _Filtering-and-sorting-field-lists:
+.. _Sorting-and-selecting-from-field-lists:
 
-**Filtering and sorting field lists**
--------------------------------------
+**Sorting and selecting from field lists**
+------------------------------------------
 
-A :ref:`field list <Field-lists>` has filtering methods for selecting
-field constructs that meet various criteria:
+A :ref:`field list <Field-lists>` may be sorted in-place using the
+same syntax as a Python `list`. By default the field list is sorted by
+the values of the field constructs identities, but any sorting
+criteria are possible.
+
+.. code-block:: python
+   :caption: *Sort a field list by the field construct identities, and
+             by field construct units.*
+
+   >>> fl = cf.read('file.nc')                                                                        
+   >>> fl
+   [<CF Field: specific_humidity(latitude(5), longitude(8)) 1>,
+    <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>]   
+   >>> fl.sort()                                                                                      
+   >>> fl
+   [<CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>,
+    <CF Field: specific_humidity(latitude(5), longitude(8)) 1>]   
+   >>> fl.sort(key=lambda f: f.units)                                                                 
+   >>> fl
+   [<CF Field: specific_humidity(latitude(5), longitude(8)) 1>,
+    <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>]
+
+A field list has mehods for selecting field constructs that meet
+various criteria:
 
 ================================  ==========================================================================  
 Method                            Filter criteria                                                              
 ================================  ==========================================================================  
-`~FieldList.filter_by_identity`   Field construct identity
-`~FieldList.filter_by_property`   Property values                                     
-`~FieldList.filter_by_units`      Units values.
-`~FieldList.filter_by_rank`       The total number of domain axis constructs in the domain
-`~FieldList.filter_by_naxes`      The number of domain axis constructs spanned by the data
-`~FieldList.filter_by_construct`  Existence and values of metadata constructs
-`~FieldList.filter_by_ncvar`      NetCDF variable name (see the :ref:`netCDF interface <NetCDF-interface>`)
+`~FieldList.select_by_identity`   Field construct identity
+`~FieldList.select_by_property`   Property values                                     
+`~FieldList.select_by_units`      Units values.
+`~FieldList.select_by_rank`       The total number of domain axis constructs in the domain
+`~FieldList.select_by_naxes`      The number of domain axis constructs spanned by the data
+`~FieldList.select_by_construct`  Existence and values of metadata constructs
+`~FieldList.select_by_ncvar`      NetCDF variable name (see the :ref:`netCDF interface <NetCDF-interface>`)
 ================================  ==========================================================================  
 
 Each of these methods returns a new (possibly empty) field list that
@@ -2990,47 +3012,29 @@ contains the selected field constructs.
     <CF Field: air_potential_temperature(time(120), latitude(5), longitude(8)) K>,
     <CF Field: precipitation_flux(time(2), latitude(4), longitude(5)) kg m2 s-1>,
     <CF Field: precipitation_flux(time(1), latitude(64), longitude(128)) kg m-2 day-1>]
-   >>> fl.filter_by_identity('precipitation_flux')
+   >>> fl.select_by_identity('precipitation_flux')
    [<CF Field: precipitation_flux(time(2), latitude(4), longitude(5)) kg m2 s-1>,
     <CF Field: precipitation_flux(time(1), latitude(64), longitude(128)) kg m-2 day-1>]
    >>> import re
-   >>> fl.filter_by_identity(re.compile('.*potential.*'))
+   >>> fl.select_by_identity(re.compile('.*potential.*'))
    [<CF Field: air_potential_temperature(time(120), latitude(5), longitude(8)) K>]
-   >>> fl.filter_by_identity('relative_humidity')
+   >>> fl.select_by_identity('relative_humidity')
    []
 
-As a further convenience, selection by field construct identity is
-also possible by providing identities to a call of a field list
-itself.
+As a convenience, selection by field construct identity is also
+possible by providing identities to a call of a field list itself, or
+to its `~FieldList.select` method.
 
 .. code-block:: python
    :caption: *Get field constructs by their identity by calling the
-             instance directly.*
+             instance directly, or with the 'select' method.*
 
    >>> fl('air_temperature')
    [<CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>,
     <CF Field: air_temperature(time(2), latitude(73), longitude(96)) K>]
-
-A field list may be sorted in-place using the same syntax as a Python
-`list`. By default the field list is sorted by the values of the field
-constructs identities, but any sorting criteria are possible.
-
-.. code-block:: python
-   :caption: *Sort a field list by the field construct identities, and
-             by field construct units.*
-
-   >>> fl = cf.read('file.nc')                                                                        
-   >>> fl
-   [<CF Field: specific_humidity(latitude(5), longitude(8)) 1>,
-    <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>]   
-   >>> fl.sort()                                                                                      
-   >>> fl
+   >>> fl.select('air_temperature')
    [<CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>,
-    <CF Field: specific_humidity(latitude(5), longitude(8)) 1>]   
-   >>> fl.sort(key=lambda f: f.units)                                                                 
-   >>> fl
-   [<CF Field: specific_humidity(latitude(5), longitude(8)) 1>,
-    <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>]
+    <CF Field: air_temperature(time(2), latitude(73), longitude(96)) K>]
 
 
 .. _Testing-criteria-on-a-field-construct:

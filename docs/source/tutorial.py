@@ -464,21 +464,22 @@ print(t.construct('latitude').array)
 t2 = t.subspace(latitude=cf.wi(51, 53))
 print(t2.array)
 
-print("\n**Filtering and sorting field lists**\n")
+print("\n**Sorting and selecting from field lists**\n")
 
-fl = cf.read('*.nc')
-fl
-fl.filter_by_identity('precipitation_flux')
-import re
-fl.filter_by_identity(re.compile('.*potential.*'))
-fl.filter_by_identity('relative_humidity')
-fl('air_temperature')
 fl = cf.read('file.nc')                                                                        
 fl
 fl.sort()                                                                                      
 fl
 fl.sort(key=lambda f: f.units)                                                                 
 fl
+fl = cf.read('*.nc')
+fl
+fl.select_by_identity('precipitation_flux')
+import re
+fl.select_by_identity(re.compile('.*potential.*'))
+fl.select_by_identity('relative_humidity')
+fl('air_temperature')
+fl.select('air_temperature')
 print(t)
 t.match_by_identity('air_temperature')
 t.match_by_rank(4)
@@ -799,7 +800,6 @@ cell_measure = cf.CellMeasure(measure='area',
                  data=cf.Data(numpy.arange(90.).reshape(9, 10)))
 
 tas.set_construct(cell_measure)
-
 print(tas)
 import netCDF4
 nc = netCDF4.Dataset('file.nc', 'r')
@@ -1032,6 +1032,29 @@ print(new_v)
 print("\n**Mathematical operations**\n")
 
 q, t = cf.read('file.nc')
+t.data.stats()   
+x = t + t
+x
+x.min()
+(t - 2).min()
+(2 + t).min()
+(t * list(range(9))).min()                                                                    
+(t + cf.Data(numpy.arange(20, 29), '0.1 K')).min()          
+u = t.copy()                                                                                  
+u.transpose(inplace=True)
+u.Units -= 273.15
+u[0]                         
+t + u[0]
+q, t = cf.read('file.nc')
+print(q.array)  
+print(-q.array)                    
+print(abs(-q.array))  
+q, t = cf.read('file.nc')
+print(q.array)         
+print((q == q).array)                                   
+print((q < 0.05).array)                                                                      
+print((q >= q[0]).array) 
+q, t = cf.read('file.nc')
 lat = q.dimension_coordinate('latitude')
 lat.data
 sin_lat = lat.sin()
@@ -1130,7 +1153,6 @@ Y = T.set_construct(cf.DomainAxis(2))
 
 # Set the data for the field
 T.set_data(cf.Data(array))
-
 T
 print(T.array)
 T.data.get_compression_type()
@@ -1152,7 +1174,6 @@ p[1, :, 3:5]
 p.data.get_compression_type()
 p.data[1] = -9
 p.data.get_compression_type()
-
 import numpy	  
 import cf
 
@@ -1184,7 +1205,7 @@ Y = P.set_construct(cf.DomainAxis(3))
 X = P.set_construct(cf.DomainAxis(2))
 
 # Set the data for the field
-P.set_data(cf.Data(array), axes=[T, Y, X])			      
+P.set_data(cf.Data(array), axes=[T, Y, X])
 
 P
 print(P.data.array)
