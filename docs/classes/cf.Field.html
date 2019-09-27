@@ -89,7 +89,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.Field">
-<em class="property">class </em><code class="descclassname">cf.</code><code class="descname">Field</code><span class="sig-paren">(</span><em>properties=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b12/cf/field.py#L175"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cf.</code><code class="descname">Field</code><span class="sig-paren">(</span><em>properties=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b12/cf/field.py#L176"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.field.Field</span></code></p>
 <p>A field construct of the CF data model.</p>
 <p>The field construct is central to the CF data model, and includes all
@@ -950,6 +950,18 @@ initialization. By default arguments are deep copied.</p>
 <tbody valign="top">
 <tr class="row-odd"><td><a class="reference internal" href="../method/cf.Field.convolution_filter.html#cf.Field.convolution_filter" title="cf.Field.convolution_filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convolution_filter</span></code></a></td>
 <td>Return the field convolved along the given axis with the specified filter.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Cumulative sums</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.Field.cumsum.html#cf.Field.cumsum" title="cf.Field.cumsum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cumsum</span></code></a></td>
+<td>Return the field cumulatively summed along the given axis.</td>
 </tr>
 </tbody>
 </table>

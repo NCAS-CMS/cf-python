@@ -450,6 +450,15 @@ Mathematical operations
 
    ~cf.Field.convolution_filter
 
+.. rubric:: Cumulative sums
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Field.cumsum
+
 Data array operations
 ---------------------
 

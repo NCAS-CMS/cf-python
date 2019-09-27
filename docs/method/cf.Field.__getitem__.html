@@ -90,7 +90,7 @@
 <h1>cf.Field.__getitem__<a class="headerlink" href="#cf-field-getitem" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.__getitem__">
-<code class="descclassname">Field.</code><code class="descname">__getitem__</code><span class="sig-paren">(</span><em>indices</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b12/cf/field.py#L259"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.__getitem__" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">__getitem__</code><span class="sig-paren">(</span><em>indices</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b12/cf/field.py#L260"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.__getitem__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a subspace of the field construct defined by indices.</p>
 <p>f.__getitem__(indices) &lt;==&gt; f[indices]</p>
 <p>Subspacing by axis indices uses an extended Python slicing syntax,
@@ -123,7 +123,7 @@ Fortran), rather than by their elements:</p>
 when given to a numpy array.</p>
 </li>
 <li><p class="first">Boolean indices may be any object which exposes the numpy array
-interface, such as the field’s coordinate objects:</p>
+interface, such as the field construct’s coordinate objects:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">[:,</span> <span class="n">f</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
 <span class="go">(12, 36, 96)</span>
 </pre></div>

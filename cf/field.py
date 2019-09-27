@@ -18,6 +18,7 @@ from numpy import array       as numpy_array
 from numpy import array_equal as numpy_array_equal
 from numpy import asanyarray  as numpy_asanyarray
 from numpy import can_cast    as numpy_can_cast
+from numpy import cumsum      as numpy_cumsum
 from numpy import diff        as numpy_diff
 from numpy import empty       as numpy_empty
 from numpy import errstate    as numpy_errstate
@@ -292,7 +293,7 @@ may be accessed with the `nc_global_attributes`,
       when given to a numpy array.
     
     * Boolean indices may be any object which exposes the numpy array
-      interface, such as the field's coordinate objects:
+      interface, such as the field construct's coordinate objects:
     
       >>> f[:, f.coord('latitude')<0].shape
       (12, 36, 96)
@@ -363,7 +364,7 @@ may be accessed with the `nc_global_attributes`,
             new = self.copy()
 
         # ------------------------------------------------------------
-        # Subspace the field's data
+        # Subspace the field construct's data
         # ------------------------------------------------------------
         if auxiliary_mask:
             auxiliary_mask = list(auxiliary_mask)
@@ -2118,7 +2119,7 @@ may be accessed with the `nc_global_attributes`,
 
         '''
         if axes is None:
-            # Retrieve the field's X and Y dimension coordinates
+            # Retrieve the field construct's X and Y dimension coordinates
             xdims = self.dimension_coordinates('X')
             len_x = len(xdims)
             if not len_x:
@@ -3721,8 +3722,8 @@ may be accessed with the `nc_global_attributes`,
                 construct's data.
     
             The *identity* parameter selects the domain axis as
-            returned by this call of the field's `domain_axis` method:
-            ``f.domain_axis(identity)``.
+            returned by this call of the field construct's
+            `domain_axis` method: ``f.domain_axis(identity)``.
     
         kwargs: deprecated at version 3.0.0
     
@@ -3919,8 +3920,8 @@ may be accessed with the `nc_global_attributes`,
                 construct's data.
     
             The *identity* parameter selects the domain axis as
-            returned by this call of the field's `domain_axis` method:
-            ``f.domain_axis(identity)``.
+            returned by this call of the field construct's
+            `domain_axis` method: ``f.domain_axis(identity)``.
     
         iscyclic: `bool`, optional
             If False then the axis is set to be non-cyclic. By
@@ -4004,12 +4005,12 @@ may be accessed with the `nc_global_attributes`,
     
     Weights for any combination of axes may be returned.
     
-    Weights are either derived from the field's metadata (such as
-    coordinate cell sizes) or provided explicitly in the form of other
-    `Field` objects. In any case, the outer product of these weights
-    components is returned in a field which is broadcastable to the
-    orginal field (see the *components* parameter for returning the
-    components individually).
+    Weights are either derived from the field construct's metadata
+    (such as coordinate cell sizes) or provided explicitly in the form
+    of other `Field` objects. In any case, the outer product of these
+    weights components is returned in a field which is broadcastable
+    to the orginal field (see the *components* parameter for returning
+    the components individually).
     
     By default null, equal weights are returned.
     
@@ -4072,19 +4073,22 @@ may be accessed with the `nc_global_attributes`,
                   ============  ==========================================
                   *weights*     Description     
                   ============  ==========================================
-                  ``'area'``    Cell area weights from the field's area
+                  ``'area'``    Cell area weights from the field 
+                                construct's area
                                 cell measure construct or, if one doesn't
                                 exist, from (grid) latitude and (grid)
                                 longitude dimension coordinates. Set the
                                 *methods* parameter to find out how the
                                 weights were actually created.
                   
-                  ``'volume'``  Cell volume weights from the field's
+                  ``'volume'``  Cell volume weights from the field 
+                                construct's
                                 volume cell measure construct.
                   
                   items         Weights from the cell sizes of the
                                 dimension coordinate objects that would be
-                                selected by this call of the field's
+                                selected by this call of the field 
+                                construct's TODO
                                 `~cf.Field.dims` method: ``f.dims(items,
                                 **kwargs)``. See `cf.Field.dims` for
                                 details. TODO
@@ -4112,10 +4116,11 @@ may be accessed with the `nc_global_attributes`,
         components: `bool`, optional
             If True then a dictionary of orthogonal weights components
             is returned instead of a field. Each key is a tuple of
-            integers representing axes positions in the field's data
-            array with corresponding values of weights in `Data`
-            objects. The axes of weights match the axes of the field's
-            data array in the order given by their dictionary keys.
+            integers representing axes positions in the field
+            construct's data array with corresponding values of
+            weights in `Data` objects. The axes of weights match the
+            axes of the field construct's data array in the order
+            given by their dictionary keys.
     
         methods: `bool`, optional
             If True, then return a dictionary describing methods used
@@ -4390,9 +4395,9 @@ may be accessed with the `nc_global_attributes`,
                 t = w.analyse_items()
     
                 if t['undefined_axes']:
-#                    if t.axes(size=gt(1)).intersection(t['undefined_axes']):
                     if set(t.domain_axes.filter_by_size(gt(1))).intersection(t['undefined_axes']):
                         raise ValueError("345jn456jn TODO")
+                #--- End: if
     
                 w = w.squeeze()
 
@@ -5364,11 +5369,11 @@ may be accessed with the `nc_global_attributes`,
         axes: (sequence of) `str`, optional
             The axes to be collapsed, defined by those which would be
             selected by passing each given axis description to a call
-            of the field's `domain_axis` method. For example, for a
-            value of ``'X'``, the domain axis construct returned by
-            ``f.domain_axis('X'))`` is selected. If a selected axis
-            has size 1 then it is ignored. By default all axes with
-            size greater than 1 are collapsed.
+            of the field construct's `domain_axis` method. For
+            example, for a value of ``'X'``, the domain axis construct
+            returned by ``f.domain_axis('X'))`` is selected. If a
+            selected axis has size 1 then it is ignored. By default
+            all axes with size greater than 1 are collapsed.
    
             *Parameter example:*
               ``axes='X'``
@@ -5395,7 +5400,7 @@ may be accessed with the `nc_global_attributes`,
         weights: optional
             Specify the weights for the collapse. **By default the
             collapse is unweighted**. The weights are those that would
-            be returned by this call of the field's
+            be returned by this call of the field construct's
             `~cf.Field.weights` method: ``f.weights(weights,
             components=True)``. See `cf.Field.weights` for details.
             By default *weights* is `None` (``f.weights(None,
@@ -7014,7 +7019,6 @@ may be accessed with the `nc_global_attributes`,
 
             if isinstance(group, numpy_ndarray):
                 classification = numpy_squeeze(group.copy())
-#                coord = self.dimension_coordinates.filter_by_axis('exact', axis).value()
 
                 if classification.dtype.kind != 'i':
                     raise ValueError(
@@ -7126,7 +7130,6 @@ may be accessed with the `nc_global_attributes`,
                 # ----------------------------------------------------
                 coord = self.dimension_coordinates.filter_by_axis('exact', axis).value(None)
                 if coord is None:
-#                    coord = self.aux(axes=axis, ndim=1)
                     coord = self.auxiliary_coordinates.filter_by_axis('exact', axis).value(None)
                     if coord is None:
                         raise ValueError("asdad8777787 TODO")
@@ -7530,7 +7533,6 @@ may be accessed with the `nc_global_attributes`,
                                 ignore_n -= 1
                                 continue
                         else:
-#                            coord = pc.coord(input_axis, ndim=1)
                             coord = pc.coordinates.filter_by_axis('exact', axis).value(None)
                             if coord is None:
                                 raise ValueError(
@@ -7610,7 +7612,6 @@ may be accessed with the `nc_global_attributes`,
             # Hack to fix missing bounds!            
             for g in fl:
                 try:
-#                    g.dim(axis).get_bounds(create=True, insert=True, copy=False)
                     c = g.dimension_coordinates.filter_by_axis('exact', axis).value()
                     if not c.has_bounds():
                         c.set_bounds(c.create_bounds())
@@ -7622,8 +7623,6 @@ may be accessed with the `nc_global_attributes`,
             # Sort the list of collapsed fields
             # --------------------------------------------------------
             if coord is not None and coord.isdimension:
-#                fl.sort(key=lambda g: g.dim(axis).datum(0),
-#                        reverse=coord.decreasing)
                 fl.sort(
                     key=lambda g: g.dimension_coordinates.filter_by_axis('exact', axis).value().datum(0),
                     reverse=coord.decreasing)
@@ -7748,8 +7747,8 @@ may be accessed with the `nc_global_attributes`,
                 construct's data.
     
             The *identity* parameter selects the domain axis as
-            returned by this call of the field's `domain_axis` method:
-            ``f.domain_axis(identity)``.
+            returned by this call of the field construct's
+            `domain_axis` method: ``f.domain_axis(identity)``.
     
         axes: deprecated at version 3.0.0
             Use the *identity* parmeter instead.
@@ -7834,9 +7833,9 @@ may be accessed with the `nc_global_attributes`,
         axis:
             Select the domain axis to, defined by that which would be
             selected by passing the given axis description to a call
-            of the field's `domain_axis` method. For example, for a
-            value of ``'X'``, the domain axis construct returned by
-            ``f.domain_axis('X'))`` is selected.
+            of the field construct's `domain_axis` method. For
+            example, for a value of ``'X'``, the domain axis construct
+            returned by ``f.domain_axis('X'))`` is selected.
     
         position: `int`, optional
             Specify the position that the new axis will have in the
@@ -7869,7 +7868,7 @@ may be accessed with the `nc_global_attributes`,
         axis = self.domain_axis(axis, key=True, default=ValueError(
             "Can't identify a unique axis to insert"))
 
-        # Expand the dims in the field's data array
+        # Expand the dims in the field construct's data array
         super(Field, f).insert_dimension(axis=axis, position=position,
                                          inplace=True)
 
@@ -7889,9 +7888,9 @@ may be accessed with the `nc_global_attributes`,
     If metadata items are not specified for an axis then a full slice
     (``slice(None)``) is assumed for that axis.
     
-    Values for size 1 axes which are not spanned by the field's data array
-    may be specified, but only indices for axes which span the field's
-    data array will be returned.
+    Values for size 1 axes which are not spanned by the field
+    construct's data array may be specified, but only indices for axes
+    which span the field construct's data array will be returned.
     
     The conditions may be given in any order.
     
@@ -7920,7 +7919,7 @@ may be accessed with the `nc_global_attributes`,
     
             A keyword name is a string which selects a unique item of the
             field. The string may be any string value allowed by the
-            *description* parameter of the field's `item` method, which is
+            *description* parameter of the field's TODO `item` method, which is
             used to select a unique domain item. See `cf.Field.item` for
             details.
             
@@ -8861,9 +8860,9 @@ may be accessed with the `nc_global_attributes`,
         axis:
             Select the domain axis over which the filter is to be
             applied, defined by that which would be selected by
-            passing the given axis description to a call of the
-            field's `domain_axis` method. For example, for a value of
-            ``'X'``, the domain axis construct returned by
+            passing the given axis description to a call of the field
+            construct's `domain_axis` method. For example, for a value
+            of ``'X'``, the domain axis construct returned by
             ``f.domain_axis('X'))`` is selected.
                 
         mode: `str`, optional
@@ -9146,6 +9145,81 @@ may be accessed with the `nc_global_attributes`,
         return f
 
 
+    def cumsum(self, axis, masked_as_zero=False, inplace=False):
+        '''Return the field cumulatively summed along the given axis.
+        
+    .. versionadded:: 3.0.0
+        
+    :Parameters:
+    
+        axis:
+            Select the domain axis over which the filter is to be
+            applied, defined by that which would be selected by
+            passing the given axis description to a call of the field
+            construct's `domain_axis` method. For example, for a value
+            of ``'X'``, the domain axis construct returned by
+            ``f.domain_axis('X'))`` is selected.
+
+        masked_as_zero: `bool`, optional
+            If True then set missing data values to zero before
+            calculating the cumulative sum. By default the output data
+            will be masked where any missing values contribute to a
+            cumulative sum.
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+    :Returns:
+
+        `Field` or `None`
+            The field construct with the cumulatively summed
+            dimension, or `None` of the operation was in-place.
+
+    **Examples:**
+        
+    >>> g = f.cumsum('T')
+
+    >>> g = f.cumsum('latitude', masked_as_zero=True)
+
+        '''
+        # Retrieve the axis
+        axis_key = self.domain_axis(axis, key=True)
+        if axis_key is None:
+            raise ValueError('Invalid axis specifier: {!r}'.format(axis))
+
+        # Get the axis index
+        axis_index = self.get_data_axes().index(axis_key)
+
+        # Section the data into sections up to a chunk in size
+        sections = self.data.section([axis_index], chunks=True)
+
+        # Cumulatively sum each section
+        for k in sections:
+            array = sections[k].array
+
+            if masked_as_zero and numpy_ma_is_masked(array):
+                array = array.filled(0)
+            
+            output_array = numpy_cumsum(array, axis=axis_index)
+            sections[k] = Data(output_array, units=self.Units)
+
+        # Glue the sections back together again
+        new_data = Data.reconstruct_sectioned_data(sections)
+
+        # Construct new field
+        if inplace:
+            f = self
+        else:
+            f = self.copy()
+
+        # Insert filtered data into new field
+        f.set_data(new_data, set_axes=False, copy=False)
+
+        if inplace:
+            f = None
+        return f
+
+
     def flip(self, axes=None, inplace=False, i=False, **kwargs):
         '''Flip (reverse the direction of) axes of the field.
 
@@ -9157,10 +9231,10 @@ may be accessed with the `nc_global_attributes`,
         axes: (sequence of) `str` or `int`, optional
             Select the domain axes to flip, defined by the domain axes
             that would be selected by passing the each given axis
-            description to a call of the field's `domain_axis`
-            method. For example, for a value of ``'X'``, the domain
-            axis construct returned by ``f.domain_axis('X'))`` is
-            selected.
+            description to a call of the field construct's
+            `domain_axis` method. For example, for a value of ``'X'``,
+            the domain axis construct returned by
+            ``f.domain_axis('X'))`` is selected.
 
             If no axes are provided then all axes are flipped.
     
@@ -9242,9 +9316,9 @@ may be accessed with the `nc_global_attributes`,
         axis:
             The cyclic axis to be rolled, defined by that which would
             be selected by passing the given axis description to a
-            call of the field's `domain_axis` method. For example, for
-            a value of ``'X'``, the domain axis construct returned by
-            ``f.domain_axis('X'))`` is selected.
+            call of the field construct's `domain_axis` method. For
+            example, for a value of ``'X'``, the domain axis construct
+            returned by ``f.domain_axis('X'))`` is selected.
 
         value:
             Anchor the dimension coordinate values for the selected
@@ -9622,10 +9696,10 @@ may be accessed with the `nc_global_attributes`,
         axes: (sequence of) `str` or `int`, optional
             Select the domain axes to squeeze, defined by the domain
             axes that would be selected by passing the each given axis
-            description to a call of the field's `domain_axis`
-            method. For example, for a value of ``'X'``, the domain
-            axis construct returned by ``f.domain_axis('X'))`` is
-            selected.
+            description to a call of the field construct's
+            `domain_axis` method. For example, for a value of ``'X'``,
+            the domain axis construct returned by
+            ``f.domain_axis('X'))`` is selected.
 
             If no axes are provided then all size-1 axes are squeezed.
 
@@ -9695,10 +9769,10 @@ may be accessed with the `nc_global_attributes`,
         axes: (sequence of) `str` or `int`, optional
             Select the domain axis order, defined by the domain axes
             that would be selected by passing the each given axis
-            description to a call of the field's `domain_axis`
-            method. For example, for a value of ``'X'``, the domain
-            axis construct returned by ``f.domain_axis('X'))`` is
-            selected.
+            description to a call of the field construct's
+            `domain_axis` method. For example, for a value of ``'X'``,
+            the domain axis construct returned by
+            ``f.domain_axis('X'))`` is selected.
 
             Each dimension of the field construct's data must be
             provided, or if no axes are specified then the axis order
@@ -9768,8 +9842,8 @@ may be accessed with the `nc_global_attributes`,
     def unsqueeze(self, inplace=False, i=False, axes=None, **kwargs):
         '''Insert size 1 axes into the data array.
 
-    All size 1 domain axes which are not spanned by the field's data
-    array are inserted.
+    All size 1 domain axes which are not spanned by the field
+    construct's data are inserted.
     
     The axes are inserted into the slowest varying data array positions.
     
@@ -11235,8 +11309,8 @@ may be accessed with the `nc_global_attributes`,
         axis:
             The cyclic axis, defined by that which would be selected
             by passing the given axis description to a call of the
-            field's `domain_axis` method. For example, for a value of
-            ``'X'``, the domain axis construct returned by
+            field construct's `domain_axis` method. For example, for a
+            value of ``'X'``, the domain axis construct returned by
             ``f.domain_axis('X'))`` is selected.
     
         axes: deprecated at version 3.0.0
@@ -11402,9 +11476,9 @@ may be accessed with the `nc_global_attributes`,
         axis: 
             The cyclic axis to be rolled, defined by that which would
             be selected by passing the given axis description to a
-            call of the field's `domain_axis` method. For example, for
-            a value of ``'X'``, the domain axis construct returned by
-            ``f.domain_axis('X'))`` is selected.
+            call of the field construct's `domain_axis` method. For
+            example, for a value of ``'X'``, the domain axis construct
+            returned by ``f.domain_axis('X'))`` is selected.
 
         shift: `int`
             The number of places by which the selected cyclic axis is
@@ -11534,7 +11608,7 @@ may be accessed with the `nc_global_attributes`,
               will set data values in columns 0 and 2 to -999, and
               data values in column 1 to missing data. This works
               because the condition has shape ``(3,)`` which
-              broadcasts to the field's shape.
+              broadcasts to the field construct's shape.
     
             If *condition* is a `Query` object then this implies a
             condition defined by applying the query to the field
@@ -11572,10 +11646,10 @@ may be accessed with the `nc_global_attributes`,
     
         x, y: *optional*
             Specify the assignment values. Where the condition
-            evaluates to `True`, assign to the field's data from *x*,
-            and where the condition evaluates to `False`, assign to
-            the field's data from *y*. The *x* and *y* parameters are
-            each one of:
+            evaluates to `True`, assign to the field construct's data
+            from *x*, and where the condition evaluates to `False`,
+            assign to the field construct's data from *y*. The *x* and
+            *y* parameters are each one of:
     
             * `None`. The appropriate data elements array are
               unchanged. This the default.
@@ -11631,8 +11705,8 @@ may be accessed with the `nc_global_attributes`,
         ..
     
             The *construct* parameter selects the metadata construct
-            that is returned by this call of the field's `construct`
-            method: ``f.construct(construct)``. See
+            that is returned by this call of the field construct's
+            `construct` method: ``f.construct(construct)``. See
             `cf.Field.construct` for details.
     
             *Parameter example:*
@@ -11808,10 +11882,9 @@ may be accessed with the `nc_global_attributes`,
     
     **Size one axes**
     
-      Size one axes in the data array of the subspaced field are always
-      retained, but may be subsequently removed with the field's
-      `~cf.Field.squeeze` method:
-    
+      Size one axes in the data array of the subspaced field are
+      always retained, but may be subsequently removed with the field
+      construct's `~cf.Field.squeeze` method:
     
     **Defining a subspace in metadata-space**
     
@@ -11894,10 +11967,11 @@ may be accessed with the `nc_global_attributes`,
       
               **Keyword names**
     
-              A keyword name selects a unique item of the field. The name
-              may be any value allowed by the *description* parameter of
-              the field's `item` method, which is used to select a unique
-              domain item. See `cf.Field.item` for details.
+              TODO A keyword name selects a unique item of the field. The
+              name may be any value allowed by the *description*
+              parameter of the field construct's `item` method, which
+              is used to select a unique domain item. See
+              `cf.Field.item` for details.
               
               *Parameter example:*           
                 The keyword ``lat`` will select the item returned by
@@ -11913,8 +11987,8 @@ may be accessed with the `nc_global_attributes`,
                 this internal identifier
                 ``f.item(description='dim2')``. This can be useful in
                 the absence of any more meaningful metadata. A full list
-                of internal identifiers may be found with the field's
-                `items` method.
+                of internal identifiers may be found with the field construct's
+                `items` method. TODO
       
               **Keyword values**
     
@@ -12016,8 +12090,9 @@ may be accessed with the `nc_global_attributes`,
         each axis (similar to the way vector subscripts work in Fortran),
         rather than by their elements.
       
-      * Boolean indices may be any object which exposes the numpy array
-        interface, such as the field's coordinate objects.
+      * Boolean indices may be any object which exposes the numpy
+        array interface, such as the field construct's coordinate
+        objects.
     
       :Returns:
     
@@ -12045,9 +12120,10 @@ may be accessed with the `nc_global_attributes`,
       >>> f.subspace[0:6] = f.subspace[6:12]
       >>> f.subspace[..., 0:48] = -99
       
-      To assign to a subspace defined in metadata-space, the equivalent
-      index-space indices must first be found with the field's `indices`
-      method, and then the assignment may be applied in index-space:
+      To assign to a subspace defined in metadata-space, the
+      equivalent index-space indices must first be found with the
+      field construct's `indices` method, and then the assignment may
+      be applied in index-space:
       
       >>> index = f.indices(longitude=cf.lt(180))
       >>> f.subspace[index] = cf.masked
@@ -12231,9 +12307,9 @@ may be accessed with the `nc_global_attributes`,
 
     **Metadata**
     
-    The field's domain must have well defined X and Y axes with
-    latitude and longitude coordinate values, which may be stored as
-    dimension coordinate objects or two dimensional auxiliary
+    The field construct's domain must have well defined X and Y axes
+    with latitude and longitude coordinate values, which may be stored
+    as dimension coordinate objects or two dimensional auxiliary
     coordinate objects. If the latitude and longitude coordinates are
     two dimensional then the X and Y axes must be defined by dimension
     coordinates if present or by the netCDF dimensions. In the latter
@@ -12250,10 +12326,10 @@ may be accessed with the `nc_global_attributes`,
     bounds it will be necessary to specify *src_cyclic* or
     *dst_cyclic* manually if the field is global.
     
-    The output field's coordinate objects which span the X and/or Y
-    axes are replaced with those from the destination grid. Any fields
-    contained in coordinate reference objects will also be regridded,
-    if possible.
+    The output field construct's coordinate objects which span the X
+    and/or Y axes are replaced with those from the destination
+    grid. Any fields contained in coordinate reference objects will
+    also be regridded, if possible.
     
 
     **Mask**
@@ -12441,21 +12517,22 @@ may be accessed with the `nc_global_attributes`,
             If this is a dictionary then the field masses of the
             source and destination fields are computed and returned
             within the dictionary. The keys of the dictionary
-            indicates the lat/long slice of the field and the
-            corresponding value is a tuple containing the source
-            field's mass and the destination field's mass. The
-            calculation is only done if conservative regridding is
-            being performed. This is for debugging purposes.
+            indicates the lat-long slice of the field and the
+            corresponding value is a tuple containing the source field
+            construct's mass and the destination field construct's
+            mass. The calculation is only done if conservative
+            regridding is being performed. This is for debugging
+            purposes.
     
     :Returns:
     
         `Field`
-            The regridded field.
+            The regridded field construct.
     
     **Examples:**
     
-    Regrid field ``f`` conservatively onto a grid contained in field
-    ``g``:
+    Regrid field construct ``f`` conservatively onto a grid contained
+    in field construct ``g``:
     
     >>> h = f.regrids(g, 'conservative')
     
@@ -12822,15 +12899,16 @@ may be accessed with the `nc_global_attributes`,
 
     **Metadata**
     
-    The field's domain must have axes matching those specified in
-    *src_axes*. The same is true for the destination grid, if it
-    provided as part of another field. Optionally the axes to use from
-    the destination grid may be specified separately in *dst_axes*.
+    The field construct's domain must have axes matching those
+    specified in *src_axes*. The same is true for the destination
+    grid, if it provided as part of another field. Optionally the axes
+    to use from the destination grid may be specified separately in
+    *dst_axes*.
     
-    The output field's coordinate objects which span the specified
-    axes are replaced with those from the destination grid. Any fields
-    contained in coordinate reference objects will also be regridded,
-    if possible.
+    The output field construct's coordinate objects which span the
+    specified axes are replaced with those from the destination
+    grid. Any fields contained in coordinate reference objects will
+    also be regridded, if possible.
 
     
     **Mask**
@@ -12957,10 +13035,11 @@ may be accessed with the `nc_global_attributes`,
             source and destination fields are computed and returned
             within the dictionary. The keys of the dictionary
             indicates the lat/long slice of the field and the
-            corresponding value is a tuple containing the source
-            field's mass and the destination field's mass. The
-            calculation is only done if conservative regridding is
-            being performed. This is for debugging purposes.
+            corresponding value is a tuple containing the source field
+            construct's mass and the destination field construct's
+            mass. The calculation is only done if conservative
+            regridding is being performed. This is for debugging
+            purposes.
     
     :Returns:
     
@@ -13304,10 +13383,10 @@ may be accessed with the `nc_global_attributes`,
     :Parameters:
     
         axis: 
-            The axis , defined by that which would
-            be selected by passing the given axis description to a
-            call of the field's `domain_axis` method. For example, for
-            a value of ``'X'``, the domain axis construct returned by
+            The axis , defined by that which would be selected by
+            passing the given axis description to a call of the field
+            construct's `domain_axis` method. For example, for a value
+            of ``'X'``, the domain axis construct returned by
             ``f.domain_axis('X'))`` is selected.
 
         wrap: `bool`, optional
@@ -14144,21 +14223,23 @@ any units, then the units of the named item are assumed.
     :Parameters:
     
         kwargs: *optional*
-            Keyword names identify coordinates; and keyword values specify
-            the coordinate values which are to be reinterpreted as indices
-            to the field's data array.
+            Keyword names identify coordinates; and keyword values
+            specify the coordinate values which are to be
+            reinterpreted as indices to the field construct's data
+            array.
     
     
     ~~~~~~~~~~~~~~ /??????
             Coordinates are identified by their exact identity or by their
-            axis's identifier in the field's domain.
+            axis's identifier in the field construct's domain.
     
             A keyword value is a condition, or sequence of conditions,
             which is evaluated by finding where the coordinate's data
             array equals each condition. The locations where the
             conditions are satisfied are interpreted as indices to the
-            field's data array. If a condition is a scalar ``x`` then
-            this is equivalent to the `Query` object ``cf.eq(x)``.
+            field construct's data array. If a condition is a scalar
+            ``x`` then this is equivalent to the `Query` object
+            ``cf.eq(x)``.
     
     :Returns:
     

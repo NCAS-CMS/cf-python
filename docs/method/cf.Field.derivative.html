@@ -90,7 +90,7 @@
 <h1>cf.Field.derivative<a class="headerlink" href="#cf-field-derivative" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.derivative">
-<code class="descclassname">Field.</code><code class="descname">derivative</code><span class="sig-paren">(</span><em>axis</em>, <em>wrap=None</em>, <em>one_sided_at_boundary=False</em>, <em>inplace=False</em>, <em>i=False</em>, <em>cyclic=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b12/cf/field.py#L13293"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.derivative" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">derivative</code><span class="sig-paren">(</span><em>axis</em>, <em>wrap=None</em>, <em>one_sided_at_boundary=False</em>, <em>inplace=False</em>, <em>i=False</em>, <em>cyclic=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b12/cf/field.py#L13372"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.derivative" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the derivative along the specified axis.</p>
 <p>The derivative is calculated by centred finite differences along
 the specified axis.</p>
@@ -103,10 +103,10 @@ finite differences are requested.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
 <dt>axis: </dt>
-<dd><p class="first last">The axis , defined by that which would
-be selected by passing the given axis description to a
-call of the field’s <a class="reference internal" href="cf.Field.domain_axis.html#cf.Field.domain_axis" title="cf.Field.domain_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axis</span></code></a> method. For example, for
-a value of <code class="docutils literal notranslate"><span class="pre">'X'</span></code>, the domain axis construct returned by
+<dd><p class="first last">The axis , defined by that which would be selected by
+passing the given axis description to a call of the field
+construct’s <a class="reference internal" href="cf.Field.domain_axis.html#cf.Field.domain_axis" title="cf.Field.domain_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axis</span></code></a> method. For example, for a value
+of <code class="docutils literal notranslate"><span class="pre">'X'</span></code>, the domain axis construct returned by
 <code class="docutils literal notranslate"><span class="pre">f.domain_axis('X'))</span></code> is selected.</p>
 </dd>
 <dt>wrap: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>

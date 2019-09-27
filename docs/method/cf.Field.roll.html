@@ -90,7 +90,7 @@
 <h1>cf.Field.roll<a class="headerlink" href="#cf-field-roll" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.roll">
-<code class="descclassname">Field.</code><code class="descname">roll</code><span class="sig-paren">(</span><em>axis</em>, <em>shift</em>, <em>inplace=False</em>, <em>i=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b12/cf/field.py#L11391"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.roll" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">roll</code><span class="sig-paren">(</span><em>axis</em>, <em>shift</em>, <em>inplace=False</em>, <em>i=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b12/cf/field.py#L11465"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.roll" title="Permalink to this definition">¶</a></dt>
 <dd><p>Roll the field along a cyclic axis.</p>
 <p>A unique axis is selected with the axes and kwargs parameters.</p>
 <div class="versionadded">
@@ -108,9 +108,9 @@
 <dt>axis: </dt>
 <dd><p class="first last">The cyclic axis to be rolled, defined by that which would
 be selected by passing the given axis description to a
-call of the field’s <a class="reference internal" href="cf.Field.domain_axis.html#cf.Field.domain_axis" title="cf.Field.domain_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axis</span></code></a> method. For example, for
-a value of <code class="docutils literal notranslate"><span class="pre">'X'</span></code>, the domain axis construct returned by
-<code class="docutils literal notranslate"><span class="pre">f.domain_axis('X'))</span></code> is selected.</p>
+call of the field construct’s <a class="reference internal" href="cf.Field.domain_axis.html#cf.Field.domain_axis" title="cf.Field.domain_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axis</span></code></a> method. For
+example, for a value of <code class="docutils literal notranslate"><span class="pre">'X'</span></code>, the domain axis construct
+returned by <code class="docutils literal notranslate"><span class="pre">f.domain_axis('X'))</span></code> is selected.</p>
 </dd>
 <dt>shift: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt>
 <dd><p class="first last">The number of places by which the selected cyclic axis is

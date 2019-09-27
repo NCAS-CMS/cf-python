@@ -90,7 +90,7 @@
 <h1>cf.Field.collapse<a class="headerlink" href="#cf-field-collapse" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.collapse">
-<code class="descclassname">Field.</code><code class="descname">collapse</code><span class="sig-paren">(</span><em>method</em>, <em>axes=None</em>, <em>squeeze=False</em>, <em>mtol=1</em>, <em>weights=None</em>, <em>ddof=1</em>, <em>a=None</em>, <em>inplace=False</em>, <em>group=None</em>, <em>regroup=False</em>, <em>within_days=None</em>, <em>within_years=None</em>, <em>over_days=None</em>, <em>over_years=None</em>, <em>coordinate='mid_range'</em>, <em>group_by='coords'</em>, <em>group_span=None</em>, <em>group_contiguous=None</em>, <em>verbose=False</em>, <em>_create_zero_size_cell_bounds=False</em>, <em>_update_cell_methods=True</em>, <em>i=False</em>, <em>_debug=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b12/cf/field.py#L4954"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.collapse" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">collapse</code><span class="sig-paren">(</span><em>method</em>, <em>axes=None</em>, <em>squeeze=False</em>, <em>mtol=1</em>, <em>weights=None</em>, <em>ddof=1</em>, <em>a=None</em>, <em>inplace=False</em>, <em>group=None</em>, <em>regroup=False</em>, <em>within_days=None</em>, <em>within_years=None</em>, <em>over_days=None</em>, <em>over_years=None</em>, <em>coordinate='mid_range'</em>, <em>group_by='coords'</em>, <em>group_span=None</em>, <em>group_contiguous=None</em>, <em>verbose=False</em>, <em>_create_zero_size_cell_bounds=False</em>, <em>_update_cell_methods=True</em>, <em>i=False</em>, <em>_debug=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b12/cf/field.py#L4959"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.collapse" title="Permalink to this definition">¶</a></dt>
 <dd><p>Collapse axes of the field.</p>
 <p>Collapsing one or more dimensions reduces their size and replaces
 the data along those axes with representative statistical
@@ -565,11 +565,11 @@ multiannual means of calendar monthly minima:</p>
 <dt>axes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
 <dd><p class="first">The axes to be collapsed, defined by those which would be
 selected by passing each given axis description to a call
-of the field’s <a class="reference internal" href="cf.Field.domain_axis.html#cf.Field.domain_axis" title="cf.Field.domain_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axis</span></code></a> method. For example, for a
-value of <code class="docutils literal notranslate"><span class="pre">'X'</span></code>, the domain axis construct returned by
-<code class="docutils literal notranslate"><span class="pre">f.domain_axis('X'))</span></code> is selected. If a selected axis
-has size 1 then it is ignored. By default all axes with
-size greater than 1 are collapsed.</p>
+of the field construct’s <a class="reference internal" href="cf.Field.domain_axis.html#cf.Field.domain_axis" title="cf.Field.domain_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axis</span></code></a> method. For
+example, for a value of <code class="docutils literal notranslate"><span class="pre">'X'</span></code>, the domain axis construct
+returned by <code class="docutils literal notranslate"><span class="pre">f.domain_axis('X'))</span></code> is selected. If a
+selected axis has size 1 then it is ignored. By default
+all axes with size greater than 1 are collapsed.</p>
 <dl class="docutils">
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">axes='X'</span></code></p>
@@ -599,7 +599,7 @@ then it is assumed that the X and Y axes are intended.</p>
 <dt>weights: optional</dt>
 <dd><p class="first">Specify the weights for the collapse. <strong>By default the
 collapse is unweighted</strong>. The weights are those that would
-be returned by this call of the field’s
+be returned by this call of the field construct’s
 <a class="reference internal" href="cf.Field.weights.html#cf.Field.weights" title="cf.Field.weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">weights</span></code></a> method: <code class="docutils literal notranslate"><span class="pre">f.weights(weights,</span>
 <span class="pre">components=True)</span></code>. See <a class="reference internal" href="cf.Field.weights.html#cf.Field.weights" title="cf.Field.weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.weights</span></code></a> for details.
 By default <em>weights</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (<code class="docutils literal notranslate"><span class="pre">f.weights(None,</span>

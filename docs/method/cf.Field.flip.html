@@ -90,7 +90,7 @@
 <h1>cf.Field.flip<a class="headerlink" href="#cf-field-flip" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.flip">
-<code class="descclassname">Field.</code><code class="descname">flip</code><span class="sig-paren">(</span><em>axes=None</em>, <em>inplace=False</em>, <em>i=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b12/cf/field.py#L9149"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.flip" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">flip</code><span class="sig-paren">(</span><em>axes=None</em>, <em>inplace=False</em>, <em>i=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b12/cf/field.py#L9223"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.flip" title="Permalink to this definition">¶</a></dt>
 <dd><p>Flip (reverse the direction of) axes of the field.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
@@ -105,10 +105,10 @@
 <dt>axes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt>
 <dd><p class="first">Select the domain axes to flip, defined by the domain axes
 that would be selected by passing the each given axis
-description to a call of the field’s <a class="reference internal" href="cf.Field.domain_axis.html#cf.Field.domain_axis" title="cf.Field.domain_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axis</span></code></a>
-method. For example, for a value of <code class="docutils literal notranslate"><span class="pre">'X'</span></code>, the domain
-axis construct returned by <code class="docutils literal notranslate"><span class="pre">f.domain_axis('X'))</span></code> is
-selected.</p>
+description to a call of the field construct’s
+<a class="reference internal" href="cf.Field.domain_axis.html#cf.Field.domain_axis" title="cf.Field.domain_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axis</span></code></a> method. For example, for a value of <code class="docutils literal notranslate"><span class="pre">'X'</span></code>,
+the domain axis construct returned by
+<code class="docutils literal notranslate"><span class="pre">f.domain_axis('X'))</span></code> is selected.</p>
 <p class="last">If no axes are provided then all axes are flipped.</p>
 </dd>
 <dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>

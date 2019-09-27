@@ -107,9 +107,9 @@ syntax.</p>
 </div>
 <p><strong>Size one axes</strong></p>
 <blockquote>
-<div>Size one axes in the data array of the subspaced field are always
-retained, but may be subsequently removed with the field’s
-<a class="reference internal" href="../method/cf.Field.squeeze.html#cf.Field.squeeze" title="cf.Field.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a> method:</div></blockquote>
+<div>Size one axes in the data array of the subspaced field are
+always retained, but may be subsequently removed with the field
+construct’s <a class="reference internal" href="../method/cf.Field.squeeze.html#cf.Field.squeeze" title="cf.Field.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a> method:</div></blockquote>
 <p><strong>Defining a subspace in metadata-space</strong></p>
 <blockquote>
 <div><p>Defining a subspace in metadata-space has the following features</p>
@@ -211,10 +211,11 @@ created.</p>
 </dl>
 <blockquote>
 <div><p><strong>Keyword names</strong></p>
-<p>A keyword name selects a unique item of the field. The name
-may be any value allowed by the <em>description</em> parameter of
-the field’s <a class="reference internal" href="../method/cf.Field.item.html#cf.Field.item" title="cf.Field.item"><code class="xref py py-obj docutils literal notranslate"><span class="pre">item</span></code></a> method, which is used to select a unique
-domain item. See <a class="reference internal" href="../method/cf.Field.item.html#cf.Field.item" title="cf.Field.item"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.item</span></code></a> for details.</p>
+<p>TODO A keyword name selects a unique item of the field. The
+name may be any value allowed by the <em>description</em>
+parameter of the field construct’s <a class="reference internal" href="../method/cf.Field.item.html#cf.Field.item" title="cf.Field.item"><code class="xref py py-obj docutils literal notranslate"><span class="pre">item</span></code></a> method, which
+is used to select a unique domain item. See
+<a class="reference internal" href="../method/cf.Field.item.html#cf.Field.item" title="cf.Field.item"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.item</span></code></a> for details.</p>
 <dl class="docutils">
 <dt><em>Parameter example:</em>           </dt>
 <dd><p class="first last">The keyword <code class="docutils literal notranslate"><span class="pre">lat</span></code> will select the item returned by
@@ -230,8 +231,8 @@ positional argument.</p>
 this internal identifier
 <code class="docutils literal notranslate"><span class="pre">f.item(description='dim2')</span></code>. This can be useful in
 the absence of any more meaningful metadata. A full list
-of internal identifiers may be found with the field’s
-<a class="reference internal" href="../method/cf.Field.items.html#cf.Field.items" title="cf.Field.items"><code class="xref py py-obj docutils literal notranslate"><span class="pre">items</span></code></a> method.</p>
+of internal identifiers may be found with the field construct’s
+<a class="reference internal" href="../method/cf.Field.items.html#cf.Field.items" title="cf.Field.items"><code class="xref py py-obj docutils literal notranslate"><span class="pre">items</span></code></a> method. TODO</p>
 </dd>
 </dl>
 <p><strong>Keyword values</strong></p>
@@ -343,8 +344,9 @@ functionality are:</p>
 sequence of integers, then these indices work independently along
 each axis (similar to the way vector subscripts work in Fortran),
 rather than by their elements.</li>
-<li>Boolean indices may be any object which exposes the numpy array
-interface, such as the field’s coordinate objects.</li>
+<li>Boolean indices may be any object which exposes the numpy
+array interface, such as the field construct’s coordinate
+objects.</li>
 </ul>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -380,9 +382,10 @@ changed by assignment:</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">48</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">99</span>
 </pre></div>
 </div>
-<p>To assign to a subspace defined in metadata-space, the equivalent
-index-space indices must first be found with the field’s <a class="reference internal" href="../method/cf.Field.indices.html#cf.Field.indices" title="cf.Field.indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">indices</span></code></a>
-method, and then the assignment may be applied in index-space:</p>
+<p>To assign to a subspace defined in metadata-space, the
+equivalent index-space indices must first be found with the
+field construct’s <a class="reference internal" href="../method/cf.Field.indices.html#cf.Field.indices" title="cf.Field.indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">indices</span></code></a> method, and then the assignment may
+be applied in index-space:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">index</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">lt</span><span class="p">(</span><span class="mi">180</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">masked</span>
 </pre></div>

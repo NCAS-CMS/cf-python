@@ -90,17 +90,17 @@
 <h1>cf.Field.weights<a class="headerlink" href="#cf-field-weights" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.weights">
-<code class="descclassname">Field.</code><code class="descname">weights</code><span class="sig-paren">(</span><em>weights='auto'</em>, <em>scale=False</em>, <em>components=False</em>, <em>methods=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b12/cf/field.py#L3998"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.weights" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">weights</code><span class="sig-paren">(</span><em>weights='auto'</em>, <em>scale=False</em>, <em>components=False</em>, <em>methods=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b12/cf/field.py#L3999"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.weights" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return weights for the data array values.</p>
 <p>The weights are those used during a statistical collapse of the
 data. For example when computing a area weight average.</p>
 <p>Weights for any combination of axes may be returned.</p>
-<p>Weights are either derived from the field’s metadata (such as
-coordinate cell sizes) or provided explicitly in the form of other
-<a class="reference internal" href="../classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> objects. In any case, the outer product of these weights
-components is returned in a field which is broadcastable to the
-orginal field (see the <em>components</em> parameter for returning the
-components individually).</p>
+<p>Weights are either derived from the field construct’s metadata
+(such as coordinate cell sizes) or provided explicitly in the form
+of other <a class="reference internal" href="../classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> objects. In any case, the outer product of these
+weights components is returned in a field which is broadcastable
+to the orginal field (see the <em>components</em> parameter for returning
+the components individually).</p>
 <p>By default null, equal weights are returned.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.0.</span></p>
@@ -200,7 +200,8 @@ broadcastable to the orginal field (see the
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'area'</span></code></td>
-<td>Cell area weights from the field’s area
+<td>Cell area weights from the field
+construct’s area
 cell measure construct or, if one doesn’t
 exist, from (grid) latitude and (grid)
 longitude dimension coordinates. Set the
@@ -208,13 +209,15 @@ longitude dimension coordinates. Set the
 weights were actually created.</td>
 </tr>
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'volume'</span></code></td>
-<td>Cell volume weights from the field’s
+<td>Cell volume weights from the field
+construct’s
 volume cell measure construct.</td>
 </tr>
 <tr class="row-even"><td>items</td>
 <td>Weights from the cell sizes of the
 dimension coordinate objects that would be
-selected by this call of the field’s
+selected by this call of the field
+construct’s TODO
 <a class="reference internal" href="cf.Field.dims.html#cf.Field.dims" title="cf.Field.dims"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dims</span></code></a> method: <code class="docutils literal notranslate"><span class="pre">f.dims(items,</span>
 <span class="pre">**kwargs)</span></code>. See <a class="reference internal" href="cf.Field.dims.html#cf.Field.dims" title="cf.Field.dims"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.dims</span></code></a> for
 details. TODO</td>
@@ -252,10 +255,11 @@ less than or equal to 1.</dd>
 <dt>components: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd>If True then a dictionary of orthogonal weights components
 is returned instead of a field. Each key is a tuple of
-integers representing axes positions in the field’s data
-array with corresponding values of weights in <a class="reference internal" href="../classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>
-objects. The axes of weights match the axes of the field’s
-data array in the order given by their dictionary keys.</dd>
+integers representing axes positions in the field
+construct’s data array with corresponding values of
+weights in <a class="reference internal" href="../classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects. The axes of weights match the
+axes of the field construct’s data array in the order
+given by their dictionary keys.</dd>
 <dt>methods: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd>If True, then return a dictionary describing methods used
 to create the weights.</dd>

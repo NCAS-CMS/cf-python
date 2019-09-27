@@ -90,7 +90,7 @@
 <h1>cf.Field.regrids<a class="headerlink" href="#cf-field-regrids" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.regrids">
-<code class="descclassname">Field.</code><code class="descname">regrids</code><span class="sig-paren">(</span><em>dst</em>, <em>method</em>, <em>src_cyclic=None</em>, <em>dst_cyclic=None</em>, <em>use_src_mask=True</em>, <em>use_dst_mask=False</em>, <em>fracfield=False</em>, <em>src_axes=None</em>, <em>dst_axes=None</em>, <em>axis_order=None</em>, <em>ignore_degenerate=True</em>, <em>inplace=False</em>, <em>i=False</em>, <em>_compute_field_mass=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b12/cf/field.py#L12205"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.regrids" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">regrids</code><span class="sig-paren">(</span><em>dst</em>, <em>method</em>, <em>src_cyclic=None</em>, <em>dst_cyclic=None</em>, <em>use_src_mask=True</em>, <em>use_dst_mask=False</em>, <em>fracfield=False</em>, <em>src_axes=None</em>, <em>dst_axes=None</em>, <em>axis_order=None</em>, <em>ignore_degenerate=True</em>, <em>inplace=False</em>, <em>i=False</em>, <em>_compute_field_mass=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b12/cf/field.py#L12281"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.regrids" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the field regridded onto a new latitude-longitude grid.</p>
 <p>Regridding, also called remapping or interpolation, is the process
 of changing the grid underneath field data values while preserving
@@ -110,9 +110,9 @@ limit on a machine. Nearest neighbour interpolation is also
 available. Nearest source to destination is particularly useful
 for regridding integer fields such as land use.</p>
 <p><strong>Metadata</strong></p>
-<p>The field’s domain must have well defined X and Y axes with
-latitude and longitude coordinate values, which may be stored as
-dimension coordinate objects or two dimensional auxiliary
+<p>The field construct’s domain must have well defined X and Y axes
+with latitude and longitude coordinate values, which may be stored
+as dimension coordinate objects or two dimensional auxiliary
 coordinate objects. If the latitude and longitude coordinates are
 two dimensional then the X and Y axes must be defined by dimension
 coordinates if present or by the netCDF dimensions. In the latter
@@ -127,10 +127,10 @@ not registered as such by its parent field (see
 dimensional latitude and longitude dimension coordinates without
 bounds it will be necessary to specify <em>src_cyclic</em> or
 <em>dst_cyclic</em> manually if the field is global.</p>
-<p>The output field’s coordinate objects which span the X and/or Y
-axes are replaced with those from the destination grid. Any fields
-contained in coordinate reference objects will also be regridded,
-if possible.</p>
+<p>The output field construct’s coordinate objects which span the X
+and/or Y axes are replaced with those from the destination
+grid. Any fields contained in coordinate reference objects will
+also be regridded, if possible.</p>
 <p><strong>Mask</strong></p>
 <p>The data array mask of the field is automatically taken into
 account, such that the regridded data array will be masked in
@@ -319,18 +319,19 @@ degenerate cells.</p>
 <dd><p class="first last">If this is a dictionary then the field masses of the
 source and destination fields are computed and returned
 within the dictionary. The keys of the dictionary
-indicates the lat/long slice of the field and the
-corresponding value is a tuple containing the source
-field’s mass and the destination field’s mass. The
-calculation is only done if conservative regridding is
-being performed. This is for debugging purposes.</p>
+indicates the lat-long slice of the field and the
+corresponding value is a tuple containing the source field
+construct’s mass and the destination field construct’s
+mass. The calculation is only done if conservative
+regridding is being performed. This is for debugging
+purposes.</p>
 </dd>
 </dl>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
 <dt><a class="reference internal" href="../classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a></dt>
-<dd><p class="first last">The regridded field.</p>
+<dd><p class="first last">The regridded field construct.</p>
 </dd>
 </dl>
 </td>
@@ -338,8 +339,8 @@ being performed. This is for debugging purposes.</p>
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<p>Regrid field <code class="docutils literal notranslate"><span class="pre">f</span></code> conservatively onto a grid contained in field
-<code class="docutils literal notranslate"><span class="pre">g</span></code>:</p>
+<p>Regrid field construct <code class="docutils literal notranslate"><span class="pre">f</span></code> conservatively onto a grid contained
+in field construct <code class="docutils literal notranslate"><span class="pre">g</span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">h</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">regrids</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="s1">&#39;conservative&#39;</span><span class="p">)</span>
 </pre></div>
 </div>

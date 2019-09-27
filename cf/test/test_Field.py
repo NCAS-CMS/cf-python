@@ -26,7 +26,7 @@ class FieldTest(unittest.TestCase):
         self.test_only = []
 #        self.test_only = ['NOTHING!!!!']
 #        self.test_only = ['test_Field_domain_axis_position']
-#        self.test_only = ['test_Field__add__']
+#        self.test_only = ['test_Field_cumsum']
 #        self.test_only = ['test_Field_indices']
 #        self.test_only = ['test_Field_item']
 #        self.test_only = ['test_Field_field_ancillary']
@@ -460,6 +460,36 @@ class FieldTest(unittest.TestCase):
         m = f.domain_mask(grid_longitude=cf.wi(25, 31))
 
 
+    def test_Field_cumsum(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        for chunksize in self.chunk_sizes:
+            cf.CHUNKSIZE(chunksize)
+            f = cf.read(self.filename)[0]
+
+            g = f.copy()
+            h = g.cumsum(2)
+            self.assertTrue(g.cumsum(2, inplace=True) is None)
+            self.assertTrue(g.equals(h, verbose=True))
+
+            for i in range(f.ndim):
+                a = numpy.cumsum(f.array, axis=i)
+                self.assertTrue((f.cumsum(i).array == a).all())
+                
+            f[0, 0, 3] = cf.masked
+            f[0, 2, 7] = cf.masked
+            
+            for i in range(f.ndim):
+                a = f.array
+                a = a.filled(0)
+                a = numpy.cumsum(a, axis=i)
+                g = f.cumsum(i, masked_as_zero=True)
+                self.assertTrue(cf.functions._numpy_allclose(g.array, a))
+        #--- End: for
+        cf.CHUNKSIZE(self.original_chunksize)
+
+        
     def test_Field_flip(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return

@@ -90,7 +90,7 @@
 <h1>cf.Field.indices<a class="headerlink" href="#cf-field-indices" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.indices">
-<code class="descclassname">Field.</code><code class="descname">indices</code><span class="sig-paren">(</span><em>*mode</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b12/cf/field.py#L7881"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.indices" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">indices</code><span class="sig-paren">(</span><em>*mode</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b12/cf/field.py#L7880"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.indices" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create indices based on domain metadata that define a subspace of
 the field.</p>
 <p>The subspace is defined in “domain space” via data array values of its
@@ -98,9 +98,9 @@ domain items: dimension coordinate, auxiliary coordinate, cell
 measure, domain ancillary and field ancillary objects.</p>
 <p>If metadata items are not specified for an axis then a full slice
 (<code class="docutils literal notranslate"><span class="pre">slice(None)</span></code>) is assumed for that axis.</p>
-<p>Values for size 1 axes which are not spanned by the field’s data array
-may be specified, but only indices for axes which span the field’s
-data array will be returned.</p>
+<p>Values for size 1 axes which are not spanned by the field
+construct’s data array may be specified, but only indices for axes
+which span the field construct’s data array will be returned.</p>
 <p>The conditions may be given in any order.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
@@ -144,7 +144,7 @@ are created which, for each axis, select where the conditions
 are met.</p>
 <p>A keyword name is a string which selects a unique item of the
 field. The string may be any string value allowed by the
-<em>description</em> parameter of the field’s <a class="reference internal" href="cf.Field.item.html#cf.Field.item" title="cf.Field.item"><code class="xref py py-obj docutils literal notranslate"><span class="pre">item</span></code></a> method, which is
+<em>description</em> parameter of the field’s TODO <a class="reference internal" href="cf.Field.item.html#cf.Field.item" title="cf.Field.item"><code class="xref py py-obj docutils literal notranslate"><span class="pre">item</span></code></a> method, which is
 used to select a unique domain item. See <a class="reference internal" href="cf.Field.item.html#cf.Field.item" title="cf.Field.item"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.item</span></code></a> for
 details.</p>
 <blockquote>

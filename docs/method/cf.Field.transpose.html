@@ -90,7 +90,7 @@
 <h1>cf.Field.transpose<a class="headerlink" href="#cf-field-transpose" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.transpose">
-<code class="descclassname">Field.</code><code class="descname">transpose</code><span class="sig-paren">(</span><em>axes=None</em>, <em>constructs=False</em>, <em>inplace=False</em>, <em>items=True</em>, <em>i=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b12/cf/field.py#L9679"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.transpose" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">transpose</code><span class="sig-paren">(</span><em>axes=None</em>, <em>constructs=False</em>, <em>inplace=False</em>, <em>items=True</em>, <em>i=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b12/cf/field.py#L9753"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.transpose" title="Permalink to this definition">¶</a></dt>
 <dd><p>Permute the axes of the data array.</p>
 <p>By default the order of the axes is reversed, but any ordering may
 be specified by selecting the axes of the output in the required
@@ -110,10 +110,10 @@ if the <em>constructs</em> parmeter is set.</p>
 <dt>axes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt>
 <dd><p class="first">Select the domain axis order, defined by the domain axes
 that would be selected by passing the each given axis
-description to a call of the field’s <a class="reference internal" href="cf.Field.domain_axis.html#cf.Field.domain_axis" title="cf.Field.domain_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axis</span></code></a>
-method. For example, for a value of <code class="docutils literal notranslate"><span class="pre">'X'</span></code>, the domain
-axis construct returned by <code class="docutils literal notranslate"><span class="pre">f.domain_axis('X'))</span></code> is
-selected.</p>
+description to a call of the field construct’s
+<a class="reference internal" href="cf.Field.domain_axis.html#cf.Field.domain_axis" title="cf.Field.domain_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axis</span></code></a> method. For example, for a value of <code class="docutils literal notranslate"><span class="pre">'X'</span></code>,
+the domain axis construct returned by
+<code class="docutils literal notranslate"><span class="pre">f.domain_axis('X'))</span></code> is selected.</p>
 <p class="last">Each dimension of the field construct’s data must be
 provided, or if no axes are specified then the axis order
 is reversed.</p>
