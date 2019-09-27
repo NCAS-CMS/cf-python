@@ -149,7 +149,7 @@ of environment variable <em>name</em>.</td>
 <tr class="row-even"><td>Pathname</td>
 <td>A string containing UNIX file name
 metacharacters as understood by the
-<a class="reference external" href="https://docs.python.org/3/library/glob.html#module-glob" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">glob</span></code></a> module is replaced by
+Python <a class="reference external" href="https://docs.python.org/3/library/glob.html#module-glob" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">glob</span></code></a> module is replaced by
 the list of matching file names. This
 type of expansion is ignored for
 OPenDAP URLs.</td>
@@ -290,11 +290,11 @@ call.</p>
 <p>If <em>aggregate</em> is a dictionary then it is used to
 configure the aggregation process passing its contents as
 keyword arguments to the <a class="reference internal" href="../generated/cf.aggregate.html#cf.aggregate" title="cf.aggregate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.aggregate</span></code></a> function.</p>
-<p class="last">If <em>aggregate</em> is False then the field contructs are not
+<p class="last">If <em>aggregate</em> is False then the field constructs are not
 aggregated.</p>
 </dd>
 <dt>squeeze: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If True then remove size 1 axes from each field contruct’s
+<dd><p class="first last">If True then remove size 1 axes from each field construct’s
 data array.</p>
 </dd>
 <dt>unsqueeze: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
@@ -303,14 +303,14 @@ construct’s domain into its data array.</p>
 </dd>
 <dt>select, select_options: optional TODO</dt>
 <dd><p class="first last">Only return field constructs which satisfy the given
-conditions on their property values. Only field contructs
+conditions on their property values. Only field constructs
 which, prior to any aggregation, satisfy
 <code class="docutils literal notranslate"><span class="pre">f.match(description=select,</span> <span class="pre">**select_options)</span> <span class="pre">==</span> <span class="pre">True</span></code>
 are returned. See <a class="reference internal" href="../method/cf.Field.match.html#cf.Field.match" title="cf.Field.match"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.match</span></code></a> for details.</p>
 </dd>
 <dt>recursive: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then recursively read sub-directories of any
-directories specified with the <em>files</em> parmaeter.</p>
+directories specified with the <em>files</em> parameter.</p>
 </dd>
 <dt>followlinks: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first">If True, and <em>recursive</em> is True, then also search for
@@ -394,7 +394,7 @@ construct will be created.</td>
 </tbody>
 </table>
 <p>If format is specified as <code class="docutils literal notranslate"><span class="pre">'PP'</span></code> then the word size and
-byte order default to <code class="docutils literal notranslate"><span class="pre">4</span></code> and <code class="docutils literal notranslate"><span class="pre">'big'</span></code> repsectively.</p>
+byte order default to <code class="docutils literal notranslate"><span class="pre">4</span></code> and <code class="docutils literal notranslate"><span class="pre">'big'</span></code> respectively.</p>
 <dl class="docutils">
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last">To specify that the input files are 32-bit, big-endian

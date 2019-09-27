@@ -82,7 +82,7 @@ def read(files, external=None, verbose=False, warnings=False,
     
             Pathname              A string containing UNIX file name
                                   metacharacters as understood by the
-                                  :py:obj:`glob` module is replaced by
+                                  Python `glob` module is replaced by
                                   the list of matching file names. This
                                   type of expansion is ignored for
                                   OPenDAP URLs.
@@ -200,11 +200,11 @@ def read(files, external=None, verbose=False, warnings=False,
             configure the aggregation process passing its contents as
             keyword arguments to the `cf.aggregate` function.
     
-            If *aggregate* is False then the field contructs are not
+            If *aggregate* is False then the field constructs are not
             aggregated.
     
         squeeze: `bool`, optional
-            If True then remove size 1 axes from each field contruct's
+            If True then remove size 1 axes from each field construct's
             data array.
     
         unsqueeze: `bool`, optional
@@ -213,14 +213,14 @@ def read(files, external=None, verbose=False, warnings=False,
     
         select, select_options: optional TODO
             Only return field constructs which satisfy the given
-            conditions on their property values. Only field contructs
+            conditions on their property values. Only field constructs
             which, prior to any aggregation, satisfy
             ``f.match(description=select, **select_options) == True``
             are returned. See `cf.Field.match` for details.
     
         recursive: `bool`, optional
             If True then recursively read sub-directories of any
-            directories specified with the *files* parmaeter.
+            directories specified with the *files* parameter.
     
         followlinks: `bool`, optional
             If True, and *recursive* is True, then also search for
@@ -290,9 +290,9 @@ def read(files, external=None, verbose=False, warnings=False,
                                           dimension coordinate
                                           construct will be created.
             ============================  =====================================
-    
+
             If format is specified as ``'PP'`` then the word size and
-            byte order default to ``4`` and ``'big'`` repsectively.
+            byte order default to ``4`` and ``'big'`` respectively.
     
             *Parameter example:*
               To specify that the input files are 32-bit, big-endian
