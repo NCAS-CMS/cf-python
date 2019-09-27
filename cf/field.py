@@ -9064,7 +9064,7 @@ may be accessed with the `nc_global_attributes`,
         return f
 
 
-    def convert(self, identity, full_domain=True):
+    def convert(self, identity, full_domain=True, cellsize=False):
         '''Convert a metadata construct into a new field construct.
 
     The new field construct has the properties and data of the
@@ -9073,7 +9073,7 @@ may be accessed with the `nc_global_attributes`,
     (such as dimension coordinate and coordinate reference constructs)
     that define its domain.
     
-    The cf.read function allows a field construct to be derived
+    The `cf.read` function allows a field construct to be derived
     directly from a netCDF variable that corresponds to a metadata
     construct. In this case, the new field construct will have a
     domain limited to that which can be inferred from the
@@ -9138,6 +9138,10 @@ may be accessed with the `nc_global_attributes`,
             as much of the domain as possible is copied to the new
             field construct.
     
+        cellsize: `bool`, optional
+            If `True` then create a field construct from the selected
+            metadata construct's cell sizes.
+    
     :Returns:	
     
         `Field`
@@ -9150,10 +9154,23 @@ may be accessed with the `nc_global_attributes`,
         '''
         key = self.construct_key(identity, default=None)
         if key is None:
-            raise ValueError("Can't find metadata construct with identity {!r}".format(
-                identity))
+            raise ValueError(
+                "Can't find metadata construct with identity {!r}".format(
+                    identity))
 
-        return super().convert(key, full_domain=full_domain)
+        f = super().convert(key, full_domain=full_domain)
+
+        if cellsize:
+            # Change the new field's data to cell sizes
+            construct = self.construct(key)
+            try:
+                cs = construct.cellsize
+            except AttributeError as error:
+                raise ValueError(error)
+
+            f.set_data(cs.data, set_axes=False, copy=False)
+
+        return f
 
 
     def flip(self, axes=None, inplace=False, i=False, **kwargs):

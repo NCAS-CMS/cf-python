@@ -12,14 +12,15 @@ import cf
 tmpfile  = tempfile.mktemp('.cf-python_test')
 tmpfiles = [tmpfile]
 def _remove_tmpfiles():
+    '''TODO
     '''
-'''
     for f in tmpfiles:
         try:
             os.remove(f)
         except OSError:
             pass
-#--- End: def
+
+        
 atexit.register(_remove_tmpfiles)
 
 class read_writeTest(unittest.TestCase):
@@ -33,10 +34,11 @@ class read_writeTest(unittest.TestCase):
 #    test_only = ['NOTHING!!!!!']
 #    test_only = ['test_write_reference_datetime']
 #    test_only = ['test_read_write_unlimited']
-    test_only = ['test_read_write_format']
+#    test_only = ['test_read_write_format']
 #    test_only = ['test_write_datatype']
 #    test_only = ['test_read_directory']
-    
+#    test_only = ['test_read_write_netCDF4_compress_shuffle']
+
     def test_read_directory(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -61,7 +63,7 @@ class read_writeTest(unittest.TestCase):
         
         f = cf.read('dir/subdir', recursive=True, aggregate=False)
         self.assertTrue(len(f) == 2, f)
-    #--- End: def
+
 
     def test_read_select(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -71,7 +73,7 @@ class read_writeTest(unittest.TestCase):
         f = cf.read(self.filename, select='eastward_wind')
         g = cf.read(self.filename)
         self.assertTrue(f.equals(g, verbose=True), 'Bad read with select keyword')
-    #--- End: def
+
 
     def test_read_squeeze(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -82,17 +84,16 @@ class read_writeTest(unittest.TestCase):
         f = cf.read(self.filename, unsqueeze=True)
         with self.assertRaises(Exception):
             f = cf.read(self.filename, unsqueeze=True, squeeze=True)
-    #--- End: def
+
 
     def test_read_aggregate(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        # select on field list
         f = cf.read(self.filename, aggregate=True)
         f = cf.read(self.filename, aggregate=False)
         f = cf.read(self.filename, aggregate={})
-    #--- End: def
+
 
     def test_read_extra(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -127,7 +128,7 @@ class read_writeTest(unittest.TestCase):
                                      'cell_measure', 'auxiliary_coordinate',
                                      'domain_ancillary'))
         self.assertTrue(len(f) == 15, '\n'+str(f))
-    #--- End: def
+
 
     def test_read_write_format(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -144,23 +145,21 @@ class read_writeTest(unittest.TestCase):
                         'CFA',):
                 f = cf.read(self.filename)[0]
                 f0 = f.copy()
-#                print ('FORMAT=', fmt)
-#                tmpfile = 'delme'+str(chunksize)+fmt+'.nc'
                 cf.write(f, tmpfile, fmt=fmt)
                 g = cf.read(tmpfile)
                 self.assertTrue(len(g) == 1, g)
                 g0 = g[0]
-#                print (f0.dump())
-#                print (g0.dump())
                 self.assertTrue(f0.equals(g0, verbose=1),
                                 'Bad read/write of format {!r}'.format(fmt))
         #--- End: for
-    #--- End: def
+
 
     def test_read_write_netCDF4_compress_shuffle(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
+        tmpfile = tempfile.mktemp('.cf-python_test')
+        
         for chunksize in self.chunk_sizes:   
             cf.CHUNKSIZE(chunksize) 
             f = cf.read(self.filename)[0]
@@ -179,7 +178,7 @@ class read_writeTest(unittest.TestCase):
                                 fmt, compress, no_shuffle))
         #--- End: for
         cf.CHUNKSIZE(self.original_chunksize) 
-    #--- End: def
+
 
     def test_write_datatype(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -196,7 +195,7 @@ class read_writeTest(unittest.TestCase):
                             'datatype read in is '+str(g.dtype))
         #--- End: for
         cf.CHUNKSIZE(self.original_chunksize) 
-    #--- End: def
+
 
     def test_write_reference_datetime(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -218,7 +217,7 @@ class read_writeTest(unittest.TestCase):
                                 'Units written were '+repr(t.Units.reftime)+' not '+repr(reference_datetime))
         #--- End: for
         cf.CHUNKSIZE(self.original_chunksize) 
-    #--- End: def
+
 
 #    def test_write_HDF_chunks(self):
 #        if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -232,7 +231,7 @@ class read_writeTest(unittest.TestCase):
 #                cf.write(f, tmpfile, fmt=fmt, HDF_chunksizes={'X': 6})
 #        #--- End: for
 #        cf.CHUNKSIZE(self.original_chunksize) 
-#    #--- End: def
+
 
     def test_read_write_unlimited(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -256,7 +255,22 @@ class read_writeTest(unittest.TestCase):
         f = cf.read(tmpfile)[0]
         self.assertTrue(f.domain_axes['domainaxis0'].nc_is_unlimited())
         self.assertTrue(f.domain_axes['domainaxis2'].nc_is_unlimited())
-    #--- End: def
+
+
+    def test_read_pp(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        p = cf.read('wgdos_packed.pp')[0]            
+        p0 = cf.read('wgdos_packed.pp',
+                     um={'fmt': 'PP',
+                         'endian': 'big',
+                         'word_size': 4,
+                         'version': 4.5,
+                         'height_at_top_of_model': 23423.65})[0]
+
+        self.assertTrue(p.equals(p0, verbose=True))
+        
 
 #--- End: class
 

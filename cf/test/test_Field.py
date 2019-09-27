@@ -25,7 +25,7 @@ class FieldTest(unittest.TestCase):
 
         self.test_only = []
 #        self.test_only = ['NOTHING!!!!']
-#        self.test_only = ['test_Field_replace_construct']
+#        self.test_only = ['test_Field_convert']
 #        self.test_only = ['test_Field__add__']
 #        self.test_only = ['test_Field_indices']
 #        self.test_only = ['test_Field_item']
@@ -1198,6 +1198,10 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(len(c.field_ancillaries) == 0)
         self.assertTrue(len(c.cell_methods) == 0)
 
+        # Cellsize
+        c = f.convert('grid_longitude', cellsize=True)
+        self.assertTrue((c.data == [1.,  1.,  1.,  1.,  1.,  1.,  1.,  3.5, 6. ]).all())
+        
         with self.assertRaises(ValueError):
             f.convert('qwerty')
 

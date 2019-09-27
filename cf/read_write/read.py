@@ -7,7 +7,6 @@ import cfdm
 
 from . import implementation
 
-#from ..field     import FieldList
 from ..fieldlist import FieldList
 from ..functions import flat
 from ..aggregate import aggregate as cf_aggregate
@@ -18,7 +17,8 @@ from .um     import UMRead
 from ..functions import _DEPRECATION_ERROR_FUNCTION_KWARGS
 
 # --------------------------------------------------------------------
-# Create an implementation container and initialize read objects
+# Create an implementation container and initialize a read object for
+# each format
 # --------------------------------------------------------------------
 _implementation = implementation()
 netcdf = NetCDFRead(_implementation)
@@ -28,10 +28,10 @@ UM     = UMRead(_implementation)
 def read(files, external=None, verbose=False, warnings=False,
          ignore_read_error=False, aggregate=True, nfields=None,
          squeeze=False, unsqueeze=False, fmt=None, select=None,
-         extra=None, height_at_top_of_model=None, recursive=False,
-         followlinks=False, um=None, chunk=True, field=None,
+         extra=None, recursive=False, followlinks=False, um=None,
+         chunk=True, field=None, height_at_top_of_model=None,
          select_options=None, follow_symlinks=False):
-    '''Read fields from netCDF, PP or UM fields files.
+    '''Read field constructs from netCDF, PP or UM fields files.
 
     Files may be on disk or on a OPeNDAP server.
     
@@ -58,35 +58,35 @@ def read(files, external=None, verbose=False, warnings=False,
     available to field constructs derived from UM fields files or PP
     files.
 
-    .. seealso:: `cf.write`, `cf.aggregate`,
-                 `cf.load_stash2standard_name`
+    .. seealso:: `cf.aggregate`, `cf.load_stash2standard_name`,
+                 `cf.write`
     
     :Parameters:
     
         files: (arbitrarily nested sequence of) `str`
             A string or arbitrarily nested sequence of strings giving
             the file names, directory names, or OPenDAP URLs from
-            which to read fields. Various type of expansion are
-            applied to the names:
+            which to read field constructs. Various type of expansion
+            are applied to the names:
             
-              ====================  ======================================
-              Expansion             Description
-              ====================  ======================================
-              Tilde                 An initial component of ``~`` or
-                                    ``~user`` is replaced by that *user*'s
-                                    home directory.
-               
-              Environment variable  Substrings of the form ``$name`` or
-                                    ``${name}`` are replaced by the value
-                                    of environment variable *name*.
+            ====================  ======================================
+            Expansion             Description
+            ====================  ======================================
+            Tilde                 An initial component of ``~`` or
+                                  ``~user`` is replaced by that *user*'s
+                                  home directory.
+             
+            Environment variable  Substrings of the form ``$name`` or
+                                  ``${name}`` are replaced by the value
+                                  of environment variable *name*.
     
-              Pathname              A string containing UNIX file name
-                                    metacharacters as understood by the
-                                    :py:obj:`glob` module is replaced by
-                                    the list of matching file names. This
-                                    type of expansion is ignored for
-                                    OPenDAP URLs.
-              ====================  ======================================
+            Pathname              A string containing UNIX file name
+                                  metacharacters as understood by the
+                                  :py:obj:`glob` module is replaced by
+                                  the list of matching file names. This
+                                  type of expansion is ignored for
+                                  OPenDAP URLs.
+            ====================  ======================================
         
             Where more than one type of expansion is used in the same
             string, they are applied in the order given in the above
@@ -130,29 +130,29 @@ def read(files, external=None, verbose=False, warnings=False,
               ``external=('cell_measure_A.nc', 'cell_measure_O.nc')``
     
         extra: (sequence of) `str`, optional
-            Create extra, independent fields from netCDF variables
-            that correspond to particular types metadata
+            Create extra, independent field constructs from netCDF
+            variables that correspond to particular types metadata
             constructs. The *extra* parameter may be one, or a
             sequence, of:
     
-              ==========================  ================================
-              *extra*                     Metadata constructs
-              ==========================  ================================
-              ``'field_ancillary'``       Field ancillary constructs
-              ``'domain_ancillary'``      Domain ancillary constructs
-              ``'dimension_coordinate'``  Dimension coordinate constructs
-              ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
-              ``'cell_measure'``          Cell measure constructs
-              ==========================  ================================
+            ==========================  ===============================
+            *extra*                     Metadata constructs
+            ==========================  ===============================
+            ``'field_ancillary'``       Field ancillary constructs
+            ``'domain_ancillary'``      Domain ancillary constructs
+            ``'dimension_coordinate'``  Dimension coordinate constructs
+            ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
+            ``'cell_measure'``          Cell measure constructs
+            ==========================  ===============================
     
             *Parameter example:*
-              To create fields from auxiliary coordinate constructs:
-              ``extra='auxiliary_coordinate'`` or
+              To create field constructs from auxiliary coordinate
+              constructs: ``extra='auxiliary_coordinate'`` or
               ``extra=['auxiliary_coordinate']``.
     
             *Parameter example:*
-              To create fields from domain ancillary and cell measure
-              constructs: ``extra=['domain_ancillary',
+              To create field constructs from domain ancillary and
+              cell measure constructs: ``extra=['domain_ancillary',
               'cell_measure']``.
     
             An extra field construct created via the *extra* parameter
@@ -162,8 +162,8 @@ def read(files, external=None, verbose=False, warnings=False,
             variable. It is possible to create independent fields from
             metadata constructs that do incorporate as much of the
             parent field construct's domain as possible by using the
-            `~cfdm.Field.convert` method of a returned field
-            construct, instead of setting the *extra* parameter.
+            `~cf.Field.convert` method of a returned field construct,
+            instead of setting the *extra* parameter.
     
         verbose: `bool`, optional
             If True then print a description of how the contents of
@@ -184,64 +184,39 @@ def read(files, external=None, verbose=False, warnings=False,
         fmt: `str`, optional
             Only read files of the given format, ignoring all other
             files. Valid formats are ``'NETCDF'`` for CF-netCDF files,
-            ``'CFA'`` for CFA-netCDF files and ``'PP'`` for PP files
-            and 'FF' for UM fields files. By default files of any of
-            these formats are read.
+            ``'CFA'`` for CFA-netCDF files, and ``'UM'`` for PP or UM
+            fields files. By default files of any of these formats are
+            read.
     
         aggregate: `bool` or `dict`, optional
-            If True (the default) or a (possibly empty) dictionary
-            then aggregate the fields read in from all input files
-            into as few fields as possible by passing all of the
-            fields found the input files to the `cf.aggregate`, and
-            returning the output of this function call.
+            If True (the default) or a dictionary (possibly empty)
+            then aggregate the field constructs read in from all input
+            files into as few field constructs as possible by passing
+            all of the field constructs found the input files to the
+            `cf.aggregate`, and returning the output of this function
+            call.
     
             If *aggregate* is a dictionary then it is used to
             configure the aggregation process passing its contents as
             keyword arguments to the `cf.aggregate` function.
     
-            If *aggregate* is False then the fields are not
+            If *aggregate* is False then the field contructs are not
             aggregated.
     
         squeeze: `bool`, optional
-            If True then remove size 1 axes from each field's data
-            array.
+            If True then remove size 1 axes from each field contruct's
+            data array.
     
         unsqueeze: `bool`, optional
-            If True then insert size 1 axes from each field's domain
-            into its data array.
+            If True then insert size 1 axes from each field
+            construct's domain into its data array.
     
         select, select_options: optional TODO
-            Only return fields which satisfy the given conditions on
-            their property values. Only fields which, prior to any
-            aggregation, satisfy ``f.match(description=select,
-            **select_options) == True`` are returned. See
-            `cf.Field.match` for details.
-    
-        field: (sequence of) `str`, optional TODO
-            Create independent fields from field components. The
-            *field* parameter may be one, or a sequence, of:
-    
-              ======================  ====================================
-              *field*                 Field components
-              ======================  ====================================
-              ``'field_ancillary'``   Field ancillary objects
-              ``'domain_ancillary'``  Domain ancillary objects
-              ``'dimension'``         Dimension coordinate objects
-              ``'auxiliary'``         Auxiliary coordinate objects
-              ``'measure'``           Cell measure objects
-              ``'all'``               All of the above
-              ======================  ====================================
-    
-              *Parameter example:*
-                To create fields from auxiliary coordinate objects:
-                ``field='auxiliary'`` or ``field=['auxiliary']``.
-    
-              *Parameter example:*
-                To create fields from domain ancillary and cell
-                measure objects: ``field=['domain_ancillary',
-                'measure']``.
-    
-            .. versionadded:: 3.0.0
+            Only return field constructs which satisfy the given
+            conditions on their property values. Only field contructs
+            which, prior to any aggregation, satisfy
+            ``f.match(description=select, **select_options) == True``
+            are returned. See `cf.Field.match` for details.
     
         recursive: `bool`, optional
             If True then recursively read sub-directories of any
@@ -267,45 +242,73 @@ def read(files, external=None, verbose=False, warnings=False,
             key/value pair in the dictionary sets a decoding option as
             follows:
     
-              ===============  ===========================================
-              Key              Value
-              ===============  ===========================================
-              ``'fmt'``        The file format (``'PP'`` or ``'FF'``)
+            ============================  =====================================
+            Key                           Value
+            ============================  =====================================
+            ``'fmt'``                     The file format (``'PP'`` or  
+                                          ``'FF'``)
+                                    
+            ``'word_size'``               The word size in bytes (``4`` or 
+                                          ``8``)
+                                    
+            ``'endian'``                  The byte order (``'big'`` or
+                                          ``'little'``)
+                                    
+            ``'version'``                 The UM version to be used
+                                          when decoding the
+                                          header. Valid versions
+                                          are, for example, ``4.2``,
+                                          ``'6.6.3'`` and
+                                          ``'8.2'``. The default
+                                          version is ``4.5``. In
+                                          general, a given version
+                                          is ignored if it can be
+                                          inferred from the header
+                                          (which is usually the case
+                                          for files created by the
+                                          UM at versions 5.3 and
+                                          later). The exception to
+                                          this is when the given
+                                          version has a third
+                                          element (such as the 3 in
+                                          6.6.3), in which case any
+                                          version in the header is
+                                          ignored.
+
+            ``'height_at_top_of_model'``  The height (in metres) of
+                                          the upper bound of the top
+                                          model level. By default
+                                          the height at top model is
+                                          taken from the top level's
+                                          upper bound defined by
+                                          BRSVD1 in the lookup
+                                          header. If the height at
+                                          top model can not be
+                                          determined from the header and is
+                                          not provided then no
+                                          "atmosphere_hybrid_height_coordinate"
+                                          dimension coordinate
+                                          construct will be created.
+            ============================  =====================================
     
-              ``'word_size'``  The word size in bytes (``4`` or ``8``)
-    
-              ``'endian'``     The byte order (``'big'`` or ``'little'``)
-    
-              ``'version'``    The Unified Model version to be used when
-                               decoding the header. Valid versions are,
-                               for example, ``4.2``, ``'6.6.3'`` and
-                               ``'8.2'``. The default version is
-                               ``4.5``. In general, a given version is
-                               ignored if it can be inferred from the
-                               header (which is usually the case for files
-                               created by the UM at versions 5.3 and
-                               later). The exception to this is when the
-                               given version has a third element (such as
-                               the 3 in 6.6.3), in which case any version
-                               in the header is ignored.
-              ===============  ===========================================
-    
-            If format is specified as PP then the word size and byte
-            order default to ``4`` and ``'big'`` repsectively.
+            If format is specified as ``'PP'`` then the word size and
+            byte order default to ``4`` and ``'big'`` repsectively.
     
             *Parameter example:*
-                To specify that the input files are 32-bit, big-endian
-                PP files: ``um={'fmt': 'PP'}``
+              To specify that the input files are 32-bit, big-endian
+              PP files: ``um={'fmt': 'PP'}``
     
             *Parameter example:*
-                To specify that the input files are 32-bit,
-                little-endian PP files from version 5.1 of the Unified
-                Model: ``um={'fmt': 'PP', 'endian': 'little',
-                'version': 5.1}``
+              To specify that the input files are 32-bit,
+              little-endian PP files from version 5.1 of the UM:
+              ``um={'fmt': 'PP', 'endian': 'little', 'version': 5.1}``
     
             .. versionadded:: 1.5
     
         umversion: deprecated at version 3.0.0
+            Use the *um* parameter instead.
+    
+        height_at_top_of_model: deprecated at version 3.0.0
             Use the *um* parameter instead.
     
         field: deprecated at version 3.0.0
@@ -319,14 +322,12 @@ def read(files, external=None, verbose=False, warnings=False,
     :Returns:
         
         `FieldList`
-            A list of the fields found in the input file(s). The list
+            The field constructs found in the input file(s). The list
             may be empty.
     
     **Examples:**
     
     >>> x = cfdm.read('file.nc')
-    >>> print(type(x))
-    <type 'list'>
     
     Read a file and create field constructs from CF-netCDF data
     variables as well as from the netCDF variables that correspond to
@@ -377,7 +378,11 @@ def read(files, external=None, verbose=False, warnings=False,
                                            {'follow_symlinks': follow_symlinks},
                                            "Use keyword 'followlink' instead.") # pragma: no cover
 
-       
+    if height_at_top_of_model is not None:
+        _DEPRECATION_ERROR_FUNCTION_KWARGS('cf.read',
+                                           {'height_at_top_of_model': height_at_top_of_model},
+                                           "Use keyword 'um' instead.") # pragma: no cover
+
     # Parse select
     if isinstance(select, str):
         select = (select,)
@@ -574,18 +579,20 @@ def _read_a_file(filename, aggregate=True, aggregate_options={},
 
     '''
     # Find this file's type
-    fmt       = None
-    word_size = None
-    endian    = None
-    umversion = 405
+    fmt                    = None
+    word_size              = None
+    endian                 = None
+    height_at_top_of_model = None
+    umversion              = 405
 
     if um:
         ftype = 'UM' 
-        fmt         = um.get('fmt')
-        word_size   = um.get('word_size')
-        endian      = um.get('endian')
-        umversion   = um.get('version')
-        if fmt in ('PP', 'pp'):
+        fmt                    = um.get('fmt')
+        word_size              = um.get('word_size')
+        endian                 = um.get('endian')
+        umversion              = um.get('version')
+        height_at_top_of_model = um.get('height_at_top_of_model')
+        if fmt in ('PP', 'pp', 'pP', 'Pp'):
             fmt = fmt.upper()
             # For PP format, there is a default word size and
             # endian-ness
@@ -624,7 +631,7 @@ def _read_a_file(filename, aggregate=True, aggregate_options={},
                              verbose=verbose, warnings=warnings,
                              extra_read_vars=extra_read_vars)
         
-    elif ftype == 'UM' and (selected_fmt in (None, 'PP', 'FF')):
+    elif ftype == 'UM' and (selected_fmt in (None, 'UM')):
         fields = UM.read(filename, um_version=umversion,
                          verbose=verbose, set_standard_name=True,
                          height_at_top_of_model=height_at_top_of_model,

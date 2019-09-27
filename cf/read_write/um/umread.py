@@ -29,7 +29,6 @@ from netCDF4 import date2num as netCDF4_date2num
 
 import cftime
 import cfdm
-#from cfunits import Units
 
 from ...                   import __version__, __Conventions__, __file__
 from ...functions          import RTOL, ATOL, equals
@@ -344,37 +343,37 @@ class UMField:
                  implementation=None, **kwargs):
         '''**Initialization**
 
-:Parameters:
-
-    var: `umfile.Var`
-
-    byte_ordering: `str`
-        ``'little_endian'` or ``'big_endian'``.
-
-    word_size: `int`
-        Word size in bytes (4 or 8).
-
-
-    fmt: `str`
-        ``'PP'` or ``'FF'``
-
-    um_version: number
+    :Parameters:
     
-    set_standard_name: `bool`
-        If True then set the standard_name CF property.
-
-    height_at_top_of_model: `float`
-
-    kwargs: *optional*
-        Keyword arguments specifying CF properties for the UM field.
+        var: `umfile.Var`
+    
+        byte_ordering: `str`
+            ``'little_endian'` or ``'big_endian'``.
+    
+        word_size: `int`
+            Word size in bytes (4 or 8).
+    
+    
+        fmt: `str`
+            ``'PP'` or ``'FF'``
+    
+        um_version: number
+        
+        set_standard_name: `bool`
+            If True then set the standard_name CF property.
+    
+        height_at_top_of_model: `float`
+    
+        kwargs: *optional*
+            Keyword arguments specifying CF properties for the UM field.
 
         '''
+        self._bool = False
+       
         self.implementation = implementation
         
         self.verbose = verbose
 
-        self._nonzero = False
-       
         self.fmt                    = fmt
         self.height_at_top_of_model = height_at_top_of_model
         self.byte_ordering          = byte_ordering
@@ -392,13 +391,8 @@ class UMField:
         filename = abspath(var.file.path)
         self.filename = filename
 
-#        for rec in var:
-#           
-
         groups = var.group_records_by_extra_data()
 
-#        for rec in groups[0]:
-#            print('rec.int_hdr[0:6] =',  rec.int_hdr[0:6])
         n_groups = len(groups)
 
         if n_groups == 1:
@@ -516,8 +510,7 @@ class UMField:
     
         header_um_version, source = divmod(int_hdr[lbsrce], 10000)
        
-        if header_um_version > 0 and int(um_version) == um_version: #len(um_version) <= 3:
-#            header_um_version = str(header_um_version)
+        if header_um_version > 0 and int(um_version) == um_version:
             model_um_version = header_um_version
             self.um_version  = header_um_version
         else:
@@ -527,7 +520,7 @@ class UMField:
         # Set source
         source = _lbsrce_model_codes.setdefault(source, None)
         if source is not None and model_um_version is not None:
-            source += ' vn%s' % model_um_version
+            source += ' vn{0}'.format(model_um_version)
         if source:
             cf_properties['source'] = source
             
@@ -630,16 +623,18 @@ class UMField:
             section, item = divmod(stash, 1000)
             um_stash_source = 'm%02ds%02di%03d' % (submodel, section, item)
             cf_properties['um_stash_source'] = um_stash_source 
-            identity = 'UM_%s_vn%s' % (um_stash_source, self.um_version)
+            identity = 'UM_{0}_vn{1}'.format(um_stash_source,
+                                             self.um_version)
         else:
-            identity = 'UM_%d_fc%d_vn%s' % (submodel, int_hdr[lbfc],
-                                            self.um_version)
+            identity = 'UM_{0}_fc{1}_vn{2}'.format(submodel,
+                                                   int_hdr[lbfc],
+                                                   self.um_version)
             
         if um_Units is None:
             self.um_Units = _Units[None]
     
         if um_condition:
-            identity += '_%s' % um_condition
+            identity += '_{0}'.format(um_condition)
             
         if long_name is None:
             cf_properties['long_name'] = identity
@@ -669,7 +664,7 @@ class UMField:
             # ------------------------------------------------------------
             if self.verbose:
                 print(self.__dict__) # pragma: no cover
-                self.printfdr() # pragma: no cover
+                self.printfdr()      # pragma: no cover
             
             # ------------------------------------------------------------
             # Create the 'T' dimension coordinate
@@ -759,26 +754,13 @@ class UMField:
                 
                 self.implementation.set_coordinate_conversion(ref, cc)
 
-#                self.implementation.set_coordinate_reference_coordinates(
-#                    ref, (ykey, xkey)) #(_axis['y'], _axis['x']))
-                
                 self.implementation.set_coordinate_reference(self.field, ref, copy=False)
-
-#                rotated_pole = CoordinateReference(
-#                    name='rotated_latitude_longitude',
-#                    parameters={'grid_north_pole_latitude': BPLAT,
-#                                'grid_north_pole_longitude': BPLON},
-#                    coordinates=(_axis['y'], _axis['x']))
-#
-#                self.field.insert_ref(rotated_pole, copy=False)
 
                 # --------------------------------------------------------
                 # Create UNROTATED, 2-D LATITUDE and LONGITUDE auxiliary
                 # coordinates
                 # --------------------------------------------------------
                 self.latitude_longitude_2d_aux_coordinates(yc, xc) #, rotated_pole)
-    
-            #--- End: if
     
             # ------------------------------------------------------------
             # Create a RADIATION WAVELENGTH dimension coordinate
@@ -793,7 +775,6 @@ class UMField:
                 # Set LBUSER5 to zero so that it is not confused for a
                 # pseudolevel
                 LBUSER5 = 0
-            #--- End: try
     
             # ------------------------------------------------------------
             # Create a PSEUDOLEVEL dimension coordinate. This must be
@@ -807,7 +788,6 @@ class UMField:
             attributes['real_hdr'] = real_hdr[:]
             attributes['file']     = filename        
             attributes['id']       = identity
-#            attributes['ncvar']    = identity
             
             cf_properties['Conventions'] = __Conventions__
             cf_properties['runid']       = self.decode_lbexp()
@@ -825,7 +805,6 @@ class UMField:
             # Insert data into the field
             # ------------------------------------------------------------
             field = self.field
-#            field.insert_data(self.data, axes=self.data_axes, copy=False)
 
             self.implementation.set_data(field, self.data,
                                          axes=self.data_axes,
@@ -839,13 +818,10 @@ class UMField:
             # Add kwargs to the CF properties
             cf_properties.update(kwargs)
 
-#            field.properties(cf_properties, copy=False)
             self.implementation.set_properties(field, cf_properties, copy=False)
 
             self.implementation.nc_set_variable(field, identity)
             
-#            field.attributes(attributes, copy=False)
-    
             # ------------------------------------------------------------
             # Create and insert cell methods
             # ------------------------------------------------------------
@@ -868,23 +844,23 @@ class UMField:
             self.fields.append(field)
         #--- End: for
 
-        self._nonzero = True
-    #--- End: def
+        self._bool = True
 
-    def __nonzero__(self):
-        '''x.__nonzero__() <==> bool(x)
+
+    def __bool__(self):
+        '''x.__bool__() <==> bool(x)
 
         '''
-        return self._nonzero
-    #--- End: if
+        return self._bool
+
 
     def __repr__(self):
         '''x.__repr__() <==> repr(x)
 
         '''
         return self.fdr()
-    #--- End: def
 
+    
     def __str__(self):
         '''x.__str__() <==> str(x)
 
@@ -899,62 +875,61 @@ class UMField:
                  'file')
 
         for attr in attrs:
-            out.append('%s=%s' % (attr, getattr(self, attr, None)))
+            out.append('{0}={1}'.format(attr, getattr(self, attr, None)))
             
         out.append('')
 
-        return '\n'.join(out)   
-    #--- End: def
+        return '\n'.join(out)
+
 
     def atmosphere_hybrid_height_coordinate(self, axiscode):
         '''TODO
 
-**From appendix A of UMDP F3**
-
-From UM Version 5.2, the method of defining the model levels in PP
-headers was revised. At vn5.0 and 5.1, eta values were used in the PP
-headers to specify the levels of model data, which was of limited use
-when plotting data on model levels. From 5.2, the PP headers were
-redefined to give information on the height of the level. Given a 2D
-orography field, the height field for a given level can then be
-derived. The height coordinates for PP-output are defined as:
-
-  Z(i,j,k)=Zsea(k)+C(k)*orography(i,j)
-
-where Zsea(k) and C(k) are height based hybrid coefficients.
-
-  Zsea(k) = eta_value(k)*Height_at_top_of_model
-
-  C(k)=[1-eta_value(k)/eta_value(first_constant_rho_level)]**2 for
-  levels less than or equal to first_constant_rho_level
-
-  C(k)=0.0 for levels greater than first_constant_rho_level
-
-where eta_value(k) is the eta_value for theta or rho level k. The
-eta_value is a terrain-following height coordinate; full details are
-given in UMDP15, Appendix B.
-
-The PP headers store Zsea and C as follows :-
-
-  * 46 = bulev = brsvd1  = Zsea of upper layer boundary
-  * 47 = bhulev = brsvd2 = C of upper layer boundary
-  * 52 = blev            = Zsea of level
-  * 53 = brlev           = Zsea of lower layer boundary
-  * 54 = bhlev           = C of level
-  * 55 = bhrlev          = C of lower layer boundary
-
-:Parameters:
-
-    axiscode: `int`
-
-:Returns:
-
-    `DimensionCoordinate` or `None`
+    **From appendix A of UMDP F3**
+    
+    From UM Version 5.2, the method of defining the model levels in PP
+    headers was revised. At vn5.0 and 5.1, eta values were used in the
+    PP headers to specify the levels of model data, which was of
+    limited use when plotting data on model levels. From 5.2, the PP
+    headers were redefined to give information on the height of the
+    level. Given a 2D orography field, the height field for a given
+    level can then be derived. The height coordinates for PP-output
+    are defined as:
+    
+      Z(i,j,k)=Zsea(k)+C(k)*orography(i,j)
+    
+    where Zsea(k) and C(k) are height based hybrid coefficients.
+    
+      Zsea(k) = eta_value(k)*Height_at_top_of_model
+    
+      C(k)=[1-eta_value(k)/eta_value(first_constant_rho_level)]**2 for
+      levels less than or equal to first_constant_rho_level
+    
+      C(k)=0.0 for levels greater than first_constant_rho_level
+    
+    where eta_value(k) is the eta_value for theta or rho level k. The
+    eta_value is a terrain-following height coordinate; full details
+    are given in UMDP15, Appendix B.
+    
+    The PP headers store Zsea and C as follows :-
+    
+      * 46 = bulev = brsvd1  = Zsea of upper layer boundary
+      * 47 = bhulev = brsvd2 = C of upper layer boundary
+      * 52 = blev            = Zsea of level
+      * 53 = brlev           = Zsea of lower layer boundary
+      * 54 = bhlev           = C of level
+      * 55 = bhrlev          = C of lower layer boundary
+    
+    :Parameters:
+    
+        axiscode: `int`
+    
+    :Returns:
+    
+        `DimensionCoordinate` or `None`
 
         '''
         field = self.field
-
-#        zdim = _axis['z']
 
         # "a" domain ancillary
         array = numpy_array([rec.real_hdr[blev] for rec in self.z_recs],  # Zsea
@@ -972,7 +947,7 @@ The PP headers store Zsea and C as follows :-
 
         ac = self.implementation.initialise_DomainAncillary()
         ac = self.coord_data(ac, array, bounds, units=_Units['m'])
-        ac.id        = 'UM_atmosphere_hybrid_height_coordinate_a'
+        ac.id = 'UM_atmosphere_hybrid_height_coordinate_a'
         self.implementation.set_properties(ac, {'long_name': 'height based hybrid coeffient a'})
         key_a =  self.implementation.set_domain_ancillary(field, ac, axes=[_axis['z']], copy=False)
 
@@ -984,10 +959,9 @@ The PP headers store Zsea and C as follows :-
         if not TOA_height:
             dc = None
         else:            
-            array  = array  / TOA_height
+            array  = array / TOA_height
             dc = self.implementation.initialise_DimensionCoordinate()
             dc = self.coord_data(dc, array, bounds, units=_Units[''])
-            #            dc.standard_name = 'atmosphere_hybrid_height_coordinate'
             self.implementation.set_properties(dc, {'standard_name': 'atmosphere_hybrid_height_coordinate'})
             dc = self.coord_axis(dc, axiscode)
             dc = self.coord_positive(dc, axiscode, _axis['z'])
@@ -1004,7 +978,7 @@ The PP headers store Zsea and C as follows :-
 
         ac = self.implementation.initialise_DomainAncillary()
         ac = self.coord_data(ac, array, bounds, units=_Units['1'])
-        ac.id        = 'UM_atmosphere_hybrid_height_coordinate_b'
+        ac.id = 'UM_atmosphere_hybrid_height_coordinate_b'
         self.implementation.set_properties(ac, {'long_name': 'height based hybrid coeffient b'})
         key_b = self.implementation.set_domain_ancillary(field, ac, axes=[_axis['z']], copy=False)
 
@@ -1019,25 +993,23 @@ The PP headers store Zsea and C as follows :-
             self.implementation.set_coordinate_reference(field, ref, copy=False)
 
         return dc
-    #--- End: def
+
 
     def depth_coordinate(self, axiscode):
         '''TODO
 
-:Parameters:
-
-    axiscode: `int`
-
-:Returns:
-
-    `DimensionCoordinate` or `None`
+    :Parameters:
+    
+        axiscode: `int`
+    
+    :Returns:
+    
+        `DimensionCoordinate` or `None`
 
         '''
         dc = self.model_level_number_coordinate(aux=False)
 
         field = self.field
-
-#        zdim = _axis['z']
 
         array = numpy_array([rec.real_hdr[blev] for rec in self.z_recs],
                             dtype=float)
@@ -1074,22 +1046,18 @@ The PP headers store Zsea and C as follows :-
         ac = self.coord_data(ac, array, bounds, units=_Units['1'])
         ac.id        = 'UM_atmosphere_hybrid_height_coordinate_bk'
         ac.long_name = 'atmosphere_hybrid_height_coordinate_bk'
-#        field.insert_aux(ac, axes=[zdim], copy=False)
         self.implementation.set_auxiliary_coordinate(self.field, ac,
                                                      axes=[_axis['z']], copy=False)
         
-#        if dc:
-#            self.cell_method_axis_name['z'] = dc.identity()
-
         return dc
-    #--- End: def
+
 
     def atmosphere_hybrid_sigma_pressure_coordinate(self, axiscode):
         '''atmosphere_hybrid_sigma_pressure_coordinate when not an array axis
 
-46 BULEV Upper layer boundary or BRSVD(1)
+    46 BULEV Upper layer boundary or BRSVD(1)
 
-47 BHULEV Upper layer boundary or BRSVD(2)
+    47 BHULEV Upper layer boundary or BRSVD(2)
 
         For hybrid levels:
         - BULEV is B-value at half-level above.
@@ -1103,13 +1071,13 @@ The PP headers store Zsea and C as follows :-
             * If rho level: C for theta level above
             * If theta level: C for rho level above
 
-:Parameters:
-
-    axiscode: `int`
-
-:Returns:
-
-    `DimensionCoordinate`
+    :Parameters:
+    
+        axiscode: `int`
+    
+    :Returns:
+    
+        `DimensionCoordinate`
 
         '''
         array     = []
@@ -1130,7 +1098,6 @@ The PP headers store Zsea and C as follows :-
             
             bk_array.append(BLEV)
             bk_bounds.append((BRLEV , BULEV))
-        #--- End: for    
    
         array     = numpy_array(array    , dtype=float)
         bounds    = numpy_array(bounds   , dtype=float)
@@ -1146,9 +1113,6 @@ The PP headers store Zsea and C as follows :-
 
         field = self.field
 
-#        zdim  = _axis['z']
-
-#        dc = DimensionCoordinate()
         dc = self.implementation.initialise_DimensionCoordinate()
         dc = self.coord_data(
             dc, array, bounds,
@@ -1156,43 +1120,39 @@ The PP headers store Zsea and C as follows :-
         dc = self.coord_positive(dc, axiscode, _axis['z'])
         dc = self.coord_axis(dc, axiscode)
         dc = self.coord_names(dc, axiscode)
-#        field.insert_dim(dc, key=_axis['z'], copy=False)
+
         self.implementation.set_dimension_coordinate(self.field, dc,
                                                      axes=[_axis['z']],
                                                      copy=False)        
 
 
-        #ac = AuxiliaryCoordinate()
         ac = self.implementation.initialise_AuxiliaryCoordinate()
         ac = self.coord_data(ac, ak_array, ak_bounds, units=_Units['Pa'])
         ac.id        = 'atmosphere_hybrid_sigma_pressure_coordinate_ak'
         ac.long_name = 'atmosphere_hybrid_sigma_pressure_coordinate_ak'
-#        field.insert_aux(ac, axes=[zdim], copy=False)
+
         self.implementation.set_auxiliary_coordinate(self.field, ac,
                                                      axes=[_axis['z']], copy=False)        
 
 
-        #ac = AuxiliaryCoordinate()
         ac = self.implementation.initialise_AuxiliaryCoordinate()
         ac = self.coord_data(ac, bk_array, bk_bounds, units=_Units['1'])
-#        field.insert_aux(ac, axes=[zdim], copy=False)
+
         self.implementation.set_auxiliary_coordinate(self.field, ac,
                                                      axes=[_axis['z']], copy=False)        
 
         ac.id        = 'UM_atmosphere_hybrid_sigma_pressure_coordinate_bk'
         ac.long_name = 'atmosphere_hybrid_sigma_pressure_coordinate_bk'
 
-#        self.cell_method_axis_name['z'] = dc.identity()
-
         return dc
-    #--- End: def
+
            
     def create_cell_methods(self):
         '''Create the cell methods
 
-:Returns:
+    :Returns:
 
-    `list`
+        `list`
         '''
         cell_methods = []
         
@@ -1250,7 +1210,6 @@ The PP headers store Zsea and C as follows :-
         if not cell_methods:
             return None
 
-#        cell_methods = CellMethods(' '.join(cell_methods))
         cell_methods = self.implementation.initialise_CellMethod().create(
             ' '.join(cell_methods))
 
@@ -1258,7 +1217,7 @@ The PP headers store Zsea and C as follows :-
             cm.change_axes(_axis, inplace=True)
 
         return cell_methods
-    #--- End: def
+
   
     def coord_axis(self, c, axiscode):
         axis = _coord_axis.setdefault(axiscode, None)
@@ -1272,28 +1231,28 @@ The PP headers store Zsea and C as follows :-
                    fill_value=None, climatology=False):
         '''Set the data array of a coordinate construct.
 
- :Parameters:
+    :Parameters:
+      
+        c: Coordinate construct
+      
+        data: array-like, optional
+            The data array.
+                
+        bounds: array-like, optional
+            The Cell bounds for the data array.
+               
+        units: `Units`, optional
+            The units of the data array.
    
-       c: Coordinate construct
+        fill_value: optional
    
-       data: array-like, optional
-           The data array.
-             
-       bounds: array-like, optional
-           The Cell bounds for the data array.
-              
-       units: `Units`, optional
-           The units of the data array.
-
-       fill_value: optional
-
-       climatology: `bool`, optional
-           Whether or not the coordinate construct is a time
-           climatology. By default it is not.
-
- :Returns:
+        climatology: `bool`, optional
+            Whether or not the coordinate construct is a time
+            climatology. By default it is not.
    
-       Coordinate construct
+    :Returns:
+      
+        Coordinate construct
 
         '''
         if array is not None:
@@ -1305,25 +1264,23 @@ The PP headers store Zsea and C as follows :-
             bounds = self.implementation.initialise_Bounds()
             self.implementation.set_data(bounds, bounds_data, copy=False)
             self.implementation.set_bounds(c, bounds, copy=False)
-#            if climatology:
-#                c.climatology = True
-        #--- End: if
 
-#        c.insert_data(array, bounds=bounds, copy=False)
         return c
-    #--- End: def
+
 
     def coord_names(self, coord, axiscode):
-        '''
-:Parameters:
+        '''TODO
 
-    coord: `cf.Coordinate`
+    :Parameters:
+    
+        coord: Coordinate construct
+    
+        axiscode: `int`
+    
+    :Returns:
+    
+        out: Coordinate construct
 
-    axiscode: `int`
-
-:Returns:
-
-    out: `cf.Coordinate`
         '''
         standard_name = _coord_standard_name.setdefault(axiscode, None)
         
@@ -1336,22 +1293,22 @@ The PP headers store Zsea and C as follows :-
                 coord.long_name = long_name
 
         return coord
-    #--- End: def
+
 
     def coord_positive(self, c, axiscode, domain_axis_key):
         '''TODO
-
-:Parameters:
-        
-    c: Coordinate construct
-
-    axiscode: `int`
-
-    domain_axis_key: `str`
-
-:Returns:
-
-    Coordinate construct
+    
+    :Parameters:
+            
+        c: Coordinate construct
+    
+        axiscode: `int`
+    
+        domain_axis_key: `str`
+    
+    :Returns:
+    
+        Coordinate construct
 
         '''
         positive = _coord_positive.setdefault(axiscode, None)
@@ -1362,10 +1319,10 @@ The PP headers store Zsea and C as follows :-
         #--- End: if
 
         return c
-    #--- End: def
+
 
     def ctime(self, rec):
-        '''
+        '''TODO
         '''
         reftime = self.refUnits
         LBVTIME = tuple(self.header_vtime(rec))
@@ -1374,154 +1331,134 @@ The PP headers store Zsea and C as follows :-
         key = (LBVTIME, LBDTIME, self.refunits, self.calendar)
         ctime = _cached_ctime.get(key, None)
         if ctime is None:
-#            LTIME = list(LBDTIME)
-#            LTIME[0] =  LBVTIME[0]
             LBDTIME = list(LBDTIME)
             LBDTIME[0] = LBVTIME[0]
-#            ctime = dt(*LBDTIME) #Datetime(*LBDTIME)
+
             ctime = cftime.datetime(*LBDTIME)
-#            print('ctime =', repr(ctime))
-#            ctime.year = LBVTIME[0]
-#            if ctime < dt(*LBVTIME): #Datetime(*LBVTIME):
+
             if ctime < cftime.datetime(*LBVTIME):
                 LBDTIME[0] += 1
-#                ctime = dt(*LBDTIME) #  Datetime(*LBDTIME)
                 ctime = cftime.datetime(*LBDTIME)
-#                ctime.year += 1
+
             ctime = Data(ctime, reftime).array.item()
             _cached_ctime[key] = ctime
-        #--- End: if
 
         return ctime
-    #--- End: def
+
 
     def header_vtime(self, rec):
-        '''
-
-Return the list [LBYR, LBMON, LBDAT, LBHR, LBMIN] for the given
-record.
-
-:Parameters:
-
-    rec : 
-
-:Returns:
-
-    out : list 
-
-**Examples:**
-
->>> u.header_vtime(rec)
-[1991, 1, 1, 0, 0]
+        '''Return the list [LBYR, LBMON, LBDAT, LBHR, LBMIN] for the given
+    record.
+    
+    :Parameters:
+    
+        rec: 
+    
+    :Returns:
+    
+        out: `list` 
+    
+    **Examples:**
+    
+    >>> u.header_vtime(rec)
+    [1991, 1, 1, 0, 0]
 
         '''
         return rec.int_hdr[lbyr:lbmin+1]
-    #--- End: def
+
 
     def header_dtime(self, rec):
-        '''
-
-Return the list [LBYRD, LBMOND, LBDATD, LBHRD, LBMIND] for the
-given record.
-
-:Parameters:
-
-    rec : 
-
-:Returns:
-
-    out : list 
-
-**Examples:**
-
->>> u.header_dtime(rec)
-[1991, 2, 1, 0, 0]
+        '''Return the list [LBYRD, LBMOND, LBDATD, LBHRD, LBMIND] for the
+    given record.
+    
+    :Parameters:
+    
+        rec: 
+    
+    :Returns:
+    
+        out: `list` 
+    
+    **Examples:**
+    
+    >>> u.header_dtime(rec)
+    [1991, 2, 1, 0, 0]
 
         '''
         return rec.int_hdr[lbyrd:lbmind+1]
-    #--- End: def
+
 
     def header_bz(self, rec):
+        '''Return the list [BLEV, BRLEV, BHLEV, BHRLEV, BULEV, BHULEV] for the
+    given record.
+    
+    :Parameters:
+    
+        rec: 
+    
+    :Returns:
+    
+        out: `list`
+    
+    **Examples:**
+    
+    >>> u.header_bz(rec)
+
         '''
-
-Return the list [BLEV, BRLEV, BHLEV, BHRLEV, BULEV, BHULEV] for the
-given record.
-
-:Parameters:
-
-    rec : 
-
-:Returns:
-
-    out : list 
-
-**Examples:**
-
->>> u.header_bz(rec)
-
-
-'''
         real_hdr = rec.real_hdr
         return (real_hdr[blev:bhrlev+1].tolist()    +  # BLEV, BRLEV, BHLEV, BHRLEV
                 real_hdr[brsvd1:brsvd2+1].tolist())    # BULEV, BHULEV
-    #--- End: def
+
     
     def header_lz(self, rec):
+        '''Return the list [LBLEV, LBUSER5] for the given record.
+
+    :Parameters:
+    
+        rec: 
+    
+    :Returns:
+    
+        out: `list` 
+    
+    **Examples:**
+    
+    >>> u.header_lz(rec)
+
         '''
-
-Return the list [LBLEV, LBUSER5] for the given record.
-
-:Parameters:
-
-    rec : 
-
-:Returns:
-
-    out : list 
-
-**Examples:**
-
->>> u.header_lz(rec)
-
-
-'''
         int_hdr = rec.int_hdr
         return [int_hdr.item(lblev,), int_hdr.item(lbuser5,)]
-    #--- End: def
+
 
     def header_z(self, rec):
+        '''Return the list [LBLEV, LBUSER5, BLEV, BRLEV, BHLEV, BHRLEV, BULEV,
+    BHULEV] for the given record.
+
+    These header items are used by the compare_levels function in
+    compare.c
+
+    :Parameters:
+    
+        rec: 
+    
+    :Returns:
+    
+        out: `list` 
+    
+    **Examples:**
+    
+    >>> u.header_z(rec)
+
         '''
-
-Return the list [LBLEV, LBUSER5, BLEV, BRLEV, BHLEV, BHRLEV, BULEV,
-BHULEV] for the given record.
-
-:Parameters:
-
-    rec: 
-
-:Returns:
-
-    out: `list` 
-
-**Examples:**
-
->>> u.header_z(rec)
-
-
-'''
-        # ------------------------------------------------------------
-        # These header items are used by the compare_levels function
-        # in compare.c
-        # ------------------------------------------------------------
         return self.header_lz + self.header_bz
-    #--- End: def
+
 
     def create_data(self):
         '''Sets the data and data axes.
     
-:Returns:
-
-    `Data`
+    :Returns:
+    
+        `Data`
 
         '''
         if self.verbose:
@@ -1702,27 +1639,27 @@ BHULEV] for the given record.
         self.data_axes = data_axes
 
         return data
-    #---End: def
+
 
     def decode_lbexp(self):
         '''Decode the integer value of LBEXP in the PP header into a runid.
     
-If this value has already been decoded, then it will be returned from
-the cache, otherwise the value will be decoded and then added to the
-cache.
-
-:Returns:
-
-    out : str
-       A string derived from LBEXP. If LBEXP is a negative integer
-       then that number is returned as a string.
-
-**Examples:**
-
->>> self.decode_lbexp()
-'aaa5u'
->>> self.decode_lbexp()
-'-34'
+    If this value has already been decoded, then it will be returned
+    from the cache, otherwise the value will be decoded and then added
+    to the cache.
+    
+    :Returns:
+    
+        out: `str`
+           A string derived from LBEXP. If LBEXP is a negative integer
+           then that number is returned as a string.
+    
+    **Examples:**
+    
+    >>> self.decode_lbexp()
+    'aaa5u'
+    >>> self.decode_lbexp()
+    '-34'
 
         '''
         LBEXP = self.int_hdr[lbexp]
@@ -1749,18 +1686,19 @@ cache.
                 if index < _n_characters:
                     runid.append(_characters[index])
             #--- End: for
+            
             runid = ''.join(runid)
-        #--- End: def
 
         # Enter this runid into the cache
         _cached_runid[LBEXP] = runid
     
         # Return the runid
         return runid
-    #--- End: def 
+
 
     def dtime(self, rec):
-        '''
+        '''TODO
+
         '''
         reftime = self.refUnits
         units    = self.refunits
@@ -1778,27 +1716,27 @@ cache.
             else:
                 time = netCDF4_date2num(
                     cftime.datetime(*LBDTIME), units, calendar)
+                
             _cached_date2num[key] = time
-        #--- End: if
 
         return time
-    #--- End: def
+
 
     def fdr(self):
         '''Return a the contents of PP field headers as strings.
 
-This is a bit like printfdr in the UKMO IDL PP library.
+    This is a bit like printfdr in the UKMO IDL PP library.
 
-:Returns:
+    :Returns:
 
-    out : list
+        out: `list`
 
-'''
+    '''
         out2 = []
         for i, rec in enumerate(self.recs):
-            out = ['Field %d:' % i]
+            out = ['Field {0}:'.format(i)]
 
-            x = ['%s::%s' % (name, value)
+            x = ['{0}::{1}'.format(name, value)
                  for name, value in zip(_header_names,
                                         self.int_hdr + self.real_hdr)]
             
@@ -1808,12 +1746,12 @@ This is a bit like printfdr in the UKMO IDL PP library.
             if self.extra:
                 out.append('EXTRA DATA:')
                 for key in sorted(self.extra):
-                    out.append('%s: %s' % (key, str(self.extra[key])))
+                    out.append('{0}: {1}'.format(key, str(self.extra[key])))
             #--- End: if
 
             out.append('file: '+self.filename)
-            out.append('format, byte order, word size: %s, %s, %d' % 
-                       (self.fmt, self.byte_ordering, self.word_size))
+            out.append('format, byte order, word size: {}, {}, {}'.format( 
+                self.fmt, self.byte_ordering, self.word_size))
 
             out.append('')
 
@@ -1821,21 +1759,22 @@ This is a bit like printfdr in the UKMO IDL PP library.
         #--- End: for
 
         return out2
-    #--- End: def
 
-    def latitude_longitude_2d_aux_coordinates(self, yc, xc): #, rotated_pole):
+
+    def latitude_longitude_2d_aux_coordinates(self, yc, xc):
+        '''TODO
+
+    :Parameters:
+    
+        yc: `cf.DimensionCoordinate`
+    
+        xc: `cf.DimensionCoordinate`
+    
+    :Returns:
+    
+        `None`
+
         '''
-:Parameters:
-
-    yc: `cf.DimensionCoordinate`
-
-    xc: `cf.DimensionCoordinate`
-
-:Returns:
-
-    `None`
-
-'''
         BDX   = self.bdx
         BDY   = self.bdy
         LBNPT = self.lbnpt
@@ -1869,7 +1808,8 @@ This is a bit like printfdr in the UKMO IDL PP library.
                 yb[:-1] = yc.bounds.subspace[:, 0].squeeze(1).array
                 yb[-1]  = yc.bounds.datum(-1, 1)
 
-                temp_lat_bounds, temp_lon_bounds = self.unrotated_latlon(yb, xb, BPLAT, BPLON) 
+                temp_lat_bounds, temp_lon_bounds = self.unrotated_latlon(yb, xb,
+                                                                         BPLAT, BPLON) 
                 
                 lat_bounds = numpy_empty(lat.shape + (4,))
                 lon_bounds = numpy_empty(lon.shape + (4,))
@@ -1903,28 +1843,24 @@ This is a bit like printfdr in the UKMO IDL PP library.
             ac = self.coord_data(ac, array, bounds=bounds,
                                  units=_axiscode_to_Units.setdefault(axiscode, None))
             ac = self.coord_names(ac, axiscode)
-#            key = self.field.insert_aux(ac, axes=axes, copy=False)
+
             key = self.implementation.set_auxiliary_coordinate(self.field, ac,
                                                                axes=axes,
-                                                               copy=False)        
+                                                               copy=False)
 
             
-#            rotated_pole._coordinates.add(key)
-        #--- End: for
-    #--- End: def
-
     def model_level_number_coordinate(self, aux=False):
         '''model_level_number dimension or auxiliary coordinate
 
-:Parameters:
-
-    aux: `bool`
-
-:Returns:
-
-    out : `AuxiliaryCoordinate` or `DimensionCoordinate` or `None`
-
-''' 
+    :Parameters:
+    
+        aux: `bool`
+    
+    :Returns:
+    
+        out : `AuxiliaryCoordinate` or `DimensionCoordinate` or `None`
+    
+    ''' 
         array = tuple([rec.int_hdr.item(lblev,) for rec in self.z_recs])
 
         key = array
@@ -1937,11 +1873,9 @@ This is a bit like printfdr in the UKMO IDL PP library.
                                                              axes=[_axis['z']],
                                                              copy=True)
             else:
-#                self.field.insert_dim(c, key=_axis['z'], copy=True)
                 self.implementation.set_dimension_coordinate(self.field, c,
                                                              axes=[_axis['z']],
                                                              copy=True)
-#                self.cell_method_axis_name['z'] = c.identity()
         else:
             array = numpy_array(array, dtype=self.int_hdr_dtype)
             
@@ -1954,45 +1888,38 @@ This is a bit like printfdr in the UKMO IDL PP library.
     
             if aux:
                 ac = self.implementation.initialise_AuxiliaryCoordinate()
-                #                ac = AuxiliaryCoordinate()
                 ac = self.coord_data(ac, array, units=Units('1'))
                 ac = self.coord_names(ac, axiscode)
-                #                self.field.insert_aux(ac, axes=[_axis['z']], copy=False)
                 self.implementation.set_auxiliary_coordinate(self.field,
-                                                             ac, axes=[_axis['z']], copy=False)        
+                                                             ac, axes=[_axis['z']],
+                                                             copy=False)        
 
             else:
-                #c = DimensionCoordinate()
                 dc = self.implementation.initialise_DimensionCoordinate()
                 dc = self.coord_data(dc, array, units=Units('1'))
                 dc = self.coord_names(dc, axiscode)
                 dc = self.coord_axis(dc, axiscode)
-#                self.field.insert_dim(c, key=_axis['z'], copy=False)
                 self.implementation.set_dimension_coordinate(self.field, dc,
                                                              axes=[_axis['z']],
-                                                             copy=False)        
-#                self.cell_method_axis_name['z'] = c.identity()
-            #--- End: if
+                                                             copy=False)
+                
             _cached_model_level_number_coordinate[key] = c
-        #--- End: if
 
         return c
-    #--- End: def
+
 
     def data_type_in_file(self, rec):
         '''Return the data type of the data array.
 
-:Parameters:
+    :Parameters:
+    
+        rec: `umfile.Rec`
+    
+    :Returns:
+    
+        out: `numpy.dtype`
 
-    rec : umfile.Rec
-
-:Returns:
-
-    out : numpy.dtype
-
-**Examples:**
-
-'''
+        '''
         # Find the data type
         if rec.int_hdr.item(lbuser2,) == 3:
             # Boolean
@@ -2012,25 +1939,25 @@ This is a bit like printfdr in the UKMO IDL PP library.
 #        #--- End: if
 #
 #        return numpy_dtype(data_type)
-    #--- End: def
+
 
     def printfdr(self):
         '''Print out the contents of PP field headers.
 
-This is a bit like printfdr in the UKMO IDL PP library.
+    This is a bit like printfdr in the UKMO IDL PP library.
+    
+    **Examples:**
+    
+    >>> u.printfdr()
 
-**Examples:**
-
->>> u.printfdr()
-
-'''
+        '''
         for header in self.fdr():
             print(header)
-    #--- End: def
+
 
     def pseudolevel_coordinate(self, LBUSER5):
+        '''TODO
         '''
-'''
         if self.nz == 1:            
             array = numpy_array((LBUSER5,), dtype=self.int_hdr_dtype)
         else:
@@ -2045,10 +1972,8 @@ This is a bit like printfdr in the UKMO IDL PP library.
         dc = self.implementation.initialise_DimensionCoordinate()
         dc = self.coord_data(dc, array,
                              units=_axiscode_to_Units.setdefault(axiscode, None))     
-        self.implementation.set_properties(dc, {'long_name': 'pseudolevel'}) # for PP stash_code %d' % self.stash
+        self.implementation.set_properties(dc, {'long_name': 'pseudolevel'})
         dc.id = 'UM_pseudolevel'
-
-#        self.field.insert_dim(dc, key=_axis['p'], copy=False)
 
         da = self.implementation.initialise_DomainAxis(size=array.size)        
         axisP = self.implementation.set_domain_axis(self.field, da)
@@ -2058,11 +1983,11 @@ This is a bit like printfdr in the UKMO IDL PP library.
                                                      axes=[_axis['p']], copy=False)        
 
         return dc
-    #--- End: def
+
 
     def radiation_wavelength_coordinate(self, rwl, rwl_units):
+        '''TODO
         '''
-'''
         array  = numpy_array((rwl,), dtype=float)
         bounds = numpy_array(((0.0, rwl)), dtype=float)
 
@@ -2082,15 +2007,14 @@ This is a bit like printfdr in the UKMO IDL PP library.
         
         self.implementation.set_dimension_coordinate(self.field, dc,
                                                      axes=[_axis['r']], copy=False)        
-#        self.field.insert_dim(dc, key=_axis['r'], copy=False)
 
         return dc
-    #--- End: def
+
 
     def reference_time_Units(self):
+        '''TODO
         '''
-        '''
-        time_units = 'days since %d-1-1' % self.int_hdr[lbyr]
+        time_units = 'days since {}-1-1'.format(self.int_hdr[lbyr])
         calendar = self.calendar
 
         key = time_units+' calendar='+calendar
@@ -2104,9 +2028,12 @@ This is a bit like printfdr in the UKMO IDL PP library.
         self.refunits = time_units
 
         return units
-    #--- End: def
+
     
     def size_1_height_coordinate(self, axiscode, height, units):
+        '''TODO
+
+        '''
         # Create the height coordinate from the information given in the
         # STASH to standard_name conversion table
 
@@ -2117,8 +2044,6 @@ This is a bit like printfdr in the UKMO IDL PP library.
         axisZ = self.implementation.set_domain_axis(self.field, da)
         _axis['z'] = axisZ
         
-#        zdim = _axis['z']
-
         if dc is not None:            
             copy = True
         else:
@@ -2137,39 +2062,36 @@ This is a bit like printfdr in the UKMO IDL PP library.
 
             _cached_size_1_height_coordinate[key] = dc            
             copy = False
-        #--- End: def 
 
         self.implementation.set_dimension_coordinate(self.field, dc,
                                                      axes=[_axis['z']],
                                                      copy=copy)        
-#        self.field.insert_dim(dc, key=zdim, copy=copy)
-
         return dc
-    #--- End: def
-        
+
+    
     def test_um_condition(self, um_condition, LBCODE, BPLAT, BPLON):
-        '''Return True if a field satisfies the condition specified for a
-STASH code to standard name conversion.
+        '''Return `True` if a field satisfies the condition specified for a
+    STASH code to standard name conversion.
     
-:Parameters:
+    :Parameters:
+        
+        um_condition: `str`
     
-    um_condition: `str`
-
-    LBCODE: `int`        
-
-    BPLAT: `float`
-
-    BPLON: `float`
-
-:Returns:
+        LBCODE: `int`        
     
-    `bool`
-        True if a field satisfies the condition specified, False
-        otherwise.
-   
-**Examples:**
+        BPLAT: `float`
     
->>> ok = u.test_um_condition('true_latitude_longitude', ...)
+        BPLON: `float`
+    
+    :Returns:
+        
+        `bool`
+            `True` if a field satisfies the condition specified,
+            `False` otherwise.
+       
+    **Examples:**
+        
+    >>> ok = u.test_um_condition('true_latitude_longitude', ...)
 
         '''
         if um_condition == 'true_latitude_longitude':
@@ -2194,40 +2116,40 @@ STASH code to standard name conversion.
             
         else:
             raise ValueError(
-                "Unknown UM condition in STASH code conversion table: '%s'" %
-                um_condition)
+                "Unknown UM condition in STASH code conversion table: {!r}".format(
+                    um_condition))
     
         # Still here? Then the condition has not been satisfied.
         return
-    #--- End: def
+
 
     def test_um_version(self, valid_from, valid_to, um_version):
-        '''Return True if the UM version applicable to this field is within
-the given range.
+        '''Return `True` if the UM version applicable to this field is within
+    the given range.
+        
+    If possible, the UM version is derived from the PP header and
+    stored in the metadata object. Otherwise it is taken from the
+    *um_version* parameter.
+        
+    :Parameters:
     
-If possible, the UM version is derived from the PP header and stored
-in the metadata object. Otherwise it is taken from the *um_version*
-parameter.
+        valid_from: `int`, `float` or `None`
     
-:Parameters:
-
-    valid_from: `int`, `float` or `None`
-
-    valid_to: `int`, `float` or `None`
-
-    um_version: `int` or `float`
-
-:Returns:
-
-    `bool`
-        True if the UM version applicable to this field is within the
-        range, False otherwise.
-
-**Examples:**
-
->>> ok = u.test_um_version(401, 505, 1001)
->>> ok = u.test_um_version(401, None, 606.3)
->>> ok = u.test_um_version(None, 405, 401)
+        valid_to: `int`, `float` or `None`
+    
+        um_version: `int` or `float`
+    
+    :Returns:
+    
+        `bool`
+            `True` if the UM version applicable to this field
+            construct is within the range, `False` otherwise.
+    
+    **Examples:**
+    
+    >>> ok = u.test_um_version(401, 505, 1001)
+    >>> ok = u.test_um_version(401, None, 606.3)
+    >>> ok = u.test_um_version(None, 405, 401)
 
         '''
         if valid_to is None:
@@ -2243,18 +2165,18 @@ parameter.
             return True 
 
         return False    
-    #--- End: def
+
 
     def time_coordinate(self, axiscode):
         '''Return the T dimension coordinate
 
-:Parameters:
-
-    axiscode: `int`
-
-:Returns:
-
-    `DimensionCoordinate`
+    :Parameters:
+    
+        axiscode: `int`
+    
+    :Returns:
+    
+        `DimensionCoordinate`
 
         '''
         recs = self.t_recs
@@ -2293,14 +2215,12 @@ parameter.
         self.implementation.set_dimension_coordinate(self.field, dc,
                                                      axes=[_axis['t']],
                                                      copy=False)
-#               self.field.insert_dim(dc, key=_axis['t'], copy=False)
-
         return dc
-    #--- End: def
+
 
     def time_coordinate_from_extra_data(self, axiscode, axis):
-        '''
-'''     
+        '''TODO
+        '''     
         extra = self.extra
         array = extra[axis]
         bounds = extra.get(axis+'_bounds', None)
@@ -2315,23 +2235,21 @@ parameter.
         else:
             units = None
                 
-#        dc = DimensionCoordinate()
         dc = self.implementation.initialise_DimensionCoordinate()
         dc = self.coord_data(dc, array, bounds, units=units)
         dc = self.coord_axis(dc, axiscode)
         dc = self.coord_names(dc, axiscode)
-#        self.field.insert_dim(dc, key=_axis[axis], copy=False)
         self.implementation.set_dimension_coordinate(self.field, dc,
                                                      axes=[_axis[axis]],
                                                      copy=False)
         
-#        self.cell_method_axis_name[axis] = dc.identity()
-#        self.cell_method_axis_name['t'] = self.cell_method_axis_name[axis]
-
         return dc
-    #--- End: def        
+
 
     def time_coordinate_from_um_timeseries(self, axiscode, axis):
+        '''TODO
+
+        '''
         # This PP/FF field is a timeseries. The validity time is
         # taken to be the time for the first sample, the data time
         # for the last sample, with the others evenly between.
@@ -2344,7 +2262,6 @@ parameter.
         
         array = numpy_arange(vtime, vtime+delta*size, size, dtype=float)
                 
-#        dc = DimensionCoordinate()
         dc = self.implementation.initialise_DimensionCoordinate()
         dc = self.coord_data(dc, array, units=units)
         dc = self.coord_axis(dc, axiscode)
@@ -2352,30 +2269,25 @@ parameter.
         self.implementation.set_dimension_coordinate(self.field, dc,
                                                      axes=[_axis[axis]],
                                                      copy=False)
-#        self.field.insert_dim(dc, key=_axis[axis], copy=False)
-
-#        self.cell_method_axis_name['t'] = dc.identity()
-
         return dc
-    #--- End: def        
+
 
     def vtime(self, rec):
-        '''
-:Parmaeters:
+        '''TODO
 
-    rec: `umfile.Rec`
-
-:Returns:
-
-    out: `float`
-
+    :Parmaeters:
+   
+        rec: `umfile.Rec`
+   
+    :Returns:
+   
+        out: `float`
 
         '''
         reftime  = self.refUnits
         units    = self.refunits
         calendar = self.calendar
 
-#        LBVTIME = tuple(rec.int_hdr[lbyr: lbmin+1])
         LBVTIME = tuple(self.header_vtime(rec))
 
         key = (LBVTIME, units, calendar)
@@ -2386,15 +2298,18 @@ parameter.
                 time = netCDF4_date2num(
                     datetime(*LBVTIME), units, calendar)
             else:                
-                time = netCDF4_date2num(
-                    cftime.datetime(*LBVTIME), units, calendar)
+                time = netCDF4_date2num(cftime.datetime(*LBVTIME),
+                                        units, calendar)
+                
             _cached_date2num[key] = time
-        #--- End: if
-#        print('time=',reftime, units, calendar, LBVTIME, time)
+
         return time
-    #--- End: def
+
 
     def dddd(self):
+        '''TODO
+
+        '''
         for axis_code, extra_type in zip((11 , 10 ),
                                          ('x', 'y')):
             coord_type = extra_type + '_domain_bounds'
@@ -2440,7 +2355,7 @@ parameter.
                                                                     # 13       
                 #--- End: if
             else:
-                coord_type = '%s_domain_lower_bound' % extra_type
+                coord_type = '{0}_domain_lower_bound'.format(extra_type)
                 if coord_type in p.extra:
                     # Create, from extra data, an auxiliary
                     # coordinate with data but no bounds, if the
@@ -2460,26 +2375,24 @@ parameter.
                                                    dimensions=[xdim])# DCH xdim?    
            #--- End: if
        #--- End: for
-    #--- End: if
-        
-        # --------------------
+
 
     def unrotated_latlon(self, rotated_lat, rotated_lon, pole_lat, pole_lon):
         '''Create 2-d arrays of unrotated latitudes and longitudes.
         
-:Parameters:
-
-    rotated_lat: `numpy.ndarray`
-
-    rotated_lon: `numpy.ndarray`
-
-    pole_lat: `float`
-
-    pole_lon: `float`
-
-:Returns:
-
-    lat, lon: `numpy.ndarray`, `numpy.ndarray`
+    :Parameters:
+    
+        rotated_lat: `numpy.ndarray`
+    
+        rotated_lon: `numpy.ndarray`
+    
+        pole_lat: `float`
+    
+        pole_lon: `float`
+    
+    :Returns:
+    
+        lat, lon: `numpy.ndarray`, `numpy.ndarray`
 
         '''
         # Make sure rotated_lon and pole_lon is in [0, 360)
@@ -2536,25 +2449,24 @@ parameter.
     
         # Return unrotated latitudes and longitudes
         return (unrotated_lat, unrotated_lon)
-    #--- End: def
+
 
     def xy_coordinate(self, axiscode, axis):
         '''Create an X or Y dimension coordinate from header entries or extra
-data.
+    data.
 
-:Parameters:
-
-    axiscode: `int`
-
-    axis: `str`
-        'x' or 'y'
-
-:Returns:
-
-    `str, `DimensionCoordinate`
+    :Parameters:
+    
+        axiscode: `int`
+    
+        axis: `str`
+            'x' or 'y'
+    
+    :Returns:
+    
+        `str, `DimensionCoordinate`
 
         '''
-#        print('axiscode, axis=', axiscode, axis)
         if axis == 'y':
             delta  = self.bdy
             origin = self.real_hdr[bzy]
@@ -2614,10 +2526,9 @@ data.
         key = self.implementation.set_dimension_coordinate(self.field, dc,
                                                            axes=[axis_key],
                                                            copy=False)
-#        self.field.insert_dim(dc, key=_axis[axis], copy=False)       
 
         return key, dc
-    #--- End: def
+
 
     def z_coordinate(self, axiscode):
         '''Create a Z dimension coordinate from BLEV

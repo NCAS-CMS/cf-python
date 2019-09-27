@@ -513,40 +513,38 @@ parameters.
         return True
     #--- End: def
 
-    # 0
     def _YMDhms(self, attr):
         '''TODO
         '''
         out = super()._YMDhms(attr)
         out.del_bounds(None)
         return out
-    #--- End: def
+
 
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
-    # 1
     @property
     def cellsize(self):
         '''The cell sizes.
 
-If there are no cell bounds then the cell sizes are all zero.
+    If there are no cell bounds then the cell sizes are all zero.
 
-.. versionadded:: 2.0
+    .. versionadded:: 2.0
 
-**Examples:**
-
->>> print(c.bounds.array)
-[[-90. -87.]
- [-87. -80.]
- [-80. -67.]]
->>> c.cellsize
-<CF Data(3,): [3.0, 7.0, 13.0] degrees_north>
->>> print(d.cellsize.array)
-[  3.   7.  13.]
->>> b = c.del_bounds()
->>> c.cellsize
-<CF Data(3,): [0, 0, 0] degrees_north>
+    **Examples:**
+    
+    >>> print(c.bounds.array)
+    [[-90. -87.]
+     [-87. -80.]
+     [-80. -67.]]
+    >>> c.cellsize
+    <CF Data(3,): [3.0, 7.0, 13.0] degrees_north>
+    >>> print(d.cellsize.array)
+    [  3.   7.  13.]
+    >>> b = c.del_bounds()
+    >>> c.cellsize
+    <CF Data(3,): [0, 0, 0] degrees_north>
 
         '''
         data = self.get_bounds_data(None)
@@ -562,8 +560,8 @@ If there are no cell bounds then the cell sizes are all zero.
 
         raise AttributeError(
             "Can't get cell sizes when there are no bounds nor coordinate data")
-    #--- End: def
 
+    
     @property
     def dtype(self):
         '''Numpy data-type of the data array.
