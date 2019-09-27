@@ -90,7 +90,7 @@
 <h1>cf.Field.cell_area<a class="headerlink" href="#cf-field-cell-area" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.cell_area">
-<code class="descclassname">Field.</code><code class="descname">cell_area</code><span class="sig-paren">(</span><em>radius=None</em>, <em>insert=False</em>, <em>force=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b12/cf/field.py#L3547"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.cell_area" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">cell_area</code><span class="sig-paren">(</span><em>radius=None</em>, <em>insert=False</em>, <em>force=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b12/cf/field.py#L3519"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.cell_area" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a field containing horizontal cell areas.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.0.</span></p>
@@ -125,13 +125,13 @@ units of metres are assumed.</p>
 </dl>
 </dd>
 <dt>insert: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> then the calculated cell areas are also inserted
+<dd><p class="first last">If True then the calculated cell areas are also inserted
 in place as an area cell measure object. An existing area
 cell measure object for the horizontal axes will not be
 overwritten.</p>
 </dd>
 <dt>force: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> the always calculate the cell areas. By default if
+<dd><p class="first last">If True the always calculate the cell areas. By default if
 there is already an area cell measure object for the
 horizontal axes then it will provide the area values.</p>
 </dd>

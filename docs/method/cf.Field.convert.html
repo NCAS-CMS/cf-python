@@ -90,7 +90,7 @@
 <h1>cf.Field.convert<a class="headerlink" href="#cf-field-convert" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.convert">
-<code class="descclassname">Field.</code><code class="descname">convert</code><span class="sig-paren">(</span><em>identity</em>, <em>full_domain=True</em>, <em>cellsize=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b12/cf/field.py#L9068"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.convert" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">convert</code><span class="sig-paren">(</span><em>identity</em>, <em>full_domain=True</em>, <em>cellsize=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b12/cf/field.py#L9040"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.convert" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert a metadata construct into a new field construct.</p>
 <p>The new field construct has the properties and data of the
 metadata construct, and domain axis constructs corresponding to
@@ -164,13 +164,13 @@ an <em>identity</em> argument.</p>
 </dl>
 </dd>
 <dt>full_domain: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> then do not create a domain, other than domain
+<dd><p class="first last">If False then do not create a domain, other than domain
 axis constructs, for the new field construct. By default
 as much of the domain as possible is copied to the new
 field construct.</p>
 </dd>
 <dt>cellsize: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> then create a field construct from the selected
+<dd><p class="first last">If True then create a field construct from the selected
 metadata construct’s cell sizes.</p>
 </dd>
 </dl>

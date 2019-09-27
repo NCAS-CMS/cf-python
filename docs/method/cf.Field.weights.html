@@ -90,7 +90,7 @@
 <h1>cf.Field.weights<a class="headerlink" href="#cf-field-weights" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.weights">
-<code class="descclassname">Field.</code><code class="descname">weights</code><span class="sig-paren">(</span><em>weights='auto'</em>, <em>scale=False</em>, <em>components=False</em>, <em>methods=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b12/cf/field.py#L4026"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.weights" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">weights</code><span class="sig-paren">(</span><em>weights='auto'</em>, <em>scale=False</em>, <em>components=False</em>, <em>methods=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b12/cf/field.py#L3998"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.weights" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return weights for the data array values.</p>
 <p>The weights are those used during a statistical collapse of the
 data. For example when computing a area weight average.</p>
@@ -247,17 +247,17 @@ linear height: <code class="docutils literal notranslate"><span class="pre">f.we
 </div></blockquote>
 <dl class="docutils">
 <dt>scale: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd>If <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> then scale the returned weights so that they are
+<dd>If True then scale the returned weights so that they are
 less than or equal to 1.</dd>
 <dt>components: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd>If <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> then a dictionary of orthogonal weights components
+<dd>If True then a dictionary of orthogonal weights components
 is returned instead of a field. Each key is a tuple of
 integers representing axes positions in the field’s data
 array with corresponding values of weights in <a class="reference internal" href="../classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>
 objects. The axes of weights match the axes of the field’s
 data array in the order given by their dictionary keys.</dd>
 <dt>methods: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd>If <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>, then return a dictionary describing methods used
+<dd>If True, then return a dictionary describing methods used
 to create the weights.</dd>
 </dl>
 <p class="last">kwargs: deprecated at version 3.0.0.</p>

@@ -800,6 +800,7 @@ cell_measure = cf.CellMeasure(measure='area',
                  data=cf.Data(numpy.arange(90.).reshape(9, 10)))
 
 tas.set_construct(cell_measure)
+
 print(tas)
 import netCDF4
 nc = netCDF4.Dataset('file.nc', 'r')
@@ -1038,9 +1039,9 @@ x
 x.min()
 (t - 2).min()
 (2 + t).min()
-(t * list(range(9))).min()                                                                    
+(t * list(range(9))).min()
 (t + cf.Data(numpy.arange(20, 29), '0.1 K')).min()          
-u = t.copy()                                                                                  
+u = t.copy()
 u.transpose(inplace=True)
 u.Units -= 273.15
 u[0]                         
@@ -1052,8 +1053,18 @@ print(abs(-q.array))
 q, t = cf.read('file.nc')
 print(q.array)         
 print((q == q).array)                                   
-print((q < 0.05).array)                                                                      
+print((q < 0.05).array)
 print((q >= q[0]).array) 
+t.min()
+u = t.copy()
+new_data = t.data + t.data
+u.set_data(new_data)
+u       
+u.min()
+u[...] = new_data
+u.min()
+t.data -= t.data
+t.min()
 q, t = cf.read('file.nc')
 lat = q.dimension_coordinate('latitude')
 lat.data
@@ -1153,6 +1164,7 @@ Y = T.set_construct(cf.DomainAxis(2))
 
 # Set the data for the field
 T.set_data(cf.Data(array))
+
 T
 print(T.array)
 T.data.get_compression_type()
@@ -1174,6 +1186,7 @@ p[1, :, 3:5]
 p.data.get_compression_type()
 p.data[1] = -9
 p.data.get_compression_type()
+
 import numpy	  
 import cf
 
@@ -1205,7 +1218,7 @@ Y = P.set_construct(cf.DomainAxis(3))
 X = P.set_construct(cf.DomainAxis(2))
 
 # Set the data for the field
-P.set_data(cf.Data(array), axes=[T, Y, X])
+P.set_data(cf.Data(array), axes=[T, Y, X])			      
 
 P
 print(P.data.array)

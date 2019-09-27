@@ -90,7 +90,7 @@
 <h1>cf.Field.set_construct<a class="headerlink" href="#cf-field-set-construct" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.set_construct">
-<code class="descclassname">Field.</code><code class="descname">set_construct</code><span class="sig-paren">(</span><em>construct</em>, <em>key=None</em>, <em>axes=None</em>, <em>set_axes=True</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b12/cf/field.py#L10940"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.set_construct" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">set_construct</code><span class="sig-paren">(</span><em>construct</em>, <em>key=None</em>, <em>axes=None</em>, <em>set_axes=True</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b12/cf/field.py#L11005"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.set_construct" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set a metadata construct.</p>
 <p>When inserting a construct with data, the domain axes constructs
 spanned by the data are either inferred, or specified with the
@@ -150,14 +150,14 @@ axis construct key via the <a class="reference internal" href="cf.Field.domain_a
 </dl>
 </dd>
 <dt>set_axes: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> then do not set the domain axes constructs that
+<dd><p class="first last">If False then do not set the domain axes constructs that
 are spanned by the data, even if the <em>axes</em> parameter has
 been set. By default the axes are set either according to
 the <em>axes</em> parameter, or an attempt will be made to assign
 existing domain axis constructs to the data.</p>
 </dd>
 <dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> then set a copy of the construct. By default the
+<dd><p class="first last">If True then set a copy of the construct. By default the
 construct is not copied.</p>
 </dd>
 </dl>

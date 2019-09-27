@@ -1315,8 +1315,8 @@ A single value may be assigned to any number of elements.
      [276.4  -2.0 276.3 266.1 276.1 268.1 277.0 273.4 269.7]]]
 
 An array of values can be assigned, as long as it is broadcastable to
-the shape defined by the indices, using the `numpy broadcasting rules
-<https://docs.scipy.org/doc/numpy/user/basics.broadcasting.html>`_.
+the shape defined by the indices, using the `numpy broadcasting
+rules`_.
 
 .. code-block:: python
    :caption: *Assigning arrays of values.*
@@ -5842,8 +5842,10 @@ construct key.
 **Mathematical operations**
 ---------------------------
 
-Arithmetic
-^^^^^^^^^^
+.. _Arithmetical-operations:
+
+Arithmetical operations
+^^^^^^^^^^^^^^^^^^^^^^^
 
 A field construct may be arithmetically combined with another field
 construct, or any other object that is broadcastable to its data. See
@@ -5885,7 +5887,7 @@ during operations.
    <CF Data(): 258.0 K>
    >>> (2 + t).min()
    <CF Data(): 262.0 K>
-   >>> (t * list(range(9))).min()                                                                    
+   >>> (t * list(range(9))).min()
    <CF Data(): 0.0 K>
    >>> (t + cf.Data(numpy.arange(20, 29), '0.1 K')).min()          
    <CF Data(): 262.6 K>
@@ -5901,29 +5903,9 @@ during operations.
    >>> t + u[0]
    <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>
 
-If both operands are field constructs, but there is insufficent
-metadata to create a mapping of physically compatible dimensions, the
-operation may applied to the field construct's data instead, If and
-the resulting data then inserted into a copy of one of the field
-constructs. **Note that in this case it is assumed that the dimensions
-of both** `~cf.Data` **instance operands are already in the correct
-order for physically menaingful broadcasting to occur.**
 
-   .. code-block:: python
-  :caption: *TODO*
+.. _Unary-operations:
 
-   >>> t.min()
-   <CF Data(): 260.0 K>
-   >>> u = t.copy()
-   >>> new_data = t.data + t.data
-   >>> u.set_data(new_data)
-   >>> u       
-   <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>
-   >>> u.min()
-   <CF Data(): 520.0 K>
-   >>> u[...] = new_data
-
-   
 Unary operations
 ^^^^^^^^^^^^^^^^
 
@@ -5956,6 +5938,8 @@ returning a new field construct with modified data values. See the
     [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]
 
     
+.. _Relational-operations:
+
 Relational operations
 ^^^^^^^^^^^^^^^^^^^^^
 
@@ -5995,7 +5979,7 @@ during operations.
     [ True  True  True  True  True  True  True  True]
     [ True  True  True  True  True  True  True  True]
     [ True  True  True  True  True  True  True  True]]
-   >>> print((q < 0.05).array)                                                                      
+   >>> print((q < 0.05).array)
    [[ True  True  True  True  True  True  True  True]
     [ True  True  True False  True False  True False]
     [False False False False False False False  True]
@@ -6008,6 +5992,54 @@ during operations.
     [ True  True  True  True  True  True False False]
     [False  True  True  True  True  True  True False]]
 
+Arthmetical and relational operations with insufficent metadata
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+For :ref:`arithmetical <Arithmetical-operations>` and :ref:`relational
+<Relational-operations>` operations, if both operands are field
+constructs but there is insufficent metadata to create a mapping of
+physically compatible dimensions, then operations may applied to the
+field construct's data instead. The resulting data may then be
+inserted into a copy of one of the field constructs, either with the
+`~cf.Field.set_data` method of the field construct, or with
+:ref:`indexed assignment <Assignment-by-index>`. The latter technique
+allows broadcasting, but the former one does not.
+
+In this case it is **assumed, and not checked**\ , that the dimensions
+of both `~cf.Data` instance operands are already in the correct order
+for physically meaningful broadcasting to occur.
+
+.. code-block:: python
+  :caption: *Operate on the data and use 'set_data' to put the
+            resulting data into the new field construct.*
+	    
+   >>> t.min()
+   <CF Data(): 260.0 K>
+   >>> u = t.copy()
+   >>> new_data = t.data + t.data
+   >>> u.set_data(new_data)
+   >>> u       
+   <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>
+   >>> u.min()
+   <CF Data(): 520.0 K>
+
+.. code-block:: python
+  :caption: *Update the data with indexed assignment*
+
+   >>> u[...] = new_data
+   >>> u.min()
+   <CF Data(): 520.0 K>
+
+For augmented assignments, the field construct data may be changed
+in-place.
+   
+.. code-block:: python
+  :caption: *An example of augmented assignment involving the data of
+            two field constructs.*
+
+   >>> t.data -= t.data
+   >>> t.min()
+   <CF Data(): 0.0 K>
     
 Trigonometrical functions
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -6993,8 +7025,10 @@ is straight forward with the `cf.load_stash2standard_name` function.
 
 .. External links
 
-.. _Tripolar:                         https://doi.org/10.1007%2FBF00211684
-		  
+.. _Tripolar:                 https://doi.org/10.1007%2FBF00211684
+.. _numpy broadcasting rules: https://docs.scipy.org/doc/numpy/user/basics.broadcasting.html
+
+
 .. External links to the CF conventions (will need updating with new versions of CF)
    
 .. _External variables:               http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#external-variables
