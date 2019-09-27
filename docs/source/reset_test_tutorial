@@ -5,8 +5,8 @@ test_tutorial=test_tutorial
 
 rm $test_tutorial/*
 
-cp $sample_files/cf_tutorial_files.zip $test_tutorial
+cp $sample_files/* $test_tutorial
 
 cd $test_tutorial
 
-unzip cf_tutorial_files.zip
+zip cf_tutorial_files.zip *.nc *.pp
