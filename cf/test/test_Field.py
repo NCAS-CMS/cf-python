@@ -482,6 +482,12 @@ class FieldTest(unittest.TestCase):
             
             for i in range(f.ndim):
                 a = f.array
+                a = numpy.cumsum(a, axis=i)
+                g = f.cumsum(i)
+                self.assertTrue(cf.functions._numpy_allclose(g.array, a))
+
+            for i in range(f.ndim):
+                a = f.array
                 a = a.filled(0)
                 a = numpy.cumsum(a, axis=i)
                 g = f.cumsum(i, masked_as_zero=True)
