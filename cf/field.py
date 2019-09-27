@@ -9153,11 +9153,11 @@ may be accessed with the `nc_global_attributes`,
     :Parameters:
     
         axis:
-            Select the domain axis over which the filter is to be
-            applied, defined by that which would be selected by
-            passing the given axis description to a call of the field
-            construct's `domain_axis` method. For example, for a value
-            of ``'X'``, the domain axis construct returned by
+            Select the domain axis over which the cumulative sums are
+            to be calculated, defined by that which would be selected
+            by passing the given axis description to a call of the
+            field construct's `domain_axis` method. For example, for a
+            value of ``'X'``, the domain axis construct returned by
             ``f.domain_axis('X'))`` is selected.
 
         masked_as_zero: `bool`, optional

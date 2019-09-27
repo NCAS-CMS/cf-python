@@ -106,7 +106,7 @@ a duration of one calendar month which, by default, starts at 12:00 on
 the 16th of the month. Note that the offset</p>
 <p><strong>Changing the units</strong></p>
 <p>The time duration’s units may be changed in place by assigning
-equivalent units to the <a class="reference internal" href="../generated/cf.TimeDuration.Units.html#cf.TimeDuration.Units" title="cf.TimeDuration.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a> attribute:</p>
+equivalent units to the <a class="reference internal" href="../attribute/cf.TimeDuration.Units.html#cf.TimeDuration.Units" title="cf.TimeDuration.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a> attribute:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;day&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span>
 <span class="go">&lt;CF TimeDuration: 1 day (from Y-M-D 00:00:00)&gt;</span>
@@ -320,7 +320,7 @@ scalar data which could be used to create a <a class="reference internal" href="
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last">Instances, <code class="docutils literal notranslate"><span class="pre">x</span></code>, of following types are all examples of
 data-like objects (because <code class="docutils literal notranslate"><span class="pre">cf.Data(x)</span></code> creates a valid
-<a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> object), <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a>, <a class="reference internal" href="../generated/cf.list.html#cf.list" title="cf.list"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>,
+<a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> object), <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>,
 <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>, <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Coordinate</span></code>, <a class="reference internal" href="cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a>.</p>
 </dd>
 </dl>
@@ -386,13 +386,13 @@ elements for units smaller that of the time duration are used.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../generated/cf.TimeDuration.Units.html#cf.TimeDuration.Units" title="cf.TimeDuration.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.TimeDuration.Units.html#cf.TimeDuration.Units" title="cf.TimeDuration.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a></td>
 <td>The units of the time duration.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../generated/cf.TimeDuration.isint.html#cf.TimeDuration.isint" title="cf.TimeDuration.isint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isint</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.TimeDuration.isint.html#cf.TimeDuration.isint" title="cf.TimeDuration.isint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isint</span></code></a></td>
 <td>True if the time duration is a whole number.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../generated/cf.TimeDuration.iso.html#cf.TimeDuration.iso" title="cf.TimeDuration.iso"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iso</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.TimeDuration.iso.html#cf.TimeDuration.iso" title="cf.TimeDuration.iso"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iso</span></code></a></td>
 <td>Return the time duration as an ISO 8601-like time duration string.</td>
 </tr>
 </tbody>
