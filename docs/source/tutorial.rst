@@ -5893,13 +5893,35 @@ during operations.
 .. code-block:: python
   :caption: *TODO*
 
-   >>> u = t.copy()                                                                                  
+   >>> u = t.copy()
    >>> u.transpose(inplace=True)
    >>> u.Units -= 273.15
    >>> u[0]                         
    <CF Field: air_temperature(grid_longitude(1), grid_latitude(10), atmosphere_hybrid_height_coordinate(1)) K @ 273.15>
    >>> t + u[0]
    <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>
+
+If both operands are field constructs, but there is insufficent
+metadata to create a mapping of physically compatible dimensions, the
+operation may applied to the field construct's data instead, If and
+the resulting data then inserted into a copy of one of the field
+constructs. **Note that in this case it is assumed that the dimensions
+of both** `~cf.Data` **instance operands are already in the correct
+order for physically menaingful broadcasting to occur.**
+
+   .. code-block:: python
+  :caption: *TODO*
+
+   >>> t.min()
+   <CF Data(): 260.0 K>
+   >>> u = t.copy()
+   >>> new_data = t.data + t.data
+   >>> u.set_data(new_data)
+   >>> u       
+   <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>
+   >>> u.min()
+   <CF Data(): 520.0 K>
+   >>> u[...] = new_data
 
    
 Unary operations

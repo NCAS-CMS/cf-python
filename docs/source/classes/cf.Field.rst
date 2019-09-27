@@ -253,6 +253,7 @@ Metadata constructs
    ~cf.Field.domain_ancillary
    ~cf.Field.domain_axis
    ~cf.Field.domain_axis_key
+   ~cf.Field.domain_axis_position
    ~cf.Field.field_ancillary
    
 .. rubric:: Attributes

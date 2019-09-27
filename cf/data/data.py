@@ -7757,43 +7757,43 @@ and has 0 where the data array has missing data and 1 otherwise.
         return d
 
 
-    # 0
     @classmethod
     def asdata(cls, d, dtype=None, copy=False):
         '''Convert the input to a `Data` object.
 
-:Parameters:
-
-    d: data-like
-        Input data in any form that can be converted to an cf.Data
-        object. This includes `cf.Data` and `cf.Field` objects, numpy
-        arrays and any object which may be converted to a numpy array.
-
-   dtype: data-type, optional
-        By default, the data-type is inferred from the input data.
- 
-   copy: TODO
-
-:Returns:
-
-    `Data`
-        `Data` interpretation of *d*. No copy is performed on the
-        input if it is already a `Data` object with matching dtype and
-        *copy* is False.
-
-**Examples:**
-
->>> d = cf.Data([1, 2])
->>> cf.Data.asdata(d) is d
-True
->>> d.asdata(d) is d
-True
-
->>> cf.Data.asdata([1, 2])
-<CF Data: [1, 2]>
-
->>> cf.Data.asdata(numpy.array([1, 2]))
-<CF Data: [1, 2]>
+    :Parameters:
+    
+        d: data-like
+            Input data in any form that can be converted to an cf.Data
+            object. This includes `cf.Data` and `cf.Field` objects,
+            numpy arrays and any object which may be converted to a
+            numpy array.
+    
+       dtype: data-type, optional
+            By default, the data-type is inferred from the input data.
+     
+       copy: TODO
+    
+    :Returns:
+    
+        `Data`
+            `Data` interpretation of *d*. No copy is performed on the
+            input if it is already a `Data` object with matching dtype
+            and *copy* is False.
+    
+    **Examples:**
+    
+    >>> d = cf.Data([1, 2])
+    >>> cf.Data.asdata(d) is d
+    True
+    >>> d.asdata(d) is d
+    True
+    
+    >>> cf.Data.asdata([1, 2])
+    <CF Data: [1, 2]>
+    
+    >>> cf.Data.asdata(numpy.array([1, 2]))
+    <CF Data: [1, 2]>
 
         '''
         data = getattr(d, '__data__', None)
@@ -7817,27 +7817,26 @@ True
         #--- End: if
 
         return data            
-    #--- End: def
 
-    # 0
+    
     def close(self):
         '''Close all files referenced by the data array.
 
-Note that a closed file will be automatically reopened if its contents
-are subsequently required.
-
-:Returns:
-
-    `None`
-
-**Examples:**
-
->>> d.close()
+    Note that a closed file will be automatically reopened if its
+    contents are subsequently required.
+    
+    :Returns:
+    
+        `None`
+    
+    **Examples:**
+    
+    >>> d.close()
 
         '''    
         for partition in self.partitions.matrix.flat:
             partition.file_close()
-    #--- End: def
+
 
     # 1
     def cos(self, inplace=False, i=False):

@@ -27,7 +27,6 @@ class read_writeTest(unittest.TestCase):
     filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                             'test_file.nc')
     chunk_sizes = (17, 34, 300, 100000)[::-1]
-#    chunk_sizes = (100000,)
     original_chunksize = cf.CHUNKSIZE()
 
     test_only = []

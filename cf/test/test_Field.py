@@ -25,7 +25,7 @@ class FieldTest(unittest.TestCase):
 
         self.test_only = []
 #        self.test_only = ['NOTHING!!!!']
-#        self.test_only = ['test_Field_convert']
+#        self.test_only = ['test_Field_domain_axis_position']
 #        self.test_only = ['test_Field__add__']
 #        self.test_only = ['test_Field_indices']
 #        self.test_only = ['test_Field_item']
@@ -45,18 +45,6 @@ class FieldTest(unittest.TestCase):
 #        self.test_only = ['test_Field_Field_domain_mask']
 
 
-#    def test_Field_properties(self):
-#        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-#            return
-#
-#        f = self.f.copy()
-#
-#        f.setprop('standard_name', 'qwerty')
-#        self.assertTrue(f.getprop('standard_name') == 'qwerty')
-#        f.delprop('standard_name')
-#        self.assertFalse(f.hasprop('standard_name'))
-
-
     def test_Field_direction(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -73,6 +61,27 @@ class FieldTest(unittest.TestCase):
         self.assertIsInstance(f.directions(), dict)
         f.directions()
         
+
+    def test_Field_domain_axis_position(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = self.f
+
+        for i in range(f.ndim):
+            self.assertTrue(f.domain_axis_position(i) == i)
+
+        for i in range(1, f.ndim+1):
+            self.assertTrue(f.domain_axis_position(-i) == -i + 3)
+
+        data_axes =  f.get_data_axes()
+        for key in data_axes:
+            self.assertTrue(f.domain_axis_position(key) == data_axes.index(key))
+
+
+        self.assertTrue(f.domain_axis_position('Z') == 0)
+        self.assertTrue(f.domain_axis_position('grid_latitude') == 1)
+            
 
     def test_Field_replace_construct(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

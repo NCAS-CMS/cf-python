@@ -25,6 +25,7 @@ from numpy import finfo       as numpy_finfo
 from numpy import isnan       as numpy_isnan
 from numpy import nan         as numpy_nan
 from numpy import ndarray     as numpy_ndarray
+from numpy import ndim        as numpy_ndim
 from numpy import shape       as numpy_shape
 from numpy import size        as numpy_size
 from numpy import squeeze     as numpy_squeeze
@@ -54,8 +55,7 @@ from . import FieldList
 from .constants import masked as cf_masked
 
 from .functions import (parse_indices, CHUNKSIZE, equals,
-                        RELAXED_IDENTITIES, IGNORE_IDENTITIES,
-                        _section)
+                        RELAXED_IDENTITIES, _section)
 from .functions       import inspect as cf_inspect
 from .query           import Query, ge, gt, le, lt, ne, eq, wi
 from .regrid          import Regrid
@@ -245,7 +245,7 @@ may be accessed with the `nc_global_attributes`,
         from those of *source*.
         
     copy: `bool`, optional
-        If `False` then do not deep copy input parameters prior to
+        If False then do not deep copy input parameters prior to
         initialization. By default arguments are deep copied.
 
         '''
@@ -778,7 +778,7 @@ may be accessed with the `nc_global_attributes`,
     
     :Parameters:
     
-        other: standard Python scalar object, `Field` or `Query` or `Data`
+        other: `Field` or `Query` or any object that broadcasts to the field construct's data
     
         method: `str`
             The binary arithmetic or comparison method name (such as
@@ -800,51 +800,29 @@ may be accessed with the `nc_global_attributes`,
         '''        
         _debug = False
 
-#        if IGNORE_IDENTITIES():
-#            inplace = method[2] == 'i'
-#            data = self.data._binary_operation(other, method)
-#            if self.shape != data.shape:
-#                pass
-#        
-#            if inplace:
-#                out = self
-#            else:
-#                out = self.copy()
-#
-#            out.set_data(data, axes=None, copy=False)
-##  What?
-#            return out
-#
-        if (isinstance(other, (float, int, bool, str)) or
-            other is self):
-            # ========================================================
-            # CASE 1a: No changes to the field's items are required so
-            #          can use the metadata-unaware parent method
-            # ========================================================
-            return super()._binary_operation(other, method)
-
-        if isinstance(other, Data) and other.size == 1:
-            # ========================================================
-            # CASE 1b: No changes to the field's items are required
-            #          so can use the metadata-unaware parent method
-            # ========================================================
-            if other.ndim > 0:
-                other = other.squeeze()
-
-            return super()._binary_operation(other, method)
-
         if isinstance(other, Query):
-            # ========================================================
-            # CASE 2: Combine the field with a Query object
-            # ========================================================
+            # --------------------------------------------------------
+            # Combine the field with a Query object
+            # --------------------------------------------------------
             return NotImplemented
 
-#        if not isinstance(other, self.__class__):
-#            raise ValueError(
-#                "Can't combine {!r} with {!r}".format(
-#                    self.__class__.__name__, other.__class__.__name__))
-
         if not isinstance(other, self.__class__):
+            # --------------------------------------------------------
+            # Combine the field with anything other than a Query
+            # object or another field construct
+            # --------------------------------------------------------
+            if numpy_size(other) == 1:
+                # ----------------------------------------------------
+                # No changes to the field metadata constructs are
+                # required so can use the metadata-unaware parent
+                # method
+                # ----------------------------------------------------
+                other = Data(other)
+                if other.ndim > 0:
+                    other.squeeze(inplace=True)
+
+                return super()._binary_operation(other, method)
+
             if self._is_broadcastable(numpy_shape(other)):
                 return super()._binary_operation(other, method)
             
@@ -865,11 +843,11 @@ may be accessed with the `nc_global_attributes`,
         v = other.analyse_items(relaxed_identities=relaxed_identities)
 
         if _debug:
-            print(s) # pragma: no cover
-            print() # pragma: no cover
-            print(v) # pragma: no cover
-            print(v) # pragma: no cover
-            print(self) # pragma: no cover
+            print(s)     # pragma: no cover
+            print()      # pragma: no cover
+            print(v)     # pragma: no cover
+            print(v)     # pragma: no cover
+            print(self)  # pragma: no cover
             print(other) # pragma: no cover
             
         if s['warnings'] or v['warnings']:
@@ -880,8 +858,10 @@ may be accessed with the `nc_global_attributes`,
         if s['undefined_axes'] and v['undefined_axes']:
             raise ValueError(
                 "Can't combine fields: Both fields have undefined axes: {!r}, {!r}".format(
-                    tuple(self.constructs.domain_axis_identity(a) for a in s['undefined_axes']),
-                    tuple(other.constructs.domain_axis_identity(a) for a in v['undefined_axes'])))
+                    tuple(self.constructs.domain_axis_identity(a)
+                          for a in s['undefined_axes']),
+                    tuple(other.constructs.domain_axis_identity(a)
+                          for a in v['undefined_axes'])))
         #--- End: if
         
         # Find the axis names which are present in both fields
@@ -889,7 +869,7 @@ may be accessed with the `nc_global_attributes`,
         if _debug:
             print("s['id_to_axis'] =", s['id_to_axis']) # pragma: no cover
             print("v['id_to_axis'] =", v['id_to_axis']) # pragma: no cover
-            print('matching_ids    =', matching_ids) # pragma: no cover
+            print('matching_ids    =', matching_ids)    # pragma: no cover
         
         # Check that any matching axes defined by an auxiliary
         # coordinate are done so in both fields.
@@ -1017,7 +997,6 @@ may be accessed with the `nc_global_attributes`,
 
                 nrefs = len(refs0)
                 if nrefs > 1 or nrefs != len(refs1):
-                    print ('arse')
                     # The defining coordinate are associated with
                     # different numbers of coordinate references
                     equivalent_refs = False
@@ -1070,8 +1049,8 @@ may be accessed with the `nc_global_attributes`,
                     # The defining coordinates have non-equivalent
                     # data arrays and are both of size > 1
                     raise ValueError(
-"Can't combine fields: Incompatible {!r} coordinate values: {}, {}".format(
-    identity, coord0.data, coord1.data))
+                        "Can't combine fields: Incompatible {!r} coordinate values: {}, {}".format(
+                            identity, coord0.data, coord1.data))
                 else:
                     # The defining coordinates have non-equivalent
                     # data arrays and are both size 1 => this axis to
@@ -1085,6 +1064,10 @@ may be accessed with the `nc_global_attributes`,
 
         matching_axis1_to_axis0 = axis1_to_axis0.copy()
         matching_axis0_to_axis1 = axis0_to_axis1.copy()
+
+        if _debug:
+            print("1: axis1_to_axis0 =", axis1_to_axis0) # pragma: no cover
+            print("1: axis0_to_axis1 =", axis0_to_axis1) # pragma: no cover
 
         # ------------------------------------------------------------
         # Still here? Then the two fields are combinable!
@@ -1134,6 +1117,7 @@ may be accessed with the `nc_global_attributes`,
         if _debug:
             print('2: axes_unD, axes_unM , axes0_M =', axes_unD , axes_unM , axes0_M) # pragma: no cover
 
+#        print ('arse0' , axes_unD + axes_unM + axes0_M)
         field0.transpose(axes_unD + axes_unM + axes0_M, inplace=True)
 
         end_of_undefined0   = len(axes_unD)
@@ -1142,7 +1126,7 @@ may be accessed with the `nc_global_attributes`,
         if _debug: 
             print('2: end_of_undefined0   =', end_of_undefined0   ) # pragma: no cover
             print('2: start_of_unmatched0 =', start_of_unmatched0 ) # pragma: no cover
-            print('2: start_of_matched0   =', start_of_matched0  ) # pragma: no cover
+            print('2: start_of_matched0   =', start_of_matched0  )  # pragma: no cover
 
         # ------------------------------------------------------------
         # Permute the axes of the data array of field1 so that:
@@ -1159,7 +1143,7 @@ may be accessed with the `nc_global_attributes`,
         axes_unD = []
         axes_unM = []
         axes1_M  = [axis0_to_axis1[axis0] for axis0 in axes0_M]
-        for  axis1 in data_axes1:          
+        for axis1 in data_axes1:          
             if axis1 in axes1_M:
                 pass
             elif axis1 in axis1_to_axis0:
@@ -1175,6 +1159,7 @@ may be accessed with the `nc_global_attributes`,
         if _debug:
             print('2: axes_unD , axes_unM , axes0_M =',axes_unD , axes_unM , axes0_M) # pragma: no cover
 
+#        print ('arse', axes_unD + axes_unM + axes1_M)
         field1.transpose(axes_unD + axes_unM + axes1_M, inplace=True)
 
         start_of_unmatched1 = len(axes_unD)
@@ -1294,18 +1279,15 @@ may be accessed with the `nc_global_attributes`,
         #
         # Note that, by now, field0.ndim >= field1.ndim.
         # ============================================================
-#dch        field0.Data = getattr(field0.Data, method)(field1.Data)
         if _debug:
-            print() # pragma: no cover
             print('3: repr(field0) =', repr(field0)) # pragma: no cover
             print('3: repr(field1) =', repr(field1)) # pragma: no cover
 
         new_data0 = field0.data._binary_operation(field1.data, method)
         
-#        field0 = super(Field, field0)._binary_operation(field1, method)
-
         if _debug:
-            print('3: field0.shape =', field0.shape) # pragma: no cover
+            print('3: new_data0.shape =', new_data0.shape) # pragma: no cover
+            print('3: field0.shape =', field0.data.shape) # pragma: no cover
             print('3: repr(field0) =', repr(field0)) # pragma: no cover
 
         # ============================================================
@@ -1329,7 +1311,6 @@ may be accessed with the `nc_global_attributes`,
 
         #AND HEREIN LIES THE PROBLEM            TODO
         for size1_axis in remove_size1_axes0:
-#            field0.remove_axis(size1_axis)
             field0.del_construct(size1_axis)
 
         # ------------------------------------------------------------
@@ -1376,7 +1357,6 @@ may be accessed with the `nc_global_attributes`,
 
             # Remove all field0 auxiliary coordinates and domain
             # ancillaries which span this axis
-#            remove_items.update(field0.Items(role='ac', axes=set((axis0,))))
             c = field0.constructs.filter_by_type('auxiliary_coordinate', 'domain_ancillary')
             remove_items.update(c.filter_by_axis('and', axis0))
 
@@ -1389,8 +1369,6 @@ may be accessed with the `nc_global_attributes`,
                     remove_items.add(key0)
                     remove_items.update(field0.domain_ancillaries(
                         *tuple(ref0.coordinate_conversion.domain_ancillaries().values())))
-#                    remove_items.update(field0.Items(ref0.ancillaries.values(), 
-#                                                     exact=True, role='c'))
             #--- End: for
         #--- End: for
 
@@ -1505,7 +1483,6 @@ may be accessed with the `nc_global_attributes`,
 
         for key1, axes0 in insert_dim.items():
             try:
-#                key0 = field0.insert_dim(field1.Items[key1], axes=axes0)
                 key0 = field0.set_construct(field1.dimension_coordinates[key1],
                                             axes=axes0)
             except ValueError:
@@ -1521,7 +1498,6 @@ may be accessed with the `nc_global_attributes`,
                 
         for key1, axes0 in insert_aux.items():
             try:
-#                key0 = field0.insert_aux(field1.Items[key1], axes=axes0)
                 key0 = field0.set_construct(field1.auxiliary_coordinates[key1],
                                             axes=axes0)
             except ValueError:
@@ -1537,7 +1513,6 @@ may be accessed with the `nc_global_attributes`,
                 
         for key1, axes0 in insert_domain_anc.items():
             try:
-#                key0 = field0.insert_domain_anc(field1.constructs[key1], axes=axes0)
                 key0 = field0.set_construct(field1.domain_ancillaries[key1], axes=axes0)
             except ValueError as error:
                 # There was some sort of problem with the insertion, so
@@ -1559,7 +1534,6 @@ may be accessed with the `nc_global_attributes`,
                 print(sorted(field0.constructs.keys())) # pragma: no cover
                 print('Removing {!r} from field0'.format(sorted(remove_items))) # pragma: no cover
 
-#            field0.remove_items(remove_items, role='facdmr')
             for key in remove_items:
                 field0.del_construct(key, default=None)
 
@@ -1576,12 +1550,10 @@ may be accessed with the `nc_global_attributes`,
                                                                  'axuiliary_coordinate',
                                                                  'domain_ancillary'))
             for key1, item1 in identity_map.copy().items():
-#                identity_map[key1] = key1_to_key0.get(key1, None)
                 identity_map[key1] = key1_to_key0.get(key1, item1.identity())
 
             new_ref0 = ref1.change_identifiers(identity_map, strict=True)
             
-#            field0.insert_ref(new_ref0, copy=False)
             field0.set_construct(new_ref0, copy=False)
         
         field0.set_data(new_data0, set_axes=False, copy=False)
@@ -1825,7 +1797,7 @@ may be accessed with the `nc_global_attributes`,
         # Analyse each domain
         s = self.analyse_items()
         v = other.analyse_items()
-    
+
         if s['warnings'] or v['warnings']:
             raise ValueError(
                 "Can't setitem: {0}".format(s['warnings'] or v['warnings']))
@@ -1904,7 +1876,7 @@ may be accessed with the `nc_global_attributes`,
                     transpose_axes1.append(axis1)
         #--- End: for
         
-        if transpose_axes1 != data_axes1: 
+        if transpose_axes1 != data_axes1:
             if not copied:
                 other = other.copy()
                 copied = True
@@ -1997,7 +1969,7 @@ may be accessed with the `nc_global_attributes`,
             numbers. The default value is set by the `RTOL` function.
     
         traceback: `bool`, optional
-            If `True` then print a traceback highlighting where the two
+            If True then print a traceback highlighting where the two
             items differ.
 
         '''
@@ -3572,13 +3544,13 @@ may be accessed with the `nc_global_attributes`,
               'm')``, ``radius=cf.Data(6371.2, 'km')``.
     
         insert: `bool`, optional
-            If `True` then the calculated cell areas are also inserted
+            If True then the calculated cell areas are also inserted
             in place as an area cell measure object. An existing area
             cell measure object for the horizontal axes will not be
             overwritten.
     
         force: `bool`, optional
-            If `True` the always calculate the cell areas. By default if
+            If True the always calculate the cell areas. By default if
             there is already an area cell measure object for the
             horizontal axes then it will provide the area values.
             
@@ -3951,7 +3923,7 @@ may be accessed with the `nc_global_attributes`,
             ``f.domain_axis(identity)``.
     
         iscyclic: `bool`, optional
-            If `False` then the axis is set to be non-cyclic. By
+            If False then the axis is set to be non-cyclic. By
             default the selected axis is set to be cyclic.
     
         period: optional       
@@ -4134,11 +4106,11 @@ may be accessed with the `nc_global_attributes`,
                     linear height: ``f.weights(['area', 'Z'])``.
     
         scale: `bool`, optional
-            If `True` then scale the returned weights so that they are
+            If True then scale the returned weights so that they are
             less than or equal to 1.
     
         components: `bool`, optional
-            If `True` then a dictionary of orthogonal weights components
+            If True then a dictionary of orthogonal weights components
             is returned instead of a field. Each key is a tuple of
             integers representing axes positions in the field's data
             array with corresponding values of weights in `Data`
@@ -4146,7 +4118,7 @@ may be accessed with the `nc_global_attributes`,
             data array in the order given by their dictionary keys.
     
         methods: `bool`, optional
-            If `True`, then return a dictionary describing methods used
+            If True, then return a dictionary describing methods used
             to create the weights.
     
         kwargs: deprecated at version 3.0.0.
@@ -4934,7 +4906,7 @@ may be accessed with the `nc_global_attributes`,
             refence construct.
 
         strict: `bool`, optional
-            If `False` then allow non-strict identities for
+            If False then allow non-strict identities for
             identifying coordinate and domain ancillary metadata
             constructs.
 
@@ -5445,7 +5417,7 @@ may be accessed with the `nc_global_attributes`,
               derived in this case.
     
         squeeze: `bool`, optional
-            If `True` then size 1 collapsed axes are removed from the
+            If True then size 1 collapsed axes are removed from the
             output data array. By default the axes which are collapsed
             are retained in the result's data array.
     
@@ -6124,7 +6096,7 @@ may be accessed with the `nc_global_attributes`,
     
     
         inplace: `bool`, optional
-            If `True` then do the operation in-place and return `None`.
+            If True then do the operation in-place and return `None`.
     
         kwargs: deprecated at version 3.0.0
     
@@ -6135,7 +6107,7 @@ may be accessed with the `nc_global_attributes`,
      
         `Field` or `numpy.ndarray`
              The collapsed field. Alternatively, if the *regroup*
-             parameter is `True` then a numpy array is returned.
+             parameter is True then a `numpy` array is returned.
 
     **Examples:**
 
@@ -6910,7 +6882,7 @@ may be accessed with the `nc_global_attributes`,
                 As for the *group_by* parameter of the `collapse` method.
         
             time_interval: `bool`
-                If `True` then then return a tuple of date-time
+                If True then then return a tuple of date-time
                 objects, rather than a tuple of `Data` objects.
         
         :Returns:
@@ -7872,7 +7844,7 @@ may be accessed with the `nc_global_attributes`,
             slowest varying position.
     
         inplace: `bool`, optional
-            If `True` then do the operation in-place and return `None`.
+            If True then do the operation in-place and return `None`.
     
     :Returns:
     
@@ -8487,14 +8459,14 @@ may be accessed with the `nc_global_attributes`,
               ``axes=[1, 0]``
     
         set_axes: `bool`, optional
-            If `False` then do not set the domain axes constructs that
+            If False then do not set the domain axes constructs that
             are spanned by the data, even if the *axes* parameter has
             been set. By default the axes are set either according to
             the *axes* parameter, or an attempt will be made to assign
             existing domain axis constructs to the data.
     
         copy: `bool`, optional
-            If `True` then set a copy of the data. By default the data
+            If True then set a copy of the data. By default the data
             are not copied.
        
     :Returns:
@@ -8951,14 +8923,14 @@ may be accessed with the `nc_global_attributes`,
               the and the next three points.
     
         update_bounds: `bool`, optional
-            If `False` then the bounds of a dimension coordinate
+            If False then the bounds of a dimension coordinate
             construct that spans the convolved axis are not
             altered. By default, the bounds of a dimension coordinate
             construct that spans the convolved axis are updated to
             reflect the width and origin of the window.
     
         inplace: `bool`, optional
-            If `True` then do the operation in-place and return `None`.
+            If True then do the operation in-place and return `None`.
     
         i: deprecated at version 3.0.0
             Use the *inplace* parameter instead.
@@ -9134,13 +9106,13 @@ may be accessed with the `nc_global_attributes`,
               ``identity='ncvar%areacello'``
     
         full_domain: `bool`, optional
-            If `False` then do not create a domain, other than domain
+            If False then do not create a domain, other than domain
             axis constructs, for the new field construct. By default
             as much of the domain as possible is copied to the new
             field construct.
     
         cellsize: `bool`, optional
-            If `True` then create a field construct from the selected
+            If True then create a field construct from the selected
             metadata construct's cell sizes.
     
     :Returns:	
@@ -9193,7 +9165,7 @@ may be accessed with the `nc_global_attributes`,
             If no axes are provided then all axes are flipped.
     
         inplace: `bool`, optional
-            If `True` then do the operation in-place and return `None`.
+            If True then do the operation in-place and return `None`.
     
         i: deprecated at version 3.0.0
             Use the *inplace* parameter instead.
@@ -9318,7 +9290,7 @@ may be accessed with the `nc_global_attributes`,
               30``.
     
         inplace: `bool`, optional
-            If `True` then do the operation in-place and return `None`.
+            If True then do the operation in-place and return `None`.
     
         dry_run: `bool`, optional
             Return a dictionary of parameters which describe the
@@ -9658,7 +9630,7 @@ may be accessed with the `nc_global_attributes`,
             If no axes are provided then all size-1 axes are squeezed.
 
         inplace: `bool`, optional
-            If `True` then do the operation in-place and return `None`.
+            If True then do the operation in-place and return `None`.
     
         i: deprecated at version 3.0.0
             Use the *inplace* parameter instead.
@@ -9733,13 +9705,13 @@ may be accessed with the `nc_global_attributes`,
             is reversed.
    
         constructs: `bool`
-            If `True` then metadata constructs are also transposed so
+            If True then metadata constructs are also transposed so
             that their axes are in the same relative order as in the
             tranposed data array of the field. By default metadata
             constructs are not altered.
     
         inplace: `bool`, optional
-            If `True` then do the operation in-place and return `None`.
+            If True then do the operation in-place and return `None`.
     
         items: deprecated at version 3.0.0
             Use the *constructs* parameter instead.
@@ -9791,41 +9763,40 @@ may be accessed with the `nc_global_attributes`,
         # Transpose the field's data array
         return super().transpose(iaxes, constructs=constructs,
                                  inplace=inplace)
-    #--- End: def
 
-    # 1
+
     def unsqueeze(self, inplace=False, i=False, axes=None, **kwargs):
         '''Insert size 1 axes into the data array.
 
-All size 1 domain axes which are not spanned by the field's data array
-are inserted.
-
-The axes are inserted into the slowest varying data array positions.
-
-.. seealso:: `flip`, `insert_dimension`, `squeeze`, `transpose`
-
-:Parameters:
-
-    inplace: `bool`, optional
-        If `True` then do the operation in-place and return `None`.
-
-    i: deprecated at version 3.0.0
-        Use the *inplace* parameter instead.
-
-    axes: deprecated at version 3.0.0
-
-    kwargs: deprecated at version 3.0.0
-
-:Returns:
-
-    `Field` or `None`
-        The field construct with size-1 axes inserted in its data, or
-        `None` of the operation was in-place.
-
-**Examples:**
-
->>> g = f.unsqueeze()
->>> f.unsqueeze(['dim2'], inplace=True)
+    All size 1 domain axes which are not spanned by the field's data
+    array are inserted.
+    
+    The axes are inserted into the slowest varying data array positions.
+    
+    .. seealso:: `flip`, `insert_dimension`, `squeeze`, `transpose`
+    
+    :Parameters:
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+        i: deprecated at version 3.0.0
+            Use the *inplace* parameter instead.
+    
+        axes: deprecated at version 3.0.0
+    
+        kwargs: deprecated at version 3.0.0
+    
+    :Returns:
+    
+        `Field` or `None`
+            The field construct with size-1 axes inserted in its data,
+            or `None` of the operation was in-place.
+    
+    **Examples:**
+    
+    >>> g = f.unsqueeze()
+    >>> f.unsqueeze(['dim2'], inplace=True)
 
         '''
         if i:
@@ -9854,7 +9825,7 @@ The axes are inserted into the slowest varying data array positions.
         if inplace:
             f = None
         return f
-    #--- End: def
+
 
     def auxiliary_coordinate(self, identity, default=ValueError(),
                              key=False):
@@ -9862,7 +9833,7 @@ The axes are inserted into the slowest varying data array positions.
 
     .. versionadded:: 3.0.0
     
-    .. seealso:: TODO
+    .. seealso:: `construct`, `dimension_coordinate`
     
     :Parameters:
     
@@ -9931,7 +9902,7 @@ The axes are inserted into the slowest varying data array positions.
               ``identity=0``
     
         key: `bool`, optional
-            If `True` then return the selected construct key. By
+            If True then return the selected construct key. By
             default the construct itself is returned.
     
         default: optional
@@ -10048,7 +10019,7 @@ The axes are inserted into the slowest varying data array positions.
               ``identity=0``
     
         key: `bool`, optional
-            If `True` then return the selected construct key. By
+            If True then return the selected construct key. By
             default the construct itself is returned.
     
         default: optional
@@ -10149,7 +10120,7 @@ The axes are inserted into the slowest varying data array positions.
               ``identity=0``
     
         key: `bool`, optional
-            If `True` then return the selected construct key. By
+            If True then return the selected construct key. By
             default the construct itself is returned.
     
         default: optional
@@ -10239,7 +10210,7 @@ The axes are inserted into the slowest varying data array positions.
               ``identity=0``
     
         key: `bool`, optional
-            If `True` then return the selected construct key. By
+            If True then return the selected construct key. By
             default the construct itself is returned.
     
         default: optional
@@ -10344,7 +10315,7 @@ The axes are inserted into the slowest varying data array positions.
               ``identity='ncdim%y'``
     
         key: `bool`, optional
-            If `True` then return the selected construct key. By
+            If True then return the selected construct key. By
             default the construct itself is returned.
     
         default: optional  
@@ -10444,7 +10415,7 @@ The axes are inserted into the slowest varying data array positions.
               ``identity='ncvar%lat_lon'``
     
         key: `bool`, optional
-            If `True` then return the selected construct key. By
+            If True then return the selected construct key. By
             default the construct itself is returned.
     
         default: optional
@@ -10550,7 +10521,7 @@ The axes are inserted into the slowest varying data array positions.
               ``identity=0``
     
         key: `bool`, optional
-            If `True` then return the selected construct key. By
+            If True then return the selected construct key. By
             default the construct itself is returned.
     
         default: optional
@@ -10653,7 +10624,7 @@ The axes are inserted into the slowest varying data array positions.
               ``identity='ncdim%y'``
     
         key: `bool, optional
-            If `True` then return the selected construct key. By default
+            If True then return the selected construct key. By default
             the construct itself is returned.
     
         default: optional
@@ -10751,7 +10722,7 @@ The axes are inserted into the slowest varying data array positions.
               ``identity=2``
     
         key: `bool, optional
-            If `True` then return the selected construct key. By
+            If True then return the selected construct key. By
             default the construct itself is returned.
     
         default: optional
@@ -10793,6 +10764,100 @@ The axes are inserted into the slowest varying data array positions.
             return da_key
 
         return self.constructs[da_key]
+
+
+    def domain_axis_position(self, identity):
+        '''Return the position in the data of a domain axis construct.
+
+    .. versionadded:: 3.0.0
+    
+    .. seealso:: `domain_axis`
+    
+    :Parameters:
+    
+        identity:
+           Select the domain axis construct by one of:
+    
+              * An identity or key of a 1-d coordinate construct that
+                whose data spans the domain axis construct.
+    
+              * A domain axis construct identity or key.
+    
+              * The position of the domain axis construct in the field
+                construct's data.
+    
+            A construct identity is specified by a string
+            (e.g. ``'latitude'``, ``'long_name=time'``,
+            ``'ncvar%lat'``, etc.); or a compiled regular expression
+            (e.g. ``re.compile('^atmosphere')``) that selects the
+            relevant constructs whose identities match via
+            `re.search`.
+    
+            Each construct has a number of identities, and is selected
+            if any of them match any of those provided. A construct's
+            identities are those returned by its `!identities`
+            method. In the following example, the construct ``x`` has
+            six identities:
+    
+               >>> x.identities()
+               ['time', 'long_name=Time', 'foo=bar', 'standard_name=time', 'ncvar%t', 'T']
+    
+            A construct key may optionally have the ``'key%'``
+            prefix. For example ``'dimensioncoordinate2'`` and
+            ``'key%dimensioncoordinate2'`` are both acceptable keys.
+    
+            A position of a domain axis construct in the field
+            construct's data is specified by an integer index.
+    
+            Note that in the output of a `print` call or `!dump`
+            method, a construct is always described by one of its
+            identities, and so this description may always be used as
+            an *identity* argument.
+            
+            *Parameter example:*
+              ``identity='long_name=Latitude'``
+    
+            *Parameter example:*
+              ``identity='dimensioncoordinate1'``
+    
+            *Parameter example:*
+              ``identity='domainaxis2'``
+    
+            *Parameter example:*
+              ``identity='key%domainaxis2'``
+    
+            *Parameter example:*
+              ``identity='ncdim%y'``
+    
+            *Parameter example:*
+              ``identity=2``
+    
+    :Returns:
+    
+        `int`
+            The position in the field construct's dat of the selected
+            domain axis construct.
+    
+    **Examples:**
+    
+    >>> f
+    <CF Field: air_temperature(time(12), latitude(64), longitude(128)) K>
+    >>> f.get_data_axes()        
+    ('domainaxis0', 'domainaxis1', 'domainaxis2')
+    >>> f.domain_axis_position('T')
+    0    
+    >>> f.domain_axis_position('latitude')
+    1
+    >>> f.domain_axis_position('domainaxis1')
+    1
+    >>> f.domain_axis_position(2)
+    2
+    >>> f.domain_axis_position(-2)
+    1
+
+        '''
+        key = self.domain_axis(identity, key=True)
+        return self.get_data_axes().index(key)
 
 
     def axes_names(self, *identities, **kwargs):
@@ -10995,14 +11060,14 @@ The axes are inserted into the slowest varying data array positions.
               ``axes=[1, 0]``
     
         set_axes: `bool`, optional
-            If `False` then do not set the domain axes constructs that
+            If False then do not set the domain axes constructs that
             are spanned by the data, even if the *axes* parameter has
             been set. By default the axes are set either according to
             the *axes* parameter, or an attempt will be made to assign
             existing domain axis constructs to the data.
     
         copy: `bool`, optional
-            If `True` then set a copy of the construct. By default the
+            If True then set a copy of the construct. By default the
             construct is not copied.
             
     :Returns:
@@ -11291,7 +11356,7 @@ The axes are inserted into the slowest varying data array positions.
            *identity* parameter.
 
         copy: `bool`, optional
-            If `True` then set a copy of the new construct. By default
+            If True then set a copy of the new construct. By default
             the construct is not copied.
     
     :Returns:
@@ -11346,7 +11411,7 @@ The axes are inserted into the slowest varying data array positions.
             to be rolled.
     
         inplace: `bool`, optional
-            If `True` then do the operation in-place and return `None`.
+            If True then do the operation in-place and return `None`.
     
         i: deprecated at version 3.0.0
             Use the *inplace* parameter instead.
@@ -11576,7 +11641,7 @@ The axes are inserted into the slowest varying data array positions.
               30 degrees of the equator to missing data.
     
         inplace: `bool`, optional
-            If `True` then do the operation in-place and return `None`.
+            If True then do the operation in-place and return `None`.
     
         i: deprecated at version 3.0.0
             Use the *inplace* parameter instead.
@@ -11775,48 +11840,48 @@ The axes are inserted into the slowest varying data array positions.
               Configure the type of subspace that is created. Zero or one
               of:
         
-                ==============  ==========================================
-                *argument*      Description
-                ==============  ==========================================
-                ``'compress'``  The default. Create the smallest possible
-                                subspace that contains the selected
-                                elements. As many non-selected elements
-                                are discarded as possible, meaning that
-                                the subspace may not form a contiguous
-                                block of the original field. The subspace
-                                may still contain non-selected elements, 
-                                which are set to missing data.
-                
-                ``'envelope'``  Create the smallest subspace that
-                                contains the selected elements and forms a
-                                contiguous block of the original
-                                field. Interior, non-selected elements are
-                                set to missing data.
-                
-                ``'full'``      Create a subspace that is the same size as
-                                the original field, but with all
-                                non-selected elements set to missing data.
-                ==============  ==========================================
+              ==============  ==========================================
+              *argument*      Description
+              ==============  ==========================================
+              ``'compress'``  The default. Create the smallest possible
+                              subspace that contains the selected
+                              elements. As many non-selected elements
+                              are discarded as possible, meaning that
+                              the subspace may not form a contiguous
+                              block of the original field. The subspace
+                              may still contain non-selected elements, 
+                              which are set to missing data.
+              
+              ``'envelope'``  Create the smallest subspace that
+                              contains the selected elements and forms a
+                              contiguous block of the original
+                              field. Interior, non-selected elements are
+                              set to missing data.
+              
+              ``'full'``      Create a subspace that is the same size as
+                              the original field, but with all
+                              non-selected elements set to missing data.
+              ==============  ==========================================
     
               In addition the following optional argument specifies how to
               interpret the keyword parameter names:
     
-                ==============  ==========================================
-                *argument*      Description
-                ==============  ==========================================
-                ``'exact'``     Keyword parameters names are not treated
-                                as abbreviations of item identities. By
-                                default, keyword parameters names are
-                                allowed to be abbreviations of item
-                                identities.
-                ==============  ==========================================
+              ==============  ==========================================
+              *argument*      Description
+              ==============  ==========================================
+              ``'exact'``     Keyword parameters names are not treated
+                              as abbreviations of item identities. By
+                              default, keyword parameters names are
+                              allowed to be abbreviations of item
+                              identities.
+              ==============  ==========================================
     
-                *Parameter example:*
-                  To create a subspace that is the same size as the
-                  original field, but with missing data at non-selected
-                  elements: ``f.subspace('full', **kwargs)``, where
-                  ``**kwargs`` are the positional parameters that define
-                  the selected elements.
+              *Parameter example:*
+                To create a subspace that is the same size as the
+                original field, but with missing data at non-selected
+                elements: ``f.subspace('full', **kwargs)``, where
+                ``**kwargs`` are the positional parameters that define
+                the selected elements.
         
           keyword parameters: *optional*
               Keyword parameter names identify items of the domain (such
@@ -11834,23 +11899,22 @@ The axes are inserted into the slowest varying data array positions.
               the field's `item` method, which is used to select a unique
               domain item. See `cf.Field.item` for details.
               
-                *Parameter example:*           
-                  The keyword ``lat`` will select the item returned by
-                  ``f.item(description='lat')``. See the *exact*
-                  positional argument.
+              *Parameter example:*           
+                The keyword ``lat`` will select the item returned by
+                ``f.item(description='lat')``. See the *exact*
+                positional argument.
       
-                *Parameter example:*           
-                  The keyword ``'T'`` will select the item returned by
-                  ``f.item(description='T')``.
+              *Parameter example:*           
+                The keyword ``'T'`` will select the item returned by
+                ``f.item(description='T')``.
       
-      
-                *Parameter example:*           
-                  The keyword ``'dim2'`` will select the item that has
-                  this internal identifier
-                  ``f.item(description='dim2')``. This can be useful in
-                  the absence of any more meaningful metadata. A full list
-                  of internal identifiers may be found with the field's
-                  `items` method.
+              *Parameter example:*           
+                The keyword ``'dim2'`` will select the item that has
+                this internal identifier
+                ``f.item(description='dim2')``. This can be useful in
+                the absence of any more meaningful metadata. A full list
+                of internal identifiers may be found with the field's
+                `items` method.
       
               **Keyword values**
     
@@ -11863,57 +11927,58 @@ The axes are inserted into the slowest varying data array positions.
               If the value is a `Query` object then then the query is
               applied to the item's data array to create the subspace.
     
-                *Parameter example:*
-                  To create a subspace for the northern hemisphere,
-                  assuming that there is a coordinate with identity
-                  "latitude": ``f.subspace(latitude=cf.ge(0))``
+              *Parameter example:*
+                To create a subspace for the northern hemisphere,
+                assuming that there is a coordinate with identity
+                "latitude": ``f.subspace(latitude=cf.ge(0))``
       
-                *Parameter example:*
-                  To create a subspace for the time 2018-08-27:
-                  ``f.subspace(T=cf.dteq('2018-08-27'))``
+              *Parameter example:*
+                To create a subspace for the time 2018-08-27:
+                ``f.subspace(T=cf.dteq('2018-08-27'))``
       
-                *Parameter example:*
-                  To create a subspace for the northern hemisphere,
-                  identifying the latitude coordinate by its long name:
-                  ``f.subspace(**{'long_name:latitude': cf.ge(0)})``. In
-                  this case it is necessary to use the ``**`` syntax
-                  because the ``:`` character is not allowed in keyword
-                  parameter names.
+              *Parameter example:*
+                To create a subspace for the northern hemisphere,
+                identifying the latitude coordinate by its long name:
+                ``f.subspace(**{'long_name:latitude': cf.ge(0)})``. In
+                this case it is necessary to use the ``**`` syntax
+                because the ``:`` character is not allowed in keyword
+                parameter names.
       
               If the value is a `list` of integers then these are used as
               the axis indices, without testing the item's data array.
       
-                *Parameter example:*
-                  To create a subspace using the first, third, fourth and
-                  last indices of the "X" axis: ``f.subspace(X=[0, 2, 3,
-                  -1])``.
+              *Parameter example:*
+                To create a subspace using the first, third, fourth
+                and last indices of the "X" axis: ``f.subspace(X=[0,
+                2, 3, -1])``.
       
               If the value is a `slice` object then it is used as the axis
               indices, without testing the item's data array.
       
-                *Parameter example:*
-                  To create a subspace from every even numbered index
-                  along the "Z" axis: ``f.subspace(Z=slice(0, None, 2))``.
+              *Parameter example:*
+                To create a subspace from every even numbered index
+                along the "Z" axis: ``f.subspace(Z=slice(0, None,
+                2))``.
       
               If the value is anything other thaqn a `Query`, `list` or
               `slice` object then, the subspace is defined by where the
               data array equals that value. I.e. ``f.subspace(name=x)`` is
               equivalent to ``f.subspace(name=cf.eq(x))``.
     
-                *Parameter example:*
-                  To create a subspace where latitude is 52 degrees north:
-                  ``f.subspace(latitude=52)``. Note that this assumes that
-                  the latitude coordinate are in units of degrees
-                  north. If this were not known, either of
-                  ``f.subspace(latitude=cf.Data(52, 'degrees_north'))``
-                  and ``f.subspace(latitude=cf.eq(52, 'degrees_north'))``
-                  would guarantee the correct result.
+              *Parameter example:*
+                To create a subspace where latitude is 52 degrees
+                north: ``f.subspace(latitude=52)``. Note that this
+                assumes that the latitude coordinate are in units of
+                degrees north. If this were not known, either of
+                ``f.subspace(latitude=cf.Data(52, 'degrees_north'))``
+                and ``f.subspace(latitude=cf.eq(52,
+                'degrees_north'))`` would guarantee the correct
+                result.
       
       :Returns:
     
-          `Field`
-              An independent field containing the subspace of the original
-              field.
+          `Field` An independent field containing the subspace of the
+              original field.
           
       **Multidimensional items**
     
@@ -12367,7 +12432,7 @@ The axes are inserted into the slowest varying data array positions.
     
     
         inplace: `bool`, optional
-            If `True` then do the operation in-place and return `None`.
+            If True then do the operation in-place and return `None`.
     
         i: deprecated at version 3.0.0
             Use the *inplace* parameter instead.
@@ -12882,7 +12947,7 @@ The axes are inserted into the slowest varying data array positions.
     
     
         inplace: `bool`, optional
-            If `True` then do the operation in-place and return `None`.
+            If True then do the operation in-place and return `None`.
     
         i: deprecated at version 3.0.0
             Use the *inplace* parameter instead.
@@ -13246,18 +13311,18 @@ The axes are inserted into the slowest varying data array positions.
             ``f.domain_axis('X'))`` is selected.
 
         wrap: `bool`, optional
-            If `True` then the boundary is wrapped around, otherwise the
+            If True then the boundary is wrapped around, otherwise the
             value of *one_sided_at_boundary* determines the boundary
             condition. If `None` then the cyclicity of the axis is
             autodetected.
     
         one_sided_at_boundary: `bool`, optional
-            If `True` then one-sided finite differences are used at the
+            If True then one-sided finite differences are used at the
             boundary, otherwise missing values are used.
     
     
         inplace: `bool`, optional
-            If `True` then do the operation in-place and return `None`.
+            If True then do the operation in-place and return `None`.
     
         i: deprecated at version 3.0.0
             Use the *inplace* parameter instead.
@@ -14442,7 +14507,7 @@ any units, then the units of the named item are assumed.
 #            value of *key* is ``lambda f: f.identity()``.
 #    
 #        reverse: `bool`, optional
-#            If set to `True`, then the field list elements are sorted
+#            If True, then the field list elements are sorted
 #            as if each comparison were reversed.
 #    
 #    :Returns:
@@ -14622,12 +14687,12 @@ any units, then the units of the named item are assumed.
 #            function.
 #    
 #        ignore_fill_value: `bool`, optional
-#            If `True` then the "_FillValue" and "missing_value"
+#            If True then the "_FillValue" and "missing_value"
 #            properties are omitted from the comparison, for the field
 #            construct and metadata constructs.
 #    
 #        verbose: `bool`, optional
-#            If `True` then print information about differences that lead
+#            If True then print information about differences that lead
 #            to inequality.
 #    
 #        ignore_properties: sequence of `str`, optional
@@ -14637,13 +14702,13 @@ any units, then the units of the named item are assumed.
 #            default.
 #    
 #        ignore_data_type: `bool`, optional
-#            If `True` then ignore the data types in all numerical
+#            If True then ignore the data types in all numerical
 #            comparisons. By default different numerical data types
 #            imply inequality, regardless of whether the elements are
 #            within the tolerance for equality.
 #    
 #        ignore_compression: `bool`, optional
-#            If `True` then any compression applied to underlying arrays
+#            If True then any compression applied to underlying arrays
 #            is ignored and only uncompressed arrays are tested for
 #            equality. By default the compression type and, if
 #            applicable, the underlying compressed arrays must be the
@@ -15112,7 +15177,7 @@ any units, then the units of the named item are assumed.
 #            ``Units('m s-1')``, etc.).
 #            
 #        exact: `bool`, optional
-#            If `False` then select field constructs whose units are
+#            If False then select field constructs whose units are
 #            equivalent to any of those given by *units*. For example,
 #            metres and are equivelent to kilometres. By default, field
 #            constructs whose units are exactly one of those given by
