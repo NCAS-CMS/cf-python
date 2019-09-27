@@ -103,6 +103,23 @@ dataset. It is not strict about CF-compliance, however, so that
 partially conformant datasets may be ingested from existing datasets
 and written to new datasets.This is so that datasets which are
 partially conformant may nonetheless be modified in memory.</p>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text"><em>A simple example of reading a field construct from a
+file and inspecting it.</em></span><a class="headerlink" href="#id3" title="Permalink to this code">¶</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="go">Field: air_temperature (ncvar%tas)</span>
+<span class="go">----------------------------------</span>
+<span class="go">Data            : air_temperature(time(12), latitude(64), longitude(128)) K</span>
+<span class="go">Cell methods    : time(12): mean (interval: 1.0 month)</span>
+<span class="go">Dimension coords: time(12) = [0450-11-16 00:00:00, ..., 0451-10-16 12:00:00] noleap</span>
+<span class="go">                : latitude(64) = [-87.86380004882812, ..., 87.86380004882812] degrees_north</span>
+<span class="go">                : longitude(128) = [0.0, ..., 357.1875] degrees_east</span>
+<span class="go">                : height(1) = [2.0] m</span>
+</pre></div>
+</div>
+</div>
 <p>The cf package can:</p>
 <ul class="simple">
 <li>read field constructs from netCDF, PP and UM datasets,</li>
@@ -133,7 +150,7 @@ constructs are available with the <a class="reference external" href="http://ajh
 seprately to cf).</p>
 <p>See the <a class="reference external" href="http://ajheaps.github.io/cf-plot/gallery.html">cfplot gallery</a> for the wide range
 range plotting possibilities with example code.</p>
-<div class="figure" id="id3">
+<div class="figure" id="id4">
 <img alt="_images/cfplot_example.png" src="_images/cfplot_example.png" />
 <p class="caption"><span class="caption-text"><em>Example output of cfplot displaying a cf field construct.</em></span></p>
 </div>

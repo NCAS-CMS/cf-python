@@ -33,7 +33,7 @@ def read(files, external=None, verbose=False, warnings=False,
          select_options=None, follow_symlinks=False):
     '''Read field constructs from netCDF, PP or UM fields files.
 
-    Files may be on disk or on a OPeNDAP server.
+    Files may be on disk or on an OPeNDAP server.
     
     Any amount of any combination of CF-netCDF and CFA-netCDF files
     (or URLs if DAP access is enabled), Met Office (UK) PP files and
