@@ -836,6 +836,13 @@ may be accessed with the `nc_global_attributes`,
         # Still here? Then combine the field with another field
         # ============================================================
 
+        units = self.Units
+        sn = self.get_property('standasrd_name', None)
+        ln = self.get_property('long_name', None)
+
+        other_sn = other.get_property('standard_name', None)
+        other_ln = other.get_property('long_name', None)
+            
         # ------------------------------------------------------------
         # Analyse each domain
         # ------------------------------------------------------------
@@ -1285,6 +1292,7 @@ may be accessed with the `nc_global_attributes`,
             print('3: repr(field1) =', repr(field1)) # pragma: no cover
 
         new_data0 = field0.data._binary_operation(field1.data, method)
+#        new_data0 = super(Field, field0)._binary_operation(field1, method).data
         
         if _debug:
             print('3: new_data0.shape =', new_data0.shape) # pragma: no cover
@@ -1558,7 +1566,30 @@ may be accessed with the `nc_global_attributes`,
             field0.set_construct(new_ref0, copy=False)
         
         field0.set_data(new_data0, set_axes=False, copy=False)
-        
+
+        # TODO
+        # Warning: This code is replicated in PropertiesData
+        if sn != other_sn:
+            if sn is not None and other_sn is not None:
+                field0.del_property('standard_name', None)
+                field0.del_property('long_name', None)
+            elif other_sn is not None:
+                field0.set_property('standard_name', other_sn)
+                if other_ln is None:
+                    field0.del_property('long_name', None)
+                else:
+                    field0.set_property('long_name', other_ln)
+        elif ln is None and other_ln is not None:
+            field0.set_property('long_name', other_ln)
+
+        # TODO
+        # Warning: This code is replicated in PropertiesData
+        new_units = field0.Units
+        if (not units.equivalent(new_units) and
+            not (units.isreftime and new_units.isreftime)):
+            field0.del_property('standard_name', None)
+            field0.del_property('long_name', None)   
+         
         return field0
 
 

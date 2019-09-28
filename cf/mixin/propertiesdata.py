@@ -643,6 +643,7 @@ class PropertiesData(Properties):
     >>> w = u._binary_operation(u, '__add__')
     >>> w = u._binary_operation(v, '__lt__')
     >>> u._binary_operation(2, '__imul__')
+    >>> u._binary_operation(v, '__idiv__')
 
         '''
         data = self.get_data(None)
@@ -653,9 +654,20 @@ class PropertiesData(Properties):
 
         inplace = method[2] == 'i'
 
+        units = self.Units
+        sn = self.get_property('standasrd_name', None)
+        ln = self.get_property('long_name', None)
+
+        try:
+            other_sn = y.get_property('standard_name', None)
+            other_ln = y.get_property('long_name', None)
+        except AttributeError:
+            other_sn = None
+            other_ln = None
+            
         if isinstance(y, self.__class__):
             y = y.data
-
+        
         if not inplace:
             new = self.copy() #data=False) TODO
             new_data = data._binary_operation(y, method)
@@ -664,6 +676,26 @@ class PropertiesData(Properties):
             new = self
             new.data._binary_operation(y, method)
 
+        new_units = new.Units
+#        print (sn, other_sn, ln, other_ln)
+        if sn != other_sn:
+            if sn is not None and other_sn is not None:
+                new.del_property('standard_name', None)
+                new.del_property('long_name', None)
+            elif other_sn is not None:
+                new.set_property('standard_name', other_sn)
+                if other_ln is None:
+                    new.del_property('long_name', None)
+                else:
+                    new.set_property('long_name', other_ln)
+        elif ln is None and other_ln is not None:
+            new.set_property('long_name', other_ln)
+        
+        if (not units.equivalent(new_units) and
+            not (units.isreftime and new_units.isreftime)):
+            new.del_property('standard_name', None)
+            new.del_property('long_name', None)   
+        
         return new
 
 
