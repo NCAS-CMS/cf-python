@@ -1,7 +1,0 @@
-cf.hashlib_md5
-==============
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. autofunction:: cf.hashlib_md5

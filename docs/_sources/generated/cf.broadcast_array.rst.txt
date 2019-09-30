@@ -1,7 +1,0 @@
-cf.broadcast_array
-==================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. autofunction:: cf.broadcast_array

@@ -891,9 +891,14 @@ False
         if inplace:
             c = self
     
+        c.dtype = numpy_result_type(c.dtype, period.dtype)        
+
         b = c.get_bounds(None)
         bounds_data = b.get_data(None)
- 
+        if bounds_data is not None:
+            b.dtype = numpy_result_type(bounds_data.dtype, period.dtype)
+            bounds_data = b.get_data(None)
+        
         if direction:
             # Increasing
             c[:shift] -= period

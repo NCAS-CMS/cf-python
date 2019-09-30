@@ -1,7 +1,0 @@
-cf.AuxiliaryCoordinate.del_part_node_count
-==========================================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.AuxiliaryCoordinate.del_part_node_count

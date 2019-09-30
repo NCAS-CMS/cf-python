@@ -1,7 +1,0 @@
-cf.List.__lt__
-==============
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.List.__lt__

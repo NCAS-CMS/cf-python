@@ -1,7 +1,0 @@
-cf.cr_default_values
-====================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. autofunction:: cf.cr_default_values

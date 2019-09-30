@@ -1,7 +1,0 @@
-cf.AuxiliaryCoordinate.has_node_count
-=====================================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.AuxiliaryCoordinate.has_node_count

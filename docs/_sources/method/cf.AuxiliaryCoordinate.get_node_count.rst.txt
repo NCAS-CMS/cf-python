@@ -1,7 +1,0 @@
-cf.AuxiliaryCoordinate.get_node_count
-=====================================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.AuxiliaryCoordinate.get_node_count

@@ -1,7 +1,0 @@
-cf.AuxiliaryCoordinate.datetime_array
-=====================================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.AuxiliaryCoordinate.datetime_array

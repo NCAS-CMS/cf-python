@@ -1,7 +1,0 @@
-cf.nomask
-=========
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. autofunction:: cf.nomask

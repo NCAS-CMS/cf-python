@@ -1,7 +1,0 @@
-cf.AuxiliaryCoordinate.positive
-===============================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.AuxiliaryCoordinate.positive

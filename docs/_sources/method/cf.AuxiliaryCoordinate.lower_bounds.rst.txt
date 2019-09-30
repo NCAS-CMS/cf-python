@@ -1,7 +1,0 @@
-cf.AuxiliaryCoordinate.lower_bounds
-===================================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.AuxiliaryCoordinate.lower_bounds

@@ -1,7 +1,0 @@
-cf.AuxiliaryCoordinate.direction
-================================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.AuxiliaryCoordinate.direction

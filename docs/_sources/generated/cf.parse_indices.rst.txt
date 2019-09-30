@@ -1,7 +1,0 @@
-cf.parse_indices
-================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. autofunction:: cf.parse_indices

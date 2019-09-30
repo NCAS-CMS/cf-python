@@ -1,7 +1,0 @@
-cf.field
-========
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. autofunction:: cf.field

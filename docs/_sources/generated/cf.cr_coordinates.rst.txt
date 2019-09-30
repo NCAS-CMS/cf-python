@@ -1,7 +1,0 @@
-cf.cr_coordinates
-=================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. autofunction:: cf.cr_coordinates

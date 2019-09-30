@@ -1,7 +1,0 @@
-cf.AuxiliaryCoordinate.interior_ring
-====================================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.AuxiliaryCoordinate.interior_ring

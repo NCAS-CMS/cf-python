@@ -1,7 +1,0 @@
-cf.FieldList.__getitem__
-========================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.FieldList.__getitem__

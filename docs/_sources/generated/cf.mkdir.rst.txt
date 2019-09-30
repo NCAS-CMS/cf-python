@@ -1,7 +1,0 @@
-cf.mkdir
-========
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. autofunction:: cf.mkdir

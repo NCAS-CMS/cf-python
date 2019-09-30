@@ -1,7 +1,0 @@
-cf.DimensionCoordinate.direction
-================================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. autoattribute:: cf.DimensionCoordinate.direction

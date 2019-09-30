@@ -1,7 +1,0 @@
-cf.DimensionCoordinate.decreasing
-=================================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.DimensionCoordinate.decreasing

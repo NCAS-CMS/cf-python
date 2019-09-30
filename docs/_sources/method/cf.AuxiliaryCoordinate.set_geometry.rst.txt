@@ -1,7 +1,0 @@
-cf.AuxiliaryCoordinate.set_geometry
-===================================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.AuxiliaryCoordinate.set_geometry
