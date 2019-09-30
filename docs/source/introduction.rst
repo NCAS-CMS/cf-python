@@ -100,17 +100,17 @@ The cf package can:
 -----------------
 
 Powerful, flexible, and very simple to produce visualizations of field
-constructs are available with the `cfplot package
+constructs are available with the `cf-plot package
 <http://ajheaps.github.io/cf-plot>`_ (that needs to be installed
 seprately to cf).
 
-See the `cfplot gallery
+See the `cf-plot gallery
 <http://ajheaps.github.io/cf-plot/gallery.html>`_ for the wide range
 range plotting possibilities with example code.
 
 .. figure:: images/cfplot_example.png
 
-   *Example output of cfplot displaying a cf field construct.*
+   *Example output of cf-plot displaying a cf field construct.*
 
 .. [#cfdm] Hassell, D., Gregory, J., Blower, J., Lawrence, B. N., and
            Taylor, K. E.: A data model of the Climate and Forecast

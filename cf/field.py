@@ -6549,7 +6549,6 @@ may be accessed with the `nc_global_attributes`,
 
                 bounds = Bounds(data=Data([bounds_data], units=units))
 
-#                dim.insert_data(data, bounds=bounds, copy=False)
                 dim.set_data(data, copy=False)
                 dim.set_bounds(bounds, copy=False)
             #--- End: for
@@ -6557,7 +6556,6 @@ may be accessed with the `nc_global_attributes`,
             # --------------------------------------------------------
             # Update the cell methods
             # --------------------------------------------------------
-#            if kwargs.get('_update_cell_methods', True):
             if _update_cell_methods:
                 f._collapse_update_cell_methods(method,
                                                 collapse_axes=collapse_axes,
@@ -9019,10 +9017,9 @@ may be accessed with the `nc_global_attributes`,
             if masked or (mode == 'constant' and numpy_isnan(cval)):
                 with numpy_errstate(invalid='ignore'):
                     output_array = numpy_ma_masked_invalid(output_array)
-           #--- End: if
+            #--- End: if
             
             sections[k] = Data(output_array, units=self.Units)
-        #--- End: for
 
         # Glue the sections back together again
         new_data = Data.reconstruct_sectioned_data(sections)
@@ -9037,30 +9034,28 @@ may be accessed with the `nc_global_attributes`,
         f.set_data(new_data, axes=self.get_data_axes(), copy=False)
 
         # Update the bounds of the convolution axis if necessary
-        if update_bounds:
-            coord = f.dimension_coordinate(axis_key, default=None)
-            if coord is not None and coord.has_bounds():
-                old_bounds = coord.bounds.array
-                length = old_bounds.shape[0]
-                new_bounds = numpy_empty((length, 2))
-                len_weights = len(weights)
-                lower_offset = len_weights//2 + origin
-                upper_offset = len_weights - 1 - lower_offset
-                if mode == 'wrap':
-                    if coord.direction():
-                        new_bounds[:, 0] = coord.roll(0,  upper_offset).bounds.array[:, 0]
-                        new_bounds[:, 1] = coord.roll(0, -lower_offset).bounds.array[:, 1] + coord.period()
-                    else:
-                        new_bounds[:, 0] = coord.roll(0,  upper_offset).bounds.array[:, 0] + 2*coord.period()
-                        new_bounds[:, 1] = coord.roll(0, -lower_offset).bounds.array[:, 1] + coord.period()
+        coord = f.dimension_coordinate(axis_key, default=None)
+        if coord is not None and coord.has_bounds():
+            old_bounds = coord.bounds.array
+            length = old_bounds.shape[0]
+            new_bounds = numpy_empty((length, 2))
+            len_weights = len(weights)
+            lower_offset = len_weights//2 + origin
+            upper_offset = len_weights - 1 - lower_offset
+            if mode == 'wrap':
+                if coord.direction():
+                    new_bounds[:, 0] = coord.roll(0,  upper_offset).bounds.array[:, 0]
+                    new_bounds[:, 1] = coord.roll(0, -lower_offset).bounds.array[:, 1] + coord.period()
                 else:
-                    new_bounds[upper_offset:length, 0] = old_bounds[0:length - upper_offset, 0]
-                    new_bounds[0:upper_offset, 0] = old_bounds[0, 0]
-                    new_bounds[0:length - lower_offset, 1] = old_bounds[lower_offset:length, 1]
-                    new_bounds[length - lower_offset:length, 1] = old_bounds[length - 1, 1]
-
-                coord.set_bounds(Bounds(data=Data(new_bounds, units=coord.Units)))
-        #--- End: if
+                    new_bounds[:, 0] = coord.roll(0,  upper_offset).bounds.array[:, 0] + 2*coord.period()
+                    new_bounds[:, 1] = coord.roll(0, -lower_offset).bounds.array[:, 1] + coord.period()
+            else:
+                new_bounds[upper_offset:length, 0] = old_bounds[0:length - upper_offset, 0]
+                new_bounds[0:upper_offset, 0] = old_bounds[0, 0]
+                new_bounds[0:length - lower_offset, 1] = old_bounds[lower_offset:length, 1]
+                new_bounds[length - lower_offset:length, 1] = old_bounds[length - 1, 1]
+                
+            coord.set_bounds(Bounds(data=Data(new_bounds, units=coord.Units)))
 
         if inplace:
             f = None
@@ -9179,8 +9174,13 @@ may be accessed with the `nc_global_attributes`,
     def cumsum(self, axis, masked_as_zero=False, inplace=False):
         '''Return the field cumulatively summed along the given axis.
         
+    The cell bounds (if any) of the summed axis are updated, and a
+    cell method construct is added.
+
     .. versionadded:: 3.0.0
         
+    .. seealso:: `collapse`, `convolution_filter`
+
     :Parameters:
     
         axis:
@@ -9245,6 +9245,16 @@ may be accessed with the `nc_global_attributes`,
 
         # Insert filtered data into new field
         f.set_data(new_data, set_axes=False, copy=False)
+
+        if self.domain_axis(axis_key).get_size() > 1:
+            # Update the bounds of the summed axis if necessary
+            coord = f.dimension_coordinate(axis_key, default=None)
+            if coord is not None and coord.has_bounds():
+                coord.bounds[:, 0] = coord.bounds[0, 0]
+
+            # Update the cell methods
+            cell_method = CellMethod(axes=[axis_key], method='sum')
+            f.set_construct(cell_method, copy=False)
 
         if inplace:
             f = None

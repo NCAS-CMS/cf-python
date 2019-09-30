@@ -521,21 +521,21 @@ files <External-variables-with-cfa>`.
 -----------------
 
 Powerful, flexible, and very simple to produce visualizations of field
-constructs are available with the `cfplot package
+constructs are available with the `cf-plot package
 <http://ajheaps.github.io/cf-plot>`_ (that needs to be installed
 separately to cf).
 
 .. figure:: images/cfplot_example.png
 
-   *Example output of cfplot displaying a cf field construct.*
+   *Example output of cf-plot displaying a cf field construct.*
 
-See the `cfplot gallery
+See the `cf-plot gallery
 <http://ajheaps.github.io/cf-plot/gallery.html>`_ for the wide range
 of plotting possibilities, with example code. These include, but are
 not limited to:
 
 * Cylindrical, polar stereographic and other plane projections
-* Latitude or longitude vs. height
+* Latitude or longitude vs. height or pressure
 * Hovmuller
 * Vectors
 * Stipples
@@ -5495,6 +5495,8 @@ method constructs.
                    : longitude(8) = [22.5, ..., 337.5] degrees_east
                    : air_pressure(1) = [850.0] hPa
 
+
+		   
 ----
 
 .. _Regridding:
