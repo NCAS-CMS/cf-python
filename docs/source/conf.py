@@ -462,12 +462,11 @@ def linkcode_resolve(domain, info):
     if online_source_code:
 #        commit = '11dddff56c31c24d86c3b83995e503989f90911b'
 #        commit = 'master'
-        commit = 'v'+release
-        print("https://github.com/NCAS-CMS/cf/blob/{0}/cf/{1}{2}".format(
-            commit, fn, linespec))
-
-        return "https://github.com/NCAS-CMS/cf/blob/{0}/cf/{1}{2}".format(
-            commit, fn, linespec)
+        version = 'v'+release
+        url = "https://github.com/NCAS-CMS/cf-python/blob/{0}/cf/{1}{2}".format(
+            version, fn, linespec)
+        print(url)
+        return url
     else:
         # Point to local source code relative to this directory
         return "../../../cf/{0}{1}".format(fn, linespec)

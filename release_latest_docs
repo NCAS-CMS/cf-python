@@ -7,6 +7,11 @@ if [[ ! $1 ]] ; then
   exit 1
 fi
 
+rm_doctrees=true
+if [[ $2 ]] ; then 
+  rm_doctrees=false
+fi
+
 version=$1
 
 # Make zip file
@@ -18,7 +23,9 @@ cd -
 # Make the latest docs    
 # --------------------------------------------------------------------
 cd docs
-rm -fr .doctrees
+if [[ $rm_doctrees = "true" ]] ;
+   rm -fr .doctrees
+fi
 make html .
 
 rm -fr _downloads/*
