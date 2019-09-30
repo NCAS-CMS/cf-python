@@ -5997,19 +5997,19 @@ during operations.
 Arthmetical and relational operations with insufficent metadata
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-For :ref:`arithmetical <Arithmetical-operations>` and :ref:`relational
-<Relational-operations>` operations, if both operands are field
-constructs but there is insufficent metadata to create a mapping of
-physically compatible dimensions, then operations may applied to the
-field construct's data instead. The resulting data may then be
-inserted into a copy of one of the field constructs, either with the
+If both operands of :ref:`arithmetical <Arithmetical-operations>` or
+:ref:`relational <Relational-operations>` operations are field
+constructs with insufficent metadata to create a mapping of physically
+compatible dimensions, then operations may applied to the field
+construct's data instead. The resulting data may then be inserted into
+a copy of one of the field constructs, either with the
 `~cf.Field.set_data` method of the field construct, or with
 :ref:`indexed assignment <Assignment-by-index>`. The latter technique
 allows broadcasting, but the former one does not.
 
-In this case it is **assumed, and not checked**\ , that the dimensions
-of both `~cf.Data` instance operands are already in the correct order
-for physically meaningful broadcasting to occur.
+In this case it is assumed, and not checked, that the dimensions of
+both `~cf.Data` instance operands are already in the correct order for
+physically meaningful broadcasting to occur.
 
 .. code-block:: python
   :caption: *Operate on the data and use 'set_data' to put the
