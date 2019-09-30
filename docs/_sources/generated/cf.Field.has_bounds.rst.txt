@@ -1,0 +1,7 @@
+cf.Field.has_bounds
+===================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.Field.has_bounds

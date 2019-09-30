@@ -9,7 +9,7 @@ fi
 
 rm_doctrees=true
 if [[ $2 ]] ; then 
-  rm_doctrees=false
+  rm_doctrees=$2
 fi
 
 version=$1
@@ -23,7 +23,7 @@ cd -
 # Make the latest docs    
 # --------------------------------------------------------------------
 cd docs
-if [[ $rm_doctrees = "true" ]] ;
+if [[ $rm_doctrees = "true" ]] ; then
    rm -fr .doctrees
 fi
 make html .

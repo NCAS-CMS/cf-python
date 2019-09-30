@@ -1,0 +1,7 @@
+cf.FieldAncillary.trunc
+=======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.FieldAncillary.trunc

@@ -1,0 +1,7 @@
+cf.Query.attr
+=============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.Query.attr

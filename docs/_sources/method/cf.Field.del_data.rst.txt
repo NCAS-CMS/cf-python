@@ -1,0 +1,7 @@
+cf.Field.del_data
+=================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Field.del_data

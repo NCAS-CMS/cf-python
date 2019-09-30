@@ -1,0 +1,7 @@
+cf.SET_PERFORMANCE
+==================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autofunction:: cf.SET_PERFORMANCE

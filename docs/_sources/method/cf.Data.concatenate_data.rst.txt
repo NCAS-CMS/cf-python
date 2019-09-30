@@ -1,0 +1,7 @@
+cf.Data.concatenate_data
+========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Data.concatenate_data

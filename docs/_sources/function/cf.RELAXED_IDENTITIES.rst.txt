@@ -1,0 +1,7 @@
+cf.RELAXED_IDENTITIES
+=====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autofunction:: cf.RELAXED_IDENTITIES

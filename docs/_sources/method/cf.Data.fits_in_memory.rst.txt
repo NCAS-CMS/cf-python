@@ -1,0 +1,7 @@
+cf.Data.fits_in_memory
+======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Data.fits_in_memory

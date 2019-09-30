@@ -1,0 +1,7 @@
+cf.CellMeasure.override_calendar
+================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CellMeasure.override_calendar
