@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.0b12</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.0b13</a></b></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -90,13 +90,15 @@
 <h1>cf.FieldAncillary.sin<a class="headerlink" href="#cf-fieldancillary-sin" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.FieldAncillary.sin">
-<code class="descclassname">FieldAncillary.</code><code class="descname">sin</code><span class="sig-paren">(</span><em>inplace=False</em>, <em>i=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b12/cf/mixin/propertiesdata.py#L3556"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.FieldAncillary.sin" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">FieldAncillary.</code><code class="descname">sin</code><span class="sig-paren">(</span><em>inplace=False</em>, <em>i=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b13/cf/mixin/propertiesdata.py#L3550"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.FieldAncillary.sin" title="Permalink to this definition">¶</a></dt>
 <dd><p>The trigonometric sine of the data, element-wise.</p>
 <p>Units are accounted for in the calculation. For example, the the
 sine of 90 degrees_east is 1.0, as is the sine of 1.57079632
 radians. If the units are not equivalent to radians (such as
 Kelvin) then they are treated as if they were radians.</p>
 <p>The Units are changed to ‘1’ (nondimensionsal).</p>
+<p>The “standard_name” and “long_name” properties are removed from
+the result.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last"><a class="reference internal" href="cf.FieldAncillary.cos.html#cf.FieldAncillary.cos" title="cf.FieldAncillary.cos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cos</span></code></a>, <a class="reference internal" href="cf.FieldAncillary.tan.html#cf.FieldAncillary.tan" title="cf.FieldAncillary.tan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tan</span></code></a></p>
@@ -135,7 +137,7 @@ operation was in-place then <a class="reference external" href="https://docs.pyt
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">Units</span>
 <span class="go">&lt;Units: m s-1&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="n">f</span><span class="o">.</span><span class="n">array</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[1 2 3 --]]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">sin</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">Units</span>

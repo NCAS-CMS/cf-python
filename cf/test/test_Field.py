@@ -449,6 +449,31 @@ class FieldTest(unittest.TestCase):
         with self.assertRaises(Exception):
             h = f + ('qwerty',)
 
+            
+    def test_Field__mul__(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = cf.read(self.filename)[0].squeeze()
+
+        f.standard_name= 'qwerty'
+        g = f * f
+
+        self.assertTrue(g.get_property('standard_name', None) is None)
+                
+
+    def test_Field__gt__(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = cf.read(self.filename)[0].squeeze()
+
+        f.standard_name= 'qwerty'
+        g = f > f.mean()
+            
+        self.assertTrue(g.Units.equals(cf.Units()))
+        self.assertTrue(g.get_property('standard_name', None) is None)
+        
 
     def test_Field_domain_mask(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

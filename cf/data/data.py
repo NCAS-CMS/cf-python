@@ -116,7 +116,8 @@ if mpi_on:
 
 _year_length = 365.242198781
 _month_length = _year_length / 12
-    
+
+ 
 def _convert_to_builtin_type(x):
     '''
 
@@ -372,11 +373,11 @@ place.
             those of *source*.
     
         hardmask: `bool`, optional
-            If `False` then the mask is soft. By default the mask is
+            If False then the mask is soft. By default the mask is
             hard.
         
         dt: `bool`, optional
-            If `True` then strings (such as ``'1990-12-01 12:00'``)
+            If True then strings (such as ``'1990-12-01 12:00'``)
             given by the *array* parameter are re-interpreted as
             date-time objects. By default they are not.
         
@@ -391,11 +392,11 @@ place.
             `dumps` and `loads` methods.
 
         copy: `bool`, optional
-            If `False` then do not deep copy input parameters prior to
+            If False then do not deep copy input parameters prior to
             initialization. By default arguments are deep copied.
     
         chunk: `bool`, optional
-            If `False` then the data array will be stored in a single
+            If False then the data array will be stored in a single
             partition. By default the data array will be partitioned
             if it is larger than the chunk size, as returned by the
             `cf.CHUNKSIZE` function.
@@ -1011,7 +1012,7 @@ place.
         ``numpy.array(numpy[.ma].where(....))``.
 
     compress: `bool`
-        If `True` then remove whole slices which only contain masked
+        If True then remove whole slices which only contain masked
         points.
 
 :Returns:
@@ -2223,7 +2224,7 @@ True
         as returned by the `dumpd` method.
  
     chunk: `bool`, optional
-        If `True` (the default) then the reset data array will be
+        If True (the default) then the reset data array will be
         re-partitions according the current chunk size, as defined by
         the `cf.CHUNKSIZE` function.
 
@@ -2414,7 +2415,7 @@ x``.
 :Parameters:
 
     inplace: `bool`, optional
-        If `True` then do the operation in-place and return `None`.
+        If True then do the operation in-place and return `None`.
 
     i: deprecated at version 3.0.0
         Use *inplace* parameter instead.
@@ -2726,7 +2727,7 @@ no change occurs.
 :Parameters:
 
     inplace: `bool`, optional
-        If `True` then do the operation in-place and return `None`.
+        If True then do the operation in-place and return `None`.
 
     i: deprecated at version 3.0.0
         Use *inplace* parameter instead.
@@ -2801,7 +2802,7 @@ then no change occurs.
 :Parameters:
 
     inplace: `bool`, optional
-        If `True` then do the operation in-place and return `None`.
+        If True then do the operation in-place and return `None`.
 
 :Returns:
 
@@ -3406,7 +3407,6 @@ then no change occurs.
                             data1_shape, data0_shape))
                 
                 broadcast_indices.append(slice(None))
-            #--- End: for
 
             new_size = reduce(operator_mul, new_shape, 1)
 
@@ -3494,7 +3494,8 @@ then no change occurs.
                 new_dtype = numpy_result_type(data0.dtype, other.dtype) 
             else:
                 new_dtype = data0.dtype
-
+        #--- End: if
+        
         # ------------------------------------------------------------
         # Set flags to control whether or not the data of result and
         # self should be kept in memory
@@ -3590,11 +3591,10 @@ then no change occurs.
             except TypeError as error:
                 if inplace:
                     raise TypeError(
-"Incompatible result data type ({0!r}) for in-place {1!r} arithmetic".format(
-    numpy_result_type(array0.dtype, array1.dtype).name, array0.dtype.name))
+                        "Incompatible result data type ({0!r}) for in-place {1!r} arithmetic".format(
+                            numpy_result_type(array0.dtype, array1.dtype).name, array0.dtype.name))
                 else:
                     raise TypeError(error)
-
             #--- End: try
 
             if array0 is NotImplemented:
@@ -3627,15 +3627,18 @@ then no change occurs.
 
         # Reset numpy.seterr
         numpy_seterr(**original_numpy_seterr)
-            
+
+
         if not inplace:
             result._Units = new_Units
             result.dtype  = new_dtype
             result._flip(new_flip)
-#            result._flip  = new_flip
 
             if broadcasting:
                 result.partitions.set_location_map(result._axes)
+
+            if method_type in ('_eq', '_ne', '_lt', '_le', '_gt', '_ge'):
+                result.override_units(Units(), inplace=True)
 
             return result
         else:
@@ -3645,7 +3648,6 @@ then no change occurs.
             data0._size  = new_size
             data0._axes  = new_axes
             data0._flip(new_flip)
-#            data0._flip  = new_flip
             data0._Units = new_Units
             data0.dtype  = new_dtype
    
@@ -3752,7 +3754,7 @@ then no change occurs.
             they were one dimensionsal.
     
         _preserve: `bool`, optional 
-            If `False` then the time taken to do the concatenation is
+            If False then the time taken to do the concatenation is
             reduced at the expense of changing the input data arrays
             given by the *data* parameter in place and **these in
             place changes will render the input data arrays
@@ -4787,7 +4789,7 @@ order.
         are collapsed if *axes* is an empty sequence.
 
     squeeze: `bool`, optional
-        If `False` then the axes which are collapsed are left in the
+        If False then the axes which are collapsed are left in the
         result as axes with size 1. In this case the result will
         broadcast correctly against the original array. By default
         collapsed axes are removed.
@@ -4795,13 +4797,13 @@ order.
     weights: *optional*
 
     inplace: `bool`, optional
-        If `True` then do the operation in-place and return `None`.
+        If True then do the operation in-place and return `None`.
 
     i: deprecated at version 3.0.0
         Use *inplace* parameter instead.
      
     _preserve_partitions: `bool`, optional
-        If `True` then preserve the shape of the partition matrix of the
+        If True then preserve the shape of the partition matrix of the
         input data, at the expense of a much slower execution. By
         default, the partition matrix may be reduced (using `varray`)
         to considerably speed things up.
@@ -6336,7 +6338,6 @@ Tuple of the data array's dimension sizes.
                     array_out.set_fill_value(self.get_fill_value(None))
                     masked = True
 
-#                print ('array',self.shape, partition.indices, p_array.shape)
                 array_out[partition.indices] = p_array
 
                 partition.close()
@@ -6498,7 +6499,6 @@ Tuple of the data array's dimension sizes.
             self._auxiliary_mask_tidy()
 
             for mask in self._auxiliary_mask:
-#                print (type(array_out.mask), type(mask.array), mask.array)
                 array_out.mask = array_out.mask | mask.array
 
             if array_out.mask is numpy_ma_nomask:
@@ -7125,7 +7125,7 @@ the whole data.
         default the maximum over the whole data is located.
 
     unravel: `bool`, optional
-        If `True`, then when locating the maximum over the whole data,
+        If True, then when locating the maximum over the whole data,
         return the location as a tuple of indices for each axis. By
         default an index to the flattened array is returned in this
         case.
@@ -7377,7 +7377,7 @@ None
         squeeze : bool, optional
     
         inplace: `bool`, optional
-            If `True` then do the operation in-place and return `None`.
+            If True then do the operation in-place and return `None`.
     
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
@@ -7408,7 +7408,7 @@ None
         squeeze : bool, optional
     
         inplace: `bool`, optional
-            If `True` then do the operation in-place and return `None`.
+            If True then do the operation in-place and return `None`.
     
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
@@ -7453,7 +7453,7 @@ omitted from the calculation.
         are collapsed if *axes* is an empty sequence.
 
     squeeze: `bool`, optional
-        If `True` then collapsed axes are removed. By default the axes
+        If True then collapsed axes are removed. By default the axes
         which are collapsed are left in the result as axes with size
         1, meaning that the result is guaranteed to broadcast
         correctly against the original array.
@@ -7491,7 +7491,7 @@ omitted from the calculation.
         intermediate value is permitted.
 
     inplace: `bool`, optional
-        If `True` then do the operation in-place and return `None`.
+        If True then do the operation in-place and return `None`.
 
     i: deprecated at version 3.0.0
         Use *inplace* parameter instead.
@@ -7612,12 +7612,12 @@ omitted from the calculation.
     # 0
     def sample_size(self, axes=None, squeeze=False, mtol=1, inplace=False, i=False,
                     _preserve_partitions=False):
-        r'''
+        '''TODO
 
 :Parameters:
 
     inplace: `bool`, optional
-        If `True` then do the operation in-place and return `None`.
+        If True then do the operation in-place and return `None`.
 
     i: deprecated at version 3.0.0
         Use *inplace* parameter instead.
@@ -7710,7 +7710,7 @@ and has 0 where the data array has missing data and 1 otherwise.
             same units as the data are assumed.
        
         inplace: `bool`, optional
-            If `True` then do the operation in-place and return `None`.
+            If True then do the operation in-place and return `None`.
     
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
@@ -7852,7 +7852,7 @@ The output units are changed to '1' (nondimensionsal).
 :Parameters:
 
     inplace: `bool`, optional
-        If `True` then do the operation in-place and return `None`.
+        If True then do the operation in-place and return `None`.
 
     i: deprecated at version 3.0.0
         Use *inplace* parameter instead.
@@ -8231,29 +8231,25 @@ dimensional array.
 
 
     def dump(self, display=True, prefix=None):
+        '''Return a string containing a full description of the instance.
+
+    :Parameters:
+    
+        display: `bool`, optional
+            If False then return the description as a string. By
+            default the description is printed, i.e. ``d.dump()`` is
+            equivalent to ``print d.dump(display=False)``.
+    
+        prefix: `str`, optional
+           Set the common prefix of component names. By default the
+           instance's class name is used.
+    
+    :Returns:
+    
+        `None` or `str`
+            A string containing the description.
+
         '''
-
-Return a string containing a full description of the instance.
-
-:Parameters:
-
-    display : bool, optional
-        If `False` then return the description as a string. By default
-        the description is printed, i.e. ``d.dump()`` is equivalent to
-        ``print d.dump(display=False)``.
-
-    prefix : str, optional
-       Set the common prefix of component names. By default the
-       instance's class name is used.
-
-:Returns:
-
-    `None` or `str`
-        A string containing the description.
-
-**Examples:**
-
-'''
         if prefix is None:
             prefix = self.__class__.__name__
             
@@ -8275,7 +8271,7 @@ Return a string containing a full description of the instance.
             print(string)
         else:
             return string
-    #--- End: def
+
 
     def ndindex(self):
         '''Return an iterator over the N-dimensional indices of the data array.
@@ -8328,23 +8324,23 @@ is iterated over first.
     
     :Parameters:
     
-        other : 
+        other: 
             The object to compare for equality.
     
-        atol : float, optional
+        atol: `float`, optional
             The absolute tolerance for all numerical comparisons. By
             default the value returned by the `ATOL` function is used.
     
-        rtol : float, optional
+        rtol: `float`, optional
             The relative tolerance for all numerical comparisons. By
             default the value returned by the `RTOL` function is used.
     
-        ignore_fill_value : bool, optional
-            If `True` then data arrays with different fill values are
+        ignore_fill_value: `bool`, optional
+            If True then data arrays with different fill values are
             considered equal. By default they are considered unequal.
     
-        traceback : bool, optional
-            If `True` then print a traceback highlighting where the two
+        traceback: `bool`, optional
+            If True then print a traceback highlighting where the two
             instances differ.
     
     :Returns: 
@@ -8413,27 +8409,27 @@ is iterated over first.
         # ------------------------------------------------------------
         return True
 
-    # 0
+
     def exp(self, inplace=False, i=False):
+        '''Take the exponential of the data array.
+
+    :Parameters:
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+        i: deprecated at version 3.0.0
+            Use *inplace* parameter instead.
+    
+    :Returns:
+    
+        `Data`
+    
+    **Examples:**
+    
+    TODO
+
         '''
-
-Take the exponential of the data array.
-
-:Parameters:
-
-    inplace: `bool`, optional
-        If `True` then do the operation in-place and return `None`.
-
-    i: deprecated at version 3.0.0
-        Use *inplace* parameter instead.
-
-:Returns:
-
-    `Data`
-
-**Examples:**
-
-'''
         if i:
             _DEPRECATION_ERROR_KWARGS(self, 'exp', i=True) # pragma: no cover
         
@@ -8457,32 +8453,33 @@ Take the exponential of the data array.
             d = None
 
         return d
-    #--- End: def
 
-    # 0
+
     def insert_dimension(self, position=0, inplace=False):
         '''Expand the shape of the data array in place.
 
-Insert a new size 1 axis, corresponding to a given position in the
-data array shape.
+    Insert a new size 1 axis, corresponding to a given position in the
+    data array shape.
+    
+    .. seealso:: `flip`, `squeeze`, `swapaxes`, `transpose`
+    
+    :Parameters:
+    
+        position: `int`, optional
+            Specify the position that the new axis will have in the data
+            array axes. By default the new axis has position 0, the
+            slowest varying position.
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+    :Returns:
+    
+        `Data` or `None`
+    
+    **Examples:**
 
-.. seealso:: `flip`, `squeeze`, `swapaxes`, `transpose`
-
-:Parameters:
-
-    position : int, optional
-        Specify the position that the new axis will have in the data
-        array axes. By default the new axis has position 0, the
-        slowest varying position.
-
-    inplace: `bool`, optional
-        If `True` then do the operation in-place and return `None`.
-
-:Returns:
-
-    `Data` or `None`
-
-**Examples:**
+        TODO
 
         '''
         # Parse position
@@ -8572,7 +8569,7 @@ set()
 :Parameters:
 
     ignore_masked: `bool`, optional
-        If `False` then masked and unmasked elements will be returned. By
+        If False then masked and unmasked elements will be returned. By
         default only unmasked elements are returned
 
 :Returns:
@@ -8644,56 +8641,57 @@ Return the floor of the data array.
         return self.func(numpy_floor, out=True, inplace=inplace)
     #---End: def
 
-    # 0
+    
     def outerproduct(self, e, inplace=False, i=False):
         '''Compute the outer product with another data array.
 
-The axes of result will be the combined axes of the two input arrays:
-
->>> d.outerproduct(e).ndim == d.ndim + e.ndim
-True
->>> d.outerproduct(e).shape == d.shape + e.shape
-True
-
-:Parameters:
-
-    e : data-like
-        The data array with which to form the outer product.
-
-    inplace: `bool`, optional
-        If `True` then do the operation in-place and return `None`.
-
-    i: deprecated at version 3.0.0
-        Use *inplace* parameter instead.
-
-:Returns:
-
-    `Data`
-
-**Examples:**
-
->>> d = cf.Data([1, 2, 3], 'metre')
->>> o = d.outerproduct([4, 5, 6, 7])
->>> o
-<CF Data: [[4, ..., 21]] m>
->>> print o.array
-[[ 4  5  6  7]
- [ 8 10 12 14]
- [12 15 18 21]]
-
->>> e = cf.Data([[4, 5, 6, 7], [6, 7, 8, 9]], 's-1')
->>> o = d.outerproduct(e)
->>> o
-<CF Data: [[[4, ..., 27]]] m.s-1>
->>> print d.shape, e.shape, o.shape
-(3,) (2, 4) (3, 2, 4)
->>> print o.array
-[[[ 4  5  6  7]
-  [ 6  7  8  9]]
- [[ 8 10 12 14]
-  [12 14 16 18]]
- [[12 15 18 21]
-  [18 21 24 27]]]
+    The axes of result will be the combined axes of the two input
+    arrays:
+    
+    >>> d.outerproduct(e).ndim == d.ndim + e.ndim
+    True
+    >>> d.outerproduct(e).shape == d.shape + e.shape
+    True
+    
+    :Parameters:
+    
+        e: data-like
+            The data array with which to form the outer product.
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+        i: deprecated at version 3.0.0
+            Use *inplace* parameter instead.
+    
+    :Returns:
+    
+        `Data`
+    
+    **Examples:**
+    
+    >>> d = cf.Data([1, 2, 3], 'metre')
+    >>> o = d.outerproduct([4, 5, 6, 7])
+    >>> o
+    <CF Data: [[4, ..., 21]] m>
+    >>> print o.array
+    [[ 4  5  6  7]
+     [ 8 10 12 14]
+     [12 15 18 21]]
+    
+    >>> e = cf.Data([[4, 5, 6, 7], [6, 7, 8, 9]], 's-1')
+    >>> o = d.outerproduct(e)
+    >>> o
+    <CF Data: [[[4, ..., 27]]] m.s-1>
+    >>> print d.shape, e.shape, o.shape
+    (3,) (2, 4) (3, 2, 4)
+    >>> print o.array
+    [[[ 4  5  6  7]
+      [ 6  7  8  9]]
+     [[ 8 10 12 14]
+      [12 14 16 18]]
+     [[12 15 18 21]
+      [18 21 24 27]]]
 
         '''    
         if i:
@@ -8718,20 +8716,19 @@ True
             d = None
             
         return d
-    #--- End: def
 
-    # 0
+
     def change_calendar(self, calendar, inplace=False, i=False):
         '''Change the calendar of the data array elements.
 
-Changing the calendar could result in a change of reference time data
-array values.
-
-Not to be confused with using the `override_calendar` method or
-resetting `d.Units`. `override_calendar` is different because the new
-calendar need not be equivalent to the original ones and the data
-array elements will not be changed to reflect the new units. Resetting
-`d.Units` will 
+    Changing the calendar could result in a change of reference time
+    data array values.
+    
+    Not to be confused with using the `override_calendar` method or
+    resetting `d.Units`. `override_calendar` is different because the
+    new calendar need not be equivalent to the original ones and the
+    data array elements will not be changed to reflect the new
+    units. Resetting `d.Units` will
 
         '''
         if i:
@@ -8755,7 +8752,7 @@ array elements will not be changed to reflect the new units. Resetting
             d = None
             
         return d
-    #--- End: def
+
 
     def override_units(self, units, inplace=False, i=False):
         '''Override the data array units.
@@ -8772,7 +8769,7 @@ array elements will not be changed to reflect the new units. Resetting
             The new units for the data array.
     
         inplace: `bool`, optional
-            If `True` then do the operation in-place and return `None`.
+            If True then do the operation in-place and return `None`.
     
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
@@ -8805,7 +8802,7 @@ array elements will not be changed to reflect the new units. Resetting
             d = self.copy()
 
         units = Units(units)
- 
+
         config = self.partition_configuration(readonly=False)
 
         for partition in d.partitions.matrix.flat:
@@ -8826,7 +8823,6 @@ array elements will not be changed to reflect the new units. Resetting
 
         if inplace:
             d = None
-            
         return d
 
 
@@ -8841,11 +8837,11 @@ array elements will not be changed to reflect the new units. Resetting
     
     :Parameters:
     
-        calendar : str
+        calendar: `str`
             The new calendar.
     
         inplace: `bool`, optional
-            If `True` then do the operation in-place and return `None`.
+            If True then do the operation in-place and return `None`.
     
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
@@ -8855,6 +8851,8 @@ array elements will not be changed to reflect the new units. Resetting
         `Data`
     
     **Examples:**
+
+    TODO
 
         '''
         if i:
@@ -8917,13 +8915,13 @@ There is no change to partitions with data that are already in memory.
 :Parameters:
     
     regardless: `bool`, optional
-        If `True` then store all partitions' data in memory regardless
+        If True then store all partitions' data in memory regardless
         of the size of the master array. By default only store all
         partitions' data in memory if the master array is smaller than
         the chunk size.
 
     parallelise: `bool`, optional
-        If `True` than only move those partitions to memory that are
+        If True than only move those partitions to memory that are
         flagged for processing on this rank.
 
 :Returns:
@@ -9174,7 +9172,7 @@ Note that:
 :Parameters:
 
     inplace: `bool`, optional
-        If `True` then do the operation in-place and return `None`.
+        If True then do the operation in-place and return `None`.
 
     i: deprecated at version 3.0.0
         Use *inplace* parameter instead.
@@ -9252,12 +9250,12 @@ Missing data array elements are omitted from the calculation.
 
 :Parameters:
 
-    axes : (sequence of) int, optional
+    axes: (sequence of) `int`, optional
 
-    squeeze : bool, optional
+    squeeze: `bool`, optional
 
     inplace: `bool`, optional
-        If `True` then do the operation in-place and return `None`.
+        If True then do the operation in-place and return `None`.
 
     i: deprecated at version 3.0.0
         Use *inplace* parameter instead.
@@ -9289,8 +9287,7 @@ Missing data array elements are omitted from the calculation.
             flipped if *axes* is an empty sequence.
     
         inplace: `bool`, optional
-            If `True` then do the operation in-place and return
-            `None`.
+            If True then do the operation in-place and return `None`.
     
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
@@ -9517,7 +9514,7 @@ For numeric data arrays, ``d.isclose(y, rtol, atol)`` is equivalent to
 :Parameters:
 
     inplace: `bool`, optional
-        If `True` then do the operation in-place and return `None`.
+        If True then do the operation in-place and return `None`.
 
     i: deprecated at version 3.0.0
         Use *inplace* parameter instead.
@@ -9566,7 +9563,7 @@ For numeric data arrays, ``d.isclose(y, rtol, atol)`` is equivalent to
             to the left of the decimal point.
     
         inplace: `bool`, optional
-            If `True` then do the operation in-place and return `None`.
+            If True then do the operation in-place and return `None`.
     
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
@@ -9618,7 +9615,7 @@ For numeric data arrays, ``d.isclose(y, rtol, atol)`` is equivalent to
             original integer position.
     
         inplace: `bool`, optional
-            If `True` then do the operation in-place and return `None`.
+            If True then do the operation in-place and return `None`.
     
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
@@ -9856,7 +9853,7 @@ non-masked values.
           values to missing data.
 
     inplace: `bool`, optional
-        If `True` then do the operation in-place and return `None`.
+        If True then do the operation in-place and return `None`.
 
     i: deprecated at version 3.0.0
         Use the *inplace* parameter instead.
@@ -9952,8 +9949,8 @@ given indices.
             d = self.copy()
 
         if _debug:
-            print ('    data.shape =', d.shape) # pragma: no cover
-            print ('    condition =', repr(condition)) # pragma: no cover
+            print('    data.shape =', d.shape) # pragma: no cover
+            print('    condition =', repr(condition)) # pragma: no cover
             
         if x is None and y is None:
             # The data is unchanged regardless of condition
@@ -10055,7 +10052,7 @@ given indices.
 
         for partition in d.partitions.matrix.flat:
             if _debug:
-                print ('   Partition:') # pragma: no cover
+                print('   Partition:') # pragma: no cover
                 
             partition.open(config)
             array = partition.array
@@ -10128,10 +10125,10 @@ given indices.
             #--- End: if
 
             if _debug:
-                print ('  array =', array) # pragma: no cover
-                print ('      c =', c) # pragma: no cover
-                print ('      T =', T) # pragma: no cover
-                print ('      F =', F) # pragma: no cover
+                print('  array =', array) # pragma: no cover
+                print('      c =', c) # pragma: no cover
+                print('      T =', T) # pragma: no cover
+                print('      F =', F) # pragma: no cover
             
             # --------------------------------------------------------
             # Create a numpy array which takes vales from T where c
@@ -10180,7 +10177,7 @@ given indices.
             # array
             # --------------------------------------------------------
             if _debug:
-                print ('      new=', new) # pragma: no cover
+                print('      new=', new) # pragma: no cover
                 
             partition.subarray = new
 
@@ -10207,7 +10204,7 @@ The outpu units are changed to '1' (nondimensionsal).
 :Parameters:
 
     inplace: `bool`, optional
-        If `True` then do the operation in-place and return `None`.
+        If True then do the operation in-place and return `None`.
 
     i: deprecated at version 3.0.0
         Use *inplace* parameter instead.
@@ -10266,7 +10263,7 @@ The outpu units are changed to '1' (nondimensionsal).
     base: 
 
     inplace: `bool`, optional
-        If `True` then do the operation in-place and return `None`.
+        If True then do the operation in-place and return `None`.
 
     i: deprecated at version 3.0.0
         Use *inplace* parameter instead.
@@ -10325,7 +10322,7 @@ selected with the keyword arguments.
         No axes are removed if *axes* is an empty sequence.
 
     inplace: `bool`, optional
-        If `True` then do the operation in-place and return `None`.
+        If True then do the operation in-place and return `None`.
 
     i: deprecated at version 3.0.0
         Use *inplace* parameter instead.
@@ -10476,7 +10473,7 @@ The output units are changed to ``'1'`` (nondimensionsal).
 :Parmaeters:
 
     inplace: `bool`, optional
-        If `True` then do the operation in-place and return `None`.
+        If True then do the operation in-place and return `None`.
 
     i: deprecated at version 3.0.0
         Use *inplace* parameter instead.
@@ -10574,7 +10571,7 @@ Permute the axes of the data array.
         original integer position.
 
     inplace: `bool`, optional
-        If `True` then do the operation in-place and return `None`.
+        If True then do the operation in-place and return `None`.
 
     i: deprecated at version 3.0.0
         Use *inplace* parameter instead.
@@ -10672,7 +10669,7 @@ signed number ``x`` is discarded.
 :Parameters:
 
     inplace: `bool`, optional
-        If `True` then do the operation in-place and return `None`.
+        If True then do the operation in-place and return `None`.
 
     i: deprecated at version 3.0.0
         Use *inplace* parameter instead.
@@ -10797,7 +10794,7 @@ signed number ``x`` is discarded.
     out: `bool`, optional
 
     inplace: `bool`, optional
-        If `True` then do the operation in-place and return `None`.
+        If True then do the operation in-place and return `None`.
 
     i: deprecated at version 3.0.0
         Use *inplace* parameter instead.
@@ -10882,7 +10879,7 @@ Missing data array elements are omitted from the calculation.
 :Parameters:
 
     inplace: `bool`, optional
-        If `True` then do the operation in-place and return `None`.
+        If True then do the operation in-place and return `None`.
 
     i: deprecated at version 3.0.0
         Use *inplace* parameter instead.
@@ -10909,7 +10906,7 @@ Missing data array elements are omitted from the calculation.
 :Parameters:
 
     inplace: `bool`, optional
-        If `True` then do the operation in-place and return `None`.
+        If True then do the operation in-place and return `None`.
 
     i: deprecated at version 3.0.0
         Use *inplace* parameter instead.
@@ -10984,7 +10981,7 @@ Missing data array elements are omitted from the calculation.
     squeeze : bool, optional
 
     inplace: `bool`, optional
-        If `True` then do the operation in-place and return `None`.
+        If True then do the operation in-place and return `None`.
 
     i: deprecated at version 3.0.0
         Use *inplace* parameter instead.
@@ -11018,7 +11015,7 @@ Missing data array elements are omitted from the calculation.
     squeeze : bool, optional
 
     inplace: `bool`, optional
-        If `True` then do the operation in-place and return `None`.
+        If True then do the operation in-place and return `None`.
 
     i: deprecated at version 3.0.0
         Use *inplace* parameter instead.
@@ -11053,7 +11050,7 @@ Missing data array elements are omitted from the calculation.
     squeeze : bool, optional
 
     inplace: `bool`, optional
-        If `True` then do the operation in-place and return `None`.
+        If True then do the operation in-place and return `None`.
 
     i: deprecated at version 3.0.0
         Use *inplace* parameter instead.
@@ -11127,7 +11124,7 @@ Missing data array elements are omitted from the calculation.
             axes are collapsed if *axes* is an empty sequence.
     
         squeeze : `bool`, optional
-            If `True` then collapsed axes are removed. By default the
+            If True then collapsed axes are removed. By default the
             axes which are collapsed are left in the result as axes
             with size 1. When the collapsed axes are retained, the
             result is guaranteed to broadcast correctly against the
@@ -11193,8 +11190,7 @@ Missing data array elements are omitted from the calculation.
             sample mean (Bessel's correction).
     
         inplace: `bool`, optional
-            If `True` then do the operation in-place and return
-            `None`.
+            If True then do the operation in-place and return `None`.
     
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
@@ -11252,8 +11248,7 @@ Missing data array elements are omitted from the calculation.
         weights :
     
         inplace: `bool`, optional
-            If `True` then do the operation in-place and return
-            `None`.
+            If True then do the operation in-place and return `None`.
     
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
@@ -11303,7 +11298,7 @@ Missing data array elements are omitted from the calculation.
             None all sections are taken.
     
         chunks: `bool`, optional
-            If `True` return sections that are of the maximum possible
+            If True return sections that are of the maximum possible
             size that will fit in one chunk of memory instead of
             sectioning into slices of size 1 along the dimensions that
             are being sectioned.

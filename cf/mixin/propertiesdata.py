@@ -36,6 +36,8 @@ _units_None = Units()
 _month_units = ('month', 'months')
 _year_units  = ('year', 'years', 'yr')
 
+_relational_methods = ('__eq__', '__ne__', '__lt__', '__le__', '__gt__', '__ge__')
+
 
 class PropertiesData(Properties):
     '''Mixin class for a data array with metadata.
@@ -72,7 +74,7 @@ class PropertiesData(Properties):
 #    
 #        copy: `bool`, optional
 #
-#            If `False` then do not deep copy input parameters prior to
+#            If False then do not deep copy input parameters prior to
 #            initialization. By default arguments are deep copied.
 #
 #        '''
@@ -655,7 +657,7 @@ class PropertiesData(Properties):
         inplace = method[2] == 'i'
 
         units = self.Units
-        sn = self.get_property('standasrd_name', None)
+        sn = self.get_property('standard_name', None)
         ln = self.get_property('long_name', None)
 
         try:
@@ -676,8 +678,13 @@ class PropertiesData(Properties):
             new = self
             new.data._binary_operation(y, method)
 
-        new_units = new.Units
-#        print (sn, other_sn, ln, other_ln)
+        if method in _relational_methods:
+            # Booleans have no units
+            new.override_units(Units(), inplace=True)
+            
+        # ------------------------------------------------------------
+        # Remove misleading identities
+        # ------------------------------------------------------------
         if sn != other_sn:
             if sn is not None and other_sn is not None:
                 new.del_property('standard_name', None)
@@ -691,14 +698,61 @@ class PropertiesData(Properties):
         elif ln is None and other_ln is not None:
             new.set_property('long_name', other_ln)
         
-        if (not units.equivalent(new_units) and
+        new_units = new.Units
+        if (method in _relational_methods or
+            not units.equivalent(new_units) and
             not (units.isreftime and new_units.isreftime)):
             new.del_property('standard_name', None)
-            new.del_property('long_name', None)   
-        
+            new.del_property('long_name', None)
+            
         return new
 
 
+#    def _ooo(self):
+#        '''
+#        '''
+#        units = self.Units
+#        sn = self.get_property('standard_name', None)
+#        ln = self.get_property('long_name', None)
+#
+#        try:
+#            other_sn = y.get_property('standard_name', None)
+#            other_ln = y.get_property('long_name', None)
+#        except AttributeError:
+#            other_sn = None
+#            other_ln = None
+#            
+#        if isinstance(y, self.__class__):
+#            y = y.data
+#        
+#        if not inplace:
+#            new = self.copy() #data=False) TODO
+#            new_data = data._binary_operation(y, method)
+#            new.set_data(new_data, copy=False)
+#        else:
+#            new = self
+#            new.data._binary_operation(y, method)
+#
+#
+#        if sn != other_sn:
+#            if sn is not None and other_sn is not None:
+#                new.del_property('standard_name', None)
+#                new.del_property('long_name', None)
+#            elif other_sn is not None:
+#                new.set_property('standard_name', other_sn)
+#                if other_ln is None:
+#                    new.del_property('long_name', None)
+#                else:
+#                    new.set_property('long_name', other_ln)
+#        elif ln is None and other_ln is not None:
+#            new.set_property('long_name', other_ln)
+#        
+#        new_units = new.Units
+#        if (not units.equivalent(new_units) and
+#            not (units.isreftime and new_units.isreftime)):
+#            new.del_property('standard_name', None)
+#            new.del_property('long_name', None)   
+        
 #    def _change_axis_names(self, dim_name_map):
 #        '''Change the axis names of the Data object.
 #
@@ -904,19 +958,19 @@ class PropertiesData(Properties):
     
     **Examples:**
     
-    >>> print v.array
+    >>> print(v.array)
     [1 2 -3 -4 -5]
     
     >>> w = v._unary_operation('__abs__')
-    >>> print w.array
+    >>> print(w.array)
     [1 2 3 4 5]
     
     >>> w = v.__abs__()
-    >>> print w.array
+    >>> print(w.array)
     [1 2 3 4 5]
     
     >>> w = abs(v)
-    >>> print w.array
+    >>> print(w.array)
     [1 2 3 4 5]
 
         '''
@@ -996,7 +1050,7 @@ class PropertiesData(Properties):
     
     **Examples:**
     
-    >>> print f.X
+    >>> print(f.X)
     False
 
         '''              
@@ -1011,7 +1065,7 @@ class PropertiesData(Properties):
     
     **Examples:**
     
-    >>> print f.Y
+    >>> print(f.Y)
     False
 
         '''              
@@ -1026,7 +1080,7 @@ class PropertiesData(Properties):
     
     **Examples:**
     
-    >>> print f.Z
+    >>> print(f.Z)
     False
 
         '''              
@@ -2012,25 +2066,25 @@ TODO
     >>> type(f.dtype)
     <type 'numpy.dtype'>
     
-    >>> print f.array
+    >>> print(f.array)
     [0.5 1.5 2.5]
     >>> import numpy
     >>> f.dtype = numpy.dtype(int)
-    >>> print f.array
+    >>> print(f.array)
     [0 1 2]
     >>> f.dtype = bool
-    >>> print f.array
+    >>> print(f.array)
     [False  True  True]
     >>> f.dtype = 'float64'
-    >>> print f.array
+    >>> print(f.array)
     [ 0.  1.  1.]
     
-    >>> print f.array
+    >>> print(f.array)
     [0.5 1.5 2.5]
     >>> f.dtype = int
     >>> f.dtype = bool
     >>> f.dtype = float
-    >>> print f.array
+    >>> print(f.array)
     [ 0.5  1.5  2.5]
 
         '''
@@ -2115,12 +2169,12 @@ TODO
     >>> a = f.array
     >>> type(a)
     <type 'numpy.ndarray'>
-    >>> print a
+    >>> print(a)
     [0 1 2 3 4]
     >>> a[0] = 999
-    >>> print a
+    >>> print(a)
     [999 1 2 3 4]
-    >>> print f.array
+    >>> print(f.array)
     [0 1 2 3 4]
     >>> f.data
     <CF Data(5): [0, ... 4] kg m-1 s-2>
@@ -2148,12 +2202,12 @@ TODO
     >>> a = f.array
     >>> type(a)
     <type 'numpy.ndarray'>
-    >>> print a
+    >>> print(a)
     [0 1 2 3 4]
     >>> a[0] = 999
-    >>> print a
+    >>> print(a)
     [999 1 2 3 4]
-    >>> print f.array
+    >>> print(f.array)
     [999 1 2 3 4]
     >>> f.data
     <CF Data(5): [999, ... 4] kg m-1 s-2>
@@ -2464,6 +2518,9 @@ TODO
     Kelvin) then they are treated as if they were radians.
     
     The output units are '1' (nondimensionsal).
+
+    The "standard_name" and "long_name" properties are removed from
+    the result.
     
     .. seealso:: `sin`, `tan`
     
@@ -2515,6 +2572,10 @@ TODO
         if data is not None:
             data.cos(inplace=True)
 
+        # Remove misleading identities
+        v.del_property('standard_name', None)
+        v.del_property('long_name', None)
+        
         if inplace:
             v = None
         return v
@@ -2825,14 +2886,14 @@ TODO
               calendar.
     
         calendar_months: `bool`, optional 
-            If `True` then treat units of ``'months'`` as if they were
+            If True then treat units of ``'months'`` as if they were
             calendar months (in whichever calendar is originally
             specified), rather than a 12th of the interval between 2
             successive passages of the sun through vernal equinox
             (i.e. 365.242198781/12 days).
     
         calendar_years: `bool`, optional
-            If `True` then treat units of ``'years'`` as if they were
+            If True then treat units of ``'years'`` as if they were
             calendar years (in whichever calendar is originally
             specified), rather than the interval between 2 successive
             passages of the sun through vernal equinox
@@ -3076,7 +3137,7 @@ TODO
             If no units are provided then there is always a match.
          
         exact: `bool`, optional
-            If `False` then a match occurs if the construct's units
+            If False then a match occurs if the construct's units
             are equivalent to any of those given by *units*. For
             example, metres and are equivelent to kilometres. By
             default, a match only occurs if the construct's units are
@@ -3273,81 +3334,7 @@ TODO
             return data.any()
 
         return False
-    
 
-    def asdatetime(self, i=False): #TODO
-        '''Convert the internal representation of data array elements to
-date-time objects.
-
-TODO : underscore this?
-
-Only applicable to construct with reference time units.
-
-If the calendar has not been set then the CF default calendar will be
-used and the units will be updated accordingly.
-
-.. seealso:: `asreftime`
-
-:Parameters:
-
-    inplace: `bool`, optional
-        If True then do the operation in-place and return `None`.
-
-    i: deprecated at version 3.0.0
-        Use *inplace* parameter instead.
-
-:Returns:
-
-TODO
-
-**Examples:**
-
->>> t.asdatetime().dtype
-dtype('float64')
->>> t.asdatetime().dtype
-dtype('O')
-
-        '''
-        raise NotImplementedError(
-            "asdatetime is dead. Consider {0}.datetime_array instead".format(
-                self.__class__.__name__))
-    
-
-    def asreftime(self, i=False): # TODOx
-        '''Convert the internal representation of data array elements
-to numeric reference times.
-
-Only applicable to constructs with reference time units.
-
-If the calendar has not been set then the CF default calendar will be
-used and the units will be updated accordingly.
-
-.. seealso:: `asdatetime`
-
-:Parameters:
-
-    inplace: `bool`, optional
-        If True then do the operation in-place and return `None`.
-
-    i: deprecated at version 3.0.0
-        Use *inplace* parameter instead.
-
-:Returns:
-
-    TODO
-
-**Examples:**
-
->>> t.asdatetime().dtype
-dtype('O')
->>> t.asreftime().dtype
-dtype('float64')
-
-        '''
-        raise NotImplementedError(
-            "asreftime is dead. Consider {0}.array instead".format(
-                self.__class__.__name__))   
-    
 
     def files(self):
         '''Return the names of any files containing parts of the data array.
@@ -3399,7 +3386,7 @@ dtype('float64')
             may be found as follows:
     
             >>> import netCDF4
-            >>> print netCDF4.default_fillvals  TODO  
+            >>> print(netCDF4.default_fillvals)
     
     :Returns:
     
@@ -3503,6 +3490,9 @@ dtype('float64')
     def exp(self, inplace=False, i=False):
         '''The exponential of the data, element-wise.
 
+    The "standard_name" and "long_name" properties are removed from
+    the result.
+
     .. seealso:: `log`
     
     :Parameters:
@@ -3548,6 +3538,10 @@ dtype('float64')
         if data is not None:
             data.exp(inplace=True)
 
+        # Remove misleading identities
+        v.del_property('standard_name', None)
+        v.del_property('long_name', None)       
+
         if inplace:
             v = None
         return v
@@ -3562,6 +3556,9 @@ dtype('float64')
     Kelvin) then they are treated as if they were radians.
     
     The Units are changed to '1' (nondimensionsal).
+
+    The "standard_name" and "long_name" properties are removed from
+    the result.
     
     .. seealso:: `cos`, `tan`
     
@@ -3592,7 +3589,7 @@ dtype('float64')
     
     >>> f.Units
     <Units: m s-1>
-    >>> print f.array
+    >>> print(f.array)
     [[1 2 3 --]]
     >>> f.sin()
     >>> f.Units
@@ -3613,6 +3610,10 @@ dtype('float64')
         if data is not None:
             data.sin(inplace=True)
 
+        # Remove misleading identities
+        v.del_property('standard_name', None)
+        v.del_property('long_name', None)
+        
         if inplace:
             v = None
         return v
@@ -3628,6 +3629,9 @@ dtype('float64')
     radians.
     
     The Units are changed to '1' (nondimensionsal).
+
+    The "standard_name" and "long_name" properties are removed from
+    the result.
     
     .. seealso:: `cos`, `sin`
     
@@ -3661,6 +3665,10 @@ dtype('float64')
         if data is not None:
             data.tan(inplace=True)
 
+        # Remove misleading identities
+        v.del_property('standard_name', None)
+        v.del_property('long_name', None)        
+
         if inplace:
             v = None
         return v
@@ -3671,6 +3679,9 @@ dtype('float64')
 
     By default the natural logarithm is taken, but any base may be
     specified.
+
+    The "standard_name" and "long_name" properties are removed from
+    the result.
     
     .. seealso:: `exp`
     
@@ -3726,6 +3737,10 @@ dtype('float64')
         if data is not None:
             data.log(base, inplace=True)
 
+        # Remove misleading identities
+        v.del_property('standard_name', None)
+        v.del_property('long_name', None)
+        
         if inplace:
             v = None
         return v
@@ -4319,8 +4334,8 @@ dtype('float64')
             The data to be inserted.
     
         copy: `bool`, optional
-            If `False` then do not copy the data prior to
-            insertion. By default the data are copied.
+            If False then do not copy the data prior to insertion. By
+            default the data are copied.
     
     :Returns:
     
@@ -4522,7 +4537,7 @@ dtype('float64')
     **Examples:**
     
     >>> if f.hasdata:
-    ...     print f.data
+    ...     print(f.data)
 
         '''
         _DEPRECATION_ERROR_ATTRIBUTE(self, 'hasdata', "Use 'has_data' method instead")
@@ -4539,6 +4554,66 @@ dtype('float64')
             self, 'unsafe_array',
             "Use 'array' attribute instead.") # pragma: no cover
 
+
+    def asdatetime(self, i=False):
+        '''Convert the internal representation of data array elements to
+    date-time objects.
+    
+    Only applicable to construct with reference time units.
+    
+    If the calendar has not been set then the CF default calendar will be
+    used and the units will be updated accordingly.
+    
+    .. seealso:: `asreftime`
+    
+    :Parameters:
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+        i: deprecated at version 3.0.0
+            Use *inplace* parameter instead.
+    
+    **Examples:**
+    
+    >>> t.asdatetime().dtype
+    dtype('float64')
+    >>> t.asdatetime().dtype
+    dtype('O')
+
+        '''
+        _DEPRECATION_ERROR_METHOD(self, 'asdatetime') # pragma: no cover
+
+        
+    def asreftime(self, i=False):
+        '''Convert the internal representation of data array elements
+    to numeric reference times.
+    
+    Only applicable to constructs with reference time units.
+    
+    If the calendar has not been set then the CF default calendar will be
+    used and the units will be updated accordingly.
+    
+    .. seealso:: `asdatetime`
+    
+    :Parameters:
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+        i: deprecated at version 3.0.0
+            Use *inplace* parameter instead.
+        
+    **Examples:**
+    
+    >>> t.asdatetime().dtype
+    dtype('O')
+    >>> t.asreftime().dtype
+    dtype('float64')
+
+        '''
+        _DEPRECATION_ERROR_METHOD(self, 'asreftime') # pragma: no cover
+    
 
     def expand_dims(self, position=0, i=False):
         '''Insert a size 1 axis into the data array.

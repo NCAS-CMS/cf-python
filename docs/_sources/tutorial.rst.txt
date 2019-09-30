@@ -10,6 +10,9 @@
 
 Version |release| for version |version| of the CF conventions.
 
+All of the Python code in this tutorial is available in an executable
+script (:download:`download <../source/tutorial.py>`, 36kB).
+
 .. https://stackoverflow.com/questions/24129481/how-to-include-a-local-table-of-contents-into-sphinx-doc
 
 .. http://docutils.sourceforge.net/docs/ref/rst/directives.html#table-of-contents
@@ -61,10 +64,6 @@ the directory that also contains the sample files.
 The tutorial files may be also found in the `downloads directory
 <https://github.com/NCAS-CMS/cf-python/tree/master/docs/_downloads>`_
 of the on-line code repository.
-
-All of the Python code in this tutorial is available in an executable
-script (:download:`download <../source/tutorial.py>`, 36kB).
-
 
 ----
 
@@ -5905,6 +5904,27 @@ during operations.
    >>> t + u[0]
    <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>
 
+If the physical nature of the result differs from both operands, then
+the "standard_name" and "long_name" properties are removed. This is
+the case if the units of the result differ from bother operands, or if
+they have different standard names.
+
+.. code-block:: python
+  :caption: *TODO*
+
+   >>> t.identities()
+   ['air_temperature',
+    'Conventions=CF-1.7',
+    'project=research',
+    'units=K',
+    'standard_name=air_temperature',
+    'ncvar%ta']
+   >>> u = t * cf.Data(10, 'ms-1')
+   >>> u.identities()
+   ['Conventions=CF-1.7',
+    'project=research',
+    'units=1000 s-1.K',
+    'ncvar%ta']
 
 .. _Unary-operations:
 
@@ -5994,22 +6014,43 @@ during operations.
     [ True  True  True  True  True  True False False]
     [False  True  True  True  True  True  True False]]
 
+The "standard_name" and "long_name" properties are removed from the
+result, which also has no units.
+
+.. code-block:: python
+  :caption: *TODO*
+
+   >>> q.identities()
+   ['specific_humidity',
+    'Conventions=CF-1.7',
+    'project=research',
+    'units=1',
+    'standard_name=specific_humidity',
+    'ncvar%q']
+   >>> r = q > q.mean()
+   >>> r.identities()
+   ['Conventions=CF-1.7',
+    'project=research',
+    'units=',
+    'ncvar%q']
+
+
 Arthmetical and relational operations with insufficent metadata
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-For :ref:`arithmetical <Arithmetical-operations>` and :ref:`relational
-<Relational-operations>` operations, if both operands are field
-constructs but there is insufficent metadata to create a mapping of
-physically compatible dimensions, then operations may applied to the
-field construct's data instead. The resulting data may then be
-inserted into a copy of one of the field constructs, either with the
+If both operands of an :ref:`arithmetical <Arithmetical-operations>`
+or :ref:`relational <Relational-operations>` operation are field
+constructs with insufficent metadata to create a mapping of physically
+compatible dimensions, then operations may applied to the field
+construct's data instead. The resulting data may then be inserted into
+a copy of one of the field constructs, either with the
 `~cf.Field.set_data` method of the field construct, or with
 :ref:`indexed assignment <Assignment-by-index>`. The latter technique
 allows broadcasting, but the former one does not.
 
-In this case it is **assumed, and not checked**\ , that the dimensions
-of both `~cf.Data` instance operands are already in the correct order
-for physically meaningful broadcasting to occur.
+In this case it is assumed, and not checked, that the dimensions of
+both `~cf.Data` instance operands are already in the correct order for
+physically meaningful broadcasting to occur.
 
 .. code-block:: python
   :caption: *Operate on the data and use 'set_data' to put the
@@ -6062,6 +6103,9 @@ changing the construct's units.
    >>> sin_lat.data
    <CF Data(5): [-0.9659258262890683, ..., 0.9659258262890683] 1>
 
+The "standard_name" and "long_name" properties are removed from the
+result.
+       
 Exponential and logarithmic functions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -6085,6 +6129,9 @@ metadata but changing the construct's units where required.
    <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) lg(re 1 K)>
    >>> t.exp()                                                # Raises Exception
    ValueError: Can't take exponential of dimensional quantities: <Units: K>
+
+The "standard_name" and "long_name" properties are removed from the
+result.
 
 Rounding and truncation
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -6267,6 +6314,53 @@ is inserted at the edges by default; otherwise it may be forced to
 wrap around, or a one-sided difference is calculated at the edges. If
 the longitudinal axis is :ref:`cyclic <Cyclic-domain-axes>` then the
 derivative wraps around by default.
+
+.. _Cumulative-sums:
+
+Cumulative sums
+^^^^^^^^^^^^^^^
+
+The `~Field.cumsum` method of the field construct calulates the
+cumulative sum of elements along a given axis. The cell bounds of of
+the axis are updated to describe the range over which the sum applies,
+and a new "sum" cell method construct is added to the resulting field
+constuct.
+
+
+.. code-block:: python
+   :caption: *Calculate cumulative sums along the "T" axis, showing
+             the cell bounds before and after the operation.*
+   
+   >>> a = cf.read('timeseries.nc')[0]
+   >>> print(a)
+   Field: air_potential_temperature (ncvar%air_potential_temperature)
+   ------------------------------------------------------------------
+   Data            : air_potential_temperature(time(120), latitude(5), longitude(8)) K
+   Cell methods    : area: mean
+   Dimension coords: time(120) = [1959-12-16 12:00:00, ..., 1969-11-16 00:00:00]
+                   : latitude(5) = [-75.0, ..., 75.0] degrees_north
+                   : longitude(8) = [22.5, ..., 337.5] degrees_east
+                   : air_pressure(1) = [850.0] hPa
+   >>> b = a.cumsum('T')
+   >>> print(b)
+   Field: air_potential_temperature (ncvar%air_potential_temperature)
+   ------------------------------------------------------------------
+   Data            : air_potential_temperature(time(120), latitude(5), longitude(8)) K
+   Cell methods    : area: mean time(120): sum
+   Dimension coords: time(120) = [1959-12-16 12:00:00, ..., 1969-11-16 00:00:00]
+                   : latitude(5) = [-75.0, ..., 75.0] degrees_north
+                   : longitude(8) = [22.5, ..., 337.5] degrees_east
+                   : air_pressure(1) = [850.0] hPa
+   >>> print(a.coordinate('T').bounds[-1].dtarray)
+   [[cftime.DatetimeGregorian(1969-11-01 00:00:00)
+     cftime.DatetimeGregorian(1969-12-01 00:00:00))]]
+   >>> print(b.coordinate('T').bounds[-1].dtarray)
+   [[cftime.DatetimeGregorian(1959-11-01 00:00:00)
+     cftime.DatetimeGregorian(1969-12-01 00:00:00))]]
+
+The treatment of missing values can be specified, as well as the
+positioning of coordinate values in the summed axis of the returned
+field constuct.
 
 ----
   

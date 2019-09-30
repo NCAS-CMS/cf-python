@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.0b12</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.0b13</a></b></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -90,7 +90,7 @@
 <h1>cf.Field.regrids<a class="headerlink" href="#cf-field-regrids" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.regrids">
-<code class="descclassname">Field.</code><code class="descname">regrids</code><span class="sig-paren">(</span><em>dst</em>, <em>method</em>, <em>src_cyclic=None</em>, <em>dst_cyclic=None</em>, <em>use_src_mask=True</em>, <em>use_dst_mask=False</em>, <em>fracfield=False</em>, <em>src_axes=None</em>, <em>dst_axes=None</em>, <em>axis_order=None</em>, <em>ignore_degenerate=True</em>, <em>inplace=False</em>, <em>i=False</em>, <em>_compute_field_mass=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b12/cf/field.py#L12322"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.regrids" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">regrids</code><span class="sig-paren">(</span><em>dst</em>, <em>method</em>, <em>src_cyclic=None</em>, <em>dst_cyclic=None</em>, <em>use_src_mask=True</em>, <em>use_dst_mask=False</em>, <em>fracfield=False</em>, <em>src_axes=None</em>, <em>dst_axes=None</em>, <em>axis_order=None</em>, <em>ignore_degenerate=True</em>, <em>inplace=False</em>, <em>i=False</em>, <em>_compute_field_mass=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b13/cf/field.py#L12362"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.regrids" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the field regridded onto a new latitude-longitude grid.</p>
 <p>Regridding, also called remapping or interpolation, is the process
 of changing the grid underneath field data values while preserving
@@ -145,7 +145,7 @@ Python interface to the Earth System Modeling Framework (ESMF)
 regridding utility.</p>
 <p><strong>Logging</strong></p>
 <p>Whether ESMF logging is enabled or not is determined by
-<a class="reference internal" href="../generated/cf.REGRID_LOGGING.html#cf.REGRID_LOGGING" title="cf.REGRID_LOGGING"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.REGRID_LOGGING</span></code></a>. If it is logging takes place after every
+<a class="reference internal" href="../function/cf.REGRID_LOGGING.html#cf.REGRID_LOGGING" title="cf.REGRID_LOGGING"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.REGRID_LOGGING</span></code></a>. If it is logging takes place after every
 call. By default logging is disabled.</p>
 <p><strong>Latitude-Longitude Grid</strong></p>
 <p>The canonical grid with independent latitude and longitude
@@ -304,7 +304,7 @@ cells when checking the grids for errors. Regridding will
 proceed and degenerate cells will be skipped, not
 producing a result, when set to True. Otherwise an error
 will be produced if degenerate cells are found. This will
-be present in the ESMPy log files if <a class="reference internal" href="../generated/cf.REGRID_LOGGING.html#cf.REGRID_LOGGING" title="cf.REGRID_LOGGING"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.REGRID_LOGGING</span></code></a>
+be present in the ESMPy log files if <a class="reference internal" href="../function/cf.REGRID_LOGGING.html#cf.REGRID_LOGGING" title="cf.REGRID_LOGGING"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.REGRID_LOGGING</span></code></a>
 is set to True. As of ESMF 7.0.0 this only applies to
 conservative regridding.  Other methods always skip
 degenerate cells.</p>

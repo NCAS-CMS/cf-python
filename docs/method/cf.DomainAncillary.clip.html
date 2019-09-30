@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.0b12</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.0b13</a></b></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -90,7 +90,7 @@
 <h1>cf.DomainAncillary.clip<a class="headerlink" href="#cf-domainancillary-clip" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.DomainAncillary.clip">
-<code class="descclassname">DomainAncillary.</code><code class="descname">clip</code><span class="sig-paren">(</span><em>a_min</em>, <em>a_max</em>, <em>units=None</em>, <em>bounds=True</em>, <em>inplace=False</em>, <em>i=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b12/cf/mixin/propertiesdatabounds.py#L947"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DomainAncillary.clip" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">DomainAncillary.</code><code class="descname">clip</code><span class="sig-paren">(</span><em>a_min</em>, <em>a_max</em>, <em>units=None</em>, <em>bounds=True</em>, <em>inplace=False</em>, <em>i=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b13/cf/mixin/propertiesdatabounds.py#L935"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DomainAncillary.clip" title="Permalink to this definition">¶</a></dt>
 <dd><p>Limit the values in the data.</p>
 <p>Given an interval, values outside the interval are clipped to the
 interval edges. For example, if an interval of <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code> is
@@ -116,11 +116,11 @@ upper interval edge. Not more than one of <code class="xref py py-obj docutils l
 same units as the data are assumed.</p>
 </dd>
 <dt>bounds: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> then do not alter any bounds. By default any bounds
+<dd><p class="first last">If False then do not alter any bounds. By default any bounds
 are also altered.</p>
 </dd>
 <dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+<dd><p class="first last">If True then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
 </dd>
 <dt>i: deprecated at version 3.0.0</dt>
 <dd><p class="first last">Use <em>inplace</em> parameter instead.</p>

@@ -163,9 +163,9 @@ _collapse_ddof_methods = set(('sd',
                               'var',
                               ))
 
-#class DeprecationError(Exception):
- ##   '''Exception for removed methods'''
-#    pass
+
+_relational_methods = ('__eq__', '__ne__', '__lt__', '__le__', '__gt__', '__ge__')
+
 
 # ====================================================================
 #
@@ -837,7 +837,7 @@ may be accessed with the `nc_global_attributes`,
         # ============================================================
 
         units = self.Units
-        sn = self.get_property('standasrd_name', None)
+        sn = self.get_property('standard_name', None)
         ln = self.get_property('long_name', None)
 
         other_sn = other.get_property('standard_name', None)
@@ -1125,7 +1125,7 @@ may be accessed with the `nc_global_attributes`,
         if _debug:
             print('2: axes_unD, axes_unM , axes0_M =', axes_unD , axes_unM , axes0_M) # pragma: no cover
 
-#        print ('arse0' , axes_unD + axes_unM + axes0_M)
+#        print ('ZZZZZ' , axes_unD + axes_unM + axes0_M)
         field0.transpose(axes_unD + axes_unM + axes0_M, inplace=True)
 
         end_of_undefined0   = len(axes_unD)
@@ -1167,7 +1167,7 @@ may be accessed with the `nc_global_attributes`,
         if _debug:
             print('2: axes_unD , axes_unM , axes0_M =',axes_unD , axes_unM , axes0_M) # pragma: no cover
 
-#        print ('arse', axes_unD + axes_unM + axes1_M)
+#        print ('XXXXXXX', axes_unD + axes_unM + axes1_M)
         field1.transpose(axes_unD + axes_unM + axes1_M, inplace=True)
 
         start_of_unmatched1 = len(axes_unD)
@@ -1293,7 +1293,7 @@ may be accessed with the `nc_global_attributes`,
 
         new_data0 = field0.data._binary_operation(field1.data, method)
 #        new_data0 = super(Field, field0)._binary_operation(field1, method).data
-        
+
         if _debug:
             print('3: new_data0.shape =', new_data0.shape) # pragma: no cover
             print('3: field0.shape =', field0.data.shape) # pragma: no cover
@@ -1567,7 +1567,9 @@ may be accessed with the `nc_global_attributes`,
         
         field0.set_data(new_data0, set_axes=False, copy=False)
 
-        # TODO
+        # ------------------------------------------------------------
+        # Remove misleading identities
+        # ------------------------------------------------------------
         # Warning: This code is replicated in PropertiesData
         if sn != other_sn:
             if sn is not None and other_sn is not None:
@@ -1582,14 +1584,18 @@ may be accessed with the `nc_global_attributes`,
         elif ln is None and other_ln is not None:
             field0.set_property('long_name', other_ln)
 
-        # TODO
         # Warning: This code is replicated in PropertiesData
         new_units = field0.Units
-        if (not units.equivalent(new_units) and
+        if (method in _relational_methods or
+            not units.equivalent(new_units) and
             not (units.isreftime and new_units.isreftime)):
             field0.del_property('standard_name', None)
             field0.del_property('long_name', None)   
-         
+
+
+        if method in _relational_methods:
+            field0.override_units(Units(), inplace=True)
+            
         return field0
 
 
@@ -8533,6 +8539,16 @@ may be accessed with the `nc_global_attributes`,
 
         '''
         if not set_axes:
+            if not data.Units:
+                units = getattr(self, 'Units', None)
+                if units is not None:
+                    if copy:
+                        copy = False
+                        data = data.override_units(units, inplace=False)
+                    else:
+                        data.override_units(units, inplace=True)
+            #--- End: if
+            
             super(cfdm.Field, self).set_data(data, axes=None, copy=copy)
             return
             
@@ -8640,7 +8656,7 @@ may be accessed with the `nc_global_attributes`,
                 else:
                     data.override_units(units, inplace=True)
         #--- End: if
-            
+
         super(cfdm.Field, self).set_data(data, axes=axes, copy=copy)
 
 
@@ -9171,7 +9187,8 @@ may be accessed with the `nc_global_attributes`,
         return f
 
 
-    def cumsum(self, axis, masked_as_zero=False, inplace=False):
+    def cumsum(self, axis, masked_as_zero=False, coordinate=None,
+               inplace=False):
         '''Return the field cumulatively summed along the given axis.
         
     The cell bounds (if any) of the summed axis are updated, and a
@@ -9197,6 +9214,13 @@ may be accessed with the `nc_global_attributes`,
             will be masked where any missing values contribute to a
             cumulative sum.
 
+        coordinate: `str`, optional
+            Set how the cell coordinate values for the summed axis are
+            defined. By default they are unchanged from the original
+            field construct, but if *coordinate* is set to
+            ``'mid-range'`` then the each coordinate value is replaced
+            by the mid-range of the updated cell bounds.
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
     
@@ -9211,6 +9235,10 @@ may be accessed with the `nc_global_attributes`,
     >>> g = f.cumsum('T')
 
     >>> g = f.cumsum('latitude', masked_as_zero=True)
+
+    >>> g = f.cumsum('latitude', coordinate='mid_range')
+
+    >>> f.cumsum('latitude', inplace=True)
 
         '''
         # Retrieve the axis
@@ -9250,8 +9278,20 @@ may be accessed with the `nc_global_attributes`,
             # Update the bounds of the summed axis if necessary
             coord = f.dimension_coordinate(axis_key, default=None)
             if coord is not None and coord.has_bounds():
-                coord.bounds[:, 0] = coord.bounds[0, 0]
+                bounds = coord.get_bounds()
+                bounds[:, 0] = bounds[0, 0]
 
+                if coordinate is not None:
+                    if coordinate != 'mid_range':
+                        raise ValueError("TODO")
+                    
+                    data = coord.get_data(None)
+                    if data is not None:
+                        bounds = bounds.array
+                        data = data.varray
+                        data[...] = (bounds[:, 0] + bounds[:, 1])*0.5
+            #--- End: if
+            
             # Update the cell methods
             cell_method = CellMethod(axes=[axis_key], method='sum')
             f.set_construct(cell_method, copy=False)
@@ -9627,14 +9667,14 @@ may be accessed with the `nc_global_attributes`,
 
         if len(dims) != 1:
             if verbose:
-                print ("Not one 'X' dimension coordinate construct:", len(dims)) # pragma: no cover
+                print("Not one 'X' dimension coordinate construct:", len(dims)) # pragma: no cover
             return False
 
         key, dim = dict(dims).popitem()
 
 
         if not dim.Units.islongitude:
-            if verbose: print (0)
+            if verbose: print(0)
             if dim.get_property('standard_name', None) not in ('longitude', 'grid_longitude'):
                 self.cyclic(key, iscyclic=False)
                 if verbose: print (1)
@@ -9644,13 +9684,13 @@ may be accessed with the `nc_global_attributes`,
         bounds = dim.get_bounds(None)
         if bounds is None:
             self.cyclic(key, iscyclic=False)
-            if verbose: print (2)
+            if verbose: print(2)
             return False
 
         bounds_data = bounds.get_data(None)
         if bounds_data is None:
             self.cyclic(key, iscyclic=False)
-            if verbose: print (3)
+            if verbose: print(3)
             return False
 
         bounds = bounds_data.array
@@ -9661,11 +9701,11 @@ may be accessed with the `nc_global_attributes`,
 
         if abs(bounds[-1, -1] - bounds[0, 0]) != period.array:
             self.cyclic(key, iscyclic=False)
-            if verbose: print (4)
+            if verbose: print(4)
             return False
 
         self.cyclic(key, iscyclic=True, period=period)
-        if verbose: print (5)
+        if verbose: print(5)
 
         return True
     

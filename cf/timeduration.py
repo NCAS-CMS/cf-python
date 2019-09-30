@@ -42,6 +42,7 @@ _default_calendar = 'gregorian'
 Offset = namedtuple('offset', ('year', 'month', 'day', 'hour',
                                'minute', 'second', 'microsecond'))
 
+_relational_methods = ('__eq__', '__ne__', '__lt__', '__le__', '__gt__', '__ge__')
 
 class TimeDuration:
     '''A duration of time.
@@ -718,6 +719,7 @@ Function  Description
 
         return NotImplemented
 
+
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
@@ -749,13 +751,15 @@ Function  Description
                     self.__class__.__name__, duration))
 
         if not duration.Units.equals(self.duration.Units):
-            if method not in ('__eq__', '__ne__', '__lt__', '__le__', '__gt__', '__ge__'):
+            if method not in _relational_methods:
                 # Operator is not one of ==, !=, >=, >, <=, <                
                 raise ValueError(
                     "Can't create {} of {!r}".format(self.__class__.__name__, duration.Units))
         #--- End: if
         
-        duration.Units = self_units
+        if method not in _relational_methods:
+            # Operator is not one of ==, !=, >=, >, <=, <                
+            duration.Units = self_units
 
         new.duration = duration
 

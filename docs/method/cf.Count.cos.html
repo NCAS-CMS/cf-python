@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.0b12</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.0b13</a></b></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -90,13 +90,15 @@
 <h1>cf.Count.cos<a class="headerlink" href="#cf-count-cos" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Count.cos">
-<code class="descclassname">Count.</code><code class="descname">cos</code><span class="sig-paren">(</span><em>bounds=True</em>, <em>inplace=False</em>, <em>i=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b12/cf/mixin/propertiesdata.py#L2458"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Count.cos" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Count.</code><code class="descname">cos</code><span class="sig-paren">(</span><em>bounds=True</em>, <em>inplace=False</em>, <em>i=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b13/cf/mixin/propertiesdata.py#L2512"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Count.cos" title="Permalink to this definition">¶</a></dt>
 <dd><p>Take the trigonometric cosine of the data, element-wise.</p>
 <p>Units are accounted for in the calculation, so that the the cosine
 of 90 degrees_east is 0.0, as is the cosine of 1.57079632
 radians. If the units are not equivalent to radians (such as
 Kelvin) then they are treated as if they were radians.</p>
 <p>The output units are ‘1’ (nondimensionsal).</p>
+<p>The “standard_name” and “long_name” properties are removed from
+the result.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last"><a class="reference internal" href="cf.Count.sin.html#cf.Count.sin" title="cf.Count.sin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sin</span></code></a>, <a class="reference internal" href="cf.Count.tan.html#cf.Count.tan" title="cf.Count.tan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tan</span></code></a></p>

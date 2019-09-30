@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.0b12</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.0b13</a></b></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -90,7 +90,7 @@
 <h1>cf.Data.__setitem__<a class="headerlink" href="#cf-data-setitem" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Data.__setitem__">
-<code class="descclassname">Data.</code><code class="descname">__setitem__</code><span class="sig-paren">(</span><em>indices</em>, <em>value</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b12/cf/data/data.py#L1505"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.__setitem__" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Data.</code><code class="descname">__setitem__</code><span class="sig-paren">(</span><em>indices</em>, <em>value</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b13/cf/data/data.py#L1506"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.__setitem__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implement indexed assignment.</p>
 <p>x.__setitem__(indices, y) &lt;==&gt; x[indices]=y</p>
 <p>Assignment to data array elements defined by indices.</p>
@@ -99,7 +99,7 @@ subspace. See <a class="reference internal" href="cf.Data.__getitem__.html#cf.Da
 of the data array.</p>
 <p><strong>Missing data</strong></p>
 <p>The treatment of missing data elements during assignment to a
-subspace depends on the value of the <a class="reference internal" href="../generated/cf.Data.hardmask.html#cf.Data.hardmask" title="cf.Data.hardmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></a> attribute. If it
+subspace depends on the value of the <a class="reference internal" href="../attribute/cf.Data.hardmask.html#cf.Data.hardmask" title="cf.Data.hardmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></a> attribute. If it
 is True then masked elements will notbe unmasked, otherwise masked
 elements may be set to any value.</p>
 <p>In either case, unmasked elements may be set, (including missing
@@ -109,7 +109,7 @@ data).</p>
 masked elements.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="../constant.html#cf.cf.masked" title="cf.cf.masked"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.masked</span></code></a>, <a class="reference internal" href="../generated/cf.Data.hardmask.html#cf.Data.hardmask" title="cf.Data.hardmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></a>, <a class="reference internal" href="../generated/cf.Data.where.html#cf.Data.where" title="cf.Data.where"><code class="xref py py-obj docutils literal notranslate"><span class="pre">where</span></code></a></p>
+<p class="last"><a class="reference internal" href="../constant.html#cf.cf.masked" title="cf.cf.masked"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.masked</span></code></a>, <a class="reference internal" href="../attribute/cf.Data.hardmask.html#cf.Data.hardmask" title="cf.Data.hardmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></a>, <a class="reference internal" href="cf.Data.where.html#cf.Data.where" title="cf.Data.where"><code class="xref py py-obj docutils literal notranslate"><span class="pre">where</span></code></a></p>
 </div>
 <p><strong>Examples:</strong></p>
 </dd></dl>

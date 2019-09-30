@@ -1046,6 +1046,9 @@ u.transpose(inplace=True)
 u.Units -= 273.15
 u[0]                         
 t + u[0]
+t.identities()
+u = t * cf.Data(10, 'ms-1')
+u.identities()
 q, t = cf.read('file.nc')
 print(q.array)  
 print(-q.array)                    
@@ -1055,6 +1058,9 @@ print(q.array)
 print((q == q).array)                                   
 print((q < 0.05).array)
 print((q >= q[0]).array) 
+q.identities()
+r = q > q.mean()
+r.identities()
 t.min()
 u = t.copy()
 new_data = t.data + t.data
@@ -1098,6 +1104,12 @@ u, v = cf.read('wind_components.nc')
 zeta = cf.relative_vorticity(u, v)
 print(zeta)
 print(zeta.array.round(8))
+a = cf.read('timeseries.nc')[0]
+print(a)
+b = a.cumsum('T')
+print(b)
+print(a.coordinate('T').bounds[-1].dtarray)
+print(b.coordinate('T').bounds[-1].dtarray)
 
 print("\n**Aggregation**\n")
 
@@ -1218,7 +1230,7 @@ Y = P.set_construct(cf.DomainAxis(3))
 X = P.set_construct(cf.DomainAxis(2))
 
 # Set the data for the field
-P.set_data(cf.Data(array), axes=[T, Y, X])			      
+P.set_data(cf.Data(array), axes=[T, Y, X])
 
 P
 print(P.data.array)

@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.0b12</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.0b13</a></b></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -89,7 +89,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.TimeDuration">
-<em class="property">class </em><code class="descclassname">cf.</code><code class="descname">TimeDuration</code><span class="sig-paren">(</span><em>duration</em>, <em>units=None</em>, <em>month=1</em>, <em>day=1</em>, <em>hour=0</em>, <em>minute=0</em>, <em>second=0</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b12/cf/timeduration.py#L46"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.TimeDuration" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cf.</code><code class="descname">TimeDuration</code><span class="sig-paren">(</span><em>duration</em>, <em>units=None</em>, <em>month=1</em>, <em>day=1</em>, <em>hour=0</em>, <em>minute=0</em>, <em>second=0</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b13/cf/timeduration.py#L47"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.TimeDuration" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>A duration of time.</p>
 <p>The duration of time is a number of either calendar years, calender
@@ -106,7 +106,7 @@ a duration of one calendar month which, by default, starts at 12:00 on
 the 16th of the month. Note that the offset</p>
 <p><strong>Changing the units</strong></p>
 <p>The time duration’s units may be changed in place by assigning
-equivalent units to the <a class="reference internal" href="../generated/cf.TimeDuration.Units.html#cf.TimeDuration.Units" title="cf.TimeDuration.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a> attribute:</p>
+equivalent units to the <a class="reference internal" href="../attribute/cf.TimeDuration.Units.html#cf.TimeDuration.Units" title="cf.TimeDuration.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a> attribute:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;day&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span>
 <span class="go">&lt;CF TimeDuration: 1 day (from Y-M-D 00:00:00)&gt;</span>
@@ -279,29 +279,29 @@ time duration objects:</p>
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td><a class="reference internal" href="../generated/cf.Y.html#cf.Y" title="cf.Y"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Y</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../function/cf.Y.html#cf.Y" title="cf.Y"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Y</span></code></a></td>
 <td>Create a time duration of calendar years.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../generated/cf.M.html#cf.M" title="cf.M"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.M</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../function/cf.M.html#cf.M" title="cf.M"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.M</span></code></a></td>
 <td>Create a time duration of calendar months.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../generated/cf.D.html#cf.D" title="cf.D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.D</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../function/cf.D.html#cf.D" title="cf.D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.D</span></code></a></td>
 <td>Create a time duration of days.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../generated/cf.h.html#cf.h" title="cf.h"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.h</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../function/cf.h.html#cf.h" title="cf.h"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.h</span></code></a></td>
 <td>Create a time duration of hours.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../generated/cf.m.html#cf.m" title="cf.m"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.m</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../function/cf.m.html#cf.m" title="cf.m"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.m</span></code></a></td>
 <td>Create a time duration of minutes.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../generated/cf.s.html#cf.s" title="cf.s"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.s</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../function/cf.s.html#cf.s" title="cf.s"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.s</span></code></a></td>
 <td>Create a time duration of seconds.</td>
 </tr>
 </tbody>
 </table>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="../generated/cf.dt.html#cf.dt" title="cf.dt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.dt</span></code></a>, <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Datetime</span></code></p>
+<p class="last"><a class="reference internal" href="../function/cf.dt.html#cf.dt" title="cf.dt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.dt</span></code></a>, <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Datetime</span></code></p>
 </div>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.0.</span></p>
@@ -386,13 +386,13 @@ elements for units smaller that of the time duration are used.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../generated/cf.TimeDuration.Units.html#cf.TimeDuration.Units" title="cf.TimeDuration.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.TimeDuration.Units.html#cf.TimeDuration.Units" title="cf.TimeDuration.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a></td>
 <td>The units of the time duration.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../generated/cf.TimeDuration.isint.html#cf.TimeDuration.isint" title="cf.TimeDuration.isint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isint</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.TimeDuration.isint.html#cf.TimeDuration.isint" title="cf.TimeDuration.isint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isint</span></code></a></td>
 <td>True if the time duration is a whole number.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../generated/cf.TimeDuration.iso.html#cf.TimeDuration.iso" title="cf.TimeDuration.iso"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iso</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.TimeDuration.iso.html#cf.TimeDuration.iso" title="cf.TimeDuration.iso"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iso</span></code></a></td>
 <td>Return the time duration as an ISO 8601-like time duration string.</td>
 </tr>
 </tbody>

@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.0b12</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.0b13</a></b></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -90,7 +90,7 @@
 <h1>cf.Index.match_by_units<a class="headerlink" href="#cf-index-match-by-units" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Index.match_by_units">
-<code class="descclassname">Index.</code><code class="descname">match_by_units</code><span class="sig-paren">(</span><em>*units</em>, <em>exact=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b12/cf/mixin/propertiesdata.py#L3058"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Index.match_by_units" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Index.</code><code class="descname">match_by_units</code><span class="sig-paren">(</span><em>*units</em>, <em>exact=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b13/cf/mixin/propertiesdata.py#L3119"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Index.match_by_units" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether or not the construct has given units.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 3.0.0.</span></p>
@@ -114,7 +114,7 @@ expression (e.g. <code class="docutils literal notranslate"><span class="pre">'k
 <p class="last">If no units are provided then there is always a match.</p>
 </dd>
 <dt>exact: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> then a match occurs if the construct’s units
+<dd><p class="first last">If False then a match occurs if the construct’s units
 are equivalent to any of those given by <em>units</em>. For
 example, metres and are equivelent to kilometres. By
 default, a match only occurs if the construct’s units are

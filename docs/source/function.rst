@@ -27,7 +27,7 @@ Aggregation
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: function/
    :template: function.rst
 
    cf.aggregate
@@ -39,7 +39,7 @@ Mathematical operations
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: function/
    :template: function.rst
 
    cf.ATOL
@@ -54,7 +54,7 @@ Condition constructors
    
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: function/
    :template: function.rst
 
    cf.eq
@@ -71,7 +71,7 @@ Condition constructors
    
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: function/
    :template: function.rst
 
    cf.year 	
@@ -90,7 +90,7 @@ Condition constructors
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: function/
    :template: function.rst
 
    cf.contains
@@ -107,7 +107,7 @@ Date-time and time duration
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: function/
    :template: function.rst
 
    cf.dt
@@ -124,7 +124,7 @@ Resource management
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: function/
    :template: function.rst
 
    cf.CHUNKSIZE
@@ -148,7 +148,7 @@ Miscellaneous
 
 .. autosummary::
    :nosignatures:
-   :toctree: generated/
+   :toctree: function/
    :template: function.rst
 
    cf.CF

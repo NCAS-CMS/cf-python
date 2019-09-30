@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.0b12</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.0b13</a></b></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -90,19 +90,19 @@
 <h1>cf.DimensionCoordinate.override_calendar<a class="headerlink" href="#cf-dimensioncoordinate-override-calendar" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.DimensionCoordinate.override_calendar">
-<code class="descclassname">DimensionCoordinate.</code><code class="descname">override_calendar</code><span class="sig-paren">(</span><em>calendar</em>, <em>inplace=False</em>, <em>i=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b12/cf/mixin/propertiesdata.py#L4032"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DimensionCoordinate.override_calendar" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">DimensionCoordinate.</code><code class="descname">override_calendar</code><span class="sig-paren">(</span><em>calendar</em>, <em>inplace=False</em>, <em>i=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b13/cf/mixin/propertiesdata.py#L4047"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DimensionCoordinate.override_calendar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Override the calendar of date-time units.</p>
 <p>The new calendar <strong>need not</strong> be equivalent to the original one
 and the data array elements will not be changed to reflect the new
 units. Therefore, this method should only be used when it is known
 that the data array values are correct but the calendar has been
 incorrectly encoded.</p>
-<p>Not to be confused with setting the <a class="reference internal" href="../generated/cf.DimensionCoordinate.calendar.html#cf.DimensionCoordinate.calendar" title="cf.DimensionCoordinate.calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calendar</span></code></a> or <a class="reference internal" href="../classes/cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a>
+<p>Not to be confused with setting the <a class="reference internal" href="../attribute/cf.DimensionCoordinate.calendar.html#cf.DimensionCoordinate.calendar" title="cf.DimensionCoordinate.calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calendar</span></code></a> or <a class="reference internal" href="../classes/cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a>
 attributes to a calendar which is equivalent to the original
 calendar</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="../generated/cf.DimensionCoordinate.calendar.html#cf.DimensionCoordinate.calendar" title="cf.DimensionCoordinate.calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calendar</span></code></a>, <a class="reference internal" href="cf.DimensionCoordinate.override_units.html#cf.DimensionCoordinate.override_units" title="cf.DimensionCoordinate.override_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">override_units</span></code></a>, <a class="reference internal" href="../generated/cf.DimensionCoordinate.units.html#cf.DimensionCoordinate.units" title="cf.DimensionCoordinate.units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">units</span></code></a>, <a class="reference internal" href="../classes/cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a></p>
+<p class="last"><a class="reference internal" href="../attribute/cf.DimensionCoordinate.calendar.html#cf.DimensionCoordinate.calendar" title="cf.DimensionCoordinate.calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calendar</span></code></a>, <a class="reference internal" href="cf.DimensionCoordinate.override_units.html#cf.DimensionCoordinate.override_units" title="cf.DimensionCoordinate.override_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">override_units</span></code></a>, <a class="reference internal" href="../attribute/cf.DimensionCoordinate.units.html#cf.DimensionCoordinate.units" title="cf.DimensionCoordinate.units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">units</span></code></a>, <a class="reference internal" href="../classes/cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />

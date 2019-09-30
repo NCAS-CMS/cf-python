@@ -464,21 +464,22 @@ print(t.construct('latitude').array)
 t2 = t.subspace(latitude=cf.wi(51, 53))
 print(t2.array)
 
-print("\n**Filtering and sorting field lists**\n")
+print("\n**Sorting and selecting from field lists**\n")
 
-fl = cf.read('*.nc')
-fl
-fl.filter_by_identity('precipitation_flux')
-import re
-fl.filter_by_identity(re.compile('.*potential.*'))
-fl.filter_by_identity('relative_humidity')
-fl('air_temperature')
 fl = cf.read('file.nc')                                                                        
 fl
 fl.sort()                                                                                      
 fl
 fl.sort(key=lambda f: f.units)                                                                 
 fl
+fl = cf.read('*.nc')
+fl
+fl.select_by_identity('precipitation_flux')
+import re
+fl.select_by_identity(re.compile('.*potential.*'))
+fl.select_by_identity('relative_humidity')
+fl('air_temperature')
+fl.select('air_temperature')
 print(t)
 t.match_by_identity('air_temperature')
 t.match_by_rank(4)
@@ -1032,6 +1033,45 @@ print(new_v)
 print("\n**Mathematical operations**\n")
 
 q, t = cf.read('file.nc')
+t.data.stats()   
+x = t + t
+x
+x.min()
+(t - 2).min()
+(2 + t).min()
+(t * list(range(9))).min()
+(t + cf.Data(numpy.arange(20, 29), '0.1 K')).min()          
+u = t.copy()
+u.transpose(inplace=True)
+u.Units -= 273.15
+u[0]                         
+t + u[0]
+t.identities()
+u = t * cf.Data(10, 'ms-1')
+u.identities()
+q, t = cf.read('file.nc')
+print(q.array)  
+print(-q.array)                    
+print(abs(-q.array))  
+q, t = cf.read('file.nc')
+print(q.array)         
+print((q == q).array)                                   
+print((q < 0.05).array)
+print((q >= q[0]).array) 
+q.identities()
+r = q > q.mean()
+r.identities()
+t.min()
+u = t.copy()
+new_data = t.data + t.data
+u.set_data(new_data)
+u       
+u.min()
+u[...] = new_data
+u.min()
+t.data -= t.data
+t.min()
+q, t = cf.read('file.nc')
 lat = q.dimension_coordinate('latitude')
 lat.data
 sin_lat = lat.sin()
@@ -1064,6 +1104,12 @@ u, v = cf.read('wind_components.nc')
 zeta = cf.relative_vorticity(u, v)
 print(zeta)
 print(zeta.array.round(8))
+a = cf.read('timeseries.nc')[0]
+print(a)
+b = a.cumsum('T')
+print(b)
+print(a.coordinate('T').bounds[-1].dtarray)
+print(b.coordinate('T').bounds[-1].dtarray)
 
 print("\n**Aggregation**\n")
 
@@ -1184,7 +1230,7 @@ Y = P.set_construct(cf.DomainAxis(3))
 X = P.set_construct(cf.DomainAxis(2))
 
 # Set the data for the field
-P.set_data(cf.Data(array), axes=[T, Y, X])			      
+P.set_data(cf.Data(array), axes=[T, Y, X])
 
 P
 print(P.data.array)

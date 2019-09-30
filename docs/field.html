@@ -30,7 +30,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="index.html">cf 3.0.0b12</a></b></h3>
+<h3><b><a href="index.html">cf 3.0.0b13</a></b></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -203,7 +203,7 @@ data array as an actual <a class="reference external" href="https://docs.scipy.o
 </pre></div>
 </div>
 <p>The data array’s missing value mask may be retrieved with the
-<a class="reference internal" href="generated/cf.Field.mask.html#cf.Field.mask" title="cf.Field.mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code></a> attribute. The mask is returned as a new field with a
+<a class="reference internal" href="attribute/cf.Field.mask.html#cf.Field.mask" title="cf.Field.mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code></a> attribute. The mask is returned as a new field with a
 boolean data array:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">mask</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">data</span>
@@ -216,7 +216,7 @@ values is still returned.</p>
 <div class="section" id="cf-properties">
 <h2>CF properties<a class="headerlink" href="#cf-properties" title="Permalink to this headline">¶</a></h2>
 <p>Standard CF data variable properties (such as
-<a class="reference internal" href="generated/cf.Field.standard_name.html#cf.Field.standard_name" title="cf.Field.standard_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_name</span></code></a>, <a class="reference internal" href="generated/cf.Field.units.html#cf.Field.units" title="cf.Field.units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">units</span></code></a>, etc.) all have reserved
+<a class="reference internal" href="attribute/cf.Field.standard_name.html#cf.Field.standard_name" title="cf.Field.standard_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_name</span></code></a>, <a class="reference internal" href="attribute/cf.Field.units.html#cf.Field.units" title="cf.Field.units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">units</span></code></a>, etc.) all have reserved
 attribute names. See the <span class="xref std std-ref">list of reserved CF properties</span> for details. These properties may be set,
 retrieved and deleted like normal python object attributes:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">standard_name</span> <span class="o">=</span> <span class="s1">&#39;air_temperature&#39;</span>

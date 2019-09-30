@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.0b12</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.0b13</a></b></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -90,23 +90,24 @@
 <h1>cf.AuxiliaryCoordinate.mask_invalid<a class="headerlink" href="#cf-auxiliarycoordinate-mask-invalid" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.AuxiliaryCoordinate.mask_invalid">
-<code class="descclassname">AuxiliaryCoordinate.</code><code class="descname">mask_invalid</code><span class="sig-paren">(</span><em>inplace=False</em>, <em>i=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b12/cf/mixin/propertiesdatabounds.py#L705"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.AuxiliaryCoordinate.mask_invalid" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">AuxiliaryCoordinate.</code><code class="descname">mask_invalid</code><span class="sig-paren">(</span><em>inplace=False</em>, <em>i=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b13/cf/mixin/propertiesdatabounds.py#L692"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.AuxiliaryCoordinate.mask_invalid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Mask the array where invalid values occur.</p>
 <p>Note that:</p>
 <ul class="simple">
 <li>Invalid values are Nan or inf</li>
-<li>Invalid values in the results of arithmetic operations only occur if
-the raising of <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FloatingPointError" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FloatingPointError</span></code></a> exceptions has been suppressed
-by <a class="reference internal" href="../generated/cf.Data.seterr.html#cf.Data.seterr" title="cf.Data.seterr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.seterr</span></code></a>.</li>
-<li>If the raising of <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FloatingPointError" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FloatingPointError</span></code></a> exceptions has been allowed
-then invalid values in the results of arithmetic operations it is
-possible for them to be automatically converted to masked values,
-depending on the setting of <a class="reference internal" href="../generated/cf.Data.mask_fpe.html#cf.Data.mask_fpe" title="cf.Data.mask_fpe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.mask_fpe</span></code></a>. In this case, such
-automatic conversion might be faster than calling <a class="reference internal" href="#cf.AuxiliaryCoordinate.mask_invalid" title="cf.AuxiliaryCoordinate.mask_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask_invalid</span></code></a>.</li>
+<li>Invalid values in the results of arithmetic operations only
+occur if the raising of <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FloatingPointError" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FloatingPointError</span></code></a> exceptions has been
+suppressed by <a class="reference internal" href="cf.Data.seterr.html#cf.Data.seterr" title="cf.Data.seterr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.seterr</span></code></a>.</li>
+<li>If the raising of <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FloatingPointError" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FloatingPointError</span></code></a> exceptions has been
+allowed then invalid values in the results of arithmetic
+operations it is possible for them to be automatically converted
+to masked values, depending on the setting of
+<a class="reference internal" href="cf.Data.mask_fpe.html#cf.Data.mask_fpe" title="cf.Data.mask_fpe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.mask_fpe</span></code></a>. In this case, such automatic conversion
+might be faster than calling <a class="reference internal" href="#cf.AuxiliaryCoordinate.mask_invalid" title="cf.AuxiliaryCoordinate.mask_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask_invalid</span></code></a>.</li>
 </ul>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="../generated/cf.Data.mask_fpe.html#cf.Data.mask_fpe" title="cf.Data.mask_fpe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.mask_fpe</span></code></a>, <a class="reference internal" href="../generated/cf.Data.seterr.html#cf.Data.seterr" title="cf.Data.seterr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.seterr</span></code></a></p>
+<p class="last"><a class="reference internal" href="cf.Data.mask_fpe.html#cf.Data.mask_fpe" title="cf.Data.mask_fpe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.mask_fpe</span></code></a>, <a class="reference internal" href="cf.Data.seterr.html#cf.Data.seterr" title="cf.Data.seterr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.seterr</span></code></a></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />

@@ -81,7 +81,7 @@ class QueryTest(unittest.TestCase):
         
         message = 'Diff ='+str( (d-cf.Data(cf.dt('2001-01-03 21:00:00', calendar='standard'))).array)
         
-        self.assertTrue((d==cf.eq(cf.dt('2001-01-03 21:00:00'))).equals(cf.Data([[False, True], [False, False]])), message)
+        self.assertTrue((d==cf.eq(cf.dt('2001-01-03 21:00:00'))).equals(cf.Data([[False, True], [False, False]]), verbose=True), message)
         self.assertTrue((d==cf.ne(cf.dt('2001-01-03 21:00:00'))).equals(cf.Data([[True, False], [True, True]])), message)
         self.assertTrue((d==cf.ge(cf.dt('2001-01-03 21:00:00'))).equals(cf.Data([[False, True], [True, False]])), message)
         self.assertTrue((d==cf.gt(cf.dt('2001-01-03 21:00:00'))).equals(cf.Data([[False, False], [True, False]])), message)

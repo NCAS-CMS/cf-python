@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.0b12</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.0b13</a></b></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -90,7 +90,7 @@
 <h1>cf.Field.where<a class="headerlink" href="#cf-field-where" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.where">
-<code class="descclassname">Field.</code><code class="descname">where</code><span class="sig-paren">(</span><em>condition</em>, <em>x=None</em>, <em>y=None</em>, <em>inplace=False</em>, <em>construct=None</em>, <em>i=False</em>, <em>_debug=False</em>, <em>item=None</em>, <em>**item_options</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b12/cf/field.py#L11595"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.where" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">where</code><span class="sig-paren">(</span><em>condition</em>, <em>x=None</em>, <em>y=None</em>, <em>inplace=False</em>, <em>construct=None</em>, <em>i=False</em>, <em>_debug=False</em>, <em>item=None</em>, <em>**item_options</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b13/cf/field.py#L11635"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.where" title="Permalink to this definition">¶</a></dt>
 <dd><p>Assign to data elements depending on a condition.</p>
 <p>Data can be changed by assigning to elements that are selected by
 a condition based on the data values of the field construct or on
@@ -103,12 +103,12 @@ to the <a class="reference internal" href="../constant.html#cf.cf.masked" title=
 elements of array-valued <em>x</em> and <em>y</em> parameters.</p>
 <p>By default the data mask is “hard”, meaning that masked values can
 not be changed by assigning them to another value. This behaviour
-may be changed by setting the <a class="reference internal" href="../generated/cf.Field.hardmask.html#cf.Field.hardmask" title="cf.Field.hardmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></a> attribute of the field
+may be changed by setting the <a class="reference internal" href="../attribute/cf.Field.hardmask.html#cf.Field.hardmask" title="cf.Field.hardmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></a> attribute of the field
 construct to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, thereby making the data mask “soft” and
 allowing masked elements to be set to non-masked values.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="../constant.html#cf.cf.masked" title="cf.cf.masked"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.masked</span></code></a>, <a class="reference internal" href="../generated/cf.Field.hardmask.html#cf.Field.hardmask" title="cf.Field.hardmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></a>, <a class="reference internal" href="cf.Field.indices.html#cf.Field.indices" title="cf.Field.indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">indices</span></code></a>, <a class="reference internal" href="../generated/cf.Field.mask.html#cf.Field.mask" title="cf.Field.mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code></a>,
+<p class="last"><a class="reference internal" href="../constant.html#cf.cf.masked" title="cf.cf.masked"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.masked</span></code></a>, <a class="reference internal" href="../attribute/cf.Field.hardmask.html#cf.Field.hardmask" title="cf.Field.hardmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></a>, <a class="reference internal" href="cf.Field.indices.html#cf.Field.indices" title="cf.Field.indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">indices</span></code></a>, <a class="reference internal" href="../attribute/cf.Field.mask.html#cf.Field.mask" title="cf.Field.mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code></a>,
 <a class="reference internal" href="cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a>, <a class="reference internal" href="cf.Field.__setitem__.html#cf.Field.__setitem__" title="cf.Field.__setitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__setitem__</span></code></a></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">

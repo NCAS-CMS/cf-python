@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.0b12</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.0b13</a></b></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -90,7 +90,7 @@
 <h1>cf.Field.cumsum<a class="headerlink" href="#cf-field-cumsum" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.cumsum">
-<code class="descclassname">Field.</code><code class="descname">cumsum</code><span class="sig-paren">(</span><em>axis</em>, <em>masked_as_zero=False</em>, <em>inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b12/cf/field.py#L9174"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.cumsum" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">cumsum</code><span class="sig-paren">(</span><em>axis</em>, <em>masked_as_zero=False</em>, <em>coordinate=None</em>, <em>inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf/blob/v3.0.0b13/cf/field.py#L9190"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.cumsum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the field cumulatively summed along the given axis.</p>
 <p>The cell bounds (if any) of the summed axis are updated, and a
 cell method construct is added.</p>
@@ -120,6 +120,13 @@ calculating the cumulative sum. By default the output data
 will be masked where any missing values contribute to a
 cumulative sum.</p>
 </dd>
+<dt>coordinate: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dd><p class="first last">Set how the cell coordinate values for the summed axis are
+defined. By default they are unchanged from the original
+field construct, but if <em>coordinate</em> is set to
+<code class="docutils literal notranslate"><span class="pre">'mid-range'</span></code> then the each coordinate value is replaced
+by the mid-range of the updated cell bounds.</p>
+</dd>
 <dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
 </dd>
@@ -141,6 +148,12 @@ dimension, or <a class="reference external" href="https://docs.python.org/3/libr
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">,</span> <span class="n">masked_as_zero</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">,</span> <span class="n">coordinate</span><span class="o">=</span><span class="s1">&#39;mid_range&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>

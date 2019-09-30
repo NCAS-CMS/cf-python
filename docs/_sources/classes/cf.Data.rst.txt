@@ -13,7 +13,7 @@ Data attributes
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../attribute/
    :template: attribute.rst
 
    ~cf.Data.array
@@ -44,7 +44,7 @@ Data methods
    
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.Data.add_partitions
@@ -160,7 +160,7 @@ Data static methods
 
 .. autosummary::
    :nosignatures:
-   :toctree: ../generated/
+   :toctree: ../method/
    :template: method.rst
 
    ~cf.Data.mask_fpe
