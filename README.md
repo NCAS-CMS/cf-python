@@ -82,7 +82,7 @@ See the cf-plot gallery
 (http://ajheaps.github.io/cf-plot/gallery.html) for the full range
 range plotting possibilities with example code.
 
-![text](docs/source/images/cfplot_example.png)
+![Example output of cf-plot displaying a cf field construct](docs/source/images/cfplot_example.png)
 
 Command line utilities
 ======================
