@@ -23,9 +23,7 @@ make html $version
 
 cd $version
 
-rm -fr _downloads/*
-cp -pv ../source/sample_files/cf_tutorial_files.zip _downloads
-cp -pv ../source/tutorial.py _downloads
+cp -pv ../source/sample_files/cf_tutorial_files.zip ../source/tutorial.py _downloads
 
 for download_file in cf_tutorial_files.zip tutorial.py
 do		     
@@ -45,7 +43,8 @@ git add \
     *.js \
     _sources \
     _static \
-    _downloads/*
+    _downloads/cf_tutorial_files.zip \
+    _downloads/tutorial.py
 
 git commit -a -m "v$version archive documentation"
 

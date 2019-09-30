@@ -28,9 +28,7 @@ if [[ $rm_doctrees = "true" ]] ; then
 fi
 make html .
 
-rm -fr _downloads/*
-cp -pv source/sample_files/cf_tutorial_files.zip _downloads
-cp -pv source/tutorial.py _downloads
+cp -pv source/sample_files/cf_tutorial_files.zip source/tutorial.py _downloads
 
 for download_file in cf_tutorial_files.zip tutorial.py
 do		     
