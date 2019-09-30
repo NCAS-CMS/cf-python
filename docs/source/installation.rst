@@ -14,6 +14,15 @@ Version |release| for version |version| of the CF conventions.
    :local:
    :backlinks: entry
 
+.. _Operating-systems:
+
+**Operating systems**
+---------------------
+
+cf works only for Linux and Mac operating systems.
+
+----
+
 .. _Python-versions:
 
 **Python versions**
@@ -21,6 +30,27 @@ Version |release| for version |version| of the CF conventions.
 
 cf works only for Python 3.5 or later. (Versions 2.x of cf work only
 for Python 2.7.)
+
+----
+
+.. _conda:
+  
+**conda**
+---------
+
+cf-python is in the ``ncas`` conda channel. To install cf with all of
+its :ref:`required <Required>` and :ref:`optional <Optional>`
+dependencies, and the `cf-plot visualisation package
+<http://ajheaps.github.io/cf-plot>`_, run
+
+.. code-block:: shell
+   :caption: *Install with conda.*
+	     
+   conda install -c ncas -c conda-forge cf-python cf-plot udunits2
+   conda install -c conda-forge mpich esmpy
+
+The second of the two ``conda`` commands is required for
+:ref:`regridding <Regridding>` to work.
 
 ----
 
@@ -72,7 +102,7 @@ To install from source:
 1. Download the cf-python package from https://pypi.org/project/cf-python
 
 2. Unpack the library (replacing ``<version>`` with the version that
-   you want to install, e.g. ``1.7.0``):
+   you want to install, e.g. ``3.0.0``):
 
    .. code:: bash
 	 
