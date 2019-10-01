@@ -80,7 +80,7 @@ except ImportError as error1:
 __Conventions__  = 'CF-1.7'
 __author__       = 'David Hassell'
 __date__         = '2019-10-01'
-__version__      = '3.0.0'
+__version__      = '3.0.1'
 __cf_version__   = cfdm.core.__cf_version__
 
 from distutils.version import LooseVersion

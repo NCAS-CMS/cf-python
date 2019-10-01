@@ -98,10 +98,6 @@ Adpated from https://github.com/Turbo87/py-xcsoar/blob/master/setup.py
 
 
 long_description="""
-DEVELOPMENT VERSION FOR ``PYTHON 3`` - LIABLE TO CHANGE WITHOUT NOTICE UNTIL THE STABLE RELEASE DATE: ``2019-10-01``
-====================================================================================================================
-
-
 CF Python
 =========
 

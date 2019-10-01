@@ -1,0 +1,7 @@
+cf.Data.stats
+=============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Data.stats
