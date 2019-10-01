@@ -42,20 +42,42 @@ class read_writeTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
+        pwd = os.getcwd() + '/'
+        
+        try:
+            os.mkdir('dir')
+        except FileExistsError:
+            pass
+        except:
+            raise ValueError("Can not make 'dir'")
+        else:
+            f = 'test_file2.nc' 
+            os.symlink(pwd+f, pwd+'dir/'+f)
+            
+        try:
+            os.mkdir('dir/subdir')
+        except FileExistsError:
+            pass
+        except:
+            raise ValueError("Can not make 'dir/subdir'")
+        else:
+            for f in ('test_file3.nc', 'test_file4.nc'):            
+                os.symlink(pwd+f, pwd+'dir/subdir/'+f)
+                           
         f = cf.read('dir', aggregate=False)
-        self.assertTrue(len(f) == 3, f)
+        self.assertTrue(len(f) == 1, f)
 
         f = cf.read('dir', recursive=True, aggregate=False)
-        self.assertTrue(len(f) == 5, f)
+        self.assertTrue(len(f) == 3, f)
 
         f = cf.read(['dir', 'dir/subdir'], aggregate=False)
-        self.assertTrue(len(f) == 5, f)
+        self.assertTrue(len(f) == 3, f)
 
         f = cf.read(['dir/subdir', 'dir'], aggregate=False)
-        self.assertTrue(len(f) == 5, f)
+        self.assertTrue(len(f) == 3, f)
 
         f = cf.read(['dir', 'dir/subdir'], recursive=True, aggregate=False)
-        self.assertTrue(len(f) == 7, f)
+        self.assertTrue(len(f) == 5, f)
 
         f = cf.read('dir/subdir', aggregate=False)
         self.assertTrue(len(f) == 2, f)
