@@ -7,6 +7,9 @@
 
 * Create a link to the new documentation in docs/source/releases.rst
 
+* Make sure that the Data tests are not commented out
+  (cf/test/test_Data.py)
+  
 * Create a source tarball using `python setup.py sdist`
 
 * Test the tarball release using `test_release <vn>`
