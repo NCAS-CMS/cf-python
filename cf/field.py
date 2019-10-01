@@ -9962,9 +9962,6 @@ may be accessed with the `nc_global_attributes`,
                 self, 'unsqueeze', {'axes': axes},
                 "All size one domain axes missing from the data are inserted. Use method 'insert_dimension' to insert an individual size one domain axis.") # pragma: no cover
 
-        if kwargs:
-            _DEPRECATION_ERROR_KWARGS(self, 'unsqueeze', kwargs) # pragma: no cover
-
         if inplace:
             f = self
         else:
@@ -11136,7 +11133,8 @@ may be accessed with the `nc_global_attributes`,
 
         '''
         if axes:
-            _DEPRECATION_ERROR_KWARGS(self, 'axis_size', axes=True) # pragma: no cover
+            _DEPRECATION_ERROR_KWARGS(self, 'axis_size',
+                                      "Use keyword 'identity' instead.") # pragma: no cover
 
         if kwargs:
             _DEPRECATION_ERROR_KWARGS(self, 'axis_size', kwargs, "See f.domain_axes") # pragma: no cover

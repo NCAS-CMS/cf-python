@@ -90,17 +90,17 @@
 <h1>cf.Data.isclose<a class="headerlink" href="#cf-data-isclose" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Data.isclose">
-<code class="descclassname">Data.</code><code class="descname">isclose</code><span class="sig-paren">(</span><em>y</em>, <em>rtol=None</em>, <em>atol=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.0b13/cf/data/data.py#L9429"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.isclose" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Data.</code><code class="descname">isclose</code><span class="sig-paren">(</span><em>y</em>, <em>rtol=None</em>, <em>atol=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.0b13/cf/data/data.py#L9423"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.isclose" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return where data are element-wise equal to other, broadcastable
 data.</p>
 <p>Two real numbers <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> are considered equal if
 <code class="docutils literal notranslate"><span class="pre">|x-y|&lt;=atol+rtol|y|</span></code>, where <code class="docutils literal notranslate"><span class="pre">atol</span></code> (the tolerance on absolute
-differences) and <code class="docutils literal notranslate"><span class="pre">rtol</span></code> (the tolerance on relative differences) are
-positive, typically very small numbers. See the <em>atol</em> and <em>rtol</em>
-parameters.</p>
-<p>For numeric data arrays, <code class="docutils literal notranslate"><span class="pre">d.isclose(y,</span> <span class="pre">rtol,</span> <span class="pre">atol)</span></code> is equivalent to
-<code class="docutils literal notranslate"><span class="pre">abs(d</span> <span class="pre">-</span> <span class="pre">y)</span> <span class="pre">&lt;=</span> <span class="pre">``atol</span> <span class="pre">+</span> <span class="pre">rtol*abs(y)</span></code>, otherwise it is equivalent to
-<code class="docutils literal notranslate"><span class="pre">d</span> <span class="pre">==</span> <span class="pre">y</span></code>.</p>
+differences) and <code class="docutils literal notranslate"><span class="pre">rtol</span></code> (the tolerance on relative differences)
+are positive, typically very small numbers. See the <em>atol</em> and
+<em>rtol</em> parameters.</p>
+<p>For numeric data arrays, <code class="docutils literal notranslate"><span class="pre">d.isclose(y,</span> <span class="pre">rtol,</span> <span class="pre">atol)</span></code> is
+equivalent to <code class="docutils literal notranslate"><span class="pre">abs(d</span> <span class="pre">-</span> <span class="pre">y)</span> <span class="pre">&lt;=</span> <span class="pre">``atol</span> <span class="pre">+</span> <span class="pre">rtol*abs(y)</span></code>, otherwise it
+is equivalent to <code class="docutils literal notranslate"><span class="pre">d</span> <span class="pre">==</span> <span class="pre">y</span></code>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
