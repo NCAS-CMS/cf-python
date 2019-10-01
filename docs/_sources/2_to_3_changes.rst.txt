@@ -10,9 +10,11 @@ For those familiar with the cf-python API at version 2.x, some
 important, backwards incompatible changes were introduced at version
 3.0.0.
 
-Some of these changes could break code written at version 2.x, causing
-an exception to be raised with a message on how to change the code to
-work at version 3.x. 
+Scripts written for version 2.x but running under version 3.x should
+either work as expected, or provide informative error mesages on the
+new API usage. However, it is advised that the outputs of older
+scripts be checked when running with Python 3 versions of the cf
+library.
 
 
 Python

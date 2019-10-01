@@ -30,7 +30,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="index.html">cf 3.0.0b13</a></b></h3>
+<h3><b><a href="index.html">cf 3.0.0</a></b></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -81,9 +81,11 @@
 <p>For those familiar with the cf-python API at version 2.x, some
 important, backwards incompatible changes were introduced at version
 3.0.0.</p>
-<p>Some of these changes could break code written at version 2.x, causing
-an exception to be raised with a message on how to change the code to
-work at version 3.x.</p>
+<p>Scripts written for version 2.x but running under version 3.x should
+either work as expected, or provide informative error mesages on the
+new API usage. However, it is advised that the outputs of older
+scripts be checked when running with Python 3 versions of the cf
+library.</p>
 <div class="section" id="python">
 <h2>Python<a class="headerlink" href="#python" title="Permalink to this headline">¶</a></h2>
 <p>Version 3.x only works for Python 3.5 or later. Version 2.x only works
@@ -165,9 +167,9 @@ attributes that they replace:</p>
 </tbody>
 </table>
 </div>
-<div class="section" id="method-apis">
-<h2>Method APIs<a class="headerlink" href="#method-apis" title="Permalink to this headline">¶</a></h2>
-<p>Methods that have a a different API in version 3.x</p>
+<div class="section" id="changes-to-method-apis">
+<h2>Changes to method APIs<a class="headerlink" href="#changes-to-method-apis" title="Permalink to this headline">¶</a></h2>
+<p>Methods that have a different API in version 3.x</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="56%" />

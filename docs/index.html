@@ -31,7 +31,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="#">cf 3.0.0b13</a></b></h3>
+<h3><b><a href="#">cf 3.0.0</a></b></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -84,7 +84,7 @@
 <style> .red {color:red} </style><style> .blue {color:blue} </style><div class="section" id="introduction">
 <h2><strong>Introduction</strong><a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
-<p>Version 3.0.0b13 for version 1.7 of the CF conventions.</p>
+<p>Version 3.0.0 for version 1.7 of the CF conventions.</p>
 <p>The Python cf package is an Earth science data analysis library that
 is built on a complete implementation of the <a class="reference internal" href="cf_data_model.html#cf-data-model"><span class="std std-ref">CF data model</span></a>
 <a class="footnote-reference" href="#cfdm" id="id1">[1]</a>.</p>
@@ -93,9 +93,14 @@ is built on a complete implementation of the <a class="reference internal" href=
 <hr class="docutils" />
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last"><strong>This version of cf is for Python 3 only</strong>, and there are
-<a class="reference internal" href="2_to_3_changes.html#two-to-three-changes"><span class="std std-ref">incompatible differences between versions 2.x and 3.x</span></a>. For version 2.x documentation, see
-the <a class="reference external" href="https://cfpython.bitbucket.io/docs/archive.html">documentation archive</a>.</p>
+<p><strong>This version of cf is for Python 3 only</strong> and there are
+<a class="reference internal" href="2_to_3_changes.html#two-to-three-changes"><span class="std std-ref">incompatible differences between versions 2.x and 3.x</span></a> of cf.</p>
+<p>Scripts written for version 2.x but running under version
+3.x should either work as expected, or provide informative
+error mesages on the new API usage. However, it is advised
+that the outputs of older scripts be checked when running
+with Python 3 versions of the cf library.</p>
+<p class="last">For version 2.x documentation, see the <a class="reference internal" href="releases.html#older-releases"><span class="std std-ref">older releases</span></a> page.</p>
 </div>
 <p>The cf package implements the <a class="reference internal" href="cf_data_model.html#cf-data-model"><span class="std std-ref">CF data model</span></a> <a class="footnote-reference" href="#cfdm" id="id2">[1]</a> for its
 internal data structures and so is able to process any CF-compliant

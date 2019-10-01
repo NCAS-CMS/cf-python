@@ -30,11 +30,18 @@ is built on a complete implementation of the :ref:`CF-data-model`
 
 ----
 
-.. note:: **This version of cf is for Python 3 only**, and there are
+.. note:: **This version of cf is for Python 3 only** and there are
           :ref:`incompatible differences between versions 2.x and 3.x
-          <two-to-three-changes>`. For version 2.x documentation, see
-          the `documentation archive
-          <https://cfpython.bitbucket.io/docs/archive.html>`_.
+          <two-to-three-changes>` of cf.
+
+	  Scripts written for version 2.x but running under version
+          3.x should either work as expected, or provide informative
+          error mesages on the new API usage. However, it is advised
+          that the outputs of older scripts be checked when running
+          with Python 3 versions of the cf library.
+
+	  For version 2.x documentation, see the :ref:`older releases
+	  <Older-releases>` page.
 
 The cf package implements the :ref:`CF-data-model` [#cfdm]_ for its
 internal data structures and so is able to process any CF-compliant

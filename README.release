@@ -1,9 +1,6 @@
 * Change the version and date in cf/__init__.py (__version__ and
   __date__ variables)
 
-* If required, change the CF conventions version in cf/__init__.py
-  (__cf_version__ variable)
-
 * Make sure that README.md is up to date.
 
 * Make sure that Changelog.rst is up to date.
@@ -18,8 +15,6 @@
 * Test tutorial code:
 
 cd docs/source; ./extract_tutorial_code; ./reset_test_tutorial; cd test_tutorial; python ../tutorial.py
-
-  
 
 * Update the latest documentation using `./release_latest_docs <vn>`
   (e.g. ./release_latest_docs 3.0.0)
