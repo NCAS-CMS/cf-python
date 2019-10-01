@@ -243,7 +243,7 @@ int initialise_records(Rec **recs, int nrec, List *heaplist)
       /* store time info */
       CKP(  rec->internp->time = malloc_(sizeof(Time), heaplist)  );
       CKI(  time_set(rec->internp->time, rec)  );
-      rec->internp->mean_period = mean_period(rec->internp->time);
+      rec->internp->mean_period = get_mean_period(rec->internp->time);
   }
   return 0;
   ERRBLKI;

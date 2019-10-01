@@ -75,6 +75,57 @@ Version 3.x                                      	  Version 2.x
 
 `cf.Data.nc_hdf5_chunksizes`	    	 	          `cf.Field.HDF_chunks`            
     
+`cf.Data.nc_set_hdf5_chunksizes`	           	  `cf.Field.HDF_chunks` 
+    
+`cf.Data.nc_clear_hdf5_chunksizes`	 	          `cf.Field.HDF_chunks`
+========================================================  ===============================  
+
+
+Method APIs
+-----------
+
+Methods that have a a different API in version 3.x
+
+========================================================  ===============================  
+Version 3.x                                      	  Changes compared to version 2.x
+========================================================  ===============================  
+`cf.Field.cell_area`			 	          No ``insert`` parameter.
+						 	                                 
+`cf.Field.collapse`			 	          No ``**`` parameters.
+			 	                          No ``**kwargs`` parameters.
+			 	                          No ``**kwargs`` parameters.
+ 
+						 	                                 
+`cf.Field.cyclic`			 	          No ``**kwargs`` parameters
+						 	                                 
+`cf.Field.iscyclic`			 	          No ``**kwargs`` parameters
+						 	                                 
+cf.Field.convert`				 	  `cf.Field.field`                 
+						 	                                   
+`cf.Field.domain_axis_identity`			 	  `cf.Field.axis_name`             
+						 		                                   
+`cf.Field.del_construct`			 	  `cf.Field.remove_item`
+
+`cf.Field.get_data_axes`			 	  `cf.Field.data_axes`,
+                                                          `cf.Field.item_axes`            
+						 	                                   
+`cf.Field.insert_dimension`			 	  `cf.Field.expand_dims`           
+						 	                                   
+`cf.Field.set_construct`			 	  `cf.Field.insert_aux`,            
+                           			 	  `cf.Field.insert_axis`,          
+                           			 	  `cf.Field.insert_dim`,            
+                           			 	  `cf.Field.insert_domain_anc`,     
+                           			 	  `cf.Field.insert_field_anc`,      
+                           			 	  `cf.Field.insert_item`,           
+                           			 	  `cf.Field.insert_measure`,        
+                           			 	  `cf.Field.insert_ref`            
+
+`cf.Field.set_data`				 	  `cf.Field.insert_data`           
+
+`cf.Constructs.data_axes`	   	 	          `cf.Field.items_axes`            
+
+`cf.Data.nc_hdf5_chunksizes`	    	 	          `cf.Field.HDF_chunks`            
+    
 `cf.Data.nc_set_hdf5_chunksizes`	           	  `cf.Field.HDF_chunks`    	                           
     
 `cf.Data.nc_clear_hdf5_chunksizes`	 	          `cf.Field.HDF_chunks`

@@ -3,17 +3,7 @@
 
 #include "umfileint.h"
 
-
 #define file_pos(f) (lseek(f, 0, SEEK_CUR))
-
-
-#if defined(SINGLE)
-#define swap_bytes swap_bytes_sgl
-#elif defined(DOUBLE)
-#define swap_bytes swap_bytes_dbl
-#else
-#error Need to compile this file with -DSINGLE or -DDOUBLE
-#endif
 
 
 /*

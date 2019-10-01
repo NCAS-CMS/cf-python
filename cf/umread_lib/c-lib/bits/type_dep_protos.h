@@ -64,7 +64,7 @@ int lev_set(Level *lev, const Rec *rec);
 Lev_type level_type(const Rec *rec);
 
 /* date_and_time.c */
-REAL mean_period(const Time *time);
+REAL get_mean_period(const Time *time);
 int is_time_mean(INTEGER LBTIM);
 REAL time_diff(INTEGER lbtim, const Date *date, const Date *orig_date);
 REAL sec_to_day(int64_t seconds);

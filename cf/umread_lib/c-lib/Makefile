@@ -1,12 +1,25 @@
 HEADERS=umfile.h umfileint.h bits/*.h
 
 LIBRARY=umfile.so
-
-CC=gcc
 CFLAGS=-Wall -fPIC -g
+
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Linux)
+    CC=gcc
+    LD=ld
+    LDFLAGS=-shared --build-id
+    CFLAGS += -DLINUX
+    LD_ARCHIVE_FLAGS=--whole-archive
+endif
+ifeq ($(UNAME_S),Darwin)
+    CC=clang
+    LD=clang
+    LDFLAGS=-dynamiclib
+    CFLAGS += -DOSX
+    LD_ARCHIVE_FLAGS=-force_load
+endif
+
 CPP=gcc -E -P
-LD=ld
-LDFLAGS=-shared --build-id
 OBJS = umfile.o error.o filetype.o \
 	malloc.o linklist.o new_structs.o swap.o
 
@@ -28,7 +41,7 @@ type-dep:
 	$(MAKE) -C $(TYPE_DEP_DIR)
 
 $(LIBRARY): $(OBJS) type-dep
-	$(LD) $(LDFLAGS) -o $@ $(OBJS) --whole-archive $(TYPE_DEP_LIBRARY_PATH)
+	$(LD) $(LDFLAGS) -o $@ $(OBJS) $(LD_ARCHIVE_FLAGS) $(TYPE_DEP_LIBRARY_PATH)
 
 %.o: %.c $(HEADERS)
 	$(CC) $(CFLAGS) -c $<

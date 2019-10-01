@@ -13,6 +13,7 @@
 /* ----------------------------------------------------------- */
 
 #if defined(SINGLE) || defined(DOUBLE)
+#include "bits/type_dep_redefs.h"
 #include "bits/type_dep_protos.h"
 #else
 #define WITH_LEN(x) x ## _sgl

@@ -7,7 +7,7 @@
  * different variables.
  */
 
-REAL mean_period(const Time *time) 
+REAL get_mean_period(const Time *time) 
 {
   /* returns the averaging period in days, or 0. if it is not a mean field */
   INTEGER lbtim = time->type;

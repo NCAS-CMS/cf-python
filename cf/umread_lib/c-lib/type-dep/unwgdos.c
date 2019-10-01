@@ -15,9 +15,10 @@
 #include <limits.h>
 #include <float.h>
 #include <errno.h>
+#include <stdlib.h>
 
 #include "umfileint.h"
-#include "stdlib.h"
+
 
 #define TRUE 1
 #define FALSE 0
@@ -357,7 +358,7 @@ int extrin(int32_t *icomp, int iword, int istart, int nbit, int *inum, int isign
       
       /* move sign bit */
       
-      *inum = (*icomp << (31-istart)) & (~0 << 31);
+      *inum = (*icomp << (31-istart)) & -2 * (1 << 30);
       
       /* set undefined if inum negative */
       
@@ -382,7 +383,7 @@ static int bit_test(void *iword, int ibit)
   
   ui = *(unsigned int *) iword;
   
-  i = (ui >> ibit) & ~(~0 << 1);
+  i = (ui >> ibit) & -2;
   
   if (i == 1)
     return TRUE;
