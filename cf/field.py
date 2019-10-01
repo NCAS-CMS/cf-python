@@ -9189,7 +9189,7 @@ may be accessed with the `nc_global_attributes`,
         '''Return the field cumulatively summed along the given axis.
         
     The cell bounds (if any) of the summed axis are updated, and a
-    cell method construct is added.
+    "sum" cell method construct is added.
 
     .. versionadded:: 3.0.0
         
@@ -9215,8 +9215,8 @@ may be accessed with the `nc_global_attributes`,
             Set how the cell coordinate values for the summed axis are
             defined. By default they are unchanged from the original
             field construct, but if *coordinate* is set to
-            ``'mid-range'`` then the each coordinate value is replaced
-            by the mid-range of the updated cell bounds.
+            ``'mid_range'`` then the each coordinate value is replaced
+            by the mid_range of the updated cell bounds.
 
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.

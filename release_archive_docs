@@ -19,6 +19,8 @@ cd -
 # --------------------------------------------------------------------
 cd docs
 
+rm -fr $version/.doctrees
+
 make html $version
 
 cd $version
