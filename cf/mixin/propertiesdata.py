@@ -810,7 +810,9 @@ class PropertiesData(Properties):
 
         '''
         if self.has_data() != other.has_data():
-            # add traceback TODO
+            if verbose:
+                print("{}: Only one construct has data: {!r}, {!r}".format(
+                    self.__class__.__name__, self, other))
             return False
 
         if not self.has_data():
@@ -820,24 +822,26 @@ class PropertiesData(Properties):
         data1 = other.get_data()
 
         if data0.shape != data1.shape:
-            # add traceback TODO
+            if verbose:
+                print("{}: Data have different shapes: {}, {}".format(
+                    self.__class__.__name__, data0.shape, data1.shape))
             return False              
  
         if not data0.Units.equivalent(data1.Units):
-            # add traceback TODO
-            if traceback:
-                print(repr(data0.Units), repr(data1.Units))
-                print('BAD UNITS TODO')
-                
+            if verbose:
+                print("{}: Data have non-equivalent units: {!r}, {!r}".format(
+                    self.__class__.__name__, data0.Units, data1.Units))
             return  False
 
-        if atol is None:
-            atol = ATOL()        
-        if rtol is None:
-            rtol = RTOL()
+#        if atol is None:
+#            atol = ATOL()        
+#        if rtol is None:
+#            rtol = RTOL()
             
         if not data0.allclose(data1, rtol=rtol, atol=atol):
-            # add traceback TODO
+            if verbose:
+                print("{}: Data have non-equivalent values: {!r}, {!r}".format(
+                    self.__class__.__name__, data0, data1))
             return False
 
         return True

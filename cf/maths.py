@@ -146,7 +146,7 @@ with missing values or calculated with off-centre finite differences.
 
         # Calculate the correction term
         corr = u.copy()
-        corr.data *= tan_lat.array.reshape(u_shape)
+        corr *= tan_lat.array.reshape(u_shape)
 
         # Calculate the derivatives
         v.derivative(v_x_key, wrap=wrap,

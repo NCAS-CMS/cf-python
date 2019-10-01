@@ -815,24 +815,22 @@ place.
 
         return False
 
-    
-    # 1
+
     @property
     def _ATOL(self):
         '''Return the current value of the `ATOL` function.
 
         '''
         return ATOL()
-    #--- End: def
 
-    # 1
+    
     @property
     def _RTOL(self):
         '''Return the current value of the `RTOL` function.
 
         '''
         return RTOL()
-    #--- End: def
+
         
     def _auxiliary_mask_from_1d_indices(self, compressed_indices):
         '''
@@ -6860,42 +6858,42 @@ False
                                        pdim)
     #--- End: def
 
-    # 0
+
     def all(self):
         '''Test whether all data array elements evaluate to True.
 
-Performs a logical ``and`` over the data array and returns the
-result. Masked values are considered as True during computation.
-
-.. seealso:: `allclose`, `any`, `isclose`
-
-:Returns:
-
-    `bool`
-        Whether or not all data array elements evaluate to True.
-
-**Examples:**
-
->>> d = cf.Data([[1, 3, 2]])
->>> print(d.array)
-[[1 3 2]]
->>> d.all()
-True
->>> d[0, 2] = cf.masked
->>> print(d.array)
-[[1 3 --]]
->>> d.all()
-True
->>> d[0, 0] = 0
->>> print(d.array)
-[[0 3 --]]
->>> d.all()
-False
->>> d[...] = cf.masked
->>> print(d.array)
-[[-- -- --]]
->>> d.all()
-True
+    Performs a logical ``and`` over the data array and returns the
+    result. Masked values are considered as True during computation.
+    
+    .. seealso:: `allclose`, `any`, `isclose`
+    
+    :Returns:
+    
+        `bool`
+            Whether or not all data array elements evaluate to True.
+    
+    **Examples:**
+    
+    >>> d = cf.Data([[1, 3, 2]])
+    >>> print(d.array)
+    [[1 3 2]]
+    >>> d.all()
+    True
+    >>> d[0, 2] = cf.masked
+    >>> print(d.array)
+    [[1 3 --]]
+    >>> d.all()
+    True
+    >>> d[0, 0] = 0
+    >>> print(d.array)
+    [[0 3 --]]
+    >>> d.all()
+    False
+    >>> d[...] = cf.masked
+    >>> print(d.array)
+    [[-- -- --]]
+    >>> d.all()
+    True
 
         '''
         config = self.partition_configuration(readonly=True)
@@ -6909,96 +6907,93 @@ True
                 return False
 
             partition.close()
-        #--- End: for
 
         return True
-    #--- End: def
 
-    # 0
+    
     def allclose(self, y, rtol=None, atol=None):
         '''Returns True if two broadcastable arrays have equal values, False
-otherwise.
-
-Two real numbers ``x`` and ``y`` are considered equal if
-``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
-differences) and ``rtol`` (the tolerance on relative differences) are
-positive, typically very small numbers. See the *atol* and *rtol*
-parameters.
-
-.. seealso:: `all`, `any`, `isclose`
-
-:Parameters:
-
-    y: data_like
-
-    atol: `float`, optional
-        The absolute tolerance for all numerical comparisons. By
-        default the value returned by the `ATOL` function is used.
-
-    rtol: `float`, optional
-        The relative tolerance for all numerical comparisons. By
-        default the value returned by the `RTOL` function is used.
-
-:Returns:
-
-    `bool`
-
-**Examples:**
-
->>> d = cf.Data([1000, 2500], 'metre')
->>> e = cf.Data([1, 2.5], 'km')
->>> d.allclose(e)
-True
-
->>> d = cf.Data(['ab', 'cdef'])
->>> d.allclose([[['ab', 'cdef']]])
-True
-
->>> d.allclose(e)
-True
-
->>> d = cf.Data([[1000, 2500], [1000, 2500]], 'metre')
->>> e = cf.Data([1, 2.5], 'km')
->>> d.allclose(e)
-True
-
->>> d = cf.Data([1, 1, 1], 's')
->>> d.allclose(1)
-True
+    otherwise.
+    
+    Two real numbers ``x`` and ``y`` are considered equal if
+    ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
+    differences) and ``rtol`` (the tolerance on relative differences)
+    are positive, typically very small numbers. See the *atol* and
+    *rtol* parameters.
+    
+    .. seealso:: `all`, `any`, `isclose`
+    
+    :Parameters:
+    
+        y: data_like
+    
+        atol: `float`, optional
+            The absolute tolerance for all numerical comparisons. By
+            default the value returned by the `ATOL` function is used.
+    
+        rtol: `float`, optional
+            The relative tolerance for all numerical comparisons. By
+            default the value returned by the `RTOL` function is used.
+    
+    :Returns:
+    
+        `bool`
+    
+    **Examples:**
+    
+    >>> d = cf.Data([1000, 2500], 'metre')
+    >>> e = cf.Data([1, 2.5], 'km')
+    >>> d.allclose(e)
+    True
+    
+    >>> d = cf.Data(['ab', 'cdef'])
+    >>> d.allclose([[['ab', 'cdef']]])
+    True
+    
+    >>> d.allclose(e)
+    True
+    
+    >>> d = cf.Data([[1000, 2500], [1000, 2500]], 'metre')
+    >>> e = cf.Data([1, 2.5], 'km')
+    >>> d.allclose(e)
+    True
+    
+    >>> d = cf.Data([1, 1, 1], 's')
+    >>> d.allclose(1)
+    True
 
         '''     
         return self.isclose(y, rtol=rtol, atol=atol).all()
-    #--- End: def
 
-    # 0
+
     def any(self):
         '''Test whether any data array elements evaluate to True.
 
-Performs a logical or over the data array and returns the
-result. Masked values are considered as False during computation.
-
-.. seealso:: `all`, `allclose`, `isclose`
-
-**Examples:**
-
->>> d = cf.Data([[0 0 0]])
->>> d.any()
-False
->>> d[0, 0] = cf.masked
->>> print d.array
-[[-- 0 0]]
->>> d.any()
-False
->>> d[0, 1] = 3
->>> print d.array
-[[0 3 0]]
->>> d.any()
-True
-
->>> print d.array
-[[-- -- --]]
->>> d.any()
-False
+    Performs a logical or over the data array and returns the
+    result. Masked values are considered as False during computation.
+    
+    .. seealso:: `all`, `allclose`, `isclose`
+    
+    **Examples:**
+    
+    >>> d = cf.Data([[0 0 0]])
+    >>> d.any()
+    False
+    >>> d[0, 0] = cf.masked
+    >>> print d.array
+    [[-- 0 0]]
+    >>> d.any()
+    False
+    >>> d[0, 1] = 3
+    >>> print d.array
+    [[0 3 0]]
+    >>> d.any()
+    True
+    
+    >>> print d.array
+    [[-- -- --]]
+    >>> d.any()
+    False
 
         '''  
         config = self.partition_configuration(readonly=True)
@@ -7011,10 +7006,9 @@ False
                 return True
 
             partition.close()
-        #--- End: for
 
         return False
-    #--- End: def
+
 
     # 0
     @classmethod
@@ -9425,57 +9419,57 @@ Missing data array elements are omitted from the calculation.
         print(cf_inspect(self)) # pragma: no cover
     #--- End: def
 
-    # 0
+
     def isclose(self, y, rtol=None, atol=None):
         '''Return where data are element-wise equal to other, broadcastable
-data.
-
-Two real numbers ``x`` and ``y`` are considered equal if
-``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
-differences) and ``rtol`` (the tolerance on relative differences) are
-positive, typically very small numbers. See the *atol* and *rtol*
-parameters.
-
-For numeric data arrays, ``d.isclose(y, rtol, atol)`` is equivalent to
-``abs(d - y) <= ``atol + rtol*abs(y)``, otherwise it is equivalent to
-``d == y``.
-
-:Parameters:
-
-    y: data_like
-
-    atol: `float`, optional
-        The absolute tolerance for all numerical comparisons. By
-        default the value returned by the `ATOL` function is used.
-
-    rtol: `float`, optional
-        The relative tolerance for all numerical comparisons. By
-        default the value returned by the `RTOL` function is used.
-
-:Returns:
-
-     `bool`
-
-**Examples:**
-
->>> d = cf.Data([1000, 2500], 'metre')
->>> e = cf.Data([1, 2.5], 'km')
->>> print d.isclose(e).array
-[ True  True]
-
->>> d = cf.Data(['ab', 'cdef'])
->>> print d.isclose([[['ab', 'cdef']]]).array
-[[[ True  True]]]
-
->>> d = cf.Data([[1000, 2500], [1000, 2500]], 'metre')
->>> e = cf.Data([1, 2.5], 'km')
->>> print d.isclose(e).array
-[[ True  True]
- [ True  True]]
-
->>> d = cf.Data([1, 1, 1], 's')
->>> print d.isclose(1).array
-[ True  True  True]
+    data.
+    
+    Two real numbers ``x`` and ``y`` are considered equal if
+    ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
+    differences) and ``rtol`` (the tolerance on relative differences)
+    are positive, typically very small numbers. See the *atol* and
+    *rtol* parameters.
+    
+    For numeric data arrays, ``d.isclose(y, rtol, atol)`` is
+    equivalent to ``abs(d - y) <= ``atol + rtol*abs(y)``, otherwise it
+    is equivalent to ``d == y``.
+    
+    :Parameters:
+    
+        y: data_like
+    
+        atol: `float`, optional
+            The absolute tolerance for all numerical comparisons. By
+            default the value returned by the `ATOL` function is used.
+    
+        rtol: `float`, optional
+            The relative tolerance for all numerical comparisons. By
+            default the value returned by the `RTOL` function is used.
+    
+    :Returns:
+    
+         `bool`
+    
+    **Examples:**
+    
+    >>> d = cf.Data([1000, 2500], 'metre')
+    >>> e = cf.Data([1, 2.5], 'km')
+    >>> print d.isclose(e).array
+    [ True  True]
+    
+    >>> d = cf.Data(['ab', 'cdef'])
+    >>> print d.isclose([[['ab', 'cdef']]]).array
+    [[[ True  True]]]
+    
+    >>> d = cf.Data([[1000, 2500], [1000, 2500]], 'metre')
+    >>> e = cf.Data([1, 2.5], 'km')
+    >>> print d.isclose(e).array
+    [[ True  True]
+     [ True  True]]
+    
+    >>> d = cf.Data([1, 1, 1], 's')
+    >>> print d.isclose(1).array
+    [ True  True  True]
 
         '''     
         if atol is None:
@@ -9501,42 +9495,40 @@ For numeric data arrays, ``d.isclose(y, rtol, atol)`` is equivalent to
             return abs(x - y) <= atol + rtol*abs(y)
         except (TypeError, NotImplementedError, IndexError):
             return self == y
-    #--- End: def
 
-    # 1
+
     def rint(self, inplace=False, i=False):
         '''Round the data to the nearest integer, element-wise.
 
-.. versionadded:: 1.0
-
-.. seealso:: `ceil`, `floor`, `trunc`
-
-:Parameters:
-
-    inplace: `bool`, optional
-        If True then do the operation in-place and return `None`.
-
-    i: deprecated at version 3.0.0
-        Use *inplace* parameter instead.
-
-:Returns:
-
-        The rounded data. If the operation was in-place then `None` is
-        returned.
-
-**Examples:**
-
->>> print(d.array)
-[-1.9 -1.5 -1.1 -1.   0.   1.   1.1  1.5  1.9]
->>> print(d.rint().array)
-[-2. -2. -1. -1.  0.  1.  1.  2.  2.]
+    .. versionadded:: 1.0
+    
+    .. seealso:: `ceil`, `floor`, `trunc`
+    
+    :Parameters:
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+        i: deprecated at version 3.0.0
+            Use *inplace* parameter instead.
+    
+    :Returns:
+    
+            The rounded data. If the operation was in-place then
+            `None` is returned.
+    
+    **Examples:**
+    
+    >>> print(d.array)
+    [-1.9 -1.5 -1.1 -1.   0.   1.   1.1  1.5  1.9]
+    >>> print(d.rint().array)
+    [-2. -2. -1. -1.  0.  1.  1.  2.  2.]
 
         '''
         if i:
             _DEPRECATION_ERROR_KWARGS(self, 'rint', i=True) # pragma: no cover
 
         return self.func(numpy_rint, out=True, inplace=inplace)
-    #---End: def
 
 
     def round(self, decimals=0, inplace=False, i=False):

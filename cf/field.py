@@ -1056,9 +1056,6 @@ may be accessed with the `nc_global_attributes`,
                 if coord0.size > 1:
                     # The defining coordinates have non-equivalent
                     # data arrays and are both of size > 1
-                    coord0.dump()
-                    coord1.dump()
-                    print ((                    coord1 - coord0).array)
                     raise ValueError(
                         "Can't combine fields: Incompatible {!r} coordinate values: {}, {}".format(
                             identity, coord0.data, coord1.data))
@@ -2014,9 +2011,6 @@ may be accessed with the `nc_global_attributes`,
             items differ.
 
         '''
-#        self_Items = self.Items
-#        field1_Items = field1.Items
-
         item0 = self.constructs[key0]
         item1 = field1.constructs[key1]
        
@@ -8885,7 +8879,7 @@ may be accessed with the `nc_global_attributes`,
 
     def convolution_filter(self, weights, axis=None, mode=None,
                            cval=None, origin=0, update_bounds=True,
-                           inplace=False, i=False):
+                           inplace=False, i=False, _bounds=True):
         '''Return the field convolved along the given axis with the specified
     filter.
     
@@ -9054,7 +9048,7 @@ may be accessed with the `nc_global_attributes`,
 
         # Update the bounds of the convolution axis if necessary
         coord = f.dimension_coordinate(axis_key, default=None)
-        if coord is not None and coord.has_bounds():
+        if _bounds and coord is not None and coord.has_bounds():
             old_bounds = coord.bounds.array
             length = old_bounds.shape[0]
             new_bounds = numpy_empty((length, 2))
@@ -13483,7 +13477,6 @@ may be accessed with the `nc_global_attributes`,
             If True then one-sided finite differences are used at the
             boundary, otherwise missing values are used.
     
-    
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
     
@@ -13508,8 +13501,6 @@ may be accessed with the `nc_global_attributes`,
                                       "Use the 'wrap' keyword instead") # pragma: no cover
 
         # Retrieve the axis
-#        dims = self.dims(axis)
-#        axis = self.domain_axis_key(axis, default=None)
         axis = self.domain_axis(axis, key=True, default=None)
         if axis is None:
             raise ValueError('Invalid axis specifier')
@@ -13521,7 +13512,6 @@ may be accessed with the `nc_global_attributes`,
         elif len_dims != 1:
             raise ValueError('Axis specified is not unique.')
 
-#        axis_key, coord = dict(dims).popitem()
         dckey, coord = dict(dims).popitem()
 
         # Get the axis index
@@ -13546,7 +13536,8 @@ may be accessed with the `nc_global_attributes`,
             
         # Find the finite difference of the field
         f.convolution_filter([1, 0, -1], axis=axis, mode=mode,
-                             update_bounds=False, inplace=True)
+                             update_bounds=False, inplace=True,
+                             _bounds=False)
 
         # Find the finite difference of the axis
         d = convolve1d(coord, [1, 0, -1], mode=mode, cval=numpy_nan)

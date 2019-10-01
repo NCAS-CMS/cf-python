@@ -437,28 +437,26 @@ bounds.
                          verbose=False):
         '''TODO
 
-Two real numbers ``x`` and ``y`` are considered equal if
-``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
-differences) and ``rtol`` (the tolerance on relative differences) are
-positive, typically very small numbers. See the *atol* and *rtol*
-parameters.
-
-:Parameters:
-
-    atol: `float`, optional
-        The tolerance on absolute differences between real
-        numbers. The default value is set by the `ATOL` function.
-
-    rtol: `float`, optional
-        The tolerance on relative differences between real
-        numbers. The default value is set by the `RTOL` function.
-
-:Returns:
-
-    `bool`
-
-**Examples:**
-
+    Two real numbers ``x`` and ``y`` are considered equal if
+    ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
+    differences) and ``rtol`` (the tolerance on relative differences) are
+    positive, typically very small numbers. See the *atol* and *rtol*
+    parameters.
+    
+    :Parameters:
+    
+        atol: `float`, optional
+            The tolerance on absolute differences between real
+            numbers. The default value is set by the `ATOL` function.
+    
+        rtol: `float`, optional
+            The tolerance on relative differences between real
+            numbers. The default value is set by the `RTOL` function.
+    
+    :Returns:
+    
+        `bool`
+    
         '''
         self_bounds = self.get_bounds(None)
         other_bounds = other.get_bounds(None)
@@ -492,7 +490,8 @@ parameters.
                                                 rtol=rtol, atol=atol,
                                                 verbose=verbose):
                 if verbose:
-                    print('non equivalent bounds data TODO') # pragma: no cover
+                    print('{}: Non-equivalent bounds data: {!r}, {!r}'.format(
+                        self.__class__.__name__, self_bounds.data, other_bounds.data)) # pragma: no cover
                 return False
         #--- End: if
 
