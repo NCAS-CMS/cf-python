@@ -1,0 +1,7 @@
+cf.Count.__query_wi__
+=====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Count.__query_wi__

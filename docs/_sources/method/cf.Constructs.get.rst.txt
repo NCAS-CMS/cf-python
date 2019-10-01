@@ -1,0 +1,7 @@
+cf.Constructs.get
+=================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Constructs.get

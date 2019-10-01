@@ -1,7 +1,0 @@
-cf.default_fillvals
-===================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. autofunction:: cf.default_fillvals

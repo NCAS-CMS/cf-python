@@ -1,0 +1,7 @@
+cf.AuxiliaryCoordinate.match_by_naxes
+=====================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.AuxiliaryCoordinate.match_by_naxes

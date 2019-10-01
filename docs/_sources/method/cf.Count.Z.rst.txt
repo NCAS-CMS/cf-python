@@ -1,0 +1,7 @@
+cf.Count.Z
+==========
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.Count.Z

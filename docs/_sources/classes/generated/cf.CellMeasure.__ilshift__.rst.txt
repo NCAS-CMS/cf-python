@@ -1,0 +1,7 @@
+cf.CellMeasure.__ilshift__
+==========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CellMeasure.__ilshift__

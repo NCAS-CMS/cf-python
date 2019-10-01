@@ -1,0 +1,7 @@
+cf.DomainAncillary.ceil
+=======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DomainAncillary.ceil

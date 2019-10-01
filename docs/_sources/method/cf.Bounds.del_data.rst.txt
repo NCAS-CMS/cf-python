@@ -1,0 +1,7 @@
+cf.Bounds.del_data
+==================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.del_data

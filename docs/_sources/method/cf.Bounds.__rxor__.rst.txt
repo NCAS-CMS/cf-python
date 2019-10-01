@@ -1,0 +1,7 @@
+cf.Bounds.__rxor__
+==================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.__rxor__

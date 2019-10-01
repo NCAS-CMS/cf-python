@@ -1,7 +1,0 @@
-cf.FieldList.filter
-===================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.FieldList.filter

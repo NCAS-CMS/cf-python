@@ -1056,6 +1056,9 @@ may be accessed with the `nc_global_attributes`,
                 if coord0.size > 1:
                     # The defining coordinates have non-equivalent
                     # data arrays and are both of size > 1
+                    coord0.dump()
+                    coord1.dump()
+                    print ((                    coord1 - coord0).array)
                     raise ValueError(
                         "Can't combine fields: Incompatible {!r} coordinate values: {}, {}".format(
                             identity, coord0.data, coord1.data))

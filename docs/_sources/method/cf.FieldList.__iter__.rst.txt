@@ -1,0 +1,7 @@
+cf.FieldList.__iter__
+=====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.FieldList.__iter__

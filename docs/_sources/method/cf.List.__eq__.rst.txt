@@ -1,0 +1,7 @@
+cf.List.__eq__
+==============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.List.__eq__

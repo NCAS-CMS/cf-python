@@ -1,0 +1,7 @@
+cf.Index.sd
+===========
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Index.sd

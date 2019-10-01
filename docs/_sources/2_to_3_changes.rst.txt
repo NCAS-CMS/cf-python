@@ -1,7 +1,7 @@
 .. currentmodule:: cf
 .. default-role:: obj
 
-.. _2_to_3_changes:
+.. _two-to-three-changes:
 		  
 Incompatible differences between versions 2.x and 3.x
 =====================================================

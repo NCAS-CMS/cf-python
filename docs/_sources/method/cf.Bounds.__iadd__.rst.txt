@@ -1,0 +1,7 @@
+cf.Bounds.__iadd__
+==================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.__iadd__

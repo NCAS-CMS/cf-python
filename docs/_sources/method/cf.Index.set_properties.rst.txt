@@ -1,0 +1,7 @@
+cf.Index.set_properties
+=======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Index.set_properties

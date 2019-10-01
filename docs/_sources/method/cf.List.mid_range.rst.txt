@@ -1,0 +1,7 @@
+cf.List.mid_range
+=================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.List.mid_range

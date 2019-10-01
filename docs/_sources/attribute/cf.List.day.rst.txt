@@ -1,0 +1,7 @@
+cf.List.day
+===========
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.List.day

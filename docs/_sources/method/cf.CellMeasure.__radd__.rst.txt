@@ -1,0 +1,7 @@
+cf.CellMeasure.__radd__
+=======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CellMeasure.__radd__

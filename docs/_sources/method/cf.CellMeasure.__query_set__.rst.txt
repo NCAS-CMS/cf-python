@@ -1,0 +1,7 @@
+cf.CellMeasure.__query_set__
+============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CellMeasure.__query_set__

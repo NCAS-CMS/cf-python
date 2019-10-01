@@ -245,7 +245,7 @@ initialization. By default arguments are deep copied.</p>
 <dd><p class="first last">If False then the data array will be stored in a single
 partition. By default the data array will be partitioned
 if it is larger than the chunk size, as returned by the
-<a class="reference internal" href="../generated/cf.CHUNKSIZE.html#cf.CHUNKSIZE" title="cf.CHUNKSIZE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.CHUNKSIZE</span></code></a> function.</p>
+<a class="reference internal" href="../function/cf.CHUNKSIZE.html#cf.CHUNKSIZE" title="cf.CHUNKSIZE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.CHUNKSIZE</span></code></a> function.</p>
 </dd>
 </dl>
 <p><strong>Examples:</strong></p>
@@ -270,70 +270,70 @@ if it is larger than the chunk size, as returned by the
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../generated/cf.Data.array.html#cf.Data.array" title="cf.Data.array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.Data.array.html#cf.Data.array" title="cf.Data.array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a></td>
 <td>A numpy array copy the data array.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../generated/cf.Data.binary_mask.html#cf.Data.binary_mask" title="cf.Data.binary_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_mask</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.Data.binary_mask.html#cf.Data.binary_mask" title="cf.Data.binary_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_mask</span></code></a></td>
 <td>A binary (0 and 1) mask of the data array.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../generated/cf.Data.data.html#cf.Data.data" title="cf.Data.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.Data.data.html#cf.Data.data" title="cf.Data.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></td>
 <td>The data as an object identity.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../generated/cf.Data.day.html#cf.Data.day" title="cf.Data.day"><code class="xref py py-obj docutils literal notranslate"><span class="pre">day</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.Data.day.html#cf.Data.day" title="cf.Data.day"><code class="xref py py-obj docutils literal notranslate"><span class="pre">day</span></code></a></td>
 <td>The day of each data array element.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../generated/cf.Data.datetime_array.html#cf.Data.datetime_array" title="cf.Data.datetime_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime_array</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.Data.datetime_array.html#cf.Data.datetime_array" title="cf.Data.datetime_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime_array</span></code></a></td>
 <td>An independent numpy array of date-time objects.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../generated/cf.Data.dtype.html#cf.Data.dtype" title="cf.Data.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.Data.dtype.html#cf.Data.dtype" title="cf.Data.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a></td>
 <td>The <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/index.html#module-numpy" title="(in NumPy v1.17)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> data type of the data array.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../generated/cf.Data.fill_value.html#cf.Data.fill_value" title="cf.Data.fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fill_value</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.Data.fill_value.html#cf.Data.fill_value" title="cf.Data.fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fill_value</span></code></a></td>
 <td>The data array missing data value.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../generated/cf.Data.hardmask.html#cf.Data.hardmask" title="cf.Data.hardmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.Data.hardmask.html#cf.Data.hardmask" title="cf.Data.hardmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></a></td>
 <td>Whether the mask is hard (True) or soft (False).</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../generated/cf.Data.hour.html#cf.Data.hour" title="cf.Data.hour"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hour</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.Data.hour.html#cf.Data.hour" title="cf.Data.hour"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hour</span></code></a></td>
 <td>The hour of each data array element.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../generated/cf.Data.ismasked.html#cf.Data.ismasked" title="cf.Data.ismasked"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ismasked</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.Data.ismasked.html#cf.Data.ismasked" title="cf.Data.ismasked"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ismasked</span></code></a></td>
 <td>True if the data array has any masked values.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../generated/cf.Data.isscalar.html#cf.Data.isscalar" title="cf.Data.isscalar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isscalar</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.Data.isscalar.html#cf.Data.isscalar" title="cf.Data.isscalar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isscalar</span></code></a></td>
 <td>True if the data array is a 0-d scalar array.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../generated/cf.Data.mask.html#cf.Data.mask" title="cf.Data.mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.Data.mask.html#cf.Data.mask" title="cf.Data.mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code></a></td>
 <td>The boolean missing data mask of the data array.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../generated/cf.Data.minute.html#cf.Data.minute" title="cf.Data.minute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">minute</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.Data.minute.html#cf.Data.minute" title="cf.Data.minute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">minute</span></code></a></td>
 <td>The minute of each data array element.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../generated/cf.Data.month.html#cf.Data.month" title="cf.Data.month"><code class="xref py py-obj docutils literal notranslate"><span class="pre">month</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.Data.month.html#cf.Data.month" title="cf.Data.month"><code class="xref py py-obj docutils literal notranslate"><span class="pre">month</span></code></a></td>
 <td>The month of each data array element.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../generated/cf.Data.nbytes.html#cf.Data.nbytes" title="cf.Data.nbytes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nbytes</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.Data.nbytes.html#cf.Data.nbytes" title="cf.Data.nbytes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nbytes</span></code></a></td>
 <td>Total number of bytes consumed by the elements of the array.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../generated/cf.Data.ndim.html#cf.Data.ndim" title="cf.Data.ndim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndim</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.Data.ndim.html#cf.Data.ndim" title="cf.Data.ndim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndim</span></code></a></td>
 <td>Number of dimensions in the data array.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../generated/cf.Data.second.html#cf.Data.second" title="cf.Data.second"><code class="xref py py-obj docutils literal notranslate"><span class="pre">second</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.Data.second.html#cf.Data.second" title="cf.Data.second"><code class="xref py py-obj docutils literal notranslate"><span class="pre">second</span></code></a></td>
 <td>The second of each data array element.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../generated/cf.Data.shape.html#cf.Data.shape" title="cf.Data.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.Data.shape.html#cf.Data.shape" title="cf.Data.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></td>
 <td>Tuple of the data array’s dimension sizes.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../generated/cf.Data.size.html#cf.Data.size" title="cf.Data.size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">size</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.Data.size.html#cf.Data.size" title="cf.Data.size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">size</span></code></a></td>
 <td>Number of elements in the data array.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../generated/cf.Data.Units.html#cf.Data.Units" title="cf.Data.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.Data.Units.html#cf.Data.Units" title="cf.Data.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a></td>
 <td>The <a class="reference internal" href="cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Units</span></code></a> object aining the units of the data array.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../generated/cf.Data.varray.html#cf.Data.varray" title="cf.Data.varray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">varray</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.Data.varray.html#cf.Data.varray" title="cf.Data.varray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">varray</span></code></a></td>
 <td>A numpy array view the data array.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../generated/cf.Data.year.html#cf.Data.year" title="cf.Data.year"><code class="xref py py-obj docutils literal notranslate"><span class="pre">year</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.Data.year.html#cf.Data.year" title="cf.Data.year"><code class="xref py py-obj docutils literal notranslate"><span class="pre">year</span></code></a></td>
 <td>The year of each data array element.</td>
 </tr>
 </tbody>
@@ -1009,7 +1009,7 @@ or, for augmented assignments, modify the data in-place.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/classes/cf.Data.rst.txt"

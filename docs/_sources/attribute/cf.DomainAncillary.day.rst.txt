@@ -1,0 +1,7 @@
+cf.DomainAncillary.day
+======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.DomainAncillary.day

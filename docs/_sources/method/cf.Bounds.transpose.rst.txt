@@ -1,0 +1,7 @@
+cf.Bounds.transpose
+===================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.transpose

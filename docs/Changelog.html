@@ -100,7 +100,7 @@ with Python 3 versions of the cf library.</p>
 <p><strong>2019-04-04</strong></p>
 <ul class="simple">
 <li>Changed calculation of chunksize in parallel case to avoid potential
-problems and introduced a new method <a class="reference internal" href="generated/cf.SET_PERFORMANCE.html#cf.SET_PERFORMANCE" title="cf.SET_PERFORMANCE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.SET_PERFORMANCE</span></code></a> to tune
+problems and introduced a new method <a class="reference internal" href="function/cf.SET_PERFORMANCE.html#cf.SET_PERFORMANCE" title="cf.SET_PERFORMANCE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.SET_PERFORMANCE</span></code></a> to tune
 the chunksize and the fraction of memory to keep free.</li>
 </ul>
 </div>
@@ -637,7 +637,7 @@ delattr on _fillValue and missinge_value properties.</li>
 <li>Limited Nd funtionality to Field.indices</li>
 <li>Correct treatment of add_offset and scale_factor</li>
 <li>Replaced -a with -x in <code class="docutils literal notranslate"><span class="pre">cfa</span></code> and <code class="docutils literal notranslate"><span class="pre">cfdump</span></code> scripts</li>
-<li>added ncvar_identities parameter to <a class="reference internal" href="generated/cf.aggregate.html#cf.aggregate" title="cf.aggregate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.aggregate</span></code></a></li>
+<li>added ncvar_identities parameter to <a class="reference internal" href="function/cf.aggregate.html#cf.aggregate" title="cf.aggregate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.aggregate</span></code></a></li>
 <li>Performance improvements to field subspacing</li>
 <li>Documentation</li>
 <li>Improved API to match, select, items, axes, etc.</li>
@@ -661,8 +661,8 @@ delattr on _fillValue and missinge_value properties.</li>
 <li>Added __mod__, __imod__, __rmod__, ceil, floor, trunc, rint
 methods to <a class="reference internal" href="classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Variable</span></code></li>
 <li>Added ceil, floor, trunc, rint to <a class="reference internal" href="classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Variable</span></code></li>
-<li>Fixed bug in which array <a class="reference internal" href="generated/cf.Data.array.html#cf.Data.array" title="cf.Data.array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.array</span></code></a> sometimes behaved like
-<a class="reference internal" href="generated/cf.Data.varray.html#cf.Data.varray" title="cf.Data.varray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.varray</span></code></a></li>
+<li>Fixed bug in which array <a class="reference internal" href="attribute/cf.Data.array.html#cf.Data.array" title="cf.Data.array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.array</span></code></a> sometimes behaved like
+<a class="reference internal" href="attribute/cf.Data.varray.html#cf.Data.varray" title="cf.Data.varray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.varray</span></code></a></li>
 <li>Fixed bug in <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.netcdf.read.read</span></code> which affected reading fields
 with formula_terms.</li>
 <li>Refactored the test suite to use the unittest package</li>
@@ -864,7 +864,7 @@ Jeff Whitaker).</li>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="_sources/Changelog.rst.txt"

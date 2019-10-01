@@ -1,0 +1,7 @@
+cf.Count.__irshift__
+====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Count.__irshift__

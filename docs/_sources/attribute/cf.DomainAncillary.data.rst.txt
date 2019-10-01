@@ -1,0 +1,7 @@
+cf.DomainAncillary.data
+=======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.DomainAncillary.data

@@ -1,0 +1,7 @@
+cf.Bounds.T
+===========
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.Bounds.T

@@ -32,8 +32,8 @@ is built on a complete implementation of the :ref:`CF-data-model`
 
 .. note:: **This version of cf is for Python 3 only**, and there are
           :ref:`incompatible differences between versions 2.x and 3.x
-          <2_to_3_changes>`. For version 2.x documentation, see the
-          `documentation archive
+          <two-to-three-changes>`. For version 2.x documentation, see
+          the `documentation archive
           <https://cfpython.bitbucket.io/docs/archive.html>`_.
 
 The cf package implements the :ref:`CF-data-model` [#cfdm]_ for its

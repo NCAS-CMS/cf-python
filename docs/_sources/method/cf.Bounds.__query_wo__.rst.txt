@@ -1,0 +1,7 @@
+cf.Bounds.__query_wo__
+======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.__query_wo__

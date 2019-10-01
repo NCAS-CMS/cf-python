@@ -1,0 +1,7 @@
+cf.List.__idiv__
+================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.List.__idiv__
