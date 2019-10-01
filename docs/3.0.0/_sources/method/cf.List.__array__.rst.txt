@@ -1,0 +1,7 @@
+cf.List.__array__
+=================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.List.__array__

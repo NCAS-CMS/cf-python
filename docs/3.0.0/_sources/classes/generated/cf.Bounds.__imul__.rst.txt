@@ -1,0 +1,7 @@
+cf.Bounds.__imul__
+==================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.__imul__

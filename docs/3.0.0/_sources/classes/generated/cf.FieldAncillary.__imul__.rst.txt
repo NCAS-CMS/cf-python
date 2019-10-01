@@ -1,0 +1,7 @@
+cf.FieldAncillary.__imul__
+==========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.FieldAncillary.__imul__

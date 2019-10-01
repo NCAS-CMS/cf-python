@@ -1,0 +1,7 @@
+cf.Index.__ifloordiv__
+======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Index.__ifloordiv__

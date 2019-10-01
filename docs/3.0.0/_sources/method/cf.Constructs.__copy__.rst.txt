@@ -1,0 +1,7 @@
+cf.Constructs.__copy__
+======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Constructs.__copy__

@@ -1,0 +1,7 @@
+cf.FieldAncillary.varray
+========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.FieldAncillary.varray

@@ -1,0 +1,7 @@
+cf.COLLAPSE_PARALLEL_MODE
+=========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autofunction:: cf.COLLAPSE_PARALLEL_MODE

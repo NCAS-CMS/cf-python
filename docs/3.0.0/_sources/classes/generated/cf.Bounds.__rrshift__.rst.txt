@@ -1,0 +1,7 @@
+cf.Bounds.__rrshift__
+=====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.__rrshift__

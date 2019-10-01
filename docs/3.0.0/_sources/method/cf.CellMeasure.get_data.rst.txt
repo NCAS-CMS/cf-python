@@ -1,0 +1,7 @@
+cf.CellMeasure.get_data
+=======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CellMeasure.get_data

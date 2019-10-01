@@ -1,0 +1,7 @@
+cf.CellMeasure.allclose
+=======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CellMeasure.allclose

@@ -1,0 +1,7 @@
+cf.Count.log
+============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Count.log

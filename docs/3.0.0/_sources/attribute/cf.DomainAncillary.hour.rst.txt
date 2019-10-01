@@ -1,0 +1,7 @@
+cf.DomainAncillary.hour
+=======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.DomainAncillary.hour

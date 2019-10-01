@@ -1,0 +1,7 @@
+cf.List.match
+=============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.List.match

@@ -1,0 +1,7 @@
+cf.List.__truediv__
+===================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.List.__truediv__

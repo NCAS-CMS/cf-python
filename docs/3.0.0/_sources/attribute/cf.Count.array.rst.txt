@@ -1,0 +1,7 @@
+cf.Count.array
+==============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.Count.array

@@ -1,0 +1,7 @@
+cf.FieldAncillary.history
+=========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.FieldAncillary.history

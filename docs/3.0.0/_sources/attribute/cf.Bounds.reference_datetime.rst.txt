@@ -1,0 +1,7 @@
+cf.Bounds.reference_datetime
+============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.Bounds.reference_datetime

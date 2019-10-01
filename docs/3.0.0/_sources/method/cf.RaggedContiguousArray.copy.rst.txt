@@ -1,0 +1,7 @@
+cf.RaggedContiguousArray.copy
+=============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.RaggedContiguousArray.copy

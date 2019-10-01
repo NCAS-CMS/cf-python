@@ -1,0 +1,7 @@
+cf.FieldAncillary.__eq__
+========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.FieldAncillary.__eq__

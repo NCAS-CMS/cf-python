@@ -1,0 +1,7 @@
+cf.Index.year
+=============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.Index.year

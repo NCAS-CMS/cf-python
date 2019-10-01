@@ -1,0 +1,7 @@
+cf.Index.__query_wi__
+=====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Index.__query_wi__

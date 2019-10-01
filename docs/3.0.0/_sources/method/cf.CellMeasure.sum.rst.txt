@@ -1,0 +1,7 @@
+cf.CellMeasure.sum
+==================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CellMeasure.sum

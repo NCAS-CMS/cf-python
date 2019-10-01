@@ -1,0 +1,7 @@
+cf.RaggedContiguousArray.get_compressed_dimension
+=================================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.RaggedContiguousArray.get_compressed_dimension

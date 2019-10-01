@@ -1,0 +1,197 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Introduction &#8212; Documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/copybutton.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="CF data model" href="cf_data_model.html" />
+    <link rel="prev" title="cf python package" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><b><a href="index.html">cf 3.0.0</a></b></h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="releases.html"><strong>Older releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter"><strong>cf python package</strong></a></li>
+      <li>Next: <a href="cf_data_model.html" title="next chapter"><strong>CF data model</strong></a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/introduction.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <style> .red {color:red} </style><style> .blue {color:blue} </style><div class="section" id="introduction">
+<h1><strong>Introduction</strong><a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<hr class="docutils" />
+<p>Version 3.0.0 for version 1.7 of the CF conventions.</p>
+<p>The Python cf package is an Earth science data analysis library that
+is built on a complete implementation of the <a class="reference internal" href="cf_data_model.html#cf-data-model"><span class="std std-ref">CF data model</span></a>
+<a class="footnote-reference" href="#cfdm" id="id1">[1]</a>.</p>
+<div class="section" id="functionality">
+<h2><strong>Functionality</strong><a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<hr class="docutils" />
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p><strong>This version of cf is for Python 3 only</strong> and there are
+<a class="reference internal" href="2_to_3_changes.html#two-to-three-changes"><span class="std std-ref">incompatible differences between versions 2.x and 3.x</span></a> of cf.</p>
+<p>Scripts written for version 2.x but running under version
+3.x should either work as expected, or provide informative
+error mesages on the new API usage. However, it is advised
+that the outputs of older scripts be checked when running
+with Python 3 versions of the cf library.</p>
+<p class="last">For version 2.x documentation, see the <a class="reference internal" href="releases.html#older-releases"><span class="std std-ref">older releases</span></a> page.</p>
+</div>
+<p>The cf package implements the <a class="reference internal" href="cf_data_model.html#cf-data-model"><span class="std std-ref">CF data model</span></a> <a class="footnote-reference" href="#cfdm" id="id2">[1]</a> for its
+internal data structures and so is able to process any CF-compliant
+dataset. It is not strict about CF-compliance, however, so that
+partially conformant datasets may be ingested from existing datasets
+and written to new datasets.This is so that datasets which are
+partially conformant may nonetheless be modified in memory.</p>
+<div class="literal-block-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text"><em>A simple example of reading a field construct from a
+file and inspecting it.</em></span><a class="headerlink" href="#id3" title="Permalink to this code">¶</a></div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">cf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="go">Field: air_temperature (ncvar%tas)</span>
+<span class="go">----------------------------------</span>
+<span class="go">Data            : air_temperature(time(12), latitude(64), longitude(128)) K</span>
+<span class="go">Cell methods    : time(12): mean (interval: 1.0 month)</span>
+<span class="go">Dimension coords: time(12) = [0450-11-16 00:00:00, ..., 0451-10-16 12:00:00] noleap</span>
+<span class="go">                : latitude(64) = [-87.86380004882812, ..., 87.86380004882812] degrees_north</span>
+<span class="go">                : longitude(128) = [0.0, ..., 357.1875] degrees_east</span>
+<span class="go">                : height(1) = [2.0] m</span>
+</pre></div>
+</div>
+</div>
+<p>The cf package can:</p>
+<ul class="simple">
+<li>read field constructs from netCDF, PP and UM datasets,</li>
+<li>create new field constructs in memory,</li>
+<li>inspect field constructs,</li>
+<li>test whether two field constructs are the same,</li>
+<li>modify field construct metadata and data,</li>
+<li>create subspaces of field constructs,</li>
+<li>write field constructs to netCDF datasets on disk,</li>
+<li>incorporate, and create, metadata stored in external files,</li>
+<li>read, write, and create data that have been compressed by
+convention (i.e. ragged or gathered arrays), whilst presenting a
+view of the data in its uncompressed form,</li>
+<li>Combine field constructs arithmetically,</li>
+<li>Manipulate field construct data by arithmetical and trigonometrical
+operations,</li>
+<li>Perform statistical collapses on field constructs,</li>
+<li>Regrid field constructs,</li>
+<li>Apply convolution filters to field constructs,</li>
+<li>Calculate derivatives of field constructs,</li>
+<li>Create field constructs to create derived quantities (such as vorticity).</li>
+</ul>
+</div>
+<div class="section" id="visualization">
+<h2><strong>Visualization</strong><a class="headerlink" href="#visualization" title="Permalink to this headline">¶</a></h2>
+<p>Powerful, flexible, and very simple to produce visualizations of field
+constructs are available with the <a class="reference external" href="http://ajheaps.github.io/cf-plot">cf-plot package</a> (that needs to be installed
+seprately to cf).</p>
+<p>See the <a class="reference external" href="http://ajheaps.github.io/cf-plot/gallery.html">cf-plot gallery</a> for the wide range
+range plotting possibilities with example code.</p>
+<div class="figure" id="id4">
+<img alt="_images/cfplot_example.png" src="_images/cfplot_example.png" />
+<p class="caption"><span class="caption-text"><em>Example output of cf-plot displaying a cf field construct.</em></span></p>
+</div>
+<table class="docutils footnote" frame="void" id="cfdm" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label">[1]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id2">2</a>)</em> Hassell, D., Gregory, J., Blower, J., Lawrence, B. N., and
+Taylor, K. E.: A data model of the Climate and Forecast
+metadata conventions (CF-1.6) with a software
+implementation (cf-python v2.1), Geosci. Model Dev., 10,
+4619-4646, <a class="reference external" href="https://doi.org/10.5194/gmd-10-4619-2017">https://doi.org/10.5194/gmd-10-4619-2017</a>, 2017.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2019, David Hassell.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      
+      |
+      <a href="_sources/introduction.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,423 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>cf.Field.subspace &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cf.Field.where" href="cf.Field.where.html" />
+    <link rel="prev" title="cf.Field.mask_invalid" href="cf.Field.mask_invalid.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><b><a href="../index.html">cf 3.0.0</a></b></h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../class.html"><strong>cf classes</strong></a><ul>
+  <li><a href="../classes/cf.Field.html">cf.Field</a><ul>
+      <li>Previous: <a href="cf.Field.mask_invalid.html" title="previous chapter">cf.Field.mask_invalid</a></li>
+      <li>Next: <a href="cf.Field.where.html" title="next chapter">cf.Field.where</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/method/cf.Field.subspace.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="cf-field-subspace">
+<h1>cf.Field.subspace<a class="headerlink" href="#cf-field-subspace" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="cf.Field.subspace">
+<code class="descclassname">Field.</code><code class="descname">subspace</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cf.Field.subspace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a subspace of the field.</p>
+<p>The subspace retains all of the metadata of the original field, with
+those metadata items that contain data arrays also subspaced.</p>
+<p>A subspace may be defined in “metadata-space” via conditionss on the
+data array values of its domain items: dimension coordinate, auxiliary
+coordinate, cell measure, domain ancillary and field ancillary
+objects.</p>
+<p>Alternatively, a subspace may be defined be in “index-space” via
+explicit indices for the data array using an extended Python slicing
+syntax.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="cf.Field.indices.html#cf.Field.indices" title="cf.Field.indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">indices</span></code></a>, <a class="reference internal" href="cf.Field.where.html#cf.Field.where" title="cf.Field.where"><code class="xref py py-obj docutils literal notranslate"><span class="pre">where</span></code></a>, <a class="reference internal" href="cf.Field.__getitem__.html#cf.Field.__getitem__" title="cf.Field.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></p>
+</div>
+<p><strong>Size one axes</strong></p>
+<blockquote>
+<div>Size one axes in the data array of the subspaced field are
+always retained, but may be subsequently removed with the field
+construct’s <a class="reference internal" href="cf.Field.squeeze.html#cf.Field.squeeze" title="cf.Field.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a> method:</div></blockquote>
+<p><strong>Defining a subspace in metadata-space</strong></p>
+<blockquote>
+<div><p>Defining a subspace in metadata-space has the following features</p>
+<ul class="simple">
+<li>Axes to be subspaced may identified by metadata, rather than their
+position in the data array.</li>
+<li>The position in the data array of each axis need not be known and
+the axes to be subspaced may be given in any order.</li>
+<li>Axes for which no subspacing is required need not be specified.</li>
+<li>Size one axes of the domain which are not spanned by the data
+array may be specified.</li>
+<li>The field may be subspaced according to conditions on
+multidimensional items.</li>
+</ul>
+<p>Subspacing in metadata-space is configured with the following
+parameters:</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>positional arguments: <em>optional</em></dt>
+<dd><p class="first">Configure the type of subspace that is created. Zero or one
+of:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="25%" />
+<col width="75%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head"><em>argument</em></th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'compress'</span></code></td>
+<td>The default. Create the smallest possible
+subspace that contains the selected
+elements. As many non-selected elements
+are discarded as possible, meaning that
+the subspace may not form a contiguous
+block of the original field. The subspace
+may still contain non-selected elements,
+which are set to missing data.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'envelope'</span></code></td>
+<td>Create the smallest subspace that
+contains the selected elements and forms a
+contiguous block of the original
+field. Interior, non-selected elements are
+set to missing data.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'full'</span></code></td>
+<td>Create a subspace that is the same size as
+the original field, but with all
+non-selected elements set to missing data.</td>
+</tr>
+</tbody>
+</table>
+<p>In addition the following optional argument specifies how to
+interpret the keyword parameter names:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="25%" />
+<col width="75%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head"><em>argument</em></th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'exact'</span></code></td>
+<td>Keyword parameters names are not treated
+as abbreviations of item identities. By
+default, keyword parameters names are
+allowed to be abbreviations of item
+identities.</td>
+</tr>
+</tbody>
+</table>
+<dl class="last docutils">
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last">To create a subspace that is the same size as the
+original field, but with missing data at non-selected
+elements: <code class="docutils literal notranslate"><span class="pre">f.subspace('full',</span> <span class="pre">**kwargs)</span></code>, where
+<code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> are the positional parameters that define
+the selected elements.</p>
+</dd>
+</dl>
+</dd>
+<dt>keyword parameters: <em>optional</em></dt>
+<dd><p class="first last">Keyword parameter names identify items of the domain (such
+as a particular coordinate type) and their values set
+conditions on their data arrays (e.g. the actual coordinate
+values). These conditions define the subspace that is
+created.</p>
+</dd>
+</dl>
+<blockquote>
+<div><p><strong>Keyword names</strong></p>
+<p>TODO A keyword name selects a unique item of the field. The
+name may be any value allowed by the <em>description</em>
+parameter of the field construct’s <a class="reference internal" href="cf.Field.item.html#cf.Field.item" title="cf.Field.item"><code class="xref py py-obj docutils literal notranslate"><span class="pre">item</span></code></a> method, which
+is used to select a unique domain item. See
+<a class="reference internal" href="cf.Field.item.html#cf.Field.item" title="cf.Field.item"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.item</span></code></a> for details.</p>
+<dl class="docutils">
+<dt><em>Parameter example:</em>           </dt>
+<dd><p class="first last">The keyword <code class="docutils literal notranslate"><span class="pre">lat</span></code> will select the item returned by
+<code class="docutils literal notranslate"><span class="pre">f.item(description='lat')</span></code>. See the <em>exact</em>
+positional argument.</p>
+</dd>
+<dt><em>Parameter example:</em>           </dt>
+<dd><p class="first last">The keyword <code class="docutils literal notranslate"><span class="pre">'T'</span></code> will select the item returned by
+<code class="docutils literal notranslate"><span class="pre">f.item(description='T')</span></code>.</p>
+</dd>
+<dt><em>Parameter example:</em>           </dt>
+<dd><p class="first last">The keyword <code class="docutils literal notranslate"><span class="pre">'dim2'</span></code> will select the item that has
+this internal identifier
+<code class="docutils literal notranslate"><span class="pre">f.item(description='dim2')</span></code>. This can be useful in
+the absence of any more meaningful metadata. A full list
+of internal identifiers may be found with the field construct’s
+<a class="reference internal" href="cf.Field.items.html#cf.Field.items" title="cf.Field.items"><code class="xref py py-obj docutils literal notranslate"><span class="pre">items</span></code></a> method. TODO</p>
+</dd>
+</dl>
+<p><strong>Keyword values</strong></p>
+<p>A keyword value specifies a selection on the selected item’s
+data array which identifies the axis elements to be be
+included in the subspace.</p>
+</div></blockquote>
+<blockquote>
+<div><p>If the value is a <a class="reference internal" href="../classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object then then the query is
+applied to the item’s data array to create the subspace.</p>
+<dl class="docutils">
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last">To create a subspace for the northern hemisphere,
+assuming that there is a coordinate with identity
+“latitude”: <code class="docutils literal notranslate"><span class="pre">f.subspace(latitude=cf.ge(0))</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last">To create a subspace for the time 2018-08-27:
+<code class="docutils literal notranslate"><span class="pre">f.subspace(T=cf.dteq('2018-08-27'))</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last">To create a subspace for the northern hemisphere,
+identifying the latitude coordinate by its long name:
+<code class="docutils literal notranslate"><span class="pre">f.subspace(**{'long_name:latitude':</span> <span class="pre">cf.ge(0)})</span></code>. In
+this case it is necessary to use the <code class="docutils literal notranslate"><span class="pre">**</span></code> syntax
+because the <code class="docutils literal notranslate"><span class="pre">:</span></code> character is not allowed in keyword
+parameter names.</p>
+</dd>
+</dl>
+<p>If the value is a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a> of integers then these are used as
+the axis indices, without testing the item’s data array.</p>
+<dl class="docutils">
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last">To create a subspace using the first, third, fourth
+and last indices of the “X” axis: <code class="docutils literal notranslate"><span class="pre">f.subspace(X=[0,</span>
+<span class="pre">2,</span> <span class="pre">3,</span> <span class="pre">-1])</span></code>.</p>
+</dd>
+</dl>
+<p>If the value is a <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a> object then it is used as the axis
+indices, without testing the item’s data array.</p>
+<dl class="docutils">
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last">To create a subspace from every even numbered index
+along the “Z” axis: <code class="docutils literal notranslate"><span class="pre">f.subspace(Z=slice(0,</span> <span class="pre">None,</span>
+<span class="pre">2))</span></code>.</p>
+</dd>
+</dl>
+<p>If the value is anything other thaqn a <a class="reference internal" href="../classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a> or
+<a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a> object then, the subspace is defined by where the
+data array equals that value. I.e. <code class="docutils literal notranslate"><span class="pre">f.subspace(name=x)</span></code> is
+equivalent to <code class="docutils literal notranslate"><span class="pre">f.subspace(name=cf.eq(x))</span></code>.</p>
+<dl class="docutils">
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last">To create a subspace where latitude is 52 degrees
+north: <code class="docutils literal notranslate"><span class="pre">f.subspace(latitude=52)</span></code>. Note that this
+assumes that the latitude coordinate are in units of
+degrees north. If this were not known, either of
+<code class="docutils literal notranslate"><span class="pre">f.subspace(latitude=cf.Data(52,</span> <span class="pre">'degrees_north'))</span></code>
+and <code class="docutils literal notranslate"><span class="pre">f.subspace(latitude=cf.eq(52,</span>
+<span class="pre">'degrees_north'))</span></code> would guarantee the correct
+result.</p>
+</dd>
+</dl>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><a class="reference internal" href="../classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> An independent field containing the subspace of the</dt>
+<dd><p class="first last">original field.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Multidimensional items</strong></p>
+<p>Subspaces defined by items which span two or more axes are
+allowed.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Parameter example:</em> </dt>
+<dd>The subspace for the Nino Region 3 created by
+<code class="docutils literal notranslate"><span class="pre">f.subspace(latitude=cf.wi(-5,</span> <span class="pre">5),</span> <span class="pre">longitude=cf.wi(90,</span>
+<span class="pre">150))</span></code> will work equally well if the latitude and longitude
+coordinates are stored in 1-d or 2-d arrays. In the latter
+case it is possble that the coordinates are curvilinear or
+unstructured, in which case the subspace may contain missing
+data for the non-selected elements.</dd>
+</dl>
+</div></blockquote>
+<p><strong>Subspacing multiple axes simultaneously</strong></p>
+<p>To subspace multiple axes simultaneously, simply provide multiple
+keyword arguments.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><em>Parameter example:</em></dt>
+<dd>To create an eastern hemisphere tropical subspace:
+<code class="docutils literal notranslate"><span class="pre">f.subspace(X=cf.wi(0,</span> <span class="pre">180),</span> <span class="pre">latitude=cf.wi(-30,</span> <span class="pre">30))</span></code>.</dd>
+</dl>
+</div></blockquote>
+</div></blockquote>
+<p><strong>Defining a subspace in index-space</strong></p>
+<blockquote>
+<div><p>Subspacing in index-space uses an extended Python slicing syntax,
+which is similar to <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/arrays.indexing.html#arrays-indexing" title="(in NumPy v1.17)"><span class="xref std std-ref">numpy array indexing</span></a>. Extensions to the numpy indexing
+functionality are:</p>
+<ul class="simple">
+<li>When more than one axis’s slice is a 1-d boolean sequence or 1-d
+sequence of integers, then these indices work independently along
+each axis (similar to the way vector subscripts work in Fortran),
+rather than by their elements.</li>
+<li>Boolean indices may be any object which exposes the numpy
+array interface, such as the field construct’s coordinate
+objects.</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><a class="reference internal" href="../classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a></dt>
+<dd><p class="first last">An independent field containing the subspace of the original
+field.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span>
+<span class="go">&lt;CF Field: air_temperature(time(12), latitude(73), longitude(96)) K&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">[:,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">72</span><span class="p">],</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]</span>
+<span class="go">&lt;CF Field: air_temperature(time(12), latitude(2), longitude(3)) K&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">[:,</span> <span class="n">f</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span>
+<span class="go">&lt;CF Field: air_temperature(time(12), latitude(36), longitude(96)) K&gt;</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p><strong>Assignment to the data array</strong></p>
+<blockquote>
+<div><p>A subspace defined in index-space may have its data array values
+changed by assignment:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span>
+<span class="go">&lt;CF Field: air_temperature(time(12), latitude(73), longitude(96)) K&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">[</span><span class="mi">6</span><span class="p">:</span><span class="mi">12</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">48</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">99</span>
+</pre></div>
+</div>
+<p>To assign to a subspace defined in metadata-space, the
+equivalent index-space indices must first be found with the
+field construct’s <a class="reference internal" href="cf.Field.indices.html#cf.Field.indices" title="cf.Field.indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">indices</span></code></a> method, and then the assignment may
+be applied in index-space:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">index</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">longitude</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">lt</span><span class="p">(</span><span class="mi">180</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">subspace</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">masked</span>
+</pre></div>
+</div>
+<p>Note that the <a class="reference internal" href="cf.Field.indices.html#cf.Field.indices" title="cf.Field.indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">indices</span></code></a> method accepts the same positional and
+keyword arguments as <a class="reference internal" href="#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a>.</p>
+</div></blockquote>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2019, David Hassell.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      
+      |
+      <a href="../_sources/method/cf.Field.subspace.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

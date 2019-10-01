@@ -1,0 +1,7 @@
+cf.Bounds.cyclic
+================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.cyclic

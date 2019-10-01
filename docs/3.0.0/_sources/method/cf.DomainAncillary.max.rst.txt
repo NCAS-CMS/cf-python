@@ -1,0 +1,7 @@
+cf.DomainAncillary.max
+======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DomainAncillary.max

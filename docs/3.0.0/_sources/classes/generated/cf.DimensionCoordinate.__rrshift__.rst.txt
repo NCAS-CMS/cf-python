@@ -1,0 +1,7 @@
+cf.DimensionCoordinate.__rrshift__
+==================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DimensionCoordinate.__rrshift__

@@ -1,0 +1,7 @@
+cf.FieldAncillary.mean
+======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.FieldAncillary.mean

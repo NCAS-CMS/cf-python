@@ -1,0 +1,7 @@
+cf.AuxiliaryCoordinate.__floordiv__
+===================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.AuxiliaryCoordinate.__floordiv__
