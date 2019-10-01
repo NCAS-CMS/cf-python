@@ -3,7 +3,6 @@ from distutils.command.build import build
 import os
 import fnmatch
 import sys
-import imp
 import re
 import subprocess
 
