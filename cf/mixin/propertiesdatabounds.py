@@ -2271,6 +2271,7 @@ The identities comprise:
             _DEPRECATAION_ERROR_KWARGS(self, 'identity', relaxed_identity=True) # pragma: no cover
             
         identity = super().identity(default=None, strict=strict, nc_only=nc_only)
+
         if identity is not None:
             return identity
 
@@ -2294,40 +2295,39 @@ The identities comprise:
         print(cf_inspect(self)) # pragma: no cover
 
 
-    # 1
     def rint(self, bounds=True, inplace=False, i=False):
         '''Round the data to the nearest integer, element-wise.
 
-.. versionadded:: 1.0
-
-.. seealso:: `ceil`, `floor`, `trunc`
-
-:Parameters:
-
-    bounds: `bool`, optional
-        If False then do not alter any bounds. By default any bounds
-        are also altered.
-
-    inplace: `bool`, optional
-        If True then do the operation in-place and return `None`.
-
-    i: deprecated at version 3.0.0
-        Use *inplace* parameter instead.
-
-:Returns:
-        
-        The construct with rounded data. If the operation was in-place
-        then `None` is returned.
-
-**Examples:**
-
->>> print(f.array)
-[-1.9 -1.5 -1.1 -1.   0.   1.   1.1  1.5  1.9]
->>> print(f.rint().array)
-[-2. -2. -1. -1.  0.  1.  1.  2.  2.]
->>> f.rint(inplace=True)
->>> print(f.array)
-[-2. -2. -1. -1.  0.  1.  1.  2.  2.]
+    .. versionadded:: 1.0
+    
+    .. seealso:: `ceil`, `floor`, `trunc`
+    
+    :Parameters:
+    
+        bounds: `bool`, optional
+            If False then do not alter any bounds. By default any
+            bounds are also altered.
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+        i: deprecated at version 3.0.0
+            Use *inplace* parameter instead.
+    
+    :Returns:
+            
+            The construct with rounded data. If the operation was
+            in-place then `None` is returned.
+    
+    **Examples:**
+    
+    >>> print(f.array)
+    [-1.9 -1.5 -1.1 -1.   0.   1.   1.1  1.5  1.9]
+    >>> print(f.rint().array)
+    [-2. -2. -1. -1.  0.  1.  1.  2.  2.]
+    >>> f.rint(inplace=True)
+    >>> print(f.array)
+    [-2. -2. -1. -1.  0.  1.  1.  2.  2.]
 
         '''
         if i:
@@ -2346,57 +2346,56 @@ The identities comprise:
         if inplace:
             v = None            
         return v
-    #--- End: def
 
-    # 1
+
     def round(self, decimals=0, bounds=True, inplace=False, i=False):
         '''Round the data to the given number of decimals.
 
-Data elements are evenly rounded to the given number of decimals.
-
-.. note:: Values exactly halfway between rounded decimal values are
-          rounded to the nearest even value. Thus 1.5 and 2.5 round to
-          2.0, -0.5 and 0.5 round to 0.0, etc. Results may also be
-          surprising due to the inexact representation of decimal
-          fractions in the IEEE floating point standard and errors
-          introduced when scaling by powers of ten.
- 
-.. versionadded:: 1.1.4
-
-.. seealso:: `ceil`, `floor`, `rint`, `trunc`
-
-:Parameters:
-	
-    decimals: `int`, optional
-        Number of decimal places to round to (0 by default). If
-        decimals is negative, it specifies the number of positions to
-        the left of the decimal point.
-
-    bounds: `bool`, optional
-        If False then do not alter any bounds. By default any bounds
-        are also altered.
-
-    inplace: `bool`, optional
-        If True then do the operation in-place and return `None`.
-
-    i: deprecated at version 3.0.0
-        Use *inplace* parameter instead.
-
-:Returns:
-
-        The construct with rounded data. If the operation was in-place
-        then `None` is returned.
-
-**Examples:**
-
->>> print(f.array)
-[-1.81, -1.41, -1.01, -0.91,  0.09,  1.09,  1.19,  1.59,  1.99])
->>> print(f.round().array)
-[-2., -1., -1., -1.,  0.,  1.,  1.,  2.,  2.]
->>> print(f.round(1).array)
-[-1.8, -1.4, -1. , -0.9,  0.1,  1.1,  1.2,  1.6,  2. ]
->>> print(f.round(-1).array)
-[-0., -0., -0., -0.,  0.,  0.,  0.,  0.,  0.]
+    Data elements are evenly rounded to the given number of decimals.
+    
+    .. note:: Values exactly halfway between rounded decimal values
+              are rounded to the nearest even value. Thus 1.5 and 2.5
+              round to 2.0, -0.5 and 0.5 round to 0.0, etc. Results
+              may also be surprising due to the inexact representation
+              of decimal fractions in the IEEE floating point standard
+              and errors introduced when scaling by powers of ten.
+     
+    .. versionadded:: 1.1.4
+    
+    .. seealso:: `ceil`, `floor`, `rint`, `trunc`
+    
+    :Parameters:
+    	
+        decimals: `int`, optional
+            Number of decimal places to round to (0 by default). If
+            decimals is negative, it specifies the number of positions
+            to the left of the decimal point.
+    
+        bounds: `bool`, optional
+            If False then do not alter any bounds. By default any
+            bounds are also altered.
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+        i: deprecated at version 3.0.0
+            Use *inplace* parameter instead.
+    
+    :Returns:
+    
+            The construct with rounded data. If the operation was
+            in-place then `None` is returned.
+    
+    **Examples:**
+    
+    >>> print(f.array)
+    [-1.81, -1.41, -1.01, -0.91,  0.09,  1.09,  1.19,  1.59,  1.99])
+    >>> print(f.round().array)
+    [-2., -1., -1., -1.,  0.,  1.,  1.,  2.,  2.]
+    >>> print(f.round(1).array)
+    [-1.8, -1.4, -1. , -0.9,  0.1,  1.1,  1.2,  1.6,  2. ]
+    >>> print(f.round(-1).array)
+    [-0., -0., -0., -0.,  0.,  0.,  0.,  0.,  0.]
 
         '''
         if i:
@@ -2416,32 +2415,32 @@ Data elements are evenly rounded to the given number of decimals.
         if inplace:
             v = None
         return v
-    #--- End: def
 
-    # 0
+
     def roll(self, iaxis, shift, inplace=False, i=False):
         '''Roll the data along an axis.
 
-.. seealso:: `insert_dimension`, `flip`, `squeeze`, `transpose`
+    .. seealso:: `insert_dimension`, `flip`, `squeeze`, `transpose`
+    
+    :Parameters:
+    
+        iaxis: `int`
+            TODO
+            
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+        i: deprecated at version 3.0.0
+            Use *inplace* parmaeter instead.
+    
+    :Returns:
+    
+    TODO
+    
+    **Examples:**
+    
+    TODO
 
-:Parameters:
-
-    iaxis: `int`
-        TODO
-        
-    inplace: `bool`, optional
-        If True then do the operation in-place and return `None`.
-
-    i: deprecated at version 3.0.0
-        Use *inplace* parmaeter instead.
-
-:Returns:
-
-TODO
-
-**Examples:**
-
-TODO
         '''
         if i:
             _DEPRECATION_ERROR_KWARGS(self, 'roll', i=True) # pragma: no cover
@@ -2459,10 +2458,10 @@ TODO
         if inplace:
             v = None
         return v
-    #--- End: def
+
 
     # ----------------------------------------------------------------
-    # Deprecated attributes
+    # Deprecated attributes and methods
     # ----------------------------------------------------------------
     @property
     def hasbounds(self):
@@ -2472,20 +2471,18 @@ TODO
         _DEPRECATION_ERROR_ATTRIBUTE(
             self, 'hasbounds',
             "Use method 'has_bounds' instead.") # pragma: no cover
-    #--- End: def
-    
-    # ----------------------------------------------------------------
-    # Deprecated methods
-    # ----------------------------------------------------------------
+
+        
     def expand_dims(self, position=0, i=False):
         '''Insert a size 1 axis into the data array.
 
-Deprecated at version 3.0.0. Use method 'insert_dimension' instead.
+    Deprecated at version 3.0.0. Use method 'insert_dimension'
+    instead.
 
         '''
         _DEPRECATION_ERROR_METHOD(
             self, 'expand_dims',
             "Use method 'insert_dimension' instead.") # pragma: no cover
-    #--- End: def
 
+        
 #--- End: class

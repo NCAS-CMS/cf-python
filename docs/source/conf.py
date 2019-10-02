@@ -462,8 +462,8 @@ def linkcode_resolve(domain, info):
     if online_source_code:
 #        commit = '11dddff56c31c24d86c3b83995e503989f90911b'
 #        commit = 'master'
-        # version = 'v'+release
-        version = 'v3.0.0'
+        # version = 'v3.0.0'
+        version = 'v'+release
         url = "https://github.com/NCAS-CMS/cf-python/blob/{0}/cf/{1}{2}".format(
             version, fn, linespec)
         print(url)

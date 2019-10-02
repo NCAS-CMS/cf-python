@@ -161,13 +161,13 @@ def FREE_MEMORY():
     **Examples:**
     
     >>> import numpy
-    >>> print 'Free memory =', cf.FREE_MEMORY()/2**30, 'GiB'
+    >>> print('Free memory =', cf.FREE_MEMORY()/2**30, 'GiB')
     Free memory = 88.2728042603 GiB
     >>> a = numpy.arange(10**9)
-    >>> print 'Free memory =', cf.FREE_MEMORY()/2**30, 'GiB'
+    >>> print('Free memory =', cf.FREE_MEMORY()/2**30, 'GiB')
     Free memory = 80.8082618713 GiB
     >>> del a
-    >>> print 'Free memory =', cf.FREE_MEMORY()/2**30, 'GiB'
+    >>> print('Free memory =', cf.FREE_MEMORY()/2**30, 'GiB')
     Free memory = 88.2727928162 GiB
 
     '''
@@ -559,7 +559,7 @@ def RELAXED_IDENTITIES(*arg):
     **Examples:**
     
     >>> org = cf.RELAXED_IDENTITIES()
-    >>> print org
+    >>> print(org)
     False
     >>> cf.RELAXED_IDENTITIES(True)
     False
@@ -578,39 +578,39 @@ def RELAXED_IDENTITIES(*arg):
     return old
 
 
-def IGNORE_IDENTITIES(*arg):
-    '''TODO
-
-    :Parameters:
-    
-        arg: `bool`, optional
-          
-    :Returns:
-    
-        `bool`
-            The value prior to the change, or the current value if no
-            new value was specified.
-    
-    **Examples:**
-    
-    >>> org = cf.IGNORE_IDENTITIES()
-    >>> print org
-    False
-    >>> cf.IGNORE_IDENTITIES(True)
-    False
-    >>> cf.IGNORE_IDENTITIES()
-    True
-    >>> cf.IGNORE_IDENTITIES(org)
-    True
-    >>> cf.IGNORE_IDENTITIES()
-    False
-
-    '''
-    old = CONSTANTS['IGNORE_IDENTITIES']
-    if arg:
-        CONSTANTS['IGNORE_IDENTITIES'] = bool(arg[0])
-    
-    return old
+#def IGNORE_IDENTITIES(*arg):
+#    '''TODO
+#
+#    :Parameters:
+#    
+#        arg: `bool`, optional
+#          
+#    :Returns:
+#    
+#        `bool`
+#            The value prior to the change, or the current value if no
+#            new value was specified.
+#    
+#    **Examples:**
+#    
+#    >>> org = cf.IGNORE_IDENTITIES()
+#    >>> print(org)
+#    False
+#    >>> cf.IGNORE_IDENTITIES(True)
+#    False
+#    >>> cf.IGNORE_IDENTITIES()
+#    True
+#    >>> cf.IGNORE_IDENTITIES(org)
+#    True
+#    >>> cf.IGNORE_IDENTITIES()
+#    False
+#
+#    '''
+#    old = CONSTANTS['IGNORE_IDENTITIES']
+#    if arg:
+#        CONSTANTS['IGNORE_IDENTITIES'] = bool(arg[0])
+#    
+#    return old
 
 
 def dump(x, **kwargs):
@@ -686,10 +686,10 @@ if _linux:
     
     >>> cf.OF_FRACTION()
     0.5
-    >>> print cf.open_files_threshold_exceeded()
+    >>> cf.open_files_threshold_exceeded()
     True
     >>> cf.OF_FRACTION(0.9)
-    >>> print cf.open_files_threshold_exceeded()
+    >>> cf.open_files_threshold_exceeded()
     False
 
         '''
@@ -726,10 +726,10 @@ else:
     
     >>> cf.OF_FRACTION()
     0.5
-    >>> print cf.open_files_threshold_exceeded()
+    >>> cf.open_files_threshold_exceeded()
     True
     >>> cf.OF_FRACTION(0.9)
-    >>> print cf.open_files_threshold_exceeded()
+    >>> cf.open_files_threshold_exceeded()
     False
 
         '''
@@ -1628,40 +1628,46 @@ def flat(x):
     
     **Examples:**
     
-    >>> print cf.flat([1, [2, [3, 4]]])
+    >>> cf.flat([1, [2, [3, 4]]])
     <generator object flat at 0x3649cd0>
     
-    >>> print list(cf.flat([1, (2, [3, 4])]))
+    >>> list(cf.flat([1, (2, [3, 4])]))
     [1, 2, 3, 4]
     
     >>> import numpy
-    >>> print list(cf.flat((1, [2, numpy.array([[3, 4], [5, 6]])]))
+    >>> list(cf.flat((1, [2, numpy.array([[3, 4], [5, 6]])]))
     [1, 2, 3, 4, 5, 6]
     
     >>> for a in cf.flat([1, [2, [3, 4]]]):
-    ...     print a,
+    ...     print(a, end=' ')
+    ...
     1 2 3 4
     
     >>> for a in cf.flat(['a', ['bc', ['def', 'ghij']]]):
-    ...     print a, ' ',
+    ...     print(a, end=' ')
+    ...
     a bc def ghij
     
     >>> for a in cf.flat(2004):
-    ...     print a
+    ...     print(a)
+    ...
     2004
     
     >>> for a in cf.flat('abcdefghij'):
-    ...     print a
+    ...     print(a, end=' ')
+    ...
     abcdefghij
     
     >>> f
     <CF Field: eastward_wind(air_pressure(5), latitude(110), longitude(106)) m s-1>
     >>> for a in cf.flat(f):
-    ...     print repr(a)
+    ...     print(repr(a))
+    ...
     <CF Field: eastward_wind(air_pressure(5), latitude(110), longitude(106)) m s-1>
     
     >>> for a in cf.flat([f, [f, [f, f]]]):
-    ...     print repr(a)
+    ...     print(repr(a))
+    ...
     <CF Field: eastward_wind(air_pressure(5), latitude(110), longitude(106)) m s-1>
     <CF Field: eastward_wind(air_pressure(5), latitude(110), longitude(106)) m s-1>
     <CF Field: eastward_wind(air_pressure(5), latitude(110), longitude(106)) m s-1>
@@ -1690,8 +1696,9 @@ def flat(x):
 def abspath(filename):
     '''Return a normalized absolute version of a file name.
     
-    If a string containing URL is provided then it is returned unchanged.
-    x
+    If a string containing URL is provided then it is returned
+    unchanged.
+
     .. seealso:: `cf.dirname`, `cf.pathjoin`, `cf.relpath`
     
     :Parameters:
@@ -1715,7 +1722,7 @@ def abspath(filename):
     '/data/archive/file.nc'
     >>> cf.abspath('http://data/archive/file.nc')
     'http://data/archive/file.nc'
-    
+
     ''' 
     u = urllib.parse.urlparse(filename)
     if u.scheme != '':
@@ -1926,20 +1933,8 @@ def inspect(self):
 
     :Returns: 
     
-        `str`
+        `None`
     
-    **Examples:**
-    
-    >>> print x.inspect
-    <CF CoordinateReference: rotated_latitude_longitude>
-    ----------------------------------------------------
-    _dict: {'grid_north_pole_latitude': 38.0, 'grid_north_pole_longitude': 190.0}
-    coord_terms: set([])
-    coords: set(['dim2', 'dim1', 'aux2', 'aux3'])
-    name: 'rotated_latitude_longitude'
-    ncvar: 'rotated_latitude_longitude'
-    type: 'grid_mapping'
-
     '''
     name = repr(self)
     out = [name, ''.ljust(len(name), '-')]
@@ -1948,7 +1943,7 @@ def inspect(self):
         for key, value in sorted(self.__dict__.items()):
             out.append('%s: %s' % (key, repr(value)))
         
-    return '\n'.join(out)
+    print('\n'.join(out))
 
 
 def broadcast_array(array, shape):
@@ -1978,7 +1973,7 @@ def broadcast_array(array, shape):
     [[0 1 2 3]
      [4 5 6 7]]
     
-    >>> print cf.broadcast_array(a, (3, 2, 4))
+    >>> print(cf.broadcast_array(a, (3, 2, 4)))
     [[[0 1 2 3]
       [4 5 6 0]]
     
@@ -1993,7 +1988,7 @@ def broadcast_array(array, shape):
     
      [[4 5 6 7]]]
     
-    >>> print cf.broadcast_array(a, (2, 3, 4))
+    >>> print(cf.broadcast_array(a, (2, 3, 4)))
     [[[0 1 2 3]
       [0 1 2 3]
       [0 1 2 3]]
@@ -2004,7 +1999,7 @@ def broadcast_array(array, shape):
     
     >>> a = numpy.ma.arange(8).reshape(2, 4)
     >>> a[1, 3] = numpy.ma.masked
-    >>> print a
+    >>> print(a)
     [[0 1 2 3]
      [4 5 6 --]]
     

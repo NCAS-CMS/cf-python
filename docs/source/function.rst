@@ -152,7 +152,6 @@ Miscellaneous
    :template: function.rst
 
    cf.CF
-   cf.IGNORE_IDENTITIES
    cf.RELAXED_IDENTITIES
    cf.abspath
    cf.dirname

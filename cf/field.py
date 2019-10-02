@@ -645,24 +645,30 @@ may be accessed with the `nc_global_attributes`,
                 key = dims.key()
                 dim = dims.value()
 
-                identity = None
-                if relaxed_identities:
-                    identities = dim.identities()
-                    if identities:
-                        identity = identities[0]
-                else:
-                    identity = dim.identity()
+#                identity = None
+                identity = dim.identity(strict=(not relaxed_identities),
+                                        default=None)
+
+#                if relaxed_identities:
+#                    identity = dim.identity(strict=False)
+#                    identities = dim.identities()
+#                    print ('PPPPPPPP', identities)
+#                    if identities:
+#                        identity = identities[0]
+#                else:
+#                    identity = dim.identity(strict=True)
+#                    identity = dim.identity()
 
                 if not identity:
-                   # Dimension coordinate has no identity, but it may
+                    # Dimension coordinate has no identity, but it may
                     # have a recognised axis.
                     for ctype in ('T', 'X', 'Y', 'Z'):
-                        if getattr(dim, ctype):
+                        if getattr(dim, ctype, False):
                             identity = ctype
                             break
                 #--- End: if
 
-                if identity: # and dim.has_data():
+                if identity:
                     if identity in id_to_axis:
                         warnings.append(
                             "Field has multiple {!r} axes".format(identity))
@@ -674,7 +680,7 @@ may be accessed with the `nc_global_attributes`,
                     axis_to_dim[axis]     = key
                     id_to_dim[identity]   = key
                     continue
-
+                
             else:
                 auxs = self.auxiliary_coordinates.filter_by_axis('exact', axis)
                 if len(auxs) == 1:                
@@ -865,7 +871,7 @@ may be accessed with the `nc_global_attributes`,
         # Check that at most one field has undefined axes
         if s['undefined_axes'] and v['undefined_axes']:
             raise ValueError(
-                "Can't combine fields: Both fields have undefined axes: {!r}, {!r}".format(
+                "Can't combine fields: Both fields have not-strictly-defined axes: {!r}, {!r}. Consider setting cf.RELAXED_IDENTITIES(True)".format(
                     tuple(self.constructs.domain_axis_identity(a)
                           for a in s['undefined_axes']),
                     tuple(other.constructs.domain_axis_identity(a)

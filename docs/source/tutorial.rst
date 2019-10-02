@@ -6047,20 +6047,32 @@ Arthmetical and relational operations with insufficent metadata
 If both operands of an :ref:`arithmetical <Arithmetical-operations>`
 or :ref:`relational <Relational-operations>` operation are field
 constructs with insufficent metadata to create a mapping of physically
-compatible dimensions, then operations may applied to the field
-construct's data instead. The resulting data may then be inserted into
-a copy of one of the field constructs, either with the
-`~cf.Field.set_data` method of the field construct, or with
-:ref:`indexed assignment <Assignment-by-index>`. The latter technique
-allows broadcasting, but the former one does not.
+compatible dimensions, there are various techniques that allow the
+operation the operation proceeed.
 
-In this case it is assumed, and not checked, that the dimensions of
-both `~cf.Data` instance operands are already in the correct order for
+* **Option 1:** The operation may applied to the field constructs'
+  data instead. See below for more details.
+
+* **Option 2:** If the mapping is not possible due to the absence of
+  "standard_name" properties (or "id" attributes) on metadata
+  constructs that are known to correspond, then setting "relaxed
+  identities" with the `cf.RELAXED_IDENTITIES` function may help:
+
+* **Option 3:** Add more metadata to the field constucts.
+
+For **Option 1** the resulting data may then be inserted into a copy
+of one of the field constructs, either with the `~cf.Field.set_data`
+method of the field construct, or with :ref:`indexed assignment
+<Assignment-by-index>`. The latter technique allows broadcasting, but
+the former one does not.
+
+Note that it is assumed, and not checked, that the dimensions of both
+`~cf.Data` instance operands are already in the correct order for
 physically meaningful broadcasting to occur.
 
 .. code-block:: python
-  :caption: *Operate on the data and use 'set_data' to put the
-            resulting data into the new field construct.*
+   :caption: *Operate on the data and use 'set_data' to put the
+             resulting data into the new field construct.*
 	    
    >>> t.min()
    <CF Data(): 260.0 K>
