@@ -544,7 +544,13 @@ def COLLAPSE_PARALLEL_MODE(*arg):
 
 
 def RELAXED_IDENTITIES(*arg):
-    '''TODO
+    '''Use 'relaxed' mode when getting a construct identity.
+
+    If set to True, sets ``relaxed=True`` as the default in calls to a
+    construct's `identity` method (e.g. `cf.Field.identity`).
+
+    This is used by construct arithmetic and field construct
+    aggregation.
 
     :Parameters:
     
@@ -741,11 +747,11 @@ else:
 def close_files(file_format=None):
     '''Close open files containing sub-arrays of data arrays.
 
-    By default all such files are closed, but this may be restricted to
-    files of a particular format.
+    By default all such files are closed, but this may be restricted
+    to files of a particular format.
     
-    Note that closed files will be automatically reopened if subsequently
-    needed by a variable to access the sub-array.
+    Note that closed files will be automatically reopened if
+    subsequently needed by a variable to access the sub-array.
     
     If there are no appropriate open files then no action is taken.
     

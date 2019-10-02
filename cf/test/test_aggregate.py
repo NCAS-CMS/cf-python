@@ -64,10 +64,13 @@ class aggregateTest(unittest.TestCase):
             q, t = cf.read('file.nc')
             c = cf.read('file2.nc')[0]
 
-            d = cf.aggregate([c, t], info=0)
+            d = cf.aggregate([c, t], info=0, relaxed_identities=True)
+            e = cf.aggregate([t, c], info=0, relaxed_identities=True)
 
             self.assertTrue(len(d) == 1)
+            self.assertTrue(len(e) == 1)
             self.assertTrue(d[0].shape == (3,) + t.shape)           
+            self.assertTrue(d[0].equals(e[0], verbose=True))
 
         cf.CHUNKSIZE(self.original_chunksize)
     #--- End: def

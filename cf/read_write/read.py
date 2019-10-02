@@ -485,7 +485,7 @@ def read(files, external=None, verbose=False, warnings=False,
         print("Read {0} field{1} from {2} file{3}".format( 
             field_counter, _plural(field_counter),
             file_counter , _plural(file_counter))) # pragma: no cover
-   
+
     # ----------------------------------------------------------------
     # Aggregate the output fields
     # ----------------------------------------------------------------
@@ -493,8 +493,6 @@ def read(files, external=None, verbose=False, warnings=False,
         if verbose:
             org_len = len(field_list) # pragma: no cover
             
-        field_list = cf_aggregate(field_list, **aggregate_options)
-        
         if verbose:
             n = len(field_list) # pragma: no cover
             print('{0} input field{1} aggregated into {2} field{3}'.format(
@@ -502,6 +500,12 @@ def read(files, external=None, verbose=False, warnings=False,
                 n, _plural(n))) # pragma: no cover
     #--- End: if
 
+    # ----------------------------------------------------------------
+    # Sort by netCDF variable name
+    # ----------------------------------------------------------------
+    if len(field_list) > 1:
+        field_list.sort(key=lambda f: f.nc_get_variable(''))
+        
 #    # ----------------------------------------------------------------
 #    # Add standard names to UM fields
 #    # ----------------------------------------------------------------

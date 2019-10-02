@@ -213,9 +213,8 @@ the field.
         # ------------------------------------------------------------
         self.field    = f
         self.has_data = f.has_data()
-#        self.identity = f.name(identity=strict_identities,
-#                               ncvar=ncvar_identities)
         self.identity = f.identity(strict=strict_identities,
+                                   relaxed=relaxed_identities,
                                    nc_only=ncvar_identities)
 
         if field_long_name_identities:
@@ -224,7 +223,7 @@ the field.
         # ------------------------------------------------------------
         #
         # ------------------------------------------------------------
-        signature_override = getattr(f, 'aggregate', None)
+        signature_override = getattr(f, 'aggregate', None)    
         if signature_override is not None:
             self.signature = signature_override
             self._bool = True
@@ -233,18 +232,16 @@ the field.
         if self.identity is None:
             if not allow_no_identity and self.has_data:
                 if info:
-                    self.message = \
-"no identity; consider setting relaxed_identities"
+                    self.message = "no identity; consider setting relaxed_identities"
                 return
         elif not self.has_data:
             if info:
-                self.message = \
-"no data array"
+                self.message = "no data array"
             return
         #--- End: if
 
-        items = f.items
-        item  = f.item
+#        items = f.items
+#        item  = f.item
  
         constructs = f.constructs
         construct  = f.construct
@@ -259,14 +256,10 @@ the field.
                 continue
 
             aux_coord = AuxiliaryCoordinate(properties={'long_name': prop},
-#                                            attributes={'id'   : prop,
-#                                                        'ncvar': prop},
                                             data=Data([value], units=''),
                                             copy=False)
             aux_coord.nc_set_variable(prop)
             aux_coord.id = prop
-#            axis = f.insert_axis(DomainAxis(1))
-#            f.insert_aux(aux_coord, axes=[axis], copy=False)
 
             axis = f.set_construct(DomainAxis(1))
             f.set_construct(aux_coord, axes=[axis], copy=False)
@@ -406,9 +399,7 @@ the field.
                 identity = info_1d_coord[0]['identity']
             elif not self.relaxed_identities:
                 if info:
-                    self.message = "\
-axis has no one-dimensional nor scalar coordinates"
-
+                    self.message = "axis has no one-dimensional nor scalar coordinates"
                 return
             
             ncdim = False
@@ -417,13 +408,11 @@ axis has no one-dimensional nor scalar coordinates"
                 # identify the domain axis by their netCDF dimension
                 # name.
                 domain_axis = f.axis(axis) # TODO
-#                identity = getattr(domain_axis, 'ncdim', None)
                 identity = domain_axis.nc_get_dimension(None)
                 if identity is None:
                     if info:
-                        self.message = "\
-axis {0!r} has no netCDF dimension name".format(f.axis_name(axis)) # TODO
-
+                        self.message = "axis {0!r} has no netCDF dimension name".format(
+                            f.axis_name(axis)) # TODO
                     return
                 else:
                     ncdim = True
@@ -495,7 +484,6 @@ axis {0!r} has no netCDF dimension name".format(f.axis_name(axis)) # TODO
         # Field ancillaries
         # ------------------------------------------------------------
         self.field_anc = {}
-#        for key, field_anc in items(role='f').items():
         for key, field_anc in f.field_ancillaries.items():
            
             # Find this field ancillary's identity
@@ -508,7 +496,6 @@ axis {0!r} has no netCDF dimension name".format(f.axis_name(axis)) # TODO
                                          relaxed_units=relaxed_units)
             
             # Find axes' canonical identities
-#            axes = [self.axis_to_id[axis] for axis in f.item_axes(key)]
             axes = [self.axis_to_id[axis] for axis in f.get_data_axes(key)]
             axes = tuple(sorted(axes))
 
@@ -543,11 +530,9 @@ axis {0!r} has no netCDF dimension name".format(f.axis_name(axis)) # TODO
                 if key is None:
                     continue
 
-#                anc = f.item(key)
                 anc = f.constructs[key]
                 
                 # Set this domain ancillary's identity
-#                identity = (ref.name(), term)
                 identity = (ref.identity(), term)
                 identity = self.domain_ancillary_has_identity_and_data(anc, identity)
 
@@ -556,7 +541,6 @@ axis {0!r} has no netCDF dimension name".format(f.axis_name(axis)) # TODO
                                              relaxed_units=relaxed_units)
                 
                 # Find the canonical identities of the axes
-#                axes = [self.axis_to_id[axis] for axis in f.item_axes(key)]
                 axes = [self.axis_to_id[axis] for axis in f.get_data_axes(key)]
                 axes = tuple(sorted(axes))
                 
@@ -587,7 +571,6 @@ axis {0!r} has no netCDF dimension name".format(f.axis_name(axis)) # TODO
                                          relaxed_units=relaxed_units)
             
             # Find the canonical identities of the axes
-#            axes = [self.axis_to_id[axis] for axis in f.item_axes(key)]
             axes = [self.axis_to_id[axis] for axis in f.get_data_axes(key)]
             axes = tuple(sorted(axes))
 
@@ -612,8 +595,6 @@ axis {0!r} has no netCDF dimension name".format(f.axis_name(axis)) # TODO
 
             # Find the canonical units for this cell measure
             units = self.canonical_units(msr,
-#                                         msr.name(identity=strict_identities,
-#                                                  ncvar=ncvar_identities),
                                          msr.identity(strict=strict_identities,
                                                       nc_only=ncvar_identities),
                                          relaxed_units=relaxed_units)
@@ -725,7 +706,7 @@ axis {0!r} has no netCDF dimension name".format(f.axis_name(axis)) # TODO
 
         '''
         return self._bool
-    #--- End: def
+
 
     def __repr__(self):
         '''x.__repr__() <==> repr(x)
@@ -733,7 +714,7 @@ axis {0!r} has no netCDF dimension name".format(f.axis_name(axis)) # TODO
         '''
         return '<CF {}: {!r}>'.format(self.__class__.__name__,
                                   getattr(self, 'field', None))
-    #--- End: def
+
     
     def __str__(self):
         '''x.__str__() <==> str(x)
@@ -745,7 +726,7 @@ axis {0!r} has no netCDF dimension name".format(f.axis_name(axis)) # TODO
                                                  getattr(self, attr)))
                            
         return '\n'.join(strings)
-    #--- End: def
+
 
     def coordinate_values(self):
         '''TODO
@@ -757,7 +738,7 @@ axis {0!r} has no netCDF dimension name".format(f.axis_name(axis)) # TODO
         string.append('Last bounds:  '    +str(self.last_bounds))
 
         return '\n'.join(string)                           
-    #--- End: def
+
 
     def copy(self):
         '''TODO
@@ -766,23 +747,23 @@ axis {0!r} has no netCDF dimension name".format(f.axis_name(axis)) # TODO
         new.__dict__ = self.__dict__.copy()
         new.field = new.field.copy()
         return new
-    #--- End: def
+
     
     def canonical_units(self, variable, identity, relaxed_units=False):
         '''Updates the `_canonical_units` attribute.
 
-:Parameters:
-
-    variable: cf.Variable
-
-    identity: `str`
-
-    relaxed_units: `bool` 
-        See the `cf.aggregate` for details.
-
-:Returns:
-
-    cf.Units or None
+    :Parameters:
+    
+        variable: Construct
+    
+        identity: `str`
+    
+        relaxed_units: `bool` 
+            See the `cf.aggregate` for details.
+    
+    :Returns:
+    
+        `Units` or `None`
 
         '''
         var_units = variable.Units
@@ -810,7 +791,7 @@ axis {0!r} has no netCDF dimension name".format(f.axis_name(axis)) # TODO
 
         # Still here?
         return var_units
-    #--- End: def
+
 
     def canonical_cell_methods(self, rtol=None, atol=None):
         '''Updates the `_canonical_cell_methods` attribute.
@@ -878,14 +859,14 @@ axis {0!r} has no netCDF dimension name".format(f.axis_name(axis)) # TODO
 '''
         if not msr.Units:
             if self.info:
-                self.message = \
-"{0!r} cell measure has no units".format(msr.identity())
+                self.message = "{0!r} cell measure has no units".format(
+                    msr.identity())
             return
 
         if not msr.has_data():
             if self.info:
-                self.message = \
-"{0!r} cell measure has no data".format(msr.identity())
+                self.message = "{0!r} cell measure has no data".format(
+                    msr.identity())
             return
 
         return True
@@ -894,25 +875,29 @@ axis {0!r} has no netCDF dimension name".format(f.axis_name(axis)) # TODO
     def coord_has_identity_and_data(self, coord, axes=None):
         '''TODO
 
-:Parameters:
+    :Parameters:
+    
+        coord: Coordinate construct
+            TODO
 
-    coord: cf.Coordinate
+        axes: sequence of `str`, optional
+            TODO
 
-:Returns:
+    :Returns:
+    
+        `str` or `None`
+            The coordinate construct's identity, or `None` if there is
+            no identity and/or no data.
 
-    `str` or `None`
-        The coordinate object's identity, or None if there is no
-        identity and/or no data.
-
-'''
-#        identity = coord.name(identity=self.strict_identities,
-#                              ncvar=self.ncvar_identities)
+        '''
         identity = coord.identity(strict=self.strict_identities,
-                                  nc_only=self.ncvar_identities)
-
-        if self.relaxed_identities and identity is not None:
-            identity = identity.replace('long_name=', '', 1)
-            identity = identity.replace('ncvar%', '', 1)
+                                  relaxed=self.relaxed_identities,
+                                  nc_only=self.ncvar_identities,
+                                  default=None)
+#        print (repr(coord), repr(identity))
+#        if self.relaxed_identities and identity is not None:
+#            identity = identity.replace('long_name=', '', 1)
+#            identity = identity.replace('ncvar%', '', 1)
 
         if identity is None:
             # Coordinate has no identity, but it may have a recognised
@@ -928,8 +913,7 @@ axis {0!r} has no netCDF dimension name".format(f.axis_name(axis)) # TODO
 
             if identity in all_coord_identities:
                 if self.info:
-                    self.message = \
-"multiple {0!r} coordinates".format(identity)
+                    self.message = "multiple {0!r} coordinates".format(identity)
                 return None
 
             if coord.has_data() or (coord.has_bounds() and coord.bounds.has_data()):
@@ -939,11 +923,10 @@ axis {0!r} has no netCDF dimension name".format(f.axis_name(axis)) # TODO
 
         # Still here?
         if self.info:
-            self.message = \
-"{!r} coordinate has no identity or no data".format(coord.identity())
+            self.message = "{!r} has no identity or no data".format(coord)
             
         return None
-    #--- End: def
+
 
     def field_ancillary_has_identity_and_data(self, anc):
         '''TODO
@@ -955,13 +938,12 @@ axis {0!r} has no netCDF dimension name".format(f.axis_name(axis)) # TODO
 :Returns:
 
     `str` or `None`
-        The coordinate object's identity, or None if there is no
+        The coordinate construct's identity, or None if there is no
         identity and/or no data.
 
 '''
-#        identity = anc.name(identity=self.strict_identities,
-#                            ncvar=self.ncvar_identities)
         identity = anc.identity(strict=self.strict_identities,
+                                relaxed=self.relaxed_identities,
                                 nc_only=self.ncvar_identities)
 
         if identity is not None:
@@ -981,8 +963,8 @@ axis {0!r} has no netCDF dimension name".format(f.axis_name(axis)) # TODO
 
         # Still here?
         if self.info:
-            self.message = \
-"{0!r} field ancillary has no identity or no data".format(anc.identity())
+            self.message = "{0!r} field ancillary has no identity or no data".format(
+                anc.identity())
             
         return None
     #--- End: def
@@ -1014,8 +996,8 @@ axis {0!r} has no netCDF dimension name".format(f.axis_name(axis)) # TODO
         for signature in signatures:
             if signature[0] is None:
                 if info:
-                    self.messsage = \
-"{0!r} field can't be aggregated due to it having an unidentifiable coordinate reference".format(self.f.identity())
+                    self.messsage = "{0!r} field can't be aggregated due to it having an unidentifiable coordinate reference".format(
+                        self.f.identity())
                 return
         #--- End: for
         
@@ -1043,29 +1025,28 @@ axis {0!r} has no netCDF dimension name".format(f.axis_name(axis)) # TODO
         if identity is not None:
             anc_identity = identity
         else:
-#            anc_identity = anc.name(identity=self.strict_identities,
-#                                    ncvar=self.ncvar_identities)
             anc_identity = anc.identity(strict=self.strict_identities,
+                                        relaxed=self.relaxed_identities,
                                         nc_only=self.ncvar_identities)
 
         if anc_identity is None:
             if self.info:
-                self.message = \
-"{0!r} domain ancillary has no identity".format(anc.identity())
+                self.message = "{0!r} domain ancillary has no identity".format(
+                    anc.identity())
             return 
 
         all_domain_anc_identities = self.all_domain_anc_identities
             
         if anc_identity in all_domain_anc_identities:
             if self.info:
-                self.message = \
-"multiple {0!r} domain ancillaries".format(anc_identity)
+                self.message = "multiple {0!r} domain ancillaries".format(
+                    anc_identity)
             return
 
         if not anc.has_data():
             if self.info:
-                self.message = \
-"{0!r} domain ancillary has no data".format(anc.identity())     
+                self.message = "{0!r} domain ancillary has no data".format(
+                    anc.identity())     
             return
 
         all_domain_anc_identities.add(anc_identity)
@@ -1615,6 +1596,7 @@ def aggregate(fields,
     # ================================================================
     signatures = {}
     for f in flat(fields):
+#        print (repr(f))
         # ------------------------------------------------------------
         # Create the metadata summary, including the structural
         # signature
@@ -1731,15 +1713,13 @@ def aggregate(fields,
             aggregating_axes = []
             axis_items = meta[0].axis.items()
             for axis in axes:
-#                coord = meta[0].field.coord(axis, exact=True)
                 coords = meta[0].field.coordinates.filter_by_identity('exact', axis)
                 coord = coords.value(default=None)
                 if coord is None:
                     continue
                 
-#                coord_identity = coord.name(identity=strict_identities,
-#                                            ncvar=ncvar_identities)
                 coord_identity = coord.identity(strict=strict_identities,
+                                                relaxed=relaxed_identities,
                                                 nc_only=ncvar_identities)
                 for identity, value in axis_items:
                     if (identity not in aggregating_axes and 
@@ -1751,7 +1731,6 @@ def aggregate(fields,
             _create_hash_and_first_values(meta, aggregating_axes, 
                                           donotchecknonaggregatingaxes,
                                           hfl_cache, rtol, atol)
-        #--- End: if
 
         if info >= 2:
             # Print useful information
@@ -1835,15 +1814,9 @@ def aggregate(fields,
                 for m1 in m[1:]:
                     m0 = _aggregate_2_fields(m0, m1,
                                              rtol=rtol, atol=atol,
-#                                             respect_valid=respect_valid,
-#                                             contiguous=contiguous,
-#                                             overlap=overlap,
-#                                             relaxed_units=relaxed_units,
                                              info=info,
                                              concatenate=concatenate,
                                              copy=(copy or not exclude),
-#                                             relaxed_identities=relaxed_identities,
-#                                             ncvar_identities=ncvar_identities,
                                              )
                                                                  
                     if not m0:
