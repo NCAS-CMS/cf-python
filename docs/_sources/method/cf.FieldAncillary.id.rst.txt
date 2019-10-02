@@ -1,0 +1,7 @@
+cf.FieldAncillary.id
+====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.FieldAncillary.id

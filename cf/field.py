@@ -9982,7 +9982,10 @@ may be accessed with the `nc_global_attributes`,
 
     .. versionadded:: 3.0.0
     
-    .. seealso:: `construct`, `dimension_coordinate`
+    .. seealso:: `construct`, `auxiliary_coordinates`, `cell_measure`,
+                 `cell_method`, `coordinate`, `coordinate_reference`,
+                 `dimension_coordinate`, `domain_ancillary`,
+                 `domain_axis`, `field_ancillary`
     
     :Parameters:
     
@@ -10101,8 +10104,11 @@ may be accessed with the `nc_global_attributes`,
 
     .. versionadded:: 3.0.0
     
-    .. seealso:: TODO
-    
+    .. seealso:: `construct`, `auxiliary_coordinate`, `cell_measure`,
+                 `cell_method`, `coordinate`, `coordinate_reference`,
+                 `dimension_coordinate`, `domain_ancillaries`,
+                 `domain_axis`, `field_ancillary`
+
     :Parameters:
     
         identity:
@@ -10205,8 +10211,11 @@ may be accessed with the `nc_global_attributes`,
 
     New in version 3.0.0
     
-    .. seealso:: TODO
-    
+    .. seealso:: `construct`, `auxiliary_coordinate`, `cell_measures`,
+                 `cell_method`, `coordinate`, `coordinate_reference`,
+                 `dimension_coordinate`, `domain_ancillary`,
+                 `domain_axis`, `field_ancillary`
+
     :Parameters:
     
         identity:
@@ -10305,8 +10314,11 @@ may be accessed with the `nc_global_attributes`,
 
     .. versionadadded:: 3.0.0
     
-    .. seealso:: TODO
-    
+    .. seealso:: `construct`, `auxiliary_coordinate`, `cell_measure`,
+                 `cell_methods`, `coordinate`, `coordinate_reference`,
+                 `dimension_coordinate`, `domain_ancillary`,
+                 `domain_axis`, `field_ancillary`
+
     :Parameters:
     
         identity:
@@ -10399,7 +10411,8 @@ may be accessed with the `nc_global_attributes`,
 
     .. versionadded:: 3.0.0
     
-    .. seealso:: TODO
+    .. seealso:: `construct`, `auxiliary_coordinate`, `coordinates`,
+                 `dimension_coordinate`
     
     :Parameters:
     
@@ -10502,8 +10515,11 @@ may be accessed with the `nc_global_attributes`,
 
     .. versionadded:: 3.0.0
     
-    .. seealso:: TODO
-    
+    .. seealso:: `construct`, `auxiliary_coordinate`, `cell_measure`,
+                 `cell_method`, `coordinate`, `coordinate_references`,
+                 `dimension_coordinate`, `domain_ancillary`,
+                 `domain_axis`, `field_ancillary`
+
     :Parameters:
     
         identity:
@@ -10602,8 +10618,11 @@ may be accessed with the `nc_global_attributes`,
 
     .. versionadded:: 3.0.0
     
-    .. seealso:: TODO
-    
+    .. seealso:: `construct`, `auxiliary_coordinate`, `cell_measure`,
+                 `cell_method`, `coordinate`, `coordinate_reference`,
+                 `dimension_coordinate`, `domain_ancillary`,
+                 `domain_axis`, `field_ancillaries`
+
     :Parameters:
     
         identity:
@@ -10708,8 +10727,11 @@ may be accessed with the `nc_global_attributes`,
 
     .. versionadded:: 3.0.0
     
-    .. seealso:: TODO
-    
+    .. seealso:: `construct`, `auxiliary_coordinate`, `cell_measure`,
+                 `cell_method`, `coordinate_reference`,
+                 `dimension_coordinates`, `domain_ancillary`,
+                 `domain_axis`, `field_ancillary`
+
     :Parameters:
     
         identity:
@@ -10809,8 +10831,11 @@ may be accessed with the `nc_global_attributes`,
 
     .. versionadded:: 3.0.0
     
-    .. seealso:: TODO
-    
+    .. seealso:: `construct`, `auxiliary_coordinate`, `cell_measure`,
+                 `cell_method`, `coordinate`, `coordinate_reference`,
+                 `dimension_coordinate`, `domain_ancillary`,
+                 `domain_axes`, `field_ancillary`
+
     :Parameters:
     
         identity:

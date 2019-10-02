@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.0</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.1</a></b></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -151,7 +151,7 @@ applicable to reference time coordinates. It is possible
 to “anchor” the cell bounds via the <a class="reference internal" href="../classes/cf.TimeDuration.html#cf.TimeDuration" title="cf.TimeDuration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.TimeDuration</span></code></a>
 parameters. For example, to specify cell size of one
 calendar month, starting and ending on the 15th day:
-<code class="docutils literal notranslate"><span class="pre">cellsize=cf.M(day=15)</span></code> (see <a class="reference internal" href="../function/cf.M.html#cf.M" title="cf.M"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.M</span></code></a> for details). Note
+<code class="docutils literal notranslate"><span class="pre">cellsize=cf.M(day=15)</span></code> (see <a class="reference internal" href="../generated/cf.M.html#cf.M" title="cf.M"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.M</span></code></a> for details). Note
 that the <em>flt</em> parameter is ignored in this case.</p>
 <dl class="docutils">
 <dt><em>Parameter example:</em></dt>
@@ -159,7 +159,7 @@ that the <em>flt</em> parameter is ignored in this case.</p>
 <span class="pre">12:00,</span> <span class="pre">2000-04-15</span> <span class="pre">12:00</span></code> setting,
 <code class="docutils literal notranslate"><span class="pre">cellsize=cf.D()</span></code> will result in bounds of
 <code class="docutils literal notranslate"><span class="pre">(1984-12-01,</span> <span class="pre">1984-12-02),</span> <span class="pre">(1984-12-02,</span>
-<span class="pre">1984-12-03),</span> <span class="pre">(2000-05-15,</span> <span class="pre">2000-04-16)</span></code> (see <a class="reference internal" href="../function/cf.D.html#cf.D" title="cf.D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.D</span></code></a>
+<span class="pre">1984-12-03),</span> <span class="pre">(2000-05-15,</span> <span class="pre">2000-04-16)</span></code> (see <a class="reference internal" href="../generated/cf.D.html#cf.D" title="cf.D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.D</span></code></a>
 for details).</p>
 </dd>
 <dt><em>Parameter example:</em></dt>
@@ -167,7 +167,7 @@ for details).</p>
 <span class="pre">2000-04-15</span></code> setting, <code class="docutils literal notranslate"><span class="pre">cellsize=cf.D()</span></code> will
 result in bounds of <code class="docutils literal notranslate"><span class="pre">(1984-12-01,</span> <span class="pre">1984-12-02),</span>
 <span class="pre">(1984-12-02,</span> <span class="pre">1984-12-03),</span> <span class="pre">(2000-05-15,</span> <span class="pre">2000-04-16)</span></code>
-(see <a class="reference internal" href="../function/cf.D.html#cf.D" title="cf.D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.D</span></code></a> for details).</p>
+(see <a class="reference internal" href="../generated/cf.D.html#cf.D" title="cf.D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.D</span></code></a> for details).</p>
 </dd>
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last">For coordinates <code class="docutils literal notranslate"><span class="pre">1984-12-01,</span> <span class="pre">1984-12-02,</span>
@@ -175,31 +175,31 @@ result in bounds of <code class="docutils literal notranslate"><span class="pre"
 will result in bounds of <code class="docutils literal notranslate"><span class="pre">(1984-11:30</span> <span class="pre">12:00,</span>
 <span class="pre">1984-12-01</span> <span class="pre">12:00),</span> <span class="pre">(1984-12-01</span> <span class="pre">12:00,</span> <span class="pre">1984-12-02</span>
 <span class="pre">12:00),</span> <span class="pre">(2000-05-14</span> <span class="pre">12:00,</span> <span class="pre">2000-04-15</span> <span class="pre">12:00)</span></code> (see
-<a class="reference internal" href="../function/cf.D.html#cf.D" title="cf.D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.D</span></code></a> for details).</p>
+<a class="reference internal" href="../generated/cf.D.html#cf.D" title="cf.D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.D</span></code></a> for details).</p>
 </dd>
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last">For coordinates <code class="docutils literal notranslate"><span class="pre">1984-12-16</span> <span class="pre">12:00,</span> <span class="pre">1985-01-16</span>
 <span class="pre">12:00</span></code> setting, <code class="docutils literal notranslate"><span class="pre">cellsize=cf.M()</span></code> will result in
 bounds of <code class="docutils literal notranslate"><span class="pre">(1984-12-01,</span> <span class="pre">1985-01-01),</span> <span class="pre">(1985-01-01,</span>
-<span class="pre">1985-02-01)</span></code> (see <a class="reference internal" href="../function/cf.M.html#cf.M" title="cf.M"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.M</span></code></a> for details).</p>
+<span class="pre">1985-02-01)</span></code> (see <a class="reference internal" href="../generated/cf.M.html#cf.M" title="cf.M"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.M</span></code></a> for details).</p>
 </dd>
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last">For coordinates <code class="docutils literal notranslate"><span class="pre">1984-12-01</span> <span class="pre">12:00,</span> <span class="pre">1985-01-01</span>
 <span class="pre">12:00</span></code> setting, <code class="docutils literal notranslate"><span class="pre">cellsize=cf.M()</span></code> will result in
 bounds of <code class="docutils literal notranslate"><span class="pre">(1984-12-01,</span> <span class="pre">1985-01-01),</span> <span class="pre">(1985-01-01,</span>
-<span class="pre">1985-02-01)</span></code> (see <a class="reference internal" href="../function/cf.M.html#cf.M" title="cf.M"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.M</span></code></a> for details).</p>
+<span class="pre">1985-02-01)</span></code> (see <a class="reference internal" href="../generated/cf.M.html#cf.M" title="cf.M"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.M</span></code></a> for details).</p>
 </dd>
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last">For coordinates <code class="docutils literal notranslate"><span class="pre">1984-12-01</span> <span class="pre">12:00,</span> <span class="pre">1985-01-01</span>
 <span class="pre">12:00</span></code> setting, <code class="docutils literal notranslate"><span class="pre">cellsize=cf.M(day=20)</span></code> will
 result in bounds of <code class="docutils literal notranslate"><span class="pre">(1984-11-20,</span> <span class="pre">1984-12-20),</span>
-<span class="pre">(1984-12-20,</span> <span class="pre">1985-01-20)</span></code> (see <a class="reference internal" href="../function/cf.M.html#cf.M" title="cf.M"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.M</span></code></a> for details).</p>
+<span class="pre">(1984-12-20,</span> <span class="pre">1985-01-20)</span></code> (see <a class="reference internal" href="../generated/cf.M.html#cf.M" title="cf.M"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.M</span></code></a> for details).</p>
 </dd>
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last">For coordinates <code class="docutils literal notranslate"><span class="pre">1984-03-01,</span> <span class="pre">1984-06-01</span></code> setting,
 <code class="docutils literal notranslate"><span class="pre">cellsize=cf.Y()</span></code> will result in bounds of
 <code class="docutils literal notranslate"><span class="pre">(1984-01-01,</span> <span class="pre">1985-01-01),</span> <span class="pre">(1984-01-01,</span>
-<span class="pre">1985-01-01)</span></code> (see <a class="reference internal" href="../function/cf.Y.html#cf.Y" title="cf.Y"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Y</span></code></a> for details). Note that in
+<span class="pre">1985-01-01)</span></code> (see <a class="reference internal" href="../generated/cf.Y.html#cf.Y" title="cf.Y"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Y</span></code></a> for details). Note that in
 this case each cell has the same bounds. This
 because <code class="docutils literal notranslate"><span class="pre">cf.Y()</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">cf.Y(month=1,</span>
 <span class="pre">day=1)</span></code> and the closest 1st January to both
@@ -292,7 +292,7 @@ returned bounds are independent.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/method/cf.DimensionCoordinate.create_bounds.rst.txt"

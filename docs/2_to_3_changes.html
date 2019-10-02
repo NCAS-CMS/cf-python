@@ -30,7 +30,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="index.html">cf 3.0.0</a></b></h3>
+<h3><b><a href="index.html">cf 3.0.1</a></b></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -105,10 +105,9 @@ in-place is now <em>inplace</em> (rather than <em>i</em>).</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="new-methods-and-attributes">
-<h2>New methods and attributes<a class="headerlink" href="#new-methods-and-attributes" title="Permalink to this headline">¶</a></h2>
-<p>Version 3.x methods and the deprecated version 2.x methods and
-attributes that they replace:</p>
+<div class="section" id="new-methods">
+<h2>New methods<a class="headerlink" href="#new-methods" title="Permalink to this headline">¶</a></h2>
+<p>Version 3.x methods that replace deprecated version 2.x methods:</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="64%" />
@@ -172,12 +171,12 @@ attributes that they replace:</p>
 <p>Methods that have a different API in version 3.x</p>
 <table border="1" class="docutils">
 <colgroup>
-<col width="56%" />
-<col width="44%" />
+<col width="49%" />
+<col width="51%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Version 3.x</th>
-<th class="head">Changes compared to version 2.x</th>
+<th class="head">API changes compared to version 2.x</th>
 </tr>
 </thead>
 <tbody valign="top">
@@ -204,23 +203,35 @@ No <code class="docutils literal notranslate"><span class="pre">**kwargs</span><
 <td><code class="docutils literal notranslate"><span class="pre">identity</span></code> replaces <code class="docutils literal notranslate"><span class="pre">axes</span></code> parameter.
 No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.cell_area.html#cf.Field.cell_area" title="cf.Field.cell_area"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.cell_area</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.ceil.html#cf.Field.ceil" title="cf.Field.ceil"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.ceil</span></code></a></td>
+<td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="method/cf.Field.cell_area.html#cf.Field.cell_area" title="cf.Field.cell_area"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.cell_area</span></code></a></td>
 <td>No <code class="docutils literal notranslate"><span class="pre">insert</span></code> parameter.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.clip.html#cf.Field.clip" title="cf.Field.clip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.clip</span></code></a></td>
+<td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.collapse</span></code></a></td>
 <td>New <code class="docutils literal notranslate"><span class="pre">verbose</span></code> parameter.
 <code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.
 No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.convolution_filter.html#cf.Field.convolution_filter" title="cf.Field.convolution_filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.convolution_filter</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.convert_reference_time.html#cf.Field.convert_reference_time" title="cf.Field.convert_reference_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.convert_reference_time</span></code></a></td>
+<td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="method/cf.Field.convolution_filter.html#cf.Field.convolution_filter" title="cf.Field.convolution_filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.convolution_filter</span></code></a></td>
 <td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.
 <code class="docutils literal notranslate"><span class="pre">weights</span></code> parameter can not be a string.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="method/cf.Field.coord.html#cf.Field.coord" title="cf.Field.coord"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.coord</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.coord.html#cf.Field.coord" title="cf.Field.coord"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.coord</span></code></a></td>
 <td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.coords.html#cf.Field.coords" title="cf.Field.coords"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.coords</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="method/cf.Field.coords.html#cf.Field.coords" title="cf.Field.coords"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.coords</span></code></a></td>
 <td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.cos.html#cf.Field.cos" title="cf.Field.cos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.cos</span></code></a></td>
+<td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="method/cf.Field.cyclic.html#cf.Field.cyclic" title="cf.Field.cyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.cyclic</span></code></a></td>
 <td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
@@ -245,63 +256,99 @@ No <code class="docutils literal notranslate"><span class="pre">**kwargs</span><
 <tr class="row-even"><td><a class="reference internal" href="method/cf.Field.domain_ancs.html#cf.Field.domain_ancs" title="cf.Field.domain_ancs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.domain_ancs</span></code></a></td>
 <td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.field_anc.html#cf.Field.field_anc" title="cf.Field.field_anc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.field_anc</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.exp.html#cf.Field.exp" title="cf.Field.exp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.exp</span></code></a></td>
+<td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="method/cf.Field.field_anc.html#cf.Field.field_anc" title="cf.Field.field_anc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.field_anc</span></code></a></td>
 <td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="method/cf.Field.field_ancs.html#cf.Field.field_ancs" title="cf.Field.field_ancs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.field_ancs</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.field_ancs.html#cf.Field.field_ancs" title="cf.Field.field_ancs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.field_ancs</span></code></a></td>
 <td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.flip.html#cf.Field.flip" title="cf.Field.flip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.flip</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="method/cf.Field.flip.html#cf.Field.flip" title="cf.Field.flip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.flip</span></code></a></td>
 <td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.
 No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="method/cf.Field.indices.html#cf.Field.indices" title="cf.Field.indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.indices</span></code></a></td>
-<td>No <code class="docutils literal notranslate"><span class="pre">'exact'</span></code> mode.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.iscyclic.html#cf.Field.iscyclic" title="cf.Field.iscyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.iscyclic</span></code></a></td>
-<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="method/cf.Field.item.html#cf.Field.item" title="cf.Field.item"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.item</span></code></a></td>
-<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.items.html#cf.Field.items" title="cf.Field.items"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.items</span></code></a></td>
-<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="method/cf.Field.key.html#cf.Field.key" title="cf.Field.key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.key</span></code></a></td>
-<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.measure.html#cf.Field.measure" title="cf.Field.measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.measure</span></code></a></td>
-<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="method/cf.Field.measures.html#cf.Field.measures" title="cf.Field.measures"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.measures</span></code></a></td>
-<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.period.html#cf.Field.period" title="cf.Field.period"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.period</span></code></a></td>
-<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="method/cf.Field.ref.html#cf.Field.ref" title="cf.Field.ref"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.ref</span></code></a></td>
-<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.refs.html#cf.Field.refs" title="cf.Field.refs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.refs</span></code></a></td>
-<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="method/cf.Field.regridc.html#cf.Field.regridc" title="cf.Field.regridc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.regridc</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.floor.html#cf.Field.floor" title="cf.Field.floor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.floor</span></code></a></td>
 <td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.regrids</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="method/cf.Field.identity.html#cf.Field.identity" title="cf.Field.identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.identity</span></code></a></td>
+<td>No <code class="docutils literal notranslate"><span class="pre">relaxed_identity</span></code> parameter.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.indices.html#cf.Field.indices" title="cf.Field.indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.indices</span></code></a></td>
+<td>No <code class="docutils literal notranslate"><span class="pre">'exact'</span></code> mode.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="method/cf.Field.iscyclic.html#cf.Field.iscyclic" title="cf.Field.iscyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.iscyclic</span></code></a></td>
+<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.item.html#cf.Field.item" title="cf.Field.item"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.item</span></code></a></td>
+<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="method/cf.Field.items.html#cf.Field.items" title="cf.Field.items"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.items</span></code></a></td>
+<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.key.html#cf.Field.key" title="cf.Field.key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.key</span></code></a></td>
+<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="method/cf.Field.log.html#cf.Field.log" title="cf.Field.log"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.log</span></code></a></td>
+<td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.mask_invalid.html#cf.Field.mask_invalid" title="cf.Field.mask_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.mask_invalid</span></code></a></td>
+<td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="method/cf.Field.measure.html#cf.Field.measure" title="cf.Field.measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.measure</span></code></a></td>
+<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.measures.html#cf.Field.measures" title="cf.Field.measures"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.measures</span></code></a></td>
+<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="method/cf.Field.override_calendar.html#cf.Field.override_calendar" title="cf.Field.override_calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.override_calendar</span></code></a></td>
+<td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.override_units.html#cf.Field.override_units" title="cf.Field.override_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.override_units</span></code></a></td>
+<td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="method/cf.Field.period.html#cf.Field.period" title="cf.Field.period"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.period</span></code></a></td>
+<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.ref.html#cf.Field.ref" title="cf.Field.ref"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.ref</span></code></a></td>
+<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="method/cf.Field.refs.html#cf.Field.refs" title="cf.Field.refs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.refs</span></code></a></td>
+<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.regridc.html#cf.Field.regridc" title="cf.Field.regridc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.regridc</span></code></a></td>
+<td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="method/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.regrids</span></code></a></td>
+<td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.rint.html#cf.Field.rint" title="cf.Field.rint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.rint</span></code></a></td>
 <td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="method/cf.Field.roll.html#cf.Field.roll" title="cf.Field.roll"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.roll</span></code></a></td>
+<td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.round.html#cf.Field.round" title="cf.Field.round"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.round</span></code></a></td>
+<td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="method/cf.Field.sin.html#cf.Field.sin" title="cf.Field.sin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.sin</span></code></a></td>
 <td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.squeeze.html#cf.Field.squeeze" title="cf.Field.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.squeeze</span></code></a></td>
 <td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.
 No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.tranpose</span></code></td>
+<tr class="row-even"><td><a class="reference internal" href="method/cf.Field.tan.html#cf.Field.tan" title="cf.Field.tan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.tan</span></code></a></td>
+<td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.</td>
+</tr>
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.tranpose</span></code></td>
 <td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.
 <code class="docutils literal notranslate"><span class="pre">constructs</span></code> replaces <code class="docutils literal notranslate"><span class="pre">items</span></code> parameter.
 No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="method/cf.Field.trunc.html#cf.Field.trunc" title="cf.Field.trunc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.trunc</span></code></a></td>
+<td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.unsqueeze.html#cf.Field.unsqueeze" title="cf.Field.unsqueeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.unsqueeze</span></code></a></td>
 <td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.
@@ -331,7 +378,7 @@ No <code class="docutils literal notranslate"><span class="pre">**item_options</
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="_sources/2_to_3_changes.rst.txt"

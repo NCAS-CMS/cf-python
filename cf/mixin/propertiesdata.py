@@ -90,15 +90,14 @@ class PropertiesData(Properties):
 
         
     def __array__(self, *dtype):
-        '''TODO
+        '''Returns a numpy array representation of the data.
 
         '''
         data = self.get_data(None)
         if data is not None:
             return data.__array__(*dtype)
 
-        raise ValueError("%s has no data" %
-                         self.__class__.__name__)
+        raise ValueError("{} has no data".format(self.__class__.__name__))
 
 
     def __contains__(self, value):
@@ -941,7 +940,7 @@ class PropertiesData(Properties):
 
     def __query_wo__(self, value):
         '''TODO
-
+1
         '''
         new = self.copy()
         new.set_data(self.data.__query_wo__(value), copy=False)
@@ -1137,26 +1136,19 @@ class PropertiesData(Properties):
     def data(self):
         return self.del_data()
 
-#    @property
-#    def hasbounds(self):
-#        '''`True` if there are cell bounds.
-#
-#If present, cell bounds are stored in the `!bounds` attribute.
-#
-#**Examples:**
-#
-#>>> if c.hasbounds:
-#...     b = c.bounds
-#
-#        '''
-#        _DEPRECATION_WARNING_METHOD(self, 'hasbounds', "Use 'has_bounds' method instead")
-#        return self.has_bounds()
-
-
 
     @property
     def reference_datetime(self):
-        '''TODO'''
+        '''The reference date-time of units of elapsed time.
+
+    **Examples**
+
+    >>> f.units
+    'days since 2000-1-1'
+    >>> f.reference_datetime
+    cftime.DatetimeNoLeap(2000-01-01 00:00:00)
+
+        '''
         units = self.Units
         if not units.isreftime:
             raise AttributeError(
@@ -1404,10 +1396,13 @@ class PropertiesData(Properties):
     -4.0
     >>> del f.add_offset
     
-    >>> f.setprop('add_offset', 10.5) TODO
+    >>> f.set_property('add_offset', 10.5)
     >>> f.get_property('add_offset')
     10.5
-    >>> f.delprop('add_offset') TODO
+    >>> f.del_property('add_offset')
+    10.5
+    >>> f.has_property('add_offset')
+    False
 
         '''
         return self.get_property('add_offset', default=AttributeError())
@@ -1438,10 +1433,13 @@ class PropertiesData(Properties):
     'noleap'
     >>> del f.calendar
     
-    >>> f.setprop('calendar', 'proleptic_gregorian') TODO
+    >>> f.set_property('calendar', 'proleptic_gregorian')
     >>> f.get_property('calendar')
     'proleptic_gregorian'
-    >>> f.delprop('calendar')
+    >>> f.del_property('calendar')
+    'proleptic_gregorian'
+    >>> f.has_property('calendar')
+    False
 
         '''
         value = getattr(self.Units, 'calendar', None)
@@ -1483,11 +1481,14 @@ class PropertiesData(Properties):
     10.0
     >>> del f.scale_factor
     
-    >>> f.setprop('scale_factor', 10.0) TODO
+    >>> f.set_property('scale_factor', 10.0)
     >>> f.get_property('scale_factor')
     10.0
-    >>> f.delprop('scale_factor')
-
+    >>> f.del_property('scale_factor')
+    10
+    >>> f.has_property('scale_factor')
+    False
+        
         '''
         return self.get_property('scale_factor', default=AttributeError())
     
@@ -1512,10 +1513,11 @@ class PropertiesData(Properties):
     'K'
     >>> del f.units
     
-    >>> f.setprop('units', 'm.s-1') TODO
+    >>> f.set_property('units', 'm.s-1')
     >>> f.get_property('units')
     'm.s-1'
-    >>> f.delprop('units')
+    >>> f.has_property('units')
+    True
 
         '''
         value = getattr(self.Units, 'units', None)
@@ -1525,7 +1527,6 @@ class PropertiesData(Properties):
         
         return value
     
-
     @units.setter
     def units(self, value):
         self.Units = Units(value, getattr(self, 'calendar', None))
@@ -1637,11 +1638,9 @@ class PropertiesData(Properties):
     **Examples:**
     
     >>> f.data
-    <CF Data(12, 73, 96: [[[236.512756348, ..., 256.93371582]]] K>
-    >>> f.max() TODO
-    311.343780518
-    >>> f.max().data
-    <CF Data(): 311.343780518 K>
+    <CF Data(12, 64, 128): [[[236.512756, ..., 256.93371]]] K>
+    >>> f.max()
+    <CF Data(): 311.343780 K>
 
         '''
         data = self.get_data(None)
@@ -1667,9 +1666,7 @@ class PropertiesData(Properties):
     
     >>> f.data
     <CF Data(12, 73, 96): [[[236.512756348, ..., 256.93371582]]] K>
-    >>> f.mean() TODO
-    280.192227593
-    >>> f.mean().data
+    >>> f.mean()
     <CF Data(): 280.192227593 K>
 
         '''
@@ -1699,8 +1696,6 @@ class PropertiesData(Properties):
     >>> f.data
     <CF Data(12, 73, 96): [[[236.512756348, ..., 256.93371582]]] K>
     >>> f.mid_range()
-    255.08618927
-    >>> f.mid_range().data
     <CF Data(): 255.08618927 K>
 
         '''
@@ -1728,8 +1723,6 @@ class PropertiesData(Properties):
     >>> f.data
     <CF Data(12, 73, 96): [[[236.512756348, ..., 256.93371582]]] K>
     >>> f.min()
-    198.828598022
-    >>> f.min().data
     <CF Data(): 198.828598022 K>
 
         '''
@@ -1759,8 +1752,6 @@ class PropertiesData(Properties):
     >>> f.data
     <CF Data(12, 73, 96): [[[236.512756348, ..., 256.93371582]]] K>
     >>> f.range()
-    112.515182495
-    >>> f.range().data
     <CF Data(): 112.515182495 K>
 
         '''
@@ -1788,8 +1779,6 @@ class PropertiesData(Properties):
     >>> f.data
     <CF Data(12, 73, 96): [[[236.512756348, ..., 256.93371582]]] K>
     >>> f.sample_size()
-    98304.0
-    >>> f.sample_size().data
     <CF Data(): 98304.0>
 
         '''
@@ -1817,8 +1806,6 @@ class PropertiesData(Properties):
     >>> f.data
     <CF Data(12, 73, 96): [[[236.512756348, ..., 256.93371582]]] K>
     >>> f.sd()
-    22.685052535
-    >>> f.sd().data
     <CF Data(): 22.685052535 K>
 
         '''
@@ -1846,8 +1833,6 @@ class PropertiesData(Properties):
     >>> f.data
     <CF Data(12, 73, 96): [[[236.512756348, ..., 256.93371582]]] K>
     >>> f.sum()
-    27544016.7413
-    >>> f.sum().data
     <CF Data(): 27544016.7413 K>
 
         '''
@@ -1875,8 +1860,6 @@ class PropertiesData(Properties):
     >>> f.data
     <CF Data(12, 73, 96): [[[236.512756348, ..., 256.93371582]]] K>
     >>> f.var()
-    514.611608515
-    >>> f.var().data
     <CF Data(): 514.611608515 K2>
 
         '''
@@ -2955,7 +2938,7 @@ TODO
                 return t.interval(reftime, end=False)[1]
             else:
                 return t.interval(reftime, end=True)[0]
-        
+        #--- End: def
 
         if i:
             _DEPRECATION_ERROR_KWARGS(self, 'convert_reference_time', i=True) # pragma: no cover
@@ -3654,7 +3637,25 @@ TODO
     
     **Examples:**
     
-    TODO
+    >>> f.Units
+    <Units: degrees_north>
+    >>> print(f.array)
+    [[-45 0 45 --]]
+    >>> f.tan()
+    >>> f.Units
+    <Units: 1>
+    >>> print(f.array)
+    [[-1.0 0.0 1.0 --]]
+    
+    >>> f.Units
+    <Units: m s-1>
+    >>> print(f.array)
+    [[1 2 3 --]]
+    >>> f.tan()
+    >>> f.Units
+    <Units: 1>
+    >>> print(f.array)
+    [[1.55740772465 -2.18503986326 -0.142546543074 --]]
 
         '''     
         if i:
@@ -3893,7 +3894,7 @@ TODO
 
         '''
         if relaxed_identity:
-            _DEPRECATAION_ERROR_KWARGS(self, 'identity', relaxed_identity=True) # pragma: no cover
+            _DEPRECATION_ERROR_KWARGS(self, 'identity', relaxed_identity=True) # pragma: no cover
 
         if nc_only:
             if strict:

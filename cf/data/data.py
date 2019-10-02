@@ -10453,48 +10453,48 @@ selected with the keyword arguments.
     def tan(self, inplace=False, i=False):
         '''Take the trigonometric tangent of the data array element-wise.
 
-Units are accounted for in the calculation. If the units are not
-equivalent to radians (such as Kelvin) then they are treated as if
-they were radians. For example, the the tangent of 45 degrees_east is
-1.0, as is the tangent of 0.78539816 radians.
-
-The output units are changed to ``'1'`` (nondimensionsal).
-
-.. seealso:: `cos`, `sin`
-
-:Parmaeters:
-
-    inplace: `bool`, optional
-        If True then do the operation in-place and return `None`.
-
-    i: deprecated at version 3.0.0
-        Use *inplace* parameter instead.
-
-:Returns:
-
-    `Data`
-
-**Examples:**
-
->>> d.Units
-<Units: degrees_north>
->>> print(d.array)
-[[-45 0 45 --]]
->>> d.tan()
->>> d.Units
-<Units: 1>
->>> print(d.array)
-[[-1.0 0.0 1.0 --]]
-
->>> d.Units
-<Units: m s-1>
->>> print(d.array)
-[[1 2 3 --]]
->>> d.tan()
->>> d.Units
-<Units: 1>
->>> print(d.array)
-[[1.55740772465 -2.18503986326 -0.142546543074 --]]
+    Units are accounted for in the calculation. If the units are not
+    equivalent to radians (such as Kelvin) then they are treated as if
+    they were radians. For example, the the tangent of 45 degrees_east
+    is 1.0, as is the tangent of 0.78539816 radians.
+    
+    The output units are changed to ``'1'`` (nondimensionsal).
+    
+    .. seealso:: `cos`, `sin`
+    
+    :Parmaeters:
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+        i: deprecated at version 3.0.0
+            Use *inplace* parameter instead.
+    
+    :Returns:
+    
+        `Data`
+    
+    **Examples:**
+    
+    >>> d.Units
+    <Units: degrees_north>
+    >>> print(d.array)
+    [[-45 0 45 --]]
+    >>> d.tan()
+    >>> d.Units
+    <Units: 1>
+    >>> print(d.array)
+    [[-1.0 0.0 1.0 --]]
+    
+    >>> d.Units
+    <Units: m s-1>
+    >>> print(d.array)
+    [[1 2 3 --]]
+    >>> d.tan()
+    >>> d.Units
+    <Units: 1>
+    >>> print(d.array)
+    [[1.55740772465 -2.18503986326 -0.142546543074 --]]
 
         '''
         if i:
@@ -10513,39 +10513,37 @@ The output units are changed to ``'1'`` (nondimensionsal).
         if not inplace:
             out = d
         return out
-    #--- End: def
+
 
     def tolist(self):
+        '''Return the array as a (possibly nested) list.
+
+    Return a copy of the array data as a (nested) Python list. Data
+    items are converted to the nearest compatible Python type.
+    
+    :Returns:	
+    
+        `list`
+            The possibly nested list of array elements.
+    
+    **Examples:**
+    
+    >>> d = cf.Data([1, 2])
+    >>> d.tolist()
+    [1, 2]
+    
+    >>> d = cf.Data(([[1, 2], [3, 4]])
+    >>> list(d)
+    [array([1, 2]), array([3, 4])]      # DCH CHECK
+    >>> d.tolist()
+    [[1, 2], [3, 4]]
+    
+    >>> d.equals(cf.Data(d.tolist()))
+    True
+
         '''
-Return the array as a (possibly nested) list.
-
-Return a copy of the array data as a (nested) Python list. Data items
-are converted to the nearest compatible Python type.
-
-:Returns:	
-
-    `list`
-        The possibly nested list of array elements.
-
-**Examples:**
-
->>> d = cf.Data([1, 2])
->>> d.tolist()
-[1, 2]
-
->>> d = cf.Data(([[1, 2], [3, 4]])
->>> list(d)
-[array([1, 2]), array([3, 4])]      # DCH CHECK
->>> d.tolist()
-[[1, 2], [3, 4]]
-
->>> d.equals(cf.Data(d.tolist()))
-True
-
-
-'''
         return self.array.tolist()
-    #--- End: def
+
 
     # 0
     def transpose(self, axes=None, inplace=False, i=False):
@@ -10718,35 +10716,33 @@ signed number ``x`` is discarded.
     def full(cls, shape, fill_value, dtype=None, units=None,
              chunk=True):
         '''Return a new data array of given shape and type, filled with
-`fill_value`.
-
-.. seealso:: `empty`, `ones`, `zeros`
-
-:Parameters:
-
-    shape: `int` or `tuple` of `int`
-        The shape of the new array.
-
-    fill_value: scalar
-        Fill value.
-
-    dtype: data-type
-        The data type of the new array. By default the data type is
-        `numpy.float64`.
-
-    units: `str` or `Units`
-        The units for the new data array.
-
-:Returns:
-
-    `Data`
-        TODO
-        
-**Examples:**
-
->>> d = cf.Data.full((96, 73), -99)
-
-
+    *fill_value*.
+    
+    .. seealso:: `empty`, `ones`, `zeros`
+    
+    :Parameters:
+    
+        shape: `int` or `tuple` of `int`
+            The shape of the new array.
+    
+        fill_value: scalar
+            The fill value.
+    
+        dtype: data-type
+            The data type of the new array. By default the data type
+            is `numpy.float64`.
+    
+        units: `str` or `Units`
+            The units for the new data array.
+    
+    :Returns:
+    
+        `Data`
+            TODO
+            
+    **Examples:**
+    
+    >>> d = cf.Data.full((96, 73), -99)
 
         '''
         array = FilledArray(shape=tuple(shape),
@@ -10755,64 +10751,66 @@ signed number ``x`` is discarded.
                             fill_value=fill_value)
         
         return cls(array, units=units, chunk=chunk)
-    #--- End: def
+
 
     @classmethod
     def ones(cls, shape, dtype=None, units=None, chunk=True):
-        '''
+        '''TODO
+
         '''
         return cls.full(shape, 1, dtype=dtype, units=units, chunk=chunk)
-    #--- End: def
+
     
     @classmethod
     def zeros(cls, shape, dtype=None, units=None, chunk=True):
-        '''
+        '''TODO
+
         '''
         return cls.full(shape, 0, dtype=dtype, units=units, chunk=chunk)
-    #--- End: def
 
-    # 0
+
+
     def func(self, f, units=None, out=False, inplace=False, i=False,
              **kwargs):
         '''Apply an element-wise array operation to the data array.
 
-:Parameters:
-
-    f: `function`
-        The function to be applied.
-        
-    units: `Units`, optional
-        
-    out: `bool`, optional
-
-    inplace: `bool`, optional
-        If True then do the operation in-place and return `None`.
-
-    i: deprecated at version 3.0.0
-        Use *inplace* parameter instead.
-
-:Returns:
-
-TODO
-
-**Examples:**
-
->>> d.Units
-<Units: radians>
->>> print(d.array)
-[[ 0.          1.57079633]
- [ 3.14159265  4.71238898]]
->>> import numpy
->>> e = d.func(numpy.cos)
->>> e.Units
-<Units: 1>
->>> print(e.array)
-[[ 1.0  0.0]
- [-1.0  0.0]]
->>> d.func(numpy.sin, inplace=True)
->>> print(d.array)
-[[0.0   1.0]
- [0.0  -1.0]]
+    :Parameters:
+    
+        f: `function`
+            The function to be applied.
+            
+        units: `Units`, optional
+            
+        out: `bool`, optional
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+        i: deprecated at version 3.0.0
+            Use *inplace* parameter instead.
+    
+    :Returns:
+    
+        TODO
+    
+    **Examples:**
+    
+    >>> d.Units
+    <Units: radians>
+    >>> print(d.array)
+    [[ 0.          1.57079633]
+     [ 3.14159265  4.71238898]]
+    >>> import numpy
+    >>> e = d.func(numpy.cos)
+    >>> e.Units
+    <Units: 1>
+    >>> print(e.array)
+    [[ 1.0  0.0]
+     [-1.0  0.0]]
+    >>> d.func(numpy.sin, inplace=True)
+    >>> print(d.array)
+    [[0.0   1.0]
+     [0.0  -1.0]]
 
         '''
         if i:
@@ -10851,7 +10849,7 @@ TODO
         d.dtype = datatype
 
         if units is not None:
-            d.Units = units
+            d._Units = units
             
         if inplace:
             d = None

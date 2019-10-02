@@ -40,11 +40,10 @@ in-place is now *inplace* (rather than *i*).
    None
 	  
 
-New methods and attributes
---------------------------
+New methods
+-----------
 
-Version 3.x methods and the deprecated version 2.x methods and
-attributes that they replace:
+Version 3.x methods that replace deprecated version 2.x methods:
 
 ========================================================  ===============================  
 Version 3.x                                      	  Version 2.x                      
@@ -88,100 +87,132 @@ Changes to method APIs
 
 Methods that have a different API in version 3.x
 
-========================================================  ============================================
-Version 3.x                                      	  Changes compared to version 2.x
-========================================================  ============================================
-`cf.Field.anchor`  			 	          ``inplace`` replaces ``i`` parameter.
-			 	                          No ``**kwargs`` parameters.
+==========================================  ============================================
+Version 3.x                                 API changes compared to version 2.x
+==========================================  ============================================
+`cf.Field.anchor`  			    ``inplace`` replaces ``i`` parameter.
+			 	            No ``**kwargs`` parameters.
 
-`cf.Field.aux`  			 	          No ``**kwargs`` parameters.
+`cf.Field.aux`  			    No ``**kwargs`` parameters.
 
-`cf.Field.auxs`  			 	          No ``**kwargs`` parameters.
+`cf.Field.auxs`  			    No ``**kwargs`` parameters.
 
-`cf.Field.axes`  			 	          No ``**kwargs`` parameters.
+`cf.Field.axes`  			    No ``**kwargs`` parameters.
 
-`cf.Field.axes_names`  			 	          No ``**kwargs`` parameters.
+`cf.Field.axes_names`  			    No ``**kwargs`` parameters.
 
-`cf.Field.axis`  			 	          No ``**kwargs`` parameters.
+`cf.Field.axis`  			    No ``**kwargs`` parameters.
 
-`cf.Field.axis_size`  			 	          ``identity`` replaces ``axes`` parameter.
-			 	                          No ``**kwargs`` parameters.
+`cf.Field.axis_size`  			    ``identity`` replaces ``axes`` parameter.
+			 	            No ``**kwargs`` parameters.
 
-`cf.Field.cell_area`			 	          No ``insert`` parameter.
-						 	                                 
-`cf.Field.collapse`			 	          New ``verbose`` parameter.
-			 	                          ``inplace`` replaces ``i`` parameter.
-			 	                          No ``**kwargs`` parameters.
+`cf.Field.ceil`    		 	    ``inplace`` replaces ``i`` parameter.
+					    
+`cf.Field.cell_area`			    No ``insert`` parameter.
+					                                   
+`cf.Field.clip`    		 	    ``inplace`` replaces ``i`` parameter.
+					    
+`cf.Field.collapse`			    New ``verbose`` parameter.
+			 	            ``inplace`` replaces ``i`` parameter.
+			 	            No ``**kwargs`` parameters.
  
-`cf.Field.convolution_filter`		 	          ``inplace`` replaces ``i`` parameter.
-			 	                          ``weights`` parameter can not be a string.
-						 	                                 
-`cf.Field.coord`  			 	          No ``**kwargs`` parameters.
+`cf.Field.convert_reference_time`	    ``inplace`` replaces ``i`` parameter.
+					    
+`cf.Field.convolution_filter`		    ``inplace`` replaces ``i`` parameter.
+			 	            ``weights`` parameter can not be a string.
+					                                   
+`cf.Field.coord`  			    No ``**kwargs`` parameters.
 
-`cf.Field.coords`  			 	          No ``**kwargs`` parameters.
+`cf.Field.coords`  			    No ``**kwargs`` parameters.
 
-`cf.Field.cyclic`			 	          No ``**kwargs`` parameters.
-						 	                                 
-`cf.Field.derivative`  			 	          ``inplace`` replaces ``i`` parameter.
-  			 	                          ``wrap`` replaces ``cyclic`` parameter.
+`cf.Field.cos`    		 	    ``inplace`` replaces ``i`` parameter.
+					    
+`cf.Field.cyclic`			    No ``**kwargs`` parameters.
+					                                   
+`cf.Field.derivative`  			    ``inplace`` replaces ``i`` parameter.
+  			 	            ``wrap`` replaces ``cyclic`` parameter.
 
-`cf.Field.dim`  			 	          No ``**kwargs`` parameters.
+`cf.Field.dim`  			    No ``**kwargs`` parameters.
 
-`cf.Field.dims`  			 	          No ``**kwargs`` parameters.
+`cf.Field.dims`  			    No ``**kwargs`` parameters.
 
-`cf.Field.direction`			 	          No ``axes`` parameter.
-                                                          No ``**kwargs`` parameters.
+`cf.Field.direction`			    No ``axes`` parameter.
+                                            No ``**kwargs`` parameters.
 
-`cf.Field.domain_anc`  			 	          No ``**kwargs`` parameters.
+`cf.Field.domain_anc`  			    No ``**kwargs`` parameters.
 
-`cf.Field.domain_ancs`  		 	          No ``**kwargs`` parameters.
+`cf.Field.domain_ancs`  		    No ``**kwargs`` parameters.
 
-`cf.Field.field_anc`  			 	          No ``**kwargs`` parameters.
+`cf.Field.exp`    		 	    ``inplace`` replaces ``i`` parameter.
+					    
+`cf.Field.field_anc`  			    No ``**kwargs`` parameters.
 
-`cf.Field.field_ancs`  	 	 	                  No ``**kwargs`` parameters.
+`cf.Field.field_ancs`  	 	 	    No ``**kwargs`` parameters.
 
-`cf.Field.flip`  			 	          ``inplace`` replaces ``i`` parameter.
-			 	                          No ``**kwargs`` parameters.
+`cf.Field.flip`  			    ``inplace`` replaces ``i`` parameter.
+			 	            No ``**kwargs`` parameters.
 
-`cf.Field.indices`			 	          No ``'exact'`` mode.
-						 	                                 
-`cf.Field.iscyclic`			 	          No ``**kwargs`` parameters.
-						 	                                 
-`cf.Field.item`  			 	          No ``**kwargs`` parameters.
+`cf.Field.floor`    		 	    ``inplace`` replaces ``i`` parameter.
+					    
+`cf.Field.identity`    		 	    No ``relaxed_identity`` parameter.
+					    
+`cf.Field.indices`			    No ``'exact'`` mode.
+					                                   
+`cf.Field.iscyclic`			    No ``**kwargs`` parameters.
+					                                   
+`cf.Field.item`  			    No ``**kwargs`` parameters.
 
-`cf.Field.items`  	 	 	                  No ``**kwargs`` parameters.
+`cf.Field.items`  	 	 	    No ``**kwargs`` parameters.
 
-`cf.Field.key`  			 	          No ``**kwargs`` parameters.
+`cf.Field.key`  			    No ``**kwargs`` parameters.
 
-`cf.Field.measure`  			 	          No ``**kwargs`` parameters.
+`cf.Field.log`    		 	    ``inplace`` replaces ``i`` parameter.
+					    
+`cf.Field.mask_invalid`  		    ``inplace`` replaces ``i`` parameter.
 
-`cf.Field.measures`  	 	 	                  No ``**kwargs`` parameters.
+`cf.Field.measure`  			    No ``**kwargs`` parameters.
 
-`cf.Field.period`  			 	          No ``**kwargs`` parameters.
+`cf.Field.measures`  	 	 	    No ``**kwargs`` parameters.
 
-`cf.Field.ref`  			 	          No ``**kwargs`` parameters.
+`cf.Field.override_calendar`   	 	    ``inplace`` replaces ``i`` parameter.
 
-`cf.Field.refs`  	 	 	                  No ``**kwargs`` parameters.
+`cf.Field.override_units`   	 	    ``inplace`` replaces ``i`` parameter.
 
-`cf.Field.regridc`  			 	          ``inplace`` replaces ``i`` parameter.
+`cf.Field.period`  			    No ``**kwargs`` parameters.
 
-`cf.Field.regrids`  			 	          ``inplace`` replaces ``i`` parameter.
+`cf.Field.ref`  			    No ``**kwargs`` parameters.
 
-`cf.Field.roll`  			 	          ``inplace`` replaces ``i`` parameter.
+`cf.Field.refs`  	 	 	    No ``**kwargs`` parameters.
 
-`cf.Field.squeeze`  			 	          ``inplace`` replaces ``i`` parameter.
-			 	                          No ``**kwargs`` parameters.
+`cf.Field.regridc`  			    ``inplace`` replaces ``i`` parameter.
 
-`cf.Field.tranpose`  			 	          ``inplace`` replaces ``i`` parameter.
-			 	                          ``constructs`` replaces ``items`` parameter.
-			 	                          No ``**kwargs`` parameters.
+`cf.Field.regrids`  			    ``inplace`` replaces ``i`` parameter.
 
-`cf.Field.unsqueeze`  			 	          ``inplace`` replaces ``i`` parameter.
-			 	                          No ``axes`` parameter.
-                                                          No ``**kwargs`` parameters.
+`cf.Field.rint`    		 	    ``inplace`` replaces ``i`` parameter.
+					    
+`cf.Field.roll`  			    ``inplace`` replaces ``i`` parameter.
 
-`cf.Field.where`  			 	          ``inplace`` replaces ``i`` parameter.
-			 	                          ``construct`` replaces ``item`` parameter.
-			 	                          No ``axes`` parameter.
-                                                          No ``**item_options`` parameters.
-========================================================  ============================================  
+`cf.Field.round`    		 	    ``inplace`` replaces ``i`` parameter.
+					    
+`cf.Field.sin`    		 	    ``inplace`` replaces ``i`` parameter.
+					    
+`cf.Field.squeeze`  			    ``inplace`` replaces ``i`` parameter.
+			 	            No ``**kwargs`` parameters.
+
+`cf.Field.tan`    		 	    ``inplace`` replaces ``i`` parameter.
+					    
+`cf.Field.tranpose`  			    ``inplace`` replaces ``i`` parameter.
+			 	            ``constructs`` replaces ``items`` parameter.
+			 	            No ``**kwargs`` parameters.
+
+`cf.Field.trunc`    		 	    ``inplace`` replaces ``i`` parameter.
+					    
+`cf.Field.unsqueeze`  			    ``inplace`` replaces ``i`` parameter.
+			 	            No ``axes`` parameter.
+                                            No ``**kwargs`` parameters.
+
+`cf.Field.where`  			    ``inplace`` replaces ``i`` parameter.
+			 	            ``construct`` replaces ``item`` parameter.
+			 	            No ``axes`` parameter.
+                                            No ``**item_options`` parameters.
+==========================================  ============================================  

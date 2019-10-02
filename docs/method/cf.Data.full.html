@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.0</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.1</a></b></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -90,9 +90,9 @@
 <h1>cf.Data.full<a class="headerlink" href="#cf-data-full" title="Permalink to this headline">¶</a></h1>
 <dl class="classmethod">
 <dt id="cf.Data.full">
-<em class="property">classmethod </em><code class="descclassname">Data.</code><code class="descname">full</code><span class="sig-paren">(</span><em>shape</em>, <em>fill_value</em>, <em>dtype=None</em>, <em>units=None</em>, <em>chunk=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.0/cf/data/data.py#L10717"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.full" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descclassname">Data.</code><code class="descname">full</code><span class="sig-paren">(</span><em>shape</em>, <em>fill_value</em>, <em>dtype=None</em>, <em>units=None</em>, <em>chunk=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.0/cf/data/data.py#L10715"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.full" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a new data array of given shape and type, filled with
-<a class="reference internal" href="../attribute/cf.Data.fill_value.html#cf.Data.fill_value" title="cf.Data.fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fill_value</span></code></a>.</p>
+<em>fill_value</em>.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last"><a class="reference internal" href="cf.Data.empty.html#cf.Data.empty" title="cf.Data.empty"><code class="xref py py-obj docutils literal notranslate"><span class="pre">empty</span></code></a>, <a class="reference internal" href="cf.Data.ones.html#cf.Data.ones" title="cf.Data.ones"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ones</span></code></a>, <a class="reference internal" href="cf.Data.zeros.html#cf.Data.zeros" title="cf.Data.zeros"><code class="xref py py-obj docutils literal notranslate"><span class="pre">zeros</span></code></a></p>
@@ -106,11 +106,11 @@
 <dd><p class="first last">The shape of the new array.</p>
 </dd>
 <dt>fill_value: scalar</dt>
-<dd><p class="first last">Fill value.</p>
+<dd><p class="first last">The fill value.</p>
 </dd>
 <dt>dtype: data-type</dt>
-<dd><p class="first last">The data type of the new array. By default the data type is
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.float64</span></code>.</p>
+<dd><p class="first last">The data type of the new array. By default the data type
+is <code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.float64</span></code>.</p>
 </dd>
 <dt>units: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference internal" href="../classes/cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a></dt>
 <dd><p class="first last">The units for the new data array.</p>
@@ -147,7 +147,7 @@
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/method/cf.Data.full.rst.txt"
