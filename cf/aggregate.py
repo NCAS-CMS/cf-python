@@ -1372,40 +1372,40 @@ def aggregate(fields,
             field construct's complete aggregation metadata.
     
         overlap: `bool`, optional
-            If `False` then require that aggregated field constructs
+            If False then require that aggregated field constructs
             have adjacent dimension coordinate construct cells which
             do not overlap (but they may share common boundary
             values). Ignored for a dimension coordinate construct that
             does not have bounds. See also the *contiguous* parameter.
     
         contiguous: `bool`, optional
-            If `True` then require that aggregated field constructs
+            If True then require that aggregated field constructs
             have adjacent dimension coordinate construct cells which
             overlap or share common boundary values. Ignored for a
             dimension coordinate construct that does not have
             bounds. See also the *overlap* parameter.
     
         relaxed_units: `bool`, optional
-            If `True` then assume that field and metadata constructs
+            If True then assume that field and metadata constructs
             with the same identity but missing units actually have
             equivalent (but unspecified) units, so that aggregation
             may occur. By default such field constructs are not
             aggregatable.
     
         allow_no_identity: `bool`, optional
-            If `True` then assume that field and metadata constructs with
+            If True then assume that field and metadata constructs with
             no identity (see the *relaxed_identities* parameter) actually
             have the same (but unspecified) identity, so that aggregation
             may occur. By default such field constructs are not
             aggregatable.
     
         relaxed_identities: `bool`, optional
-            If `True` and there is no standard name property nor "id"
+            If True and there is no standard name property nor "id"
             attribute, then allow field and metadata constructs to be
             identifiable by long name properties or netCDF variable names.
     
         ncvar_identities: `bool`, optional
-            If `True` then force field and metadata constructs to be
+            If True then force field and metadata constructs to be
             identified by their netCDF file variable names See also the
             *relaxed_identies* parameter.
     

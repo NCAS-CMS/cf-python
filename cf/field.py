@@ -645,21 +645,8 @@ may be accessed with the `nc_global_attributes`,
                 key = dims.key()
                 dim = dims.value()
 
-#                identity = None
-                identity = dim.identity(strict=(not relaxed_identities),
-                                        default=None)
-
-#                if relaxed_identities:
-#                    identity = dim.identity(strict=False)
-#                    identities = dim.identities()
-#                    print ('PPPPPPPP', identities)
-#                    if identities:
-#                        identity = identities[0]
-#                else:
-#                    identity = dim.identity(strict=True)
-#                    identity = dim.identity()
-
-                if not identity:
+                identity = dim.identity(strict=True, default=None)
+                if identity is None:
                     # Dimension coordinate has no identity, but it may
                     # have a recognised axis.
                     for ctype in ('T', 'X', 'Y', 'Z'):
@@ -667,6 +654,38 @@ may be accessed with the `nc_global_attributes`,
                             identity = ctype
                             break
                 #--- End: if
+                    
+                if identity is None and relaxed_identities:
+                    identity = dim.identity(relaxed=True, default=None)
+                    
+                    
+#                identity = None
+#                identity = dim.identity(strict=(not relaxed_identities),
+#                                        relaxed=relaxed_identities,
+#                                        default=None)
+#
+#                identity = dim.identity(strict=True, default=None)
+#                if not identity and relaxed_identities:
+#                    identity = dim.identity(relaxed=True, default=None)
+#                
+##                if relaxed_identities:
+##                    identity = dim.identity(strict=False)
+##                    identities = dim.identities()
+##                    print ('PPPPPPPP', identities)
+##                    if identities:
+##                        identity = identities[0]
+##                else:
+##                    identity = dim.identity(strict=True)
+##                    identity = dim.identity()
+#
+#                if not identity:
+#                    # Dimension coordinate has no identity, but it may
+#                    # have a recognised axis.
+#                    for ctype in ('T', 'X', 'Y', 'Z'):
+#                        if getattr(dim, ctype, False):
+#                            identity = ctype
+#                            break
+#                #--- End: if
 
                 if identity:
                     if identity in id_to_axis:
@@ -689,13 +708,18 @@ may be accessed with the `nc_global_attributes`,
                     # one 1-d auxiliary coordinate, so that will do.
                     key, aux = dict(auxs).popitem()
                     
-                    identity = None
-                    if relaxed_identities:
-                        identities = aux.identities()
-                        if identities:
-                            identity = identities[0]
-                    else:
-                        identity = aux.identity()
+#                    identity = None
+#                    if relaxed_identities:
+#                        identities = aux.identities()
+#                        if identities:
+#                            identity = identities[0]
+#                    else:
+#                        identity = aux.identity()
+
+                    identity = dim.identity(strict=True, default=None)
+                    
+                    if identity is None and relaxed_identities:
+                        identity = dim.identity(relaxed=True, default=None)
                     
                     if identity and aux.has_data():
                         if identity in id_to_axis:

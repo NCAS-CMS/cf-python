@@ -559,7 +559,7 @@ def RELAXED_IDENTITIES(*arg):
     **Examples:**
     
     >>> org = cf.RELAXED_IDENTITIES()
-    >>> print(org)
+    >>> org
     False
     >>> cf.RELAXED_IDENTITIES(True)
     False
@@ -618,8 +618,8 @@ def dump(x, **kwargs):
 
     If the object has a `!dump` method then this is used to create the
     output, so that ``cf.dump(f)`` is equivalent to ``print
-    f.dump()``. Otherwise ``cf.dump(x)`` is equivalent to ``print
-    x``.
+    f.dump()``. Otherwise ``cf.dump(x)`` is equivalent to
+    ``print(x)``.
     
     :Parameters:
     

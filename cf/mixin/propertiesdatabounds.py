@@ -2044,87 +2044,86 @@ ValueError: Can't take the logarithm to the base 2.718281828459045 of <Units: >
         return v
     #--- End: def
 
-    # 1
+
     def squeeze(self, axes=None, inplace=False, i=False):
         '''Remove size 1 dimensions from the data array
 
-.. seealso:: `insert_dimension`, `flip`, `transpose`
-
-:Parameters:
-
-    axes: (sequence of) `int`, optional
-        The size 1 axes to remove. By default, all size 1 axes are
-        removed. Size 1 axes for removal are identified by their
-        integer positions in the data array.
+    .. seealso:: `insert_dimension`, `flip`, `transpose`
     
-
-    inplace: `bool`, optional
-        If True then do the operation in-place and return `None`.
-
-    i: deprecated at version 3.0.0
-        Use *inplace* parameter instead.
-
-:Returns:
-
-        The construct with squeezed data. If the operation was
-        in-place then `None` is returned.
-
-**Examples:**
-
-
-TODO
-
->>> f.squeeze()
-
->>> f.squeeze(1)
-
->>> f.squeeze([2, -1])
+    :Parameters:
+    
+        axes: (sequence of) `int`, optional
+            The size 1 axes to remove. By default, all size 1 axes are
+            removed. Size 1 axes for removal are identified by their
+            integer positions in the data array.
+        
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+        i: deprecated at version 3.0.0
+            Use *inplace* parameter instead.
+    
+    :Returns:
+    
+            The construct with squeezed data. If the operation was
+            in-place then `None` is returned.
+    
+    **Examples:**
+    
+    
+    TODO
+    
+    >>> f.squeeze()
+    
+    >>> f.squeeze(1)
+    
+    >>> f.squeeze([2, -1])
 
         '''
         if i:
             _DEPRECATION_ERROR_KWARGS(self, 'squeeze', i=True) # pragma: no cover
 
         return super().squeeze(axes=axes, inplace=inplace)
-    #--- End: def
     
-    # 1
+
     def trunc(self, bounds=True, inplace=False, i=False):
         '''Truncate the data, element-wise.
 
-The truncated value of the scalar ``x``, is the nearest integer ``i``
-which is closer to zero than ``x`` is. I.e. the fractional part of the
-signed number ``x`` is discarded.
-
-.. versionadded:: 1.0
-
-.. seealso:: `ceil`, `floor`, `rint`
-
-:Parameters:
-
-    bounds: `bool`, optional
-        If False then do not alter any bounds. By default any bounds
-        are also altered.
-
-    inplace: `bool`, optional
-        If True then do the operation in-place and return `None`.
-
-    i: deprecated at version 3.0.0
-        Use *inplace* parameter instead.
-
-:Returns:
-
-        The construct with truncated data. If the operation was
-        in-place then `None` is returned.
-
-**Examples:**
-
->>> print(f.array)
-[-1.9 -1.5 -1.1 -1.   0.   1.   1.1  1.5  1.9]
->>> print(f.trunc().array)
-[-1. -1. -1. -1.  0.  1.  1.  1.  1.]
->>> f.trunc(inplace=True)
->>> print(f.array)
-[-1. -1. -1. -1.  0.  1.  1.  1.  1.]
+    The truncated value of the scalar ``x``, is the nearest integer
+    ``i`` which is closer to zero than ``x`` is. I.e. the fractional
+    part of the signed number ``x`` is discarded.
+    
+    .. versionadded:: 1.0
+    
+    .. seealso:: `ceil`, `floor`, `rint`
+    
+    :Parameters:
+    
+        bounds: `bool`, optional
+            If False then do not alter any bounds. By default any
+            bounds are also altered.
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+        i: deprecated at version 3.0.0
+            Use *inplace* parameter instead.
+    
+    :Returns:
+    
+            The construct with truncated data. If the operation was
+            in-place then `None` is returned.
+    
+    **Examples:**
+    
+    >>> print(f.array)
+    [-1.9 -1.5 -1.1 -1.   0.   1.   1.1  1.5  1.9]
+    >>> print(f.trunc().array)
+    [-1. -1. -1. -1.  0.  1.  1.  1.  1.]
+    >>> f.trunc(inplace=True)
+    >>> print(f.array)
+    [-1. -1. -1. -1.  0.  1.  1.  1.  1.]
 
         '''
         if i:
@@ -2143,52 +2142,57 @@ signed number ``x`` is discarded.
         if inplace:
             v = None
         return v
-    #--- End: def
+
     
     def identities(self):
         '''Return all possible identities.
 
-The identities comprise:
+    The identities comprise:
+    
+    * The "standard_name" property.
+    * The "id" attribute, preceeded by ``'id%'``.
+    * The "cf_role" property, preceeded by ``'cf_role='``.
+    * The "axis" property, preceeded by ``'axis='``.
+    * The "long_name" property, preceeded by ``'long_name='``.
+    * All other properties (including "standard_name"), preceeded by
+      the property name and an ``'='``.
+    * The coordinate type (``'X'``, ``'Y'``, ``'Z'`` or ``'T'``).
+    * The netCDF variable name, preceeded by ``'ncvar%'``.
+    
+    The identities of the bounds, if present, are included (with the
+    exception of the bounds netCDF variable name).
 
-* The "standard_name" property.
-* All properties, preceeded by the property name and a colon,
-  e.g. ``'long_name:Air temperature'``.
-* The netCDF variable name, preceeded by ``'ncvar%'``.
-* The coordinate type (one or none of ``'X'``, ``'Y'``, ``'Z'``,
-  ``'T'``).
-* The identities of the bounds, if any.
-
-.. versionadded:: 3.0.0
-
-.. seealso:: `identity`
-
-:Returns:
-
-    `list`
-        The identities.
-
-**Examples:**
-
->>> f.properties()
-{'foo': 'bar',
- 'long_name': 'Air Temperature',
- 'standard_name': 'air_temperature'}
->>> f.nc_get_variable()
-'tas'
->>> f.identities()
-['air_temperature',
- 'long_name=Air Temperature',
- 'foo=bar',
- 'standard_name=air_temperature',
- 'ncvar%tas']
-
->>> f.properties()
-{}
->>> f.bounds.properties()
-{'axis': 'Z',
- 'units': 'm'}
->>> f.identities()
-['axis=Z', 'units=m', 'ncvar%z']
+    .. versionadded:: 3.0.0
+    
+    .. seealso:: `id`, `identity`
+    
+    :Returns:
+    
+        `list`
+            The identities.
+    
+    **Examples:**
+    
+    >>> f.properties()
+    {'foo': 'bar',
+     'long_name': 'Air Temperature',
+     'standard_name': 'air_temperature'}
+    >>> f.nc_get_variable()
+    'tas'
+    >>> f.identities()
+    ['air_temperature',
+     'long_name=Air Temperature',
+     'foo=bar',
+     'standard_name=air_temperature',
+     'ncvar%tas']
+    
+    >>> f.properties()
+    {}
+    >>> f.bounds.properties()
+    {'axis': 'Z',
+     'units': 'm'}
+    >>> f.identities()
+    ['axis=Z', 'units=m', 'ncvar%z']
 
         '''
         identities = super().identities()
@@ -2200,25 +2204,28 @@ The identities comprise:
 # TODO ncvar AND?
 
         return identities
-    #--- End: def
 
 
-    def identity(self, default='', strict=False, nc_only=False,
-                 relaxed_identity=None):
+    def identity(self, default='', strict=False, relaxed=False,
+                 nc_only=False, relaxed_identity=None):
         '''Return the canonical identity.
 
     By default the identity is the first found of the following:
     
-    1. The "standard_name" property.
-    2. The "id" attribute, preceeded by ``'id%='``.
-    3. The "cf_role" property, preceeded by ``'cf_role='``.
-    4. The "axis" property, preceeded by ``'axis='``.
-    5. The "long_name" property, preceeded by ``'long_name='``.
-    6. The netCDF variable name, preceeded by ``'ncvar%'``.
-    7. The identity of the bounds, if any.
-    8. The value of the *default* parameter.
+    * The "standard_name" property.
+    * The "id" attribute, preceeded by ``'id%'``.
+    * The "cf_role" property, preceeded by ``'cf_role='``.
+    * The "axis" property, preceeded by ``'axis='``.
+    * The "long_name" property, preceeded by ``'long_name='``.
+    * The netCDF variable name, preceeded by ``'ncvar%'``.
+    * The coordinate type (``'X'``, ``'Y'``, ``'Z'`` or ``'T'``).
+    * The value of the *default* parameter.
+
+    If no identity can be found on the construct then the identity is
+    taken from the bounds, if present (with the exception of the
+    bounds netCDF variable name).
     
-    .. seealso:: `identities`
+    .. seealso:: `id`, `identities`
     
     :Parameters:
     
@@ -2226,6 +2233,21 @@ The identities comprise:
             If no identity can be found then return the value of the
             default parameter.
     
+        strict: `bool`, optional 
+            If True then only take the identity from the
+            "standard_name" property or the "id" attribute, in that
+            order.
+
+        relaxed: `bool`, optional
+            If True then only take the identity from the
+            "standard_name" property, the "id" attribute, the
+            "long_name" property or netCDF variable name, in that
+            order.
+
+        nc_only: `bool`, optional       
+            If True then only take the identity from the netCDF
+            variable name.
+
     :Returns:
     
             The identity.
@@ -2270,15 +2292,21 @@ The identities comprise:
         if relaxed_identity:
             _DEPRECATAION_ERROR_KWARGS(self, 'identity', relaxed_identity=True) # pragma: no cover
             
-        identity = super().identity(default=None, strict=strict, nc_only=nc_only)
+        identity = super().identity(default=None, strict=strict,
+                                    relaxed=relaxed, nc_only=nc_only)
 
         if identity is not None:
             return identity
 
         bounds = self.get_bounds(None)
         if bounds is not None:
-            return bounds.identity(default=default, strict=strict, nc_only=nc_only)
-        
+            out = bounds.identity(default=None, strict=strict,
+                                  relaxed=relaxed, nc_only=nc_only)
+
+            if out is not None and not out.startswith('ncvar%'):
+                return out
+        #--- End: if
+                
         return default
 
 

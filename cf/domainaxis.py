@@ -25,11 +25,11 @@ The netCDF dimension name of the construct may be accessed with the
     def __repr__(self):
         '''Called by the `repr` built-in function.
 
-x.__repr__() <==> repr(x)
+    x.__repr__() <==> repr(x)
 
         '''
         return super().__repr__().replace('<', '<CF ', 1)
-    #--- End: def
+
 
     def __hash__(self):
         '''TODO
@@ -38,43 +38,43 @@ x.__repr__() <==> repr(x)
         return hash((self.__class__.__name__,
                      self.get_size(),
                      self.nc_get_dimension()))
-    #-- End: def
+
     
     def __eq__(self, other):
         '''TODO
-'''
+        '''
         return self.get_size() == int(other)
-    #--- End: def
+
 
     def __ne__(self, other):
         '''TODO
-'''
+        '''
         return self.get_size() != int(other)
-    #--- End: def
+
 
     def __gt__(self, other):
         '''TODO
-'''
+        '''
         return self.get_size() > int(other)
-    #--- End: def
+
 
     def __ge__(self, other):
         '''TODO
-'''
+        '''
         return self.get_size() >= int(other)
-    #--- End: def
+
 
     def __lt__(self, other):
         '''TODO
-'''
+        '''
         return self.get_size() < int(other)
-    #--- End: def
+
 
     def __le__(self, other):
         '''TODO
-'''
+        '''
         return self.get_size() <= int(other)
-    #--- End: def
+
 
     def __add__(self, other):
         '''TODO
@@ -83,17 +83,20 @@ x.__repr__() <==> repr(x)
         new.set_size(self.get_size() + int(other))
         return new
 
+    
     def __radd__(self, other):
         '''TODO
         '''
         return self + other
 
+    
     def __iadd__(self, other):
         '''TODO
         '''
         self.set_size(self.get_size() + int(other))
         return self
 
+    
     def __sub__(self, other):
         '''TODO
         '''
@@ -101,47 +104,48 @@ x.__repr__() <==> repr(x)
         new.set_size(self.get_size() - int(other))
         return new
 
+
     def __isub__(self, other):
         '''TODO
         '''
         self.set_size(self.get_size() - int(other))
         return self
 
+    
     def __int__(self):
         '''TODO
 
-x.__int__() <==> int(x)
-'''
+    x.__int__() <==> int(x)
+        '''
         return self.get_size()
-    #--- End: def
+
 
     @property
     def size(self):
         '''TODO
         '''
         return self.get_size(default=AttributeError())
-    #--- End: def
     @size.setter
     def size(self, value): self.set_size(value)
     @size.deleter
     def size(self):        self.del_size(default=AttributeError())
 
-    # 0
+
     def inspect(self):
         '''Inspect the object for debugging.
 
-.. seealso:: `cf.inspect`
-
-:Returns: 
-
-    `None`
-
-**Examples:**
-
->>> d.inspect()
+    .. seealso:: `cf.inspect`
+    
+    :Returns: 
+    
+        `None`
+    
+    **Examples:**
+    
+    >>> d.inspect()
 
         '''
         print(cf_inspect(self)) # pragma: no cover
-    #--- End: def
+
 
 #--- End: class

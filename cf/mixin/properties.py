@@ -62,15 +62,29 @@ class Properties:
     # ----------------------------------------------------------------
     @property
     def id(self):
-        '''TODO
+        '''A canonical identity.
+
+    The `id` attribute can be used to unambiguously identify
+    constructs in the absence of a `standard_name` property.
+
+    Note that `id` is not a CF property, and so is not read from, or
+    written to, datasets.
 
     .. versionadded:: 3.0.0
+
+    **Examples:**
+
+    >>> f.id = 'um01002'
+    >>> f.id
+    'um01002'
+    >>> del f.id
 
         '''
         try:
             return self._custom['id']
         except KeyError:
-            raise AttributeError("TODO")
+            raise AttributeError("{} doesn't have attribute 'id'".format(
+                self.__class__.__name__))
 
     @id.setter
     def id(self, value):   self._custom['id'] = value
@@ -79,9 +93,10 @@ class Properties:
         try:
             del self._custom['id']
         except KeyError:
-            raise AttributeError("TODO")
+            raise AttributeError("{} doesn't have attribute 'id'".format(
+                self.__class__.__name__))
 
-    
+        
     # ----------------------------------------------------------------
     # CF properties
     # ----------------------------------------------------------------

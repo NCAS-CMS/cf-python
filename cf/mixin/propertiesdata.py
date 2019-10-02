@@ -3835,24 +3835,24 @@ TODO
             "ERROR: Can't get unique values when there is no data array")
 
 
-    def identity(self, default='', strict=False, nc_only=False,
-                 relaxed_identity=None):
+    def identity(self, default='', strict=False, relaxed=False,
+                 nc_only=False, relaxed_identity=None):
         '''Return the canonical identity.
 
     By default the identity is the first found of the following:
     
-    1. The "standard_name" property.
-    2. The "id" attribute, preceeded by ``'id%='``.
-    3. The "cf_role" property, preceeded by ``'cf_role='``.
-    4. The "axis" property, preceeded by ``'axis='``.
-    5. The "long_name" property, preceeded by ``'long_name='``.
-    6. The netCDF variable name, preceeded by ``'ncvar%'``.
-    7. The coordinate type (``'X'``, ``'Y'``, ``'Z'`` or ``'T'``).
-    8. The value of the *default* parameter.
+    * The "standard_name" property.
+    * The "id" attribute, preceeded by ``'id%'``.
+    * The "cf_role" property, preceeded by ``'cf_role='``.
+    * The "axis" property, preceeded by ``'axis='``.
+    * The "long_name" property, preceeded by ``'long_name='``.
+    * The netCDF variable name, preceeded by ``'ncvar%'``.
+    * The coordinate type (``'X'``, ``'Y'``, ``'Z'`` or ``'T'``).
+    * The value of the *default* parameter.
     
     .. versionadded:: 3.0.0
     
-    .. seealso:: `identities`
+    .. seealso:: `id`, `identities`
     
     :Parameters:
     
@@ -3860,6 +3860,21 @@ TODO
             If no identity can be found then return the value of the
             default parameter.
     
+        strict: `bool`, optional 
+            If True then only take the identity from the
+            "standard_name" property or the "id" attribute, in that
+            order.
+
+        relaxed: `bool`, optional
+            If True then only take the identity from the
+            "standard_name" property, the "id" attribute, the
+            "long_name" property or netCDF variable name, in that
+            order.
+
+        nc_only: `bool`, optional       
+            If True then only take the identity from the netCDF
+            variable name.
+
     :Returns:
     
             The identity.
@@ -3898,7 +3913,10 @@ TODO
 
         if nc_only:
             if strict:
-                raise ValueError("'strict' and 'nc_var' parameters cannot both be True")
+                raise ValueError("'strict' and 'nc_only' parameters cannot both be True")
+            
+            if relaxed:
+                raise ValueError("'relaxed' and 'nc_only' parameters cannot both be True")
             
             n = self.nc_get_variable(None)
             if n is not None:
@@ -3908,15 +3926,26 @@ TODO
             
         n = self.get_property('standard_name', None)
         if n is not None:
-            return n
+            return '{0}'.format(n)
 
         n = getattr(self, 'id', None)
         if n is not None:
-            return 'id%'+n
+            return 'id%{0}'.format(n)
+
+        if relaxed: 
+            n = self.get_property('long_name', None)
+            if n is not None:
+                return 'long_name={0}'.format(n)
+
+            n = self.nc_get_variable(None)
+            if n is not None:
+                return 'ncvar%{0}'.format(n)
+        
+            return default
 
         if strict:
             return default
-
+        
         for prop in  ('cf_role', 'axis', 'long_name'):
             n = self.get_property(prop, None)
             if n is not None:
@@ -3941,20 +3970,18 @@ TODO
     The identities comprise:
     
     * The "standard_name" property.
-
-   2. The "id" attribute, preceeded by ``'id%='``. TODO
- 
-    * All properties, preceeded by the property name and a colon,
-      e.g. ``'long_name:Air temperature'``. TODO
-
+    * The "id" attribute, preceeded by ``'id%'``.
+    * The "cf_role" property, preceeded by ``'cf_role='``.
+    * The "axis" property, preceeded by ``'axis='``.
+    * The "long_name" property, preceeded by ``'long_name='``.
+    * All other properties (including "standard_name"), preceeded by
+      the property name and an ``'='``.
+    * The coordinate type (``'X'``, ``'Y'``, ``'Z'`` or ``'T'``).
     * The netCDF variable name, preceeded by ``'ncvar%'``.
-
-    * The coordinate type (one or none of ``'X'``, ``'Y'``, ``'Z'``,
-      ``'T'``).
     
     .. versionadded:: 3.0.0
     
-    .. seealso:: `identity`
+    .. seealso:: `id`, `identity`
     
     :Returns:
     
@@ -3978,12 +4005,23 @@ TODO
 
         '''
         out = super().identities()
-# TODO insert id%
+
+        i = getattr(self, 'id', None)
+        if i is not None:
+            # Insert id attribute
+            i = 'id%{0}'.format(i)
+            if not out:
+                out = [i]
+            else:
+                out0 = out[0]
+                if '=' in out0 or '%' in out0 or True in [a == out0 for a in 'XYZT']:
+                    out.insert(0, i)
+                else:
+                    out.insert(1, i)
+        #--- End: if
+
         for ctype in ('X', 'Y', 'Z', 'T'):
             if getattr(self, ctype, False):
-#                if out and out[-1].startswith('ncvar%'):
-#                    out.insert(-1, ctype)
-#                else:
                 out.append(ctype)
         #--- End: for
         

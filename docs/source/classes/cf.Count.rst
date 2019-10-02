@@ -351,14 +351,14 @@ NetCDF
    ~cf.Count.nc_get_variable
    ~cf.Count.nc_has_variable
    ~cf.Count.nc_set_variable 
-   ~cf.nc_del_dimension
-   ~cf.nc_get_dimension
-   ~cf.nc_has_dimension
-   ~cf.nc_set_dimension
-   ~cf.nc_del_sample_dimension
-   ~cf.nc_get_sample_dimension
-   ~cf.nc_has_sample_dimension
-   ~cf.nc_set_sample_dimension
+   ~cf.Count.nc_del_dimension
+   ~cf.Count.nc_get_dimension
+   ~cf.Count.nc_has_dimension
+   ~cf.Count.nc_set_dimension
+   ~cf.Count.nc_del_sample_dimension
+   ~cf.Count.nc_get_sample_dimension
+   ~cf.Count.nc_has_sample_dimension
+   ~cf.Count.nc_set_sample_dimension
 
 
 Aliases
