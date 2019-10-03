@@ -88,7 +88,7 @@
 <h1>cf.flat<a class="headerlink" href="#cf-flat" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.flat">
-<code class="descclassname">cf.</code><code class="descname">flat</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.0/cf/functions.py#L1614"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.flat" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">cf.</code><code class="descname">flat</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/functions.py#L1620"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.flat" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return an iterator over an arbitrarily nested sequence.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -113,48 +113,54 @@ to passing a single element sequence containing <em>x</em>.</p>
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="n">cf</span><span class="o">.</span><span class="n">flat</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]])</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">flat</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]])</span>
 <span class="go">&lt;generator object flat at 0x3649cd0&gt;</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="nb">list</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">flat</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])]))</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">flat</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])]))</span>
 <span class="go">[1, 2, 3, 4]</span>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="nb">list</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">flat</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]])]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">flat</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]])]))</span>
 <span class="go">[1, 2, 3, 4, 5, 6]</span>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">cf</span><span class="o">.</span><span class="n">flat</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]]):</span>
-<span class="gp">... </span>    <span class="nb">print</span> <span class="n">a</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+<span class="gp">...</span>
 <span class="go">1 2 3 4</span>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">cf</span><span class="o">.</span><span class="n">flat</span><span class="p">([</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;bc&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;def&#39;</span><span class="p">,</span> <span class="s1">&#39;ghij&#39;</span><span class="p">]]]):</span>
-<span class="gp">... </span>    <span class="nb">print</span> <span class="n">a</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+<span class="gp">...</span>
 <span class="go">a bc def ghij</span>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">cf</span><span class="o">.</span><span class="n">flat</span><span class="p">(</span><span class="mi">2004</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="nb">print</span> <span class="n">a</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="gp">...</span>
 <span class="go">2004</span>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">cf</span><span class="o">.</span><span class="n">flat</span><span class="p">(</span><span class="s1">&#39;abcdefghij&#39;</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="nb">print</span> <span class="n">a</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+<span class="gp">...</span>
 <span class="go">abcdefghij</span>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span>
 <span class="go">&lt;CF Field: eastward_wind(air_pressure(5), latitude(110), longitude(106)) m s-1&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">cf</span><span class="o">.</span><span class="n">flat</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="nb">print</span> <span class="nb">repr</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">a</span><span class="p">))</span>
+<span class="gp">...</span>
 <span class="go">&lt;CF Field: eastward_wind(air_pressure(5), latitude(110), longitude(106)) m s-1&gt;</span>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">cf</span><span class="o">.</span><span class="n">flat</span><span class="p">([</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="n">f</span><span class="p">,</span> <span class="p">[</span><span class="n">f</span><span class="p">,</span> <span class="n">f</span><span class="p">]]]):</span>
-<span class="gp">... </span>    <span class="nb">print</span> <span class="nb">repr</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">a</span><span class="p">))</span>
+<span class="gp">...</span>
 <span class="go">&lt;CF Field: eastward_wind(air_pressure(5), latitude(110), longitude(106)) m s-1&gt;</span>
 <span class="go">&lt;CF Field: eastward_wind(air_pressure(5), latitude(110), longitude(106)) m s-1&gt;</span>
 <span class="go">&lt;CF Field: eastward_wind(air_pressure(5), latitude(110), longitude(106)) m s-1&gt;</span>
@@ -185,7 +191,7 @@ to passing a single element sequence containing <em>x</em>.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/function/cf.flat.rst.txt"

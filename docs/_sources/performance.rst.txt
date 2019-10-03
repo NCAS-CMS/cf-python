@@ -117,7 +117,7 @@ Calling `cf.COLLAPSE_PARALLEL_MODE` with no arguments returns the
 current value, otherwise the value prior to the change is returned.
 
 .. code-block:: python
-   :caption: *TODO*
+   :caption: *Inspect and set the 'collapse' parallel mode.*
 
    >>> cf.COLLAPSE_PARALLEL_MODE()
    0

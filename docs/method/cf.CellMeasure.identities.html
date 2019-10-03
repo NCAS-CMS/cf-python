@@ -90,31 +90,26 @@
 <h1>cf.CellMeasure.identities<a class="headerlink" href="#cf-cellmeasure-identities" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.CellMeasure.identities">
-<code class="descclassname">CellMeasure.</code><code class="descname">identities</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.0/cf/mixin/propertiesdata.py#L3938"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.CellMeasure.identities" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">CellMeasure.</code><code class="descname">identities</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/mixin/propertiesdata.py#L3968"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.CellMeasure.identities" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return all possible identities.</p>
-<blockquote>
-<div><p>The identities comprise:</p>
+<p>The identities comprise:</p>
 <ul class="simple">
 <li>The “standard_name” property.</li>
-</ul>
-</div></blockquote>
-<ol class="arabic simple" start="2">
-<li>The “id” attribute, preceeded by <code class="docutils literal notranslate"><span class="pre">'id%='</span></code>. TODO</li>
-</ol>
-<blockquote>
-<div><ul class="simple">
-<li>All properties, preceeded by the property name and a colon,
-e.g. <code class="docutils literal notranslate"><span class="pre">'long_name:Air</span> <span class="pre">temperature'</span></code>. TODO</li>
+<li>The “id” attribute, preceeded by <code class="docutils literal notranslate"><span class="pre">'id%'</span></code>.</li>
+<li>The “cf_role” property, preceeded by <code class="docutils literal notranslate"><span class="pre">'cf_role='</span></code>.</li>
+<li>The “axis” property, preceeded by <code class="docutils literal notranslate"><span class="pre">'axis='</span></code>.</li>
+<li>The “long_name” property, preceeded by <code class="docutils literal notranslate"><span class="pre">'long_name='</span></code>.</li>
+<li>All other properties (including “standard_name”), preceeded by
+the property name and an <code class="docutils literal notranslate"><span class="pre">'='</span></code>.</li>
+<li>The coordinate type (<code class="docutils literal notranslate"><span class="pre">'X'</span></code>, <code class="docutils literal notranslate"><span class="pre">'Y'</span></code>, <code class="docutils literal notranslate"><span class="pre">'Z'</span></code> or <code class="docutils literal notranslate"><span class="pre">'T'</span></code>).</li>
 <li>The netCDF variable name, preceeded by <code class="docutils literal notranslate"><span class="pre">'ncvar%'</span></code>.</li>
-<li>The coordinate type (one or none of <code class="docutils literal notranslate"><span class="pre">'X'</span></code>, <code class="docutils literal notranslate"><span class="pre">'Y'</span></code>, <code class="docutils literal notranslate"><span class="pre">'Z'</span></code>,
-<code class="docutils literal notranslate"><span class="pre">'T'</span></code>).</li>
 </ul>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 3.0.0.</span></p>
 </div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="cf.CellMeasure.identity.html#cf.CellMeasure.identity" title="cf.CellMeasure.identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identity</span></code></a></p>
+<p class="last"><a class="reference internal" href="../attribute/cf.CellMeasure.id.html#cf.CellMeasure.id" title="cf.CellMeasure.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code></a>, <a class="reference internal" href="cf.CellMeasure.identity.html#cf.CellMeasure.identity" title="cf.CellMeasure.identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identity</span></code></a></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -144,7 +139,6 @@ e.g. <code class="docutils literal notranslate"><span class="pre">'long_name:Air
 <span class="go"> &#39;ncvar%tas&#39;]</span>
 </pre></div>
 </div>
-</div></blockquote>
 </dd></dl>
 
 </div>
@@ -161,7 +155,7 @@ e.g. <code class="docutils literal notranslate"><span class="pre">'long_name:Air
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cf.CellMeasure.identities.rst.txt"

@@ -88,7 +88,7 @@
 <h1>cf.aggregate<a class="headerlink" href="#cf-aggregate" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.aggregate">
-<code class="descclassname">cf.</code><code class="descname">aggregate</code><span class="sig-paren">(</span><em>fields</em>, <em>info=0</em>, <em>relaxed_units=False</em>, <em>overlap=True</em>, <em>contiguous=False</em>, <em>relaxed_identities=False</em>, <em>ncvar_identities=False</em>, <em>respect_valid=False</em>, <em>equal_all=False</em>, <em>exist_all=False</em>, <em>equal=None</em>, <em>exist=None</em>, <em>ignore=None</em>, <em>exclude=False</em>, <em>dimension=()</em>, <em>concatenate=True</em>, <em>copy=True</em>, <em>axes=None</em>, <em>donotchecknonaggregatingaxes=False</em>, <em>allow_no_identity=False</em>, <em>atol=None</em>, <em>rtol=None</em>, <em>no_overlap=False</em>, <em>shared_nc_domain=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.0/cf/aggregate.py#L1305"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.aggregate" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">cf.</code><code class="descname">aggregate</code><span class="sig-paren">(</span><em>fields</em>, <em>info=0</em>, <em>relaxed_units=False</em>, <em>overlap=True</em>, <em>contiguous=False</em>, <em>relaxed_identities=False</em>, <em>ncvar_identities=False</em>, <em>respect_valid=False</em>, <em>equal_all=False</em>, <em>exist_all=False</em>, <em>equal=None</em>, <em>exist=None</em>, <em>ignore=None</em>, <em>exclude=False</em>, <em>dimension=()</em>, <em>concatenate=True</em>, <em>copy=True</em>, <em>axes=None</em>, <em>donotchecknonaggregatingaxes=False</em>, <em>allow_no_identity=False</em>, <em>atol=None</em>, <em>rtol=None</em>, <em>no_overlap=False</em>, <em>shared_nc_domain=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/aggregate.py#L1286"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.aggregate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Aggregate field constructs into as few field constructs as
 possible.</p>
 <p>Aggregation is the combination of field constructs to create a new
@@ -129,40 +129,40 @@ coordinate values. If <em>info</em> is 3 or more then display the
 field construct’s complete aggregation metadata.</p>
 </dd>
 <dt>overlap: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> then require that aggregated field constructs
+<dd><p class="first last">If False then require that aggregated field constructs
 have adjacent dimension coordinate construct cells which
 do not overlap (but they may share common boundary
 values). Ignored for a dimension coordinate construct that
 does not have bounds. See also the <em>contiguous</em> parameter.</p>
 </dd>
 <dt>contiguous: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> then require that aggregated field constructs
+<dd><p class="first last">If True then require that aggregated field constructs
 have adjacent dimension coordinate construct cells which
 overlap or share common boundary values. Ignored for a
 dimension coordinate construct that does not have
 bounds. See also the <em>overlap</em> parameter.</p>
 </dd>
 <dt>relaxed_units: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> then assume that field and metadata constructs
+<dd><p class="first last">If True then assume that field and metadata constructs
 with the same identity but missing units actually have
 equivalent (but unspecified) units, so that aggregation
 may occur. By default such field constructs are not
 aggregatable.</p>
 </dd>
 <dt>allow_no_identity: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> then assume that field and metadata constructs with
+<dd><p class="first last">If True then assume that field and metadata constructs with
 no identity (see the <em>relaxed_identities</em> parameter) actually
 have the same (but unspecified) identity, so that aggregation
 may occur. By default such field constructs are not
 aggregatable.</p>
 </dd>
 <dt>relaxed_identities: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> and there is no standard name property nor “id”
+<dd><p class="first last">If True and there is no standard name property nor “id”
 attribute, then allow field and metadata constructs to be
 identifiable by long name properties or netCDF variable names.</p>
 </dd>
 <dt>ncvar_identities: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> then force field and metadata constructs to be
+<dd><p class="first last">If True then force field and metadata constructs to be
 identified by their netCDF file variable names See also the
 <em>relaxed_identies</em> parameter.</p>
 </dd>
@@ -253,14 +253,14 @@ non-aggregating axes are in fact already entirely consistent.</p>
 <dd><p class="first last">The absolute tolerance for all numerical comparisons. The
 tolerance is a non-negative, typically very small number. Two
 numbers, x and y, are considered the same if <span class="math notranslate nohighlight">\(|x-y| \le
-atol + rtol*|y|\)</span>. By default the value returned by the <a class="reference internal" href="../generated/cf.ATOL.html#cf.ATOL" title="cf.ATOL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ATOL</span></code></a>
+atol + rtol*|y|\)</span>. By default the value returned by the <a class="reference internal" href="cf.ATOL.html#cf.ATOL" title="cf.ATOL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ATOL</span></code></a>
 function is used.</p>
 </dd>
 <dt>rtol: float, optional</dt>
 <dd><p class="first last">The relative tolerance for all numerical comparisons. The
 tolerance is a non-negative, typically very small number. Two
 numbers, x and y, are considered the same if <span class="math notranslate nohighlight">\(|x-y| \le
-atol + rtol*|y|\)</span>. By default the value returned by the <a class="reference internal" href="../generated/cf.RTOL.html#cf.RTOL" title="cf.RTOL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RTOL</span></code></a>
+atol + rtol*|y|\)</span>. By default the value returned by the <a class="reference internal" href="cf.RTOL.html#cf.RTOL" title="cf.RTOL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RTOL</span></code></a>
 function is used.</p>
 </dd>
 <dt>no_overlap: </dt>
@@ -318,7 +318,7 @@ and for three different atmospheric heights for each time:</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/function/cf.aggregate.rst.txt"

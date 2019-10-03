@@ -90,22 +90,25 @@
 <h1>cf.DomainAncillary.identity<a class="headerlink" href="#cf-domainancillary-identity" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.DomainAncillary.identity">
-<code class="descclassname">DomainAncillary.</code><code class="descname">identity</code><span class="sig-paren">(</span><em>default=''</em>, <em>strict=False</em>, <em>nc_only=False</em>, <em>relaxed_identity=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.0/cf/mixin/propertiesdatabounds.py#L2206"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DomainAncillary.identity" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">DomainAncillary.</code><code class="descname">identity</code><span class="sig-paren">(</span><em>default=''</em>, <em>strict=False</em>, <em>relaxed=False</em>, <em>nc_only=False</em>, <em>relaxed_identity=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/mixin/propertiesdatabounds.py#L2209"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DomainAncillary.identity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the canonical identity.</p>
 <p>By default the identity is the first found of the following:</p>
-<ol class="arabic simple">
+<ul class="simple">
 <li>The “standard_name” property.</li>
-<li>The “id” attribute, preceeded by <code class="docutils literal notranslate"><span class="pre">'id%='</span></code>.</li>
+<li>The “id” attribute, preceeded by <code class="docutils literal notranslate"><span class="pre">'id%'</span></code>.</li>
 <li>The “cf_role” property, preceeded by <code class="docutils literal notranslate"><span class="pre">'cf_role='</span></code>.</li>
 <li>The “axis” property, preceeded by <code class="docutils literal notranslate"><span class="pre">'axis='</span></code>.</li>
 <li>The “long_name” property, preceeded by <code class="docutils literal notranslate"><span class="pre">'long_name='</span></code>.</li>
 <li>The netCDF variable name, preceeded by <code class="docutils literal notranslate"><span class="pre">'ncvar%'</span></code>.</li>
-<li>The identity of the bounds, if any.</li>
+<li>The coordinate type (<code class="docutils literal notranslate"><span class="pre">'X'</span></code>, <code class="docutils literal notranslate"><span class="pre">'Y'</span></code>, <code class="docutils literal notranslate"><span class="pre">'Z'</span></code> or <code class="docutils literal notranslate"><span class="pre">'T'</span></code>).</li>
 <li>The value of the <em>default</em> parameter.</li>
-</ol>
+</ul>
+<p>If no identity can be found on the construct then the identity is
+taken from the bounds, if present (with the exception of the
+bounds netCDF variable name).</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="cf.DomainAncillary.identities.html#cf.DomainAncillary.identities" title="cf.DomainAncillary.identities"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identities</span></code></a></p>
+<p class="last"><a class="reference internal" href="../attribute/cf.DomainAncillary.id.html#cf.DomainAncillary.id" title="cf.DomainAncillary.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code></a>, <a class="reference internal" href="cf.DomainAncillary.identities.html#cf.DomainAncillary.identities" title="cf.DomainAncillary.identities"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identities</span></code></a></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -115,6 +118,21 @@
 <dt>default: optional</dt>
 <dd><p class="first last">If no identity can be found then return the value of the
 default parameter.</p>
+</dd>
+<dt>strict: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional </dt>
+<dd><p class="first last">If True then only take the identity from the
+“standard_name” property or the “id” attribute, in that
+order.</p>
+</dd>
+<dt>relaxed: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dd><p class="first last">If True then only take the identity from the
+“standard_name” property, the “id” attribute, the
+“long_name” property or netCDF variable name, in that
+order.</p>
+</dd>
+<dt>nc_only: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional       </dt>
+<dd><p class="first last">If True then only take the identity from the netCDF
+variable name.</p>
 </dd>
 </dl>
 </td>
@@ -177,7 +195,7 @@ default parameter.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cf.DomainAncillary.identity.rst.txt"

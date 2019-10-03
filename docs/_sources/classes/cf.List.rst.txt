@@ -24,6 +24,15 @@ Inspection
    ~cf.List.identity  
    ~cf.List.identities
    
+.. rubric:: Attributes
+	    
+.. autosummary::   
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cf.List.id
+   
 Selection
 ---------
 

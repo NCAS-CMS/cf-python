@@ -25,6 +25,15 @@ Inspection
    ~cf.Bounds.identity  
    ~cf.Bounds.identities
 
+.. rubric:: Attributes
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cf.Bounds.id
+
 Selection
 ---------
 

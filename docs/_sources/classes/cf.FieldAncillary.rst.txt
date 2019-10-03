@@ -32,6 +32,7 @@ Inspection
    :template: attribute.rst
 
    ~cf.FieldAncillary.construct_type
+   ~cf.FieldAncillary.id
 
 Selection
 ---------

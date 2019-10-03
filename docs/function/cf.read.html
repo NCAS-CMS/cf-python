@@ -88,7 +88,7 @@
 <h1>cf.read<a class="headerlink" href="#cf-read" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.read">
-<code class="descclassname">cf.</code><code class="descname">read</code><span class="sig-paren">(</span><em>files</em>, <em>external=None</em>, <em>verbose=False</em>, <em>warnings=False</em>, <em>ignore_read_error=False</em>, <em>aggregate=True</em>, <em>nfields=None</em>, <em>squeeze=False</em>, <em>unsqueeze=False</em>, <em>fmt=None</em>, <em>select=None</em>, <em>extra=None</em>, <em>recursive=False</em>, <em>followlinks=False</em>, <em>um=None</em>, <em>chunk=True</em>, <em>field=None</em>, <em>height_at_top_of_model=None</em>, <em>select_options=None</em>, <em>follow_symlinks=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.0/cf/read_write/read.py#L28"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.read" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">cf.</code><code class="descname">read</code><span class="sig-paren">(</span><em>files</em>, <em>external=None</em>, <em>verbose=False</em>, <em>warnings=False</em>, <em>ignore_read_error=False</em>, <em>aggregate=True</em>, <em>nfields=None</em>, <em>squeeze=False</em>, <em>unsqueeze=False</em>, <em>fmt=None</em>, <em>select=None</em>, <em>extra=None</em>, <em>recursive=False</em>, <em>followlinks=False</em>, <em>um=None</em>, <em>chunk=True</em>, <em>field=None</em>, <em>height_at_top_of_model=None</em>, <em>select_options=None</em>, <em>follow_symlinks=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/read_write/read.py#L28"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.read" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read field constructs from netCDF, PP or UM fields files.</p>
 <p>Files may be on disk or on an OPeNDAP server.</p>
 <p>Any amount of any combination of CF-netCDF and CFA-netCDF files
@@ -111,7 +111,7 @@ available to field constructs derived from UM fields files or PP
 files.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="../generated/cf.aggregate.html#cf.aggregate" title="cf.aggregate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.aggregate</span></code></a>, <a class="reference internal" href="cf.load_stash2standard_name.html#cf.load_stash2standard_name" title="cf.load_stash2standard_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.load_stash2standard_name</span></code></a>,
+<p class="last"><a class="reference internal" href="cf.aggregate.html#cf.aggregate" title="cf.aggregate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.aggregate</span></code></a>, <a class="reference internal" href="cf.load_stash2standard_name.html#cf.load_stash2standard_name" title="cf.load_stash2standard_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.load_stash2standard_name</span></code></a>,
 <a class="reference internal" href="cf.write.html#cf.write" title="cf.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.write</span></code></a></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
@@ -285,11 +285,11 @@ read.</p>
 then aggregate the field constructs read in from all input
 files into as few field constructs as possible by passing
 all of the field constructs found the input files to the
-<a class="reference internal" href="../generated/cf.aggregate.html#cf.aggregate" title="cf.aggregate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.aggregate</span></code></a>, and returning the output of this function
+<a class="reference internal" href="cf.aggregate.html#cf.aggregate" title="cf.aggregate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.aggregate</span></code></a>, and returning the output of this function
 call.</p>
 <p>If <em>aggregate</em> is a dictionary then it is used to
 configure the aggregation process passing its contents as
-keyword arguments to the <a class="reference internal" href="../generated/cf.aggregate.html#cf.aggregate" title="cf.aggregate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.aggregate</span></code></a> function.</p>
+keyword arguments to the <a class="reference internal" href="cf.aggregate.html#cf.aggregate" title="cf.aggregate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.aggregate</span></code></a> function.</p>
 <p class="last">If <em>aggregate</em> is False then the field constructs are not
 aggregated.</p>
 </dd>
@@ -496,7 +496,7 @@ particular types metadata constructs:</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/function/cf.read.rst.txt"

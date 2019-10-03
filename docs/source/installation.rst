@@ -46,7 +46,7 @@ dependencies, and the `cf-plot visualisation package
 .. code-block:: shell
    :caption: *Install with conda.*
 	     
-   conda install -c ncas -c conda-forge cf-python cf-plot udunits2
+   conda install -c ncas -c conda-forge cf-python cf-plot udunits2==2.2.25
    conda install -c conda-forge mpich esmpy
 
 The second of the two ``conda`` commands is required for
@@ -148,19 +148,6 @@ installed, which
 
 ----
 
-.. _Tests:
-
-**Tests**
----------
-
-Tests are run from within the ``cf-python/test`` directory:
-
-.. code:: bash
- 
-   python run_tests.py
-       
-----
-
 .. _Dependencies:
 
 **Dependencies**
@@ -189,10 +176,8 @@ Required
 
 * `UNIDATA UDUNITS-2 library
   <http://www.unidata.ucar.edu/software/udunits>`_, version 2.2.20 or
-  newer.
-
-  This is a C library which provides support for units of physical
-  quantities. If the UDUNITS-2 shared library file
+  newer. This is a C library which provides support for units of
+  physical quantities. If the UDUNITS-2 shared library file
   (``libudunits2.so.0`` on GNU/Linux or ``libudunits2.0.dylibfile`` on
   MacOS) is in a non-standard location then its path should be added
   to the ``LD_LIBRARY_PATH`` environment variable. It may also be
@@ -209,7 +194,7 @@ Some further dependencies that, enable further functionality, are
 optional. This to faciliate cf-python being installed in restricted
 environments:
 
-**Regridding**
+.. rubric:: Regridding
 
 * `ESMF <https://www.earthsystemcog.org/projects/esmpy/>`_, version
   7.1.0r or newer. This is easily installed via conda with
@@ -220,19 +205,33 @@ environments:
 
   or may be installed from source.
 
-**Convolution filters, derivatives and relative vorticity**
+.. rubric:: Convolution filters, derivatives and relative vorticity
 
 * `scipy <https://pypi.org/project/scipy>`_, version 1.3.0 or newer.
 
-**Subspacing based on N-d construct cells (N > 1) containing a given value**
+.. rubric:: Subspacing based on N-dimensional construct cells (N > 1)
+            containing a given value
 
 * `matplotlib <https://pypi.org/project/matplotlib>`_, version 3.0.0
   or newer.
 
-**Parallel processing**
+.. rubric:: Parallel processing
 
 * `mpi4py <https://pypi.org/project/mpi4py>`_
 
+----
+
+.. _Tests:
+
+**Tests**
+---------
+
+Tests are run from within the ``cf/test`` directory:
+
+.. code:: bash
+ 
+   python run_tests.py
+       
 ----
 
 .. _Code-repository:

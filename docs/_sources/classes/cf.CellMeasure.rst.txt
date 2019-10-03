@@ -32,6 +32,7 @@ Inspection
    :template: attribute.rst
 
    ~cf.CellMeasure.construct_type
+   ~cf.CellMeasure.id
 
 Measure
 -------

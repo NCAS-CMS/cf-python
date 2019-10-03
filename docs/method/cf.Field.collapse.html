@@ -90,7 +90,7 @@
 <h1>cf.Field.collapse<a class="headerlink" href="#cf-field-collapse" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.collapse">
-<code class="descclassname">Field.</code><code class="descname">collapse</code><span class="sig-paren">(</span><em>method</em>, <em>axes=None</em>, <em>squeeze=False</em>, <em>mtol=1</em>, <em>weights=None</em>, <em>ddof=1</em>, <em>a=None</em>, <em>inplace=False</em>, <em>group=None</em>, <em>regroup=False</em>, <em>within_days=None</em>, <em>within_years=None</em>, <em>over_days=None</em>, <em>over_years=None</em>, <em>coordinate='mid_range'</em>, <em>group_by='coords'</em>, <em>group_span=None</em>, <em>group_contiguous=None</em>, <em>verbose=False</em>, <em>_create_zero_size_cell_bounds=False</em>, <em>_update_cell_methods=True</em>, <em>i=False</em>, <em>_debug=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.0/cf/field.py#L4993"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.collapse" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">collapse</code><span class="sig-paren">(</span><em>method</em>, <em>axes=None</em>, <em>squeeze=False</em>, <em>mtol=1</em>, <em>weights=None</em>, <em>ddof=1</em>, <em>a=None</em>, <em>inplace=False</em>, <em>group=None</em>, <em>regroup=False</em>, <em>within_days=None</em>, <em>within_years=None</em>, <em>over_days=None</em>, <em>over_years=None</em>, <em>coordinate='mid_range'</em>, <em>group_by='coords'</em>, <em>group_span=None</em>, <em>group_contiguous=None</em>, <em>verbose=False</em>, <em>_create_zero_size_cell_bounds=False</em>, <em>_update_cell_methods=True</em>, <em>i=False</em>, <em>_debug=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/field.py#L5023"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.collapse" title="Permalink to this definition">¶</a></dt>
 <dd><p>Collapse axes of the field.</p>
 <p>Collapsing one or more dimensions reduces their size and replaces
 the data along those axes with representative statistical
@@ -748,12 +748,12 @@ coordinate values lie within the group limits (see the
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last">To define groups of 5 days, starting and ending at
 midnight on each day: <code class="docutils literal notranslate"><span class="pre">group=cf.D(5)</span></code> (see
-<a class="reference internal" href="../generated/cf.D.html#cf.D" title="cf.D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.D</span></code></a>).</p>
+<a class="reference internal" href="../function/cf.D.html#cf.D" title="cf.D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.D</span></code></a>).</p>
 </dd>
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last">To define groups of 1 calendar month, starting and
 ending at day 16 of each month:
-<code class="docutils literal notranslate"><span class="pre">group=cf.M(day=16)</span></code> (see <a class="reference internal" href="../generated/cf.M.html#cf.M" title="cf.M"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.M</span></code></a>).</p>
+<code class="docutils literal notranslate"><span class="pre">group=cf.M(day=16)</span></code> (see <a class="reference internal" href="../function/cf.M.html#cf.M" title="cf.M"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.M</span></code></a>).</p>
 </dd>
 <dt><em>Note:</em></dt>
 <dd><ul class="first last simple">
@@ -787,20 +787,20 @@ within these elements.</p>
 <div><dl class="docutils">
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last">To define groups of the season MAM in each year:
-<code class="docutils literal notranslate"><span class="pre">group=cf.mam()</span></code> (see <a class="reference internal" href="../generated/cf.mam.html#cf.mam" title="cf.mam"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.mam</span></code></a>).</p>
+<code class="docutils literal notranslate"><span class="pre">group=cf.mam()</span></code> (see <a class="reference internal" href="../function/cf.mam.html#cf.mam" title="cf.mam"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.mam</span></code></a>).</p>
 </dd>
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last">To define groups of the seasons DJF and JJA in
 each year: <code class="docutils literal notranslate"><span class="pre">group=[cf.jja(),</span> <span class="pre">cf.djf()]</span></code>. To
 define groups for seasons DJF, MAM, JJA and SON in
-each year: <code class="docutils literal notranslate"><span class="pre">group=cf.seasons()</span></code> (see <a class="reference internal" href="../generated/cf.djf.html#cf.djf" title="cf.djf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.djf</span></code></a>,
-<a class="reference internal" href="../generated/cf.jja.html#cf.jja" title="cf.jja"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.jja</span></code></a> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.season</span></code>).</p>
+each year: <code class="docutils literal notranslate"><span class="pre">group=cf.seasons()</span></code> (see <a class="reference internal" href="../function/cf.djf.html#cf.djf" title="cf.djf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.djf</span></code></a>,
+<a class="reference internal" href="../function/cf.jja.html#cf.jja" title="cf.jja"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.jja</span></code></a> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.season</span></code>).</p>
 </dd>
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last">To define groups for longitude elements less than
 or equal to 90 degrees and greater than 90
 degrees: <code class="docutils literal notranslate"><span class="pre">group=[cf.le(90,</span> <span class="pre">'degrees'),</span> <span class="pre">cf.gt(90,</span>
-<span class="pre">'degrees')]</span></code> (see <a class="reference internal" href="../generated/cf.le.html#cf.le" title="cf.le"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.le</span></code></a> and <a class="reference internal" href="../generated/cf.gt.html#cf.gt" title="cf.gt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.gt</span></code></a>).</p>
+<span class="pre">'degrees')]</span></code> (see <a class="reference internal" href="../function/cf.le.html#cf.le" title="cf.le"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.le</span></code></a> and <a class="reference internal" href="../function/cf.gt.html#cf.gt" title="cf.gt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.gt</span></code></a>).</p>
 </dd>
 <dt><em>Note:</em></dt>
 <dd><ul class="first last simple">
@@ -944,7 +944,7 @@ groups that span less than that distance:
 <dd><p class="first last">To collapse a daily timeseries into monthly
 groups, ignoring any groups that span less than 1
 calendar month: monthly values: <code class="docutils literal notranslate"><span class="pre">group=cf.M(),</span>
-<span class="pre">group_span=True</span></code> (see <a class="reference internal" href="../generated/cf.M.html#cf.M" title="cf.M"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.M</span></code></a>).</p>
+<span class="pre">group_span=True</span></code> (see <a class="reference internal" href="../function/cf.M.html#cf.M" title="cf.M"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.M</span></code></a>).</p>
 </dd>
 </dl>
 </div></blockquote>
@@ -968,7 +968,7 @@ than the given time duration.</p>
 <dd><p class="first last">To collapse a timeseries into seasonal groups,
 ignoring any groups that span less than three
 months: <code class="docutils literal notranslate"><span class="pre">group=cf.seasons(),</span> <span class="pre">group_span=cf.M(3)</span></code>
-(see <a class="reference internal" href="../generated/cf.seasons.html#cf.seasons" title="cf.seasons"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.seasons</span></code></a> and <a class="reference internal" href="../generated/cf.M.html#cf.M" title="cf.M"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.M</span></code></a>).</p>
+(see <a class="reference internal" href="../function/cf.seasons.html#cf.seasons" title="cf.seasons"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.seasons</span></code></a> and <a class="reference internal" href="../function/cf.M.html#cf.M" title="cf.M"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.M</span></code></a>).</p>
 </dd>
 </dl>
 </div></blockquote>
@@ -1073,11 +1073,11 @@ group limits (see the <em>group_by</em> parameter).</p>
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last">To define groups of 6 hours, starting at 00:00,
 06:00, 12:00 and 18:00: <code class="docutils literal notranslate"><span class="pre">within_days=cf.h(6)</span></code>
-(see <a class="reference internal" href="../generated/cf.h.html#cf.h" title="cf.h"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.h</span></code></a>).</p>
+(see <a class="reference internal" href="../function/cf.h.html#cf.h" title="cf.h"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.h</span></code></a>).</p>
 </dd>
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last">To define groups of 1 day, starting at 06:00:
-<code class="docutils literal notranslate"><span class="pre">within_days=cf.D(1,</span> <span class="pre">hour=6)</span></code> (see <a class="reference internal" href="../generated/cf.D.html#cf.D" title="cf.D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.D</span></code></a>).</p>
+<code class="docutils literal notranslate"><span class="pre">within_days=cf.D(1,</span> <span class="pre">hour=6)</span></code> (see <a class="reference internal" href="../function/cf.D.html#cf.D" title="cf.D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.D</span></code></a>).</p>
 </dd>
 <dt><em>Note:</em></dt>
 <dd><ul class="first last simple">
@@ -1108,15 +1108,15 @@ within these elements.</p>
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last">To define groups of 00:00 to 06:00 within each
 day, ignoring the rest of each day:
-<code class="docutils literal notranslate"><span class="pre">within_days=cf.hour(cf.le(6))</span></code> (see <a class="reference internal" href="../generated/cf.hour.html#cf.hour" title="cf.hour"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.hour</span></code></a>
-and <a class="reference internal" href="../generated/cf.le.html#cf.le" title="cf.le"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.le</span></code></a>).</p>
+<code class="docutils literal notranslate"><span class="pre">within_days=cf.hour(cf.le(6))</span></code> (see <a class="reference internal" href="../function/cf.hour.html#cf.hour" title="cf.hour"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.hour</span></code></a>
+and <a class="reference internal" href="../function/cf.le.html#cf.le" title="cf.le"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.le</span></code></a>).</p>
 </dd>
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last">To define groups of 00:00 to 06:00 and 18:00 to
 24:00 within each day, ignoring the rest of each
 day: <code class="docutils literal notranslate"><span class="pre">within_days=[cf.hour(cf.le(6)),</span>
-<span class="pre">cf.hour(cf.gt(18))]</span></code> (see <a class="reference internal" href="../generated/cf.gt.html#cf.gt" title="cf.gt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.gt</span></code></a>, <a class="reference internal" href="../generated/cf.hour.html#cf.hour" title="cf.hour"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.hour</span></code></a> and
-<a class="reference internal" href="../generated/cf.le.html#cf.le" title="cf.le"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.le</span></code></a>).</p>
+<span class="pre">cf.hour(cf.gt(18))]</span></code> (see <a class="reference internal" href="../function/cf.gt.html#cf.gt" title="cf.gt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.gt</span></code></a>, <a class="reference internal" href="../function/cf.hour.html#cf.hour" title="cf.hour"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.hour</span></code></a> and
+<a class="reference internal" href="../function/cf.le.html#cf.le" title="cf.le"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.le</span></code></a>).</p>
 </dd>
 <dt><em>Note:</em></dt>
 <dd><ul class="first last simple">
@@ -1169,12 +1169,12 @@ group limits (see the <em>group_by</em> parameter).</p>
 <div><dl class="docutils">
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last">To define groups of 90 days:
-<code class="docutils literal notranslate"><span class="pre">within_years=cf.D(90)</span></code> (see <a class="reference internal" href="../generated/cf.D.html#cf.D" title="cf.D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.D</span></code></a>).</p>
+<code class="docutils literal notranslate"><span class="pre">within_years=cf.D(90)</span></code> (see <a class="reference internal" href="../function/cf.D.html#cf.D" title="cf.D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.D</span></code></a>).</p>
 </dd>
 <dt><em>Parameter example:</em>  </dt>
 <dd><p class="first last">To define groups of 3 calendar months, starting on
 the 15th of a month: <code class="docutils literal notranslate"><span class="pre">within_years=cf.M(3,</span>
-<span class="pre">day=15)</span></code> (see <a class="reference internal" href="../generated/cf.M.html#cf.M" title="cf.M"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.M</span></code></a>).</p>
+<span class="pre">day=15)</span></code> (see <a class="reference internal" href="../function/cf.M.html#cf.M" title="cf.M"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.M</span></code></a>).</p>
 </dd>
 <dt><em>Note:</em></dt>
 <dd><ul class="first last simple">
@@ -1204,14 +1204,14 @@ within these elements.</p>
 <div><dl class="docutils">
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last">To define groups for the season MAM within each
-year: <code class="docutils literal notranslate"><span class="pre">within_years=cf.mam()</span></code> (see <a class="reference internal" href="../generated/cf.mam.html#cf.mam" title="cf.mam"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.mam</span></code></a>).</p>
+year: <code class="docutils literal notranslate"><span class="pre">within_years=cf.mam()</span></code> (see <a class="reference internal" href="../function/cf.mam.html#cf.mam" title="cf.mam"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.mam</span></code></a>).</p>
 </dd>
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last">To define groups for February and for November to
 December within each year:
 <code class="docutils literal notranslate"><span class="pre">within_years=[cf.month(2),</span>
-<span class="pre">cf.month(cf.ge(11))]</span></code> (see <a class="reference internal" href="../generated/cf.month.html#cf.month" title="cf.month"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.month</span></code></a> and
-<a class="reference internal" href="../generated/cf.ge.html#cf.ge" title="cf.ge"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.ge</span></code></a>).</p>
+<span class="pre">cf.month(cf.ge(11))]</span></code> (see <a class="reference internal" href="../function/cf.month.html#cf.month" title="cf.month"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.month</span></code></a> and
+<a class="reference internal" href="../function/cf.ge.html#cf.ge" title="cf.ge"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.ge</span></code></a>).</p>
 </dd>
 <dt><em>Note:</em></dt>
 <dd><ul class="first last simple">
@@ -1305,13 +1305,13 @@ limits (see the <em>group_by</em> parameter).</p>
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last">To define groups spanning 90 days:
 <code class="docutils literal notranslate"><span class="pre">over_days=cf.D(90)</span></code> or
-<code class="docutils literal notranslate"><span class="pre">over_days=cf.h(2160)</span></code>. (see <a class="reference internal" href="../generated/cf.D.html#cf.D" title="cf.D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.D</span></code></a> and <a class="reference internal" href="../generated/cf.h.html#cf.h" title="cf.h"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.h</span></code></a>).</p>
+<code class="docutils literal notranslate"><span class="pre">over_days=cf.h(2160)</span></code>. (see <a class="reference internal" href="../function/cf.D.html#cf.D" title="cf.D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.D</span></code></a> and <a class="reference internal" href="../function/cf.h.html#cf.h" title="cf.h"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.h</span></code></a>).</p>
 </dd>
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last">To define groups spanning 3 calendar months,
 starting and ending at 06:00 in the first day of
 each month: <code class="docutils literal notranslate"><span class="pre">over_days=cf.M(3,</span> <span class="pre">hour=6)</span></code> (see
-<a class="reference internal" href="../generated/cf.M.html#cf.M" title="cf.M"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.M</span></code></a>).</p>
+<a class="reference internal" href="../function/cf.M.html#cf.M" title="cf.M"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.M</span></code></a>).</p>
 </dd>
 <dt><em>Note:</em></dt>
 <dd><ul class="first last simple">
@@ -1343,7 +1343,7 @@ elements.</p>
 <dd><p class="first last">To define groups for January and for June to
 December, ignoring all other months:
 <code class="docutils literal notranslate"><span class="pre">over_days=[cf.month(1),</span> <span class="pre">cf.month(cf.wi(6,</span>
-<span class="pre">12))]</span></code> (see <a class="reference internal" href="../generated/cf.month.html#cf.month" title="cf.month"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.month</span></code></a> and <a class="reference internal" href="../generated/cf.wi.html#cf.wi" title="cf.wi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.wi</span></code></a>).</p>
+<span class="pre">12))]</span></code> (see <a class="reference internal" href="../function/cf.month.html#cf.month" title="cf.month"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.month</span></code></a> and <a class="reference internal" href="../function/cf.wi.html#cf.wi" title="cf.wi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.wi</span></code></a>).</p>
 </dd>
 <dt><em>Note:</em></dt>
 <dd><ul class="first last simple">
@@ -1435,13 +1435,13 @@ limits (see the <em>group_by</em> parameter).</p>
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last">To define groups spanning 10 calendar years:
 <code class="docutils literal notranslate"><span class="pre">over_years=cf.Y(10)</span></code> or
-<code class="docutils literal notranslate"><span class="pre">over_years=cf.M(120)</span></code> (see <a class="reference internal" href="../generated/cf.M.html#cf.M" title="cf.M"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.M</span></code></a> and <a class="reference internal" href="../generated/cf.Y.html#cf.Y" title="cf.Y"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Y</span></code></a>).</p>
+<code class="docutils literal notranslate"><span class="pre">over_years=cf.M(120)</span></code> (see <a class="reference internal" href="../function/cf.M.html#cf.M" title="cf.M"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.M</span></code></a> and <a class="reference internal" href="../function/cf.Y.html#cf.Y" title="cf.Y"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Y</span></code></a>).</p>
 </dd>
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last">To define groups spanning 5 calendar years,
 starting and ending at 06:00 on 01 December of
 each year: <code class="docutils literal notranslate"><span class="pre">over_years=cf.Y(5,</span> <span class="pre">month=12,</span>
-<span class="pre">hour=6)</span></code> (see <a class="reference internal" href="../generated/cf.Y.html#cf.Y" title="cf.Y"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Y</span></code></a>).</p>
+<span class="pre">hour=6)</span></code> (see <a class="reference internal" href="../function/cf.Y.html#cf.Y" title="cf.Y"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Y</span></code></a>).</p>
 </dd>
 <dt><em>Note:</em></dt>
 <dd><ul class="first last simple">
@@ -1472,8 +1472,8 @@ of <strong>matching</strong> elements.</p>
 <dd><p class="first last">To define one group spanning 1981 to 1990 and another
 spanning 2001 to 2005:
 <code class="docutils literal notranslate"><span class="pre">over_years=[cf.year(cf.wi(1981,</span> <span class="pre">1990),</span>
-<span class="pre">cf.year(cf.wi(2001,</span> <span class="pre">2005)]</span></code> (see <a class="reference internal" href="../generated/cf.year.html#cf.year" title="cf.year"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.year</span></code></a> and
-<a class="reference internal" href="../generated/cf.wi.html#cf.wi" title="cf.wi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.wi</span></code></a>).</p>
+<span class="pre">cf.year(cf.wi(2001,</span> <span class="pre">2005)]</span></code> (see <a class="reference internal" href="../function/cf.year.html#cf.year" title="cf.year"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.year</span></code></a> and
+<a class="reference internal" href="../function/cf.wi.html#cf.wi" title="cf.wi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.wi</span></code></a>).</p>
 </dd>
 <dt><em>Note:</em></dt>
 <dd><ul class="first last simple">
@@ -1532,7 +1532,7 @@ parameter is True then a <a class="reference external" href="https://docs.scipy.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cf.Field.collapse.rst.txt"

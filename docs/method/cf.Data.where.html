@@ -90,7 +90,7 @@
 <h1>cf.Data.where<a class="headerlink" href="#cf-data-where" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Data.where">
-<code class="descclassname">Data.</code><code class="descname">where</code><span class="sig-paren">(</span><em>condition</em>, <em>x=None</em>, <em>y=None</em>, <em>inplace=False</em>, <em>i=False</em>, <em>_debug=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.0/cf/data/data.py#L9759"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.where" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Data.</code><code class="descname">where</code><span class="sig-paren">(</span><em>condition</em>, <em>x=None</em>, <em>y=None</em>, <em>inplace=False</em>, <em>i=False</em>, <em>_debug=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/data/data.py#L9759"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.where" title="Permalink to this definition">¶</a></dt>
 <dd><p>Assign to data elements depending on a condition.</p>
 <p>Data can be changed by assigning to elements that are selected by a
 condition based on the data values.</p>
@@ -102,12 +102,12 @@ the cf.masked constant, or by assignment missing data elements of
 array-valued <em>x</em> and <em>y</em> parameters.</p>
 <p>By default the data mask is “hard”, meaning that masked values can not
 be changed by assigning them to another value. This behaviour may be
-changed by setting the <a class="reference internal" href="../generated/cf.Data.hardmask.html#cf.Data.hardmask" title="cf.Data.hardmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></a> attribute to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, thereby making
+changed by setting the <a class="reference internal" href="../attribute/cf.Data.hardmask.html#cf.Data.hardmask" title="cf.Data.hardmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></a> attribute to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, thereby making
 the data mask “soft” and allowing masked elements to be set to
 non-masked values.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="../constant.html#cf.cf.masked" title="cf.cf.masked"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.masked</span></code></a>, <a class="reference internal" href="../generated/cf.Data.hardmask.html#cf.Data.hardmask" title="cf.Data.hardmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></a>, <a class="reference internal" href="cf.Data.__setitem__.html#cf.Data.__setitem__" title="cf.Data.__setitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__setitem__</span></code></a></p>
+<p class="last"><a class="reference internal" href="../constant.html#cf.cf.masked" title="cf.cf.masked"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.masked</span></code></a>, <a class="reference internal" href="../attribute/cf.Data.hardmask.html#cf.Data.hardmask" title="cf.Data.hardmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></a>, <a class="reference internal" href="cf.Data.__setitem__.html#cf.Data.__setitem__" title="cf.Data.__setitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__setitem__</span></code></a></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -217,7 +217,7 @@ was in-place.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cf.Data.where.rst.txt"

@@ -19,6 +19,8 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cf.FieldAncillary.match_by_identity" href="../method/cf.FieldAncillary.match_by_identity.html" />
+    <link rel="prev" title="cf.FieldAncillary.construct_type" href="cf.FieldAncillary.construct_type.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -30,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.0</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.1</a></b></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -46,6 +48,14 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../class.html"><strong>cf classes</strong></a><ul>
+  <li><a href="../classes/cf.FieldAncillary.html">cf.FieldAncillary</a><ul>
+      <li>Previous: <a href="cf.FieldAncillary.construct_type.html" title="previous chapter">cf.FieldAncillary.construct_type</a></li>
+      <li>Next: <a href="../method/cf.FieldAncillary.match_by_identity.html" title="next chapter">cf.FieldAncillary.match_by_identity</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
   </ul></li>
 </ul>
 </div>
@@ -81,9 +91,20 @@
 <dl class="attribute">
 <dt id="cf.FieldAncillary.id">
 <code class="descclassname">FieldAncillary.</code><code class="descname">id</code><a class="headerlink" href="#cf.FieldAncillary.id" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO</p>
+<dd><p>A canonical identity.</p>
+<p>The <a class="reference internal" href="#cf.FieldAncillary.id" title="cf.FieldAncillary.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code></a> attribute can be used to unambiguously identify
+constructs in the absence of a <a class="reference internal" href="cf.FieldAncillary.standard_name.html#cf.FieldAncillary.standard_name" title="cf.FieldAncillary.standard_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_name</span></code></a> property.</p>
+<p>Note that <a class="reference internal" href="#cf.FieldAncillary.id" title="cf.FieldAncillary.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code></a> is not a CF property, and so is not read from, or
+written to, datasets.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 3.0.0.</span></p>
+</div>
+<p><strong>Examples:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="s1">&#39;um01002&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">id</span>
+<span class="go">&#39;um01002&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">f</span><span class="o">.</span><span class="n">id</span>
+</pre></div>
 </div>
 </dd></dl>
 

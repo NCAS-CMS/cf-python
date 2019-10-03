@@ -90,17 +90,17 @@
 <h1>cf.DimensionCoordinate.round<a class="headerlink" href="#cf-dimensioncoordinate-round" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.DimensionCoordinate.round">
-<code class="descclassname">DimensionCoordinate.</code><code class="descname">round</code><span class="sig-paren">(</span><em>decimals=0</em>, <em>bounds=True</em>, <em>inplace=False</em>, <em>i=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.0/cf/mixin/propertiesdatabounds.py#L2352"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DimensionCoordinate.round" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">DimensionCoordinate.</code><code class="descname">round</code><span class="sig-paren">(</span><em>decimals=0</em>, <em>bounds=True</em>, <em>inplace=False</em>, <em>i=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/mixin/propertiesdatabounds.py#L2379"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DimensionCoordinate.round" title="Permalink to this definition">¶</a></dt>
 <dd><p>Round the data to the given number of decimals.</p>
 <p>Data elements are evenly rounded to the given number of decimals.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">Values exactly halfway between rounded decimal values are
-rounded to the nearest even value. Thus 1.5 and 2.5 round to
-2.0, -0.5 and 0.5 round to 0.0, etc. Results may also be
-surprising due to the inexact representation of decimal
-fractions in the IEEE floating point standard and errors
-introduced when scaling by powers of ten.</p>
+<p class="last">Values exactly halfway between rounded decimal values
+are rounded to the nearest even value. Thus 1.5 and 2.5
+round to 2.0, -0.5 and 0.5 round to 0.0, etc. Results
+may also be surprising due to the inexact representation
+of decimal fractions in the IEEE floating point standard
+and errors introduced when scaling by powers of ten.</p>
 </div>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.1.4.</span></p>
@@ -116,12 +116,12 @@ introduced when scaling by powers of ten.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
 <dt>decimals: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt>
 <dd><p class="first last">Number of decimal places to round to (0 by default). If
-decimals is negative, it specifies the number of positions to
-the left of the decimal point.</p>
+decimals is negative, it specifies the number of positions
+to the left of the decimal point.</p>
 </dd>
 <dt>bounds: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If False then do not alter any bounds. By default any bounds
-are also altered.</p>
+<dd><p class="first last">If False then do not alter any bounds. By default any
+bounds are also altered.</p>
 </dd>
 <dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
@@ -132,8 +132,8 @@ are also altered.</p>
 </dl>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The construct with rounded data. If the operation was in-place
-then <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is returned.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The construct with rounded data. If the operation was
+in-place then <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is returned.</p>
 </td>
 </tr>
 </tbody>
@@ -165,7 +165,7 @@ then <a class="reference external" href="https://docs.python.org/3/library/const
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cf.DimensionCoordinate.round.rst.txt"

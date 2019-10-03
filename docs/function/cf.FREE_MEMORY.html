@@ -88,7 +88,7 @@
 <h1>cf.FREE_MEMORY<a class="headerlink" href="#cf-free-memory" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.FREE_MEMORY">
-<code class="descclassname">cf.</code><code class="descname">FREE_MEMORY</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.0/cf/functions.py#L153"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.FREE_MEMORY" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">cf.</code><code class="descname">FREE_MEMORY</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/functions.py#L153"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.FREE_MEMORY" title="Permalink to this definition">¶</a></dt>
 <dd><p>The available physical memory.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -105,13 +105,13 @@
 </table>
 <p><strong>Examples:</strong></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="s1">&#39;Free memory =&#39;</span><span class="p">,</span> <span class="n">cf</span><span class="o">.</span><span class="n">FREE_MEMORY</span><span class="p">()</span><span class="o">/</span><span class="mi">2</span><span class="o">**</span><span class="mi">30</span><span class="p">,</span> <span class="s1">&#39;GiB&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Free memory =&#39;</span><span class="p">,</span> <span class="n">cf</span><span class="o">.</span><span class="n">FREE_MEMORY</span><span class="p">()</span><span class="o">/</span><span class="mi">2</span><span class="o">**</span><span class="mi">30</span><span class="p">,</span> <span class="s1">&#39;GiB&#39;</span><span class="p">)</span>
 <span class="go">Free memory = 88.2728042603 GiB</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="mi">9</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="s1">&#39;Free memory =&#39;</span><span class="p">,</span> <span class="n">cf</span><span class="o">.</span><span class="n">FREE_MEMORY</span><span class="p">()</span><span class="o">/</span><span class="mi">2</span><span class="o">**</span><span class="mi">30</span><span class="p">,</span> <span class="s1">&#39;GiB&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Free memory =&#39;</span><span class="p">,</span> <span class="n">cf</span><span class="o">.</span><span class="n">FREE_MEMORY</span><span class="p">()</span><span class="o">/</span><span class="mi">2</span><span class="o">**</span><span class="mi">30</span><span class="p">,</span> <span class="s1">&#39;GiB&#39;</span><span class="p">)</span>
 <span class="go">Free memory = 80.8082618713 GiB</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">a</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="s1">&#39;Free memory =&#39;</span><span class="p">,</span> <span class="n">cf</span><span class="o">.</span><span class="n">FREE_MEMORY</span><span class="p">()</span><span class="o">/</span><span class="mi">2</span><span class="o">**</span><span class="mi">30</span><span class="p">,</span> <span class="s1">&#39;GiB&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Free memory =&#39;</span><span class="p">,</span> <span class="n">cf</span><span class="o">.</span><span class="n">FREE_MEMORY</span><span class="p">()</span><span class="o">/</span><span class="mi">2</span><span class="o">**</span><span class="mi">30</span><span class="p">,</span> <span class="s1">&#39;GiB&#39;</span><span class="p">)</span>
 <span class="go">Free memory = 88.2727928162 GiB</span>
 </pre></div>
 </div>
@@ -131,7 +131,7 @@
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/function/cf.FREE_MEMORY.rst.txt"

@@ -23,6 +23,15 @@ Inspection
    ~cf.Index.dump
    ~cf.Index.identity  
    ~cf.Index.identities
+
+.. rubric:: Attributes
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cf.Index.id
    
 Selection
 ---------
@@ -351,14 +360,14 @@ NetCDF
    ~cf.Index.nc_get_variable
    ~cf.Index.nc_has_variable
    ~cf.Index.nc_set_variable 
-   ~cf.nc_del_dimension
-   ~cf.nc_get_dimension
-   ~cf.nc_has_dimension
-   ~cf.nc_set_dimension
-   ~cf.nc_del_sample_dimension
-   ~cf.nc_get_sample_dimension
-   ~cf.nc_has_sample_dimension
-   ~cf.nc_set_sample_dimension
+   ~cf.Index.nc_del_dimension
+   ~cf.Index.nc_get_dimension
+   ~cf.Index.nc_has_dimension
+   ~cf.Index.nc_set_dimension
+   ~cf.Index.nc_del_sample_dimension
+   ~cf.Index.nc_get_sample_dimension
+   ~cf.Index.nc_has_sample_dimension
+   ~cf.Index.nc_set_sample_dimension
 
 
 Aliases

@@ -10,8 +10,8 @@
 
 Version |release| for version |version| of the CF conventions.
 
-Reading and writing
--------------------
+**Reading and writing**
+-----------------------
 
 .. autosummary::
    :nosignatures:
@@ -22,8 +22,8 @@ Reading and writing
    cf.write
    cf.load_stash2standard_name 
 
-Aggregation
------------
+**Aggregation**
+---------------
 
 .. autosummary::
    :nosignatures:
@@ -34,8 +34,8 @@ Aggregation
 
 .. _functions-mathematical-operations:
 
-Mathematical operations
------------------------
+**Mathematical operations**
+---------------------------
 
 .. autosummary::
    :nosignatures:
@@ -47,8 +47,8 @@ Mathematical operations
    cf.default_fillvals
    cf.relative_vorticity
 
-Condition constructors
-----------------------
+**Condition constructors**
+--------------------------
 
 .. rubric:: General conditions
    
@@ -102,8 +102,8 @@ Condition constructors
    cf.cellwi
    cf.cellwo
 
-Date-time and time duration
----------------------------
+**Date-time and time duration**
+-------------------------------
 
 .. autosummary::
    :nosignatures:
@@ -119,8 +119,8 @@ Date-time and time duration
    cf.m
    cf.s
 
-Resource management
--------------------
+**Resource management**
+-----------------------
 
 .. autosummary::
    :nosignatures:
@@ -143,8 +143,8 @@ Resource management
    cf.open_files
    cf.open_files_threshold_exceeded
 
-Miscellaneous
--------------
+**Miscellaneous**
+-----------------
 
 .. autosummary::
    :nosignatures:
@@ -152,7 +152,6 @@ Miscellaneous
    :template: function.rst
 
    cf.CF
-   cf.IGNORE_IDENTITIES
    cf.RELAXED_IDENTITIES
    cf.abspath
    cf.dirname

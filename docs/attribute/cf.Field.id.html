@@ -91,9 +91,20 @@
 <dl class="attribute">
 <dt id="cf.Field.id">
 <code class="descclassname">Field.</code><code class="descname">id</code><a class="headerlink" href="#cf.Field.id" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO</p>
+<dd><p>A canonical identity.</p>
+<p>The <a class="reference internal" href="#cf.Field.id" title="cf.Field.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code></a> attribute can be used to unambiguously identify
+constructs in the absence of a <a class="reference internal" href="cf.Field.standard_name.html#cf.Field.standard_name" title="cf.Field.standard_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_name</span></code></a> property.</p>
+<p>Note that <a class="reference internal" href="#cf.Field.id" title="cf.Field.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code></a> is not a CF property, and so is not read from, or
+written to, datasets.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 3.0.0.</span></p>
+</div>
+<p><strong>Examples:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="s1">&#39;um01002&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">id</span>
+<span class="go">&#39;um01002&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">f</span><span class="o">.</span><span class="n">id</span>
+</pre></div>
 </div>
 </dd></dl>
 
@@ -111,7 +122,7 @@
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/attribute/cf.Field.id.rst.txt"
