@@ -66,28 +66,28 @@ def _make_gathered_file(filename):
     aux1[...] = numpy.arange(list3.size)
     
     aux2 = n.createVariable('aux2', 'f8', ('time', 'list3', 'p'))
-    aux2[...] = numpy.arange(time.size * list3.size * p.size)
+    aux2[...] = numpy.arange(time.size * list3.size * p.size).reshape(time.size, list3.size, p.size)
     
     aux3 = n.createVariable('aux3', 'f8', ('p', 'list3', 'time'))
-    aux3[...] = numpy.arange(p.size * list3.size * time.size)
+    aux3[...] = numpy.arange(p.size * list3.size * time.size).reshape(p.size, list3.size, time.size)
     
     aux4 = n.createVariable('aux4', 'f8', ('p', 'time', 'list3'))
-    aux4[...] = numpy.arange(p.size * time.size * list3.size)
+    aux4[...] = numpy.arange(p.size * time.size * list3.size).reshape(p.size, time.size, list3.size)
     
     aux5 = n.createVariable('aux5', 'f8', ('list3', 'p', 'time'))
-    aux5[...] = numpy.arange(list3.size * p.size * time.size)
+    aux5[...] = numpy.arange(list3.size * p.size * time.size).reshape(list3.size, p.size, time.size)
     
     aux6 = n.createVariable('aux6', 'f8', ('list3', 'time'))
-    aux6[...] = numpy.arange(list3.size * time.size)
+    aux6[...] = numpy.arange(list3.size * time.size).reshape(list3.size, time.size)
     
     aux7 = n.createVariable('aux7', 'f8', ('lat',))
     aux7[...] = numpy.arange(lat.size)
     
     aux8 = n.createVariable('aux8', 'f8', ('lon', 'lat',))
-    aux8[...] = numpy.arange(lon.size * lat.size)
+    aux8[...] = numpy.arange(lon.size * lat.size).reshape(lon.size, lat.size)
     
     aux9 = n.createVariable('aux9', 'f8', ('time', 'height'))
-    aux9[...] = numpy.arange(time.size * height.size)
+    aux9[...] = numpy.arange(time.size * height.size).reshape(time.size, height.size)
     
     # List variables
     list1 = n.createVariable('list1', 'i', ('list1',))
@@ -109,19 +109,19 @@ def _make_gathered_file(filename):
     temp1.long_name = "temp1"
     temp1.units = "K"
     temp1.coordinates = "aux0 aux7 aux8 aux9"
-    temp1[...] = numpy.arange(2*3*4*4*6)
+    temp1[...] = numpy.arange(2*3*4*4*6).reshape(2, 3, 4, 4, 6)
     
     temp2 = n.createVariable('temp2', 'f8', ('time', 'height', 'list2', 'p'))
     temp2.long_name = "temp2"
     temp2.units = "K"
     temp2.coordinates = "aux7 aux8 aux9"
-    temp2[...] = numpy.arange(2*3*9*6)
+    temp2[...] = numpy.arange(2*3*9*6).reshape(2, 3, 9, 6)
     
     temp3 = n.createVariable('temp3', 'f8', ('time', 'list3', 'p'))
     temp3.long_name = "temp3"
     temp3.units = "K"
     temp3.coordinates = "aux0 aux1 aux2 aux3 aux4 aux5 aux6 aux7 aux8 aux9"
-    temp3[...] = numpy.arange(2*14*6)
+    temp3[...] = numpy.arange(2*14*6).reshape(2, 14, 6)
     
     n.close()
 
