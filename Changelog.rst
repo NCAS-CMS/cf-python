@@ -6,6 +6,8 @@ version 3.0.2
 
 * Fixed bug in `cf.Data.func` when overriding units. Affects methods
   that call `cf.Data.func`, such as `cf.Data.tan`.
+* Fixed "relaxed units" beahviour in `cf.aggregate` and field
+  construct arithmetic.
 
 version 3.0.1
 -------------
