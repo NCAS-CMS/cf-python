@@ -2380,7 +2380,7 @@ def _DEPRECATION_ERROR_KWARGS(instance, method, kwargs={}, message='',
                               exact=False, relaxed_identity=False):
     if relaxed_identity:
         kwargs={'relaxed_identity': None}
-        message = "Use keyword 'strict' instead."
+        message = "Use keywords 'strict' or 'relaxed' instead."
         
     if i:
         kwargs={'i': None}
