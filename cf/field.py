@@ -2161,6 +2161,12 @@ may be accessed with the `nc_global_attributes`,
             A dictionary specifying the X and Y axes, with keys 'X' and
             'Y'.
     
+            *Parameter example:*
+              ``axes={'X': 'ncdim%x', 'Y': 'ncdim%y'}``
+
+            *Parameter example:*
+              ``axes={'X': 1, 'Y': 0}``
+
     :Returns:
     
         axis_keys: `list`
@@ -2229,29 +2235,53 @@ may be accessed with the `nc_global_attributes`,
             x_size = x.size
             y_size = y.size
         else:
-            try:
-                x_axis = self.domain_axis(axes['X'], key=True, default=None)
-            except KeyError:
-                raise ValueError("Key 'X' must be specified for axes of " +
-                                 name + " field.")
+            # --------------------------------------------------------
+            # Source axes have been provided
+            # --------------------------------------------------------
+            for key in ('X', 'Y'):
+                if key not in axes:
+                    raise ValueError(
+                        "Key {!r} must be specified for axes of {} field.".format(
+                            key, name))
+            #--- End: for            
+            
+            if axes['X'] in (1, 0) and axes['Y'] in (0, 1):
+                # Axes specified by integer position in dimensions of
+                # lat and lon 2-d coordinates
+                if axes['X'] == axes['Y']:
+                    raise ValueError("TODO")
 
-            if x_axis is None:
-                raise ValueError('X axis specified for ' + name +
-                                 ' field not found.')
+                x = self.auxiliary_coordinates('X').filter_by_naxes(2)
+                y = self.auxiliary_coordinates('Y').filter_by_naxes(2)
+                if len(x) != 1:
+                    raise ValueError("TODO")
+                if len(y) != 1:
+                    raise ValueError("TODO")
 
-            try:
-                y_axis = self.domain_axis(axes['Y'], key=True, default=None)
-            except KeyError:
-                raise ValueError("Key 'Y' must be specified for axes of " +
-                                 name + " field.")
+                lon_key, lon = tuple(x.items())[0]
+                lat_key, lat = tuple(y.items())[0]
+                 
+                if lat.shape != lon.shape:
+                    raise ValueError("TODO")
 
-            if y_axis is None:
-                raise ValueError('Y axis specified for ' + name +
-                                 ' field not found.')
+                lon_axes = self.get_data_axes(lon_key)
+                lat_axes = self.get_data_axes(lat_key)
+                if lat_axes != lon_axes:
+                    raise ValueError("TODO")
+
+                x_axis = self.domain_axis(lon_axes[axes['X']], key=True,
+                                          default=ValueError("'X' axis specified for {} field not found.".format(name)))
+                y_axis = self.domain_axis(lat_axes[axes['Y']], key=True,
+                                          default=ValueError("'Y' axis specified for {} field not found.".format(name)))
+            else:                                            
+                x_axis = self.domain_axis(axes['X'], key=True,
+                                          default=ValueError("'X' axis specified for {} field not found.".format(name)))
+                
+                y_axis = self.domain_axis(axes['Y'], key=True,
+                                          default=ValueError("'Y' axis specified for {} field not found.".format(name)))
 
             x_size = self.domain_axes[x_axis].get_size()
             y_size = self.domain_axes[y_axis].get_size()
-        #--- End: if
 
         axis_keys  = [x_axis, y_axis]
         axis_sizes = [x_size, y_size]
@@ -12427,7 +12457,7 @@ may be accessed with the `nc_global_attributes`,
     method is particular useful for cases when the latitude and
     longitude coordinate cell boundaries are not known nor
     inferrable. Higher order patch recovery is available as an
-    alternative to bilinear interpolation.  This typically results in
+    alternative to bilinear interpolation. This typically results in
     better approximations to values and derivatives compared to the
     latter, but the weight matrix can be larger than the bilinear
     matrix, which can be an issue when regridding close to the memory
@@ -12600,12 +12630,15 @@ may be accessed with the `nc_global_attributes`,
     
         src_axes: `dict`, optional
             A dictionary specifying the axes of the 2D latitude and
-            longitude coordinates of the source field when no
+            longitude coordinates of the source field when no 1D
             dimension coordinates are present. It must have keys 'X'
-            and 'Y'.
+            and 'Y'. TODO
     
             *Parameter example:*
               ``src_axes={'X': 'ncdim%x', 'Y': 'ncdim%y'}``
+    
+            *Parameter example:*
+              ``src_axes={'X': 1, 'Y': 0}``
     
         dst_axes: `dict`, optional
             A dictionary specifying the axes of the 2D latitude and

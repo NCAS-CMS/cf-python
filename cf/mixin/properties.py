@@ -67,10 +67,8 @@ class Properties:
     The `id` attribute can be used to unambiguously identify
     constructs in the absence of a `standard_name` property.
 
-    Note that `id` is not a CF property, and so is not read from, or
+    Note that `id` is not a CF property and so is not read from, or
     written to, datasets.
-
-    .. versionadded:: 3.0.0
 
     **Examples:**
 
