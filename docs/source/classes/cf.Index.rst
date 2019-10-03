@@ -23,6 +23,15 @@ Inspection
    ~cf.Index.dump
    ~cf.Index.identity  
    ~cf.Index.identities
+
+.. rubric:: Attributes
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cf.Index.id
    
 Selection
 ---------

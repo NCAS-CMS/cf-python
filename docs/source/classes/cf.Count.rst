@@ -23,6 +23,15 @@ Inspection
    ~cf.Count.dump
    ~cf.Count.identity  
    ~cf.Count.identities
+
+.. rubric:: Attributes
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cf.Count.id
    
 Selection
 ---------

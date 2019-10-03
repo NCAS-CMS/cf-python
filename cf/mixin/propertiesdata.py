@@ -3909,7 +3909,8 @@ TODO
 
         '''
         if relaxed_identity:
-            _DEPRECATION_ERROR_KWARGS(self, 'identity', relaxed_identity=True) # pragma: no cover
+            _DEPRECATION_ERROR_KWARGS(self, 'identity',
+                                      relaxed_identity=True) # pragma: no cover
 
         if nc_only:
             if strict:

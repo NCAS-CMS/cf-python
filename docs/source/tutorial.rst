@@ -697,8 +697,9 @@ method.
 
 A field construct's identity may be any one of the following
 
-* The value of the "standard_name" property, e.g. ``'air_temperature'``,
-* The value of the "id" attribute, preceeded by ``'id%='``,
+* The value of the `~Field.standard_name` property,
+  e.g. ``'air_temperature'``,
+* The value of the `~Field.id` attribute, preceeded by ``'id%='``,
 * The value of any property, preceded by the property name and an
   equals, e.g. ``'long_name=Air Temperature'``, ``'foo=bar'``, etc.,
 * The netCDF variable name, preceded by "ncvar%", e.g. ``'ncvar%tas'``
@@ -1695,8 +1696,8 @@ latitude name'``.
 
 A construct's identity may be any one of the following
 
-* The value of the "standard_name" property, e.g. ``'air_temperature'``,
-* The value of the "id" attribute, preceeded by ``'id%='``,
+* The value of the `!standard_name` property, e.g. ``'air_temperature'``,
+* The value of the `!id` attribute, preceeded by ``'id%='``,
 * The physical nature of the construct denoted by ``'X'``, ``'Y'``,
   ``'Z'`` or ``'T'``, denoting longitude (or x-projection), latitude
   (or y-projection), vertical and temporal constructs respectively,
@@ -6054,7 +6055,7 @@ operation the operation proceeed.
   data instead. See below for more details.
 
 * **Option 2:** If the mapping is not possible due to the absence of
-  "standard_name" properties (or "id" attributes) on metadata
+  `!standard_name` properties (or `!id` attributes) on metadata
   constructs that are known to correspond, then setting "relaxed
   identities" with the `cf.RELAXED_IDENTITIES` function may help:
 
