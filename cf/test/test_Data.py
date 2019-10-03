@@ -70,8 +70,8 @@ class DataTest(unittest.TestCase):
             for axes in itertools.permutations(range(self.a.ndim), n)]
         
         self.test_only = []
-        self.test_only = ['NOTHING!!!!!']
-#        self.test_only = ['test_Data_tan']
+#        self.test_only = ['NOTHING!!!!!']
+        self.test_only = ['test_Data_sin_cos_tan']
 #        self.test_only = ['test_Data_months_years', 'test_Data_datetime_array']
 #        self.test_only = ['test_Data_roll']
 #        self.test_only = ['test_Data_outerproduct']
@@ -260,7 +260,6 @@ class DataTest(unittest.TestCase):
             value.squeeze(0)
             self.assertTrue(value in d)
             self.assertTrue(numpy.array([[[2]]]) in d)
-#            print "pmshape =", d._pmshape
 
         cf.CHUNKSIZE(self.original_chunksize)
 
@@ -1845,7 +1844,7 @@ class DataTest(unittest.TestCase):
     
                             self.assertTrue(
                                 e.allclose(b, rtol=1e-05, atol=1e-08),
-"%s, axis=%s, weighted, masked, pp=%s, ddof=%s, \ne=%s, \nb=%s, \ne-b=%s" %
+                                "%s, axis=%s, weighted, masked, pp=%s, ddof=%s, \ne=%s, \nb=%s, \ne-b=%s" %
                                 (h, axes, pp, ddof, e.array, b, e.array-b))
                 #--- End: for
             #--- End: for
@@ -1932,63 +1931,24 @@ class DataTest(unittest.TestCase):
             _ = d.exp()        
 
     
-    def test_Data_cos(self):
+    def test_Data_sin_cos_tan(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
-        
-        for x in (1, -1):
-            a = 0.9 * x * self.ma
-            c = numpy.ma.cos(a)
-            
-            for chunksize in self.chunk_sizes:   
-                cf.CHUNKSIZE(chunksize)          
-                d = cf.Data(a)
-                e = d.cos()
-                self.assertTrue(d.cos(inplace=True) is None)
-                self.assertTrue(d.equals(e, verbose=True))   
-                self.assertTrue(d.shape == c.shape)
-                self.assertTrue((d.array == c).all())
 
-        cf.CHUNKSIZE(self.original_chunksize)
-
-    
-    def test_Data_sin(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-        
-        for x in (1, -1):
-            a = 0.9 * x * self.ma
-            c = numpy.ma.sin(a)
-            
-            for chunksize in self.chunk_sizes:   
-                cf.CHUNKSIZE(chunksize)          
-                d = cf.Data(a)
-                e = d.sin()
-                self.assertTrue(d.sin(inplace=True) is None)
-                self.assertTrue(d.equals(e, verbose=True))   
-                self.assertTrue(d.shape == c.shape)
-                self.assertTrue((d.array == c).all())
-
-        cf.CHUNKSIZE(self.original_chunksize)
-
-    
-    def test_Data_tan(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-        
-        for x in (1, -1):
-            a = 0.9 * x * self.ma
-            c = numpy.ma.tan(a)
-            
-            for chunksize in self.chunk_sizes:   
-                cf.CHUNKSIZE(chunksize)          
-                d = cf.Data(a)
-                e = d.tan()
-                self.assertTrue(d.tan(inplace=True) is None)
-                self.assertTrue(d.equals(e, verbose=True))   
-                self.assertTrue(d.shape == c.shape)
-                self.assertTrue((d.array == c).all())
-
+        for method in ('sin', 'cos', 'tan'):                             
+            for x in (1, -1):
+                a = 0.9 * x * self.ma
+                c = getattr(numpy.ma, method)(a)                
+                for chunksize in self.chunk_sizes:   
+                    cf.CHUNKSIZE(chunksize)
+                    for units in (None, '', '1', 'radians', 'K'):          
+                        d = cf.Data(a, units=units)
+                        e = getattr(d, method)()
+                        self.assertTrue(getattr(d, method)(inplace=True) is None)
+                        self.assertTrue(d.equals(e, verbose=True), "{}".format(method, ))   
+                        self.assertTrue(d.shape == c.shape)
+                        self.assertTrue((d.array == c).all(), "{}, {}, {}".format(method, units, d.array-c))
+        #--- End: for
         cf.CHUNKSIZE(self.original_chunksize)
 
         
