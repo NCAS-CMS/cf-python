@@ -90,7 +90,7 @@
 <h1>cf.Field.where<a class="headerlink" href="#cf-field-where" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.where">
-<code class="descclassname">Field.</code><code class="descname">where</code><span class="sig-paren">(</span><em>condition</em>, <em>x=None</em>, <em>y=None</em>, <em>inplace=False</em>, <em>construct=None</em>, <em>i=False</em>, <em>_debug=False</em>, <em>item=None</em>, <em>**item_options</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/field.py#L11685"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.where" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">where</code><span class="sig-paren">(</span><em>condition</em>, <em>x=None</em>, <em>y=None</em>, <em>inplace=False</em>, <em>construct=None</em>, <em>i=False</em>, <em>_debug=False</em>, <em>item=None</em>, <em>**item_options</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/field.py#L11777"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.where" title="Permalink to this definition">¶</a></dt>
 <dd><p>Assign to data elements depending on a condition.</p>
 <p>Data can be changed by assigning to elements that are selected by
 a condition based on the data values of the field construct or on
@@ -146,10 +146,10 @@ because the condition has shape <code class="docutils literal notranslate"><span
 broadcasts to the field construct’s shape.</p>
 </dd>
 </dl>
-<p>If <em>condition</em> is a <a class="reference internal" href="../classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object then this implies a
-condition defined by applying the query to the field
-construct’s data (or a metadata construct’s data if the
-<em>construct</em> parameter is set).</p>
+<p>If, however, <em>condition</em> is a <a class="reference internal" href="../classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object then this
+implies a condition defined by applying the query to the
+field construct’s data (or a metadata construct’s data if
+the <em>construct</em> parameter is set).</p>
 <dl class="docutils">
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">f.where(cf.lt(0),</span> <span class="pre">x=-999)</span></code> will set all data values
@@ -360,7 +360,7 @@ by indices:</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/method/cf.Field.where.rst.txt"

@@ -90,168 +90,187 @@
 <h1>cf.Field.indices<a class="headerlink" href="#cf-field-indices" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.indices">
-<code class="descclassname">Field.</code><code class="descname">indices</code><span class="sig-paren">(</span><em>*mode</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/field.py#L7942"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.indices" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create indices based on domain metadata that define a subspace of
-the field.</p>
-<p>The subspace is defined in “domain space” via data array values of its
-domain items: dimension coordinate, auxiliary coordinate, cell
-measure, domain ancillary and field ancillary objects.</p>
-<p>If metadata items are not specified for an axis then a full slice
-(<code class="docutils literal notranslate"><span class="pre">slice(None)</span></code>) is assumed for that axis.</p>
-<p>Values for size 1 axes which are not spanned by the field
-construct’s data array may be specified, but only indices for axes
-which span the field construct’s data array will be returned.</p>
-<p>The conditions may be given in any order.</p>
+<code class="descclassname">Field.</code><code class="descname">indices</code><span class="sig-paren">(</span><em>*mode</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/field.py#L7997"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.indices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create indices that define a subspace of the field construct.</p>
+<p>The subspace is defined by identifying indices based on the
+metadata constructs.</p>
+<p>Metadata constructs are selected conditions are specified on their
+data. Indices for subspacing are then automatically inferred from
+where the conditions are met.</p>
+<p>The returned tuple of indices may be used to created a subspace by
+indexing the original field construct with them.</p>
+<p>Metadata constructs and the conditions on their data are defined
+by keyword parameters.</p>
+<ul class="simple">
+<li>Any domain axes that have not been identified remain unchanged.</li>
+<li>Multiple domain axes may be subspaced simultaneously, and it
+doesn’t matter which order they are specified in.</li>
+<li>Subspace criteria may be provided for size 1 domain axes that
+are not spanned by the field construct’s data.</li>
+<li>Explicit indices may also be assigned to a domain axis
+identified by a metadata construct, with either a Python <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a>
+object or a sequence of integers.</li>
+<li>For a dimension that is cyclic, a subspace defined by a slice or
+by a <a class="reference internal" href="../classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> instance is assumed to “wrap” around the edges of
+the data.</li>
+<li>Conditions may also be applied to multi-dimensionsal metadata
+constructs. The “compress” mode is still the default mode (see
+the positional arguments), but because the indices may not be
+acting along orthogonal dimensions, some missing data may still
+need to be inserted into the field construct’s data.</li>
+</ul>
+<p><strong>Auxiliary masks</strong></p>
+<p>When creating an actual subspace with the indices, if the first
+element of the tuple of indices is <code class="docutils literal notranslate"><span class="pre">'mask'</span></code> then the extent of
+the subspace is defined only by the values of elements three and
+onwards. In this case the second elements contains an “auxiliary”
+data mask that is applied to the subspace after its initial
+creation, in order to set unselected locations to missing data.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="cf.Field.where.html#cf.Field.where" title="cf.Field.where"><code class="xref py py-obj docutils literal notranslate"><span class="pre">where</span></code></a>, <a class="reference internal" href="cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a></p>
+<p class="last"><a class="reference internal" href="cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a>, <a class="reference internal" href="cf.Field.where.html#cf.Field.where" title="cf.Field.where"><code class="xref py py-obj docutils literal notranslate"><span class="pre">where</span></code></a></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first">mode: <em>optional</em></p>
-<blockquote>
-<div><table border="1" class="docutils">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>positional arguments: <em>optional</em></dt>
+<dd><p class="first">There are three modes of operation, each of which provides
+indices for a different type of subspace:</p>
+<table border="1" class="last docutils">
 <colgroup>
-<col width="23%" />
-<col width="77%" />
+<col width="25%" />
+<col width="75%" />
 </colgroup>
 <thead valign="bottom">
-<tr class="row-odd"><th class="head"><em>mode</em></th>
+<tr class="row-odd"><th class="head"><em>argument</em></th>
 <th class="head">Description</th>
 </tr>
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'compress'</span></code></td>
-<td>&#160;</td>
+<td>This is the default mode. Unselected
+locations are removed to create the
+returned subspace. Note that if a
+multi-dimensional metadata construct is
+being used to define the indices then some
+missing data may still be inserted at
+unselected locations.</td>
 </tr>
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'envelope'</span></code></td>
-<td>&#160;</td>
+<td>The returned subspace is the smallest that
+contains all of the selected
+indices. Missing data is inserted at
+unselected locations within the envelope.</td>
 </tr>
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'full'</span></code></td>
-<td>&#160;</td>
+<td>The returned subspace has the same domain
+as the original field construct. Missing
+data is inserted at unselected locations.</td>
 </tr>
 </tbody>
 </table>
-</div></blockquote>
-<dl class="docutils">
-<dt>kwargs: <em>optional</em></dt>
-<dd><p class="first">Keyword parameters identify items of the domain (such as a
-particular coordinate type) and its value sets conditions on
-their data arrays (e.g. the actual coordinate values). Indices
-are created which, for each axis, select where the conditions
-are met.</p>
-<p>A keyword name is a string which selects a unique item of the
-field. The string may be any string value allowed by the
-<em>description</em> parameter of the field’s TODO <a class="reference internal" href="cf.Field.item.html#cf.Field.item" title="cf.Field.item"><code class="xref py py-obj docutils literal notranslate"><span class="pre">item</span></code></a> method, which is
-used to select a unique domain item. See <a class="reference internal" href="cf.Field.item.html#cf.Field.item" title="cf.Field.item"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.item</span></code></a> for
-details.</p>
-<blockquote>
-<div><dl class="docutils">
-<dt><em>Parameter example:</em>           </dt>
-<dd><p class="first last">The keyword <code class="docutils literal notranslate"><span class="pre">lat</span></code> will select the item returned by
-<code class="docutils literal notranslate"><span class="pre">f.item('lat',</span> <span class="pre">role='dam')</span></code>. See the <em>exact</em> parameter.</p>
 </dd>
-</dl>
-</div></blockquote>
-<p>In general, a keyword value specifies a test on the selected
-item’s data array which identifies axis elements. The returned
-indices for this axis are the positions of these elements.</p>
-<blockquote>
-<div><dl class="docutils">
-<dt><em>Parameter example:</em></dt>
-<dd><p class="first last">To create indices for the northern hemisphere, assuming
-that there is a coordinate with identity “latitude”:
-<code class="docutils literal notranslate"><span class="pre">f.indices(latitude=cf.ge(0))</span></code></p>
-</dd>
-<dt><em>Parameter example:</em></dt>
-<dd><p class="first last">To create indices for the northern hemisphere, identifying
-the latitude coordinate by its longtg name:
-<code class="docutils literal notranslate"><span class="pre">f.indices(**{'long_name:latitude':</span> <span class="pre">cf.ge(0)})</span></code>. In this
-case it is necessary to use the <code class="docutils literal notranslate"><span class="pre">**</span></code> syntax because the
-<code class="docutils literal notranslate"><span class="pre">:</span></code> character is not allowed in keyword parameter names.</p>
-</dd>
-</dl>
-</div></blockquote>
-<p>If the value is a <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a> object then it is used as the axis
-indices, without testing the item’s data array.</p>
-<blockquote>
-<div><dl class="docutils">
-<dt><em>Parameter example:</em></dt>
-<dd><p class="first last">To create indices for every even numbered element along
-the “Z” axis: <code class="docutils literal notranslate"><span class="pre">f.indices(Z=slice(0,</span> <span class="pre">None,</span> <span class="pre">2))</span></code>.</p>
-</dd>
-</dl>
-</div></blockquote>
-<dl class="last docutils">
-<dt><strong>Multidimensional items</strong></dt>
-<dd><p class="first">Indices based on items which span two or more axes are
-possible if the result is a single element index for each of
-the axes spanned. In addition, two or more items must be
-provided, each one spanning the same axes  (in any order).</p>
-<blockquote class="last">
-<div><dl class="docutils">
-<dt><em>Parameter example:</em>          </dt>
-<dd><p class="first last">To create indices for the unique location 45 degrees
-north, 30 degrees east when latitude and longitude are
-stored in 2-dimensional auxiliary coordiantes:
-<code class="docutils literal notranslate"><span class="pre">f.indices(latitude=45,</span> <span class="pre">longitude=30)</span></code>. Note that this
-example would also work if latitude and longitude were
-stored in 1-dimensional dimensional or auxiliary
-coordinates, but in this case the location would not
-have to be unique.</p>
-</dd>
-</dl>
-</div></blockquote>
-</dd>
-</dl>
+<dt>keyword parameters: <em>optional</em></dt>
+<dd><p class="first last">A keyword name is an identity of a metadata construct, and
+the keyword value provides a condition for inferring
+indices that apply to the dimension (or dimensions)
+spanned by the metadata construct’s data. Indices are
+created that select every location for which the metadata
+construct’s data satisfies the condition.</p>
 </dd>
 </dl>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a></p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a></dt>
+<dd><p class="first last">The indices meeting the conditions.</p>
+</dd>
+</dl>
 </td>
 </tr>
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<p>These examples use the following field, which includes a dimension
-coordinate object with no identity (<code class="docutils literal notranslate"><span class="pre">ncvar:model_level_number</span></code>)
-and which has a data array which doesn’t span all of the domain
-axes:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-<span class="go">eastward_wind field summary</span>
-<span class="go">---------------------------</span>
-<span class="go">Data           : eastward_wind(time(3), air_pressure(5), grid_latitude(110), grid_longitude(106)) m s-1</span>
-<span class="go">Cell methods   : time: mean</span>
-<span class="go">Axes           : time(3) = [1979-05-01 12:00:00, ..., 1979-05-03 12:00:00] gregorian</span>
-<span class="go">               : air_pressure(5) = [850.0, ..., 50.0] hPa</span>
-<span class="go">               : grid_longitude(106) = [-20.54, ..., 25.66] degrees</span>
-<span class="go">               : grid_latitude(110) = [23.32, ..., -24.64] degrees</span>
-<span class="go">Aux coords     : latitude(grid_latitude(110), grid_longitude(106)) = [[67.12, ..., 22.89]] degrees_N</span>
-<span class="go">               : longitude(grid_latitude(110), grid_longitude(106)) = [[-45.98, ..., 35.29]] degrees_E</span>
-<span class="go">Coord refs     : &lt;CF CoordinateReference: rotated_latitude_longitude&gt;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+<span class="go">Field: specific_humidity (ncvar%q)</span>
+<span class="go">----------------------------------</span>
+<span class="go">Data            : specific_humidity(latitude(5), longitude(8)) 1</span>
+<span class="go">Cell methods    : area: mean</span>
+<span class="go">Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north</span>
+<span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
+<span class="go">                : time(1) = [2019-01-01 00:00:00]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">indices</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="mf">112.5</span><span class="p">)</span>                                                   
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
+<span class="go">(slice(0, 5, 1), slice(2, 3, 1))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="p">[</span><span class="n">indicies</span><span class="p">]</span>
+<span class="go">&lt;CF Field: specific_humidity(latitude(5), longitude(1)) 1&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="mf">112.5</span><span class="p">,</span> <span class="n">latitude</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">gt</span><span class="p">(</span><span class="o">-</span><span class="mi">60</span><span class="p">))</span>                              
+<span class="go">(slice(1, 5, 1), slice(2, 3, 1))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="o">-</span><span class="mi">45</span><span class="p">)</span> <span class="o">|</span> <span class="n">cf</span><span class="o">.</span><span class="n">ge</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>                           
+<span class="go">(array([1, 3, 4]), slice(0, 8, 1))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="n">Y</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>                      
+<span class="go">(slice(4, None, -1), array([1, 2, 4]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">wi</span><span class="p">(</span><span class="o">-</span><span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">))</span>                                        
+<span class="go">(slice(0, 5, 1), slice(-2, 4, 1))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>                                            
+<span class="go">(slice(0, 5, 1), slice(-2, 4, 1))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="s1">&#39;compress&#39;</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>                                
+<span class="go">(slice(0, 5, 1), array([1, 2, 4, 6]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="s1">&#39;envelope&#39;</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>                                
+<span class="go">(&#39;mask&#39;, [&lt;CF Data(1, 6): [[False, ..., False]]&gt;], slice(0, 5, 1), slice(1, 7, 1))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">indices</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="s1">&#39;full&#39;</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>                                    
+<span class="go">(&#39;mask&#39;, [&lt;CF Data(1, 8): [[True, ..., True]]&gt;], slice(0, 5, 1), slice(0, 8, 1))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+<span class="go">&lt;CF Field: specific_humidity(latitude(5), longitude(8)) 1&gt;</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">lat</span><span class="o">=</span><span class="mf">23.32</span><span class="p">,</span> <span class="n">lon</span><span class="o">=-</span><span class="mf">20.54</span><span class="p">)</span>
-<span class="go">(slice(0, 3, 1), slice(0, 5, 1), slice(0, 1, 1), slice(0, 1, 1))</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="go">Field: air_potential_temperature (ncvar%air_potential_temperature)</span>
+<span class="go">------------------------------------------------------------------</span>
+<span class="go">Data            : air_potential_temperature(time(120), latitude(5), longitude(8)) K</span>
+<span class="go">Cell methods    : area: mean</span>
+<span class="go">Dimension coords: time(120) = [1959-12-16 12:00:00, ..., 1969-11-16 00:00:00]</span>
+<span class="go">                : latitude(5) = [-75.0, ..., 75.0] degrees_north</span>
+<span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
+<span class="go">                : air_pressure(1) = [850.0] hPa    </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">T</span><span class="o">=</span><span class="mf">410.5</span><span class="p">)</span>                                                   
+<span class="go">(slice(2, 3, 1), slice(0, 5, 1), slice(0, 8, 1))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">T</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">dt</span><span class="p">(</span><span class="s1">&#39;1960-04-16&#39;</span><span class="p">))</span>                                     
+<span class="go">(slice(4, 5, 1), slice(0, 5, 1), slice(0, 8, 1))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">indices</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">T</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">wi</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">dt</span><span class="p">(</span><span class="s1">&#39;1962-11-01&#39;</span><span class="p">),</span> <span class="n">cf</span><span class="o">.</span><span class="n">dt</span><span class="p">(</span><span class="s1">&#39;1967-03-17 07:30&#39;</span><span class="p">)))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
+<span class="go">(slice(35, 88, 1), slice(0, 5, 1), slice(0, 8, 1))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
+<span class="go">&lt;CF Field: air_potential_temperature(time(53), latitude(5), longitude(8)) K&gt;</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">grid_lat</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">),</span> <span class="n">grid_lon</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">90</span><span class="p">])</span> 
-<span class="go">(slice(0, 3, 1), slice(0, 5, 1), slice(50, 2, -2), [0, 1, 3, 90])</span>
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">grid_lon</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">wi</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;degrees&#39;</span><span class="p">),</span> <span class="n">air_pressure</span><span class="o">=</span><span class="mi">850</span><span class="p">)</span>
-<span class="go">(slice(0, 3, 1), slice(0, 1, 1), slice(0, 110, 1), slice(47, 70, 1))</span>
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">grid_lon</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">wi</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="n">air_pressure</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="mi">85000</span><span class="p">,</span> <span class="s1">&#39;Pa&#39;</span><span class="p">)</span>
-<span class="go">(slice(0, 3, 1), slice(0, 1, 1), slice(0, 110, 1), slice(47, 70, 1))</span>
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">grid_long</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">gt</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">attr</span><span class="o">=</span><span class="s1">&#39;lower_bounds&#39;</span><span class="p">))</span>
-<span class="go">(slice(0, 3, 1), slice(0, 5, 1), slice(0, 110, 1), slice(48, 106, 1))</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="go">Field: air_temperature (ncvar%ta)</span>
+<span class="go">---------------------------------</span>
+<span class="go">Data            : air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K</span>
+<span class="go">Cell methods    : grid_latitude(10): grid_longitude(9): mean where land (interval: 0.1 degrees) time(1): maximum</span>
+<span class="go">Field ancils    : air_temperature standard_error(grid_latitude(10), grid_longitude(9)) = [[0.76, ..., 0.32]] K</span>
+<span class="go">Dimension coords: atmosphere_hybrid_height_coordinate(1) = [1.5]</span>
+<span class="go">                : grid_latitude(10) = [2.2, ..., -1.76] degrees</span>
+<span class="go">                : grid_longitude(9) = [-4.7, ..., -1.18] degrees</span>
+<span class="go">                : time(1) = [2019-01-01 00:00:00]</span>
+<span class="go">Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N</span>
+<span class="go">                : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E</span>
+<span class="go">                : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., b&#39;kappa&#39;]</span>
+<span class="go">Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2</span>
+<span class="go">Coord references: grid_mapping_name:rotated_latitude_longitude</span>
+<span class="go">                : standard_name:atmosphere_hybrid_height_coordinate</span>
+<span class="go">Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m</span>
+<span class="go">                : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]</span>
+<span class="go">                : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">indices</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="n">cf</span><span class="o">.</span><span class="n">wi</span><span class="p">(</span><span class="mi">51</span><span class="p">,</span> <span class="mi">53</span><span class="p">))</span>                                    
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
+<span class="go">(&#39;mask&#39;, [&lt;CF Data(1, 5, 9): [[[False, ..., False]]]&gt;], slice(0, 1, 1), slice(3, 8, 1), slice(0, 9, 1))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
+<span class="go">&lt;CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(5), grid_longitude(9)) K&gt;</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -270,7 +289,7 @@ axes:</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/method/cf.Field.indices.rst.txt"

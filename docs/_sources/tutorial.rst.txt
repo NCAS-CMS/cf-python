@@ -25,7 +25,7 @@ script (:download:`download <../source/tutorial.py>`, 36kB).
 
 	  Scripts written for version 2.x but running under version
           3.x should either work as expected, or provide informative
-          error mesages on the new API usage. However, it is advised
+          error messages on the new API usage. However, it is advised
           that the outputs of older scripts be checked when running
           with Python 3 versions of the cf library.
 
@@ -330,7 +330,7 @@ arrays:
                    : grid_longitude(9) = [-4.7, ..., -1.18] degrees
    Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
                    : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
-                   : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., kappa]
+                   : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., 'kappa']
    Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
    Coord references: atmosphere_hybrid_height_coordinate
                    : rotated_latitude_longitude
@@ -447,7 +447,7 @@ components, and shows the first and last values of all data arrays:
    
    Auxiliary coordinate: long_name=Grid latitude name
        long_name = 'Grid latitude name'
-       Data(grid_latitude(10)) = [--, ..., kappa]
+       Data(grid_latitude(10)) = [--, ..., 'kappa']
    
    Domain ancillary: ncvar%a
        units = 'm'
@@ -1187,8 +1187,9 @@ the only differences being:
 ..
 
 * For a dimension that is :ref:`cyclic <Cyclic-domain-axes>`, a range
-  of indices specified by a `slice` is assumed to "wrap" around the
-  edges of the data.
+  of indices specified by a `slice` that spans the edges of the data
+  (such as ``-2:3`` or ``3:-2:-1``) is assumed to "wrap" around,
+  rather then producing a null result.
   
 .. code-block:: python
   :caption: *Create a new field construct whose domain spans the first
@@ -1295,8 +1296,9 @@ the only difference being:
 ..
 
 * For a dimension that is :ref:`cyclic <Cyclic-domain-axes>`, a range
-  of indices specified by a `slice` is assumed to "wrap" around the
-  edges of the data.
+  of indices specified by a `slice` that spans the edges of the data
+  (such as ``-2:3`` or ``3:-2:-1``) is assumed to "wrap" around,
+  rather then producing a null result.
 
 A single value may be assigned to any number of elements.
   
@@ -1729,7 +1731,7 @@ A construct's identity may be any one of the following
                    : grid_longitude(9) = [-4.7, ..., -1.18] degrees
    Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
                    : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
-                   : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., kappa]
+                   : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., 'kappa']
    Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
    Coord references: atmosphere_hybrid_height_coordinate
                    : rotated_latitude_longitude
@@ -2174,7 +2176,7 @@ construct.
                    : time(1) = [2019-01-01 00:00:00]
    Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
                    : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
-                   : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., kappa]
+                   : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., 'kappa']
    Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
    Coord references: atmosphere_hybrid_height_coordinate
                    : rotated_latitude_longitude
@@ -2809,12 +2811,12 @@ date-time objects.
 Subspace mode
 ^^^^^^^^^^^^^
 
-The `~Field.subspace` has three modes of operation, each of which
-provides a different type of subspace:
+There are three modes of operation, each of which provides a different
+type of subspace:
 
 
-* **compress mode**. This is the default mode. Unselected indices are
-  removed to create the returned subspace:
+* **compress mode**. This is the default mode. Unselected locations
+  are removed to create the returned subspace:
 
   .. code-block:: python
      :caption: *Create TODO*
@@ -2926,7 +2928,7 @@ constructs.
                    : grid_longitude(9) = [-4.7, ..., -1.18] degrees
    Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
                    : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
-                   : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., kappa]
+                   : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., 'kappa']
    Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
    Coord references: atmosphere_hybrid_height_coordinate
                    : rotated_latitude_longitude
@@ -2986,7 +2988,7 @@ criteria are possible.
    [<CF Field: specific_humidity(latitude(5), longitude(8)) 1>,
     <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>]
 
-A field list has mehods for selecting field constructs that meet
+A field list has methods for selecting field constructs that meet
 various criteria:
 
 ================================  ==========================================================================  
@@ -3082,7 +3084,7 @@ the given criteria, or else `False`.
                    : time(1) = [2019-01-01 00:00:00]
    Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
                    : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
-                   : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., b'kappa']
+                   : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., 'kappa']
    Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
    Coord references: grid_mapping_name:rotated_latitude_longitude
                    : standard_name:atmosphere_hybrid_height_coordinate
@@ -4550,7 +4552,7 @@ attribute from the file.
 
 NetCDF global attributes defined with the *file_descriptors* keyword
 of the `cf.write` function will always be written as requested,
-independently of the netCDF data variable attributes, and superceding
+independently of the netCDF data variable attributes, and superseding
 any global attributes that may have been defined with the
 *global_attributes* keyword, or set on the individual field
 constructs.
@@ -5105,11 +5107,11 @@ the axes to be weighted must be identified with the *weights* keyword.
 
 Weights are either derived from the field construct's metadata (such
 as cell sizes), or may be provided explicitly in the form of other
-field constructs containing data of weights values. In either case, the
-weights actually used are those derived by the `~Field.weights` method
-of the field construct with the same *weights* keyword
+field constructs containing data of weights values. In either case,
+the weights actually used are those derived by the `~Field.weights`
+method of the field construct called with the same *weights* keyword
 value. Collapsed axes that are not identified by the *weights* keyword
-are un-weighted during the collapse operation.
+are unweighted during the collapse operation.
 
 .. code-block:: python
    :caption: *Create a weighted time average.*
@@ -5761,7 +5763,7 @@ will produce similar results to using using spherical regridding.
                    : height(1) = [2.0] m
 
 
-Cartesian regridding to the dimesion of another field construct is
+Cartesian regridding to the dimension of another field construct is
 also possible, similarly to spherical regridding.
 
 
@@ -5938,7 +5940,7 @@ they have different standard names.
 Unary operations
 ^^^^^^^^^^^^^^^^
 
-Pythion unary operators also work on the field construct's data,
+Python unary operators also work on the field construct's data,
 returning a new field construct with modified data values. See the
 :ref:`comprehensive list of available unary operations
 <Field-unary-arithmetic>`.
@@ -6042,14 +6044,14 @@ result, which also has no units.
     'ncvar%q']
 
 
-Arthmetical and relational operations with insufficent metadata
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Arithmetical and relational operations with insufficient metadata
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 If both operands of an :ref:`arithmetical <Arithmetical-operations>`
 or :ref:`relational <Relational-operations>` operation are field
-constructs with insufficent metadata to create a mapping of physically
+constructs with insufficient metadata to create a mapping of physically
 compatible dimensions, there are various techniques that allow the
-operation the operation proceeed.
+operation the operation procede.
 
 * **Option 1:** The operation may applied to the field constructs'
   data instead. See below for more details.
@@ -6057,15 +6059,15 @@ operation the operation proceeed.
 * **Option 2:** If the mapping is not possible due to the absence of
   `!standard_name` properties (or `!id` attributes) on metadata
   constructs that are known to correspond, then setting "relaxed
-  identities" with the `cf.RELAXED_IDENTITIES` function may help:
+  identities" with the `cf.RELAXED_IDENTITIES` function may help.
 
-* **Option 3:** Add more metadata to the field constucts.
+* **Option 3:** Add more metadata to the field and metadata constructs.
 
 For **Option 1** the resulting data may then be inserted into a copy
 of one of the field constructs, either with the `~cf.Field.set_data`
 method of the field construct, or with :ref:`indexed assignment
-<Assignment-by-index>`. The latter technique allows broadcasting, but
-the former one does not.
+<Assignment-by-index>`. The former technique is faster and more memory
+efficient, but the latter technique allows broadcasting.
 
 Note that it is assumed, and not checked, that the dimensions of both
 `~cf.Data` instance operands are already in the correct order for
@@ -6339,11 +6341,11 @@ derivative wraps around by default.
 Cumulative sums
 ^^^^^^^^^^^^^^^
 
-The `~Field.cumsum` method of the field construct calulates the
+The `~Field.cumsum` method of the field construct calculates the
 cumulative sum of elements along a given axis. The cell bounds of of
 the axis are updated to describe the range over which the sum applies,
 and a new "sum" cell method construct is added to the resulting field
-constuct.
+construct.
 
 
 .. code-block:: python
@@ -6379,7 +6381,7 @@ constuct.
 
 The treatment of missing values can be specified, as well as the
 positioning of coordinate values in the summed axis of the returned
-field constuct.
+field construct.
 
 ----
   
@@ -6402,7 +6404,7 @@ constructs in memory with the `cf.aggregate` function.
 .. code-block:: python
    :caption: *Demonstrate that the aggregation applied by 'cf.read' is
              equivalent to that carried by 'cf.aggregate'. This is
-             done by spliting a field up into parts, writing those to
+             done by splitting a field up into parts, writing those to
              disk, and then reading those parts and aggregating them.*
 
    >>> a = cf.read('air_temperature.nc')[0]
@@ -6986,7 +6988,7 @@ fields files of any endian-ness can be read. In nearly all cases the
 file format is auto-detected from the first 64 bits in the file, but
 for the few occasions when this is not possible [#um]_, the *um*
 keyword of `cf.read` allows the format to be specified, as well as the
-UM version (if the latter is not inferrable from the PP or lookup
+UM version (if the latter is not inferable from the PP or lookup
 header information).
 
 Note that 2-d "slices" within a single file are always combined, where

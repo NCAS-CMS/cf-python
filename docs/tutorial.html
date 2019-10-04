@@ -92,7 +92,7 @@ script (<a class="reference download internal" download="" href="_downloads/e41d
 <a class="reference internal" href="2_to_3_changes.html#two-to-three-changes"><span class="std std-ref">incompatible differences between versions 2.x and 3.x</span></a> of cf.</p>
 <p>Scripts written for version 2.x but running under version
 3.x should either work as expected, or provide informative
-error mesages on the new API usage. However, it is advised
+error messages on the new API usage. However, it is advised
 that the outputs of older scripts be checked when running
 with Python 3 versions of the cf library.</p>
 <p class="last">For version 2.x documentation, see the <a class="reference internal" href="releases.html#older-releases"><span class="std std-ref">older releases</span></a> page.</p>
@@ -233,7 +233,7 @@ with Python 3 versions of the cf library.</p>
 <li><a class="reference internal" href="#arithmetical-operations" id="id399">Arithmetical operations</a></li>
 <li><a class="reference internal" href="#unary-operations" id="id400">Unary operations</a></li>
 <li><a class="reference internal" href="#relational-operations" id="id401">Relational operations</a></li>
-<li><a class="reference internal" href="#arthmetical-and-relational-operations-with-insufficent-metadata" id="id402">Arthmetical and relational operations with insufficent metadata</a></li>
+<li><a class="reference internal" href="#arithmetical-and-relational-operations-with-insufficient-metadata" id="id402">Arithmetical and relational operations with insufficient metadata</a></li>
 <li><a class="reference internal" href="#trigonometrical-functions" id="id403">Trigonometrical functions</a></li>
 <li><a class="reference internal" href="#exponential-and-logarithmic-functions" id="id404">Exponential and logarithmic functions</a></li>
 <li><a class="reference internal" href="#rounding-and-truncation" id="id405">Rounding and truncation</a></li>
@@ -261,7 +261,7 @@ with Python 3 versions of the cf library.</p>
 <span id="id2"></span><h2><a class="toc-backref" href="#id314"><strong>Sample datasets</strong></a><a class="headerlink" href="#sample-datasets" title="Permalink to this headline">¶</a></h2>
 <p>This tutorial uses a number of small sample datasets, all of which can
 be found in the zip file <code class="docutils literal notranslate"><span class="pre">cf_tutorial_files.zip</span></code>
-(<a class="reference download internal" download="" href="_downloads/4cd32e1c6bdf28fb61e15ffab2a8d84e/cf_tutorial_files.zip"><code class="xref download docutils literal notranslate"><span class="pre">download</span></code></a>, 164kB):</p>
+(<code class="xref download docutils literal notranslate"><span class="pre">download</span></code>, 164kB):</p>
 <div class="literal-block-wrapper docutils container" id="id94">
 <div class="code-block-caption"><span class="caption-text"><em>Unpack the sample datasets.</em></span><a class="headerlink" href="#id94" title="Permalink to this code">¶</a></div>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ unzip -q cf_tutorial_files.zip
@@ -502,7 +502,7 @@ medium detail.</em></span><a class="headerlink" href="#id102" title="Permalink t
                  <span class="p">:</span> <span class="n">grid_longitude</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">4.7</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.18</span><span class="p">]</span> <span class="n">degrees</span>
  <span class="n">Auxiliary</span> <span class="n">coords</span><span class="p">:</span> <span class="n">latitude</span><span class="p">(</span><span class="n">grid_latitude</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">grid_longitude</span><span class="p">(</span><span class="mi">9</span><span class="p">))</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">53.941</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="mf">50.225</span><span class="p">]]</span> <span class="n">degrees_N</span>
                  <span class="p">:</span> <span class="n">longitude</span><span class="p">(</span><span class="n">grid_longitude</span><span class="p">(</span><span class="mi">9</span><span class="p">),</span> <span class="n">grid_latitude</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">2.004</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="mf">8.156</span><span class="p">]]</span> <span class="n">degrees_E</span>
-                 <span class="p">:</span> <span class="n">long_name</span><span class="o">=</span><span class="n">Grid</span> <span class="n">latitude</span> <span class="n">name</span><span class="p">(</span><span class="n">grid_latitude</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span> <span class="o">=</span> <span class="p">[</span><span class="o">--</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">kappa</span><span class="p">]</span>
+                 <span class="p">:</span> <span class="n">long_name</span><span class="o">=</span><span class="n">Grid</span> <span class="n">latitude</span> <span class="n">name</span><span class="p">(</span><span class="n">grid_latitude</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span> <span class="o">=</span> <span class="p">[</span><span class="o">--</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="s1">&#39;kappa&#39;</span><span class="p">]</span>
  <span class="n">Cell</span> <span class="n">measures</span>   <span class="p">:</span> <span class="n">measure</span><span class="p">:</span><span class="n">area</span><span class="p">(</span><span class="n">grid_longitude</span><span class="p">(</span><span class="mi">9</span><span class="p">),</span> <span class="n">grid_latitude</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">2391.9657</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="mf">2392.6009</span><span class="p">]]</span> <span class="n">km2</span>
  <span class="n">Coord</span> <span class="n">references</span><span class="p">:</span> <span class="n">atmosphere_hybrid_height_coordinate</span>
                  <span class="p">:</span> <span class="n">rotated_latitude_longitude</span>
@@ -616,7 +616,7 @@ full detail.</em></span><a class="headerlink" href="#id103" title="Permalink to 
 
  <span class="n">Auxiliary</span> <span class="n">coordinate</span><span class="p">:</span> <span class="n">long_name</span><span class="o">=</span><span class="n">Grid</span> <span class="n">latitude</span> <span class="n">name</span>
      <span class="n">long_name</span> <span class="o">=</span> <span class="s1">&#39;Grid latitude name&#39;</span>
-     <span class="n">Data</span><span class="p">(</span><span class="n">grid_latitude</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span> <span class="o">=</span> <span class="p">[</span><span class="o">--</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">kappa</span><span class="p">]</span>
+     <span class="n">Data</span><span class="p">(</span><span class="n">grid_latitude</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span> <span class="o">=</span> <span class="p">[</span><span class="o">--</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="s1">&#39;kappa&#39;</span><span class="p">]</span>
 
  <span class="n">Domain</span> <span class="n">ancillary</span><span class="p">:</span> <span class="n">ncvar</span><span class="o">%</span><span class="n">a</span>
      <span class="n">units</span> <span class="o">=</span> <span class="s1">&#39;m&#39;</span>
@@ -1359,8 +1359,9 @@ package</a>.</li>
 </ul>
 <ul class="simple">
 <li>For a dimension that is <a class="reference internal" href="#cyclic-domain-axes"><span class="std std-ref">cyclic</span></a>, a range
-of indices specified by a <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a> is assumed to “wrap” around the
-edges of the data.</li>
+of indices specified by a <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a> that spans the edges of the data
+(such as <code class="docutils literal notranslate"><span class="pre">-2:3</span></code> or <code class="docutils literal notranslate"><span class="pre">3:-2:-1</span></code>) is assumed to “wrap” around,
+rather then producing a null result.</li>
 </ul>
 <div class="literal-block-wrapper docutils container" id="id126">
 <div class="code-block-caption"><span class="caption-text"><em>Create a new field construct whose domain spans the first
@@ -1462,8 +1463,9 @@ package</a>.</li>
 </ul>
 <ul class="simple">
 <li>For a dimension that is <a class="reference internal" href="#cyclic-domain-axes"><span class="std std-ref">cyclic</span></a>, a range
-of indices specified by a <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a> is assumed to “wrap” around the
-edges of the data.</li>
+of indices specified by a <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a> that spans the edges of the data
+(such as <code class="docutils literal notranslate"><span class="pre">-2:3</span></code> or <code class="docutils literal notranslate"><span class="pre">3:-2:-1</span></code>) is assumed to “wrap” around,
+rather then producing a null result.</li>
 </ul>
 <p>A single value may be assigned to any number of elements.</p>
 <div class="literal-block-wrapper docutils container" id="id130">
@@ -1908,7 +1910,7 @@ e.g. <code class="docutils literal notranslate"><span class="pre">'auxiliarycoor
 <span class="go">                : grid_longitude(9) = [-4.7, ..., -1.18] degrees</span>
 <span class="go">Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N</span>
 <span class="go">                : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E</span>
-<span class="go">                : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., kappa]</span>
+<span class="go">                : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., &#39;kappa&#39;]</span>
 <span class="go">Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2</span>
 <span class="go">Coord references: atmosphere_hybrid_height_coordinate</span>
 <span class="go">                : rotated_latitude_longitude</span>
@@ -2366,7 +2368,7 @@ construct.</p>
 <span class="go">                : time(1) = [2019-01-01 00:00:00]</span>
 <span class="go">Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N</span>
 <span class="go">                : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E</span>
-<span class="go">                : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., kappa]</span>
+<span class="go">                : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., &#39;kappa&#39;]</span>
 <span class="go">Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2</span>
 <span class="go">Coord references: atmosphere_hybrid_height_coordinate</span>
 <span class="go">                : rotated_latitude_longitude</span>
@@ -2954,11 +2956,11 @@ contains a single cell for 2019-01-01. TODO</em></span><a class="headerlink" hre
 </div>
 <div class="section" id="subspace-mode">
 <span id="id46"></span><h3><a class="toc-backref" href="#id361">Subspace mode</a><a class="headerlink" href="#subspace-mode" title="Permalink to this headline">¶</a></h3>
-<p>The <a class="reference internal" href="method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a> has three modes of operation, each of which
-provides a different type of subspace:</p>
+<p>There are three modes of operation, each of which provides a different
+type of subspace:</p>
 <ul>
-<li><p class="first"><strong>compress mode</strong>. This is the default mode. Unselected indices are
-removed to create the returned subspace:</p>
+<li><p class="first"><strong>compress mode</strong>. This is the default mode. Unselected locations
+are removed to create the returned subspace:</p>
 <div class="literal-block-wrapper docutils container" id="id193">
 <div class="code-block-caption"><span class="caption-text"><em>Create TODO</em></span><a class="headerlink" href="#id193" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
@@ -3068,7 +3070,7 @@ constructs.</p>
 <span class="go">                : grid_longitude(9) = [-4.7, ..., -1.18] degrees</span>
 <span class="go">Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N</span>
 <span class="go">                : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E</span>
-<span class="go">                : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., kappa]</span>
+<span class="go">                : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., &#39;kappa&#39;]</span>
 <span class="go">Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2</span>
 <span class="go">Coord references: atmosphere_hybrid_height_coordinate</span>
 <span class="go">                : rotated_latitude_longitude</span>
@@ -3127,7 +3129,7 @@ by field construct units.</em></span><a class="headerlink" href="#id197" title="
 </pre></div>
 </div>
 </div>
-<p>A field list has mehods for selecting field constructs that meet
+<p>A field list has methods for selecting field constructs that meet
 various criteria:</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -3261,7 +3263,7 @@ the given criteria, or else <a class="reference external" href="https://docs.pyt
 <span class="go">                : time(1) = [2019-01-01 00:00:00]</span>
 <span class="go">Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N</span>
 <span class="go">                : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E</span>
-<span class="go">                : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., b&#39;kappa&#39;]</span>
+<span class="go">                : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., &#39;kappa&#39;]</span>
 <span class="go">Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2</span>
 <span class="go">Coord references: grid_mapping_name:rotated_latitude_longitude</span>
 <span class="go">                : standard_name:atmosphere_hybrid_height_coordinate</span>
@@ -4815,7 +4817,7 @@ method.</em></span><a class="headerlink" href="#id239" title="Permalink to this 
 </div>
 <p>NetCDF global attributes defined with the <em>file_descriptors</em> keyword
 of the <a class="reference internal" href="function/cf.write.html#cf.write" title="cf.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.write</span></code></a> function will always be written as requested,
-independently of the netCDF data variable attributes, and superceding
+independently of the netCDF data variable attributes, and superseding
 any global attributes that may have been defined with the
 <em>global_attributes</em> keyword, or set on the individual field
 constructs.</p>
@@ -5355,11 +5357,11 @@ default, not weighted. For weights to be incorporated in the collapse,
 the axes to be weighted must be identified with the <em>weights</em> keyword.</p>
 <p>Weights are either derived from the field construct’s metadata (such
 as cell sizes), or may be provided explicitly in the form of other
-field constructs containing data of weights values. In either case, the
-weights actually used are those derived by the <a class="reference internal" href="method/cf.Field.weights.html#cf.Field.weights" title="cf.Field.weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">weights</span></code></a> method
-of the field construct with the same <em>weights</em> keyword
+field constructs containing data of weights values. In either case,
+the weights actually used are those derived by the <a class="reference internal" href="method/cf.Field.weights.html#cf.Field.weights" title="cf.Field.weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">weights</span></code></a>
+method of the field construct called with the same <em>weights</em> keyword
 value. Collapsed axes that are not identified by the <em>weights</em> keyword
-are un-weighted during the collapse operation.</p>
+are unweighted during the collapse operation.</p>
 <div class="literal-block-wrapper docutils container" id="id256">
 <div class="code-block-caption"><span class="caption-text"><em>Create a weighted time average.</em></span><a class="headerlink" href="#id256" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;T: mean&#39;</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="s1">&#39;T&#39;</span><span class="p">)</span>
@@ -6050,7 +6052,7 @@ will produce similar results to using using spherical regridding.</p>
 </pre></div>
 </div>
 </div>
-<p>Cartesian regridding to the dimesion of another field construct is
+<p>Cartesian regridding to the dimension of another field construct is
 also possible, similarly to spherical regridding.</p>
 </div>
 <div class="section" id="regridding-masked-data">
@@ -6208,7 +6210,7 @@ they have different standard names.</p>
 </div>
 <div class="section" id="unary-operations">
 <span id="id82"></span><h3><a class="toc-backref" href="#id400">Unary operations</a><a class="headerlink" href="#unary-operations" title="Permalink to this headline">¶</a></h3>
-<p>Pythion unary operators also work on the field construct’s data,
+<p>Python unary operators also work on the field construct’s data,
 returning a new field construct with modified data values. See the
 <a class="reference internal" href="classes/cf.Field.html#field-unary-arithmetic"><span class="std std-ref">comprehensive list of available unary operations</span></a>.</p>
 <div class="literal-block-wrapper docutils container" id="id280">
@@ -6304,26 +6306,26 @@ result, which also has no units.</p>
 </div>
 </div>
 </div>
-<div class="section" id="arthmetical-and-relational-operations-with-insufficent-metadata">
-<h3><a class="toc-backref" href="#id402">Arthmetical and relational operations with insufficent metadata</a><a class="headerlink" href="#arthmetical-and-relational-operations-with-insufficent-metadata" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="arithmetical-and-relational-operations-with-insufficient-metadata">
+<h3><a class="toc-backref" href="#id402">Arithmetical and relational operations with insufficient metadata</a><a class="headerlink" href="#arithmetical-and-relational-operations-with-insufficient-metadata" title="Permalink to this headline">¶</a></h3>
 <p>If both operands of an <a class="reference internal" href="#arithmetical-operations"><span class="std std-ref">arithmetical</span></a>
 or <a class="reference internal" href="#relational-operations"><span class="std std-ref">relational</span></a> operation are field
-constructs with insufficent metadata to create a mapping of physically
+constructs with insufficient metadata to create a mapping of physically
 compatible dimensions, there are various techniques that allow the
-operation the operation proceeed.</p>
+operation the operation procede.</p>
 <ul class="simple">
 <li><strong>Option 1:</strong> The operation may applied to the field constructs’
 data instead. See below for more details.</li>
 <li><strong>Option 2:</strong> If the mapping is not possible due to the absence of
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_name</span></code> properties (or <code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code> attributes) on metadata
 constructs that are known to correspond, then setting “relaxed
-identities” with the <a class="reference internal" href="function/cf.RELAXED_IDENTITIES.html#cf.RELAXED_IDENTITIES" title="cf.RELAXED_IDENTITIES"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.RELAXED_IDENTITIES</span></code></a> function may help:</li>
-<li><strong>Option 3:</strong> Add more metadata to the field constucts.</li>
+identities” with the <a class="reference internal" href="function/cf.RELAXED_IDENTITIES.html#cf.RELAXED_IDENTITIES" title="cf.RELAXED_IDENTITIES"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.RELAXED_IDENTITIES</span></code></a> function may help.</li>
+<li><strong>Option 3:</strong> Add more metadata to the field and metadata constructs.</li>
 </ul>
 <p>For <strong>Option 1</strong> the resulting data may then be inserted into a copy
 of one of the field constructs, either with the <a class="reference internal" href="method/cf.Field.set_data.html#cf.Field.set_data" title="cf.Field.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a>
-method of the field construct, or with <a class="reference internal" href="#assignment-by-index"><span class="std std-ref">indexed assignment</span></a>. The latter technique allows broadcasting, but
-the former one does not.</p>
+method of the field construct, or with <a class="reference internal" href="#assignment-by-index"><span class="std std-ref">indexed assignment</span></a>. The former technique is faster and more memory
+efficient, but the latter technique allows broadcasting.</p>
 <p>Note that it is assumed, and not checked, that the dimensions of both
 <a class="reference internal" href="classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance operands are already in the correct order for
 physically meaningful broadcasting to occur.</p>
@@ -6604,11 +6606,11 @@ derivative wraps around by default.</p>
 </div>
 <div class="section" id="cumulative-sums">
 <span id="id84"></span><h3><a class="toc-backref" href="#id409">Cumulative sums</a><a class="headerlink" href="#cumulative-sums" title="Permalink to this headline">¶</a></h3>
-<p>The <a class="reference internal" href="method/cf.Field.cumsum.html#cf.Field.cumsum" title="cf.Field.cumsum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cumsum</span></code></a> method of the field construct calulates the
+<p>The <a class="reference internal" href="method/cf.Field.cumsum.html#cf.Field.cumsum" title="cf.Field.cumsum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cumsum</span></code></a> method of the field construct calculates the
 cumulative sum of elements along a given axis. The cell bounds of of
 the axis are updated to describe the range over which the sum applies,
 and a new “sum” cell method construct is added to the resulting field
-constuct.</p>
+construct.</p>
 <div class="literal-block-wrapper docutils container" id="id292">
 <div class="code-block-caption"><span class="caption-text"><em>Calculate cumulative sums along the “T” axis, showing
 the cell bounds before and after the operation.</em></span><a class="headerlink" href="#id292" title="Permalink to this code">¶</a></div>
@@ -6643,7 +6645,7 @@ the cell bounds before and after the operation.</em></span><a class="headerlink"
 </div>
 <p>The treatment of missing values can be specified, as well as the
 positioning of coordinate values in the summed axis of the returned
-field constuct.</p>
+field construct.</p>
 <hr class="docutils" />
 </div>
 </div>
@@ -6661,7 +6663,7 @@ constructs in memory with the <a class="reference internal" href="function/cf.ag
 <div class="literal-block-wrapper docutils container" id="id293">
 <div class="code-block-caption"><span class="caption-text"><em>Demonstrate that the aggregation applied by ‘cf.read’ is
 equivalent to that carried by ‘cf.aggregate’. This is
-done by spliting a field up into parts, writing those to
+done by splitting a field up into parts, writing those to
 disk, and then reading those parts and aggregating them.</em></span><a class="headerlink" href="#id293" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;air_temperature.nc&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span>
@@ -7213,7 +7215,7 @@ fields files of any endian-ness can be read. In nearly all cases the
 file format is auto-detected from the first 64 bits in the file, but
 for the few occasions when this is not possible <a class="footnote-reference" href="#um" id="id90">[2]</a>, the <em>um</em>
 keyword of <a class="reference internal" href="function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a> allows the format to be specified, as well as the
-UM version (if the latter is not inferrable from the PP or lookup
+UM version (if the latter is not inferable from the PP or lookup
 header information).</p>
 <p>Note that 2-d “slices” within a single file are always combined, where
 possible, into field constructs with 3-d, 4-d or 5-d data. This is
@@ -7403,7 +7405,7 @@ format can not reliably be detected automatically.</td></tr>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="_sources/tutorial.rst.txt"

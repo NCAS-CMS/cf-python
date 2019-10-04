@@ -90,7 +90,7 @@
 <h1>cf.Field.regrids<a class="headerlink" href="#cf-field-regrids" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.regrids">
-<code class="descclassname">Field.</code><code class="descname">regrids</code><span class="sig-paren">(</span><em>dst</em>, <em>method</em>, <em>src_cyclic=None</em>, <em>dst_cyclic=None</em>, <em>use_src_mask=True</em>, <em>use_dst_mask=False</em>, <em>fracfield=False</em>, <em>src_axes=None</em>, <em>dst_axes=None</em>, <em>axis_order=None</em>, <em>ignore_degenerate=True</em>, <em>inplace=False</em>, <em>i=False</em>, <em>_compute_field_mass=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/field.py#L12412"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.regrids" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">regrids</code><span class="sig-paren">(</span><em>dst</em>, <em>method</em>, <em>src_cyclic=None</em>, <em>dst_cyclic=None</em>, <em>use_src_mask=True</em>, <em>use_dst_mask=False</em>, <em>fracfield=False</em>, <em>src_axes=None</em>, <em>dst_axes=None</em>, <em>axis_order=None</em>, <em>ignore_degenerate=True</em>, <em>inplace=False</em>, <em>i=False</em>, <em>_compute_field_mass=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/field.py#L12378"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.regrids" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the field regridded onto a new latitude-longitude grid.</p>
 <p>Regridding, also called remapping or interpolation, is the process
 of changing the grid underneath field data values while preserving
@@ -102,7 +102,7 @@ interpolation. Bilinear interpolation is available. The latter
 method is particular useful for cases when the latitude and
 longitude coordinate cell boundaries are not known nor
 inferrable. Higher order patch recovery is available as an
-alternative to bilinear interpolation.  This typically results in
+alternative to bilinear interpolation. This typically results in
 better approximations to values and derivatives compared to the
 latter, but the weight matrix can be larger than the bilinear
 matrix, which can be an issue when regridding close to the memory
@@ -268,12 +268,15 @@ True. Otherwise this is ignored.</p>
 </dd>
 <dt>src_axes: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt>
 <dd><p class="first">A dictionary specifying the axes of the 2D latitude and
-longitude coordinates of the source field when no
+longitude coordinates of the source field when no 1D
 dimension coordinates are present. It must have keys ‘X’
-and ‘Y’.</p>
+and ‘Y’. TODO</p>
 <dl class="last docutils">
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">src_axes={'X':</span> <span class="pre">'ncdim%x',</span> <span class="pre">'Y':</span> <span class="pre">'ncdim%y'}</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">src_axes={'X':</span> <span class="pre">1,</span> <span class="pre">'Y':</span> <span class="pre">0}</span></code></p>
 </dd>
 </dl>
 </dd>
@@ -390,7 +393,7 @@ changed.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/method/cf.Field.regrids.rst.txt"

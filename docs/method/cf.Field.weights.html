@@ -90,7 +90,7 @@
 <h1>cf.Field.weights<a class="headerlink" href="#cf-field-weights" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.weights">
-<code class="descclassname">Field.</code><code class="descname">weights</code><span class="sig-paren">(</span><em>weights='auto'</em>, <em>scale=False</em>, <em>components=False</em>, <em>methods=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/field.py#L4063"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.weights" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">weights</code><span class="sig-paren">(</span><em>weights='auto'</em>, <em>scale=None</em>, <em>components=False</em>, <em>methods=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/field.py#L4091"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.weights" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return weights for the data array values.</p>
 <p>The weights are those used during a statistical collapse of the
 data. For example when computing a area weight average.</p>
@@ -113,13 +113,7 @@ the components individually).</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-<dl class="docutils">
-<dt>TODO</dt>
-<dd><p class="first">weights: <em>optional</em></p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first">weights: <em>optional</em></p>
 <blockquote>
 <div><blockquote>
 <div><p>Specify the weights to be created. There are two distinct
@@ -128,8 +122,8 @@ weights for all axes of the field, at the expense of not
 always being able to control exactly how the weights are
 created (see the <em>methods</em> parameter); <strong>type 2</strong> allows
 particular types of weights to be defined for particular
-axes and an exception will be raised if it is not possible
-to the create weights.</p>
+axes, and an exception will be raised if it is not
+possible to the create weights.</p>
 <blockquote>
 <div><ul>
 <li><p class="first"><strong>Type 1</strong>: <em>weights</em> may be one of:</p>
@@ -165,15 +159,16 @@ preference,</p>
 <li>Area cell measures</li>
 <li>Area calculated from (grid) latitude
 and (grid) longitude dimension
-coordinates with bounds</li>
-<li>Cell sizes of dimension coordinates
-with bounds</li>
+coordinate constructs with bounds</li>
+<li>Cell sizes of dimension coordinate
+constructs with bounds</li>
 <li>Equal weights</li>
 </ol>
 </div></blockquote>
 <p class="last">and the outer product of these weights
-components is returned in a field which is
-broadcastable to the orginal field (see the
+components is returned in a field
+constructs which is broadcastable to the
+orginal field construct (see the
 <em>components</em> parameter).</p>
 </td>
 </tr>
@@ -201,31 +196,28 @@ broadcastable to the orginal field (see the
 <tbody valign="top">
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'area'</span></code></td>
 <td>Cell area weights from the field
-construct’s area
-cell measure construct or, if one doesn’t
-exist, from (grid) latitude and (grid)
-longitude dimension coordinates. Set the
-<em>methods</em> parameter to find out how the
-weights were actually created.</td>
+construct’s area cell measure
+construct or, if one doesn’t exist,
+from (grid) latitude and (grid)
+longitude dimension coordinate
+constructs. Set the <em>methods</em>
+parameter to find out how the weights
+were actually created.</td>
 </tr>
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'volume'</span></code></td>
 <td>Cell volume weights from the field
-construct’s
-volume cell measure construct.</td>
+construct’s volume cell measure
+construct.</td>
 </tr>
-<tr class="row-even"><td>items</td>
+<tr class="row-even"><td>identity</td>
 <td>Weights from the cell sizes of the
-dimension coordinate objects that would be
-selected by this call of the field
-construct’s TODO
-<a class="reference internal" href="cf.Field.dims.html#cf.Field.dims" title="cf.Field.dims"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dims</span></code></a> method: <code class="docutils literal notranslate"><span class="pre">f.dims(items,</span>
-<span class="pre">**kwargs)</span></code>. See <a class="reference internal" href="cf.Field.dims.html#cf.Field.dims" title="cf.Field.dims"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.dims</span></code></a> for
-details. TODO</td>
+dimension coordinate construct with
+this identity.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a></td>
 <td>Take weights from the data array of
-another field, which must be broadcastable
-to this field.</td>
+another field, which must be
+broadcastable to this field.</td>
 </tr>
 </tbody>
 </table>
@@ -249,29 +241,34 @@ linear height: <code class="docutils literal notranslate"><span class="pre">f.we
 </div></blockquote>
 </div></blockquote>
 <dl class="docutils">
-<dt>scale: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd>If True then scale the returned weights so that they are
-less than or equal to 1.</dd>
-<dt>components: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd>If True then a dictionary of orthogonal weights components
-is returned instead of a field. Each key is a tuple of
-integers representing axes positions in the field
-construct’s data array with corresponding values of
-weights in <a class="reference internal" href="../classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects. The axes of weights match the
-axes of the field construct’s data array in the order
-given by their dictionary keys.</dd>
-<dt>methods: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd>If True, then return a dictionary describing methods used
-to create the weights.</dd>
-</dl>
-<p class="last">kwargs: deprecated at version 3.0.0.</p>
+<dt>scale: number, optional</dt>
+<dd><p class="first">If set to a positive number then scale the weights so that
+they are less than or equal to that number.</p>
+<dl class="last docutils">
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last">To scale all weights so that they lie between 0 and 1:
+<code class="docutils literal notranslate"><span class="pre">scale=1.0</span></code>.</p>
 </dd>
 </dl>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+</dd>
+<dt>components: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dd><p class="first last">If True then a dictionary of orthogonal weights components
+is returned instead of a field. Each key is a tuple of
+integers representing axes positions in the field
+construct’s data, with corresponding values of weights in
+<a class="reference internal" href="../classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects. The axes of weights match the axes of the
+field construct’s data array in the order given by their
+dictionary keys.</p>
+</dd>
+<dt>methods: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dd><p class="first last">If True, then return a dictionary describing methods used
+to create the weights.</p>
+</dd>
+</dl>
+<p>kwargs: deprecated at version 3.0.0.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
 <dt><a class="reference internal" href="../classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt>
 <dd><p class="first last">The weights field or, if <em>components</em> is True, orthogonal
 weights in a dictionary.</p>
@@ -286,16 +283,20 @@ weights in a dictionary.</p>
 <span class="go">&lt;CF Field: air_temperature(time(1800), latitude(145), longitude(192)) K&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">weights</span><span class="p">()</span>
 <span class="go">&lt;CF Field: long_name:weight(time(1800), latitude(145), longitude(192)) 86400 s.rad&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">weights</span><span class="p">(</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">weights</span><span class="p">(</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
 <span class="go">&lt;CF Field: long_name:weight(time(1800), latitude(145), longitude(192)) 1&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">weights</span><span class="p">(</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="go">{(0,): &lt;CF Data(1800): [1.0, ..., 1.0] d&gt;,</span>
 <span class="go"> (1,): &lt;CF Data(145): [5.94949998503e-05, ..., 5.94949998503e-05]&gt;,</span>
 <span class="go"> (2,): &lt;CF Data(192): [0.0327249234749, ..., 0.0327249234749] radians&gt;}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">weights</span><span class="p">(</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">weights</span><span class="p">(</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
 <span class="go">{(0,): &lt;CF Data(1800): [1.0, ..., 1.0]&gt;,</span>
 <span class="go"> (1,): &lt;CF Data(145): [0.00272710399807, ..., 0.00272710399807]&gt;,</span>
 <span class="go"> (2,): &lt;CF Data(192): [1.0, ..., 1.0]&gt;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">weights</span><span class="p">(</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span>
+<span class="go">{(0,): &lt;CF Data(1800): [2.0, ..., 2.0]&gt;,</span>
+<span class="go"> (1,): &lt;CF Data(145): [0.00545420799614, ..., 0.00545420799614]&gt;,</span>
+<span class="go"> (2,): &lt;CF Data(192): [2.0, ..., 2.0]&gt;}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">weights</span><span class="p">(</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="go">{(0,): &#39;linear time&#39;,</span>
 <span class="go"> (1,): &#39;linear sine latitude&#39;,</span>
@@ -318,7 +319,7 @@ weights in a dictionary.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/method/cf.Field.weights.rst.txt"
