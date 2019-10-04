@@ -4516,7 +4516,7 @@ may be accessed with the `nc_global_attributes`,
 
                     w_axis_size = w.domain_axes[axis1].get_size()
                     self_axis_size = self.domain_axes[axis0].get_size()
-#                    if w.domain_axes[axis1].get_size() != self.axis_size(axis0):
+
                     if w_axis_size != self_axis_size:
                         raise ValueError(
                             "Weights field has incorrectly sized {!r} axis ({} != {})".format(
@@ -7995,135 +7995,172 @@ may be accessed with the `nc_global_attributes`,
 
 
     def indices(self, *mode, **kwargs):
-        '''Create indices based on domain metadata that define a subspace of
-    the field.
+        '''Create indices that define a subspace of the field construct.
 
-    The subspace is defined in "domain space" via data array values of its
-    domain items: dimension coordinate, auxiliary coordinate, cell
-    measure, domain ancillary and field ancillary objects.
-    
-    If metadata items are not specified for an axis then a full slice
-    (``slice(None)``) is assumed for that axis.
-    
-    Values for size 1 axes which are not spanned by the field
-    construct's data array may be specified, but only indices for axes
-    which span the field construct's data array will be returned.
-    
-    The conditions may be given in any order.
-    
-    .. seealso:: `where`, `subspace`
+    The subspace is defined by identifying indices based on the
+    metadata constructs.
+
+    Metadata constructs are selected conditions are specified on their
+    data. Indices for subspacing are then automatically inferred from
+    where the conditions are met.
+
+    The returned tuple of indices may be used to created a subspace by
+    indexing the original field construct with them.
+
+    Metadata constructs and the conditions on their data are defined
+    by keyword parameters.
+
+    * Any domain axes that have not been identified remain unchanged.
+
+    * Multiple domain axes may be subspaced simultaneously, and it
+      doesn't matter which order they are specified in.
+
+    * Subspace criteria may be provided for size 1 domain axes that
+      are not spanned by the field construct's data.
+
+    * Explicit indices may also be assigned to a domain axis
+      identified by a metadata construct, with either a Python `slice`
+      object or a sequence of integers.
+
+    * For a dimension that is cyclic, a subspace defined by a slice or
+      by a `Query` instance is assumed to "wrap" around the edges of
+      the data.
+
+    * Conditions may also be applied to multi-dimensionsal metadata
+      constructs. The "compress" mode is still the default mode (see
+      the positional arguments), but because the indices may not be
+      acting along orthogonal dimensions, some missing data may still
+      need to be inserted into the field construct's data.
+
+    **Auxiliary masks**
+
+    When creating an actual subspace with the indices, if the first
+    element of the tuple of indices is ``'mask'`` then the extent of
+    the subspace is defined only by the values of elements three and
+    onwards. In this case the second elements contains an "auxiliary"
+    data mask that is applied to the subspace after its initial
+    creation, in order to set unselected locations to missing data.
+
+    .. seealso:: `subspace`, `where`
     
     :Parameters:
-    
-        mode: *optional*
-    
-            ==============  ==============================================
-            *mode*           Description
-            ==============  ==============================================
-            ``'compress'``
-    
-            ``'envelope'``
-    
-            ``'full'``
-            ==============  ==============================================
-    
-        kwargs: *optional*
-            Keyword parameters identify items of the domain (such as a
-            particular coordinate type) and its value sets conditions on
-            their data arrays (e.g. the actual coordinate values). Indices
-            are created which, for each axis, select where the conditions
-            are met.
-    
-            A keyword name is a string which selects a unique item of the
-            field. The string may be any string value allowed by the
-            *description* parameter of the field's TODO `item` method, which is
-            used to select a unique domain item. See `cf.Field.item` for
-            details.
+        
+        positional arguments: *optional*
+            There are three modes of operation, each of which provides
+            indices for a different type of subspace:
+
+            ==============  ==========================================
+            *argument*      Description
+            ==============  ==========================================
+            ``'compress'``  This is the default mode. Unselected
+                            locations are removed to create the
+                            returned subspace. Note that if a
+                            multi-dimensional metadata construct is
+                            being used to define the indices then some
+                            missing data may still be inserted at
+                            unselected locations.
             
-              *Parameter example:*           
-                The keyword ``lat`` will select the item returned by
-                ``f.item('lat', role='dam')``. See the *exact* parameter.
+            ``'envelope'``  The returned subspace is the smallest that
+                            contains all of the selected
+                            indices. Missing data is inserted at
+                            unselected locations within the envelope.
+            
+            ``'full'``      The returned subspace has the same domain
+                            as the original field construct. Missing
+                            data is inserted at unselected locations.
+            ==============  ==========================================
     
-            In general, a keyword value specifies a test on the selected
-            item's data array which identifies axis elements. The returned
-            indices for this axis are the positions of these elements.
-    
-              *Parameter example:*
-                To create indices for the northern hemisphere, assuming
-                that there is a coordinate with identity "latitude":
-                ``f.indices(latitude=cf.ge(0))``
-    
-              *Parameter example:*
-                To create indices for the northern hemisphere, identifying
-                the latitude coordinate by its longtg name:
-                ``f.indices(**{'long_name:latitude': cf.ge(0)})``. In this
-                case it is necessary to use the ``**`` syntax because the
-                ``:`` character is not allowed in keyword parameter names.
-    
-            If the value is a `slice` object then it is used as the axis
-            indices, without testing the item's data array.
-    
-              *Parameter example:*
-                To create indices for every even numbered element along
-                the "Z" axis: ``f.indices(Z=slice(0, None, 2))``.
-    
-    
-            **Multidimensional items**
-              Indices based on items which span two or more axes are
-              possible if the result is a single element index for each of
-              the axes spanned. In addition, two or more items must be
-              provided, each one spanning the same axes  (in any order).
-    
-                *Parameter example:*          
-                  To create indices for the unique location 45 degrees
-                  north, 30 degrees east when latitude and longitude are
-                  stored in 2-dimensional auxiliary coordiantes:
-                  ``f.indices(latitude=45, longitude=30)``. Note that this
-                  example would also work if latitude and longitude were
-                  stored in 1-dimensional dimensional or auxiliary
-                  coordinates, but in this case the location would not
-                  have to be unique.
-    
+        keyword parameters: *optional*
+            A keyword name is an identity of a metadata construct, and
+            the keyword value provides a condition for inferring
+            indices that apply to the dimension (or dimensions)
+            spanned by the metadata construct's data. Indices are
+            created that select every location for which the metadata
+            construct's data satisfies the condition.
+
     :Returns:
     
         `tuple`
-            
+            The indices meeting the conditions.
+
     **Examples:**
     
-    These examples use the following field, which includes a dimension
-    coordinate object with no identity (``ncvar:model_level_number``)
-    and which has a data array which doesn't span all of the domain
-    axes:
-    
-    
-    >>> print(f)
-    eastward_wind field summary
-    ---------------------------
-    Data           : eastward_wind(time(3), air_pressure(5), grid_latitude(110), grid_longitude(106)) m s-1
-    Cell methods   : time: mean
-    Axes           : time(3) = [1979-05-01 12:00:00, ..., 1979-05-03 12:00:00] gregorian
-                   : air_pressure(5) = [850.0, ..., 50.0] hPa
-                   : grid_longitude(106) = [-20.54, ..., 25.66] degrees
-                   : grid_latitude(110) = [23.32, ..., -24.64] degrees
-    Aux coords     : latitude(grid_latitude(110), grid_longitude(106)) = [[67.12, ..., 22.89]] degrees_N
-                   : longitude(grid_latitude(110), grid_longitude(106)) = [[-45.98, ..., 35.29]] degrees_E
-    Coord refs     : <CF CoordinateReference: rotated_latitude_longitude>
-    
-    
-    >>> f.indices(lat=23.32, lon=-20.54)
-    (slice(0, 3, 1), slice(0, 5, 1), slice(0, 1, 1), slice(0, 1, 1))
-    
-    >>> f.indices(grid_lat=slice(50, 2, -2), grid_lon=[0, 1, 3, 90]) 
-    (slice(0, 3, 1), slice(0, 5, 1), slice(50, 2, -2), [0, 1, 3, 90])
-    
-    >>> f.indices(grid_lon=cf.wi(0, 10, 'degrees'), air_pressure=850)
-    (slice(0, 3, 1), slice(0, 1, 1), slice(0, 110, 1), slice(47, 70, 1))
-    
-    >>> f.indices(grid_lon=cf.wi(0, 10), air_pressure=cf.eq(85000, 'Pa')
-    (slice(0, 3, 1), slice(0, 1, 1), slice(0, 110, 1), slice(47, 70, 1))
-    
-    >>> f.indices(grid_long=cf.gt(0, attr='lower_bounds'))
-    (slice(0, 3, 1), slice(0, 5, 1), slice(0, 110, 1), slice(48, 106, 1))
+    >>> print(q)
+    Field: specific_humidity (ncvar%q)
+    ----------------------------------
+    Data            : specific_humidity(latitude(5), longitude(8)) 1
+    Cell methods    : area: mean
+    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(8) = [22.5, ..., 337.5] degrees_east
+                    : time(1) = [2019-01-01 00:00:00]
+    >>> indices = q.indices(X=112.5)                                                   
+    >>> print(indices)
+    (slice(0, 5, 1), slice(2, 3, 1))
+    >>> q[indicies]
+    <CF Field: specific_humidity(latitude(5), longitude(1)) 1>
+    >>> q.indices(X=112.5, latitude=cf.gt(-60))                              
+    (slice(1, 5, 1), slice(2, 3, 1))
+    >>> q.indices(latitude=cf.eq(-45) | cf.ge(20))                           
+    (array([1, 3, 4]), slice(0, 8, 1))
+    >>> q.indices(X=[1, 2, 4], Y=slice(None, None, -1))                      
+    (slice(4, None, -1), array([1, 2, 4]))
+    >>> q.indices(X=cf.wi(-100, 200))                                        
+    (slice(0, 5, 1), slice(-2, 4, 1))
+    >>> q.indices(X=slice(-2, 4))                                            
+    (slice(0, 5, 1), slice(-2, 4, 1))
+    >>> q.indices('compress', X=[1, 2, 4, 6])                                
+    (slice(0, 5, 1), array([1, 2, 4, 6]))
+    >>> q.indices('envelope', X=[1, 2, 4, 6])                                
+    ('mask', [<CF Data(1, 6): [[False, ..., False]]>], slice(0, 5, 1), slice(1, 7, 1))
+    >>> indices = q.indices('full', X=[1, 2, 4, 6])                                    
+    ('mask', [<CF Data(1, 8): [[True, ..., True]]>], slice(0, 5, 1), slice(0, 8, 1))
+    >>> print(indices)
+    >>> print(q)
+    <CF Field: specific_humidity(latitude(5), longitude(8)) 1>
+
+    >>> print(a)
+    Field: air_potential_temperature (ncvar%air_potential_temperature)
+    ------------------------------------------------------------------
+    Data            : air_potential_temperature(time(120), latitude(5), longitude(8)) K
+    Cell methods    : area: mean
+    Dimension coords: time(120) = [1959-12-16 12:00:00, ..., 1969-11-16 00:00:00]
+                    : latitude(5) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(8) = [22.5, ..., 337.5] degrees_east
+                    : air_pressure(1) = [850.0] hPa    
+    >>> a.indices(T=410.5)                                                   
+    (slice(2, 3, 1), slice(0, 5, 1), slice(0, 8, 1))
+    >>> a.indices(T=cf.dt('1960-04-16'))                                     
+    (slice(4, 5, 1), slice(0, 5, 1), slice(0, 8, 1))
+    >>> indices = a.indices(T=cf.wi(cf.dt('1962-11-01'), cf.dt('1967-03-17 07:30')))
+    >>> print(indices)
+    (slice(35, 88, 1), slice(0, 5, 1), slice(0, 8, 1))
+    >>> a[indices]
+    <CF Field: air_potential_temperature(time(53), latitude(5), longitude(8)) K>
+
+    >>> print(t)
+    Field: air_temperature (ncvar%ta)
+    ---------------------------------
+    Data            : air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K
+    Cell methods    : grid_latitude(10): grid_longitude(9): mean where land (interval: 0.1 degrees) time(1): maximum
+    Field ancils    : air_temperature standard_error(grid_latitude(10), grid_longitude(9)) = [[0.76, ..., 0.32]] K
+    Dimension coords: atmosphere_hybrid_height_coordinate(1) = [1.5]
+                    : grid_latitude(10) = [2.2, ..., -1.76] degrees
+                    : grid_longitude(9) = [-4.7, ..., -1.18] degrees
+                    : time(1) = [2019-01-01 00:00:00]
+    Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
+                    : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
+                    : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., b'kappa']
+    Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
+    Coord references: grid_mapping_name:rotated_latitude_longitude
+                    : standard_name:atmosphere_hybrid_height_coordinate
+    Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
+                    : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
+                    : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
+    >>> indices = t.indices(latitude=cf.wi(51, 53))                                    
+    >>> print(indices)
+    ('mask', [<CF Data(1, 5, 9): [[[False, ..., False]]]>], slice(0, 1, 1), slice(3, 8, 1), slice(0, 9, 1))
+    >>> t[indices]
+    <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(5), grid_longitude(9)) K>
 
         '''
         if 'exact' in mode:
@@ -12050,272 +12087,146 @@ may be accessed with the `nc_global_attributes`,
 
     @property
     def subspace(self):
-        '''Create a subspace of the field.
+        '''Create a subspace of the field construct.
 
-    The subspace retains all of the metadata of the original field, with
-    those metadata items that contain data arrays also subspaced.
+    Creation of a new field construct which spans a subspace of the
+    domain of an existing field construct is achieved either by
+    identifying indices based on the metadata constructs (subspacing
+    by metadata) or by indexing the field construct directly
+    (subspacing by index).
+
+    The subspacing operation, in either case, also subspaces any
+    metadata constructs of the field construct (e.g. coordinate
+    metadata constructs) which span any of the domain axis constructs
+    that are affected. The new field construct is created with the
+    same properties as the original field construct.
+
+    **Subspacing by metadata**
     
-    A subspace may be defined in "metadata-space" via conditionss on the
-    data array values of its domain items: dimension coordinate, auxiliary
-    coordinate, cell measure, domain ancillary and field ancillary
-    objects.
+    Subspacing by metadata, signified by the use of round brackets,
+    selects metadata constructs and specifies conditions on their
+    data. Indices for subspacing are then automatically inferred from
+    where the conditions are met.
+
+    Metadata constructs and the conditions on their data are defined
+    by keyword parameters.
+
+    * Any domain axes that have not been identified remain unchanged.
+
+    * Multiple domain axes may be subspaced simultaneously, and it
+      doesn't matter which order they are specified in.
+
+    * Subspace criteria may be provided for size 1 domain axes that
+      are not spanned by the field construct's data.
+
+    * Explicit indices may also be assigned to a domain axis
+      identified by a metadata construct, with either a Python `slice`
+      object or a sequence of integers.
+
+    * For a dimension that is cyclic, a subspace defined by a slice or
+      by a `Query` instance is assumed to "wrap" around the edges of
+      the data.
+
+    * Conditions may also be applied to multi-dimensionsal metadata
+      constructs. The "compress" mode is still the default mode (see
+      the positional arguments), but because the indices may not be
+      acting along orthogonal dimensions, some missing data may still
+      need to be inserted into the field construct's data.
+
+    **Subspacing by index**
+
+    Subspacing by indexing, signified by the use of square brackets,
+    uses rules that are very similar to the numpy indexing rules, the
+    only differences being:
+
+    * An integer index i specified for a dimension reduces the size of
+      this dimension to unity, taking just the i-th element, but keeps
+      the dimension itself, so that the rank of the array is not
+      reduced.
+
+    * When two or more dimensions’ indices are sequences of integers
+      then these indices work independently along each dimension
+      (similar to the way vector subscripts work in Fortran). This is
+      the same indexing behaviour as on a Variable object of the
+      netCDF4 package.
+
+    * For a dimension that is cyclic, a range of indices specified by
+      a `slice` that spans the edges of the data (such as ``-2:3`` or
+      ``3:-2:-1``) is assumed to "wrap" around, rather then producing
+      a null result.
+  
+
+    .. seealso:: `indices`, `squeeze`, `where`, `__getitem__`
     
-    Alternatively, a subspace may be defined be in "index-space" via
-    explicit indices for the data array using an extended Python slicing
-    syntax.
-    
-    .. seealso:: `indices`, `where`, `__getitem__`
-    
-    **Size one axes**
-    
-      Size one axes in the data array of the subspaced field are
-      always retained, but may be subsequently removed with the field
-      construct's `~cf.Field.squeeze` method:
-    
-    **Defining a subspace in metadata-space**
-    
-      Defining a subspace in metadata-space has the following features
-      
-      * Axes to be subspaced may identified by metadata, rather than their
-        position in the data array.
-      
-      * The position in the data array of each axis need not be known and
-        the axes to be subspaced may be given in any order.
-      
-      * Axes for which no subspacing is required need not be specified.
-      
-      * Size one axes of the domain which are not spanned by the data
-        array may be specified.
-      
-      * The field may be subspaced according to conditions on
-        multidimensional items.
-      
-      Subspacing in metadata-space is configured with the following
-      parameters:
-    
-      :Parameters:
+    :Parameters:
         
-          positional arguments: *optional*
-              Configure the type of subspace that is created. Zero or one
-              of:
-        
-              ==============  ==========================================
-              *argument*      Description
-              ==============  ==========================================
-              ``'compress'``  The default. Create the smallest possible
-                              subspace that contains the selected
-                              elements. As many non-selected elements
-                              are discarded as possible, meaning that
-                              the subspace may not form a contiguous
-                              block of the original field. The subspace
-                              may still contain non-selected elements, 
-                              which are set to missing data.
-              
-              ``'envelope'``  Create the smallest subspace that
-                              contains the selected elements and forms a
-                              contiguous block of the original
-                              field. Interior, non-selected elements are
-                              set to missing data.
-              
-              ``'full'``      Create a subspace that is the same size as
-                              the original field, but with all
-                              non-selected elements set to missing data.
-              ==============  ==========================================
+        positional arguments: *optional*
+            There are three modes of operation, each of which provides
+            a different type of subspace:
+
+            ==============  ==========================================
+            *argument*      Description
+            ==============  ==========================================
+            ``'compress'``  This is the default mode. Unselected
+                            locations are removed to create the
+                            returned subspace. Note that if a
+                            multi-dimensional metadata construct is
+                            being used to define the indices then some
+                            missing data may still be inserted at
+                            unselected locations.
+            
+            ``'envelope'``  The returned subspace is the smallest that
+                            contains all of the selected
+                            indices. Missing data is inserted at
+                            unselected locations within the envelope.
+            
+            ``'full'``      The returned subspace has the same domain
+                            as the original field construct. Missing
+                            data is inserted at unselected locations.
+            ==============  ==========================================
     
-              In addition the following optional argument specifies how to
-              interpret the keyword parameter names:
+        keyword parameters: *optional*
+            A keyword name is an identity of a metadata construct, and
+            the keyword value provides a condition for inferring
+            indices that apply to the dimension (or dimensions)
+            spanned by the metadata construct's data. Indices are
+            created that select every location for which the metadata
+            construct's data satisfies the condition.
+
+    :Returns:
     
-              ==============  ==========================================
-              *argument*      Description
-              ==============  ==========================================
-              ``'exact'``     Keyword parameters names are not treated
-                              as abbreviations of item identities. By
-                              default, keyword parameters names are
-                              allowed to be abbreviations of item
-                              identities.
-              ==============  ==========================================
+        `Field`
+            An independent field construct containing the subspace of
+            the original field.
     
-              *Parameter example:*
-                To create a subspace that is the same size as the
-                original field, but with missing data at non-selected
-                elements: ``f.subspace('full', **kwargs)``, where
-                ``**kwargs`` are the positional parameters that define
-                the selected elements.
-        
-          keyword parameters: *optional*
-              Keyword parameter names identify items of the domain (such
-              as a particular coordinate type) and their values set
-              conditions on their data arrays (e.g. the actual coordinate
-              values). These conditions define the subspace that is
-              created.
+    **Examples:**
     
-          ..
-      
-              **Keyword names**
+    See the on-line documention for further worked examples:
+    https://ncas-cms.github.io/cf-python/tutorial.html#subspacing-by-metadata
+
+    >>> g = f.subspace(X=112.5)
+    >>> g = f.subspace(X=112.5, latitude=cf.gt(-60))
+    >>> g = f.subspace(latitude=cf.eq(-45) | cf.ge(20))
+    >>> g = f.subspace(X=[1, 2, 4], Y=slice(None, None, -1))
+    >>> g = f.subspace(X=cf.wi(-100, 200))
+    >>> g = f.subspace(X=slice(-2, 4))
+    >>> g = f.subspace(T=410.5)
+    >>> g = f.subspace(T=cf.dt('1960-04-16'))
+    >>> g = f.subspace(T=cf.wi(cf.dt('1962-11-01'), cf.dt('1967-03-17 07:30')))
+    >>> g = f.subspace('compress', X=[1, 2, 4, 6])
+    >>> g = f.subspace('envelope', X=[1, 2, 4, 6])
+    >>> g = f.subspace('full', X=[1, 2, 4, 6])
+    >>> g = f.subspace(latitude=cf.wi(51, 53))
     
-              TODO A keyword name selects a unique item of the field. The
-              name may be any value allowed by the *description*
-              parameter of the field construct's `item` method, which
-              is used to select a unique domain item. See
-              `cf.Field.item` for details.
-              
-              *Parameter example:*           
-                The keyword ``lat`` will select the item returned by
-                ``f.item(description='lat')``. See the *exact*
-                positional argument.
-      
-              *Parameter example:*           
-                The keyword ``'T'`` will select the item returned by
-                ``f.item(description='T')``.
-      
-              *Parameter example:*           
-                The keyword ``'dim2'`` will select the item that has
-                this internal identifier
-                ``f.item(description='dim2')``. This can be useful in
-                the absence of any more meaningful metadata. A full list
-                of internal identifiers may be found with the field construct's
-                `items` method. TODO
-      
-              **Keyword values**
-    
-              A keyword value specifies a selection on the selected item's
-              data array which identifies the axis elements to be be
-              included in the subspace.
-    
-          ..
-      
-              If the value is a `Query` object then then the query is
-              applied to the item's data array to create the subspace.
-    
-              *Parameter example:*
-                To create a subspace for the northern hemisphere,
-                assuming that there is a coordinate with identity
-                "latitude": ``f.subspace(latitude=cf.ge(0))``
-      
-              *Parameter example:*
-                To create a subspace for the time 2018-08-27:
-                ``f.subspace(T=cf.dteq('2018-08-27'))``
-      
-              *Parameter example:*
-                To create a subspace for the northern hemisphere,
-                identifying the latitude coordinate by its long name:
-                ``f.subspace(**{'long_name:latitude': cf.ge(0)})``. In
-                this case it is necessary to use the ``**`` syntax
-                because the ``:`` character is not allowed in keyword
-                parameter names.
-      
-              If the value is a `list` of integers then these are used as
-              the axis indices, without testing the item's data array.
-      
-              *Parameter example:*
-                To create a subspace using the first, third, fourth
-                and last indices of the "X" axis: ``f.subspace(X=[0,
-                2, 3, -1])``.
-      
-              If the value is a `slice` object then it is used as the axis
-              indices, without testing the item's data array.
-      
-              *Parameter example:*
-                To create a subspace from every even numbered index
-                along the "Z" axis: ``f.subspace(Z=slice(0, None,
-                2))``.
-      
-              If the value is anything other thaqn a `Query`, `list` or
-              `slice` object then, the subspace is defined by where the
-              data array equals that value. I.e. ``f.subspace(name=x)`` is
-              equivalent to ``f.subspace(name=cf.eq(x))``.
-    
-              *Parameter example:*
-                To create a subspace where latitude is 52 degrees
-                north: ``f.subspace(latitude=52)``. Note that this
-                assumes that the latitude coordinate are in units of
-                degrees north. If this were not known, either of
-                ``f.subspace(latitude=cf.Data(52, 'degrees_north'))``
-                and ``f.subspace(latitude=cf.eq(52,
-                'degrees_north'))`` would guarantee the correct
-                result.
-      
-      :Returns:
-    
-          `Field` An independent field containing the subspace of the
-              original field.
-          
-      **Multidimensional items**
-    
-      Subspaces defined by items which span two or more axes are
-      allowed.
-    
-          *Parameter example:* 
-            The subspace for the Nino Region 3 created by
-            ``f.subspace(latitude=cf.wi(-5, 5), longitude=cf.wi(90,
-            150))`` will work equally well if the latitude and longitude
-            coordinates are stored in 1-d or 2-d arrays. In the latter
-            case it is possble that the coordinates are curvilinear or
-            unstructured, in which case the subspace may contain missing
-            data for the non-selected elements.
-    
-      **Subspacing multiple axes simultaneously**
-    
-      To subspace multiple axes simultaneously, simply provide multiple
-      keyword arguments.
-    
-        *Parameter example:*
-          To create an eastern hemisphere tropical subspace:
-          ``f.subspace(X=cf.wi(0, 180), latitude=cf.wi(-30, 30))``.
-    
-    
-    **Defining a subspace in index-space**
-    
-      Subspacing in index-space uses an extended Python slicing syntax,
-      which is similar to :ref:`numpy array indexing
-      <numpy:arrays.indexing>`. Extensions to the numpy indexing
-      functionality are:
-    
-      * When more than one axis's slice is a 1-d boolean sequence or 1-d
-        sequence of integers, then these indices work independently along
-        each axis (similar to the way vector subscripts work in Fortran),
-        rather than by their elements.
-      
-      * Boolean indices may be any object which exposes the numpy
-        array interface, such as the field construct's coordinate
-        objects.
-    
-      :Returns:
-    
-          `Field`
-              An independent field containing the subspace of the original
-              field.
-          
-      **Examples:**
-    
-      >>> f
-      <CF Field: air_temperature(time(12), latitude(73), longitude(96)) K>
-      >>> f.subspace[:, [0, 72], [5, 4, 3]]
-      <CF Field: air_temperature(time(12), latitude(2), longitude(3)) K>
-      >>> f.subspace[:, f.coord('latitude')<0]
-      <CF Field: air_temperature(time(12), latitude(36), longitude(96)) K>
-    
-    
-    **Assignment to the data array**
-    
-      A subspace defined in index-space may have its data array values
-      changed by assignment:
-      
-      >>> f
-      <CF Field: air_temperature(time(12), latitude(73), longitude(96)) K>
-      >>> f.subspace[0:6] = f.subspace[6:12]
-      >>> f.subspace[..., 0:48] = -99
-      
-      To assign to a subspace defined in metadata-space, the
-      equivalent index-space indices must first be found with the
-      field construct's `indices` method, and then the assignment may
-      be applied in index-space:
-      
-      >>> index = f.indices(longitude=cf.lt(180))
-      >>> f.subspace[index] = cf.masked
-      
-      Note that the `indices` method accepts the same positional and
-      keyword arguments as `subspace`.
+    >>> g = f.subspace[::-1, 0]
+    >>> g = f.subspace[:, :, 1]
+    >>> g = f.subspace[:, 0]
+    >>> g = f.subspace[..., 6:3:-1, 3:6]
+    >>> g = f.subspace[0, [2, 3, 9], [4, 8]]
+    >>> g = t.subspace[0, :, -2]
+    >>> g = f.subspace[0, [2, 3, 9], [4, 8]]
+    >>> g = f.subspace[:, -2:3]
+    >>> g = f.subspace[:, 3:-2:-1]
 
         '''
         return SubspaceField(self)

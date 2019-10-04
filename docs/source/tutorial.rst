@@ -1187,8 +1187,9 @@ the only differences being:
 ..
 
 * For a dimension that is :ref:`cyclic <Cyclic-domain-axes>`, a range
-  of indices specified by a `slice` is assumed to "wrap" around the
-  edges of the data.
+  of indices specified by a `slice` that spans the edges of the data
+  (such as ``-2:3`` or ``3:-2:-1``) is assumed to "wrap" around,
+  rather then producing a null result.
   
 .. code-block:: python
   :caption: *Create a new field construct whose domain spans the first
@@ -1295,8 +1296,9 @@ the only difference being:
 ..
 
 * For a dimension that is :ref:`cyclic <Cyclic-domain-axes>`, a range
-  of indices specified by a `slice` is assumed to "wrap" around the
-  edges of the data.
+  of indices specified by a `slice` that spans the edges of the data
+  (such as ``-2:3`` or ``3:-2:-1``) is assumed to "wrap" around,
+  rather then producing a null result.
 
 A single value may be assigned to any number of elements.
   
@@ -2809,12 +2811,12 @@ date-time objects.
 Subspace mode
 ^^^^^^^^^^^^^
 
-The `~Field.subspace` has three modes of operation, each of which
-provides a different type of subspace:
+There are three modes of operation, each of which provides a different
+type of subspace:
 
 
-* **compress mode**. This is the default mode. Unselected indices are
-  removed to create the returned subspace:
+* **compress mode**. This is the default mode. Unselected locations
+  are removed to create the returned subspace:
 
   .. code-block:: python
      :caption: *Create TODO*
