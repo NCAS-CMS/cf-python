@@ -7,10 +7,11 @@ import copy
 import ctypes.util
 #import cPickle
 import netCDF4
-import psutil
 import warnings
-import cftime
 
+import psutil
+
+import cftime
 
 from numpy import __file__          as _numpy__file__
 from numpy import __version__       as _numpy__version__
@@ -56,6 +57,7 @@ from sys         import executable as _sys_executable
 import urllib.parse
 
 import cfdm
+import cfunits
 
 from .          import __version__, __file__
 from .constants import CONSTANTS, _file_to_fh, _stash2standard_name
@@ -2271,30 +2273,41 @@ def environment(display=True):
     **Examples:**
     
     >>> cf.environment()
-    Platform: Linux-4.4.0-53-generic-x86_64-with-debian-stretch-sid
-    HDF5 library: 1.8.17
-    netcdf library: 4.4.1
-    udunits2: /home/space/anaconda2/lib/libudunits2.so.0
-    python: 2.7.13 /home/space/anaconda2/bin/python
-    netCDF4: 1.2.4 /home/space/anaconda2/lib/python2.7/site-packages/netCDF4/__init__.pyc
-    numpy: 1.11.3 /home/space/anaconda2/lib/python2.7/site-packages/numpy/__init__.pyc
-    psutil: 5.0.1 /home/space/anaconda2/lib/python2.7/site-packages/psutil/__init__.pyc
-    matplotlib: 1.5.1 /home/space/anaconda2/lib/python2.7/site-packages/matplotlib/__init__.pyc
-    ESMF: 7.0.0 /home/space/anaconda2/lib/python2.7/site-packages/ESMF/__init__.pyc
-    cfplot: 2.1.10 /home/space/anaconda2/lib/python2.7/site-packages/cfplot/__init__.pyc
-    cf: 2.0.2 /home/space/cf-python/cf/__init__.pyc
+    Platform: Linux-4.15.0-64-generic-x86_64-with-debian-stretch-sid
+    HDF5 library: 1.10.2
+    netcdf library: 4.6.1
+    udunits2 library: libudunits2.so.0
+    python: 3.7.3 /home/space/anaconda3/bin/python
+    netCDF4: 1.4.2 /home/space/anaconda3/lib/python3.7/site-packages/netCDF4/__init__.py
+    cftime: 1.0.3.4 /home/space/.local/lib/python3.7/site-packages/cftime-1.0.3.4-py3.7-linux-x86_64.egg/cftime/__init__.py
+    numpy: 1.16.2 /home/space/anaconda3/lib/python3.7/site-packages/numpy/__init__.py
+    psutil: 5.6.3 /home/space/anaconda3/lib/python3.7/site-packages/psutil/__init__.py
+    scipy: 1.2.1 /home/space/anaconda3/lib/python3.7/site-packages/scipy/__init__.py
+    matplotlib: 3.1.1 /home/space/anaconda3/lib/python3.7/site-packages/matplotlib/__init__.py
+    ESMF: 7.1.0r /home/space/anaconda3/lib/python3.7/site-packages/ESMF/__init__.py
+    cfdm: 1.7.8 /home/space/anaconda3/lib/python3.7/site-packages/cfdm/__init__.py
+    cfunits: 3.2.2 /home/space/anaconda3/lib/python3.7/site-packages/cfunits/__init__.py
+    cfplot: 3.0.0 /home/space/anaconda3/lib/python3.7/site-packages/cfplot/__init__.py
+    cf: 3.0.1 /home/space/anaconda3/lib/python3.7/site-packages/cf/__init__.py
 
     '''
     out = []
     out.append('Platform: ' + str(platform.platform()))
     out.append('HDF5 library: ' + str(netCDF4. __hdf5libversion__))
     out.append('netcdf library: ' + str(netCDF4.__netcdf4libversion__))
-    out.append('udunits2: ' + str(ctypes.util.find_library('udunits2')))
+    out.append('udunits2 library: ' + str(ctypes.util.find_library('udunits2')))
     out.append('python: ' + str(platform.python_version() + ' ' + str(_sys_executable)))
     out.append('netCDF4: ' + str(netCDF4.__version__) + ' ' + str(_os_path_abspath(netCDF4.__file__)))
     out.append('cftime: ' + str(cftime.__version__) + ' ' + str(_os_path_abspath(cftime.__file__)))
     out.append('numpy: ' + str(_numpy__version__) + ' ' + str(_os_path_abspath(_numpy__file__)))
     out.append('psutil: ' + str(psutil.__version__) + ' ' + str(_os_path_abspath(psutil.__file__)))
+
+    try:
+        import scipy
+    except:
+        out.append('scipy: not available')
+    else:
+        out.append('scipy: ' + str(scipy.__version__) + ' ' + str(_os_path_abspath(scipy.__file__)))
 
     try:
         import matplotlib
@@ -2309,6 +2322,9 @@ def environment(display=True):
         out.append('ESMF: not available')
     else:
         out.append('ESMF: ' + str(ESMF.__version__) + ' ' + str(_os_path_abspath(ESMF.__file__)))
+
+    out.append('cfdm: ' + str(cfdm.__version__) + ' ' + str(_os_path_abspath(cfdm.__file__)))
+    out.append('cfunits: ' + str(cfunits.__version__) + ' ' + str(_os_path_abspath(cfunits.__file__)))
 
     try:
         import cfplot
