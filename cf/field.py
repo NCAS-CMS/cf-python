@@ -8041,11 +8041,11 @@ may be accessed with the `nc_global_attributes`,
     data mask that is applied to the subspace after its initial
     creation, in order to set unselected locations to missing data.
 
-    .. seealso:: `subspace`, `where`
+    .. seealso:: `subspace`, `where`, '__getitem__', '__setitem__'
     
     :Parameters:
         
-        positional arguments: *optional*
+        mode: `str`, *optional*
             There are three modes of operation, each of which provides
             indices for a different type of subspace:
 
@@ -8070,7 +8070,7 @@ may be accessed with the `nc_global_attributes`,
                             data is inserted at unselected locations.
             ==============  ==========================================
     
-        keyword parameters: *optional*
+        kwargs: *optional*
             A keyword name is an identity of a metadata construct, and
             the keyword value provides a condition for inferring
             indices that apply to the dimension (or dimensions)
