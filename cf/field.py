@@ -3429,8 +3429,6 @@ may be accessed with the `nc_global_attributes`,
     
     .. versionadded:: 2.0
     
-    .. seealso:: `DSG` TODO
-    
     **Examples:**
     
     >>> f.featureType = 'trajectoryProfile'
@@ -4090,7 +4088,7 @@ may be accessed with the `nc_global_attributes`,
         return old
 
 
-    def weights(self, weights='auto', scale=False, components=False,
+    def weights(self, weights='auto', scale=None, components=False,
                 methods=False, **kwargs):
         '''Return weights for the data array values.
 
@@ -4114,7 +4112,6 @@ may be accessed with the `nc_global_attributes`,
     
     :Parameters:
     
-    TODO
         weights: *optional*
 
             Specify the weights to be created. There are two distinct
@@ -4123,8 +4120,8 @@ may be accessed with the `nc_global_attributes`,
             always being able to control exactly how the weights are
             created (see the *methods* parameter); **type 2** allows
             particular types of weights to be defined for particular
-            axes and an exception will be raised if it is not possible
-            to the create weights.
+            axes, and an exception will be raised if it is not
+            possible to the create weights.
     
               * **Type 1**: *weights* may be one of:
             
@@ -4149,14 +4146,15 @@ may be accessed with the `nc_global_attributes`,
                                 2. Area cell measures
                                 3. Area calculated from (grid) latitude
                                    and (grid) longitude dimension
-                                   coordinates with bounds
-                                4. Cell sizes of dimension coordinates
-                                   with bounds
+                                   coordinate constructs with bounds
+                                4. Cell sizes of dimension coordinate
+                                   constructs with bounds
                                 5. Equal weights
     
                               and the outer product of these weights
-                              components is returned in a field which is
-                              broadcastable to the orginal field (see the
+                              components is returned in a field
+                              constructs which is broadcastable to the
+                              orginal field construct (see the
                               *components* parameter).
                   ==========  ============================================
     
@@ -4167,29 +4165,26 @@ may be accessed with the `nc_global_attributes`,
                   ============  ==========================================
                   *weights*     Description     
                   ============  ==========================================
-                  ``'area'``    Cell area weights from the field 
-                                construct's area
-                                cell measure construct or, if one doesn't
-                                exist, from (grid) latitude and (grid)
-                                longitude dimension coordinates. Set the
-                                *methods* parameter to find out how the
-                                weights were actually created.
+                  ``'area'``    Cell area weights from the field
+                                construct's area cell measure
+                                construct or, if one doesn't exist,
+                                from (grid) latitude and (grid)
+                                longitude dimension coordinate
+                                constructs. Set the *methods*
+                                parameter to find out how the weights
+                                were actually created.
                   
-                  ``'volume'``  Cell volume weights from the field 
-                                construct's
-                                volume cell measure construct.
+                  ``'volume'``  Cell volume weights from the field
+                                construct's volume cell measure
+                                construct.
                   
-                  items         Weights from the cell sizes of the
-                                dimension coordinate objects that would be
-                                selected by this call of the field 
-                                construct's TODO
-                                `~cf.Field.dims` method: ``f.dims(items,
-                                **kwargs)``. See `cf.Field.dims` for
-                                details. TODO
+                  identity      Weights from the cell sizes of the
+                                dimension coordinate construct with
+                                this identity.
                   
                   `Field`       Take weights from the data array of
-                                another field, which must be broadcastable
-                                to this field.
+                                another field, which must be
+                                broadcastable to this field.
                   ============  ==========================================
      
                 If *weights* is a sequence of any combination of the
@@ -4203,18 +4198,22 @@ may be accessed with the `nc_global_attributes`,
                     3-dimensional weights based on cell areas and
                     linear height: ``f.weights(['area', 'Z'])``.
     
-        scale: `bool`, optional
-            If True then scale the returned weights so that they are
-            less than or equal to 1.
+        scale: number, optional
+            If set to a positive number then scale the weights so that
+            they are less than or equal to that number.
+
+            *Parameter example:*
+               To scale all weights so that they lie between 0 and 1:
+               ``scale=1.0``.
     
         components: `bool`, optional
             If True then a dictionary of orthogonal weights components
             is returned instead of a field. Each key is a tuple of
             integers representing axes positions in the field
-            construct's data array with corresponding values of
-            weights in `Data` objects. The axes of weights match the
-            axes of the field construct's data array in the order
-            given by their dictionary keys.
+            construct's data, with corresponding values of weights in
+            `Data` objects. The axes of weights match the axes of the
+            field construct's data array in the order given by their
+            dictionary keys.
     
         methods: `bool`, optional
             If True, then return a dictionary describing methods used
@@ -4234,38 +4233,40 @@ may be accessed with the `nc_global_attributes`,
     <CF Field: air_temperature(time(1800), latitude(145), longitude(192)) K>
     >>> f.weights()
     <CF Field: long_name:weight(time(1800), latitude(145), longitude(192)) 86400 s.rad>
-    >>> f.weights('auto', scale=True)
+    >>> f.weights('auto', scale=1.0)
     <CF Field: long_name:weight(time(1800), latitude(145), longitude(192)) 1>
     >>> f.weights('auto', components=True)
     {(0,): <CF Data(1800): [1.0, ..., 1.0] d>,
      (1,): <CF Data(145): [5.94949998503e-05, ..., 5.94949998503e-05]>,
      (2,): <CF Data(192): [0.0327249234749, ..., 0.0327249234749] radians>}
-    >>> f.weights('auto', components=True, scale=True)
+    >>> f.weights('auto', components=True, scale=1.0)
     {(0,): <CF Data(1800): [1.0, ..., 1.0]>,
      (1,): <CF Data(145): [0.00272710399807, ..., 0.00272710399807]>,
      (2,): <CF Data(192): [1.0, ..., 1.0]>}
+    >>> f.weights('auto', components=True, scale=2.0)
+    {(0,): <CF Data(1800): [2.0, ..., 2.0]>,
+     (1,): <CF Data(145): [0.00545420799614, ..., 0.00545420799614]>,
+     (2,): <CF Data(192): [2.0, ..., 2.0]>}
     >>> f.weights('auto', methods=True)
     {(0,): 'linear time',
      (1,): 'linear sine latitude',
      (2,): 'linear longitude'}
 
         '''
-#        def _field_of_weights(data, domain=None, axes=None):
         def _scalar_field_of_weights(data):
             '''Return a field of weights with long_name ``'weight'``.
 
-    :Parameters:
+        :Parameters:
+        
+            data: `Data`
+                The weights which comprise the data array of the
+                weights field.
     
-        data: `Data`
-            The weights which comprise the data array of the weights
-            field.
-
-    :Returns:
-
-        `Field`
+        :Returns:
+    
+            `Field`
 
             '''
-#            w = type(self)(data=data, copy=False)
             w = type(self)()
             w.set_data(data, copy=False)            
             w.long_name = 'weight'
@@ -4276,11 +4277,11 @@ may be accessed with the `nc_global_attributes`,
         def _measure_weights(self, measure, comp, weights_axes, auto=False):
             '''Cell measure weights
 
-    :Parameters:
-
-    :Returns:
-
-        `bool`
+        :Parameters:
+    
+        :Returns:
+    
+            `bool`
 
             '''
             m = self.cell_measures.filter_by_measure(measure)
@@ -4331,9 +4332,9 @@ may be accessed with the `nc_global_attributes`,
         #--- End: def
         
         def _linear_weights(self, axis, comp, weights_axes, auto=False):
-            # ------------------------------------------------------------
-            # 1-d linear weights from dimension coordinates
-            # ------------------------------------------------------------
+            '''1-d linear weights from dimension coordinate constructs.
+
+            '''
             da_key = self.domain_axis(axis, key=True, default=None)
             if da_key is None:
                 if auto:
@@ -4363,14 +4364,15 @@ may be accessed with the `nc_global_attributes`,
                         axis))
 
             if not dim.has_bounds():
+                # No bounds
                 if auto:
                     return
                 
                 raise ValueError(
                     "Can't create weights: Can't find linear weights for {!r} axis: No bounds".format(
-                        axis))
-            
-            if dim.has_bounds():
+                        axis))            
+            else: #if dim.has_bounds():
+                # Bounds exist
                 if methods:
                     comp[(da_key,)] = 'linear '+self.constructs.domain_axis_identity(da_key)
                 else: 
@@ -4381,10 +4383,10 @@ may be accessed with the `nc_global_attributes`,
         #--- End: def
             
         def _area_weights_XY(self, comp, weights_axes, auto=False): 
-            # ----------------------------------------------------
-            # Calculate area weights from X and Y dimension
-            # coordinates
-            # ----------------------------------------------------
+            '''Calculate area weights from X and Y dimension coordinate
+        constructs.
+
+            '''
             xdims = dict(self.dimension_coordinates('X'))
             ydims = dict(self.dimension_coordinates('Y'))
 
@@ -4405,9 +4407,11 @@ may be accessed with the `nc_global_attributes`,
                 raise ValueError(
                     "Ambiguous coordinate constructs for calculating area weights")
 
-            if xcoord.Units.equivalent(Units('radians')) and ycoord.Units.equivalent(Units('radians')):
+            if (xcoord.Units.equivalent(Units('radians')) and
+                ycoord.Units.equivalent(Units('radians'))):
                 pass
-            elif xcoord.Units.equivalent(Units('metres')) and ycoord.Units.equivalent(Units('metres')):
+            elif (xcoord.Units.equivalent(Units('metres')) and
+                  ycoord.Units.equivalent(Units('metres'))):
                 pass
             else:
                 if auto:
@@ -4576,6 +4580,30 @@ may be accessed with the `nc_global_attributes`,
                 weights_axes.update(axes)
         #--- End: def
 
+        def _scale(w, scale):
+            '''Scale the weights so that they are <= scale.
+
+            '''
+            scale = Data.asdata(scale).datum()
+            if scale <= 0:
+                raise ValueError("'scale' parameter must be a positive number")
+
+            wmax = w.max()
+            if wmax <= 0:
+                raise ValueError(
+                    "Can't scale when all weights are non-positive. max(weights)={}".format(
+                        wmax))
+
+            wmax = wmax / scale
+            wmax.dtype = float
+            if numpy_can_cast(wmax.dtype, w.dtype):
+                w /= wmax
+            else:
+                w = w / wmax
+
+            return w
+        #--- End: def
+
         if weights is None:
             # --------------------------------------------------------
             # All equal weights
@@ -4609,7 +4637,6 @@ may be accessed with the `nc_global_attributes`,
                 _area_weights_XY(self, comp, weights_axes, auto=True)
 
             # 1-d linear weights from dimension coordinates
-#            for axis in self.dims():
             for dc_key in self.dimension_coordinates:
                 axis = self.get_data_axes(dc_key)[0]
                 _linear_weights(self, axis, comp, weights_axes, auto=True)
@@ -4709,21 +4736,13 @@ may be accessed with the `nc_global_attributes`,
                 if not _measure_weights(self, 'area', comp, weights_axes):
                     _area_weights_XY(self, comp, weights_axes)      
         #--- End: if
- 
-        # ------------------------------------------------------------
-        # Scale the weights so that they are <= 1.0
-        # ------------------------------------------------------------
-        if scale and not methods:
-            # What to do about -ve weights? dch
+        
+        if scale is not None and not methods:
+            # --------------------------------------------------------
+            # Scale the weights so that they are <= scale
+            # --------------------------------------------------------
             for key, w in comp.items(): 
-                wmax = w.data.max()    
-                if wmax > 0:
-                    wmax.dtype = float
-                    if not numpy_can_cast(wmax.dtype, w.dtype):
-                        w = w / wmax
-                    else:
-                        w /= wmax
-                    comp[key] = w
+                comp[key] = _scale(w, scale)
         #--- End: if
 
         if components:
@@ -4761,7 +4780,13 @@ may be accessed with the `nc_global_attributes`,
             a, y = pp.pop(0)
             wdata.outerproduct(y, inplace=True)
             waxes += a
-        
+
+        if scale is not None:
+            # --------------------------------------------------------
+            # Scale the weights so that they are <= scale
+            # --------------------------------------------------------            
+            wdata = _scale(wdata, scale)
+            
         field = self.copy()
         field.del_data()
         field.del_data_axes()
@@ -6210,8 +6235,8 @@ may be accessed with the `nc_global_attributes`,
 
     **Examples:**
 
-    See the on-line documention for further worked examples
-    (TODOile:///home/david/cf-python/docs/dev/tutorial.html#statistical-collapses)
+    See the on-line documention for further worked examples:
+    https://ncas-cms.github.io/cf-python/tutorial.html#statistical-collapses
 
     '''        
         if i:
@@ -6401,7 +6426,7 @@ may be accessed with the `nc_global_attributes`,
                 # ------------------------------------------------------------
                 g_weights = weights
                 if method in _collapse_weighted_methods:
-                    g_weights = f.weights(weights, scale=True, components=True)
+                    g_weights = f.weights(weights, scale=1.0, components=True)
                     if not g_weights:
                         g_weights = None
                 #--- End: if
@@ -6478,15 +6503,15 @@ may be accessed with the `nc_global_attributes`,
             d_kwargs = {}
             if weights is not None:
                 if method in _collapse_weighted_methods:
-                    d_weights = f.weights(weights, scale=True, components=True)
+                    d_weights = f.weights(weights, scale=1.0, components=True)
                     if d_weights:
                         d_kwargs['weights'] = d_weights
                 elif not equals(weights, 'auto'):  # doc this
                     for x in iaxes:
                         if (x,) in d_kwargs:
                             raise ValueError(
-"Can't collapse: Can't weight {!r} collapse method".format(method))
-
+                                "Can't collapse: Can't weight {!r} collapse method".format(
+                                    method))
             #--- End: if
 
             if method in _collapse_ddof_methods:
@@ -6632,7 +6657,7 @@ may be accessed with the `nc_global_attributes`,
         # Return the collapsed field (or the classification array)
         # ------------------------------------------------------------
         return f
-    #--- End: def
+
 
     def _collapse_grouped(self, method, axis, within=None, over=None,
                           within_days=None, within_years=None,
@@ -11771,10 +11796,10 @@ may be accessed with the `nc_global_attributes`,
               because the condition has shape ``(3,)`` which
               broadcasts to the field construct's shape.
     
-            If *condition* is a `Query` object then this implies a
-            condition defined by applying the query to the field
-            construct's data (or a metadata construct's data if the
-            *construct* parameter is set).
+            If, however, *condition* is a `Query` object then this
+            implies a condition defined by applying the query to the
+            field construct's data (or a metadata construct's data if
+            the *construct* parameter is set).
     
             *Parameter example:*
               ``f.where(cf.lt(0), x=-999)`` will set all data values

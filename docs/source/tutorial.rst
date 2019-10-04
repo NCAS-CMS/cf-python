@@ -5107,7 +5107,7 @@ Weights are either derived from the field construct's metadata (such
 as cell sizes), or may be provided explicitly in the form of other
 field constructs containing data of weights values. In either case,
 the weights actually used are those derived by the `~Field.weights`
-method of the field construct with the same *weights* keyword
+method of the field construct called with the same *weights* keyword
 value. Collapsed axes that are not identified by the *weights* keyword
 are unweighted during the collapse operation.
 
