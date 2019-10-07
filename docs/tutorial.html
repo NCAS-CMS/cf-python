@@ -1392,7 +1392,7 @@ axis.</em></span><a class="headerlink" href="#id126" title="Permalink to this co
 <div class="literal-block-wrapper docutils container" id="id127">
 <div class="code-block-caption"><span class="caption-text"><em>Create new field constructs with a variety of indexing
 techniques.</em></span><a class="headerlink" href="#id127" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span>
 <span class="go">&lt;CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">]</span>
 <span class="go">&lt;CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(1)) K&gt;</span>
@@ -1404,6 +1404,8 @@ techniques.</em></span><a class="headerlink" href="#id127" title="Permalink to t
 <span class="go">&lt;CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(3), grid_longitude(2)) K&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="o">-</span><span class="mi">2</span><span class="p">]</span>
 <span class="go">&lt;CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(1)) K&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">[</span><span class="bp">True</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="bp">False</span><span class="p">]]</span>
+<span class="go">&lt;CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(4)) K&gt;</span>
 </pre></div>
 </div>
 </div>
@@ -2764,12 +2766,12 @@ subspaces any metadata constructs of the field construct
 (e.g. coordinate metadata constructs) which span any of the domain
 axis constructs that are affected. The new field construct is created
 with the same properties as the original field construct.</p>
-<p>Subspacing by metadata uses the <a class="reference internal" href="method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a> method of the field
+<p>Subspacing by metadata uses the <a class="reference internal" href="attribute/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a> method of the field
 construct to select metadata constructs and specify conditions on
 their data. Indices for subspacing are then automatically inferred
 from where the conditions are met.</p>
 <p>Metadata constructs and the conditions on their data are defined by
-keyword parameters to the <a class="reference internal" href="method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a> method. A keyword name is
+keyword parameters to the <a class="reference internal" href="attribute/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a> method. A keyword name is
 <a class="reference internal" href="#metadata-construct-properties"><span class="std std-ref">an identity</span></a> of a metadata
 construct, and the keyword value provides a condition for inferring
 indices that apply to the dimension (or dimensions) spanned by the
@@ -2805,7 +2807,7 @@ remaining unchanged.</em></span><a class="headerlink" href="#id187" title="Perma
 <p>Any domain axes that have not been identified remain
 unchanged.</p>
 <p>Multiple domain axes may be subspaced simultaneously, and it doesn’t
-matter which order they are specified in the <a class="reference internal" href="method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a> call.</p>
+matter which order they are specified in the <a class="reference internal" href="attribute/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a> call.</p>
 <div class="literal-block-wrapper docutils container" id="id188">
 <div class="code-block-caption"><span class="caption-text"><em>Create a new field construct whose domain spans only
 112.5 degrees east and has latitude greater than -60
@@ -2852,8 +2854,8 @@ north.</em></span><a class="headerlink" href="#id189" title="Permalink to this c
 <p>Subspace criteria may be provided for size 1 domain axes that are not
 spanned by the field construct’s data.</p>
 <p>Explicit indices may also be assigned to a domain axis identified by a
-metadata construct, with either a Python <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a> object or a sequence
-of integers.</p>
+metadata construct, with either a Python <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a> object, or a sequence
+of integers or booleans.</p>
 <div class="literal-block-wrapper docutils container" id="id190">
 <div class="code-block-caption"><span class="caption-text"><em>Create a new field construct whose domain spans the 2nd,
 3rd and 5th elements of the ‘X’ axis, and reverses the

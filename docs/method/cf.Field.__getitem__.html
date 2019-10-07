@@ -93,13 +93,28 @@
 <code class="descclassname">Field.</code><code class="descname">__getitem__</code><span class="sig-paren">(</span><em>indices</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/field.py#L260"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.__getitem__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a subspace of the field construct defined by indices.</p>
 <p>f.__getitem__(indices) &lt;==&gt; f[indices]</p>
-<p>Subspacing by axis indices uses an extended Python slicing syntax,
-which is similar to <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/arrays.indexing.html#arrays-indexing" title="(in NumPy v1.17)"><span class="xref std std-ref">numpy array indexing</span></a>. There are extensions to the numpy
-indexing functionality:</p>
-<ul>
-<li><p class="first">Size 1 axes are never removed.</p>
-<p>An integer index <em>i</em> takes the <em>i</em>-th element but does not
-reduce the rank of the output array by one:</p>
+<p>Subspacing by indexing uses rules that are very similar to the
+numpy indexing rules, the only differences being:</p>
+<ul class="simple">
+<li>An integer index i specified for a dimension reduces the size of
+this dimension to unity, taking just the i-th element, but keeps
+the dimension itself, so that the rank of the array is not
+reduced.</li>
+<li>When two or more dimensions’ indices are sequences of integers
+then these indices work independently along each dimension
+(similar to the way vector subscripts work in Fortran). This is
+the same indexing behaviour as on a Variable object of the
+netCDF4 package.</li>
+<li>For a dimension that is cyclic, a range of indices specified by
+a <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a> that spans the edges of the data (such as <code class="docutils literal notranslate"><span class="pre">-2:3</span></code> or
+<code class="docutils literal notranslate"><span class="pre">3:-2:-1</span></code>) is assumed to “wrap” around, rather then producing
+a null result.</li>
+</ul>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="cf.Field.indices.html#cf.Field.indices" title="cf.Field.indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">indices</span></code></a>, <a class="reference internal" href="cf.Field.squeeze.html#cf.Field.squeeze" title="cf.Field.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a>, <a class="reference internal" href="../attribute/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a>, <a class="reference internal" href="cf.Field.where.html#cf.Field.where" title="cf.Field.where"><code class="xref py py-obj docutils literal notranslate"><span class="pre">where</span></code></a></p>
+</div>
+<p><strong>Examples:</strong></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">shape</span>
 <span class="go">(12, 73, 96)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
@@ -108,56 +123,22 @@ reduce the rank of the output array by one:</p>
 <span class="go">(1, 5, 2)</span>
 </pre></div>
 </div>
-</li>
-<li><p class="first">When more than one axis’s slice is a 1-d boolean sequence or 1-d
-sequence of integers, then these indices work independently
-along each axis (similar to the way vector subscripts work in
-Fortran), rather than by their elements:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">shape</span>
 <span class="go">(12, 73, 96)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">[:,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">72</span><span class="p">],</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]</span><span class="o">.</span><span class="n">shape</span>
 <span class="go">(12, 2, 3)</span>
 </pre></div>
 </div>
-<p>Note that the indices of the last example would raise an error
-when given to a numpy array.</p>
-</li>
-<li><p class="first">Boolean indices may be any object which exposes the numpy array
-interface, such as the field construct’s coordinate objects:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">[:,</span> <span class="n">f</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
-<span class="go">(12, 36, 96)</span>
-</pre></div>
-</div>
-</li>
-</ul>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">shape</span>
 <span class="go">(12, 73, 96)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">[</span><span class="o">...</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
 <span class="go">(12, 73, 96)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">[</span><span class="nb">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">12</span><span class="p">),</span> <span class="p">:,</span> <span class="mi">10</span><span class="p">:</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
-<span class="go">(12, 73, 5)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">coord</span><span class="p">(</span><span class="s1">&#39;longitude&#39;</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">180</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
-<span class="go">(12, 73, 48)</span>
-</pre></div>
-</div>
-<div class="versionadded">
-<p><span class="versionmodified">New in version 2.0.</span></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><a class="reference internal" href="../classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a></dt>
-<dd><p class="first last">The subspaced field construct.</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples:</strong></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:</span><span class="mi">6</span><span class="p">,</span> <span class="mi">9</span><span class="p">:</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]</span>
+<span class="go">(12, 73, 5)    </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">[[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">]]</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(9, 64, 128)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">:</span><span class="mi">6</span><span class="p">,</span> <span class="mi">9</span><span class="p">:</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(6, 4, 3)</span>
 </pre></div>
 </div>
 </dd></dl>

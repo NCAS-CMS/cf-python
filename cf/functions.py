@@ -26,6 +26,7 @@ from numpy import ndim              as _numpy_ndim
 from numpy import number            as _numpy_number
 from numpy import shape             as _numpy_shape
 from numpy import sign              as _numpy_sign
+from numpy import size              as _numpy_size
 from numpy import take              as _numpy_take
 from numpy import tile              as _numpy_tile
 from numpy import where             as _numpy_where
@@ -1174,7 +1175,8 @@ def parse_indices(shape, indices, cyclic=False, reverse=False, envelope=False):
                     (start < stop and step < 0) or
                     (start > stop and step > 0)):
                     raise IndexError(
-"Invalid indices {} for array with shape {}".format(parsed_indices, shape))
+                        "Invalid indices dimension with size {}: {}".format(
+                            size, index))
                 if step < 0 and stop < 0:
                     stop = None
                 index = slice(start, stop, step)
@@ -1187,18 +1189,18 @@ def parse_indices(shape, indices, cyclic=False, reverse=False, envelope=False):
             is_slice = True
         else:
             convert2positve = True
-            if getattr(getattr(index, 'dtype', None), 'kind', None) == 'b':
+            if (getattr(getattr(index, 'dtype', None), 'kind', None) == 'b' or
+                isinstance(index[0], bool)):
                 # Convert booleans to non-negative integers. We're
                 # assuming that anything with a dtype attribute also
                 # has a size attribute.
-                if index.size != size:
+                if _numpy_size(index) != size:
                     raise IndexError(
-                        "Invalid indices %s for array with shape %s" %
-                        (parsed_indices, shape))
+                        "Incorrect number ({}) of boolean indices for dimension with size {}: {}".format(
+                            _numpy_size(index), size, index))
 
                 index = _numpy_where(index)[0]
                 convert2positve = False
-            #--- End: if
 
             if not _numpy_ndim(index):
                 if index < 0:
@@ -1239,7 +1241,8 @@ def parse_indices(shape, indices, cyclic=False, reverse=False, envelope=False):
                         if ((step > 0 and (steps <= 0).any()) or
                             (step < 0 and (steps >= 0).any()) or
                             not step):
-                            raise ValueError("Bad index (not strictly monotonic): %s" % index)
+                            raise ValueError(
+                                "Bad index (not strictly monotonic): {}".format(index))
                             
                         if reverse and step < 0:
                             # The array is strictly monotoniticall
@@ -1250,7 +1253,6 @@ def parse_indices(shape, indices, cyclic=False, reverse=False, envelope=False):
                             index = index[::-1]
                             flip.append(i)
                             step = -step
-                        #--- End: if
 
                         if envelope:
                             # Create an envelope slice for a parsed
@@ -1269,7 +1271,7 @@ def parse_indices(shape, indices, cyclic=False, reverse=False, envelope=False):
                             is_slice = True
                 else:
                     raise IndexError(
-                        "Invalid indices {0} for array with shape {1}".format(
+                        "Invalid indices {} for array with shape {}".format(
                             parsed_indices, shape))                
             #--- End: if
         #--- End: if
@@ -1328,12 +1330,16 @@ def parse_indices(shape, indices, cyclic=False, reverse=False, envelope=False):
         return parsed_indices
 
     out = [parsed_indices]
+
     if cyclic:
         out.append(roll)
+
     if reverse:
         out.append(flip)
+
     if envelope:
         out.append(compressed_indices)
+
     return out
 
 

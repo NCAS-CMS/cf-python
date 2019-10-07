@@ -1220,7 +1220,7 @@ the only differences being:
    :caption: *Create new field constructs with a variety of indexing
              techniques.*
 
-   >>> q
+   >>> t
    <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>
    >>> t[:, :, 1]
    <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(1)) K>
@@ -1232,6 +1232,8 @@ the only differences being:
    <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(3), grid_longitude(2)) K>
    >>> t[0, :, -2]
    <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(1)) K>
+   >>> t[..., [True, False, True, True, False, False, True, False, False]]
+   <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(4)) K>
 
 
 .. code-block:: python
@@ -2701,8 +2703,8 @@ Subspace criteria may be provided for size 1 domain axes that are not
 spanned by the field construct's data.
 
 Explicit indices may also be assigned to a domain axis identified by a
-metadata construct, with either a Python `slice` object or a sequence
-of integers.
+metadata construct, with either a Python `slice` object, or a sequence
+of integers or booleans.
 
 .. code-block:: python
    :caption: *Create a new field construct whose domain spans the 2nd,
