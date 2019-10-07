@@ -8029,7 +8029,7 @@ may be accessed with the `nc_global_attributes`,
     data mask that is applied to the subspace after its initial
     creation, in order to set unselected locations to missing data.
 
-    .. seealso:: `subspace`, `where`, '__getitem__', '__setitem__'
+    .. seealso:: `subspace`, `where`, `__getitem__`, `__setitem__`
     
     :Parameters:
         
