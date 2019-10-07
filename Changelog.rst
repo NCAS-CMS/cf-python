@@ -32,8 +32,23 @@ version 3.0.0 (*first Python 3 version*)
   scripts be checked when running with Python 3 versions of the cf
   library.
 
-version 2.3.5 (*last Python 2 version*)
----------------------------------------
+version 2.3.8 (*latest Python 2 version*)
+-----------------------------------------
+----
+
+**2019-10-07**
+
+* In `cf.write`, can set ``single=False`` to mean ``double=True``, and
+  vice versa.
+* Fixed bug in `cf.aggregate` - removed overly strict test on
+  dimension coordinate bounds.
+* Fixed bug in `cf.read` that set the climatology attribute to True
+  when there are no bounds.
+* Fixed bug in `cf.write` when writing missing values (set_fill was
+  off, now on)
+
+version 2.3.5
+-------------
 ----
 
 **2019-04-04**
