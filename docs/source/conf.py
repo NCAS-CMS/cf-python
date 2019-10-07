@@ -18,6 +18,10 @@ import os
 import re
 import cf
 
+import cfdm
+
+cfdm_version = 'v'+cfdm.__version__
+
 def _read(fname):
     """Returns content of a file.
 
@@ -460,18 +464,23 @@ def linkcode_resolve(domain, info):
     # NOTE: You need to touch the .rst files to get the change in
     # ----------------------------------------------------------------
     if online_source_code:
-#        commit = '11dddff56c31c24d86c3b83995e503989f90911b'
-#        commit = 'master'
-        # version = 'v3.0.0'
-        version = 'v'+release
-        url = "https://github.com/NCAS-CMS/cf-python/blob/{0}/cf/{1}{2}".format(
-            version, fn, linespec)
+        if 'cfdm/cfdm/' in fn:
+            # Point to on-line cfdm
+            # code. E.g. https://github.com/NCAS-CMS/cfdm/blob/v1.7.8/cfdm/field.py#L619
+            fn = re.sub('^.*(cfdm/.*)', '\\1', fn)
+            url = "https://github.com/NCAS-CMS/cfdm/blob/{0}/{1}{2}".format(
+                cfdm_version, fn, linespec)
+        else:
+            # Point to on-line cf
+            # code. E.g. https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/data/data.py#L4292
+            version = 'v'+release
+            url = "https://github.com/NCAS-CMS/cf-python/blob/{0}/cf/{1}{2}".format(
+                version, fn, linespec)
+            
         print(url)
         return url
     else:
-        # Point to local source code relative to this directory
+        # Point to local source code relative to this directory. 
         return "../../../cf/{0}{1}".format(fn, linespec)
 
-                                                                      
-#https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/../../cfdm/cfdm/core/abstract/container.py#L43
-#https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/data/data.py#L4292                                                                           
+                     
