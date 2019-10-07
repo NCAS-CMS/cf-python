@@ -190,16 +190,16 @@ class read_writeTest(unittest.TestCase):
             for fmt in ('NETCDF4',
                         'NETCDF4_CLASSIC',
                         'CFA4'):
-                for no_shuffle in (True, False):
+                for shuffle in (True, False):
                     for compress in (4,): #range(10):
                         cf.write(f, tmpfile, fmt=fmt,
                                  compress=compress,
-                                 no_shuffle=no_shuffle)
+                                 shuffle=shuffle)
                         g = cf.read(tmpfile)[0]
                         self.assertTrue(
                             f.equals(g, verbose=True),
                             'Bad read/write with lossless compression: {0}, {1}, {2}'.format(
-                                fmt, compress, no_shuffle))
+                                fmt, compress, shuffle))
         #--- End: for
         cf.CHUNKSIZE(self.original_chunksize) 
 
