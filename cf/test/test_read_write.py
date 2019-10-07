@@ -4,13 +4,16 @@ import os
 import unittest
 import atexit
 import inspect
+import subprocess
 
 import numpy
 
 import cf
 
-tmpfile  = tempfile.mktemp('.cf-python_test')
-tmpfiles = [tmpfile]
+tmpfile   = tempfile.mktemp('.cf-python_test')
+tmpfileh  = tempfile.mktemp('.cf-python_test')
+tmpfilec  = tempfile.mktemp('.cf-python_test')
+tmpfiles = [tmpfile, tmpfileh, tmpfilec]
 def _remove_tmpfiles():
     '''TODO
     '''
@@ -34,7 +37,7 @@ class read_writeTest(unittest.TestCase):
 #    test_only = ['test_write_reference_datetime']
 #    test_only = ['test_read_write_unlimited']
 #    test_only = ['test_read_write_format']
-#    test_only = ['test_write_datatype']
+#    test_only = ['test_read_CDL']
 #    test_only = ['test_read_directory']
 #    test_only = ['test_read_write_netCDF4_compress_shuffle']
 
@@ -120,7 +123,7 @@ class read_writeTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        # Test field keyword of cfdm.read
+        # Test field keyword of cf.read
         filename = self.filename
         
         f = cf.read(filename)
@@ -293,6 +296,31 @@ class read_writeTest(unittest.TestCase):
         self.assertTrue(p.equals(p0, verbose=True))
         
 
+    def test_read_CDL(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        subprocess.run(' '.join(['ncdump', self.filename, '>', tmpfile]),
+                       shell=True, check=True)
+        subprocess.run(' '.join(['ncdump', '-h', self.filename, '>', tmpfileh]),
+                                shell=True, check=True)
+        subprocess.run(' '.join(['ncdump', '-c', self.filename, '>', tmpfilec]),
+                       shell=True, check=True)
+
+        f0 = cf.read(self.filename)[0]
+        f = cf.read(tmpfile)[0]
+        h = cf.read(tmpfileh)[0]
+        c = cf.read(tmpfilec)[0]
+
+        self.assertTrue(f0.equals(f, verbose=True))
+
+        self.assertTrue(f.construct('grid_latitude').equals(c.construct('grid_latitude'), verbose=True))
+        self.assertTrue(f0.construct('grid_latitude').equals(c.construct('grid_latitude'), verbose=True))
+
+        with self.assertRaises(Exception):
+            x = cf.read('test_read_write.py')
+            
+        
 #--- End: class
 
 if __name__ == "__main__":

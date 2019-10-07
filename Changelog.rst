@@ -8,6 +8,7 @@ version 3.0.2
   that call `cf.Data.func`, such as `cf.Data.tan` and `cf.Field.tan`.
 * Fixed "relaxed units" behaviour in `cf.aggregate` and field
   construct arithmetic.
+* Now reads CDL files (https://github.com/NCAS-CMS/cf-python/issues/1)
 
 version 3.0.1
 -------------

@@ -31,14 +31,53 @@ def read(files, external=None, verbose=False, warnings=False,
          extra=None, recursive=False, followlinks=False, um=None,
          chunk=True, field=None, height_at_top_of_model=None,
          select_options=None, follow_symlinks=False):
-    '''Read field constructs from netCDF, PP or UM fields files.
+    '''Read field constructs from netCDF, CDL, PP or UM fields files.
 
-    Files may be on disk or on an OPeNDAP server.
+    NetCDF files may be on disk or on an OPeNDAP server.
     
-    Any amount of any combination of CF-netCDF and CFA-netCDF files
-    (or URLs if DAP access is enabled), Met Office (UK) PP files and
-    Met Office (UK) fields files format files may be read.
+    Any amount of files of any combination of file types may be read.
+
+    **NetCDF unlimited dimensions**
+
+    Domain axis constructs that correspond to NetCDF unlimited
+    dimensions may be accessed with the
+    `~cf.DomainAxis.nc_is_unlimited` and
+    `~cf.DomainAxis.nc_set_unlimited` methods of a domain axis
+    construct.
+
+    **CF-compliance**
     
+    If the dataset is partially CF-compliant to the extent that it is
+    not possible to unambiguously map an element of the netCDF dataset
+    to an element of the CF data model, then a field construct is
+    still returned, but may be incomplete. This is so that datasets
+    which are partially conformant may nonetheless be modified in
+    memory and written to new datasets.
+
+    Such "structural" non-compliance would occur, for example, if the
+    "coordinates" attribute of a CF-netCDF data variable refers to
+    another variable that does not exist, or refers to a variable that
+    spans a netCDF dimension that does not apply to the data
+    variable. Other types of non-compliance are not checked, such
+    whether or not controlled vocabularies have been adhered to. The
+    structural compliance of the dataset may be checked with the
+    `~cf.Field.dataset_compliance` method of the field construct, as
+    well as optionally displayed when the dataset is read by setting
+    the warnings parameter.
+
+    **CDL files**
+
+    A file is considered to be a CDL representation of a netCDF
+    dataset if it is a text file that starts with the seven characters
+    "netcdf " (six letters followed by a space). It is converted to a
+    temporary netCDF4 file using the external ``ncgen`` command, and
+    the temporary file persists until the end of the Python session,
+    at which time it is automatically deleted. The CDL file may omit
+    the data array values (as would be the case, for example, if the
+    file was created with the ``-h`` or ``-c`` option to ``ncdump``),
+    in which case the the relevant constructs in memory will be
+    created with data containing missing values.
+
     **PP and UM fields files**
 
     32-bit and 64-bit PP and UM fields files of any endian-ness can be
@@ -58,8 +97,18 @@ def read(files, external=None, verbose=False, warnings=False,
     available to field constructs derived from UM fields files or PP
     files.
 
+    **Performance**
+    
+    Descriptive properties are always read into memory, but lazy
+    loading is employed for all data arrays, which means that no data
+    is read into memory until the data is required for inspection or
+    to modify the array contents. This maximises the number of field
+    constructs that may be read within a session, and makes the read
+    operation fast.
+
     .. seealso:: `cf.aggregate`, `cf.load_stash2standard_name`,
-                 `cf.write`
+                 `cf.write`, `cf.Field.convert`,
+                 `cf.Field.dataset_compliance`
     
     :Parameters:
     
@@ -184,9 +233,9 @@ def read(files, external=None, verbose=False, warnings=False,
         fmt: `str`, optional
             Only read files of the given format, ignoring all other
             files. Valid formats are ``'NETCDF'`` for CF-netCDF files,
-            ``'CFA'`` for CFA-netCDF files, and ``'UM'`` for PP or UM
-            fields files. By default files of any of these formats are
-            read.
+            ``'CFA'`` for CFA-netCDF files, ``'UM'`` for PP or UM
+            fields files, and ``'CDL'`` for CDL text files. By default
+            files of any of these formats are read.
     
         aggregate: `bool` or `dict`, optional
             If True (the default) or a dictionary (possibly empty)
@@ -630,12 +679,34 @@ def _read_a_file(filename, aggregate=True, aggregate_options={},
     # ----------------------------------------------------------------
     # Still here? Read the file into fields.
     # ----------------------------------------------------------------
-    if ftype == 'netCDF' and (selected_fmt in (None, 'NETCDF', 'CFA')):
+    cdl = False
+    if ftype == 'CDL':
+        # Create a temporary netCDF file from input CDL
+        cdl = True
+        cdl_filename = filename
+        filename = netcdf.cdl_to_netcdf(filename)
+        ftype = 'netCDF'
+        extra_read_vars['fmt'] = 'NETCDF'
+
+        if not netcdf.is_netcdf_file(filename):
+            if ignore_read_error:
+                if verbose:
+                    print("WARNING: Can't determine format of file {} generated from CDL file {}".format(
+                        filename, cdl_filename)) # pragma: no cover
+                    
+                return FieldList()
+            else:
+                raise IOError(
+                    "Can't determine format of file {} generated from CDL file {}".format(
+                        filename, cdl_filename))            
+    #--- End: if
+    
+    if ftype == 'netCDF' and extra_read_vars['fmt'] in (None, 'NETCDF', 'CFA'):
         fields = netcdf.read(filename, external=external, extra=extra,
                              verbose=verbose, warnings=warnings,
                              extra_read_vars=extra_read_vars)
         
-    elif ftype == 'UM' and (selected_fmt in (None, 'UM')):
+    elif ftype == 'UM' and extra_read_vars['fmt'] in (None, 'UM'):
         fields = UM.read(filename, um_version=umversion,
                          verbose=verbose, set_standard_name=True,
                          height_at_top_of_model=height_at_top_of_model,
@@ -674,11 +745,13 @@ def file_type(filename):
     :Returns:
     
         `str`
-            The format type of the file.
+            The format type of the file. One of ``'netCDF'``, ``'UM'``
+            or ``'CDL'``.
     
     **Examples:**
     
-    >>> ftype = file_type(filename)
+    >>> file_type(filename)
+    'netCDF'
 
     '''
     # ----------------------------------------------------------------
@@ -693,5 +766,11 @@ def file_type(filename):
     if UM.is_um_file(filename):
         return 'UM'
 
+    # ----------------------------------------------------------------
+    # CDL
+    # ----------------------------------------------------------------
+    if netcdf.is_cdl_file(filename):
+        return 'CDL'
+  
     # Still here?
     raise IOError("Can't determine format of file {}".format(filename))
