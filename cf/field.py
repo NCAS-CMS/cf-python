@@ -8038,7 +8038,7 @@ may be accessed with the `nc_global_attributes`,
             indices for a different type of subspace:
 
             ==============  ==========================================
-            *argument*      Description
+            *mode*          Description
             ==============  ==========================================
             ``'compress'``  This is the default mode. Unselected
                             locations are removed to create the
