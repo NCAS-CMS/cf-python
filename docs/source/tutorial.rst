@@ -3225,8 +3225,20 @@ of attributes) of an object.
 Condition constructors
 ^^^^^^^^^^^^^^^^^^^^^^
 
-For convenience, many commonly used conditions can be created with the
-following `cf.Query` instance constructors:
+For convenience, many commonly used conditions can be created with 
+`cf.Query` instance constructors.
+
+.. code-block:: python
+   :caption: *A example of a constructor (for a cell contaiing a
+             value) and its equivalent construction from construtor
+             cf.Query instances.*
+
+   >>> cf.contains(4)
+   <CF Query: [lower_bounds(le 4) & upper_bounds(ge 4)]>
+   >>> cf.Query('lt', 4, attr='lower_bounds') &  cf.Query('ge', 4, attr='upper_bounds')
+   <CF Query: [lower_bounds(lt 4) & upper_bounds(ge 4)]>
+
+The following `cf.Query` constructors are available:
 
 =============  ======================================================================
 *General conditions*
@@ -3291,6 +3303,8 @@ Constructor    Description
    <CF Query: (ge 2000-03-23 00:00:00)>
    >>> cf.year(1999)
    <CF Query: year(eq 1999)>
+   >>> cf.month(cf.wi(6, 8))
+   <CF Query: month(wi [6, 8])>
    >>> cf.jja()
    <CF Query: month(wi (6, 8))>
    >>> cf.contains(4)

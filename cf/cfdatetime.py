@@ -314,7 +314,12 @@ def st2dt(array, units_in=None, dummy0=None, dummy1=None):
 #    if date_string.count('-') != 2:
 #        raise ValueError("A string must contain a year, a month and a day")
 #
-#    year,month,day,hour,minute,second,utc_offset = cftime._parse_date(date_string)
+#    _ = cftime._parse_date(date_string)
+#    if len(_) == 7:
+#        year, month, day, hour, minute, second, utc_offset = _
+#    else:
+#        year, month, day, hour, minute, second, microsecond, utc_offset = _
+#
 #    if utc_offset:
 #        raise ValueError("Can't specify a time offset from UTC")
 #            
@@ -340,12 +345,17 @@ def st2datetime(date_string, calendar=None):
         raise ValueError(
             "Input date-time string must contain at least a year, a month and a day")
 
-    year,month,day,hour,minute,second,utc_offset = cftime._parse_date(date_string)
+    _ = cftime._parse_date(date_string)
+    if len(_) == 7:
+        year, month, day, hour, minute, second, utc_offset = _
+    else:
+        year, month, day, hour, minute, second, microsecond, utc_offset = _
+        
     if utc_offset:
         raise ValueError("Can't specify a time offset from UTC")
 
     #    return Datetime(year, month, day, hour, minute, second)
-    return dt(year, month, day, hour, minute, second, calendar=calendar)
+    return dt(year, month, day, hour, minute, second, microsecond, calendar=calendar)
 
 
 def st2elements(date_string):
@@ -364,11 +374,16 @@ def st2elements(date_string):
         raise ValueError(
             "Input date-time string must contain at least a year, a month and a day")
 
-    year,month,day,hour,minute,second,utc_offset = cftime._parse_date(date_string)
+    _ = cftime._parse_date(date_string)
+    if len(_) == 7:
+        year, month, day, hour, minute, second, utc_offset = _
+    else:
+        year, month, day, hour, minute, second, microsecond, utc_offset = _
+        
     if utc_offset:
         raise ValueError("Can't specify a time offset from UTC")
 
-    return (year, month, day, hour, minute, int(second), round((second % 1 )* 1e6))
+    return (year, month, day, hour, minute, second, microsecond) #round((second % 1 )* 1e6))
 
 
 #array_st2Datetime = numpy_vectorize(st2Datetime, otypes=[object])

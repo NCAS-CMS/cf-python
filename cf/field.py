@@ -228,34 +228,31 @@ may be accessed with the `nc_global_attributes`,
                  _use_data=True):
         '''**Initialization**
 
-:Parameters:
-
-    properties: `dict`, optional
-        Set descriptive properties. The dictionary keys are
-        property names, with corresponding values. Ignored if the
-        *source* parameter is set.
-
-        *Parameter example:*
-          ``properties={'standard_name': 'air_temperature'}``
-        
-        Properties may also be set after initialisation with the
-        `set_properties` and `set_property` methods.
-
-    source: optional
-        Initialize the properties, data and metadata constructs
-        from those of *source*.
-        
-    copy: `bool`, optional
-        If False then do not deep copy input parameters prior to
-        initialization. By default arguments are deep copied.
+    :Parameters:
+    
+        properties: `dict`, optional
+            Set descriptive properties. The dictionary keys are
+            property names, with corresponding values. Ignored if the
+            *source* parameter is set.
+    
+            *Parameter example:*
+              ``properties={'standard_name': 'air_temperature'}``
+            
+            Properties may also be set after initialisation with the
+            `set_properties` and `set_property` methods.
+    
+        source: optional
+            Initialize the properties, data and metadata constructs
+            from those of *source*.
+            
+        copy: `bool`, optional
+            If False then do not deep copy input parameters prior to
+            initialization. By default arguments are deep copied.
 
         '''
         super().__init__(properties=properties, source=source,
                          copy=copy, _use_data=_use_data)
         
-#        if auto_cyclic and source is None:
-#            self.autocyclic()
-
 
     def __getitem__(self, indices):
         '''Return a subspace of the field construct defined by indices.
@@ -5060,7 +5057,6 @@ may be accessed with the `nc_global_attributes`,
         ref.coordinate_conversion.set_domain_ancillaries(dakeys)
 
         return self.set_construct(ref, key=key, copy=False)
-    #--- End: def
 
     
     def collapse(self, method, axes=None, squeeze=False, mtol=1,
@@ -9688,59 +9684,105 @@ may be accessed with the `nc_global_attributes`,
         return f
 
 
-#    def argmax(self, axes=None, **kwargs):
-#        '''DCH
-#
-#.. seealso:: `argmin`, `where`
-#
-#:Parameters:
-#
-#:Returns:
-#
-#    `Field`
-#        TODO
-#
-#**Examples:**
-#
-#>>> g = f.argmax('T')
-#
-#        '''
-#        if axes is None and not kwargs:
-#            if self.ndim == 1:
-#                pass
-#            elif not self.ndim:
-#                return
-#
-#        else:
-#            axis = self.axis(axes, key=True, **kwargs)
-#            if axis is None:
-#                raise ValueError("Can't identify a unique axis")
-#            elif self.axis_size(axis) != 1:
-#                raise ValueError(
-#"Can't insert an axis of size {0}: {0!r}".format(self.axis_size(axis), axis))
-#            elif axis in self.get_data_axes():
-#                raise ValueError(
-#                    "Can't insert a duplicate axis: %r" % axis)
-#        #--- End: if
-#
-#        f = self.copy(_omit_Data=True)
-#
-#        f.data = self.data.argmax(iaxis)
-#
-#        f.remove_axes(axis)
-#
-#        standard_name = f.get_property('standard_name', None)
-#        long_name = f.get_property('long_name', standard_name)
-#        
-#        if standard_name is not None:
-#            del f.standard_name
-#
-#        f.long_name = 'Index of first maximum'
-#        if long_name is not None:
-#            f.long_name += ' '+long_name
-#
-#        return f
-#    #--- End: def
+    def argmax(self, axis=None):
+        '''Return the indices of the maximum values along an axis.
+
+    If no axis is specified then the returned index locates the
+    maximum of the whole data.
+
+    .. seealso:: `argmin`, `where`
+    
+    :Parameters:
+    
+    :Returns:
+    
+        `Field`
+            TODO
+    
+    **Examples:**
+    
+    >>> g = f.argmax('T')
+
+        '''
+        print('not ready')
+        return
+
+        if axis is not None:
+            axis_key = self.domain_axis(axis, key=True,
+                                        default=ValueError("TODO"))
+            axis = self.get_data_axes.index(axis_key)
+            
+        indices = self.data.argmax(axis, unravel=True)
+
+        if axis is None:
+            return self[indices]
+
+        out = self.subspace(**{axis_key: [0]})
+        out.squeeze(axis_key, inplace=True)
+        
+        for i in indices.ndindex():
+            out.data[i] = org.data[indices[i].datum()]            
+            
+        org = self.construct[axis_key] # TODO also for cell measure and other 1-d constructs
+        
+        aux = AuxiliaryCoordinate()
+        aux.set_properties(org.properties)
+
+        org_data = org.get_data()
+        data = Data.empty(indices.shape, dtype=org.dtype)        
+        for x in indices.ndindex():
+            data[x] = org_data[indices[x]]
+
+        aux.set_data(data, copy=False)
+        
+        if org.has_bounds():
+            org_bounds_data = org.get_bounds_data()
+            bounds = Data.empty(indices.shape + (2,), dtype=org_bounds.dtype)        
+            for x in indices.ndindex():
+                bounds[x] = org_bounds_data[indices[x]]
+        
+            aux.set_bounds(Bounds(data=data, copy=False), copy=False)
+            
+        out.set_construct(aux, axes=out.get_data_axes(), key=axis_key, copy=False)
+        
+        return out
+    
+        
+        if axes is None and not kwargs:
+            if self.ndim == 1:
+                pass
+            elif not self.ndim:
+                return
+
+        else:
+            axis = self.axis(axes, key=True, **kwargs)
+            if axis is None:
+                raise ValueError("Can't identify a unique axis")
+            elif self.axis_size(axis) != 1:
+                raise ValueError(
+                    "Can't insert an axis of size {0}: {0!r}".format(self.axis_size(axis), axis))
+            elif axis in self.get_data_axes():
+                raise ValueError(
+                    "Can't insert a duplicate axis: %r" % axis)
+        #--- End: if
+
+        f = self.copy(_omit_Data=True)
+
+        f.data = self.data.argmax(iaxis, unravel)
+
+        f.remove_axes(axis)
+
+        standard_name = f.get_property('standard_name', None)
+        long_name = f.get_property('long_name', standard_name)
+        
+        if standard_name is not None:
+            del f.standard_name
+
+        f.long_name = 'Index of first maximum'
+        if long_name is not None:
+            f.long_name += ' '+long_name
+
+        return f
 
 
     def autocyclic(self, verbose=False):
