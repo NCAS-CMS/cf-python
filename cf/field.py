@@ -3611,8 +3611,8 @@ may be accessed with the `nc_global_attributes`,
             `numpy` and `Data` objects). If unset then the radius is
             either taken from the "earth_radius" parameter(s) of any
             coordinate reference construct datums, or, if no such
-            parameter exisits, set to 6371229.0 metres (approximating
-            the radius if Earth). If units are not specified then
+            parameter exists, set to 6371229.0 metres (approximating
+            the radius of Earth). If units are not specified then
             units of metres are assumed.
     
             *Parameter example:*         
@@ -3622,15 +3622,16 @@ may be accessed with the `nc_global_attributes`,
               'm')``, ``radius=cf.Data(6371.2, 'km')``.
     
         insert: `bool`, optional
-            If True then the calculated cell areas are also inserted
-            in place as an area cell measure object. An existing area
-            cell measure object for the horizontal axes will not be
-            overwritten.
+            If True then calculated cell areas are also inserted in
+            place as an "area" cell measure construct, unless there is
+            already an existing area cell measure construct for the
+            horizontal axes.
     
         force: `bool`, optional
-            If True the always calculate the cell areas. By default if
-            there is already an area cell measure object for the
-            horizontal axes then it will provide the area values.
+            If True the always calculate the cell areas. By default,
+            if there is already an "area" cell measure construct for
+            the horizontal axes then it will be used provide the area
+            values.
             
     :Returns:
     
@@ -3642,6 +3643,7 @@ may be accessed with the `nc_global_attributes`,
     >>> a = f.cell_area()
     >>> a = f.cell_area(force=True)
     >>> a = f.cell_area(radius=cf.Data(3389.5, 'km'))
+    >>> a = f.cell_area(insert=True)
 
         '''
         if insert:
@@ -3667,39 +3669,14 @@ may be accessed with the `nc_global_attributes`,
             # Got x and y coordinates in radians, so we can calculate.
     
             # Parse the radius of the planet
-            if radius is None:
-                default_radius = Data(6371229.0, 'm')
-                
-                radii = []
-                for cr in self.coordinate_references.values():
-                    r = cr.datum.get_parameter('earth_radius', None)
-                    if r is not None:
-                        r = Data.asdata(r)
-                        if not r.Units:
-                            r.override_units('m', inplace=True)
-    
-                        get = False
-                        for _ in radii:
-                            if r == _:
-                                got = True
-                                break
-                        #--- End: for
-    
-                        if not got:
-                            radii.append(r)
-                #--- End: for
-    
-                if len(radii) > 1:
-                    raise ValueError(
-                        "Multiple radii found in coordinate reference constructs: {!r}".format(
-                            radii))
-                
-                if len(radii) == 1:
-                    radius = radii[0]                    
-                else:
-                    radius = default_radius
-            #--- End: if
-                
+            radii = self.radii(default=Data(6371229.0, 'm'))
+            if len(radii) > 1:
+                raise ValueError(
+                    "Multiple radii found in coordinate reference constructs: {!r}".format(
+                        radii))
+
+            print (radii)
+            radius = radii[0]                
             radius = Data.asdata(radius).squeeze()
             radius.dtype = float
             if radius.size != 1:
@@ -3722,6 +3699,49 @@ may be accessed with the `nc_global_attributes`,
         return w
 
 
+    def radii(self, default=6371229):
+        '''TODO
+
+    :Parameters:
+        
+        default: 
+
+    :Returns:
+
+        `list`
+
+    **Examples:**
+
+    TODO
+
+        '''
+        radii = []
+        for cr in self.coordinate_references.values():
+            r = cr.datum.get_parameter('earth_radius', None)
+            if r is not None:
+                r = Data.asdata(r)
+                if not r.Units:
+                    r.override_units('m', inplace=True)
+    
+                get = False
+                for _ in radii:
+                    if r == _:
+                        got = True
+                        break
+                #--- End: for
+            
+                if not got:
+                    radii.append(r)
+        #--- End: for
+
+        if not radii:
+            default = Data.asdata(default)
+            default.Units = Units('m')
+            return [default]
+        
+        return radii
+
+    
     def map_axes(self, other):
         '''Map the axis identifiers of the field to their equivalent axis
     identifiers of another.
@@ -4005,11 +4025,11 @@ may be accessed with the `nc_global_attributes`,
             default the selected axis is set to be cyclic.
     
         period: optional       
-            The period for a dimension coordinate object which spans
-            the selected axis. May be any numeric scalar object that
-            can be converted to a `Data` object (which includes numpy
-            array and `Data` objects). The absolute value of *period*
-            is used. If *period* has units then they must be
+            The period for a dimension coordinate construct which
+            spans the selected axis. May be any numeric scalar object
+            that can be converted to a `Data` object (which includes
+            numpy array and `Data` objects). The absolute value of
+            *period* is used. If *period* has units then they must be
             compatible with those of the dimension coordinates,
             otherwise it is assumed to have the same units as the
             dimension coordinates.
@@ -4084,10 +4104,10 @@ may be accessed with the `nc_global_attributes`,
     
     Weights are either derived from the field construct's metadata
     (such as coordinate cell sizes) or provided explicitly in the form
-    of other `Field` objects. In any case, the outer product of these
-    weights components is returned in a field which is broadcastable
-    to the orginal field (see the *components* parameter for returning
-    the components individually).
+    of other `Field` constructs. In any case, the outer product of
+    these weights components is returned in a field which is
+    broadcastable to the orginal field (see the *components* parameter
+    for returning the components individually).
     
     By default null, equal weights are returned.
     
@@ -6253,8 +6273,8 @@ may be accessed with the `nc_global_attributes`,
         # ------------------------------------------------------------
         if ':' in method:
             # Convert a cell methods string (such as 'area: mean dim3:
-            # dim2: max T: minimum height: variance') to a CellMethods
-            # object
+            # dim2: max T: minimum height: variance') to a CellMethod
+            # construct
             if axes is not None:
                 raise ValueError(
                     "Can't collapse: Can't set 'axes' when 'method' is CF-like cell methods string")
