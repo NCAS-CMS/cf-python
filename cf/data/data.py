@@ -163,7 +163,7 @@ int
 
     raise TypeError(
         "{0!r} object is not JSON serializable: {1!r}".format(type(x), x))
-#--- End: def
+
 
 _debug = True
 
@@ -833,15 +833,15 @@ place.
 
         
     def _auxiliary_mask_from_1d_indices(self, compressed_indices):
-        '''
+        '''TODO
 
-:Parameters:
-
-    compressed_indices: 
-
-:Returns:
-
-    `list` of `Data`
+    :Parameters:
+    
+        compressed_indices: 
+    
+    :Returns:
+    
+        `list` of `Data`
 
     '''
         auxiliary_mask = []
@@ -876,7 +876,7 @@ place.
         #--- End: for
 
         return auxiliary_mask
-    #--- End: def
+
 
     def _auxiliary_mask_return(self):
         '''Return the auxiliary mask.
@@ -905,22 +905,22 @@ place.
             mask = mask | m
 
         return mask
-    #-- End: def
+
 
     def _auxiliary_mask_add_component(self, mask):
         '''Add a new auxiliary mask.
 
-:Parameters:
-
-    mask: `cf.Data` or `None`
-
-:Returns:
-
-    `None`
-
-**Examples:**
-
->>> d._auxiliary_mask_add_component(m)
+    :Parameters:
+    
+        mask: `cf.Data` or `None`
+    
+    :Returns:
+    
+        `None`
+    
+    **Examples:**
+    
+    >>> d._auxiliary_mask_add_component(m)
 
         '''
         if mask is None:
@@ -930,16 +930,16 @@ place.
         # dimensions
         if mask.ndim != self._ndim:
             raise ValueError(
-"Auxiliary mask must have same number of axes as the data array ({}!={})".format(
-    mask.ndim, self.ndim))
-
+                "Auxiliary mask must have same number of axes as the data array ({}!={})".format(
+                    mask.ndim, self.ndim))
+        
         # Check that this mask component has an appropriate shape
         mask_shape = mask.shape
         for i, j in zip(mask_shape, self._shape):
             if not (i == j or i == 1):
                 raise ValueError(
-"Auxiliary mask shape {} is not broadcastable to data array shape {}".format(
-    mask.shape, self._shape))
+                    "Auxiliary mask shape {} is not broadcastable to data array shape {}".format(
+                        mask.shape, self._shape))
 
         # Merge this mask component with another, if possible.
         append = True
@@ -992,30 +992,30 @@ place.
         self._auxiliary_mask = new
 
 
-    # 0
     def _create_auxiliary_mask_component(self, mask_shape, ind, compress):
         '''TODO
 
-:Parameters:
-
-    mask_shape: `tuple`
-        The shape of the mask component to be created. This will
-        contain `None` for axes not spanned by the *ind* parameter.
-
-          *Parameter example*
-              ``mask_shape=(3, 11, None)``
-
-    ind: `numpy.ndarray`
-        As returned by a single argument call of
-        ``numpy.array(numpy[.ma].where(....))``.
-
-    compress: `bool`
-        If True then remove whole slices which only contain masked
-        points.
-
-:Returns:
-
-    `Data`
+    :Parameters:
+    
+        mask_shape: `tuple`
+            The shape of the mask component to be created. This will
+            contain `None` for axes not spanned by the *ind*
+            parameter.
+    
+              *Parameter example*
+                  ``mask_shape=(3, 11, None)``
+    
+        ind: `numpy.ndarray`
+            As returned by a single argument call of
+            ``numpy.array(numpy[.ma].where(....))``.
+    
+        compress: `bool`
+            If True then remove whole slices which only contain masked
+            points.
+    
+    :Returns:
+    
+        `Data`
 
         '''
         # --------------------------------------------------------
@@ -1047,18 +1047,18 @@ place.
             auxiliary_mask = auxiliary_mask[tuple(i)]
 
         return type(self)(auxiliary_mask)
-    #--- End: def
+
 
     def _auxiliary_mask_tidy(self):
         '''Remove unnecessary auxiliary mask components.
 
-:Returns:
-
-    `None`
-
-**Examples:**
-
->>> d._auxiliary_mask_tidy()
+    :Returns:
+    
+        `None`
+    
+    **Examples:**
+    
+    >>> d._auxiliary_mask_tidy()
 
         '''
         auxiliary_mask = self._auxiliary_mask
@@ -1071,135 +1071,72 @@ place.
             auxiliary_mask = None
 
         self._auxiliary_mask = auxiliary_mask
-    #--- End: def
-    
-#    @property
-#    def subspace(self):
-#        '''
-#
-#Return a new object which will get or set a subspace of the array.
-#
-#``e=d.subspace[indices]`` is equivalent to
-#``e=d[indices]``. ``d.subspace[indices]=x`` is equivalent to
-#``d[indices]=x``.
-#
-#'''
-#        return SubspaceData(self)
-#    #--- End: def
 
+        
     def __data__(self):
+        '''Returns a new reference to self.
+
         '''
-Returns a new reference to self.
-'''
         return self
-    #--- End: def
 
-#    def __deepcopy__(self, memo):
-#        '''
-#
-#Used if copy.deepcopy is called.
-#
-#''' 
-#        return self.copy()
-#    #--- End: def
-
-#    def __getstate__(self):
-#        '''
-#
-#Called when pickling.
-#
-#:Parameters:
-#
-#    None
-#
-#:Returns:
-#
-#    `dict`
-#        A dictionary of the instance's attributes
-#
-#**Examples:**
-#
-#'''
-#        return dict([(attr, getattr(self, attr))
-#                     for attr in self.__slots__ if hasattr(self, attr)])
-#    #--- End: def
-
-#    def __setstate__(self, odict):
-#        '''
-#
-#Called when unpickling.
-#
-#:Parameters:
-#
-#    odict : dict
-#        The output from the instance's `__getstate__` method.
-#
-#:Returns:
-#
-#    None
-#
-#'''
-#        for attr, value in odict.items():
-#            setattr(self, attr, value)
-#    #--- End: def
 
     def __hash__(self):
         '''The built-in function `hash`
 
-Generating the hash temporarily realizes the entire array in memory,
-which may not be possible for large arrays.
-
-The hash value is dependent on the data type and shape of the data
-array. If the array is a masked array then the hash value is
-independent of the fill value and of data array values underlying any
-masked elements.
-
-The hash value may be different if regenerated after the data array
-has been changed in place.
-
-The hash value is not guaranteed to be portable across versions of
-Python, numpy and cf.
-
-:Returns:
-
-    `int`
-        The hash value.
-
-**Examples:**
-
->>> print(d.array)
-[[0 1 2 3]]
->>> d.hash()
--8125230271916303273
->>> d[1, 0] = numpy.ma.masked
->>> print(d.array)
-[[0 -- 2 3]]
->>> hash(d)
-791917586613573563
->>> d.hardmask = False
->>> d[0, 1] = 999
->>> d[0, 1] = numpy.ma.masked
->>> d.hash()
-791917586613573563
->>> d.squeeze()
->>> print(d.array)
-[0 -- 2 3]
->>> hash(d)
--7007538450787927902
->>> d.dtype = float
->>> print(d.array)
-[0.0 -- 2.0 3.0]
->>> hash(d)
--4816859207969696442
+    Generating the hash temporarily realizes the entire array in
+    memory, which may not be possible for large arrays.
+    
+    The hash value is dependent on the data type and shape of the data
+    array. If the array is a masked array then the hash value is
+    independent of the fill value and of data array values underlying
+    any masked elements.
+    
+    The hash value may be different if regenerated after the data
+    array has been changed in place.
+    
+    The hash value is not guaranteed to be portable across versions of
+    Python, numpy and cf.
+    
+    :Returns:
+    
+        `int`
+            The hash value.
+    
+    **Examples:**
+    
+    >>> print(d.array)
+    [[0 1 2 3]]
+    >>> d.hash()
+    -8125230271916303273
+    >>> d[1, 0] = numpy.ma.masked
+    >>> print(d.array)
+    [[0 -- 2 3]]
+    >>> hash(d)
+    791917586613573563
+    >>> d.hardmask = False
+    >>> d[0, 1] = 999
+    >>> d[0, 1] = numpy.ma.masked
+    >>> d.hash()
+    791917586613573563
+    >>> d.squeeze()
+    >>> print(d.array)
+    [0 -- 2 3]
+    >>> hash(d)
+    -7007538450787927902
+    >>> d.dtype = float
+    >>> print(d.array)
+    [0.0 -- 2.0 3.0]
+    >>> hash(d)
+    -4816859207969696442
 
         '''
         return hash_array(self.array)
-    #--- End: def
+
 
     def __float__(self):
         '''Called to implement the built-in function `float`
 
-x.__float__() <==> float(x)
+    x.__float__() <==> float(x)
 
         '''        
         if self.size != 1:
@@ -1207,12 +1144,12 @@ x.__float__() <==> float(x)
                 "only length-1 arrays can be converted to Python scalars")
 
         return float(self.datum())
-    #--- End: def
+
 
     def __round__(self, *ndigits):
         '''Called to implement the built-in function `round`
 
-x.__round__(*ndigits) <==> round(x, *ndigits)
+    x.__round__(*ndigits) <==> round(x, *ndigits)
 
         '''    
         if self.size != 1:
@@ -1220,12 +1157,12 @@ x.__round__(*ndigits) <==> round(x, *ndigits)
                 "only length-1 arrays can be converted to Python scalars")
 
         return round(self.datum(), *ndigits)
-    #--- End: def
+
 
     def __int__(self):
         '''Called to implement the built-in function `int`
 
-x.__int__() <==> int(x)
+    x.__int__() <==> int(x)
 
         '''        
         if self.size != 1:
@@ -1233,36 +1170,35 @@ x.__int__() <==> int(x)
                 "only length-1 arrays can be converted to Python scalars")
 
         return int(self.datum())
-    #--- End: def
 
-    # 0
+
     def __iter__(self):
         '''Efficient iteration.
 
-x.__iter__() <==> iter(x)
-
-**Examples:**
-
->>> d = cf.Data([1, 2, 3], 'metres')
->>> for e in d:
-...    print repr(e)
-...
-1
-2
-3
-
->>> d = cf.Data([[1, 2], [4, 5]], 'metres')
->>> for e in d:
-...    print repr(e)
-...
-<CF Data: [1, 2] metres>
-<CF Data: [4, 5] metres>
-
->>> d = cf.Data(34, 'metres')
->>> for e in d:
-...     print repr(e)
-..
-TypeError: iteration over a 0-d Data
+    x.__iter__() <==> iter(x)
+    
+    **Examples:**
+    
+    >>> d = cf.Data([1, 2, 3], 'metres')
+    >>> for e in d:
+    ...    print repr(e)
+    ...
+    1
+    2
+    3
+    
+    >>> d = cf.Data([[1, 2], [4, 5]], 'metres')
+    >>> for e in d:
+    ...    print repr(e)
+    ...
+    <CF Data: [1, 2] metres>
+    <CF Data: [4, 5] metres>
+    
+    >>> d = cf.Data(34, 'metres')
+    >>> for e in d:
+    ...     print repr(e)
+    ..
+    TypeError: iteration over a 0-d Data
 
         '''
         ndim = self._ndim
@@ -1287,23 +1223,23 @@ TypeError: iteration over a 0-d Data
             # ndim > 1
             for n in range(self._shape[0]):
                 yield self[n, ...].squeeze(0, inplace=True)
-    #--- End: def
+
 
     def __len__(self):
         '''The built-in function `len`
 
-x.__len__() <==> len(x)
-
-**Examples:**
-
->>> len(Data([1, 2, 3]))
-3
->>> len(Data([[1, 2, 3]]))
-1
->>> len(Data([[1, 2, 3], [4, 5, 6]])
-2
->>> len(Data(1))
-TypeError: len() of scalar Data
+    x.__len__() <==> len(x)
+    
+    **Examples:**
+    
+    >>> len(Data([1, 2, 3]))
+    3
+    >>> len(Data([[1, 2, 3]]))
+    1
+    >>> len(Data([[1, 2, 3], [4, 5, 6]])
+    2
+    >>> len(Data(1))
+    TypeError: len() of scalar Data
 
         '''
         shape = self._shape
@@ -1311,39 +1247,38 @@ TypeError: len() of scalar Data
             return shape[0]
 
         raise TypeError("len() of scalar {}".format(self.__class__.__name__))
-    #--- End: def
 
-    # 0
+
     def __bool__(self):
         '''Truth value testing and the built-in operation `bool`
 
-x.__bool__() <==> bool(x)
-
-**Examples:**
-
->>> bool(Data(1))
-True
->>> bool(Data([[False]]))
-False
->>> bool(Data([1, 2]))
-ValueError: The truth value of Data with more than one element is ambiguous. Use d.any() or d.all()
+    x.__bool__() <==> bool(x)
+    
+    **Examples:**
+    
+    >>> bool(Data(1))
+    True
+    >>> bool(Data([[False]]))
+    False
+    >>> bool(Data([1, 2]))
+    ValueError: The truth value of Data with more than one element is ambiguous. Use d.any() or d.all()
 
         '''
         if self._size == 1:
             return bool(self.array)
 
         raise ValueError(
-"The truth value of Data with more than one element is ambiguous. Use d.any() or d.all()")
-    #--- End: def
+            "The truth value of Data with more than one element is ambiguous. Use d.any() or d.all()")
 
+    
     def __repr__(self):
         '''Called by the `repr` built-in function.
 
-x.__repr__() <==> repr(x)
+    x.__repr__() <==> repr(x)
 
         '''
         return super().__repr__().replace('<', '<CF ', 1)
-    #--- End: def
+
 
     def __getitem__(self, indices):
         '''Return a subspace of the data defined by indices.
@@ -1416,7 +1351,8 @@ x.__repr__() <==> repr(x)
             for axis, shift in roll.items():
                 if axes[axis] not in cyclic_axes:
                     raise IndexError(
-"Can't take a cyclic slice of a non-cyclic axis (axis position {})".format(axis))
+                        "Can't take a cyclic slice of a non-cyclic axis (axis position {})".format(
+                            axis))
 
                 d = d.roll(axis, shift)
         #--- End: if
@@ -1641,7 +1577,6 @@ x.__repr__() <==> repr(x)
 
                 self._set_subspace(array, p_indices, value)
                 partition.close()
-            #--- End: for
 
             if roll:
                 for iaxis, shift in roll.items():
@@ -1988,10 +1923,10 @@ x.__repr__() <==> repr(x)
         #--- End: for
 
         return json_dumps(d, default=_convert_to_builtin_type)
-    #--- End: def
+
 
     def loads(self, j, chunk=True):
-        '''
+        '''TODO
         '''
         d = json_loads(j)
 
@@ -2016,62 +1951,62 @@ x.__repr__() <==> repr(x)
         #--- End: for
 
         self.loadd(d, chunk=chunk)
-    #--- End: def
+
 
     def dumpd(self):
         '''Return a serialization of the data array.
 
-The serialization may be used to reconstruct the data array as it was
-at the time of the serialization creation.
-
-.. seealso:: `loadd`
-
-:Returns:
-
-    `dict`
-        The serialization.
-
-**Examples:**
-
->>> d = cf.Data([[1, 2, 3]], 'm')
->>> d.dumpd()
-{'Partitions': [{'location': [(0, 1), (0, 3)],
-                 'subarray': array([[1, 2, 3]])}],
- 'units': 'm',
- '_axes': ['dim0', 'dim1'],
- '_pmshape': (),
- 'dtype': dtype('int64'),
- 'shape': (1, 3)}
-
->>> d.flip(1)
->>> d.transpose()
->>> d.Units *= 1000
->>> d.dumpd()
-{'Partitions': [{'units': 'm',
-                 'axes': ['dim0', 'dim1'],
-                 'location': [(0, 3), (0, 1)],
-                 'subarray': array([[1, 2, 3]])}],
-` 'units': '1000 m',
- '_axes': ['dim1', 'dim0'],
- '_flip': ['dim1'],
- '_pmshape': (),
- 'dtype': dtype('int64'),
- 'shape': (3, 1)}
-
->>> d.dumpd()
-{'Partitions': [{'units': 'm',
-                 'location': [(0, 1), (0, 3)],
-                 'subarray': array([[1, 2, 3]])}],
- 'units': '10000 m',
- '_axes': ['dim0', 'dim1'],
- '_flip': ['dim1'],
- '_pmshape': (),
- 'dtype': dtype('int64'),
- 'shape': (1, 3)}
-
->>> e = cf.Data(loadd=d.dumpd())
->>> e.equals(d)
-True
+    The serialization may be used to reconstruct the data array as it
+    was at the time of the serialization creation.
+    
+    .. seealso:: `loadd`
+    
+    :Returns:
+    
+        `dict`
+            The serialization.
+    
+    **Examples:**
+    
+    >>> d = cf.Data([[1, 2, 3]], 'm')
+    >>> d.dumpd()
+    {'Partitions': [{'location': [(0, 1), (0, 3)],
+                     'subarray': array([[1, 2, 3]])}],
+     'units': 'm',
+     '_axes': ['dim0', 'dim1'],
+     '_pmshape': (),
+     'dtype': dtype('int64'),
+     'shape': (1, 3)}
+    
+    >>> d.flip(1)
+    >>> d.transpose()
+    >>> d.Units *= 1000
+    >>> d.dumpd()
+    {'Partitions': [{'units': 'm',
+                     'axes': ['dim0', 'dim1'],
+                     'location': [(0, 3), (0, 1)],
+                     'subarray': array([[1, 2, 3]])}],
+    ` 'units': '1000 m',
+     '_axes': ['dim1', 'dim0'],
+     '_flip': ['dim1'],
+     '_pmshape': (),
+     'dtype': dtype('int64'),
+     'shape': (3, 1)}
+    
+    >>> d.dumpd()
+    {'Partitions': [{'units': 'm',
+                     'location': [(0, 1), (0, 3)],
+                     'subarray': array([[1, 2, 3]])}],
+     'units': '10000 m',
+     '_axes': ['dim0', 'dim1'],
+     '_flip': ['dim1'],
+     '_pmshape': (),
+     'dtype': dtype('int64'),
+     'shape': (1, 3)}
+    
+    >>> e = cf.Data(loadd=d.dumpd())
+    >>> e.equals(d)
+    True
 
         ''' 
         axes  = self._axes
@@ -2208,41 +2143,41 @@ True
             cfa_data['_auxiliary_mask'] = [m.copy() for m in self._auxiliary_mask]
 
         return cfa_data
-    #--- End:s def
+
         
     def loadd(self, d, chunk=True):
         '''Reset the data array in place from a data array serialization.
 
-.. seealso:: `dumpd`
-
-:Parameters:
-
-    d: `dict`
-        A dictionary serialization of a `cf.Data` object, such as one
-        as returned by the `dumpd` method.
- 
-    chunk: `bool`, optional
-        If True (the default) then the reset data array will be
-        re-partitions according the current chunk size, as defined by
-        the `cf.CHUNKSIZE` function.
-
-:Returns:
-
-    `None`
-
-**Examples:**
-
->>> d = Data([[1, 2, 3]], 'm')
->>> e = Data([6, 7, 8, 9], 's')
->>> e.loadd(d.dumpd())
->>> e.equals(d)
-True
->>> e is d
-False
-
->>> e = Data(loadd=d.dumpd())
->>> e.equals(d)
-True
+    .. seealso:: `dumpd`
+    
+    :Parameters:
+    
+        d: `dict`
+            A dictionary serialization of a `cf.Data` object, such as
+            one as returned by the `dumpd` method.
+     
+        chunk: `bool`, optional
+            If True (the default) then the reset data array will be
+            re-partitions according the current chunk size, as defined
+            by the `cf.CHUNKSIZE` function.
+    
+    :Returns:
+    
+        `None`
+    
+    **Examples:**
+    
+    >>> d = Data([[1, 2, 3]], 'm')
+    >>> e = Data([6, 7, 8, 9], 's')
+    >>> e.loadd(d.dumpd())
+    >>> e.equals(d)
+    True
+    >>> e is d
+    False
+    
+    >>> e = Data(loadd=d.dumpd())
+    >>> e.equals(d)
+    True
 
         '''
         axes  = list(d.get('_axes', ()))
@@ -2397,48 +2332,49 @@ True
             self._auxiliary_mask = [m.copy() for m in _auxiliary_mask]
         else:
             self._auxiliary_mask = None
-    #--- End: def
 
-    # 1
+
+
     def ceil(self, inplace=False, i=False):
         '''The ceiling of the data, element-wise.
 
-The ceiling of ``x`` is the smallest integer ``n``, such that ``n >=
-x``.
-
-.. versionadded:: 1.0
-
-.. seealso:: `floor`, `rint`, `trunc`
-
-:Parameters:
-
-    inplace: `bool`, optional
-        If True then do the operation in-place and return `None`.
-
-    i: deprecated at version 3.0.0
-        Use *inplace* parameter instead.
-
-:Returns:
-
-        The ceilinged of data. If the operation was in-place then
-        `None` is returned.
-
-**Examples:**
-
->>> print(d.array)
-[-1.9 -1.5 -1.1 -1.   0.   1.   1.1  1.5  1.9]
->>> print(d.ceil().array)
-[-1. -1. -1. -1.  0.  1.  2.  2.  2.]
+    The ceiling of ``x`` is the smallest integer ``n``, such that
+    ``n>=x``.
+    
+    .. versionadded:: 1.0
+    
+    .. seealso:: `floor`, `rint`, `trunc`
+    
+    :Parameters:
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+        i: deprecated at version 3.0.0
+            Use *inplace* parameter instead.
+    
+    :Returns:
+    
+        `Data` or `None`
+            The ceiling of the data. If the operation was in-place
+            then `None` is returned.
+    
+    **Examples:**
+    
+    >>> print(d.array)
+    [-1.9 -1.5 -1.1 -1.   0.   1.   1.1  1.5  1.9]
+    >>> print(d.ceil().array)
+    [-1. -1. -1. -1.  0.  1.  2.  2.  2.]
 
         '''
         if i:
             _DEPRECATION_ERROR_KWARGS(self, 'ceil', i=True) # pragma: no cover
             
         return self.func(numpy_ceil, out=True, inplace=inplace)
-    #---End: def
+
 
     def _chunk_add_partitions(self, d, axes):
-        '''
+        '''TODO
         '''
         for axis in axes[::-1]:
             extra_bounds = d.get(axis)
@@ -2457,35 +2393,34 @@ x``.
 
             # Update d in-place
             d[axis] = []
-    #--- End: def
 
-    # -1
+
     def chunk(self, chunksize=None, total=None, omit_axes=None,
               pmshape=None):
         '''Partition the data array.
 
-:Parameters:
-
-    chunksize: `int`, optional
-        The 
-
-    total: sequence of `int`, optional
-
-    omit_axes: sequence of `int`, optional
-
-    pmshape: sequence of `int`, optional
-
-:Returns:
-
-    `None`
-
-**Examples:**
-
->>> d.chunk()
->>> d.chunk(100000)
->>> d.chunk(100000, )
->>> d.chunk(100000, total=[2])
->>> d.chunk(100000, omit_axes=[3, 4])
+    :Parameters:
+    
+        chunksize: `int`, optional
+            The 
+    
+        total: sequence of `int`, optional
+    
+        omit_axes: sequence of `int`, optional
+    
+        pmshape: sequence of `int`, optional
+    
+    :Returns:
+    
+        `None`
+    
+    **Examples:**
+    
+    >>> d.chunk()
+    >>> d.chunk(100000)
+    >>> d.chunk(100000, )
+    >>> d.chunk(100000, total=[2])
+    >>> d.chunk(100000, omit_axes=[3, 4])
 
         '''
         if not chunksize:
@@ -2704,40 +2639,39 @@ x``.
 #            self.add_partitions(sorted(set(extra_bounds)), axis)
 #        #--- End: for
 
-    #--- End: def
 
-    # 0
     def _asdatetime(self, inplace=False):
-        '''Change the internal representation of data array elements from numeric
-reference times to datatime-like objects.
+        '''Change the internal representation of data array elements from
+    numeric reference times to datatime-like objects.
+    
+    If the calendar has not been set then the default CF calendar will
+    be used and the units' and the `calendar` attribute will be
+    updated accordingly.
+    
+    If the internal representations are already datatime-like objects
+    then no change occurs.
+    
+    .. versionadded:: 1.3
+    
+    .. seealso:: `_asreftime`, `_isdatetime`
+    
+    :Parameters:
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+        i: deprecated at version 3.0.0
+            Use *inplace* parameter instead.
+    
+    :Returns:
+    
+        `Data`
+            TODO
+    
+    **Examples:**
+    
+    >>> d._asdatetime()
 
-If the calendar has not been set then the default CF calendar will be
-used and the units' and the `calendar` attribute will be updated
-accordingly.
-
-If the internal representations are already datatime-like objects then
-no change occurs.
-
-.. versionadded:: 1.3
-
-.. seealso:: `_asreftime`, `_isdatetime`
-
-:Parameters:
-
-    inplace: `bool`, optional
-        If True then do the operation in-place and return `None`.
-
-    i: deprecated at version 3.0.0
-        Use *inplace* parameter instead.
-
-:Returns:
-
-    `Data`
-        TODO
-
-**Examples:**
-
->>> d._asdatetime()
         '''
         if inplace:
             d = self
@@ -2748,7 +2682,7 @@ no change occurs.
         
         if not units.isreftime:
             raise ValueError(
-"Can't convert {!r} data to date-time objects".format(units))
+                "Can't convert {!r} data to date-time objects".format(units))
 
         if d._isdatetime():
             if inplace:
@@ -2770,45 +2704,43 @@ no change occurs.
         d._dtype = array.dtype
 
         if inplace:
-            d = None
-            
+            d = None            
         return d
-    #--- End: def
 
-    # 0
+
     def _isdatetime(self):
-        '''
+        '''TODO
         '''
         return self.dtype.kind == 'O' and self.Units.isreftime
 
-    # 0
+
     def _asreftime(self, inplace=False):
         '''Change the internal representation of data array elements from
-datatime-like objects to numeric reference times.
-
-If the calendar has not been set then the default CF calendar will be
-used and the units' and the `calendar` attribute will be updated
-accordingly.
-
-If the internal representations are already numeric reference times
-then no change occurs.
-
-.. versionadded:: 1.3
-
-.. seealso:: `_asdatetime`, `_isdatetime`
-
-:Parameters:
-
-    inplace: `bool`, optional
-        If True then do the operation in-place and return `None`.
-
-:Returns:
-
-    `Data`
-
-**Examples:**
-
->>> d._asreftime()
+    datatime-like objects to numeric reference times.
+    
+    If the calendar has not been set then the default CF calendar will
+    be used and the units' and the `calendar` attribute will be
+    updated accordingly.
+    
+    If the internal representations are already numeric reference
+    times then no change occurs.
+    
+    .. versionadded:: 1.3
+    
+    .. seealso:: `_asdatetime`, `_isdatetime`
+    
+    :Parameters:
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+    :Returns:
+    
+        `Data`
+    
+    **Examples:**
+    
+    >>> d._asreftime()
 
         '''
         if inplace:
@@ -2843,10 +2775,9 @@ then no change occurs.
         d._dtype = array.dtype
 
         if inplace:
-            d = None
-        
+            d = None        
         return d
-    #--- End: def
+
 
     def _combined_units(self, data1, method, inplace):
         '''TODO
@@ -4082,7 +4013,7 @@ then no change occurs.
     def _move_flip_to_partitions(self):
         '''TODO
 
-.. note:: This does not change the master array.
+    .. note:: This does not change the master array.
 
         '''
 #        flip = self._flip
@@ -4104,7 +4035,7 @@ then no change occurs.
 
 #        self._flip = []
         self._flip([])
-    #--- End: def
+
 
 #    def _parse_axes(self, axes, method=None):
 #        '''
@@ -4150,7 +4081,7 @@ then no change occurs.
 #                method, axes2))            
 #        
 #        return axes2
-#    #--- End: def
+
 
     def _unary_operation(self, operation):
         '''Implement unary arithmetic operations.
@@ -4221,507 +4152,481 @@ then no change occurs.
 
 
     def __radd__(self, other):
+        '''The binary arithmetic operation ``+`` with reflected operands
+
+    x.__radd__(y) <==> y+x
+
         '''
-
-The binary arithmetic operation ``+`` with reflected operands
-
-x.__radd__(y) <==> y+x
-
-'''
         return self._binary_operation(other, '__radd__')
-    #--- End: def
+
 
     def __sub__(self, other):
+        '''The binary arithmetic operation ``-``
+
+    x.__sub__(y) <==> x-y
+
         '''
-
-The binary arithmetic operation ``-``
-
-x.__sub__(y) <==> x-y
-
-'''
         return self._binary_operation(other, '__sub__')
-    #--- End: def
+
 
     def __isub__(self, other):
+        '''The augmented arithmetic assignment ``-=``
+
+    x.__isub__(y) <==> x-=y
+
         '''
-
-The augmented arithmetic assignment ``-=``
-
-x.__isub__(y) <==> x-=y
-
-'''
         return self._binary_operation(other, '__isub__')
-    #--- End: def
+
 
     def __rsub__(self, other):
         '''The binary arithmetic operation ``-`` with reflected operands
 
-x.__rsub__(y) <==> y-x
+    x.__rsub__(y) <==> y-x
 
         '''
         return self._binary_operation(other, '__rsub__')
-    #--- End: def
 
+    
     def __mul__(self, other):
         '''The binary arithmetic operation ``*``
 
-x.__mul__(y) <==> x*y
+    x.__mul__(y) <==> x*y
 
         '''
         return self._binary_operation(other, '__mul__')
-    #--- End: def
+
 
     def __imul__(self, other):
         '''The augmented arithmetic assignment ``*=``
 
-x.__imul__(y) <==> x*=y
+    x.__imul__(y) <==> x*=y
 
         '''
         return self._binary_operation(other, '__imul__')
-    #--- End: def
+
 
     def __rmul__(self, other):
         '''The binary arithmetic operation ``*`` with reflected operands
 
-x.__rmul__(y) <==> y*x
+    x.__rmul__(y) <==> y*x
 
         '''
         return self._binary_operation(other, '__rmul__')
-    #--- End: def
+    
 
     def __div__(self, other):
         '''The binary arithmetic operation ``/``
 
-x.__div__(y) <==> x/y
+    x.__div__(y) <==> x/y
 
         '''
         return self._binary_operation(other, '__div__')
-    #--- End: def
+
 
     def __idiv__(self, other):
         '''The augmented arithmetic assignment ``/=``
 
-x.__idiv__(y) <==> x/=y
+    x.__idiv__(y) <==> x/=y
 
         '''
         return self._binary_operation(other, '__idiv__')
-    #--- End: def
 
+    
     def __rdiv__(self, other):
         '''The binary arithmetic operation ``/`` with reflected operands
 
-x.__rdiv__(y) <==> y/x
+    x.__rdiv__(y) <==> y/x
 
         '''
         return self._binary_operation(other, '__rdiv__')
-    #--- End: def
+
 
     def __floordiv__(self, other):
         '''The binary arithmetic operation ``//``
 
-x.__floordiv__(y) <==> x//y
+    x.__floordiv__(y) <==> x//y
 
         '''
         return self._binary_operation(other, '__floordiv__')
-    #--- End: def
+
 
     def __ifloordiv__(self, other):
         '''The augmented arithmetic assignment ``//=``
 
-x.__ifloordiv__(y) <==> x//=y
+    x.__ifloordiv__(y) <==> x//=y
 
         '''
         return self._binary_operation(other, '__ifloordiv__')
-    #--- End: def
+
 
     def __rfloordiv__(self, other):
+        '''The binary arithmetic operation ``//`` with reflected operands
+
+    x.__rfloordiv__(y) <==> y//x
+
         '''
-
-The binary arithmetic operation ``//`` with reflected operands
-
-x.__rfloordiv__(y) <==> y//x
-
-'''
         return self._binary_operation(other, '__rfloordiv__')
-    #--- End: def
+
 
     def __truediv__(self, other):
+        '''The binary arithmetic operation ``/`` (true division)
+
+    x.__truediv__(y) <==> x/y
+
         '''
-
-The binary arithmetic operation ``/`` (true division)
-
-x.__truediv__(y) <==> x/y
-
-'''
         return self._binary_operation(other, '__truediv__')
-    #--- End: def
+
 
     def __itruediv__(self, other):
+        '''The augmented arithmetic assignment ``/=`` (true division)
+
+    x.__itruediv__(y) <==> x/=y
+
         '''
-
-The augmented arithmetic assignment ``/=`` (true division)
-
-x.__itruediv__(y) <==> x/=y
-
-'''
         return self._binary_operation(other, '__itruediv__')
-   #--- End: def
+
 
     def __rtruediv__(self, other):
+        '''The binary arithmetic operation ``/`` (true division) with
+    reflected operands
+    
+    x.__rtruediv__(y) <==> y/x
+
         '''
-
-The binary arithmetic operation ``/`` (true division) with reflected
-operands
-
-x.__rtruediv__(y) <==> y/x
-
-'''
         return self._binary_operation(other, '__rtruediv__')
-    #--- End: def
 
+    
     def __pow__(self, other, modulo=None):
-        '''
+        '''The binary arithmetic operations ``**`` and ``pow``
 
-The binary arithmetic operations ``**`` and ``pow``
+    x.__pow__(y) <==> x**y
 
-x.__pow__(y) <==> x**y
-
-'''  
+        '''  
         if modulo is not None:
             raise NotImplementedError(
-"3-argument power not supported for {!r}".format(self.__class__.__name__))
+                "3-argument power not supported for {!r}".format(
+                    self.__class__.__name__))
                 
         return self._binary_operation(other, '__pow__')
-    #--- End: def
+
 
     def __ipow__(self, other, modulo=None):
-        '''
+        '''The augmented arithmetic assignment ``**=``
 
-The augmented arithmetic assignment ``**=``
+    x.__ipow__(y) <==> x**=y
 
-x.__ipow__(y) <==> x**=y
-
-'''  
+        '''  
         if modulo is not None:
             raise NotImplementedError(
-"3-argument power not supported for {!r}".format(self.__class__.__name__))
+                "3-argument power not supported for {!r}".format(
+                    self.__class__.__name__))
 
         return self._binary_operation(other, '__ipow__')
-    #--- End: def
+
 
     def __rpow__(self, other, modulo=None):
-        '''
+        '''The binary arithmetic operations ``**`` and ``pow`` with reflected
+    operands
+    
+    x.__rpow__(y) <==> y**x
 
-The binary arithmetic operations ``**`` and ``pow`` with reflected
-operands
-
-x.__rpow__(y) <==> y**x
-
-'''  
+        '''  
         if modulo is not None:
             raise NotImplementedError(
-"3-argument power not supported for {!r}".format(self.__class__.__name__))
-
+                "3-argument power not supported for {!r}".format(
+                    self.__class__.__name__))
+        
         return self._binary_operation(other, '__rpow__')
-    #--- End: def
+
 
     def __mod__(self, other):
+        '''The binary arithmetic operation ``%``
+
+    x.__mod__(y) <==> x % y
+
         '''
-
-The binary arithmetic operation ``%``
-
-x.__mod__(y) <==> x % y
-
-'''
         return self._binary_operation(other, '__mod__')
-    #--- End: def
+
 
     def __imod__(self, other):
+        '''The binary arithmetic operation ``%=``
+
+    x.__imod__(y) <==> x %= y
+
         '''
-
-The binary arithmetic operation ``%=``
-
-x.__imod__(y) <==> x %= y
-
-'''
         return self._binary_operation(other, '__imod__')
-    #--- End: def
+
 
     def __rmod__(self, other):
+        '''The binary arithmetic operation ``%`` with reflected operands
+
+    x.__rmod__(y) <==> y % x
+
         '''
-
-The binary arithmetic operation ``%`` with reflected operands
-
-x.__rmod__(y) <==> y % x
-
-'''
         return self._binary_operation(other, '__rmod__')
-    #--- End: def
+
 
     def __eq__(self, other):
         '''The rich comparison operator ``==``
 
-x.__eq__(y) <==> x==y
+    x.__eq__(y) <==> x==y
 
         '''
         return self._binary_operation(other, '__eq__')
-    #--- End: def
+
 
     def __ne__(self, other):
         '''The rich comparison operator ``!=``
 
-x.__ne__(y) <==> x!=y
+    x.__ne__(y) <==> x!=y
 
         '''
         return self._binary_operation(other, '__ne__')
-    #--- End: def
 
+    
     def __ge__(self, other):
         '''The rich comparison operator ``>=``
 
-x.__ge__(y) <==> x>=y
+    x.__ge__(y) <==> x>=y
 
         '''
         return self._binary_operation(other, '__ge__')
-    #--- End: def
+
 
     def __gt__(self, other):
         '''The rich comparison operator ``>``
 
-x.__gt__(y) <==> x>y
+    x.__gt__(y) <==> x>y
 
         '''
         return self._binary_operation(other, '__gt__')
-    #--- End: def
+
 
     def __le__(self, other):
         '''The rich comparison operator ``<=``
 
-x.__le__(y) <==> x<=y
+    x.__le__(y) <==> x<=y
 
         '''
         return self._binary_operation(other, '__le__')
-    #--- End: def
+
 
     def __lt__(self, other):
         '''The rich comparison operator ``<``
 
-x.__lt__(y) <==> x<y
+    x.__lt__(y) <==> x<y
 
         '''
         return self._binary_operation(other, '__lt__')
-    #--- End: def
+
 
     def __and__(self, other):
         '''The binary bitwise operation ``&``
 
-x.__and__(y) <==> x&y
+    x.__and__(y) <==> x&y
 
         '''
         return self._binary_operation(other, '__and__')
-    #--- End: def
+
 
     def __iand__(self, other):
         '''The augmented bitwise assignment ``&=``
 
-x.__iand__(y) <==> x&=y
+    x.__iand__(y) <==> x&=y
 
         '''
         return self._binary_operation(other, '__iand__')
-    #--- End: def
+
 
     def __rand__(self, other):
         '''The binary bitwise operation ``&`` with reflected operands
 
-x.__rand__(y) <==> y&x
+    x.__rand__(y) <==> y&x
 
         '''
         return self._binary_operation(other, '__rand__')
-    #--- End: def
+
 
     def __or__(self, other):
         '''The binary bitwise operation ``|``
 
-x.__or__(y) <==> x|y
+    x.__or__(y) <==> x|y
 
         '''
         return self._binary_operation(other, '__or__')
-    #--- End: def
+
 
     def __ior__(self, other):
         '''The augmented bitwise assignment ``|=``
 
-x.__ior__(y) <==> x|=y
+    x.__ior__(y) <==> x|=y
 
         '''
         return self._binary_operation(other, '__ior__')
-    #--- End: def
+
 
     def __ror__(self, other):
         '''The binary bitwise operation ``|`` with reflected operands
 
-x.__ror__(y) <==> y|x
+    x.__ror__(y) <==> y|x
 
         '''
         return self._binary_operation(other, '__ror__')
-    #--- End: def
+
 
     def __xor__(self, other):
         '''The binary bitwise operation ``^``
 
-x.__xor__(y) <==> x^y
+    x.__xor__(y) <==> x^y
 
         '''
         return self._binary_operation(other, '__xor__')
-    #--- End: def
+
 
     def __ixor__(self, other):
         '''The augmented bitwise assignment ``^=``
 
-x.__ixor__(y) <==> x^=y
+    x.__ixor__(y) <==> x^=y
 
         '''
         return self._binary_operation(other, '__ixor__')
-    #--- End: def
+
 
     def __rxor__(self, other):
         '''The binary bitwise operation ``^`` with reflected operands
 
-x.__rxor__(y) <==> y^x
+    x.__rxor__(y) <==> y^x
 
         '''
         return self._binary_operation(other, '__rxor__')
-    #--- End: def
+
 
     def __lshift__(self, y):
         '''The binary bitwise operation ``<<``
 
-x.__lshift__(y) <==> x<<y
+    x.__lshift__(y) <==> x<<y
 
         '''
         return self._binary_operation(y, '__lshift__')
-    #--- End: def
+
 
     def __ilshift__(self, y):
         '''The augmented bitwise assignment ``<<=``
 
-x.__ilshift__(y) <==> x<<=y
+    x.__ilshift__(y) <==> x<<=y
 
         '''
         return self._binary_operation(y, '__ilshift__')
-    #--- End: def
+
 
     def __rlshift__(self, y):
         '''The binary bitwise operation ``<<`` with reflected operands
 
-x.__rlshift__(y) <==> y<<x
+    x.__rlshift__(y) <==> y<<x
 
         '''
         return self._binary_operation(y, '__rlshift__')
-    #--- End: def
+
 
     def __rshift__(self, y):
         '''The binary bitwise operation ``>>``
 
-x.__lshift__(y) <==> x>>y
+    x.__lshift__(y) <==> x>>y
 
         '''
         return self._binary_operation(y, '__rshift__')
-    #--- End: def
 
+    
     def __irshift__(self, y):
         '''The augmented bitwise assignment ``>>=``
 
-x.__irshift__(y) <==> x>>=y
+    x.__irshift__(y) <==> x>>=y
 
         '''
         return self._binary_operation(y, '__irshift__')
-    #--- End: def
+
 
     def __rrshift__(self, y):
         '''The binary bitwise operation ``>>`` with reflected operands
 
-x.__rrshift__(y) <==> y>>x
+    x.__rrshift__(y) <==> y>>x
 
         '''
         return self._binary_operation(y, '__rrshift__')
-    #--- End: def
+
 
     def __abs__(self):
         '''The unary arithmetic operation ``abs``
 
-x.__abs__() <==> abs(x)
+    x.__abs__() <==> abs(x)
 
         '''
         return self._unary_operation('__abs__')
-    #--- End: def
+
 
     def __neg__(self):
         '''The unary arithmetic operation ``-``
 
-x.__neg__() <==> -x
+    x.__neg__() <==> -x
 
         '''
         return self._unary_operation('__neg__')
-    #--- End: def
+
 
     def __invert__(self):
         '''The unary bitwise operation ``~``
 
-x.__invert__() <==> ~x
+    x.__invert__() <==> ~x
 
         '''
         return self._unary_operation('__invert__')
-    #--- End: def
+
 
     def __pos__(self):
         '''The unary arithmetic operation ``+``
 
-x.__pos__() <==> +x
+    x.__pos__() <==> +x
 
         '''
         return self._unary_operation('__pos__')
-    #--- End: def
+
 
     def _all_axis_names(self):
         '''Return a set of all the dimension names in use by the data array.
 
-Note that the output set includes dimensions of individual partitions
-which are not dimensions of the master data array.
+    Note that the output set includes dimensions of individual
+    partitions which are not dimensions of the master data array.
+    
+    :Returns:
+    
+        `list` of `str`
+            The axis names.
+    
+    **Examples:**
+    
+    >>> d._axes
+    ['dim1', 'dim0']
+    >>> d.partitions.info('_dimensions')
+    [['dim0', 'dim0'],
+     ['dim1', 'dim0', 'dim2']]
+    >>> d._all_axis_names()
+    set(['dim2', dim0', 'dim1'])
 
-:Returns:
-
-    `list` of `str`
-        The axis names.
-
-**Examples:**
-
->>> d._axes
-['dim1', 'dim0']
->>> d.partitions.info('_dimensions')
-[['dim0', 'dim0'],
- ['dim1', 'dim0', 'dim2']]
->>> d._all_axis_names()
-set(['dim2', dim0', 'dim1'])
-
-'''
+        '''
         all_axes = self._all_axes
         if not all_axes:
             return self._axes[:]
         else:
             return list(all_axes)
-    #--- End: def
 
-    # 0
+
     def _change_axis_names(self, axis_map):
         '''Change the axis names.
 
-The axis names are arbitrary, so mapping them to another arbitrary
-collection does not change the data array values, units, nor axis
-order.
-
-**Examples:**
-
+    The axis names are arbitrary, so mapping them to another arbitrary
+    collection does not change the data array values, units, nor axis
+    order.
+    
         '''       
         # Find any axis names which are not mapped. If there are any,
         # then update axis_map.
@@ -4766,51 +4671,51 @@ order.
 
         # Partitions in the partition matrix
         self.partitions.change_axis_names(axis_map)
-    #--- End: def
+
 
     def _collapse(self, func, fpartial, ffinalise, axes=None,
                   squeeze=False, weights=None, mtol=1, units=None,
                   inplace=False, i=False, _preserve_partitions=False, **kwargs):
-        '''Collapse the data array in place.
+        '''Collapse the data.
 
-:Parameters:
-
-    func: function
-
-    fpartial: function
-
-    ffinalize: function
-
-    axes: (sequence of) `int`, optional
-        The axes to be collapsed. By default flattened input is
-        used. Each axis is identified by its integer position. No axes
-        are collapsed if *axes* is an empty sequence.
-
-    squeeze: `bool`, optional
-        If False then the axes which are collapsed are left in the
-        result as axes with size 1. In this case the result will
-        broadcast correctly against the original array. By default
-        collapsed axes are removed.
-
-    weights: *optional*
-
-    inplace: `bool`, optional
-        If True then do the operation in-place and return `None`.
-
-    i: deprecated at version 3.0.0
-        Use *inplace* parameter instead.
-     
-    _preserve_partitions: `bool`, optional
-        If True then preserve the shape of the partition matrix of the
-        input data, at the expense of a much slower execution. By
-        default, the partition matrix may be reduced (using `varray`)
-        to considerably speed things up.
-
-    kwargs: *optional*
-
-:Returns:
-
-    `Data`
+    :Parameters:
+    
+        func: function
+    
+        fpartial: function
+    
+        ffinalize: function
+    
+        axes: (sequence of) `int`, optional
+            The axes to be collapsed. By default flattened input is
+            used. Each axis is identified by its integer position. No
+            axes are collapsed if *axes* is an empty sequence.
+    
+        squeeze: `bool`, optional
+            If False then the axes which are collapsed are left in the
+            result as axes with size 1. In this case the result will
+            broadcast correctly against the original array. By default
+            collapsed axes are removed.
+    
+        weights: *optional*
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+        i: deprecated at version 3.0.0
+            Use *inplace* parameter instead.
+         
+        _preserve_partitions: `bool`, optional
+            If True then preserve the shape of the partition matrix of
+            the input data, at the expense of a much slower
+            execution. By default, the partition matrix may be reduced
+            (using `varray`) to considerably speed things up.
+    
+        kwargs: *optional*
+    
+    :Returns:
+    
+        `Data`
 
         '''     
         if i:
@@ -7137,8 +7042,12 @@ returned.
     119
     >>> d.argmax(unravel=True)
     (3, 4, 5)
+    >>> d.argmax(axis=0)
+    <CF Data(5, 6): [[3, ..., 3]]>
     >>> d.argmax(axis=1)
     <CF Data(4, 6): [[4, ..., 4]]>
+    >>> d.argmax(axis=2)
+    <CF Data(4, 5): [[5, ..., 5]]>
 
         '''
         if axis is None:
@@ -7181,6 +7090,7 @@ returned.
         out = self.reconstruct_sectioned_data(sections)
         
         out.squeeze(axis, inplace=True)
+        
         return out
 
 
@@ -7323,7 +7233,6 @@ returned.
 #
 #        '''
 #        self._fill_value = value
-#    #--- End: def
 
 
     def set_units(self, value):
@@ -9215,39 +9124,39 @@ returned.
 
     def mid_range(self, axes=None, squeeze=True, mtol=1, i=False,
                   _preserve_partitions=False):
-        '''
+        '''Collapse axes with the unweighted average of their maximum and
+    minimum values.
+    
+    Missing data array elements are omitted from the calculation.
+    
+    .. seealso:: `max`, `min`, `mean`, `range`, `sum`, `sd`, `var`
+    
+    :Parameters:
+    
+        axes: (sequence of) `int`, optional
+    
+        squeeze: `bool`, optional
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+        i: deprecated at version 3.0.0
+            Use *inplace* parameter instead.
+    
+    :Returns:
+    
+        `Data`
+            The collapsed array.
+    
+    **Examples:**
 
-Collapse axes with the unweighted average of their maximum and minimum
-values.
-
-Missing data array elements are omitted from the calculation.
-
-.. seealso:: `max`, `min`, `mean`, `range`, `sum`, `sd`, `var`
-
-:Parameters:
-
-    axes: (sequence of) `int`, optional
-
-    squeeze: `bool`, optional
-
-    inplace: `bool`, optional
-        If True then do the operation in-place and return `None`.
-
-    i: deprecated at version 3.0.0
-        Use *inplace* parameter instead.
-
-:Returns:
-
-    `Data`
-        The collapsed array.
-
-**Examples:**
+        TODO
 
         '''
         return self._collapse(mid_range_f, mid_range_fpartial, mid_range_ffinalise,
                               axes=axes, squeeze=squeeze, mtol=mtol, i=i,
                               _preserve_partitions=_preserve_partitions)
-    #--- End: def
+
 
     def flip(self, axes=None, inplace=False, i=False):
         '''Reverse the direction of axes of the data array.
@@ -9386,20 +9295,19 @@ Missing data array elements are omitted from the calculation.
         self._HDF_chunks = _HDF_chunks
             
         return org_HDF_chunks
-    #--- End: def
+
 
     def inspect(self):
         '''Inspect the object for debugging.
 
-.. seealso:: `cf.inspect`
-
-:Returns:
-
-    `None`
+    .. seealso:: `cf.inspect`
+    
+    :Returns:
+    
+        `None`
 
         '''
         print(cf_inspect(self)) # pragma: no cover
-    #--- End: def
 
 
     def isclose(self, y, rtol=None, atol=None):
@@ -9679,181 +9587,179 @@ Missing data array elements are omitted from the calculation.
 #        # including space for a full boolean mask
 #        # ------------------------------------------------------------
 #        return self._size*(itemsize+1) > FREE_MEMORY() - FM_THRESHOLD()
-#    #--- End: def
+
 
     def fits_in_memory(self, itemsize):
+        '''Return True if the master array is small enough to be retained in
+    memory.
+    
+    :Parameters:
+    
+        itemsize: `int`
+            The number of bytes per word of the master data array.
+    
+    :Returns:
+    
+        `bool`
+    
+    **Examples:**
+    
+    >>> print d.fits_in_memory(8)
+    False
+
         '''
-
-Return True if the master array is small enough to be retained in
-memory.
-
-:Parameters:
-
-    itemsize: `int`
-        The number of bytes per word of the master data array.
-
-:Returns:
-
-    `bool`
-
-**Examples:**
-
->>> print d.fits_in_memory(8)
-False
-
-'''
         # ------------------------------------------------------------
         # Note that self._size*(itemsize+1) is the array size in bytes
         # including space for a full boolean mask
         # ------------------------------------------------------------
         return self._size*(itemsize+1) <= FREE_MEMORY() - FM_THRESHOLD()
-    #--- End: def
+
 
     def fits_in_one_chunk_in_memory(self, itemsize):
+        '''Return True if the master array is small enough to be retained in
+    memory.
+    
+    :Parameters:
+    
+        itemsize: `int`
+            The number of bytes per word of the master data array.
+    
+    :Returns:
+    
+        `bool`
+    
+    **Examples:**
+    
+    >>> print d.fits_one_chunk_in_memory(8)
+    False
+
         '''
-
-Return True if the master array is small enough to be retained in
-memory.
-
-:Parameters:
-
-    itemsize: `int`
-        The number of bytes per word of the master data array.
-
-:Returns:
-
-    `bool`
-
-**Examples:**
-
->>> print d.fits_one_chunk_in_memory(8)
-False
-
-'''
         # ------------------------------------------------------------
         # Note that self._size*(itemsize+1) is the array size in bytes
         # including space for a full boolean mask
         # ------------------------------------------------------------
         return CHUNKSIZE() >= self._size*(itemsize+1) <= FREE_MEMORY() - FM_THRESHOLD()
-    #--- End: def
 
-    # 1
+
     def where(self, condition, x=None, y=None, inplace=False, i=False,
               _debug=False):
         '''Assign to data elements depending on a condition.
 
-Data can be changed by assigning to elements that are selected by a
-condition based on the data values.
+    Data can be changed by assigning to elements that are selected by
+    a condition based on the data values.
+    
+    Different values can be assigned to where the conditions are, and
+    are not, met.
+    
+    **Missing data**
+    
+    Data array elements may be set to missing values by assigning them
+    to the cf.masked constant, or by assignment missing data elements
+    of array-valued *x* and *y* parameters.
+    
+    By default the data mask is "hard", meaning that masked values can
+    not be changed by assigning them to another value. This behaviour
+    may be changed by setting the `hardmask` attribute to `False`,
+    thereby making the data mask "soft" and allowing masked elements
+    to be set to non-masked values.
+    
+    .. seealso:: `cf.masked`, `hardmask`, `__setitem__`
+    
+    
+    :Parameters:
+    
+        condition: 
+            The condition which determines how to assign values to the
+            data.
+    
+            In general it may be any scalar or array-like object (such
+            as a numpy array or `Data` instance) that is broadcastable
+            to the shape of the data. Assignment from the *x* and *y*
+            parameters will be done where elements of the condition
+            evaluate to `True` and `False` respectively.
+    
+            *Parameter example:*
+              ``d.where(d.data<0, x=-999)`` will set all data values that
+              are less than zero to -999.
+    
+            *Parameter example:*
+              ``d.where(True, x=-999)`` will set all data values to
+              -999. This is equivalent to ``d[...] = -999``.
+    
+            *Parameter example:*
+              ``d.where(False, y=-999)`` will set all data values to
+              -999. This is equivalent to ``d[...] = -999``.
+    
+            *Parameter example:*
+              If data ``d`` has shape ``(5, 3)`` then ``d.where([True,
+              False, True], x=-999, y=cf.masked)`` will set data
+              values in columns 0 and 2 to -999, and data values in
+              column 1 to missing data. This works because the
+              condition has shape ``(3,)`` which broadcasts to the
+              data shape.
+    
+            If *condition* is a `Query` object then this implies a
+            condition defined by applying the query to the data.
+    
+            *Parameter example:*
+              ``d.where(cf.lt(0), x=-999)`` will set all data values
+              that are less than zero to -999. This is equivalent to
+              ``d.where(d<0, x=-999)``.
+            
+        x, y: *optional*
+            Specify the assignment values. Where the condition
+            evaluates to `True`, assign to the data from *x*, and
+            where the condition evaluates to `False`, assign to the
+            data from *y*. The *x* and *y* parameters are each one of:
+    
+            * `None`. The appropriate data elements array are
+              unchanged. This the default.
+    
+            * Any scalar or array-like object (such as a numpy array,
+              or `Data` instance) that is broadcastable to the shape
+              of the data.
+    
+        ..
+    
+            *Parameter example:*
+              ``d.where(condition)``, for any ``condition``, returns
+              data with identical data values.
+    
+            *Parameter example:* 
+              ``d.where(cf.lt(0), x=-d, y=cf.masked)`` will change the
+              sign of all negative data values, and set all other data
+              values to missing data.
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+        i: deprecated at version 3.0.0
+            Use the *inplace* parameter instead.
+    
+    :Returns:
+    
+        `Data` or `None`
+            The new data with updated values, or `None` if the
+            operation was in-place.
+    
+    **Examples:**
 
-Different values can be assigned to where the conditions are, and are
-not, met.
-
-**Missing data**
-
-Data array elements may be set to missing values by assigning them to
-the cf.masked constant, or by assignment missing data elements of
-array-valued *x* and *y* parameters.
-
-By default the data mask is "hard", meaning that masked values can not
-be changed by assigning them to another value. This behaviour may be
-changed by setting the `hardmask` attribute to `False`, thereby making
-the data mask "soft" and allowing masked elements to be set to
-non-masked values.
-
-.. seealso:: `cf.masked`, `hardmask`, `__setitem__`
-
-
-:Parameters:
-
-    condition: 
-        The condition which determines how to assign values to the
-        data. 
-
-        In general it may be any scalar or array-like object (such as
-        a numpy array or `Data` instance) that is broadcastable to the
-        shape of the data. Assignment from the *x* and *y* parameters
-        will be done where elements of the condition evaluate to
-        `True` and `False` respectively.
-
-        *Parameter example:*
-          ``d.where(d.data<0, x=-999)`` will set all data values that
-          are less than zero to -999.
-
-        *Parameter example:*
-          ``d.where(True, x=-999)`` will set all data values to
-          -999. This is equivalent to ``d[...] = -999``.
-
-        *Parameter example:*
-          ``d.where(False, y=-999)`` will set all data values to
-          -999. This is equivalent to ``d[...] = -999``.
-
-        *Parameter example:*
-          If data ``d`` has shape ``(5, 3)`` then ``d.where([True,
-          False, True], x=-999, y=cf.masked)`` will set data values in
-          columns 0 and 2 to -999, and data values in column 1 to
-          missing data. This works because the condition has shape
-          ``(3,)`` which broadcasts to the data shape.
-
-        If *condition* is a `Query` object then this implies a
-        condition defined by applying the query to the data.
-
-        *Parameter example:*
-          ``d.where(cf.lt(0), x=-999)`` will set all data values that
-          are less than zero to -999. This is equivalent to
-          ``d.where(d<0, x=-999)``.
-        
-    x, y: *optional*
-        Specify the assignment values. Where the condition evaluates
-        to `True`, assign to the data from *x*, and where the
-        condition evaluates to `False`, assign to the data from
-        *y*. The *x* and *y* parameters are each one of:
-
-        * `None`. The appropriate data elements array are
-          unchanged. This the default.
-
-        * Any scalar or array-like object (such as a numpy array, or
-          `Data` instance) that is broadcastable to the shape of the
-          data.
-
-    ..
-
-        *Parameter example:*
-          ``d.where(condition)``, for any ``condition``, returns data
-          with identical data values.
-
-        *Parameter example:* 
-          ``d.where(cf.lt(0), x=-d, y=cf.masked)`` will change
-          the sign of all negative data values, and set all other data
-          values to missing data.
-
-    inplace: `bool`, optional
-        If True then do the operation in-place and return `None`.
-
-    i: deprecated at version 3.0.0
-        Use the *inplace* parameter instead.
-
-:Returns:
-
-    `Data` or `None`
-        The new data with updated values, or `None` if the operation
-        was in-place.
-
-**Examples:**
+    TODO
 
         '''     
         def _slice_to_partition(data, indices):           
             '''Return a numpy array for the part of the input data which spans the
-given indices.
-
-:Parameters:
-    
-    data: `cf.Data`
-            
-    indices: `tuple`
-           
-:Returns:
+        given indices.
         
-    `numpy.ndarray`
+        :Parameters:
+            
+            data: `cf.Data`
+                    
+            indices: `tuple`
+                   
+        :Returns:
+                
+            `numpy.ndarray`
 
             '''
             indices2 = [(slice(0, 1) if n == 1 else i)
@@ -10162,52 +10068,51 @@ given indices.
             d = None
                     
         return d
-    #--- End: def
 
-    # 0
+
     def sin(self, inplace=False, i=False):
         '''Take the trigonometric sine of the data array in place.
 
-Units are accounted for in the calculation. If the units are not
-equivalent to radians (such as Kelvin) then they are treated as if
-they were radians. For example, the the cosine of 90 degrees_east is
-1.0, as is the sine of 1.57079632 radians.
-
-The outpu units are changed to '1' (nondimensionsal).
-
-:Parameters:
-
-    inplace: `bool`, optional
-        If True then do the operation in-place and return `None`.
-
-    i: deprecated at version 3.0.0
-        Use *inplace* parameter instead.
-
-:Returns:
-
-    `Data`
-
-**Examples:**
-
->>> d.Units
-<Units: degrees_north>
->>> print d.array
-[[-90 0 90 --]]
->>> d.sin()
->>> d.Units
-<Units: 1>
->>> print d.array
-[[-1.0 0.0 1.0 --]]
-
->>> d.Units
-<Units: m s-1>
->>> print d.array
-[[1 2 3 --]]
->>> d.sin()
->>> d.Units
-<Units: 1>
->>> print d.array
-[[0.841470984808 0.909297426826 0.14112000806 --]]
+    Units are accounted for in the calculation. If the units are not
+    equivalent to radians (such as Kelvin) then they are treated as if
+    they were radians. For example, the the cosine of 90 degrees_east
+    is 1.0, as is the sine of 1.57079632 radians.
+    
+    The outpu units are changed to '1' (nondimensionsal).
+    
+    :Parameters:
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+        i: deprecated at version 3.0.0
+            Use *inplace* parameter instead.
+    
+    :Returns:
+    
+        `Data`
+    
+    **Examples:**
+    
+    >>> d.Units
+    <Units: degrees_north>
+    >>> print d.array
+    [[-90 0 90 --]]
+    >>> d.sin()
+    >>> d.Units
+    <Units: 1>
+    >>> print d.array
+    [[-1.0 0.0 1.0 --]]
+    
+    >>> d.Units
+    <Units: m s-1>
+    >>> print d.array
+    [[1 2 3 --]]
+    >>> d.sin()
+    >>> d.Units
+    <Units: 1>
+    >>> print d.array
+    [[0.841470984808 0.909297426826 0.14112000806 --]]
 
         '''
         if i:
@@ -10226,25 +10131,25 @@ The outpu units are changed to '1' (nondimensionsal).
         if not inplace:
             out = d
         return out
-    #--- End: def
 
-    # 0
+
     def log(self, base=None, inplace=False, i=False):
-        '''
+        '''TODO
 
-:Parameters:
+    :Parameters:
+    
+        base: 
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+        i: deprecated at version 3.0.0
+            Use *inplace* parameter instead.
+    
+    :Returns:
+    
+        `Data`
 
-    base: 
-
-    inplace: `bool`, optional
-        If True then do the operation in-place and return `None`.
-
-    i: deprecated at version 3.0.0
-        Use *inplace* parameter instead.
-
-:Returns:
-
-    `Data`
         '''
         if i:
             _DEPRECATION_ERROR_KWARGS(self, 'log', i=True) # pragma: no cover
@@ -10268,71 +10173,69 @@ The outpu units are changed to '1' (nondimensionsal).
             d = None
             
         return d
-    #--- End: def
 
-    # 0
+
     def squeeze(self, axes=None, inplace=False, i=False):
+        '''Remove size 1 axes from the data array.
+
+    By default all size 1 axes are removed, but particular axes may be
+    selected with the keyword arguments.
+    
+    .. seealso:: `expand_dims`, `flip`, `swapaxes`, `transpose`
+    
+    :Parameters:
+    
+        axes : (sequence of) int or str, optional
+            Select the axes.  By default all size 1 axes are
+            removed. The *axes* argument may be one, or a sequence,
+            of:
+    
+              * An internal axis identifier. Selects this axis.
+            ..
+    
+              * An integer. Selects the axis coresponding to the given
+                position in the list of axes of the data array.
+    
+            No axes are removed if *axes* is an empty sequence.
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+        i: deprecated at version 3.0.0
+            Use *inplace* parameter instead.
+    
+    :Returns:
+    
+        `Data`
+            The squeezed data array.
+    
+    **Examples:**
+    
+    >>> v.shape
+    (1,)
+    >>> v.squeeze()
+    >>> v.shape
+    ()
+    
+    >>> v.shape
+    (1, 2, 1, 3, 1, 4, 1, 5, 1, 6, 1)
+    >>> v.squeeze((0,))
+    >>> v.shape
+    (2, 1, 3, 1, 4, 1, 5, 1, 6, 1)
+    >>> v.squeeze(1)
+    >>> v.shape
+    (2, 3, 1, 4, 1, 5, 1, 6, 1)
+    >>> v.squeeze([2, 4])
+    >>> v.shape
+    (2, 3, 4, 5, 1, 6, 1)
+    >>> v.squeeze([])
+    >>> v.shape
+    (2, 3, 4, 5, 1, 6, 1)
+    >>> v.squeeze()
+    >>> v.shape
+    (2, 3, 4, 5, 6)
+
         '''
-
-Remove size 1 axes from the data array.
-
-By default all size 1 axes are removed, but particular axes may be
-selected with the keyword arguments.
-
-.. seealso:: `expand_dims`, `flip`, `swapaxes`, `transpose`
-
-:Parameters:
-
-    axes : (sequence of) int or str, optional
-        Select the axes.  By default all size 1 axes are removed. The
-        *axes* argument may be one, or a sequence, of:
-
-          * An internal axis identifier. Selects this axis.
-        ..
-
-          * An integer. Selects the axis coresponding to the given
-            position in the list of axes of the data array.
-
-        No axes are removed if *axes* is an empty sequence.
-
-    inplace: `bool`, optional
-        If True then do the operation in-place and return `None`.
-
-    i: deprecated at version 3.0.0
-        Use *inplace* parameter instead.
-
-:Returns:
-
-    `Data`
-        The squeezed data array.
-
-**Examples:**
-
->>> v.shape
-(1,)
->>> v.squeeze()
->>> v.shape
-()
-
->>> v.shape
-(1, 2, 1, 3, 1, 4, 1, 5, 1, 6, 1)
->>> v.squeeze((0,))
->>> v.shape
-(2, 1, 3, 1, 4, 1, 5, 1, 6, 1)
->>> v.squeeze(1)
->>> v.shape
-(2, 3, 1, 4, 1, 5, 1, 6, 1)
->>> v.squeeze([2, 4])
->>> v.shape
-(2, 3, 4, 5, 1, 6, 1)
->>> v.squeeze([])
->>> v.shape
-(2, 3, 4, 5, 1, 6, 1)
->>> v.squeeze()
->>> v.shape
-(2, 3, 4, 5, 6)
-
-'''
         if i:
             _DEPRECATION_ERROR_KWARGS(self, 'squeeze', i=True) # pragma: no cover
             
@@ -10364,7 +10267,8 @@ selected with the keyword arguments.
             for i in axes:
                 if shape[i] > 1:
                     raise ValueError(
-"Can't squeeze {}: Can't remove axis of size {}".format(d.__class__.__name__, shape[i]))
+                        "Can't squeeze {}: Can't remove axis of size {}".format(
+                            d.__class__.__name__, shape[i]))
         #--- End: if
 
         if not axes:
@@ -10392,7 +10296,6 @@ selected with the keyword arguments.
             data_axes.pop(i)
 
             i_axis.append((i, axis))
-        #--- End: for
 
         for partition in d.partitions.matrix.flat:
             p_location = partition.location[:]
@@ -10409,7 +10312,6 @@ selected with the keyword arguments.
             partition.location = p_location
             partition.shape    = p_shape            
             partition.flip     = p_flip
-        #--- End: for
 
         d._ndim  = len(shape)
         d._shape = tuple(shape)
@@ -10430,7 +10332,7 @@ selected with the keyword arguments.
             d = None
             
         return d
-    #--- End: def
+
 
     def tan(self, inplace=False, i=False):
         '''Take the trigonometric tangent of the data array element-wise.
@@ -10527,44 +10429,41 @@ selected with the keyword arguments.
         return self.array.tolist()
 
 
-    # 0
     def transpose(self, axes=None, inplace=False, i=False):
-        '''
-        
-Permute the axes of the data array.
+        '''Permute the axes of the data array.
 
-.. seealso:: `insert_dimension`, `flip`, `squeeze`, `swapaxes`
-
-:Parameters:
-
-    axes: (sequence of) `int`
-        The new axis order of the data array. By default the order is
-        reversed. Each axis of the new order is identified by its
-        original integer position.
-
-    inplace: `bool`, optional
-        If True then do the operation in-place and return `None`.
-
-    i: deprecated at version 3.0.0
-        Use *inplace* parameter instead.
-
-:Returns:
-
-    `Data` or `None`
-
-**Examples:**
-
->>> d.shape
-(19, 73, 96)
->>> d.transpose()
->>> d.shape
-(96, 73, 19)
->>> d.transpose([1, 0, 2])
->>> d.shape
-(73, 96, 19)
->>> d.transpose((-1, 0, 1))
->>> d.shape
-(19, 73, 96)
+    .. seealso:: `insert_dimension`, `flip`, `squeeze`, `swapaxes`
+    
+    :Parameters:
+    
+        axes: (sequence of) `int`
+            The new axis order of the data array. By default the order
+            is reversed. Each axis of the new order is identified by
+            its original integer position.
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+        i: deprecated at version 3.0.0
+            Use *inplace* parameter instead.
+    
+    :Returns:
+    
+        `Data` or `None`
+    
+    **Examples:**
+    
+    >>> d.shape
+    (19, 73, 96)
+    >>> d.transpose()
+    >>> d.shape
+    (96, 73, 19)
+    >>> d.transpose([1, 0, 2])
+    >>> d.shape
+    (73, 96, 19)
+    >>> d.transpose((-1, 0, 1))
+    >>> d.shape
+    (19, 73, 96)
 
         '''
         if i:
@@ -10613,7 +10512,6 @@ Permute the axes of the data array.
 
             partition.location = [location[i] for i in iaxes]
             partition.shape    = [shape[i]    for i in iaxes]
-        #--- End: for
 
         # Transpose the auxiliary mask
         if d._auxiliary_mask:
@@ -10621,78 +10519,77 @@ Permute the axes of the data array.
                 mask.transpose(iaxes, inplace=True)
 
         if inplace:
-            d = None
-            
+            d = None            
         return d
-    #--- End: def
 
-    # 0
+
     def trunc(self, inplace=False, i=False):
         '''Return the truncated values of the data array.
 
-The truncated value of the number, ``x``, is the nearest integer which
-is closer to zero than ``x`` is. In short, the fractional part of the
-signed number ``x`` is discarded.
-
-.. versionadded:: 1.0
-
-.. seealso:: `ceil`, `floor`, `rint`
-
-:Parameters:
-
-    inplace: `bool`, optional
-        If True then do the operation in-place and return `None`.
-
-    i: deprecated at version 3.0.0
-        Use *inplace* parameter instead.
-
-:Returns:
-
-    `Data`
-
-**Examples:**
-
->>> print d.array
-[-1.9 -1.5 -1.1 -1.   0.   1.   1.1  1.5  1.9]
->>> print d.trunc().array
-[-1. -1. -1. -1.  0.  1.  1.  1.  1.]
+    The truncated value of the number, ``x``, is the nearest integer
+    which is closer to zero than ``x`` is. In short, the fractional
+    part of the signed number ``x`` is discarded.
+    
+    .. versionadded:: 1.0
+    
+    .. seealso:: `ceil`, `floor`, `rint`
+    
+    :Parameters:
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+        i: deprecated at version 3.0.0
+            Use *inplace* parameter instead.
+    
+    :Returns:
+    
+        `Data`
+    
+    **Examples:**
+    
+    >>> print d.array
+    [-1.9 -1.5 -1.1 -1.   0.   1.   1.1  1.5  1.9]
+    >>> print d.trunc().array
+    [-1. -1. -1. -1.  0.  1.  1.  1.  1.]
 
         '''
         if i:
             _DEPRECATION_ERROR_KWARGS(self, 'trunc', i=True) # pragma: no cover
             
         return self.func(numpy_trunc, out=True, inplace=inplace)
-    #---End: def
+
 
     @classmethod
     def empty(cls, shape, dtype=None, units=None, chunk=True):
-        ''' Create a new data array without initializing the elements.
+        '''Create a new data array without initializing the elements.
 
-.. seealso:: `full`, `ones`, `zeros`
+    .. seealso:: `full`, `ones`, `zeros`
+    
+    :Parameters:
+    
+        shape: `int` or `tuple` of `int`
+            The shape of the new array.
+    
+        dtype: `numpy.dtype` or any object convertible to `numpy.dtype`
+            The data type of the new array. By default the data type
+            is numpy.float64.
+    
+        units: `str` or `Units`
+            The units for the new data array.
+    
+    :Returns:
+    
+        `Data`
+    
+    **Examples:**
+    
+    >>> d = cf.Data.empty((96, 73))
 
-:Parameters:
-
-    shape: `int` or `tuple` of `int`
-        The shape of the new array.
-
-    dtype: `numpy.dtype` or any object convertible to `numpy.dtype`
-        The data type of the new array. By default the data type is
-        numpy.float64.
-
-    units: `str` or `Units`
-        The units for the new data array.
-
-:Returns:
-
-    `Data`
-
-**Examples:**
-
->>> d = cf.Data.empty((96, 73))
-'''
+        '''
         return cls.full(shape, None, dtype=dtype, units=units,
                         chunk=chunk)
-    #--- End: def
+
 
     @classmethod
     def full(cls, shape, fill_value, dtype=None, units=None,
@@ -10826,7 +10723,6 @@ signed number ``x`` is discarded.
                 partition.Units = units
                 
             partition.close()
-        #--- End: for
             
         d.dtype = datatype
 
@@ -10836,32 +10732,35 @@ signed number ``x`` is discarded.
         if inplace:
             d = None
         return d
-    #--- End: def
+
 
     def range(self, axes=None, squeeze=True, mtol=1, i=False,
               _preserve_partitions=False):
         '''Collapse axes with the absolute difference between their maximum
-and minimum values.
+    and minimum values.
+    
+    Missing data array elements are omitted from the calculation.
+    
+    .. seealso:: `max`, `min`, `mean`, `mid_range`, `sample_size`,
+                 `sd`, `sum`, `sum_of_weights`, `sum_of_weights2`,
+                 `var`
+    
+    :Parameters:
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+        i: deprecated at version 3.0.0
+            Use *inplace* parameter instead.
+         
+    :Returns:
+    
+        `Data`
+            The collapsed array.
+    
+    **Examples:**
 
-Missing data array elements are omitted from the calculation.
-
-.. seealso:: `max`, `min`, `mean`, `mid_range`, `sample_size`,
-             `sd`, `sum`, `sum_of_weights`, `sum_of_weights2`, `var`
-
-:Parameters:
-
-    inplace: `bool`, optional
-        If True then do the operation in-place and return `None`.
-
-    i: deprecated at version 3.0.0
-        Use *inplace* parameter instead.
-     
-:Returns:
-
-    `Data`
-        The collapsed array.
-
-**Examples:**
+        TODO
 
         '''   
         return self._collapse(range_f, range_fpartial,
@@ -10869,23 +10768,22 @@ Missing data array elements are omitted from the calculation.
                               squeeze=squeeze, weights=None,
                               mtol=mtol, i=i,
                               _preserve_partitions=_preserve_partitions)
-    #--- End: def
 
-    # 0
+
     def roll(self, axis, shift, inplace=False, i=False):
         '''A lot like `numpy.roll`
 
-:Parameters:
-
-    inplace: `bool`, optional
-        If True then do the operation in-place and return `None`.
-
-    i: deprecated at version 3.0.0
-        Use *inplace* parameter instead.
-
-:Returns:
-
-    `Data`
+    :Parameters:
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+        i: deprecated at version 3.0.0
+            Use *inplace* parameter instead.
+    
+    :Returns:
+    
+        `Data`
 
         '''
         if i:
@@ -10934,36 +10832,38 @@ Missing data array elements are omitted from the calculation.
             return
 
         return d
-    #--- End: def
+
 
     def sum(self, axes=None, squeeze=False, mtol=1, inplace=False,
             i=False, _preserve_partitions=False):
         '''Collapse axes with their sum.
 
-Missing data array elements are omitted from the calculation.
+    Missing data array elements are omitted from the calculation.
+    
+    .. seealso:: `max`, `min`, `mean`, `mid_range`, `range`,
+                 `sample_size`, `sd`, `sum_of_weights`,
+                 `sum_of_weights2`, `var`
+    
+    :Parameters:
+    
+        axes : (sequence of) int, optional
+    
+        squeeze : bool, optional
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+        i: deprecated at version 3.0.0
+            Use *inplace* parameter instead.
+         
+    :Returns:
+    
+        `Data`
+            The collapsed array.
+    
+    **Examples:**
 
-.. seealso:: `max`, `min`, `mean`, `mid_range`, `range`,
-             `sample_size`, `sd`, `sum_of_weights`, `sum_of_weights2`,
-             `var`
-
-:Parameters:
-
-    axes : (sequence of) int, optional
-
-    squeeze : bool, optional
-
-    inplace: `bool`, optional
-        If True then do the operation in-place and return `None`.
-
-    i: deprecated at version 3.0.0
-        Use *inplace* parameter instead.
-     
-:Returns:
-
-    `Data`
-        The collapsed array.
-
-**Examples:**
+        TODO
 
         '''   
         return self._collapse(sum_f, sum_fpartial, sum_ffinalise,
@@ -10971,75 +10871,77 @@ Missing data array elements are omitted from the calculation.
                               weights=None, mtol=mtol,
                               inplace=inplace,
                               _preserve_partitions=_preserve_partitions)
-    #--- End: def
+
 
     def sum_of_weights(self, axes=None, squeeze=False, mtol=1, weights=None,
                        i=False, _preserve_partitions=False):
-        '''Missing data array elements are omitted from the calculation.
+        '''TODO
 
-.. seealso:: `max`, `mean`, `mid_range`, `min`, `range`,
-             `sample_size`, `sd`, `sum`, `sum_of_weights2`, `var`
+    Missing data array elements are omitted from the calculation.
 
-:Parameters:
-
-    axes : (sequence of) int, optional
-
-    squeeze : bool, optional
-
-    inplace: `bool`, optional
-        If True then do the operation in-place and return `None`.
-
-    i: deprecated at version 3.0.0
-        Use *inplace* parameter instead.
-     
-:Returns:
-
-    `Data`
-        The collapsed array.
-
-**Examples:**
+    .. seealso:: `max`, `mean`, `mid_range`, `min`, `range`,
+                 `sample_size`, `sd`, `sum`, `sum_of_weights2`, `var`
+    
+    :Parameters:
+    
+        axes : (sequence of) int, optional
+    
+        squeeze : bool, optional
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+        i: deprecated at version 3.0.0
+            Use *inplace* parameter instead.
+         
+    :Returns:
+    
+        `Data`
+            The collapsed array.
+    
+    **Examples:**
 
         '''   
         return self._collapse(sw_f, sw_fpartial, sw_ffinalise, axes=axes,
                               squeeze=squeeze, weights=weights, mtol=mtol,
                               i=i,
                               _preserve_partitions=_preserve_partitions)
-    #--- End: def
+
 
     def sum_of_weights2(self, axes=None, squeeze=False, mtol=1, weights=None,
                         i=False, _preserve_partitions=False):
-        '''
+        '''TODO
 
-Missing data array elements are omitted from the calculation.
+    Missing data array elements are omitted from the calculation.
 
-.. seealso:: `max`, `mean`, `mid_range`, `min`, `range`,
-             `sample_size`, `sd`, `sum`, `sum_of_weights`, `var`
-
-:Parameters:
-
-    axes : (sequence of) int, optional
-
-    squeeze : bool, optional
-
-    inplace: `bool`, optional
-        If True then do the operation in-place and return `None`.
-
-    i: deprecated at version 3.0.0
-        Use *inplace* parameter instead.
-     
-:Returns:
-
-    `Data`
-        The collapsed array.
-
-**Examples:**
+    .. seealso:: `max`, `mean`, `mid_range`, `min`, `range`,
+                 `sample_size`, `sd`, `sum`, `sum_of_weights`, `var`
+    
+    :Parameters:
+    
+        axes : (sequence of) int, optional
+    
+        squeeze : bool, optional
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+        i: deprecated at version 3.0.0
+            Use *inplace* parameter instead.
+         
+    :Returns:
+    
+        `Data`
+            The collapsed array.
+    
+    **Examples:**
 
         '''   
         return self._collapse(sw2_f, sw2_fpartial, sw2_ffinalise, axes=axes,
                               squeeze=squeeze, weights=weights, mtol=mtol,
                               i=i,
                               _preserve_partitions=_preserve_partitions)
-    #--- End: def
+
 
     def sd(self, axes=None, squeeze=False, mtol=1, weights=None,
            ddof=0, inplace=False, i=False, _preserve_partitions=False):

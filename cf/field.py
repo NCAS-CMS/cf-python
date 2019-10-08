@@ -9707,82 +9707,65 @@ may be accessed with the `nc_global_attributes`,
         print('not ready')
         return
 
+        standard_name = None
+        
         if axis is not None:
             axis_key = self.domain_axis(axis, key=True,
                                         default=ValueError("TODO"))
             axis = self.get_data_axes.index(axis_key)
+            standard_name = self.domain_axis_identity(axis_key,
+                                                      strict=True, default=None)
             
         indices = self.data.argmax(axis, unravel=True)
 
         if axis is None:
             return self[indices]
 
-        out = self.subspace(**{axis_key: [0]})
+        out = self.subspace(**{axis_key: [0]}) # What if axis_key does not span array?
         out.squeeze(axis_key, inplace=True)
         
         for i in indices.ndindex():
-            out.data[i] = org.data[indices[i].datum()]            
-            
-        org = self.construct[axis_key] # TODO also for cell measure and other 1-d constructs
-        
-        aux = AuxiliaryCoordinate()
-        aux.set_properties(org.properties)
+            out.data[i] = org.data[indices[i].datum()]
 
-        org_data = org.get_data()
-        data = Data.empty(indices.shape, dtype=org.dtype)        
-        for x in indices.ndindex():
-            data[x] = org_data[indices[x]]
+        for key, c in tuple(out.constructs.filter_by_type('dimension_coordinate',
+                                                          'auxiliary_coordinate',
+                                                          'cell_measure',
+                                                          'domain_ancillary',
+                                                          'field_ancillary').filter_by_axis('and', axis_key).items()):
+                       
+            out.del_construct(key)
 
-        aux.set_data(data, copy=False)
-        
-        if org.has_bounds():
-            org_bounds_data = org.get_bounds_data()
-            bounds = Data.empty(indices.shape + (2,), dtype=org_bounds.dtype)        
-            for x in indices.ndindex():
-                bounds[x] = org_bounds_data[indices[x]]
-        
-            aux.set_bounds(Bounds(data=data, copy=False), copy=False)
+            if c.construct_type == ('cell_measure', 'domain_ancillary', 'field_ancillary'):
+                continue
+
+            aux = AuxiliaryCoordinate()
+            aux.set_properties(c.properties())
+
+            c_data = c.get_data(None)
+            if c_data is not None:
+                data = Data.empty(indices.shape, dtype=c.dtype)        
+                for x in indices.ndindex():
+                    data[x] = c_data[indices[x]]
             
-        out.set_construct(aux, axes=out.get_data_axes(), key=axis_key, copy=False)
+                aux.set_data(data, copy=False)
         
+            c_bounds_data = c.get_bounds_data(None)
+            if c_bounds_data is not None:
+                bounds = Data.empty(indices.shape + (c_bounds_data.shape[-1],),
+                                    dtype=c_bounds.dtype)        
+                for x in indices.ndindex():
+                    bounds[x] = c_bounds_data[indices[x]]
+        
+                aux.set_bounds(Bounds(data=bounds, copy=False), copy=False)
+            
+            out.set_construct(aux, axes=out.get_data_axes(), copy=False)
+
+
+        if standard_name:
+            cm = CellMethod()
+            cm.create(standard_name+': maximum')            
+            
         return out
-    
-        
-        if axes is None and not kwargs:
-            if self.ndim == 1:
-                pass
-            elif not self.ndim:
-                return
-
-        else:
-            axis = self.axis(axes, key=True, **kwargs)
-            if axis is None:
-                raise ValueError("Can't identify a unique axis")
-            elif self.axis_size(axis) != 1:
-                raise ValueError(
-                    "Can't insert an axis of size {0}: {0!r}".format(self.axis_size(axis), axis))
-            elif axis in self.get_data_axes():
-                raise ValueError(
-                    "Can't insert a duplicate axis: %r" % axis)
-        #--- End: if
-
-        f = self.copy(_omit_Data=True)
-
-        f.data = self.data.argmax(iaxis, unravel)
-
-        f.remove_axes(axis)
-
-        standard_name = f.get_property('standard_name', None)
-        long_name = f.get_property('long_name', standard_name)
-        
-        if standard_name is not None:
-            del f.standard_name
-
-        f.long_name = 'Index of first maximum'
-        if long_name is not None:
-            f.long_name += ' '+long_name
-
-        return f
 
 
     def autocyclic(self, verbose=False):

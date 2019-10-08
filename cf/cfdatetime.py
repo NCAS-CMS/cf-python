@@ -348,6 +348,7 @@ def st2datetime(date_string, calendar=None):
     _ = cftime._parse_date(date_string)
     if len(_) == 7:
         year, month, day, hour, minute, second, utc_offset = _
+        microsecond = 0
     else:
         year, month, day, hour, minute, second, microsecond, utc_offset = _
         
@@ -377,6 +378,7 @@ def st2elements(date_string):
     _ = cftime._parse_date(date_string)
     if len(_) == 7:
         year, month, day, hour, minute, second, utc_offset = _
+        microsecond = 0
     else:
         year, month, day, hour, minute, second, microsecond, utc_offset = _
         

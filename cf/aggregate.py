@@ -1550,6 +1550,9 @@ def aggregate(fields,
     # Parse parameters
     strict_identities = not (relaxed_identities or ncvar_identities)
 
+    if isinstance(dimension, str):
+        dimension = (dimension,)
+
     if exist_all and equal_all:
         raise ValueError("asdasdas  jnf0____")
 
@@ -1587,6 +1590,7 @@ def aggregate(fields,
         else:
             ignore = _signature_properties
     #--- End: if
+
 
     unaggregatable = False
     status = 0

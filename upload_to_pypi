@@ -6,17 +6,13 @@
 #
 # It is presumed that `python setup.py sdist` has already been run.
 #
-#>> ./upload_to_pypi 2.0.4
-
-
-
-
+#>> ./upload_to_pypi 3.0.2
 # --------------------------------------------------------------------
 
 set -x
 
 if [[ ! $1 ]] ; then
-  echo "No version \$1 (e.g. 2.0.1)"
+  echo "No version \$1 (e.g. 3.0.2)"
   exit 1
 fi
 

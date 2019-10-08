@@ -20,6 +20,7 @@ from numpy import allclose          as _x_numpy_allclose
 from numpy import array             as _numpy_array
 from numpy import ascontiguousarray as _numpy_ascontiguousarray 
 from numpy import dtype             as _numpy_dtype
+from numpy import integer           as _numpy_integer
 from numpy import isclose           as _x_numpy_isclose
 from numpy import ndarray           as _numpy_ndarray
 from numpy import ndim              as _numpy_ndim
@@ -1097,7 +1098,10 @@ def parse_indices(shape, indices, cyclic=False, reverse=False, envelope=False):
 
     for i, (index, size) in enumerate(zip(parsed_indices, shape)):
         is_slice = False
-        if isinstance(index, slice):            
+        if isinstance(index, slice):
+            # --------------------------------------------------------
+            # Index is a slice
+            # --------------------------------------------------------
             is_slice = True
             start = index.start
             stop  = index.stop
@@ -1181,7 +1185,10 @@ def parse_indices(shape, indices, cyclic=False, reverse=False, envelope=False):
                     stop = None
                 index = slice(start, stop, step)
          
-        elif isinstance(index, int):
+        elif isinstance(index, (int, _numpy_integer)):
+            # --------------------------------------------------------
+            # Index is an integer
+            # --------------------------------------------------------            
             if index < 0: 
                 index += size
 
@@ -1191,6 +1198,9 @@ def parse_indices(shape, indices, cyclic=False, reverse=False, envelope=False):
             convert2positve = True
             if (getattr(getattr(index, 'dtype', None), 'kind', None) == 'b' or
                 isinstance(index[0], bool)):
+                # ----------------------------------------------------
+                # Index is a sequence of booleans
+                # ----------------------------------------------------
                 # Convert booleans to non-negative integers. We're
                 # assuming that anything with a dtype attribute also
                 # has a size attribute.

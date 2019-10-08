@@ -44,6 +44,7 @@ mw = numpy.ma.array(w, mask=ma.mask)
 
 mones = numpy.ma.array(ones, mask=ma.mask)
 
+
 class DataTest(unittest.TestCase):
     def setUp(self):
         self.filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
@@ -68,15 +69,18 @@ class DataTest(unittest.TestCase):
             axes
             for n in range(1, self.a.ndim+1)
             for axes in itertools.permutations(range(self.a.ndim), n)]
-        
+
         self.test_only = []
 #        self.test_only = ['NOTHING!!!!!']
-        self.test_only = ['test_Data_sin_cos_tan']
-#        self.test_only = ['test_Data_months_years', 'test_Data_datetime_array']
-#        self.test_only = ['test_Data_roll']
+        self.test_only = ['test_Data_AUXILIARY_MASK',
+                          'test_Data_datum', 'test_Data_ERROR',
+                          'test_Data_array', 'test_Data_varray',
+                          'test_Data_datetime_array',
+                          'test_Data_dumpd_loadd_dumps',
+                          'test_Data_sin_cos_tan',
+                          'test_Data_squeeze_insert_dimension',
+                          'test_Data_months_years', 'test_Data_binary_mask', 'test_Data_CachedArray']        
 #        self.test_only = ['test_Data_outerproduct']
-#        self.test_only = ['test_Data_binary_mask']
-#        self.test_only = ['test_Data_AUXILIARY_MASK']
 #        self.test_only = ['test_Data__collapse_SHAPE']
 #        self.test_only = ['test_Data__collapse_UNWEIGHTED_MASKED']
 #        self.test_only = ['test_Data__collapse_UNWEIGHTED_UNMASKED']
@@ -89,17 +93,11 @@ class DataTest(unittest.TestCase):
 #        self.test_only = ['test_Data_sd_var']
 #        self.test_only = ['test_Data_sum_of_weights_sum_of_weights2']
 #        self.test_only = ['test_Data_max_min_sum']
-#        self.test_only = ['test_Data_max']
 #        self.test_only = ['test_Data___setitem__']
 #        self.test_only = ['test_Data_ceil', 'test_Data_floor', 'test_Data_trunc', 'test_Data_rint', 'test_Data_round' ]
-#        self.test_only = ['test_Data_array', 'test_Data_varray', 'test_Data_datetime_array']
-#        self.test_only = ['test_Data_dumpd_loadd_dumps']
-#        self.test_only = ['test_Data_ERROR']
-#        self.test_only = ['test_Data_CachedArray']
 #        self.test_only = ['test_Data_year_month_day_hour_minute_second']
 #        self.test_only = ['test_Data_BINARY_AND_UNARY_OPERATORS']
 #        self.test_only = ['test_Data_clip']
-#        self.test_only = ['test_Data_squeeze_insert_dimension']
 
 
     def test_Data_CachedArray(self):
@@ -783,7 +781,8 @@ class DataTest(unittest.TestCase):
                 self.assertTrue(d.datum(-1) == 3)
                 for index in d.ndindex():
                     self.assertTrue(d.datum(index)  == d.array[index].item())
-                    self.assertTrue(d.datum(*index) == d.array[index].item())
+                    self.assertTrue(d.datum(*index) == d.array[index].item(),
+                                    '{}, {}'.format(d.datum(*index), d.array[index].item()))
             #--- End: for
             
             d = cf.Data(5, 'metre')
@@ -972,8 +971,6 @@ class DataTest(unittest.TestCase):
                     message = 'cf.Data.swapaxes({}, {}) failed'.format(i, j)
                     self.assertTrue(b.shape == e.shape, message)
                     self.assertTrue((b == e.array).all(), message)
-                #--- End: for
-            #--- End: for
         #--- End: for
         cf.CHUNKSIZE(self.original_chunksize)
 
@@ -995,8 +992,8 @@ class DataTest(unittest.TestCase):
                               (axes, d.shape, a.shape)
                     self.assertTrue(d.shape == a.shape, message)
                     self.assertTrue((d.array == a).all(), message)
-                #--- End: for
-            #--- End: for
+        #--- End: for
+            
         cf.CHUNKSIZE(self.original_chunksize)
 
         
@@ -1113,7 +1110,6 @@ class DataTest(unittest.TestCase):
                     else:
                         message = 'Failed in {!r}**{!r}'.format(d, x)
                         self.assertTrue((d**x).all(), message)
-                #--- End: for                       
             #--- End: for                       
                       
             for a0 in arrays:
@@ -1155,7 +1151,6 @@ class DataTest(unittest.TestCase):
                         message = 'Failed in {}**{!r}'.format(x, d)
                         self.assertTrue((x**d).all(), message)
 
-#                    print 'START ====================', repr(d)
                     a = a0.copy()                        
                     try:
                         a += x
@@ -1163,12 +1158,9 @@ class DataTest(unittest.TestCase):
                         pass
                     else:
                         e = d.copy()
-#                        print '0 ------'
                         e += x
-#                        print '1 ------'
                         message = 'Failed in {!r}+={}'.format(d, x)
                         self.assertTrue(e.equals(cf.Data(a, 'm'), verbose=1), message)
-#                    print 'END ====================', repr(d)
 
                     a = a0.copy()                        
                     try:
@@ -1246,8 +1238,6 @@ class DataTest(unittest.TestCase):
                         self.assertTrue((x**d).all(), '%s**%s' % (x, repr(d)))
     
                     self.assertTrue(d.__truediv__(x).equals(cf.Data(a0.__truediv__(x.datum()), ''), verbose=1))
-                #--- End: for
-            #--- End: for
         #--- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
@@ -1282,8 +1272,6 @@ class DataTest(unittest.TestCase):
                     de = d*e
                     self.assertTrue(de.shape == ab.shape)
                     self.assertTrue((de.array == ab).all())
-                #--- End: for
-            #--- End: for
         #--- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
@@ -1455,7 +1443,6 @@ class DataTest(unittest.TestCase):
                     e.shape == shape,
                     "%s, axes=%s, not squeezed bad shape: %s != %s" % \
                     (h, None, e.shape, shape))
-                #--- End: for
         #--- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
@@ -1504,12 +1491,10 @@ class DataTest(unittest.TestCase):
                             e.allclose(b, rtol=1e-05, atol=1e-08),
                             "%s, axis=%s, unweighted, masked \ne=%s, \nb=%s, \ne-b=%s" %
                             (h, axes, e.array, b, e.array-b))
-                #--- End: for
-            #--- End: for
         #--- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
-    #--- End: for         
+
 
     def test_Data_sum_of_weights_sum_of_weights2(self):        
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -1552,7 +1537,6 @@ class DataTest(unittest.TestCase):
                             e.allclose(b, rtol=1e-05, atol=1e-08),
                             "%s, axis=%s, unweighted, masked, pp=%s, \ne=%s, \nb=%s, \ne-b=%s" %
                             (h, axes, pp, e.array, b, e.array-b))
-                    #--- End: for
                 #--- End: for    
     
         
@@ -1594,8 +1578,6 @@ class DataTest(unittest.TestCase):
                             e.allclose(b, rtol=1e-05, atol=1e-08),
                             "%s, axis=%s, \ne=%s, \nb=%s, \ne-b=%s" %
                             (h, axes, e.array, b, e.array-b))
-                #--- End: for
-            #--- End: for    
         #--- End: for    
 
         cf.CHUNKSIZE(self.original_chunksize)
@@ -1846,9 +1828,8 @@ class DataTest(unittest.TestCase):
                                 e.allclose(b, rtol=1e-05, atol=1e-08),
                                 "%s, axis=%s, weighted, masked, pp=%s, ddof=%s, \ne=%s, \nb=%s, \ne-b=%s" %
                                 (h, axes, pp, ddof, e.array, b, e.array-b))
-                #--- End: for
-            #--- End: for
         #--- End: for
+        
         cf.CHUNKSIZE(self.original_chunksize)
 
 
@@ -1949,6 +1930,7 @@ class DataTest(unittest.TestCase):
                         self.assertTrue(d.shape == c.shape)
                         self.assertTrue((d.array == c).all(), "{}, {}, {}".format(method, units, d.array-c))
         #--- End: for
+        
         cf.CHUNKSIZE(self.original_chunksize)
 
         

@@ -32,16 +32,17 @@ from numpy.ma import where        as numpy_ma_where
 
 from ..functions import broadcast_array
 
+
 def asanyarray(*args):
-    '''asdasd
+    '''TODO
 
-:Parameters:
-
-    args: sequence of `numpy.ndarray`
-
-:Returns:
-
-    out: `tuple`
+    :Parameters:
+    
+        args: sequence of `numpy.ndarray`
+    
+    :Returns:
+    
+        out: `tuple`
 
     '''
     out = []
@@ -54,38 +55,32 @@ def asanyarray(*args):
             out.append(x)
     #--- End: for
 
-    # if len(out) == 1:
-    #     return out[0]
-    # else:
-    #     return out
     return out
-#--- End: def
+
 
 def psum(x, y):
+    '''Add two arrays element-wise.
+
+    If either or both of the arrays are masked then the output array is
+    masked only where both input arrays are masked.
+    
+    :Parameters:
+    
+        x: numpy array-like
+           *Might be updated in place*.
+    
+        y: numpy array-like
+           Will not be updated in place.
+    
+    :Returns:
+    
+        out: `numpy.ndarray`
+    
+    **Examples:**
+    
+    >>> c = psum(a, b)
+
     '''
-
-Add two arrays element-wise.
-
-If either or both of the arrays are masked then the output array is
-masked only where both input arrays are masked.
-
-:Parameters:
-
-    x: numpy array-like
-       *Might be updated in place*.
-
-    y: numpy array-like
-       Will not be updated in place.
-
-:Returns:
-
-    out: `numpy.ndarray`
-
-:Examples:
-
->>> c = psum(a, b)
-
-'''
     if numpy_ma_isMA(x):
         if numpy_ma_isMA(y):
             # x and y are both masked
@@ -105,24 +100,24 @@ masked only where both input arrays are masked.
         x += y
 
     return x
-#--- End: def
+
 
 def pmax(x, y):
+    '''TODO
+
+    :Parameters:
+    
+        x: array-like
+           May be updated in place and should not be used again.
+    
+        y: array-like
+           Will not be updated in place.
+    
+    :Returns:
+    
+        out: `numpy.ndarray`
+
     '''
-
-:Parameters:
-
-    x: array-like
-       May be updated in place and should not be used again.
-
-    y: array-like
-       Will not be updated in place.
-
-:Returns:
-
-    out: `numpy.ndarray`
-
-'''
     if numpy_ma_isMA(x):
         if numpy_ma_isMA(y):
             # x and y are both masked
@@ -153,24 +148,24 @@ def pmax(x, y):
         numpy_maximum(x, y, out=x)
 
     return x
-#--- End: def
+
 
 def pmin(x, y):
+    '''TODO
+
+    :Parameters:
+    
+        x: `numpy.ndarray`
+           May be updated in place and should not be used again.
+    
+        y: `numpy.ndarray`
+           Will not be updated in place.
+    
+    :Returns:
+    
+        out: `numpy.ndarray`
+
     '''
-
-:Parameters:
-
-    x: `numpy.ndarray`
-       May be updated in place and should not be used again.
-
-    y: `numpy.ndarray`
-       Will not be updated in place.
-
-:Returns:
-
-    out: `numpy.ndarray`
-
-'''
     if numpy_ma_isMA(x):
         if numpy_ma_isMA(y):
             # x and y are both masked
@@ -201,7 +196,7 @@ def pmin(x, y):
         numpy_minimum(x, y, out=x)
 
     return x
-#--- End: def
+
 
 def mask_where_too_few_values(Nmin, N, x):
     '''Mask elements of N and x where N is strictly less than Nmin.
