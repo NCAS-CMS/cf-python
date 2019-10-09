@@ -154,9 +154,9 @@ not recommended to be used as a general tidy-up function.
             remove(_lock_file)
         except OSError:
             pass
-        for lockfile in _other_lock_files:
+        for lock_file in _other_lock_files:
             try:
-                remove(lockfile)
+                remove(lock_file)
             except OSError:
                 pass
         #--- End: for
