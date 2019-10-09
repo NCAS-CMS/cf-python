@@ -36,7 +36,6 @@ script (:download:`download <../source/tutorial.py>`, 36kB).
    :local:
    :backlinks: entry
 
-
 .. _Sample-datasets:
 
 **Sample datasets**
@@ -5890,7 +5889,8 @@ In any case, a field construct may appear as the left or right
 operand, and augmented assignments are possible.
 
 Automatic units conversions are also carried out between operands
-during operations.
+during operations, and if one operand has no units then the units of
+the other are assumed.
 
 .. code-block:: python
   :caption: *TODO*
@@ -5971,13 +5971,13 @@ returning a new field construct with modified data values. See the
     [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
     [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
     [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]   
-   >>> print(-q.array)                    
+   >>> print(-q.array)
    [[-0.007 -0.034 -0.003 -0.014 -0.018 -0.037 -0.024 -0.029]
     [-0.023 -0.036 -0.045 -0.062 -0.046 -0.073 -0.006 -0.066]
     [-0.11  -0.131 -0.124 -0.146 -0.087 -0.103 -0.057 -0.011]
     [-0.029 -0.059 -0.039 -0.07  -0.058 -0.072 -0.009 -0.017]
     [-0.006 -0.036 -0.019 -0.035 -0.018 -0.037 -0.034 -0.013]]
-   >>> print(abs(-q.array))  
+   >>> print(abs(-q).array)
    [[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]
     [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
     [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
@@ -6008,7 +6008,8 @@ In any case, a field construct may appear as the left or right
 operand.
 
 Automatic units conversions are also carried out between operands
-during operations.
+during operations, and if one operand has no units then the units of
+the other are assumed.
 
 .. code-block:: python
   :caption: *TODO*

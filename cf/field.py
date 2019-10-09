@@ -4191,8 +4191,8 @@ may be accessed with the `nc_global_attributes`,
                                 this identity.
                   
                   `Field`       Take weights from the data array of
-                                another field, which must be
-                                broadcastable to this field.
+                                another field construct, which must be
+                                broadcastable to this field construct.
                   ============  ==========================================
      
                 If *weights* is a sequence of any combination of the
@@ -4208,11 +4208,14 @@ may be accessed with the `nc_global_attributes`,
     
         scale: number, optional
             If set to a positive number then scale the weights so that
-            they are less than or equal to that number.
+            they are less than or equal to that number. If weights
+            components have been requested (see the *components*
+            parameter) then each component is scaled independently of
+            the others.
 
             *Parameter example:*
                To scale all weights so that they lie between 0 and 1:
-               ``scale=1.0``.
+               ``scale=1``.
     
         components: `bool`, optional
             If True then a dictionary of orthogonal weights components
@@ -4238,21 +4241,21 @@ may be accessed with the `nc_global_attributes`,
     **Examples:**
     
     >>> f
-    <CF Field: air_temperature(time(1800), latitude(145), longitude(192)) K>
+    <CF Field: air_temperature(time(12), latitude(145), longitude(192)) K>
     >>> f.weights()
-    <CF Field: long_name:weight(time(1800), latitude(145), longitude(192)) 86400 s.rad>
+    <CF Field: long_name:weight(time(12), latitude(145), longitude(192)) 86400 s.rad>
     >>> f.weights('auto', scale=1.0)
-    <CF Field: long_name:weight(time(1800), latitude(145), longitude(192)) 1>
+    <CF Field: long_name:weight(time(12), latitude(145), longitude(192)) 1>
     >>> f.weights('auto', components=True)
-    {(0,): <CF Data(1800): [1.0, ..., 1.0] d>,
+    {(0,): <CF Data(12): [30.0, ..., 31.0] d>,
      (1,): <CF Data(145): [5.94949998503e-05, ..., 5.94949998503e-05]>,
      (2,): <CF Data(192): [0.0327249234749, ..., 0.0327249234749] radians>}
     >>> f.weights('auto', components=True, scale=1.0)
-    {(0,): <CF Data(1800): [1.0, ..., 1.0]>,
+    {(0,): <CF Data(12): [0.967741935483871, ..., 1.0] 1>,
      (1,): <CF Data(145): [0.00272710399807, ..., 0.00272710399807]>,
      (2,): <CF Data(192): [1.0, ..., 1.0]>}
     >>> f.weights('auto', components=True, scale=2.0)
-    {(0,): <CF Data(1800): [2.0, ..., 2.0]>,
+    {(0,): <CF Data(12): [1.935483870967742, ..., 2.0] 1>,
      (1,): <CF Data(145): [0.00545420799614, ..., 0.00545420799614]>,
      (2,): <CF Data(192): [2.0, ..., 2.0]>}
     >>> f.weights('auto', methods=True)
@@ -4602,12 +4605,12 @@ may be accessed with the `nc_global_attributes`,
                     "Can't scale when all weights are non-positive. max(weights)={}".format(
                         wmax))
 
-            wmax = wmax / scale
-            wmax.dtype = float
-            if numpy_can_cast(wmax.dtype, w.dtype):
-                w /= wmax
+            factor = wmax / scale
+            factor.dtype = float
+            if numpy_can_cast(factor.dtype, w.dtype):
+                w /= factor
             else:
-                w = w / wmax
+                w = w / factor
 
             return w
         #--- End: def
