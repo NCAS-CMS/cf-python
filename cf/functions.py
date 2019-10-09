@@ -2390,6 +2390,14 @@ def _DEPRECATION_ERROR(message=''):
     raise DeprecationError("{0}".format(message))
 
 
+def _DEPRECATION_ERROR_ARG(instance, method, arg, message=''):  
+    raise DeprecationError("Argument {2!r} of method '{0}.{1}' has been deprecated at version 3.0.0 and is no longer available. {3}".format(
+            instance.__class__.__name__,
+            method,
+            arg,
+            message))
+
+
 def _DEPRECATION_ERROR_FUNCTION_KWARGS(func, kwargs={}, message='',
                                        exact=False, traceback=False):
     if exact:

@@ -22,7 +22,7 @@
 ----
 
 * `Version 3.0.0 <https://ncas-cms.github.io/cf-python/3.0.0>`_ (first Python 3 release)
-* `Version 2.3.5 <https://cfpython.bitbucket.io/docs/latest>`_ (last Python 2 release)
+* `Version 2.3.8 <https://cfpython.bitbucket.io/docs/latest>`_ (last Python 2 release)
 * `Version 2.3.0 <http://cfpython.bitbucket.io/docs/2.3.0/index.html>`_
 * `Version 2.2.8 <http://cfpython.bitbucket.io/docs/2.2.8/index.html>`_
 * `Version 2.2.5 <http://cfpython.bitbucket.io/docs/2.2.5/index.html>`_

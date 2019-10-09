@@ -62,8 +62,10 @@ from .query           import Query, ge, gt, le, lt, ne, eq, wi
 from .regrid          import Regrid
 from .timeduration    import TimeDuration
 from .units           import Units
+from .subspacefield   import SubspaceField
 
 from .functions import (_DEPRECATION_ERROR,
+                        _DEPRECATION_ERROR_ARG,
                         _DEPRECATION_ERROR_KWARGS,
                         _DEPRECATION_ERROR_METHOD,
                         _DEPRECATION_ERROR_ATTRIBUTE,
@@ -73,6 +75,7 @@ from .functions import (_DEPRECATION_ERROR,
 from .data.data import Data
 
 from . import mixin
+
 
 _debug = False
 
@@ -8170,13 +8173,23 @@ may be accessed with the `nc_global_attributes`,
 
         '''
         if 'exact' in mode:
-            _DEPRECATION_ERROR("'exact' mode has been deprecated and is no longer available. It is now assumed that, where applicable, keyword arguments not regular expressions. Use 're.compile' keywords for regular expressions.") # pragma: no cover
+            _DEPRECATION_ERROR_ARG(
+                self, 'indices', 'exact',
+                "Keywords are now never interpreted as regular expressions.") # pragma: no cover
+            
+        if len(mode) > 2:
+            raise ValueError("Can't provide more than two positional arguments.")
             
         envelope = 'envelope' in mode
         full     = 'full' in mode
         compress = 'compress' in mode or not (envelope or full)
         _debug   = '_debug' in mode
 
+        if not _debug and len(mode) == 2:
+            raise ValueError(
+                "Can't provide {0[0]!r} and {0[1]!r} positional arguments in the same call.".format(
+                    mode))
+        
         if _debug:
             print('Field.indices:') # pragma: no cover
             print('    envelope, full, compress, _debug =', envelope, full, compress, _debug) # pragma: no cover
@@ -14273,146 +14286,4 @@ may be accessed with the `nc_global_attributes`,
             "Use methods 'DomainAxis.nc_is_unlimited', and 'DomainAxis.nc_set_unlimited' instead.") # pragma: no cover
 
         
-#--- End: class
-
-
-# ====================================================================
-#
-# SubspaceField object
-#
-# ====================================================================
-
-class SubspaceField(mixin.Subspace):
-    '''Return a subspace of a field.
-
-A subspace may be defined in "domain-space" via data array values of
-its domain items: dimension coordinate, auxiliary coordinate, cell
-measure, domain ancillary and field ancillary objects.
-
-Alternatively, a subspace my be defined be in "index-space" via
-explicit indices for the data array using an extended Python slicing
-syntax.
-
-Subspacing by values of 1-d coordinates allows a subspaced field to be
-defined via coordinate values of its domain. The benefits of
-subspacing in this fashion are:
-
-  * The axes to be subspaced may identified by name.
-  * The position in the data array of each axis need not be known and
-    the axes to be subspaced may be given in any order.
-  * Axes for which no subspacing is required need not be specified.
-  * Size 1 axes in the subspaced field are always retained, but may be
-    subsequently removed with the `~cf.Field.squeeze` method.
-
-  * Size 1 axes of the domain which are not spanned by the data array
-    may be specified.
-
-Metadata values are provided as keyword arguments. Metadata items are
-identified by their identity or their axis's identifier in the field.
-
-``f.subspace(*args, **kwargs)`` is equivalent to ``f[f.indices(*args,
-**kwargs)]``. See `cf.Field.indices` for details.
-
-.. seealso:: `__getitem__`, `indices`, `where`
-
-**Examples:**
-
->>> f,shape
-(12, 73, 96)
->>> f.subspace().shape
-(12, 73, 96)
->>> f.subspace(latitude=0).shape
-(12, 1, 96)
->>> f.subspace(latitude=cf.wi(-30, 30)).shape
-(12, 25, 96)
->>> f.subspace(long=cf.ge(270, 'degrees_east'), lat=cf.set([0, 2.5, 10])).shape
-(12, 3, 24)
->>> f.subspace(latitude=cf.lt(0, 'degrees_north'))
-(12, 36, 96)
->>> f.subspace(latitude=[cf.lt(0, 'degrees_north'), 90])
-(12, 37, 96)
->>> import math
->>> f.subspace('exact', longitude=cf.lt(math.pi, 'radian'), height=2)
-(12, 73, 48)
->>> f.subspace(height=cf.gt(3))
-IndexError: No indices found for 'height' values gt 3
->>> f.subspace(dim2=3.75).shape
-(12, 1, 96)
->>> f.subspace(time=cf.le(cf.dt('1860-06-16 12:00:00')).shape
-(6, 73, 96)
->>> f.subspace(time=cf.gt(cf.dt(1860, 7)),shape
-(5, 73, 96)
-
-Note that if a comparison function (such as `cf.wi`) does not specify
-any units, then the units of the named item are assumed.
-
-    '''
-        
-    __slots__ = []
-
-    def __call__(self, *args, **kwargs):
-        '''Return a subspace of the field defined by coordinate values.
-    
-    :Parameters:
-    
-        kwargs: *optional*
-            Keyword names identify coordinates; and keyword values
-            specify the coordinate values which are to be
-            reinterpreted as indices to the field construct's data
-            array.
-    
-    
-    ~~~~~~~~~~~~~~ /??????
-            Coordinates are identified by their exact identity or by their
-            axis's identifier in the field construct's domain.
-    
-            A keyword value is a condition, or sequence of conditions,
-            which is evaluated by finding where the coordinate's data
-            array equals each condition. The locations where the
-            conditions are satisfied are interpreted as indices to the
-            field construct's data array. If a condition is a scalar
-            ``x`` then this is equivalent to the `Query` object
-            ``cf.eq(x)``.
-    
-    :Returns:
-    
-        `Field`
-    TODO
-    
-    **Examples:**
-    
-    >>> f.indices(lat=0.0, lon=0.0)
-    >>> f.indices(lon=cf.lt(0.0), lon=cf.set([0, 3.75]))
-    >>> f.indices(lon=cf.lt(0.0), lon=cf.set([0, 356.25]))
-    >>> f.indices(lon=cf.lt(0.0), lon=cf.set([0, 3.75, 356.25]))
-
-        '''
-        field = self.variable
-
-        if not args and not kwargs:
-            return field.copy()    
-
-        return field[field.indices(*args, **kwargs)]
-
-
-    def __getitem__(self, indices):
-        '''Called to implement evaluation of x[indices].
-
-    x.__getitem__(indices) <==> x[indices]
-    
-    Returns a subspace of a field.
-
-        '''
-        return super().__getitem__(indices)
-
-
-    def __setitem__(self, indices, value):
-        '''Called to implement assignment to x[indices]
-
-    x.__setitem__(indices, value) <==> x[indices]
-
-        '''      
-        super().__setitem__(indices, value)
-
-
 #--- End: class
