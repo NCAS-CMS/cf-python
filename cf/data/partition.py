@@ -149,7 +149,7 @@ not recommended to be used as a general tidy-up function.
             remove(filename)
         except OSError:
             pass
-        _dirname, _lock_file, _other_lock_files = _temporary_files[filename]
+        dirname, _lock_file, _other_lock_files = _temporary_files[filename]
         try:
             remove(_lock_file)
         except OSError:
@@ -162,7 +162,7 @@ not recommended to be used as a general tidy-up function.
         #--- End: for
         try:
             rmdir(dirname)
-        except:
+        except OSError:
             pass
     #--- End: for
 
