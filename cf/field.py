@@ -9329,12 +9329,13 @@ may be accessed with the `nc_global_attributes`,
                inplace=False):
         '''Return the field cumulatively summed along the given axis.
         
-    The cell bounds (if any) of the summed axis are updated, and a
-    "sum" cell method construct is added.
+    The cell bounds of the axis are updated to describe the range over
+    which the sums apply, and a new "sum" cell method construct is
+    added to the resulting field construct.
 
     .. versionadded:: 3.0.0
         
-    .. seealso:: `collapse`, `convolution_filter`
+    .. seealso:: `collapse`, `convolution_filter`, `sum`
 
     :Parameters:
     
@@ -9349,9 +9350,8 @@ may be accessed with the `nc_global_attributes`,
         masked_as_zero: `bool`, optional
             If True then set missing data values to zero before
             calculating the cumulative sum. By default the output data
-            will be masked where any missing values contribute to a
-            cumulative sum.
-
+            will be masked at the same locations as the original data.
+    
         coordinate: `str`, optional
             Set how the cell coordinate values for the summed axis are
             defined. By default they are unchanged from the original
@@ -9387,29 +9387,15 @@ may be accessed with the `nc_global_attributes`,
         # Get the axis index
         axis_index = self.get_data_axes().index(axis_key)
 
-        # Section the data into sections up to a chunk in size
-        sections = self.data.section([axis_index], chunks=True)
-
-        # Cumulatively sum each section
-        for k in sections:
-            array = sections[k].array
-
-            if masked_as_zero and numpy_ma_is_masked(array):
-                array = array.filled(0)
-            
-            output_array = numpy_cumsum(array, axis=axis_index)
-            sections[k] = Data(output_array, units=self.Units)
-
-        # Glue the sections back together again
-        new_data = Data.reconstruct_sectioned_data(sections)
-
+        new_data = self.data.cumsum(axis_index, masked_as_zero=masked_as_zero)
+        
         # Construct new field
         if inplace:
             f = self
         else:
             f = self.copy()
 
-        # Insert filtered data into new field
+        # Insert new data into field
         f.set_data(new_data, set_axes=False, copy=False)
 
         if self.domain_axis(axis_key).get_size() > 1:

@@ -9,6 +9,7 @@ from numpy import asanyarray    as numpy_asanyarray
 from numpy import ceil          as numpy_ceil
 from numpy import cos           as numpy_cos
 from numpy import count_nonzero as numpy_count_nonzero
+from numpy import cumsum        as numpy_cumsum
 from numpy import dtype         as numpy_dtype
 from numpy import e             as numpy_e
 from numpy import empty         as numpy_empty
@@ -1924,7 +1925,28 @@ place.
 
         return json_dumps(d, default=_convert_to_builtin_type)
 
+    def digitise(self, bins, right=False):
+        '''TODO
+        '''
 
+        out = self.copy()
+                
+        config = out.partition_configuration()
+
+        for partition in out.partitions.matrix.flat:
+            partition.open(config)
+            array = partition.array
+            partition.subarray = numpy_digitize(array, bins)
+            partition.Units = _units_None
+            partition.close()
+
+        out.dtype = int
+
+        out.override_units(_units_None, inplace=True)
+            
+        return out
+
+    
     def loads(self, j, chunk=True):
         '''TODO
         '''
@@ -2373,6 +2395,86 @@ place.
         return self.func(numpy_ceil, out=True, inplace=inplace)
 
 
+    def cumsum(self, axis, masked_as_zero=False):
+        '''Return the data cumulatively summed along the given axis.
+
+    .. versionadded:: 3.0.0
+        
+    .. seealso:: `sum`
+
+    :Parameters:
+    
+        axis: `int`, optional
+            Select the axis over which the cumulative sums are to be
+            calculated.
+    
+        masked_as_zero: `bool`, optional
+            If True then set missing data values to zero before
+            calculating the cumulative sum. By default the output data
+            will be masked at the same locations as the original data.
+    
+    :Returns:
+    
+         `Data`
+            The data with the cumulatively summed dimension.
+    
+    **Examples:**
+
+    >>> d = cf.Data(numpy.arange(12).reshape(3, 4))
+    >>> print(d.array)
+    [[ 0  1  2  3]
+     [ 4  5  6  7]
+     [ 8  9 10 11]]
+    >>> print(d.cumsum(0).array)
+    [[ 0  1  2  3]
+     [ 4  6  8 10]
+     [12 15 18 21]]
+    >>> print(d.cumsum(1).array)
+    [[ 0  1  3  6]
+     [ 4  9 15 22]
+     [ 8 17 27 38]]
+    >>> d[1, 1] = cf.masked
+    >>> print(d.array)
+    [[0 1 2 3]
+     [4 -- 6 7]
+     [8 9 10 11]]
+    >>> print(d.cumsum(1).array)
+    [[0 1 3 6]
+     [4 -- 10 17]
+     [8 17 27 38]]
+    >>> print(d.cumsum(1, masked_as_zero=True).array)
+    [[ 0  1  3  6]
+     [ 4  4 10 17]
+     [ 8 17 27 38]]
+
+        '''
+        # Parse axis
+        ndim = self._ndim 
+        if -ndim-1 <= axis < 0:
+            axis += ndim + 1
+        elif not 0 <= axis <= ndim:
+            raise ValueError(
+                "Can't cumsum: Invalid axis specification: Expected -{0}<=axis<{0}, got axis={1}".format(
+                    ndim, axis))
+
+        sections = self.section([axis], chunks=True)
+
+        # Cumulatively sum each section
+        for key, data in sections.items():
+            array = data.array
+
+            if masked_as_zero and numpy_ma_is_masked(array):
+                array = array.filled(0)
+            
+            output_array = numpy_cumsum(array, axis=axis)
+            sections[key] = type(self)(output_array, units=self.Units,
+                                       fill_value=self.fill_value)
+
+        # Glue the sections back together again
+        out = self.reconstruct_sectioned_data(sections)
+        return out
+
+    
     def _chunk_add_partitions(self, d, axes):
         '''TODO
         '''
@@ -10185,7 +10287,7 @@ returned.
     
     :Parameters:
     
-        axes : (sequence of) int or str, optional
+        axes: (sequence of) int or str, optional
             Select the axes.  By default all size 1 axes are
             removed. The *axes* argument may be one, or a sequence,
             of:

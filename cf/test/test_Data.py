@@ -75,7 +75,7 @@ class DataTest(unittest.TestCase):
         self.test_only = ['test_Data_AUXILIARY_MASK',
                           'test_Data_datum', 'test_Data_ERROR',
                           'test_Data_array', 'test_Data_varray',
-                          'test_Data_datetime_array',
+                          'test_Data_datetime_array', 'test_Data_cumsum',
                           'test_Data_dumpd_loadd_dumps',
                           'test_Data_sin_cos_tan',
                           'test_Data_squeeze_insert_dimension',
@@ -100,6 +100,30 @@ class DataTest(unittest.TestCase):
 #        self.test_only = ['test_Data_clip']
 
 
+    def test_Data_cumsum(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        for chunksize in self.chunk_sizes:
+            cf.CHUNKSIZE(chunksize)
+
+            d = cf.Data(self.a)
+
+            for i in range(d.ndim):
+                b = numpy.cumsum(self.a, axis=i)
+                e = d.cumsum(axis=i)
+                self.assertTrue((e.array == b).all())
+
+            d = cf.Data(self.ma)
+
+            for i in range(d.ndim):
+                b = numpy.cumsum(self.ma, axis=i)
+                e = d.cumsum(axis=i, masked_as_zero=False)
+                self.assertTrue(cf.functions._numpy_allclose(e.array, b))
+        #--- End: for
+        cf.CHUNKSIZE(self.original_chunksize)
+
+        
     def test_Data_CachedArray(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return

@@ -10,9 +10,9 @@ import numpy
 
 import cf
 
-tmpfile   = tempfile.mktemp('.cf-python_test')
-tmpfileh  = tempfile.mktemp('.cf-python_test')
-tmpfilec  = tempfile.mktemp('.cf-python_test')
+tmpfile   = tempfile.mktemp('_cf-python_test')
+tmpfileh  = tempfile.mktemp('_cf-python_test')
+tmpfilec  = tempfile.mktemp('_cf-python_test')
 tmpfiles = [tmpfile, tmpfileh, tmpfilec]
 def _remove_tmpfiles():
     '''TODO

@@ -6359,9 +6359,9 @@ Cumulative sums
 ^^^^^^^^^^^^^^^
 
 The `~Field.cumsum` method of the field construct calculates the
-cumulative sum of elements along a given axis. The cell bounds of of
-the axis are updated to describe the range over which the sum applies,
-and a new "sum" cell method construct is added to the resulting field
+cumulative sum of elements along a given axis. The cell bounds of the
+axis are updated to describe the ranges over which the sums apply, and
+a new "sum" cell method construct is added to the resulting field
 construct.
 
 
@@ -6427,7 +6427,7 @@ constructs in memory with the `cf.aggregate` function.
    >>> a = cf.read('air_temperature.nc')[0]
    >>> a
    <CF Field: air_temperature(time(2), latitude(73), longitude(96)) K>
-   >>> a_parts = [a[0, : , 0:30], a[0, :, 30:], a[1, :, 0:30], a[1, :, 30:]]
+   >>> a_parts = [a[0, : , 0:30], a[0, :, 30:96], a[1, :, 0:30], a[1, :, 30:96]]
    >>> a_parts
    [<CF Field: air_temperature(time(1), latitude(73), longitude(30)) K>,
     <CF Field: air_temperature(time(1), latitude(73), longitude(66)) K>,
@@ -6439,6 +6439,10 @@ constructs in memory with the `cf.aggregate` function.
    >>> x = cf.read('[0-3]_air_temperature.nc')
    >>> y = cf.read('[0-3]_air_temperature.nc', aggregate=False)
    >>> z = cf.aggregate(y)
+   >>> x
+   [<CF Field: air_temperature(time(2), latitude(73), longitude(96)) K>]
+   >>> z
+   [<CF Field: air_temperature(time(2), latitude(73), longitude(96)) K>]
    >>> x.equals(z)
    True
 
@@ -6463,6 +6467,30 @@ Note that when reading :ref:`PP and UM fields files
 <PP-and-UM-fields-files>` with `cf.read`, the *relaxed_units* option
 is `True` by default, because units are not always available to field
 constructs derived from :ref:`PP-and-UM-fields-files`.
+
+Field constructs that are logically similar but aranged differently
+are also aggregatable.
+
+.. code-block:: python
+   :caption: *Show that the aggregation is unchanged when one of the
+             field constructs has a different axis order and different
+             units.*
+
+   >>> x = cf.aggregate(a_parts)
+   >>> x
+   [<CF Field: air_temperature(time(2), latitude(73), longitude(96)) K>]
+   >>> a_parts[1].transpose(inplace=True)
+   >>> a_parts[1].units = 'degreesC'
+   >>> a_parts
+   [<CF Field: air_temperature(time(1), latitude(73), longitude(30)) K>,
+    <CF Field: air_temperature(longitude(66), latitude(73), time(1)) degreesC>,
+    <CF Field: air_temperature(time(1), latitude(73), longitude(30)) K>,
+    <CF Field: air_temperature(time(1), latitude(73), longitude(66)) K>]
+   >>> z = cf.aggregate(a_parts)
+   >>> z   
+   [<CF Field: air_temperature(time(2), latitude(73), longitude(96)) K>]
+   >>> x.equals(z)
+   True
 
 ----
 

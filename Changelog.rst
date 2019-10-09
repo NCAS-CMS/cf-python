@@ -9,6 +9,8 @@ version 3.0.2
 * Fixed "relaxed units" behaviour in `cf.aggregate` and field
   construct arithmetic.
 * Now reads CDL files (https://github.com/NCAS-CMS/cf-python/issues/1)
+* Fixed failure to delete all temporary directories at exit.
+* New method `cf.Data.cumsum`
 
 version 3.0.1
 -------------
