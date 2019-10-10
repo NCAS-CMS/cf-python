@@ -4848,8 +4848,10 @@ may be accessed with the `nc_global_attributes`,
                            ``bin_number`` property. If the
                            ``bin_bounds`` array has 2N elements then
                            the ``bin_number`` property will be N if
-                           there are no left-open and right-open bins,
-                           or N+2 if such bins are present.
+                           there are no left-open and right-open bins
+                           or N+2 if such bins are present. See the
+                           *bins* and *open_ends* parameters for more
+                           details.
                            
     ``bin_interval_type``  A string that specifies the nature of the
                            bin boundaries, i.e. if they are closed or
@@ -4872,18 +4874,21 @@ may be accessed with the `nc_global_attributes`,
               each boundary, with the exception of the two end
               boundaries, counts as the upper boundary of one bin and
               the lower boundary of next. If the *open_ends* parameter
-              is True then the lowest lower bin boundary of and the
-              largest upper bin boundary also define left-open and
-              right-open bins respectively.
+              is True (which is the default) then the smallest lower
+              bin boundary also defines a left-open (i.e. not bounded
+              below) bin, and the largest upper bin boundary also
+              defines a right-open (i.e. not bounded above) bin.
 
             * A 2-d array of numbers.
         
               The second dimension, that must have size 2, contains
               the lower and upper bin boundaries. Different bins may
               share a boundary, but may not overlap. If the
-              *open_ends* parameter is True then the lowest lower bin
-              boundary of and the largest upper bin boundary also
-              define left-open and right-open bins respectively.
+              *open_ends* parameter is True (which is the default)
+              then the smallest lower bin boundary also defines a
+              left-open (i.e. not bounded below) bin, and the largest
+              upper bin boundary also defines a right-open (i.e. not
+              bounded above) bin.
 
         upper: `bool`, optional
             If True then each bin includes its upper bound but not its
@@ -4891,12 +4896,12 @@ may be accessed with the `nc_global_attributes`,
             bin includes its lower bound but not its upper bound.
 
         open_ends: `bool`, optional
-            If False then do not create left-open and right-open bins
-            respectively from the lowest lower bin boundary and
-            largest upper bin boundary repspectively. In this case
-            missing data is insert for data values that would lie in
-            these bins. By default these bins are created, and so
-            there is no missing data in the return array of indices.
+            If False then do not create left-open (i.e. not bounded
+            below) and right-open (i.e. not bounded above) bins from
+            the lowest lower bin boundary and largest upper bin
+            boundary respectively. In this case missing data is
+            inserted for data values that lie in these bins. By
+            default these bins are created.
 
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
@@ -4915,15 +4920,31 @@ may be accessed with the `nc_global_attributes`,
     {'Conventions': 'CF-1.7',
      'standard_name': 'specific_humidity',
      'units': '0.001 1'}
-    >>>> print(q.array)
+    >>> print(f.array)
     [[  7.  34.   3.  14.  18.  37.  24.  29.]
      [ 23.  36.  45.  62.  46.  73.   6.  66.]
      [110. 131. 124. 146.  87. 103.  57.  11.]
      [ 29.  59.  39.  70.  58.  72.   9.  17.]
      [  6.  36.  19.  35.  18.  37.  34.  13.]]
+    >>> g = f.digitize([4, 50, 100])                                           
+    >>> g
+    <CF Field: long_name=Bin indices to which each 'specific_humidity' value belongs(latitude(5), longitude(8))
+    >>> print(g.array)
+    [[1 1 0 1 1 1 1 1]
+     [1 1 1 2 1 2 1 2]
+     [3 3 3 3 2 3 2 1]
+     [1 2 1 2 2 2 1 1]
+     [1 1 1 1 1 1 1 1]]    
+    >>> g.properties() 
+    {'Conventions': 'CF-1.7',
+     'bin_number': 4,
+     'bin_bounds': array([  4,  50,  50, 100]),
+     'bin_interval_type': 'lower: closed upper: open',
+     'long_name': "Bin indices to which each 'specific_humidity' value belongs"}
+
     >>> g = f.digitize([[2, 6], [40, 100]])
     >>> g
-    <CF Field: long_name=Indices to which bin each 'specific_humidity' value belongs(latitude(5), longitude(8))>
+    <CF Field: long_name=Bin indices to which each 'specific_humidity' value belongs(latitude(5), longitude(8))>
     >>> print(g.array)
     [[-- --  1 -- -- -- -- --]
      [-- --  2  2  2  2 --  2]
@@ -4935,11 +4956,11 @@ may be accessed with the `nc_global_attributes`,
      'bin_number': 4,
      'bin_bounds': array([  2,   6,  40, 100]),
      'bin_interval_type': 'lower: closed upper: open',
-     'long_name': Indices to which bin each 'specific_humidity' value belongs"}
+     'long_name': "Bin indices to which each 'specific_humidity' value belongs"}
 
     >>> g = f.digitize([2, 6, 45, 100], upper=True, open_ends=False)
     >>> g
-    <CF Field: long_name=Indices to which bin each 'specific_humidity' value belongs(latitude(5), longitude(8))>
+    <CF Field: long_name=Bin indices to which each 'specific_humidity' value belongs(latitude(5), longitude(8))>
     >>> print(g.array)
     [[ 1  1  0  1  1  1  1  1]
      [ 1  1  1  2  2  2  0  2]
@@ -4952,7 +4973,7 @@ may be accessed with the `nc_global_attributes`,
      'bin_number': 3,
      'bin_bounds': array([  2,   6,   6,  45,  45, 100]),
      'bin_interval_type': 'lower: open upper: closed',
-     'long_name': "Indices to which bin each 'specific_humidity' value belongs"}
+     'long_name': "Bin indices to which each 'specific_humidity' value belongs"}
     
     See `cf.Data.digitize` more examples.
 
@@ -5003,7 +5024,7 @@ may be accessed with the `nc_global_attributes`,
         f.set_property('bin_bounds', bin_bounds)
         f.set_property('bin_interval_type', bin_interval_type)
         f.set_property('long_name',
-                       'Indices to which bin each {!r} value belongs'.format(
+                       'Bin indices to which each {!r} value belongs'.format(
                            self.identity()))
         
         f.del_property('standard_name', None)

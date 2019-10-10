@@ -1946,18 +1946,21 @@ place.
               each boundary, with the exception of the two end
               boundaries, counts as the upper boundary of one bin and
               the lower boundary of next. If the *open_ends* parameter
-              is True then the lowest lower bin boundary of and the
-              largest upper bin boundary also define left-open and
-              right-open bins respectively.
+              is True (which is the default) then the smallest lower
+              bin boundary also defines a left-open (i.e. not bounded
+              below) bin, and the largest upper bin boundary also
+              defines a right-open (i.e. not bounded above) bin.
 
             * A 2-d array of numbers.
         
               The second dimension, that must have size 2, contains
               the lower and upper bin boundaries. Different bins may
               share a boundary, but may not overlap. If the
-              *open_ends* parameter is True then the lowest lower bin
-              boundary of and the largest upper bin boundary also
-              define left-open and right-open bins respectively.
+              *open_ends* parameter is True (which is the default)
+              then the smallest lower bin boundary also defines a
+              left-open (i.e. not bounded below) bin, and the largest
+              upper bin boundary also defines a right-open (i.e. not
+              bounded above) bin.
 
         upper: `bool`, optional
             If True then each bin includes its upper bound but not its
@@ -1965,12 +1968,12 @@ place.
             bin includes its lower bound but not its upper bound.
 
         open_ends: `bool`, optional
-            If False then do not create left-open and right-open bins
-            respectively from the lowest lower bin boundary and
-            largest upper bin boundary repspectively. In this case
-            missing data is insert for data values that would lie in
-            these bins. By default these bins are created, and so
-            there is no missing data in the return array of indices.
+            If False then do not create left-open (i.e. not bounded
+            below) and right-open (i.e. not bounded above) bins from
+            the lowest lower bin boundary and largest upper bin
+            boundary respectively. In this case missing data is
+            inserted for data values that lie in these bins. By
+            default these bins are created.
 
     :Returns:
 

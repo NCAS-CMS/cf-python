@@ -120,8 +120,10 @@ right-open bins is deduced from the
 <code class="docutils literal notranslate"><span class="pre">bin_number</span></code> property. If the
 <code class="docutils literal notranslate"><span class="pre">bin_bounds</span></code> array has 2N elements then
 the <code class="docutils literal notranslate"><span class="pre">bin_number</span></code> property will be N if
-there are no left-open and right-open bins,
-or N+2 if such bins are present.</td>
+there are no left-open and right-open bins
+or N+2 if such bins are present. See the
+<em>bins</em> and <em>open_ends</em> parameters for more
+details.</td>
 </tr>
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">bin_interval_type</span></code></td>
 <td>A string that specifies the nature of the
@@ -149,17 +151,20 @@ closed and the upper boundary is open then
 each boundary, with the exception of the two end
 boundaries, counts as the upper boundary of one bin and
 the lower boundary of next. If the <em>open_ends</em> parameter
-is True then the lowest lower bin boundary of and the
-largest upper bin boundary also define left-open and
-right-open bins respectively.</p>
+is True (which is the default) then the smallest lower
+bin boundary also defines a left-open (i.e. not bounded
+below) bin, and the largest upper bin boundary also
+defines a right-open (i.e. not bounded above) bin.</p>
 </li>
 <li><p class="first">A 2-d array of numbers.</p>
-<p>The second dimension, that must be size 2, contains the
-lower and upper bin boundaries. Different bins may share
-a boundary, but may not overlap. If the <em>open_ends</em>
-parameter is True then the lowest lower bin boundary of
-and the largest upper bin boundary also define left-open
-and right-open bins respectively.</p>
+<p>The second dimension, that must have size 2, contains
+the lower and upper bin boundaries. Different bins may
+share a boundary, but may not overlap. If the
+<em>open_ends</em> parameter is True (which is the default)
+then the smallest lower bin boundary also defines a
+left-open (i.e. not bounded below) bin, and the largest
+upper bin boundary also defines a right-open (i.e. not
+bounded above) bin.</p>
 </li>
 </ul>
 </dd>
@@ -169,12 +174,12 @@ lower bound. By default the opposite is applied, i.e. each
 bin includes its lower bound but not its upper bound.</p>
 </dd>
 <dt>open_ends: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If False then do not create left-open and right-open bins
-respectively from the lowest lower bin boundary and
-largest upper bin boundary repspectively. In this case
-missing data is insert for data values that would lie in
-these bins. By default these bins are created, and so
-there is no missing data in the return array of indices.</p>
+<dd><p class="first last">If False then do not create left-open (i.e. not bounded
+below) and right-open (i.e. not bounded above) bins from
+the lowest lower bin boundary and largest upper bin
+boundary respectively. In this case missing data is
+inserted for data values that lie in these bins. By
+default these bins are created.</p>
 </dd>
 <dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
@@ -199,15 +204,32 @@ there is no missing data in the return array of indices.</p>
 <span class="go">{&#39;Conventions&#39;: &#39;CF-1.7&#39;,</span>
 <span class="go"> &#39;standard_name&#39;: &#39;specific_humidity&#39;,</span>
 <span class="go"> &#39;units&#39;: &#39;0.001 1&#39;}</span>
-<span class="go">&gt;&gt;&gt;&gt; print(q.array)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[  7.  34.   3.  14.  18.  37.  24.  29.]</span>
 <span class="go"> [ 23.  36.  45.  62.  46.  73.   6.  66.]</span>
 <span class="go"> [110. 131. 124. 146.  87. 103.  57.  11.]</span>
 <span class="go"> [ 29.  59.  39.  70.  58.  72.   9.  17.]</span>
 <span class="go"> [  6.  36.  19.  35.  18.  37.  34.  13.]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">digitize</span><span class="p">([[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="p">[</span><span class="mi">40</span><span class="p">,</span> <span class="mi">100</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">digitize</span><span class="p">([</span><span class="mi">4</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">])</span>                                           
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g</span>
-<span class="go">&lt;CF Field: long_name=Indices to which bin each &#39;specific_humidity&#39; value belongs(latitude(5), longitude(8))&gt;</span>
+<span class="go">&lt;CF Field: long_name=Bin indices to which each &#39;specific_humidity&#39; value belongs(latitude(5), longitude(8))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[1 1 0 1 1 1 1 1]</span>
+<span class="go"> [1 1 1 2 1 2 1 2]</span>
+<span class="go"> [3 3 3 3 2 3 2 1]</span>
+<span class="go"> [1 2 1 2 2 2 1 1]</span>
+<span class="go"> [1 1 1 1 1 1 1 1]]    </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">properties</span><span class="p">()</span> 
+<span class="go">{&#39;Conventions&#39;: &#39;CF-1.7&#39;,</span>
+<span class="go"> &#39;bin_number&#39;: 4,</span>
+<span class="go"> &#39;bin_bounds&#39;: array([  4,  50,  50, 100]),</span>
+<span class="go"> &#39;bin_interval_type&#39;: &#39;lower: closed upper: open&#39;,</span>
+<span class="go"> &#39;long_name&#39;: &quot;Bin indices to which each &#39;specific_humidity&#39; value belongs&quot;}</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">digitize</span><span class="p">([[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="p">[</span><span class="mi">40</span><span class="p">,</span> <span class="mi">100</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span>
+<span class="go">&lt;CF Field: long_name=Bin indices to which each &#39;specific_humidity&#39; value belongs(latitude(5), longitude(8))&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[-- --  1 -- -- -- -- --]</span>
 <span class="go"> [-- --  2  2  2  2 --  2]</span>
@@ -219,12 +241,12 @@ there is no missing data in the return array of indices.</p>
 <span class="go"> &#39;bin_number&#39;: 4,</span>
 <span class="go"> &#39;bin_bounds&#39;: array([  2,   6,  40, 100]),</span>
 <span class="go"> &#39;bin_interval_type&#39;: &#39;lower: closed upper: open&#39;,</span>
-<span class="go"> &#39;long_name&#39;: Indices to which bin each &#39;specific_humidity&#39; value belongs&quot;}</span>
+<span class="go"> &#39;long_name&#39;: &quot;Bin indices to which each &#39;specific_humidity&#39; value belongs&quot;}</span>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">digitize</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span> <span class="n">upper</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">open_ends</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g</span>
-<span class="go">&lt;CF Field: long_name=Indices to which bin each &#39;specific_humidity&#39; value belongs(latitude(5), longitude(8))&gt;</span>
+<span class="go">&lt;CF Field: long_name=Bin indices to which each &#39;specific_humidity&#39; value belongs(latitude(5), longitude(8))&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[ 1  1  0  1  1  1  1  1]</span>
 <span class="go"> [ 1  1  1  2  2  2  0  2]</span>
@@ -237,7 +259,7 @@ there is no missing data in the return array of indices.</p>
 <span class="go"> &#39;bin_number&#39;: 3,</span>
 <span class="go"> &#39;bin_bounds&#39;: array([  2,   6,   6,  45,  45, 100]),</span>
 <span class="go"> &#39;bin_interval_type&#39;: &#39;lower: open upper: closed&#39;,</span>
-<span class="go"> &#39;long_name&#39;: &quot;Indices to which bin each &#39;specific_humidity&#39; value belongs&quot;}</span>
+<span class="go"> &#39;long_name&#39;: &quot;Bin indices to which each &#39;specific_humidity&#39; value belongs&quot;}</span>
 </pre></div>
 </div>
 <p>See <a class="reference internal" href="cf.Data.digitize.html#cf.Data.digitize" title="cf.Data.digitize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.digitize</span></code></a> more examples.</p>
@@ -257,7 +279,7 @@ there is no missing data in the return array of indices.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/method/cf.Field.digitize.rst.txt"
