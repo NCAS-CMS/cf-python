@@ -1,0 +1,7 @@
+cf.REGRID_LOGGING
+=================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autofunction:: cf.REGRID_LOGGING

@@ -1,0 +1,7 @@
+cf.AuxiliaryCoordinate.__pos__
+==============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.AuxiliaryCoordinate.__pos__

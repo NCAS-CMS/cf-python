@@ -4826,22 +4826,135 @@ may be accessed with the `nc_global_attributes`,
 
 
     def digitize(self, bins, upper=False, open_ends=True, inplace=False):
-        '''TODO
+        '''Return the indices of the bins to which each value belongs.
+
+    Masked values result in masked indices in the output field construct.
+                
+    The output field contruct is given a "long_name" property, and
+    three extra properties that define the bins:
+
+    =====================  ===========================================
+    Property               Description
+    =====================  ===========================================
+    ``bin_number``         An integer giving the number of bins
+                           
+    ``bin_bounds``         A 1-d array giving the bin bounds. The
+                           first two numbers describe the lower and
+                           upper boundaries of the first bin, the
+                           second two numbers describe the lower and
+                           upper boundaries of the second bin, and so
+                           on. The presence of left-open and
+                           right-open bins is deduced from the
+                           ``bin_number`` property. If the
+                           ``bin_bounds`` array has 2N elements then
+                           the ``bin_number`` property will be N if
+                           there are no left-open and right-open bins,
+                           or N+2 if such bins are present.
+                           
+    ``bin_interval_type``  A string that specifies the nature of the
+                           bin boundaries, i.e. if they are closed or
+                           open. For example, if the lower boundary is
+                           closed and the upper boundary is open then
+                           ``bin_interval_type`` will have the value
+                           ``'lower: closed upper: open'``.
+    =====================  ===========================================
+
+    .. versionadded:: 3.0.2
 
     :Parameters:
 
-        bins:
+        bins: array_like
+            The bin boundaries. One of:
 
-        right: `bool`, optional
+            * A 1-d array of numbers.
+        
+              When sorted into a monotonically increasing sequence,
+              each boundary, with the exception of the two end
+              boundaries, counts as the upper boundary of one bin and
+              the lower boundary of next. If the *open_ends* parameter
+              is True then the lowest lower bin boundary of and the
+              largest upper bin boundary also define left-open and
+              right-open bins respectively.
 
+            * A 2-d array of numbers.
+        
+              The second dimension, that must have size 2, contains
+              the lower and upper bin boundaries. Different bins may
+              share a boundary, but may not overlap. If the
+              *open_ends* parameter is True then the lowest lower bin
+              boundary of and the largest upper bin boundary also
+              define left-open and right-open bins respectively.
+
+        upper: `bool`, optional
+            If True then each bin includes its upper bound but not its
+            lower bound. By default the opposite is applied, i.e. each
+            bin includes its lower bound but not its upper bound.
+
+        open_ends: `bool`, optional
+            If False then do not create left-open and right-open bins
+            respectively from the lowest lower bin boundary and
+            largest upper bin boundary repspectively. In this case
+            missing data is insert for data values that would lie in
+            these bins. By default these bins are created, and so
+            there is no missing data in the return array of indices.
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
     :Returns:
 
         `Field` or `None`
-            TODO
+            The indices of the bins to which each value belongs, or
+            `None` if the operation was in-place.
 
     **Examples:**
 
-    TODO
+    >>> f
+    <CF Field: specific_humidity(latitude(5), longitude(8)) 0.001 1>
+    >>> f.properties()
+    {'Conventions': 'CF-1.7',
+     'standard_name': 'specific_humidity',
+     'units': '0.001 1'}
+    >>>> print(q.array)
+    [[  7.  34.   3.  14.  18.  37.  24.  29.]
+     [ 23.  36.  45.  62.  46.  73.   6.  66.]
+     [110. 131. 124. 146.  87. 103.  57.  11.]
+     [ 29.  59.  39.  70.  58.  72.   9.  17.]
+     [  6.  36.  19.  35.  18.  37.  34.  13.]]
+    >>> g = f.digitize([[2, 6], [40, 100]])
+    >>> g
+    <CF Field: long_name=Indices to which bin each 'specific_humidity' value belongs(latitude(5), longitude(8))>
+    >>> print(g.array)
+    [[-- --  1 -- -- -- -- --]
+     [-- --  2  2  2  2 --  2]
+     [ 3  3  3  3  2  3  2 --]
+     [--  2 --  2  2  2 -- --]
+     [-- -- -- -- -- -- -- --]]
+    >>> g.properties()
+    {'Conventions': 'CF-1.7',
+     'bin_number': 4,
+     'bin_bounds': array([  2,   6,  40, 100]),
+     'bin_interval_type': 'lower: closed upper: open',
+     'long_name': Indices to which bin each 'specific_humidity' value belongs"}
+
+    >>> g = f.digitize([2, 6, 45, 100], upper=True, open_ends=False)
+    >>> g
+    <CF Field: long_name=Indices to which bin each 'specific_humidity' value belongs(latitude(5), longitude(8))>
+    >>> print(g.array)
+    [[ 1  1  0  1  1  1  1  1]
+     [ 1  1  1  2  2  2  0  2]
+     [-- -- -- --  2 --  2  1]
+     [ 1  2  1  2  2  2  1  1]
+     [ 0  1  1  1  1  1  1  1]]   
+    >>> g.properties()
+    {'Conventions': 'CF-1.7',
+     'project': 'research',
+     'bin_number': 3,
+     'bin_bounds': array([  2,   6,   6,  45,  45, 100]),
+     'bin_interval_type': 'lower: open upper: closed',
+     'long_name': "Indices to which bin each 'specific_humidity' value belongs"}
+    
+    See `cf.Data.digitize` more examples.
 
         '''
         if inplace:
@@ -4850,39 +4963,51 @@ may be accessed with the `nc_global_attributes`,
             f = self.copy()
 
         bins = numpy_array(bins)
-        two_d = (bins.ndim == 2)
 
         new_data = self.data.digitize(bins, upper=upper,
                                       open_ends=open_ends)
-
+        units = new_data.Units
+        
         f.set_data(new_data, set_axes=False, copy=False)
-
-
-        if two_d:
-            number_of_bins = bins.shape[0] + 2
-            bin_bounds = bins.flatten()
+        f.override_units(units, inplace=True)
+        
+        if bins.ndim <= 1:
+            # Convert (n,) bins to (n-1, 2) bins
+            bins.sort(axis=0)
+            x = numpy_empty((bins.size-1, 2), dtype=int)
+            x[:, 0] = bins[:-1]
+            x[:, 1] = bins[1:]
+            bins = x
         else:
-            bins.sort()
-            number_of_bins = bins.size + 1
-            bin_bounds = bins
+            # Make sure that each bin is increasing
+            for i, x in enumerate(bins):
+                if x[1] < x[0]:
+                    bins[i] = bins[i, ::-1]
+            #--- End: for
+        
+            # Sort the bins by lower bounds
+            bins.sort(axis=0)
+        
+        bin_bounds = bins.flatten()
 
-        if not open_ends:
-            number_of_bins -= 2
+        number_of_bins = bins.shape[0] 
+        if open_ends:
+            number_of_bins += 2
 
         if upper:
             bin_interval_type = 'lower: open upper: closed'
         else:
             bin_interval_type = 'lower: closed upper: open'
             
-        f.set_property('number_of_bins', number_of_bins)
+        f.set_property('bin_number', number_of_bins)
         f.set_property('bin_bounds', bin_bounds)
         f.set_property('bin_interval_type', bin_interval_type)
         f.set_property('long_name',
-                       'Indices of the bins to which each {!r} value belongs'.format(
+                       'Indices to which bin each {!r} value belongs'.format(
                            self.identity()))
         
         f.del_property('standard_name', None)
-        
+    
         if inplace:
             f = None
         return f
@@ -8038,7 +8163,7 @@ may be accessed with the `nc_global_attributes`,
     :Returns:
     
         `Field`, or `None`
-            The field construct with expanded data, or `None` of the
+            The field construct with expanded data, or `None` if the
             operation was in-place.
     
     **Examples:**
@@ -9429,7 +9554,7 @@ may be accessed with the `nc_global_attributes`,
 
         `Field` or `None`
             The field construct with the cumulatively summed
-            dimension, or `None` of the operation was in-place.
+            dimension, or `None` if the operation was in-place.
 
     **Examples:**
         
@@ -10011,7 +10136,7 @@ may be accessed with the `nc_global_attributes`,
     :Returns:
     
         `Field` or `None`
-            The field construct with squeezed data, or `None` of the
+            The field construct with squeezed data, or `None` if the
             operation was in-place.
     
             **Examples:**
@@ -10095,7 +10220,7 @@ may be accessed with the `nc_global_attributes`,
     :Returns:
     
         `Field` or `None`
-            The field construct with transposed data, or `None` of the
+            The field construct with transposed data, or `None` if the
             operation was in-place.
     
     **Examples:**
@@ -10162,7 +10287,7 @@ may be accessed with the `nc_global_attributes`,
     
         `Field` or `None`
             The field construct with size-1 axes inserted in its data,
-            or `None` of the operation was in-place.
+            or `None` if the operation was in-place.
     
     **Examples:**
     
@@ -11642,7 +11767,7 @@ may be accessed with the `nc_global_attributes`,
     
         `Data` or `None`
             The period of the cyclic axis's dimension coordinates, or
-            `None` no period has been set.
+            `None` if no period has been set.
     
     **Examples:**
     

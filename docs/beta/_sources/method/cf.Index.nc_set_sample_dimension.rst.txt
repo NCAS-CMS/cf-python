@@ -1,0 +1,7 @@
+cf.Index.nc_set_sample_dimension
+================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Index.nc_set_sample_dimension

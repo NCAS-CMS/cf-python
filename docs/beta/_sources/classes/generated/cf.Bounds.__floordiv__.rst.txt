@@ -1,0 +1,7 @@
+cf.Bounds.__floordiv__
+======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.__floordiv__

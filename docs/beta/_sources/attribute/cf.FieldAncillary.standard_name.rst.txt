@@ -1,0 +1,7 @@
+cf.FieldAncillary.standard_name
+===============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.FieldAncillary.standard_name

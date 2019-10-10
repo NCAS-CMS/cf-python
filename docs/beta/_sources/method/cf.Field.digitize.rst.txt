@@ -1,0 +1,7 @@
+cf.Field.digitize
+=================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Field.digitize

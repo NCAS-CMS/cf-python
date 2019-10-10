@@ -1,0 +1,7 @@
+cf.Data.reconstruct_sectioned_data
+==================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Data.reconstruct_sectioned_data

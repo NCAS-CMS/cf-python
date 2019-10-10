@@ -1,0 +1,7 @@
+cf.Bounds.__contains__
+======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.__contains__

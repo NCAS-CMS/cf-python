@@ -1,0 +1,7 @@
+cf.CellMeasure.__xor__
+======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CellMeasure.__xor__

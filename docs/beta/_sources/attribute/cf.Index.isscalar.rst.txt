@@ -1,0 +1,7 @@
+cf.Index.isscalar
+=================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.Index.isscalar

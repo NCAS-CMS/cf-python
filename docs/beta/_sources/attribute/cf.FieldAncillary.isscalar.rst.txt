@@ -1,0 +1,7 @@
+cf.FieldAncillary.isscalar
+==========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.FieldAncillary.isscalar

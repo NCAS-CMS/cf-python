@@ -1,0 +1,7 @@
+cf.Index.__ilshift__
+====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Index.__ilshift__

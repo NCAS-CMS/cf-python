@@ -4,14 +4,17 @@ version 3.0.2
 
 **Not yet released**
 
+* Now reads CDL files (https://github.com/NCAS-CMS/cf-python/issues/1)
+* New methods `cf.Data.cumsum`, `cf.Field.cumsum`.
+* New methods `cf.Data.digitize`, `cf.Field.digitize`.
+* Fixed failure to delete all temporary directories at exit.
 * Fixed bug in `cf.Data.func` when overriding units. Affects methods
   that call `cf.Data.func`, such as `cf.Data.tan` and `cf.Field.tan`.
 * Fixed "relaxed units" behaviour in `cf.aggregate` and field
   construct arithmetic.
-* Now reads CDL files (https://github.com/NCAS-CMS/cf-python/issues/1)
-* Fixed failure to delete all temporary directories at exit.
-* New method `cf.Data.cumsum`
-
+* Fixed bug that led to incorrect persistent entries in output of
+  `cf.Field.properties`.
+  
 version 3.0.1
 -------------
 ----

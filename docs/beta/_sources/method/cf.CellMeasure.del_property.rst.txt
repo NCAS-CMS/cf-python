@@ -1,0 +1,7 @@
+cf.CellMeasure.del_property
+===========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CellMeasure.del_property

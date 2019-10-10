@@ -1,0 +1,7 @@
+cf.Bounds.clear_properties
+==========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.clear_properties

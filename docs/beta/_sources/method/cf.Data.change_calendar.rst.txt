@@ -1,0 +1,7 @@
+cf.Data.change_calendar
+=======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Data.change_calendar

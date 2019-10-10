@@ -1,0 +1,7 @@
+cf.Bounds.sample_size
+=====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.sample_size

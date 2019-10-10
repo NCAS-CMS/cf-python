@@ -1,0 +1,7 @@
+cf.DomainAncillary.identities
+=============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DomainAncillary.identities

@@ -1,0 +1,7 @@
+cf.Index.range
+==============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Index.range

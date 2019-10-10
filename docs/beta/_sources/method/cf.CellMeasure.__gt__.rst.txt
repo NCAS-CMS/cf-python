@@ -1,0 +1,7 @@
+cf.CellMeasure.__gt__
+=====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CellMeasure.__gt__

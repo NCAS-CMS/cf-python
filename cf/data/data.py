@@ -1929,51 +1929,100 @@ place.
 
     
     def digitize(self, bins, upper=False, open_ends=True):
-        '''TODO
+        '''Return the indices of the bins to which each value belongs.
 
-    If values are such that they fall outside the bin range,
-    attempting to index bins with the corresponding returned indices
-    will result in an error.
+    Masked values result in masked indices in the output array.
 
-    TODO: missing data in missing bins 
+    .. versionadded:: 3.0.2
 
     :Parameters:
 
         bins: array_like
+            The bin boundaries. One of:
 
-            Array of bin boundaries. It has to be 1-dimensional and
-            monotonically increasing or decreasing. An array of *N*
-            bin boundaries implies *N+1* half-open intervals. See the
-            *upper* parameter for controlling which end of each bin is
-            open. The two bins at the either end of the sequence are
-            left-open or right-open as appropriate (depending on
-            whether the sequence is increasing or decreasing).
+            * A 1-d array of numbers.
+        
+              When sorted into a monotonically increasing sequence,
+              each boundary, with the exception of the two end
+              boundaries, counts as the upper boundary of one bin and
+              the lower boundary of next. If the *open_ends* parameter
+              is True then the lowest lower bin boundary of and the
+              largest upper bin boundary also define left-open and
+              right-open bins respectively.
 
-            *Parameter example:*
-              To create the four intervals [-inf, -5), [-5, 0), [0,
-              20), [20, inf) using a 1-d array: ``bins=[-5, 0, 20]``
-
-            *Parameter example:*
-              To create the four intervals [-inf, -5), [-5, 0), [0,
-              20), [20, inf) using a 2-d array: ``bins=[[-5, 0], [0,
-              20]]``.
-
-            *Parameter example:*
-              To create the four intervals [-inf, -5), [-5, 0), [15,
-              20), [20, inf): ``bins=[[-5, 0], [15, 20]]``.
+            * A 2-d array of numbers.
+        
+              The second dimension, that must have size 2, contains
+              the lower and upper bin boundaries. Different bins may
+              share a boundary, but may not overlap. If the
+              *open_ends* parameter is True then the lowest lower bin
+              boundary of and the largest upper bin boundary also
+              define left-open and right-open bins respectively.
 
         upper: `bool`, optional
             If True then each bin includes its upper bound but not its
             lower bound. By default the opposite is applied, i.e. each
             bin includes its lower bound but not its upper bound.
 
+        open_ends: `bool`, optional
+            If False then do not create left-open and right-open bins
+            respectively from the lowest lower bin boundary and
+            largest upper bin boundary repspectively. In this case
+            missing data is insert for data values that would lie in
+            these bins. By default these bins are created, and so
+            there is no missing data in the return array of indices.
+
     :Returns:
 
         `Data`
+            The indices of the bins to which each value belongs.
 
     **Examples:**
 
-    TODO
+    >>> d = cf.Data(numpy.arange(12).reshape(3, 4))
+    [[ 0  1  2  3]
+     [ 4  5  6  7]
+     [ 8  9 10 11]]
+
+    Equivalant ways to create indices for the four bins ``[-inf, 2),
+    [2, 6), [6, 10), [10, inf)``
+
+    >>> e = d.digitize([2, 6, 10])
+    >>> e = d.digitize([[2, 6], [6, 10]])
+    >>> print(e.array)  
+    [[0 0 1 1]
+     [1 1 2 2]
+     [2 2 3 3]]
+
+    Equivalant ways to create indices for the two bins ``(2, 6], (6, 10]``
+
+    >>> e = d.digitize([2, 6, 10], upper=True, open_ends=False)
+    >>> e = d.digitize([[2, 6], [6, 10]], upper=True, open_ends=False)
+    >>> print(e.array)
+    [[-- -- --  0]
+     [ 0  0  0  1]
+     [ 1  1  1 --]]
+
+    Create indices for the two bins ``[2, 6), [8, 10]``, which are
+    non-contiguous
+
+    >>> e = d.digitize([[2, 6], [8, 10]])
+    >>> print(e.array)
+    [[ 0 0  1  1]
+     [ 1 1 -- --]
+     [ 2 2  3  3]]
+
+    Masked values result in masked indices in the output array.
+
+    >>> d[1, 1] = cf.masked
+    >>> print(d.array)
+    [[ 0  1  2  3]
+     [ 4 --  6  7]
+     [ 8  9 10 11]]
+    >>> print(d.digitize([2, 6, 10]).array)
+    [[ 0  0  1  1]
+     [ 1 --  2  2]
+     [ 2  2  3  3]]
 
         '''
         out = self.copy()
@@ -2020,23 +2069,34 @@ place.
                 delete_bins.insert(0, 0)
                 delete_bins.append(bins.size)
 
-        elif not open_ends:
-            delete_bins.insert(0, 0)
-            delete_bins.append(bins.size)
+        else:
+            bins.sort(axis=0)
+            if not open_ends:
+                delete_bins.insert(0, 0)
+                delete_bins.append(bins.size)
+        #--- End: if
         
         config = out.partition_configuration(readonly=True)
 
         for partition in out.partitions.matrix.flat:
             partition.open(config)
             array = partition.array
-            array = numpy_digitize(array, bins, right=upper)
 
+            mask = None
+            if numpy_ma_isMA(array):
+                mask = array.mask.copy()
+                
+            array = numpy_digitize(array, bins, right=upper)
+          
             if delete_bins:
                 for n, d in enumerate(delete_bins):
                     d -= n
                     array = numpy_ma_where(array==d, numpy_ma_masked, array)
                     array = numpy_ma_where(array>d, array-1, array)
             #--- End: if
+
+            if mask is not None:
+                array = numpy_ma_where(mask, numpy_ma_masked, array)
 
             partition.subarray = array              
             partition.Units = _units_None
@@ -2045,7 +2105,7 @@ place.
 
         out.dtype = int
 
-        out.override_units(_units_None, inplace=True)
+        out._Units = _units_None
             
         return out
 

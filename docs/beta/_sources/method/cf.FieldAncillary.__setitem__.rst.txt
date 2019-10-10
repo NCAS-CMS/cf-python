@@ -1,0 +1,7 @@
+cf.FieldAncillary.__setitem__
+=============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.FieldAncillary.__setitem__

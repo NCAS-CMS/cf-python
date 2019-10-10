@@ -1,0 +1,7 @@
+cf.DimensionCoordinate.__query_set__
+====================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DimensionCoordinate.__query_set__

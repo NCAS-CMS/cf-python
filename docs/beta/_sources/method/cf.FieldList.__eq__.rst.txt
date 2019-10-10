@@ -1,0 +1,7 @@
+cf.FieldList.__eq__
+===================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.FieldList.__eq__

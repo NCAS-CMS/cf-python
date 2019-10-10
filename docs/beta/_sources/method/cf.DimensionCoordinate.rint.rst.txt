@@ -1,0 +1,7 @@
+cf.DimensionCoordinate.rint
+===========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DimensionCoordinate.rint

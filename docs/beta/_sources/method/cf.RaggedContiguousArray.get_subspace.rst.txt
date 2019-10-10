@@ -1,0 +1,7 @@
+cf.RaggedContiguousArray.get_subspace
+=====================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.RaggedContiguousArray.get_subspace

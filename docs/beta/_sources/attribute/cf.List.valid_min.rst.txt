@@ -1,0 +1,7 @@
+cf.List.valid_min
+=================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.List.valid_min

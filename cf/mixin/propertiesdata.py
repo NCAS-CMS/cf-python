@@ -1491,12 +1491,12 @@ class PropertiesData(Properties):
         
         '''
         return self.get_property('scale_factor', default=AttributeError())
-    
     @scale_factor.setter
     def scale_factor(self, value): self.set_property('scale_factor', value)
     @scale_factor.deleter
     def scale_factor(self):        self.del_property('scale_factor', default=AttributeError())
 
+    
     @property
     def units(self):
         '''The units CF property.
@@ -1524,7 +1524,7 @@ class PropertiesData(Properties):
         if value is None:
             raise AttributeError("{} doesn't have CF property 'units'".format(
                 self.__class__.__name__))
-        
+
         return value
     
     @units.setter

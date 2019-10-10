@@ -1,0 +1,7 @@
+cf.Index.__sub__
+================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Index.__sub__

@@ -1,0 +1,7 @@
+cf.Constructs.data_axes
+=======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Constructs.data_axes

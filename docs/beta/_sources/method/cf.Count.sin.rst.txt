@@ -1,0 +1,7 @@
+cf.Count.sin
+============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Count.sin

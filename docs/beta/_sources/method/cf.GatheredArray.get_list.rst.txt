@@ -1,0 +1,7 @@
+cf.GatheredArray.get_list
+=========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.GatheredArray.get_list

@@ -1,0 +1,7 @@
+cf.Domain.get_data_axes
+=======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Domain.get_data_axes

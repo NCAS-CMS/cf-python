@@ -962,21 +962,35 @@ class Properties:
     **Examples:**
     
     >>> f.properties()
-    {'standard_name': 'altitude',
-     'foo': 'bar'}
-    
+    {}
+    >>> f.set_properties({'standard_name': 'air_pressure', 'long_name': 'Air Pressure'})
+    >>> f.properties()
+    {'standard_name': 'air_pressure',
+     'foo': 'bar',
+     'long_name': 'Air Pressure'}
+    >>> f.set_properties({'standard_name': 'air_pressure', 'foo': 'bar'})
+    >>> f.properties()
+    {'standard_name': 'air_pressure',
+     'foo': 'bar',
+     'long_name': 'Air Pressure'}
+    >>> f.clear_properties()
+    {'standard_name': 'air_pressure',
+     'foo': 'bar',
+     'long_name': 'Air Pressure'}
     >>> f.properties()
     {}
 
         '''
         out = super().properties()
-        
+
         for prop in self._special_properties:
             value = getattr(self, prop, None)
-            if value is not None:
+            if value is None:
+                out.pop(prop, None)
+            else:
                 out[prop] = value
         #--- End: for
-            
+
         return out
     
 
@@ -1007,14 +1021,24 @@ class Properties:
     **Examples:**
     
     >>> f.properties()
-    {'standard_name': 'altitude',
-     'foo': 'bar'}
-    >>> f.set_properties({'standard_name': 'air_pressure', 'long_name': 'Air Pressure'}
+    {}
+    >>> f.set_properties({'standard_name': 'air_pressure', 'long_name': 'Air Pressure'})
     >>> f.properties()
     {'standard_name': 'air_pressure',
      'foo': 'bar',
      'long_name': 'Air Pressure'}
-
+    >>> f.set_properties({'standard_name': 'air_pressure', 'foo': 'bar'})
+    >>> f.properties()
+    {'standard_name': 'air_pressure',
+     'foo': 'bar',
+     'long_name': 'Air Pressure'}
+    >>> f.clear_properties()
+    {'standard_name': 'air_pressure',
+     'foo': 'bar',
+     'long_name': 'Air Pressure'}
+    >>> f.properties()
+    {}
+    
         '''
         super().set_properties(properties, copy=copy)
 
