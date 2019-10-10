@@ -4909,8 +4909,9 @@ may be accessed with the `nc_global_attributes`,
     :Returns:
 
         `Field` or `None`
-            The indices of the bins to which each value belongs, or
-            `None` if the operation was in-place.
+            The field construct containing indices of the bins to
+            which each value belongs, or `None` if the operation was
+            in-place.
 
     **Examples:**
 
