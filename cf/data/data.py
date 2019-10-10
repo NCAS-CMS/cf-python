@@ -10,6 +10,7 @@ from numpy import ceil          as numpy_ceil
 from numpy import cos           as numpy_cos
 from numpy import count_nonzero as numpy_count_nonzero
 from numpy import cumsum        as numpy_cumsum
+from numpy import digitize      as numpy_digitize
 from numpy import dtype         as numpy_dtype
 from numpy import e             as numpy_e
 from numpy import empty         as numpy_empty
@@ -38,6 +39,7 @@ from numpy import size          as numpy_size
 from numpy import tan           as numpy_tan
 from numpy import tile          as numpy_tile
 from numpy import trunc         as numpy_trunc
+from numpy import unique        as numpy_unique
 from numpy import unravel_index as numpy_unravel_index
 from numpy import where         as numpy_where
 from numpy import vectorize     as numpy_vectorize
@@ -1925,19 +1927,120 @@ place.
 
         return json_dumps(d, default=_convert_to_builtin_type)
 
-    def digitise(self, bins, right=False):
+    
+    def digitize(self, bins, upper=False, open_ends=True):
         '''TODO
-        '''
 
+    If values are such that they fall outside the bin range,
+    attempting to index bins with the corresponding returned indices
+    will result in an error.
+
+    TODO: missing data in missing bins 
+
+    :Parameters:
+
+        bins: array_like
+
+            Array of bin boundaries. It has to be 1-dimensional and
+            monotonically increasing or decreasing. An array of *N*
+            bin boundaries implies *N+1* half-open intervals. See the
+            *upper* parameter for controlling which end of each bin is
+            open. The two bins at the either end of the sequence are
+            left-open or right-open as appropriate (depending on
+            whether the sequence is increasing or decreasing).
+
+            *Parameter example:*
+              To create the four intervals [-inf, -5), [-5, 0), [0,
+              20), [20, inf) using a 1-d array: ``bins=[-5, 0, 20]``
+
+            *Parameter example:*
+              To create the four intervals [-inf, -5), [-5, 0), [0,
+              20), [20, inf) using a 2-d array: ``bins=[[-5, 0], [0,
+              20]]``.
+
+            *Parameter example:*
+              To create the four intervals [-inf, -5), [-5, 0), [15,
+              20), [20, inf): ``bins=[[-5, 0], [15, 20]]``.
+
+        upper: `bool`, optional
+            If True then each bin includes its upper bound but not its
+            lower bound. By default the opposite is applied, i.e. each
+            bin includes its lower bound but not its upper bound.
+
+    :Returns:
+
+        `Data`
+
+    **Examples:**
+
+    TODO
+
+        '''
         out = self.copy()
-                
-        config = out.partition_configuration()
+
+        bins = numpy_array(bins)
+        if bins.ndim > 2:
+            raise ValueError("TODO")
+
+        delete_bins = []
+        
+        if bins.ndim == 2:
+            # --------------------------------------------------------
+            # An (n, 2) array of bins has been provided
+            # --------------------------------------------------------
+            if bins.shape[1] != 2:
+                raise ValueError("TODO")
+
+            # Make sure that each bin is increasing
+            for i, x in enumerate(bins):
+                if x[1] < x[0]:
+                    bins[i] = bins[i, ::-1]
+            #--- End: for
+            
+            # Sort the bins by lower bounds
+            bins.sort(axis=0)
+
+            # Check for overlaps
+            for i, (u, l) in enumerate(zip(bins[:-1, 1], bins[1:, 0])): 
+                if u > l:
+                    raise ValueError("TODO overlap")
+            #--- End: for
+            
+            two_d_bins = bins                     
+            bins = numpy_unique(bins)
+
+            # Find the bins that were omitted from the original 2-d
+            # bins array. Note that this includes the left-open and
+            # right-open bins at the ends.
+            delete_bins = [n+1
+                           for n, (a, b) in enumerate(zip(bins[:-1], bins[1:]))
+                           if (a, b) not in two_d_bins]
+
+            if not open_ends:
+                delete_bins.insert(0, 0)
+                delete_bins.append(bins.size)
+
+        elif not open_ends:
+            delete_bins.insert(0, 0)
+            delete_bins.append(bins.size)
+        
+        config = out.partition_configuration(readonly=True)
 
         for partition in out.partitions.matrix.flat:
             partition.open(config)
             array = partition.array
-            partition.subarray = numpy_digitize(array, bins)
+            array = numpy_digitize(array, bins, right=upper)
+
+            if delete_bins:
+                for n, d in enumerate(delete_bins):
+                    d -= n
+                    array = numpy_ma_where(array==d, numpy_ma_masked, array)
+                    array = numpy_ma_where(array>d, array-1, array)
+            #--- End: if
+
+            partition.subarray = array              
             partition.Units = _units_None
+            
             partition.close()
 
         out.dtype = int
@@ -8205,7 +8308,7 @@ returned.
         for partition in self.partitions.matrix.flat:
             partition.open(config)
             array = partition.array
-            array = numpy.unique(array)
+            array = numpy_unique(array)
 
             if partition.masked:
                 # Note that compressing a masked array may result in

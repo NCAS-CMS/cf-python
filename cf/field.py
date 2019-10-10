@@ -4825,6 +4825,69 @@ may be accessed with the `nc_global_attributes`,
         return field
 
 
+    def digitize(self, bins, upper=False, open_ends=True, inplace=False):
+        '''TODO
+
+    :Parameters:
+
+        bins:
+
+        right: `bool`, optional
+
+    :Returns:
+
+        `Field` or `None`
+            TODO
+
+    **Examples:**
+
+    TODO
+
+        '''
+        if inplace:
+            f = self
+        else:
+            f = self.copy()
+
+        bins = numpy_array(bins)
+        two_d = (bins.ndim == 2)
+
+        new_data = self.data.digitize(bins, upper=upper,
+                                      open_ends=open_ends)
+
+        f.set_data(new_data, set_axes=False, copy=False)
+
+
+        if two_d:
+            number_of_bins = bins.shape[0] + 2
+            bin_bounds = bins.flatten()
+        else:
+            bins.sort()
+            number_of_bins = bins.size + 1
+            bin_bounds = bins
+
+        if not open_ends:
+            number_of_bins -= 2
+
+        if upper:
+            bin_interval_type = 'lower: open upper: closed'
+        else:
+            bin_interval_type = 'lower: closed upper: open'
+            
+        f.set_property('number_of_bins', number_of_bins)
+        f.set_property('bin_bounds', bin_bounds)
+        f.set_property('bin_interval_type', bin_interval_type)
+        f.set_property('long_name',
+                       'Indices of the bins to which each {!r} value belongs'.format(
+                           self.identity()))
+        
+        f.del_property('standard_name', None)
+        
+        if inplace:
+            f = None
+        return f
+            
+    
     def del_construct(self, identity, default=ValueError()):
         '''Remove a metadata construct.
 
@@ -7850,7 +7913,7 @@ may be accessed with the `nc_global_attributes`,
         if verbose:
             print('    Modified cell methods =', self.cell_methods.ordered()) # pragma: no cover
 
-
+            
     def direction(self, identity, axes=None, **kwargs):
         '''Whether or not a domain axis is increasing.
 
