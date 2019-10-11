@@ -4831,12 +4831,12 @@ may be accessed with the `nc_global_attributes`,
     Masked values result in masked indices in the output field construct.
                 
     The output field contruct is given a "long_name" property, and
-    three extra properties that define the bins:
+    extra properties that define the bins:
 
     =====================  ===========================================
     Property               Description
     =====================  ===========================================
-    ``bin_number``         An integer giving the number of bins
+    ``bin_count``          An integer giving the number of bins
                            
     ``bin_bounds``         A 1-d array giving the bin bounds. The
                            first two numbers describe the lower and
@@ -4844,14 +4844,13 @@ may be accessed with the `nc_global_attributes`,
                            second two numbers describe the lower and
                            upper boundaries of the second bin, and so
                            on. The presence of left-open and
-                           right-open bins is deduced from the
-                           ``bin_number`` property. If the
+                           right-open bins (see the *bins* and
+                           *open_ends* parameters) is deduced from the
+                           ``bin_count`` property. If the
                            ``bin_bounds`` array has 2N elements then
-                           the ``bin_number`` property will be N if
+                           the ``bin_count`` property will be N if
                            there are no left-open and right-open bins
-                           or N+2 if such bins are present. See the
-                           *bins* and *open_ends* parameters for more
-                           details.
+                           or N+2 if such bins are present.
                            
     ``bin_interval_type``  A string that specifies the nature of the
                            bin boundaries, i.e. if they are closed or
@@ -4859,6 +4858,29 @@ may be accessed with the `nc_global_attributes`,
                            closed and the upper boundary is open then
                            ``bin_interval_type`` will have the value
                            ``'lower: closed upper: open'``.
+
+    ``bin_units``          A string giving the units of the bin
+                           boundary values (e.g. ``'Kelvin'``).
+
+    ``bin_calendar``       A string giving the calendar of reference
+                           date-time units for the bin boundary values
+                           (e.g. ``'noleap'``). If the units are not
+                           reference date-time units this property
+                           will be omitted. If the calendar is the CF
+                           default calendar, then this property may be
+                           omitted.
+
+    ``bin_standard_name``  A string giving the standard name of the
+                           bin boundaries
+                           (e.g. ``'air_temperature'``). If there is
+                           no standard name then this property will be
+                           omitted.
+
+    ``bin_long_name``      A string giving the long name of the bin
+                           boundaries (e.g. ``'Air Temperature'``). If
+                           there is no long name, or the
+                           ``bin_standard_name`` is present, then this
+                           property will be omitted.
     =====================  ===========================================
 
     .. versionadded:: 3.0.2
@@ -4938,9 +4960,11 @@ may be accessed with the `nc_global_attributes`,
      [1 1 1 1 1 1 1 1]]    
     >>> g.properties() 
     {'Conventions': 'CF-1.7',
-     'bin_number': 4,
      'bin_bounds': array([  4,  50,  50, 100]),
+     'bin_count': 4,
      'bin_interval_type': 'lower: closed upper: open',
+     'bin_standard_name': 'specific_humidity',
+     'bin_units': '0.001',
      'long_name': "Bin indices to which each 'specific_humidity' value belongs"}
 
     >>> g = f.digitize([[2, 6], [40, 100]])
@@ -4954,9 +4978,11 @@ may be accessed with the `nc_global_attributes`,
      [-- -- -- -- -- -- -- --]]
     >>> g.properties()
     {'Conventions': 'CF-1.7',
-     'bin_number': 4,
      'bin_bounds': array([  2,   6,  40, 100]),
+     'bin_count': 4,
      'bin_interval_type': 'lower: closed upper: open',
+     'bin_standard_name': 'specific_humidity',
+     'bin_units': '0.001',
      'long_name': "Bin indices to which each 'specific_humidity' value belongs"}
 
     >>> g = f.digitize([2, 6, 45, 100], upper=True, open_ends=False)
@@ -4970,10 +4996,11 @@ may be accessed with the `nc_global_attributes`,
      [ 0  1  1  1  1  1  1  1]]   
     >>> g.properties()
     {'Conventions': 'CF-1.7',
-     'project': 'research',
-     'bin_number': 3,
      'bin_bounds': array([  2,   6,   6,  45,  45, 100]),
+     'bin_count': 3,
      'bin_interval_type': 'lower: open upper: closed',
+     'bin_standard_name': 'specific_humidity',
+     'bin_units': '0.001',
      'long_name': "Bin indices to which each 'specific_humidity' value belongs"}
     
     See `cf.Data.digitize` more examples.
@@ -4984,6 +5011,8 @@ may be accessed with the `nc_global_attributes`,
         else:
             f = self.copy()
 
+        org_Units = f.Units
+        
         bins = numpy_array(bins)
 
         new_data = self.data.digitize(bins, upper=upper,
@@ -5020,21 +5049,80 @@ may be accessed with the `nc_global_attributes`,
             bin_interval_type = 'lower: open upper: closed'
         else:
             bin_interval_type = 'lower: closed upper: open'
+
+        standard_name = f.del_property('standard_name', None)
+        if standard_name is not None:
+             f.set_property('bin_standard_name', standard_name)
+        else:
+             long_name = f.del_property('long_name', None)
+             if long_name is not None:
+                 f.set_property('bin_long_name', long_name)
+        #--- End: if
+
+        bin_units = getattr(org_Units, 'units', None)
+        if units is not None:
+            f.set_property('bin_units', bin_units)
+
+        bin_calendar = getattr(org_Units, 'calendar', None)
+        if units is not None:
+            f.set_property('bin_calendar', bin_calendar)
             
-        f.set_property('bin_number', number_of_bins)
         f.set_property('bin_bounds', bin_bounds)
+        f.set_property('bin_count', number_of_bins)
         f.set_property('bin_interval_type', bin_interval_type)
         f.set_property('long_name',
                        'Bin indices to which each {!r} value belongs'.format(
                            self.identity()))
-        
-        f.del_property('standard_name', None)
-    
+                     
         if inplace:
             f = None
         return f
             
-    
+
+    def asd(self, indices):
+        '''
+        '''
+        out = self.copy()
+
+        out.set_data(Data.zeros(out.shape, dtye=int), set_axes=False, copy=False)
+        out.override_units(Units(), inplace=True)
+        
+        for i in indices:
+            out.data.where(i.data.mask, cf_masked, inplace=True)
+
+        out = type(self)            
+
+        bins_1d = {}
+        
+        for i in indices:
+            bin_bounds        = i.get_property('bin_bounds')
+            bin_count         = i.get_property('bin_count')
+            bin_units         = i.get_property('bin_units', None))
+            bin_calendar      = i.get_property('bin_calendar', None))
+            bin_standard_name = i.get_property('bin_standard_name', None)
+            bin_long_name     = i.get_property('bin_long_name', None)
+
+            if bin_count != len(bin_bounds)/2:
+                raise ValueError("TODO")
+            
+            axis = out.set_construct(DomainAxis(bin_count))
+            dim = DimensionCoordinate()
+            if standard_name is not None:
+                dim.standard_name = bin_standard_name
+            elif bin_long_name is not None:
+                dim.long_name = bin_long_name
+                
+            data = Data(0.5*(bin_bounds[1::2] - bin_bounds[0::2]),
+                        units=Units(bin_units, bin_calendar))
+            dim.set_data(data=data, copy=False)
+            bounds_data = numpy_empty((bin_count, 2))
+            bounds_data[0] = bin_bounds[0::2]
+            bounds_data[1] = bin_bounds[1::2]
+            dim.set_bounds(bounds=Bounds(data=Data(bounds_data)))
+            key = out.set_construct(dim, axis=[axis], copy=False)
+
+            bins_1d[key] = numpy_unique(bounds_data)
+            
     def del_construct(self, identity, default=ValueError()):
         '''Remove a metadata construct.
 

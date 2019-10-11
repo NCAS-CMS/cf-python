@@ -179,11 +179,13 @@ Required
   newer. This is a C library which provides support for units of
   physical quantities. If the UDUNITS-2 shared library file
   (``libudunits2.so.0`` on GNU/Linux or ``libudunits2.0.dylibfile`` on
-  MacOS) is in a non-standard location then its path should be added
-  to the ``LD_LIBRARY_PATH`` environment variable. It may also be
-  necessary to specify the location of the ``udunits2.xml`` file in
-  the ``UDUNITS2_XML_PATH`` environment variable (although the default
-  location is usually correct).
+  MacOS) is in a non-standard location then its directory path should
+  be added to the ``LD_LIBRARY_PATH`` environment variable. It may
+  also be necessary to specify the location (directory path *and*
+  filename) of the ``udunits2.xml`` file in the ``UDUNITS2_XML_PATH``
+  environment variable (although the default location is usually
+  correct). For example, ``export
+  UDUNITS2_XML_PATH=/home/user/anaconda3/share/udunits/udunits2.xml``
 
 .. _Optional:
 
