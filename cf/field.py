@@ -5082,47 +5082,84 @@ may be accessed with the `nc_global_attributes`,
     def asd(self, indices):
         '''
         '''
-        out = self.copy()
-
-        out.set_data(Data.zeros(out.shape, dtye=int), set_axes=False, copy=False)
-        out.override_units(Units(), inplace=True)
+        axes        = []
+        bin_indices = []
+        shape = []
         
-        for i in indices:
-            out.data.where(i.data.mask, cf_masked, inplace=True)
+        out = type(self)(properties=self.properties())
 
-        out = type(self)            
-
-        bins_1d = {}
-        
-        for i in indices:
-            bin_bounds        = i.get_property('bin_bounds')
-            bin_count         = i.get_property('bin_count')
-            bin_units         = i.get_property('bin_units', None))
-            bin_calendar      = i.get_property('bin_calendar', None))
-            bin_standard_name = i.get_property('bin_standard_name', None)
-            bin_long_name     = i.get_property('bin_long_name', None)
+        for f in indices:
+            bin_bounds        = f.get_property('bin_bounds')
+            bin_count         = f.get_property('bin_count')
+            bin_units         = f.get_property('bin_units', None)
+            bin_calendar      = f.get_property('bin_calendar', None)
+            bin_standard_name = f.get_property('bin_standard_name', None)
+            bin_long_name     = f.get_property('bin_long_name', None)
 
             if bin_count != len(bin_bounds)/2:
                 raise ValueError("TODO")
-            
-            axis = out.set_construct(DomainAxis(bin_count))
+
+            # Create dimension coordinate for bins
             dim = DimensionCoordinate()
             if standard_name is not None:
                 dim.standard_name = bin_standard_name
             elif bin_long_name is not None:
                 dim.long_name = bin_long_name
-                
-            data = Data(0.5*(bin_bounds[1::2] - bin_bounds[0::2]),
-                        units=Units(bin_units, bin_calendar))
-            dim.set_data(data=data, copy=False)
-            bounds_data = numpy_empty((bin_count, 2))
-            bounds_data[0] = bin_bounds[0::2]
-            bounds_data[1] = bin_bounds[1::2]
-            dim.set_bounds(bounds=Bounds(data=Data(bounds_data)))
-            key = out.set_construct(dim, axis=[axis], copy=False)
 
-            bins_1d[key] = numpy_unique(bounds_data)
+            # Create units for the bins
+            units = Units(bin_units, bin_calendar)
             
+            data = Data(0.5*(bin_bounds[1::2] - bin_bounds[0::2]), units=units)
+            dim.set_data(data=data, copy=False)
+            
+            bounds_data = numpy_reshape(bin_bounds, (bin_count, 2))
+            dim.set_bounds(Bounds(data=Data(bounds_data, units=units)))
+
+            # Set domain axis and dimension coordinate for bins
+            axis = out.set_construct(DomainAxis(dim.size))            
+            out.set_construct(dim, axis=[axis], copy=False)
+
+            axes.append(axis)
+            bin_indices.append(f.data)
+            shape.append(dim.size)
+            
+        data = Data.masked_all(shape=tuple(shape), dtype=self.dtype,
+                               units=None)
+        out.set_data(data, axes=axes, copy=False)
+
+        out.hardmask = False
+        
+        c = self.copy()
+
+        if weights is not None:
+            weights = self.weights(weights)
+
+        # Unique collections of bin indices
+        y = numpy_empty((len(bin_indices), bin_indices[0].size), dtype=int)
+        for i, f in enumerate(bin_indices):
+            y[i, :] = f.array.flat
+
+        # Loop round unique collections of bin indices
+        for i in zip(*numpy_unique(y, axis=1)):
+
+            b = (bin_indices[0] == i[0])
+            for a, n in zip(bin_indices[1:], i[1:]):
+                b &= (a == n)
+                
+            c.set_data(self.data.where(b, None, cf.masked),
+                       set_axes=False, copy=False)
+
+            result = c.collapse(method=method, weights=weights).data
+            out.data[i] = result.datum()
+
+            units = result.Units
+            
+        out.override_units(units, inplace=True)
+        out.hardmask = True
+            
+        return out
+            
+
     def del_construct(self, identity, default=ValueError()):
         '''Remove a metadata construct.
 
@@ -5472,16 +5509,16 @@ may be accessed with the `nc_global_attributes`,
                               
                               .. math:: \mu=\frac{1}{N}\sum_{i=1}^{N} x_i
                               
-                              The :ref:`weighted <Weights>` mean of
-                              :math:`N` values :math:`x_i` with
-                              corresponding weights :math:`w_i` is
+                              The weighted mean of :math:`N` values
+                              :math:`x_i` with corresponding weights
+                              :math:`w_i` is
     
                               .. math:: \hat{\mu}=\frac{1}{V_{1}}
                                                     \sum_{i=1}^{N} w_i
                                                     x_i
     
-                              where :math:`V_{1}=\sum_{i=1}^{N} w_i`, the
-                              sum of the weights.
+                              where :math:`V_{1}=\sum_{i=1}^{N} w_i`,
+                              the sum of the weights.
                                    
     ``'variance'``            The unweighted variance of :math:`N` values
                               :math:`x_i` and with :math:`N-ddof` degrees
@@ -5492,23 +5529,24 @@ may be accessed with the `nc_global_attributes`,
     
                               The unweighted biased estimate of the
                               variance (:math:`s_{N}^{2}`) is given by
-                              :math:`ddof=0` and the unweighted unbiased
-                              estimate of the variance using Bessel's
-                              correction (:math:`s^{2}=s_{N-1}^{2}`) is
-                              given by :math:`ddof=1`.
+                              :math:`ddof=0` and the unweighted
+                              unbiased estimate of the variance using
+                              Bessel's correction
+                              (:math:`s^{2}=s_{N-1}^{2}`) is given by
+                              :math:`ddof=1`.
     
-                              The :ref:`weighted <Weights>` biased
-                              estimate of the variance of :math:`N` values
-                              :math:`x_i` with corresponding weights
-                              :math:`w_i` is
+                              The weighted biased estimate of the
+                              variance of :math:`N` values :math:`x_i`
+                              with corresponding weights :math:`w_i`
+                              is
     
                               .. math:: \hat{s}_{N}^{2}=\frac{1}{V_{1}}
                                                         \sum_{i=1}^{N}
                                                         w_i(x_i -
                                                         \hat{\mu})^{2}
                                    
-                              The corresponding :ref:`weighted <Weights>`
-                              unbiased estimate of the variance is
+                              The corresponding weighted unbiased
+                              estimate of the variance is
                               
                               .. math:: \hat{s}^{2}=\frac{1}{V_{1} -
                                                     (V_{1}/V_{2})}
@@ -5516,11 +5554,12 @@ may be accessed with the `nc_global_attributes`,
                                                     w_i(x_i -
                                                     \hat{\mu})^{2}
     
-                              where :math:`V_{2}=\sum_{i=1}^{N} w_i^{2}`,
-                              the sum of the squares of weights. In both
-                              cases, the weights are assumed to be
-                              non-random reliability weights, as
-                              opposed to frequency weights.
+                              where :math:`V_{2}=\sum_{i=1}^{N}
+                              w_i^{2}`, the sum of the squares of
+                              weights. In both cases, the weights are
+                              assumed to be non-random reliability
+                              weights, as opposed to frequency
+                              weights.
                                   
     ``'standard_deviation'``  The variance is the square root of the variance.
     
@@ -5738,8 +5777,8 @@ may be accessed with the `nc_global_attributes`,
 
     .. versionadded:: 1.0
     
-    .. seealso:: `weights`, `weights`, `max`, `mean`, `mid_range`,
-                 `min`, `range`, `sample_size`, `sd`, `sum`, `var`
+    .. seealso:: `weights`, `max`, `mean`, `mid_range`, `min`,
+                 `range`, `sample_size`, `sd`, `sum`, `var`
     
     :Parameters:
     

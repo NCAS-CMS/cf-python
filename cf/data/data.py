@@ -6762,7 +6762,7 @@ dtype('bool')
         return mask
     #--- End: def
 
-    # 0
+
     @staticmethod
     def mask_fpe(*arg):
         '''Masking of floating-point errors in the results of arithmetic
@@ -9388,6 +9388,43 @@ returned.
             d = None
         
         return d
+
+
+    @classmethod
+    def masked_all(cls, shape, dtype=None, units=None, chunk=True):
+        '''Return a new data array of given shape and type with all elements
+    masked.
+    
+    .. seealso:: `empty`, `ones`, `zeros`
+    
+    :Parameters:
+    
+        shape: `int` or `tuple` of `int`
+            The shape of the new array.
+    
+        dtype: data-type
+            The data type of the new array. By default the data type
+            is `numpy.float64`.
+    
+        units: `str` or `Units`
+            The units for the new data array.
+    
+    :Returns:
+    
+        `Data`
+            TODO
+            
+    **Examples:**
+    
+    >>> d = cf.Data.masked_all((96, 73))
+
+        '''
+        array = FilledArray(shape=tuple(shape),
+                            size=reduce(operator_mul, shape, 1),
+                            ndim=len(shape), dtype=numpy_dtype(dtype),
+                            masked_all=True)
+        
+        return cls(array, units=units, chunk=chunk)
 
 
     def mid_range(self, axes=None, squeeze=True, mtol=1, i=False,

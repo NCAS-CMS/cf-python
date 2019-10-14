@@ -45,12 +45,12 @@ class FilledArray(abstract.Array):
         super().__init__(dtype=dtype, ndim=ndim, shape=shape,
                          size=size, fill_value=fill_value,
                          masked_all=masked_all)
-    #--- End: def
+
 
     def __getitem__(self, indices):
         '''x.__getitem__(indices) <==> x[indices]
 
-Returns a numpy array.
+    Returns a numpy array.
 
         '''
         if indices is Ellipsis:
@@ -89,27 +89,8 @@ Returns a numpy array.
                               dtype=self.dtype)
         else:
             return numpy_empty(array_shape, dtype=self.dtype)
-    #--- End: def
 
-#    def __repr__(self):
-#        '''
-#
-#x.__repr__() <==> repr(x)
-#
-#'''
-#        return "<CF {0}: shape={1}, dtype={2}, fill_value={3}>".format(
-#            self.__class__.__name__, self.shape, self.dtype, self.fill_value)
-#    #--- End: def
-#
-#    def __str__(self):
-#        '''
-#
-#x.__str__() <==> str(x)
-#
-#'''
-#        return repr(self)
-#    #--- End: def
-
+        
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
@@ -117,144 +98,145 @@ Returns a numpy array.
     def dtype(self):
         '''Data-type of the data elements.
          
-**Examples:**
-
->>> a.dtype
-dtype('float64')
->>> print(type(a.dtype))
-<type 'numpy.dtype'>
+    **Examples:**
+    
+    >>> a.dtype
+    dtype('float64')
+    >>> print(type(a.dtype))
+    <type 'numpy.dtype'>
 
         '''
         return self._get_component('dtype')
-    #--- End: def
+
     
     @property
     def ndim(self):
         '''Number of array dimensions
         
-**Examples:**
-
->>> a.shape
-(73, 96)
->>> a.ndim
-2
->>> a.size
-7008
-
->>> a.shape
-(1, 1, 1)
->>> a.ndim
-3
->>> a.size
-1
-
->>> a.shape
-()
->>> a.ndim
-0
->>> a.size
-1
+    **Examples:**
+    
+    >>> a.shape
+    (73, 96)
+    >>> a.ndim
+    2
+    >>> a.size
+    7008
+    
+    >>> a.shape
+    (1, 1, 1)
+    >>> a.ndim
+    3
+    >>> a.size
+    1
+    
+    >>> a.shape
+    ()
+    >>> a.ndim
+    0
+    >>> a.size
+    1
         '''
         return self._get_component('ndim')
-    #--- End: def
+
     
     @property
     def shape(self):
         '''Tuple of array dimension sizes.
 
-**Examples:**
-
->>> a.shape
-(73, 96)
->>> a.ndim
-2
->>> a.size
-7008
-
->>> a.shape
-(1, 1, 1)
->>> a.ndim
-3
->>> a.size
-1
-
->>> a.shape
-()
->>> a.ndim
-0
->>> a.size
-1
+    **Examples:**
+    
+    >>> a.shape
+    (73, 96)
+    >>> a.ndim
+    2
+    >>> a.size
+    7008
+    
+    >>> a.shape
+    (1, 1, 1)
+    >>> a.ndim
+    3
+    >>> a.size
+    1
+    
+    >>> a.shape
+    ()
+    >>> a.ndim
+    0
+    >>> a.size
+    1
         '''
         return self._get_component('shape')
-    #--- End: def
+
     
     @property
     def size(self):        
         '''Number of elements in the array.
 
-**Examples:**
-
->>> a.shape
-(73, 96)
->>> a.size
-7008
->>> a.ndim
-2
-
->>> a.shape
-(1, 1, 1)
->>> a.ndim
-3
->>> a.size
-1
-
->>> a.shape
-()
->>> a.ndim
-0
->>> a.size
-1
+    **Examples:**
+    
+    >>> a.shape
+    (73, 96)
+    >>> a.size
+    7008
+    >>> a.ndim
+    2
+    
+    >>> a.shape
+    (1, 1, 1)
+    >>> a.ndim
+    3
+    >>> a.size
+    1
+    
+    >>> a.shape
+    ()
+    >>> a.ndim
+    0
+    >>> a.size
+    1
 
         '''
         return self._get_component('size')
-    #--- End: def
+
 
     def fill_value(self):        
         '''TODO        '''
         return self._get_component('fill_value')
-    #--- End: def
+
 
     def masked_all(self):        
         '''TODO        '''
         return self._get_component('masked_all')
-    #--- End: def
+
 
     @property
     def array(self):
         '''TODO
-'''
+        '''
         return self[...]
 
+    
     def reshape(self, newshape):
+        '''TODO
         '''
-'''
         new = self.copy()        
         new.shape = newshape
         new.ndim  = len(newshape)
         return new
-    #--- End: def
+
 
     def resize(self, newshape):
+        '''TODO
         '''
-'''
         self.shape = newshape
         self.ndim  = len(newshape)
-    #--- End: def
+
 
     def view(self):
+        '''TODO
         '''
-'''
         return self[...]
-    #--- End: def
+
 
 #--- End: class
