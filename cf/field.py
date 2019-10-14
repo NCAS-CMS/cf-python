@@ -129,6 +129,7 @@ _collapse_cell_methods = {
     'standard_deviation': 'standard_deviation',
     'sd'                : 'standard_deviation',
     'sum'               : 'sum',
+    'integral'          : 'sum',
     'variance'          : 'variance',
     'var'               : 'variance',
     'sample_size'       : None,
@@ -157,6 +158,7 @@ _collapse_weighted_methods = set(('mean',
                                   'variance',
                                   'sum_of_weights',
                                   'sum_of_weights2',
+                                  'integral'
                                   ))
 
 # --------------------------------------------------------------------
@@ -166,6 +168,7 @@ _collapse_ddof_methods = set(('sd',
                               'var',
                               ))
 
+_earth_radius = Data(6371229.0, 'm')
 
 _relational_methods = ('__eq__', '__ne__', '__lt__', '__le__', '__gt__', '__ge__')
 
@@ -3597,7 +3600,7 @@ may be accessed with the `nc_global_attributes`,
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
-    def cell_area(self, radius=None, insert=False, force=False):
+    def cell_area(self, radius='earth', insert=False, force=False):
         '''Return a field containing horizontal cell areas.
 
     .. versionadded:: 1.0
@@ -3671,53 +3674,38 @@ may be accessed with the `nc_global_attributes`,
             
             # Got x and y coordinates in radians, so we can calculate.
     
-            # Parse the radius of the planet
-            radii = self.radii(default=Data(6371229.0, 'm'))
-            if len(radii) > 1:
-                raise ValueError(
-                    "Multiple radii found in coordinate reference constructs: {!r}".format(
-                        radii))
-
-            print (radii)
-            radius = radii[0]                
-            radius = Data.asdata(radius).squeeze()
-            radius.dtype = float
-            if radius.size != 1:
-                raise ValueError("Multiple radii: radius={!r}".format(radius))
-
-            if not radius.Units:
-                radius.override_units(_units_metres, inplace=True)
-            elif not radius.Units.equivalent(_units_metres):
-                raise ValueError(
-                    "Invalid units for radius: {!r}".format(radius.Units))
-
+            # Parse the radius of the sphere
+            radius = self.radius(default=radius)
+            
             w = self.weights('area')
             radius **= 2
             w *= radius
             w.override_units(radius.Units, inplace=True)
         #--- End: if               
 
-        w.standard_name = 'area'
+        w.set_property('standard_name', 'cell_area')
         
         return w
 
 
-    def radii(self, default=6371229):
+    def radius(self, default=None):
         '''TODO
 
     :Parameters:
         
-        default: 
+        default: optional
 
     :Returns:
 
-        `list`
+        `Data`
 
     **Examples:**
 
     TODO
 
         '''
+        
+        
         radii = []
         for cr in self.coordinate_references.values():
             r = cr.datum.get_parameter('earth_radius', None)
@@ -3737,12 +3725,28 @@ may be accessed with the `nc_global_attributes`,
                     radii.append(r)
         #--- End: for
 
+        if len(radii) > 1:
+            raise ValueError(
+                "Multiple radii found in coordinate reference constructs: {!r}".format(
+                    radii))
+
         if not radii:
-            default = Data.asdata(default)
-            default.Units = Units('m')
-            return [default]
+            if default is None:
+                raise ValueError("TODO")
+
+            if default == 'earth':
+                return _earth_radius.copy()
         
-        return radii
+            r = Data.asdata(default).squeeze()
+        else:
+            r = Data.asdata(radii[0]).squeeze()
+            
+        if r.size != 1:
+            raise ValueError("Multiple radii: {!r}".format(r))
+
+        r.Units = Units('m')
+        r.dtype = float
+        return r
 
     
     def map_axes(self, other):
@@ -4097,7 +4101,8 @@ may be accessed with the `nc_global_attributes`,
 
 
     def weights(self, weights='auto', scale=None, components=False,
-                methods=False, **kwargs):
+                methods=False, integral=False, radius='earth',
+                **kwargs):
         '''Return weights for the data array values.
 
     The weights are those used during a statistical collapse of the
@@ -4186,7 +4191,7 @@ may be accessed with the `nc_global_attributes`,
                                 construct's volume cell measure
                                 construct.
                   
-                  identity      Weights from the cell sizes of the
+                  ``str``       Weights from the cell sizes of the
                                 dimension coordinate construct with
                                 this identity.
                   
@@ -4200,11 +4205,11 @@ may be accessed with the `nc_global_attributes`,
                 product of the weights defined by each element of the
                 sequence. The ordering of the sequence is irrelevant.
     
-                  *Parameter example:*
-                    To create to 2-dimensional weights based on cell
-                    areas: ``f.weights('area')``. To create to
-                    3-dimensional weights based on cell areas and
-                    linear height: ``f.weights(['area', 'Z'])``.
+                *Parameter example:*
+                  To create to 2-dimensional weights based on cell
+                  areas: ``f.weights('area')``. To create to
+                  3-dimensional weights based on cell areas and linear
+                  height: ``f.weights(['area', 'Z'])``.
     
         scale: number, optional
             If set to a positive number then scale the weights so that
@@ -4214,8 +4219,8 @@ may be accessed with the `nc_global_attributes`,
             the others.
 
             *Parameter example:*
-               To scale all weights so that they lie between 0 and 1:
-               ``scale=1``.
+              To scale all weights so that they lie between 0 and 1:
+              ``scale=1``.
     
         components: `bool`, optional
             If True then a dictionary of orthogonal weights components
@@ -4300,16 +4305,18 @@ may be accessed with the `nc_global_attributes`,
             if not m:
                 if measure == 'area':
                     return False
+                
                 if auto:
                     return
                 
                 raise ValueError(
                     "Can't get weights: No {!r} cell measure".format(measure))
+            
             elif len(m) > 1:
                 if auto:
                     return False
                 
-                raise ValueError("Found multiple 'area' cell measures")                
+                raise ValueError("Found multiple {!r} cell measures".format(measure))
 
             key, clm = dict(m).popitem()    
             
@@ -4322,6 +4329,7 @@ may be accessed with the `nc_global_attributes`,
                 if axis in weights_axes:
                     if auto:
                         return False
+                    
                     raise ValueError(
                         "Multiple weights specifications for {!r} axis".format(
                             self.constructs.domain_axis_identity(axis)))
@@ -4393,9 +4401,20 @@ may be accessed with the `nc_global_attributes`,
             weights_axes.add(da_key)
         #--- End: def
             
-        def _area_weights_XY(self, comp, weights_axes, auto=False): 
+        def _area_weights_XY(self, comp, weights_axes, auto=False,
+                             integral=False, radius=None): 
             '''Calculate area weights from X and Y dimension coordinate
         constructs.
+
+        :Parameters:
+            
+            integral: `bool`
+                If true then make sure that the weights represent true
+                cell areas.
+
+        :Returns:
+            
+            `bool` or `None`
 
             '''
             xdims = dict(self.dimension_coordinates('X'))
@@ -4442,7 +4461,11 @@ may be accessed with the `nc_global_attributes`,
                     raise ValueError(
                         "Multiple weights specifications for {!r} axis".format( 
                             self.constructs.domain_axis_identity(axis)))
+            #--- End: if
 
+            if integral and radius is not None:
+                radius = self.radius(default=radius)
+            
             if xcoord.size > 1:
                 if not xcoord.has_bounds(): 
                     if auto:
@@ -4457,9 +4480,12 @@ may be accessed with the `nc_global_attributes`,
                 else:
                     cells = xcoord.cellsize
                     if xcoord.Units.equivalent(Units('radians')):
-                        cells.Units = _units_radians
+                        cells.Units = _units_radians                        
+                        if integral:
+                            cells *= radius
+                            cells.override_units(radius.Units, inplace=True)
                     else:
-                        cells.Units = Units('metres')
+                        cellgs.Units = Units('metres')
                         
                     comp[(xaxis,)] = cells
 
@@ -4481,13 +4507,18 @@ may be accessed with the `nc_global_attributes`,
     
                     if methods:
                         comp[(yaxis,)] = 'linear sine '+ycoord.identity()
-                    else:            
-                        comp[(yaxis,)] = ycoord.cellsize
+                    else:
+                        cells = ycoord.cellsize
+                        if integral:
+                            cells *=  radius
+
+                        comp[(yaxis,)] = cells
                 else:                    
                     if methods:
                         comp[(yaxis,)] = 'linear '+ycoord.identity()
-                    else:            
-                        comp[(yaxis,)] = ycoord.cellsize
+                    else:         
+                        cells = ycoord.cellsize
+                        comp[(yaxis,)] = cells
                 #--- End: if
                         
                 weights_axes.add(yaxis)
@@ -4615,6 +4646,9 @@ may be accessed with the `nc_global_attributes`,
             return w
         #--- End: def
 
+        if integral and scale is not None:
+            raise ValueError("Can't scale and integral TODO")
+
         if weights is None:
             # --------------------------------------------------------
             # All equal weights
@@ -4645,7 +4679,8 @@ may be accessed with the `nc_global_attributes`,
 
             # Area weights
             if not _measure_weights(self, 'area', comp, weights_axes, auto=True):
-                _area_weights_XY(self, comp, weights_axes, auto=True)
+                _area_weights_XY(self, comp, weights_axes, auto=True,
+                                 integral=integral, radius=radius)
 
             # 1-d linear weights from dimension coordinates
             for dc_key in self.dimension_coordinates:
@@ -4656,18 +4691,23 @@ may be accessed with the `nc_global_attributes`,
             # --------------------------------------------------------
             # Dictionary
             # --------------------------------------------------------
-            for key, value in weights.items():                
-                try:
-                    key = [data_axes[iaxis] for iaxis in key]
-                except IndexError:
-                    raise ValueError("TODO s ^^^^^^ csdcvd 3456 4")
+            for key, value in weights.items():
+                key = [self.domain_axis(i, key=True) for i in key]
+                for k in key:
+                    if k not in data_axes:
+                        raise ValueError("TODO {!r} domain axis".format(k))
+                #--- End: for
+                
+#                try:
+#                    key = [data_axes[iaxis] for iaxis in key]
+#                except IndexError:
+#                    raise ValueError("TODO s ^^^^^^ csdcvd 3456 4")
 
                 multiple_weights = weights_axes.intersection(key)
                 if multiple_weights:
                     raise ValueError(
-                        "Multiple weights specifications for {0!r} axis".format(
+                        "Multiple weights specifications for {!r} domain axis".format(
                             self.constructs.domain_axis_identity(multiple_weights.pop())))
-                #--- End: if
                 
                 weights_axes.update(key)
 
@@ -4706,6 +4746,7 @@ may be accessed with the `nc_global_attributes`,
                     da_key_x = da_key
                 elif da_key == yaxis:
                     da_key_y = da_key
+            #--- End: if
                 
             if da_key_x and da_key_y:
                 xdim = self.dimension_coordinate(xaxis, default=None)
@@ -4729,7 +4770,9 @@ may be accessed with the `nc_global_attributes`,
             # Area weights
             if 'area' in cell_measures:
                 if not _measure_weights(self, 'area', comp, weights_axes):
-                    _area_weights_XY(self, comp, weights_axes)      
+                    _area_weights_XY(self, comp, weights_axes,
+                                     integral=integral, radius=radius)
+            #--- End: if
 
             # 1-d linear weights from dimension coordinates
             for axis in axes:
@@ -4745,7 +4788,8 @@ may be accessed with the `nc_global_attributes`,
                 weights_axes.discard(xaxis)
                 weights_axes.discard(yaxis)
                 if not _measure_weights(self, 'area', comp, weights_axes):
-                    _area_weights_XY(self, comp, weights_axes)      
+                    _area_weights_XY(self, comp, weights_axes,
+                                     integral=integral, radius=radius)      
         #--- End: if
         
         if scale is not None and not methods:
@@ -5079,8 +5123,22 @@ may be accessed with the `nc_global_attributes`,
         return f
             
 
-    def asd(self, indices):
-        '''
+    def asd(self, method, digitized, weights=None, integral=False,
+            radius='earth'):
+        '''TODO
+
+    :Parameters:
+
+        method: `str`
+
+        digitized: (seqeunce of) `Field`
+
+    :Returns:
+
+        `Field`
+
+    **Examples:**
+
         '''
         axes        = []
         bin_indices = []
@@ -5088,14 +5146,32 @@ may be accessed with the `nc_global_attributes`,
         
         out = type(self)(properties=self.properties())
 
-        for f in indices:
-            bin_bounds        = f.get_property('bin_bounds')
-            bin_count         = f.get_property('bin_count')
+        if method == 'sample_size':
+            out.standard_name = 'number_of_observations'
+
+        long_name = self.get_property('long_name', None):
+        if long_name is None:
+            out.long_name = method.replace('_', ' ')+' '+self.get_property('standard_name', ''))
+        else:
+            out.long_name = method.replace('_', ' ')+' '+long_name
+            
+        if isinstance(digitized, self.__class__):
+            digitized = (digitized,)
+        
+        for f in digitized:
+            bin_bounds        = f.get_property('bin_bounds', None)
+            bin_count         = f.get_property('bin_count', None)
             bin_units         = f.get_property('bin_units', None)
             bin_calendar      = f.get_property('bin_calendar', None)
             bin_standard_name = f.get_property('bin_standard_name', None)
             bin_long_name     = f.get_property('bin_long_name', None)
 
+            if bin_count is None:
+                raise ValueError("TODO")
+
+            if bin_bounds is None:
+                raise ValueError("TODO")
+             
             if bin_count != len(bin_bounds)/2:
                 raise ValueError("TODO")
 
@@ -5128,11 +5204,22 @@ may be accessed with the `nc_global_attributes`,
         out.set_data(data, axes=axes, copy=False)
 
         out.hardmask = False
+
+#        cell_method = CellMethod(method=_collapse_cell_methods[method])
+#        if weights in ('area', 'volume'):
+#            cell_mehod.set_axes(weights) 
         
         c = self.copy()
 
+        integral = (method == 'integral')
+        if integral:
+            scale = None
+        else:
+            scale = 1.0
+            
         if weights is not None:
-            weights = self.weights(weights)
+            weights = self.weights(weights, components=True,
+                                   integral=integral, radius=radius)
 
         # Unique collections of bin indices
         y = numpy_empty((len(bin_indices), bin_indices[0].size), dtype=int)
@@ -5426,7 +5513,8 @@ may be accessed with the `nc_global_attributes`,
                  within_years=None, over_days=None, over_years=None,
                  coordinate='mid_range', group_by='coords',
                  group_span=None, group_contiguous=None,
-                 verbose=False, _create_zero_size_cell_bounds=False,
+                 radius='earth', verbose=False,
+                 _create_zero_size_cell_bounds=False,
                  _update_cell_methods=True, i=False, _debug=False,
                  **kwargs):
         r'''
@@ -5496,13 +5584,21 @@ may be accessed with the `nc_global_attributes`,
                               
     ``'minimum'``             The minimum of the values.
                                        
-    ``'sum'``                 The sum of the values.
+    ``'sum'``                 The sum of the values :math:`x_i` is
+
+                              .. math:: t=\sum_{i=1}^{N} x_i
                               
-    ``'mid_range'``           The average of the maximum and the minimum of the
-                              values.
+    ``'integral'``            The integral of the values :math:`x_i`
+                              with corresponding cell measures
+                              :math:`m_i` is
+
+                              .. math:: i=\sum_{i=1}^{N} m_i x_i
+
+    ``'mid_range'``           The average of the maximum and the
+                              minimum of the values.
                               
-    ``'range'``               The absolute difference between the maximum and
-                              the minimum of the values.
+    ``'range'``               The absolute difference between the
+                              maximum and the minimum of the values.
                               
     ``'mean'``                The unweighted mean of :math:`N` values
                               :math:`x_i` is
@@ -5561,16 +5657,19 @@ may be accessed with the `nc_global_attributes`,
                               weights, as opposed to frequency
                               weights.
                                   
-    ``'standard_deviation'``  The variance is the square root of the variance.
+    ``'standard_deviation'``  The variance is the square root of the
+                              variance.
     
-    ``'sample_size'``         The sample size, :math:`N`, as would be used for 
-                              other statistical calculations.
-                              
-    ``'sum_of_weights'``      The sum of weights, :math:`V_{1}`, as would be
+    ``'sample_size'``         The sample size, :math:`N`, as would be
                               used for other statistical calculations.
+                              
+    ``'sum_of_weights'``      The sum of weights, :math:`V_{1}`, as
+                              would be used for other statistical
+                              calculations.
     
-    ``'sum_of_weights2'``     The sum of squares of weights, :math:`V_{2}`, as
-                              would be used for other statistical calculations.
+    ``'sum_of_weights2'``     The sum of squares of weights,
+                              :math:`V_{2}`, as would be used for
+                              other statistical calculations.
     ========================  =====================================================
     
 
@@ -6766,17 +6865,28 @@ may be accessed with the `nc_global_attributes`,
 
             if grouped_collapse:
                 if len(collapse_axes) > 1:
-                    raise ValueError("Can't do a grouped collapse multiple axes simultaneously")
+                    raise ValueError("Can't do a grouped collapse on multiple axes simultaneously")
 
                 # ------------------------------------------------------------
                 # Calculate weights
                 # ------------------------------------------------------------
                 g_weights = weights
                 if method in _collapse_weighted_methods:
-                    g_weights = f.weights(weights, scale=1.0, components=True)
+                    if method == 'integral':
+                        integral=True
+                        scale = None
+                    else:
+                        integral=False
+                        scale = 1.0
+                        
+                    g_weights = f.weights(weights, scale=scale,
+                                          components=True, integral=integral,
+                                          radius=radius)
                     if not g_weights:
                         g_weights = None
-                #--- End: if
+                        
+                elif weights is not None:
+                    raise ValueError("Can't weight a {!r} collapse".format(method))
 
                 axis = collapse_axes.key()
                 
@@ -6850,10 +6960,23 @@ may be accessed with the `nc_global_attributes`,
             d_kwargs = {}
             if weights is not None:
                 if method in _collapse_weighted_methods:
-                    d_weights = f.weights(weights, scale=1.0, components=True)
+                    if method == 'integral':
+                        integral=True
+                        scale = None
+                    else:
+                        integral=False
+                        scale = 1.0
+                        
+                    d_weights = f.weights(weights, scale=scale,
+                                          components=True, integral=integral,
+                                          radius=radius)
                     if d_weights:
                         d_kwargs['weights'] = d_weights
-                elif not equals(weights, 'auto'):  # doc this
+
+#                elif weights is not None:
+#                    raise ValueError("Can't weight a {!r} collapse".format(method))
+
+                elif not equals(weights, 'auto'):  # doc this TODO is this right?
                     for x in iaxes:
                         if (x,) in d_kwargs:
                             raise ValueError(
@@ -8143,7 +8266,11 @@ may be accessed with the `nc_global_attributes`,
         if input_axes and tuple(input_axes) == ('area',):
             axes = ('area',)
         else:
-            axes   = tuple(collapse_axes)
+            axes = tuple(collapse_axes)
+
+        comment = None
+        if method == 'integral':
+            comment = 'integral'
             
         method = _collapse_cell_methods.get(method, method)
 
@@ -8153,6 +8280,9 @@ may be accessed with the `nc_global_attributes`,
         elif over:
             cell_method.set_qualifier('over', over)
 
+        if comment:
+            cell_method.set_qualifier('comment', comment)
+            
         if original_cell_methods:
             # There are already some cell methods
             if len(collapse_axes) == 1:
@@ -8174,11 +8304,12 @@ may be accessed with the `nc_global_attributes`,
                         # It was a null collapse (i.e. the method is
                         # the same as the last one and the size of the
                         # collapsed axis hasn't changed).
-                        cell_method = None
                         if within:
                             lastcm.within = within
                         elif over:
                             lastcm.over = over
+
+                        cell_method = None
         #--- End: if
     
         if cell_method is not None:
