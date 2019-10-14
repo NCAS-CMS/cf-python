@@ -5149,9 +5149,9 @@ may be accessed with the `nc_global_attributes`,
         if method == 'sample_size':
             out.standard_name = 'number_of_observations'
 
-        long_name = self.get_property('long_name', None):
+        long_name = self.get_property('long_name', None)
         if long_name is None:
-            out.long_name = method.replace('_', ' ')+' '+self.get_property('standard_name', ''))
+            out.long_name = method.replace('_', ' ')+' '+self.get_property('standard_name', '')
         else:
             out.long_name = method.replace('_', ' ')+' '+long_name
             
