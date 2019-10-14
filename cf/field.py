@@ -5569,7 +5569,7 @@ may be accessed with the `nc_global_attributes`,
     *Example:*
       Find the horizontal maximum using the special identity 'area':
 
-      >>> b=a.collapse('area: maximum')
+      >>> b = a.collapse('area: maximum')
 
     
     **Collapse methods**
@@ -5584,21 +5584,22 @@ may be accessed with the `nc_global_attributes`,
                               
     ``'minimum'``             The minimum of the values.
                                        
-    ``'sum'``                 The sum of the values :math:`x_i` is
-
-                              .. math:: t=\sum_{i=1}^{N} x_i
-                              
-    ``'integral'``            The integral of the values :math:`x_i`
-                              with corresponding cell measures
-                              :math:`m_i` is
-
-                              .. math:: i=\sum_{i=1}^{N} m_i x_i
-
     ``'mid_range'``           The average of the maximum and the
                               minimum of the values.
                               
     ``'range'``               The absolute difference between the
                               maximum and the minimum of the values.
+
+    ``'sum'``                 The sum of :math:`N` values :math:`x_i`
+                              is
+
+                              .. math:: t=\sum_{i=1}^{N} x_i
+                              
+    ``'integral'``            The integral of :math:`N` values
+                              :math:`x_i` with corresponding cell
+                              measures :math:`m_i` is
+
+                              .. math:: i=\sum_{i=1}^{N} m_i x_i
                               
     ``'mean'``                The unweighted mean of :math:`N` values
                               :math:`x_i` is
