@@ -5301,7 +5301,7 @@ place.
         if inplace:
             d = None
         return d
-    #--- End: def
+
 
     def _collapse_subspace(self, func, fpartial, ffinalise, indices,
                            n_non_collapse_axes, n_collapse_axes, Nmax,
@@ -7560,8 +7560,57 @@ returned.
     **Examples:**
 
         '''
+        if i:
+            _DEPRECATION_ERROR_KWARGS(self, 'max', i=True) # pragma: no cover
+            
         return self._collapse(max_f, max_fpartial, max_ffinalise, axes=axes,
                               squeeze=squeeze, mtol=mtol, inplace=inplace,
+                              _preserve_partitions=_preserve_partitions)
+
+
+    def maximum_absolute_value(self, axes=None, squeeze=False, mtol=1,
+                               inplace=False,
+                               _preserve_partitions=False):
+        '''Collapse axes with their maximum absolute value.
+
+    Missing data elements are omitted from the calculation.
+    
+    .. seealso:: `max`, `min`, `mean`, `mid_range`, `sum`, `sd`, `var`
+    
+    :Parameters:
+    
+        axes : (sequence of) int, optional
+            TODO
+
+        squeeze : bool, optional
+            TODO
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+    :Returns:
+    
+        `Data` or `None`
+            The collapsed data, or `None` if the operation was
+            in-place.
+    
+    **Examples:**
+
+    >>> d=cf.Data([[-1, 2, 3], [9, -8, -12]], 'm')                              
+    >>> d.maximum_absolute_value()                                             
+    <CF Data(1, 1): [[12]] m>
+    >>> d.max()                                                                 
+    <CF Data(1, 1): [[9]] m>
+    >>> d.maximum_absolute_value(axes=1)                                       
+    <CF Data(2, 1): [[3, 12]] m>    
+    >>> d.max(axes=1)                                                          
+    <CF Data(2, 1): [[3, 9]] m>
+
+        '''
+        return self._collapse(max_abs_f, max_abs_fpartial,
+                              max_abs_ffinalise, axes=axes,
+                              squeeze=squeeze, mtol=mtol,
+                              inplace=inplace,
                               _preserve_partitions=_preserve_partitions)
 
 
@@ -7599,6 +7648,51 @@ returned.
 
         return self._collapse(min_f, min_fpartial, min_ffinalise, axes=axes,
                               squeeze=squeeze, mtol=mtol, inplace=inplace,
+                              _preserve_partitions=_preserve_partitions)
+
+    def minimum_absolute_value(self, axes=None, squeeze=False, mtol=1,
+                               inplace=False,
+                               _preserve_partitions=False):
+        '''Collapse axes with their minimum absolute value.
+
+    Missing data elements are omitted from the calculation.
+    
+    .. seealso:: `max`, `min`, `mean`, `mid_range`, `sum`, `sd`, `var`
+    
+    :Parameters:
+    
+        axes : (sequence of) int, optional
+            TODO
+
+        squeeze : bool, optional
+            TODO
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+    :Returns:
+    
+        `Data` or `None`
+            The collapsed data, or `None` if the operation was
+            in-place.
+    
+    **Examples:**
+
+    >>> d=cf.Data([[-1, 2, 3], [9, -8, -12]], 'm')                              
+    >>> d.minimum_absolute_value()                                              
+    <CF Data(1, 1): [[1]] m>
+    >>> d.d.min()                                                                 
+    <CF Data(1, 1): [[-12]] m>
+    >>> d.minimum_absolute_value(axes=1)                                        
+    <CF Data(2, 1): [[1, 8]] m>
+    >>> d.min(axes=1)                                                           
+    <CF Data(2, 1): [[-1, -12]] m>
+
+        '''
+        return self._collapse(min_abs_f, min_abs_fpartial,
+                              min_abs_ffinalise, axes=axes,
+                              squeeze=squeeze, mtol=mtol,
+                              inplace=inplace,
                               _preserve_partitions=_preserve_partitions)
 
 
@@ -7778,6 +7872,101 @@ returned.
         return self._collapse(mean_f, mean_fpartial, mean_ffinalise,
                               axes=axes, squeeze=squeeze, weights=weights,
                               mtol=mtol, inplace=inplace,
+                              _preserve_partitions=_preserve_partitions)
+
+    def integral(self, axes=None, squeeze=False, mtol=1, weights=None,
+                 inplace=False, _preserve_partitions=False):
+        '''TODO
+    
+    TODO if no weights => sum
+
+    :Parameters:
+    
+        axes: (sequence of) int, optional
+            The axes to be collapsed. By default flattened input is
+            used. Each axis is identified by its integer position. No
+            axes are collapsed if *axes* is an empty sequence.
+    
+        squeeze: `bool`, optional
+            If True then collapsed axes are removed. By default the
+            axes which are collapsed are left in the result as axes
+            with size 1, meaning that the result is guaranteed to
+            broadcast correctly against the original array.
+    
+        weights: data-like or dict, optional
+            TOD note that the units of the weights matter
+        
+            Weights associated with values of the array. By default
+            all non-missing elements of the array are assumed to have
+            a weight equal to one. If *weights* is a data-like object
+            then it must have either the same shape as the array or,
+            if that is not the case, the same shape as the axes being
+            collapsed. If *weights* is a dictionary then each key is
+            axes of the array (an int or tuple of ints) with a
+            corresponding data-like value of weights for those
+            axes. In this case, the implied weights array is the outer
+            product of the dictionary's values.
+    
+            *Parameter example:*
+              If ``weights={1: w, (2, 0): x}`` then ``w`` must contain
+              1-dimensionsal weights for axis 1 and ``x`` must contain
+              2-dimensionsal weights for axes 2 and 0. This is
+              equivalent, for example, to ``weights={(1, 2, 0), y}``,
+              where ``y`` is the outer product of ``w`` and ``x``. If
+              ``axes=[1, 2, 0]`` then ``weights={(1, 2, 0), y}`` is
+              equivalent to ``weights=y``. If ``axes=None`` and the
+              array is 3-dimensionsal then ``weights={(1, 2, 0), y}``
+              is equivalent to ``weights=y.transpose([2, 0, 1])``.
+    
+        mtol: number, optional
+            For each element in the output data array, the fraction of
+            contributing input array elements which is allowed to
+            contain missing data. Where this fraction exceeds *mtol*,
+            missing data is returned. The default is 1, meaning a
+            missing datum in the output array only occurs when its
+            contributing input array elements are all missing data. A
+            value of 0 means that a missing datum in the output array
+            occurs whenever any of its contributing input array
+            elements are missing data. Any intermediate value is
+            permitted.
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+    :Returns:
+    
+        `Data` or `None`
+            The collapsed data, or `None` of the operation was
+            in-place.
+    
+    .. seealso:: `max`, `min`, `mid_range`, `range`, `sum`, `sd`, `var`
+    
+    **Examples:**
+    
+    TODO
+
+        '''
+        if weights is None:
+            units = None
+        else:
+            units = self.Units
+            if not units:
+                units = Units('1')
+    
+            weights_units = getattr(weights, 'Units', None)
+            if weights_units is not None:
+                units = units * weights_units
+            else:
+                for w in weights.values():                
+                    weights_units = getattr(w, 'Units', None)
+                    if weights_units is not None:
+                        units = units * weights_units
+        #--- End: if
+
+        return self._collapse(sum_f, sum_fpartial, sum_ffinalise,
+                              axes=axes, squeeze=squeeze,
+                              weights=weights, mtol=mtol,
+                              inplace=inplace, units=units,
                               _preserve_partitions=_preserve_partitions)
 
 
@@ -11170,11 +11359,59 @@ returned.
 
         TODO
 
-        '''   
+        '''
+        if i:
+            _DEPRECATION_ERROR_KWARGS(self, 'sum', i=True) # pragma: no cover
+
         return self._collapse(sum_f, sum_fpartial, sum_ffinalise,
                               axes=axes, squeeze=squeeze,
                               weights=None, mtol=mtol,
                               inplace=inplace,
+                              _preserve_partitions=_preserve_partitions)
+
+
+    def sum_of_squares(self, axes=None, squeeze=False, mtol=1,
+                       inplace=False, _preserve_partitions=False):
+        '''Collapse axes with the sum of the squares of the values.
+
+    Missing data array elements are omitted from the calculation.
+    
+    .. seealso:: `max`, `min`, `mean`, `mid_range`, `range`,
+                 `sample_size`, `sd`, `sum_of_weights`,
+                 `sum_of_weights2`, `var`
+    
+    :Parameters:
+    
+        axes : (sequence of) int, optional
+    
+        squeeze : bool, optional
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+         
+    :Returns:
+    
+        `Data` or `None`
+            The collapsed data, or `None` if the operation was
+            in-place.
+    
+    **Examples:**
+
+    >>> d = cf.Data([[-1, 2, 3], [9, -8, -12]], 'm')
+    >>> d.sum_of_squares()                                                      
+    <CF Data(1, 1): [[303]] m2>
+    >>> d.sum_of_squares(axes=1)                                                
+    <CF Data(2, 1): [[14, 289]] m2>
+
+        '''   
+        units = self.Units
+        if units:
+            units = units ** 2
+
+        return self._collapse(sum_squares_f, sum_squares_fpartial,
+                              sum_squares_ffinalise, axes=axes,
+                              squeeze=squeeze, weights=None,
+                              units=units, mtol=mtol, inplace=inplace,
                               _preserve_partitions=_preserve_partitions)
 
 

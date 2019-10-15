@@ -91,50 +91,56 @@ _units_metres  = Units('m')
 # assumed to have a corresponding Data method with the same name.
 # --------------------------------------------------------------------
 _collapse_methods = {
-    'mean'              : 'mean',
-    'avg'               : 'mean',
-    'average'           : 'mean',
-    'max'               : 'max',
-    'maximum'           : 'max',
-    'min'               : 'min',
-    'minimum'           : 'min',
-    'mid_range'         : 'mid_range',
-    'range'             : 'range',
-    'standard_deviation': 'sd',
-    'sd'                : 'sd',
-    'sum'               : 'sum',
-    'variance'          : 'var',
-    'var'               : 'var',
-    'sample_size'       : 'sample_size', 
-    'sum_of_weights'    : 'sum_of_weights',
-    'sum_of_weights2'   : 'sum_of_weights2',
+    'mean'                  : 'mean',
+    'avg'                   : 'mean',
+    'average'               : 'mean',
+    'max'                   : 'max',
+    'maximum'               : 'max',
+    'maximum_absolute_value': 'maximum_absolute_value',
+    'min'                   : 'min',
+    'minimum'               : 'min',
+    'minimum_absolute_value': 'minimum_absolute_value',
+    'mid_range'             : 'mid_range',
+    'range'                 : 'range',
+    'standard_deviation'    : 'sd',
+    'sd'                    : 'sd',
+    'sum'                   : 'sum',
+    'sum_of_squares'        : 'sum_of_squares',
+    'integral'              : 'integral',
+    'variance'              : 'var',
+    'var'                   : 'var',
+    'sample_size'           : 'sample_size', 
+    'sum_of_weights'        : 'sum_of_weights',
+    'sum_of_weights2'       : 'sum_of_weights2',
 }
 
 # --------------------------------------------------------------------
-# Map each allowed input collapse method name to its corresponding
-# Data method. Input collapse methods not in this sictionary are
-# assumed to have a corresponding Data method with the same name.
+# Map each allowed input collapse method name to its corresponding CF
+# cell method.
 # --------------------------------------------------------------------
 _collapse_cell_methods = {
-    'point'             : 'point',
-    'mean'              : 'mean',
-    'avg'               : 'mean',
-    'average'           : 'mean',
-    'max'               : 'maximum',
-    'maximum'           : 'maximum',
-    'min'               : 'minimum',
-    'minimum'           : 'minimum',
-    'mid_range'         : 'mid_range',
-    'range'             : 'range',
-    'standard_deviation': 'standard_deviation',
-    'sd'                : 'standard_deviation',
-    'sum'               : 'sum',
-    'integral'          : 'sum',
-    'variance'          : 'variance',
-    'var'               : 'variance',
-    'sample_size'       : None,
-    'sum_of_weights'    : None,
-    'sum_of_weights2'   : None,
+    'point'                 : 'point',
+    'mean'                  : 'mean',
+    'avg'                   : 'mean',
+    'average'               : 'mean',
+    'max'                   : 'maximum',
+    'maximum'               : 'maximum',
+    'maximum_absolute_value': 'maximum_absolute_value',
+    'min'                   : 'minimum',
+    'minimum'               : 'minimum',
+    'minimum_absolute_value': 'minimum_absolute_value',
+    'mid_range'             : 'mid_range',
+    'range'                 : 'range',
+    'standard_deviation'    : 'standard_deviation',
+    'sd'                    : 'standard_deviation',
+    'sum'                   : 'sum',
+    'integral'              : 'sum',
+    'sum_of_squares'        : 'sum_of_squares',
+    'variance'              : 'variance',
+    'var'                   : 'variance',
+    'sample_size'           : None,
+    'sum_of_weights'        : None,
+    'sum_of_weights2'       : None,
 }
 
 # --------------------------------------------------------------------
@@ -5537,7 +5543,7 @@ may be accessed with the `nc_global_attributes`,
 
       >>> b = a.collapse('minimum')
 
-    The collapse can be applied to only a subset of the field
+    The collapse can also be applied to any subset of the field
     construct's dimensions. In this case, the domain axis and
     coordinate constructs for the non-collapsed dimensions remain the
     same. This is implemented either with the axes keyword, or with a
@@ -5577,9 +5583,9 @@ may be accessed with the `nc_global_attributes`,
     The following collapse methods are available, over any subset of
     the domain axes:
     
-    ========================  =====================================================
-    Method                    Description
-    ========================  =====================================================
+    ========================  ========================================  =============
+    Method                    Description                               Cell method
+    ========================  ========================================  =============
     ``'maximum'``             The maximum of the values.
                               
     ``'minimum'``             The minimum of the values.
@@ -5671,7 +5677,7 @@ may be accessed with the `nc_global_attributes`,
     ``'sum_of_weights2'``     The sum of squares of weights,
                               :math:`V_{2}`, as would be used for
                               other statistical calculations.
-    ========================  =====================================================
+    ========================  ========================================  =============
     
 
     **Data type and missing data**
@@ -8270,8 +8276,8 @@ may be accessed with the `nc_global_attributes`,
             axes = tuple(collapse_axes)
 
         comment = None
-        if method == 'integral':
-            comment = 'integral'
+#        if method == 'integral':
+#            comment = 'integral'
             
         method = _collapse_cell_methods.get(method, method)
 

@@ -4936,10 +4936,10 @@ constructs each now have a single cell. The air pressure time
 dimension was not included in the collapse because it already had size
 1 in the original field construct.
 
-The collapse can be applied to only a subset of the field construct's
-dimensions. In this case, the domain axis and coordinate constructs
-for the non-collapsed dimensions remain the same. This is implemented
-either with the *axes* keyword, or with a `CF-netCDF cell
+The collapse can also be applied to any subset of the field
+construct's dimensions. In this case, the domain axis and coordinate
+constructs for the non-collapsed dimensions remain the same. This is
+implemented either with the *axes* keyword, or with a `CF-netCDF cell
 methods`_\ -like syntax for describing both the collapse dimensions
 and the collapse method in a single string. The latter syntax uses
 :ref:`construct identities <Construct-identities>` instead of netCDF
@@ -5011,99 +5011,108 @@ Collapse methods
 ^^^^^^^^^^^^^^^^
 
 The following collapse methods are available, over any subset of the
-domain axes:
+domain axes. The "Cell method" column in the table gives the method of
+the new cell method construct (if one is created).
 
-========================  =====================================================
-Method                    Description
-========================  =====================================================
-``'maximum'``             The maximum of the values.
+============================  =====================================================  ===============================
+Method                        Description                                            Cell method
+============================  =====================================================  ===============================
+``'maximum'``                 The maximum of the values.                             ``maximum``
                           
-``'minimum'``             The minimum of the values.
+``'minimum'``                 The minimum of the values.                             ``minimum``
                                    
-``'mid_range'``           The average of the maximum and the
-                          minimum of the values.
+``'maximum_absolute_value'``  The maximum of the absolute values.                    ``maximum_absolute_value``
                           
-``'range'``               The absolute difference between the
-                          maximum and the minimum of the values.
-
-``'sum'``                 The sum of :math:`N` values :math:`x_i`
-                          is
-
-                          .. math:: t=\sum_{i=1}^{N} x_i
+``'minimum_absolute_value'``  The maximum of the absolute values.                    ``minimum_absolute_value``
                           
-``'integral'``            The integral of :math:`N` values
-                          :math:`x_i` with corresponding cell
-                          measures :math:`m_i` is
-
-                          .. math:: i=\sum_{i=1}^{N} m_i x_i
-
-``'mean'``                The unweighted mean of :math:`N` values
-                          :math:`x_i` is
-                          
-                          .. math:: \mu=\frac{1}{N}\sum_{i=1}^{N} x_i
-                          
-                          The :ref:`weighted <Weights>` mean of
-                          :math:`N` values :math:`x_i` with
-                          corresponding weights :math:`w_i` is
-
-                          .. math:: \hat{\mu}=\frac{1}{V_{1}}
-                                                \sum_{i=1}^{N} w_i
-                                                x_i
-
-                          where :math:`V_{1}=\sum_{i=1}^{N} w_i`, the
-                          sum of the weights.
-                               
-``'variance'``            The unweighted variance of :math:`N` values
-                          :math:`x_i` and with :math:`N-ddof` degrees
-                          of freedom (:math:`ddof\ge0`) is
-
-                          .. math:: s_{N-ddof}^{2}=\frac{1}{N-ddof}
-                                      \sum_{i=1}^{N} (x_i - \mu)^2
-
-                          The unweighted biased estimate of the
-                          variance (:math:`s_{N}^{2}`) is given by
-                          :math:`ddof=0` and the unweighted unbiased
-                          estimate of the variance using Bessel's
-                          correction (:math:`s^{2}=s_{N-1}^{2}`) is
-                          given by :math:`ddof=1`.
-
-                          The :ref:`weighted <Weights>` biased
-                          estimate of the variance of :math:`N` values
-                          :math:`x_i` with corresponding weights
-                          :math:`w_i` is
-
-                          .. math:: \hat{s}_{N}^{2}=\frac{1}{V_{1}}
+``'mid_range'``               The average of the maximum and the                     ``mid_range``
+                              minimum of the values.
+                              
+``'range'``                   The absolute difference between the                    ``range``
+                              maximum and the minimum of the values.
+			      
+``'sum'``                     The sum of :math:`N` values :math:`x_i`                ``sum``
+                              is
+			      
+                              .. math:: t=\sum_{i=1}^{N} x_i
+                              
+``'integral'``                The integral of :math:`N` values                       ``sum``
+                              :math:`x_i` with corresponding cell                    
+                              measures :math:`m_i` is
+			      
+                              .. math:: i=\sum_{i=1}^{N} m_i x_i
+			      
+``'sum_of_squares'``          The sum of the squares of :math:`N` values             ``sum_of_squares``
+                              :math:`x_i` is
+			      
+                              .. math:: t_2=\sum_{i=1}^{N} x_{i}^{2}
+                              
+``'mean'``                    The unweighted mean of :math:`N` values                ``mean``
+                              :math:`x_i` is
+                              
+                              .. math:: \mu=\frac{1}{N}\sum_{i=1}^{N} x_i
+                              
+                              The :ref:`weighted <Weights>` mean of
+                              :math:`N` values :math:`x_i` with
+                              corresponding weights :math:`w_i` is
+			      
+                              .. math:: \hat{\mu}=\frac{1}{V_{1}}
+                                                    \sum_{i=1}^{N} w_i
+                                                    x_i
+			      
+                              where :math:`V_{1}=\sum_{i=1}^{N} w_i`, the
+                              sum of the weights.
+                                   
+``'variance'``                The unweighted variance of :math:`N` values            ``variance``
+                              :math:`x_i` and with :math:`N-ddof` degrees
+                              of freedom (:math:`ddof\ge0`) is
+			      
+                              .. math:: s_{N-ddof}^{2}=\frac{1}{N-ddof}
+                                          \sum_{i=1}^{N} (x_i - \mu)^2
+			      
+                              The unweighted biased estimate of the
+                              variance (:math:`s_{N}^{2}`) is given by
+                              :math:`ddof=0` and the unweighted unbiased
+                              estimate of the variance using Bessel's
+                              correction (:math:`s^{2}=s_{N-1}^{2}`) is
+                              given by :math:`ddof=1`.
+			      
+                              The :ref:`weighted <Weights>` biased
+                              estimate of the variance of :math:`N` values
+                              :math:`x_i` with corresponding weights
+                              :math:`w_i` is
+			      
+                              .. math:: \hat{s}_{N}^{2}=\frac{1}{V_{1}}
+                                                        \sum_{i=1}^{N}
+                                                        w_i(x_i -
+                                                        \hat{\mu})^{2}
+                                   
+                              The corresponding :ref:`weighted <Weights>`
+                              unbiased estimate of the variance is
+                              
+                              .. math:: \hat{s}^{2}=\frac{1}{V_{1} -
+                                                    (V_{1}/V_{2})}
                                                     \sum_{i=1}^{N}
                                                     w_i(x_i -
                                                     \hat{\mu})^{2}
-                               
-                          The corresponding :ref:`weighted <Weights>`
-                          unbiased estimate of the variance is
-                          
-                          .. math:: \hat{s}^{2}=\frac{1}{V_{1} -
-                                                (V_{1}/V_{2})}
-                                                \sum_{i=1}^{N}
-                                                w_i(x_i -
-                                                \hat{\mu})^{2}
-
-                          where :math:`V_{2}=\sum_{i=1}^{N} w_i^{2}`,
-                          the sum of the squares of weights. In both
-                          cases, the weights are assumed to be
-                          non-random reliability weights, as
-                          opposed to frequency weights.
+			      
+                              where :math:`V_{2}=\sum_{i=1}^{N} w_i^{2}`,
+                              the sum of the squares of weights. In both
+                              cases, the weights are assumed to be
+                              non-random reliability weights, as
+                              opposed to frequency weights.
+                                  
+``'standard_deviation'``      The variance is the square root of the variance.       ``standard_deviation``
+			      
+``'sample_size'``             The sample size, :math:`N`, as would be used for 
+                              other statistical calculations.
                               
-``'standard_deviation'``  The variance is the square root of the variance.
-
-``'sample_size'``         The sample size, :math:`N`, as would be used for 
-                          other statistical calculations.
-                          
-``'sum_of_weights'``      The sum of weights, :math:`V_{1}`, as would be
-                          used for other statistical calculations.
-
-``'sum_of_weights2'``     The sum of squares of weights, :math:`V_{2}`, as
-                          would be used for other statistical calculations.
-========================  =====================================================
-
+``'sum_of_weights'``          The sum of weights, :math:`V_{1}`, as would be
+                              used for other statistical calculations.
+			      
+``'sum_of_weights2'``         The sum of squares of weights, :math:`V_{2}`, as
+                              would be used for other statistical calculations.
+============================  =====================================================  ===============================
 
 .. _Data-type-and-missing-data:
 
