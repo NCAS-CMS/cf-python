@@ -4106,8 +4106,8 @@ may be accessed with the `nc_global_attributes`,
         return old
 
 
-    def weights(self, weights='auto', scale=None, components=False,
-                methods=False, integral=False, radius='earth',
+    def weights(self, weights='auto', scale=None, measure=False,
+                components=False, methods=False, radius='earth',
                 **kwargs):
         '''Return weights for the data array values.
 
@@ -4227,7 +4227,10 @@ may be accessed with the `nc_global_attributes`,
             *Parameter example:*
               To scale all weights so that they lie between 0 and 1:
               ``scale=1``.
-    
+
+        measure: `bool`, optional
+            TODO
+        
         components: `bool`, optional
             If True then a dictionary of orthogonal weights components
             is returned instead of a field. Each key is a tuple of
@@ -4396,7 +4399,7 @@ may be accessed with the `nc_global_attributes`,
                 raise ValueError(
                     "Can't create weights: Can't find linear weights for {!r} axis: No bounds".format(
                         axis))            
-            else: #if dim.has_bounds():
+            else:
                 # Bounds exist
                 if methods:
                     comp[(da_key,)] = 'linear '+self.constructs.domain_axis_identity(da_key)
@@ -4408,13 +4411,13 @@ may be accessed with the `nc_global_attributes`,
         #--- End: def
             
         def _area_weights_XY(self, comp, weights_axes, auto=False,
-                             integral=False, radius=None): 
+                             measure=False, radius=None): 
             '''Calculate area weights from X and Y dimension coordinate
         constructs.
 
         :Parameters:
             
-            integral: `bool`
+            measure: `bool`
                 If true then make sure that the weights represent true
                 cell areas.
 
@@ -4469,7 +4472,7 @@ may be accessed with the `nc_global_attributes`,
                             self.constructs.domain_axis_identity(axis)))
             #--- End: if
 
-            if integral and radius is not None:
+            if measure and radius is not None:
                 radius = self.radius(default=radius)
             
             if xcoord.size > 1:
@@ -4487,7 +4490,7 @@ may be accessed with the `nc_global_attributes`,
                     cells = xcoord.cellsize
                     if xcoord.Units.equivalent(Units('radians')):
                         cells.Units = _units_radians                        
-                        if integral:
+                        if measure:
                             cells *= radius
                             cells.override_units(radius.Units, inplace=True)
                     else:
@@ -4515,7 +4518,7 @@ may be accessed with the `nc_global_attributes`,
                         comp[(yaxis,)] = 'linear sine '+ycoord.identity()
                     else:
                         cells = ycoord.cellsize
-                        if integral:
+                        if measure:
                             cells *=  radius
 
                         comp[(yaxis,)] = cells
@@ -4652,8 +4655,14 @@ may be accessed with the `nc_global_attributes`,
             return w
         #--- End: def
 
-        if integral and scale is not None:
-            raise ValueError("Can't scale and integral TODO")
+        # ------------------------------------------------------------
+        # Start of main code (weights)
+        # ------------------------------------------------------------
+        if kwargs:
+            _DEPRECATION_ERROR_KWARGS(self, 'weights', kwargs) # pragma: no cover
+
+        if measure and scale is not None:
+            raise ValueError("Can't scale and measure TODO")
 
         if weights is None:
             # --------------------------------------------------------
@@ -4686,7 +4695,7 @@ may be accessed with the `nc_global_attributes`,
             # Area weights
             if not _measure_weights(self, 'area', comp, weights_axes, auto=True):
                 _area_weights_XY(self, comp, weights_axes, auto=True,
-                                 integral=integral, radius=radius)
+                                 measure=measure, radius=radius)
 
             # 1-d linear weights from dimension coordinates
             for dc_key in self.dimension_coordinates:
@@ -4777,7 +4786,7 @@ may be accessed with the `nc_global_attributes`,
             if 'area' in cell_measures:
                 if not _measure_weights(self, 'area', comp, weights_axes):
                     _area_weights_XY(self, comp, weights_axes,
-                                     integral=integral, radius=radius)
+                                     measure=measure, radius=radius)
             #--- End: if
 
             # 1-d linear weights from dimension coordinates
@@ -4795,7 +4804,7 @@ may be accessed with the `nc_global_attributes`,
                 weights_axes.discard(yaxis)
                 if not _measure_weights(self, 'area', comp, weights_axes):
                     _area_weights_XY(self, comp, weights_axes,
-                                     integral=integral, radius=radius)      
+                                     measure=measure, radius=radius)      
         #--- End: if
         
         if scale is not None and not methods:
@@ -4821,9 +4830,11 @@ may be accessed with the `nc_global_attributes`,
 
             return components
 
+        # Still here?
         if methods:
             return components
 
+        # Still here?
         if not comp:
             # --------------------------------------------------------
             # No component weights have been defined so return an
@@ -4832,8 +4843,8 @@ may be accessed with the `nc_global_attributes`,
             return _scalar_field_of_weights(Data(1.0, '1'))
         
         # ------------------------------------------------------------
-        # Return a weights field which is the outer product of the
-        # component weights
+        # Still here? Return a weights field which is the outer
+        # product of the component weights
         # ------------------------------------------------------------
         pp = sorted(comp.items())       
         waxes, wdata = pp.pop(0)
@@ -4910,7 +4921,11 @@ may be accessed with the `nc_global_attributes`,
                            ``'lower: closed upper: open'``.
 
     ``bin_units``          A string giving the units of the bin
-                           boundary values (e.g. ``'Kelvin'``).
+                           boundary values (e.g. ``'Kelvin'``). If the
+                           *bins* parameter is a `Data` object with
+                           units then these are used to set this
+                           property, otherwise the field construct's
+                           units are used.
 
     ``bin_calendar``       A string giving the calendar of reference
                            date-time units for the bin boundary values
@@ -4918,7 +4933,10 @@ may be accessed with the `nc_global_attributes`,
                            reference date-time units this property
                            will be omitted. If the calendar is the CF
                            default calendar, then this property may be
-                           omitted.
+                           omitted. If the *bins* parameter is a
+                           `Data` object with a calendar then this is
+                           used to set this property, otherwise the
+                           field construct's calendar is used.
 
     ``bin_standard_name``  A string giving the standard name of the
                            bin boundaries
@@ -5109,6 +5127,8 @@ may be accessed with the `nc_global_attributes`,
                  f.set_property('bin_long_name', long_name)
         #--- End: if
 
+        TODO: check bin units for use instead.
+
         bin_units = getattr(org_Units, 'units', None)
         if units is not None:
             f.set_property('bin_units', bin_units)
@@ -5129,8 +5149,7 @@ may be accessed with the `nc_global_attributes`,
         return f
             
 
-    def asd(self, method, digitized, weights=None, integral=False,
-            radius='earth'):
+    def asd(self, method, digitized, weights=None, radius='earth'):
         '''TODO
 
     :Parameters:
@@ -5217,15 +5236,16 @@ may be accessed with the `nc_global_attributes`,
         
         c = self.copy()
 
-        integral = (method == 'integral')
-        if integral:
+        measure = (method == 'integral')
+        if measure:
             scale = None
         else:
             scale = 1.0
             
         if weights is not None:
             weights = self.weights(weights, components=True,
-                                   integral=integral, radius=radius)
+                                   scale=scale, measure=measure,
+                                   radius=radius)
 
         # Unique collections of bin indices
         y = numpy_empty((len(bin_indices), bin_indices[0].size), dtype=int)
@@ -6880,14 +6900,15 @@ may be accessed with the `nc_global_attributes`,
                 g_weights = weights
                 if method in _collapse_weighted_methods:
                     if method == 'integral':
-                        integral=True
+                        measure=True
                         scale = None
                     else:
-                        integral=False
+                        measure=False
                         scale = 1.0
                         
-                    g_weights = f.weights(weights, scale=scale,
-                                          components=True, integral=integral,
+                    g_weights = f.weights(weights, components=True,
+                                          scale=scale,
+                                          measure=measure,
                                           radius=radius)
                     if not g_weights:
                         g_weights = None
@@ -6968,14 +6989,15 @@ may be accessed with the `nc_global_attributes`,
             if weights is not None:
                 if method in _collapse_weighted_methods:
                     if method == 'integral':
-                        integral=True
+                        measure=True
                         scale = None
                     else:
-                        integral=False
+                        measure=False
                         scale = 1.0
                         
-                    d_weights = f.weights(weights, scale=scale,
-                                          components=True, integral=integral,
+                    d_weights = f.weights(weights, components=True,
+                                          scale=scale,
+                                          measure=measure,
                                           radius=radius)
                     if d_weights:
                         d_kwargs['weights'] = d_weights
