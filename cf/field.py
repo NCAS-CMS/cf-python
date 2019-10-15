@@ -4890,14 +4890,14 @@ may be accessed with the `nc_global_attributes`,
         return field
 
 
-    def digitize(self, bins, upper=False, open_ends=True,
+    def digitize(self, bins, upper=False, open_ends=False,
                  inplace=False, return_bins=False):
         '''Return the indices of the bins to which each value belongs.
 
     Masked values result in masked indices in the output field construct.
                 
-    The output field contruct is given a "long_name" property, and
-    extra properties that define the bins:
+    The output field contruct is given a ``long_name`` property, and
+    properties that define the bins:
 
     =====================  ===========================================
     Property               Description
@@ -4966,11 +4966,19 @@ may be accessed with the `nc_global_attributes`,
             * An integer.
         
               Create this many equally sized, contiguous bins spanning
-              the range of the data. If the *open_ends* parameter is
-              True (which is the default) then the smallest lower bin
-              boundary also defines a left-open (i.e. not bounded
-              below) bin, and the largest upper bin boundary also
-              defines a right-open (i.e. not bounded above) bin.
+              the range of the data. I.e. the smallest bin boundary is
+              the minimum of the data and the largest bin boundary is
+              the maximum of the data. The bin boundaries have the
+              same data type as the data. In order to guarantee that
+              each data value lies inside a bin, the most extreme open
+              boundary is extended by multiplying it by ``1.0 -
+              epsilon`` or ``1.0 + epsilon``, whichever extends the
+              boundary in the appropriate direction, where ``epsilon``
+              is the smallest positive 64-bit float such that ``1.0 +
+              epsilson != 1.0``. I.e. if *upper* is False then the
+              largest upper bin boundary is made slightly larger and
+              if *upper* is True then the lowest lower bin boundary is
+              made slightly lower.
 
             * A 1-d array of numbers.
         
@@ -4978,21 +4986,20 @@ may be accessed with the `nc_global_attributes`,
               each boundary, with the exception of the two end
               boundaries, counts as the upper boundary of one bin and
               the lower boundary of next. If the *open_ends* parameter
-              is True (which is the default) then the smallest lower
-              bin boundary also defines a left-open (i.e. not bounded
-              below) bin, and the largest upper bin boundary also
-              defines a right-open (i.e. not bounded above) bin.
+              is True then the lowest lower bin boundary also defines
+              a left-open (i.e. not bounded below) bin, and the
+              largest upper bin boundary also defines a right-open
+              (i.e. not bounded above) bin.
 
             * A 2-d array of numbers.
         
               The second dimension, that must have size 2, contains
               the lower and upper bin boundaries. Different bins may
               share a boundary, but may not overlap. If the
-              *open_ends* parameter is True (which is the default)
-              then the smallest lower bin boundary also defines a
-              left-open (i.e. not bounded below) bin, and the largest
-              upper bin boundary also defines a right-open (i.e. not
-              bounded above) bin.
+              *open_ends* parameter is True then the lowest lower bin
+              boundary also defines a left-open (i.e. not bounded
+              below) bin, and the largest upper bin boundary also
+              defines a right-open (i.e. not bounded above) bin.
 
         upper: `bool`, optional
             If True then each bin includes its upper bound but not its
@@ -5000,12 +5007,10 @@ may be accessed with the `nc_global_attributes`,
             bin includes its lower bound but not its upper bound.
 
         open_ends: `bool`, optional
-            If False then do not create left-open (i.e. not bounded
-            below) and right-open (i.e. not bounded above) bins from
-            the lowest lower bin boundary and largest upper bin
-            boundary respectively. In this case missing data is
-            inserted for data values that lie in these bins. By
-            default these bins are created.
+            If True then create left-open (i.e. not bounded below) and
+            right-open (i.e. not bounded above) bins from the lowest
+            lower bin boundary and largest upper bin boundary
+            respectively. By default these bins are not created
 
         return_bins: `bool`, optional
             TODO
@@ -5088,7 +5093,13 @@ may be accessed with the `nc_global_attributes`,
      'bin_standard_name': 'specific_humidity',
      'bin_units': '0.001',
      'long_name': "Bin indices to which each 'specific_humidity' value belongs"}
-    
+
+    >>> g, bins = q.digitize(10, return_bins=True)        
+    >>> bins
+    <CF Data(10, 2): [[3.0, ..., 146.00000000000003]] 0.001 1>
+    >>> g, bins = q.digitize(10, upper=True, return_bins=True) 
+    <CF Data(10, 2): [[2.999999999999999, ..., 146.0]] 0.001 1>
+
     See `cf.Data.digitize` more examples.
 
         '''
@@ -5247,6 +5258,10 @@ may be accessed with the `nc_global_attributes`,
 
         c = self.copy()
 
+        if method == 'integral':
+            measure = True
+            scale = None
+        
         if weights is not None:
             if not measure and scale is None:
                 scale = 1.0
@@ -5254,7 +5269,7 @@ may be accessed with the `nc_global_attributes`,
             weights = self.weights(weights, components=True,
                                    scale=scale, measure=measure,
                                    radius=radius)
-
+            
         # Unique collections of bin indices
         y = numpy_empty((len(bin_indices), bin_indices[0].size), dtype=int)
         for i, f in enumerate(bin_indices):
@@ -5268,26 +5283,15 @@ may be accessed with the `nc_global_attributes`,
             for a, n in zip(bin_indices[1:], i[1:]):
                 b &= (a == n)
 
-            print (b.array.sum(), self.data.array.count(), end=" ")
-                
             c.set_data(self.data.where(b, None, cf_masked),
                        set_axes=False, copy=False)
-
-            print (c.data.array.count(), end=" ")
-            if b.array.sum() < 10:
-                N=0
-                for z in b.array.flatten():
-                    if z:
-                        N+=1
-                print (b.dtype, 'N=',N, c.array.compressed(), end=" ")
-                
-                
+#            print (b.sum(), c.count(), end=" ")
             result = c.collapse(method=method, weights=weights).data
             out.data[i] = result.datum()
 
             units = result.Units
             print (result)
-
+            
         # Set correct units
         out.override_units(units, inplace=True)
         out.hardmask = True

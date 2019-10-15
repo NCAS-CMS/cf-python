@@ -17,6 +17,7 @@ from numpy import empty         as numpy_empty
 from numpy import empty_like    as numpy_empty_like
 from numpy import exp           as numpy_exp
 from numpy import floor         as numpy_floor
+from numpy import finfo         as numpy_finfo
 from numpy import isclose       as numpy_isclose
 from numpy import linspace      as numpy_linspace
 from numpy import log           as numpy_log
@@ -1929,7 +1930,7 @@ place.
         return json_dumps(d, default=_convert_to_builtin_type)
 
     
-    def digitize(self, bins, upper=False, open_ends=True,
+    def digitize(self, bins, upper=False, open_ends=False,
                  return_bins=False):
         '''Return the indices of the bins to which each value belongs.
 
@@ -1945,11 +1946,19 @@ place.
             * An integer.
         
               Create this many equally sized, contiguous bins spanning
-              the range of the data. If the *open_ends* parameter is
-              True (which is the default) then the smallest lower bin
-              boundary also defines a left-open (i.e. not bounded
-              below) bin, and the largest upper bin boundary also
-              defines a right-open (i.e. not bounded above) bin.
+              the range of the data. I.e. the smallest bin boundary is
+              the minimum of the data and the largest bin boundary is
+              the maximum of the data. The bin boundaries have the
+              same data type as the data. In order to guarantee that
+              each data value lies inside a bin, the most extreme open
+              boundary is extended by multiplying it by ``1.0 -
+              epsilon`` or ``1.0 + epsilon``, whichever extends the
+              boundary in the appropriate direction, where ``epsilon``
+              is the smallest positive 64-bit float such that ``1.0 +
+              epsilson != 1.0``. I.e. if *upper* is False then the
+              largest upper bin boundary is made slightly larger and
+              if *upper* is True then the lowest lower bin boundary is
+              made slightly lower.
 
             * A 1-d array of numbers.
         
@@ -1957,21 +1966,20 @@ place.
               each boundary, with the exception of the two end
               boundaries, counts as the upper boundary of one bin and
               the lower boundary of next. If the *open_ends* parameter
-              is True (which is the default) then the smallest lower
-              bin boundary also defines a left-open (i.e. not bounded
-              below) bin, and the largest upper bin boundary also
-              defines a right-open (i.e. not bounded above) bin.
+              is True then the lowest lower bin boundary also defines
+              a left-open (i.e. not bounded below) bin, and the
+              largest upper bin boundary also defines a right-open
+              (i.e. not bounded above) bin.
 
             * A 2-d array of numbers.
         
               The second dimension, that must have size 2, contains
               the lower and upper bin boundaries. Different bins may
               share a boundary, but may not overlap. If the
-              *open_ends* parameter is True (which is the default)
-              then the smallest lower bin boundary also defines a
-              left-open (i.e. not bounded below) bin, and the largest
-              upper bin boundary also defines a right-open (i.e. not
-              bounded above) bin.
+              *open_ends* parameter is True then the lowest lower bin
+              boundary also defines a left-open (i.e. not bounded
+              below) bin, and the largest upper bin boundary also
+              defines a right-open (i.e. not bounded above) bin.
 
         upper: `bool`, optional
             If True then each bin includes its upper bound but not its
@@ -1979,12 +1987,10 @@ place.
             bin includes its lower bound but not its upper bound.
 
         open_ends: `bool`, optional
-            If False then do not create left-open (i.e. not bounded
-            below) and right-open (i.e. not bounded above) bins from
-            the lowest lower bin boundary and largest upper bin
-            boundary respectively. In this case missing data is
-            inserted for data values that lie in these bins. By
-            default these bins are created.
+            If True then create left-open (i.e. not bounded below) and
+            right-open (i.e. not bounded above) bins from the lowest
+            lower bin boundary and largest upper bin boundary
+            respectively. By default these bins are not created
 
         return_bins: `bool`, optional
             TODO
@@ -2060,7 +2066,7 @@ place.
         else:
             bin_units = org_units
         
-        bins = numpy_array(bins)
+        bins = numpy_asanyarray(bins)
         
         if bins.ndim > 2:
             raise ValueError("TODO")
@@ -2102,14 +2108,21 @@ place.
         else:
             # --------------------------------------------------------
             # 0-d bins:
-            # --------------------------------------------------------
-            bins = numpy_linspace(self.min().datum(),
-                                  self.max().datum(), int(bins) + 1)
+            # --------------------------------------------------------            
+            epsilon = numpy_finfo(float).eps
+            mx = self.max().datum()
+            mn = self.min().datum()
+            bins = numpy_linspace(mn, mx, int(bins) + 1, dtype=float)
+            if upper:
+                bins[0] -= abs(mn) * epsilon
+            else:
+                bins[-1] += abs(mx) * epsilon
+                    
             delete_bins = []
 
         if not open_ends:
             delete_bins.insert(0, 0)
-            delete_bins.append(bins.size)
+        delete_bins.append(bins.size)  
 
         if return_bins and two_d_bins is None:
             x = numpy_empty((bins.size-1, 2), dtype=bins.dtype)
@@ -7911,8 +7924,9 @@ returned.
             _DEPRECATION_ERROR_KWARGS(self, 'mean', i=True) # pragma: no cover
             
         return self._collapse(mean_f, mean_fpartial, mean_ffinalise,
-                              axes=axes, squeeze=squeeze, weights=weights,
-                              mtol=mtol, inplace=inplace,
+                              axes=axes, squeeze=squeeze,
+                              weights=weights, mtol=mtol,
+                              inplace=inplace,
                               _preserve_partitions=_preserve_partitions)
 
     def integral(self, axes=None, squeeze=False, mtol=1, weights=None,
@@ -7993,12 +8007,12 @@ returned.
             units = self.Units
             if not units:
                 units = Units('1')
-    
+
             weights_units = getattr(weights, 'Units', None)
             if weights_units is not None:
                 units = units * weights_units
             else:
-                for w in weights.values():                
+                for w in weights.values():
                     weights_units = getattr(w, 'Units', None)
                     if weights_units is not None:
                         units = units * weights_units
