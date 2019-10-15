@@ -472,24 +472,24 @@ def mean_f(a, axis=None, weights=None, masked=False):
         N, = sample_size_f(a, axis=axis, masked=masked)
         
     return asanyarray(N, avg, sw)
-#--- End: def
+
 
 def mean_fpartial(out, out1=None, group=False):
     '''Return the partial sample size,the partial sum and partial sum of
-the weights.
-
-:Parameters:
-
-    out: 3-`tuple` of `numpy.ndarray`
-        Either an output from a previous call to `mean_fpartial`; or,
-        if *out1* is `None`, an output from `mean_f`.
-
-    out1: 3-`tuple` of `numpy.ndarray`, optional
-        An output from `mean_f`.
-        
-:Returns:
-
-    out: 3-`tuple` of `numpy.ndarray`
+    the weights.
+    
+    :Parameters:
+    
+        out: 3-`tuple` of `numpy.ndarray`
+            Either an output from a previous call to `mean_fpartial`;
+            or, if *out1* is `None`, an output from `mean_f`.
+    
+        out1: 3-`tuple` of `numpy.ndarray`, optional
+            An output from `mean_f`.
+            
+    :Returns:
+    
+        out: 3-`tuple` of `numpy.ndarray`
 
     '''
     N, avg, sw = out
@@ -510,36 +510,93 @@ the weights.
         N   = psum(N, N1)
         avg = psum(avg, avg1) # Now a partial sum
         sw  = psum(sw, sw1)
-    #--- End: if
 
     return asanyarray(N, avg, sw)
-#--- End: def
+
 
 def mean_ffinalise(out, sub_samples=None):
     '''Divide the weighted sum by the sum of weights.
 
-Also mask out any values derived from a too-small sample size.
+    Also mask out any values derived from a too-small sample size.
+    
+    :Parameters:
+    
+        out: 3-`tuple` of `numpy.ndarray`
+            An output from `mean_fpartial`. 
+    
+        sub_samples: optional
+    
+    :Returns:
+    
+        out: 2-`tuple` of `numpy.ndarray`
+            The sample size and the mean.
 
-:Parameters:
-
-    out: 3-`tuple` of `numpy.ndarray`
-        An output from `mean_fpartial`. 
-
-    sub_samples: optional
-
-:Returns:
-
-    out: 2-`tuple` of `numpy.ndarray`
-        The sample size and the mean.
-
-'''
+    '''
     N, avg, sw = out
 
     if sub_samples:
         avg /= sw
 
     return mask_where_too_few_values(1, N, avg)
-#--- End: def
+
+
+#---------------------------------------------------------------------
+# root_mean_square
+#---------------------------------------------------------------------
+def root_mean_square_f(a, axis=None, weights=None, masked=False):
+    '''The RMS along the specified axes.
+
+    :Parameters:
+    
+        a: array-like
+            Input array. Not all missing data
+    
+        axis: `int`, optional
+            Axis along which to operate. By default, flattened input
+            is used.
+    
+        weights: array-like, optional
+    
+        masked: `bool`, optional
+    
+    :Returns:
+    
+        out: `tuple`
+            3-tuple.
+
+    '''
+    a = double_precision(a)
+
+    return mean_f(a**2, axis=axis, weights=weights, masked=masked)
+
+
+root_mean_square_fpartial = mean_fpartial
+
+def root_mean_square_ffinalise(out, sub_samples=None):
+    '''Divide the weighted sum by the sum of weights and take the square
+    root.
+
+    Also mask out any values derived from a too-small sample size.
+    
+    :Parameters:
+    
+        out: 3-`tuple` of `numpy.ndarray`
+            An output from `root_mean_square_fpartial`. 
+    
+        sub_samples: optional
+    
+    :Returns:
+    
+        out: 2-`tuple` of `numpy.ndarray`
+            The sample size and the RMS.
+
+    '''
+    N, avg = mean_ffinalise(out, sub_samples=sub_samples)
+
+    avg **= 0.5
+
+    return asanyarray(N, avg)
+
 
 #---------------------------------------------------------------------
 # Mid range: Average of maximum and minimum 

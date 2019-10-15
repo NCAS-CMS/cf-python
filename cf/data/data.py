@@ -18,6 +18,7 @@ from numpy import empty_like    as numpy_empty_like
 from numpy import exp           as numpy_exp
 from numpy import floor         as numpy_floor
 from numpy import isclose       as numpy_isclose
+from numpy import linspace      as numpy_linspace
 from numpy import log           as numpy_log
 from numpy import log10         as numpy_log10
 from numpy import log2          as numpy_log2
@@ -1928,7 +1929,8 @@ place.
         return json_dumps(d, default=_convert_to_builtin_type)
 
     
-    def digitize(self, bins, upper=False, open_ends=True):
+    def digitize(self, bins, upper=False, open_ends=True,
+                 return_bins=False):
         '''Return the indices of the bins to which each value belongs.
 
     Masked values result in masked indices in the output array.
@@ -1939,6 +1941,15 @@ place.
 
         bins: array_like
             The bin boundaries. One of:
+
+            * An integer.
+        
+              Create this many equally sized, contiguous bins spanning
+              the range of the data. If the *open_ends* parameter is
+              True (which is the default) then the smallest lower bin
+              boundary also defines a left-open (i.e. not bounded
+              below) bin, and the largest upper bin boundary also
+              defines a right-open (i.e. not bounded above) bin.
 
             * A 1-d array of numbers.
         
@@ -1975,10 +1986,15 @@ place.
             inserted for data values that lie in these bins. By
             default these bins are created.
 
+        return_bins: `bool`, optional
+            TODO
+
     :Returns:
 
-        `Data`
-            The indices of the bins to which each value belongs.
+        `Data`, [`Data`]
+            The indices of the bins to which each value belongs. If
+            *return_bins* is True then also return the bins in their
+            2-d form.
 
     **Examples:**
 
@@ -2030,26 +2046,36 @@ place.
         '''
         out = self.copy()
 
+        org_units = self.Units
+
+        bin_units = getattr(bins, 'Units', None)
+
+        if bin_units:
+            if not bin_units.equivalent(org_units):
+                raise ValueError("non-equiv units TODO")
+
+            if not bin_units.equals(org_units):
+                bins = bins.copy()
+                bins.Units = org_units
+        else:
+            bin_units = org_units
+        
         bins = numpy_array(bins)
+        
         if bins.ndim > 2:
             raise ValueError("TODO")
 
-        delete_bins = []
+        two_d_bins = None
         
         if bins.ndim == 2:
             # --------------------------------------------------------
-            # An (n, 2) array of bins has been provided
+            # 2-d bins: Make sure that each bin is increasing and sort
+            #           the bins by lower bounds
             # --------------------------------------------------------
             if bins.shape[1] != 2:
                 raise ValueError("TODO")
 
-            # Make sure that each bin is increasing
-            for i, x in enumerate(bins):
-                if x[1] < x[0]:
-                    bins[i] = bins[i, ::-1]
-            #--- End: for
-            
-            # Sort the bins by lower bounds
+            bins.sort(axis=1)
             bins.sort(axis=0)
 
             # Check for overlaps
@@ -2067,18 +2093,30 @@ place.
             delete_bins = [n+1
                            for n, (a, b) in enumerate(zip(bins[:-1], bins[1:]))
                            if (a, b) not in two_d_bins]
-
-            if not open_ends:
-                delete_bins.insert(0, 0)
-                delete_bins.append(bins.size)
-
+        elif bins.ndim == 1:
+            # --------------------------------------------------------
+            # 1-d bins:
+            # --------------------------------------------------------            
+            bins.sort()
+            delete_bins = []
         else:
-            bins.sort(axis=0)
-            if not open_ends:
-                delete_bins.insert(0, 0)
-                delete_bins.append(bins.size)
-        #--- End: if
-        
+            # --------------------------------------------------------
+            # 0-d bins:
+            # --------------------------------------------------------
+            bins = numpy_linspace(self.min().datum(),
+                                  self.max().datum(), int(bins) + 1)
+            delete_bins = []
+
+        if not open_ends:
+            delete_bins.insert(0, 0)
+            delete_bins.append(bins.size)
+
+        if return_bins and two_d_bins is None:
+            x = numpy_empty((bins.size-1, 2), dtype=bins.dtype)
+            x[:, 0] = bins[:-1]
+            x[:, 1] = bins[1:]
+            two_d_bins = x
+            
         config = out.partition_configuration(readonly=True)
 
         for partition in out.partitions.matrix.flat:
@@ -2110,6 +2148,9 @@ place.
 
         out._Units = _units_None
             
+        if return_bins:
+            return out, type(self)(two_d_bins, units=bin_units)
+
         return out
 
     
@@ -9915,6 +9956,92 @@ returned.
         return self.func(numpy_rint, out=True, inplace=inplace)
 
 
+    def root_mean_square(self, axes=None, squeeze=False, mtol=1,
+                         weights=None, inplace=False,
+                         _preserve_partitions=False):
+        r'''TODO Collapse axes with their weighted mean.
+
+    The weighted mean, :math:`\mu`, for array elements :math:`x_i` and
+    corresponding weights elements :math:`w_i` is
+    
+    .. math:: \mu=\frac{\sum w_i x_i}{\sum w_i}
+    
+    Missing data array elements and their corresponding weights are
+    omitted from the calculation.
+    
+    :Parameters:
+    
+        axes: (sequence of) int, optional
+            The axes to be collapsed. By default flattened input is
+            used. Each axis is identified by its integer position. No
+            axes are collapsed if *axes* is an empty sequence.
+    
+        squeeze: `bool`, optional
+            If True then collapsed axes are removed. By default the
+            axes which are collapsed are left in the result as axes
+            with size 1, meaning that the result is guaranteed to
+            broadcast correctly against the original array.
+    
+        weights: data-like or dict, optional
+            Weights associated with values of the array. By default
+            all non-missing elements of the array are assumed to have
+            a weight equal to one. If *weights* is a data-like object
+            then it must have either the same shape as the array or,
+            if that is not the case, the same shape as the axes being
+            collapsed. If *weights* is a dictionary then each key is
+            axes of the array (an int or tuple of ints) with a
+            corresponding data-like value of weights for those
+            axes. In this case, the implied weights array is the outer
+            product of the dictionary's values.
+    
+            *Parameter example:*
+              If ``weights={1: w, (2, 0): x}`` then ``w`` must contain
+              1-dimensionsal weights for axis 1 and ``x`` must contain
+              2-dimensionsal weights for axes 2 and 0. This is
+              equivalent, for example, to ``weights={(1, 2, 0), y}``,
+              where ``y`` is the outer product of ``w`` and ``x``. If
+              ``axes=[1, 2, 0]`` then ``weights={(1, 2, 0), y}`` is
+              equivalent to ``weights=y``. If ``axes=None`` and the
+              array is 3-dimensionsal then ``weights={(1, 2, 0), y}``
+              is equivalent to ``weights=y.transpose([2, 0, 1])``.
+    
+        mtol: number, optional
+            For each element in the output data array, the fraction of
+            contributing input array elements which is allowed to
+            contain missing data. Where this fraction exceeds *mtol*,
+            missing data is returned. The default is 1, meaning a
+            missing datum in the output array only occurs when its
+            contributing input array elements are all missing data. A
+            value of 0 means that a missing datum in the output array
+            occurs whenever any of its contributing input array
+            elements are missing data. Any intermediate value is
+            permitted.
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+        i: deprecated at version 3.0.0
+            Use *inplace* parameter instead.
+         
+    :Returns:
+    
+        `Data`
+            The collapsed array.
+    
+    .. seealso:: `max`, `min`, `mid_range`, `range`, `sum`, `sd`, `var`
+    
+    **Examples:**
+    
+        TODO
+        '''
+        return self._collapse(root_mean_square_f,
+                              root_mean_square_fpartial,
+                              root_mean_square_ffinalise, axes=axes,
+                              squeeze=squeeze, weights=weights,
+                              mtol=mtol, inplace=inplace,
+                              _preserve_partitions=_preserve_partitions)
+
+    
     def round(self, decimals=0, inplace=False, i=False):
         '''Evenly round elements of the data array to the given number of
     decimals.

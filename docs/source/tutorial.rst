@@ -5052,9 +5052,10 @@ Method                        Description                                       
                               
                               .. math:: \mu=\frac{1}{N}\sum_{i=1}^{N} x_i
                               
-                              The :ref:`weighted <Weights>` mean of
-                              :math:`N` values :math:`x_i` with
-                              corresponding weights :math:`w_i` is
+                              The :ref:`weighted <Collapse-weights>`
+                              mean of :math:`N` values :math:`x_i`
+                              with corresponding weights :math:`w_i`
+                              is
 			      
                               .. math:: \hat{\mu}=\frac{1}{V_{1}}
                                                     \sum_{i=1}^{N} w_i
@@ -5072,23 +5073,25 @@ Method                        Description                                       
 			      
                               The unweighted biased estimate of the
                               variance (:math:`s_{N}^{2}`) is given by
-                              :math:`ddof=0` and the unweighted unbiased
-                              estimate of the variance using Bessel's
-                              correction (:math:`s^{2}=s_{N-1}^{2}`) is
-                              given by :math:`ddof=1`.
+                              :math:`ddof=0` and the unweighted
+                              unbiased estimate of the variance using
+                              Bessel's correction
+                              (:math:`s^{2}=s_{N-1}^{2}`) is given by
+                              :math:`ddof=1`.
 			      
-                              The :ref:`weighted <Weights>` biased
-                              estimate of the variance of :math:`N` values
-                              :math:`x_i` with corresponding weights
-                              :math:`w_i` is
+                              The :ref:`weighted <Collapse-weights>`
+                              biased estimate of the variance of
+                              :math:`N` values :math:`x_i` with
+                              corresponding weights :math:`w_i` is
 			      
                               .. math:: \hat{s}_{N}^{2}=\frac{1}{V_{1}}
                                                         \sum_{i=1}^{N}
                                                         w_i(x_i -
                                                         \hat{\mu})^{2}
                                    
-                              The corresponding :ref:`weighted <Weights>`
-                              unbiased estimate of the variance is
+                              The corresponding :ref:`weighted
+                              <Collapse-weights>` unbiased estimate of
+                              the variance is
                               
                               .. math:: \hat{s}^{2}=\frac{1}{V_{1} -
                                                     (V_{1}/V_{2})}
@@ -5096,22 +5099,42 @@ Method                        Description                                       
                                                     w_i(x_i -
                                                     \hat{\mu})^{2}
 			      
-                              where :math:`V_{2}=\sum_{i=1}^{N} w_i^{2}`,
-                              the sum of the squares of weights. In both
-                              cases, the weights are assumed to be
-                              non-random reliability weights, as
-                              opposed to frequency weights.
+                              where :math:`V_{2}=\sum_{i=1}^{N}
+                              w_i^{2}`, the sum of the squares of
+                              weights. In both cases, the weights are
+                              assumed to be non-random reliability
+                              weights, as opposed to frequency
+                              weights.
                                   
-``'standard_deviation'``      The variance is the square root of the variance.       ``standard_deviation``
+``'standard_deviation'``      The variance is the square root of the                 ``standard_deviation``
+                              variance.  
 			      
-``'sample_size'``             The sample size, :math:`N`, as would be used for 
-                              other statistical calculations.
-                              
-``'sum_of_weights'``          The sum of weights, :math:`V_{1}`, as would be
+``'root_mean_square'``        The unweighted root mean square of                     ``root_mean_square`` 
+                              :math:`N` values :math:`x_i` is
+			      
+                              .. math:: RMS=\sqrt{\frac{1}{N}
+				                   \sum_{i=1}^{N}
+				                   x_{i}^2}
+			      
+                              The :ref:`weighted <Collapse-weights>`
+                              root mean square of :math:`N` values
+                              :math:`x_i` with corresponding weights
+                              :math:`w_i` is
+			      
+                              .. math:: \hat{RMS}=\sqrt{\frac{1}{V_{1}}
+				                   \sum_{i=1}^{N} w_i
+				                   x_{i}^2}
+			      
+``'sample_size'``             The sample size, :math:`N`, as would be
                               used for other statistical calculations.
+                              
+``'sum_of_weights'``          The sum of weights, :math:`V_{1}`, as
+                              would be used for other statistical
+                              calculations.
 			      
-``'sum_of_weights2'``         The sum of squares of weights, :math:`V_{2}`, as
-                              would be used for other statistical calculations.
+``'sum_of_weights2'``         The sum of squares of weights,
+                              :math:`V_{2}`, as would be used for
+                              other statistical calculations.			      
 ============================  =====================================================  ===============================
 
 .. _Data-type-and-missing-data:
@@ -5119,7 +5142,7 @@ Method                        Description                                       
 Data type and missing data
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-In all collapses, missing data array elements are accounted for in the
+In all collapses, missing data array elements are accounted for in the 
 calculation.
 
 Any collapse method that involves a calculation (such as calculating a

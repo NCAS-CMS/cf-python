@@ -27,6 +27,7 @@ from numpy import isnan       as numpy_isnan
 from numpy import nan         as numpy_nan
 from numpy import ndarray     as numpy_ndarray
 from numpy import ndim        as numpy_ndim
+from numpy import reshape     as numpy_reshape
 from numpy import shape       as numpy_shape
 from numpy import size        as numpy_size
 from numpy import squeeze     as numpy_squeeze
@@ -107,6 +108,7 @@ _collapse_methods = {
     'sum'                   : 'sum',
     'sum_of_squares'        : 'sum_of_squares',
     'integral'              : 'integral',
+    'root_mean_square'      : 'root_mean_square',
     'variance'              : 'var',
     'var'                   : 'var',
     'sample_size'           : 'sample_size', 
@@ -135,6 +137,7 @@ _collapse_cell_methods = {
     'sd'                    : 'standard_deviation',
     'sum'                   : 'sum',
     'integral'              : 'sum',
+    'root_mean_square'      : 'root_mean_square',
     'sum_of_squares'        : 'sum_of_squares',
     'variance'              : 'variance',
     'var'                   : 'variance',
@@ -164,7 +167,8 @@ _collapse_weighted_methods = set(('mean',
                                   'variance',
                                   'sum_of_weights',
                                   'sum_of_weights2',
-                                  'integral'
+                                  'integral',
+                                  'root_mean_square',
                                   ))
 
 # --------------------------------------------------------------------
@@ -4886,7 +4890,8 @@ may be accessed with the `nc_global_attributes`,
         return field
 
 
-    def digitize(self, bins, upper=False, open_ends=True, inplace=False):
+    def digitize(self, bins, upper=False, open_ends=True,
+                 inplace=False, return_bins=False):
         '''Return the indices of the bins to which each value belongs.
 
     Masked values result in masked indices in the output field construct.
@@ -4958,6 +4963,15 @@ may be accessed with the `nc_global_attributes`,
         bins: array_like
             The bin boundaries. One of:
 
+            * An integer.
+        
+              Create this many equally sized, contiguous bins spanning
+              the range of the data. If the *open_ends* parameter is
+              True (which is the default) then the smallest lower bin
+              boundary also defines a left-open (i.e. not bounded
+              below) bin, and the largest upper bin boundary also
+              defines a right-open (i.e. not bounded above) bin.
+
             * A 1-d array of numbers.
         
               When sorted into a monotonically increasing sequence,
@@ -4993,15 +5007,19 @@ may be accessed with the `nc_global_attributes`,
             inserted for data values that lie in these bins. By
             default these bins are created.
 
+        return_bins: `bool`, optional
+            TODO
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
     
     :Returns:
 
-        `Field` or `None`
+        `Field` or `None`, [`Data`]
             The field construct containing indices of the bins to
             which each value belongs, or `None` if the operation was
-            in-place.
+            in-place. If *return_bins* is True then also return the
+            bins in their 2-d form.
 
     **Examples:**
 
@@ -5079,44 +5097,38 @@ may be accessed with the `nc_global_attributes`,
         else:
             f = self.copy()
 
-        org_Units = f.Units
-        
-        bins = numpy_array(bins)
-
-        new_data = self.data.digitize(bins, upper=upper,
-                                      open_ends=open_ends)
+#        org_units = f.Units
+#        bin_units = getattr(bins, 'Units', None)
+            
+        new_data, bins = self.data.digitize(bins, upper=upper,
+                                            open_ends=open_ends,
+                                            return_bins=True)
         units = new_data.Units
         
         f.set_data(new_data, set_axes=False, copy=False)
         f.override_units(units, inplace=True)
-        
-        if bins.ndim <= 1:
-            # Convert (n,) bins to (n-1, 2) bins
-            bins.sort(axis=0)
-            x = numpy_empty((bins.size-1, 2), dtype=int)
-            x[:, 0] = bins[:-1]
-            x[:, 1] = bins[1:]
-            bins = x
-        else:
-            # Make sure that each bin is increasing
-            for i, x in enumerate(bins):
-                if x[1] < x[0]:
-                    bins[i] = bins[i, ::-1]
-            #--- End: for
-        
-            # Sort the bins by lower bounds
-            bins.sort(axis=0)
-        
-        bin_bounds = bins.flatten()
 
-        number_of_bins = bins.shape[0] 
+        # ------------------------------------------------------------
+        # Set properties
+        # ------------------------------------------------------------
+        f.set_property('long_name',
+                       'Bin indices to which each {!r} value belongs'.format(
+                           self.identity()))
+
+        f.set_property('bin_bounds', bins.array.flatten())
+
+        bin_count = bins.shape[0]        
         if open_ends:
-            number_of_bins += 2
+            bin_count += 2
+
+        f.set_property('bin_count', bin_count)
 
         if upper:
             bin_interval_type = 'lower: open upper: closed'
         else:
             bin_interval_type = 'lower: closed upper: open'
+
+        f.set_property('bin_interval_type', bin_interval_type)
 
         standard_name = f.del_property('standard_name', None)
         if standard_name is not None:
@@ -5127,29 +5139,26 @@ may be accessed with the `nc_global_attributes`,
                  f.set_property('bin_long_name', long_name)
         #--- End: if
 
-        TODO: check bin units for use instead.
-
-        bin_units = getattr(org_Units, 'units', None)
+        bin_units = bins.Units
+        units = getattr(bin_units, 'units', None)
         if units is not None:
-            f.set_property('bin_units', bin_units)
+            f.set_property('bin_units', units)
 
-        bin_calendar = getattr(org_Units, 'calendar', None)
-        if units is not None:
-            f.set_property('bin_calendar', bin_calendar)
+        calendar = getattr(bin_units, 'calendar', None)
+        if calendar is not None:
+            f.set_property('bin_calendar', calendar)
             
-        f.set_property('bin_bounds', bin_bounds)
-        f.set_property('bin_count', number_of_bins)
-        f.set_property('bin_interval_type', bin_interval_type)
-        f.set_property('long_name',
-                       'Bin indices to which each {!r} value belongs'.format(
-                           self.identity()))
-                     
         if inplace:
             f = None
+
+        if return_bins:
+            return f, bins
+            
         return f
             
 
-    def asd(self, method, digitized, weights=None, radius='earth'):
+    def asd(self, method, digitized, weights=None, measure=False,
+            scale=None, radius='earth'):
         '''TODO
 
     :Parameters:
@@ -5165,9 +5174,9 @@ may be accessed with the `nc_global_attributes`,
     **Examples:**
 
         '''
-        axes        = []
-        bin_indices = []
-        shape = []
+        axes           = []
+        bin_indices    = []
+        shape          = []
         
         out = type(self)(properties=self.properties())
 
@@ -5202,7 +5211,7 @@ may be accessed with the `nc_global_attributes`,
 
             # Create dimension coordinate for bins
             dim = DimensionCoordinate()
-            if standard_name is not None:
+            if bin_standard_name is not None:
                 dim.standard_name = bin_standard_name
             elif bin_long_name is not None:
                 dim.long_name = bin_long_name
@@ -5210,7 +5219,7 @@ may be accessed with the `nc_global_attributes`,
             # Create units for the bins
             units = Units(bin_units, bin_calendar)
             
-            data = Data(0.5*(bin_bounds[1::2] - bin_bounds[0::2]), units=units)
+            data = Data(0.5*(bin_bounds[1::2] + bin_bounds[0::2]), units=units)
             dim.set_data(data=data, copy=False)
             
             bounds_data = numpy_reshape(bin_bounds, (bin_count, 2))
@@ -5218,31 +5227,30 @@ may be accessed with the `nc_global_attributes`,
 
             # Set domain axis and dimension coordinate for bins
             axis = out.set_construct(DomainAxis(dim.size))            
-            out.set_construct(dim, axis=[axis], copy=False)
+            out.set_construct(dim, axes=[axis], copy=False)
 
             axes.append(axis)
             bin_indices.append(f.data)
             shape.append(dim.size)
+
+
+        if method == 'sample_size':
+            dtype = int
+        else:
+            dtype = self.dtype
             
-        data = Data.masked_all(shape=tuple(shape), dtype=self.dtype,
+        data = Data.masked_all(shape=tuple(shape), dtype=dtype,
                                units=None)
         out.set_data(data, axes=axes, copy=False)
 
         out.hardmask = False
 
-#        cell_method = CellMethod(method=_collapse_cell_methods[method])
-#        if weights in ('area', 'volume'):
-#            cell_mehod.set_axes(weights) 
-        
         c = self.copy()
 
-        measure = (method == 'integral')
-        if measure:
-            scale = None
-        else:
-            scale = 1.0
-            
         if weights is not None:
+            if not measure and scale is None:
+                scale = 1.0
+            
             weights = self.weights(weights, components=True,
                                    scale=scale, measure=measure,
                                    radius=radius)
@@ -5250,26 +5258,61 @@ may be accessed with the `nc_global_attributes`,
         # Unique collections of bin indices
         y = numpy_empty((len(bin_indices), bin_indices[0].size), dtype=int)
         for i, f in enumerate(bin_indices):
-            y[i, :] = f.array.flat
+            y[i, :] = f.array.flatten()
 
         # Loop round unique collections of bin indices
         for i in zip(*numpy_unique(y, axis=1)):
-
+            print (method, i, end=" ")
+            
             b = (bin_indices[0] == i[0])
             for a, n in zip(bin_indices[1:], i[1:]):
                 b &= (a == n)
+
+            print (b.array.sum(), self.data.array.count(), end=" ")
                 
-            c.set_data(self.data.where(b, None, cf.masked),
+            c.set_data(self.data.where(b, None, cf_masked),
                        set_axes=False, copy=False)
 
+            print (c.data.array.count(), end=" ")
+            if b.array.sum() < 10:
+                N=0
+                for z in b.array.flatten():
+                    if z:
+                        N+=1
+                print (b.dtype, 'N=',N, c.array.compressed(), end=" ")
+                
+                
             result = c.collapse(method=method, weights=weights).data
             out.data[i] = result.datum()
 
             units = result.Units
-            
+            print (result)
+
+        # Set correct units
         out.override_units(units, inplace=True)
         out.hardmask = True
             
+        # Create a cell method (if possible)
+        standard_names = []
+        domain_axes = self.domain_axes.filter_by_size(ge(2))
+       
+        for da_key in domain_axes:
+            d = self.dimension_coordinate(da_key, default=None)
+            if d is None:
+                continue
+            
+            standard_name = d.get_property('standard_name', None)
+            if standard_name is None:
+                continue
+
+            standard_names.append(standard_name)
+        
+        if len(standard_names) == len(domain_axes):
+            cell_method = CellMethod(axes=sorted(standard_names),
+                                     method=method)
+            out.set_construct(cell_method, copy=False)
+
+        # Return
         return out
             
 
@@ -5539,7 +5582,7 @@ may be accessed with the `nc_global_attributes`,
                  within_years=None, over_days=None, over_years=None,
                  coordinate='mid_range', group_by='coords',
                  group_span=None, group_contiguous=None,
-                 radius='earth', verbose=False,
+                 measure=False, radius='earth', verbose=False,
                  _create_zero_size_cell_bounds=False,
                  _update_cell_methods=True, i=False, _debug=False,
                  **kwargs):
@@ -6899,11 +6942,11 @@ may be accessed with the `nc_global_attributes`,
                 # ------------------------------------------------------------
                 g_weights = weights
                 if method in _collapse_weighted_methods:
-                    if method == 'integral':
-                        measure=True
+                    if measure or method == 'integral':
+                        measure = True
                         scale = None
                     else:
-                        measure=False
+                        measure = False
                         scale = 1.0
                         
                     g_weights = f.weights(weights, components=True,
@@ -6932,6 +6975,7 @@ may be accessed with the `nc_global_attributes`,
                                         regroup=regroup,
                                         mtol=mtol,
                                         ddof=ddof,
+                                        measure=measure,
                                         weights=g_weights,
                                         squeeze=squeeze,
                                         coordinate=coordinate,
@@ -6988,11 +7032,11 @@ may be accessed with the `nc_global_attributes`,
             d_kwargs = {}
             if weights is not None:
                 if method in _collapse_weighted_methods:
-                    if method == 'integral':
-                        measure=True
+                    if measure or method == 'integral':
+                        measure = True
                         scale = None
                     else:
-                        measure=False
+                        measure = False
                         scale = 1.0
                         
                     d_weights = f.weights(weights, components=True,
@@ -7162,10 +7206,10 @@ may be accessed with the `nc_global_attributes`,
                           within_days=None, within_years=None,
                           over_days=None, over_years=None, group=None,
                           group_span=None, group_contiguous=False,
-#                          input_axis=None,
-                          mtol=None, ddof=None,
-                          regroup=None, coordinate=None, weights=None,
-                          squeeze=None, group_by=None, verbose=False):
+                          mtol=None, ddof=None, regroup=None,
+                          coordinate=None, measure=False,
+                          weights=None, squeeze=None, group_by=None,
+                          verbose=False):
         '''TODO
         
     :Parameters:
