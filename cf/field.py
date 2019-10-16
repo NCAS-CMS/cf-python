@@ -4972,6 +4972,8 @@ may be accessed with the `nc_global_attributes`,
 
     .. versionadded:: 3.0.2
 
+    .. seealso:: `histogram`
+
     :Parameters:
 
         bins: array_like
@@ -5199,9 +5201,9 @@ may be accessed with the `nc_global_attributes`,
         return f
             
 
-    def asd(self, method, digitized, weights=None, measure=False,
-            scale=None, mtol=1, ddof=1, radius='earth',
-            return_indices=False, verbose=False):
+    def asd(self, method, digitized, weights=None,
+                  measure=False, scale=None, mtol=1, ddof=1,
+                  radius='earth', return_indices=False, verbose=False):
         '''TODO
 
     whose values are a statisitic of describing those original values that map to the index
@@ -5414,7 +5416,7 @@ may be accessed with the `nc_global_attributes`,
 
         '''
         if verbose:
-            print ('    Method:', method) # pragma: no cover
+            print('    Method:', method) # pragma: no cover
             
         if method == 'integral':
             if weights is None:
@@ -5454,7 +5456,7 @@ may be accessed with the `nc_global_attributes`,
             
         for f in digitized:
             if verbose:
-                print ('    Digitized field:', repr(f)) # pragma: no cover
+                print('    Digitized field:', repr(f)) # pragma: no cover
 
             if f.shape != self_shape:
                 raise ValueError(
@@ -5502,7 +5504,7 @@ may be accessed with the `nc_global_attributes`,
             dim.set_bounds(Bounds(data=bounds_data))
 
             if verbose:
-                print ('    {} bins: {!r}'.format(dim.identity(), bounds_data)) # pragma: no cover
+                print('    {} bins: {!r}'.format(dim.identity(), bounds_data)) # pragma: no cover
             
             # Set domain axis and dimension coordinate for bins
             axis = out.set_construct(DomainAxis(dim.size))            
@@ -5574,12 +5576,15 @@ may be accessed with the `nc_global_attributes`,
         # Loop round unique collections of bin indices        
         y = numpy_unique(y, axis=1)
         if verbose:
-            print ('    Number of unique ({}) indices: {}'.format(
+            print('    Number of unique ({}) indices: {}'.format(
                 ', '.join(names), y.shape[1])) # pragma: no cover
-            print ('    Weights:', repr(weights)) # pragma: no cover
-
+            print('    Weights:', repr(weights)) # pragma: no cover
+            print('    Processed ({}) bins:'.format(', '.join(names)),
+                  end=" ") # pragma: no cover
+                
         for i in zip(*y):
-            print (method, i, end=" ")
+            if verbose:
+                print(i, end=" ")
             
             b = (bin_indices[0] == i[0])
             for a, n in zip(bin_indices[1:], i[1:]):
@@ -5587,9 +5592,8 @@ may be accessed with the `nc_global_attributes`,
 
             c.set_data(self.data.where(b, None, cf_masked),
                        set_axes=False, copy=False)
-#            print (b.sum(), c.count(), end=" ")
 
-            result = c.collapse(method=method, weights=weights).data
+            result = c.collapse(method=method, weights=weights, verbose=False).data
             out.data[i] = result.datum()
 
             units = result.Units
@@ -5598,9 +5602,8 @@ may be accessed with the `nc_global_attributes`,
                 b.insert_dimension(0, inplace=True)
                 for n, ind in enumerate(i):
                     d.data[n] = d.data[n].where(b, ind)
+        #--- End: for
 
-            print (result)
-            
         # Set correct units
         out.override_units(units, inplace=True)
         out.hardmask = True
@@ -5631,6 +5634,44 @@ may be accessed with the `nc_global_attributes`,
             return out, d
 
         return out
+            
+    def histogram(self, digitized):
+        '''TODO
+
+    Note that ``h = f.histogram(digitzed)`` is an alias for 
+    ``h = f.asd('sample_size', digitized)``.
+        
+    .. versionadded:: 3.0.2
+
+    .. seealso:: `asd`, `digitize`
+
+    :Parameters:
+
+        digitized: (sequence of) `Field`
+            One or more field constructs that contain digitized data
+            with corresponding metadata, as output by
+            `cf.Field.digitize`. For each field construct the data
+            contains indices of the bins to which each value of an
+            original field construct belongs; and there must be
+            ``bin_count`` and ``bin_bounds`` properties as defined by
+            the `digitize` method (and any of the extra properties
+            defined by that method are also recommended).
+
+            The bins defined by the ``bin_count`` and ``bin_bounds``
+            properties are used to create dimension coordinate
+            constructs for the output field construct.
+
+    :Returns:
+
+        `Field`
+            TODO.
+
+    **Examples:**
+
+        TODO
+
+        '''
+        return self.asd('sample_size', digitized=digitized)
             
 
     def del_construct(self, identity, default=ValueError()):
@@ -7344,7 +7385,8 @@ may be accessed with the `nc_global_attributes`,
 #                    (_collapse_cell_methods[method], min_size))
     
             data_axes = f.get_data_axes()
-            iaxes = [data_axes.index(axis) for axis in collapse_axes]
+            iaxes = [data_axes.index(axis) for axis in collapse_axes
+                     if axis in data_axes]
 
             # ------------------------------------------------------------
             # Calculate weights

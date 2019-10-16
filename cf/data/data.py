@@ -2066,7 +2066,7 @@ place.
                 bins.Units = org_units
         else:
             bin_units = org_units
-        
+                
         bins = numpy_asanyarray(bins)
         
         if bins.ndim > 2:
