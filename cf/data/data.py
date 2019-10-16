@@ -1998,9 +1998,10 @@ place.
     :Returns:
 
         `Data`, [`Data`]
-            The indices of the bins to which each value belongs. If
-            *return_bins* is True then also return the bins in their
-            2-d form.
+            The indices of the bins to which each value belongs.
+
+            If *return_bins* is True then also return the bins in
+            their 2-d form.
 
     **Examples:**
 

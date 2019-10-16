@@ -44,6 +44,7 @@ from numpy.ma import masked_invalid as numpy_ma_masked_invalid
 
 import cfdm
 
+from . import AuxiliaryCoordinate
 from . import Bounds
 from . import CellMethod
 from . import DimensionCoordinate
@@ -4360,7 +4361,8 @@ may be accessed with the `nc_global_attributes`,
             return True
         #--- End: def
         
-        def _linear_weights(self, axis, comp, weights_axes, auto=False):
+        def _linear_weights(self, axis, comp, weights_axes,
+                            auto=False, measure=False):
             '''1-d linear weights from dimension coordinate constructs.
 
             '''
@@ -4378,10 +4380,10 @@ may be accessed with the `nc_global_attributes`,
                     return
                 
                 raise ValueError(
-                    "Can't create weights: Can't find dimension coodinates matching {!r}".format(
+                    "Can't create linear weights for {!r} axis: Can't find dimension coodinate construct.".format(
                         axis))
             
-            if dim.size == 1:
+            if not measure and dim.size == 1:
                 return
 
             if da_key in weights_axes:
@@ -4389,7 +4391,7 @@ may be accessed with the `nc_global_attributes`,
                     return
                 
                 raise ValueError(
-                    "Can't create weights: Multiple weights specifications for {!r} axis".format(
+                    "Can't create linear weights for {!r} axis: Multiple specifications for {!r} axis".format(
                         axis))
 
             if not dim.has_bounds():
@@ -4398,7 +4400,7 @@ may be accessed with the `nc_global_attributes`,
                     return
                 
                 raise ValueError(
-                    "Can't create weights: Can't find linear weights for {!r} axis: No bounds".format(
+                    "Can't create linear weights for {!r} axis: No bounds".format(
                         axis))            
             else:
                 # Bounds exist
@@ -4476,7 +4478,7 @@ may be accessed with the `nc_global_attributes`,
             if measure and radius is not None:
                 radius = self.radius(default=radius)
             
-            if xcoord.size > 1:
+            if measure or xcoord.size > 1:
                 if not xcoord.has_bounds(): 
                     if auto:
                         return
@@ -4502,7 +4504,7 @@ may be accessed with the `nc_global_attributes`,
                 weights_axes.add(xaxis)
             #--- End: if
 
-            if ycoord.size > 1:
+            if measure or ycoord.size > 1:
                 if not ycoord.has_bounds():
                     if auto:
                         return
@@ -4632,7 +4634,7 @@ may be accessed with the `nc_global_attributes`,
                 weights_axes.update(axes)
         #--- End: def
 
-        def _scale(w, scale):
+        def _scale(w, scale, wmax=None):
             '''Scale the weights so that they are <= scale.
 
             '''
@@ -4640,7 +4642,16 @@ may be accessed with the `nc_global_attributes`,
             if scale <= 0:
                 raise ValueError("'scale' parameter must be a positive number")
 
-            wmax = w.max()
+#            if isinstance(w, dict):
+#                wmax = Data(max([x.max().datum() for x in w.values()]))
+#                for key, x in comp.items(): 
+#                    w[key] = _scale(x, scale, wmax=wmax)
+#
+#                return w
+
+            if wmax is None:
+                wmax = w.max()
+                
             if wmax <= 0:
                 raise ValueError(
                     "Can't scale when all weights are non-positive. max(weights)={}".format(
@@ -4701,7 +4712,8 @@ may be accessed with the `nc_global_attributes`,
             # 1-d linear weights from dimension coordinates
             for dc_key in self.dimension_coordinates:
                 axis = self.get_data_axes(dc_key)[0]
-                _linear_weights(self, axis, comp, weights_axes, auto=True)
+                _linear_weights(self, axis, comp, weights_axes,
+                                auto=True, measure=measure)
  
         elif isinstance(weights, dict):
             # --------------------------------------------------------
@@ -4792,7 +4804,8 @@ may be accessed with the `nc_global_attributes`,
 
             # 1-d linear weights from dimension coordinates
             for axis in axes:
-                _linear_weights(self, axis, comp, weights_axes, auto=False)
+                _linear_weights(self, axis, comp, weights_axes,
+                                auto=False, measure=measure)
 
             # Check for area weights specified by X and Y axes
             # separately and replace them with area weights
@@ -4812,6 +4825,7 @@ may be accessed with the `nc_global_attributes`,
             # --------------------------------------------------------
             # Scale the weights so that they are <= scale
             # --------------------------------------------------------
+#            comp = _scale(comp, scale)
             for key, w in comp.items(): 
                 comp[key] = _scale(w, scale)
         #--- End: if
@@ -4891,14 +4905,8 @@ may be accessed with the `nc_global_attributes`,
                  inplace=False, return_bins=False):
         '''Return the indices of the bins to which each value belongs.
 
-    .. raw:: html
-    
-        <style> .red {color:red} </style>
-    
-    .. role:: red
-
-    :red:`Values (including masked values) that do not belong to any bin
-    result in masked indices in the output field construct.`
+    Values (including masked values) that do not belong to any bin
+    result in masked indices in the output field construct.
                 
     The output field contruct is given a ``long_name`` property, and
     properties that define the bins:
@@ -5017,7 +5025,7 @@ may be accessed with the `nc_global_attributes`,
             lower bin boundary and largest upper bin boundary
             respectively. By default these bins are not created
 
-        :red:`return_bins`: `bool`, optional
+        return_bins: `bool`, optional
             TODO
 
         inplace: `bool`, optional
@@ -5028,8 +5036,10 @@ may be accessed with the `nc_global_attributes`,
         `Field` or `None`, [`Data`]
             The field construct containing indices of the bins to
             which each value belongs, or `None` if the operation was
-            in-place. If *return_bins* is True then also return the
-            bins in their 2-d form.
+            in-place.
+
+            If *return_bins* is True then also return the bins in
+            their 2-d form.
 
     **Examples:**
 
@@ -5047,7 +5057,7 @@ may be accessed with the `nc_global_attributes`,
      [  6.  36.  19.  35.  18.  37.  34.  13.]]
     >>> g = f.digitize([4, 50, 100])                                           
     >>> g
-    <CF Field: long_name=Bin indices to which each 'specific_humidity' value belongs(latitude(5), longitude(8))
+    <CF Field: long_name=Bin index to which each 'specific_humidity' value belongs(latitude(5), longitude(8))
     >>> print(g.array)
     [[1 1 0 1 1 1 1 1]
      [1 1 1 2 1 2 1 2]
@@ -5061,11 +5071,11 @@ may be accessed with the `nc_global_attributes`,
      'bin_interval_type': 'lower: closed upper: open',
      'bin_standard_name': 'specific_humidity',
      'bin_units': '0.001',
-     'long_name': "Bin indices to which each 'specific_humidity' value belongs"}
+     'long_name': "Bin index to which each 'specific_humidity' value belongs"}
 
     >>> g = f.digitize([[2, 6], [40, 100]])
     >>> g
-    <CF Field: long_name=Bin indices to which each 'specific_humidity' value belongs(latitude(5), longitude(8))>
+    <CF Field: long_name=Bin index to which each 'specific_humidity' value belongs(latitude(5), longitude(8))>
     >>> print(g.array)
     [[-- --  1 -- -- -- -- --]
      [-- --  2  2  2  2 --  2]
@@ -5079,11 +5089,11 @@ may be accessed with the `nc_global_attributes`,
      'bin_interval_type': 'lower: closed upper: open',
      'bin_standard_name': 'specific_humidity',
      'bin_units': '0.001',
-     'long_name': "Bin indices to which each 'specific_humidity' value belongs"}
+     'long_name': "Bin index to which each 'specific_humidity' value belongs"}
 
     >>> g = f.digitize([2, 6, 45, 100], upper=True, open_ends=False)
     >>> g
-    <CF Field: long_name=Bin indices to which each 'specific_humidity' value belongs(latitude(5), longitude(8))>
+    <CF Field: long_name=Bin index to which each 'specific_humidity' value belongs(latitude(5), longitude(8))>
     >>> print(g.array)
     [[ 1  1  0  1  1  1  1  1]
      [ 1  1  1  2  2  2  0  2]
@@ -5097,7 +5107,7 @@ may be accessed with the `nc_global_attributes`,
      'bin_interval_type': 'lower: open upper: closed',
      'bin_standard_name': 'specific_humidity',
      'bin_units': '0.001',
-     'long_name': "Bin indices to which each 'specific_humidity' value belongs"}
+     'long_name': "Bin index to which each 'specific_humidity' value belongs"}
 
     >>> g, bins = f.digitize(10, return_bins=True)        
     >>> bins
@@ -5144,7 +5154,7 @@ may be accessed with the `nc_global_attributes`,
         # Set properties
         # ------------------------------------------------------------
         f.set_property('long_name',
-                       'Bin indices to which each {!r} value belongs'.format(
+                       'Bin index to which each {!r} value belongs'.format(
                            self.identity()))
 
         f.set_property('bin_bounds', bins.array.flatten())
@@ -5190,12 +5200,15 @@ may be accessed with the `nc_global_attributes`,
             
 
     def asd(self, method, digitized, weights=None, measure=False,
-            scale=None, mtol=1, ddof=1, radius='earth'):
+            scale=None, mtol=1, ddof=1, radius='earth',
+            return_indices=False, verbose=False):
         '''TODO
+
+    whose values are a statisitic of describing those original values that map to the index
 
     .. versionadded:: 3.0.2
 
-    .. seealso:: `digitize`
+    .. seealso:: `collapse`, `digitize`, `weights`
 
     :Parameters:
 
@@ -5256,32 +5269,35 @@ may be accessed with the `nc_global_attributes`,
                                           
             ``'sum_of_weights'``          The sum of weights, as would
                                           be used for other
-                                          statistical calculations.
+                                          calculations.
                                           
             ``'sum_of_weights2'``         The sum of squares of
                                           weights, as would be used
-                                          for other statistical
-                                          calculations.
+                                          for other calculations.
             ============================  ============================
 
         digitized: (sequence of) `Field`
-            One or more field constructs that contain digitised data
+            One or more field constructs that contain digitized data
             with corresponding metadata, as output by
             `cf.Field.digitize`. For each field construct the data
             contains indices of the bins to which each value of an
             original field construct belongs; and there must be
             ``bin_count`` and ``bin_bounds`` properties as defined by
-            the `digitize` method (any of the extra properties defined
-            by that method are also recommended).
+            the `digitize` method (and any of the extra properties
+            defined by that method are also recommended).
+
+            The bins defined by the ``bin_count`` and ``bin_bounds``
+            properties are used to create dimension coordinate
+            constructs for the output field construct.
 
         weights: optional
             Specify the weights for the collapse calculations. **By
             default all collapses are unweighted**. The weights are
             those that would be returned by this call of the field
             construct's `~cf.Field.weights` method:
-            ``f.weights(weights, components=True, measure=measure,
-            scale=scale)``. See the *measure* and *scale* parameters
-            and `cf.Field.weights` for details.
+            ``f.weights(weights, measure=measure, scale=scale,
+            components=True)``. See the *measure* and *scale*
+            parameters and `cf.Field.weights` for details.
 
             By default *weights* is `None`, resulting in unweighted
             calculations.
@@ -5295,17 +5311,23 @@ may be accessed with the `nc_global_attributes`,
               time you could set ``weights=('area', 'T')``.
     
         measure: `bool`, optional
-            Create weights which are cell measures, i.e. describe
-            actual cell sizes (e.g. cell area) with appropriate units
-            (e.g. metres squared). By default the weights are
-            normalized and have arbitrary units.
+            Create weights which are cell measures, i.e. which
+            describe actual cell sizes (e.g. cell area) with
+            appropriate units (e.g. metres squared). By default the
+            weights are scaled to lie between 0 and 1 and have
+            arbitrary units (see the *scale* parameter).
 
-            Cell measures can be created for any axis combination. For
-            example, cell measures for a time axis are the time span
-            for each cell with canonical units of seconds; cell
-            measures for the combination of four axes representing
-            time and three dimensional space could have canonical
-            units of metres cubed seconds.
+            Cell measures can be created for any combination of
+            axes. For example, cell measures for a time axis are the
+            time span for each cell with canonical units of seconds;
+            cell measures for the combination of four axes
+            representing time and three dimensional space could have
+            canonical units of metres cubed seconds.
+
+            When collapsing with the ``'integral'`` method, *measure*
+            must be True, and the units of the weights are
+            incorporated into the units of the returned field
+            construct.
 
             Note that specifying volume weights via ``weights=['X',
             'Y', 'Z']`` or ``weights=['area', 'Z']`` will give
@@ -5319,8 +5341,8 @@ may be accessed with the `nc_global_attributes`,
         scale: number, optional
             If set to a positive number then scale the weights so that
             they are less than or equal to that number. By default the
-            weights are normalized to lie between 0 and 1 (i.e.
-            *scale* is 1), and have arbitrary units.
+            weights are scaled to lie between 0 and 1 (i.e.  *scale*
+            is 1), and have arbitrary units.
 
             *Parameter example:*
               To scale all weights so that they lie between 0 and 0.5:
@@ -5369,14 +5391,31 @@ may be accessed with the `nc_global_attributes`,
               ``radius=cf.Data(6371200)``, ``radius=cf.Data(6371200,
               'm')``, ``radius=cf.Data(6371.2, 'km')``.
     
+        return_indices: `bool`, optional
+            If True then also return a field construct which contains,
+            for each value in the original field construct, the index
+            to the multidimensional bin (as defined by the digitized
+            field constructs) to which it corresponds.
+
     :Returns:
 
-        `Field`
-            TODO
+        `Field`, [`Field`]
+            TODO.
+
+            If *return_indices* is True then also return a field
+            construct which contains, for each value in the original
+            field construct, the index to the multidimensional bin (as
+            defined by the digitized field constructs) to which it
+            corresponds.
 
     **Examples:**
 
+        TODO
+
         '''
+        if verbose:
+            print ('    Method:', method) # pragma: no cover
+            
         if method == 'integral':
             if weights is None:
                 raise ValueError(
@@ -5394,7 +5433,9 @@ may be accessed with the `nc_global_attributes`,
         axes           = []
         bin_indices    = []
         shape          = []
-        
+        dims           = []
+        names          = []
+
         out = type(self)(properties=self.properties())
 
         if method == 'sample_size':
@@ -5408,8 +5449,18 @@ may be accessed with the `nc_global_attributes`,
             
         if isinstance(digitized, self.__class__):
             digitized = (digitized,)
-        
+
+        self_shape = self.shape
+            
         for f in digitized:
+            if verbose:
+                print ('    Digitized field:', repr(f)) # pragma: no cover
+
+            if f.shape != self_shape:
+                raise ValueError(
+                    "Digitized field construct must have matching shape. Got {}, expected {}".format(
+                        f.shape, self_shape))
+                
             bin_bounds        = f.get_property('bin_bounds', None)
             bin_count         = f.get_property('bin_count', None)
             bin_interval_type = f.get_property('bin_interval_type', None)
@@ -5419,13 +5470,17 @@ may be accessed with the `nc_global_attributes`,
             bin_long_name     = f.get_property('bin_long_name', None)
 
             if bin_count is None:
-                raise ValueError("TODO")
+                raise ValueError(
+                    "Digitized field construct must have a 'bin_count' property.")
 
             if bin_bounds is None:
-                raise ValueError("TODO")
+                raise ValueError(
+                    "Digitized field construct must have a 'bin_bounds' property.")
              
             if bin_count != len(bin_bounds)/2:
-                raise ValueError("TODO")
+                raise ValueError(
+                    "bin_count must equal len(bin_bounds)/2. Got bin_count={}, len(bin_bounds)/2={}".format(
+                        bin_count, len(bin_bounds)/2))
 
             # Create dimension coordinate for bins
             dim = DimensionCoordinate()
@@ -5443,9 +5498,12 @@ may be accessed with the `nc_global_attributes`,
             data = Data(0.5*(bin_bounds[1::2] + bin_bounds[0::2]), units=units)
             dim.set_data(data=data, copy=False)
             
-            bounds_data = numpy_reshape(bin_bounds, (bin_count, 2))
-            dim.set_bounds(Bounds(data=Data(bounds_data, units=units)))
+            bounds_data = Data(numpy_reshape(bin_bounds, (bin_count, 2)), units=units)
+            dim.set_bounds(Bounds(data=bounds_data))
 
+            if verbose:
+                print ('    {} bins: {!r}'.format(dim.identity(), bounds_data)) # pragma: no cover
+            
             # Set domain axis and dimension coordinate for bins
             axis = out.set_construct(DomainAxis(dim.size))            
             out.set_construct(dim, axes=[axis], copy=False)
@@ -5453,8 +5511,9 @@ may be accessed with the `nc_global_attributes`,
             axes.append(axis)
             bin_indices.append(f.data)
             shape.append(dim.size)
-
-
+            dims.append(dim)
+            names.append(dim.identity())
+            
         if method == 'sample_size':
             dtype = int
         else:
@@ -5468,21 +5527,58 @@ may be accessed with the `nc_global_attributes`,
 
         c = self.copy()
 
+        if return_indices:
+            # --------------------------------------------------------
+            # Create a field for storing the bin indices of each value
+            # --------------------------------------------------------
+            d = self.copy()
+            shape = d.shape
+            d.del_data(None)
+            d.Units = Units()
+            n_indices = len(bin_indices)
+            axis = d.set_construct(DomainAxis(n_indices))
+            data = Data.masked_all(shape=(n_indices,) + self.shape,
+                                   dtype=int, units=None)
+
+            d.set_data(data, axes=(axis,) + d.get_data_axes(), copy=False)
+
+            d.hardmask = False
+            
+            aux = AuxiliaryCoordinate()
+            aux.long_name = 'Bin name'            
+            data = Data([dim.identity(strict=True) for dim in dims])
+            aux.set_data(data, copy=False)
+            d.set_construct(aux, axes=axis, copy=False)
+
+            d.del_property('standard_name', None)
+            d.long_name = 'Bin index to which each {!r} value belongs'.format(
+                self.identity())
+
+            for key in d.cell_methods:
+                d.del_construct(key)
+        #--- End: if
+        
         if weights is not None:
             if not measure and scale is None:
                 scale = 1.0
-            print ('scale=', scale, measure)
+
             weights = self.weights(weights, components=True,
                                    scale=scale, measure=measure,
                                    radius=radius)
-            print ('PPPP', weights)
+
         # Unique collections of bin indices
         y = numpy_empty((len(bin_indices), bin_indices[0].size), dtype=int)
         for i, f in enumerate(bin_indices):
             y[i, :] = f.array.flatten()
 
-        # Loop round unique collections of bin indices
-        for i in zip(*numpy_unique(y, axis=1)):
+        # Loop round unique collections of bin indices        
+        y = numpy_unique(y, axis=1)
+        if verbose:
+            print ('    Number of unique ({}) indices: {}'.format(
+                ', '.join(names), y.shape[1])) # pragma: no cover
+            print ('    Weights:', repr(weights)) # pragma: no cover
+
+        for i in zip(*y):
             print (method, i, end=" ")
             
             b = (bin_indices[0] == i[0])
@@ -5492,10 +5588,17 @@ may be accessed with the `nc_global_attributes`,
             c.set_data(self.data.where(b, None, cf_masked),
                        set_axes=False, copy=False)
 #            print (b.sum(), c.count(), end=" ")
+
             result = c.collapse(method=method, weights=weights).data
             out.data[i] = result.datum()
 
             units = result.Units
+
+            if return_indices:
+                b.insert_dimension(0, inplace=True)
+                for n, ind in enumerate(i):
+                    d.data[n] = d.data[n].where(b, ind)
+
             print (result)
             
         # Set correct units
@@ -5507,11 +5610,11 @@ may be accessed with the `nc_global_attributes`,
         domain_axes = self.domain_axes.filter_by_size(ge(2))
        
         for da_key in domain_axes:
-            d = self.dimension_coordinate(da_key, default=None)
-            if d is None:
+            dim = self.dimension_coordinate(da_key, default=None)
+            if dim is None:
                 continue
             
-            standard_name = d.get_property('standard_name', None)
+            standard_name = dim.get_property('standard_name', None)
             if standard_name is None:
                 continue
 
@@ -5523,6 +5626,10 @@ may be accessed with the `nc_global_attributes`,
             out.set_construct(cell_method, copy=False)
 
         # Return
+        if return_indices:
+            d.hardmask = True
+            return out, d
+
         return out
             
 
@@ -5792,8 +5899,8 @@ may be accessed with the `nc_global_attributes`,
                  within_years=None, over_days=None, over_years=None,
                  coordinate='mid_range', group_by='coords',
                  group_span=None, group_contiguous=None,
-                 measure=False, radius='earth', verbose=False,
-                 _create_zero_size_cell_bounds=False,
+                 measure=False, scale=None, radius='earth',
+                 verbose=False, _create_zero_size_cell_bounds=False,
                  _update_cell_methods=True, i=False, _debug=False,
                  **kwargs):
         r'''Collapse axes of the field.
@@ -5905,13 +6012,11 @@ may be accessed with the `nc_global_attributes`,
                                   values.
                                   
     ``'sum_of_weights'``          The sum of weights, as would
-                                  be used for other
-                                  statistical calculations.
+                                  be used for other calculations.
                                   
     ``'sum_of_weights2'``         The sum of squares of
                                   weights, as would be used
-                                  for other statistical
-                                  calculations.
+                                  for other calculations.
     ============================  ====================================
 
     **Data type and missing data**
@@ -6204,14 +6309,16 @@ may be accessed with the `nc_global_attributes`,
               'Z']``.
     
         weights: optional
-            Specify the weights for the collapse. **By default the
-            collapse is unweighted**. The weights are those that would
-            be returned by this call of the field construct's
+            Specify the weights for the collapse. **By default all
+            collapses are unweighted**. The weights are those that
+            would be returned by this call of the field construct's
             `~cf.Field.weights` method: ``f.weights(weights,
-            components=True)``. See `cf.Field.weights` for details.
-            By default *weights* is `None` (``f.weights(None,
-            components=True)`` creates equal weights for all
-            elements).
+            measure=measure, scale=scale, components=True)``. See the
+            *measure* and *scale* parameters and `cf.Field.weights`
+            for details.
+
+            By default *weights* is `None`, resulting in unweighted
+            calculations.
     
             *Parameter example:*
               To specify weights based on cell areas use
@@ -6221,12 +6328,43 @@ may be accessed with the `nc_global_attributes`,
               To specify weights based on cell areas and linearly in
               time you could set ``weights=('area', 'T')``.
     
+        measure: `bool`, optional
+            Create weights which are cell measures, i.e. which
+            describe actual cell sizes (e.g. cell area) with
+            appropriate units (e.g. metres squared). By default the
+            weights are normalized and have arbitrary units.
+
+            Cell measures can be created for any combination of
+            axes. For example, cell measures for a time axis are the
+            time span for each cell with canonical units of seconds;
+            cell measures for the combination of four axes
+            representing time and three dimensional space could have
+            canonical units of metres cubed seconds.
+
+            When collapsing with the ``'integral'`` method, *measure*
+            must be True, and the units of the weights are
+            incorporated into the units of the returned field
+            construct.
+
+            Note that specifying volume weights via ``weights=['X',
+            'Y', 'Z']`` or ``weights=['area', 'Z']`` will give
+            **incorrect volume cell measures if the vertical dimension
+            coordinates do not define the actual height or depth
+            thickness of every cell in the domain**. In this case,
+            ``weights='volume'`` should be used instead, which
+            requires the field construct to have a "volume" cell
+            measure construct.
+
+        scale: number, optional
+            If set to a positive number then scale the weights so that
+            they are less than or equal to that number. By default the
+            weights are scaled to lie between 0 and 1 (i.e.  *scale*
+            is 1), and have arbitrary units.
+
             *Parameter example:*
-              To automatically detect the best weights available for
-              all axes from the metadata: ``weights='auto'``. See
-              `cf.Field.weights` for details on how the weights are
-              derived in this case.
-    
+              To scale all weights so that they lie between 0 and 0.5:
+              ``scale=0.5``.            
+
         squeeze: `bool`, optional
             If True then size 1 collapsed axes are removed from the
             output data array. By default the axes which are collapsed
@@ -7113,12 +7251,26 @@ may be accessed with the `nc_global_attributes`,
                 # ------------------------------------------------------------
                 g_weights = weights
                 if method in _collapse_weighted_methods:
-                    if measure or method == 'integral':
-                        measure = True
-                        scale = None
-                    else:
-                        measure = False
+                    if isinstance(weights, (dict, self.__class__, Data)):
+                        if measure:
+                            raise ValueError(
+                                "TODO")
+                        
+                        if scale is not None:
+                            raise ValueError(
+                                "TODO")
+                    elif method == 'integral':
+                        if not measure:
+                            raise ValueError(
+                                "Must set measure=True for creation of weights for 'integral' calculations.")
+                        
+                        if scale is not None:
+                            raise ValueError(
+                                "Can't set scale for creation of weights for 'integral' calculations.")
+                    elif not measure and scale is None:
                         scale = 1.0
+                    elif measure and scale is not None:
+                        raise ValueError("TODO")
                         
                     g_weights = f.weights(weights, components=True,
                                           scale=scale,
@@ -7203,21 +7355,32 @@ may be accessed with the `nc_global_attributes`,
             d_kwargs = {}
             if weights is not None:
                 if method in _collapse_weighted_methods:
-                    print ('bon', measure)
-#                    if measure or method == 'integral':
-#                        print ('arse')
-#                        measure = True
-#                        scale = None
-#                    else:
-#                        measure = False
-#                        scale = 1.0
-                    if not measure:
-                        scale TODO
+                    if isinstance(weights, (dict, self.__class__, Data)):
+                        if measure:
+                            raise ValueError(
+                                "TODO")
+                        
+                        if scale is not None:
+                            raise ValueError(
+                                "TODO")
+                    elif method == 'integral':
+                        if not measure:
+                            raise ValueError(
+                                "Must set measure=True for 'integral' calculations.")
+                        
+                        if scale is not None:
+                            raise ValueError(
+                                "Can't set scale for 'integral' calculations.")
+                    elif not measure and scale is None:
+                        scale = 1.0
+                    elif measure and scale is not None:
+                        raise ValueError("TODO")
+
                     d_weights = f.weights(weights, components=True,
                                           scale=scale,
                                           measure=measure,
                                           radius=radius)
-                    print (d_weights)
+
                     if d_weights:
                         d_kwargs['weights'] = d_weights
 

@@ -6,16 +6,20 @@ version 3.0.2
 
 * Now reads CDL files (https://github.com/NCAS-CMS/cf-python/issues/1)
 * New methods `cf.Field.cumsum`, `cf.Field.digitize`.
-* New field construct collapse methods: ``maximum_absolute_value``,
-  ``minimum_absolute_value``, ``sum_of_squares``,
-  ``root_mean_square``.
+* New field construct collapse methods: ``integral``,
+  ``maximum_absolute_value``, ``minimum_absolute_value``,
+  ``sum_of_squares``, ``root_mean_square``.
+* New keywords to `cf.Field.collapse` and `cf.Field.weights`:
+  ``measure``, ``scale``, ``radius``
 * New methods `cf.Data.cumsum`, `cf.Data.digitize`,
   `cf.Data.masked_all`, `cf.Data.maximum_absolute_value`,
   `cf.Data.minimum_absolute_value`, `cf.Data.sum_of_squares`,
   `cf.Data.root_mean_square`.
-* Fixed failure to delete all temporary directories at exit.
-* Fixed bug in `cf.Data.func` when overriding units. Affects methods
-  that call `cf.Data.func`, such as `cf.Data.tan` and `cf.Field.tan`.
+* Fixed occasional failure to delete all temporary directories at
+  exit.
+* Fixed bug in `cf.Data.func` when overriding units. Affects all
+  methods that call `cf.Data.func`, such as `cf.Data.tan` and
+  `cf.Field.tan`.
 * Fixed "relaxed units" behaviour in `cf.aggregate` and field
   construct arithmetic.
 * Fixed bug that led to incorrect persistent entries in output of
