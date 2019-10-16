@@ -1934,8 +1934,9 @@ place.
                  return_bins=False):
         '''Return the indices of the bins to which each value belongs.
 
-    Masked values result in masked indices in the output array.
-
+    Values (including masked values) that do not belong to any bin
+    result in masked indices in the output data.
+             
     .. versionadded:: 3.0.2
 
     :Parameters:
@@ -1948,9 +1949,8 @@ place.
               Create this many equally sized, contiguous bins spanning
               the range of the data. I.e. the smallest bin boundary is
               the minimum of the data and the largest bin boundary is
-              the maximum of the data. The bin boundaries have the
-              same data type as the data. In order to guarantee that
-              each data value lies inside a bin, the most extreme open
+              the maximum of the data. In order to guarantee that each
+              data value lies inside a bin, the most extreme open
               boundary is extended by multiplying it by ``1.0 -
               epsilon`` or ``1.0 + epsilon``, whichever extends the
               boundary in the appropriate direction, where ``epsilon``
@@ -2108,7 +2108,11 @@ place.
         else:
             # --------------------------------------------------------
             # 0-d bins:
-            # --------------------------------------------------------            
+            # --------------------------------------------------------
+            if open_ends:
+                raise ValueError(
+                    "Can't set open_ends=True when specifying bins as a scalar.")
+            
             epsilon = numpy_finfo(float).eps
             mx = self.max().datum()
             mn = self.min().datum()
@@ -11556,8 +11560,9 @@ returned.
                               _preserve_partitions=_preserve_partitions)
 
 
-    def sum_of_weights(self, axes=None, squeeze=False, mtol=1, weights=None,
-                       i=False, _preserve_partitions=False):
+    def sum_of_weights(self, axes=None, squeeze=False, mtol=1,
+                       weights=None, inplace=False, i=False,
+                       _preserve_partitions=False):
         '''TODO
 
     Missing data array elements are omitted from the calculation.
@@ -11585,14 +11590,33 @@ returned.
     **Examples:**
 
         '''   
-        return self._collapse(sw_f, sw_fpartial, sw_ffinalise, axes=axes,
-                              squeeze=squeeze, weights=weights, mtol=mtol,
-                              i=i,
+        if i:
+            _DEPRECATION_ERROR_KWARGS(self, 'sum_of_weights', i=True) # pragma: no cover
+
+        if weights is None:
+            units = Units()
+        else:
+            weights_units = getattr(weights, 'Units', None)
+            if weights_units is not None:
+                units = weights_units
+            else:
+                units = Units('1')
+                for w in weights.values():
+                    weights_units = getattr(w, 'Units', None)
+                    if weights_units is not None:
+                        units = units * weights_units
+        #--- End: if
+
+        return self._collapse(sw_f, sw_fpartial, sw_ffinalise,
+                              axes=axes, squeeze=squeeze,
+                              weights=weights, mtol=mtol, units=units,
+                              inplace=inplace,
                               _preserve_partitions=_preserve_partitions)
 
 
-    def sum_of_weights2(self, axes=None, squeeze=False, mtol=1, weights=None,
-                        i=False, _preserve_partitions=False):
+    def sum_of_weights2(self, axes=None, squeeze=False, mtol=1,
+                        weights=None, inplace=False, i=False,
+                        _preserve_partitions=False):
         '''TODO
 
     Missing data array elements are omitted from the calculation.
@@ -11619,10 +11643,29 @@ returned.
     
     **Examples:**
 
-        '''   
-        return self._collapse(sw2_f, sw2_fpartial, sw2_ffinalise, axes=axes,
-                              squeeze=squeeze, weights=weights, mtol=mtol,
-                              i=i,
+        '''        
+        if i:
+            _DEPRECATION_ERROR_KWARGS(self, 'sum_of_weights2', i=True) # pragma: no cover
+
+
+        if weights is None:
+            units = Units()
+        else:
+            weights_units = getattr(weights, 'Units', None)
+            if weights_units is not None:
+                units = weights_units
+            else:
+                units = Units('1')
+                for w in weights.values():
+                    weights_units = getattr(w, 'Units', None)
+                    if weights_units is not None:
+                        units = units * (weights_units ** 2)
+        #--- End: if
+
+        return self._collapse(sw2_f, sw2_fpartial, sw2_ffinalise,
+                              axes=axes, squeeze=squeeze,
+                              weights=weights, mtol=mtol, units=units,
+                              inplace=inplace,
                               _preserve_partitions=_preserve_partitions)
 
 

@@ -672,7 +672,7 @@ may be accessed with the `nc_global_attributes`,
 ##                if relaxed_identities:
 ##                    identity = dim.identity(strict=False)
 ##                    identities = dim.identities()
-##                    print ('PPPPPPPP', identities)
+##                    print ('P', identities)
 ##                    if identities:
 ##                        identity = identities[0]
 ##                else:
@@ -3620,16 +3620,13 @@ may be accessed with the `nc_global_attributes`,
     :Parameters:
     
         radius: optional
-            The radius used for calculating spherical surface areas
-            when both of the horizontal axes are part of a spherical
-            polar coordinate system. May be any numeric scalar object
-            that can be converted to a `Data` object (which includes
-            `numpy` and `Data` objects). If unset then the radius is
-            either taken from the "earth_radius" parameter(s) of any
-            coordinate reference construct datums, or, if no such
-            parameter exists, set to 6371229.0 metres (approximating
-            the radius of Earth). If units are not specified then
-            units of metres are assumed.
+            The radius used for calculating the areas of cells defined
+            in spherical polar coordinates. By default (or if *radius*
+            is ``'earth'``) the radius taken as 6371229 metres,
+            representing the radius of the Earth. May be set to any
+            numeric scalar object, including `numpy` and `Data`
+            objects. The units of the radius are assumed to be metres,
+            unless specified by a `Data` object.
     
             *Parameter example:*         
               Five equivalent ways to set a radius of 6371200 metres:
@@ -4894,7 +4891,14 @@ may be accessed with the `nc_global_attributes`,
                  inplace=False, return_bins=False):
         '''Return the indices of the bins to which each value belongs.
 
-    Masked values result in masked indices in the output field construct.
+    .. raw:: html
+    
+        <style> .red {color:red} </style>
+    
+    .. role:: red
+
+    :red:`Values (including masked values) that do not belong to any bin
+    result in masked indices in the output field construct.`
                 
     The output field contruct is given a ``long_name`` property, and
     properties that define the bins:
@@ -4921,7 +4925,9 @@ may be accessed with the `nc_global_attributes`,
     ``bin_interval_type``  A string that specifies the nature of the
                            bin boundaries, i.e. if they are closed or
                            open. For example, if the lower boundary is
-                           closed and the upper boundary is open then
+                           closed and the upper boundary is open
+                           (which is the case when the *upper*
+                           parameter is False) then
                            ``bin_interval_type`` will have the value
                            ``'lower: closed upper: open'``.
 
@@ -4963,14 +4969,13 @@ may be accessed with the `nc_global_attributes`,
         bins: array_like
             The bin boundaries. One of:
 
-            * An integer.
-        
+            * :red:`An integer.`
+           
               Create this many equally sized, contiguous bins spanning
               the range of the data. I.e. the smallest bin boundary is
               the minimum of the data and the largest bin boundary is
-              the maximum of the data. The bin boundaries have the
-              same data type as the data. In order to guarantee that
-              each data value lies inside a bin, the most extreme open
+              the maximum of the data. In order to guarantee that each
+              data value lies inside a bin, the most extreme open
               boundary is extended by multiplying it by ``1.0 -
               epsilon`` or ``1.0 + epsilon``, whichever extends the
               boundary in the appropriate direction, where ``epsilon``
@@ -5012,7 +5017,7 @@ may be accessed with the `nc_global_attributes`,
             lower bin boundary and largest upper bin boundary
             respectively. By default these bins are not created
 
-        return_bins: `bool`, optional
+        :red:`return_bins`: `bool`, optional
             TODO
 
         inplace: `bool`, optional
@@ -5094,13 +5099,32 @@ may be accessed with the `nc_global_attributes`,
      'bin_units': '0.001',
      'long_name': "Bin indices to which each 'specific_humidity' value belongs"}
 
-    >>> g, bins = q.digitize(10, return_bins=True)        
+    >>> g, bins = f.digitize(10, return_bins=True)        
     >>> bins
     <CF Data(10, 2): [[3.0, ..., 146.00000000000003]] 0.001 1>
-    >>> g, bins = q.digitize(10, upper=True, return_bins=True) 
+    >>> g, bins = f.digitize(10, upper=True, return_bins=True) 
     <CF Data(10, 2): [[2.999999999999999, ..., 146.0]] 0.001 1>
+    >>> print(g.array)   
+    [[0 2 0 0 1 2 1 1]
+     [1 2 2 4 3 4 0 4]
+     [7 8 8 9 5 6 3 0]
+     [1 3 2 4 3 4 0 0]
+     [0 2 1 2 1 2 2 0]]
 
-    See `cf.Data.digitize` more examples.
+    >>> f[1, [2, 5]] = cf.masked
+    >>> print(f.array) 
+    [[  7.  34.   3.  14.  18.  37.  24.  29.]
+     [ 23.  36.   --  62.  46.   --   6.  66.]
+     [110. 131. 124. 146.  87. 103.  57.  11.]
+     [ 29.  59.  39.  70.  58.  72.   9.  17.]
+     [  6.  36.  19.  35.  18.  37.  34.  13.]]
+    >>> g, bins = f.digitize(10, return_bins=True)        
+    >>> print(g.array)  
+    [[0 2  0 0 1  2 1 1]
+     [1 2 -- 4 3 -- 0 4]
+     [7 8  8 9 5  6 3 0]
+     [1 3  2 4 3  4 0 0]
+     [0 2  1 2 1  2 2 0]]
 
         '''
         if inplace:
@@ -5108,9 +5132,6 @@ may be accessed with the `nc_global_attributes`,
         else:
             f = self.copy()
 
-#        org_units = f.Units
-#        bin_units = getattr(bins, 'Units', None)
-            
         new_data, bins = self.data.digitize(bins, upper=upper,
                                             open_ends=open_ends,
                                             return_bins=True)
@@ -5169,22 +5190,207 @@ may be accessed with the `nc_global_attributes`,
             
 
     def asd(self, method, digitized, weights=None, measure=False,
-            scale=None, radius='earth'):
+            scale=None, mtol=1, ddof=1, radius='earth'):
         '''TODO
+
+    .. versionadded:: 3.0.2
+
+    .. seealso:: `digitize`
 
     :Parameters:
 
         method: `str`
+            The collapse method used to combine values that map to
+            each cell of the output field construct. The following
+            methods are available (see
+            https://ncas-cms.github.io/cf-python/tutorial.html#collapse-methods
+            for precise definitions):
 
-        digitized: (seqeunce of) `Field`
+            ============================  ============================
+            *method*                      Description                     
+            ============================  ============================
+            ``'maximum'``                 The maximum of the values.
+                                      
+            ``'minimum'``                 The minimum of the values.
 
+            ``'maximum_absolute_value'``  The maximum of the absolute
+                                          values.
+                          
+            ``'minimum_absolute_value'``  The minimum of the absolute
+                                          values.
+
+            ``'mid_range'``               The average of the maximum
+                                          and the minimum of the
+                                          values.
+                                          
+            ``'range'``                   The absolute difference
+                                          between the maximum and the
+                                          minimum of the values.
+                                          
+            ``'sum'``                     The sum of the values
+                                                                                    
+            ``'sum_of_squares'``          The sum of the squares of
+                                          values.
+                                          
+            ``'integral'``                The integral of values.
+                                          
+            ``'mean'``                    The weighted or unweighted
+                                          mean of the values.
+                                          
+            ``'variance'``                The weighted or unweighted
+                                          variance of the values, with
+                                          a given number of degrees of
+                                          freedom.
+                                              
+            ``'standard_deviation'``      The square root of the
+                                          variance.
+                                          
+            ``'root_mean_square'``        The square root of the
+                                          weighted or unweighted mean
+                                          of the squares of the
+                                          values.
+                                          
+            ``'sample_size'``             The sample size, i.e. the
+                                          number of non-missing
+                                          values.
+                                          
+            ``'sum_of_weights'``          The sum of weights, as would
+                                          be used for other
+                                          statistical calculations.
+                                          
+            ``'sum_of_weights2'``         The sum of squares of
+                                          weights, as would be used
+                                          for other statistical
+                                          calculations.
+            ============================  ============================
+
+        digitized: (sequence of) `Field`
+            One or more field constructs that contain digitised data
+            with corresponding metadata, as output by
+            `cf.Field.digitize`. For each field construct the data
+            contains indices of the bins to which each value of an
+            original field construct belongs; and there must be
+            ``bin_count`` and ``bin_bounds`` properties as defined by
+            the `digitize` method (any of the extra properties defined
+            by that method are also recommended).
+
+        weights: optional
+            Specify the weights for the collapse calculations. **By
+            default all collapses are unweighted**. The weights are
+            those that would be returned by this call of the field
+            construct's `~cf.Field.weights` method:
+            ``f.weights(weights, components=True, measure=measure,
+            scale=scale)``. See the *measure* and *scale* parameters
+            and `cf.Field.weights` for details.
+
+            By default *weights* is `None`, resulting in unweighted
+            calculations.
+    
+            *Parameter example:*
+              To specify weights based on cell areas use
+              ``weights='area'``.
+    
+            *Parameter example:*
+              To specify weights based on cell areas and linearly in
+              time you could set ``weights=('area', 'T')``.
+    
+        measure: `bool`, optional
+            Create weights which are cell measures, i.e. describe
+            actual cell sizes (e.g. cell area) with appropriate units
+            (e.g. metres squared). By default the weights are
+            normalized and have arbitrary units.
+
+            Cell measures can be created for any axis combination. For
+            example, cell measures for a time axis are the time span
+            for each cell with canonical units of seconds; cell
+            measures for the combination of four axes representing
+            time and three dimensional space could have canonical
+            units of metres cubed seconds.
+
+            Note that specifying volume weights via ``weights=['X',
+            'Y', 'Z']`` or ``weights=['area', 'Z']`` will give
+            **incorrect volume cell measures if the vertical dimension
+            coordinates do not define the actual height or depth
+            thickness of every cell in the domain**. In this case,
+            ``weights='volume'`` should be used instead, which
+            requires the field construct to have a "volume" cell
+            measure construct.
+
+        scale: number, optional
+            If set to a positive number then scale the weights so that
+            they are less than or equal to that number. By default the
+            weights are normalized to lie between 0 and 1 (i.e.
+            *scale* is 1), and have arbitrary units.
+
+            *Parameter example:*
+              To scale all weights so that they lie between 0 and 0.5:
+              ``scale=0.5``.            
+
+        mtol: number, optional        
+            Set the fraction of input array elements which is allowed
+            to contain missing data when contributing to an individual
+            output array element. Where this fraction exceeds *mtol*,
+            missing data is returned. The default is 1, meaning that a
+            missing datum in the output array occurs when its
+            contributing input array elements are all missing data. A
+            value of 0 means that a missing datum in the output array
+            occurs whenever any of its contributing input array
+            elements are missing data. Any intermediate value is
+            permitted.
+    
+            *Parameter example:*
+              To ensure that an output array element is a missing
+              datum if more than 25% of its input array elements are
+              missing data: ``mtol=0.25``.
+    
+        ddof: number, optional
+            The delta degrees of freedom in the calculation of a
+            standard deviation or variance. The number of degrees of
+            freedom used in the calculation is (N-*ddof*) where N
+            represents the number of non-missing elements contributing
+            to the calculation. By default *ddof* is 1, meaning the
+            standard deviation and variance of the population is
+            estimated according to the usual formula with (N-1) in the
+            denominator to avoid the bias caused by the use of the
+            sample mean (Bessel's correction).
+    
+        radius: optional
+            The radius used for calculating area cell measures for
+            cells defined in spherical polar coordinates. By default
+            (or if *radius* is ``'earth'``) the radius taken as
+            6371229 metres, representing the radius of the Earth. May
+            be set to any numeric scalar object, including `numpy` and
+            `Data` objects. The units of the radius are assumed to be
+            metres, unless specified by a `Data` object.
+    
+            *Parameter example:*         
+              Five equivalent ways to set a radius of 6371200 metres:
+              ``radius=6371200``, ``radius=numpy.array(6371200)``,
+              ``radius=cf.Data(6371200)``, ``radius=cf.Data(6371200,
+              'm')``, ``radius=cf.Data(6371.2, 'km')``.
+    
     :Returns:
 
         `Field`
+            TODO
 
     **Examples:**
 
         '''
+        if method == 'integral':
+            if weights is None:
+                raise ValueError(
+                    "Must specify weights for 'integral' calculations.")
+            
+            if not measure:
+                raise ValueError(
+                    "Must set measure=True for 'integral' calculations.")
+
+            if scale is not None:
+                raise ValueError(
+                    "Can't set scale for 'integral' calculations.")
+        #--- End: if
+        
         axes           = []
         bin_indices    = []
         shape          = []
@@ -5206,6 +5412,7 @@ may be accessed with the `nc_global_attributes`,
         for f in digitized:
             bin_bounds        = f.get_property('bin_bounds', None)
             bin_count         = f.get_property('bin_count', None)
+            bin_interval_type = f.get_property('bin_interval_type', None)
             bin_units         = f.get_property('bin_units', None)
             bin_calendar      = f.get_property('bin_calendar', None)
             bin_standard_name = f.get_property('bin_standard_name', None)
@@ -5227,6 +5434,9 @@ may be accessed with the `nc_global_attributes`,
             elif bin_long_name is not None:
                 dim.long_name = bin_long_name
 
+            if bin_interval_type is not None:
+                dim.set_property('bin_interval_type', bin_interval_type)
+                
             # Create units for the bins
             units = Units(bin_units, bin_calendar)
             
@@ -5258,18 +5468,14 @@ may be accessed with the `nc_global_attributes`,
 
         c = self.copy()
 
-        if method == 'integral':
-            measure = True
-            scale = None
-        
         if weights is not None:
             if not measure and scale is None:
                 scale = 1.0
-            
+            print ('scale=', scale, measure)
             weights = self.weights(weights, components=True,
                                    scale=scale, measure=measure,
                                    radius=radius)
-            
+            print ('PPPP', weights)
         # Unique collections of bin indices
         y = numpy_empty((len(bin_indices), bin_indices[0].size), dtype=int)
         for i, f in enumerate(bin_indices):
@@ -5590,9 +5796,7 @@ may be accessed with the `nc_global_attributes`,
                  _create_zero_size_cell_bounds=False,
                  _update_cell_methods=True, i=False, _debug=False,
                  **kwargs):
-        r'''
-
-    Collapse axes of the field.
+        r'''Collapse axes of the field.
     
     Collapsing one or more dimensions reduces their size and replaces
     the data along those axes with representative statistical
@@ -5648,104 +5852,67 @@ may be accessed with the `nc_global_attributes`,
     **Collapse methods**
     
     The following collapse methods are available, over any subset of
-    the domain axes:
-    
-    ========================  ========================================  =============
-    Method                    Description                               Cell method
-    ========================  ========================================  =============
-    ``'maximum'``             The maximum of the values.
-                              
-    ``'minimum'``             The minimum of the values.
-                                       
-    ``'mid_range'``           The average of the maximum and the
-                              minimum of the values.
-                              
-    ``'range'``               The absolute difference between the
-                              maximum and the minimum of the values.
+    the domain axes (see
+    https://ncas-cms.github.io/cf-python/tutorial.html#collapse-methods
+    for precise definitions):
 
-    ``'sum'``                 The sum of :math:`N` values :math:`x_i`
-                              is
+    ============================  ====================================
+    Method                        Description                     
+    ============================  ====================================
+    ``'maximum'``                 The maximum of the values.
+                              
+    ``'minimum'``                 The minimum of the values.
 
-                              .. math:: t=\sum_{i=1}^{N} x_i
-                              
-    ``'integral'``            The integral of :math:`N` values
-                              :math:`x_i` with corresponding cell
-                              measures :math:`m_i` is
+    ``'maximum_absolute_value'``  The maximum of the absolute
+                                  values.
+                  
+    ``'minimum_absolute_value'``  The minimum of the absolute
+                                  values.
 
-                              .. math:: i=\sum_{i=1}^{N} m_i x_i
-                              
-    ``'mean'``                The unweighted mean of :math:`N` values
-                              :math:`x_i` is
-                              
-                              .. math:: \mu=\frac{1}{N}\sum_{i=1}^{N} x_i
-                              
-                              The weighted mean of :math:`N` values
-                              :math:`x_i` with corresponding weights
-                              :math:`w_i` is
-    
-                              .. math:: \hat{\mu}=\frac{1}{V_{1}}
-                                                    \sum_{i=1}^{N} w_i
-                                                    x_i
-    
-                              where :math:`V_{1}=\sum_{i=1}^{N} w_i`,
-                              the sum of the weights.
-                                   
-    ``'variance'``            The unweighted variance of :math:`N` values
-                              :math:`x_i` and with :math:`N-ddof` degrees
-                              of freedom (:math:`ddof\ge0`) is
-    
-                              .. math:: s_{N-ddof}^{2}=\frac{1}{N-ddof}
-                                          \sum_{i=1}^{N} (x_i - \mu)^2
-    
-                              The unweighted biased estimate of the
-                              variance (:math:`s_{N}^{2}`) is given by
-                              :math:`ddof=0` and the unweighted
-                              unbiased estimate of the variance using
-                              Bessel's correction
-                              (:math:`s^{2}=s_{N-1}^{2}`) is given by
-                              :math:`ddof=1`.
-    
-                              The weighted biased estimate of the
-                              variance of :math:`N` values :math:`x_i`
-                              with corresponding weights :math:`w_i`
-                              is
-    
-                              .. math:: \hat{s}_{N}^{2}=\frac{1}{V_{1}}
-                                                        \sum_{i=1}^{N}
-                                                        w_i(x_i -
-                                                        \hat{\mu})^{2}
-                                   
-                              The corresponding weighted unbiased
-                              estimate of the variance is
-                              
-                              .. math:: \hat{s}^{2}=\frac{1}{V_{1} -
-                                                    (V_{1}/V_{2})}
-                                                    \sum_{i=1}^{N}
-                                                    w_i(x_i -
-                                                    \hat{\mu})^{2}
-    
-                              where :math:`V_{2}=\sum_{i=1}^{N}
-                              w_i^{2}`, the sum of the squares of
-                              weights. In both cases, the weights are
-                              assumed to be non-random reliability
-                              weights, as opposed to frequency
-                              weights.
+    ``'mid_range'``               The average of the maximum
+                                  and the minimum of the
+                                  values.
                                   
-    ``'standard_deviation'``  The variance is the square root of the
-                              variance.
-    
-    ``'sample_size'``         The sample size, :math:`N`, as would be
-                              used for other statistical calculations.
-                              
-    ``'sum_of_weights'``      The sum of weights, :math:`V_{1}`, as
-                              would be used for other statistical
-                              calculations.
-    
-    ``'sum_of_weights2'``     The sum of squares of weights,
-                              :math:`V_{2}`, as would be used for
-                              other statistical calculations.
-    ========================  ========================================  =============
-    
+    ``'range'``                   The absolute difference
+                                  between the maximum and the
+                                  minimum of the values.
+                                  
+    ``'sum'``                     The sum of the values
+                                                                            
+    ``'sum_of_squares'``          The sum of the squares of
+                                  values.
+                                  
+    ``'integral'``                The integral of values.
+                                  
+    ``'mean'``                    The weighted or unweighted
+                                  mean of the values.
+                                  
+    ``'variance'``                The weighted or unweighted
+                                  variance of the values, with
+                                  a given number of degrees of
+                                  freedom.
+                                      
+    ``'standard_deviation'``      The square root of the
+                                  variance.
+                                  
+    ``'root_mean_square'``        The square root of the
+                                  weighted or unweighted mean
+                                  of the squares of the
+                                  values.
+                                  
+    ``'sample_size'``             The sample size, i.e. the
+                                  number of non-missing
+                                  values.
+                                  
+    ``'sum_of_weights'``          The sum of weights, as would
+                                  be used for other
+                                  statistical calculations.
+                                  
+    ``'sum_of_weights2'``         The sum of squares of
+                                  weights, as would be used
+                                  for other statistical
+                                  calculations.
+    ============================  ====================================
 
     **Data type and missing data**
     
@@ -6070,7 +6237,7 @@ may be accessed with the `nc_global_attributes`,
             to contain missing data when contributing to an individual
             output array element. Where this fraction exceeds *mtol*,
             missing data is returned. The default is 1, meaning that a
-            missing datum in the output array only occurs when its
+            missing datum in the output array occurs when its
             contributing input array elements are all missing data. A
             value of 0 means that a missing datum in the output array
             occurs whenever any of its contributing input array
@@ -7036,17 +7203,21 @@ may be accessed with the `nc_global_attributes`,
             d_kwargs = {}
             if weights is not None:
                 if method in _collapse_weighted_methods:
-                    if measure or method == 'integral':
-                        measure = True
-                        scale = None
-                    else:
-                        measure = False
-                        scale = 1.0
-                        
+                    print ('bon', measure)
+#                    if measure or method == 'integral':
+#                        print ('arse')
+#                        measure = True
+#                        scale = None
+#                    else:
+#                        measure = False
+#                        scale = 1.0
+                    if not measure:
+                        scale TODO
                     d_weights = f.weights(weights, components=True,
                                           scale=scale,
                                           measure=measure,
                                           radius=radius)
+                    print (d_weights)
                     if d_weights:
                         d_kwargs['weights'] = d_weights
 

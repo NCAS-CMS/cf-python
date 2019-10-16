@@ -5023,7 +5023,7 @@ Method                        Description                                       
                                    
 ``'maximum_absolute_value'``  The maximum of the absolute values.                    ``maximum_absolute_value``
                           
-``'minimum_absolute_value'``  The maximum of the absolute values.                    ``minimum_absolute_value``
+``'minimum_absolute_value'``  The minimum of the absolute values.                    ``minimum_absolute_value``
                           
 ``'mid_range'``               The average of the maximum and the                     ``mid_range``
                               minimum of the values.
@@ -5106,9 +5106,10 @@ Method                        Description                                       
                               weights, as opposed to frequency
                               weights.
                                   
-``'standard_deviation'``      The variance is the square root of the                 ``standard_deviation``
-                              variance.  
-			      
+``'standard_deviation'``      The standard deviation is the square                   ``standard_deviation``
+                              root of the variance, as defined in
+			      this table.
+			       
 ``'root_mean_square'``        The unweighted root mean square of                     ``root_mean_square`` 
                               :math:`N` values :math:`x_i` is
 			      
@@ -5126,7 +5127,8 @@ Method                        Description                                       
 				                   x_{i}^2}
 			      
 ``'sample_size'``             The sample size, :math:`N`, as would be
-                              used for other statistical calculations.
+                              used for other statistical calculations,
+                              i.e. the number of non-missing values.
                               
 ``'sum_of_weights'``          The sum of weights, :math:`V_{1}`, as
                               would be used for other statistical

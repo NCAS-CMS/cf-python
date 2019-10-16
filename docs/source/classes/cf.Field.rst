@@ -467,6 +467,7 @@ Mathematical operations
    :template: method.rst
 
    ~cf.Field.digitize
+   ~cf.Field.asd
 
 Data array operations
 ---------------------
