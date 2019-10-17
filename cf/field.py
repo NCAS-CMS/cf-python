@@ -5232,7 +5232,7 @@ may be accessed with the `nc_global_attributes`,
 
     The number of dimensions of the output binned data is equal to the
     number of field constructs provided by the *digitized*
-    argument. Each such field constuct defines a sequence of bins and
+    argument. Each such field construct defines a sequence of bins and
     provides indices to the bins that each value of another field
     construct belongs. There is no upper limit to the number of
     dimensions of the output binned data.
@@ -5804,7 +5804,7 @@ may be accessed with the `nc_global_attributes`,
 
     The number of dimensions of the histogram is equal to the number
     of field constructs provided by the *digitized* argument. Each
-    such field constuct defines a sequence of bins and provides
+    such field construct defines a sequence of bins and provides
     indices to the bins that each value of another field construct
     belongs.  There is no upper limit to the number of dimensions of
     the histogram.
@@ -13119,7 +13119,7 @@ may be accessed with the `nc_global_attributes`,
             Use the *inplace* parameter instead.
     
         item: deprecated at version 3.0.0
-            Use the *constuct* parameter instead.
+            Use the *construct* parameter instead.
     
         item_options: deprecated at version 3.0.0
     
