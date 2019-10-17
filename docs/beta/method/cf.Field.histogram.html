@@ -93,11 +93,11 @@
 <code class="descclassname">Field.</code><code class="descname">histogram</code><span class="sig-paren">(</span><em>digitized</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/field.py#L5802"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.histogram" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a multi-dimensional histogram of the data.</p>
 <p>The number of dimensions of the histogram is equal to the number
-of field constucts provided by the <em>digitized</em> argument. Each such
-field constuct defines a sequence of bins and provides indices to
-the bins that each value of another field construct belongs.
-There is no upper limit to the number of dimensions of the
-histogram.</p>
+of field constructs provided by the <em>digitized</em> argument. Each
+such field constuct defines a sequence of bins and provides
+indices to the bins that each value of another field construct
+belongs.  There is no upper limit to the number of dimensions of
+the histogram.</p>
 <p>The output histogram bins are defined by the exterior product of
 the one-dimensional bins of the digitized field constructs. For
 example, if only one digitized field construct is given then the
@@ -107,10 +107,10 @@ histogram bins comprise the two-dimensionsal matrix formed by all
 possible combinations of the two sets of one-dimensional
 bins.</p>
 <p>An output value for an output histogram bin is formed by counting
-the number cells for which the digitized field constucts
+the number cells for which the digitized field constructs
 collectively index that bin. Note that it may be the case that not
-all output bins are indexed by the digitized field constucts,
-and for these bins missing data is returned.</p>
+all output bins are indexed by the digitized field constructs, and
+for these bins missing data is returned.</p>
 <p>Therefore, the creation of a one-dimensional histogram of the
 field construct’s own data must based on a digitized version of
 itself. However, a one-dimensional histogram can also be based on

@@ -5231,7 +5231,7 @@ may be accessed with the `nc_global_attributes`,
         '''Collapse the data values that lie in multi-dimensional bins.
 
     The number of dimensions of the output binned data is equal to the
-    number of field constucts provided by the *digitized*
+    number of field constructs provided by the *digitized*
     argument. Each such field constuct defines a sequence of bins and
     provides indices to the bins that each value of another field
     construct belongs. There is no upper limit to the number of
@@ -5247,9 +5247,9 @@ may be accessed with the `nc_global_attributes`,
 
     An output binned value is formed by collapsing (using the method
     given by the *method* parameter) the elements of the data for
-    which the digitized field constucts collectively index that
+    which the digitized field constructs collectively index that
     bin. Note that it may be the case that not all output bins are
-    indexed by the digitized field constucts, and for these bins
+    indexed by the digitized field constructs, and for these bins
     missing data is returned.
 
     The returned field construct will have a domain axis construct for
@@ -5803,11 +5803,11 @@ may be accessed with the `nc_global_attributes`,
         '''Return a multi-dimensional histogram of the data.
 
     The number of dimensions of the histogram is equal to the number
-    of field constucts provided by the *digitized* argument. Each such
-    field constuct defines a sequence of bins and provides indices to
-    the bins that each value of another field construct belongs.
-    There is no upper limit to the number of dimensions of the
-    histogram.
+    of field constructs provided by the *digitized* argument. Each
+    such field constuct defines a sequence of bins and provides
+    indices to the bins that each value of another field construct
+    belongs.  There is no upper limit to the number of dimensions of
+    the histogram.
         
     The output histogram bins are defined by the exterior product of
     the one-dimensional bins of the digitized field constructs. For
@@ -5819,10 +5819,10 @@ may be accessed with the `nc_global_attributes`,
     bins.
 
     An output value for an output histogram bin is formed by counting
-    the number cells for which the digitized field constucts
+    the number cells for which the digitized field constructs
     collectively index that bin. Note that it may be the case that not
-    all output bins are indexed by the digitized field constucts,
-    and for these bins missing data is returned.
+    all output bins are indexed by the digitized field constructs, and
+    for these bins missing data is returned.
 
     Therefore, the creation of a one-dimensional histogram of the
     field construct's own data must based on a digitized version of

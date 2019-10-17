@@ -93,7 +93,7 @@
 <code class="descclassname">Field.</code><code class="descname">bin</code><span class="sig-paren">(</span><em>method</em>, <em>digitized</em>, <em>weights=None</em>, <em>measure=False</em>, <em>scale=None</em>, <em>mtol=1</em>, <em>ddof=1</em>, <em>radius='earth'</em>, <em>return_indices=False</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/field.py#L5228"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.bin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Collapse the data values that lie in multi-dimensional bins.</p>
 <p>The number of dimensions of the output binned data is equal to the
-number of field constucts provided by the <em>digitized</em>
+number of field constructs provided by the <em>digitized</em>
 argument. Each such field constuct defines a sequence of bins and
 provides indices to the bins that each value of another field
 construct belongs. There is no upper limit to the number of
@@ -107,9 +107,9 @@ histogram bins comprise the two-dimensionsal matrix formed by all
 possible combinations of the two sets of one-dimensional bins.</p>
 <p>An output binned value is formed by collapsing (using the method
 given by the <em>method</em> parameter) the elements of the data for
-which the digitized field constucts collectively index that
+which the digitized field constructs collectively index that
 bin. Note that it may be the case that not all output bins are
-indexed by the digitized field constucts, and for these bins
+indexed by the digitized field constructs, and for these bins
 missing data is returned.</p>
 <p>The returned field construct will have a domain axis construct for
 each dimension of the output bins, with corresponding dimension
