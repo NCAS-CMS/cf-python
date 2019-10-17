@@ -90,7 +90,7 @@
 <h1>cf.Field.cell_area<a class="headerlink" href="#cf-field-cell-area" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.cell_area">
-<code class="descclassname">Field.</code><code class="descname">cell_area</code><span class="sig-paren">(</span><em>radius=None</em>, <em>insert=False</em>, <em>force=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/field.py#L3600"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.cell_area" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">cell_area</code><span class="sig-paren">(</span><em>radius='earth'</em>, <em>insert=False</em>, <em>force=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/field.py#L3614"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.cell_area" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a field containing horizontal cell areas.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.0.</span></p>
@@ -105,16 +105,13 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
 <dt>radius: optional</dt>
-<dd><p class="first">The radius used for calculating spherical surface areas
-when both of the horizontal axes are part of a spherical
-polar coordinate system. May be any numeric scalar object
-that can be converted to a <a class="reference internal" href="../classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object (which includes
-<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/index.html#module-numpy" title="(in NumPy v1.17)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> and <a class="reference internal" href="../classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects). If unset then the radius is
-either taken from the “earth_radius” parameter(s) of any
-coordinate reference construct datums, or, if no such
-parameter exists, set to 6371229.0 metres (approximating
-the radius of Earth). If units are not specified then
-units of metres are assumed.</p>
+<dd><p class="first">The radius used for calculating the areas of cells defined
+in spherical polar coordinates. By default (or if <em>radius</em>
+is <code class="docutils literal notranslate"><span class="pre">'earth'</span></code>) the radius taken as 6371229 metres,
+representing the radius of the Earth. May be set to any
+numeric scalar object, including <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/index.html#module-numpy" title="(in NumPy v1.17)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> and <a class="reference internal" href="../classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>
+objects. The units of the radius are assumed to be metres,
+unless specified by a <a class="reference internal" href="../classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object.</p>
 <dl class="last docutils">
 <dt><em>Parameter example:</em>         </dt>
 <dd><p class="first last">Five equivalent ways to set a radius of 6371200 metres:
@@ -124,13 +121,13 @@ units of metres are assumed.</p>
 </dd>
 </dl>
 </dd>
-<dt>insert: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>insert: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then calculated cell areas are also inserted in
 place as an “area” cell measure construct, unless there is
 already an existing area cell measure construct for the
 horizontal axes.</p>
 </dd>
-<dt>force: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>force: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True the always calculate the cell areas. By default,
 if there is already an “area” cell measure construct for
 the horizontal axes then it will be used provide the area

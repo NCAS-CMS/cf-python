@@ -9676,8 +9676,9 @@ returned.
         return cls(array, units=units, chunk=chunk)
 
 
-    def mid_range(self, axes=None, squeeze=True, mtol=1, i=False,
-                  _preserve_partitions=False):
+    def mid_range(self, axes=None, squeeze=True, mtol=1,
+                  inplace=False, _preserve_partitions=False,
+                  i=False):
         '''Collapse axes with the unweighted average of their maximum and
     minimum values.
     
@@ -9706,9 +9707,14 @@ returned.
 
         TODO
 
-        '''
-        return self._collapse(mid_range_f, mid_range_fpartial, mid_range_ffinalise,
-                              axes=axes, squeeze=squeeze, mtol=mtol, i=i,
+        '''  
+        if i:
+            _DEPRECATION_ERROR_KWARGS(self, 'mid_range', i=True) # pragma: no cover
+            
+        return self._collapse(mid_range_f, mid_range_fpartial,
+                              mid_range_ffinalise, axes=axes,
+                              squeeze=squeeze, mtol=mtol,
+                              inplace=inplace,
                               _preserve_partitions=_preserve_partitions)
 
 
@@ -11374,8 +11380,8 @@ returned.
         return d
 
 
-    def range(self, axes=None, squeeze=True, mtol=1, i=False,
-              _preserve_partitions=False):
+    def range(self, axes=None, squeeze=True, mtol=1, inplace=False,
+              _preserve_partitions=False, i=False):
         '''Collapse axes with the absolute difference between their maximum
     and minimum values.
     
@@ -11403,10 +11409,13 @@ returned.
         TODO
 
         '''   
+        if i:
+            _DEPRECATION_ERROR_KWARGS(self, 'range', i=True) # pragma: no cover
+            
         return self._collapse(range_f, range_fpartial,
                               range_ffinalise, axes=axes,
                               squeeze=squeeze, weights=None,
-                              mtol=mtol, i=i,
+                              mtol=mtol, inplace=inplace,
                               _preserve_partitions=_preserve_partitions)
 
 
@@ -11474,8 +11483,8 @@ returned.
         return d
 
 
-    def sum(self, axes=None, squeeze=False, mtol=1, inplace=False,
-            i=False, _preserve_partitions=False):
+    def sum(self, axes=None, squeeze=False, mtol=1, weights=None,
+            inplace=False, i=False, _preserve_partitions=False):
         '''Collapse axes with their sum.
 
     Missing data array elements are omitted from the calculation.
@@ -11511,13 +11520,14 @@ returned.
 
         return self._collapse(sum_f, sum_fpartial, sum_ffinalise,
                               axes=axes, squeeze=squeeze,
-                              weights=None, mtol=mtol,
+                              weights=weights, mtol=mtol,
                               inplace=inplace,
                               _preserve_partitions=_preserve_partitions)
 
 
     def sum_of_squares(self, axes=None, squeeze=False, mtol=1,
-                       inplace=False, _preserve_partitions=False):
+                       weights=None, inplace=False,
+                       _preserve_partitions=False):
         '''Collapse axes with the sum of the squares of the values.
 
     Missing data array elements are omitted from the calculation.
@@ -11554,9 +11564,10 @@ returned.
         if units:
             units = units ** 2
 
-        return self._collapse(sum_squares_f, sum_squares_fpartial,
-                              sum_squares_ffinalise, axes=axes,
-                              squeeze=squeeze, weights=None,
+        return self._collapse(sum_of_squares_f,
+                              sum_of_squares_fpartial,
+                              sum_of_squares_ffinalise, axes=axes,
+                              squeeze=squeeze, weights=weights,
                               units=units, mtol=mtol, inplace=inplace,
                               _preserve_partitions=_preserve_partitions)
 
@@ -11863,11 +11874,11 @@ returned.
 
         '''
         if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'sd', i=True) # pragma: no cover
+            _DEPRECATION_ERROR_KWARGS(self, 'var', i=True) # pragma: no cover
 
         units = self.Units
         if units:
-            units = units ** 2
+            units = units**2
 
         return self._collapse(var_f, var_fpartial, var_ffinalise,
                               axes=axes, squeeze=squeeze,

@@ -5014,43 +5014,64 @@ The following collapse methods are available, over any subset of the
 domain axes. The "Cell method" column in the table gives the method of
 the new cell method construct (if one is created).
 
-============================  =====================================================  ===============================
-Method                        Description                                            Cell method
-============================  =====================================================  ===============================
-``'maximum'``                 The maximum of the values.                             ``maximum``
+============================  ========================================  ==========================
+Method                        Description                               Cell method
+============================  ========================================  ==========================
+``'maximum'``                 The maximum of the values.                ``maximum``
                           
-``'minimum'``                 The minimum of the values.                             ``minimum``
+``'minimum'``                 The minimum of the values.                ``minimum``
                                    
-``'maximum_absolute_value'``  The maximum of the absolute values.                    ``maximum_absolute_value``
+``'maximum_absolute_value'``  The maximum of the absolute values.       ``maximum_absolute_value``
                           
-``'minimum_absolute_value'``  The minimum of the absolute values.                    ``minimum_absolute_value``
+``'minimum_absolute_value'``  The minimum of the absolute values.       ``minimum_absolute_value``
                           
-``'mid_range'``               The average of the maximum and the                     ``mid_range``
+``'mid_range'``               The average of the maximum and the        ``mid_range``
                               minimum of the values.
                               
-``'range'``                   The absolute difference between the                    ``range``
+``'range'``                   The absolute difference between the       ``range``
                               maximum and the minimum of the values.
 			      
-``'sum'``                     The sum of :math:`N` values :math:`x_i`                ``sum``
-                              is
+``'sample_size'``             The sample size, :math:`N`, as would be
+                              used for other calculations, i.e. the
+			      number of non-missing values.
+                              
+``'sum_of_weights'``          The sum of :math:`N` weights
+                              :math:`w_i`, as would be used for other
+                              calculations, is
+
+			      .. math:: V_{1}=\sum_{i=1}^{N} w_i
+			      
+``'sum_of_weights2'``         The sum of the squares of :math:`N`
+                              weights :math:`w_i`, as would be used
+                              for other calculations, is
+
+			      .. math:: V_{2}=\sum_{i=1}^{N}  w_i^{2}
+
+``'sum'``                     The unweighted sum of :math:`N` values    ``sum``
+                              :math:`x_i` is
 			      
                               .. math:: t=\sum_{i=1}^{N} x_i
-                              
-``'integral'``                The integral of :math:`N` values                       ``sum``
-                              :math:`x_i` with corresponding cell                    
+
+``'integral'``                The integral of :math:`N` values          ``sum``
+                              :math:`x_i` with corresponding cell       
                               measures :math:`m_i` is
 			      
                               .. math:: i=\sum_{i=1}^{N} m_i x_i
+
+			      The integral differs from a weighted sum
+			      in that the units of the cell measures
+			      are incorporated into the result.
 			      
-``'sum_of_squares'``          The sum of the squares of :math:`N` values             ``sum_of_squares``
-                              :math:`x_i` is
+``'sum_of_squares'``          The unweighted sum of the squares of      ``sum_of_squares``
+                              :math:`N` values :math:`x_i` is
 			      
                               .. math:: t_2=\sum_{i=1}^{N} x_{i}^{2}
                               
-``'mean'``                    The unweighted mean of :math:`N` values                ``mean``
+``'mean'``                    The unweighted mean of :math:`N` values   ``mean``
                               :math:`x_i` is
                               
-                              .. math:: \mu=\frac{1}{N}\sum_{i=1}^{N} x_i
+                              .. math:: \mu=\frac{1}{N}\sum_{i=1}^{N}
+					               x_i
                               
                               The :ref:`weighted <Collapse-weights>`
                               mean of :math:`N` values :math:`x_i`
@@ -5061,15 +5082,14 @@ Method                        Description                                       
                                                     \sum_{i=1}^{N} w_i
                                                     x_i
 			      
-                              where :math:`V_{1}=\sum_{i=1}^{N} w_i`, the
-                              sum of the weights.
-                                   
-``'variance'``                The unweighted variance of :math:`N` values            ``variance``
-                              :math:`x_i` and with :math:`N-ddof` degrees
-                              of freedom (:math:`ddof\ge0`) is
+``'variance'``                The unweighted variance of :math:`N`      ``variance``
+                              values :math:`x_i` and with 
+                              :math:`N-ddof` degrees of freedom
+   			      (:math:`ddof\ge0`) is
 			      
-                              .. math:: s_{N-ddof}^{2}=\frac{1}{N-ddof}
-                                          \sum_{i=1}^{N} (x_i - \mu)^2
+                              .. math:: s_{N-ddof}^{2}=
+          		                \frac{1}{N-ddof}
+                                        \sum_{i=1}^{N} (x_i - \mu)^2
 			      
                               The unweighted biased estimate of the
                               variance (:math:`s_{N}^{2}`) is given by
@@ -5084,10 +5104,11 @@ Method                        Description                                       
                               :math:`N` values :math:`x_i` with
                               corresponding weights :math:`w_i` is
 			      
-                              .. math:: \hat{s}_{N}^{2}=\frac{1}{V_{1}}
-                                                        \sum_{i=1}^{N}
-                                                        w_i(x_i -
-                                                        \hat{\mu})^{2}
+                              .. math:: \hat{s}_{N}^{2}=
+					\frac{1}{V_{1}}
+                                        \sum_{i=1}^{N}
+                                        w_i(x_i -
+                                        \hat{\mu})^{2}
                                    
                               The corresponding :ref:`weighted
                               <Collapse-weights>` unbiased estimate of
@@ -5099,18 +5120,15 @@ Method                        Description                                       
                                                     w_i(x_i -
                                                     \hat{\mu})^{2}
 			      
-                              where :math:`V_{2}=\sum_{i=1}^{N}
-                              w_i^{2}`, the sum of the squares of
-                              weights. In both cases, the weights are
-                              assumed to be non-random reliability
-                              weights, as opposed to frequency
-                              weights.
+                              In both cases, the weights are assumed
+                              to be non-random reliability weights, as
+                              opposed to frequency weights.
                                   
-``'standard_deviation'``      The standard deviation is the square                   ``standard_deviation``
+``'standard_deviation'``      The standard deviation is the square      ``standard_deviation``
                               root of the variance, as defined in
 			      this table.
 			       
-``'root_mean_square'``        The unweighted root mean square of                     ``root_mean_square`` 
+``'root_mean_square'``        The unweighted root mean square of        ``root_mean_square`` 
                               :math:`N` values :math:`x_i` is
 			      
                               .. math:: RMS=\sqrt{\frac{1}{N}
@@ -5122,22 +5140,11 @@ Method                        Description                                       
                               :math:`x_i` with corresponding weights
                               :math:`w_i` is
 			      
-                              .. math:: \hat{RMS}=\sqrt{\frac{1}{V_{1}}
-				                   \sum_{i=1}^{N} w_i
-				                   x_{i}^2}
-			      
-``'sample_size'``             The sample size, :math:`N`, as would be
-                              used for other statistical calculations,
-                              i.e. the number of non-missing values.
-                              
-``'sum_of_weights'``          The sum of weights, :math:`V_{1}`, as
-                              would be used for other statistical
-                              calculations.
-			      
-``'sum_of_weights2'``         The sum of squares of weights,
-                              :math:`V_{2}`, as would be used for
-                              other statistical calculations.			      
-============================  =====================================================  ===============================
+                              .. math:: \hat{RMS}=\sqrt{
+				              \frac{1}{V_{1}}
+				              \sum_{i=1}^{N} w_i
+				              x_{i}^2}			      
+============================  ========================================  ==========================
 
 .. _Data-type-and-missing-data:
 

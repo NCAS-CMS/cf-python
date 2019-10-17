@@ -90,7 +90,7 @@
 <h1>cf.Field.squeeze<a class="headerlink" href="#cf-field-squeeze" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.squeeze">
-<code class="descclassname">Field.</code><code class="descname">squeeze</code><span class="sig-paren">(</span><em>axes=None</em>, <em>inplace=False</em>, <em>i=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/field.py#L10126"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.squeeze" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">squeeze</code><span class="sig-paren">(</span><em>axes=None</em>, <em>inplace=False</em>, <em>i=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/field.py#L11057"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.squeeze" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove size-1 axes from the data array.</p>
 <p>By default all size 1 axes are removed, but particular size 1 axes
 may be selected for removal.</p>
@@ -106,7 +106,7 @@ contructs, nor from the domain.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>axes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt>
+<dt>axes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt>
 <dd><p class="first">Select the domain axes to squeeze, defined by the domain
 axes that would be selected by passing the each given axis
 description to a call of the field construct’s
@@ -115,8 +115,8 @@ the domain axis construct returned by
 <code class="docutils literal notranslate"><span class="pre">f.domain_axis('X'))</span></code> is selected.</p>
 <p class="last">If no axes are provided then all size-1 axes are squeezed.</p>
 </dd>
-<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If True then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dd><p class="first last">If True then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
 </dd>
 <dt>i: deprecated at version 3.0.0</dt>
 <dd><p class="first last">Use the <em>inplace</em> parameter instead.</p>
@@ -126,8 +126,8 @@ the domain axis construct returned by
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><a class="reference internal" href="../classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt>
-<dd><p class="first">The field construct with squeezed data, or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> if the
+<dt><a class="reference internal" href="../classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt>
+<dd><p class="first">The field construct with squeezed data, or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> if the
 operation was in-place.</p>
 <p class="last"><strong>Examples:</strong></p>
 </dd>

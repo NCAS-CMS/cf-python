@@ -90,7 +90,7 @@
 <h1>cf.Field.weights<a class="headerlink" href="#cf-field-weights" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.weights">
-<code class="descclassname">Field.</code><code class="descname">weights</code><span class="sig-paren">(</span><em>weights='auto'</em>, <em>scale=None</em>, <em>components=False</em>, <em>methods=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/field.py#L4099"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.weights" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">weights</code><span class="sig-paren">(</span><em>weights='auto'</em>, <em>scale=None</em>, <em>measure=False</em>, <em>components=False</em>, <em>methods=False</em>, <em>radius='earth'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/field.py#L4111"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.weights" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return weights for the data array values.</p>
 <p>The weights are those used during a statistical collapse of the
 data. For example when computing a area weight average.</p>
@@ -139,7 +139,7 @@ possible to the create weights.</p>
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></td>
+<tr class="row-even"><td><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></td>
 <td>Equal weights for all axes. This the
 default.</td>
 </tr>
@@ -209,7 +209,7 @@ were actually created.</td>
 construct’s volume cell measure
 construct.</td>
 </tr>
-<tr class="row-even"><td>identity</td>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">str</span></code></td>
 <td>Weights from the cell sizes of the
 dimension coordinate construct with
 this identity.</td>
@@ -226,16 +226,14 @@ broadcastable to this field construct.</td>
 above then the returned field contains the outer
 product of the weights defined by each element of the
 sequence. The ordering of the sequence is irrelevant.</p>
-<blockquote>
-<div><dl class="docutils">
+<dl class="docutils">
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last">To create to 2-dimensional weights based on cell
 areas: <code class="docutils literal notranslate"><span class="pre">f.weights('area')</span></code>. To create to
-3-dimensional weights based on cell areas and
-linear height: <code class="docutils literal notranslate"><span class="pre">f.weights(['area',</span> <span class="pre">'Z'])</span></code>.</p>
+3-dimensional weights based on cell areas and linear
+height: <code class="docutils literal notranslate"><span class="pre">f.weights(['area',</span> <span class="pre">'Z'])</span></code>.</p>
 </dd>
 </dl>
-</div></blockquote>
 </li>
 </ul>
 </div></blockquote>
@@ -254,7 +252,10 @@ the others.</p>
 </dd>
 </dl>
 </dd>
-<dt>components: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>measure: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dd><p class="first last">TODO</p>
+</dd>
+<dt>components: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then a dictionary of orthogonal weights components
 is returned instead of a field. Each key is a tuple of
 integers representing axes positions in the field
@@ -263,7 +264,7 @@ construct’s data, with corresponding values of weights in
 field construct’s data array in the order given by their
 dictionary keys.</p>
 </dd>
-<dt>methods: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>methods: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True, then return a dictionary describing methods used
 to create the weights.</p>
 </dd>
@@ -272,7 +273,7 @@ to create the weights.</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><a class="reference internal" href="../classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt>
+<dt><a class="reference internal" href="../classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt>
 <dd><p class="first last">The weights field or, if <em>components</em> is True, orthogonal
 weights in a dictionary.</p>
 </dd>

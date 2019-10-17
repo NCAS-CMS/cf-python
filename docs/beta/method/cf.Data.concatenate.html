@@ -90,7 +90,7 @@
 <h1>cf.Data.concatenate<a class="headerlink" href="#cf-data-concatenate" title="Permalink to this headline">¶</a></h1>
 <dl class="classmethod">
 <dt id="cf.Data.concatenate">
-<em class="property">classmethod </em><code class="descclassname">Data.</code><code class="descname">concatenate</code><span class="sig-paren">(</span><em>data</em>, <em>axis=0</em>, <em>_preserve=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/data/data.py#L3935"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.concatenate" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descclassname">Data.</code><code class="descname">concatenate</code><span class="sig-paren">(</span><em>data</em>, <em>axis=0</em>, <em>_preserve=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/data/data.py#L3994"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.concatenate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Join a sequence of data arrays together.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -104,12 +104,12 @@ equivalent units and the same shape, except in the
 concatenation axis. Note that scalar arrays are treated as
 if they were one dimensionsal.</p>
 </dd>
-<dt>axis: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt>
+<dt>axis: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt>
 <dd><p class="first last">The axis along which the arrays will be joined. The
 default is 0. Note that scalar arrays are treated as if
 they were one dimensionsal.</p>
 </dd>
-<dt>_preserve: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional </dt>
+<dt>_preserve: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional </dt>
 <dd><p class="first last">If False then the time taken to do the concatenation is
 reduced at the expense of changing the input data arrays
 given by the <em>data</em> parameter in place and <strong>these in

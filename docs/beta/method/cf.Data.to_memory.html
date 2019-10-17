@@ -90,7 +90,7 @@
 <h1>cf.Data.to_memory<a class="headerlink" href="#cf-data-to-memory" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Data.to_memory">
-<code class="descclassname">Data.</code><code class="descname">to_memory</code><span class="sig-paren">(</span><em>regardless=False</em>, <em>parallelise=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/data/data.py#L9064"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.to_memory" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Data.</code><code class="descname">to_memory</code><span class="sig-paren">(</span><em>regardless=False</em>, <em>parallelise=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/data/data.py#L9313"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.to_memory" title="Permalink to this definition">¶</a></dt>
 <dd><p>Store each partition’s data in memory in place if the master array is
 smaller than the chunk size.</p>
 <p>There is no change to partitions with data that are already in memory.</p>
@@ -99,20 +99,20 @@ smaller than the chunk size.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>regardless: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>regardless: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then store all partitions’ data in memory
 regardless of the size of the master array. By default
 only store all partitions’ data in memory if the master
 array is smaller than the chunk size.</p>
 </dd>
-<dt>parallelise: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>parallelise: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True than only move those partitions to memory that are
 flagged for processing on this rank.</p>
 </dd>
 </dl>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 </td>
 </tr>
 </tbody>

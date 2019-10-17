@@ -89,7 +89,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.Field">
-<em class="property">class </em><code class="descclassname">cf.</code><code class="descname">Field</code><span class="sig-paren">(</span><em>properties=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/field.py#L179"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cf.</code><code class="descname">Field</code><span class="sig-paren">(</span><em>properties=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/field.py#L193"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.field.Field</span></code></p>
 <p>A field construct of the CF data model.</p>
 <p>The field construct is central to the CF data model, and includes all
@@ -125,7 +125,7 @@ may be accessed with the <a class="reference internal" href="../method/cf.Field.
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
-<dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt>
+<dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt>
 <dd><p class="first">Set descriptive properties. The dictionary keys are
 property names, with corresponding values. Ignored if the
 <em>source</em> parameter is set.</p>
@@ -141,7 +141,7 @@ property names, with corresponding values. Ignored if the
 <dd><p class="first last">Initialize the properties, data and metadata constructs
 from those of <em>source</em>.</p>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If False then do not deep copy input parameters prior to
 initialization. By default arguments are deep copied.</p>
 </dd>
@@ -972,8 +972,14 @@ initialization. By default arguments are deep copied.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../method/cf.Field.digitize.html#cf.Field.digitize" title="cf.Field.digitize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">digitize</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.Field.bin.html#cf.Field.bin" title="cf.Field.bin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bin</span></code></a></td>
+<td>Collapse the data values that lie in multi-dimensional bins.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.Field.digitize.html#cf.Field.digitize" title="cf.Field.digitize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">digitize</span></code></a></td>
 <td>Return the indices of the bins to which each value belongs.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.Field.histogram.html#cf.Field.histogram" title="cf.Field.histogram"><code class="xref py py-obj docutils literal notranslate"><span class="pre">histogram</span></code></a></td>
+<td>Return a multi-dimensional histogram of the data.</td>
 </tr>
 </tbody>
 </table>
@@ -1149,7 +1155,7 @@ initialization. By default arguments are deep copied.</p>
 <td>The number of axes in the domain.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.Field.T.html#cf.Field.T" title="cf.Field.T"><code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code></a></td>
-<td><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if and only if the data are coordinates for a CF ‘T’ axis.</td>
+<td><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if and only if the data are coordinates for a CF ‘T’ axis.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../attribute/cf.Field.X.html#cf.Field.X" title="cf.Field.X"><code class="xref py py-obj docutils literal notranslate"><span class="pre">X</span></code></a></td>
 <td>Always False.</td>
@@ -1489,16 +1495,16 @@ construct’s data in-place.</p>
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td><a class="reference internal" href="../method/cf.Field.__deepcopy__.html#cf.Field.__deepcopy__" title="cf.Field.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></td>
-<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</td>
+<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cf.Field.__getitem__.html#cf.Field.__getitem__" title="cf.Field.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></td>
 <td>Return a subspace of the field construct defined by indices.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cf.Field.__repr__.html#cf.Field.__repr__" title="cf.Field.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></td>
-<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</td>
+<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cf.Field.__str__.html#cf.Field.__str__" title="cf.Field.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></td>
-<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</td>
+<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</td>
 </tr>
 </tbody>
 </table>

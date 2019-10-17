@@ -466,6 +466,7 @@ Mathematical operations
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.Field.bin
    ~cf.Field.digitize
    ~cf.Field.histogram
 

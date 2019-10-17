@@ -5,7 +5,8 @@ version 3.0.2
 **Not yet released**
 
 * Now reads CDL files (https://github.com/NCAS-CMS/cf-python/issues/1)
-* New methods `cf.Field.cumsum`, `cf.Field.digitize`.
+* New methods `cf.Field.cumsum`, `cf.Field.digitize`, `cf.Field.bin`,
+  `cf.Field.histogram`.
 * New field construct collapse methods: ``integral``,
   ``maximum_absolute_value``, ``minimum_absolute_value``,
   ``sum_of_squares``, ``root_mean_square``.

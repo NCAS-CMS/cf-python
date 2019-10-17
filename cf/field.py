@@ -142,9 +142,9 @@ _collapse_cell_methods = {
     'sum_of_squares'        : 'sum_of_squares',
     'variance'              : 'variance',
     'var'                   : 'variance',
-    'sample_size'           : None,
-    'sum_of_weights'        : None,
-    'sum_of_weights2'       : None,
+    'sample_size'           : 'point',
+    'sum_of_weights'        : 'point',
+    'sum_of_weights2'       : 'point',
 }
 
 # --------------------------------------------------------------------
@@ -4902,7 +4902,7 @@ may be accessed with the `nc_global_attributes`,
 
 
     def digitize(self, bins, upper=False, open_ends=False,
-                 inplace=False, return_bins=False):
+                 return_bins=False, inplace=False):
         '''Return the indices of the bins to which each value belongs.
 
     Values (including masked values) that do not belong to any bin
@@ -4972,14 +4972,14 @@ may be accessed with the `nc_global_attributes`,
 
     .. versionadded:: 3.0.2
 
-    .. seealso:: `histogram`
+    .. seealso:: `bin`, `histogram`
 
     :Parameters:
 
         bins: array_like
             The bin boundaries. One of:
 
-            * :red:`An integer.`
+            * An integer.
            
               Create this many equally sized, contiguous bins spanning
               the range of the data. I.e. the smallest bin boundary is
@@ -4987,13 +4987,13 @@ may be accessed with the `nc_global_attributes`,
               the maximum of the data. In order to guarantee that each
               data value lies inside a bin, the most extreme open
               boundary is extended by multiplying it by ``1.0 -
-              epsilon`` or ``1.0 + epsilon``, whichever extends the
-              boundary in the appropriate direction, where ``epsilon``
-              is the smallest positive 64-bit float such that ``1.0 +
-              epsilson != 1.0``. I.e. if *upper* is False then the
-              largest upper bin boundary is made slightly larger and
-              if *upper* is True then the lowest lower bin boundary is
-              made slightly lower.
+              epsilon`` or ``1.0 + epsilon`` (where ``epsilon`` is the
+              smallest positive 64-bit float such that ``1.0 +
+              epsilson != 1.0``), whichever extends the boundary in
+              the appropriate direction. I.e. if *upper* is False then
+              the largest upper bin boundary is made slightly larger
+              and if *upper* is True then the lowest lower bin
+              boundary is made slightly lower.
 
             * A 1-d array of numbers.
         
@@ -5009,8 +5009,8 @@ may be accessed with the `nc_global_attributes`,
             * A 2-d array of numbers.
         
               The second dimension, that must have size 2, contains
-              the lower and upper bin boundaries. Different bins may
-              share a boundary, but may not overlap. If the
+              the lower and upper boundaries of each bin. The bins to
+              not have to be contigous, but must not overlap. If the
               *open_ends* parameter is True then the lowest lower bin
               boundary also defines a left-open (i.e. not bounded
               below) bin, and the largest upper bin boundary also
@@ -5057,43 +5057,57 @@ may be accessed with the `nc_global_attributes`,
      [110. 131. 124. 146.  87. 103.  57.  11.]
      [ 29.  59.  39.  70.  58.  72.   9.  17.]
      [  6.  36.  19.  35.  18.  37.  34.  13.]]
-    >>> g = f.digitize([4, 50, 100])                                           
-    >>> g
-    <CF Field: long_name=Bin index to which each 'specific_humidity' value belongs(latitude(5), longitude(8))
-    >>> print(g.array)
-    [[1 1 0 1 1 1 1 1]
-     [1 1 1 2 1 2 1 2]
-     [3 3 3 3 2 3 2 1]
-     [1 2 1 2 2 2 1 1]
-     [1 1 1 1 1 1 1 1]]    
-    >>> g.properties() 
-    {'Conventions': 'CF-1.7',
-     'bin_bounds': array([  4,  50,  50, 100]),
-     'bin_count': 4,
-     'bin_interval_type': 'lower: closed upper: open',
-     'bin_standard_name': 'specific_humidity',
-     'bin_units': '0.001',
-     'long_name': "Bin index to which each 'specific_humidity' value belongs"}
-
-    >>> g = f.digitize([[2, 6], [40, 100]])
+    >>> g = f.digitize([0, 50, 100, 150]) 
     >>> g
     <CF Field: long_name=Bin index to which each 'specific_humidity' value belongs(latitude(5), longitude(8))>
     >>> print(g.array)
-    [[-- --  1 -- -- -- -- --]
-     [-- --  2  2  2  2 --  2]
-     [ 3  3  3  3  2  3  2 --]
-     [--  2 --  2  2  2 -- --]
-     [-- -- -- -- -- -- -- --]]
+    [[0 0 0 0 0 0 0 0]
+     [0 0 0 1 0 1 0 1]
+     [2 2 2 2 1 2 1 0]
+     [0 1 0 1 1 1 0 0]
+     [0 0 0 0 0 0 0 0]]
     >>> g.properties()
     {'Conventions': 'CF-1.7',
-     'bin_bounds': array([  2,   6,  40, 100]),
-     'bin_count': 4,
+     'long_name': "Bin index to which each 'specific_humidity' value belongs",
+     'bin_bounds': array([  0,  50,  50, 100, 100, 150]),
+     'bin_count': 3,
      'bin_interval_type': 'lower: closed upper: open',
      'bin_standard_name': 'specific_humidity',
-     'bin_units': '0.001',
-     'long_name': "Bin index to which each 'specific_humidity' value belongs"}
+     'bin_units': '0.001 1'}
 
-    >>> g = f.digitize([2, 6, 45, 100], upper=True, open_ends=False)
+    >>> g = f.digitize([[10, 20], [40, 60], [100, 140]]) 
+    >>> print(g.array)                       
+    [[-- -- --  0  0 -- -- --]
+     [-- --  1 --  1 -- -- --]
+     [ 2  2  2 -- --  2  1  0]
+     [--  1 -- --  1 -- --  0]
+     [-- --  0 --  0 -- --  0]]
+    >>> g.properties()        
+    {'Conventions': 'CF-1.7',
+     'long_name': "Bin index to which each 'specific_humidity' value belongs",
+     'bin_bounds': array([ 10,  20,  40,  60, 100, 140]),
+     'bin_count': 3,
+     'bin_interval_type': 'lower: closed upper: open',
+     'bin_standard_name': 'specific_humidity',
+     'bin_units': '0.001 1'}
+    
+    >>> g = f.digitize([[10, 20], [40, 60], [100, 140]], open_ends=True)      
+    >>> print(g.array)                                               
+    [[ 0 --  0  1  1 -- -- --]
+     [-- --  2 --  2 --  0 --]
+     [ 3  3  3 -- --  3  2  1]
+     [--  2 -- --  2 --  0  1]
+     [ 0 --  1 --  1 -- --  1]]
+    >>> g.properties()                                           
+    {'Conventions': 'CF-1.7',
+     'long_name': "Bin index to which each 'specific_humidity' value belongs",
+     'bin_bounds': array([ 10,  20,  40,  60, 100, 140]),
+     'bin_count': 5,
+     'bin_interval_type': 'lower: closed upper: open',
+     'bin_standard_name': 'specific_humidity',
+     'bin_units': '0.001 1'}
+
+    >>> g = f.digitize([2, 6, 45, 100], upper=True)
     >>> g
     <CF Field: long_name=Bin index to which each 'specific_humidity' value belongs(latitude(5), longitude(8))>
     >>> print(g.array)
@@ -5104,12 +5118,12 @@ may be accessed with the `nc_global_attributes`,
      [ 0  1  1  1  1  1  1  1]]   
     >>> g.properties()
     {'Conventions': 'CF-1.7',
+     'long_name': "Bin index to which each 'specific_humidity' value belongs",
      'bin_bounds': array([  2,   6,   6,  45,  45, 100]),
      'bin_count': 3,
      'bin_interval_type': 'lower: open upper: closed',
      'bin_standard_name': 'specific_humidity',
-     'bin_units': '0.001',
-     'long_name': "Bin index to which each 'specific_humidity' value belongs"}
+     'bin_units': '0.001 1'}
 
     >>> g, bins = f.digitize(10, return_bins=True)        
     >>> bins
@@ -5130,13 +5144,23 @@ may be accessed with the `nc_global_attributes`,
      [110. 131. 124. 146.  87. 103.  57.  11.]
      [ 29.  59.  39.  70.  58.  72.   9.  17.]
      [  6.  36.  19.  35.  18.  37.  34.  13.]]
-    >>> g, bins = f.digitize(10, return_bins=True)        
+    >>> g = f.digitize(10)
     >>> print(g.array)  
-    [[0 2  0 0 1  2 1 1]
-     [1 2 -- 4 3 -- 0 4]
-     [7 8  8 9 5  6 3 0]
-     [1 3  2 4 3  4 0 0]
-     [0 2  1 2 1  2 2 0]]
+    [[ 0  2  0  0  1  2  1  1]
+     [ 1  2 --  4  3 --  0  4]
+     [ 7  8  8  9  5  6  3  0]
+     [ 1  3  2  4  3  4  0  0]
+     [ 0  2  1  2  1  2  2  0]]
+    >>> g.properties()    
+    {'Conventions': 'CF-1.7',
+     'long_name': "Bin index to which each 'specific_humidity' value belongs",
+     'bin_bounds': array([  3. ,  17.3,  17.3,  31.6,  31.6,  45.9,  45.9,  60.2,
+            60.2,  74.5,  74.5,  88.8,  88.8, 103.1, 103.1, 117.4, 117.4, 131.7,
+            131.7, 146. ]),
+     'bin_count': 10,
+     'bin_interval_type': 'lower: closed upper: open',
+     'bin_standard_name': 'specific_humidity',
+     'bin_units': '0.001 1'}
 
         '''
         if inplace:
@@ -5201,16 +5225,43 @@ may be accessed with the `nc_global_attributes`,
         return f
             
 
-    def asd(self, method, digitized, weights=None,
-                  measure=False, scale=None, mtol=1, ddof=1,
-                  radius='earth', return_indices=False, verbose=False):
-        '''TODO
+    def bin(self, method, digitized, weights=None, measure=False,
+            scale=None, mtol=1, ddof=1, radius='earth',
+            return_indices=False, verbose=False):
+        '''Collapse the data values that lie in multi-dimensional bins.
 
-    whose values are a statisitic of describing those original values that map to the index
+    The number of dimensions of the output binned data is equal to the
+    number of field constucts provided by the *digitized*
+    argument. Each such field constuct defines a sequence of bins and
+    provides indices to the bins that each value of another field
+    construct belongs. There is no upper limit to the number of
+    dimensions of the output binned data.
+        
+    The output bins are defined by the exterior product of the
+    one-dimensional bins of the digitized field constructs. For
+    example, if only one digitized field construct is given then the
+    histogram bins simply comprise the one-dimensional bins that it
+    defines; if there are two digitized field constructs then the
+    histogram bins comprise the two-dimensionsal matrix formed by all
+    possible combinations of the two sets of one-dimensional bins.
+
+    An output binned value is formed by collapsing (using the method
+    given by the *method* parameter) the elements of the data for
+    which the digitized field constucts collectively index that
+    bin. Note that it may be the case that not all output bins are
+    indexed by the digitized field constucts, and for these bins
+    missing data is returned.
+
+    The returned field construct will have a domain axis construct for
+    each dimension of the output bins, with corresponding dimension
+    coordinate constructs that define the bin boundaries.
+
+    Note that ``h = f.bin('sample_size', digitized)`` is equivalent to
+    ``h = f.histogram(digitized)``
 
     .. versionadded:: 3.0.2
 
-    .. seealso:: `collapse`, `digitize`, `weights`
+    .. seealso:: `collapse`, `digitize`, `histogram`, `weights`
 
     :Parameters:
 
@@ -5218,7 +5269,7 @@ may be accessed with the `nc_global_attributes`,
             The collapse method used to combine values that map to
             each cell of the output field construct. The following
             methods are available (see
-            https://ncas-cms.github.io/cf-python/tutorial.html#collapse-methods
+            https://ncas-cms.github.io/cf-python/beta/tutorial.html#collapse-methods
             for precise definitions):
 
             ============================  ============================
@@ -5281,7 +5332,8 @@ may be accessed with the `nc_global_attributes`,
         digitized: (sequence of) `Field`
             One or more field constructs that contain digitized data
             with corresponding metadata, as output by
-            `cf.Field.digitize`. For each field construct the data
+            `cf.Field.digitize`. Each field construct, which must have
+            the data shape as the field construct being histogrammed,
             contains indices of the bins to which each value of an
             original field construct belongs; and there must be
             ``bin_count`` and ``bin_bounds`` properties as defined by
@@ -5333,8 +5385,8 @@ may be accessed with the `nc_global_attributes`,
 
             Note that specifying volume weights via ``weights=['X',
             'Y', 'Z']`` or ``weights=['area', 'Z']`` will give
-            **incorrect volume cell measures if the vertical dimension
-            coordinates do not define the actual height or depth
+            **incorrect volume cell measures unless the vertical
+            dimension coordinates define the actual height or depth
             thickness of every cell in the domain**. In this case,
             ``weights='volume'`` should be used instead, which
             requires the field construct to have a "volume" cell
@@ -5393,26 +5445,125 @@ may be accessed with the `nc_global_attributes`,
               ``radius=cf.Data(6371200)``, ``radius=cf.Data(6371200,
               'm')``, ``radius=cf.Data(6371.2, 'km')``.
     
-        return_indices: `bool`, optional
-            If True then also return a field construct which contains,
-            for each value in the original field construct, the index
-            to the multidimensional bin (as defined by the digitized
-            field constructs) to which it corresponds.
-
     :Returns:
 
-        `Field`, [`Field`]
-            TODO.
-
-            If *return_indices* is True then also return a field
-            construct which contains, for each value in the original
-            field construct, the index to the multidimensional bin (as
-            defined by the digitized field constructs) to which it
-            corresponds.
+        `Field`
+            The field construct containing the binned values.
 
     **Examples:**
 
-        TODO
+    Find the range of values that lie in each bin:
+
+    >>> print(q)                                                                                                   
+    Field: specific_humidity (ncvar%q)
+    ----------------------------------
+    Data            : specific_humidity(latitude(5), longitude(8)) 0.001 1
+    Cell methods    : area: mean
+    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(8) = [22.5, ..., 337.5] degrees_east
+                    : time(1) = [2019-01-01 00:00:00]       
+    >>> print(q.array)                                                                                            
+    [[  7.  34.   3.  14.  18.  37.  24.  29.]
+     [ 23.  36.  45.  62.  46.  73.   6.  66.]
+     [110. 131. 124. 146.  87. 103.  57.  11.]
+     [ 29.  59.  39.  70.  58.  72.   9.  17.]
+     [  6.  36.  19.  35.  18.  37.  34.  13.]]
+    >>> q_indices = q.digitize(10)                                             
+    >>> b = q.bin('range', digitized=q_indices)                             
+    >>> print(b)                                                                                                  
+    Field: specific_humidity
+    ------------------------
+    Data            : specific_humidity(specific_humidity(10)) 0.001 1
+    Cell methods    : latitude: longitude: range
+    Dimension coords: specific_humidity(10) = [10.15, ..., 138.85000000000002] 0.001 1
+    >>> print(b.array)                                                                                            
+    [14. 11. 11. 13. 11.  0.  0.  0.  7.  0.]
+
+    Find various metrics describing how
+    ``tendency_of_sea_water_potential_temperature_expressed_as_heat_content``
+    data varies with ``sea_water_potential_temperature`` and
+    ``sea_water_salinity``:
+
+    >>> t
+    Field: sea_water_potential_temperature (ncvar%sea_water_potential_temperature)
+    ------------------------------------------------------------------------------
+    Data            : sea_water_potential_temperature(time(1), depth(1), latitude(5), longitude(8)) K
+    Cell methods    : area: mean time(1): mean
+    Dimension coords: time(1) = [2290-06-01 00:00:00] 360_day
+                    : depth(1) = [3961.89990234375] m
+                    : latitude(5) = [-1.875, ..., 3.125] degrees_north
+                    : longitude(8) = [75.0, ..., 83.75] degrees_east
+    Auxiliary coords: model_level_number(depth(1)) = [18]
+    >>> s
+    Field: sea_water_salinity (ncvar%sea_water_salinity)
+    ----------------------------------------------------
+    Data            : sea_water_salinity(time(1), depth(1), latitude(5), longitude(8)) psu
+    Cell methods    : area: mean time(1): mean
+    Dimension coords: time(1) = [2290-06-01 00:00:00] 360_day
+                    : depth(1) = [3961.89990234375] m
+                    : latitude(5) = [-1.875, ..., 3.125] degrees_north
+                    : longitude(8) = [75.0, ..., 83.75] degrees_east
+    Auxiliary coords: model_level_number(depth(1)) = [18]
+    >>> x
+    Field: tendency_of_sea_water_potential_temperature_expressed_as_heat_content (ncvar%tend)
+    -----------------------------------------------------------------------------------------
+    Data            : tendency_of_sea_water_potential_temperature_expressed_as_heat_content(time(1), depth(1), latitude(5), longitude(8)) W m-2
+    Cell methods    : area: mean time(1): mean
+    Dimension coords: time(1) = [2290-06-01 00:00:00] 360_day
+                    : depth(1) = [3961.89990234375] m
+                    : latitude(5) = [-1.875, ..., 3.125] degrees_north
+                    : longitude(8) = [75.0, ..., 83.75] degrees_east
+    Auxiliary coords: model_level_number(depth(1)) = [18]
+    >>> print(x.array)
+    [[[[-209.72  340.86   94.75  154.21   38.54 -262.75  158.22  154.58]
+       [ 311.67  245.91 -168.16   47.61 -219.66 -270.33  226.1    52.0 ]
+       [     -- -112.34  271.67  189.22    9.92  232.39  221.17  206.0 ]
+       [     --      --  -92.31 -285.57  161.55  195.89 -258.29    8.35]
+       [     --      --   -7.82 -299.79  342.32 -169.38  254.5   -75.4 ]]]]
+
+    >>> t_indices = t.digitize(6)
+    >>> s_indices = s.digitize(4)
+    >>> b = x.bin('mean', [t_indices, s_indices], weights=['X', 'Y', 'Z', 'T'])
+    >>> b
+    Field: tendency_of_sea_water_potential_temperature_expressed_as_heat_content
+    ----------------------------------------------------------------------------
+    Data            : tendency_of_sea_water_potential_temperature_expressed_as_heat_content(sea_water_salinity(4), sea_water_potential_temperature(6)) W m-2
+    Cell methods    : latitude: longitude: mean
+    Dimension coords: sea_water_salinity(4) = [6.3054151982069016, ..., 39.09366758167744] psu
+                    : sea_water_potential_temperature(6) = [278.1569468180338, ..., 303.18466695149743] K
+    >>> print(b)
+    [[-168.16      --      --  129.88  125.04    49.24]
+     [     --  112.45      --  161.83  220.67       --]
+     [     --  154.39 -270.33  342.32   -7.82  -219.66]
+     [     --   47.61  153.94 -163.39   -55.11 -170.88]]
+
+    >>> b = x.bin('integral', [t_indices, s_indices], weights=['X', 'Y', 'Z', 'T'], measure=True)
+    >>> b
+    Field: long_name=Integral of tendency_of_sea_water_potential_temperature_expressed_as_heat_content
+    --------------------------------------------------------------------------------------------------
+    Data            : long_name=Integral of tendency_of_sea_water_potential_temperature_expressed_as_heat_content(sea_water_salinity(4), sea_water_potential_temperature(6)) 86400 m3.kg.s-2
+    Cell methods    : latitude: longitude: sum
+    Dimension coords: sea_water_salinity(4) = [6.3054151982069016, ..., 39.09366758167744] psu
+                    : sea_water_potential_temperature(6) = [278.1569468180338, ..., 303.18466695149743] K
+    >>> print(b.array)
+    [[-3248849420288.0              --               --  5017197084672.0  7243526307840.0  2852639211520.0]
+     [              -- 6510366687232.0               --  6253326630912.0 12785788387328.0               --]
+     [              -- 5962883661824.0 -5222633570304.0  6603800051712.0  -150768402432.0 -4243793641472.0]
+     [              --  919988011008.0  8922435944448.0 -9467474214912.0 -2127805546496.0 -9899841945600.0]]
+
+    >>> b = x.bin('sample_size', [t_indices, s_indices])
+    >>> b
+    Field: number_of_observations
+    -----------------------------
+    Data            : number_of_observations(sea_water_salinity(4), sea_water_potential_temperature(6)) 1
+    Cell methods    : latitude: longitude: point
+    Dimension coords: sea_water_salinity(4) = [6.3054151982069016, ..., 39.09366758167744] psu
+                    : sea_water_potential_temperature(6) = [278.1569468180338, ..., 303.18466695149743] K
+    >>> print(b.array)
+    [[ 1 -- --  2  3  3]
+     [--  3 --  2  3 --]
+     [--  2  1  1  1  1]
+     [--  1  3  3  2  3]]
 
         '''
         if verbose:
@@ -5454,7 +5605,7 @@ may be accessed with the `nc_global_attributes`,
 
         self_shape = self.shape
             
-        for f in digitized:
+        for f in digitized[::-1]:
             if verbose:
                 print('    Digitized field:', repr(f)) # pragma: no cover
 
@@ -5504,7 +5655,8 @@ may be accessed with the `nc_global_attributes`,
             dim.set_bounds(Bounds(data=bounds_data))
 
             if verbose:
-                print('    {} bins: {!r}'.format(dim.identity(), bounds_data)) # pragma: no cover
+                print('    {} bins: {!r}'.format(
+                    dim.identity(), bounds_data)) # pragma: no cover
             
             # Set domain axis and dimension coordinate for bins
             axis = out.set_construct(DomainAxis(dim.size))            
@@ -5529,36 +5681,36 @@ may be accessed with the `nc_global_attributes`,
 
         c = self.copy()
 
-        if return_indices:
-            # --------------------------------------------------------
-            # Create a field for storing the bin indices of each value
-            # --------------------------------------------------------
-            d = self.copy()
-            shape = d.shape
-            d.del_data(None)
-            d.Units = Units()
-            n_indices = len(bin_indices)
-            axis = d.set_construct(DomainAxis(n_indices))
-            data = Data.masked_all(shape=(n_indices,) + self.shape,
-                                   dtype=int, units=None)
-
-            d.set_data(data, axes=(axis,) + d.get_data_axes(), copy=False)
-
-            d.hardmask = False
-            
-            aux = AuxiliaryCoordinate()
-            aux.long_name = 'Bin name'            
-            data = Data([dim.identity(strict=True) for dim in dims])
-            aux.set_data(data, copy=False)
-            d.set_construct(aux, axes=axis, copy=False)
-
-            d.del_property('standard_name', None)
-            d.long_name = 'Bin index to which each {!r} value belongs'.format(
-                self.identity())
-
-            for key in d.cell_methods:
-                d.del_construct(key)
-        #--- End: if
+#        if return_indices:
+#            # --------------------------------------------------------
+#            # Create a field for storing the bin indices of each value
+#            # --------------------------------------------------------
+#            d = self.copy()
+#            shape = d.shape
+#            d.del_data(None)
+#            d.Units = Units()
+#            n_indices = len(bin_indices)
+#            axis = d.set_construct(DomainAxis(n_indices))
+#            data = Data.masked_all(shape=(n_indices,) + self.shape,
+#                                   dtype=int, units=None)
+#
+#            d.set_data(data, axes=(axis,) + d.get_data_axes(), copy=False)
+#
+#            d.hardmask = False
+#            
+#            aux = AuxiliaryCoordinate()
+#            aux.long_name = 'Bin name'            
+#            data = Data([dim.identity(strict=True) for dim in dims])
+#            aux.set_data(data, copy=False)
+#            d.set_construct(aux, axes=axis, copy=False)
+#
+#            d.del_property('standard_name', None)
+#            d.long_name = 'Bin index to which each {!r} value belongs'.format(
+#                self.identity())
+#
+#            for key in d.cell_methods:
+#                d.del_construct(key)
+#        #--- End: if
         
         if weights is not None:
             if not measure and scale is None:
@@ -5581,7 +5733,7 @@ may be accessed with the `nc_global_attributes`,
             print('    Weights:', repr(weights)) # pragma: no cover
             print('    Processed ({}) bins:'.format(', '.join(names)),
                   end=" ") # pragma: no cover
-                
+            
         for i in zip(*y):
             if verbose:
                 print(i, end=" ")
@@ -5598,12 +5750,15 @@ may be accessed with the `nc_global_attributes`,
 
             units = result.Units
 
-            if return_indices:
-                b.insert_dimension(0, inplace=True)
-                for n, ind in enumerate(i):
-                    d.data[n] = d.data[n].where(b, ind)
+#            if return_indices:
+#                b.insert_dimension(0, inplace=True)
+#                for n, ind in enumerate(i):
+#                    d.data[n] = d.data[n].where(b, ind)
         #--- End: for
 
+        if verbose:
+            print()
+        
         # Set correct units
         out.override_units(units, inplace=True)
         out.hardmask = True
@@ -5622,35 +5777,77 @@ may be accessed with the `nc_global_attributes`,
                 continue
 
             standard_names.append(standard_name)
-        
+
         if len(standard_names) == len(domain_axes):
             cell_method = CellMethod(axes=sorted(standard_names),
-                                     method=method)
+                                     method=_collapse_cell_methods[method])
             out.set_construct(cell_method, copy=False)
+            
+        if method == 'integral':
+            name = self.get_property('standard_name',
+                                     self.get_property('long_name', None))
+
+            if name is not None:
+                out.long_name = 'Integral of '+name
+                
+            out.del_property('standard_name', None)
 
         # Return
-        if return_indices:
-            d.hardmask = True
-            return out, d
-
+#        if return_indices:
+#            d.hardmask = True
+#            return out, d
         return out
-            
-    def histogram(self, digitized):
-        '''TODO
 
-    Note that ``h = f.histogram(digitzed)`` is an alias for 
-    ``h = f.asd('sample_size', digitized)``.
+    
+    def histogram(self, digitized):
+        '''Return a multi-dimensional histogram of the data.
+
+    The number of dimensions of the histogram is equal to the number
+    of field constucts provided by the *digitized* argument. Each such
+    field constuct defines a sequence of bins and provides indices to
+    the bins that each value of another field construct belongs.
+    There is no upper limit to the number of dimensions of the
+    histogram.
+        
+    The output histogram bins are defined by the exterior product of
+    the one-dimensional bins of the digitized field constructs. For
+    example, if only one digitized field construct is given then the
+    histogram bins simply comprise the one-dimensional bins that it
+    defines; if there are two digitized field constructs then the
+    histogram bins comprise the two-dimensionsal matrix formed by all
+    possible combinations of the two sets of one-dimensional
+    bins.
+
+    An output value for an output histogram bin is formed by counting
+    the number cells for which the digitized field constucts
+    collectively index that bin. Note that it may be the case that not
+    all output bins are indexed by the digitized field constucts,
+    and for these bins missing data is returned.
+
+    Therefore, the creation of a one-dimensional histogram of the
+    field construct's own data must based on a digitized version of
+    itself. However, a one-dimensional histogram can also be based on
+    the digitized data of another field construct representing a
+    different physical quantity.
+
+    The returned field construct will have a domain axis construct for
+    each dimension of the histogram, with corresponding dimension
+    coordinate constructs that define the bin boundaries.
+
+    Note that ``h = f.histogram(digitized)`` is equivalent to ``h =
+    f.bin('sample_size', digitized)``.
         
     .. versionadded:: 3.0.2
 
-    .. seealso:: `asd`, `digitize`
+    .. seealso:: `bin`, `collapse`, `digitize`
 
     :Parameters:
 
         digitized: (sequence of) `Field`
             One or more field constructs that contain digitized data
             with corresponding metadata, as output by
-            `cf.Field.digitize`. For each field construct the data
+            `cf.Field.digitize`. Each field construct, which must have
+            the data shape as the field construct being histogrammed,
             contains indices of the bins to which each value of an
             original field construct belongs; and there must be
             ``bin_count`` and ``bin_bounds`` properties as defined by
@@ -5663,15 +5860,38 @@ may be accessed with the `nc_global_attributes`,
 
     :Returns:
 
-        `Field`
-            TODO.
+        `Field`            
+            The field construct containing the histogram.
 
     **Examples:**
 
-        TODO
+    >>> print(q)                                                                                                   
+    Field: specific_humidity (ncvar%q)
+    ----------------------------------
+    Data            : specific_humidity(latitude(5), longitude(8)) 0.001 1
+    Cell methods    : area: mean
+    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(8) = [22.5, ..., 337.5] degrees_east
+                    : time(1) = [2019-01-01 00:00:00]       
+    >>> print(q.array)                                                                                            
+    [[  7.  34.   3.  14.  18.  37.  24.  29.]
+     [ 23.  36.  45.  62.  46.  73.   6.  66.]
+     [110. 131. 124. 146.  87. 103.  57.  11.]
+     [ 29.  59.  39.  70.  58.  72.   9.  17.]
+     [  6.  36.  19.  35.  18.  37.  34.  13.]]
+    >>> q_indices = q.digitize(10)                                             
+    >>> h = q.histogram(q_indices)                             
+    >>> print(h) 
+    Field: number_of_observations
+    -----------------------------
+    Data            : number_of_observations(specific_humidity(10)) 1
+    Cell methods    : latitude: longitude: point
+    Dimension coords: specific_humidity(10) = [10.15, ..., 138.85000000000002] 0.001 1
+    >>> print(h.array)                                                                                             
+    [9 7 9 4 5 1 1 1 2 1]
 
         '''
-        return self.asd('sample_size', digitized=digitized)
+        return self.bin('sample_size', digitized=digitized)
             
 
     def del_construct(self, identity, default=ValueError()):
@@ -6001,7 +6221,7 @@ may be accessed with the `nc_global_attributes`,
     
     The following collapse methods are available, over any subset of
     the domain axes (see
-    https://ncas-cms.github.io/cf-python/tutorial.html#collapse-methods
+    https://ncas-cms.github.io/cf-python/beta/tutorial.html#collapse-methods
     for precise definitions):
 
     ============================  ====================================

@@ -90,14 +90,14 @@
 <h1>cf.Data.mask_invalid<a class="headerlink" href="#cf-data-mask-invalid" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Data.mask_invalid">
-<code class="descclassname">Data.</code><code class="descname">mask_invalid</code><span class="sig-paren">(</span><em>inplace=False</em>, <em>i=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/data/data.py#L9308"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.mask_invalid" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Data.</code><code class="descname">mask_invalid</code><span class="sig-paren">(</span><em>inplace=False</em>, <em>i=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/data/data.py#L9557"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.mask_invalid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Mask the array where invalid values occur (NaN or inf).</p>
 <p>Note that:</p>
 <ul class="simple">
 <li>Invalid values in the results of arithmetic operations may only
-occur if the raising of <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FloatingPointError" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FloatingPointError</span></code></a> exceptions has been
+occur if the raising of <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FloatingPointError" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FloatingPointError</span></code></a> exceptions has been
 suppressed by <a class="reference internal" href="cf.Data.seterr.html#cf.Data.seterr" title="cf.Data.seterr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.seterr</span></code></a>.</li>
-<li>If the raising of <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FloatingPointError" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FloatingPointError</span></code></a> exceptions has been
+<li>If the raising of <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FloatingPointError" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FloatingPointError</span></code></a> exceptions has been
 allowed then invalid values in the results of arithmetic
 operations it is possible for them to be automatically converted
 to masked values, depending on the setting of
@@ -113,8 +113,8 @@ might be faster than calling <a class="reference internal" href="#cf.Data.mask_i
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If True then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dd><p class="first last">If True then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
 </dd>
 <dt>i: deprecated at version 3.0.0</dt>
 <dd><p class="first last">Use <em>inplace</em> parameter instead.</p>

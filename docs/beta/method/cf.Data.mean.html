@@ -90,7 +90,7 @@
 <h1>cf.Data.mean<a class="headerlink" href="#cf-data-mean" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Data.mean">
-<code class="descclassname">Data.</code><code class="descname">mean</code><span class="sig-paren">(</span><em>axes=None</em>, <em>squeeze=False</em>, <em>mtol=1</em>, <em>weights=None</em>, <em>inplace=False</em>, <em>i=False</em>, <em>_preserve_partitions=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/data/data.py#L7605"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.mean" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Data.</code><code class="descname">mean</code><span class="sig-paren">(</span><em>axes=None</em>, <em>squeeze=False</em>, <em>mtol=1</em>, <em>weights=None</em>, <em>inplace=False</em>, <em>i=False</em>, <em>_preserve_partitions=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/data/data.py#L7758"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.mean" title="Permalink to this definition">¶</a></dt>
 <dd><p>Collapse axes with their weighted mean.</p>
 <p>The weighted mean, <span class="math notranslate nohighlight">\(\mu\)</span>, for array elements <span class="math notranslate nohighlight">\(x_i\)</span> and
 corresponding weights elements <span class="math notranslate nohighlight">\(w_i\)</span> is</p>
@@ -108,7 +108,7 @@ omitted from the calculation.</p>
 used. Each axis is identified by its integer position. No
 axes are collapsed if <em>axes</em> is an empty sequence.</p>
 </dd>
-<dt>squeeze: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>squeeze: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then collapsed axes are removed. By default the
 axes which are collapsed are left in the result as axes
 with size 1, meaning that the result is guaranteed to
@@ -151,8 +151,8 @@ occurs whenever any of its contributing input array
 elements are missing data. Any intermediate value is
 permitted.</p>
 </dd>
-<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If True then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dd><p class="first last">If True then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
 </dd>
 <dt>i: deprecated at version 3.0.0</dt>
 <dd><p class="first last">Use <em>inplace</em> parameter instead.</p>

@@ -90,7 +90,7 @@
 <h1>cf.Field.collapse<a class="headerlink" href="#cf-field-collapse" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.collapse">
-<code class="descclassname">Field.</code><code class="descname">collapse</code><span class="sig-paren">(</span><em>method</em>, <em>axes=None</em>, <em>squeeze=False</em>, <em>mtol=1</em>, <em>weights=None</em>, <em>ddof=1</em>, <em>a=None</em>, <em>inplace=False</em>, <em>group=None</em>, <em>regroup=False</em>, <em>within_days=None</em>, <em>within_years=None</em>, <em>over_days=None</em>, <em>over_years=None</em>, <em>coordinate='mid_range'</em>, <em>group_by='coords'</em>, <em>group_span=None</em>, <em>group_contiguous=None</em>, <em>verbose=False</em>, <em>_create_zero_size_cell_bounds=False</em>, <em>_update_cell_methods=True</em>, <em>i=False</em>, <em>_debug=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/field.py#L5298"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.collapse" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">collapse</code><span class="sig-paren">(</span><em>method</em>, <em>axes=None</em>, <em>squeeze=False</em>, <em>mtol=1</em>, <em>weights=None</em>, <em>ddof=1</em>, <em>a=None</em>, <em>inplace=False</em>, <em>group=None</em>, <em>regroup=False</em>, <em>within_days=None</em>, <em>within_years=None</em>, <em>over_days=None</em>, <em>over_years=None</em>, <em>coordinate='mid_range'</em>, <em>group_by='coords'</em>, <em>group_span=None</em>, <em>group_contiguous=None</em>, <em>measure=False</em>, <em>scale=None</em>, <em>radius='earth'</em>, <em>verbose=False</em>, <em>_create_zero_size_cell_bounds=False</em>, <em>_update_cell_methods=True</em>, <em>i=False</em>, <em>_debug=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/field.py#L6157"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.collapse" title="Permalink to this definition">¶</a></dt>
 <dd><p>Collapse axes of the field.</p>
 <p>Collapsing one or more dimensions reduces their size and replaces
 the data along those axes with representative statistical
@@ -108,7 +108,7 @@ completely (i.e. to size 1) with a given collapse method.</p>
 </div>
 </dd>
 </dl>
-<p>The collapse can be applied to only a subset of the field
+<p>The collapse can also be applied to any subset of the field
 construct’s dimensions. In this case, the domain axis and
 coordinate constructs for the non-collapsed dimensions remain the
 same. This is implemented either with the axes keyword, or with a
@@ -141,18 +141,20 @@ coordinate reference system.</p>
 <dl class="docutils">
 <dt><em>Example:</em></dt>
 <dd><p class="first">Find the horizontal maximum using the special identity ‘area’:</p>
-<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span><span class="o">=</span><span class="n">a</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;area: maximum&#39;</span><span class="p">)</span>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;area: maximum&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd>
 </dl>
 <p><strong>Collapse methods</strong></p>
 <p>The following collapse methods are available, over any subset of
-the domain axes:</p>
+the domain axes (see
+<a class="reference external" href="https://ncas-cms.github.io/cf-python/beta/tutorial.html#collapse-methods">https://ncas-cms.github.io/cf-python/beta/tutorial.html#collapse-methods</a>
+for precise definitions):</p>
 <table border="1" class="docutils">
 <colgroup>
-<col width="31%" />
-<col width="69%" />
+<col width="44%" />
+<col width="56%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Method</th>
@@ -166,84 +168,67 @@ the domain axes:</p>
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'minimum'</span></code></td>
 <td>The minimum of the values.</td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'sum'</span></code></td>
-<td>The sum of the values.</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'mid_range'</span></code></td>
-<td>The average of the maximum and the minimum of the
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'maximum_absolute_value'</span></code></td>
+<td>The maximum of the absolute
 values.</td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'range'</span></code></td>
-<td>The absolute difference between the maximum and
-the minimum of the values.</td>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'minimum_absolute_value'</span></code></td>
+<td>The minimum of the absolute
+values.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'mid_range'</span></code></td>
+<td>The average of the maximum
+and the minimum of the
+values.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'range'</span></code></td>
+<td>The absolute difference
+between the maximum and the
+minimum of the values.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'sum'</span></code></td>
+<td>The sum of the values</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'sum_of_squares'</span></code></td>
+<td>The sum of the squares of
+values.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'integral'</span></code></td>
+<td>The integral of values.</td>
 </tr>
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'mean'</span></code></td>
-<td><p class="first">The unweighted mean of <span class="math notranslate nohighlight">\(N\)</span> values
-<span class="math notranslate nohighlight">\(x_i\)</span> is</p>
-<div class="math notranslate nohighlight">
-\[\mu=\frac{1}{N}\sum_{i=1}^{N} x_i\]</div>
-<p>The <span class="xref std std-ref">weighted</span> mean of
-<span class="math notranslate nohighlight">\(N\)</span> values <span class="math notranslate nohighlight">\(x_i\)</span> with
-corresponding weights <span class="math notranslate nohighlight">\(w_i\)</span> is</p>
-<div class="math notranslate nohighlight">
-\[\hat{\mu}=\frac{1}{V_{1}}
-\sum_{i=1}^{N} w_i
-x_i\]</div>
-<p class="last">where <span class="math notranslate nohighlight">\(V_{1}=\sum_{i=1}^{N} w_i\)</span>, the
-sum of the weights.</p>
-</td>
+<td>The weighted or unweighted
+mean of the values.</td>
 </tr>
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'variance'</span></code></td>
-<td><p class="first">The unweighted variance of <span class="math notranslate nohighlight">\(N\)</span> values
-<span class="math notranslate nohighlight">\(x_i\)</span> and with <span class="math notranslate nohighlight">\(N-ddof\)</span> degrees
-of freedom (<span class="math notranslate nohighlight">\(ddof\ge0\)</span>) is</p>
-<div class="math notranslate nohighlight">
-\[s_{N-ddof}^{2}=\frac{1}{N-ddof}
-\sum_{i=1}^{N} (x_i - \mu)^2\]</div>
-<p>The unweighted biased estimate of the
-variance (<span class="math notranslate nohighlight">\(s_{N}^{2}\)</span>) is given by
-<span class="math notranslate nohighlight">\(ddof=0\)</span> and the unweighted unbiased
-estimate of the variance using Bessel’s
-correction (<span class="math notranslate nohighlight">\(s^{2}=s_{N-1}^{2}\)</span>) is
-given by <span class="math notranslate nohighlight">\(ddof=1\)</span>.</p>
-<p>The <span class="xref std std-ref">weighted</span> biased
-estimate of the variance of <span class="math notranslate nohighlight">\(N\)</span> values
-<span class="math notranslate nohighlight">\(x_i\)</span> with corresponding weights
-<span class="math notranslate nohighlight">\(w_i\)</span> is</p>
-<div class="math notranslate nohighlight">
-\[\hat{s}_{N}^{2}=\frac{1}{V_{1}}
-\sum_{i=1}^{N}
-w_i(x_i -
-\hat{\mu})^{2}\]</div>
-<p>The corresponding <span class="xref std std-ref">weighted</span>
-unbiased estimate of the variance is</p>
-<div class="math notranslate nohighlight">
-\[\hat{s}^{2}=\frac{1}{V_{1} -
-(V_{1}/V_{2})}
-\sum_{i=1}^{N}
-w_i(x_i -
-\hat{\mu})^{2}\]</div>
-<p class="last">where <span class="math notranslate nohighlight">\(V_{2}=\sum_{i=1}^{N} w_i^{2}\)</span>,
-the sum of the squares of weights. In both
-cases, the weights are assumed to be
-non-random reliability weights, as
-opposed to frequency weights.</p>
-</td>
+<td>The weighted or unweighted
+variance of the values, with
+a given number of degrees of
+freedom.</td>
 </tr>
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'standard_deviation'</span></code></td>
-<td>The variance is the square root of the variance.</td>
+<td>The square root of the
+variance.</td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'sample_size'</span></code></td>
-<td>The sample size, <span class="math notranslate nohighlight">\(N\)</span>, as would be used for
-other statistical calculations.</td>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'root_mean_square'</span></code></td>
+<td>The square root of the
+weighted or unweighted mean
+of the squares of the
+values.</td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'sum_of_weights'</span></code></td>
-<td>The sum of weights, <span class="math notranslate nohighlight">\(V_{1}\)</span>, as would be
-used for other statistical calculations.</td>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'sample_size'</span></code></td>
+<td>The sample size, i.e. the
+number of non-missing
+values.</td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'sum_of_weights2'</span></code></td>
-<td>The sum of squares of weights, <span class="math notranslate nohighlight">\(V_{2}\)</span>, as
-would be used for other statistical calculations.</td>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'sum_of_weights'</span></code></td>
+<td>The sum of weights, as would
+be used for other calculations.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'sum_of_weights2'</span></code></td>
+<td>The sum of squares of
+weights, as would be used
+for other calculations.</td>
 </tr>
 </tbody>
 </table>
@@ -472,15 +457,15 @@ deviations with two separate collapse calls:</p>
 </div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="cf.Field.weights.html#cf.Field.weights" title="cf.Field.weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">weights</span></code></a>, <a class="reference internal" href="cf.Field.weights.html#cf.Field.weights" title="cf.Field.weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">weights</span></code></a>, <a class="reference internal" href="cf.Field.max.html#cf.Field.max" title="cf.Field.max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max</span></code></a>, <a class="reference internal" href="cf.Field.mean.html#cf.Field.mean" title="cf.Field.mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean</span></code></a>, <a class="reference internal" href="cf.Field.mid_range.html#cf.Field.mid_range" title="cf.Field.mid_range"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mid_range</span></code></a>,
-<a class="reference internal" href="cf.Field.min.html#cf.Field.min" title="cf.Field.min"><code class="xref py py-obj docutils literal notranslate"><span class="pre">min</span></code></a>, <a class="reference internal" href="cf.Field.range.html#cf.Field.range" title="cf.Field.range"><code class="xref py py-obj docutils literal notranslate"><span class="pre">range</span></code></a>, <a class="reference internal" href="cf.Field.sample_size.html#cf.Field.sample_size" title="cf.Field.sample_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_size</span></code></a>, <a class="reference internal" href="cf.Field.sd.html#cf.Field.sd" title="cf.Field.sd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sd</span></code></a>, <a class="reference internal" href="cf.Field.sum.html#cf.Field.sum" title="cf.Field.sum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sum</span></code></a>, <a class="reference internal" href="cf.Field.var.html#cf.Field.var" title="cf.Field.var"><code class="xref py py-obj docutils literal notranslate"><span class="pre">var</span></code></a></p>
+<p class="last"><a class="reference internal" href="cf.Field.weights.html#cf.Field.weights" title="cf.Field.weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">weights</span></code></a>, <a class="reference internal" href="cf.Field.max.html#cf.Field.max" title="cf.Field.max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max</span></code></a>, <a class="reference internal" href="cf.Field.mean.html#cf.Field.mean" title="cf.Field.mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean</span></code></a>, <a class="reference internal" href="cf.Field.mid_range.html#cf.Field.mid_range" title="cf.Field.mid_range"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mid_range</span></code></a>, <a class="reference internal" href="cf.Field.min.html#cf.Field.min" title="cf.Field.min"><code class="xref py py-obj docutils literal notranslate"><span class="pre">min</span></code></a>,
+<a class="reference internal" href="cf.Field.range.html#cf.Field.range" title="cf.Field.range"><code class="xref py py-obj docutils literal notranslate"><span class="pre">range</span></code></a>, <a class="reference internal" href="cf.Field.sample_size.html#cf.Field.sample_size" title="cf.Field.sample_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_size</span></code></a>, <a class="reference internal" href="cf.Field.sd.html#cf.Field.sd" title="cf.Field.sd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sd</span></code></a>, <a class="reference internal" href="cf.Field.sum.html#cf.Field.sum" title="cf.Field.sum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sum</span></code></a>, <a class="reference internal" href="cf.Field.var.html#cf.Field.var" title="cf.Field.var"><code class="xref py py-obj docutils literal notranslate"><span class="pre">var</span></code></a></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>method: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt>
+<dt>method: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt>
 <dd><p class="first">Define the collapse method. All of the axes specified by
 the <em>axes</em> parameter are collapsed simultaneously by this
 method. The method is given by one of the following
@@ -562,7 +547,7 @@ multiannual means of calendar monthly minima:</p>
 </pre></div>
 </div>
 </dd>
-<dt>axes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dt>axes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
 <dd><p class="first">The axes to be collapsed, defined by those which would be
 selected by passing each given axis description to a call
 of the field construct’s <a class="reference internal" href="cf.Field.domain_axis.html#cf.Field.domain_axis" title="cf.Field.domain_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axis</span></code></a> method. For
@@ -597,14 +582,15 @@ then it is assumed that the X and Y axes are intended.</p>
 </dl>
 </dd>
 <dt>weights: optional</dt>
-<dd><p class="first">Specify the weights for the collapse. <strong>By default the
-collapse is unweighted</strong>. The weights are those that would
-be returned by this call of the field construct’s
+<dd><p class="first">Specify the weights for the collapse. <strong>By default all
+collapses are unweighted</strong>. The weights are those that
+would be returned by this call of the field construct’s
 <a class="reference internal" href="cf.Field.weights.html#cf.Field.weights" title="cf.Field.weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">weights</span></code></a> method: <code class="docutils literal notranslate"><span class="pre">f.weights(weights,</span>
-<span class="pre">components=True)</span></code>. See <a class="reference internal" href="cf.Field.weights.html#cf.Field.weights" title="cf.Field.weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.weights</span></code></a> for details.
-By default <em>weights</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (<code class="docutils literal notranslate"><span class="pre">f.weights(None,</span>
-<span class="pre">components=True)</span></code> creates equal weights for all
-elements).</p>
+<span class="pre">measure=measure,</span> <span class="pre">scale=scale,</span> <span class="pre">components=True)</span></code>. See the
+<em>measure</em> and <em>scale</em> parameters and <a class="reference internal" href="cf.Field.weights.html#cf.Field.weights" title="cf.Field.weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.weights</span></code></a>
+for details.</p>
+<p>By default <em>weights</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, resulting in unweighted
+calculations.</p>
 <dl class="last docutils">
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last">To specify weights based on cell areas use
@@ -614,15 +600,45 @@ elements).</p>
 <dd><p class="first last">To specify weights based on cell areas and linearly in
 time you could set <code class="docutils literal notranslate"><span class="pre">weights=('area',</span> <span class="pre">'T')</span></code>.</p>
 </dd>
+</dl>
+</dd>
+<dt>measure: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dd><p class="first">Create weights which are cell measures, i.e. which
+describe actual cell sizes (e.g. cell area) with
+appropriate units (e.g. metres squared). By default the
+weights are normalized and have arbitrary units.</p>
+<p>Cell measures can be created for any combination of
+axes. For example, cell measures for a time axis are the
+time span for each cell with canonical units of seconds;
+cell measures for the combination of four axes
+representing time and three dimensional space could have
+canonical units of metres cubed seconds.</p>
+<p>When collapsing with the <code class="docutils literal notranslate"><span class="pre">'integral'</span></code> method, <em>measure</em>
+must be True, and the units of the weights are
+incorporated into the units of the returned field
+construct.</p>
+<p class="last">Note that specifying volume weights via <code class="docutils literal notranslate"><span class="pre">weights=['X',</span>
+<span class="pre">'Y',</span> <span class="pre">'Z']</span></code> or <code class="docutils literal notranslate"><span class="pre">weights=['area',</span> <span class="pre">'Z']</span></code> will give
+<strong>incorrect volume cell measures if the vertical dimension
+coordinates do not define the actual height or depth
+thickness of every cell in the domain</strong>. In this case,
+<code class="docutils literal notranslate"><span class="pre">weights='volume'</span></code> should be used instead, which
+requires the field construct to have a “volume” cell
+measure construct.</p>
+</dd>
+<dt>scale: number, optional</dt>
+<dd><p class="first">If set to a positive number then scale the weights so that
+they are less than or equal to that number. By default the
+weights are scaled to lie between 0 and 1 (i.e.  <em>scale</em>
+is 1), and have arbitrary units.</p>
+<dl class="last docutils">
 <dt><em>Parameter example:</em></dt>
-<dd><p class="first last">To automatically detect the best weights available for
-all axes from the metadata: <code class="docutils literal notranslate"><span class="pre">weights='auto'</span></code>. See
-<a class="reference internal" href="cf.Field.weights.html#cf.Field.weights" title="cf.Field.weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.weights</span></code></a> for details on how the weights are
-derived in this case.</p>
+<dd><p class="first last">To scale all weights so that they lie between 0 and 0.5:
+<code class="docutils literal notranslate"><span class="pre">scale=0.5</span></code>.</p>
 </dd>
 </dl>
 </dd>
-<dt>squeeze: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>squeeze: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then size 1 collapsed axes are removed from the
 output data array. By default the axes which are collapsed
 are retained in the result’s data array.</p>
@@ -632,7 +648,7 @@ are retained in the result’s data array.</p>
 to contain missing data when contributing to an individual
 output array element. Where this fraction exceeds <em>mtol</em>,
 missing data is returned. The default is 1, meaning that a
-missing datum in the output array only occurs when its
+missing datum in the output array occurs when its
 contributing input array elements are all missing data. A
 value of 0 means that a missing datum in the output array
 occurs whenever any of its contributing input array
@@ -657,7 +673,7 @@ formula with (N-1) in the denominator to avoid the bias
 caused by the use of the sample mean (Bessel’s
 correction).</p>
 </dd>
-<dt>coordinate: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dt>coordinate: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
 <dd><p class="first">Set how the cell coordinate values for collapsed axes are
 defined. This has no effect on the cell bounds for the
 collapsed axes, which always represent the extrema of the
@@ -822,7 +838,7 @@ group it will be in.</li>
 </div></blockquote>
 <blockquote>
 <div><ul>
-<li><p class="first">An <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> defining the number of elements in each
+<li><p class="first">An <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> defining the number of elements in each
 group. The first group starts with the first axis
 element and spans the defined number of consecutive
 elements. Each susbsequent group immediately follows
@@ -880,7 +896,7 @@ in the array will not be in any group.</li>
 </ul>
 </div></blockquote>
 </dd>
-<dt>group_by: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dt>group_by: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
 <dd><p class="first">Specify how coordinates are assigned to the groups defined
 by the <em>group</em>, <em>within_days</em> or <em>within_years</em>
 parameter. Ignored unless one of these parameters is a
@@ -927,10 +943,10 @@ contiguous, use the <em>group_contiguous</em> parameter.</li>
 <p>The <em>group_span</em> parameter may be one of:</p>
 <blockquote>
 <div><ul>
-<li><p class="first"><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>. Ignore groups whose span is less than the size
+<li><p class="first"><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>. Ignore groups whose span is less than the size
 defined by the <em>group</em> parameter. Only applicable if
 the <em>group</em> parameter is set to a <a class="reference internal" href="../classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>,
-<a class="reference internal" href="../classes/cf.TimeDuration.html#cf.TimeDuration" title="cf.TimeDuration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TimeDuration</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> object. If the <em>group</em>
+<a class="reference internal" href="../classes/cf.TimeDuration.html#cf.TimeDuration" title="cf.TimeDuration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TimeDuration</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> object. If the <em>group</em>
 parameter is a (sequence of) <a class="reference internal" href="../classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> then one of the
 other options is required.</p>
 <blockquote>
@@ -977,12 +993,12 @@ months: <code class="docutils literal notranslate"><span class="pre">group=cf.se
 </div></blockquote>
 <blockquote class="last">
 <div><ul class="simple">
-<li><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>. Ignore groups that contain fewer than the given
+<li><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>. Ignore groups that contain fewer than the given
 number of elements.</li>
 </ul>
 </div></blockquote>
 </dd>
-<dt>group_contiguous: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt>
+<dt>group_contiguous: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt>
 <dd><p class="first">Only applicable to grouped collapses (i.e. the <em>group</em>,
 <em>within_days</em> or <em>within_years</em> parameter is being
 used). If set to 1 or 2 then ignore groups whose cells are
@@ -1026,7 +1042,7 @@ contiguous group containing overlapping cells:
 </dl>
 </div></blockquote>
 </dd>
-<dt>regroup: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>regroup: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first">For grouped collapses, return a <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.17)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.array</span></code></a> of integers
 which identifies the groups defined by the <em>group</em>
 parameter. The array is interpreted as for a numpy array
@@ -1284,7 +1300,7 @@ not be the case; see <code class="xref py py-obj docutils literal notranslate"><
 partitioned into groups, and may be one of:</p>
 <blockquote>
 <div><ul class="simple">
-<li><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>. This is the default. Each collection of</li>
+<li><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>. This is the default. Each collection of</li>
 </ul>
 <p><strong>matching</strong> elements forms a group.</p>
 </div></blockquote>
@@ -1414,7 +1430,7 @@ case; see <code class="xref py py-obj docutils literal notranslate"><span class=
 partitioned into groups, and may be one of:</p>
 <blockquote>
 <div><ul class="simple">
-<li><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>. Each collection of <strong>matching</strong> elements forms
+<li><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>. Each collection of <strong>matching</strong> elements forms
 a group. This is the default.</li>
 </ul>
 </div></blockquote>
@@ -1491,8 +1507,8 @@ group it will be in.</li>
 </ul>
 </div></blockquote>
 </dd>
-<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If True then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dd><p class="first last">If True then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
 </dd>
 </dl>
 <p>kwargs: deprecated at version 3.0.0</p>

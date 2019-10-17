@@ -90,7 +90,7 @@
 <h1>cf.Field.regridc<a class="headerlink" href="#cf-field-regridc" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.regridc">
-<code class="descclassname">Field.</code><code class="descname">regridc</code><span class="sig-paren">(</span><em>dst</em>, <em>axes</em>, <em>method</em>, <em>use_src_mask=True</em>, <em>use_dst_mask=False</em>, <em>fracfield=False</em>, <em>axis_order=None</em>, <em>ignore_degenerate=True</em>, <em>inplace=False</em>, <em>i=False</em>, <em>_compute_field_mass=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/field.py#L13216"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.regridc" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">regridc</code><span class="sig-paren">(</span><em>dst</em>, <em>axes</em>, <em>method</em>, <em>use_src_mask=True</em>, <em>use_dst_mask=False</em>, <em>fracfield=False</em>, <em>axis_order=None</em>, <em>ignore_degenerate=True</em>, <em>inplace=False</em>, <em>i=False</em>, <em>_compute_field_mass=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/field.py#L14147"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.regridc" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the field with the specified Cartesian axes regridded onto a
 new grid.</p>
 <p>Between 1 and 3 dimensions may be regridded.</p>
@@ -144,7 +144,7 @@ call. By default logging is disabled.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>dst: <a class="reference internal" href="../classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt>
+<dt>dst: <a class="reference internal" href="../classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt>
 <dd><p class="first last">The field containing the new grid or a dictionary with the
 axes specifiers as keys referencing dimension coordinates.
 If dst is a field list the first field in the list is
@@ -157,7 +157,7 @@ options for selecting specific axes. However, the number
 of axes returned by <a class="reference internal" href="cf.Field.axes.html#cf.Field.axes" title="cf.Field.axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.axes</span></code></a> TODO must be the same as
 the number of specifiers passed in.</p>
 </dd>
-<dt>method: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt>
+<dt>method: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt>
 <dd><p class="first">Specify the regridding method. The <em>method</em> parameter must be
 one of:</p>
 <blockquote class="last">
@@ -204,7 +204,7 @@ to more than one destination point.</td>
 </table>
 </div></blockquote>
 </dd>
-<dt>use_src_mask: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>use_src_mask: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first">For all methods other than ‘nearest_stod’, this must be
 True as it does not make sense to set it to False. For the</p>
 <p class="last">‘nearest_stod’ method if it is True then points in the
@@ -212,12 +212,12 @@ result that are nearest to a masked source point are
 masked. Otherwise, if it is False, then these points are
 interpolated to the nearest unmasked source points.</p>
 </dd>
-<dt>use_dst_mask: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>use_dst_mask: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">By default the mask of the data on the destination grid is
 not taken into account when performing regridding. If this
 option is set to True then it is.</p>
 </dd>
-<dt>fracfield: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>fracfield: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If the method of regridding is conservative the fraction
 of each destination grid cell involved in the regridding
 is returned instead of the regridded data if this is
@@ -233,7 +233,7 @@ recalculated every time the mask of a slice changes with
 respect to the previous one, so this option allows the
 user to minimise how frequently the mask changes.</p>
 </dd>
-<dt>ignore_degenerate: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>ignore_degenerate: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">True by default. Instructs ESMPy to ignore degenerate
 cells when checking the grids for errors. Regridding will
 proceed and degenerate cells will be skipped, not
@@ -244,13 +244,13 @@ set to True. As of ESMF 7.0.0 this only applies to
 conservative regridding.  Other methods always skip
 degenerate cells.</p>
 </dd>
-<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If True then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dd><p class="first last">If True then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
 </dd>
 <dt>i: deprecated at version 3.0.0</dt>
 <dd><p class="first last">Use the <em>inplace</em> parameter instead.</p>
 </dd>
-<dt>_compute_field_mass: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt>
+<dt>_compute_field_mass: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt>
 <dd><p class="first last">If this is a dictionary then the field masses of the
 source and destination fields are computed and returned
 within the dictionary. The keys of the dictionary
@@ -266,7 +266,7 @@ purposes.</p>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
 <dt><a class="reference internal" href="../classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a href="#id1"><span class="problematic" id="id2">`</span></a>None</dt>
-<dd><p class="first last">The regridded field construct, or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> if the operation
+<dd><p class="first last">The regridded field construct, or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> if the operation
 was in-place.</p>
 </dd>
 </dl>

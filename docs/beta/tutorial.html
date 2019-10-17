@@ -341,7 +341,7 @@ instance”.</p>
 a <a class="reference internal" href="classes/cf.FieldList.html#cf.FieldList" title="cf.FieldList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.FieldList</span></code></a> instance that contains zero or more <a class="reference internal" href="classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a>
 instances, each of which represents a field construct. Henceforth, the
 phrase “field list” will be assumed to mean a <a class="reference internal" href="classes/cf.FieldList.html#cf.FieldList" title="cf.FieldList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.FieldList</span></code></a> instance.</p>
-<p>A <a class="reference internal" href="#field-lists"><span class="std std-ref">field list</span></a> is very much like a Python <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>,
+<p>A <a class="reference internal" href="#field-lists"><span class="std std-ref">field list</span></a> is very much like a Python <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>,
 with the addition of extra methods that operate on its field construct
 elements.</p>
 <p>All formats of netCDF3 and netCDF4 files (including <a class="reference external" href="http://www.met.reading.ac.uk/~david/cfa/0.4/index.html">CFA-netCDF</a> files),
@@ -451,7 +451,7 @@ well as optionally displayed when the dataset is read.</p>
 levels of detail.</p>
 <div class="section" id="minimal-detail">
 <span id="id8"></span><h3><a class="toc-backref" href="#id323">Minimal detail</a><a class="headerlink" href="#minimal-detail" title="Permalink to this headline">¶</a></h3>
-<p>The built-in <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> function returns a short, one-line description:</p>
+<p>The built-in <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> function returns a short, one-line description:</p>
 <div class="literal-block-wrapper docutils container" id="id101">
 <div class="code-block-caption"><span class="caption-text"><em>Inspect the contents of the two field constructs from
 the dataset and create a Python variable for each of
@@ -474,7 +474,7 @@ spanned by the data array (“latitude” and “longitude” with sizes 5 and
 </div>
 <div class="section" id="medium-detail">
 <span id="id9"></span><h3><a class="toc-backref" href="#id324">Medium detail</a><a class="headerlink" href="#medium-detail" title="Permalink to this headline">¶</a></h3>
-<p>The built-in <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> function returns similar information as the
+<p>The built-in <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> function returns similar information as the
 one-line output, along with short descriptions of the metadata
 constructs, which include the first and last values of their data
 arrays:</p>
@@ -722,7 +722,7 @@ not limited to:</p>
 <div class="section" id="field-lists">
 <span id="id12"></span><h2><a class="toc-backref" href="#id328"><strong>Field lists</strong></a><a class="headerlink" href="#field-lists" title="Permalink to this headline">¶</a></h2>
 <p>A field list, contained in a <a class="reference internal" href="classes/cf.FieldList.html#cf.FieldList" title="cf.FieldList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.FieldList</span></code></a> instance, is an ordered
-sequence of field constructs. It supports all of the Python <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>
+sequence of field constructs. It supports all of the Python <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>
 operations, such as indexing, iteration, and methods like
 <a class="reference internal" href="method/cf.FieldList.append.html#cf.FieldList.append" title="cf.FieldList.append"><code class="xref py py-obj docutils literal notranslate"><span class="pre">append</span></code></a>.</p>
 <div class="literal-block-wrapper docutils container" id="id106">
@@ -966,7 +966,7 @@ that meet particular criteria (see
 <a class="reference internal" href="#filtering-metadata-constructs"><span class="std std-ref">Filtering metadata constructs</span></a>). It also behaves like a
 “read-only” Python dictionary, in that it has <a class="reference internal" href="method/cf.Constructs.items.html#cf.Constructs.items" title="cf.Constructs.items"><code class="xref py py-obj docutils literal notranslate"><span class="pre">items</span></code></a>,
 <a class="reference internal" href="method/cf.Constructs.keys.html#cf.Constructs.keys" title="cf.Constructs.keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keys</span></code></a> and <a class="reference internal" href="method/cf.Constructs.values.html#cf.Constructs.values" title="cf.Constructs.values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">values</span></code></a> methods that work exactly
-like their corresponding <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> methods. It also has a
+like their corresponding <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> methods. It also has a
 <a class="reference internal" href="method/cf.Constructs.get.html#cf.Constructs.get" title="cf.Constructs.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a> method and indexing like a Python dictionary (see
 <a class="reference internal" href="#metadata-construct-access"><span class="std std-ref">Metadata construct access</span></a> for details).</p>
 <div class="literal-block-wrapper docutils container" id="id111">
@@ -1187,7 +1187,7 @@ the data as an array of date-time objects.</p>
 <p>Alternatively, date-time data may be created by providing date-time
 objects or <a class="reference external" href="https://en.wikipedia.org/wiki/ISO_8601">ISO 8601-like date-time strings</a>. Date-time objects may be
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">cftime.datetime</span></code> instances (as returned by the <a class="reference internal" href="function/cf.dt.html#cf.dt" title="cf.dt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.dt</span></code></a> and
-<a class="reference internal" href="function/cf.dt_vector.html#cf.dt_vector" title="cf.dt_vector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.dt_vector</span></code></a> functions), Python <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime.datetime</span></code></a> instances, or
+<a class="reference internal" href="function/cf.dt_vector.html#cf.dt_vector" title="cf.dt_vector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.dt_vector</span></code></a> functions), Python <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime.datetime</span></code></a> instances, or
 any other date-time object that has an equivalent API.</p>
 <div class="literal-block-wrapper docutils container" id="id120">
 <div class="code-block-caption"><span class="caption-text"><em>Creating a Data instance from a date-time objects.</em></span><a class="headerlink" href="#id120" title="Permalink to this code">¶</a></div>
@@ -1359,7 +1359,7 @@ package</a>.</li>
 </ul>
 <ul class="simple">
 <li>For a dimension that is <a class="reference internal" href="#cyclic-domain-axes"><span class="std std-ref">cyclic</span></a>, a range
-of indices specified by a <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a> that spans the edges of the data
+of indices specified by a <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a> that spans the edges of the data
 (such as <code class="docutils literal notranslate"><span class="pre">-2:3</span></code> or <code class="docutils literal notranslate"><span class="pre">3:-2:-1</span></code>) is assumed to “wrap” around,
 rather then producing a null result.</li>
 </ul>
@@ -1465,7 +1465,7 @@ package</a>.</li>
 </ul>
 <ul class="simple">
 <li>For a dimension that is <a class="reference internal" href="#cyclic-domain-axes"><span class="std std-ref">cyclic</span></a>, a range
-of indices specified by a <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a> that spans the edges of the data
+of indices specified by a <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a> that spans the edges of the data
 (such as <code class="docutils literal notranslate"><span class="pre">-2:3</span></code> or <code class="docutils literal notranslate"><span class="pre">3:-2:-1</span></code>) is assumed to “wrap” around,
 rather then producing a null result.</li>
 </ul>
@@ -1558,7 +1558,7 @@ the <a class="reference internal" href="constant.html#cf.cf.masked" title="cf.cf
 <p>By default the data mask is “hard”, meaning that masked values can not
 be changed by assigning them to another value. This behaviour may be
 changed by setting the <a class="reference internal" href="attribute/cf.Field.hardmask.html#cf.Field.hardmask" title="cf.Field.hardmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></a> attribute of the field
-construct to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, thereby making the data mask “soft”.</p>
+construct to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, thereby making the data mask “soft”.</p>
 <div class="literal-block-wrapper docutils container" id="id135">
 <div class="code-block-caption"><span class="caption-text"><em>Changing masked elements back to data values is only
 possible when the “hardmask” attribute is False.</em></span><a class="headerlink" href="#id135" title="Permalink to this code">¶</a></div>
@@ -2175,7 +2175,7 @@ the value of the “default” parameter is returned.</em></span><a class="heade
 </div>
 <p>The <a class="reference internal" href="method/cf.Constructs.get.html#cf.Constructs.get" title="cf.Constructs.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a> method of a <a class="reference internal" href="classes/cf.Constructs.html#cf.Constructs" title="cf.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Constructs</span></code></a> instance accepts an
 optional second argument to be returned if the construct key does not
-exist, exactly like the Python <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict.get" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict.get</span></code></a> method.</p>
+exist, exactly like the Python <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict.get" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict.get</span></code></a> method.</p>
 <div class="section" id="metadata-construct-properties">
 <span id="id30"></span><h3><a class="toc-backref" href="#id345">Metadata construct properties</a><a class="headerlink" href="#metadata-construct-properties" title="Permalink to this headline">¶</a></h3>
 <p>Metadata constructs share the <a class="reference internal" href="#properties"><span class="std std-ref">same API as the field construct</span></a> for accessing their properties:</p>
@@ -2854,7 +2854,7 @@ north.</em></span><a class="headerlink" href="#id189" title="Permalink to this c
 <p>Subspace criteria may be provided for size 1 domain axes that are not
 spanned by the field construct’s data.</p>
 <p>Explicit indices may also be assigned to a domain axis identified by a
-metadata construct, with either a Python <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a> object, or a sequence
+metadata construct, with either a Python <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a> object, or a sequence
 of integers or booleans.</p>
 <div class="literal-block-wrapper docutils container" id="id190">
 <div class="code-block-caption"><span class="caption-text"><em>Create a new field construct whose domain spans the 2nd,
@@ -3110,7 +3110,7 @@ case in this example.</p>
 <div class="section" id="sorting-and-selecting-from-field-lists">
 <span id="id48"></span><h2><a class="toc-backref" href="#id365"><strong>Sorting and selecting from field lists</strong></a><a class="headerlink" href="#sorting-and-selecting-from-field-lists" title="Permalink to this headline">¶</a></h2>
 <p>A <a class="reference internal" href="#field-lists"><span class="std std-ref">field list</span></a> may be sorted in-place using the
-same syntax as a Python <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>. By default the field list is sorted by
+same syntax as a Python <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>. By default the field list is sorted by
 the values of the field constructs identities, but any sorting
 criteria are possible.</p>
 <div class="literal-block-wrapper docutils container" id="id197">
@@ -3249,8 +3249,8 @@ various criteria:</p>
 </tr>
 </tbody>
 </table>
-<p>Each of these methods returns <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if the field construct matches
-the given criteria, or else <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p>
+<p>Each of these methods returns <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if the field construct matches
+the given criteria, or else <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>.</p>
 <div class="literal-block-wrapper docutils container" id="id200">
 <div class="code-block-caption"><span class="caption-text"><em>Match a field construct to its properties and metadata.</em></span><a class="headerlink" href="#id200" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
@@ -4343,7 +4343,7 @@ altered.</em></span><a class="headerlink" href="#id226" title="Permalink to this
 </pre></div>
 </div>
 </div>
-<p>Equivalently, the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function may be used:</p>
+<p>Equivalently, the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function may be used:</p>
 <div class="literal-block-wrapper docutils container" id="id227">
 <div class="code-block-caption"><span class="caption-text"><em>Copy a field construct with the built-in copy module.</em></span><a class="headerlink" href="#id227" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">copy</span>
@@ -4459,10 +4459,10 @@ behaves in a similar manner.</em></span><a class="headerlink" href="#id231" titl
 <div class="section" id="field-list-equality">
 <span id="id61"></span><h3><a class="toc-backref" href="#id380">Field list equality</a><a class="headerlink" href="#field-list-equality" title="Permalink to this headline">¶</a></h3>
 <p>A <a class="reference internal" href="#field-lists"><span class="std std-ref">field list</span></a> also has an <a class="reference internal" href="method/cf.FieldList.equals.html#cf.FieldList.equals" title="cf.FieldList.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a>
-method that compares two field lists. It returns <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if and only if
+method that compares two field lists. It returns <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if and only if
 field constructs at the same index are equal. This method also has an
-<em>unordered</em> parameter that, when <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>, treats the two field lists as
-unordered collections of field constructs, i.e. in this case <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> is
+<em>unordered</em> parameter that, when <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>, treats the two field lists as
+unordered collections of field constructs, i.e. in this case <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> is
 returned if and only if field constructs are pair-wise equal,
 irrespective of their positions in the list.</p>
 <hr class="docutils" />
@@ -5183,10 +5183,10 @@ new cell method construct (<code class="docutils literal notranslate"><span clas
 constructs each now have a single cell. The air pressure time
 dimension was not included in the collapse because it already had size
 1 in the original field construct.</p>
-<p>The collapse can be applied to only a subset of the field construct’s
-dimensions. In this case, the domain axis and coordinate constructs
-for the non-collapsed dimensions remain the same. This is implemented
-either with the <em>axes</em> keyword, or with a <a class="reference external" href="http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#cell-methods">CF-netCDF cell
+<p>The collapse can also be applied to any subset of the field
+construct’s dimensions. In this case, the domain axis and coordinate
+constructs for the non-collapsed dimensions remain the same. This is
+implemented either with the <em>axes</em> keyword, or with a <a class="reference external" href="http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#cell-methods">CF-netCDF cell
 methods</a>-like syntax for describing both the collapse dimensions
 and the collapse method in a single string. The latter syntax uses
 <a class="reference internal" href="#construct-identities"><span class="std std-ref">construct identities</span></a> instead of netCDF
@@ -5255,102 +5255,180 @@ reference system.</p>
 <div class="section" id="collapse-methods">
 <span id="id69"></span><h3><a class="toc-backref" href="#id389">Collapse methods</a><a class="headerlink" href="#collapse-methods" title="Permalink to this headline">¶</a></h3>
 <p>The following collapse methods are available, over any subset of the
-domain axes:</p>
+domain axes. The “Cell method” column in the table gives the method of
+the new cell method construct (if one is created).</p>
 <table border="1" class="docutils">
 <colgroup>
-<col width="31%" />
-<col width="69%" />
+<col width="30%" />
+<col width="43%" />
+<col width="28%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Method</th>
 <th class="head">Description</th>
+<th class="head">Cell method</th>
 </tr>
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'maximum'</span></code></td>
 <td>The maximum of the values.</td>
+<td><code class="docutils literal notranslate"><span class="pre">maximum</span></code></td>
 </tr>
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'minimum'</span></code></td>
 <td>The minimum of the values.</td>
+<td><code class="docutils literal notranslate"><span class="pre">minimum</span></code></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'sum'</span></code></td>
-<td>The sum of the values.</td>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'maximum_absolute_value'</span></code></td>
+<td>The maximum of the absolute values.</td>
+<td><code class="docutils literal notranslate"><span class="pre">maximum_absolute_value</span></code></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'mid_range'</span></code></td>
-<td>The average of the maximum and the minimum of the
-values.</td>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'minimum_absolute_value'</span></code></td>
+<td>The minimum of the absolute values.</td>
+<td><code class="docutils literal notranslate"><span class="pre">minimum_absolute_value</span></code></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'range'</span></code></td>
-<td>The absolute difference between the maximum and
-the minimum of the values.</td>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'mid_range'</span></code></td>
+<td>The average of the maximum and the
+minimum of the values.</td>
+<td><code class="docutils literal notranslate"><span class="pre">mid_range</span></code></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'mean'</span></code></td>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'range'</span></code></td>
+<td>The absolute difference between the
+maximum and the minimum of the values.</td>
+<td><code class="docutils literal notranslate"><span class="pre">range</span></code></td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'sample_size'</span></code></td>
+<td>The sample size, <span class="math notranslate nohighlight">\(N\)</span>, as would be
+used for other calculations, i.e. the
+number of non-missing values.</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'sum_of_weights'</span></code></td>
+<td><p class="first">The sum of <span class="math notranslate nohighlight">\(N\)</span> weights
+<span class="math notranslate nohighlight">\(w_i\)</span>, as would be used for other
+calculations, is</p>
+<div class="last math notranslate nohighlight">
+\[V_{1}=\sum_{i=1}^{N} w_i\]</div>
+</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'sum_of_weights2'</span></code></td>
+<td><p class="first">The sum of the squares of <span class="math notranslate nohighlight">\(N\)</span>
+weights <span class="math notranslate nohighlight">\(w_i\)</span>, as would be used
+for other calculations, is</p>
+<div class="last math notranslate nohighlight">
+\[V_{2}=\sum_{i=1}^{N}  w_i^{2}\]</div>
+</td>
+<td>&#160;</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'sum'</span></code></td>
+<td><p class="first">The unweighted sum of <span class="math notranslate nohighlight">\(N\)</span> values
+<span class="math notranslate nohighlight">\(x_i\)</span> is</p>
+<div class="last math notranslate nohighlight">
+\[t=\sum_{i=1}^{N} x_i\]</div>
+</td>
+<td><code class="docutils literal notranslate"><span class="pre">sum</span></code></td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'integral'</span></code></td>
+<td><p class="first">The integral of <span class="math notranslate nohighlight">\(N\)</span> values
+<span class="math notranslate nohighlight">\(x_i\)</span> with corresponding cell
+measures <span class="math notranslate nohighlight">\(m_i\)</span> is</p>
+<div class="math notranslate nohighlight">
+\[i=\sum_{i=1}^{N} m_i x_i\]</div>
+<p class="last">The integral differs from a weighted sum
+in that the units of the cell measures
+are incorporated into the result.</p>
+</td>
+<td><code class="docutils literal notranslate"><span class="pre">sum</span></code></td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'sum_of_squares'</span></code></td>
+<td><p class="first">The unweighted sum of the squares of
+<span class="math notranslate nohighlight">\(N\)</span> values <span class="math notranslate nohighlight">\(x_i\)</span> is</p>
+<div class="last math notranslate nohighlight">
+\[t_2=\sum_{i=1}^{N} x_{i}^{2}\]</div>
+</td>
+<td><code class="docutils literal notranslate"><span class="pre">sum_of_squares</span></code></td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'mean'</span></code></td>
 <td><p class="first">The unweighted mean of <span class="math notranslate nohighlight">\(N\)</span> values
 <span class="math notranslate nohighlight">\(x_i\)</span> is</p>
 <div class="math notranslate nohighlight">
-\[\mu=\frac{1}{N}\sum_{i=1}^{N} x_i\]</div>
-<p>The <span class="xref std std-ref">weighted</span> mean of
-<span class="math notranslate nohighlight">\(N\)</span> values <span class="math notranslate nohighlight">\(x_i\)</span> with
-corresponding weights <span class="math notranslate nohighlight">\(w_i\)</span> is</p>
-<div class="math notranslate nohighlight">
+\[\mu=\frac{1}{N}\sum_{i=1}^{N}
+x_i\]</div>
+<p>The <a class="reference internal" href="#collapse-weights"><span class="std std-ref">weighted</span></a>
+mean of <span class="math notranslate nohighlight">\(N\)</span> values <span class="math notranslate nohighlight">\(x_i\)</span>
+with corresponding weights <span class="math notranslate nohighlight">\(w_i\)</span>
+is</p>
+<div class="last math notranslate nohighlight">
 \[\hat{\mu}=\frac{1}{V_{1}}
 \sum_{i=1}^{N} w_i
 x_i\]</div>
-<p class="last">where <span class="math notranslate nohighlight">\(V_{1}=\sum_{i=1}^{N} w_i\)</span>, the
-sum of the weights.</p>
 </td>
+<td><code class="docutils literal notranslate"><span class="pre">mean</span></code></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'variance'</span></code></td>
-<td><p class="first">The unweighted variance of <span class="math notranslate nohighlight">\(N\)</span> values
-<span class="math notranslate nohighlight">\(x_i\)</span> and with <span class="math notranslate nohighlight">\(N-ddof\)</span> degrees
-of freedom (<span class="math notranslate nohighlight">\(ddof\ge0\)</span>) is</p>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'variance'</span></code></td>
+<td><p class="first">The unweighted variance of <span class="math notranslate nohighlight">\(N\)</span>
+values <span class="math notranslate nohighlight">\(x_i\)</span> and with
+<span class="math notranslate nohighlight">\(N-ddof\)</span> degrees of freedom
+(<span class="math notranslate nohighlight">\(ddof\ge0\)</span>) is</p>
 <div class="math notranslate nohighlight">
-\[s_{N-ddof}^{2}=\frac{1}{N-ddof}
+\[s_{N-ddof}^{2}=
+\frac{1}{N-ddof}
 \sum_{i=1}^{N} (x_i - \mu)^2\]</div>
 <p>The unweighted biased estimate of the
 variance (<span class="math notranslate nohighlight">\(s_{N}^{2}\)</span>) is given by
-<span class="math notranslate nohighlight">\(ddof=0\)</span> and the unweighted unbiased
-estimate of the variance using Bessel’s
-correction (<span class="math notranslate nohighlight">\(s^{2}=s_{N-1}^{2}\)</span>) is
-given by <span class="math notranslate nohighlight">\(ddof=1\)</span>.</p>
-<p>The <span class="xref std std-ref">weighted</span> biased
-estimate of the variance of <span class="math notranslate nohighlight">\(N\)</span> values
-<span class="math notranslate nohighlight">\(x_i\)</span> with corresponding weights
-<span class="math notranslate nohighlight">\(w_i\)</span> is</p>
+<span class="math notranslate nohighlight">\(ddof=0\)</span> and the unweighted
+unbiased estimate of the variance using
+Bessel’s correction
+(<span class="math notranslate nohighlight">\(s^{2}=s_{N-1}^{2}\)</span>) is given by
+<span class="math notranslate nohighlight">\(ddof=1\)</span>.</p>
+<p>The <a class="reference internal" href="#collapse-weights"><span class="std std-ref">weighted</span></a>
+biased estimate of the variance of
+<span class="math notranslate nohighlight">\(N\)</span> values <span class="math notranslate nohighlight">\(x_i\)</span> with
+corresponding weights <span class="math notranslate nohighlight">\(w_i\)</span> is</p>
 <div class="math notranslate nohighlight">
-\[\hat{s}_{N}^{2}=\frac{1}{V_{1}}
+\[\hat{s}_{N}^{2}=
+\frac{1}{V_{1}}
 \sum_{i=1}^{N}
 w_i(x_i -
 \hat{\mu})^{2}\]</div>
-<p>The corresponding <span class="xref std std-ref">weighted</span>
-unbiased estimate of the variance is</p>
+<p>The corresponding <a class="reference internal" href="#collapse-weights"><span class="std std-ref">weighted</span></a> unbiased estimate of
+the variance is</p>
 <div class="math notranslate nohighlight">
 \[\hat{s}^{2}=\frac{1}{V_{1} -
 (V_{1}/V_{2})}
 \sum_{i=1}^{N}
 w_i(x_i -
 \hat{\mu})^{2}\]</div>
-<p class="last">where <span class="math notranslate nohighlight">\(V_{2}=\sum_{i=1}^{N} w_i^{2}\)</span>,
-the sum of the squares of weights. In both
-cases, the weights are assumed to be
-non-random reliability weights, as
+<p class="last">In both cases, the weights are assumed
+to be non-random reliability weights, as
 opposed to frequency weights.</p>
 </td>
+<td><code class="docutils literal notranslate"><span class="pre">variance</span></code></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'standard_deviation'</span></code></td>
-<td>The variance is the square root of the variance.</td>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'standard_deviation'</span></code></td>
+<td>The standard deviation is the square
+root of the variance, as defined in
+this table.</td>
+<td><code class="docutils literal notranslate"><span class="pre">standard_deviation</span></code></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'sample_size'</span></code></td>
-<td>The sample size, <span class="math notranslate nohighlight">\(N\)</span>, as would be used for
-other statistical calculations.</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'sum_of_weights'</span></code></td>
-<td>The sum of weights, <span class="math notranslate nohighlight">\(V_{1}\)</span>, as would be
-used for other statistical calculations.</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'sum_of_weights2'</span></code></td>
-<td>The sum of squares of weights, <span class="math notranslate nohighlight">\(V_{2}\)</span>, as
-would be used for other statistical calculations.</td>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'root_mean_square'</span></code></td>
+<td><p class="first">The unweighted root mean square of
+<span class="math notranslate nohighlight">\(N\)</span> values <span class="math notranslate nohighlight">\(x_i\)</span> is</p>
+<div class="math notranslate nohighlight">
+\[RMS=\sqrt{\frac{1}{N}
+\sum_{i=1}^{N}
+x_{i}^2}\]</div>
+<p>The <a class="reference internal" href="#collapse-weights"><span class="std std-ref">weighted</span></a>
+root mean square of <span class="math notranslate nohighlight">\(N\)</span> values
+<span class="math notranslate nohighlight">\(x_i\)</span> with corresponding weights
+<span class="math notranslate nohighlight">\(w_i\)</span> is</p>
+<div class="last math notranslate nohighlight">
+\[\hat{RMS}=\sqrt{
+\frac{1}{V_{1}}
+\sum_{i=1}^{N} w_i
+x_{i}^2}\]</div>
+</td>
+<td><code class="docutils literal notranslate"><span class="pre">root_mean_square</span></code></td>
 </tr>
 </tbody>
 </table>
@@ -6724,7 +6802,7 @@ from a named field construct property,</li>
 <p>These parameters are also available to the <a class="reference internal" href="function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a> function via its
 <em>aggregate</em> parameter.</p>
 <p>Note that when reading <a class="reference internal" href="#pp-and-um-fields-files"><span class="std std-ref">PP and UM fields files</span></a> with <a class="reference internal" href="function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a>, the <em>relaxed_units</em> option
-is <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> by default, because units are not always available to field
+is <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> by default, because units are not always available to field
 constructs derived from <a class="reference internal" href="#pp-and-um-fields-files"><span class="std std-ref">PP and UM fields files</span></a>.</p>
 <p>Field constructs that are logically similar but aranged differently
 are also aggregatable.</p>
@@ -6789,7 +6867,7 @@ uncompressed form of the data. The new subspace will no longer be
 compressed, i.e. its underlying arrays will be uncompressed, but the
 original data will remain compressed. It follows that all of the
 data in a field construct may be uncompressed by indexing the field
-construct with (indices equivalent to) <a class="reference external" href="https://docs.python.org/3/library/constants.html#Ellipsis" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Ellipsis</span></code></a>.</li>
+construct with (indices equivalent to) <a class="reference external" href="https://docs.python.org/3/library/constants.html#Ellipsis" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Ellipsis</span></code></a>.</li>
 </ul>
 <ul class="simple">
 <li>If data elements are modified by <a class="reference internal" href="#assignment-by-index"><span class="std std-ref">assigning</span></a> to indices of the uncompressed form of the

@@ -90,7 +90,7 @@
 <h1>cf.Data.seterr<a class="headerlink" href="#cf-data-seterr" title="Permalink to this headline">¶</a></h1>
 <dl class="staticmethod">
 <dt id="cf.Data.seterr">
-<em class="property">static </em><code class="descclassname">Data.</code><code class="descname">seterr</code><span class="sig-paren">(</span><em>all=None</em>, <em>divide=None</em>, <em>over=None</em>, <em>under=None</em>, <em>invalid=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/data/data.py#L6835"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.seterr" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descclassname">Data.</code><code class="descname">seterr</code><span class="sig-paren">(</span><em>all=None</em>, <em>divide=None</em>, <em>over=None</em>, <em>under=None</em>, <em>invalid=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/data/data.py#L6894"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.seterr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set how floating-point errors in the results of arithmetic operations
 are handled.</p>
 <p>The options for handling floating-point errors are:</p>
@@ -110,12 +110,12 @@ are handled.</p>
 result data array.</td>
 </tr>
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'warn'</span></code></td>
-<td>Print a <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeWarning" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RuntimeWarning</span></code></a> (via the Python <a class="reference external" href="https://docs.python.org/3/library/warnings.html#module-warnings" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">warnings</span></code></a>
+<td>Print a <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeWarning" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RuntimeWarning</span></code></a> (via the Python <a class="reference external" href="https://docs.python.org/3/library/warnings.html#module-warnings" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">warnings</span></code></a>
 module). Allows invalid values to occur in the result
 data array.</td>
 </tr>
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'raise'</span></code></td>
-<td>Raise a <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FloatingPointError" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FloatingPointError</span></code></a> exception.</td>
+<td>Raise a <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FloatingPointError" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FloatingPointError</span></code></a> exception.</td>
 </tr>
 </tbody>
 </table>
@@ -168,23 +168,23 @@ returned.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>all: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dt>all: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
 <dd><p class="first last">Set the treatment for all types of floating-point errors at
 once. The default is not to change the current behaviour.</p>
 </dd>
-<dt>divide: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dt>divide: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
 <dd><p class="first last">Set the treatment for division by zero. The default is not to
 change the current behaviour.</p>
 </dd>
-<dt>over: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dt>over: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
 <dd><p class="first last">Set the treatment for floating-point overflow. The default is
 not to change the current behaviour.</p>
 </dd>
-<dt>under: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dt>under: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
 <dd><p class="first last">Set the treatment for floating-point underflow. The default is
 not to change the current behaviour.</p>
 </dd>
-<dt>invalid: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dt>invalid: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
 <dd><p class="first last">Set the treatment for invalid floating-point operation. The
 default is not to change the current behaviour.</p>
 </dd>
@@ -192,7 +192,7 @@ default is not to change the current behaviour.</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt>
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt>
 <dd><p class="first last">The behaviour prior to the change, or the current behaviour if
 no new values are specified.</p>
 </dd>

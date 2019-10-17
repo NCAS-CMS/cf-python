@@ -90,7 +90,7 @@
 <h1>cf.Field.set_data<a class="headerlink" href="#cf-field-set-data" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.set_data">
-<code class="descclassname">Field.</code><code class="descname">set_data</code><span class="sig-paren">(</span><em>data</em>, <em>axes=None</em>, <em>set_axes=True</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/field.py#L8805"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.set_data" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">set_data</code><span class="sig-paren">(</span><em>data</em>, <em>axes=None</em>, <em>set_axes=True</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/field.py#L9736"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.set_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the field construct data.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 3.0.0.</span></p>
@@ -108,7 +108,7 @@
 <dt>data: <a class="reference internal" href="../classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a></dt>
 <dd><p class="first last">The data to be inserted.</p>
 </dd>
-<dt>axes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt>
+<dt>axes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt>
 <dd><p class="first">Set the domain axes constructs that are spanned by the
 data. If unset, and the <em>set_axes</em> parameter is True, then
 an attempt will be made to assign existing domain axis
@@ -134,21 +134,21 @@ axis construct key via the <a class="reference internal" href="cf.Field.domain_a
 </dd>
 </dl>
 </dd>
-<dt>set_axes: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>set_axes: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If False then do not set the domain axes constructs that
 are spanned by the data, even if the <em>axes</em> parameter has
 been set. By default the axes are set either according to
 the <em>axes</em> parameter, or an attempt will be made to assign
 existing domain axis constructs to the data.</p>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then set a copy of the data. By default the data
 are not copied.</p>
 </dd>
 </dl>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 </td>
 </tr>
 </tbody>

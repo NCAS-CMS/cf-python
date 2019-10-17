@@ -852,7 +852,7 @@ def sum_ffinalise(out, sub_samples=None):
 #---------------------------------------------------------------------
 # sum_of_squares
 #---------------------------------------------------------------------
-def sum_squares_f(a, axis=None, masked=False):
+def sum_of_squares_f(a, axis=None, weights=None, masked=False):
     '''Return the sum of the square of an array or the sum of squares
     along an axis.
     
@@ -872,11 +872,11 @@ def sum_squares_f(a, axis=None, masked=False):
 
     '''
     a = double_precision(a)
-    return sum_f(a**2, axis=axis, masked=masked)
+    return sum_f(a**2, axis=axis, weights=weights, masked=masked)
 
 
-sum_squares_fpartial  = sum_fpartial
-sum_squares_ffinalise = sum_ffinalise
+sum_of_squares_fpartial  = sum_fpartial
+sum_of_squares_ffinalise = sum_ffinalise
 
 
 #---------------------------------------------------------------------

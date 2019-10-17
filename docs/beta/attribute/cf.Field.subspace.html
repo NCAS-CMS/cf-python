@@ -116,7 +116,7 @@ doesn’t matter which order they are specified in.</li>
 <li>Subspace criteria may be provided for size 1 domain axes that
 are not spanned by the field construct’s data.</li>
 <li>Explicit indices may also be assigned to a domain axis
-identified by a metadata construct, with either a Python <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a>
+identified by a metadata construct, with either a Python <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a>
 object, or a sequence of integers or booleans.</li>
 <li>For a dimension that is cyclic, a subspace defined by a slice or
 by a <a class="reference internal" href="../classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> instance is assumed to “wrap” around the edges of
@@ -142,7 +142,7 @@ then these indices work independently along each dimension
 the same indexing behaviour as on a Variable object of the
 netCDF4 package.</li>
 <li>For a dimension that is cyclic, a range of indices specified by
-a <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a> that spans the edges of the data (such as <code class="docutils literal notranslate"><span class="pre">-2:3</span></code> or
+a <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a> that spans the edges of the data (such as <code class="docutils literal notranslate"><span class="pre">-2:3</span></code> or
 <code class="docutils literal notranslate"><span class="pre">3:-2:-1</span></code>) is assumed to “wrap” around, rather then producing
 a null result.</li>
 </ul>

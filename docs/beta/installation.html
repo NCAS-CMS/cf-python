@@ -227,11 +227,13 @@ newer. (Note that this package is installed with netCDF4.)</li>
 newer. This is a C library which provides support for units of
 physical quantities. If the UDUNITS-2 shared library file
 (<code class="docutils literal notranslate"><span class="pre">libudunits2.so.0</span></code> on GNU/Linux or <code class="docutils literal notranslate"><span class="pre">libudunits2.0.dylibfile</span></code> on
-MacOS) is in a non-standard location then its path should be added
-to the <code class="docutils literal notranslate"><span class="pre">LD_LIBRARY_PATH</span></code> environment variable. It may also be
-necessary to specify the location of the <code class="docutils literal notranslate"><span class="pre">udunits2.xml</span></code> file in
-the <code class="docutils literal notranslate"><span class="pre">UDUNITS2_XML_PATH</span></code> environment variable (although the default
-location is usually correct).</li>
+MacOS) is in a non-standard location then its directory path should
+be added to the <code class="docutils literal notranslate"><span class="pre">LD_LIBRARY_PATH</span></code> environment variable. It may
+also be necessary to specify the location (directory path <em>and</em>
+filename) of the <code class="docutils literal notranslate"><span class="pre">udunits2.xml</span></code> file in the <code class="docutils literal notranslate"><span class="pre">UDUNITS2_XML_PATH</span></code>
+environment variable (although the default location is usually
+correct). For example, <code class="docutils literal notranslate"><span class="pre">export</span>
+<span class="pre">UDUNITS2_XML_PATH=/home/user/anaconda3/share/udunits/udunits2.xml</span></code></li>
 </ul>
 </div>
 <div class="section" id="optional">
@@ -292,7 +294,7 @@ or newer.</li>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="_sources/installation.rst.txt"

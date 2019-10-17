@@ -90,7 +90,7 @@
 <h1>cf.Data.argmax<a class="headerlink" href="#cf-data-argmax" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Data.argmax">
-<code class="descclassname">Data.</code><code class="descname">argmax</code><span class="sig-paren">(</span><em>axis=None</em>, <em>unravel=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/data/data.py#L7282"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.argmax" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Data.</code><code class="descname">argmax</code><span class="sig-paren">(</span><em>axis=None</em>, <em>unravel=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/data/data.py#L7341"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.argmax" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the indices of the maximum values along an axis.</p>
 <p>If no axis is specified then the returned index locates the
 maximum of the whole data.</p>
@@ -99,12 +99,12 @@ maximum of the whole data.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>axis: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt>
+<dt>axis: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt>
 <dd><p class="first last">The specified axis over which to locate te maximum
 values. By default the maximum over the whole data is
 located.</p>
 </dd>
-<dt>unravel: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>unravel: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True, then when locating the maximum over the whole
 data, return the location as a tuple of indices for each
 axis. By default an index to the flattened array is
@@ -114,7 +114,7 @@ returned in this case.</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a> or <a class="reference internal" href="../classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a></dt>
+<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a> or <a class="reference internal" href="../classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a></dt>
 <dd><p class="first last">The location of the maximum, or maxima.</p>
 </dd>
 </dl>

@@ -90,7 +90,7 @@
 <h1>cf.Field.replace_construct<a class="headerlink" href="#cf-field-replace-construct" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.replace_construct">
-<code class="descclassname">Field.</code><code class="descname">replace_construct</code><span class="sig-paren">(</span><em>identity</em>, <em>construct</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/field.py#L11829"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.replace_construct" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">replace_construct</code><span class="sig-paren">(</span><em>identity</em>, <em>construct</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/field.py#L12760"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.replace_construct" title="Permalink to this definition">¶</a></dt>
 <dd><p>Replace a metadata construct.</p>
 <p>Replacement assigns the same construct key and, if applicable, the
 domain axes of the original construct to the new, replacing
@@ -122,7 +122,7 @@ etc.); a <a class="reference internal" href="../classes/cf.Query.html#cf.Query" 
 a compiled regular expression
 (e.g. <code class="docutils literal notranslate"><span class="pre">re.compile('^atmosphere')</span></code>) that selects the
 relevant constructs whose identities match via
-<a class="reference external" href="https://docs.python.org/3/library/re.html#re.search" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.search</span></code></a>.</p>
+<a class="reference external" href="https://docs.python.org/3/library/re.html#re.search" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.search</span></code></a>.</p>
 <p>A construct has a number of identities, and is selected if
 any of them match any of those provided. A construct’s
 identities are those returned by its <code class="xref py py-obj docutils literal notranslate"><span class="pre">identities</span></code>
@@ -135,7 +135,7 @@ six identities:</p>
 <p>A construct key may optionally have the <code class="docutils literal notranslate"><span class="pre">'key%'</span></code>
 prefix. For example <code class="docutils literal notranslate"><span class="pre">'dimensioncoordinate2'</span></code> and
 <code class="docutils literal notranslate"><span class="pre">'key%dimensioncoordinate2'</span></code> are both acceptable keys.</p>
-<p>Note that in the output of a <a class="reference external" href="https://docs.python.org/3/library/functions.html#print" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a> call or <code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code>
+<p>Note that in the output of a <a class="reference external" href="https://docs.python.org/3/library/functions.html#print" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a> call or <code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code>
 method, a construct is always described by one of its
 identities, and so this description may always be used as
 an <em>identity</em> argument.</p>
@@ -164,7 +164,7 @@ an <em>identity</em> argument.</p>
 <dd><p class="first last">The new construct to replace that selected by the
 <em>identity</em> parameter.</p>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then set a copy of the new construct. By default
 the construct is not copied.</p>
 </dd>
