@@ -4134,7 +4134,6 @@ may be accessed with the `nc_global_attributes`,
     :Parameters:
     
         weights: *optional*
-
             Specify the weights to be created. There are two distinct
             methods: **type 1** will always succeed in creating
             weights for all axes of the field, at the expense of not
@@ -4146,78 +4145,85 @@ may be accessed with the `nc_global_attributes`,
     
               * **Type 1**: *weights* may be one of:
             
-                  ==========  ============================================
-                  *weights*   Description
-                  ==========  ============================================
-                  `None`      Equal weights for all axes. This the
-                              default.
+              ==========  ============================================
+              *weights*   Description
+              ==========  ============================================
+              `None`      Equal weights for all axes. This the
+                          default.
     
-                  ``'auto'``  Weights are created for non-overlapping
-                              subsets of the axes by the methods
-                              enumerated in the above notes. Set the
-                              *methods* parameter to find out how the
-                              weights were actually created.
+              ``'auto'``  Weights are created for non-overlapping
+                          subsets of the axes by the methods
+                          enumerated in the above notes. Set the
+                          *methods* parameter to find out how the
+                          weights were actually created.
     
-                              In this case weights components are created
-                              for all axes of the field by one or more of
-                              the following methods, in order of
-                              preference,
-                            
-                                1. Volume cell measures
-                                2. Area cell measures
-                                3. Area calculated from (grid) latitude
-                                   and (grid) longitude dimension
-                                   coordinate constructs with bounds
-                                4. Cell sizes of dimension coordinate
-                                   constructs with bounds
-                                5. Equal weights
+                          In this case weights components are created
+                          for all axes of the field by one or more of
+                          the following methods, in order of
+                          preference,
+                        
+                            1. Volume cell measures
+                            2. Area cell measures
+                            3. Area calculated from (grid) latitude
+                               and (grid) longitude dimension
+                               coordinate constructs with bounds
+                            4. Cell sizes of dimension coordinate
+                               constructs with bounds
+                            5. Equal weights
     
-                              and the outer product of these weights
-                              components is returned in a field
-                              constructs which is broadcastable to the
-                              orginal field construct (see the
-                              *components* parameter).
-                  ==========  ============================================
-    
-           ..
+                          and the outer product of these weights
+                          components is returned in a field constructs
+                          which is broadcastable to the orginal field
+                          construct (see the *components* parameter).
+
+              `Data`      Explicit weights in a `Data` object that
+                          must be broadcastable to the field
+                          construct's data.
+
+              `Field`     Explicit weights from the data of another
+                          field construct, which must be broadcastable
+                          to this field construct's data.
+
+              `dict`      Explicit weights in dictionary of the form
+                          that is returned from a call to the
+                          `weights` method with ``component=True``
+              ==========  ============================================
     
               * **Type 2**: *weights* may be one, or a sequence, of:
               
-                  ============  ==========================================
-                  *weights*     Description     
-                  ============  ==========================================
-                  ``'area'``    Cell area weights from the field
-                                construct's area cell measure
-                                construct or, if one doesn't exist,
-                                from (grid) latitude and (grid)
-                                longitude dimension coordinate
-                                constructs. Set the *methods*
-                                parameter to find out how the weights
-                                were actually created.
-                  
-                  ``'volume'``  Cell volume weights from the field
-                                construct's volume cell measure
-                                construct.
-                  
-                  ``str``       Weights from the cell sizes of the
-                                dimension coordinate construct with
-                                this identity.
-                  
-                  `Field`       Take weights from the data array of
-                                another field construct, which must be
-                                broadcastable to this field construct.
-                  ============  ==========================================
+              ============  ==========================================
+              *weights*     Description     
+              ============  ==========================================
+              ``'area'``    Cell area weights from the field
+                            construct's area cell measure construct
+                            or, if one doesn't exist, from (grid)
+                            latitude and (grid) longitude dimension
+                            coordinate constructs. Set the *methods*
+                            parameter to find out how the weights were
+                            actually created.
+              
+              ``'volume'``  Cell volume weights from the field
+                            construct's volume cell measure construct.
+              
+              `str`         Weights from the cell sizes of the
+                            dimension coordinate construct with this
+                            identity.
+              
+              `Field`       Explicit weights from the data of another
+                            field construct, which must be
+                            broadcastable to this field construct.
+              ============  ==========================================
      
-                If *weights* is a sequence of any combination of the
-                above then the returned field contains the outer
-                product of the weights defined by each element of the
-                sequence. The ordering of the sequence is irrelevant.
+              If *weights* is a sequence of any combination of the
+              above then the returned field contains the outer product
+              of the weights defined by each element of the
+              sequence. The ordering of the sequence is irrelevant.
     
-                *Parameter example:*
-                  To create to 2-dimensional weights based on cell
-                  areas: ``f.weights('area')``. To create to
-                  3-dimensional weights based on cell areas and linear
-                  height: ``f.weights(['area', 'Z'])``.
+              *Parameter example:*
+                To create to 2-dimensional weights based on cell
+                areas: ``f.weights('area')``. To create to
+                3-dimensional weights based on cell areas and linear
+                height: ``f.weights(['area', 'Z'])``.
     
         scale: number, optional
             If set to a positive number then scale the weights so that
@@ -4593,7 +4599,7 @@ may be accessed with the `nc_global_attributes`,
                     # If the defining coordinates are attached to
                     # coordinate references then check that those
                     # coordinate references are equivalent                    
-                    refs0 = [key for key, ref in self.coordinate_references.item()
+                    refs0 = [key for key, ref in self.coordinate_references.items()
                              if key0 in ref.coordinates()]
                     refs1 = [key for key, ref in w.coordinate_references.items()
                              if key1 in ref.coordinates()]
@@ -4612,14 +4618,14 @@ may be accessed with the `nc_global_attributes`,
                         # exactly one coordinate reference
                         equivalent_refs = self._equivalent_coordinate_references(
                             w,
-                            key0=refs0[0], key1e=refs1[0],
+                            key0=refs0[0], key1=refs1[0],
                             s=s,t=t)
 
                     if not equivalent_refs:
                         raise ValueError(
                             "Input weights field has an incompatible coordinate reference")
                 #--- End: for
-    
+
                 axes0 = tuple([axis1_to_axis0[axis1] for axis1 in w.get_data_axes()])
             
                 for axis0 in axes0:
@@ -4629,9 +4635,36 @@ may be accessed with the `nc_global_attributes`,
                                 self.constructs.domain_axis_identity(axis0)))
                 #--- End: for
     
-                comp[axes] = w.data
+                comp[tuple(axes0)] = w.data
             
-                weights_axes.update(axes)
+                weights_axes.update(axes0)
+        #--- End: def
+
+        def _data_weights(self, data, comp, weights_axes):
+            # ------------------------------------------------------------
+            # Data weights
+            # ------------------------------------------------------------
+            for w in data:
+                if w.ndim > 0:
+                    while w.shape[0] == 1:
+                        w = w.squeeze(0)
+                #--- End: if                
+
+                if not self._is_broadcastable(w.shape):
+                    raise ValueError("TODO")
+
+                axes0 = self.get_data_axes()[self.ndim-w.ndim:]
+           
+                for axis0 in axes0:
+                    if axis0 in weights_axes:
+                        raise ValueError(
+                            "Multiple weights specified for {!r} axis".format(
+                                self.constructs.domain_axis_identity(axis0)))
+                #--- End: for
+    
+                comp[tuple(axes0)] = w
+            
+                weights_axes.update(axes0)
         #--- End: def
 
         def _scale(w, scale, wmax=None):
@@ -4740,6 +4773,17 @@ may be accessed with the `nc_global_attributes`,
                 weights_axes.update(key)
 
                 comp[tuple(key)] = value.copy()
+        elif isinstance(weights, self.__class__):
+            # --------------------------------------------------------
+            # Field
+            # --------------------------------------------------------
+            _field_weights(self, [weights], comp, weights_axes)
+            
+        elif isinstance(weights, Data):
+            # --------------------------------------------------------
+            # Data
+            # --------------------------------------------------------            
+            _data_weights(self, [weights], comp, weights_axes)
         else:
             # --------------------------------------------------------
             # String or sequence
@@ -4757,6 +4801,8 @@ may be accessed with the `nc_global_attributes`,
                 for w in tuple(weights):
                     if isinstance(w, self.__class__):
                         fields.append(w)
+                    elif isinstance(w, Data):
+                        raise ValueError("TODO")
                     elif w in ('area', 'volume'):
                         cell_measures.append(w)
                     else:
@@ -5385,8 +5431,8 @@ may be accessed with the `nc_global_attributes`,
 
             Note that specifying volume weights via ``weights=['X',
             'Y', 'Z']`` or ``weights=['area', 'Z']`` will give
-            **incorrect volume cell measures unless the vertical
-            dimension coordinates define the actual height or depth
+            **incorrect volume cell measures if the vertical dimension
+            coordinates do not define the actual height or depth
             thickness of every cell in the domain**. In this case,
             ``weights='volume'`` should be used instead, which
             requires the field construct to have a "volume" cell
@@ -5532,10 +5578,10 @@ may be accessed with the `nc_global_attributes`,
     Dimension coords: sea_water_salinity(4) = [6.3054151982069016, ..., 39.09366758167744] psu
                     : sea_water_potential_temperature(6) = [278.1569468180338, ..., 303.18466695149743] K
     >>> print(b)
-    [[-168.16      --      --  129.88  125.04    49.24]
-     [     --  112.45      --  161.83  220.67       --]
-     [     --  154.39 -270.33  342.32   -7.82  -219.66]
-     [     --   47.61  153.94 -163.39   -55.11 -170.88]]
+    [[ 189.22 131.36    6.75 -41.61     --  100.04]
+     [-116.73 232.38   -4.82 180.47 134.25 -189.55]
+     [     --     --  180.69     --  47.61      --]
+     [158.22      -- -262.75  64.12 -51.83 -219.66]]
 
     >>> b = x.bin('integral', [t_indices, s_indices], weights=['X', 'Y', 'Z', 'T'], measure=True)
     >>> b
@@ -5546,10 +5592,10 @@ may be accessed with the `nc_global_attributes`,
     Dimension coords: sea_water_salinity(4) = [6.3054151982069016, ..., 39.09366758167744] psu
                     : sea_water_potential_temperature(6) = [278.1569468180338, ..., 303.18466695149743] K
     >>> print(b.array)
-    [[-3248849420288.0              --               --  5017197084672.0  7243526307840.0  2852639211520.0]
-     [              -- 6510366687232.0               --  6253326630912.0 12785788387328.0               --]
-     [              -- 5962883661824.0 -5222633570304.0  6603800051712.0  -150768402432.0 -4243793641472.0]
-     [              --  919988011008.0  8922435944448.0 -9467474214912.0 -2127805546496.0 -9899841945600.0]]
+    [[ 3655558758400.0 5070927691776.0   260864491520.0 -1605439586304.0               --  3863717609472.0]
+     [-4509735059456.0 4489564127232.0  -280126521344.0 10454746267648.0  7777254113280.0 -7317268463616.0]
+     [              --              -- 10470463373312.0               --   919782031360.0               --]
+     [ 3055211773952.0              -- -5073676009472.0  3715958833152.0 -2000787079168.0 -4243632160768.0]]
 
     >>> b = x.bin('sample_size', [t_indices, s_indices])
     >>> b
@@ -5560,10 +5606,10 @@ may be accessed with the `nc_global_attributes`,
     Dimension coords: sea_water_salinity(4) = [6.3054151982069016, ..., 39.09366758167744] psu
                     : sea_water_potential_temperature(6) = [278.1569468180338, ..., 303.18466695149743] K
     >>> print(b.array)
-    [[ 1 -- --  2  3  3]
-     [--  3 --  2  3 --]
-     [--  2  1  1  1  1]
-     [--  1  3  3  2  3]]
+    [[ 1  2 2  2 --  2]
+     [ 2  1 3  3  3  2]
+     [-- -- 3 --  1 --]
+     [ 1 -- 1  3  2  1]]
 
         '''
         if verbose:
@@ -6219,66 +6265,8 @@ may be accessed with the `nc_global_attributes`,
     
     **Collapse methods**
     
-    The following collapse methods are available, over any subset of
-    the domain axes (see
-    https://ncas-cms.github.io/cf-python/beta/tutorial.html#collapse-methods
-    for precise definitions):
+    See the *methods* parmaeter  for details.
 
-    ============================  ====================================
-    Method                        Description                     
-    ============================  ====================================
-    ``'maximum'``                 The maximum of the values.
-                              
-    ``'minimum'``                 The minimum of the values.
-
-    ``'maximum_absolute_value'``  The maximum of the absolute
-                                  values.
-                  
-    ``'minimum_absolute_value'``  The minimum of the absolute
-                                  values.
-
-    ``'mid_range'``               The average of the maximum
-                                  and the minimum of the
-                                  values.
-                                  
-    ``'range'``                   The absolute difference
-                                  between the maximum and the
-                                  minimum of the values.
-                                  
-    ``'sum'``                     The sum of the values
-                                                                            
-    ``'sum_of_squares'``          The sum of the squares of
-                                  values.
-                                  
-    ``'integral'``                The integral of values.
-                                  
-    ``'mean'``                    The weighted or unweighted
-                                  mean of the values.
-                                  
-    ``'variance'``                The weighted or unweighted
-                                  variance of the values, with
-                                  a given number of degrees of
-                                  freedom.
-                                      
-    ``'standard_deviation'``      The square root of the
-                                  variance.
-                                  
-    ``'root_mean_square'``        The square root of the
-                                  weighted or unweighted mean
-                                  of the squares of the
-                                  values.
-                                  
-    ``'sample_size'``             The sample size, i.e. the
-                                  number of non-missing
-                                  values.
-                                  
-    ``'sum_of_weights'``          The sum of weights, as would
-                                  be used for other calculations.
-                                  
-    ``'sum_of_weights2'``         The sum of squares of
-                                  weights, as would be used
-                                  for other calculations.
-    ============================  ====================================
 
     **Data type and missing data**
     
@@ -6492,23 +6480,66 @@ may be accessed with the `nc_global_attributes`,
             Define the collapse method. All of the axes specified by
             the *axes* parameter are collapsed simultaneously by this
             method. The method is given by one of the following
-            strings:
-    
-              ========================================  =========================
-              *method*                                  Description
-              ========================================  =========================
-              ``'max'`` or ``'maximum'``                Maximum                  
-              ``'min'`` or ``'minimum'``                Minimum                      
-              ``'sum'``                                 Sum                      
-              ``'mid_range'``                           Mid-range                
-              ``'range'``                               Range                    
-              ``'mean'`` or ``'average'`` or ``'avg'``  Mean                         
-              ``'var'`` or ``'variance'``               Variance                 
-              ``'sd'`` or ``'standard_deviation'``      Standard deviation       
-              ``'sample_size'``                         Sample size                      
-              ``'sum_of_weights'``                      Sum of weights           
-              ``'sum_of_weights2'``                     Sum of squares of weights
-              ========================================  =========================
+            strings (see
+            https://ncas-cms.github.io/cf-python/beta/tutorial.html#collapse-methods
+            for precise definitions):
+
+            ============================  ============================
+            *method*                      Description                     
+            ============================  ============================
+            ``'maximum'``                 The maximum of the values.
+                                      
+            ``'minimum'``                 The minimum of the values.
+            
+            ``'maximum_absolute_value'``  The maximum of the absolute
+                                          values.
+                          
+            ``'minimum_absolute_value'``  The minimum of the absolute
+                                          values.
+            
+            ``'mid_range'``               The average of the maximum
+                                          and the minimum of the
+                                          values.
+                                          
+            ``'range'``                   The absolute difference
+                                          between the maximum and the
+                                          minimum of the values.
+                                          
+            ``'sum'``                     The sum of the values
+                                                                                    
+            ``'sum_of_squares'``          The sum of the squares of
+                                          values.
+                                          
+            ``'integral'``                The integral of values.
+                                          
+            ``'mean'``                    The weighted or unweighted
+                                          mean of the values.
+                                          
+            ``'variance'``                The weighted or unweighted
+                                          variance of the values, with
+                                          a given number of degrees of
+                                          freedom.
+                                              
+            ``'standard_deviation'``      The square root of the
+                                          variance.
+                                          
+            ``'root_mean_square'``        The square root of the
+                                          weighted or unweighted mean
+                                          of the squares of the
+                                          values.
+                                          
+            ``'sample_size'``             The sample size, i.e. the
+                                          number of non-missing
+                                          values.
+                                          
+            ``'sum_of_weights'``          The sum of weights, as
+                                          would be used for other
+                                          calculations.
+                                          
+            ``'sum_of_weights2'``         The sum of squares of
+                                          weights, as would be used
+                                          for other calculations.
+            ============================  ============================
     
             An alternative form is to provide a CF cell methods-like
             string. In this case an ordered sequence of collapses may

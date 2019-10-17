@@ -90,7 +90,7 @@
 <h1>cf.Field.collapse<a class="headerlink" href="#cf-field-collapse" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.collapse">
-<code class="descclassname">Field.</code><code class="descname">collapse</code><span class="sig-paren">(</span><em>method</em>, <em>axes=None</em>, <em>squeeze=False</em>, <em>mtol=1</em>, <em>weights=None</em>, <em>ddof=1</em>, <em>a=None</em>, <em>inplace=False</em>, <em>group=None</em>, <em>regroup=False</em>, <em>within_days=None</em>, <em>within_years=None</em>, <em>over_days=None</em>, <em>over_years=None</em>, <em>coordinate='mid_range'</em>, <em>group_by='coords'</em>, <em>group_span=None</em>, <em>group_contiguous=None</em>, <em>measure=False</em>, <em>scale=None</em>, <em>radius='earth'</em>, <em>verbose=False</em>, <em>_create_zero_size_cell_bounds=False</em>, <em>_update_cell_methods=True</em>, <em>i=False</em>, <em>_debug=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/field.py#L6157"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.collapse" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">collapse</code><span class="sig-paren">(</span><em>method</em>, <em>axes=None</em>, <em>squeeze=False</em>, <em>mtol=1</em>, <em>weights=None</em>, <em>ddof=1</em>, <em>a=None</em>, <em>inplace=False</em>, <em>group=None</em>, <em>regroup=False</em>, <em>within_days=None</em>, <em>within_years=None</em>, <em>over_days=None</em>, <em>over_years=None</em>, <em>coordinate='mid_range'</em>, <em>group_by='coords'</em>, <em>group_span=None</em>, <em>group_contiguous=None</em>, <em>measure=False</em>, <em>scale=None</em>, <em>radius='earth'</em>, <em>verbose=False</em>, <em>_create_zero_size_cell_bounds=False</em>, <em>_update_cell_methods=True</em>, <em>i=False</em>, <em>_debug=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/field.py#L6203"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.collapse" title="Permalink to this definition">¶</a></dt>
 <dd><p>Collapse axes of the field.</p>
 <p>Collapsing one or more dimensions reduces their size and replaces
 the data along those axes with representative statistical
@@ -147,91 +147,7 @@ coordinate reference system.</p>
 </dd>
 </dl>
 <p><strong>Collapse methods</strong></p>
-<p>The following collapse methods are available, over any subset of
-the domain axes (see
-<a class="reference external" href="https://ncas-cms.github.io/cf-python/beta/tutorial.html#collapse-methods">https://ncas-cms.github.io/cf-python/beta/tutorial.html#collapse-methods</a>
-for precise definitions):</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="44%" />
-<col width="56%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Method</th>
-<th class="head">Description</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'maximum'</span></code></td>
-<td>The maximum of the values.</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'minimum'</span></code></td>
-<td>The minimum of the values.</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'maximum_absolute_value'</span></code></td>
-<td>The maximum of the absolute
-values.</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'minimum_absolute_value'</span></code></td>
-<td>The minimum of the absolute
-values.</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'mid_range'</span></code></td>
-<td>The average of the maximum
-and the minimum of the
-values.</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'range'</span></code></td>
-<td>The absolute difference
-between the maximum and the
-minimum of the values.</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'sum'</span></code></td>
-<td>The sum of the values</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'sum_of_squares'</span></code></td>
-<td>The sum of the squares of
-values.</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'integral'</span></code></td>
-<td>The integral of values.</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'mean'</span></code></td>
-<td>The weighted or unweighted
-mean of the values.</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'variance'</span></code></td>
-<td>The weighted or unweighted
-variance of the values, with
-a given number of degrees of
-freedom.</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'standard_deviation'</span></code></td>
-<td>The square root of the
-variance.</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'root_mean_square'</span></code></td>
-<td>The square root of the
-weighted or unweighted mean
-of the squares of the
-values.</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'sample_size'</span></code></td>
-<td>The sample size, i.e. the
-number of non-missing
-values.</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'sum_of_weights'</span></code></td>
-<td>The sum of weights, as would
-be used for other calculations.</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'sum_of_weights2'</span></code></td>
-<td>The sum of squares of
-weights, as would be used
-for other calculations.</td>
-</tr>
-</tbody>
-</table>
+<p>See the <em>methods</em> parmaeter  for details.</p>
 <p><strong>Data type and missing data</strong></p>
 <p>In all collapses, missing data array elements are accounted for in
 the calculation.</p>
@@ -469,12 +385,13 @@ deviations with two separate collapse calls:</p>
 <dd><p class="first">Define the collapse method. All of the axes specified by
 the <em>axes</em> parameter are collapsed simultaneously by this
 method. The method is given by one of the following
-strings:</p>
-<blockquote>
-<div><table border="1" class="docutils">
+strings (see
+<a class="reference external" href="https://ncas-cms.github.io/cf-python/beta/tutorial.html#collapse-methods">https://ncas-cms.github.io/cf-python/beta/tutorial.html#collapse-methods</a>
+for precise definitions):</p>
+<table border="1" class="docutils">
 <colgroup>
-<col width="62%" />
-<col width="38%" />
+<col width="50%" />
+<col width="50%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head"><em>method</em></th>
@@ -482,42 +399,77 @@ strings:</p>
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'max'</span></code> or <code class="docutils literal notranslate"><span class="pre">'maximum'</span></code></td>
-<td>Maximum</td>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'maximum'</span></code></td>
+<td>The maximum of the values.</td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'min'</span></code> or <code class="docutils literal notranslate"><span class="pre">'minimum'</span></code></td>
-<td>Minimum</td>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'minimum'</span></code></td>
+<td>The minimum of the values.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'maximum_absolute_value'</span></code></td>
+<td>The maximum of the absolute
+values.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'minimum_absolute_value'</span></code></td>
+<td>The minimum of the absolute
+values.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'mid_range'</span></code></td>
+<td>The average of the maximum
+and the minimum of the
+values.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'range'</span></code></td>
+<td>The absolute difference
+between the maximum and the
+minimum of the values.</td>
 </tr>
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'sum'</span></code></td>
-<td>Sum</td>
+<td>The sum of the values</td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'mid_range'</span></code></td>
-<td>Mid-range</td>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'sum_of_squares'</span></code></td>
+<td>The sum of the squares of
+values.</td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'range'</span></code></td>
-<td>Range</td>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'integral'</span></code></td>
+<td>The integral of values.</td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'mean'</span></code> or <code class="docutils literal notranslate"><span class="pre">'average'</span></code> or <code class="docutils literal notranslate"><span class="pre">'avg'</span></code></td>
-<td>Mean</td>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'mean'</span></code></td>
+<td>The weighted or unweighted
+mean of the values.</td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'var'</span></code> or <code class="docutils literal notranslate"><span class="pre">'variance'</span></code></td>
-<td>Variance</td>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'variance'</span></code></td>
+<td>The weighted or unweighted
+variance of the values, with
+a given number of degrees of
+freedom.</td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'sd'</span></code> or <code class="docutils literal notranslate"><span class="pre">'standard_deviation'</span></code></td>
-<td>Standard deviation</td>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'standard_deviation'</span></code></td>
+<td>The square root of the
+variance.</td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'sample_size'</span></code></td>
-<td>Sample size</td>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'root_mean_square'</span></code></td>
+<td>The square root of the
+weighted or unweighted mean
+of the squares of the
+values.</td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'sum_of_weights'</span></code></td>
-<td>Sum of weights</td>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'sample_size'</span></code></td>
+<td>The sample size, i.e. the
+number of non-missing
+values.</td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'sum_of_weights2'</span></code></td>
-<td>Sum of squares of weights</td>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'sum_of_weights'</span></code></td>
+<td>The sum of weights, as
+would be used for other
+calculations.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'sum_of_weights2'</span></code></td>
+<td>The sum of squares of
+weights, as would be used
+for other calculations.</td>
 </tr>
 </tbody>
 </table>
-</div></blockquote>
 <p>An alternative form is to provide a CF cell methods-like
 string. In this case an ordered sequence of collapses may
 be defined and both the collapse methods and their axes

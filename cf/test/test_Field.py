@@ -25,7 +25,7 @@ class FieldTest(unittest.TestCase):
 
         self.test_only = []
 #        self.test_only = ['NOTHING!!!!']
-#        self.test_only = ['test_Field_domain_axis_position']
+#        self.test_only = ['test_Field_weights']
 #        self.test_only = ['test_Field_cumsum']
 #        self.test_only = ['test_Field_indices']
 #        self.test_only = ['test_Field_item']
@@ -81,6 +81,27 @@ class FieldTest(unittest.TestCase):
 
         self.assertTrue(f.domain_axis_position('Z') == 0)
         self.assertTrue(f.domain_axis_position('grid_latitude') == 1)
+
+        
+    def test_Field_weights(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = self.f
+
+        w = f.weights()
+
+        x = f.weights(w)
+        self.assertTrue(x.equals(w, verbose=True))
+
+        for components in (False, True):
+            y = f.weights(w.data.transpose(), components=components)
+            y = f.weights(w.data.transpose()[0].squeeze(), components=components)
+            y = f.weights(w.data.transpose()[0], components=components)
+            y = f.weights(f.data.squeeze(), components=components)
+            y = f.weights('auto', components=components)
+            y = f.weights('grid_longitude', components=components)
+            y = f.weights(['grid_longitude'], components=components)
             
 
     def test_Field_replace_construct(self):

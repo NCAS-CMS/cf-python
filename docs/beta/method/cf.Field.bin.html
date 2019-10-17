@@ -90,7 +90,7 @@
 <h1>cf.Field.bin<a class="headerlink" href="#cf-field-bin" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.bin">
-<code class="descclassname">Field.</code><code class="descname">bin</code><span class="sig-paren">(</span><em>method</em>, <em>digitized</em>, <em>weights=None</em>, <em>measure=False</em>, <em>scale=None</em>, <em>mtol=1</em>, <em>ddof=1</em>, <em>radius='earth'</em>, <em>return_indices=False</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/field.py#L5228"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.bin" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">bin</code><span class="sig-paren">(</span><em>method</em>, <em>digitized</em>, <em>weights=None</em>, <em>measure=False</em>, <em>scale=None</em>, <em>mtol=1</em>, <em>ddof=1</em>, <em>radius='earth'</em>, <em>return_indices=False</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/field.py#L5274"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.bin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Collapse the data values that lie in multi-dimensional bins.</p>
 <p>The number of dimensions of the output binned data is equal to the
 number of field constructs provided by the <em>digitized</em>
@@ -270,8 +270,8 @@ incorporated into the units of the returned field
 construct.</p>
 <p class="last">Note that specifying volume weights via <code class="docutils literal notranslate"><span class="pre">weights=['X',</span>
 <span class="pre">'Y',</span> <span class="pre">'Z']</span></code> or <code class="docutils literal notranslate"><span class="pre">weights=['area',</span> <span class="pre">'Z']</span></code> will give
-<strong>incorrect volume cell measures unless the vertical
-dimension coordinates define the actual height or depth
+<strong>incorrect volume cell measures if the vertical dimension
+coordinates do not define the actual height or depth
 thickness of every cell in the domain</strong>. In this case,
 <code class="docutils literal notranslate"><span class="pre">weights='volume'</span></code> should be used instead, which
 requires the field construct to have a “volume” cell
@@ -429,10 +429,10 @@ data varies with <code class="docutils literal notranslate"><span class="pre">se
 <span class="go">Dimension coords: sea_water_salinity(4) = [6.3054151982069016, ..., 39.09366758167744] psu</span>
 <span class="go">                : sea_water_potential_temperature(6) = [278.1569468180338, ..., 303.18466695149743] K</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
-<span class="go">[[-168.16      --      --  129.88  125.04    49.24]</span>
-<span class="go"> [     --  112.45      --  161.83  220.67       --]</span>
-<span class="go"> [     --  154.39 -270.33  342.32   -7.82  -219.66]</span>
-<span class="go"> [     --   47.61  153.94 -163.39   -55.11 -170.88]]</span>
+<span class="go">[[ 189.22 131.36    6.75 -41.61     --  100.04]</span>
+<span class="go"> [-116.73 232.38   -4.82 180.47 134.25 -189.55]</span>
+<span class="go"> [     --     --  180.69     --  47.61      --]</span>
+<span class="go"> [158.22      -- -262.75  64.12 -51.83 -219.66]]</span>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="s1">&#39;integral&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">t_indices</span><span class="p">,</span> <span class="n">s_indices</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="s1">&#39;Z&#39;</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">],</span> <span class="n">measure</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -444,10 +444,10 @@ data varies with <code class="docutils literal notranslate"><span class="pre">se
 <span class="go">Dimension coords: sea_water_salinity(4) = [6.3054151982069016, ..., 39.09366758167744] psu</span>
 <span class="go">                : sea_water_potential_temperature(6) = [278.1569468180338, ..., 303.18466695149743] K</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
-<span class="go">[[-3248849420288.0              --               --  5017197084672.0  7243526307840.0  2852639211520.0]</span>
-<span class="go"> [              -- 6510366687232.0               --  6253326630912.0 12785788387328.0               --]</span>
-<span class="go"> [              -- 5962883661824.0 -5222633570304.0  6603800051712.0  -150768402432.0 -4243793641472.0]</span>
-<span class="go"> [              --  919988011008.0  8922435944448.0 -9467474214912.0 -2127805546496.0 -9899841945600.0]]</span>
+<span class="go">[[ 3655558758400.0 5070927691776.0   260864491520.0 -1605439586304.0               --  3863717609472.0]</span>
+<span class="go"> [-4509735059456.0 4489564127232.0  -280126521344.0 10454746267648.0  7777254113280.0 -7317268463616.0]</span>
+<span class="go"> [              --              -- 10470463373312.0               --   919782031360.0               --]</span>
+<span class="go"> [ 3055211773952.0              -- -5073676009472.0  3715958833152.0 -2000787079168.0 -4243632160768.0]]</span>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="s1">&#39;sample_size&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">t_indices</span><span class="p">,</span> <span class="n">s_indices</span><span class="p">])</span>
@@ -459,10 +459,10 @@ data varies with <code class="docutils literal notranslate"><span class="pre">se
 <span class="go">Dimension coords: sea_water_salinity(4) = [6.3054151982069016, ..., 39.09366758167744] psu</span>
 <span class="go">                : sea_water_potential_temperature(6) = [278.1569468180338, ..., 303.18466695149743] K</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
-<span class="go">[[ 1 -- --  2  3  3]</span>
-<span class="go"> [--  3 --  2  3 --]</span>
-<span class="go"> [--  2  1  1  1  1]</span>
-<span class="go"> [--  1  3  3  2  3]]</span>
+<span class="go">[[ 1  2 2  2 --  2]</span>
+<span class="go"> [ 2  1 3  3  3  2]</span>
+<span class="go"> [-- -- 3 --  1 --]</span>
+<span class="go"> [ 1 -- 1  3  2  1]]</span>
 </pre></div>
 </div>
 </dd></dl>
