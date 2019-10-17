@@ -5569,49 +5569,73 @@ may be accessed with the `nc_global_attributes`,
 
     >>> t_indices = t.digitize(6)
     >>> s_indices = s.digitize(4)
-    >>> b = x.bin('mean', [t_indices, s_indices], weights=['X', 'Y', 'Z', 'T'])
-    >>> b
-    Field: tendency_of_sea_water_potential_temperature_expressed_as_heat_content
-    ----------------------------------------------------------------------------
-    Data            : tendency_of_sea_water_potential_temperature_expressed_as_heat_content(sea_water_salinity(4), sea_water_potential_temperature(6)) W m-2
-    Cell methods    : latitude: longitude: mean
-    Dimension coords: sea_water_salinity(4) = [6.3054151982069016, ..., 39.09366758167744] psu
-                    : sea_water_potential_temperature(6) = [278.1569468180338, ..., 303.18466695149743] K
-    >>> print(b)
-    [[ 189.22 131.36    6.75 -41.61     --  100.04]
-     [-116.73 232.38   -4.82 180.47 134.25 -189.55]
-     [     --     --  180.69     --  47.61      --]
-     [158.22      -- -262.75  64.12 -51.83 -219.66]]
 
-    >>> b = x.bin('integral', [t_indices, s_indices], weights=['X', 'Y', 'Z', 'T'], measure=True)
-    >>> b
-    Field: long_name=Integral of tendency_of_sea_water_potential_temperature_expressed_as_heat_content
-    --------------------------------------------------------------------------------------------------
-    Data            : long_name=Integral of tendency_of_sea_water_potential_temperature_expressed_as_heat_content(sea_water_salinity(4), sea_water_potential_temperature(6)) 86400 m3.kg.s-2
-    Cell methods    : latitude: longitude: sum
-    Dimension coords: sea_water_salinity(4) = [6.3054151982069016, ..., 39.09366758167744] psu
-                    : sea_water_potential_temperature(6) = [278.1569468180338, ..., 303.18466695149743] K
-    >>> print(b.array)
-    [[ 3655558758400.0 5070927691776.0   260864491520.0 -1605439586304.0               --  3863717609472.0]
-     [-4509735059456.0 4489564127232.0  -280126521344.0 10454746267648.0  7777254113280.0 -7317268463616.0]
-     [              --              -- 10470463373312.0               --   919782031360.0               --]
-     [ 3055211773952.0              -- -5073676009472.0  3715958833152.0 -2000787079168.0 -4243632160768.0]]
-
-    >>> b = x.bin('sample_size', [t_indices, s_indices])
-    >>> b
+    >>> n = x.bin('sample_size', [t_indices, s_indices])
+    >>> print(n)
     Field: number_of_observations
     -----------------------------
     Data            : number_of_observations(sea_water_salinity(4), sea_water_potential_temperature(6)) 1
     Cell methods    : latitude: longitude: point
     Dimension coords: sea_water_salinity(4) = [6.3054151982069016, ..., 39.09366758167744] psu
                     : sea_water_potential_temperature(6) = [278.1569468180338, ..., 303.18466695149743] K
-    >>> print(b.array)
+    >>> print(n.array)
     [[ 1  2 2  2 --  2]
      [ 2  1 3  3  3  2]
      [-- -- 3 --  1 --]
      [ 1 -- 1  3  2  1]]
 
-        '''
+    >>> m = x.bin('mean', [t_indices, s_indices], weights=['X', 'Y', 'Z', 'T'])
+    >>> print(m)
+    Field: tendency_of_sea_water_potential_temperature_expressed_as_heat_content
+    ----------------------------------------------------------------------------
+    Data            : tendency_of_sea_water_potential_temperature_expressed_as_heat_content(sea_water_salinity(4), sea_water_potential_temperature(6)) W m-2
+    Cell methods    : latitude: longitude: mean
+    Dimension coords: sea_water_salinity(4) = [6.3054151982069016, ..., 39.09366758167744] psu
+                    : sea_water_potential_temperature(6) = [278.1569468180338, ..., 303.18466695149743] K
+    >>> print(m)
+    [[ 189.22 131.36    6.75 -41.61     --  100.04]
+     [-116.73 232.38   -4.82 180.47 134.25 -189.55]
+     [     --     --  180.69     --  47.61      --]
+     [158.22      -- -262.75  64.12 -51.83 -219.66]]
+
+    >>> i = x.bin('integral', [t_indices, s_indices], weights=['X', 'Y', 'Z', 'T'], measure=True)
+    >>> print(i)
+    Field: long_name=integral of tendency_of_sea_water_potential_temperature_expressed_as_heat_content
+    --------------------------------------------------------------------------------------------------
+    Data            : long_name=integral of tendency_of_sea_water_potential_temperature_expressed_as_heat_content(sea_water_salinity(4), sea_water_potential_temperature(6)) 86400 m3.kg.s-2
+    Cell methods    : latitude: longitude: sum
+    Dimension coords: sea_water_salinity(4) = [6.3054151982069016, ..., 39.09366758167744] psu
+                    : sea_water_potential_temperature(6) = [278.1569468180338, ..., 303.18466695149743] K
+    >>> print(i.array)
+    [[ 3655558758400.0 5070927691776.0   260864491520.0 -1605439586304.0               --  3863717609472.0]
+     [-4509735059456.0 4489564127232.0  -280126521344.0 10454746267648.0  7777254113280.0 -7317268463616.0]
+     [              --              -- 10470463373312.0               --   919782031360.0               --]
+     [ 3055211773952.0              -- -5073676009472.0  3715958833152.0 -2000787079168.0 -4243632160768.0]]
+
+    >>> w = x.bin('sum_of_weights', [t_indices, s_indices], weights=['X', 'Y', 'Z', 'T'], measure=True)
+    Field: long_name=sum_of_weights of tendency_of_sea_water_potential_temperature_expressed_as_heat_content
+    --------------------------------------------------------------------------------------------------------
+    Data            : long_name=sum_of_weights of tendency_of_sea_water_potential_temperature_expressed_as_heat_content(sea_water_salinity(4), sea_water_potential_temperature(6)) 86400 m3.s
+    Cell methods    : latitude: longitude: point
+    Dimension coords: sea_water_salinity(4) = [7.789749830961227, ..., 36.9842486679554] psu
+                    : sea_water_potential_temperature(6) = [274.50717671712243, ..., 302.0188242594401] K
+    >>> print(w)
+    [[19319093248.0 38601412608.0 38628990976.0 38583025664.0            --  38619795456.0]
+     [38628990976.0 19319093248.0 57957281792.0 57929699328.0 57929695232.0  38601412608.0]
+     [         --              -- 57948086272.0            -- 19319093248.0             --]
+     [19309897728.0            -- 19309897728.0 57948086272.0 38601412608.0  19319093248.0]]
+
+    >>> print(i/w)
+    Field: 
+    -------
+    Data            : (sea_water_salinity(4), sea_water_potential_temperature(6)) kg.s-3
+    Cell methods    : latitude: longitude: sum
+    Dimension coords: sea_water_salinity(4) = [7.789749830961227, ..., 36.9842486679554] psu
+                    : sea_water_potential_temperature(6) = [274.50717671712243, ..., 302.0188242594401] K
+    >>> (i/w == m).all()
+    True
+
+    '''
         if verbose:
             print('    Method:', method) # pragma: no cover
             
@@ -5637,14 +5661,18 @@ may be accessed with the `nc_global_attributes`,
 
         out = type(self)(properties=self.properties())
 
+        # Sort out identity
         if method == 'sample_size':
             out.standard_name = 'number_of_observations'
+        elif method in ('integral', 'sum_of_squares',
+                        'sum_of_weights', 'sum_of_weights2'):
+            out.del_property('standard_name', None)
 
         long_name = self.get_property('long_name', None)
         if long_name is None:
-            out.long_name = method.replace('_', ' ')+' '+self.get_property('standard_name', '')
+            out.long_name = method+' of '+self.get_property('standard_name', '')
         else:
-            out.long_name = method.replace('_', ' ')+' '+long_name
+            out.long_name = method+' of '+long_name
             
         if isinstance(digitized, self.__class__):
             digitized = (digitized,)
@@ -5828,16 +5856,8 @@ may be accessed with the `nc_global_attributes`,
             cell_method = CellMethod(axes=sorted(standard_names),
                                      method=_collapse_cell_methods[method])
             out.set_construct(cell_method, copy=False)
-            
-        if method == 'integral':
-            name = self.get_property('standard_name',
-                                     self.get_property('long_name', None))
-
-            if name is not None:
-                out.long_name = 'Integral of '+name
-                
-            out.del_property('standard_name', None)
-
+           
+ 
         # Return
 #        if return_indices:
 #            d.hardmask = True
