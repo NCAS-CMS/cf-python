@@ -217,20 +217,23 @@ for other calculations.</td>
 </tbody>
 </table>
 </dd>
-<dt>digitized: (sequence of) <a class="reference internal" href="../classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a></dt>
-<dd><p class="first">One or more field constructs that contain digitized data
-with corresponding metadata, as output by
+</dl>
+<p>digitized: (sequence of) <a class="reference internal" href="../classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a></p>
+<blockquote>
+<div><p>One or more field constructs that contain digitized data
+with corresponding metadata, as would be output by
 <a class="reference internal" href="cf.Field.digitize.html#cf.Field.digitize" title="cf.Field.digitize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.digitize</span></code></a>. Each field construct, which must have
 the same data shape as the field construct being binned,
-contains indices of the bins to which each value of an
-original field construct belongs; and there must be
-<code class="docutils literal notranslate"><span class="pre">bin_count</span></code> and <code class="docutils literal notranslate"><span class="pre">bin_bounds</span></code> properties as defined by
-the <a class="reference internal" href="cf.Field.digitize.html#cf.Field.digitize" title="cf.Field.digitize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">digitize</span></code></a> method (and any of the extra properties
-defined by that method are also recommended).</p>
-<p class="last">The bins defined by the <code class="docutils literal notranslate"><span class="pre">bin_count</span></code> and <code class="docutils literal notranslate"><span class="pre">bin_bounds</span></code>
-properties are used to create dimension coordinate
-constructs for the output field construct.</p>
-</dd>
+contains indices to the one-dimensionsal bins to which
+each value of an original field construct belongs; and
+there must be <code class="docutils literal notranslate"><span class="pre">bin_count</span></code> and <code class="docutils literal notranslate"><span class="pre">bin_bounds</span></code> properties
+as defined by the <a class="reference internal" href="cf.Field.digitize.html#cf.Field.digitize" title="cf.Field.digitize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">digitize</span></code></a> method (and any of the extra
+properties defined by that method are also recommended).</p>
+<p>The bins defined by the <code class="docutils literal notranslate"><span class="pre">bin_count</span></code> and <code class="docutils literal notranslate"><span class="pre">bin_bounds</span></code>
+properties are used to create a dimension coordinate
+construct for the output field construct.</p>
+</div></blockquote>
+<dl class="docutils">
 <dt>weights: optional</dt>
 <dd><p class="first">Specify the weights for the collapse calculations. <strong>By
 default all collapses are unweighted</strong>. The weights are

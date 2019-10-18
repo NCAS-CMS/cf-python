@@ -90,7 +90,7 @@
 <h1>cf.Field.histogram<a class="headerlink" href="#cf-field-histogram" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.histogram">
-<code class="descclassname">Field.</code><code class="descname">histogram</code><span class="sig-paren">(</span><em>digitized</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/field.py#L5868"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.histogram" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">histogram</code><span class="sig-paren">(</span><em>digitized</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/field.py#L5869"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.histogram" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a multi-dimensional histogram of the data.</p>
 <p>The number of dimensions of the histogram is equal to the number
 of field constructs provided by the <em>digitized</em> argument. Each
@@ -132,22 +132,22 @@ coordinate constructs that define the bin boundaries.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>digitized: (sequence of) <a class="reference internal" href="../classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a></dt>
-<dd><p class="first">One or more field constructs that contain digitized data
-with corresponding metadata, as output by
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first">digitized: (sequence of) <a class="reference internal" href="../classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a></p>
+<blockquote>
+<div><p>One or more field constructs that contain digitized data
+with corresponding metadata, as would be output by
 <a class="reference internal" href="cf.Field.digitize.html#cf.Field.digitize" title="cf.Field.digitize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.digitize</span></code></a>. Each field construct, which must have
 the same data shape as the field construct being
-histogrammed, contains indices of the bins to which each
-value of an original field construct belongs; and there
-must be <code class="docutils literal notranslate"><span class="pre">bin_count</span></code> and <code class="docutils literal notranslate"><span class="pre">bin_bounds</span></code> properties as
-defined by the <a class="reference internal" href="cf.Field.digitize.html#cf.Field.digitize" title="cf.Field.digitize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">digitize</span></code></a> method (and any of the extra
-properties defined by that method are also recommended).</p>
-<p class="last">The bins defined by the <code class="docutils literal notranslate"><span class="pre">bin_count</span></code> and <code class="docutils literal notranslate"><span class="pre">bin_bounds</span></code>
-properties are used to create dimension coordinate
-constructs for the output field construct.</p>
-</dd>
-</dl>
+histogrammed, contains indices to the one-dimensionsal
+bins to which each value of an original field construct
+belongs; and there must be <code class="docutils literal notranslate"><span class="pre">bin_count</span></code> and
+<code class="docutils literal notranslate"><span class="pre">bin_bounds</span></code> properties as defined by the <a class="reference internal" href="cf.Field.digitize.html#cf.Field.digitize" title="cf.Field.digitize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">digitize</span></code></a>
+method (and any of the extra properties defined by that
+method are also recommended).</p>
+<p>The bins defined by the <code class="docutils literal notranslate"><span class="pre">bin_count</span></code> and <code class="docutils literal notranslate"><span class="pre">bin_bounds</span></code>
+properties are used to create a dimension coordinate
+construct for the output field construct.</p>
+</div></blockquote>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
@@ -160,7 +160,9 @@ constructs for the output field construct.</p>
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>                                                                                                   
+<p>Create a one-dimensioanl histogram based on 10 equally-sized bins
+that exactly span the data range:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>                                                                                                   
 <span class="go">Field: specific_humidity (ncvar%q)</span>
 <span class="go">----------------------------------</span>
 <span class="go">Data            : specific_humidity(latitude(5), longitude(8)) 0.001 1</span>
@@ -168,14 +170,14 @@ constructs for the output field construct.</p>
 <span class="go">Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north</span>
 <span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
 <span class="go">                : time(1) = [2019-01-01 00:00:00]       </span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>                                                                                            
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>                                                                                            
 <span class="go">[[  7.  34.   3.  14.  18.  37.  24.  29.]</span>
 <span class="go"> [ 23.  36.  45.  62.  46.  73.   6.  66.]</span>
 <span class="go"> [110. 131. 124. 146.  87. 103.  57.  11.]</span>
 <span class="go"> [ 29.  59.  39.  70.  58.  72.   9.  17.]</span>
 <span class="go"> [  6.  36.  19.  35.  18.  37.  34.  13.]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">q_indices</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>                                             
-<span class="gp">&gt;&gt;&gt; </span><span class="n">h</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">q_indices</span><span class="p">)</span>                             
+<span class="gp">&gt;&gt;&gt; </span><span class="n">indices</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>                                             
+<span class="gp">&gt;&gt;&gt; </span><span class="n">h</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>                             
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">h</span><span class="p">)</span> 
 <span class="go">Field: number_of_observations</span>
 <span class="go">-----------------------------</span>

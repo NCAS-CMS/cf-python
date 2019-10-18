@@ -4952,7 +4952,7 @@ may be accessed with the `nc_global_attributes`,
         '''Return the indices of the bins to which each value belongs.
 
     Values (including masked values) that do not belong to any bin
-    result in masked indices in the output field construct.
+    result in masked values in the output field construct of indices.
                 
     The output field contruct is given a ``long_name`` property, and
     properties that define the bins:
@@ -5376,19 +5376,20 @@ may be accessed with the `nc_global_attributes`,
             ============================  ============================
 
         digitized: (sequence of) `Field`
+
             One or more field constructs that contain digitized data
-            with corresponding metadata, as output by
+            with corresponding metadata, as would be output by
             `cf.Field.digitize`. Each field construct, which must have
             the same data shape as the field construct being binned,
-            contains indices of the bins to which each value of an
-            original field construct belongs; and there must be
-            ``bin_count`` and ``bin_bounds`` properties as defined by
-            the `digitize` method (and any of the extra properties
-            defined by that method are also recommended).
+            contains indices to the one-dimensionsal bins to which
+            each value of an original field construct belongs; and
+            there must be ``bin_count`` and ``bin_bounds`` properties
+            as defined by the `digitize` method (and any of the extra
+            properties defined by that method are also recommended).
 
             The bins defined by the ``bin_count`` and ``bin_bounds``
-            properties are used to create dimension coordinate
-            constructs for the output field construct.
+            properties are used to create a dimension coordinate
+            construct for the output field construct.
 
         weights: optional
             Specify the weights for the collapse calculations. **By
@@ -5910,19 +5911,21 @@ may be accessed with the `nc_global_attributes`,
     :Parameters:
 
         digitized: (sequence of) `Field`
+
             One or more field constructs that contain digitized data
-            with corresponding metadata, as output by
+            with corresponding metadata, as would be output by
             `cf.Field.digitize`. Each field construct, which must have
             the same data shape as the field construct being
-            histogrammed, contains indices of the bins to which each
-            value of an original field construct belongs; and there
-            must be ``bin_count`` and ``bin_bounds`` properties as
-            defined by the `digitize` method (and any of the extra
-            properties defined by that method are also recommended).
+            histogrammed, contains indices to the one-dimensionsal
+            bins to which each value of an original field construct
+            belongs; and there must be ``bin_count`` and
+            ``bin_bounds`` properties as defined by the `digitize`
+            method (and any of the extra properties defined by that
+            method are also recommended).
 
             The bins defined by the ``bin_count`` and ``bin_bounds``
-            properties are used to create dimension coordinate
-            constructs for the output field construct.
+            properties are used to create a dimension coordinate
+            construct for the output field construct.
 
     :Returns:
 
@@ -5931,7 +5934,10 @@ may be accessed with the `nc_global_attributes`,
 
     **Examples:**
 
-    >>> print(q)                                                                                                   
+    Create a one-dimensioanl histogram based on 10 equally-sized bins
+    that exactly span the data range:
+
+    >>> print(f)                                                                                                   
     Field: specific_humidity (ncvar%q)
     ----------------------------------
     Data            : specific_humidity(latitude(5), longitude(8)) 0.001 1
@@ -5939,14 +5945,14 @@ may be accessed with the `nc_global_attributes`,
     Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
                     : longitude(8) = [22.5, ..., 337.5] degrees_east
                     : time(1) = [2019-01-01 00:00:00]       
-    >>> print(q.array)                                                                                            
+    >>> print(f.array)                                                                                            
     [[  7.  34.   3.  14.  18.  37.  24.  29.]
      [ 23.  36.  45.  62.  46.  73.   6.  66.]
      [110. 131. 124. 146.  87. 103.  57.  11.]
      [ 29.  59.  39.  70.  58.  72.   9.  17.]
      [  6.  36.  19.  35.  18.  37.  34.  13.]]
-    >>> q_indices = q.digitize(10)                                             
-    >>> h = q.histogram(q_indices)                             
+    >>> indices = f.digitize(10)                                             
+    >>> h = f.histogram(indices)                             
     >>> print(h) 
     Field: number_of_observations
     -----------------------------

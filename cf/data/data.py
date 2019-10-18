@@ -1935,7 +1935,7 @@ place.
         '''Return the indices of the bins to which each value belongs.
 
     Values (including masked values) that do not belong to any bin
-    result in masked indices in the output data.
+    result in masked values in the output data.
              
     .. versionadded:: 3.0.2
 
