@@ -5645,21 +5645,54 @@ method constructs.
 Binned collapses
 ^^^^^^^^^^^^^^^^
 
-Collapse the data values that lie in multi-dimensional bins.
+TODO1
 
-An output value for an bin is formed by collapsing the elements of the
-data for which the corresponding locations in the digitized field
-constructs, taken together, index that bin. Note that it may be the
-case that not all output bins are indexed by the digitized field
-constructs, and for these bins missing data is returned.
+.. Collapse the data values that lie in multi-dimensional bins.
 
-The output bins are defined by the exterior product of the
-one-dimensional bins of each digitized field construct. For example,
-if only one digitized field construct is provided then the histogram
-bins simply comprise its one-dimensional bins; if there are two
-digitized field constructs then the histogram bins comprise the
-two-dimensionsal matrix formed by all possible combinations of the two
-sets of one-dimensional bins.
+   two stage process. First, the bin each 
+   
+       The number of dimensions of the output binned data is equal to the
+       number of field constructs provided by the *digitized*
+       argument. Each such field construct defines a sequence of bins and
+       provides indices to the bins that each value of another field
+       construct belongs. There is no upper limit to the number of
+       dimensions of the output binned data.
+           
+       The output bins are defined by the exterior product of the
+       one-dimensional bins of each digitized field construct. For
+       example, if only one digitized field construct is provided then
+       the histogram bins simply comprise its one-dimensional bins; if
+       there are two digitized field constructs then the histogram bins
+       comprise the two-dimensionsal matrix formed by all possible
+       combinations of the two sets of one-dimensional bins.
+   
+       An output value for a bin is formed by collapsing (using the
+       method given by the *method* parameter) the elements of the data
+       for which the corresponding locations in the digitized field
+       constructs, taken together, index that bin. Note that it may be
+       the case that not all output bins are indexed by the digitized
+       field constructs, and for these bins missing data is returned.
+   
+   An output value for a bin is formed by collapsing the elements of the
+   data which map to   the corresponding locations in the digitized field
+   constructs, taken together, index that bin. Note that it may be the
+   case that not all output bins are indexed by the digitized field
+   constructs, and for these bins missing data is returned.
+   
+   The output bins are defined by the exterior product of the
+   one-dimensional bins of each digitized field construct. For example,
+   if only one digitized field construct is provided then the histogram
+   bins simply comprise its one-dimensional bins; if there are two
+   digitized field constructs then the histogram bins comprise the
+   two-dimensionsal matrix formed by all possible combinations of the two
+   sets of one-dimensional bins.
+   
+   An output value for a bin is formed by collapsing (using the method
+   given by the method parameter) the elements of the data for which the
+   corresponding locations in the digitized field constructs, taken
+   together, index that bin. Note that it may be the case that not all
+   output bins are indexed by the digitized field constructs, and for
+   these bins missing data is returned.
 
 ----
 

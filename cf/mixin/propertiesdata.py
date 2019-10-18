@@ -1626,7 +1626,7 @@ class PropertiesData(Properties):
     
     def max(self):
         '''The maximum of the data array.
-
+g
     .. seealso:: `mean`, `mid_range`, `min`, `range`, `sample_size`,
                  `sd`, `sum`, `var`
     
@@ -4136,6 +4136,7 @@ TODO
         data = v.get_data(None)
         if data is not None:
             data.override_calendar(calendar, inplace=True)
+            v._custom['Units'] = data.Units
         else:
             if not v.Units.isreftime:
                 raise ValueError(
@@ -4144,6 +4145,8 @@ TODO
                 
             v.Units = Units(getattr(v.Units, 'units', None), calendar=calendar)
 
+        if inplace:
+            v = None
         return v
 
 
@@ -4202,12 +4205,18 @@ TODO
         else:
             v = self.copy()
 
+        units = Units(units)
+        
         data = v.get_data(None)
         if data is not None:
             data.override_units(units, inplace=True)
+            v._custom['Units'] = units
         else:
-            v.Units = Units(units)
+            v.Units = units
 
+
+        if inplace:
+            v = None
         return v
 
 

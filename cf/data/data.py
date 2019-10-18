@@ -2164,7 +2164,7 @@ place.
 
         out.dtype = int
 
-        out._Units = _units_None
+        out.override_units(_units_None, inplace=True)
             
         if return_bins:
             return out, type(self)(two_d_bins, units=bin_units)

@@ -1861,7 +1861,7 @@ may be accessed with the `nc_global_attributes`,
     
     **Examples:**
     
-    >>> g = _conform_for_assignment(f)
+    >>> h = f._conform_for_assignment(g)
 
         '''
         # Analyse each domain
@@ -1992,7 +1992,7 @@ may be accessed with the `nc_global_attributes`,
             axis0 = s['id_to_axis'][identity]
             if other.direction(axis1) != self.direction(axis0):
                 flip_axes1.append(axis1)
-         #--- End: for
+        #--- End: for
 
         if flip_axes1:
             if not copied:
@@ -5499,6 +5499,10 @@ may be accessed with the `nc_global_attributes`,
               ``radius=6371200``, ``radius=numpy.array(6371200)``,
               ``radius=cf.Data(6371200)``, ``radius=cf.Data(6371200,
               'm')``, ``radius=cf.Data(6371.2, 'km')``.
+
+        verbose: `bool`, optional    
+            If True then print a description of the binned field
+            construct creation process.
     
     :Returns:
 
@@ -5648,7 +5652,7 @@ may be accessed with the `nc_global_attributes`,
         if verbose:
             print('    Method:', method) # pragma: no cover
             
-        if method == 'integral':
+        if method == 'integral':            
             if weights is None:
                 raise ValueError(
                     "Must specify weights for 'integral' calculations.")
@@ -5668,9 +5672,10 @@ may be accessed with the `nc_global_attributes`,
         dims           = []
         names          = []
 
+        # Initialize the output binned field
         out = type(self)(properties=self.properties())
 
-        # Sort out identity
+        # Sort out its identity
         if method == 'sample_size':
             out.standard_name = 'number_of_observations'
         elif method in ('integral', 'sum_of_squares',
@@ -5682,20 +5687,26 @@ may be accessed with the `nc_global_attributes`,
             out.long_name = method+' of '+self.get_property('standard_name', '')
         else:
             out.long_name = method+' of '+long_name
-            
+
+        # ------------------------------------------------------------
+        # Create domain axes and dimension coordinates for the output
+        # binned field
+        # ------------------------------------------------------------
         if isinstance(digitized, self.__class__):
             digitized = (digitized,)
 
-        self_shape = self.shape
-            
         for f in digitized[::-1]:
             if verbose:
-                print('    Digitized field:', repr(f)) # pragma: no cover
+                print('    Digitized field input    :', repr(f)) # pragma: no cover
 
-            if f.shape != self_shape:
+            f =  self._conform_for_assignment(f)
+            if verbose:
+                print('                    conformed:', repr(f)) # pragma: no cover
+          
+            if f.shape != self.shape:
                 raise ValueError(
-                    "Digitized field construct must have matching shape. Got {}, expected {}".format(
-                        f.shape, self_shape))
+                    "Digitized field {!r} construct must have matching shape. Got {}, expected {}".format(
+                        f, f.shape, self.shape))
                 
             bin_bounds        = f.get_property('bin_bounds', None)
             bin_count         = f.get_property('bin_count', None)
@@ -5707,16 +5718,16 @@ may be accessed with the `nc_global_attributes`,
 
             if bin_count is None:
                 raise ValueError(
-                    "Digitized field construct must have a 'bin_count' property.")
+                    "Digitized field {!r} construct must have a 'bin_count' property.".format(f))
 
             if bin_bounds is None:
                 raise ValueError(
-                    "Digitized field construct must have a 'bin_bounds' property.")
+                    "Digitized field construct {!r} must have a 'bin_bounds' property.".format(f))
              
             if bin_count != len(bin_bounds)/2:
                 raise ValueError(
-                    "bin_count must equal len(bin_bounds)/2. Got bin_count={}, len(bin_bounds)/2={}".format(
-                        bin_count, len(bin_bounds)/2))
+                    "Digitized field construct {!r} bin_count must equal len(bin_bounds)/2. Got bin_count={}, len(bin_bounds)/2={}".format(
+                        f, bin_count, len(bin_bounds)/2))
 
             # Create dimension coordinate for bins
             dim = DimensionCoordinate()
@@ -5738,7 +5749,7 @@ may be accessed with the `nc_global_attributes`,
             dim.set_bounds(Bounds(data=bounds_data))
 
             if verbose:
-                print('    {} bins: {!r}'.format(
+                print('                    bins     : {} {!r}'.format(
                     dim.identity(), bounds_data)) # pragma: no cover
             
             # Set domain axis and dimension coordinate for bins
@@ -5750,7 +5761,10 @@ may be accessed with the `nc_global_attributes`,
             shape.append(dim.size)
             dims.append(dim)
             names.append(dim.identity())
-            
+
+        # ------------------------------------------------------------
+        # Initialize the ouput data as a totally masked array
+        # ------------------------------------------------------------
         if method == 'sample_size':
             dtype = int
         else:
@@ -5759,15 +5773,12 @@ may be accessed with the `nc_global_attributes`,
         data = Data.masked_all(shape=tuple(shape), dtype=dtype,
                                units=None)
         out.set_data(data, axes=axes, copy=False)
-
         out.hardmask = False
 
         c = self.copy()
 
 #        if return_indices:
-#            # --------------------------------------------------------
 #            # Create a field for storing the bin indices of each value
-#            # --------------------------------------------------------
 #            d = self.copy()
 #            shape = d.shape
 #            d.del_data(None)
@@ -5794,7 +5805,10 @@ may be accessed with the `nc_global_attributes`,
 #            for key in d.cell_methods:
 #                d.del_construct(key)
 #        #--- End: if
-        
+
+        # ------------------------------------------------------------
+        # Parse the weights
+        # ------------------------------------------------------------
         if weights is not None:
             if not measure and scale is None:
                 scale = 1.0
@@ -5803,21 +5817,27 @@ may be accessed with the `nc_global_attributes`,
                                    scale=scale, measure=measure,
                                    radius=radius)
 
-        # Unique collections of bin indices
+        # ------------------------------------------------------------
+        # Find the unique multi-dimensionsal bin indices (TODO: can I
+        # LAMA this?)
+        # ------------------------------------------------------------
         y = numpy_empty((len(bin_indices), bin_indices[0].size), dtype=int)
         for i, f in enumerate(bin_indices):
             y[i, :] = f.array.flatten()
 
-        # Loop round unique collections of bin indices        
-        y = numpy_unique(y, axis=1)
+        unique_indices = numpy_unique(y, axis=1)
+        del f
+        del y
+        
         if verbose:
-            print('    Number of unique ({}) indices: {}'.format(
-                ', '.join(names), y.shape[1])) # pragma: no cover
             print('    Weights:', repr(weights)) # pragma: no cover
-            print('    Processed ({}) bins:'.format(', '.join(names)),
+            print('    Number of unique ({}) bins: {}'.format(
+                ', '.join(names), unique_indices.shape[1])) # pragma: no cover
+            print('    ({}) bin indices:'.format(', '.join(names)),
                   end=" ") # pragma: no cover
             
-        for i in zip(*y):
+        # Loop round unique collections of bin indices        
+        for i in zip(*unique_indices):
             if verbose:
                 print(i, end=" ")
             
@@ -5831,8 +5851,6 @@ may be accessed with the `nc_global_attributes`,
             result = c.collapse(method=method, weights=weights, verbose=False).data
             out.data[i] = result.datum()
 
-            units = result.Units
-
 #            if return_indices:
 #                b.insert_dimension(0, inplace=True)
 #                for n, ind in enumerate(i):
@@ -5842,11 +5860,14 @@ may be accessed with the `nc_global_attributes`,
         if verbose:
             print()
         
-        # Set correct units
-        out.override_units(units, inplace=True)
+        # Set correct units (note: takes them from the last processed
+        # "result" variable in the above loop)
+        out.override_units(result.Units, inplace=True)
         out.hardmask = True
-            
+
+        # ------------------------------------------------------------
         # Create a cell method (if possible)
+        # ------------------------------------------------------------
         standard_names = []
         domain_axes = self.domain_axes.filter_by_size(ge(2))
        
