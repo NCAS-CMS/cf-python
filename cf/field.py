@@ -5291,7 +5291,7 @@ may be accessed with the `nc_global_attributes`,
     comprise the two-dimensionsal matrix formed by all possible
     combinations of the two sets of one-dimensional bins.
 
-    An output value for an bin is formed by collapsing (using the
+    An output value for a bin is formed by collapsing (using the
     method given by the *method* parameter) the elements of the data
     for which the corresponding locations in the digitized field
     constructs, taken together, index that bin. Note that it may be
