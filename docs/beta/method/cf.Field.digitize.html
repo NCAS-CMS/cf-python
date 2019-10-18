@@ -93,7 +93,7 @@
 <code class="descclassname">Field.</code><code class="descname">digitize</code><span class="sig-paren">(</span><em>bins</em>, <em>upper=False</em>, <em>open_ends=False</em>, <em>return_bins=False</em>, <em>inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/field.py#L4950"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.digitize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the indices of the bins to which each value belongs.</p>
 <p>Values (including masked values) that do not belong to any bin
-result in masked indices in the output field construct.</p>
+result in masked values in the output field construct of indices.</p>
 <p>The output field contruct is given a <code class="docutils literal notranslate"><span class="pre">long_name</span></code> property, and
 properties that define the bins:</p>
 <table border="1" class="docutils">
@@ -214,7 +214,7 @@ largest upper bin boundary also defines a right-open
 <li><p class="first">A 2-d array of numbers.</p>
 <p>The second dimension, that must have size 2, contains
 the lower and upper boundaries of each bin. The bins to
-not have to be contigous, but must not overlap. If the
+not have to be contiguous, but must not overlap. If the
 <em>open_ends</em> parameter is True then the lowest lower bin
 boundary also defines a left-open (i.e. not bounded
 below) bin, and the largest upper bin boundary also
@@ -234,7 +234,7 @@ lower bin boundary and largest upper bin boundary
 respectively. By default these bins are not created</p>
 </dd>
 <dt>return_bins: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">TODO</p>
+<dd><p class="first last">If True then also return the bins in their 2-d form.</p>
 </dd>
 <dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>

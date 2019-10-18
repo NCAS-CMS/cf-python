@@ -5056,7 +5056,7 @@ may be accessed with the `nc_global_attributes`,
         
               The second dimension, that must have size 2, contains
               the lower and upper boundaries of each bin. The bins to
-              not have to be contigous, but must not overlap. If the
+              not have to be contiguous, but must not overlap. If the
               *open_ends* parameter is True then the lowest lower bin
               boundary also defines a left-open (i.e. not bounded
               below) bin, and the largest upper bin boundary also
@@ -5074,7 +5074,7 @@ may be accessed with the `nc_global_attributes`,
             respectively. By default these bins are not created
 
         return_bins: `bool`, optional
-            TODO
+            If True then also return the bins in their 2-d form.
 
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
@@ -5284,23 +5284,23 @@ may be accessed with the `nc_global_attributes`,
     dimensions of the output binned data.
         
     The output bins are defined by the exterior product of the
-    one-dimensional bins of the digitized field constructs. For
-    example, if only one digitized field construct is given then the
-    histogram bins simply comprise the one-dimensional bins that it
-    defines; if there are two digitized field constructs then the
-    histogram bins comprise the two-dimensionsal matrix formed by all
-    possible combinations of the two sets of one-dimensional bins.
+    one-dimensional bins of each digitized field construct. For
+    example, if only one digitized field construct is provided then
+    the histogram bins simply comprise its one-dimensional bins; if
+    there are two digitized field constructs then the histogram bins
+    comprise the two-dimensionsal matrix formed by all possible
+    combinations of the two sets of one-dimensional bins.
 
-    An output binned value is formed by collapsing (using the method
-    given by the *method* parameter) the elements of the data for
-    which the digitized field constructs collectively index that
-    bin. Note that it may be the case that not all output bins are
-    indexed by the digitized field constructs, and for these bins
-    missing data is returned.
+    An output value for an bin is formed by collapsing (using the
+    method given by the *method* parameter) the elements of the data
+    for which the corresponding locations in the digitized field
+    constructs, taken together, index that bin. Note that it may be
+    the case that not all output bins are indexed by the digitized
+    field constructs, and for these bins missing data is returned.
 
     The returned field construct will have a domain axis construct for
-    each dimension of the output bins, with corresponding dimension
-    coordinate constructs that define the bin boundaries.
+    each dimension of the output bins, with a corresponding dimension
+    coordinate construct that defines the bin boundaries.
 
     Note that ``h = f.bin('sample_size', digitized)`` is equivalent to
     ``h = f.histogram(digitized)``
@@ -5877,29 +5877,28 @@ may be accessed with the `nc_global_attributes`,
     the histogram.
         
     The output histogram bins are defined by the exterior product of
-    the one-dimensional bins of the digitized field constructs. For
-    example, if only one digitized field construct is given then the
-    histogram bins simply comprise the one-dimensional bins that it
-    defines; if there are two digitized field constructs then the
-    histogram bins comprise the two-dimensionsal matrix formed by all
-    possible combinations of the two sets of one-dimensional
-    bins.
+    the one-dimensional bins of each digitized field construct. For
+    example, if only one digitized field construct is provided then
+    the histogram bins simply comprise its one-dimensional bins; if
+    there are two digitized field constructs then the histogram bins
+    comprise the two-dimensionsal matrix formed by all possible
+    combinations of the two sets of one-dimensional bins.
 
-    An output value for an output histogram bin is formed by counting
-    the number cells for which the digitized field constructs
-    collectively index that bin. Note that it may be the case that not
+    An output value for an histogram bin is formed by counting the
+    number cells for which the digitized field constructs, taken
+    together, index that bin. Note that it may be the case that not
     all output bins are indexed by the digitized field constructs, and
     for these bins missing data is returned.
 
     Therefore, the creation of a one-dimensional histogram of the
-    field construct's own data must based on a digitized version of
+    field construct's own data must be based on a digitized version of
     itself. However, a one-dimensional histogram can also be based on
     the digitized data of another field construct representing a
     different physical quantity.
 
     The returned field construct will have a domain axis construct for
-    each dimension of the histogram, with corresponding dimension
-    coordinate constructs that define the bin boundaries.
+    each dimension of the histogram, with a corresponding dimension
+    coordinate construct that defines the bin boundaries.
 
     Note that ``h = f.histogram(digitized)`` is equivalent to ``h =
     f.bin('sample_size', digitized)``.

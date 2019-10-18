@@ -1993,7 +1993,7 @@ place.
             respectively. By default these bins are not created
 
         return_bins: `bool`, optional
-            TODO
+            If True then also return the bins in their 2-d form.
 
     :Returns:
 

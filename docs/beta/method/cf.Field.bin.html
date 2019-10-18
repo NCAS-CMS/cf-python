@@ -99,21 +99,21 @@ provides indices to the bins that each value of another field
 construct belongs. There is no upper limit to the number of
 dimensions of the output binned data.</p>
 <p>The output bins are defined by the exterior product of the
-one-dimensional bins of the digitized field constructs. For
-example, if only one digitized field construct is given then the
-histogram bins simply comprise the one-dimensional bins that it
-defines; if there are two digitized field constructs then the
-histogram bins comprise the two-dimensionsal matrix formed by all
-possible combinations of the two sets of one-dimensional bins.</p>
-<p>An output binned value is formed by collapsing (using the method
-given by the <em>method</em> parameter) the elements of the data for
-which the digitized field constructs collectively index that
-bin. Note that it may be the case that not all output bins are
-indexed by the digitized field constructs, and for these bins
-missing data is returned.</p>
+one-dimensional bins of each digitized field construct. For
+example, if only one digitized field construct is provided then
+the histogram bins simply comprise its one-dimensional bins; if
+there are two digitized field constructs then the histogram bins
+comprise the two-dimensionsal matrix formed by all possible
+combinations of the two sets of one-dimensional bins.</p>
+<p>An output value for an bin is formed by collapsing (using the
+method given by the <em>method</em> parameter) the elements of the data
+for which the corresponding locations in the digitized field
+constructs, taken together, index that bin. Note that it may be
+the case that not all output bins are indexed by the digitized
+field constructs, and for these bins missing data is returned.</p>
 <p>The returned field construct will have a domain axis construct for
-each dimension of the output bins, with corresponding dimension
-coordinate constructs that define the bin boundaries.</p>
+each dimension of the output bins, with a corresponding dimension
+coordinate construct that defines the bin boundaries.</p>
 <p>Note that <code class="docutils literal notranslate"><span class="pre">h</span> <span class="pre">=</span> <span class="pre">f.bin('sample_size',</span> <span class="pre">digitized)</span></code> is equivalent to
 <code class="docutils literal notranslate"><span class="pre">h</span> <span class="pre">=</span> <span class="pre">f.histogram(digitized)</span></code></p>
 <div class="versionadded">

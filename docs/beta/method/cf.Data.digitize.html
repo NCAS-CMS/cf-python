@@ -93,7 +93,7 @@
 <code class="descclassname">Data.</code><code class="descname">digitize</code><span class="sig-paren">(</span><em>bins</em>, <em>upper=False</em>, <em>open_ends=False</em>, <em>return_bins=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/data/data.py#L1933"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.digitize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the indices of the bins to which each value belongs.</p>
 <p>Values (including masked values) that do not belong to any bin
-result in masked indices in the output data.</p>
+result in masked values in the output data.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 3.0.2.</span></p>
 </div>
@@ -153,7 +153,7 @@ lower bin boundary and largest upper bin boundary
 respectively. By default these bins are not created</p>
 </dd>
 <dt>return_bins: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">TODO</p>
+<dd><p class="first last">If True then also return the bins in their 2-d form.</p>
 </dd>
 </dl>
 </td>
