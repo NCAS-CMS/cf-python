@@ -2029,7 +2029,7 @@ place.
      [ 0  0  0  1]
      [ 1  1  1 --]]
 
-    Create indices for the two bins ``[2, 6), [8, 10]``, which are
+    Create indices for the two bins ``[2, 6), [8, 10)``, which are
     non-contiguous
 
     >>> e = d.digitize([[2, 6], [8, 10]])

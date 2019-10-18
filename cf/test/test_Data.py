@@ -81,7 +81,6 @@ class DataTest(unittest.TestCase):
                           'test_Data_squeeze_insert_dimension',
                           'test_Data_months_years', 'test_Data_binary_mask',
                           'test_Data_CachedArray', 'test_Data_digitize']
-        self.test_only = ['test_Data_digitize']      
                 
 #        self.test_only = ['test_Data_outerproduct']
 #        self.test_only = ['test_Data__collapse_SHAPE']
@@ -107,37 +106,34 @@ class DataTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        a = numpy.arange(120).reshape(3, 20, 2)
 
-        for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
-            
-            d = cf.Data(a, 'km')
-            print(d._pmshape)
-            for upper in (False, True):
-                for bins in ([2, 6, 10],
-                             [[2, 6], [6, 10]]):
-                    e = d.digitize(bins, upper=upper, open_ends=True)
-                    b = numpy.digitize(a, [2, 6, 10], right=upper)
-                    
-                    self.assertTrue((e.array == b).all())
-                    
-                    e.where(cf.set([e.min(), e.max()]), cf.masked, e-1, inplace=True)
-                    f = d.digitize(bins, upper=upper)
-                    self.assertTrue(e.equals(f, verbose=True))
+        for a in [numpy.arange(120).reshape(3, 2, 20),
+                  numpy.ma.arange(120).reshape(3, 2, 20)]:
+
+            if numpy.ma.isMA(a):
+                a[0, 1, [2, 5, 6, 7, 8]] = numpy.ma.masked
+                a[2, 0, [12, 14, 17]] = numpy.ma.masked
+                
+            for chunksize in self.chunk_sizes:
+                cf.CHUNKSIZE(chunksize)
+                
+                d = cf.Data(a, 'km')
+    
+                for upper in (False, True):
+                    for bins in ([2, 6, 10, 50, 100],
+                                 [[2, 6], [6, 10], [10, 50], [50, 100]]):
+                        e = d.digitize(bins, upper=upper, open_ends=True)
+                        b = numpy.digitize(a, [2, 6, 10, 50, 100], right=upper)
+
+                        self.assertTrue((e.array == b).all())
+                        
+                        e.where(cf.set([e.min(), e.max()]), cf.masked, e-1, inplace=True)
+                        f = d.digitize(bins, upper=upper)
+                        self.assertTrue(e.equals(f, verbose=True))
         #--- End: for
         cf.CHUNKSIZE(self.original_chunksize)
+
         
-#
-#    Equivalant ways to create indices for the two bins ``(2, 6], (6, 10]``
-#
-#    >>> e = d.digitize([2, 6, 10], upper=True, open_ends=False)
-#    >>> e = d.digitize([[2, 6], [6, 10]], upper=True, open_ends=False)
-#    >>> print(e.array)
-#    [[-- -- --  0]
-#     [ 0  0  0  1]
-#     [ 1  1  1 --]]
-#
 #    Create indices for the two bins ``[2, 6), [8, 10]``, which are
 #    non-contiguous
 #

@@ -43,6 +43,44 @@ class FieldTest(unittest.TestCase):
 #        self.test_only = ['test_Field_section']
 #        self.test_only = ['test_Field_flip']
 #        self.test_only = ['test_Field_Field_domain_mask']
+#        self.test_only = ['test_Field_bin']
+
+
+    def test_Field_bin(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        
+        f = self.f.copy()
+
+        d = f.digitize(10)
+        b = f.bin('sample_size', digitized=d)
+
+        a = numpy.ma.masked_all((10,), dtype=int)
+        a[...] = 9
+        self.assertTrue((a==b.array).all())
+          
+        b = f.bin('sample_size', digitized=[d])
+
+        a = numpy.ma.masked_all((10,), dtype=int)
+        a[...] = 9
+        self.assertTrue((a==b.array).all())
+
+        b = f.bin('sample_size', digitized=[d, d])
+
+        a = numpy.ma.masked_all((10, 10), dtype=int)
+        for i in range(9):
+            a[i, i] = 9
+
+        self.assertTrue((a==b.array).all())
+
+        b = f.bin('sample_size', digitized=[d, d, d])
+
+        a = numpy.ma.masked_all((10, 10, 10), dtype=int)
+        for i in range(9):
+            a[i, i, i] = 9
+
+        self.assertTrue((a==b.array).all())
 
 
     def test_Field_direction(self):
