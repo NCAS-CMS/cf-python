@@ -5339,7 +5339,7 @@ may be accessed with the `nc_global_attributes`,
                                           between the maximum and the
                                           minimum of the values.
                                           
-            ``'sum'``                     The sum of the values
+            ``'sum'``                     The sum of the values.
                                                                                     
             ``'sum_of_squares'``          The sum of the squares of
                                           values.
@@ -5379,7 +5379,7 @@ may be accessed with the `nc_global_attributes`,
             One or more field constructs that contain digitized data
             with corresponding metadata, as output by
             `cf.Field.digitize`. Each field construct, which must have
-            the data shape as the field construct being histogrammed,
+            the same data shape as the field construct being binned,
             contains indices of the bins to which each value of an
             original field construct belongs; and there must be
             ``bin_count`` and ``bin_bounds`` properties as defined by
@@ -5635,7 +5635,7 @@ may be accessed with the `nc_global_attributes`,
     >>> (i/w == m).all()
     True
 
-    '''
+        '''
         if verbose:
             print('    Method:', method) # pragma: no cover
             
@@ -5913,12 +5913,12 @@ may be accessed with the `nc_global_attributes`,
             One or more field constructs that contain digitized data
             with corresponding metadata, as output by
             `cf.Field.digitize`. Each field construct, which must have
-            the data shape as the field construct being histogrammed,
-            contains indices of the bins to which each value of an
-            original field construct belongs; and there must be
-            ``bin_count`` and ``bin_bounds`` properties as defined by
-            the `digitize` method (and any of the extra properties
-            defined by that method are also recommended).
+            the same data shape as the field construct being
+            histogrammed, contains indices of the bins to which each
+            value of an original field construct belongs; and there
+            must be ``bin_count`` and ``bin_bounds`` properties as
+            defined by the `digitize` method (and any of the extra
+            properties defined by that method are also recommended).
 
             The bins defined by the ``bin_count`` and ``bin_bounds``
             properties are used to create dimension coordinate
@@ -6525,7 +6525,7 @@ may be accessed with the `nc_global_attributes`,
                                           between the maximum and the
                                           minimum of the values.
                                           
-            ``'sum'``                     The sum of the values
+            ``'sum'``                     The sum of the values.
                                                                                     
             ``'sum_of_squares'``          The sum of the squares of
                                           values.

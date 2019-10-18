@@ -137,12 +137,12 @@ coordinate constructs that define the bin boundaries.</p>
 <dd><p class="first">One or more field constructs that contain digitized data
 with corresponding metadata, as output by
 <a class="reference internal" href="cf.Field.digitize.html#cf.Field.digitize" title="cf.Field.digitize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.digitize</span></code></a>. Each field construct, which must have
-the data shape as the field construct being histogrammed,
-contains indices of the bins to which each value of an
-original field construct belongs; and there must be
-<code class="docutils literal notranslate"><span class="pre">bin_count</span></code> and <code class="docutils literal notranslate"><span class="pre">bin_bounds</span></code> properties as defined by
-the <a class="reference internal" href="cf.Field.digitize.html#cf.Field.digitize" title="cf.Field.digitize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">digitize</span></code></a> method (and any of the extra properties
-defined by that method are also recommended).</p>
+the same data shape as the field construct being
+histogrammed, contains indices of the bins to which each
+value of an original field construct belongs; and there
+must be <code class="docutils literal notranslate"><span class="pre">bin_count</span></code> and <code class="docutils literal notranslate"><span class="pre">bin_bounds</span></code> properties as
+defined by the <a class="reference internal" href="cf.Field.digitize.html#cf.Field.digitize" title="cf.Field.digitize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">digitize</span></code></a> method (and any of the extra
+properties defined by that method are also recommended).</p>
 <p class="last">The bins defined by the <code class="docutils literal notranslate"><span class="pre">bin_count</span></code> and <code class="docutils literal notranslate"><span class="pre">bin_bounds</span></code>
 properties are used to create dimension coordinate
 constructs for the output field construct.</p>
@@ -202,7 +202,7 @@ constructs for the output field construct.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cf.Field.histogram.rst.txt"
