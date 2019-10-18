@@ -2127,7 +2127,7 @@ place.
 
         if not open_ends:
             delete_bins.insert(0, 0)
-        delete_bins.append(bins.size)  
+            delete_bins.append(bins.size)  
 
         if return_bins and two_d_bins is None:
             x = numpy_empty((bins.size-1, 2), dtype=bins.dtype)
