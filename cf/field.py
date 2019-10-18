@@ -143,8 +143,8 @@ _collapse_cell_methods = {
     'variance'              : 'variance',
     'var'                   : 'variance',
     'sample_size'           : 'point',
-    'sum_of_weights'        : 'point',
-    'sum_of_weights2'       : 'point',
+    'sum_of_weights'        : 'sum',
+    'sum_of_weights2'       : 'sum',
 }
 
 # --------------------------------------------------------------------
@@ -5318,62 +5318,70 @@ may be accessed with the `nc_global_attributes`,
             https://ncas-cms.github.io/cf-python/beta/tutorial.html#collapse-methods
             for precise definitions):
 
-            ============================  ============================
-            *method*                      Description                     
-            ============================  ============================
-            ``'maximum'``                 The maximum of the values.
+            ============================  ============================  ========
+            *method*                      Description                   Weighted  
+            ============================  ============================  ========
+            ``'maximum'``                 The maximum of the values.    Never
                                       
-            ``'minimum'``                 The minimum of the values.
-
-            ``'maximum_absolute_value'``  The maximum of the absolute
-                                          values.
+            ``'minimum'``                 The minimum of the values.    Never
+            
+            ``'maximum_absolute_value'``  The maximum of the absolute.  Never
                           
-            ``'minimum_absolute_value'``  The minimum of the absolute
-                                          values.
-
-            ``'mid_range'``               The average of the maximum
+            ``'minimum_absolute_value'``  The minimum of the absolute.  Never
+            
+            ``'mid_range'``               The average of the maximum    Never
                                           and the minimum of the
                                           values.
                                           
-            ``'range'``                   The absolute difference
+            ``'range'``                   The absolute difference       Never
                                           between the maximum and the
                                           minimum of the values.
                                           
-            ``'sum'``                     The sum of the values.
+            ``'sum'``                     The sum of the values.        Never
                                                                                     
-            ``'sum_of_squares'``          The sum of the squares of
+            ``'sum_of_squares'``          The sum of the squares of     Never
                                           values.
                                           
-            ``'integral'``                The integral of values.
+            ``'sample_size'``             The sample size, i.e. the     Never
+                                          number of non-missing
+                                          values.
+
+            ``'sum_of_weights'``          The sum of weights, as        Never
+                                          would be used for other
+                                          calculations.
                                           
-            ``'mean'``                    The weighted or unweighted
+            ``'sum_of_weights2'``         The sum of squares of         Never
+                                          weights, as would be used
+                                          for other calculations.
+
+            ``'mean'``                    The weighted or unweighted    May be
                                           mean of the values.
                                           
-            ``'variance'``                The weighted or unweighted
+            ``'variance'``                The weighted or unweighted    May be
                                           variance of the values, with
                                           a given number of degrees of
                                           freedom.
                                               
-            ``'standard_deviation'``      The square root of the
+            ``'standard_deviation'``      The square root of the        May be
+                                          weighted or unweighted
                                           variance.
                                           
-            ``'root_mean_square'``        The square root of the
+            ``'root_mean_square'``        The square root of the        May be
                                           weighted or unweighted mean
                                           of the squares of the
                                           values.
                                           
-            ``'sample_size'``             The sample size, i.e. the
-                                          number of non-missing
-                                          values.
-                                          
-            ``'sum_of_weights'``          The sum of weights, as would
-                                          be used for other
-                                          calculations.
-                                          
-            ``'sum_of_weights2'``         The sum of squares of
-                                          weights, as would be used
-                                          for other calculations.
-            ============================  ============================
+            ``'integral'``                The integral of values.       Always                                          
+            ============================  ============================  ========
+    
+            Collapse methods that are "Never" weighted ignore the
+            *weights* parameter, even if it is set.
+
+            Collapse methods that "May be" weighted will only be
+            weighted if the *weights* parameter is set.
+
+            Collapse methods that are "Always" weighted require the
+            *weights* parameter to be set.
 
         digitized: (sequence of) `Field`
 
@@ -5617,7 +5625,7 @@ may be accessed with the `nc_global_attributes`,
     Field: long_name=sum_of_weights of tendency_of_sea_water_potential_temperature_expressed_as_heat_content
     --------------------------------------------------------------------------------------------------------
     Data            : long_name=sum_of_weights of tendency_of_sea_water_potential_temperature_expressed_as_heat_content(sea_water_salinity(4), sea_water_potential_temperature(6)) 86400 m3.s
-    Cell methods    : latitude: longitude: point
+    Cell methods    : latitude: longitude: sum
     Dimension coords: sea_water_salinity(4) = [7.789749830961227, ..., 36.9842486679554] psu
                     : sea_water_potential_temperature(6) = [274.50717671712243, ..., 302.0188242594401] K
     >>> print(w)
@@ -6235,7 +6243,7 @@ may be accessed with the `nc_global_attributes`,
                  verbose=False, _create_zero_size_cell_bounds=False,
                  _update_cell_methods=True, i=False, _debug=False,
                  **kwargs):
-        r'''Collapse axes of the field.
+        '''Collapse axes of the field.
     
     Collapsing one or more dimensions reduces their size and replaces
     the data along those axes with representative statistical
@@ -6290,7 +6298,7 @@ may be accessed with the `nc_global_attributes`,
     
     **Collapse methods**
     
-    See the *methods* parmaeter  for details.
+    See the *methods* parameter  for details.
 
 
     **Data type and missing data**
@@ -6496,12 +6504,13 @@ may be accessed with the `nc_global_attributes`,
 
     .. versionadded:: 1.0
     
-    .. seealso:: `weights`, `max`, `mean`, `mid_range`, `min`,
+    .. seealso:: `bin`, `weights`, `max`, `mean`, `mid_range`, `min`,
                  `range`, `sample_size`, `sd`, `sum`, `var`
     
     :Parameters:
-    
+        
         method: `str`
+
             Define the collapse method. All of the axes specified by
             the *axes* parameter are collapsed simultaneously by this
             method. The method is given by one of the following
@@ -6509,68 +6518,77 @@ may be accessed with the `nc_global_attributes`,
             https://ncas-cms.github.io/cf-python/beta/tutorial.html#collapse-methods
             for precise definitions):
 
-            ============================  ============================
-            *method*                      Description                     
-            ============================  ============================
-            ``'maximum'``                 The maximum of the values.
+            ============================  ============================  ========
+            *method*                      Description                   Weighted  
+            ============================  ============================  ========
+            ``'maximum'``                 The maximum of the values.    Never
                                       
-            ``'minimum'``                 The minimum of the values.
+            ``'minimum'``                 The minimum of the values.    Never
             
-            ``'maximum_absolute_value'``  The maximum of the absolute
-                                          values.
+            ``'maximum_absolute_value'``  The maximum of the absolute.  Never
                           
-            ``'minimum_absolute_value'``  The minimum of the absolute
-                                          values.
+            ``'minimum_absolute_value'``  The minimum of the absolute.  Never
             
-            ``'mid_range'``               The average of the maximum
+            ``'mid_range'``               The average of the maximum    Never
                                           and the minimum of the
                                           values.
                                           
-            ``'range'``                   The absolute difference
+            ``'range'``                   The absolute difference       Never
                                           between the maximum and the
                                           minimum of the values.
                                           
-            ``'sum'``                     The sum of the values.
+            ``'sum'``                     The sum of the values.        Never
                                                                                     
-            ``'sum_of_squares'``          The sum of the squares of
+            ``'sum_of_squares'``          The sum of the squares of     Never
                                           values.
                                           
-            ``'integral'``                The integral of values.
+            ``'sample_size'``             The sample size, i.e. the     Never
+                                          number of non-missing
+                                          values.
+
+            ``'sum_of_weights'``          The sum of weights, as        Never
+                                          would be used for other
+                                          calculations.
                                           
-            ``'mean'``                    The weighted or unweighted
+            ``'sum_of_weights2'``         The sum of squares of         Never
+                                          weights, as would be used
+                                          for other calculations.
+                                          
+            ``'mean'``                    The weighted or unweighted    May be
                                           mean of the values.
                                           
-            ``'variance'``                The weighted or unweighted
+            ``'variance'``                The weighted or unweighted    May be
                                           variance of the values, with
                                           a given number of degrees of
                                           freedom.
                                               
-            ``'standard_deviation'``      The square root of the
+            ``'standard_deviation'``      The square root of the        May be
+                                          weighted or unweighted
                                           variance.
                                           
-            ``'root_mean_square'``        The square root of the
+            ``'root_mean_square'``        The square root of the        May be
                                           weighted or unweighted mean
                                           of the squares of the
                                           values.
                                           
-            ``'sample_size'``             The sample size, i.e. the
-                                          number of non-missing
-                                          values.
-                                          
-            ``'sum_of_weights'``          The sum of weights, as
-                                          would be used for other
-                                          calculations.
-                                          
-            ``'sum_of_weights2'``         The sum of squares of
-                                          weights, as would be used
-                                          for other calculations.
-            ============================  ============================
+            ``'integral'``                The integral of values.       Always
+            ============================  ============================  ========
     
-            An alternative form is to provide a CF cell methods-like
-            string. In this case an ordered sequence of collapses may
-            be defined and both the collapse methods and their axes
-            are provided. The axes are interpreted as for the *axes*
-            parameter, which must not also be set. For example:
+            Collapse methods that are "Never" weighted ignore the
+            *weights* parameter, even if it is set.
+
+            Collapse methods that "May be" weighted will only be
+            weighted if the *weights* parameter is set.
+
+            Collapse methods that are "Always" weighted require the
+            *weights* parameter to be set.
+
+            An alternative form of providing the collapse method is to
+            provide a CF cell methods-like string. In this case an
+            ordered sequence of collapses may be defined and both the
+            collapse methods and their axes are provided. The axes are
+            interpreted as for the *axes* parameter, which must not
+            also be set. For example:
               
             >>> g = f.collapse('time: max (interval 1 hr) X: Y: mean dim3: sd')
             
@@ -7380,7 +7398,7 @@ may be accessed with the `nc_global_attributes`,
     See the on-line documention for further worked examples:
     https://ncas-cms.github.io/cf-python/tutorial.html#statistical-collapses
 
-    '''        
+        '''        
         if i:
             _DEPRECATION_ERROR_KWARGS(self, 'collapse', i=True) # pragma: no cover
 

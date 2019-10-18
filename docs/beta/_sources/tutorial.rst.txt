@@ -5031,17 +5031,17 @@ Method                        Description                               Cell met
 ``'range'``                   The absolute difference between the       ``range``
                               maximum and the minimum of the values.
 			      
-``'sample_size'``             The sample size, :math:`N`, as would be
+``'sample_size'``             The sample size, :math:`N`, as would be   ``point``
                               used for other calculations, i.e. the
 			      number of non-missing values.
                               
-``'sum_of_weights'``          The sum of :math:`N` weights
+``'sum_of_weights'``          The sum of :math:`N` weights              ``sum``
                               :math:`w_i`, as would be used for other
                               calculations, is
 
 			      .. math:: V_{1}=\sum_{i=1}^{N} w_i
 			      
-``'sum_of_weights2'``         The sum of the squares of :math:`N`
+``'sum_of_weights2'``         The sum of the squares of :math:`N`       ``sum``
                               weights :math:`w_i`, as would be used
                               for other calculations, is
 
@@ -5052,21 +5052,22 @@ Method                        Description                               Cell met
 			      
                               .. math:: t=\sum_{i=1}^{N} x_i
 
+``'sum_of_squares'``          The unweighted sum of the squares of      ``sum_of_squares``
+                              :math:`N` values :math:`x_i` is
+			      
+                              .. math:: t_2=\sum_{i=1}^{N} x_{i}^{2}
+                              
 ``'integral'``                The integral of :math:`N` values          ``sum``
                               :math:`x_i` with corresponding cell       
                               measures :math:`m_i` is
 			      
                               .. math:: i=\sum_{i=1}^{N} m_i x_i
 
-			      The integral differs from a weighted sum
-			      in that the units of the cell measures
-			      are incorporated into the result.
+			      Note that the integral differs from a
+			      weighted sum in that the units of the
+			      cell measures are incorporated into the
+			      result.
 			      
-``'sum_of_squares'``          The unweighted sum of the squares of      ``sum_of_squares``
-                              :math:`N` values :math:`x_i` is
-			      
-                              .. math:: t_2=\sum_{i=1}^{N} x_{i}^{2}
-                              
 ``'mean'``                    The unweighted mean of :math:`N` values   ``mean``
                               :math:`x_i` is
                               
@@ -5125,8 +5126,9 @@ Method                        Description                               Cell met
                               opposed to frequency weights.
                                   
 ``'standard_deviation'``      The standard deviation is the square      ``standard_deviation``
-                              root of the variance, as defined in
-			      this table.
+                              root of the unweighted or
+			      :ref:`weighted <Collapse-weights>`
+		              variance, as defined in this table.
 			       
 ``'root_mean_square'``        The unweighted root mean square of        ``root_mean_square`` 
                               :math:`N` values :math:`x_i` is
@@ -5166,9 +5168,78 @@ construct.
 Collapse weights
 ^^^^^^^^^^^^^^^^
 
-The calculations of means, standard deviations and variances are, by
-default, not weighted. For weights to be incorporated in the collapse,
-the axes to be weighted must be identified with the *weights* keyword.
+.. The calculations of means, standard deviations and variances are,
+   by default, not weighted. For weights to be incorporated in the
+   collapse, the axes to be weighted must be identified with the
+   *weights* keyword.
+
+For weights to be incorporated in the collapse, the axes to be
+weighted must be identified with the *weights* keyword. A collapse by
+a particular method is either never weighted, or may be weighted, or
+is always weighted, as described in the following table:
+
+============================  ============================  ========
+Method                        Description                   Weighted  
+============================  ============================  ========
+``'maximum'``                 The maximum of the values.    Never
+                          
+``'minimum'``                 The minimum of the values.    Never
+
+``'maximum_absolute_value'``  The maximum of the absolute.  Never
+              
+``'minimum_absolute_value'``  The minimum of the absolute.  Never
+
+``'mid_range'``               The average of the maximum    Never
+                              and the minimum of the
+                              values.
+                              
+``'range'``                   The absolute difference       Never
+                              between the maximum and the
+                              minimum of the values.
+                              
+``'sum'``                     The sum of the values.        Never
+                                                                        
+``'sum_of_squares'``          The sum of the squares of     Never
+                              values.
+                              
+``'sample_size'``             The sample size, i.e. the     Never
+                              number of non-missing
+                              values.
+
+``'sum_of_weights'``          The sum of weights, as        Never
+                              would be used for other
+                              calculations.
+                              
+``'sum_of_weights2'``         The sum of squares of         Never
+                              weights, as would be used
+                              for other calculations.
+
+``'mean'``                    The weighted or unweighted    May be
+                              mean of the values.
+                              
+``'variance'``                The weighted or unweighted    May be
+                              variance of the values, with
+                              a given number of degrees of
+                              freedom.
+                                  
+``'standard_deviation'``      The square root of the        May be
+                              weighted or unweighted
+                              variance.
+                              
+``'root_mean_square'``        The square root of the        May be
+                              weighted or unweighted mean
+                              of the squares of the
+                              values.
+                              
+``'integral'``                The integral of values.       Always                                          
+============================  ============================  ========
+
+
+Collapse methods that are "Never" weighted ignore the *weights*
+parameter, even if it is set. Collapse methods that "May be" weighted
+will only be weighted if the *weights* parameter is set. Collapse
+methods that are "Always" weighted require the *weights* parameter to
+be set.
 
 Weights are either derived from the field construct's metadata (such
 as cell sizes), or may be provided explicitly in the form of other
@@ -5569,7 +5640,27 @@ method constructs.
                    : air_pressure(1) = [850.0] hPa
 
 
-		   
+.. _Binned-collapses:
+
+Binned collapses
+^^^^^^^^^^^^^^^^
+
+Collapse the data values that lie in multi-dimensional bins.
+
+An output value for an bin is formed by collapsing the elements of the
+data for which the corresponding locations in the digitized field
+constructs, taken together, index that bin. Note that it may be the
+case that not all output bins are indexed by the digitized field
+constructs, and for these bins missing data is returned.
+
+The output bins are defined by the exterior product of the
+one-dimensional bins of each digitized field construct. For example,
+if only one digitized field construct is provided then the histogram
+bins simply comprise its one-dimensional bins; if there are two
+digitized field constructs then the histogram bins comprise the
+two-dimensionsal matrix formed by all possible combinations of the two
+sets of one-dimensional bins.
+
 ----
 
 .. _Regridding:
@@ -6411,7 +6502,7 @@ Cumulative sums
 The `~Field.cumsum` method of the field construct calculates the
 cumulative sum of elements along a given axis. The cell bounds of the
 axis are updated to describe the ranges over which the sums apply, and
-a new "sum" cell method construct is added to the resulting field
+a new ``sum`` cell method construct is added to the resulting field
 construct.
 
 

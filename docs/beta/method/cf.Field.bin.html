@@ -134,88 +134,111 @@ each cell of the output field construct. The following
 methods are available (see
 <a class="reference external" href="https://ncas-cms.github.io/cf-python/beta/tutorial.html#collapse-methods">https://ncas-cms.github.io/cf-python/beta/tutorial.html#collapse-methods</a>
 for precise definitions):</p>
-<table border="1" class="last docutils">
+<table border="1" class="docutils">
 <colgroup>
-<col width="50%" />
-<col width="50%" />
+<col width="44%" />
+<col width="44%" />
+<col width="13%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head"><em>method</em></th>
 <th class="head">Description</th>
+<th class="head">Weighted</th>
 </tr>
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'maximum'</span></code></td>
 <td>The maximum of the values.</td>
+<td>Never</td>
 </tr>
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'minimum'</span></code></td>
 <td>The minimum of the values.</td>
+<td>Never</td>
 </tr>
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'maximum_absolute_value'</span></code></td>
-<td>The maximum of the absolute
-values.</td>
+<td>The maximum of the absolute.</td>
+<td>Never</td>
 </tr>
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'minimum_absolute_value'</span></code></td>
-<td>The minimum of the absolute
-values.</td>
+<td>The minimum of the absolute.</td>
+<td>Never</td>
 </tr>
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'mid_range'</span></code></td>
 <td>The average of the maximum
 and the minimum of the
 values.</td>
+<td>Never</td>
 </tr>
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'range'</span></code></td>
 <td>The absolute difference
 between the maximum and the
 minimum of the values.</td>
+<td>Never</td>
 </tr>
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'sum'</span></code></td>
 <td>The sum of the values.</td>
+<td>Never</td>
 </tr>
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'sum_of_squares'</span></code></td>
 <td>The sum of the squares of
 values.</td>
+<td>Never</td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'integral'</span></code></td>
-<td>The integral of values.</td>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'sample_size'</span></code></td>
+<td>The sample size, i.e. the
+number of non-missing
+values.</td>
+<td>Never</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'sum_of_weights'</span></code></td>
+<td>The sum of weights, as
+would be used for other
+calculations.</td>
+<td>Never</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'sum_of_weights2'</span></code></td>
+<td>The sum of squares of
+weights, as would be used
+for other calculations.</td>
+<td>Never</td>
 </tr>
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'mean'</span></code></td>
 <td>The weighted or unweighted
 mean of the values.</td>
+<td>May be</td>
 </tr>
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'variance'</span></code></td>
 <td>The weighted or unweighted
 variance of the values, with
 a given number of degrees of
 freedom.</td>
+<td>May be</td>
 </tr>
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'standard_deviation'</span></code></td>
 <td>The square root of the
+weighted or unweighted
 variance.</td>
+<td>May be</td>
 </tr>
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'root_mean_square'</span></code></td>
 <td>The square root of the
 weighted or unweighted mean
 of the squares of the
 values.</td>
+<td>May be</td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'sample_size'</span></code></td>
-<td>The sample size, i.e. the
-number of non-missing
-values.</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'sum_of_weights'</span></code></td>
-<td>The sum of weights, as would
-be used for other
-calculations.</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'sum_of_weights2'</span></code></td>
-<td>The sum of squares of
-weights, as would be used
-for other calculations.</td>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'integral'</span></code></td>
+<td>The integral of values.</td>
+<td>Always</td>
 </tr>
 </tbody>
 </table>
+<p>Collapse methods that are “Never” weighted ignore the
+<em>weights</em> parameter, even if it is set.</p>
+<p>Collapse methods that “May be” weighted will only be
+weighted if the <em>weights</em> parameter is set.</p>
+<p class="last">Collapse methods that are “Always” weighted require the
+<em>weights</em> parameter to be set.</p>
 </dd>
 </dl>
 <p>digitized: (sequence of) <a class="reference internal" href="../classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a></p>
@@ -474,7 +497,7 @@ data varies with <code class="docutils literal notranslate"><span class="pre">se
 <span class="go">Field: long_name=sum_of_weights of tendency_of_sea_water_potential_temperature_expressed_as_heat_content</span>
 <span class="go">--------------------------------------------------------------------------------------------------------</span>
 <span class="go">Data            : long_name=sum_of_weights of tendency_of_sea_water_potential_temperature_expressed_as_heat_content(sea_water_salinity(4), sea_water_potential_temperature(6)) 86400 m3.s</span>
-<span class="go">Cell methods    : latitude: longitude: point</span>
+<span class="go">Cell methods    : latitude: longitude: sum</span>
 <span class="go">Dimension coords: sea_water_salinity(4) = [7.789749830961227, ..., 36.9842486679554] psu</span>
 <span class="go">                : sea_water_potential_temperature(6) = [274.50717671712243, ..., 302.0188242594401] K</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
