@@ -5286,10 +5286,10 @@ may be accessed with the `nc_global_attributes`,
     The output bins are defined by the exterior product of the
     one-dimensional bins of each digitized field construct. For
     example, if only one digitized field construct is provided then
-    the histogram bins simply comprise its one-dimensional bins; if
-    there are two digitized field constructs then the histogram bins
-    comprise the two-dimensionsal matrix formed by all possible
-    combinations of the two sets of one-dimensional bins.
+    the output bins simply comprise its one-dimensional bins; if there
+    are two digitized field constructs then the output bins comprise
+    the two-dimensionsal matrix formed by all possible combinations of
+    the two sets of one-dimensional bins.
 
     An output value for a bin is formed by collapsing (using the
     method given by the *method* parameter) the elements of the data
@@ -5371,7 +5371,7 @@ may be accessed with the `nc_global_attributes`,
                                           of the squares of the
                                           values.
                                           
-            ``'integral'``                The integral of values.       Always                                          
+            ``'integral'``                The integral of values.       Always
             ============================  ============================  ========
     
             Collapse methods that are "Never" weighted ignore the
@@ -5384,32 +5384,38 @@ may be accessed with the `nc_global_attributes`,
             *weights* parameter to be set.
 
         digitized: (sequence of) `Field`
-
             One or more field constructs that contain digitized data
             with corresponding metadata, as would be output by
-            `cf.Field.digitize`. Each field construct, which must have
-            the same data shape as the field construct being binned,
-            contains indices to the one-dimensionsal bins to which
-            each value of an original field construct belongs; and
-            there must be ``bin_count`` and ``bin_bounds`` properties
-            as defined by the `digitize` method (and any of the extra
-            properties defined by that method are also recommended).
+            `cf.Field.digitize`. Each field construct contains indices
+            to the one-dimensionsal bins to which each value of an
+            original field construct belongs; and there must be
+            ``bin_count`` and ``bin_bounds`` properties as defined by
+            the `digitize` method (and any of the extra properties
+            defined by that method are also recommended).
 
             The bins defined by the ``bin_count`` and ``bin_bounds``
             properties are used to create a dimension coordinate
             construct for the output field construct.
 
+            Each digitized field construct must be transformable so
+            that it is broadcastable to the input field contruct's
+            data. This is done by using the metadata constructs of the
+            to create a mapping of physically compatible dimensions
+            between the fields, and then manipulating the dimensions
+            of the digitized field construct's data to ensure that
+            broadcasting can occur.
+
         weights: optional
-            Specify the weights for the collapse calculations. **By
-            default all collapses are unweighted**. The weights are
-            those that would be returned by this call of the field
-            construct's `~cf.Field.weights` method:
+
+            Specify the weights for the collapse calculations. The
+            weights are those that would be returned by this call of
+            the field construct's `~cf.Field.weights` method:
             ``f.weights(weights, measure=measure, scale=scale,
             components=True)``. See the *measure* and *scale*
             parameters and `cf.Field.weights` for details.
 
-            By default *weights* is `None`, resulting in unweighted
-            calculations.
+            .. note:: By default *weights* is `None`, resulting in
+                      unweighted calculations.
     
             *Parameter example:*
               To specify weights based on cell areas use
@@ -5420,11 +5426,12 @@ may be accessed with the `nc_global_attributes`,
               time you could set ``weights=('area', 'T')``.
     
         measure: `bool`, optional
-            Create weights which are cell measures, i.e. which
-            describe actual cell sizes (e.g. cell area) with
-            appropriate units (e.g. metres squared). By default the
-            weights are scaled to lie between 0 and 1 and have
-            arbitrary units (see the *scale* parameter).
+            Create weights, as defined by the *weights* parameter,
+            which are cell measures, i.e. which describe actual cell
+            sizes (e.g. cell areas) with appropriate units
+            (e.g. metres squared). By default the weights are scaled
+            to lie between 0 and 1 and have arbitrary units (see the
+            *scale* parameter).
 
             Cell measures can be created for any combination of
             axes. For example, cell measures for a time axis are the
@@ -5438,20 +5445,23 @@ may be accessed with the `nc_global_attributes`,
             incorporated into the units of the returned field
             construct.
 
-            Note that specifying volume weights via ``weights=['X',
-            'Y', 'Z']`` or ``weights=['area', 'Z']`` will give
-            **incorrect volume cell measures if the vertical dimension
-            coordinates do not define the actual height or depth
-            thickness of every cell in the domain**. In this case,
-            ``weights='volume'`` should be used instead, which
-            requires the field construct to have a "volume" cell
-            measure construct.
+            .. note:: Specifying cell volume weights via
+                      ``weights=['X', 'Y', 'Z']`` or
+                      ``weights=['area', 'Z']`` (or other equivalents)
+                      will produce **an incorrect result if the
+                      vertical dimension coordinates do not define the
+                      actual height or depth thickness of every cell
+                      in the domain**. In this case,
+                      ``weights='volume'`` should be used instead,
+                      which requires the field construct to have a
+                      "volume" cell measure construct.
 
         scale: number, optional
-            If set to a positive number then scale the weights so that
-            they are less than or equal to that number. By default the
-            weights are scaled to lie between 0 and 1 (i.e.  *scale*
-            is 1), and have arbitrary units.
+            If set to a positive number then scale the weights, as
+            defined by the *weights* parameter, so that they are less
+            than or equal to that number. By default the weights are
+            scaled to lie between 0 and 1 (i.e.  *scale* is 1), and
+            have arbitrary units.
 
             *Parameter example:*
               To scale all weights so that they lie between 0 and 0.5:
@@ -5513,7 +5523,7 @@ may be accessed with the `nc_global_attributes`,
 
     Find the range of values that lie in each bin:
 
-    >>> print(q)                                                                                                   
+    >>> print(q)                                       
     Field: specific_humidity (ncvar%q)
     ----------------------------------
     Data            : specific_humidity(latitude(5), longitude(8)) 0.001 1
@@ -5521,21 +5531,21 @@ may be accessed with the `nc_global_attributes`,
     Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
                     : longitude(8) = [22.5, ..., 337.5] degrees_east
                     : time(1) = [2019-01-01 00:00:00]       
-    >>> print(q.array)                                                                                            
+    >>> print(q.array)
     [[  7.  34.   3.  14.  18.  37.  24.  29.]
      [ 23.  36.  45.  62.  46.  73.   6.  66.]
      [110. 131. 124. 146.  87. 103.  57.  11.]
      [ 29.  59.  39.  70.  58.  72.   9.  17.]
      [  6.  36.  19.  35.  18.  37.  34.  13.]]
-    >>> q_indices = q.digitize(10)                                             
-    >>> b = q.bin('range', digitized=q_indices)                             
-    >>> print(b)                                                                                                  
+    >>> indices = q.digitize(10)                                             
+    >>> b = q.bin('range', digitized=indices)                             
+    >>> print(b)                                    
     Field: specific_humidity
     ------------------------
     Data            : specific_humidity(specific_humidity(10)) 0.001 1
     Cell methods    : latitude: longitude: range
     Dimension coords: specific_humidity(10) = [10.15, ..., 138.85000000000002] 0.001 1
-    >>> print(b.array)                                                                                            
+    >>> print(b.array)                                 
     [14. 11. 11. 13. 11.  0.  0.  0.  7.  0.]
 
     Find various metrics describing how
@@ -5605,7 +5615,7 @@ may be accessed with the `nc_global_attributes`,
     Cell methods    : latitude: longitude: mean
     Dimension coords: sea_water_salinity(4) = [6.3054151982069016, ..., 39.09366758167744] psu
                     : sea_water_potential_temperature(6) = [278.1569468180338, ..., 303.18466695149743] K
-    >>> print(m)
+    >>> print(m.array)
     [[ 189.22 131.36    6.75 -41.61     --  100.04]
      [-116.73 232.38   -4.82 180.47 134.25 -189.55]
      [     --     --  180.69     --  47.61      --]
@@ -5632,11 +5642,14 @@ may be accessed with the `nc_global_attributes`,
     Cell methods    : latitude: longitude: sum
     Dimension coords: sea_water_salinity(4) = [7.789749830961227, ..., 36.9842486679554] psu
                     : sea_water_potential_temperature(6) = [274.50717671712243, ..., 302.0188242594401] K
-    >>> print(w)
+    >>> print(w.array)
     [[19319093248.0 38601412608.0 38628990976.0 38583025664.0            --  38619795456.0]
      [38628990976.0 19319093248.0 57957281792.0 57929699328.0 57929695232.0  38601412608.0]
      [         --              -- 57948086272.0            -- 19319093248.0             --]
      [19309897728.0            -- 19309897728.0 57948086272.0 38601412608.0  19319093248.0]]
+
+    Demonstrate that the integral divided by the sum cell measures is
+    equal to the mean:
 
     >>> print(i/w)
     Field: 
@@ -5700,14 +5713,21 @@ may be accessed with the `nc_global_attributes`,
                 print('    Digitized field input    :', repr(f)) # pragma: no cover
 
             f =  self._conform_for_assignment(f)
+
+            ndiff = f.ndim-self.ndim
+            if ndiff > 0 and set(f.shape[:ndiff]) == set((1,)):
+                for i in range(ndiff):
+                    f.squeeze(0, inplace=True)
+            #--- End: def
+            
             if verbose:
                 print('                    conformed:', repr(f)) # pragma: no cover
           
-            if f.shape != self.shape:
-                raise ValueError(
-                    "Digitized field {!r} construct must have matching shape. Got {}, expected {}".format(
+            if not self._is_broadcastable(f.shape):
+                raise ValueError(                    
+                    "Conformed digitized field {!r} construct must have broadcastable shape. Got {}, expected {}".format(
                         f, f.shape, self.shape))
-                
+            
             bin_bounds        = f.get_property('bin_bounds', None)
             bin_count         = f.get_property('bin_count', None)
             bin_interval_type = f.get_property('bin_interval_type', None)
@@ -5831,7 +5851,7 @@ may be accessed with the `nc_global_attributes`,
         
         if verbose:
             print('    Weights:', repr(weights)) # pragma: no cover
-            print('    Number of unique ({}) bins: {}'.format(
+            print('    Number of indexed ({}) bins: {}'.format(
                 ', '.join(names), unique_indices.shape[1])) # pragma: no cover
             print('    ({}) bin indices:'.format(', '.join(names)),
                   end=" ") # pragma: no cover
@@ -5939,21 +5959,26 @@ may be accessed with the `nc_global_attributes`,
     :Parameters:
 
         digitized: (sequence of) `Field`
-
             One or more field constructs that contain digitized data
             with corresponding metadata, as would be output by
-            `cf.Field.digitize`. Each field construct, which must have
-            the same data shape as the field construct being
-            histogrammed, contains indices to the one-dimensionsal
-            bins to which each value of an original field construct
-            belongs; and there must be ``bin_count`` and
-            ``bin_bounds`` properties as defined by the `digitize`
-            method (and any of the extra properties defined by that
-            method are also recommended).
+            `cf.Field.digitize`. Each field construct contains indices
+            to the one-dimensionsal bins to which each value of an
+            original field construct belongs; and there must be
+            ``bin_count`` and ``bin_bounds`` properties as defined by
+            the `digitize` method (and any of the extra properties
+            defined by that method are also recommended).
 
             The bins defined by the ``bin_count`` and ``bin_bounds``
             properties are used to create a dimension coordinate
             construct for the output field construct.
+
+            Each digitized field construct must be transformable so
+            that it is broadcastable to the input field contruct's
+            data. This is done by using the metadata constructs of the
+            to create a mapping of physically compatible dimensions
+            between the fields, and then manipulating the dimensions
+            of the digitized field construct's data to ensure that
+            broadcasting can occur.
 
     :Returns:
 
@@ -6665,16 +6690,23 @@ may be accessed with the `nc_global_attributes`,
               'Z']``.
     
         weights: optional
-            Specify the weights for the collapse. **By default all
-            collapses are unweighted**. The weights are those that
-            would be returned by this call of the field construct's
-            `~cf.Field.weights` method: ``f.weights(weights,
-            measure=measure, scale=scale, components=True)``. See the
-            *measure* and *scale* parameters and `cf.Field.weights`
-            for details.
+            Specify the weights for the collapse. The weights are
+            those that would be returned by this call of the field
+            construct's `~cf.Field.weights` method:
+            ``f.weights(weights, measure=measure, scale=scale,
+            components=True)``. See the *measure* and *scale*
+            parameters and `cf.Field.weights` for details.
 
-            By default *weights* is `None`, resulting in unweighted
-            calculations.
+            .. note:: By default *weights* is `None`, resulting in
+                      unweighted calculations.
+    
+            *Parameter example:*
+              To specify weights based on cell areas use
+              ``weights='area'``.
+    
+            *Parameter example:*
+              To specify weights based on cell areas and linearly in
+              time you could set ``weights=('area', 'T')``.
     
             *Parameter example:*
               To specify weights based on cell areas use
@@ -6702,14 +6734,16 @@ may be accessed with the `nc_global_attributes`,
             incorporated into the units of the returned field
             construct.
 
-            Note that specifying volume weights via ``weights=['X',
-            'Y', 'Z']`` or ``weights=['area', 'Z']`` will give
-            **incorrect volume cell measures if the vertical dimension
-            coordinates do not define the actual height or depth
-            thickness of every cell in the domain**. In this case,
-            ``weights='volume'`` should be used instead, which
-            requires the field construct to have a "volume" cell
-            measure construct.
+            .. note:: Specifying cell volume weights via
+                      ``weights=['X', 'Y', 'Z']`` or
+                      ``weights=['area', 'Z']`` (or other equivalents)
+                      will produce **an incorrect result if the
+                      vertical dimension coordinates do not define the
+                      actual height or depth thickness of every cell
+                      in the domain**. In this case,
+                      ``weights='volume'`` should be used instead,
+                      which requires the field construct to have a
+                      "volume" cell measure construct.
 
         scale: number, optional
             If set to a positive number then scale the weights so that
