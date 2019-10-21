@@ -118,6 +118,8 @@ if mpi_on:
     from .. import mpi_comm
     from .. import mpi_size
     from .. import mpi_rank
+    from mpi4py.MPI import SUM as mpi_sum
+#--- End: if
 
 _year_length = 365.242198781
 _month_length = _year_length / 12
@@ -8351,21 +8353,45 @@ returned.
         
         n = 0
 
-        for partition in self.partitions.matrix.flat:
-            partition.open(config)
-            array = partition.array
-            n += numpy_ma_count(array)  # not this
-#            partition.output = numpy_ma_count(array) # but this! or return n?
-            partition.close()
+        self._flag_partitions_for_processing(parallelise=mpi_on)
+
+        processed_partitions = []
+        for pmindex, partition in enumerate(self.partitions.matrix):
+            if partition._process_partition:
+                partition.open(config)
+                partition._pmindex = pmindex
+                array = partition.array
+                n += numpy_ma_count(array)
+                partition.close()
+            #--- End: if
         #--- End: for
 
-#if not parallel:    
-#    for p in parations:
-#        _worker(p)
-#        if ?? : break
-#else:
-#    
-#
+        # processed_partitions contains a list of all the partitions
+        # that have been processed on this rank. In the serial case
+        # this is all of them and this line of code has no
+        # effect. Otherwise the processed partitions from each rank
+        # are distributed to every rank and processed_partitions now
+        # contains all the processed partitions from every rank.
+        processed_partitions = self._share_partitions(processed_partitions,
+                                                      mpi_on)
+
+        # Put the processed partitions back in the partition matrix
+        # according to each partitions _pmindex attribute set above.
+        pm = self.partitions.matrix
+        for partition in processed_partitions:
+            pm[partition._pmindex] = partition
+        #--- End: for
+
+        # Share the lock files created by each rank for each partition
+        # now in a temporary file so that __del__ knows which lock
+        # files to check if present
+        self._share_lock_files(mpi_on)
+
+        # Aggregate the results on each process and return on all
+        # processes
+        if mpi_on:
+            n = mpi_comm.allreduce(n, op=mpi_sum)
+        #--- End: if
         
         return n
 
