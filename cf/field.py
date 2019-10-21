@@ -832,7 +832,7 @@ may be accessed with the `nc_global_attributes`,
     >>> f._binary_operation(g, '__rdiv__')
 
         '''        
-        _debug = False #True
+        _debug = True
 
         if isinstance(other, Query):
             # --------------------------------------------------------
