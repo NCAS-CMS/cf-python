@@ -2003,6 +2003,166 @@ may be accessed with the `nc_global_attributes`,
 
         return other
 
+    
+    def _conform_for_data_broadcasting(self, other):
+        '''TODO
+
+    Note that *other* is not changed in-place.
+    
+    :Parameters:
+    
+        other: `Field`
+            The field to conform.
+    
+    :Returns:
+    
+        `Field`
+            The conformed version of *other*.
+    
+    **Examples:**
+    
+    >>> h = f._conform_for_data_broadcasting(g)
+
+        '''
+        # Analyse each domain
+        s = self.analyse_items()
+        v = other.analyse_items()
+
+        if s['warnings'] or v['warnings']:
+            raise ValueError(
+                "Can't setitem: {0}".format(s['warnings'] or v['warnings']))
+    
+        # Find the set of matching axes
+        matching_ids = set(s['id_to_axis']).intersection(v['id_to_axis'])
+        if not matching_ids:
+            raise ValueError("Can't assign: No matching axes")
+    
+        # ------------------------------------------------------------
+        # Check that any matching axes defined by auxiliary
+        # coordinates are done so in both fields.
+        # ------------------------------------------------------------
+        for identity in matching_ids:
+            if (identity in s['id_to_aux']) + (identity in v['id_to_aux']) == 1:
+                raise ValueError(
+                    "Can't assign: {0!r} axis defined by auxiliary in only 1 field".format(
+                        identity))
+        #--- End: for
+    
+        copied = False
+    
+        # ------------------------------------------------------------
+        # Check that 1) all undefined axes in other have size 1 and 2)
+        # that all of other's unmatched but defined axes have size 1
+        # and squeeze any such axes out of its data array.
+        #
+        # For example, if   self.data is        P T     Z Y   X   A
+        #              and  other.data is     1     B C   Y 1 X T
+        #              then other.data becomes            Y   X T
+        # ------------------------------------------------------------
+        squeeze_axes1 = []
+        for axis1 in v['undefined_axes']:
+            axis_size = other.domain_axes[axis1].get_size()
+            if axis_size != 1:            
+                raise ValueError(
+                    "Can't assign: Can't broadcast undefined axis with size {}".format(
+                        axis_size))
+
+            squeeze_axes1.append(axis1)
+
+        for identity in set(v['id_to_axis']).difference(matching_ids):
+            axis1 = v['id_to_axis'][identity]
+            axis_size = other.domain_axes[axis1].get_size()
+            if axis_size != 1:
+               raise ValueError(
+                   "Can't assign: Can't broadcast size {0} {1!r} axis".format(
+                       axis_size, identity))
+           
+            squeeze_axes1.append(axis1)    
+
+        if squeeze_axes1:
+            if not copied:
+                other = other.copy()
+                copied = True
+
+            other.squeeze(squeeze_axes1, inplace=True)
+
+        # ------------------------------------------------------------
+        # Permute the axes of other.data so that they are in the same
+        # order as their matching counterparts in self.data
+        #
+        # For example, if   self.data is       P T Z Y X   A
+        #              and  other.data is            Y X T
+        #              then other.data becomes   T   Y X
+        # ------------------------------------------------------------
+        data_axes0 = self.get_data_axes()
+        data_axes1 = other.get_data_axes()
+
+        transpose_axes1 = []       
+        for axis0 in data_axes0:
+            identity = s['axis_to_id'][axis0]
+            if identity in matching_ids:
+                axis1 = v['id_to_axis'][identity]                
+                if axis1 in data_axes1:
+                    transpose_axes1.append(axis1)
+        #--- End: for
+        
+        if transpose_axes1 != data_axes1:
+            if not copied:
+                other = other.copy()
+                copied = True
+
+            other.transpose(transpose_axes1, inplace=True)
+
+        # ------------------------------------------------------------
+        # Insert size 1 axes into other.data to match axes in
+        # self.data which other.data doesn't have.
+        #
+        # For example, if   self.data is       P T Z Y X A
+        #              and  other.data is        T   Y X
+        #              then other.data becomes 1 T 1 Y X 1
+        # ------------------------------------------------------------
+        expand_positions1 = []
+        for i, axis0 in enumerate(data_axes0):
+            identity = s['axis_to_id'][axis0]
+            if identity in matching_ids:
+                axis1 = v['id_to_axis'][identity]
+                if axis1 not in data_axes1:
+                    expand_positions1.append(i)
+            else:     
+                expand_positions1.append(i)
+        #--- End: for
+
+        if expand_positions1:
+            if not copied:
+                other = other.copy()
+                copied = True
+
+            for i in expand_positions1:
+                new_axis = other.set_construct(other._DomainAxis(1))
+                other.insert_dimension(new_axis, position=i, inplace=True)
+        #--- End: if
+
+        # ----------------------------------------------------------------
+        # Make sure that each pair of matching axes has the same
+        # direction
+        # ----------------------------------------------------------------
+        flip_axes1 = []
+        for identity in matching_ids:
+            axis1 = v['id_to_axis'][identity]
+            axis0 = s['id_to_axis'][identity]
+            if other.direction(axis1) != self.direction(axis0):
+                flip_axes1.append(axis1)
+        #--- End: for
+
+        if flip_axes1:
+            if not copied:
+                other = other.copy()
+                copied = True
+
+            other.flip(flip_axes1, inplace=True)
+
+        return other
+
 
     def _equivalent_construct_data(self, field1, key0=None, key1=None,
                                    s=None, t=None,
@@ -5712,9 +5872,10 @@ may be accessed with the `nc_global_attributes`,
             if verbose:
                 print('    Digitized field input    :', repr(f)) # pragma: no cover
 
-            f =  self._conform_for_assignment(f)
+            f =  self._conform_for_assignment(f) # TODO - this does not account for coord refs
 
-            ndiff = f.ndim-self.ndim
+            # Remove leading size one dimensions
+            ndiff = f.ndim - self.ndim
             if ndiff > 0 and set(f.shape[:ndiff]) == set((1,)):
                 for i in range(ndiff):
                     f.squeeze(0, inplace=True)
@@ -5725,8 +5886,8 @@ may be accessed with the `nc_global_attributes`,
           
             if not self._is_broadcastable(f.shape):
                 raise ValueError(                    
-                    "Conformed digitized field {!r} construct must have broadcastable shape. Got {}, expected {}".format(
-                        f, f.shape, self.shape))
+                    "Conformed digitized field {!r} construct must have shape broadcastable to {}.".format(
+                        f, self.shape))
             
             bin_bounds        = f.get_property('bin_bounds', None)
             bin_count         = f.get_property('bin_count', None)
