@@ -472,9 +472,9 @@ may be accessed with the `nc_global_attributes`,
 
     def __setitem__(self, indices, value):
         '''Called to implement assignment to x[indices]=value
-
+        
     x.__setitem__(indices, value) <==> x[indices]=value
-
+        
     .. versionadded:: 2.0
 
         '''
@@ -492,8 +492,9 @@ may be accessed with the `nc_global_attributes`,
             pass
         else:
             if data is None:
-                raise ValueError("Can't assign a {!r} with no data to a {}".format(
-                    value.__class__.__name__, self.__class__.__name__))
+                raise ValueError(
+                    "Can't assign to a {} from a {!r} with no data}".format(
+                        self.__class__.__name__, value.__class__.__name__))
 
             value = data
         
@@ -831,7 +832,7 @@ may be accessed with the `nc_global_attributes`,
     >>> f._binary_operation(g, '__rdiv__')
 
         '''        
-        _debug = False
+        _debug = False #True
 
         if isinstance(other, Query):
             # --------------------------------------------------------
@@ -1843,7 +1844,7 @@ may be accessed with the `nc_global_attributes`,
         return axes
 
 
-    def _conform_for_assignment(self, other):
+    def _conform_for_assignment(self, other, check_coordinates=False):
         '''Conform *other* so that it is ready for metadata-unaware assignment
     broadcasting across *self*.
 
@@ -1864,6 +1865,8 @@ may be accessed with the `nc_global_attributes`,
     >>> h = f._conform_for_assignment(g)
 
         '''
+        _debug = False
+        
         # Analyse each domain
         s = self.analyse_items()
         v = other.analyse_items()
@@ -2001,6 +2004,59 @@ may be accessed with the `nc_global_attributes`,
 
             other.flip(flip_axes1, inplace=True)
 
+        # Find the axis names which are present in both fields
+        if not check_coordinates:
+            return other
+
+        # Still here?
+        matching_ids = set(s['id_to_axis']).intersection(v['id_to_axis'])
+        
+        for identity in matching_ids:
+            key0 = s['id_to_coord'][identity]
+            key1 = v['id_to_coord'][identity]
+
+            coord0 = self.constructs[key0]
+            coord1 = other.constructs[key1]
+
+            # Check the sizes of the defining coordinates
+            size0 = coord0.size
+            size1 = coord1.size
+            if size0 != size1:
+                if size0 == 1 or size1 == 1:
+                    continue
+                
+                raise ValueError(
+                    "Can't broadcast {!r} axes with sizes {} and {}".format(
+                        identity, size0, size1))
+            
+            # Check that equally sized defining coordinate data arrays
+            # are compatible
+            if not coord0._equivalent_data(coord1, verbose=_debug):
+                raise ValueError(
+                    "Matching {!r} coordinate constructs have different data".format(
+                        identity))
+
+            # If the defining coordinates are attached to
+            # coordinate references then check that those
+            # coordinate references are equivalent
+            
+            # For each field, find the coordinate references which
+            # contain the defining coordinate.
+            refs0 = [key for key, ref in self.coordinate_references.items()
+                     if key0 in ref.coordinates()]
+            refs1 = [key for key, ref in other.coordinate_references.items()
+                     if key1 in ref.coordinates()]
+            
+            nrefs = len(refs0)
+            if nrefs > 1 or nrefs != len(refs1):
+                raise ValueError("TODO")
+
+            if nrefs and not self._equivalent_coordinate_references(
+                    other, key0=refs0[0], key1=refs1[0], s=s, t=v,
+                    verbose=_debug):
+                raise ValueError("TODO")
+        #--- End: for
+            
         return other
 
     
@@ -2024,142 +2080,20 @@ may be accessed with the `nc_global_attributes`,
     >>> h = f._conform_for_data_broadcasting(g)
 
         '''
-        # Analyse each domain
-        s = self.analyse_items()
-        v = other.analyse_items()
 
-        if s['warnings'] or v['warnings']:
-            raise ValueError(
-                "Can't setitem: {0}".format(s['warnings'] or v['warnings']))
-    
-        # Find the set of matching axes
-        matching_ids = set(s['id_to_axis']).intersection(v['id_to_axis'])
-        if not matching_ids:
-            raise ValueError("Can't assign: No matching axes")
-    
-        # ------------------------------------------------------------
-        # Check that any matching axes defined by auxiliary
-        # coordinates are done so in both fields.
-        # ------------------------------------------------------------
-        for identity in matching_ids:
-            if (identity in s['id_to_aux']) + (identity in v['id_to_aux']) == 1:
-                raise ValueError(
-                    "Can't assign: {0!r} axis defined by auxiliary in only 1 field".format(
-                        identity))
-        #--- End: for
-    
-        copied = False
-    
-        # ------------------------------------------------------------
-        # Check that 1) all undefined axes in other have size 1 and 2)
-        # that all of other's unmatched but defined axes have size 1
-        # and squeeze any such axes out of its data array.
-        #
-        # For example, if   self.data is        P T     Z Y   X   A
-        #              and  other.data is     1     B C   Y 1 X T
-        #              then other.data becomes            Y   X T
-        # ------------------------------------------------------------
-        squeeze_axes1 = []
-        for axis1 in v['undefined_axes']:
-            axis_size = other.domain_axes[axis1].get_size()
-            if axis_size != 1:            
-                raise ValueError(
-                    "Can't assign: Can't broadcast undefined axis with size {}".format(
-                        axis_size))
-
-            squeeze_axes1.append(axis1)
-
-        for identity in set(v['id_to_axis']).difference(matching_ids):
-            axis1 = v['id_to_axis'][identity]
-            axis_size = other.domain_axes[axis1].get_size()
-            if axis_size != 1:
-               raise ValueError(
-                   "Can't assign: Can't broadcast size {0} {1!r} axis".format(
-                       axis_size, identity))
-           
-            squeeze_axes1.append(axis1)    
-
-        if squeeze_axes1:
-            if not copied:
-                other = other.copy()
-                copied = True
-
-            other.squeeze(squeeze_axes1, inplace=True)
-
-        # ------------------------------------------------------------
-        # Permute the axes of other.data so that they are in the same
-        # order as their matching counterparts in self.data
-        #
-        # For example, if   self.data is       P T Z Y X   A
-        #              and  other.data is            Y X T
-        #              then other.data becomes   T   Y X
-        # ------------------------------------------------------------
-        data_axes0 = self.get_data_axes()
-        data_axes1 = other.get_data_axes()
-
-        transpose_axes1 = []       
-        for axis0 in data_axes0:
-            identity = s['axis_to_id'][axis0]
-            if identity in matching_ids:
-                axis1 = v['id_to_axis'][identity]                
-                if axis1 in data_axes1:
-                    transpose_axes1.append(axis1)
-        #--- End: for
+        other = self._conform_for_assignment(other, check_coordinates=True)
         
-        if transpose_axes1 != data_axes1:
-            if not copied:
-                other = other.copy()
-                copied = True
-
-            other.transpose(transpose_axes1, inplace=True)
-
-        # ------------------------------------------------------------
-        # Insert size 1 axes into other.data to match axes in
-        # self.data which other.data doesn't have.
-        #
-        # For example, if   self.data is       P T Z Y X A
-        #              and  other.data is        T   Y X
-        #              then other.data becomes 1 T 1 Y X 1
-        # ------------------------------------------------------------
-        expand_positions1 = []
-        for i, axis0 in enumerate(data_axes0):
-            identity = s['axis_to_id'][axis0]
-            if identity in matching_ids:
-                axis1 = v['id_to_axis'][identity]
-                if axis1 not in data_axes1:
-                    expand_positions1.append(i)
-            else:     
-                expand_positions1.append(i)
-        #--- End: for
-
-        if expand_positions1:
-            if not copied:
-                other = other.copy()
-                copied = True
-
-            for i in expand_positions1:
-                new_axis = other.set_construct(other._DomainAxis(1))
-                other.insert_dimension(new_axis, position=i, inplace=True)
+        # Remove leading size one dimensions
+        ndiff = other.ndim - self.ndim
+        if ndiff > 0 and set(other.shape[:ndiff]) == set((1,)):
+            for i in range(ndiff):
+                other = other.squeeze(0)
         #--- End: if
 
-        # ----------------------------------------------------------------
-        # Make sure that each pair of matching axes has the same
-        # direction
-        # ----------------------------------------------------------------
-        flip_axes1 = []
-        for identity in matching_ids:
-            axis1 = v['id_to_axis'][identity]
-            axis0 = s['id_to_axis'][identity]
-            if other.direction(axis1) != self.direction(axis0):
-                flip_axes1.append(axis1)
-        #--- End: for
-
-        if flip_axes1:
-            if not copied:
-                other = other.copy()
-                copied = True
-
-            other.flip(flip_axes1, inplace=True)
+#        if not self._is_broadcastable(other.shape):
+#            raise ValueError(                    
+#                "Can't transform field {!r} to be broadcastable to {!r}.".format(
+#                    other, self))
 
         return other
 
@@ -2169,7 +2103,6 @@ may be accessed with the `nc_global_attributes`,
                                    atol=None, rtol=None,
                                    verbose=False):
         '''TODO
-
 
     Two real numbers ``x`` and ``y`` are considered equal if
     ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
@@ -2218,7 +2151,7 @@ may be accessed with the `nc_global_attributes`,
 
         if item0.size != item1.size:
             if verbose:
-                print("{}: Different data array sizes ({}, {})".format(
+                print("{}: Different metadata construct data array size: {} != {}".format(
                     self.__class__.__name__, item0.size, item1.size)) # pragma: no cover
             return False
 
@@ -5449,7 +5382,7 @@ may be accessed with the `nc_global_attributes`,
     the output bins simply comprise its one-dimensional bins; if there
     are two digitized field constructs then the output bins comprise
     the two-dimensionsal matrix formed by all possible combinations of
-    the two sets of one-dimensional bins.
+    the two sets of one-dimensional bins; etc.
 
     An output value for a bin is formed by collapsing (using the
     method given by the *method* parameter) the elements of the data
@@ -5808,8 +5741,8 @@ may be accessed with the `nc_global_attributes`,
      [         --              -- 57948086272.0            -- 19319093248.0             --]
      [19309897728.0            -- 19309897728.0 57948086272.0 38601412608.0  19319093248.0]]
 
-    Demonstrate that the integral divided by the sum cell measures is
-    equal to the mean:
+    Demonstrate that the integral divided by the sum of the cell
+    measures is equal to the mean:
 
     >>> print(i/w)
     Field: 
@@ -5872,15 +5805,7 @@ may be accessed with the `nc_global_attributes`,
             if verbose:
                 print('    Digitized field input    :', repr(f)) # pragma: no cover
 
-            f =  self._conform_for_assignment(f) # TODO - this does not account for coord refs
-
-            # Remove leading size one dimensions
-            ndiff = f.ndim - self.ndim
-            if ndiff > 0 and set(f.shape[:ndiff]) == set((1,)):
-                for i in range(ndiff):
-                    f.squeeze(0, inplace=True)
-            #--- End: def
-            
+            f =  self._conform_for_data_broadcasting(f)
             if verbose:
                 print('                    conformed:', repr(f)) # pragma: no cover
           
@@ -6092,7 +6017,7 @@ may be accessed with the `nc_global_attributes`,
     the histogram bins simply comprise its one-dimensional bins; if
     there are two digitized field constructs then the histogram bins
     comprise the two-dimensionsal matrix formed by all possible
-    combinations of the two sets of one-dimensional bins.
+    combinations of the two sets of one-dimensional bins; etc.
 
     An output value for an histogram bin is formed by counting the
     number cells for which the digitized field constructs, taken

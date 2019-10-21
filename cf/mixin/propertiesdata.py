@@ -703,7 +703,7 @@ class PropertiesData(Properties):
             not (units.isreftime and new_units.isreftime)):
             new.del_property('standard_name', None)
             new.del_property('long_name', None)
-            
+
         return new
 
 
