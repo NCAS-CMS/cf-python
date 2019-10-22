@@ -6648,6 +6648,19 @@ indices to the bins that each value of one of the variables belongs.
     [0.1317 0.146 ]]
 
 
+The data values of a field construct may be binned according to how
+they correspond to the N-dimensionsal histogram bins of another set of
+variables, and each the values in each histogram bin collapsed
+according to any one of the available :ref:`collapse methods
+<Collapse-methods>`.
+
+Each dimension of the histogram is defined by a field construct
+returned by the `~Field.digitize` method of a field construct. This
+"digitized" field construct defines a sequence of bins and provides
+indices to the bins that each value of one of the variables belongs.
+
+..
+
 ----
   
 .. _Aggregation:
