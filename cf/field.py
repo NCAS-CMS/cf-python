@@ -5367,7 +5367,13 @@ may be accessed with the `nc_global_attributes`,
     def bin(self, method, digitized, weights=None, measure=False,
             scale=None, mtol=1, ddof=1, radius='earth',
             return_indices=False, verbose=False):
-        '''Collapse the data values that lie in multi-dimensional bins.
+        '''Collapse the data values that lie in N-dimensional bins.
+
+    The data values of the field construct are binned according to how
+    they correspond to the N-dimensionsal histogram bins of another
+    set of variables (see `cf.histogram` for details), and each bin of
+    values is collapsed with one of the collapse methods allowed by
+    the *method* parameter.
 
     The number of dimensions of the output binned data is equal to the
     number of field constructs provided by the *digitized*

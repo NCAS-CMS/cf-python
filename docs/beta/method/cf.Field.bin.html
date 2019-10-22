@@ -91,7 +91,12 @@
 <dl class="method">
 <dt id="cf.Field.bin">
 <code class="descclassname">Field.</code><code class="descname">bin</code><span class="sig-paren">(</span><em>method</em>, <em>digitized</em>, <em>weights=None</em>, <em>measure=False</em>, <em>scale=None</em>, <em>mtol=1</em>, <em>ddof=1</em>, <em>radius='earth'</em>, <em>return_indices=False</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/field.py#L5367"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.bin" title="Permalink to this definition">¶</a></dt>
-<dd><p>Collapse the data values that lie in multi-dimensional bins.</p>
+<dd><p>Collapse the data values that lie in N-dimensional bins.</p>
+<p>The data values of the field construct are binned according to how
+they correspond to the N-dimensionsal histogram bins of another
+set of variables (see <a class="reference internal" href="../function/cf.histogram.html#cf.histogram" title="cf.histogram"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.histogram</span></code></a> for details), and each bin of
+values is collapsed with one of the collapse methods allowed by
+the <em>method</em> parameter.</p>
 <p>The number of dimensions of the output binned data is equal to the
 number of field constructs provided by the <em>digitized</em>
 argument. Each such field construct defines a sequence of bins and
