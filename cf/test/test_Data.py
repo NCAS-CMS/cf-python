@@ -1043,7 +1043,7 @@ class DataTest(unittest.TestCase):
         
         for chunksize in self.chunk_sizes:   
             cf.CHUNKSIZE(chunksize)          
-             d = cf.Data(a.copy())
+            d = cf.Data(a.copy())
      
             for i in range(-a.ndim, a.ndim):
                 for j in range(-a.ndim, a.ndim):
