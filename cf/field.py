@@ -1663,7 +1663,7 @@ may be accessed with the `nc_global_attributes`,
     >>> f._binary_operation(g, '__rdiv__')
 
         '''        
-        _debug = True
+        _debug = False
 
         if isinstance(other, Query):
             # --------------------------------------------------------
@@ -6328,7 +6328,13 @@ may be accessed with the `nc_global_attributes`,
     def bin(self, method, digitized, weights=None, measure=False,
             scale=None, mtol=1, ddof=1, radius='earth',
             return_indices=False, verbose=False):
-        '''Collapse the data values that lie in multi-dimensional bins.
+        '''Collapse the data values that lie in N-dimensional bins.
+
+    The data values of the field construct are binned according to how
+    they correspond to the N-dimensionsal histogram bins of another
+    set of variables (see `cf.histogram` for details), and each bin of
+    values is collapsed with one of the collapse methods allowed by
+    the *method* parameter.
 
     The number of dimensions of the output binned data is equal to the
     number of field constructs provided by the *digitized*
@@ -6356,12 +6362,9 @@ may be accessed with the `nc_global_attributes`,
     each dimension of the output bins, with a corresponding dimension
     coordinate construct that defines the bin boundaries.
 
-    Note that ``h = f.bin('sample_size', digitized)`` is equivalent to
-    ``h = f.histogram(digitized)``
-
     .. versionadded:: 3.0.2
 
-    .. seealso:: `collapse`, `digitize`, `histogram`, `weights`
+    .. seealso:: `collapse`, `digitize`, `weights`, `cf.histogram`
 
     :Parameters:
 
@@ -6460,7 +6463,6 @@ may be accessed with the `nc_global_attributes`,
             broadcasting can occur.
 
         weights: optional
-
             Specify the weights for the collapse calculations. The
             weights are those that would be returned by this call of
             the field construct's `~cf.Field.weights` method:
@@ -6965,11 +6967,15 @@ may be accessed with the `nc_global_attributes`,
     def histogram(self, digitized):
         '''Return a multi-dimensional histogram of the data.
 
+    **This has moved to** `cf.histogram`. **Ignore everything below.**
+
+
+
     The number of dimensions of the histogram is equal to the number
     of field constructs provided by the *digitized* argument. Each
     such field construct defines a sequence of bins and provides
     indices to the bins that each value of another field construct
-    belongs.  There is no upper limit to the number of dimensions of
+    belongs. There is no upper limit to the number of dimensions of
     the histogram.
         
     The output histogram bins are defined by the exterior product of
@@ -6996,10 +7002,7 @@ may be accessed with the `nc_global_attributes`,
     each dimension of the histogram, with a corresponding dimension
     coordinate construct that defines the bin boundaries.
 
-    Note that ``h = f.histogram(digitized)`` is equivalent to ``h =
-    f.bin('sample_size', digitized)``.
-        
-    .. versionadded:: 3.0.2
+        .. versionadded:: 3.0.2
 
     .. seealso:: `bin`, `collapse`, `digitize`
 
@@ -7034,7 +7037,7 @@ may be accessed with the `nc_global_attributes`,
 
     **Examples:**
 
-    Create a one-dimensioanl histogram based on 10 equally-sized bins
+    Create a one-dimensional histogram based on 10 equally-sized bins
     that exactly span the data range:
 
     >>> print(f)                                                                                                   
@@ -7051,7 +7054,26 @@ may be accessed with the `nc_global_attributes`,
      [110. 131. 124. 146.  87. 103.  57.  11.]
      [ 29.  59.  39.  70.  58.  72.   9.  17.]
      [  6.  36.  19.  35.  18.  37.  34.  13.]]
-    >>> indices = f.digitize(10)                                             
+    >>> indices, bins = f.digitize(10, return_bins=True)
+    >>> print(indices)
+    Field: long_name=Bin index to which each 'specific_humidity' value belongs (ncvar%q)
+    ------------------------------------------------------------------------------------
+    Data            : long_name=Bin index to which each 'specific_humidity' value belongs(latitude(5), longitude(8))
+    Cell methods    : area: mean
+    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(8) = [22.5, ..., 337.5] degrees_east
+                    : time(1) = [2019-01-01 00:00:00]
+    >>> print(bins.array)
+    [[  3.   17.3]
+     [ 17.3  31.6]
+     [ 31.6  45.9]
+     [ 45.9  60.2]
+     [ 60.2  74.5]
+     [ 74.5  88.8]
+     [ 88.8 103.1]
+     [103.1 117.4]
+     [117.4 131.7]
+     [131.7 146. ]]
     >>> h = f.histogram(indices)                             
     >>> print(h) 
     Field: number_of_observations
@@ -7061,8 +7083,20 @@ may be accessed with the `nc_global_attributes`,
     Dimension coords: specific_humidity(10) = [10.15, ..., 138.85000000000002] 0.001 1
     >>> print(h.array)                                                                                             
     [9 7 9 4 5 1 1 1 2 1]
+    >>> print(h.coordinate('specific_humidity').bounds.array)
+    [[  3.   17.3]
+     [ 17.3  31.6]
+     [ 31.6  45.9]
+     [ 45.9  60.2]
+     [ 60.2  74.5]
+     [ 74.5  88.8]
+     [ 88.8 103.1]
+     [103.1 117.4]
+     [117.4 131.7]
+     [131.7 146. ]]
 
         '''
+        raise RuntimeError("Use cf.histogram instead")
         return self.bin('sample_size', digitized=digitized)
             
 

@@ -45,6 +45,7 @@ Version |release| for version |version| of the CF conventions.
    cf.ATOL
    cf.RTOL
    cf.default_fillvals
+   cf.histogram
    cf.relative_vorticity
 
 **Condition constructors**

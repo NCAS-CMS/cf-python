@@ -20,7 +20,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.eq" href="cf.eq.html" />
-    <link rel="prev" title="cf.default_fillvals" href="cf.default_fillvals.html" />
+    <link rel="prev" title="cf.histogram" href="cf.histogram.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -50,7 +50,7 @@
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../function.html"><strong>cf functions</strong></a><ul>
-      <li>Previous: <a href="cf.default_fillvals.html" title="previous chapter">cf.default_fillvals</a></li>
+      <li>Previous: <a href="cf.histogram.html" title="previous chapter">cf.histogram</a></li>
       <li>Next: <a href="cf.eq.html" title="next chapter">cf.eq</a></li>
   </ul></li>
   </ul></li>
@@ -88,7 +88,7 @@
 <h1>cf.relative_vorticity<a class="headerlink" href="#cf-relative-vorticity" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.relative_vorticity">
-<code class="descclassname">cf.</code><code class="descname">relative_vorticity</code><span class="sig-paren">(</span><em>u</em>, <em>v</em>, <em>wrap=None</em>, <em>one_sided_at_boundary=False</em>, <em>radius=6371229.0</em>, <em>cyclic=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/maths.py#L21"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.relative_vorticity" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">cf.</code><code class="descname">relative_vorticity</code><span class="sig-paren">(</span><em>u</em>, <em>v</em>, <em>wrap=None</em>, <em>one_sided_at_boundary=False</em>, <em>radius=6371229.0</em>, <em>cyclic=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/maths.py#L7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.relative_vorticity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the relative vorticity using centred finite differences.</p>
 <p>The relative vorticity of wind defined on a Cartesian domain (such
 as a plane projection) is defined as</p>
@@ -144,11 +144,11 @@ are assumed.</p>
 </dd>
 </dl>
 </dd>
-<dt>wrap: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>wrap: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">Whether the longitude is cyclic or not. By default this is
 autodetected.</p>
 </dd>
-<dt>one_sided_at_boundary: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>one_sided_at_boundary: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then if the field is not cyclic off-centre finite
 differences are calculated at the boundaries, otherwise
 missing values are used at the boundaries.</p>

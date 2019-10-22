@@ -1807,12 +1807,14 @@ place.
                 for i in range(n_partitions):
                     if mpi_rank == rank:
                         partition = processed_partitions[i]
-                        if isinstance(partition._subarray, numpy_ndarray):
-                            # If the subarray is a numpy array, swap it
-                            # out before broadcasting the partition
+                        if (isinstance(partition._subarray, numpy_ndarray) and
+                            partition._subarray.dtype.kind in {'b', 'i', 'u', 'f', 'c'}):
+                            # If the subarray is a supported numpy
+                            # array, swap it out before broadcasting
+                            # the partition
                             subarray = partition._subarray
                             partition._subarray = None
-                            partition._subarray_is_in_memory = True
+                            partition._subarray_removed = True
                             partition._subarray_dtype = subarray.dtype
                             partition._subarray_shape = subarray.shape
                             partition._subarray_isMA = numpy_ma_isMA(subarray)
@@ -1822,17 +1824,24 @@ place.
                                 partition._subarray_is_masked = False
                             #--- End: if
                         else:
-                            partition._subarray_is_in_memory = False
+                            # The partition's subarray is either not a
+                            # numpy array or is, for example, an array
+                            # of strings, so it will be pickled and
+                            # broadcast with the partition.
+                            partition._subarray_removed = False
                         #--- End: if
                     else:
                         partition = None
                     #--- End: if
+
+                    # Pickle and broadcast the partition with or
+                    # without the subarray
                     partition = mpi_comm.bcast(partition, root=rank)
 
-                    if partition._subarray_is_in_memory:
-                        # If the subarray is a numpy array broadcast it
-                        # without serialising and swap it back into the
-                        # partition
+                    if partition._subarray_removed:
+                        # If the subarray is a supported numpy array
+                        # broadcast it without pickling and swap it
+                        # back into the partition
                         if partition._subarray_isMA:
                             # If the subarray is a masked array broadcast
                             # the data and the mask separately
@@ -1881,7 +1890,7 @@ place.
                     #--- End: if
 
                     # Clean up temporary attribute
-                    del partition._subarray_is_in_memory
+                    del partition._subarray_removed
 
                     if mpi_rank != rank:
                         shared_partitions.append(partition)
@@ -5539,6 +5548,7 @@ dimensions.
             for rank in range(1, mpi_size):
                 if mpi_rank == rank:
                     if out is None:
+                        # out is None, so will not be sent
                         out_is_none = True
                         mpi_comm.send(out_is_none, dest=0)
                     else:
@@ -5547,7 +5557,10 @@ dimensions.
                         out_props = []
                         for item in out:
                             item_props = {}
-                            if isinstance(item, numpy_ndarray):
+                            if (isinstance(item, numpy_ndarray) and
+                                item.dtype.kind in {'b', 'i', 'u', 'f', 'c'}):
+                                # The item is a supported numpy array,
+                                # so can be sent without pickling it.
                                 item_props['is_numpy_array'] = True
                                 item_props['isMA'] = numpy_ma_isMA(item)
                                 if item_props['isMA']:
@@ -5558,11 +5571,22 @@ dimensions.
                                 item_props['shape'] = item.shape
                                 item_props['dtype'] = item.dtype
                             else:
+                                # The item is either not a numpy array
+                                # or is, for example, an array of
+                                # strings, so will be pickled when
+                                # sent.
                                 item_props['is_numpy_array'] = False
                             #--- End: if
                             out_props.append(item_props)
                         #--- End: for
+
+                        # Send information about the properties of
+                        # each item in out so that it can be received
+                        # correctly.
                         mpi_comm.send(out_props, dest=0)
+
+                        # Send each item in out to process 0 in the
+                        # appropriate way.
                         for item, item_props in zip(out, out_props):
                             if item_props['is_numpy_array']:
                                 if item_props['is_masked']:
@@ -5580,9 +5604,15 @@ dimensions.
                 elif mpi_rank == 0:
                     p_out_is_none = mpi_comm.recv(source=rank)
                     if p_out_is_none:
+                        # p_out is None so there is nothing to do
                         continue
                     else:
+                        # Receive information about the properties of
+                        # p_out.
                         p_out_props = mpi_comm.recv(source=rank)
+
+                        # Receive each item in p_out in the correct
+                        # way according to its properties.
                         p_out = []
                         for item_props in p_out_props:
                             if item_props['is_numpy_array']:
@@ -5605,6 +5635,8 @@ dimensions.
                             p_out.append(item)
                         #--- End: for
                         p_out = tuple(p_out)
+
+                        # Aggregate out and p_out if out is not None.
                         if out is None:
                             out = p_out
                         else:
@@ -5622,6 +5654,12 @@ dimensions.
                                               sub_samples, masked, Nmax, mtol, data,
                                               n_non_collapse_axes)
             #--- End: if
+
+            # Broadcast the aggregated result back from process 0 to
+            # all processes.
+
+            # First communicate information about the result's
+            # properties.
             if mpi_rank == 0:
                 out_props = {}
                 out_props['isMA'] = numpy_ma_isMA(out)
@@ -5636,6 +5674,8 @@ dimensions.
                 out_props = None
             #--- End: if
             out_props = mpi_comm.bcast(out_props, root=0)
+
+            # Do the broadcast.
             if out_props['is_masked']:
                 if mpi_rank != 0:
                     out = numpy_ma_masked_all(out_props['shape'],
@@ -5657,9 +5697,12 @@ dimensions.
                 mpi_comm.Bcast(out, root=0)
             #--- End: if
         else:
+            # In the case that the inner loop is not parallelised,
+            # just finalise.
             out = self._collapse_finalise(ffinalise, out, sub_samples,
                                           masked, Nmax, mtol, data, n_non_collapse_axes)
         #--- End: if
+        
         return out
     #--- End: def
 
@@ -7759,15 +7802,13 @@ returned.
 
     def mean(self, axes=None, squeeze=False, mtol=1, weights=None,
              inplace=False, i=False, _preserve_partitions=False):
-        r'''Collapse axes with their weighted mean.
+        '''Collapse axes with their mean.
 
-    The weighted mean, :math:`\mu`, for array elements :math:`x_i` and
-    corresponding weights elements :math:`w_i` is
-    
-    .. math:: \mu=\frac{\sum w_i x_i}{\sum w_i}
-    
-    Missing data array elements and their corresponding weights are
-    omitted from the calculation.
+    The mean is unweighted by default, but may be weighted (see the
+    *weights* parmaeter).
+
+    Missing data array elements and their corresponding weights
+    are omitted from the calculation.
     
     :Parameters:
     
@@ -7855,7 +7896,7 @@ returned.
     
     >>> y = cf.Data([1, 3])
     >>> x = cf.Data([1, 2, 1])
-    >>> w = cf.expand_dims(y, 1) * x
+    >>> w = cf.insert_dimension(y, 1) * x
     >>> print w.array
     [[1 2 1]
      [3 6 3]]
@@ -7956,7 +7997,7 @@ returned.
             broadcast correctly against the original array.
     
         weights: data-like or dict, optional
-            TOD note that the units of the weights matter
+            TODO note that the units of the weights matter
         
             Weights associated with values of the array. By default
             all non-missing elements of the array are assumed to have
@@ -8356,13 +8397,14 @@ returned.
         self._flag_partitions_for_processing(parallelise=mpi_on)
 
         processed_partitions = []
-        for pmindex, partition in enumerate(self.partitions.matrix):
+        for pmindex, partition in self.partitions.ndenumerate():
             if partition._process_partition:
                 partition.open(config)
                 partition._pmindex = pmindex
                 array = partition.array
                 n += numpy_ma_count(array)
                 partition.close()
+                processed_partitions.append(partition)
             #--- End: if
         #--- End: for
 
@@ -8373,7 +8415,7 @@ returned.
         # are distributed to every rank and processed_partitions now
         # contains all the processed partitions from every rank.
         processed_partitions = self._share_partitions(processed_partitions,
-                                                      mpi_on)
+                                                      parallelise=mpi_on)
 
         # Put the processed partitions back in the partition matrix
         # according to each partitions _pmindex attribute set above.
@@ -8385,7 +8427,7 @@ returned.
         # Share the lock files created by each rank for each partition
         # now in a temporary file so that __del__ knows which lock
         # files to check if present
-        self._share_lock_files(mpi_on)
+        self._share_lock_files(parallelise=mpi_on)
 
         # Aggregate the results on each process and return on all
         # processes
@@ -10160,7 +10202,7 @@ returned.
     def swapaxes(self, axis0, axis1, inplace=False, i=False):
         '''Interchange two axes of an array.
 
-    .. seealso:: `expand_dims`, `flip`, `squeeze`, `transpose`
+    .. seealso:: ``flip`, insert_dimension`, `squeeze`, `transpose`
     
     :Parameters:
     
@@ -10177,19 +10219,21 @@ returned.
     :Returns:
     
         `Data`
-    
+            The data with swapped axis positions.
+
     **Examples:**
     
-    >>> d=cf.Data([[[1, 2, 3], [4, 5, 6]]])
-    >>> d.shape
-    (1, 2, 3)
-    >>> d.swapaxes(1, 0).shape
-    
-    >>> d.swapaxes(2, 1).shape
-    
-    >>> d.swapaxes(0, -1).shape
-    
-    >>> d.swapaxes(1, 1).shape
+    >>> d = cf.Data([[[1, 2, 3], [4, 5, 6]]])
+    >>> d
+    <CF Data(1, 2, 3): [[[1, ..., 6]]]>
+    >>> d.swapaxes(1, 0)
+    <CF Data(2, 1, 3): [[[1, ..., 6]]]>
+    >>> d.swapaxes(0, -1)
+    <CF Data(3, 2, 1): [[[1, ..., 6]]]>
+    >>> d.swapaxes(1, 1)
+    <CF Data(1, 2, 3): [[[1, ..., 6]]]>
+    >>> d.swapaxes(-1, -1)
+    <CF Data(1, 2, 3): [[[1, ..., 6]]]>
 
         '''
         if i:
@@ -10200,8 +10244,8 @@ returned.
         else:
             d = self.copy()
 
-        axis0 = d._parse_axes((axis0,))[0] #, 'swapaxes')[0]
-        axis1 = d._parse_axes((axis1,))[0] #, 'swapaxes')[0]
+        axis0 = d._parse_axes((axis0,))[0]
+        axis1 = d._parse_axes((axis1,))[0]
 
         if axis0 != axis1:
             iaxes = list(range(d._ndim))
@@ -10215,8 +10259,7 @@ returned.
         #--- End: if
 
         if inplace:
-            d = None
-            
+            d = None            
         return d
 
 
@@ -10853,7 +10896,7 @@ returned.
     By default all size 1 axes are removed, but particular axes may be
     selected with the keyword arguments.
     
-    .. seealso:: `expand_dims`, `flip`, `swapaxes`, `transpose`
+    .. seealso:: `insert_dimension`, `flip`, `swapaxes`, `transpose`
     
     :Parameters:
     
