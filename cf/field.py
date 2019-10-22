@@ -183,14 +183,9 @@ _earth_radius = Data(6371229.0, 'm')
 
 _relational_methods = ('__eq__', '__ne__', '__lt__', '__le__', '__gt__', '__ge__')
 
-xxx = namedtuple('data_dimensions', ['size', 'axis'])
 
+_xxx = namedtuple('data_dimension', ['size', 'axis', 'key', 'coord', 'coord_type'])
 
-# ====================================================================
-#
-# Field object
-#
-# ====================================================================
 
 class Field(mixin.PropertiesData,
             cfdm.Field):
@@ -1202,7 +1197,7 @@ may be accessed with the `nc_global_attributes`,
         if _debug:
             print('2: axes_unD , axes_unM , axes0_M =',axes_unD , axes_unM , axes0_M) # pragma: no cover
 
-#        print ('XXXXXXX', axes_unD + axes_unM + axes1_M)
+#        print ('rrrr', axes_unD + axes_unM + axes1_M)
         field1.transpose(axes_unD + axes_unM + axes1_M, inplace=True)
 
         start_of_unmatched1 = len(axes_unD)
@@ -1722,7 +1717,10 @@ may be accessed with the `nc_global_attributes`,
         for i, (f, out) in enumerate(zip((field0, field1),
                                          (out0  , out1))):
             for axis in f.get_data_axes():
-                identity = None
+                identity   = None
+                key        = None
+                coord      = None
+                coord_type = None
                 
                 coords = f.dimension_coordinates.filter_by_axis('exact', axis)
                 if len(coords) == 1:
@@ -1759,13 +1757,19 @@ may be accessed with the `nc_global_attributes`,
 
                 if identity is None:
                     identity = i
+                else:
+                    coord_type = coord.construct_type
                     
-                out[identity] = xxx(size=f.domain_axis(axis).get_size(),
-                                    axis=axis)
+                out[identity] = _xxx(size=f.domain_axis(axis).get_size(),
+                                     axis=axis,
+                                     key=key,
+                                     coord=coord,
+                                     coord_type=coord_type)
         #--- End: for
 
-        print('out0', out0)
-        print('out1', out1)
+        print ('out0', out0)
+        print ()
+        print ('out1', out1)
 
         squeeze1 = []
         insert0  = []
@@ -1777,16 +1781,25 @@ may be accessed with the `nc_global_attributes`,
                     del out1[b]
                     squeeze.append(i)
                 else:
-                    insert0.append(self.ndim)
+                    insert0.append(field0.ndim)
                     
             if identity in out0 and isinstance(identity, str):
                 a = out0[identity]
-                if y.size != a.size and not (y.size == 1 or a.size == 1):
-                    raise  ValueError(
-                        "Can't broadcast size {} {!r} axis to size {} {!r} axis".format(
-                            y.size, identity, a.size, identity))
+                if not (y.size == 1 or a.size == 1):
+                    if y.size != a.size:
+                        raise  ValueError(
+                            "Can't broadcast size {} {!r} axis to size {} {!r} axis".format(
+                                y.size, identity, a.size, identity))
 
-                # Now check for equivalent coord values
+                    # Now check for equivalent coord values
+                    if y.coord.direction() != a.coord.direction():
+                        other.flip(y.axis, inplace=True)
+                        
+                    if not y.coord._equivalent_data(a.coord, verbose=_debug):
+                        raise  ValueError(
+                            "Can't broadcast combine {} axes with different coordinate values".format(
+                                identity))
+                    # Check coord refs
         #--- End: for        
 
         # Make sure that both data ararys have the same number of
@@ -1795,7 +1808,7 @@ may be accessed with the `nc_global_attributes`,
             field1.squeeze(squeeze, inplace=True)
         
         for i in insert0:
-            field0.insert_dimension(i, inplace=True)
+            field0.insert_dimension(field0.ndim, inplace=True)
 
         while field1.ndim < field0.ndim:
             field1.insert_dimension(0, inplace=True)
@@ -1817,7 +1830,7 @@ may be accessed with the `nc_global_attributes`,
                                 inplace=True)
         #--- End: for
 
-        # Make sure that the domain axis sizes in field0 are those for
+        # Change the domain axis sizes in field0 so that they match
         # the broadcasted result data
         for identity, y in out1.items():
             if identity in out0 and isinstance(identity, str):
@@ -2161,7 +2174,7 @@ may be accessed with the `nc_global_attributes`,
         if _debug:
             print('2: axes_unD , axes_unM , axes0_M =',axes_unD , axes_unM , axes0_M) # pragma: no cover
 
-#        print ('XXXXXXX', axes_unD + axes_unM + axes1_M)
+#        print ('ssss', axes_unD + axes_unM + axes1_M)
         field1.transpose(axes_unD + axes_unM + axes1_M, inplace=True)
 
         start_of_unmatched1 = len(axes_unD)
@@ -6967,137 +6980,10 @@ may be accessed with the `nc_global_attributes`,
     def histogram(self, digitized):
         '''Return a multi-dimensional histogram of the data.
 
-    **This has moved to** `cf.histogram`. **Ignore everything below.**
-
-
-
-    The number of dimensions of the histogram is equal to the number
-    of field constructs provided by the *digitized* argument. Each
-    such field construct defines a sequence of bins and provides
-    indices to the bins that each value of another field construct
-    belongs. There is no upper limit to the number of dimensions of
-    the histogram.
-        
-    The output histogram bins are defined by the exterior product of
-    the one-dimensional bins of each digitized field construct. For
-    example, if only one digitized field construct is provided then
-    the histogram bins simply comprise its one-dimensional bins; if
-    there are two digitized field constructs then the histogram bins
-    comprise the two-dimensionsal matrix formed by all possible
-    combinations of the two sets of one-dimensional bins; etc.
-
-    An output value for an histogram bin is formed by counting the
-    number cells for which the digitized field constructs, taken
-    together, index that bin. Note that it may be the case that not
-    all output bins are indexed by the digitized field constructs, and
-    for these bins missing data is returned.
-
-    Therefore, the creation of a one-dimensional histogram of the
-    field construct's own data must be based on a digitized version of
-    itself. However, a one-dimensional histogram can also be based on
-    the digitized data of another field construct representing a
-    different physical quantity.
-
-    The returned field construct will have a domain axis construct for
-    each dimension of the histogram, with a corresponding dimension
-    coordinate construct that defines the bin boundaries.
-
-        .. versionadded:: 3.0.2
-
-    .. seealso:: `bin`, `collapse`, `digitize`
-
-    :Parameters:
-
-        digitized: (sequence of) `Field`
-            One or more field constructs that contain digitized data
-            with corresponding metadata, as would be output by
-            `cf.Field.digitize`. Each field construct contains indices
-            to the one-dimensionsal bins to which each value of an
-            original field construct belongs; and there must be
-            ``bin_count`` and ``bin_bounds`` properties as defined by
-            the `digitize` method (and any of the extra properties
-            defined by that method are also recommended).
-
-            The bins defined by the ``bin_count`` and ``bin_bounds``
-            properties are used to create a dimension coordinate
-            construct for the output field construct.
-
-            Each digitized field construct must be transformable so
-            that it is broadcastable to the input field contruct's
-            data. This is done by using the metadata constructs of the
-            to create a mapping of physically compatible dimensions
-            between the fields, and then manipulating the dimensions
-            of the digitized field construct's data to ensure that
-            broadcasting can occur.
-
-    :Returns:
-
-        `Field`            
-            The field construct containing the histogram.
-
-    **Examples:**
-
-    Create a one-dimensional histogram based on 10 equally-sized bins
-    that exactly span the data range:
-
-    >>> print(f)                                                                                                   
-    Field: specific_humidity (ncvar%q)
-    ----------------------------------
-    Data            : specific_humidity(latitude(5), longitude(8)) 0.001 1
-    Cell methods    : area: mean
-    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
-                    : longitude(8) = [22.5, ..., 337.5] degrees_east
-                    : time(1) = [2019-01-01 00:00:00]       
-    >>> print(f.array)                                                                                            
-    [[  7.  34.   3.  14.  18.  37.  24.  29.]
-     [ 23.  36.  45.  62.  46.  73.   6.  66.]
-     [110. 131. 124. 146.  87. 103.  57.  11.]
-     [ 29.  59.  39.  70.  58.  72.   9.  17.]
-     [  6.  36.  19.  35.  18.  37.  34.  13.]]
-    >>> indices, bins = f.digitize(10, return_bins=True)
-    >>> print(indices)
-    Field: long_name=Bin index to which each 'specific_humidity' value belongs (ncvar%q)
-    ------------------------------------------------------------------------------------
-    Data            : long_name=Bin index to which each 'specific_humidity' value belongs(latitude(5), longitude(8))
-    Cell methods    : area: mean
-    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
-                    : longitude(8) = [22.5, ..., 337.5] degrees_east
-                    : time(1) = [2019-01-01 00:00:00]
-    >>> print(bins.array)
-    [[  3.   17.3]
-     [ 17.3  31.6]
-     [ 31.6  45.9]
-     [ 45.9  60.2]
-     [ 60.2  74.5]
-     [ 74.5  88.8]
-     [ 88.8 103.1]
-     [103.1 117.4]
-     [117.4 131.7]
-     [131.7 146. ]]
-    >>> h = f.histogram(indices)                             
-    >>> print(h) 
-    Field: number_of_observations
-    -----------------------------
-    Data            : number_of_observations(specific_humidity(10)) 1
-    Cell methods    : latitude: longitude: point
-    Dimension coords: specific_humidity(10) = [10.15, ..., 138.85000000000002] 0.001 1
-    >>> print(h.array)                                                                                             
-    [9 7 9 4 5 1 1 1 2 1]
-    >>> print(h.coordinate('specific_humidity').bounds.array)
-    [[  3.   17.3]
-     [ 17.3  31.6]
-     [ 31.6  45.9]
-     [ 45.9  60.2]
-     [ 60.2  74.5]
-     [ 74.5  88.8]
-     [ 88.8 103.1]
-     [103.1 117.4]
-     [117.4 131.7]
-     [131.7 146. ]]
+    **This has moved to** `cf.histogram`
 
         '''
         raise RuntimeError("Use cf.histogram instead")
-        return self.bin('sample_size', digitized=digitized)
             
 
     def del_construct(self, identity, default=ValueError()):
