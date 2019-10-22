@@ -8363,6 +8363,7 @@ returned.
                 array = partition.array
                 n += numpy_ma_count(array)
                 partition.close()
+                processed_partitions.append(partition)
             #--- End: if
         #--- End: for
 
@@ -8373,7 +8374,7 @@ returned.
         # are distributed to every rank and processed_partitions now
         # contains all the processed partitions from every rank.
         processed_partitions = self._share_partitions(processed_partitions,
-                                                      mpi_on)
+                                                      parallelise=mpi_on)
 
         # Put the processed partitions back in the partition matrix
         # according to each partitions _pmindex attribute set above.
@@ -8385,7 +8386,7 @@ returned.
         # Share the lock files created by each rank for each partition
         # now in a temporary file so that __del__ knows which lock
         # files to check if present
-        self._share_lock_files(mpi_on)
+        self._share_lock_files(parallelise=mpi_on)
 
         # Aggregate the results on each process and return on all
         # processes
