@@ -1824,17 +1824,24 @@ place.
                                 partition._subarray_is_masked = False
                             #--- End: if
                         else:
+                            # The partition's subarray is either not a
+                            # numpy array or is, for example, an array
+                            # of strings, so it will be pickled and
+                            # broadcast with the partition.
                             partition._subarray_removed = False
                         #--- End: if
                     else:
                         partition = None
                     #--- End: if
+
+                    # Pickle and broadcast the partition with or
+                    # without the subarray
                     partition = mpi_comm.bcast(partition, root=rank)
 
                     if partition._subarray_removed:
-                        # If the subarray is a numpy array broadcast it
-                        # without serialising and swap it back into the
-                        # partition
+                        # If the subarray is a supported numpy array
+                        # broadcast it without pickling and swap it
+                        # back into the partition
                         if partition._subarray_isMA:
                             # If the subarray is a masked array broadcast
                             # the data and the mask separately
@@ -5541,6 +5548,7 @@ dimensions.
             for rank in range(1, mpi_size):
                 if mpi_rank == rank:
                     if out is None:
+                        # out is None, so will not be sent
                         out_is_none = True
                         mpi_comm.send(out_is_none, dest=0)
                     else:
@@ -5551,6 +5559,8 @@ dimensions.
                             item_props = {}
                             if (isinstance(item, numpy_ndarray) and
                                 item.dtype.kind in {'b', 'i', 'u', 'f', 'c'}):
+                                # The item is a supported numpy array,
+                                # so can be sent without pickling it.
                                 item_props['is_numpy_array'] = True
                                 item_props['isMA'] = numpy_ma_isMA(item)
                                 if item_props['isMA']:
@@ -5561,11 +5571,22 @@ dimensions.
                                 item_props['shape'] = item.shape
                                 item_props['dtype'] = item.dtype
                             else:
+                                # The item is either not a numpy array
+                                # or is, for example, an array of
+                                # strings, so will be pickled when
+                                # sent.
                                 item_props['is_numpy_array'] = False
                             #--- End: if
                             out_props.append(item_props)
                         #--- End: for
+
+                        # Send information about the properties of
+                        # each item in out so that it can be received
+                        # correctly.
                         mpi_comm.send(out_props, dest=0)
+
+                        # Send each item in out to process 0 in the
+                        # appropriate way.
                         for item, item_props in zip(out, out_props):
                             if item_props['is_numpy_array']:
                                 if item_props['is_masked']:
@@ -5583,9 +5604,15 @@ dimensions.
                 elif mpi_rank == 0:
                     p_out_is_none = mpi_comm.recv(source=rank)
                     if p_out_is_none:
+                        # p_out is None so there is nothing to do
                         continue
                     else:
+                        # Receive information about the properties of
+                        # p_out.
                         p_out_props = mpi_comm.recv(source=rank)
+
+                        # Receive each item in p_out in the correct
+                        # way according to its properties.
                         p_out = []
                         for item_props in p_out_props:
                             if item_props['is_numpy_array']:
@@ -5608,6 +5635,8 @@ dimensions.
                             p_out.append(item)
                         #--- End: for
                         p_out = tuple(p_out)
+
+                        # Aggregate out and p_out if out is not None.
                         if out is None:
                             out = p_out
                         else:
@@ -5625,6 +5654,12 @@ dimensions.
                                               sub_samples, masked, Nmax, mtol, data,
                                               n_non_collapse_axes)
             #--- End: if
+
+            # Broadcast the aggregated result back from process 0 to
+            # all processes.
+
+            # First communicate information about the result's
+            # properties.
             if mpi_rank == 0:
                 out_props = {}
                 out_props['isMA'] = numpy_ma_isMA(out)
@@ -5639,6 +5674,8 @@ dimensions.
                 out_props = None
             #--- End: if
             out_props = mpi_comm.bcast(out_props, root=0)
+
+            # Do the broadcast.
             if out_props['is_masked']:
                 if mpi_rank != 0:
                     out = numpy_ma_masked_all(out_props['shape'],
@@ -5660,9 +5697,12 @@ dimensions.
                 mpi_comm.Bcast(out, root=0)
             #--- End: if
         else:
+            # In the case that the inner loop is not parallelised,
+            # just finalise.
             out = self._collapse_finalise(ffinalise, out, sub_samples,
                                           masked, Nmax, mtol, data, n_non_collapse_axes)
         #--- End: if
+        
         return out
     #--- End: def
 
