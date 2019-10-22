@@ -6125,6 +6125,37 @@ they have different standard names.
     'units=1000 s-1.K',
     'ncvar%ta']
 
+.. note:: Care must be taken when combining a `numpy` array and field
+          construct, due to the way in which both allow themselves to
+          be combined with other object types. If the field construct
+          is on the left hand side of the operation, then a field
+          construct is returned whose data is the combination of the
+          original field construct's data and the numpy array. If,
+          however, the `numpy` array is on the left hand side of the
+          operation, then a `numpy` array is returned, containing the
+          same in the other case.
+          
+    
+          .. code-block:: python
+             :caption: *TODO*
+
+	     >>> q, t = cf.read('fil.nc')
+             >>> a = numpy.array(1000)
+             >>> t * a
+	     >>> a * t
+	     >>> b = numpy.random.randn(t.size).reshape(t.shape)
+	     >>> t * b
+	     >>> b * t
+
+	  Ways around: 
+	     
+          .. code-block:: python
+             :caption: *TODO*
+
+
+	     >>> cf.Data(b) * t
+	     
+
 .. _Unary-operations:
 
 Unary operations
