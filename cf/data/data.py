@@ -1807,12 +1807,14 @@ place.
                 for i in range(n_partitions):
                     if mpi_rank == rank:
                         partition = processed_partitions[i]
-                        if isinstance(partition._subarray, numpy_ndarray):
-                            # If the subarray is a numpy array, swap it
-                            # out before broadcasting the partition
+                        if (isinstance(partition._subarray, numpy_ndarray) and
+                            partition._subarray.dtype.kind in {'b', 'i', 'u', 'f', 'c'}):
+                            # If the subarray is a supported numpy
+                            # array, swap it out before broadcasting
+                            # the partition
                             subarray = partition._subarray
                             partition._subarray = None
-                            partition._subarray_is_in_memory = True
+                            partition._subarray_removed = True
                             partition._subarray_dtype = subarray.dtype
                             partition._subarray_shape = subarray.shape
                             partition._subarray_isMA = numpy_ma_isMA(subarray)
@@ -1822,14 +1824,14 @@ place.
                                 partition._subarray_is_masked = False
                             #--- End: if
                         else:
-                            partition._subarray_is_in_memory = False
+                            partition._subarray_removed = False
                         #--- End: if
                     else:
                         partition = None
                     #--- End: if
                     partition = mpi_comm.bcast(partition, root=rank)
 
-                    if partition._subarray_is_in_memory:
+                    if partition._subarray_removed:
                         # If the subarray is a numpy array broadcast it
                         # without serialising and swap it back into the
                         # partition
@@ -1881,7 +1883,7 @@ place.
                     #--- End: if
 
                     # Clean up temporary attribute
-                    del partition._subarray_is_in_memory
+                    del partition._subarray_removed
 
                     if mpi_rank != rank:
                         shared_partitions.append(partition)
@@ -5547,7 +5549,8 @@ dimensions.
                         out_props = []
                         for item in out:
                             item_props = {}
-                            if isinstance(item, numpy_ndarray):
+                            if (isinstance(item, numpy_ndarray) and
+                                item.dtype.kind in {'b', 'i', 'u', 'f', 'c'}):
                                 item_props['is_numpy_array'] = True
                                 item_props['isMA'] = numpy_ma_isMA(item)
                                 if item_props['isMA']:
@@ -8354,7 +8357,7 @@ returned.
         self._flag_partitions_for_processing(parallelise=mpi_on)
 
         processed_partitions = []
-        for pmindex, partition in enumerate(self.partitions.matrix):
+        for pmindex, partition in self.partitions.ndenumerate():
             if partition._process_partition:
                 partition.open(config)
                 partition._pmindex = pmindex
