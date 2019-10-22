@@ -8356,7 +8356,7 @@ returned.
         self._flag_partitions_for_processing(parallelise=mpi_on)
 
         processed_partitions = []
-        for pmindex, partition in enumerate(self.partitions.matrix):
+        for pmindex, partition in self.partitions.ndenumerate():
             if partition._process_partition:
                 partition.open(config)
                 partition._pmindex = pmindex
