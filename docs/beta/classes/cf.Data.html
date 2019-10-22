@@ -88,7 +88,7 @@
 <h1>cf.Data<a class="headerlink" href="#cf-data" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="cf.Data">
-<em class="property">class </em><code class="descclassname">cf.</code><code class="descname">Data</code><span class="sig-paren">(</span><em>array=None</em>, <em>units=None</em>, <em>calendar=None</em>, <em>fill_value=None</em>, <em>hardmask=True</em>, <em>chunk=True</em>, <em>loadd=None</em>, <em>loads=None</em>, <em>dt=False</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_array=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/data/data.py#L246"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cf.</code><code class="descname">Data</code><span class="sig-paren">(</span><em>array=None</em>, <em>units=None</em>, <em>calendar=None</em>, <em>fill_value=None</em>, <em>hardmask=True</em>, <em>chunk=True</em>, <em>loadd=None</em>, <em>loads=None</em>, <em>dt=False</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_array=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/data/data.py#L248"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.data.Data</span></code></p>
 <p>An N-dimensional data array with units and masked values.</p>
 <ul class="simple">
@@ -537,7 +537,7 @@ if it is larger than the chunk size, as returned by the
 <td>Collapse axes with their maximum.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cf.Data.mean.html#cf.Data.mean" title="cf.Data.mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean</span></code></a></td>
-<td>Collapse axes with their weighted mean.</td>
+<td>Collapse axes with their mean.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cf.Data.mid_range.html#cf.Data.mid_range" title="cf.Data.mid_range"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mid_range</span></code></a></td>
 <td>Collapse axes with the unweighted average of their maximum and minimum values.</td>
@@ -957,7 +957,7 @@ or, for augmented assignments, modify the data in-place.</p>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cf.Data.__data__.html#cf.Data.__data__" title="cf.Data.__data__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__data__</span></code></a></td>
 <td>Returns a new reference to self.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></td>
+<tr class="row-even"><td><a class="reference internal" href="generated/cf.Data.__deepcopy__.html#cf.Data.__deepcopy__" title="cf.Data.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></td>
 <td>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cf.Data.__getitem__.html#cf.Data.__getitem__" title="cf.Data.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></td>
@@ -987,7 +987,7 @@ or, for augmented assignments, modify the data in-place.</p>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cf.Data.__setitem__.html#cf.Data.__setitem__" title="cf.Data.__setitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__setitem__</span></code></a></td>
 <td>Implement indexed assignment.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></td>
+<tr class="row-even"><td><a class="reference internal" href="generated/cf.Data.__str__.html#cf.Data.__str__" title="cf.Data.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></td>
 <td>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</td>
 </tr>
 </tbody>
@@ -1007,7 +1007,7 @@ or, for augmented assignments, modify the data in-place.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/classes/cf.Data.rst.txt"

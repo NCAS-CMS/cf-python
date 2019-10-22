@@ -992,10 +992,11 @@ class DataTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
+        a = numpy.arange(10*15*19).reshape(10, 1, 15, 19)
+
         for chunksize in self.chunk_sizes:   
             cf.CHUNKSIZE(chunksize)          
-            a = numpy.arange(10*15*19).reshape(10, 1, 15, 19)
-            d = cf.Data(a)
+            d = cf.Data(a.copy())
 
             pmshape = d._pmshape
 
@@ -1038,10 +1039,11 @@ class DataTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
+        a = numpy.arange(10*15*19).reshape(10, 1, 15, 19)
+        
         for chunksize in self.chunk_sizes:   
             cf.CHUNKSIZE(chunksize)          
-            a = numpy.arange(10*15*19).reshape(10, 1, 15, 19)
-            d = cf.Data(a.copy())
+             d = cf.Data(a.copy())
      
             for i in range(-a.ndim, a.ndim):
                 for j in range(-a.ndim, a.ndim):
@@ -1058,9 +1060,10 @@ class DataTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
+        a = numpy.arange(10*15*19).reshape(10, 1, 15, 19)
+        
         for chunksize in self.chunk_sizes:   
             cf.CHUNKSIZE(chunksize)          
-            a = numpy.arange(10*15*19).reshape(10, 1, 15, 19)
             d = cf.Data(a.copy())
 
             for indices in (range(a.ndim), range(-a.ndim, 0)):

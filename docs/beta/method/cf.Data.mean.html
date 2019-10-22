@@ -90,14 +90,12 @@
 <h1>cf.Data.mean<a class="headerlink" href="#cf-data-mean" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Data.mean">
-<code class="descclassname">Data.</code><code class="descname">mean</code><span class="sig-paren">(</span><em>axes=None</em>, <em>squeeze=False</em>, <em>mtol=1</em>, <em>weights=None</em>, <em>inplace=False</em>, <em>i=False</em>, <em>_preserve_partitions=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/data/data.py#L7758"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.mean" title="Permalink to this definition">¶</a></dt>
-<dd><p>Collapse axes with their weighted mean.</p>
-<p>The weighted mean, <span class="math notranslate nohighlight">\(\mu\)</span>, for array elements <span class="math notranslate nohighlight">\(x_i\)</span> and
-corresponding weights elements <span class="math notranslate nohighlight">\(w_i\)</span> is</p>
-<div class="math notranslate nohighlight">
-\[\mu=\frac{\sum w_i x_i}{\sum w_i}\]</div>
-<p>Missing data array elements and their corresponding weights are
-omitted from the calculation.</p>
+<code class="descclassname">Data.</code><code class="descname">mean</code><span class="sig-paren">(</span><em>axes=None</em>, <em>squeeze=False</em>, <em>mtol=1</em>, <em>weights=None</em>, <em>inplace=False</em>, <em>i=False</em>, <em>_preserve_partitions=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/data/data.py#L7760"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.mean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Collapse axes with their mean.</p>
+<p>The mean is unweighted by default, but may be weighted (see the
+<em>weights</em> parmaeter).</p>
+<p>Missing data array elements and their corresponding weights
+are omitted from the calculation.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -199,7 +197,7 @@ permitted.</p>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">w</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">x</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">w</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">insert_dimension</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">x</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="n">w</span><span class="o">.</span><span class="n">array</span>
 <span class="go">[[1 2 1]</span>
 <span class="go"> [3 6 3]]</span>
@@ -294,7 +292,7 @@ permitted.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cf.Data.mean.rst.txt"
