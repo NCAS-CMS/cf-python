@@ -1,4 +1,4 @@
-from collections import OrderedDict
+from collections import OrderedDict, namedtuple
 from copy        import deepcopy
 from functools   import reduce
 from operator    import mul as operator_mul
@@ -182,6 +182,8 @@ _collapse_ddof_methods = set(('sd',
 _earth_radius = Data(6371229.0, 'm')
 
 _relational_methods = ('__eq__', '__ne__', '__lt__', '__le__', '__gt__', '__ge__')
+
+xxx = namedtuple('data_dimensions', ['size', 'axis'])
 
 
 # ====================================================================
@@ -719,10 +721,10 @@ may be accessed with the `nc_global_attributes`,
 #                    else:
 #                        identity = aux.identity()
 
-                    identity = dim.identity(strict=True, default=None)
+                    identity = aux.identity(strict=True, default=None)
                     
                     if identity is None and relaxed_identities:
-                        identity = dim.identity(relaxed=True, default=None)
+                        identity = aux.identity(relaxed=True, default=None)
                     
                     if identity and aux.has_data():
                         if identity in id_to_axis:
@@ -832,7 +834,7 @@ may be accessed with the `nc_global_attributes`,
     >>> f._binary_operation(g, '__rdiv__')
 
         '''        
-        _debug = True
+        _debug = False
 
         if isinstance(other, Query):
             # --------------------------------------------------------
@@ -879,6 +881,965 @@ may be accessed with the `nc_global_attributes`,
         # ------------------------------------------------------------
         # Analyse each domain
         # ------------------------------------------------------------
+        relaxed_identities = RELAXED_IDENTITIES()
+        s = self.analyse_items(relaxed_identities=relaxed_identities)
+        v = other.analyse_items(relaxed_identities=relaxed_identities)
+
+        if _debug:
+            print(s)     # pragma: no cover
+            print()      # pragma: no cover
+            print(v)     # pragma: no cover
+            print(v)     # pragma: no cover
+            print(self)  # pragma: no cover
+            print(other) # pragma: no cover
+            
+        if s['warnings'] or v['warnings']:
+            raise ValueError(
+                "Can't combine fields: {}".format(s['warnings'] or v['warnings']))
+            
+        # Check that at most one field has undefined axes
+        if s['undefined_axes'] and v['undefined_axes']:
+            raise ValueError(
+                "Can't combine fields: Both fields have not-strictly-defined axes: {!r}, {!r}. Consider setting cf.RELAXED_IDENTITIES(True)".format(
+                    tuple(self.constructs.domain_axis_identity(a)
+                          for a in s['undefined_axes']),
+                    tuple(other.constructs.domain_axis_identity(a)
+                          for a in v['undefined_axes'])))
+        #--- End: if
+        
+        # Find the axis names which are present in both fields
+        matching_ids = set(s['id_to_axis']).intersection(v['id_to_axis'])
+        if _debug:
+            print("s['id_to_axis'] =", s['id_to_axis']) # pragma: no cover
+            print("v['id_to_axis'] =", v['id_to_axis']) # pragma: no cover
+            print('matching_ids    =', matching_ids)    # pragma: no cover
+        
+        # Check that any matching axes defined by an auxiliary
+        # coordinate are done so in both fields.
+        for identity in set(s['id_to_aux']).symmetric_difference(v['id_to_aux']):
+            if identity in matching_ids:
+                raise ValueError(
+                    "Can't combine fields: {!r} axis defined by auxiliary in only 1 field".format(
+                        standard_name)) ########~WRONG
+        #--- End: for
+
+        # ------------------------------------------------------------
+        # For matching dimension coordinates check that they have
+        # consistent coordinate references and that one of the following is
+        # true:
+        #
+        # 1) They have equal size > 1 and their data arrays are
+        #    equivalent
+        #
+        # 2) They have unequal sizes and one of them has size 1
+        #
+        # 3) They have equal size = 1. In this case, if the data
+        #    arrays are not equivalent then the axis will be omitted
+        #    from the result field.
+        #-------------------------------------------------------------
+
+        # List of size 1 axes to be completely removed from the result
+        # field. Such an axis's size 1 defining coordinates have
+        # unequivalent data arrays.
+        #
+        # For example:
+        # >>> remove_size1_axes0
+        # ['dim2']
+        remove_size1_axes0 = []
+
+        # List of matching axes with equivalent defining dimension
+        # coordinate data arrays.
+        #
+        # Note that we don't need to include matching axes with
+        # equivalent defining *auxiliary* coordinate data arrays.
+        #
+        # For example:
+        # >>> 
+        # [('dim2', 'dim0')]
+        matching_axes_with_equivalent_data = {}
+
+        # For each field, list those of its matching axes which need
+        # to be broadcast against the other field. I.e. those axes
+        # which are size 1 but size > 1 in the other field.
+        #
+        # For example:
+        # >>> s['size1_broadcast_axes']
+        # ['dim1']
+        s['size1_broadcast_axes'] = []
+        v['size1_broadcast_axes'] = []
+
+#DO SOMETING WITH v['size1_broadcast_axes'] to be symmetrial with regards coord refs!!!!!
+        
+        # Map axes in field1 to axes in field0 and vice versa
+        #
+        # For example:
+        # >>> axis1_to_axis0
+        # {'dim1': 'dim0', 'dim2': 'dim1', 'dim0': 'dim2'}
+        # >>> axis0_to_axis1
+        # {'dim0': 'dim1', 'dim1': 'dim2', 'dim2': 'dim0'}
+        axis1_to_axis0 = {}
+        axis0_to_axis1 = {}
+
+        remove_items = set()
+        
+        for identity in matching_ids:
+            axis0  = s['id_to_axis'][identity]
+            axis1  = v['id_to_axis'][identity]
+
+            axis1_to_axis0[axis1] = axis0
+            axis0_to_axis1[axis0] = axis1
+
+            key0 = s['id_to_coord'][identity]
+            key1 = v['id_to_coord'][identity]
+
+            coord0 = self.constructs[key0]
+            coord1 = other.constructs[key1]
+
+            # Check the sizes of the defining coordinates
+            size0 = coord0.size
+            size1 = coord1.size
+            if size0 != size1:
+                # Defining coordinates have different sizes
+                if size0 == 1:
+                    # Broadcast
+                    s['size1_broadcast_axes'].append(axis0)
+                elif size1 == 1:
+                    # Broadcast
+                    v['size1_broadcast_axes'].append(axis1)
+                else:
+                    # Can't broadcast
+                    raise ValueError(
+                        "Can't combine fields: Can't broadcast {!r} axes with sizes {} and {}".format(
+                            identity, size0, size1))
+
+                # Move on to the next identity if the defining
+                # coordinates have different sizes
+                continue
+
+            # Still here? Then the defining coordinates have the same
+            # size.
+
+            # Check that equally sized defining coordinate data arrays
+            # are compatible
+            if coord0._equivalent_data(coord1, verbose=_debug):
+                # The defining coordinates have equivalent data
+                # arrays
+            
+                # If the defining coordinates are attached to
+                # coordinate references then check that those
+                # coordinate references are equivalent
+
+                # For each field, find the coordinate references which
+                # contain the defining coordinate.
+#                refs0 = [ref for ref in self.coordinate_references.values()
+#                         if key0 in ref.coordinates()]
+                refs0 = [key for key, ref in self.coordinate_references.items()
+                         if key0 in ref.coordinates()]
+                refs1 = [key for key, ref in other.coordinate_references.items()
+                         if key1 in ref.coordinates()]
+
+                nrefs = len(refs0)
+                if nrefs > 1 or nrefs != len(refs1):
+                    # The defining coordinate are associated with
+                    # different numbers of coordinate references
+                    equivalent_refs = False
+                elif not nrefs:
+                    # Neither defining coordinate is associated with a
+                    # coordinate reference                    
+                    equivalent_refs = True
+                else:  
+                    # Each defining coordinate is associated with
+                    # exactly one coordinate reference
+                    equivalent_refs = self._equivalent_coordinate_references(
+                        other, key0=refs0[0], key1=refs1[0], s=s, t=v,
+                        verbose=_debug)
+
+                if not equivalent_refs:
+                    # The defining coordinates have non-equivalent
+                    # coordinate references
+                    if coord0.size == 1:
+                        # The defining coordinates have non-equivalent
+                        # coordinate references but both defining
+                        # coordinates are of size 1 => flag this axis
+                        # to be omitted from the result field.
+#dch                        remove_size1_axes0.append(axis0)
+                        if refs0:
+                            key0 = refs0[0]
+                            ref0 = self.coordinate_references[key0]
+                            remove_items.add(refs0[0])
+                            remove_items.update(ref0.coordinate_conversion.domain_ancillaries().values())
+                    else:
+                        # The defining coordinates have non-equivalent
+                        # coordinate references and they are of size >
+                        # 1
+                        raise ValueError(
+                            "Can't combine fields: Incompatible coordinate references for {!r} coordinates".format(
+                                identity))
+
+                elif identity not in s['id_to_aux']:
+                    # The defining coordinates are both dimension
+                    # coordinates, have equivalent data arrays and
+                    # have equivalent coordinate references.
+                    matching_axes_with_equivalent_data[axis0] = axis1
+                else:
+                    # The defining coordinates are both auxiliary
+                    # coordinates, have equivalent data arrays and
+                    # have equivalent coordinate references.
+                    pass
+
+            else:
+                if coord0.size > 1:
+                    # The defining coordinates have non-equivalent
+                    # data arrays and are both of size > 1
+                    raise ValueError(
+                        "Can't combine fields: Incompatible {!r} coordinate values: {}, {}".format(
+                            identity, coord0.data, coord1.data))
+                else:
+                    # The defining coordinates have non-equivalent
+                    # data arrays and are both size 1 => this axis to
+                    # be omitted from the result field
+                    remove_size1_axes0.append(axis0)
+        #--- End: for
+        if _debug:
+            print("1: s['size1_broadcast_axes'] =", s['size1_broadcast_axes']) # pragma: no cover
+            print("1: v['size1_broadcast_axes'] =", v['size1_broadcast_axes']) # pragma: no cover
+            print('1: remove_size1_axes0 =', remove_size1_axes0) # pragma: no cover
+
+        matching_axis1_to_axis0 = axis1_to_axis0.copy()
+        matching_axis0_to_axis1 = axis0_to_axis1.copy()
+
+        if _debug:
+            print("1: axis1_to_axis0 =", axis1_to_axis0) # pragma: no cover
+            print("1: axis0_to_axis1 =", axis0_to_axis1) # pragma: no cover
+
+        # ------------------------------------------------------------
+        # Still here? Then the two fields are combinable!
+        # ------------------------------------------------------------
+
+        # ------------------------------------------------------------
+        # 2.1 Create copies of the two fields, unless it is an in
+        #     place combination, in which case we don't want to copy
+        #     self)
+        # ------------------------------------------------------------
+        field1 = other.copy()
+
+        inplace = method[2] == 'i'
+        if not inplace:
+            field0 = self.copy()
+        else:
+            field0 = self
+
+        s['new_size1_axes'] = []
+            
+        # ------------------------------------------------------------
+        # Permute the axes of the data array of field0 so that:
+        #
+        # * All of the matching axes are the inner (fastest varying)
+        #   axes
+        #
+        # * All of the undefined axes are the outer (slowest varying)
+        #   axes
+        #
+        # * All of the defined but unmatched axes are in the middle
+        # ------------------------------------------------------------
+        data_axes0 = field0.get_data_axes()
+        axes_unD = []                     # Undefined axes
+        axes_unM = []                     # Defined but unmatched axes
+        axes0_M  = []                     # Defined and matched axes
+        for axis0 in data_axes0:
+            if axis0 in axis0_to_axis1:
+                # Matching axis                
+                axes0_M.append(axis0)
+            elif axis0 in s['undefined_axes']:
+                # Undefined axis
+                axes_unD.append(axis0)
+            else:
+                # Defined but unmatched axis
+                axes_unM.append(axis0)
+        #--- End: for
+        if _debug:
+            print('2: axes_unD, axes_unM , axes0_M =', axes_unD , axes_unM , axes0_M) # pragma: no cover
+
+#        print ('ZZZZZ' , axes_unD + axes_unM + axes0_M)
+        field0.transpose(axes_unD + axes_unM + axes0_M, inplace=True)
+
+        end_of_undefined0   = len(axes_unD)
+        start_of_unmatched0 = end_of_undefined0
+        start_of_matched0   = start_of_unmatched0 + len(axes_unM)
+        if _debug: 
+            print('2: end_of_undefined0   =', end_of_undefined0   ) # pragma: no cover
+            print('2: start_of_unmatched0 =', start_of_unmatched0 ) # pragma: no cover
+            print('2: start_of_matched0   =', start_of_matched0  )  # pragma: no cover
+
+        # ------------------------------------------------------------
+        # Permute the axes of the data array of field1 so that:
+        #
+        # * All of the matching axes are the inner (fastest varying)
+        #   axes and in corresponding positions to data0
+        #
+        # * All of the undefined axes are the outer (slowest varying)
+        #   axes
+        #
+        # * All of the defined but unmatched axes are in the middle
+        # ------------------------------------------------------------
+        data_axes1 = field1.get_data_axes()
+        axes_unD = []
+        axes_unM = []
+        axes1_M  = [axis0_to_axis1[axis0] for axis0 in axes0_M]
+        for axis1 in data_axes1:          
+            if axis1 in axes1_M:
+                pass
+            elif axis1 in axis1_to_axis0:
+                # Matching axis
+                axes_unM.append(axis1)
+            elif axis1 in v['undefined_axes']:
+                # Undefined axis
+                axes_unD.append(axis1) 
+            else:
+                # Defined but unmatched axis
+                axes_unM.append(axis1)
+        #--- End: for
+        if _debug:
+            print('2: axes_unD , axes_unM , axes0_M =',axes_unD , axes_unM , axes0_M) # pragma: no cover
+
+#        print ('XXXXXXX', axes_unD + axes_unM + axes1_M)
+        field1.transpose(axes_unD + axes_unM + axes1_M, inplace=True)
+
+        start_of_unmatched1 = len(axes_unD)
+        start_of_matched1   = start_of_unmatched1 + len(axes_unM)
+        undefined_indices1  = slice(None, start_of_unmatched1)
+        unmatched_indices1  = slice(start_of_unmatched1, start_of_matched1)
+        if _debug: 
+            print('2: start_of_unmatched1 =', start_of_unmatched1 ) # pragma: no cover
+            print('2: start_of_matched1   =', start_of_matched1   ) # pragma: no cover
+            print('2: undefined_indices1  =', undefined_indices1  ) # pragma: no cover
+            print('2: unmatched_indices1  =', unmatched_indices1  ) # pragma: no cover
+
+        # ------------------------------------------------------------
+        # Make sure that each pair of matching axes run in the same
+        # direction 
+        #
+        # Note that the axis0_to_axis1 dictionary currently only maps
+        # matching axes
+        # ------------------------------------------------------------
+        if _debug:
+            print('2: axis0_to_axis1 =',axis0_to_axis1) # pragma: no cover
+
+        for axis0, axis1 in axis0_to_axis1.items():
+            if field1.direction(axis1) != field0.direction(axis0):
+                field1.flip(axis1, inplace=True)
+        #--- End: for
+    
+        # ------------------------------------------------------------
+        # 2f. Insert size 1 axes into the data array of field0 to
+        #     correspond to defined but unmatched axes in field1
+        #
+        # For example, if   field0.data is      1 3         T Y X
+        #              and  field1.data is          4 1 P Z   Y X
+        #              then field0.data becomes 1 3     1 1 T Y X
+        # ------------------------------------------------------------
+        unmatched_axes1 = data_axes1[unmatched_indices1]
+        if _debug: 
+            print('2: unmatched_axes1=', unmatched_axes1) # pragma: no cover
+
+        if unmatched_axes1:
+            for axis1 in unmatched_axes1:
+                new_axis = field0.set_construct(field0._DomainAxis(1))
+                field0.insert_dimension(new_axis, end_of_undefined0, inplace=True)
+                if _debug: 
+                    print('2: axis1, field0.shape =', axis1, field0.data.shape) # pragma: no cover
+                
+                axis0 = set(field0.get_data_axes()).difference(data_axes0).pop()
+
+                axis1_to_axis0[axis1] = axis0
+                axis0_to_axis1[axis0] = axis1
+                s['new_size1_axes'].append(axis0)
+
+                start_of_unmatched0 += 1
+                start_of_matched0   += 1 
+
+                data_axes0 = field0.get_data_axes()
+        #--- End: if
+
+        # ------------------------------------------------------------
+        # Insert size 1 axes into the data array of field1 to
+        # correspond to defined but unmatched axes in field0
+        #
+        # For example, if   field0.data is      1 3     1 1 T Y X
+        #              and  field1.data is          4 1 P Z   Y X 
+        #              then field1.data becomes     4 1 P Z 1 Y X 
+        # ------------------------------------------------------------
+        unmatched_axes0 = data_axes0[start_of_unmatched0:start_of_matched0]
+        if _debug:
+            print('2: unmatched_axes0 =', unmatched_axes0) # pragma: no cover
+
+        if unmatched_axes0:
+            for axis0 in unmatched_axes0:
+                new_axis = field1.set_construct(field1._DomainAxis(1))
+                field1.insert_dimension(new_axis, start_of_matched1, inplace=True)
+                if _debug:
+                    print('2: axis0, field1.shape =',axis0, field1.shape) # pragma: no cover
+
+                axis1 = set(field1.get_data_axes()).difference(data_axes1).pop()
+
+                axis0_to_axis1[axis0] = axis1
+                axis1_to_axis0[axis1] = axis0
+
+                start_of_unmatched1 += 1
+
+                data_axes1 = field1.get_data_axes()
+         #--- End: if
+
+        # ------------------------------------------------------------
+        # Insert size 1 axes into the data array of field0 to
+        # correspond to undefined axes (of any size) in field1
+        #
+        # For example, if   field0.data is      1 3     1 1 T Y X
+        #              and  field1.data is          4 1 P Z 1 Y X 
+        #              then field0.data becomes 1 3 1 1 1 1 T Y X
+        # ------------------------------------------------------------
+        axes1 = data_axes1[undefined_indices1]
+        if axes1:
+            for axis1 in axes1:
+                new_axis = field0.set_construct(field0._DomainAxis(1))
+                field0.insert_dimension(new_axis, end_of_undefined0, inplace=True)
+
+                axis0 = set(field0.get_data_axes()).difference(data_axes0).pop()
+
+                axis0_to_axis1[axis0] = axis1
+                axis1_to_axis0[axis1] = axis0
+                s['new_size1_axes'].append(axis0)
+
+                data_axes0 = field0.get_data_axes()
+        #--- End: if
+        if _debug:
+            print('2: axis0_to_axis1 =', axis0_to_axis1) # pragma: no cover
+            print('2: axis1_to_axis0 =', axis1_to_axis0) # pragma: no cover
+            print("2: s['new_size1_axes']  =", s['new_size1_axes']) # pragma: no cover
+
+        # ============================================================
+        # 3. Combine the data objects
+        #
+        # Note that, by now, field0.ndim >= field1.ndim.
+        # ============================================================
+        if _debug:
+            print('3: repr(field0) =', repr(field0)) # pragma: no cover
+            print('3: repr(field1) =', repr(field1)) # pragma: no cover
+
+        new_data0 = field0.data._binary_operation(field1.data, method)
+#        new_data0 = super(Field, field0)._binary_operation(field1, method).data
+
+        if _debug:
+            print('3: new_data0.shape =', new_data0.shape) # pragma: no cover
+            print('3: field0.shape =', field0.data.shape) # pragma: no cover
+            print('3: repr(field0) =', repr(field0)) # pragma: no cover
+
+        # ============================================================
+        # 4. Adjust the domain of field0 to accommodate its new data
+        # ============================================================
+        # Field 1 dimension coordinate to be inserted into field 0
+        insert_dim        = {}
+        # Field 1 auxiliary coordinate to be inserted into field 0
+        insert_aux        = {}
+        # Field 1 domain ancillaries to be inserted into field 0
+        insert_domain_anc = {}
+        # Field 1 coordinate references to be inserted into field 0
+        insert_ref   = set()
+
+        # ------------------------------------------------------------
+        # 4a. Remove selected size 1 axes
+        # ------------------------------------------------------------
+        if _debug:
+            print('4: field0.constructs.keys() =', sorted(field0.constructs.keys())) # pragma: no cover
+            print('4: field1.constructs.keys() =', sorted(field1.constructs.keys())) # pragma: no cover
+
+        #AND HEREIN LIES THE PROBLEM            TODO
+        for size1_axis in remove_size1_axes0:
+            field0.del_construct(size1_axis)
+
+        # ------------------------------------------------------------
+        # 4b. If broadcasting has grown any size 1 axes in field0
+        #     then replace their size 1 coordinates with the
+        #     corresponding size > 1 coordinates from field1.
+        # ------------------------------------------------------------
+        refs0 = dict(field0.coordinate_references)
+        refs1 = dict(field1.coordinate_references)
+
+        for axis0 in s['size1_broadcast_axes'] + s['new_size1_axes']:
+            axis1 = axis0_to_axis1[axis0]
+#            field0._Axes[axis0] = field1._Axes[axis1]
+            field0.set_construct(field1.domain_axes[axis1], key=axis0)
+            if _debug:
+                print('4: field0 domain axes =',field0.domain_axes) # pragma: no cover
+                print('4: field1 domain axes =',field1.domain_axes) # pragma: no cover
+
+            # Copy field1 1-d coordinates for this axis to field0
+#            if axis1 in field1.Items.d:
+            if axis1 in field1.dimension_coordinates:
+                insert_dim[axis1] = [axis0]
+
+#            for key1 in field1.Items(role='a', axes_all=set((axis1,))):
+            for key1 in field1.auxiliary_coordinates.filter_by_axis('exact', axis1):
+                insert_aux[key1] = [axis0]
+
+            # Copy field1 coordinate references which span this axis
+            # to field0, along with all of their domain ancillaries
+            # (even if those domain ancillaries do not span this
+            # axis).
+            for key1, ref1 in refs1.items():
+                if axis1 not in field1.coordinate_reference_domain_axes(key1):
+                    continue
+#                insert_ref.add(key1)
+#                for identifier1 in ref1.ancillaries.values():
+#                    key1 = field1.key(identifier1, exact=True, role='c')
+#                    if key1 is not None:
+#                        axes0 = [axis1_to_axis0[axis]ct2', 'dim1', 'dim2', 'fav0', 'fav1', 'fav2', 'fav3', 'msr0', 'ref1']
+#5: field1.Items().keys() = ['aux0', 'aux1', 'aux2', 'c
+#                                 for axis in field1.Items.axes(key1)]
+#                        insert_domain_anc[key1] = axes0
+            #--- End: for
+
+            # Remove all field0 auxiliary coordinates and domain
+            # ancillaries which span this axis
+            c = field0.constructs.filter_by_type('auxiliary_coordinate', 'domain_ancillary')
+            remove_items.update(c.filter_by_axis('and', axis0))
+
+            # Remove all field0 coordinate references which span this
+            # axis, and their domain ancillaries (even if those domain
+            # ancillaries do not span this axis).
+            for key0 in tuple(refs0):
+                if axis0 in field0.coordinate_reference_domain_axes(key0):
+                    ref0 = refs0.pop(key0)
+                    remove_items.add(key0)
+                    remove_items.update(field0.domain_ancillaries(
+                        *tuple(ref0.coordinate_conversion.domain_ancillaries().values())))
+            #--- End: for
+        #--- End: for
+
+        # ------------------------------------------------------------
+        # Consolidate auxiliary coordinates for matching axes
+        #
+        # A field0 auxiliary coordinate is retained if:
+        #
+        # 1) it is the defining coordinate for its axis
+        #
+        # 2) there is a corresponding field1 auxiliary coordinate
+        #    spanning the same axes which has the same identity and
+        #    equivalent data array
+        #
+        # 3) there is a corresponding field1 auxiliary coordinate
+        #    spanning the same axes which has the same identity and a
+        #    size-1 data array.
+        #-------------------------------------------------------------
+        auxs1 = dict(field1.auxiliary_coordinates)
+        if _debug:
+            print('5: field0.auxs() =', field0.auxiliary_coordinates) # pragma: no cover
+            print('5: field1.auxs() =', auxs1) # pragma: no cover
+            print('5: remove_items =', remove_items) # pragma: no cover
+
+        for key0, aux0 in field0.auxiliary_coordinates.items():
+            if key0 in remove_items:
+                # Field0 auxiliary coordinate has already marked for
+                # removal
+                continue
+            
+            if key0 in s['id_to_aux'].values():
+                # Field0 auxiliary coordinate has already been checked
+                continue
+            
+            if aux0.identity() is None:
+                # Auxiliary coordinate has no identity
+                remove_items.add(key0)
+                continue        
+
+            axes0 = field0.get_data_axes(key0)
+            if not set(axes0).issubset(matching_axis0_to_axis1):
+                # Auxiliary coordinate spans at least on non-matching
+                # axis
+                remove_items.add(key0)
+                continue
+                
+            found_equivalent_auxiliary_coordinates = False
+            for key1, aux1 in auxs1.copy().items():
+                if key1 in v['id_to_aux'].values():
+                    # Field1 auxiliary coordinate has already been checked
+                    del auxs1[key1]
+                    continue            
+
+                if aux1.identity() is None:
+                    # Field1 auxiliary coordinate has no identity
+                    del auxs1[key1]
+                    continue        
+
+                axes1 = field1.get_data_axes(key0)
+                if not set(axes1).issubset(matching_axis1_to_axis0):
+                    # Field 1 auxiliary coordinate spans at least one
+                    # non-matching axis
+                    del auxs1[key1]
+                    continue
+
+                if field1.constructs[key1].size == 1:
+                    # Field1 auxiliary coordinate has size-1 data array
+                    found_equivalent_auxiliary_coordinates = True
+                    del auxs1[key1]
+                    break
+
+                if field0._equivalent_construct_data(field1,
+                                                     key0=key0, key1=key1, s=s, t=v):
+                    # Field0 auxiliary coordinate has equivalent data
+                    # to a field1 auxiliary coordinate
+                    found_equivalent_auxiliary_coordinates = True
+                    del auxs1[key1]
+                    break
+            #--- End: for                
+
+            if not found_equivalent_auxiliary_coordinates:
+                remove_items.add(key0)
+        #--- End: for
+
+        # ------------------------------------------------------------
+        # Copy field1 auxiliary coordinates which do not span any
+        # matching axes to field0
+        # ------------------------------------------------------------
+        for key1 in field1.auxiliary_coordinates:
+            if key1 in insert_aux:
+                continue
+            
+            axes1 = field1.constructs.data_axes()[key1]
+            if set(axes1).isdisjoint(matching_axis1_to_axis0):
+                insert_aux[key1] = [axis1_to_axis0[axis1] for axis1 in axes1]
+        #--- End: for
+
+        # ------------------------------------------------------------
+        # Insert field1 items into field0
+        # ------------------------------------------------------------
+
+        # Map field1 items keys to field0 item keys
+        key1_to_key0 = {}
+
+        if _debug:
+            print('5: insert_dim               =', insert_dim                      ) # pragma: no cover
+            print('5: insert_aux               =', insert_aux                      ) # pragma: no cover
+            print('5: insert_domain_anc        =', insert_domain_anc               ) # pragma: no cover
+            print('5: insert_ref               =', insert_ref                      ) # pragma: no cover
+            print('5: field0.constructs.keys() =', sorted(field0.constructs.keys())) # pragma: no cover
+            print('5: field1.constructs.keys() =', sorted(field1.constructs.keys())) # pragma: no cover
+
+        for key1, axes0 in insert_dim.items():
+            try:
+                key0 = field0.set_construct(field1.dimension_coordinates[key1],
+                                            axes=axes0)
+            except ValueError:
+                # There was some sort of problem with the insertion, so
+                # just ignore this item.
+                pass
+            else:
+                key1_to_key0[key1] = key0
+
+            if _debug:
+                print('axes0, key1, field1.constructs[key1] =',
+                      axes0, key1, repr(field1.constructs[key1])) # pragma: no cover
+                
+        for key1, axes0 in insert_aux.items():
+            try:
+                key0 = field0.set_construct(field1.auxiliary_coordinates[key1],
+                                            axes=axes0)
+            except ValueError:
+                # There was some sort of problem with the insertion, so
+                # just ignore this item.
+                pass
+            else:
+                key1_to_key0[key1] = key0
+                
+            if _debug:
+                print('axes0, key1, field1.constructs[key1] =',
+                      axes0, key1, repr(field1.constructs[key1])) # pragma: no cover
+                
+        for key1, axes0 in insert_domain_anc.items():
+            try:
+                key0 = field0.set_construct(field1.domain_ancillaries[key1], axes=axes0)
+            except ValueError as error:
+                # There was some sort of problem with the insertion, so
+                # just ignore this item.
+                if _debug:
+                    print('Domain ancillary insertion problem:', error) # pragma: no cover
+            else:
+                key1_to_key0[key1] = key0
+
+            if _debug:
+                print('domain ancillary axes0, key1, field1.constructs[key1] =',
+                      axes0, key1, repr(field1.constructs[key1])) # pragma: no cover
+
+        # ------------------------------------------------------------
+        # Remove field0 which are no longer required
+        # ------------------------------------------------------------
+        if remove_items:
+            if _debug:
+                print(sorted(field0.constructs.keys())) # pragma: no cover
+                print('Removing {!r} from field0'.format(sorted(remove_items))) # pragma: no cover
+
+            for key in remove_items:
+                field0.del_construct(key, default=None)
+
+        # ------------------------------------------------------------
+        # Copy coordinate references from field1 to field0 (do this
+        # after removing any coordinates and domain ancillaries)
+        # ------------------------------------------------------------
+        for key1 in insert_ref:
+            ref1 = field1.coordinate_references[key1]
+            if _debug:
+                print('Copying {!r} from field1 to field0'.format(ref1)) # pragma: no cover
+
+            identity_map = dict(field1.constructs.filter_by_type('dimension_coordinate',
+                                                                 'axuiliary_coordinate',
+                                                                 'domain_ancillary'))
+            for key1, item1 in identity_map.copy().items():
+                identity_map[key1] = key1_to_key0.get(key1, item1.identity())
+
+            new_ref0 = ref1.change_identifiers(identity_map, strict=True)
+            
+            field0.set_construct(new_ref0, copy=False)
+        
+        field0.set_data(new_data0, set_axes=False, copy=False)
+
+        # ------------------------------------------------------------
+        # Remove misleading identities
+        # ------------------------------------------------------------
+        # Warning: This code is replicated in PropertiesData
+        if sn != other_sn:
+            if sn is not None and other_sn is not None:
+                field0.del_property('standard_name', None)
+                field0.del_property('long_name', None)
+            elif other_sn is not None:
+                field0.set_property('standard_name', other_sn)
+                if other_ln is None:
+                    field0.del_property('long_name', None)
+                else:
+                    field0.set_property('long_name', other_ln)
+        elif ln is None and other_ln is not None:
+            field0.set_property('long_name', other_ln)
+
+        # Warning: This code is replicated in PropertiesData
+        new_units = field0.Units
+        if (method in _relational_methods or
+            not units.equivalent(new_units) and
+            not (units.isreftime and new_units.isreftime)):
+            field0.del_property('standard_name', None)
+            field0.del_property('long_name', None)   
+
+
+        if method in _relational_methods:
+            field0.override_units(Units(), inplace=True)
+            
+        return field0
+
+    def _binary_operation2(self, other, method):
+        '''Implement binary arithmetic and comparison operations on the master
+    data array with metadata-aware broadcasting.
+    
+    It is intended to be called by the binary arithmetic and
+    comparison methods, such as `__sub__`, `__imul__`, `__rdiv__`,
+    `__lt__`, etc.
+    
+    :Parameters:
+    
+        other: `Field` or `Query` or any object that broadcasts to the field construct's data
+    
+        method: `str`
+            The binary arithmetic or comparison method name (such as
+            ``'__idiv__'`` or ``'__ge__'``).
+    
+    :Returns:
+    
+        `Field`
+            The new field, or the same field if the operation was an
+            in place augmented arithmetic assignment.
+    
+    **Examples:**
+    
+    >>> h = f._binary_operation(g, '__add__')
+    >>> h = f._binary_operation(g, '__ge__')
+    >>> f._binary_operation(g, '__isub__')
+    >>> f._binary_operation(g, '__rdiv__')
+
+        '''        
+        _debug = True
+
+        if isinstance(other, Query):
+            # --------------------------------------------------------
+            # Combine the field with a Query object
+            # --------------------------------------------------------
+            return NotImplemented
+
+        if not isinstance(other, self.__class__):
+            # --------------------------------------------------------
+            # Combine the field with anything other than a Query
+            # object or another field construct
+            # --------------------------------------------------------
+            if numpy_size(other) == 1:
+                # ----------------------------------------------------
+                # No changes to the field metadata constructs are
+                # required so can use the metadata-unaware parent
+                # method
+                # ----------------------------------------------------
+                other = Data(other)
+                if other.ndim > 0:
+                    other.squeeze(inplace=True)
+
+                return super()._binary_operation(other, method)
+
+            if self._is_broadcastable(numpy_shape(other)):
+                return super()._binary_operation(other, method)
+            
+            raise ValueError(
+                "Can't combine {!r} with {!r} (incompatible shapes: {}, {})".format(
+                    self.__class__.__name__, other.__class__.__name__,
+                    self.shape, numpy_shape(other)))
+
+        # ============================================================
+        # Still here? Then combine the field with another field
+        # ============================================================
+
+        units = self.Units
+        sn = self.get_property('standard_name', None)
+        ln = self.get_property('long_name', None)
+
+        other_sn = other.get_property('standard_name', None)
+        other_ln = other.get_property('long_name', None)
+            
+
+        field1 = other.copy()
+
+        inplace = method[2] == 'i'
+        if not inplace:
+            field0 = self.copy()
+        else:
+            field0 = self
+
+        # Analyse the two fields' data array dimensions
+        out0 = OrderedDict()
+        out1 = OrderedDict()
+        for i, (f, out) in enumerate(zip((field0, field1),
+                                         (out0  , out1))):
+            for axis in f.get_data_axes():
+                identity = None
+                
+                coords = f.dimension_coordinates.filter_by_axis('exact', axis)
+                if len(coords) == 1:
+                    # This axis of the domain has a dimension coordinate
+                    key   = coords.key()
+                    coord = coords.value()
+                    
+                    identity = coord.identity(strict=True, default=None)
+                    if identity is None:
+                        # Dimension coordinate has no identity, but it may
+                        # have a recognised axis.
+                        for ctype in ('T', 'X', 'Y', 'Z'):
+                            if getattr(coord, ctype, False):
+                                identity = ctype
+                                break
+                    #--- End: if
+                            
+                    if identity is None and relaxed_identities:
+                        identity = coord.identity(relaxed=True, default=None)
+                else:
+                    coords = f.auxiliary_coordinates.filter_by_axis('exact', axis)
+                    if len(coords) == 1:                
+                        # This axis of the domain does not have a
+                        # dimension coordinate but it does have exactly
+                        # one 1-d auxiliary coordinate, so that will do.
+                        key   = coords.key()
+                        coord = coords.value()
+                        
+                        identity = coord.identity(strict=True, default=None)
+                        
+                        if identity is None and relaxed_identities:
+                            identity = coord.identity(relaxed=True, default=None)
+                #--- End: if
+
+                if identity is None:
+                    identity = i
+                    
+                out[identity] = xxx(size=f.domain_axis(axis).get_size(),
+                                    axis=axis)
+        #--- End: for
+
+        print('out0', out0)
+        print('out1', out1)
+
+        squeeze1 = []
+        insert0  = []
+
+        # Check that the two fields are combinable
+        for i, (identity, y) in enumerate(tuple(out1.items())):
+            if isinstance(identity, int):
+                if y.size == 1:
+                    del out1[b]
+                    squeeze.append(i)
+                else:
+                    insert0.append(self.ndim)
+                    
+            if identity in out0 and isinstance(identity, str):
+                a = out0[identity]
+                if y.size != a.size and not (y.size == 1 or a.size == 1):
+                    raise  ValueError(
+                        "Can't broadcast size {} {!r} axis to size {} {!r} axis".format(
+                            y.size, identity, a.size, identity))
+
+                # Now check for equivalent coord values
+        #--- End: for        
+
+        # Make sure that both data ararys have the same number of
+        # dimensions
+        if squeeze1:
+            field1.squeeze(squeeze, inplace=True)
+        
+        for i in insert0:
+            field0.insert_dimension(i, inplace=True)
+
+        while field1.ndim < field0.ndim:
+            field1.insert_dimension(0, inplace=True)
+        
+        while field0.ndim < field1.ndim:
+            field0.insert_dimension(field0.ndim, inplace=True)
+
+        # Make sure that the dimensions in data1 are in the same order
+        # as the dimensions in data0
+        for identity, y in out1.items():
+            if isinstance(identity, int) or identity not in out0:                
+                field1.swapaxes(field1.get_data_axes().index(y.axis), -1,
+                                inplace=True)
+            else:
+                # This identity is also in out0
+                a = out0[identity]
+                field1.swapaxes(field1.get_data_axes().index(y.axis),
+                                field0.get_data_axes().index(a.axis),
+                                inplace=True)
+        #--- End: for
+
+        # Make sure that the domain axis sizes in field0 are those for
+        # the broadcasted result data
+        for identity, y in out1.items():
+            if identity in out0 and isinstance(identity, str):
+                a = out0[identity]
+                if y.size > 1 and a.size == 1:
+                    for c in field0.constructs.filter_by_axis('or', a.axis):
+                        field0.del_construct(c)
+                        field0.del_coordinate_reference(construct=c)
+
+                    field0.domain_axis(a.axis).set_size(y.size)
+            elif y.size > 1:
+                iaxis = field1.get_data_axes().index(y.axis)
+                field0.domain_axis(iaxis).set_size(y.size)
+        #--- End: for        
+
+        new_data = field0.data._binary_operation(field1.data, method)
+
+        field0.set_data(new_data, set_axes=False, copy=False)
+
+
+        # Now copy over any metadata constructs from field1
+        
         relaxed_identities = RELAXED_IDENTITIES()
         s = self.analyse_items(relaxed_identities=relaxed_identities)
         v = other.analyse_items(relaxed_identities=relaxed_identities)
@@ -6190,7 +7151,8 @@ may be accessed with the `nc_global_attributes`,
         return super().del_construct(key, default=default)
 
             
-    def del_coordinate_reference(self, identity, default=ValueError()):
+    def del_coordinate_reference(self, identity=None, construct=None,
+                                 default=ValueError()):
         '''Remove a coordinate reference construct and all of its domain
     ancillary constructs.
             
@@ -6200,7 +7162,7 @@ may be accessed with the `nc_global_attributes`,
     
     :Parameters:
     
-        identity:
+        identity: optional
             Select the coordinate reference construct by one of:
     
               * The identity or key of a coordinate reference
@@ -6257,6 +7219,9 @@ may be accessed with the `nc_global_attributes`,
             *Parameter example:*
               ``identity='ncvar%lat_lon'``
     
+        construct: optional
+            TODO
+
         default: optional
             Return the value of the *default* parameter if the
             construct can not be removed, or does not exist. If set to
@@ -6272,20 +7237,47 @@ may be accessed with the `nc_global_attributes`,
     <CF CoordinateReference: rotated_latitude_longitude>
 
         '''
-        key = self.coordinate_reference(identity, key=True, default=None)
-        if key is None:
-            return self._default(
-                default,
-                "Can't identify construct to delete from identity {!r}".format(identity))
-
-        ref = self.del_construct(key)
-        
-        for da_key in ref.coordinate_conversion.domain_ancillaries().values():
-            self.del_construct(da_key, default=None)
+        if construct is None:
+            if identity is None:
+                raise ValueError("TODO")
             
-        return ref
+            key = self.coordinate_reference(identity, key=True, default=None)
+            if key is None:
+                return self._default(
+                    default,
+                    "Can't identify construct to delete from identity {!r}".format(identity))
+    
+            ref = self.del_construct(key)
+            
+            for da_key in ref.coordinate_conversion.domain_ancillaries().values():
+                self.del_construct(da_key, default=None)
+                
+            return ref
+        elif identity is not None:
+            raise ValueError("TODO")
+            
 
+        out = []
+        
+        c_key = self.construct(construct, key=True)
+        
+        for key, ref in tuple(self.coordinate_references.items()):
+            if c_key in ref.coordinates():
+                self.del_coordinate_reference(key, construct=None,
+                                              default=default)
+                out.append(ref)
+                continue
 
+            if c_key in ref.coordinate_conversion.domain_ancillaries().values():
+                self.del_coordinate_reference(key, construct=None,
+                                              default=default)
+                out.append(ref)
+                continue
+        #--- End: for
+        
+        return out
+
+    
     def set_coordinate_reference(self, coordinate_reference, key=None,
                                  field=None, strict=True):
         '''Set a coordinate reference construct.
