@@ -10180,7 +10180,7 @@ returned.
     
     **Examples:**
     
-    >>> d=cf.Data([[[1, 2, 3], [4, 5, 6]]])
+    >>> d = cf.Data([[[1, 2, 3], [4, 5, 6]]])
     >>> d.shape
     (1, 2, 3)
     >>> d.swapaxes(1, 0).shape
@@ -10190,6 +10190,17 @@ returned.
     >>> d.swapaxes(0, -1).shape
     
     >>> d.swapaxes(1, 1).shape
+In [14]: d.swapaxes(1, 0)
+Out[14]: <CF Data(2, 1, 3): [[[1, ..., 6]]]>
+
+In [15]: d.swapaxes(0, -1)
+Out[15]: <CF Data(3, 2, 1): [[[1, ..., 6]]]>
+
+In [16]: d.swapaxes(1, 1)
+Out[16]: <CF Data(1, 2, 3): [[[1, ..., 6]]]>
+
+In [17]: d.swapaxes(-1, -1)
+Out[17]: <CF Data(1, 2, 3): [[[1, ..., 6]]]>
 
         '''
         if i:
@@ -10200,8 +10211,8 @@ returned.
         else:
             d = self.copy()
 
-        axis0 = d._parse_axes((axis0,))[0] #, 'swapaxes')[0]
-        axis1 = d._parse_axes((axis1,))[0] #, 'swapaxes')[0]
+        axis0 = d._parse_axes((axis0,))[0]
+        axis1 = d._parse_axes((axis1,))[0]
 
         if axis0 != axis1:
             iaxes = list(range(d._ndim))
@@ -10215,8 +10226,7 @@ returned.
         #--- End: if
 
         if inplace:
-            d = None
-            
+            d = None            
         return d
 
 
