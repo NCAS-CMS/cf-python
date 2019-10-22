@@ -7759,15 +7759,13 @@ returned.
 
     def mean(self, axes=None, squeeze=False, mtol=1, weights=None,
              inplace=False, i=False, _preserve_partitions=False):
-        r'''Collapse axes with their weighted mean.
+        '''Collapse axes with their mean.
 
-    The weighted mean, :math:`\mu`, for array elements :math:`x_i` and
-    corresponding weights elements :math:`w_i` is
-    
-    .. math:: \mu=\frac{\sum w_i x_i}{\sum w_i}
-    
-    Missing data array elements and their corresponding weights are
-    omitted from the calculation.
+    The mean is unweighted by default, but may be weighted (see the
+    *weights* parmaeter).
+
+    Missing data array elements and their corresponding weights
+    are omitted from the calculation.
     
     :Parameters:
     
@@ -7855,7 +7853,7 @@ returned.
     
     >>> y = cf.Data([1, 3])
     >>> x = cf.Data([1, 2, 1])
-    >>> w = cf.expand_dims(y, 1) * x
+    >>> w = cf.insert_dimension(y, 1) * x
     >>> print w.array
     [[1 2 1]
      [3 6 3]]
@@ -7956,7 +7954,7 @@ returned.
             broadcast correctly against the original array.
     
         weights: data-like or dict, optional
-            TOD note that the units of the weights matter
+            TODO note that the units of the weights matter
         
             Weights associated with values of the array. By default
             all non-missing elements of the array are assumed to have
@@ -10161,7 +10159,7 @@ returned.
     def swapaxes(self, axis0, axis1, inplace=False, i=False):
         '''Interchange two axes of an array.
 
-    .. seealso:: `expand_dims`, `flip`, `squeeze`, `transpose`
+    .. seealso:: ``flip`, insert_dimension`, `squeeze`, `transpose`
     
     :Parameters:
     
@@ -10178,30 +10176,21 @@ returned.
     :Returns:
     
         `Data`
-    
+            The data with swapped axis positions.
+
     **Examples:**
     
     >>> d = cf.Data([[[1, 2, 3], [4, 5, 6]]])
-    >>> d.shape
-    (1, 2, 3)
-    >>> d.swapaxes(1, 0).shape
-    
-    >>> d.swapaxes(2, 1).shape
-    
-    >>> d.swapaxes(0, -1).shape
-    
-    >>> d.swapaxes(1, 1).shape
-In [14]: d.swapaxes(1, 0)
-Out[14]: <CF Data(2, 1, 3): [[[1, ..., 6]]]>
-
-In [15]: d.swapaxes(0, -1)
-Out[15]: <CF Data(3, 2, 1): [[[1, ..., 6]]]>
-
-In [16]: d.swapaxes(1, 1)
-Out[16]: <CF Data(1, 2, 3): [[[1, ..., 6]]]>
-
-In [17]: d.swapaxes(-1, -1)
-Out[17]: <CF Data(1, 2, 3): [[[1, ..., 6]]]>
+    >>> d
+    <CF Data(1, 2, 3): [[[1, ..., 6]]]>
+    >>> d.swapaxes(1, 0)
+    <CF Data(2, 1, 3): [[[1, ..., 6]]]>
+    >>> d.swapaxes(0, -1)
+    <CF Data(3, 2, 1): [[[1, ..., 6]]]>
+    >>> d.swapaxes(1, 1)
+    <CF Data(1, 2, 3): [[[1, ..., 6]]]>
+    >>> d.swapaxes(-1, -1)
+    <CF Data(1, 2, 3): [[[1, ..., 6]]]>
 
         '''
         if i:
@@ -10864,7 +10853,7 @@ Out[17]: <CF Data(1, 2, 3): [[[1, ..., 6]]]>
     By default all size 1 axes are removed, but particular axes may be
     selected with the keyword arguments.
     
-    .. seealso:: `expand_dims`, `flip`, `swapaxes`, `transpose`
+    .. seealso:: `insert_dimension`, `flip`, `swapaxes`, `transpose`
     
     :Parameters:
     

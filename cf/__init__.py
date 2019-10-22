@@ -208,7 +208,7 @@ from .query                import (Query, lt, le, gt, ge, eq, ne, contain, conta
                                    cellwi, cellwo, djf, mam, jja, son, seasons)
 from .constants            import *
 from .functions            import *
-from .maths                import relative_vorticity
+from .maths                import relative_vorticity, histogram
 
 
 from .read_write import (read,

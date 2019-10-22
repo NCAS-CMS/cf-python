@@ -459,7 +459,7 @@ Mathematical operations
 
    ~cf.Field.cumsum
 
-.. rubric:: Histogram operations
+.. rubric:: Binning operations
 
 .. autosummary::
    :nosignatures:
@@ -468,7 +468,6 @@ Mathematical operations
 
    ~cf.Field.bin
    ~cf.Field.digitize
-   ~cf.Field.histogram
 
 Data array operations
 ---------------------

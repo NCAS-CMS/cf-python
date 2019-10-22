@@ -90,7 +90,7 @@
 <h1>cf.Field.bin<a class="headerlink" href="#cf-field-bin" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.bin">
-<code class="descclassname">Field.</code><code class="descname">bin</code><span class="sig-paren">(</span><em>method</em>, <em>digitized</em>, <em>weights=None</em>, <em>measure=False</em>, <em>scale=None</em>, <em>mtol=1</em>, <em>ddof=1</em>, <em>radius='earth'</em>, <em>return_indices=False</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/field.py#L5274"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.bin" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">bin</code><span class="sig-paren">(</span><em>method</em>, <em>digitized</em>, <em>weights=None</em>, <em>measure=False</em>, <em>scale=None</em>, <em>mtol=1</em>, <em>ddof=1</em>, <em>radius='earth'</em>, <em>return_indices=False</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/field.py#L5367"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.bin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Collapse the data values that lie in multi-dimensional bins.</p>
 <p>The number of dimensions of the output binned data is equal to the
 number of field constructs provided by the <em>digitized</em>
@@ -104,7 +104,7 @@ example, if only one digitized field construct is provided then
 the output bins simply comprise its one-dimensional bins; if there
 are two digitized field constructs then the output bins comprise
 the two-dimensionsal matrix formed by all possible combinations of
-the two sets of one-dimensional bins.</p>
+the two sets of one-dimensional bins; etc.</p>
 <p>An output value for a bin is formed by collapsing (using the
 method given by the <em>method</em> parameter) the elements of the data
 for which the corresponding locations in the digitized field
@@ -114,14 +114,12 @@ field constructs, and for these bins missing data is returned.</p>
 <p>The returned field construct will have a domain axis construct for
 each dimension of the output bins, with a corresponding dimension
 coordinate construct that defines the bin boundaries.</p>
-<p>Note that <code class="docutils literal notranslate"><span class="pre">h</span> <span class="pre">=</span> <span class="pre">f.bin('sample_size',</span> <span class="pre">digitized)</span></code> is equivalent to
-<code class="docutils literal notranslate"><span class="pre">h</span> <span class="pre">=</span> <span class="pre">f.histogram(digitized)</span></code></p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 3.0.2.</span></p>
 </div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collapse</span></code></a>, <a class="reference internal" href="cf.Field.digitize.html#cf.Field.digitize" title="cf.Field.digitize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">digitize</span></code></a>, <a class="reference internal" href="cf.Field.histogram.html#cf.Field.histogram" title="cf.Field.histogram"><code class="xref py py-obj docutils literal notranslate"><span class="pre">histogram</span></code></a>, <a class="reference internal" href="cf.Field.weights.html#cf.Field.weights" title="cf.Field.weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">weights</span></code></a></p>
+<p class="last"><a class="reference internal" href="cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collapse</span></code></a>, <a class="reference internal" href="cf.Field.digitize.html#cf.Field.digitize" title="cf.Field.digitize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">digitize</span></code></a>, <a class="reference internal" href="cf.Field.weights.html#cf.Field.weights" title="cf.Field.weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">weights</span></code></a>, <a class="reference internal" href="../function/cf.histogram.html#cf.histogram" title="cf.histogram"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.histogram</span></code></a></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -260,10 +258,8 @@ between the fields, and then manipulating the dimensions
 of the digitized field construct’s data to ensure that
 broadcasting can occur.</p>
 </dd>
-</dl>
-<p>weights: optional</p>
-<blockquote>
-<div><p>Specify the weights for the collapse calculations. The
+<dt>weights: optional</dt>
+<dd><p class="first">Specify the weights for the collapse calculations. The
 weights are those that would be returned by this call of
 the field construct’s <a class="reference internal" href="cf.Field.weights.html#cf.Field.weights" title="cf.Field.weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">weights</span></code></a> method:
 <code class="docutils literal notranslate"><span class="pre">f.weights(weights,</span> <span class="pre">measure=measure,</span> <span class="pre">scale=scale,</span>
@@ -274,7 +270,7 @@ parameters and <a class="reference internal" href="cf.Field.weights.html#cf.Fiel
 <p class="last">By default <em>weights</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, resulting in
 unweighted calculations.</p>
 </div>
-<dl class="docutils">
+<dl class="last docutils">
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last">To specify weights based on cell areas use
 <code class="docutils literal notranslate"><span class="pre">weights='area'</span></code>.</p>
@@ -284,8 +280,7 @@ unweighted calculations.</p>
 time you could set <code class="docutils literal notranslate"><span class="pre">weights=('area',</span> <span class="pre">'T')</span></code>.</p>
 </dd>
 </dl>
-</div></blockquote>
-<dl class="docutils">
+</dd>
 <dt>measure: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first">Create weights, as defined by the <em>weights</em> parameter,
 which are cell measures, i.e. which describe actual cell
@@ -526,8 +521,8 @@ data varies with <code class="docutils literal notranslate"><span class="pre">se
 <span class="go"> [19309897728.0            -- 19309897728.0 57948086272.0 38601412608.0  19319093248.0]]</span>
 </pre></div>
 </div>
-<p>Demonstrate that the integral divided by the sum cell measures is
-equal to the mean:</p>
+<p>Demonstrate that the integral divided by the sum of the cell
+measures is equal to the mean:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="o">/</span><span class="n">w</span><span class="p">)</span>
 <span class="go">Field: </span>
 <span class="go">-------</span>
@@ -555,7 +550,7 @@ equal to the mean:</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cf.Field.bin.rst.txt"

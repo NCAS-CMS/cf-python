@@ -1,22 +1,8 @@
-#from cfunits import Units
-
 from .functions import _DEPRECATION_ERROR_FUNCTION_KWARGS
 from . import Units
 
 from .data.data import Data
 
-
-#def radius_of_earth():
-#    '''
-#
-#Return a radius of the Earth.
-#
-#:Returns:
-#
-#    radius_of_earth: cf.Data
-#
-#    '''
-#    return Data(6371229.0, 'meters')
 
 def relative_vorticity(u, v, wrap=None, one_sided_at_boundary=False,
                        radius=6371229.0, cyclic=None):
@@ -201,3 +187,136 @@ def relative_vorticity(u, v, wrap=None, one_sided_at_boundary=False,
     
     return rv
 
+
+def histogram(*digitized):
+    '''Return the distribution of a set of variables in the form of an
+    N-dimensional histogram.
+
+    The number of dimensions of the histogram is equal to the number
+    of field constructs provided by the *digitized* argument. Each
+    such field construct defines a sequence of bins and provides
+    indices to the bins that each value of one of the variables
+    belongs. There is no upper limit to the number of dimensions of
+    the histogram.
+        
+    The output histogram bins are defined by the exterior product of
+    the one-dimensional bins of each digitized field construct. For
+    example, if only one digitized field construct is provided then
+    the histogram bins simply comprise its one-dimensional bins; if
+    there are two digitized field constructs then the histogram bins
+    comprise the two-dimensionsal matrix formed by all possible
+    combinations of the two sets of one-dimensional bins; etc.
+
+    An output value for an histogram bin is formed by counting the
+    number cells for which the digitized field constructs, taken
+    together, index that bin. Note that it may be the case that not
+    all output bins are indexed by the digitized field constructs, and
+    for these bins missing data is returned.
+
+    The returned field construct will have a domain axis construct for
+    each dimension of the histogram, with a corresponding dimension
+    coordinate construct that defines the bin boundaries.
+
+    .. versionadded:: 3.0.2
+
+    .. seealso:: `cf.Field.bin`, `cf.Field.collapse`,
+                 `cf.Field.digitize`
+
+    :Parameters:
+
+        digitized: one or more `Field`
+            One or more field constructs that contain digitized data
+            with corresponding metadata, as would be output by
+            `cf.Field.digitize`. Each field construct contains indices
+            to the one-dimensionsal bins to which each value of an
+            original field construct belongs; and there must be
+            ``bin_count`` and ``bin_bounds`` properties as defined by
+            the `cf.Field.digitize` method (and any of the extra
+            properties defined by that method are also recommended).
+
+            The bins defined by the ``bin_count`` and ``bin_bounds``
+            properties are used to create a dimension coordinate
+            construct for the output field construct.
+
+            Each digitized field construct must be transformable so
+            that its data is broadcastable to any other digitized
+            field contruct's data. This is done by using the metadata
+            constructs of the to create a mapping of physically
+            compatible dimensions between the fields, and then
+            manipulating the dimensions of the digitized field
+            construct's data to ensure that broadcasting can occur.
+
+    :Returns:
+
+        `Field`            
+            The field construct containing the histogram.
+
+    **Examples:**
+
+    Create a one-dimensional histogram based on 10 equally-sized bins
+    that exactly span the data range:
+
+    >>> print(f)                                                                                                   
+    Field: specific_humidity (ncvar%q)
+    ----------------------------------
+    Data            : specific_humidity(latitude(5), longitude(8)) 0.001 1
+    Cell methods    : area: mean
+    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(8) = [22.5, ..., 337.5] degrees_east
+                    : time(1) = [2019-01-01 00:00:00]       
+    >>> print(f.array)                                                                                            
+    [[  7.  34.   3.  14.  18.  37.  24.  29.]
+     [ 23.  36.  45.  62.  46.  73.   6.  66.]
+     [110. 131. 124. 146.  87. 103.  57.  11.]
+     [ 29.  59.  39.  70.  58.  72.   9.  17.]
+     [  6.  36.  19.  35.  18.  37.  34.  13.]]
+    >>> indices, bins = f.digitize(10, return_bins=True)
+    >>> print(indices)
+    Field: long_name=Bin index to which each 'specific_humidity' value belongs (ncvar%q)
+    ------------------------------------------------------------------------------------
+    Data            : long_name=Bin index to which each 'specific_humidity' value belongs(latitude(5), longitude(8))
+    Cell methods    : area: mean
+    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(8) = [22.5, ..., 337.5] degrees_east
+                    : time(1) = [2019-01-01 00:00:00]
+    >>> print(bins.array)
+    [[  3.   17.3]
+     [ 17.3  31.6]
+     [ 31.6  45.9]
+     [ 45.9  60.2]
+     [ 60.2  74.5]
+     [ 74.5  88.8]
+     [ 88.8 103.1]
+     [103.1 117.4]
+     [117.4 131.7]
+     [131.7 146. ]]
+    >>> h = cf.histogram(indices)
+    >>> print(h) 
+    Field: number_of_observations
+    -----------------------------
+    Data            : number_of_observations(specific_humidity(10)) 1
+    Cell methods    : latitude: longitude: point
+    Dimension coords: specific_humidity(10) = [10.15, ..., 138.85000000000002] 0.001 1
+    >>> print(h.array)                                                                                             
+    [9 7 9 4 5 1 1 1 2 1]
+    >>> print(h.coordinate('specific_humidity').bounds.array)
+    [[  3.   17.3]
+     [ 17.3  31.6]
+     [ 31.6  45.9]
+     [ 45.9  60.2]
+     [ 60.2  74.5]
+     [ 74.5  88.8]
+     [ 88.8 103.1]
+     [103.1 117.4]
+     [117.4 131.7]
+     [131.7 146. ]]
+
+    '''
+    if not digitized:
+        raise ValueError(
+            "Must provide at least one 'digitized' field construct")
+    
+    f = digitized[0].copy()    
+    f.clear_properties()
+    
+    return f.bin('sample_size', digitized=digitized)
