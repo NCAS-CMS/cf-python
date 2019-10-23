@@ -12214,6 +12214,7 @@ def _getattr(x, attr):
     return getattr(x, attr)
 _array_getattr = numpy_vectorize(_getattr)
 
+
 def _broadcast(a, shape):
     '''Broadcast an array to a given shape.
     
