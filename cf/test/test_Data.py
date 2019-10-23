@@ -77,11 +77,13 @@ class DataTest(unittest.TestCase):
                           'test_Data_array', 'test_Data_varray',
                           'test_Data_datetime_array', 'test_Data_cumsum',
                           'test_Data_dumpd_loadd_dumps',
-                          'test_Data_sin_cos_tan',
+#                          'test_Data_sin_cos_tan',
                           'test_Data_squeeze_insert_dimension',
                           'test_Data_months_years', 'test_Data_binary_mask',
-                          'test_Data_CachedArray', 'test_Data_digitize']
-                
+                          'test_Data_CachedArray', 'test_Data_digitize',
+                          'test_Data_outerproduct']
+        
+#        self.test_only = ['test_Data_AUXILIARY_MASK']
 #        self.test_only = ['test_Data_outerproduct']
 #        self.test_only = ['test_Data__collapse_SHAPE']
 #        self.test_only = ['test_Data__collapse_UNWEIGHTED_MASKED']
@@ -276,7 +278,6 @@ class DataTest(unittest.TestCase):
             f = cf.Data.concatenate([d, e], axis=0)
             self.assertTrue(f.shape == fm.shape)
 
-            
             self.assertTrue((f._auxiliary_mask_return().array == fm).all())
 
             # --------------------------------------------------------

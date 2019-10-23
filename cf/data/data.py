@@ -9091,6 +9091,14 @@ returned.
     def flatten(self, axes=None, inplace=False):
         '''TODO
 
+    :Parameters:
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+    :Returns:
+
+
     **Examples**
 
     >>> d = cf.Data(numpy.arange(24).reshape(1, 2, 3, 4))
@@ -9133,8 +9141,7 @@ returned.
         out = self.empty(_new_shape(shape, axes), dtype=self.dtype,
                          units=self.Units, chunk=True)
         out.hardmask = False
-        
-        print( out.shape, out.array)
+
         config = self.partition_configuration(readonly=True)
               
         for partition in self.partitions.matrix.flat:
@@ -9143,7 +9150,7 @@ returned.
 
             new_shape = _new_shape(array.shape, axes)
             indices   = [slice(0, n) for n in new_shape]
-            print (new_shape, indices, array.reshape(new_shape).shape)
+
             out[tuple(indices)] = array.reshape(new_shape)
             
             partition.close()
@@ -11377,8 +11384,8 @@ returned.
     >>> d = cf.Data.empty((96, 73))
 
         '''
-        return cls.full(shape, None, dtype=dtype, units=units,
-                        chunk=chunk)
+        return cls.full(shape, fill_value=None, dtype=dtype,
+                        units=units, chunk=chunk)
 
 
     @classmethod

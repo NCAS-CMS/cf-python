@@ -11,6 +11,7 @@ from numpy.ma import masked_all as numpy_ma_masked_all
 from ..functions import parse_indices, get_subspace #, abspath
 from ..functions import inspect as cf_inspect
 from ..constants import CONSTANTS
+from ..constants import masked as cf_masked
 
 _debug = False
 
@@ -35,20 +36,15 @@ class FilledArray(abstract.Array):
 
     fill_value : scalar, optional
 
-    masked_all: `bool`
+#    masked_all: `bool`
 
     '''
     def __init__(self, dtype=None, ndim=None, shape=None, size=None,
                  fill_value=None, masked_all=False):
         '''
         '''
-
-        if fill_value is None:
-            masked_all = True
-            
         super().__init__(dtype=dtype, ndim=ndim, shape=shape,
-                         size=size, fill_value=fill_value,
-                         masked_all=masked_all)
+                         size=size, fill_value=fill_value)
 
 
     def __getitem__(self, indices):
@@ -86,10 +82,9 @@ class FilledArray(abstract.Array):
             #-- End: for
         #-- End: if
 
-        if self.masked_all():
+        if self.fill_value() is cf_masked:
             return numpy_ma_masked_all(array_shape, dtype=self.dtype)
-        elif self.fill_value is not None:
-            print('RASE', self.fill_value())
+        elif self.fill_value() is not None:
             return numpy_full(array_shape, fill_value=self.fill_value(),
                               dtype=self.dtype)
         else:
@@ -210,9 +205,9 @@ class FilledArray(abstract.Array):
         return self._get_component('fill_value')
 
 
-    def masked_all(self):        
-        '''TODO        '''
-        return self._get_component('masked_all')
+#    def masked_all(self):        
+#        '''TODO        '''
+#        return self._get_component('masked_all')
 
 
     @property

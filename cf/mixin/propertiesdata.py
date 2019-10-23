@@ -3044,6 +3044,45 @@ TODO
         return v    
 
 
+    def flatten(self, axes=None, inplace=False):
+        '''TODO
+
+    :Parameters:
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+    :Returns:
+
+        TODO
+ 
+    **Examples**
+
+    >>> f.shape
+    (1, 2, 3, 4)
+    >>> f.flatten().shape
+    (24,)
+    >>> f.flatten([1, 3]).shape
+    (1, 8, 3)
+    >>> f.flatten([0, -1], inplace=True)
+    >>> f.shape
+    (4, 2, 3)
+
+        '''
+        if inplace:
+            v = self
+        else:
+            v = self.copy()
+
+        data = v.get_data(None)
+        if data is not None:
+            data.flatten(axes, inplace=True)
+
+        if inplace:
+            v = None
+        return v
+
+        
     def floor(self, inplace=False, i=False):
         '''Floor the data array, element-wise.
 

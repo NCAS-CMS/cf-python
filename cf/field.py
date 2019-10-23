@@ -11714,7 +11714,7 @@ may be accessed with the `nc_global_attributes`,
 
         data_axes = self.get_data_axes()
 
-        if axes is None and not kwargs:
+        if axes is None:
             all_axes = self.domain_axes
             axes = [axis for axis in data_axes if all_axes[axis].get_size(None) == 1]
         else:
@@ -11794,7 +11794,7 @@ may be accessed with the `nc_global_attributes`,
         return f
 
     
-    def transpose(self, axes=None, constructs=False, inplace=False,
+    def transpose(self, axes=None, constructs=True, inplace=False,
                   items=True, i=False, **kwargs):
         '''Permute the axes of the data array.
 
@@ -13529,10 +13529,70 @@ may be accessed with the `nc_global_attributes`,
 
         return c
 
-    def flatten(self, axes):
+    def flatten(self, axes=None, inplace=False):
+        '''TODO
+
         '''
-        '''
-        pass
+        if inplace:
+            f = self
+        else:
+            f = self.copy()
+            
+        data_axes = self.get_data_axes()
+
+        if axes is None:
+            axes = data_axes
+        else:
+            if isinstance(axes, (str, int)):
+                axes = (axes,)
+
+            axes = [self.domain_axis(x, key=True) for x in axes]
+            axes = set(axes).intersection(data_axes)
+
+        iaxes = [data_axes.index(axis) for axis in axes]      
+
+        # Make sure that the metadata constructs have the same
+        # relative axis order as the data (pre-flattening)
+        f.transpose(f.get_data_axes(), inplace=True, constructs=True)
+        
+        # Flatten the field's data array
+        super(Field, f).flatten(iaxes, inplace=True)
+
+        # Update the data axes
+        new_data_axes = [data_axes[i] for i in range(len(data_axes))
+                         if i not in iaxes]
+        new_axis = f.set_construct(DomainAxis(f.shape[iaxes[0]]))
+        new_data_axes.insert(iaxes[0], new_axis)
+        
+        f.set_data_axes(new_data_axes)
+        
+        # Flatten the constructs that span the flattened axes. This
+        # might entail taking broadcasting some constructs and
+        # flattening them
+        print ('axes=', axes)
+        for key, c in f.constructs.filter_by_axis('subset', *axes).items():
+            c_axes = f.get_data_axes(key)
+            print ('bon', c_axes, repr(c))
+            c_iaxes = [c_axes.index(axis) for axis in axes if axis in c_axes]
+            print (c_iaxes)
+            c.flatten(c_iaxes, inplace=True)
+
+            new_data_axes = [c_axes[i] for i in range(len(c_axes))
+                             if i not in iaxes]
+            new_data_axes.insert(iaxes[0], new_axis)        
+            print ('ppp',new_data_axes)
+            f.set_data_axes(new_data_axes, key=key)
+            
+        # Remove cell methods that no longer apply
+        for key, cm in tuple(f.cell_methods.items()):
+            if set(cm.get_axes(())).intersection(axes):
+                f.del_construct(key)
+        #--- End: for
+        print (f)
+        if inplace:
+            f = None
+        return f
+
     
     def roll(self, axis, shift, inplace=False, i=False, **kwargs):
         '''Roll the field along a cyclic axis.
