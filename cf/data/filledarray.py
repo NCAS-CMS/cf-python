@@ -42,6 +42,10 @@ class FilledArray(abstract.Array):
                  fill_value=None, masked_all=False):
         '''
         '''
+
+        if fill_value is None:
+            masked_all = True
+            
         super().__init__(dtype=dtype, ndim=ndim, shape=shape,
                          size=size, fill_value=fill_value,
                          masked_all=masked_all)
@@ -85,6 +89,7 @@ class FilledArray(abstract.Array):
         if self.masked_all():
             return numpy_ma_masked_all(array_shape, dtype=self.dtype)
         elif self.fill_value is not None:
+            print('RASE', self.fill_value())
             return numpy_full(array_shape, fill_value=self.fill_value(),
                               dtype=self.dtype)
         else:

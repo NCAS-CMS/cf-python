@@ -5,7 +5,8 @@ version 3.0.2
 **Not yet released**
 
 * Now reads CDL files (https://github.com/NCAS-CMS/cf-python/issues/1)
-* New methods: `cf.Field.cumsum`, `cf.Field.digitize`, `cf.Field.bin`.
+* New methods: `cf.Field.cumsum`, `cf.Field.digitize`, `cf.Field.bin`,
+  `cf.Field.swapaxes`, `cf.Field.flatten`.
 * New methods: `cf.histogram`.
 * New field construct collapse methods: ``integral``,
   ``maximum_absolute_value``, ``minimum_absolute_value``,
@@ -15,7 +16,7 @@ version 3.0.2
 * New methods: `cf.Data.cumsum`, `cf.Data.digitize`,
   `cf.Data.masked_all`, `cf.Data.maximum_absolute_value`,
   `cf.Data.minimum_absolute_value`, `cf.Data.sum_of_squares`,
-  `cf.Data.root_mean_square`.
+  `cf.Data.root_mean_square`, `cf.Data.flatten`.
 * Fixed occasional failure to delete all temporary directories at
   exit.
 * Fixed bug in `cf.Data.func` when overriding units. Affects all
@@ -25,6 +26,8 @@ version 3.0.2
   construct arithmetic.
 * Fixed bug that led to incorrect persistent entries in output of
   `cf.Field.properties`.
+* Fixed bug in `cf.Data.squeeze` that sometimes created
+  inconsistencies with the cyclic dimensions.
   
 version 3.0.1
 -------------

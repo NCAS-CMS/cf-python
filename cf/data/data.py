@@ -29,6 +29,7 @@ from numpy import ndindex       as numpy_ndindex
 from numpy import ndim          as numpy_ndim
 from numpy import newaxis       as numpy_newaxis
 from numpy import ones          as numpy_ones
+from numpy import prod          as numpy_prod
 from numpy import ravel_multi_index as numpy_ravel_multi_index
 from numpy import reshape       as numpy_reshape
 from numpy import result_type   as numpy_result_type
@@ -9087,6 +9088,75 @@ returned.
                     yield cf_masked
 
 
+    def flatten(self, axes=None, inplace=False):
+        '''TODO
+
+    **Examples**
+
+    >>> d = cf.Data(numpy.arange(24).reshape(1, 2, 3, 4))
+    >>> d
+    <CF Data(1, 2, 3, 4): [[[[0, ..., 23]]]]>    
+    >>> d.flatten()
+    <CF Data(24): [0, ..., 23]>   
+    >>> d.flatten([1, 3])
+    >>> <CF Data(1, 8, 3): [[[0, ..., 23]]]>
+    >>> d.flatten([0, -1], inplace=True)
+    >>> d
+    <CF Data(4, 2, 3): [[[0, ..., 23]]]>
+
+        '''
+        def _new_shape(old_shape, flatten_axes):
+            new_shape = [old_shape[i] for i in range(len(old_shape))
+                         if i not in flatten_axes]
+            new_shape.insert(axes[0], numpy_prod([old_shape[i] for i in flatten_axes]))
+            return new_shape
+        #--- End: def
+        
+        ndim = self._ndim
+        if not ndim:
+            if axes or axes == 0:
+                raise ValueError(
+                    "Can't flatten: Can't remove an axis from scalar {}".format(
+                        self.__class__.__name__))
+            
+            if inplace:
+                return
+            return self
+
+        shape = list(self._shape)
+
+        if axes is None:
+            axes = list(range(ndim))
+        else:
+            axes = self._parse_axes(axes)
+
+        out = self.empty(_new_shape(shape, axes), dtype=self.dtype,
+                         units=self.Units, chunk=True)
+        out.hardmask = False
+        
+        print( out.shape, out.array)
+        config = self.partition_configuration(readonly=True)
+              
+        for partition in self.partitions.matrix.flat:
+            partition.open(config)
+            array = partition.array
+
+            new_shape = _new_shape(array.shape, axes)
+            indices   = [slice(0, n) for n in new_shape]
+            print (new_shape, indices, array.reshape(new_shape).shape)
+            out[tuple(indices)] = array.reshape(new_shape)
+            
+            partition.close()
+
+        out.hardmask = True
+            
+        if inplace:
+            self.__dict__ = out.__dict__
+            return None 
+                  
+        return out
+        
+        
     def floor(self, inplace=False, i=False):
         '''Return the floor of the data array.
 
@@ -10976,7 +11046,7 @@ returned.
         if axes is None:
             axes = [i for i, n in enumerate(shape) if n == 1]
         else:
-            axes = d._parse_axes(axes) #, 'squeeze')
+            axes = d._parse_axes(axes)
             
             # Check the squeeze axes
             for i in axes:
@@ -11031,6 +11101,10 @@ returned.
         d._ndim  = len(shape)
         d._shape = tuple(shape)
 
+        # Remove squeezed axes from list of cyclic axes
+        for a in axes:
+            d._cyclic.discard(d._axes[a])
+            
         d._axes = data_axes
 #        d._flip = flip
         d._flip(flip)
@@ -11045,7 +11119,6 @@ returned.
                 
         if inplace:
             d = None
-            
         return d
 
 
@@ -11279,7 +11352,9 @@ returned.
     def empty(cls, shape, dtype=None, units=None, chunk=True):
         '''Create a new data array without initializing the elements.
 
-    .. seealso:: `full`, `ones`, `zeros`
+    Note that the mask of the returned empty data is hard.
+
+    .. seealso:: `full`, `hardmask`, `ones`, `zeros`
     
     :Parameters:
     
