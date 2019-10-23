@@ -10206,7 +10206,7 @@ returned.
     
     :Parameters:
     
-        axis0, axis1 : ints
+        axis0, axis1 : `int`, `int`
             Select the axes to swap. Each axis is identified by its
             original integer position.
     
@@ -10247,7 +10247,7 @@ returned.
         axis0 = d._parse_axes((axis0,))[0]
         axis1 = d._parse_axes((axis1,))[0]
 
-        if axis0 != axis1:
+        if axis0 != axis1:            
             iaxes = list(range(d._ndim))
             iaxes[axis1], iaxes[axis0] = axis0, axis1
             d.transpose(iaxes, inplace=True)

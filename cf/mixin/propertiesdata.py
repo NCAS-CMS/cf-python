@@ -1844,6 +1844,53 @@ g
             "ERROR: Can't get the sum when there is no data array")       
     
 
+    def swapaxes(self, axis0, axis1, inplace=False):
+        '''Interchange two axes of an array.
+
+    .. seealso:: ``flip`, insert_dimension`, `squeeze`, `transpose`
+    
+    :Parameters:
+    
+        axis0, axis1: `int`, `int`
+            Select the axes to swap. Each axis is identified by its
+            original integer position.
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+    :Returns:
+    
+            The construct with data with swapped axis positions. If
+            the operation was in-place then `None` is returned.
+
+    **Examples:**
+    
+    >>> f.shape
+    (1, 2, 3)
+    >>> f.swapaxes(1, 0).shape
+    (2, 1, 3)
+    >>> f.swapaxes(0, -1).shape
+    (3, 2, 1)
+    >>> f.swapaxes(1, 1).shape
+    (1, 2, 3)
+    >>> f.swapaxes(-1, -1).shape
+    (1, 2, 3)
+
+        '''
+        if inplace:
+            v = self
+        else:
+            v = self.copy()
+            
+        data = v.get_data(None)
+        if data is not None:
+            data.swapaxes(axis0, axis1, inplace=True)
+
+        if inplace:            
+            v = None
+        return v
+
+    
     def var(self):
         '''The unweighted sample variance of the data array.
         

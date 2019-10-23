@@ -158,6 +158,7 @@ Data
    ~cf.Count.insert_dimension
    ~cf.Count.roll
    ~cf.Count.squeeze
+   ~cf.Count.swapaxes
    ~cf.Count.transpose
    
 .. rubric:: *Data array mask*

@@ -159,6 +159,7 @@ Data
    ~cf.FieldAncillary.insert_dimension
    ~cf.FieldAncillary.roll
    ~cf.FieldAncillary.squeeze
+   ~cf.FieldAncillary.swapaxes
    ~cf.FieldAncillary.transpose
    
 .. rubric:: *Data array mask*

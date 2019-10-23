@@ -199,6 +199,7 @@ Data
    ~cf.DimensionCoordinate.insert_dimension
    ~cf.DimensionCoordinate.roll
    ~cf.DimensionCoordinate.squeeze
+   ~cf.DimensionCoordinate.swapaxes
    ~cf.DimensionCoordinate.transpose
    
 .. rubric:: *Data array mask*

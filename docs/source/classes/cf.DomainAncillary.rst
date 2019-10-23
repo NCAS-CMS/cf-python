@@ -192,6 +192,7 @@ Data
    ~cf.DomainAncillary.insert_dimension
    ~cf.DomainAncillary.roll
    ~cf.DomainAncillary.squeeze
+   ~cf.DomainAncillary.swapaxes
    ~cf.DomainAncillary.transpose
    
 .. rubric:: *Data array mask*

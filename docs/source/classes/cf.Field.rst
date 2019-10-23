@@ -176,6 +176,7 @@ Data
    ~cf.Field.insert_dimension
    ~cf.Field.roll
    ~cf.Field.squeeze
+   ~cf.Field.swapaxes
    ~cf.Field.transpose
    ~cf.Field.unsqueeze
 

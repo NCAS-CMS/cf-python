@@ -183,6 +183,7 @@ Data
    ~cf.CellMeasure.insert_dimension
    ~cf.CellMeasure.roll
    ~cf.CellMeasure.squeeze
+   ~cf.CellMeasure.swapaxes
    ~cf.CellMeasure.transpose
    
 .. rubric:: *Data array mask*

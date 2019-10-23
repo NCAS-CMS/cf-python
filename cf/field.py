@@ -1808,28 +1808,37 @@ may be accessed with the `nc_global_attributes`,
             field1.squeeze(squeeze, inplace=True)
         
         for i in insert0:
-            field0.insert_dimension(field0.ndim, inplace=True)
+            new_axis = field0.set_construct(DomainAxis(1))
+            field0.insert_dimension(new_axis, position=field0.ndim, inplace=True)
 
         while field1.ndim < field0.ndim:
-            field1.insert_dimension(0, inplace=True)
-        
+            new_axis = field1.set_construct(DomainAxis(1))
+            field1.insert_dimension(new_axis, position=0, inplace=True)
+
         while field0.ndim < field1.ndim:
-            field0.insert_dimension(field0.ndim, inplace=True)
+            new_axis = field0.set_construct(DomainAxis(1))
+            field0.insert_dimension(new_axis, position=field0.ndim, inplace=True)
 
         # Make sure that the dimensions in data1 are in the same order
         # as the dimensions in data0
         for identity, y in out1.items():
+            print ('\n',identity, y)
             if isinstance(identity, int) or identity not in out0:                
                 field1.swapaxes(field1.get_data_axes().index(y.axis), -1,
                                 inplace=True)
             else:
+                print ('arse')
                 # This identity is also in out0
                 a = out0[identity]
+                print (a, field0.get_data_axes(), field1.get_data_axes(),
+                       field1.get_data_axes().index(y.axis),
+                       field0.get_data_axes().index(a.axis))
                 field1.swapaxes(field1.get_data_axes().index(y.axis),
                                 field0.get_data_axes().index(a.axis),
                                 inplace=True)
         #--- End: for
-
+        print (repr(field0))
+        print (repr(field1))
         # Change the domain axis sizes in field0 so that they match
         # the broadcasted result data
         for identity, y in out1.items():
@@ -12250,6 +12259,70 @@ may be accessed with the `nc_global_attributes`,
 
         # Squeeze the field's data array
         return super().squeeze(iaxes, inplace=inplace)
+
+    
+    def swapaxes(self, axis0, axis1, inplace=False, i=False):
+        '''Interchange two axes of the data.
+        
+    .. seealso:: ``flip`, insert_dimension`, `squeeze`, `transpose`
+    
+    :Parameters:
+    
+        axis0, axis1: TODO
+            Select the axes to swap. Each axis is identified by its
+            original integer position.
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+    :Returns:
+    
+            The field construct with data with swapped axis
+            positions. If the operation was in-place then `None` is
+            returned.
+
+    **Examples:**
+    
+    >>> f.shape
+    (1, 2, 3)
+    >>> f.swapaxes(1, 0).shape
+    (2, 1, 3)
+    >>> f.swapaxes(0, -1).shape
+    (3, 2, 1)
+    >>> f.swapaxes(1, 1).shape
+    (1, 2, 3)
+    >>> f.swapaxes(-1, -1).shape
+    (1, 2, 3)
+
+        '''
+        data_axes = self.get_data_axes(default=None)
+
+        da_key0 = self.domain_axis(axis0, key=True)
+        da_key1 = self.domain_axis(axis1, key=True)
+
+        if da_key0 not in data_axes:
+            raise ValueError(
+                "Can't swapaxes {}: Bad axis specification: {!r}".format(
+                    self.__class__.__name__, axes0))
+
+        if da_key1 not in data_axes:
+            raise ValueError(
+                "Can't swapaxes {}: Bad axis specification: {!r}".format(
+                    self.__class__.__name__, axis1))
+
+        axis0 = data_axes.index(da_key0)
+        axis1 = data_axes.index(da_key1)
+            
+        f = super().swapaxes(axis0, axis1, inplace=inplace)
+        if inplace:
+            f = self
+            
+        if data_axes is not None:
+            data_axes = list(data_axes)
+            data_axes[axis1], data_axes[axis0] = data_axes[axis0], data_axes[axis1] 
+            f.set_data_axes(data_axes)
+
+        return f
 
     
     def transpose(self, axes=None, constructs=False, inplace=False,

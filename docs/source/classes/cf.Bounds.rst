@@ -160,6 +160,7 @@ Data
    ~cf.Bounds.insert_dimension
    ~cf.Bounds.roll
    ~cf.Bounds.squeeze
+   ~cf.Bounds.swapaxes
    ~cf.Bounds.transpose
    
 .. rubric:: *Data array mask*
