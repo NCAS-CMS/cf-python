@@ -80,140 +80,9 @@
 <h1>cf.Field.histogram<a class="headerlink" href="#cf-field-histogram" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.histogram">
-<code class="descclassname">Field.</code><code class="descname">histogram</code><span class="sig-paren">(</span><em>digitized</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/field.py#L6006"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.histogram" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">histogram</code><span class="sig-paren">(</span><em>digitized</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/field.py#L6980"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.histogram" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a multi-dimensional histogram of the data.</p>
-<p><strong>This has moved to</strong> <a class="reference internal" href="../function/cf.histogram.html#cf.histogram" title="cf.histogram"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.histogram</span></code></a>. <strong>Ignore everything below.</strong></p>
-<p>The number of dimensions of the histogram is equal to the number
-of field constructs provided by the <em>digitized</em> argument. Each
-such field construct defines a sequence of bins and provides
-indices to the bins that each value of another field construct
-belongs. There is no upper limit to the number of dimensions of
-the histogram.</p>
-<p>The output histogram bins are defined by the exterior product of
-the one-dimensional bins of each digitized field construct. For
-example, if only one digitized field construct is provided then
-the histogram bins simply comprise its one-dimensional bins; if
-there are two digitized field constructs then the histogram bins
-comprise the two-dimensionsal matrix formed by all possible
-combinations of the two sets of one-dimensional bins; etc.</p>
-<p>An output value for an histogram bin is formed by counting the
-number cells for which the digitized field constructs, taken
-together, index that bin. Note that it may be the case that not
-all output bins are indexed by the digitized field constructs, and
-for these bins missing data is returned.</p>
-<p>Therefore, the creation of a one-dimensional histogram of the
-field construct’s own data must be based on a digitized version of
-itself. However, a one-dimensional histogram can also be based on
-the digitized data of another field construct representing a
-different physical quantity.</p>
-<p>The returned field construct will have a domain axis construct for
-each dimension of the histogram, with a corresponding dimension
-coordinate construct that defines the bin boundaries.</p>
-<blockquote>
-<div><div class="versionadded">
-<p><span class="versionmodified">New in version 3.0.2.</span></p>
-</div>
-</div></blockquote>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="cf.Field.bin.html#cf.Field.bin" title="cf.Field.bin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bin</span></code></a>, <a class="reference internal" href="cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collapse</span></code></a>, <a class="reference internal" href="cf.Field.digitize.html#cf.Field.digitize" title="cf.Field.digitize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">digitize</span></code></a></p>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>digitized: (sequence of) <a class="reference internal" href="../classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a></dt>
-<dd><p class="first">One or more field constructs that contain digitized data
-with corresponding metadata, as would be output by
-<a class="reference internal" href="cf.Field.digitize.html#cf.Field.digitize" title="cf.Field.digitize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.digitize</span></code></a>. Each field construct contains indices
-to the one-dimensionsal bins to which each value of an
-original field construct belongs; and there must be
-<code class="docutils literal notranslate"><span class="pre">bin_count</span></code> and <code class="docutils literal notranslate"><span class="pre">bin_bounds</span></code> properties as defined by
-the <a class="reference internal" href="cf.Field.digitize.html#cf.Field.digitize" title="cf.Field.digitize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">digitize</span></code></a> method (and any of the extra properties
-defined by that method are also recommended).</p>
-<p>The bins defined by the <code class="docutils literal notranslate"><span class="pre">bin_count</span></code> and <code class="docutils literal notranslate"><span class="pre">bin_bounds</span></code>
-properties are used to create a dimension coordinate
-construct for the output field construct.</p>
-<p class="last">Each digitized field construct must be transformable so
-that it is broadcastable to the input field contruct’s
-data. This is done by using the metadata constructs of the
-to create a mapping of physically compatible dimensions
-between the fields, and then manipulating the dimensions
-of the digitized field construct’s data to ensure that
-broadcasting can occur.</p>
-</dd>
-</dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><a class="reference internal" href="../classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a>            </dt>
-<dd><p class="first last">The field construct containing the histogram.</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples:</strong></p>
-<p>Create a one-dimensional histogram based on 10 equally-sized bins
-that exactly span the data range:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>                                                                                                   
-<span class="go">Field: specific_humidity (ncvar%q)</span>
-<span class="go">----------------------------------</span>
-<span class="go">Data            : specific_humidity(latitude(5), longitude(8)) 0.001 1</span>
-<span class="go">Cell methods    : area: mean</span>
-<span class="go">Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north</span>
-<span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
-<span class="go">                : time(1) = [2019-01-01 00:00:00]       </span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>                                                                                            
-<span class="go">[[  7.  34.   3.  14.  18.  37.  24.  29.]</span>
-<span class="go"> [ 23.  36.  45.  62.  46.  73.   6.  66.]</span>
-<span class="go"> [110. 131. 124. 146.  87. 103.  57.  11.]</span>
-<span class="go"> [ 29.  59.  39.  70.  58.  72.   9.  17.]</span>
-<span class="go"> [  6.  36.  19.  35.  18.  37.  34.  13.]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">indices</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">return_bins</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
-<span class="go">Field: long_name=Bin index to which each &#39;specific_humidity&#39; value belongs (ncvar%q)</span>
-<span class="go">------------------------------------------------------------------------------------</span>
-<span class="go">Data            : long_name=Bin index to which each &#39;specific_humidity&#39; value belongs(latitude(5), longitude(8))</span>
-<span class="go">Cell methods    : area: mean</span>
-<span class="go">Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north</span>
-<span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
-<span class="go">                : time(1) = [2019-01-01 00:00:00]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">bins</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
-<span class="go">[[  3.   17.3]</span>
-<span class="go"> [ 17.3  31.6]</span>
-<span class="go"> [ 31.6  45.9]</span>
-<span class="go"> [ 45.9  60.2]</span>
-<span class="go"> [ 60.2  74.5]</span>
-<span class="go"> [ 74.5  88.8]</span>
-<span class="go"> [ 88.8 103.1]</span>
-<span class="go"> [103.1 117.4]</span>
-<span class="go"> [117.4 131.7]</span>
-<span class="go"> [131.7 146. ]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">h</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>                             
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">h</span><span class="p">)</span> 
-<span class="go">Field: number_of_observations</span>
-<span class="go">-----------------------------</span>
-<span class="go">Data            : number_of_observations(specific_humidity(10)) 1</span>
-<span class="go">Cell methods    : latitude: longitude: point</span>
-<span class="go">Dimension coords: specific_humidity(10) = [10.15, ..., 138.85000000000002] 0.001 1</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>                                                                                             
-<span class="go">[9 7 9 4 5 1 1 1 2 1]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;specific_humidity&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
-<span class="go">[[  3.   17.3]</span>
-<span class="go"> [ 17.3  31.6]</span>
-<span class="go"> [ 31.6  45.9]</span>
-<span class="go"> [ 45.9  60.2]</span>
-<span class="go"> [ 60.2  74.5]</span>
-<span class="go"> [ 74.5  88.8]</span>
-<span class="go"> [ 88.8 103.1]</span>
-<span class="go"> [103.1 117.4]</span>
-<span class="go"> [117.4 131.7]</span>
-<span class="go"> [131.7 146. ]]</span>
-</pre></div>
-</div>
+<p><strong>This has moved to</strong> <a class="reference internal" href="../function/cf.histogram.html#cf.histogram" title="cf.histogram"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.histogram</span></code></a></p>
 </dd></dl>
 
 </div>
@@ -230,7 +99,7 @@ that exactly span the data range:</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/method/cf.Field.histogram.rst.txt"

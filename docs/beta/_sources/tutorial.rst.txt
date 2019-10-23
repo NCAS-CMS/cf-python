@@ -5983,10 +5983,10 @@ Vertical regridding
 The only option for regridding along a vertical axis is to use
 Cartesian regridding. However, care must be taken to ensure that the
 vertical axis is transformed so that it's coordinate values are vary
-linearly. For example, to regrid a data on one set of vertical
-pressure coordinates to another set, the pressure coordinates may
-first be transformed into the logarithm of pressure, and then changed
-back to pressure coordinates after the regridding operation.
+linearly. For example, to regrid data on one set of vertical pressure
+coordinates to another set, the pressure coordinates may first be
+transformed into the logarithm of pressure, and then changed back to
+pressure coordinates after the regridding operation.
 
 .. code-block:: python
    :caption: *Regrid a field construct from one set of pressure levels
@@ -6031,8 +6031,8 @@ back to pressure coordinates after the regridding operation.
 
 Note that the `~Field.replace_construct` method of the field construct
 is used to easily replace the vertical dimension coordinate construct,
-without having to match up the corresponding domain axis construct and
-construct key.
+without having to manually match up the corresponding domain axis
+construct and construct key.
 
 ----
    
@@ -6124,6 +6124,45 @@ they have different standard names.
     'project=research',
     'units=1000 s-1.K',
     'ncvar%ta']
+
+.. note:: Care must be taken when combining a field construct with a
+          `numpy` array or a `Data` instance, due to the ways in which
+          both of these objects allow themselves to be combined with
+          other types:
+
+	  * If the field construct is on the left hand side (LHS) of
+            the operation then, as expected, a field construct is
+            returned whose data is the combination of the original
+            field construct's data and the `numpy` array or `Data`
+            instance on the right hand side (RHS).
+
+	  * If, however, the field construct is on the RHS then a
+            `numpy` array or `Data` innstance (which ever type is on
+            the LHS) is returned, containing the same data as in the
+            first case.
+    
+          .. code-block:: python
+             :caption: *A field construct will not be returned if the
+                       left hand operand is a numpy array or a 'Data'
+                       instance.*
+
+	     >>> import numpy
+	     >>> q, t = cf.read('fil.nc')
+             >>> a = numpy.array(1000)
+             >>> type(t * a)
+	     cf.field.Field
+	     >>> type(a + t)
+	     numpy.ndarray
+	     >>> b = numpy.random.randn(t.size).reshape(t.shape)
+	     >>> type(t * b)
+	     cf.field.Field
+	     >>> type(b * t)
+	     numpy.ndarray
+	     >>> type(t - cf.Data(b))
+	     cf.field.Field
+	     >>> type(cf.Data(b) * t)
+	     cf.data.data.Data
+	     
 
 .. _Unary-operations:
 
