@@ -1476,12 +1476,10 @@ The output units are '1' (nondimensionsal).
         if inplace:
             v = self
             
-        if bounds:
-            bounds = v.get_bounds(None)
-            if bounds is not None:
-                axes = self._parse_axes(axes)[0]
-                bounds.flatten(axes, inplace=True)
-        #--- End: if
+        bounds = v.get_bounds(None)
+        if bounds is not None:
+            axes = self._parse_axes(axes)
+            bounds.flatten(axes, inplace=True)
         
         if inplace:
             v = None

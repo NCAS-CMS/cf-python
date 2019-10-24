@@ -9162,34 +9162,92 @@ returned.
         if axes is None:
             axes = list(range(ndim))
         else:
-            axes = self._parse_axes(axes)
+            axes = sorted(self._parse_axes(axes))
 
-        if len(axes) <= 1:
+        n_axes = len(axes)
+        if n_axes <= 1:
             if inplace:
                 return
             return self
-            
+
+        n_non_flattened_axes = self.ndim - n_axes
+
         out = self.empty(_new_shape(shape, axes), dtype=self.dtype,
                          units=self.Units, chunk=True)
         out.hardmask = False
+#        print (self.section(axes))
 
-        config = self.partition_configuration(readonly=True)
 
-        start = 0
-        for partition in self.partitions.matrix.flat:
-            partition.open(config)
-            array = partition.array
-
-            new_shape = _new_shape(array.shape, axes)
-            indices   = [slice(0, n) for n in new_shape]
-            size = indices[axes[0]].stop
-            indices[axes[0]] = slice(start, start+size)
-
-            out[tuple(indices)] = array.reshape(new_shape)
+        # 
+        for key, data in self.section(axes).items():
+            flattened_array = data.array.flatten()
+            size = flattened_array.size
             
-            start += size
+            first_None_index = key.index(None)
+            
+            indices = [i for i in key if i is not None]
+            indices.insert(first_None_index, slice(0, size))
 
-            partition.close()
+            shape = [1] * n_non_flattened_axes
+            shape.insert(first_None_index, size)
+
+#            print('key=', key, indices, shape)
+            out[tuple(indices)] = flattened_array.reshape(shape)
+            
+
+#        config = self.partition_configuration(readonly=True)
+#
+#        xxx= [n for i, n in enumerate(shape) if i in axes]
+#        yyy = []
+#        for i in axes:
+#            yyy.append(int(numpy_prod(xxx[i+1:])) )
+#        print ('size=', self.size)
+#        print ('axes=', axes)
+#        print('xxx=', xxx)
+#        print('yyy=', yyy)
+#        
+#        first_flat_axis = axes[0]
+#        last_flat_axis  = axes[-1]
+#        print ('first_flat_axis=',first_flat_axis)
+#        print ('last_flat_axis =', last_flat_axis )
+#        for partition in self.partitions.matrix.flat:
+#            partition.open(config)
+#            array = partition.array
+#
+#            new_shape = _new_shape(array.shape, axes)
+#
+#            # Create indices to out which correspond to this
+#            # partition's array
+#            indices = list(partition.indices)
+#            location = partition.location
+#
+#            
+#            start = 0
+#            stop = 0
+#            for i in axes[:last_flat_axis]:
+##                start += (indices[i].stop - indices[i].start) * yyy[i]
+#                start += location[i][0] * yyy[i]
+#                stop += (location[i][1] - location[i][0]) * yyy[i]
+#
+##            stop = start + (indices[last_flat_axis].stop - indices[last_flat_axis].start)
+#
+#            print ('start, stop =', start, stop)
+#            
+#            new_indices = [indices[i] for i in range(len(indices))
+#                           if i not in axes]
+#            new_indices.insert(first_flat_axis, slice(start, stop))
+#            
+#            print (partition.location)
+#            print (indices, new_indices )
+#            indices   = [slice(0, n) for n in new_shape]
+#            size = indices[first_flat_axis].stop
+#            indices[first_flat_axis] = slice(start, start+size)
+#
+#            out[tuple(indices)] = array.reshape(new_shape)
+#            
+#            start += size
+#
+#            partition.close()
 
 
         out.hardmask = True

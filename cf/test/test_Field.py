@@ -27,6 +27,7 @@ class FieldTest(unittest.TestCase):
 #        self.test_only = ['NOTHING!!!!']
 #        self.test_only = ['test_Field_ATOL_RTOL']
 #        self.test_only = ['test_Field_cumsum']
+#        self.test_only = ['test_Field_flatten']
 #        self.test_only = ['test_Field_transpose']
 #        self.test_only = ['test_Field_item']
 #        self.test_only = ['test_Field_field_ancillary']
@@ -45,6 +46,27 @@ class FieldTest(unittest.TestCase):
 #        self.test_only = ['test_Field_Field_domain_mask']
 #        self.test_only = ['test_Field_bin']
 
+
+    def test_Field_flatten(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+        
+        f = self.f.copy()
+        print(f)
+        self.assertTrue(f.equals(f.flatten([]), verbose=True))
+        self.assertTrue(f.flatten(inplace=True) is None)
+
+        f = self.f.copy()
+           
+        f.flatten()                       
+#        f.flatten(0)
+#        f.flatten(1)
+#        f.flatten([2])  One of these three make teh next one p[ass !!!!!!!!! ARRRRRRGG
+        f.flatten([0, 1, 2])
+        f.flatten([1, 2])
+        f.flatten([0, 1])
+        f.flatten([0, 2])
+        
 
     def test_Field_bin(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

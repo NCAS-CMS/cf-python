@@ -85,7 +85,7 @@ class DataTest(unittest.TestCase):
                           'test_Data_flatten',
                           'test_Data_transpose']
         
-#        self.test_only = ['test_Data_flatten']
+        self.test_only = ['test_Data_flatten']
 #        self.test_only = ['test_Data_AUXILIARY_MASK']
 #        self.test_only = ['test_Data_outerproduct']
 #        self.test_only = ['test_Data__collapse_SHAPE']
@@ -166,14 +166,16 @@ class DataTest(unittest.TestCase):
     def test_Data_flatten(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
-
+        
+        d = cf.Data(self.ma.copy())        
+        self.assertTrue(d.equals(d.flatten([]), verbose=True))
+        self.assertTrue(d.flatten(inplace=True) is None)
+        
         for chunksize in self.chunk_sizes:
             cf.CHUNKSIZE(chunksize)
-
-            
             
             d = cf.Data(self.ma.copy())
-
+            
             b = self.ma.flatten()
             for axes in (None, list(range(d.ndim))):
                 e = d.flatten(axes)
@@ -181,7 +183,21 @@ class DataTest(unittest.TestCase):
                 self.assertTrue(e.shape == b.shape)
                 self.assertTrue(cf.functions._numpy_allclose(e.array, b))
                 
-             # now do for subsets of axes TODO
+            # now do for subsets of axes TODO
+            
+            for axes in self.axes_combinations:
+#                print('axes=', axes, 'd._pmshape=', d._pmshape, d.shape)
+                e = d.flatten(axes)
+
+                if len(axes) <= 1:
+                    shape  = d.shape
+                else:                    
+                    shape = [n for i, n in enumerate(d.shape) if i not in axes]
+                    shape.insert(sorted(axes)[0], numpy.prod([n for i, n in enumerate(d.shape) if i in axes]))
+                    
+                self.assertTrue(e.shape == tuple(shape))
+                self.assertTrue(e.ndim == d.ndim-len(axes)+1)
+                self.assertTrue(e.size == d.size)
         #--- End: for
         cf.CHUNKSIZE(self.original_chunksize)
 

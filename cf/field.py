@@ -13708,7 +13708,7 @@ may be accessed with the `nc_global_attributes`,
         new_axis_size = numpy_prod([shape[i] for i in iaxes])
         new_axis = f.set_construct(DomainAxis(new_axis_size))
         new_data_axes.insert(iaxes[0], new_axis)
-
+        print ('iaxes=', iaxes, f.shape)
         # Flatten the field's data
         super(Field, f).flatten(iaxes, inplace=True)
         
@@ -13753,11 +13753,11 @@ may be accessed with the `nc_global_attributes`,
         #--- End: for
 
         # Flatten the constructs that span all of the flattened axes,
-        # or all bar some which have size 1.
+        # or all of the flattened axes all bar some which have size 1.
         d = dict(f.constructs.filter_by_axis('exact', *axes))
         axes2 = [axis for axis in axes  if f.domain_axes[axis].get_size() > 1]
         if axes2 != axes:
-            d.update(f.constructs.filter_by_axis('exact', *axes2))
+            d.update(f.constructs.filter_by_axis('subset', *axes).filter_by_axis('and', *axes2))
 
         for key, c in d.items():
             c_axes = f.get_data_axes(key)
@@ -13770,7 +13770,7 @@ may be accessed with the `nc_global_attributes`,
 
         # Remove constructs that span some, but not all, of the
         # flattened axes.
-        for key in f.constructs.filter_by_axis('subset', *axes):
+        for key in f.constructs.filter_by_axis('or', *axes):
             f.del_construct(key)
 
         # Remove the domain axis constructs for the flattened axes
