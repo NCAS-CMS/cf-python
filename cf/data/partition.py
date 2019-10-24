@@ -994,53 +994,50 @@ values of the partition's `!_original` attribute and on the
     #--- End: def
 
     def copy(self):
+        '''Return a deep copy.
+
+    ``p.copy()`` is equivalent to ``copy.deepcopy(p)``.
+    
+    :Returns:
+    
+            A deep copy.
+    
+    **Examples:**
+    
+    >>> q = p.copy()
+
         '''
-
-Return a deep copy.
-
-``p.copy()`` is equivalent to ``copy.deepcopy(p)``.
-
-:Returns:
-
-        A deep copy.
-
-**Examples:**
-
->>> q = p.copy()
-
-'''
         new = Partition.__new__(Partition)
         new.__dict__ = self.__dict__.copy()
 
         self._increment_file_counter()
         
         return new
-    #--- End: def
+
 
     @property
     def array(self):
         '''Returns the partition's data array.
-
     
-After a partition has been conformed, the partition must be closed
-(with the `close` method) before another partition is conformed,
-otherwise a memory leak could occur. For example:
-
->>> for partition in partition_array.flat:
-...    # Open the partition
-...    partition.open(config)
-...
-...    # Get the data array as a numpy array
-...    array = partition.array
-...
-...    # < Some code to operate on the aray >
-...
-...    # Close the partition
-...    partition.close()
-...
-...    # Now move on to conform the next partition 
-...
->>>
+    After a partition has been conformed, the partition must be closed
+    (with the `close` method) before another partition is conformed,
+    otherwise a memory leak could occur. For example:
+    
+    >>> for partition in partition_array.flat:
+    ...    # Open the partition
+    ...    partition.open(config)
+    ...
+    ...    # Get the data array as a numpy array
+    ...    array = partition.array
+    ...
+    ...    # < Some code to operate on the aray >
+    ...
+    ...    # Close the partition
+    ...    partition.close()
+    ...
+    ...    # Now move on to conform the next partition 
+    ...
+    >>>
 
         '''
         config = self.config
@@ -1213,7 +1210,6 @@ otherwise a memory leak could occur. For example:
             #--- End: for
             
             self.masked = True
-        #--- End: if
 
         # ------------------------------------------------------------
         # Convert the array's data type
@@ -1269,32 +1265,29 @@ otherwise a memory leak could occur. For example:
             self.location  = p_location
 
             self._in_place_changes = in_place_changes
-        #--- End: if
 
         # ------------------------------------------------------------
         # Return the numpy array
         # ------------------------------------------------------------
         return p_data
-    #--- End: def
+
     
     @property
     def isdt(self):
+        '''True if the subarray contains date-time objects.
+
+    **Examples:**
+    
+    >>> p.Units.isreftime
+    True
+    >>> p.subarray.dtype == numpy.dtype(object)
+    True
+    >>> p.isdt
+    True
+
         '''
-
-True if the subarray contains date-time objects.
-
-**Examples:**
-
->>> p.Units.isreftime
-True
->>> p.subarray.dtype == numpy.dtype(object)
-True
->>> p.isdt
-True
-
-'''
         return self.Units.isreftime and self._subarray.dtype == _dtype_object
-    #--- End: def
+
 
     def file_close(self):
         '''

@@ -27,7 +27,7 @@ class FieldTest(unittest.TestCase):
 #        self.test_only = ['NOTHING!!!!']
 #        self.test_only = ['test_Field_ATOL_RTOL']
 #        self.test_only = ['test_Field_cumsum']
-#        self.test_only = ['test_Field_indices']
+#        self.test_only = ['test_Field_transpose']
 #        self.test_only = ['test_Field_item']
 #        self.test_only = ['test_Field_field_ancillary']
 #        self.test_only = ['test_Field_AUXILIARY_MASK']
@@ -1639,6 +1639,7 @@ class FieldTest(unittest.TestCase):
         
         # Null transpose
         g = f.transpose([0, 1, 2])
+
         self.assertTrue(f0.equals(g, verbose=True))
         self.assertTrue(f.transpose([0, 1, 2], inplace=True) is None)
         self.assertTrue(f0.equals(f))

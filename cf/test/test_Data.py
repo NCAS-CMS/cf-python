@@ -81,8 +81,11 @@ class DataTest(unittest.TestCase):
                           'test_Data_squeeze_insert_dimension',
                           'test_Data_months_years', 'test_Data_binary_mask',
                           'test_Data_CachedArray', 'test_Data_digitize',
-                          'test_Data_outerproduct']
+                          'test_Data_outerproduct',
+                          'test_Data_flatten',
+                          'test_Data_transpose']
         
+#        self.test_only = ['test_Data_flatten']
 #        self.test_only = ['test_Data_AUXILIARY_MASK']
 #        self.test_only = ['test_Data_outerproduct']
 #        self.test_only = ['test_Data__collapse_SHAPE']
@@ -136,27 +139,6 @@ class DataTest(unittest.TestCase):
         cf.CHUNKSIZE(self.original_chunksize)
 
         
-#    Create indices for the two bins ``[2, 6), [8, 10]``, which are
-#    non-contiguous
-#
-#    >>> e = d.digitize([[2, 6], [8, 10]])
-#    >>> print(e.array)
-#    [[ 0 0  1  1]
-#     [ 1 1 -- --]
-#     [ 2 2  3  3]]
-#
-#    Masked values result in masked indices in the output array.
-#
-#    >>> d[1, 1] = cf.masked
-#    >>> print(d.array)
-#    [[ 0  1  2  3]
-#     [ 4 --  6  7]
-#     [ 8  9 10 11]]
-#    >>> print(d.digitize([2, 6, 10]).array)
-#    [[ 0  0  1  1]
-#     [ 1 --  2  2]
-#     [ 2  2  3  3]
-
     def test_Data_cumsum(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -177,6 +159,29 @@ class DataTest(unittest.TestCase):
                 b = numpy.cumsum(self.ma, axis=i)
                 e = d.cumsum(axis=i, masked_as_zero=False)
                 self.assertTrue(cf.functions._numpy_allclose(e.array, b))
+        #--- End: for
+        cf.CHUNKSIZE(self.original_chunksize)
+
+
+    def test_Data_flatten(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        for chunksize in self.chunk_sizes:
+            cf.CHUNKSIZE(chunksize)
+
+            
+            
+            d = cf.Data(self.ma.copy())
+
+            b = self.ma.flatten()
+            for axes in (None, list(range(d.ndim))):
+                e = d.flatten(axes)
+                self.assertTrue(e.ndim == 1)
+                self.assertTrue(e.shape == b.shape)
+                self.assertTrue(cf.functions._numpy_allclose(e.array, b))
+                
+             # now do for subsets of axes TODO
         #--- End: for
         cf.CHUNKSIZE(self.original_chunksize)
 

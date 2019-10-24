@@ -12,14 +12,14 @@ class CompressedSubarray(abc.ABC):
     def __init__(self, array, shape, compression):
         '''**Initialization**
 
-:Parameters:
-
-    array: 
-
-    shape: `tuple`
-        The shape of the uncompressed array
-
-    compression: `dict`
+    :Parameters:
+    
+        array: 
+    
+        shape: `tuple`
+            The shape of the uncompressed array
+    
+        compression: `dict`
 
         '''
         # DO NOT CHANGE IN PLACE
@@ -36,17 +36,17 @@ class CompressedSubarray(abc.ABC):
 
         # DO NOT CHANGE IN PLACE
         self.size = reduce(mul, shape, 1)
-    #---End: def
+
     
     @abc.abstractmethod
     def __getitem__(self, indices):
         '''x.__getitem__(indices) <==> x[indices]
 
-Returns a numpy array.
+    Returns a numpy array.
 
         '''
         raise NotImplementedError() # pragma: no cover
-    #--- End: def
+
 
     @property
     def dtype(self):
@@ -55,32 +55,32 @@ Returns a numpy array.
     @property    
     def file(self):
         '''The file on disk which contains the compressed array, or `None` of
-the array is in memory.
+    the array is in memory.
 
-:Examples:
+   **Examples:**
 
->>> self.file
-'/home/foo/bar.nc'
+    >>> self.file
+    '/home/foo/bar.nc'
 
         '''        
         return getattr(self.array, 'file', None)
-    #--- End: def
+
 
     def close(self):
         '''Close all referenced open files.
 
-:Returns:
-
-    `None`
-
-**Examples:**
-
->>> f.close()
+    :Returns:
+    
+        `None`
+    
+    **Examples:**
+    
+    >>> f.close()
 
         '''     
         if self.on_disk():
             self.array.close()
-    #--- End: def
+
 
     def copy(self):
         '''TODO
@@ -90,40 +90,39 @@ the array is in memory.
         new = C.__new__(C)
         new.__dict__ = self.__dict__.copy()
         return new
-    #--- End: def
+
 
     def inspect(self):
         '''Inspect the object for debugging.
 
-.. seealso:: `cf.inspect`
-
-:Returns: 
-
-    `None`
+    .. seealso:: `cf.inspect`
+    
+    :Returns: 
+    
+        `None`
 
         '''
         print(cf_inspect(self))
-    #--- End: def
         
     def on_disk(self):
         '''True if and only if the compressed array is on disk as opposed to
-in memory.
-
-**Examples:**
-
->>> a.on_disk()
-True
+    in memory.
+    
+    **Examples:**
+    
+    >>> a.on_disk()
+    True
 
         '''
         return not hasattr(self.array, '__array_interface__')
-    #--- End: if
+
 
     def unique(self):
         '''TODO
 
         '''
         return getrefcount(self.array) <= 2
-    #--- End: def
 
+    
 #--- End: class
 

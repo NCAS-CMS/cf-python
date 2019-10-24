@@ -558,13 +558,13 @@ class DSGTest(unittest.TestCase):
 
         qa = q.data.array
 
-#        print (qa[0, 11])
-#        print (self.b[0, 11])
+#        print (qa[0, 12])
+#        print (self.b[0, 12])
 
         for n in range(qa.shape[0]):
             for m in range(qa.shape[1]):
                 self.assertTrue(q._equals(qa.mask[n, m], self.b.mask[n, m]),
-                                str(n)+ ' '+ str(m)+ ' '+repr(qa[n, m]) + repr(self.b[n, m]))
+                                str(n)+ ' '+ str(m)+ ' '+str(qa[n, m]) +' '+ str(self.b[n, m]))
         
         message= repr(qa-self.b) #+'\n'+repr(qa[2,0])+'\n'+repr(self.b[2, 0])
         self.assertTrue(q._equals(qa, self.b), message)

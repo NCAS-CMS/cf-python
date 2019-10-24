@@ -20,23 +20,23 @@ from ..constants import CONSTANTS
 class CachedArray(abstract.FileArray):
     '''A indexable N-dimensional array supporting masked values.
 
-The array is stored on disk in a temporary file until it is
-accessed. The directory containing the temporary file may be found and
-set with the `cf.TEMPDIR` function.
+    The array is stored on disk in a temporary file until it is
+    accessed. The directory containing the temporary file may be found
+    and set with the `cf.TEMPDIR` function.
 
     '''
     def __init__(self, array):
         '''**Initialization**
 
-:Parameters:
-
-    array: numpy array
-        The array to be stored on disk in a temporary file.        
-
-**Examples:**
-
->>> f = CachedArray(numpy.array([1, 2, 3, 4, 5]))
->>> f = CachedArray(numpy.ma.array([1, 2, 3, 4, 5]))
+    :Parameters:
+    
+        array: numpy array
+            The array to be stored on disk in a temporary file.        
+    
+    **Examples:**
+    
+    >>> f = CachedArray(numpy.array([1, 2, 3, 4, 5]))
+    >>> f = CachedArray(numpy.ma.array([1, 2, 3, 4, 5]))
 
         '''
         super().__init__()
@@ -80,13 +80,13 @@ set with the `cf.TEMPDIR` function.
             else:
                 # Array is not a masked array.
                 numpy_save(_partition_file, array)
-    #--- End: def
+
 
     def __getitem__(self, indices):
         '''x.__getitem__(indices) <==> x[indices]
 
-Returns a numpy array.
-
+    Returns a numpy array.
+        
         '''
         array = numpy_load(self._partition_file)
 
@@ -99,18 +99,17 @@ Returns a numpy array.
             array = numpy_ma_array(array['_data'], mask=array['_mask'],
                                    copy=False)
             array.shrink_mask()
-        #--- End: if
 
         # Return the numpy array
         return array
-    #--- End: def
 
+    
     def __str__(self):
         '''x.__str__() <==> str(x)
 
         '''
         return '%s in %s' % (self.shape, self._partition_file)
-    #--- End: def
+
 
     # ----------------------------------------------------------------
     # Attributes
@@ -121,7 +120,7 @@ Returns a numpy array.
 
         '''
         return self._get_component('_partition_dir')
-    #--- End: def
+
 
     @property
     def _partition_file(self):
@@ -129,6 +128,6 @@ Returns a numpy array.
 
         '''
         return self._get_component('_partition_file')
-    #--- End: def
+
 
 #--- End: class

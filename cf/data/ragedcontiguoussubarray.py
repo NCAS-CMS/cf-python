@@ -4,9 +4,7 @@ from operator import mul
 from numpy import empty  as numpy_empty
 
 
-from ..functions import parse_indices, get_subspace #, abspath
-from ..functions import inspect as cf_inspect
-from ..constants import CONSTANTS
+from ..functions import parse_indices, get_subspace
 
 from . import abstract
 
@@ -18,13 +16,11 @@ class RaggedContiguousSubarray(abstract.CompressedSubarray):
 
     '''
     def __getitem__(self, indices):
+        '''x.__getitem__(indices) <==> x[indices]
+
+    Returns a numpy array.
+
         '''
-
-x.__getitem__(indices) <==> x[indices]
-
-Returns a numpy array.
-
-'''
         # The compressed array
         array = self.array
         
@@ -65,13 +61,13 @@ Returns a numpy array.
                 print('parse_indices(self.shape, indices) =', indices)
                 
             return get_subspace(uarray, indices)
-    #--- End: def
+
 
     def __repr__(self):
         '''x.__repr__() <==> repr(x)
 
         '''
         return "<CF %s: %s>" % (self.__class__.__name__, str(self.array))
-    #--- End: def
+
 
 #--- End: class

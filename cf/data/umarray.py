@@ -20,50 +20,50 @@ class UMArray(abstract.FileArray):
                  word_size=None, byte_ordering=None):
         '''**Initialization**
 
-:Parameters:
-
-    filename: `str`
-        The file name in normalized, absolute form.
-
-    dtype: `numpy.dtype`
-        The data type of the data array on disk.
-
-    ndim: `int`
-        The number of dimensions in the unpacked data array.
-
-    shape: `tuple`
-        The shape of the unpacked data array.
-
-    size: `int`
-        The number of elements in the unpacked data array.
-
-    header_offset: `int`
-        The start position in the file of the header.
-
-    data_offset: `int`
-        The start position in the file of the data array.
-
-    disk_length: `int`
-        The number of words on disk for the data array, usually
-        LBLREC-LBEXT. If set to 0 then `!size` is used.
-
-    fmt: `str`, optional
-
-    word_size: `int`, optional
-
-    byte_ordering: `str`, optional
-
-**Examples:**
-
->>> a = UMFileArray(file='file.pp', header_offset=3156, data_offset=3420,
-...                 dtype=numpy.dtype('float32'), shape=(30, 24),
-...                 size=720, ndim=2, disk_length=0)
-
->>> a = UMFileArray(file='packed_file.pp', header_offset=3156, data_offset=3420,
-...                 dtype=numpy.dtype('float32'), shape=(30, 24),
-...                 size=720, ndim=2, disk_length=423)
-
-'''
+    :Parameters:
+    
+        filename: `str`
+            The file name in normalized, absolute form.
+    
+        dtype: `numpy.dtype`
+            The data type of the data array on disk.
+    
+        ndim: `int`
+            The number of dimensions in the unpacked data array.
+    
+        shape: `tuple`
+            The shape of the unpacked data array.
+    
+        size: `int`
+            The number of elements in the unpacked data array.
+    
+        header_offset: `int`
+            The start position in the file of the header.
+    
+        data_offset: `int`
+            The start position in the file of the data array.
+    
+        disk_length: `int`
+            The number of words on disk for the data array, usually
+            LBLREC-LBEXT. If set to 0 then `!size` is used.
+    
+        fmt: `str`, optional
+    
+        word_size: `int`, optional
+    
+        byte_ordering: `str`, optional
+    
+    **Examples:**
+    
+    >>> a = UMFileArray(file='file.pp', header_offset=3156, data_offset=3420,
+    ...                 dtype=numpy.dtype('float32'), shape=(30, 24),
+    ...                 size=720, ndim=2, disk_length=0)
+    
+    >>> a = UMFileArray(file='packed_file.pp', header_offset=3156, data_offset=3420,
+    ...                 dtype=numpy.dtype('float32'), shape=(30, 24),
+    ...                 size=720, ndim=2, disk_length=423)
+    
+    '''
         super().__init__(filename=filename, dtype=dtype, ndim=ndim,
                          shape=shape, size=size,
                          header_offset=header_offset,
@@ -74,14 +74,14 @@ class UMArray(abstract.FileArray):
 
         # By default, do not close the UM file after data array access
         self._close = False
-    #--- End: def
+
     
     def __getitem__(self, indices):
         '''Implement indexing
 
-x.__getitem__(indices) <==> x[indices]
-
-Returns a numpy array.
+    x.__getitem__(indices) <==> x[indices]
+        
+    Returns a numpy array.
 
         ''' 
         f = self.open()
@@ -146,84 +146,84 @@ Returns a numpy array.
 
         # Return the numpy array
         return array
-    #--- End: def
+
 
     def __str__(self):
         '''x.__str__() <==> str(x)
 
         '''      
         return "%s%s in %s" % (self.header_offset, self.shape, self.filename)
-    #--- End: def
+
 
     @property
     def file_pointer(self):
-        '''
+        '''TODO
 
         '''
         return (self.filename, self.header_offset)
-    #--- End: def
+
 
     @property
     def header_offset(self):
-        '''
+        '''TODO
 
         '''
         return self._get_component('header_offset')
-    #--- End: def
+
 
     @property
     def data_offset(self):
-        '''
+        '''TODO
 
         '''
         return self._get_component('data_offset')
-    #--- End: def
+
 
     @property
     def disk_length(self):
-        '''
+        '''TODO
 
         '''
         return self._get_component('disk_length')
-    #--- End: def
+
 
 
     @property
     def fmt(self):
-        '''
+        '''TODO
 
         '''
         return self._get_component('fmt')
-    #--- End: def
+
 
     @property
     def byte_ordering(self):
-        '''
+        '''TODO
 
         '''
         return self._get_component('byte_ordering')
-    #--- End: def
+
 
     @property
     def word_size(self):
-        '''
+        '''TODO
 
         '''
         return self._get_component('word_size')
-    #--- End: def
+
 
     def close(self):
         '''Close the file containing the data array.
 
-If the file is not open then no action is taken.
-
-:Returns:
-
-    `None`
-
-**Examples:**
-
->>> f.close()
+    If the file is not open then no action is taken.
+    
+    :Returns:
+    
+        `None`
+    
+    **Examples:**
+    
+    >>> f.close()
 
         '''
         _close_um_file(self.filename)
@@ -232,19 +232,19 @@ If the file is not open then no action is taken.
     def open(self):
         '''Open the file containing the data array.
 
-:Returns:
-
-    `umfile_lib.File`
-
-**Examples:**
-
->>> f.open()
+    :Returns:
+    
+        `umfile_lib.File`
+    
+    **Examples:**
+    
+    >>> f.open()
 
         '''    
         return _open_um_file(self.filename,
                              fmt=self.fmt,
                              word_size=self.word_size,
                              byte_ordering=self.byte_ordering)
-    #--- End: def
+
 
 #--- End: class

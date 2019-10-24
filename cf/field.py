@@ -11796,7 +11796,7 @@ may be accessed with the `nc_global_attributes`,
         return f
 
     
-    def transpose(self, axes=None, constructs=True, inplace=False,
+    def transpose(self, axes=None, constructs=False, inplace=False,
                   items=True, i=False, **kwargs):
         '''Permute the axes of the data array.
 
@@ -13531,6 +13531,7 @@ may be accessed with the `nc_global_attributes`,
         self.set_construct(construct, key=key, axes=axes, copy=copy)
 
         return c
+    
 
     def flatten(self, axes=None, return_axis=False, inplace=False):
         '''Flatten axes of the field.

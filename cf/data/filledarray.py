@@ -8,9 +8,7 @@ from numpy.ma import array      as numpy_ma_array
 from numpy.ma import is_masked  as numpy_ma_is_masked
 from numpy.ma import masked_all as numpy_ma_masked_all
 
-from ..functions import parse_indices, get_subspace #, abspath
-from ..functions import inspect as cf_inspect
-from ..constants import CONSTANTS
+from ..functions import parse_indices, get_subspace
 from ..constants import masked as cf_masked
 
 _debug = False
@@ -79,7 +77,6 @@ class FilledArray(abstract.Array):
                         array_shape.append(a)
                 else:
                     array_shape.append(len(index))
-            #-- End: for
         #-- End: if
 
         if self.fill_value() is cf_masked:

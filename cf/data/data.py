@@ -710,8 +710,7 @@ place.
                                                size=partition.size,
                                                ndim=partition.ndim,
                                                dtype=compressed_array.dtype,
-                                               masked_all=True,
-                                               fill_value=0)
+                                               fill_value=cf_masked)
                     else:
                         # Find the location in the count array of the number
                         # of elements in this profile
@@ -9175,17 +9174,23 @@ returned.
         out.hardmask = False
 
         config = self.partition_configuration(readonly=True)
-              
+
+        start = 0
         for partition in self.partitions.matrix.flat:
             partition.open(config)
             array = partition.array
 
             new_shape = _new_shape(array.shape, axes)
             indices   = [slice(0, n) for n in new_shape]
+            size = indices[axes[0]].stop
+            indices[axes[0]] = slice(start, start+size)
 
             out[tuple(indices)] = array.reshape(new_shape)
             
+            start += size
+
             partition.close()
+
 
         out.hardmask = True
             
@@ -9848,7 +9853,7 @@ returned.
         array = FilledArray(shape=tuple(shape),
                             size=reduce(operator_mul, shape, 1),
                             ndim=len(shape), dtype=numpy_dtype(dtype),
-                            masked_all=True)
+                            fill_value=cf_masked)
         
         return cls(array, units=units, chunk=chunk)
 
