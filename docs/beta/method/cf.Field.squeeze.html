@@ -19,7 +19,7 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cf.Field.transpose" href="cf.Field.transpose.html" />
+    <link rel="next" title="cf.Field.swapaxes" href="cf.Field.swapaxes.html" />
     <link rel="prev" title="cf.Field.roll" href="cf.Field.roll.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -52,7 +52,7 @@
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
   <li><a href="../classes/cf.Field.html">cf.Field</a><ul>
       <li>Previous: <a href="cf.Field.roll.html" title="previous chapter">cf.Field.roll</a></li>
-      <li>Next: <a href="cf.Field.transpose.html" title="next chapter">cf.Field.transpose</a></li>
+      <li>Next: <a href="cf.Field.swapaxes.html" title="next chapter">cf.Field.swapaxes</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -90,7 +90,7 @@
 <h1>cf.Field.squeeze<a class="headerlink" href="#cf-field-squeeze" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.squeeze">
-<code class="descclassname">Field.</code><code class="descname">squeeze</code><span class="sig-paren">(</span><em>axes=None</em>, <em>inplace=False</em>, <em>i=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/field.py#L12184"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.squeeze" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">squeeze</code><span class="sig-paren">(</span><em>axes=None</em>, <em>inplace=False</em>, <em>i=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/field.py#L11663"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.squeeze" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove size-1 axes from the data array.</p>
 <p>By default all size 1 axes are removed, but particular size 1 axes
 may be selected for removal.</p>
@@ -98,7 +98,7 @@ may be selected for removal.</p>
 contructs, nor from the domain.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="cf.Field.domain_axis.html#cf.Field.domain_axis" title="cf.Field.domain_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axis</span></code></a>, <a class="reference internal" href="cf.Field.insert_dimension.html#cf.Field.insert_dimension" title="cf.Field.insert_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_dimension</span></code></a>, <a class="reference internal" href="cf.Field.flip.html#cf.Field.flip" title="cf.Field.flip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flip</span></code></a>,
+<p class="last"><a class="reference internal" href="cf.Field.domain_axis.html#cf.Field.domain_axis" title="cf.Field.domain_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axis</span></code></a>, <a class="reference internal" href="cf.Field.flatten.html#cf.Field.flatten" title="cf.Field.flatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flatten</span></code></a>, <a class="reference internal" href="cf.Field.insert_dimension.html#cf.Field.insert_dimension" title="cf.Field.insert_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_dimension</span></code></a>, <a class="reference internal" href="cf.Field.flip.html#cf.Field.flip" title="cf.Field.flip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flip</span></code></a>,
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_axes</span></code>, <a class="reference internal" href="cf.Field.transpose.html#cf.Field.transpose" title="cf.Field.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a>, <a class="reference internal" href="cf.Field.unsqueeze.html#cf.Field.unsqueeze" title="cf.Field.unsqueeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unsqueeze</span></code></a></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">

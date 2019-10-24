@@ -188,6 +188,7 @@ Data
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.DomainAncillary.flatten
    ~cf.DomainAncillary.flip
    ~cf.DomainAncillary.insert_dimension
    ~cf.DomainAncillary.roll

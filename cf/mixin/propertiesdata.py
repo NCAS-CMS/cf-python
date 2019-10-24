@@ -1847,7 +1847,8 @@ g
     def swapaxes(self, axis0, axis1, inplace=False):
         '''Interchange two axes of an array.
 
-    .. seealso:: ``flip`, insert_dimension`, `squeeze`, `transpose`
+    .. seealso:: `flatten`, `flip`, `insert_dimension`, `squeeze`,
+                 `transpose`
     
     :Parameters:
     
@@ -3045,17 +3046,42 @@ TODO
 
 
     def flatten(self, axes=None, inplace=False):
-        '''TODO
+        '''Flatten axes of the data
+
+    Any subset of the axes may be flattened.
+
+    The shape of the data may change, but the size will not.
+
+    The flattening is executed in row-major (C-style) order. For
+    example, the array [[1, 2], [3, 4]] would be flattened across both
+    dimensions to [1 2 3 4].
+
+    .. versionaddedd:: 3.0.2
+
+    .. seealso:: `insert_dimension`, `flip`, `swapaxes`, `transpose`
 
     :Parameters:
-
+   
+        axes: (sequence of) int or str, optional
+            Select the axes.  By default all axes are flattened. The
+            *axes* argument may be one, or a sequence, of:
+    
+              * An internal axis identifier. Selects this axis.
+            ..
+    
+              * An integer. Selects the axis coresponding to the given
+                position in the list of axes of the data array.
+    
+            No axes are flattened if *axes* is an empty sequence.
+    
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
     
     :Returns:
 
-        TODO
- 
+            The construct with flattened data, or `None` if the
+            operation was in-place.
+
     **Examples**
 
     >>> f.shape
@@ -3509,8 +3535,8 @@ TODO
     def flip(self, axes=None, inplace=False, i=False):
         '''Flip (reverse the direction of) data dimensions.
 
-    .. seealso:: `insert_dimension`, `squeeze`, `transpose`,
-                 `unsqueeze`
+    .. seealso:: `flatten`, `insert_dimension`, `squeeze`,
+                 `transpose`, `unsqueeze`
     
     :Parameters:
     
@@ -4418,7 +4444,8 @@ TODO
     def roll(self, iaxis, shift, inplace=False, i=False):
         '''Roll the data along an axis.
 
-    .. seealso:: `insert_dimension`, `flip`, `squeeze`, `transpose`
+    .. seealso:: `flatten`, `insert_dimension`, `flip`, `squeeze`,
+                 `transpose`
     
     :Parameters:
     

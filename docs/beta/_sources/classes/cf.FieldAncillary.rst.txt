@@ -155,10 +155,12 @@ Data
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.FieldAncillary.flatten
    ~cf.FieldAncillary.flip
    ~cf.FieldAncillary.insert_dimension
    ~cf.FieldAncillary.roll
    ~cf.FieldAncillary.squeeze
+   ~cf.FieldAncillary.swapaxes
    ~cf.FieldAncillary.transpose
    
 .. rubric:: *Data array mask*

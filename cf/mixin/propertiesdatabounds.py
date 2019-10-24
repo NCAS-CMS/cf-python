@@ -1422,6 +1422,72 @@ The output units are '1' (nondimensionsal).
         return v
 
     
+    def flatten(self, axes=None, inplace=False):
+        '''Flatten axes of the data
+
+    Any subset of the axes may be flattened.
+
+    The shape of the data may change, but the size will not.
+
+    The flattening is executed in row-major (C-style) order. For
+    example, the array [[1, 2], [3, 4]] would be flattened across both
+    dimensions to [1 2 3 4].
+
+    .. versionaddedd:: 3.0.2
+
+    .. seealso:: `insert_dimension`, `flip`, `swapaxes`, `transpose`
+
+    :Parameters:
+   
+        axes: (sequence of) int or str, optional
+            Select the axes.  By default all axes are flattened. The
+            *axes* argument may be one, or a sequence, of:
+    
+              * An internal axis identifier. Selects this axis.
+            ..
+    
+              * An integer. Selects the axis coresponding to the given
+                position in the list of axes of the data array.
+    
+            No axes are flattened if *axes* is an empty sequence.
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+    :Returns:
+
+            The construct with flattened data, or `None` if the
+            operation was in-place.
+
+    **Examples**
+
+    >>> f.shape
+    (1, 2, 3, 4)
+    >>> f.flatten().shape
+    (24,)
+    >>> f.flatten([1, 3]).shape
+    (1, 8, 3)
+    >>> f.flatten([0, -1], inplace=True)
+    >>> f.shape
+    (4, 2, 3)
+
+        '''
+        v = super().flatten(axes, inplace=inplace)
+        if inplace:
+            v = self
+            
+        if bounds:
+            bounds = v.get_bounds(None)
+            if bounds is not None:
+                axes = self._parse_axes(axes)[0]
+                bounds.flatten(axes, inplace=True)
+        #--- End: if
+        
+        if inplace:
+            v = None
+        return v
+
+
     def floor(self, bounds=True, inplace=False, i=False):
         '''Floor the data array, element-wise.
 

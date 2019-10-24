@@ -27,6 +27,7 @@ from numpy import isnan       as numpy_isnan
 from numpy import nan         as numpy_nan
 from numpy import ndarray     as numpy_ndarray
 from numpy import ndim        as numpy_ndim
+from numpy import prod        as numpy_prod
 from numpy import reshape     as numpy_reshape
 from numpy import shape       as numpy_shape
 from numpy import size        as numpy_size
@@ -9698,8 +9699,8 @@ may be accessed with the `nc_global_attributes`,
 
     .. versionadded:: 3.0.0
     
-    .. seealso:: `domain_axis`, `flip`, `squeeze`, `transpose`,
-                 `unsqueeze`
+    .. seealso:: `domain_axis`, `flatten`, `flip`, `squeeze`,
+                 `transpose`, `unsqueeze`
     
     :Parameters:
     
@@ -11174,8 +11175,8 @@ may be accessed with the `nc_global_attributes`,
     def flip(self, axes=None, inplace=False, i=False, **kwargs):
         '''Flip (reverse the direction of) axes of the field.
 
-    .. seealso:: `domain_axis`, `insert_dimension`, `squeeze`,
-                 `transpose`, `unsqueeze`
+    .. seealso:: `domain_axis`, `flatten`, `insert_dimension`,
+                 `squeeze`, `transpose`, `unsqueeze`
     
     :Parameters:
     
@@ -11668,7 +11669,7 @@ may be accessed with the `nc_global_attributes`,
     Squeezed domain axis constructs are not removed from the metadata
     contructs, nor from the domain.
     
-    .. seealso:: `domain_axis`, `insert_dimension`, `flip`,
+    .. seealso:: `domain_axis`, `flatten`, `insert_dimension`, `flip`,
                  `remove_axes`, `transpose`, `unsqueeze`
     
     :Parameters:
@@ -11733,7 +11734,8 @@ may be accessed with the `nc_global_attributes`,
     def swapaxes(self, axis0, axis1, inplace=False, i=False):
         '''Interchange two axes of the data.
         
-    .. seealso:: `flip`, `insert_dimension`, `squeeze`, `transpose`
+    .. seealso:: `flatten`, `flip`, `insert_dimension`, `squeeze`,
+                 `transpose`
     
     :Parameters:
     
@@ -11805,8 +11807,8 @@ may be accessed with the `nc_global_attributes`,
     By default metadata constructs are not tranposed, but they may be
     if the *constructs* parmeter is set.
     
-    .. seealso:: `domain_axis`, `insert_dimension`, `flip`, `squeeze`,
-                 `unsqueeze`
+    .. seealso:: `domain_axis`, `flatten`, `insert_dimension`, `flip`,
+                 `squeeze`, `unsqueeze`
     
     :Parameters:
 
@@ -11891,7 +11893,8 @@ may be accessed with the `nc_global_attributes`,
     
     The axes are inserted into the slowest varying data array positions.
     
-    .. seealso:: `flip`, `insert_dimension`, `squeeze`, `transpose`
+    .. seealso:: `flatten`, `flip`, `insert_dimension`, `squeeze`,
+                 `transpose`
     
     :Parameters:
     
@@ -13529,10 +13532,134 @@ may be accessed with the `nc_global_attributes`,
 
         return c
 
-    def flatten(self, axes=None, inplace=False):
-        '''TODO
+    def flatten(self, axes=None, return_axis=False, inplace=False):
+        '''Flatten axes of the field.
+
+    Any subset of the domain axes may be flattened.
+
+    The shape of the data may change, but the size will not.
+
+    Metadata constructs whose data spans the flattened axes will
+    either also be flattened, or removed.
+
+    Cell method constructs that apply to the flattened axes will be
+    removed or, if possible, have their axes specifications changed to
+    standard names.
+
+    The flattening is executed in row-major (C-style) order. For
+    example, the array ``[[1, 2], [3, 4]]`` would be flattened across
+    both dimensions to ``[1 2 3 4]``.
+
+    .. versionadded:: 3.0.2
+
+    .. seealso:: `insert_dimension`, `flip`, `swapaxes`, `transpose`
+
+    :Parameters:
+
+        axes: (sequence of) `str` or `int`, optional
+            Select the domain axes to be flattened, defined by the
+            domain axes that would be selected by passing the each
+            given axis description to a call of the field construct's
+            `domain_axis` method. For example, for a value of ``'X'``,
+            the domain axis construct returned by
+            ``f.domain_axis('X'))`` is selected.
+
+            If no axes are provided then all axes spanned by the field
+            construct's data are flattened.
+
+        return_axis: `bool`, optional
+            If True then also return either the key of the new,
+            flattened domain axis construct; or `None` if the axes to
+            be flattened do not span the data.
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+    :Returns:
+
+        `Field` or `None`, [`str` or `None`]
+            The new, flattened field construct, or `None` if the
+            operation was in-place.
+
+            If *return_axis* is True then also return either the key
+            of the new, flattened domain axis construct; or `None` if
+            the axes to be flattened do not span the data.
+ 
+    **Examples**
+
+    >>> f.shape
+    (1, 2, 3, 4)
+    >>> f.flatten().shape
+    (24,)
+    >>> f.flatten([1, 3]).shape
+    (1, 8, 3)
+    >>> f.flatten([0, -1], inplace=True)
+    >>> f.shape
+    (4, 2, 3)
+
+    >>> print(t)
+    Field: air_temperature (ncvar%ta)
+    ---------------------------------
+    Data            : air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K
+    Cell methods    : grid_latitude(10): grid_longitude(9): mean where land (interval: 0.1 degrees) time(1): maximum
+    Field ancils    : air_temperature standard_error(grid_latitude(10), grid_longitude(9)) = [[0.76, ..., 0.32]] K
+    Dimension coords: atmosphere_hybrid_height_coordinate(1) = [1.5]
+                    : grid_latitude(10) = [2.2, ..., -1.76] degrees
+                    : grid_longitude(9) = [-4.7, ..., -1.18] degrees
+                    : time(1) = [2019-01-01 00:00:00]
+    Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
+                    : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
+                    : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., b'kappa']
+    Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
+    Coord references: grid_mapping_name:rotated_latitude_longitude
+                    : standard_name:atmosphere_hybrid_height_coordinate
+    Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
+                    : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
+                    : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
+    >>> print(t.flatten())
+    Field: air_temperature (ncvar%ta)
+    ---------------------------------
+    Data            : air_temperature(key%domainaxis4(90)) K
+    Cell methods    : grid_latitude: grid_longitude: mean where land (interval: 0.1 degrees) time(1): maximum
+    Field ancils    : air_temperature standard_error(key%domainaxis4(90)) = [0.76, ..., 0.32] K
+    Dimension coords: time(1) = [2019-01-01 00:00:00]
+    Auxiliary coords: latitude(key%domainaxis4(90)) = [53.941, ..., 50.225] degrees_N
+                    : longitude(key%domainaxis4(90)) = [2.004, ..., 8.156] degrees_E
+    Cell measures   : measure:area(key%domainaxis4(90)) = [2391.9657, ..., 2392.6009] km2
+    Coord references: grid_mapping_name:rotated_latitude_longitude
+                    : standard_name:atmosphere_hybrid_height_coordinate
+    Domain ancils   : surface_altitude(key%domainaxis4(90)) = [0.0, ..., 270.0] m
+    >>> print(t.flatten(['grid_latitude', 'grid_longitude']))
+    Field: air_temperature (ncvar%ta)
+    ---------------------------------
+    Data            : air_temperature(atmosphere_hybrid_height_coordinate(1), key%domainaxis4(90)) K
+    Cell methods    : grid_latitude: grid_longitude: mean where land (interval: 0.1 degrees) time(1): maximum
+    Field ancils    : air_temperature standard_error(key%domainaxis4(90)) = [0.76, ..., 0.32] K
+    Dimension coords: atmosphere_hybrid_height_coordinate(1) = [1.5]
+                    : time(1) = [2019-01-01 00:00:00]
+    Auxiliary coords: latitude(key%domainaxis4(90)) = [53.941, ..., 50.225] degrees_N
+                    : longitude(key%domainaxis4(90)) = [2.004, ..., 8.156] degrees_E
+    Cell measures   : measure:area(key%domainaxis4(90)) = [2391.9657, ..., 2392.6009] km2
+    Coord references: grid_mapping_name:rotated_latitude_longitude
+                    : standard_name:atmosphere_hybrid_height_coordinate
+    Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
+                    : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
+                    : surface_altitude(key%domainaxis4(90)) = [0.0, ..., 270.0] m
+
+    >>> t.domain_axes.keys()
+    >>> dict_keys(['domainaxis0', 'domainaxis1', 'domainaxis2', 'domainaxis3'])
+    >>> t.flatten(return_axis=True)
+    (<CF Field: air_temperature(key%domainaxis4(90)) K>,
+     'domainaxis4')
+    >>> t.flatten('grid_longitude', return_axis=True)
+    (<CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>,
+     'domainaxis2')
+    >>> t.flatten('time', return_axis=True)
+    (<CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>,
+     None)
 
         '''
+        
         if inplace:
             f = self
         else:
@@ -13551,46 +13678,109 @@ may be accessed with the `nc_global_attributes`,
 
         iaxes = [data_axes.index(axis) for axis in axes]      
 
+        if not len(iaxes):
+            if inplace:
+                f = None
+
+            if return_axis:
+                return f, None            
+
+            return f
+        
+        if len(iaxes) == 1:
+            if inplace:
+                f = None
+
+            if return_axis:
+                return f, tuple(axes)[0]
+
+            return f
+        
         # Make sure that the metadata constructs have the same
         # relative axis order as the data (pre-flattening)
         f.transpose(f.get_data_axes(), inplace=True, constructs=True)
-        
-        # Flatten the field's data array
-        super(Field, f).flatten(iaxes, inplace=True)
 
-        # Update the data axes
+        # Create the new data axes
+        shape = f.shape
         new_data_axes = [data_axes[i] for i in range(len(data_axes))
                          if i not in iaxes]
-        new_axis = f.set_construct(DomainAxis(f.shape[iaxes[0]]))
+        new_axis_size = numpy_prod([shape[i] for i in iaxes])
+        new_axis = f.set_construct(DomainAxis(new_axis_size))
         new_data_axes.insert(iaxes[0], new_axis)
+
+        # Flatten the field's data
+        super(Field, f).flatten(iaxes, inplace=True)
         
+        # Set the new data axes
         f.set_data_axes(new_data_axes)
         
-        # Flatten the constructs that span the flattened axes. This
-        # might entail taking broadcasting some constructs and
-        # flattening them
-        print ('axes=', axes)
-        for key, c in f.constructs.filter_by_axis('subset', *axes).items():
-            c_axes = f.get_data_axes(key)
-            print ('bon', c_axes, repr(c))
-            c_iaxes = [c_axes.index(axis) for axis in axes if axis in c_axes]
-            print (c_iaxes)
-            c.flatten(c_iaxes, inplace=True)
-
-            new_data_axes = [c_axes[i] for i in range(len(c_axes))
-                             if i not in iaxes]
-            new_data_axes.insert(iaxes[0], new_axis)        
-            print ('ppp',new_data_axes)
-            f.set_data_axes(new_data_axes, key=key)
-            
-        # Remove cell methods that no longer apply
+        # Modify or remove cell methods that span the flatten axes
         for key, cm in tuple(f.cell_methods.items()):
-            if set(cm.get_axes(())).intersection(axes):
+            cm_axes = set(cm.get_axes(()))
+            if not cm_axes or cm_axes.isdisjoint(axes):
+                continue
+            
+            if cm_axes.difference(axes):
                 f.del_construct(key)
+                continue
+            
+            if cm_axes.issubset(axes):
+                cm_axes = list(cm_axes)
+                set_axes = True
+                for i, a in enumerate(cm_axes):
+                    sn = None
+                    for ctype in ('dimension_coordinate', 'auxiliary_coordinate'):
+                        for c in f.constructs.filter_by_type(ctype).filter_by_axis('exact', a).values():
+                            sn = c.get_property('standard_name', None)
+                            if sn is not None:
+                                break
+                            
+                        if sn is not None:
+                            break
+                    #--- End: for
+
+                    if sn is None:
+                        f.del_construct(key)
+                        set_axes = False
+                        break
+                    else:
+                        cm_axes[i] = sn    
+                #--- End: for
+
+                if set_axes:
+                    cm.set_axes(cm_axes)                
         #--- End: for
-        print (f)
+
+        # Flatten the constructs that span all of the flattened axes,
+        # or all bar some which have size 1.
+        d = dict(f.constructs.filter_by_axis('exact', *axes))
+        axes2 = [axis for axis in axes  if f.domain_axes[axis].get_size() > 1]
+        if axes2 != axes:
+            d.update(f.constructs.filter_by_axis('exact', *axes2))
+
+        for key, c in d.items():
+            c_axes = f.get_data_axes(key)
+            c_iaxes = [c_axes.index(axis) for axis in axes if axis in c_axes]
+            c.flatten(c_iaxes, inplace=True)
+            new_data_axes = [c_axes[i] for i in range(len(c_axes))
+                             if i not in c_iaxes]
+            new_data_axes.insert(iaxes[0], new_axis)        
+            f.set_data_axes(new_data_axes, key=key)
+
+        # Remove constructs that span some, but not all, of the
+        # flattened axes.
+        for key in f.constructs.filter_by_axis('subset', *axes):
+            f.del_construct(key)
+
+        # Remove the domain axis constructs for the flattened axes
+        for key in axes:
+            f.del_construct(key)
+
         if inplace:
             f = None
+        if return_axis:
+            return f, new_axis
+        
         return f
 
     

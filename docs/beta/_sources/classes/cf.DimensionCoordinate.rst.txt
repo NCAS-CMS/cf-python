@@ -195,10 +195,12 @@ Data
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.DimensionCoordinate.flatten
    ~cf.DimensionCoordinate.flip
    ~cf.DimensionCoordinate.insert_dimension
    ~cf.DimensionCoordinate.roll
    ~cf.DimensionCoordinate.squeeze
+   ~cf.DimensionCoordinate.swapaxes
    ~cf.DimensionCoordinate.transpose
    
 .. rubric:: *Data array mask*

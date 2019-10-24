@@ -195,6 +195,7 @@ Data
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.DimensionCoordinate.flatten
    ~cf.DimensionCoordinate.flip
    ~cf.DimensionCoordinate.insert_dimension
    ~cf.DimensionCoordinate.roll

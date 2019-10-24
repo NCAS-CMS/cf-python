@@ -156,6 +156,7 @@ Data
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.Bounds.flatten
    ~cf.Bounds.flip
    ~cf.Bounds.insert_dimension
    ~cf.Bounds.roll

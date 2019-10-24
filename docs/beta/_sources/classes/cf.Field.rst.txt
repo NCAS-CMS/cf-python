@@ -172,10 +172,12 @@ Data
    :template: method.rst
 
    ~cf.Field.anchor
+   ~cf.Field.flatten
    ~cf.Field.flip
    ~cf.Field.insert_dimension
    ~cf.Field.roll
    ~cf.Field.squeeze
+   ~cf.Field.swapaxes
    ~cf.Field.transpose
    ~cf.Field.unsqueeze
 

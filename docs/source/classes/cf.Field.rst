@@ -172,6 +172,7 @@ Data
    :template: method.rst
 
    ~cf.Field.anchor
+   ~cf.Field.flatten
    ~cf.Field.flip
    ~cf.Field.insert_dimension
    ~cf.Field.roll

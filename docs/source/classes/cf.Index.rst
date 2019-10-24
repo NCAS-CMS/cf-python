@@ -154,6 +154,7 @@ Data
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.Index.flatten
    ~cf.Index.flip
    ~cf.Index.insert_dimension
    ~cf.Index.roll

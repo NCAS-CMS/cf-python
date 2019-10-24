@@ -155,6 +155,7 @@ Data
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.FieldAncillary.flatten
    ~cf.FieldAncillary.flip
    ~cf.FieldAncillary.insert_dimension
    ~cf.FieldAncillary.roll

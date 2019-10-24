@@ -179,6 +179,7 @@ Data
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.CellMeasure.flatten
    ~cf.CellMeasure.flip
    ~cf.CellMeasure.insert_dimension
    ~cf.CellMeasure.roll

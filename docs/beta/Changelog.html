@@ -87,7 +87,8 @@
 <p><strong>Not yet released</strong></p>
 <ul class="simple">
 <li>Now reads CDL files (<a class="reference external" href="https://github.com/NCAS-CMS/cf-python/issues/1">https://github.com/NCAS-CMS/cf-python/issues/1</a>)</li>
-<li>New methods: <a class="reference internal" href="method/cf.Field.cumsum.html#cf.Field.cumsum" title="cf.Field.cumsum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.cumsum</span></code></a>, <a class="reference internal" href="method/cf.Field.digitize.html#cf.Field.digitize" title="cf.Field.digitize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.digitize</span></code></a>, <a class="reference internal" href="method/cf.Field.bin.html#cf.Field.bin" title="cf.Field.bin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.bin</span></code></a>.</li>
+<li>New methods: <a class="reference internal" href="method/cf.Field.cumsum.html#cf.Field.cumsum" title="cf.Field.cumsum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.cumsum</span></code></a>, <a class="reference internal" href="method/cf.Field.digitize.html#cf.Field.digitize" title="cf.Field.digitize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.digitize</span></code></a>, <a class="reference internal" href="method/cf.Field.bin.html#cf.Field.bin" title="cf.Field.bin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.bin</span></code></a>,
+<a class="reference internal" href="method/cf.Field.swapaxes.html#cf.Field.swapaxes" title="cf.Field.swapaxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.swapaxes</span></code></a>, <a class="reference internal" href="method/cf.Field.flatten.html#cf.Field.flatten" title="cf.Field.flatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.flatten</span></code></a>.</li>
 <li>New methods: <a class="reference internal" href="function/cf.histogram.html#cf.histogram" title="cf.histogram"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.histogram</span></code></a>.</li>
 <li>New field construct collapse methods: <code class="docutils literal notranslate"><span class="pre">integral</span></code>,
 <code class="docutils literal notranslate"><span class="pre">maximum_absolute_value</span></code>, <code class="docutils literal notranslate"><span class="pre">minimum_absolute_value</span></code>,
@@ -97,7 +98,7 @@
 <li>New methods: <a class="reference internal" href="method/cf.Data.cumsum.html#cf.Data.cumsum" title="cf.Data.cumsum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.cumsum</span></code></a>, <a class="reference internal" href="method/cf.Data.digitize.html#cf.Data.digitize" title="cf.Data.digitize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.digitize</span></code></a>,
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.masked_all</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.maximum_absolute_value</span></code>,
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.minimum_absolute_value</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.sum_of_squares</span></code>,
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.root_mean_square</span></code>.</li>
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.root_mean_square</span></code>, <a class="reference internal" href="method/cf.Data.flatten.html#cf.Data.flatten" title="cf.Data.flatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.flatten</span></code></a>.</li>
 <li>Fixed occasional failure to delete all temporary directories at
 exit.</li>
 <li>Fixed bug in <a class="reference internal" href="method/cf.Data.func.html#cf.Data.func" title="cf.Data.func"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.func</span></code></a> when overriding units. Affects all
@@ -107,6 +108,8 @@ methods that call <a class="reference internal" href="method/cf.Data.func.html#c
 construct arithmetic.</li>
 <li>Fixed bug that led to incorrect persistent entries in output of
 <a class="reference internal" href="method/cf.Field.properties.html#cf.Field.properties" title="cf.Field.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.properties</span></code></a>.</li>
+<li>Fixed bug in <a class="reference internal" href="method/cf.Data.squeeze.html#cf.Data.squeeze" title="cf.Data.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.squeeze</span></code></a> that sometimes created
+inconsistencies with the cyclic dimensions.</li>
 </ul>
 </div>
 <div class="section" id="version-3-0-1">
@@ -623,7 +626,7 @@ array.</li>
 <li>Functionality to recursively read directories in <a class="reference internal" href="function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a>, <code class="docutils literal notranslate"><span class="pre">cfa</span></code>
 and <code class="docutils literal notranslate"><span class="pre">cfump</span></code></li>
 <li>Print warning but carry on when ESMF import fails</li>
-<li>Fixed bug in <a class="reference internal" href="method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.subspace</span></code></a> when accessing axes derived from UM
+<li>Fixed bug in <a class="reference internal" href="attribute/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.subspace</span></code></a> when accessing axes derived from UM
 format files</li>
 </ul>
 </div>

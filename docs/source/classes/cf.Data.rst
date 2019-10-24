@@ -83,6 +83,7 @@ Data methods
    ~cf.Data.fits_in_memory
    ~cf.Data.fits_in_one_chunk_in_memory
    ~cf.Data.flat
+   ~cf.Data.flatten
    ~cf.Data.flip
    ~cf.Data.floor
    ~cf.Data.full

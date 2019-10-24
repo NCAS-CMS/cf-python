@@ -9089,15 +9089,42 @@ returned.
 
 
     def flatten(self, axes=None, inplace=False):
-        '''TODO
+        '''Flatten axes of the data
+
+    Any subset of the axes may be flattened.
+
+    The shape of the data may change, but the size will not.
+
+    The flattening is executed in row-major (C-style) order. For
+    example, the array [[1, 2], [3, 4]] would be flattened across both
+    dimensions to [1 2 3 4].
+
+    .. versionaddedd:: 3.0.2
+
+    .. seealso:: `insert_dimension`, `flip`, `swapaxes`, `transpose`
 
     :Parameters:
-
+   
+        axes: (sequence of) int or str, optional
+            Select the axes.  By default all axes are flattened. The
+            *axes* argument may be one, or a sequence, of:
+    
+              * An internal axis identifier. Selects this axis.
+            ..
+    
+              * An integer. Selects the axis coresponding to the given
+                position in the list of axes of the data array.
+    
+            No axes are flattened if *axes* is an empty sequence.
+    
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
     
     :Returns:
 
+        `Data` or `None`
+            The flattened data, or `None` if the operation was
+            in-place.
 
     **Examples**
 
@@ -9138,6 +9165,11 @@ returned.
         else:
             axes = self._parse_axes(axes)
 
+        if len(axes) <= 1:
+            if inplace:
+                return
+            return self
+            
         out = self.empty(_new_shape(shape, axes), dtype=self.dtype,
                          units=self.Units, chunk=True)
         out.hardmask = False
@@ -9159,7 +9191,7 @@ returned.
             
         if inplace:
             self.__dict__ = out.__dict__
-            return None 
+            return
                   
         return out
         
@@ -9866,7 +9898,7 @@ returned.
     def flip(self, axes=None, inplace=False, i=False):
         '''Reverse the direction of axes of the data array.
 
-    .. seealso:: `insert_dimension`, `squeeze`, `swapaxes`,
+    .. seealso:: `flatten', `insert_dimension`, `squeeze`, `swapaxes`,
                  `transpose`
     
     :Parameters:
@@ -10279,7 +10311,8 @@ returned.
     def swapaxes(self, axis0, axis1, inplace=False, i=False):
         '''Interchange two axes of an array.
 
-    .. seealso:: ``flip`, insert_dimension`, `squeeze`, `transpose`
+    .. seealso:: `flatten', `flip`, 'insert_dimension`, `squeeze`,
+                 `transpose`
     
     :Parameters:
     
@@ -10973,7 +11006,8 @@ returned.
     By default all size 1 axes are removed, but particular axes may be
     selected with the keyword arguments.
     
-    .. seealso:: `insert_dimension`, `flip`, `swapaxes`, `transpose`
+    .. seealso:: `flatten`, `insert_dimension`, `flip`, `swapaxes`,
+                 `transpose`
     
     :Parameters:
     
@@ -11227,7 +11261,8 @@ returned.
     def transpose(self, axes=None, inplace=False, i=False):
         '''Permute the axes of the data array.
 
-    .. seealso:: `insert_dimension`, `flip`, `squeeze`, `swapaxes`
+    .. seealso:: `flatten', `insert_dimension`, `flip`, `squeeze`,
+                 `swapaxes`
     
     :Parameters:
     

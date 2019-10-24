@@ -90,7 +90,7 @@
 <h1>cf.DimensionCoordinate.identity<a class="headerlink" href="#cf-dimensioncoordinate-identity" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.DimensionCoordinate.identity">
-<code class="descclassname">DimensionCoordinate.</code><code class="descname">identity</code><span class="sig-paren">(</span><em>default=''</em>, <em>strict=False</em>, <em>relaxed=False</em>, <em>nc_only=False</em>, <em>relaxed_identity=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/mixin/propertiesdatabounds.py#L2209"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DimensionCoordinate.identity" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">DimensionCoordinate.</code><code class="descname">identity</code><span class="sig-paren">(</span><em>default=''</em>, <em>strict=False</em>, <em>relaxed=False</em>, <em>nc_only=False</em>, <em>relaxed_identity=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/mixin/propertiesdatabounds.py#L2275"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DimensionCoordinate.identity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the canonical identity.</p>
 <p>By default the identity is the first found of the following:</p>
 <ul class="simple">
@@ -119,18 +119,18 @@ bounds netCDF variable name).</p>
 <dd><p class="first last">If no identity can be found then return the value of the
 default parameter.</p>
 </dd>
-<dt>strict: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional </dt>
+<dt>strict: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional </dt>
 <dd><p class="first last">If True then only take the identity from the
 “standard_name” property or the “id” attribute, in that
 order.</p>
 </dd>
-<dt>relaxed: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>relaxed: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then only take the identity from the
 “standard_name” property, the “id” attribute, the
 “long_name” property or netCDF variable name, in that
 order.</p>
 </dd>
-<dt>nc_only: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional       </dt>
+<dt>nc_only: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional       </dt>
 <dd><p class="first last">If True then only take the identity from the netCDF
 variable name.</p>
 </dd>
@@ -195,7 +195,7 @@ variable name.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/method/cf.DimensionCoordinate.identity.rst.txt"
