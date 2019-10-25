@@ -181,8 +181,6 @@ from .units                import Units
 
 from .fieldlist            import FieldList
 
-from .abstract             import Coordinate
-
 from .dimensioncoordinate  import DimensionCoordinate
 from .auxiliarycoordinate  import AuxiliaryCoordinate
 from .coordinatereference  import CoordinateReference

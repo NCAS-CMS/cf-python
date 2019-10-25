@@ -3,16 +3,16 @@ from numpy import dtype   as numpy_dtype
 from numpy import sort    as numpy_sort
 
 from collections import namedtuple
-from operator    import attrgetter, itemgetter
+from operator    import itemgetter
 
 from .auxiliarycoordinate import AuxiliaryCoordinate
-from .coordinatereference import CoordinateReference
+#from .coordinatereference import CoordinateReference
 from .domainaxis          import DomainAxis
-from .field               import Field
+#from .field               import Field
 from .fieldlist           import FieldList
 from .query               import gt
-from .functions           import (flat, RTOL, ATOL, equals,
-                                  hash_array, allclose,
+from .functions           import (flat, RTOL, ATOL,
+                                  hash_array, 
                                   _numpy_allclose)
 from .functions           import inspect as cf_inspect
 from .units               import Units

@@ -1,24 +1,19 @@
-from collections import namedtuple
 from functools   import reduce
 from operator    import itemgetter
 
 import numpy
-from numpy import argsort       as numpy_argsort
 from numpy import array         as numpy_array
 from numpy import asanyarray    as numpy_asanyarray
 from numpy import ceil          as numpy_ceil
 from numpy import cos           as numpy_cos
-from numpy import count_nonzero as numpy_count_nonzero
 from numpy import cumsum        as numpy_cumsum
 from numpy import digitize      as numpy_digitize
 from numpy import dtype         as numpy_dtype
 from numpy import e             as numpy_e
 from numpy import empty         as numpy_empty
-from numpy import empty_like    as numpy_empty_like
 from numpy import exp           as numpy_exp
 from numpy import floor         as numpy_floor
 from numpy import finfo         as numpy_finfo
-from numpy import isclose       as numpy_isclose
 from numpy import linspace      as numpy_linspace
 from numpy import log           as numpy_log
 from numpy import log10         as numpy_log10
@@ -62,10 +57,8 @@ from numpy.ma import masked_invalid as numpy_ma_masked_invalid
 from numpy.ma import masked_where   as numpy_ma_masked_where
 from numpy.ma import MaskedArray    as numpy_ma_MaskedArray
 from numpy.ma import nomask         as numpy_ma_nomask
-from numpy.ma import ones           as numpy_ma_ones
 from numpy.ma import var            as numpy_ma_var
 from numpy.ma import where          as numpy_ma_where
-from numpy.ma import zeros          as numpy_ma_zeros
 
 import cftime
 
@@ -76,20 +69,19 @@ import operator
 from json import dumps as json_dumps
 from json import loads as json_loads
 
-from functools import partial
+#from functools import partial
 from operator  import mul as operator_mul
 from math      import ceil as math_ceil
-from sys       import byteorder, getrefcount
 from itertools import product as itertools_product
 
-from ..cfdatetime import st2dt, dt2rt, rt2dt, st2rt
+from ..cfdatetime import dt2rt, rt2dt, st2rt
 from ..cfdatetime import dt as cf_dt
 from ..units      import Units
 from ..constants  import masked as cf_masked
 from ..functions import (CHUNKSIZE, FM_THRESHOLD, RTOL, ATOL,
                          FREE_MEMORY, COLLAPSE_PARALLEL_MODE,
                          parse_indices, _numpy_allclose,
-                         _numpy_isclose, abspath, pathjoin,
+                         _numpy_isclose, pathjoin,
                          hash_array, broadcast_array)
 
 from ..functions import (_DEPRECATION_ERROR_KWARGS,
@@ -100,7 +92,6 @@ from ..functions import inspect as cf_inspect
 from ..functions import _section
 
 from .abstract           import (Array,
-                                 FileArray,
                                  CompressedArray)
 from .filledarray        import FilledArray
 from .partition          import Partition
@@ -1819,7 +1810,7 @@ place.
                             partition._subarray_shape = subarray.shape
                             partition._subarray_isMA = numpy_ma_isMA(subarray)
                             if partition._subarray_isMA:
-                                partition._subarray_is_masked = not subarray.mask is numpy_ma_nomask
+                                partition._subarray_is_masked = subarray.mask is not numpy_ma_nomask
                             else:
                                 partition._subarray_is_masked = False
                             #--- End: if
@@ -5564,7 +5555,7 @@ dimensions.
                                 item_props['is_numpy_array'] = True
                                 item_props['isMA'] = numpy_ma_isMA(item)
                                 if item_props['isMA']:
-                                    item_props['is_masked'] = not item.mask is numpy_ma_nomask
+                                    item_props['is_masked'] = item.mask is not numpy_ma_nomask
                                 else:
                                     item_props['is_masked'] = False
                                 #--- End: if
@@ -5664,7 +5655,7 @@ dimensions.
                 out_props = {}
                 out_props['isMA'] = numpy_ma_isMA(out)
                 if out_props['isMA']:
-                    out_props['is_masked'] = not out.mask is numpy_ma_nomask
+                    out_props['is_masked'] = out.mask is not numpy_ma_nomask
                 else:
                     out_props['is_masked'] = False
                 #--- End: if
@@ -12429,14 +12420,6 @@ class AuxiliaryMask:
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
-    @property
-    def dtype(self):
-        '''TODO
-
-        '''
-        return self._mask[0].dtype
-
-
     @property
     def ndim(self):
         '''TODO

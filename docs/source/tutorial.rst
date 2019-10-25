@@ -54,6 +54,7 @@ be found in the zip file ``cf_tutorial_files.zip``
    cf_tutorial_files.zip
    contiguous.nc
    external.nc
+   file2.nc
    file.nc
    gathered.nc
    parent.nc
@@ -143,13 +144,23 @@ A :ref:`field list <Field-lists>` is very much like a Python `list`,
 with the addition of extra methods that operate on its field construct
 elements.
 
-All formats of netCDF3 and netCDF4 files (including `CFA-netCDF
-<http://www.met.reading.ac.uk/~david/cfa/0.4/index.html>`_ files),
-containing datasets for any version of CF up to and including
-CF-|version|, can be read.
+The following file type can be read:
 
-:ref:`PP and UM fields files <PP-and-UM-fields-files>` can also be
-read, the contents of which are mapped into field constructs.
+* All formats of netCDF3 and netCDF4 files (including `CFA-netCDF
+  <http://www.met.reading.ac.uk/~david/cfa/0.4/index.html>`_ files)
+  can be read, containing datasets for any version of CF up to and
+  including CF-|version|.
+
+..
+
+* Files in `CDL format
+  <https://www.unidata.ucar.edu/software/netcdf/netcdf/CDL-Syntax.html>`_,
+  with or without the data array values.
+
+..
+
+* :ref:`PP and UM fields files <PP-and-UM-fields-files>`, whose
+  contents are mapped into field constructs.
 
 For example, to read the file ``file.nc``, which contains two field
 constructs:
@@ -183,7 +194,7 @@ cards). Shell environment variables are also permitted.
 		
    >>> y = cf.read('*.nc')
    >>> len(y)
-   12
+   14
 
 .. code-block:: python
    :caption: *Read two particular files, noting that they contain more
@@ -206,7 +217,7 @@ with the *ignore_read_error* keyword.
    Exception: Can't determine format of file cf_tutorial_files.zip
    >>> y = cf.read('$PWD', ignore_read_error=True)
    >>> len(y)
-   13
+   15
 
 In all cases, the default behaviour is to aggregate the contents of
 all input datasets into as few field constructs as possible, and it is
@@ -1096,6 +1107,8 @@ by using the following field construct methods:
 =========================  ===========================================
 Method                     Description
 =========================  ===========================================
+`~Field.flatten`           Flatten domain axes of the field construct
+
 `~Field.flip`              Reverse the direction of a data dimension
 
 `~Field.insert_dimension`  Insert a new size one data dimension. The
@@ -1688,6 +1701,8 @@ easy to perform further filters on their results:
     
 Construct identities
 ^^^^^^^^^^^^^^^^^^^^
+
+TODO1 : mention relaxed identities
 
 Another method of selection is by metadata construct "identity".
 Construct identities are used to describe constructs when they are
@@ -5371,11 +5386,14 @@ collapses).
 Grouped collapses
 ^^^^^^^^^^^^^^^^^
 
-A grouped collapse is one for which as axis is not collapsed
+A grouped collapse is one for which an axis is not collapsed
 completely to size 1. Instead the collapse axis is partitioned into
 groups and each group is collapsed to size 1. The resulting axis will
 generally have more than one element. For example, creating 12 annual
-means from a timeseries of 120 months would be a grouped collapse.
+means from a timeseries of 120 months would be a grouped collapse. The
+groups do not need to be created from adjacent cells, as would be the
+case when creating 12 multi-annual monthly means from a timeseries of
+120 months.
 
 The *group* keyword of `~Field.collapse` defines the size of the
 groups. Groups can be defined in a variety of ways, including with
@@ -5645,54 +5663,91 @@ method constructs.
 Binned collapses
 ^^^^^^^^^^^^^^^^
 
-TODO1
+A binned collapse is one for which the data is collapsed in groups,
+where each group is defined by how the data corresponds to the
+:ref:`N-dimensionsal histogram bins of another set of variables
+<Histograms>`.
 
-.. Collapse the data values that lie in multi-dimensional bins.
+The result of a binned collapse is a field construct whose domain axes
+and dimension coordinate constructs describe the sizes of the
+N-dimensional bins of the other set of variables. To make clear the
+distinction between this and other types of collapse, the `~Field.bin`
+method of the field construct is used instead.
 
-   two stage process. First, the bin each 
-   
-       The number of dimensions of the output binned data is equal to the
-       number of field constructs provided by the *digitized*
-       argument. Each such field construct defines a sequence of bins and
-       provides indices to the bins that each value of another field
-       construct belongs. There is no upper limit to the number of
-       dimensions of the output binned data.
-           
-       The output bins are defined by the exterior product of the
-       one-dimensional bins of each digitized field construct. For
-       example, if only one digitized field construct is provided then
-       the histogram bins simply comprise its one-dimensional bins; if
-       there are two digitized field constructs then the histogram bins
-       comprise the two-dimensionsal matrix formed by all possible
-       combinations of the two sets of one-dimensional bins.
-   
-       An output value for a bin is formed by collapsing (using the
-       method given by the *method* parameter) the elements of the data
-       for which the corresponding locations in the digitized field
-       constructs, taken together, index that bin. Note that it may be
-       the case that not all output bins are indexed by the digitized
-       field constructs, and for these bins missing data is returned.
-   
-   An output value for a bin is formed by collapsing the elements of the
-   data which map to   the corresponding locations in the digitized field
-   constructs, taken together, index that bin. Note that it may be the
-   case that not all output bins are indexed by the digitized field
-   constructs, and for these bins missing data is returned.
-   
-   The output bins are defined by the exterior product of the
-   one-dimensional bins of each digitized field construct. For example,
-   if only one digitized field construct is provided then the histogram
-   bins simply comprise its one-dimensional bins; if there are two
-   digitized field constructs then the histogram bins comprise the
-   two-dimensionsal matrix formed by all possible combinations of the two
-   sets of one-dimensional bins.
-   
-   An output value for a bin is formed by collapsing (using the method
-   given by the method parameter) the elements of the data for which the
-   corresponding locations in the digitized field constructs, taken
-   together, index that bin. Note that it may be the case that not all
-   output bins are indexed by the digitized field constructs, and for
-   these bins missing data is returned.
+.. code-block:: python
+   :caption: *Find the range of values that lie in each of bin 10
+             equally-sized bins of the data itself.*
+
+   >>> q, t = cf.read('file.nc')     
+   Field: specific_humidity (ncvar%q)
+   ----------------------------------
+   Data            : specific_humidity(latitude(5), longitude(8)) 0.001 1
+   Cell methods    : area: mean
+   Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                   : longitude(8) = [22.5, ..., 337.5] degrees_east
+                   : time(1) = [2019-01-01 00:00:00]       
+   >>> print(q.array)
+   [[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]
+    [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
+    [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
+    [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
+    [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]
+   >>> indices = q.digitize(5)                                             
+   >>> b = q.bin('range', digitized=indices)                             
+   >>> print(b)                                    
+   Field: specific_humidity
+   ------------------------
+   Data            : specific_humidity(specific_humidity(5)) 1
+   Cell methods    : latitude: longitude: range
+   Dimension coords: specific_humidity(5) = [0.0173, ..., 0.1317] 1
+   >>> print(b.array)
+   [0.026 0.025 0.025 0.007 0.022]  
+   >>> print(b.coordinate('specific_humidity').bounds.array)
+   [[0.003  0.0316]
+    [0.0316 0.0602]
+    [0.0602 0.0888]
+    [0.0888 0.1174]
+    [0.1174 0.146 ]]
+
+.. code-block:: python
+   :caption: *Find the area-weighted mean of specific humidity values
+             that correspond to two-dimensional bins defined by
+             temperature and pressure values.*
+
+   >>> p, t = cf.read('file2.nc')
+   >>> print(t)
+   Field: air_temperature (ncvar%t)
+   --------------------------------
+   Data            : air_temperature(latitude(5), longitude(8)) degreesC
+   Cell methods    : area: mean
+   Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                   : longitude(8) = [22.5, ..., 337.5] degrees_east
+                   : time(1) = [2019-01-01 00:00:00]
+   >>> print(p)      
+   Field: air_pressure (ncvar%p)
+   -----------------------------
+   Data            : air_pressure(latitude(5), longitude(8)) hPa
+   Cell methods    : area: mean
+   Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                   : longitude(8) = [22.5, ..., 337.5] degrees_east
+                   : time(1) = [2019-01-01 00:00:00]
+   >>> t_indices = t.digitize(4)
+   >>> p_indices = p.digitize(6)
+   >>> b = q.bin('mean', digitized=[t_indices, p_indices], weights='area')  
+   >>> print(b)
+   Field: specific_humidity
+   ------------------------
+   Data            : specific_humidity(air_pressure(6), air_temperature(4)) 1
+   Cell methods    : latitude: longitude: mean
+   Dimension coords: air_pressure(6) = [966.6225003326126, ..., 1033.6456080043665] hPa
+                   : air_temperature(4) = [-12.735821567738295, ..., 9.9702610462581] degreesC
+   >>> print(b.array)
+   [[     --       --       --  0.011  ]
+    [0.131    0.0145   0.0345   0.05052]
+    [0.05742  0.01727  0.06392  0.0105 ]
+    [     --  0.04516  0.05272  0.10194]
+    [0.124    0.024    0.059    0.006  ]
+    [     --  0.08971       --       --]]
 
 ----
 
@@ -6577,7 +6632,6 @@ axis are updated to describe the ranges over which the sums apply, and
 a new ``sum`` cell method construct is added to the resulting field
 construct.
 
-
 .. code-block:: python
    :caption: *Calculate cumulative sums along the "T" axis, showing
              the cell bounds before and after the operation.*
@@ -6631,7 +6685,7 @@ indices to the bins that each value of one of the variables belongs.
              based on 10 equally-sized bins that exactly span the data
              range.*
    
-   >>> q, t = cf.read('file.nc')                                                                                                   
+   >>> q, t = cf.read('file.nc')     
    Field: specific_humidity (ncvar%q)
    ----------------------------------
    Data            : specific_humidity(latitude(5), longitude(8)) 1
@@ -6639,7 +6693,7 @@ indices to the bins that each value of one of the variables belongs.
    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
                    : longitude(8) = [22.5, ..., 337.5] degrees_east
                    : time(1) = [2019-01-01 00:00:00]       
-   >>> print(q.array)                                                                                            
+   >>> print(q.array)
    [[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]
     [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
     [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
@@ -6653,7 +6707,13 @@ indices to the bins that each value of one of the variables belongs.
    Cell methods    : area: mean
    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
                    : longitude(8) = [22.5, ..., 337.5] degrees_eastg
-                   : time(1) = [2019-01-01 00:00:00]   
+                   : time(1) = [2019-01-01 00:00:00]
+   >>> print(indices.array)
+   [[0 2 0 0 1 2 1 1]
+    [1 2 2 4 3 4 0 4]
+    [7 8 8 9 5 6 3 0]
+    [1 3 2 4 3 4 0 0]
+    [0 2 1 2 1 2 2 0]]
    >>> print(bins.array)
    [[0.003  0.0173]
     [0.0173 0.0316]
@@ -6672,7 +6732,7 @@ indices to the bins that each value of one of the variables belongs.
    Data            : number_of_observations(specific_humidity(10)) 1
    Cell methods    : latitude: longitude: point
    Dimension coords: specific_humidity(10) = [10.15, ..., 138.85000000000002] 1
-   >>> print(h.array)                                                                                             
+   >>> print(h.array)
    [9 7 9 4 5 1 1 1 2 1]
    >>> print(h.coordinate('specific_humidity').bounds.array)
    [[0.003  0.0173]
@@ -6686,63 +6746,64 @@ indices to the bins that each value of one of the variables belongs.
     [0.1174 0.1317]
     [0.1317 0.146 ]]
 
-.. _Binning-operations:
+.. .. _Binning-operations:
 
-Binning operations
-^^^^^^^^^^^^^^^^^^
-
-The `~Field.bin` method of the field construct allows its data values
-to be binned according to how they correspond to the
-:ref:`N-dimensionsal histogram bins of another set of variables
-<Histograms>`, and each bin of values is collapsed with one of the
-:ref:`collapse methods <Collapse-methods>`.
-
-.. code-block:: python
-   :caption: *Find the range of values that lie in each bin.*
-
-   >>> q, t = cf.read('file.nc')                                                                                                   
-   Field: specific_humidity (ncvar%q)
-   ----------------------------------
-   Data            : specific_humidity(latitude(5), longitude(8)) 0.001 1
-   Cell methods    : area: mean
-   Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
-                   : longitude(8) = [22.5, ..., 337.5] degrees_east
-                   : time(1) = [2019-01-01 00:00:00]       
-   >>> print(q.array)
-   [[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]
-    [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
-    [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
-    [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
-    [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]
-   >>> indices = q.digitize(5)                                             
-   >>> b = q.bin('range', digitized=indices)                             
-   >>> print(b)                                    
-   Field: specific_humidity
-   ------------------------
-   Data            : specific_humidity(specific_humidity(5)) 1
-   Cell methods    : latitude: longitude: range
-   Dimension coords: specific_humidity(5) = [0.0173, ..., 0.1317] 1
-   >>> print(b.array)
-   [0.026 0.025 0.025 0.007 0.022]  
-   >>> print(b.coordinate('specific_humidity').bounds.array)
-   [[0.003  0.0316]
-    [0.0316 0.0602]
-    [0.0602 0.0888]
-    [0.0888 0.1174]
-    [0.1174 0.146 ]]
-
-.. code-block:: python
-   :caption: *Find the area-weighted mean of specific humidity values
-             that correspond to two-dimensional bins defined by
-             temperature and pressure values.*
-
-   >>> t_indices = t.digitize(4)
-   >>> p_indices = t.digitize(6)
-   >>> b = q.bin('mean', digitized=[t_indices, p_indices], weights='area')  
-   >>> print(b)
+   Binning operations
+   ^^^^^^^^^^^^^^^^^^
    
-   >>> print(b.array)
+   The `~Field.bin` method of the field construct allows its data to be
+   collapsed in groups, where each group is defined by how the data
+   corresponds to the :ref:`N-dimensionsal histogram bin of another set
+   of variables <Histograms>`. Any of the :ref:`collapse methods
+   <Collapse-methods>` are available.
    
+   .. code-block:: python
+      :caption: *Find the range of values that lie in each bin.*
+   
+      >>> q, t = cf.read('file.nc')     
+      Field: specific_humidity (ncvar%q)
+      ----------------------------------
+      Data            : specific_humidity(latitude(5), longitude(8)) 0.001 1
+      Cell methods    : area: mean
+      Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                      : longitude(8) = [22.5, ..., 337.5] degrees_east
+                      : time(1) = [2019-01-01 00:00:00]       
+      >>> print(q.array)
+      [[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]
+       [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
+       [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
+       [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
+       [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]
+      >>> indices = q.digitize(5)                                             
+      >>> b = q.bin('range', digitized=indices)                             
+      >>> print(b)                                    
+      Field: specific_humidity
+      ------------------------
+      Data            : specific_humidity(specific_humidity(5)) 1
+      Cell methods    : latitude: longitude: range
+      Dimension coords: specific_humidity(5) = [0.0173, ..., 0.1317] 1
+      >>> print(b.array)
+      [0.026 0.025 0.025 0.007 0.022]  
+      >>> print(b.coordinate('specific_humidity').bounds.array)
+      [[0.003  0.0316]
+       [0.0316 0.0602]
+       [0.0602 0.0888]
+       [0.0888 0.1174]
+       [0.1174 0.146 ]]
+   
+   .. code-block:: python
+      :caption: *Find the area-weighted mean of specific humidity values
+                that correspond to two-dimensional bins defined by
+                temperature and pressure values.*
+   
+      >>> t_indices = t.digitize(4)
+      >>> p_indices = t.digitize(6)
+      >>> b = q.bin('mean', digitized=[t_indices, p_indices], weights='area')  
+      >>> print(b)
+      TODO
+      >>> print(b.array)
+      TODO
+
 ----
   
 .. _Aggregation:

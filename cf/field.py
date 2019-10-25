@@ -1,9 +1,7 @@
 from collections import namedtuple
-from copy        import deepcopy
 from functools   import reduce
 from operator    import mul as operator_mul
 from operator    import itemgetter
-import warnings
 
 try:
     from scipy.ndimage.filters import convolve1d
@@ -18,7 +16,6 @@ from numpy import array       as numpy_array
 from numpy import array_equal as numpy_array_equal
 from numpy import asanyarray  as numpy_asanyarray
 from numpy import can_cast    as numpy_can_cast
-from numpy import cumsum      as numpy_cumsum
 from numpy import diff        as numpy_diff
 from numpy import empty       as numpy_empty
 from numpy import errstate    as numpy_errstate
@@ -26,7 +23,6 @@ from numpy import finfo       as numpy_finfo
 from numpy import isnan       as numpy_isnan
 from numpy import nan         as numpy_nan
 from numpy import ndarray     as numpy_ndarray
-from numpy import ndim        as numpy_ndim
 from numpy import prod        as numpy_prod
 from numpy import reshape     as numpy_reshape
 from numpy import shape       as numpy_shape
@@ -35,7 +31,6 @@ from numpy import squeeze     as numpy_squeeze
 from numpy import tile        as numpy_tile
 from numpy import unique      as numpy_unique
 from numpy import where       as numpy_where
-from numpy import zeros       as numpy_zeros
 
 from numpy.ma import is_masked   as numpy_ma_is_masked
 from numpy.ma import isMA        as numpy_ma_isMA
@@ -60,8 +55,7 @@ from .constants import masked as cf_masked
 
 from .functions import (parse_indices, CHUNKSIZE, equals,
                         RELAXED_IDENTITIES, _section)
-from .functions       import inspect as cf_inspect
-from .query           import Query, ge, gt, le, lt, ne, eq, wi
+from .query           import Query, ge, gt, le, lt, eq
 from .regrid          import Regrid
 from .timeduration    import TimeDuration
 from .units           import Units
@@ -3213,7 +3207,7 @@ may be accessed with the `nc_global_attributes`,
         # Reorder keys correspondingly if required
         if axis_indices:
             section_keys = sorted(sections.keys(),
-                                  key=operator_itemgetter(*axis_indices))
+                                  key=itemgetter(*axis_indices))
         else:
             section_keys = sections.keys()
         
@@ -8037,7 +8031,7 @@ may be accessed with the `nc_global_attributes`,
         #--- End: for
 
         if verbose:
-            print('    all_methods, all_axes, all_within, all_over =', \
+            print('    all_methods, all_axes, all_within, all_over =',
                   all_methods, all_axes, all_within, all_over) # pragma: no cover
 
         if group is not None and len(all_axes) > 1:

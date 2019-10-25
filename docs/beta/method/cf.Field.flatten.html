@@ -90,12 +90,12 @@
 <h1>cf.Field.flatten<a class="headerlink" href="#cf-field-flatten" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.flatten">
-<code class="descclassname">Field.</code><code class="descname">flatten</code><span class="sig-paren">(</span><em>axes=None</em>, <em>return_axis=False</em>, <em>inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/field.py#L13535"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.flatten" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">flatten</code><span class="sig-paren">(</span><em>axes=None</em>, <em>return_axis=False</em>, <em>inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/field.py#L13530"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.flatten" title="Permalink to this definition">¶</a></dt>
 <dd><p>Flatten axes of the field.</p>
 <p>Any subset of the domain axes may be flattened.</p>
 <p>The shape of the data may change, but the size will not.</p>
 <p>Metadata constructs whose data spans the flattened axes will
-either also be flattened, or removed.</p>
+either themselves be flattened, or else removed.</p>
 <p>Cell method constructs that apply to the flattened axes will be
 removed or, if possible, have their axes specifications changed to
 standard names.</p>
@@ -121,8 +121,9 @@ given axis description to a call of the field construct’s
 <a class="reference internal" href="cf.Field.domain_axis.html#cf.Field.domain_axis" title="cf.Field.domain_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axis</span></code></a> method. For example, for a value of <code class="docutils literal notranslate"><span class="pre">'X'</span></code>,
 the domain axis construct returned by
 <code class="docutils literal notranslate"><span class="pre">f.domain_axis('X'))</span></code> is selected.</p>
-<p class="last">If no axes are provided then all axes spanned by the field
+<p>If no axes are provided then all axes spanned by the field
 construct’s data are flattened.</p>
+<p class="last">No axes are flattened if <em>axes</em> is an empty sequence.</p>
 </dd>
 <dt>return_axis: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then also return either the key of the new,
@@ -149,10 +150,14 @@ the axes to be flattened do not span the data.</p>
 </tbody>
 </table>
 <p><strong>Examples</strong></p>
+<p>See <a class="reference internal" href="cf.Data.flatten.html#cf.Data.flatten" title="cf.Data.flatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.flatten</span></code></a> for more examples of how the data are
+flattened.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">shape</span>
 <span class="go">(1, 2, 3, 4)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span><span class="o">.</span><span class="n">shape</span>
 <span class="go">(24,)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">flatten</span><span class="p">([])</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(1, 2, 3, 4)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">flatten</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span><span class="o">.</span><span class="n">shape</span>
 <span class="go">(1, 8, 3)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">flatten</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>

@@ -1956,7 +1956,7 @@ place.
         # on another rank
         _partition_file = self._subarray._partition_file
         _partition_dir = self._subarray._partition_dir
-        if not _partition_file in _temporary_files:
+        if _partition_file not in _temporary_files:
             fd, _lock_file = mkstemp(prefix=_partition_file + '_',
                                      dir=_partition_dir)
             close(fd)

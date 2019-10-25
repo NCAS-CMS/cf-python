@@ -1,11 +1,6 @@
 from operator import __and__ as operator_and
 from operator import __or__  as operator_or
 
-from numpy import ndarray   as numpy_ndarray
-from numpy import vectorize as numpy_vectorize
-
-#from cfunits import Units
-
 from .functions  import equals  as _equals
 from .functions  import inspect as _inspect
 from .units      import Units
@@ -255,8 +250,9 @@ value.
     x.__ne__(y) <==> (x==y)==False
 
         '''
+        # Note that it is important to use the == operator
         return self._evaluate(x, ()) == False
-
+    
 
     def __and__(self, other):
         '''The binary bitwise operation ``&``

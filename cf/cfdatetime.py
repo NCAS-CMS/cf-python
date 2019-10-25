@@ -4,7 +4,6 @@ from functools import partial as functools_partial
 import numpy
 
 import cftime
-#from cfunits import Units
 
 from numpy import around     as numpy_around
 from numpy import array      as numpy_array
@@ -13,17 +12,13 @@ from numpy import ndarray    as numpy_ndarray
 from numpy import ndim       as numpy_ndim
 from numpy import vectorize  as numpy_vectorize
 
-from numpy.ma import array        as numpy_ma_array
 from numpy.ma import isMA         as numpy_ma_isMA
 from numpy.ma import is_masked    as numpy_ma_is_masked
-from numpy.ma import masked       as numpy_ma_masked
 from numpy.ma import masked_all   as numpy_ma_masked_all
 from numpy.ma import masked_where as numpy_ma_masked_where
 from numpy.ma import nomask       as numpy_ma_nomask
 
-from .functions import inspect as cf_inspect
 from .functions import _DEPRECATION_ERROR_CLASS
-from .units     import Units
 
 ## Define some usegful units
 #_calendar_years  = Units('calendar_years')

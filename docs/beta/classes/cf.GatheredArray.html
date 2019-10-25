@@ -93,8 +93,8 @@
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.data.abstract.compressedarray.CompressedArray</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.gatheredarray.GatheredArray</span></code></p>
 <p>An underlying gathered array.</p>
 <p>Compression by gathering combines axes of a multidimensional array
-into a new, discrete axis whilst omitting the missing values and thus
-reducing the number of values that need to be stored.</p>
+into a new, discrete axis whilst omitting the missing values and
+thus reducing the number of values that need to be stored.</p>
 <p>The information needed to uncompress the data is stored in a “list
 variable” that gives the indices of the required points.</p>
 <div class="versionadded">
@@ -109,16 +109,16 @@ variable” that gives the indices of the required points.</p>
 <dt>compressed_array: <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a></dt>
 <dd><p class="first last">The compressed array.</p>
 </dd>
-<dt>shape: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a></dt>
+<dt>shape: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a></dt>
 <dd><p class="first last">The uncompressed array dimension sizes.</p>
 </dd>
-<dt>size: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt>
+<dt>size: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt>
 <dd><p class="first last">Number of elements in the uncompressed array.</p>
 </dd>
-<dt>ndim: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt>
+<dt>ndim: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt>
 <dd><p class="first last">The number of uncompressed array dimensions</p>
 </dd>
-<dt>compressed_dimension: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt>
+<dt>compressed_dimension: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt>
 <dd><p class="first last">The position of the compressed dimension in the compressed
 array.</p>
 </dd>
@@ -225,7 +225,7 @@ to the data of a CF-netCDF list variable.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/classes/cf.GatheredArray.rst.txt"

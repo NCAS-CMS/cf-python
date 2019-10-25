@@ -18,7 +18,7 @@ def _make_gathered_file(filename):
             if i in list_values:
                 array[index] = i
         return array
-    
+    #--- End: def    
 
     n = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
     
@@ -126,7 +126,7 @@ def _make_gathered_file(filename):
     n.close()
 
     return filename
-#--- End: def
+
 
 gathered = _make_gathered_file('gathered.nc')
     
@@ -228,11 +228,11 @@ class DSGTest(unittest.TestCase):
         self.b = b
         
         self.test_only = []
-    #--- End: def
+
     
     def tearDown(self):
         os.remove(self.tempfilename)
-    #--- End: def
+
 
     def test_GATHERING(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -277,7 +277,7 @@ class DSGTest(unittest.TestCase):
 
         for a, b in zip(f, g):
             self.assertTrue(b.equals(a, verbose=True))
-    #--- End: def        
+
 
     def test_GATHERING_create(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -344,7 +344,6 @@ class DSGTest(unittest.TestCase):
             
             self.assertTrue((tas.data.get_list().data.array == numpy.array(
                 [1, 4, 5])).all(), message)
-    #--- End: def
 
     
 #--- End: class

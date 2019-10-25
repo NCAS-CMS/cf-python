@@ -317,6 +317,25 @@ Miscellaneous
    ~cf.Field.equals
    ~cf.Field.convert
    cf.Field.concatenate
+   ~cf.Field.radius
+   
+.. rubric:: Attributes
+	    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cf.Field.Flags
+   ~cf.Field.has_bounds
+   ~cf.Field.isauxiliary
+   ~cf.Field.isdimension
+   ~cf.Field.ismeasure
+   ~cf.Field.rank
+   ~cf.Field.T
+   ~cf.Field.X
+   ~cf.Field.Y
+   ~cf.Field.Z
 
 .. _Field-NetCDF:
    
@@ -570,25 +589,6 @@ Logic functions
 
    ~cf.Field.unique
 
-
-Miscellaneous
--------------
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../attribute/
-   :template: attribute.rst
-
-   ~cf.Field.Flags
-   ~cf.Field.has_bounds
-   ~cf.Field.isauxiliary
-   ~cf.Field.isdimension
-   ~cf.Field.ismeasure
-   ~cf.Field.rank
-   ~cf.Field.T
-   ~cf.Field.X
-   ~cf.Field.Y
-   ~cf.Field.Z
 
 Aliases
 -------

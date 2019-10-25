@@ -12,7 +12,7 @@ class DomainAxisTest(unittest.TestCase):
         
         _ = repr(x)
         _ = str(x)
-    #--- End: def
+
     
     def test_DomainAxis(self):
         x = cf.DomainAxis(size=111)
@@ -46,7 +46,7 @@ class DomainAxisTest(unittest.TestCase):
         self.assertTrue(x != 100)
 
         _ = hash(x)        
-    #--- End: def
+
     
 #--- End: class
 

@@ -6,7 +6,7 @@ version 3.0.2
 
 * Now reads CDL files (https://github.com/NCAS-CMS/cf-python/issues/1)
 * New methods: `cf.Field.cumsum`, `cf.Field.digitize`, `cf.Field.bin`,
-  `cf.Field.swapaxes`, `cf.Field.flatten`.
+  `cf.Field.swapaxes`, `cf.Field.flatten`, `cf.Field.radius`.
 * New methods: `cf.histogram`.
 * New field construct collapse methods: ``integral``,
   ``maximum_absolute_value``, ``minimum_absolute_value``,

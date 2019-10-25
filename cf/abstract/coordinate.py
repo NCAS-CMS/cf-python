@@ -334,7 +334,7 @@ horizontal coordinates).
 #
 #        if not value:
 #            return old
-#  
+#
 #        value = value[0]
 #
 #        if value is not None:

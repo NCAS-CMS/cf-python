@@ -19,7 +19,8 @@ def _remove_tmpfiles():
             os.remove(f)
         except OSError:
             pass
-#--- End: def
+
+        
 atexit.register(_remove_tmpfiles)
 
 class ppTest(unittest.TestCase):
@@ -37,7 +38,7 @@ class ppTest(unittest.TestCase):
         self.chunk_sizes = (17, 34, 300, 100000)[::-1]
         self.original_chunksize = cf.CHUNKSIZE()
         self.test_only = ()
-    #--- End: def
+
 
     def test_PP_load_stash2standard_name(self):
         f = cf.read(self.ppfilename)[0]
@@ -52,9 +53,9 @@ class ppTest(unittest.TestCase):
             f = cf.read(self.ppfilename)[0]
             self.assertTrue(f.identity() == 'surface_temperature')
             self.assertTrue(f.Units == cf.Units('K'))
-        #--- End: for
+
         cf.load_stash2standard_name()
-    #--- End: def
+
 
     def test_PP_WGDOS_UNPACKING(self):
         f = cf.read(self.ppfilename)[0]
@@ -90,9 +91,9 @@ class ppTest(unittest.TestCase):
                 
                 self.assertTrue(f.equals(g, verbose=True),
                                 'Bad writing/reading. format='+fmt)
-        #--- End: for
+
         cf.CHUNKSIZE(self.original_chunksize)
-    #--- End: def
+
 
 #--- End: class
 

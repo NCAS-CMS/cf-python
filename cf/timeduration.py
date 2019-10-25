@@ -1,23 +1,17 @@
 from operator import __add__, __sub__
 
-from ast         import literal_eval
 from collections import namedtuple
-from datetime    import datetime
-from functools   import partial as functools_partial
 
 import numpy
-from numpy import array     as numpy_array
-from numpy import size      as numpy_size
-from numpy import vectorize as numpy_vectorize
 
 from .cfdatetime import elements #Datetime
 from .cfdatetime import dt as cf_dt
-from .functions  import equals
-from .functions  import _DEPRECATION_ERROR_KWARGS
 from .functions  import inspect as cf_inspect
 from .units      import Units
 
 from .data.data import Data
+
+from .functions  import _DEPRECATION_ERROR_KWARGS
 
 
 # Define some useful units

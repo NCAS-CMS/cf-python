@@ -90,7 +90,7 @@
 <h1>cf.FieldList.equals<a class="headerlink" href="#cf-fieldlist-equals" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.FieldList.equals">
-<code class="descclassname">FieldList.</code><code class="descname">equals</code><span class="sig-paren">(</span><em>other</em>, <em>rtol=None</em>, <em>atol=None</em>, <em>verbose=False</em>, <em>ignore_data_type=False</em>, <em>ignore_fill_value=False</em>, <em>ignore_properties=()</em>, <em>ignore_compression=False</em>, <em>ignore_type=False</em>, <em>ignore=()</em>, <em>traceback=False</em>, <em>unordered=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/fieldlist.py#L462"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.FieldList.equals" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">FieldList.</code><code class="descname">equals</code><span class="sig-paren">(</span><em>other</em>, <em>rtol=None</em>, <em>atol=None</em>, <em>verbose=False</em>, <em>ignore_data_type=False</em>, <em>ignore_fill_value=False</em>, <em>ignore_properties=()</em>, <em>ignore_compression=False</em>, <em>ignore_type=False</em>, <em>ignore=()</em>, <em>traceback=False</em>, <em>unordered=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/fieldlist.py#L461"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.FieldList.equals" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether two field lists are the same.</p>
 <p>Equality requires the two field lists to have the same length and
 for the the field construct elements to be equal pair-wise, using
@@ -143,49 +143,49 @@ function.</p>
 numbers. The default value is set by the <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.RTOL</span></code>
 function.</p>
 </dd>
-<dt>ignore_fill_value: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> then the “_FillValue” and “missing_value”
+<dt>ignore_fill_value: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dd><p class="first last">If <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> then the “_FillValue” and “missing_value”
 properties are omitted from the comparison, for the field
 construct and metadata constructs.</p>
 </dd>
-<dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> then print information about differences that lead
+<dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dd><p class="first last">If <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> then print information about differences that lead
 to inequality.</p>
 </dd>
-<dt>ignore_properties: sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dt>ignore_properties: sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
 <dd><p class="first last">The names of properties of the field construct (not the
 metadata constructs) to omit from the comparison. Note
 that the “Conventions” property is always omitted by
 default.</p>
 </dd>
-<dt>ignore_data_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> then ignore the data types in all numerical
+<dt>ignore_data_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dd><p class="first last">If <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> then ignore the data types in all numerical
 comparisons. By default different numerical data types
 imply inequality, regardless of whether the elements are
 within the tolerance for equality.</p>
 </dd>
-<dt>ignore_compression: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> then any compression applied to underlying arrays
+<dt>ignore_compression: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dd><p class="first last">If <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> then any compression applied to underlying arrays
 is ignored and only uncompressed arrays are tested for
 equality. By default the compression type and, if
 applicable, the underlying compressed arrays must be the
 same, as well as the arrays in their uncompressed forms</p>
 </dd>
-<dt>ignore_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>ignore_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">Any type of object may be tested but, in general, equality
 is only possible with another field list, or a subclass of
 one. If <em>ignore_type</em> is True then
 <code class="docutils literal notranslate"><span class="pre">FieldList(source=other)</span></code> is tested, rather than the
 <code class="docutils literal notranslate"><span class="pre">other</span></code> defined by the <em>other</em> parameter.</p>
 </dd>
-<dt>unordered: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>unordered: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">TODO</p>
 </dd>
 </dl>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt>
+<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt>
 <dd><p class="first last">Whether the two field lists are equal.</p>
 </dd>
 </dl>
@@ -220,7 +220,7 @@ one. If <em>ignore_type</em> is True then
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/method/cf.FieldList.equals.rst.txt"

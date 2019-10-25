@@ -21,7 +21,7 @@ class CellMeasureTest(unittest.TestCase):
         _ = x.dump(display=False)
 
         self.assertTrue(x.ismeasure)
-    #--- End: def
+
 
     def test_CellMeasure_measure(self):
         f = cf.read(self.filename)[0]
@@ -32,7 +32,7 @@ class CellMeasureTest(unittest.TestCase):
         self.assertTrue(getattr(x, 'measure', None) is None)
         x.measure = 'qwerty'
         self.assertTrue(x.measure == 'qwerty')
-    #--- End: def
+
         
     def test_CellMeasure_identity(self):
         f = cf.read(self.filename)[0]
@@ -43,7 +43,7 @@ class CellMeasureTest(unittest.TestCase):
         self.assertTrue(x.identity() == 'ncvar%cell_measure', x.identity())
         x.nc_del_variable()
         self.assertTrue(x.identity() == '')
-    #--- End: def
+
         
 #--- End: class
 

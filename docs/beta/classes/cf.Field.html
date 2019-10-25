@@ -89,7 +89,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.Field">
-<em class="property">class </em><code class="descclassname">cf.</code><code class="descname">Field</code><span class="sig-paren">(</span><em>properties=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/field.py#L191"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cf.</code><code class="descname">Field</code><span class="sig-paren">(</span><em>properties=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/field.py#L185"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.field.Field</span></code></p>
 <p>A field construct of the CF data model.</p>
 <p>The field construct is central to the CF data model, and includes all
@@ -524,7 +524,7 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cf.Field.mask_invalid.html#cf.Field.mask_invalid" title="cf.Field.mask_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask_invalid</span></code></a></td>
 <td>Mask the array where invalid values occur.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a></td>
 <td>Create a subspace of the field construct.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cf.Field.where.html#cf.Field.where" title="cf.Field.where"><code class="xref py py-obj docutils literal notranslate"><span class="pre">where</span></code></a></td>
@@ -722,6 +722,48 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-even"><td><a class="reference internal" href="../method/cf.Field.concatenate.html#cf.Field.concatenate" title="cf.Field.concatenate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.concatenate</span></code></a></td>
 <td>Join a sequence of fields together.</td>
 </tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.Field.radius.html#cf.Field.radius" title="cf.Field.radius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">radius</span></code></a></td>
+<td>TODO</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.Field.Flags.html#cf.Field.Flags" title="cf.Field.Flags"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Flags</span></code></a></td>
+<td>A <a class="reference internal" href="cf.Flags.html#cf.Flags" title="cf.Flags"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Flags</span></code></a> object containing self-describing CF flag values.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.Field.has_bounds.html#cf.Field.has_bounds" title="cf.Field.has_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_bounds</span></code></a></td>
+<td>Whether or not there are cell bounds.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.Field.isauxiliary.html#cf.Field.isauxiliary" title="cf.Field.isauxiliary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isauxiliary</span></code></a></td>
+<td>True if the variable is an auxiliary coordinate object.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.Field.isdimension.html#cf.Field.isdimension" title="cf.Field.isdimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isdimension</span></code></a></td>
+<td>True if the variable is a dimension coordinate object.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.Field.ismeasure.html#cf.Field.ismeasure" title="cf.Field.ismeasure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ismeasure</span></code></a></td>
+<td>True if the variable is a cell measure object.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.Field.rank.html#cf.Field.rank" title="cf.Field.rank"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rank</span></code></a></td>
+<td>The number of axes in the domain.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.Field.T.html#cf.Field.T" title="cf.Field.T"><code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code></a></td>
+<td><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if and only if the data are coordinates for a CF ‘T’ axis.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.Field.X.html#cf.Field.X" title="cf.Field.X"><code class="xref py py-obj docutils literal notranslate"><span class="pre">X</span></code></a></td>
+<td>Always False.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.Field.Y.html#cf.Field.Y" title="cf.Field.Y"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Y</span></code></a></td>
+<td>Always False.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.Field.Z.html#cf.Field.Z" title="cf.Field.Z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Z</span></code></a></td>
+<td>Always False.</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -819,7 +861,7 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cf.Field.__getitem__.html#cf.Field.__getitem__" title="cf.Field.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></td>
 <td>Return a subspace of the field construct defined by indices.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a></td>
 <td>Create a subspace of the field construct.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cf.Field.indices.html#cf.Field.indices" title="cf.Field.indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">indices</span></code></a></td>
@@ -1127,47 +1169,6 @@ initialization. By default arguments are deep copied.</p>
 <tbody valign="top">
 <tr class="row-odd"><td><a class="reference internal" href="../method/cf.Field.unique.html#cf.Field.unique" title="cf.Field.unique"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unique</span></code></a></td>
 <td>The unique elements of the data.</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section" id="id1">
-<h2>Miscellaneous<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.Field.Flags.html#cf.Field.Flags" title="cf.Field.Flags"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Flags</span></code></a></td>
-<td>A <a class="reference internal" href="cf.Flags.html#cf.Flags" title="cf.Flags"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Flags</span></code></a> object containing self-describing CF flag values.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.Field.has_bounds.html#cf.Field.has_bounds" title="cf.Field.has_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_bounds</span></code></a></td>
-<td>Whether or not there are cell bounds.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.Field.isauxiliary.html#cf.Field.isauxiliary" title="cf.Field.isauxiliary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isauxiliary</span></code></a></td>
-<td>True if the variable is an auxiliary coordinate object.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.Field.isdimension.html#cf.Field.isdimension" title="cf.Field.isdimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isdimension</span></code></a></td>
-<td>True if the variable is a dimension coordinate object.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.Field.ismeasure.html#cf.Field.ismeasure" title="cf.Field.ismeasure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ismeasure</span></code></a></td>
-<td>True if the variable is a cell measure object.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.Field.rank.html#cf.Field.rank" title="cf.Field.rank"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rank</span></code></a></td>
-<td>The number of axes in the domain.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.Field.T.html#cf.Field.T" title="cf.Field.T"><code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code></a></td>
-<td><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if and only if the data are coordinates for a CF ‘T’ axis.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.Field.X.html#cf.Field.X" title="cf.Field.X"><code class="xref py py-obj docutils literal notranslate"><span class="pre">X</span></code></a></td>
-<td>Always False.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.Field.Y.html#cf.Field.Y" title="cf.Field.Y"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Y</span></code></a></td>
-<td>Always False.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.Field.Z.html#cf.Field.Z" title="cf.Field.Z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Z</span></code></a></td>
-<td>Always False.</td>
 </tr>
 </tbody>
 </table>

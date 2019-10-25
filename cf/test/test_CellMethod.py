@@ -65,7 +65,7 @@ class CellMethodTest(unittest.TestCase):
             self.assertTrue(t == s, '{!r} != {!r}'.format(t, s))
             for cm in cms:
                 _ = repr(cm)
-    #--- End: def
+
 
     def test_CellMethod_equals(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -75,7 +75,7 @@ class CellMethodTest(unittest.TestCase):
             cms = cf.CellMethod.create(s)
             for cm in cms:                
                 self.assertTrue(cm.equals(cm.copy(), verbose=True))
-    #--- End: def
+
 
     def test_CellMethod_equivalent(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -118,7 +118,7 @@ class CellMethodTest(unittest.TestCase):
                 self.assertTrue(cm0.equivalent(cm1, verbose=True),
                                 '{0!r} not equivalent to {1!r}'.format(cm0, cm1))
         #--- End: for
-    #--- End: def
+
 
     def test_CellMethod_get_set_delete(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -135,7 +135,7 @@ class CellMethodTest(unittest.TestCase):
         self.assertTrue(cm1.method == 'sum')
         self.assertTrue(cm0.axes == ('time',))
         self.assertTrue(cm1.axes == ('time',))
-    #--- End: def
+
 
 #--- End: class
 

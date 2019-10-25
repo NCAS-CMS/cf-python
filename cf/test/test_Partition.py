@@ -18,7 +18,6 @@ class PartitionTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-    #--- End: def
 
 #--- End: class
 

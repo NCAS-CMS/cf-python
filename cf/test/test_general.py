@@ -18,13 +18,14 @@ tmpfile2 = tempfile.mktemp('.nca')
 tmpfiles = [tmpfile, tmpfile2]
 def _remove_tmpfiles():
     '''
-'''
+    '''
     for f in tmpfiles:
         try:
             os.remove(f)
         except OSError:
             pass
-#--- End: def
+
+        
 atexit.register(_remove_tmpfiles)
 
 
@@ -202,9 +203,9 @@ class generalTest(unittest.TestCase):
 
         cf.CHUNKSIZE(original_chunksize)
 
-    #--- End: def
 
 #--- End: class
+
 if __name__ == "__main__":
     print('Run date:', datetime.datetime.utcnow())
     cf.environment()

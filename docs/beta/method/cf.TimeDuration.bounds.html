@@ -90,7 +90,7 @@
 <h1>cf.TimeDuration.bounds<a class="headerlink" href="#cf-timeduration-bounds" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.TimeDuration.bounds">
-<code class="descclassname">TimeDuration.</code><code class="descname">bounds</code><span class="sig-paren">(</span><em>dt</em>, <em>direction=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/timeduration.py#L1458"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.TimeDuration.bounds" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">TimeDuration.</code><code class="descname">bounds</code><span class="sig-paren">(</span><em>dt</em>, <em>direction=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/timeduration.py#L1452"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.TimeDuration.bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a time interval containing a date-time.</p>
 <p>The interval spans the time duration and starts and ends at
 date-times consistent with the time duration’s offset.</p>
@@ -109,7 +109,7 @@ date-times consistent with the time duration’s offset.</p>
 <dt>dt: date-time-like</dt>
 <dd><p class="first">The date-time to be contained by the interval. <em>dt</em> may be
 any date-time-like object, such as <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Datetime</span></code>,
-<a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime.datetime</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">netCDF4.netcdftime.datetime</span></code>, etc.</p>
+<a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime.datetime</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">netCDF4.netcdftime.datetime</span></code>, etc.</p>
 <dl class="last docutils">
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last">To find bounds around 1999-16-1 in the Gregorian
@@ -119,7 +119,7 @@ details).</p>
 </dd>
 </dl>
 </dd>
-<dt>calendar: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dt>calendar: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
 <dd><p class="first">Define the CF calendar for the input date-time and output
 time interval. By default the calendar of the input
 date-time is used. If <em>calendar</em> is set, then the calendar
@@ -131,8 +131,8 @@ of the input date-time is overridden.</p>
 </dd>
 </dl>
 </dd>
-<dt>direction: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> then the bounds are decreasing. By default the
+<dt>direction: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dd><p class="first last">If <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> then the bounds are decreasing. By default the
 bounds are increasing. Note that <code class="docutils literal notranslate"><span class="pre">t.bounds(dt,</span>
 <span class="pre">direction=False)</span></code> is equivalent to
 <code class="docutils literal notranslate"><span class="pre">t.bounds(dt)[::-1]</span></code>.</p>
@@ -185,7 +185,7 @@ bounds are increasing. Note that <code class="docutils literal notranslate"><spa
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/method/cf.TimeDuration.bounds.rst.txt"

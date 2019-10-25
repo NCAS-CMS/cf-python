@@ -1092,8 +1092,7 @@ class DataTest(unittest.TestCase):
                 for axes in itertools.permutations(indices):
                     a = numpy.transpose(a, axes)
                     d.transpose(axes, inplace=True)
-                    message = 'cf.Data.transpose(%s) failed: d.shape=%s, a.shape=%s' % \
-                              (axes, d.shape, a.shape)
+                    message = 'cf.Data.transpose(%s) failed: d.shape=%s, a.shape=%s' % (axes, d.shape, a.shape)
                     self.assertTrue(d.shape == a.shape, message)
                     self.assertTrue((d.array == a).all(), message)
         #--- End: for
@@ -1515,8 +1514,7 @@ class DataTest(unittest.TestCase):
                     shape = tuple(shape)
                     self.assertTrue(
                         e.shape == shape,
-                        "%s, axes=%s, not squeezed bad shape: %s != %s" % \
-                        (h, axes, e.shape, shape))
+                        "%s, axes=%s, not squeezed bad shape: %s != %s" % (h, axes, e.shape, shape))
                 #--- End: for
     
                 for axes in self.axes_combinations:
@@ -1527,9 +1525,8 @@ class DataTest(unittest.TestCase):
                         shape.pop(i)
     
                     shape = tuple(shape)
-                    assert e.shape == shape, \
-                        "%s, axes=%s, squeezed bad shape: %s != %s" % \
-                        (h, axis, e.shape, shape)
+                    assert(e.shape == shape, 
+                           "%s, axes=%s, squeezed bad shape: %s != %s" % (h, axis, e.shape, shape))
                 #--- End: for
     
                 e = getattr(d, h)(squeeze=True,
@@ -1537,16 +1534,14 @@ class DataTest(unittest.TestCase):
                 shape = ()
                 self.assertTrue(
                     e.shape == shape,
-                    "%s, axes=%s, squeezed bad shape: %s != %s" % \
-                    (h, None, e.shape, shape))
+                    "%s, axes=%s, squeezed bad shape: %s != %s" % (h, None, e.shape, shape))
     
                 e = getattr(d, h)(squeeze=False,
                                   _preserve_partitions=False)
                 shape = (1,) * d.ndim
                 self.assertTrue(
                     e.shape == shape,
-                    "%s, axes=%s, not squeezed bad shape: %s != %s" % \
-                    (h, None, e.shape, shape))
+                    "%s, axes=%s, not squeezed bad shape: %s != %s" % (h, None, e.shape, shape))
         #--- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
@@ -1618,8 +1613,7 @@ class DataTest(unittest.TestCase):
                         
                         self.assertTrue(
                             e.allclose(b, rtol=1e-05, atol=1e-08),
-                            "%s, axis=%s, unweighted, unmasked, pp=%s, \ne=%s, \nb=%s, \ne-b=%s" % \
-                            (h, axes, pp, e.array, b, e.array-b))
+                            "%s, axis=%s, unweighted, unmasked, pp=%s, \ne=%s, \nb=%s, \ne-b=%s" % (h, axes, pp, e.array, b, e.array-b))
                 #--- End: for
 
                 # unweighted, masked
@@ -1634,8 +1628,7 @@ class DataTest(unittest.TestCase):
         
                         self.assertTrue(
                             (e.mask.array == b.mask).all(),
-                            "%s, axis=%s, unweighted, masked, pp=%s, \ne.mask=%s, \nb.mask=%s, \ne.mask==b.mask=%s" %
-                            (h, axes, pp, e.mask.array, b.mask, e.mask.array==b.mask))
+                            "%s, axis=%s, unweighted, masked, pp=%s, \ne.mask=%s, \nb.mask=%s, \ne.mask==b.mask=%s" % (h, axes, pp, e.mask.array, b.mask, e.mask.array==b.mask))
     
                         self.assertTrue(
                             e.allclose(b, rtol=1e-05, atol=1e-08),
@@ -1780,7 +1773,7 @@ class DataTest(unittest.TestCase):
                 
                 self.assertTrue(
                     e.allclose(b, rtol=1e-05, atol=1e-08),
-                    "axis=%s, \ne=%s, \nb=%s, \ne-b=%s" % \
+                    "axis=%s, \ne=%s, \nb=%s, \ne-b=%s" % 
                     (axes, e.array, b, e.array-b))
             #--- End: for
     
@@ -1793,7 +1786,7 @@ class DataTest(unittest.TestCase):
                 
                 self.assertTrue(
                     e.allclose(b, rtol=1e-05, atol=1e-08),
-                    "axis=%s, \ne=%s, \nb=%s, \ne-b=%s" % \
+                    "axis=%s, \ne=%s, \nb=%s, \ne-b=%s" % 
                     (axes, e.array, b, e.array-b))
             #--- End: for
     
@@ -1878,7 +1871,7 @@ class DataTest(unittest.TestCase):
                             
                             self.assertTrue(
                                 e.allclose(b, rtol=1e-05, atol=1e-08) ,
-                                "%s, axis=%s, weighted, unmasked, pp=%s, ddof=%s, \ne=%s, \nb=%s, \ne-b=%s" % \
+                                "%s, axis=%s, weighted, unmasked, pp=%s, ddof=%s, \ne=%s, \nb=%s, \ne-b=%s" % 
                                 (h, axes, pp, ddof, e.array, b, e.array-b))
                 #--- End: for
     

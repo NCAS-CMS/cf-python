@@ -89,8 +89,8 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.Query">
-<em class="property">class </em><code class="descclassname">cf.</code><code class="descname">Query</code><span class="sig-paren">(</span><em>operator</em>, <em>value</em>, <em>units=None</em>, <em>attr=None</em>, <em>exact=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/query.py#L20"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Query" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<em class="property">class </em><code class="descclassname">cf.</code><code class="descname">Query</code><span class="sig-paren">(</span><em>operator</em>, <em>value</em>, <em>units=None</em>, <em>attr=None</em>, <em>exact=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/query.py#L15"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Encapsulate a condition.</p>
 <p>A condition that may be applied to any object may be stored in a
 <a class="reference internal" href="#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object. A <a class="reference internal" href="#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object encapulates a condition, such as
@@ -216,8 +216,8 @@ instances:</p>
 <p><strong>The query interface</strong></p>
 <p>In general, the query operator must be permitted between the value of
 the condition and the operand for which it is being evaulated. For
-example, when the value is an <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, the query works if the operand is
-also an <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, but fails if it is a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>:</p>
+example, when the value is an <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, the query works if the operand is
+also an <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, but fails if it is a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Query</span><span class="p">(</span><span class="s1">&#39;lt&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">==</span> <span class="mi">1</span>
 <span class="go">True</span>
@@ -296,19 +296,19 @@ value.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
-<dt>operator: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt>
+<dt>operator: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt>
 <dd><p class="first last">The query operator.</p>
 </dd>
 <dt>value:</dt>
 <dd><p class="first last">The value of the condition.</p>
 </dd>
-<dt>units: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference internal" href="cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a>, optional</dt>
+<dt>units: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference internal" href="cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a>, optional</dt>
 <dd><p class="first last">The units of <em>value</em>. By default, the same units as the
 operand being tested are assumed, if applicable. If
 <em>units</em> is specified and the already <em>value</em> has units
 (such as a <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object`), then they must be equivalent.</p>
 </dd>
-<dt>attr: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dt>attr: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
 <dd><p class="first last">Apply the condition to the attribute, or nested
 attributes, of the operand, rather than the operand
 itself. Nested attributes are specified by separating them
@@ -317,7 +317,7 @@ with a <code class="docutils literal notranslate"><span class="pre">.</span></co
 also the <a class="reference internal" href="../method/cf.Query.addattr.html#cf.Query.addattr" title="cf.Query.addattr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">addattr</span></code></a> method.</p>
 </dd>
 <dt>exact: deprecated at version 3.0.0.</dt>
-<dd><p class="first last">Use <a class="reference external" href="https://docs.python.org/3/library/re.html#re.compile" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.compile</span></code></a> objects in <em>value</em> instead.</p>
+<dd><p class="first last">Use <a class="reference external" href="https://docs.python.org/3/library/re.html#re.compile" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.compile</span></code></a> objects in <em>value</em> instead.</p>
 </dd>
 </dl>
 </td>
@@ -395,7 +395,7 @@ also the <a class="reference internal" href="../method/cf.Query.addattr.html#cf.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/classes/cf.Query.rst.txt"

@@ -117,7 +117,7 @@ standard names are missing.</p>
 <dt>fields: <a class="reference internal" href="../classes/cf.FieldList.html#cf.FieldList" title="cf.FieldList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FieldList</span></code></a> or sequence of <a class="reference internal" href="../classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a></dt>
 <dd><p class="first last">The field constructs to aggregated.</p>
 </dd>
-<dt>info: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt>
+<dt>info: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt>
 <dd><p class="first last">Print information about the aggregation process. By
 default <em>info</em> is 0 and no information is displayed. If
 <em>info</em> is 1 or more then display information on which
@@ -128,75 +128,75 @@ same structural signature, their canonical first and last
 coordinate values. If <em>info</em> is 3 or more then display the
 field construct’s complete aggregation metadata.</p>
 </dd>
-<dt>overlap: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>overlap: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If False then require that aggregated field constructs
 have adjacent dimension coordinate construct cells which
 do not overlap (but they may share common boundary
 values). Ignored for a dimension coordinate construct that
 does not have bounds. See also the <em>contiguous</em> parameter.</p>
 </dd>
-<dt>contiguous: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>contiguous: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then require that aggregated field constructs
 have adjacent dimension coordinate construct cells which
 overlap or share common boundary values. Ignored for a
 dimension coordinate construct that does not have
 bounds. See also the <em>overlap</em> parameter.</p>
 </dd>
-<dt>relaxed_units: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>relaxed_units: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then assume that field and metadata constructs
 with the same identity but missing units actually have
 equivalent (but unspecified) units, so that aggregation
 may occur. By default such field constructs are not
 aggregatable.</p>
 </dd>
-<dt>allow_no_identity: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>allow_no_identity: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then assume that field and metadata constructs with
 no identity (see the <em>relaxed_identities</em> parameter) actually
 have the same (but unspecified) identity, so that aggregation
 may occur. By default such field constructs are not
 aggregatable.</p>
 </dd>
-<dt>relaxed_identities: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>relaxed_identities: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True and there is no standard name property nor “id”
 attribute, then allow field and metadata constructs to be
 identifiable by long name properties or netCDF variable names.</p>
 </dd>
-<dt>ncvar_identities: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>ncvar_identities: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then force field and metadata constructs to be
 identified by their netCDF file variable names See also the
 <em>relaxed_identies</em> parameter.</p>
 </dd>
-<dt>equal_all: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>equal_all: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then require that aggregated fields have the same set
 of non-standard CF properties (including
 <a class="reference internal" href="../attribute/cf.Field.long_name.html#cf.Field.long_name" title="cf.Field.long_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">long_name</span></code></a>), with the same values. See the
 <em>concatenate</em> parameter.</p>
 </dd>
-<dt>equal_ignore: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dt>equal_ignore: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
 <dd><p class="first last">Specify CF properties to omit from any properties specified by
 or implied by the <em>equal_all</em> and <em>equal</em> parameters.</p>
 </dd>
-<dt>equal: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dt>equal: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
 <dd><p class="first last">Specify CF properties for which it is required that aggregated
 fields all contain the properties, with the same values. See
 the <em>concatenate</em> parameter.</p>
 </dd>
-<dt>exist_all: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>exist_all: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then require that aggregated fields have the same set
 of non-standard CF properties (including, in this case,
 long_name), but not requiring the values to be the same. See
 the <em>concatenate</em> parameter.</p>
 </dd>
-<dt>exist_ignore: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dt>exist_ignore: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
 <dd><p class="first last">Specify CF properties to omit from the properties specified by
 or implied by the <em>exist_all</em> and <em>exist</em> parameters.</p>
 </dd>
-<dt>exist: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dt>exist: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
 <dd><p class="first last">Specify CF properties for which it is required that aggregated
 fields all contain the properties, but not requiring the
 values to be the same. See the <em>concatenate</em> parameter.</p>
 </dd>
-<dt>respect_valid: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>respect_valid: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then the CF properties <a class="reference internal" href="../attribute/cf.Field.valid_min.html#cf.Field.valid_min" title="cf.Field.valid_min"><code class="xref py py-obj docutils literal notranslate"><span class="pre">valid_min</span></code></a>,
 <a class="reference internal" href="../attribute/cf.Field.valid_max.html#cf.Field.valid_max" title="cf.Field.valid_max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">valid_max</span></code></a> and <a class="reference internal" href="../attribute/cf.Field.valid_range.html#cf.Field.valid_range" title="cf.Field.valid_range"><code class="xref py py-obj docutils literal notranslate"><span class="pre">valid_range</span></code></a> are taken
 into account during aggregation. I.e. a requirement for
@@ -204,7 +204,7 @@ aggregation is that fields have identical values for each
 these attributes, if set. By default these CF properties are
 ignored and are not set in the output fields.</p>
 </dd>
-<dt>dimension: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dt>dimension: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
 <dd><p class="first last">Create new axes for each input field which has one or more of
 the given properties. For each CF property name specified, if
 an input field has the property then, prior to aggregation, a
@@ -212,7 +212,7 @@ new axis is created with an auxiliary coordinate whose datum
 is the property’s value and the property itself is deleted
 from that field.</p>
 </dd>
-<dt>concatenate: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>concatenate: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If False then a CF property is omitted from an aggregated
 field if the property has unequal values across constituent
 fields or is missing from at least one constituent field. By
@@ -221,7 +221,7 @@ concatenated collection of the distinct values from the
 constituent fields, delimited with the string
 <code class="docutils literal notranslate"><span class="pre">'</span> <span class="pre">:AGGREGATED:</span> <span class="pre">'</span></code>.</p>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If False then do not copy fields prior to aggregation.
 Setting this option to False may change input fields in place,
 and the output fields may not be independent of the
@@ -230,7 +230,7 @@ never to accessed again (such as in this case: <code class="docutils literal not
 <span class="pre">cf.aggregate(f)</span></code>) then setting <em>copy</em> to False can reduce the
 time taken for aggregation.</p>
 </dd>
-<dt>axes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dt>axes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
 <dd><p class="first last">Select axes to aggregate over. Aggregation will only occur
 over as large a subset as possible of these axes. Each axis is
 identified by the exact identity of a one dimensional
@@ -239,7 +239,7 @@ method. Aggregations over more than one axis will occur in the
 order given. By default, aggregation will be over as many axes
 as possible.</p>
 </dd>
-<dt>donotchecknonaggregatingaxes: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>donotchecknonaggregatingaxes: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True, and <em>axes</em> is set, then checks for consistent data
 array values will only be made for one dimensional coordinate
 objects which span the any of the given aggregating axes. This
@@ -318,7 +318,7 @@ and for three different atmospheric heights for each time:</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/function/cf.aggregate.rst.txt"

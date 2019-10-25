@@ -93,14 +93,15 @@
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.data.abstract.compressedarray.CompressedArray</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.raggedindexedcontiguousarray.RaggedIndexedContiguousArray</span></code></p>
 <p>An underlying indexed contiguous ragged array.</p>
 <p>A collection of features, each of which is sequence of (vertical)
-profiles, stored using an indexed contiguous ragged array combines all
-feature elements along a single dimension (the “sample dimension”)
-such that a contiguous ragged array representation is used for each
-profile and the indexed ragged array representation to organise the
-profiles into timeseries.</p>
-<p>The information needed to uncompress the data is stored in a “count
-variable” that gives the size of each profile; and in a “index
-variable” that specifies the feature that each profile belongs to.</p>
+profiles, stored using an indexed contiguous ragged array combines
+all feature elements along a single dimension (the “sample
+dimension”) such that a contiguous ragged array representation is
+used for each profile and the indexed ragged array representation
+to organise the profiles into timeseries.</p>
+<p>The information needed to uncompress the data is stored in a
+“count variable” that gives the size of each profile; and in a
+“index variable” that specifies the feature that each profile
+belongs to.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 3.0.0.</span></p>
 </div>
@@ -113,13 +114,13 @@ variable” that specifies the feature that each profile belongs to.</p>
 <dt>compressed_array: <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a></dt>
 <dd><p class="first last">The compressed array.</p>
 </dd>
-<dt>shape: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a></dt>
+<dt>shape: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a></dt>
 <dd><p class="first last">The uncompressed array dimension sizes.</p>
 </dd>
-<dt>size: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt>
+<dt>size: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt>
 <dd><p class="first last">Number of elements in the uncompressed array.</p>
 </dd>
-<dt>ndim: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt>
+<dt>ndim: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt>
 <dd><p class="first last">The number of uncompressed array dimensions</p>
 </dd>
 <dt>count_variable: <a class="reference internal" href="cf.Count.html#cf.Count" title="cf.Count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Count</span></code></a></dt>
@@ -232,7 +233,7 @@ corresponding to a CF-netCDF CF-netCDF index variable.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/classes/cf.RaggedIndexedContiguousArray.rst.txt"

@@ -1,13 +1,5 @@
-import re
-
-from copy      import deepcopy
 from functools import partial as functools_partial
-from functools import reduce
-from re        import escape  as re_escape
-from re        import match   as re_match
-from re        import findall as re_findall
 from netCDF4   import default_fillvals
-from re        import compile as re_compile
 
 from numpy import array       as numpy_array
 from numpy import result_type as numpy_result_type
@@ -15,7 +7,6 @@ from numpy import vectorize   as numpy_vectorize
 
 
 from ..cfdatetime   import dt
-from ..functions    import RTOL, ATOL
 from ..functions    import equivalent as cf_equivalent
 from ..functions    import inspect    as cf_inspect
 from ..query        import Query
@@ -27,8 +18,8 @@ from ..data.data import Data
 from . import Properties
 
 from ..functions import (_DEPRECATION_ERROR_KWARGS,
-                         _DEPRECATION_WARNING_METHOD,
-                         _DEPRECATION_ERROR_METHOD)
+                         _DEPRECATION_ERROR_METHOD,
+                        )
 
 
 _units_None = Units()

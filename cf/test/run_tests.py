@@ -16,11 +16,13 @@ def run_test_suite_setup(verbosity=2):
     runner = unittest.TextTestRunner(verbosity=verbosity)
     runner.run(testsuite_setup)
 
+    
 # Run the test suite.
 def run_test_suite(verbosity=2):
     runner = unittest.TextTestRunner(verbosity=verbosity)
     runner.run(testsuite)
 
+    
 if __name__ == '__main__':
     original_chunksize = cf.CHUNKSIZE()
     print('--------------------')

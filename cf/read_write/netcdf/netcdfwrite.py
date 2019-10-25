@@ -526,13 +526,13 @@ double
 int
 
         ''' 
-        if isinstance(x, numpy_bool_):
+        if isinstance(x, numpy.bool_):
             return bool(x)
         
-        if isinstance(x, numpy_integer):
+        if isinstance(x, numpy.integer):
             return int(x)
         
-        if isinstance(x, numpy_floating):
+        if isinstance(x, numpy.floating):
             return float(x)
         
         raise TypeError(

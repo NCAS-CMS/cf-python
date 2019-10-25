@@ -62,7 +62,7 @@ class CoordinateReferenceTest(unittest.TestCase):
 
         _ = repr(coordinate_conversion)
         _ = str(coordinate_conversion)
-    #--- End: def
+
     
     def test_CoordinateReference_equals(self):
         f = cf.read(self.filename)[0]
@@ -128,7 +128,7 @@ class CoordinateReferenceTest(unittest.TestCase):
         )
         self.assertTrue(t.equals(t, verbose=True))
         self.assertTrue(t.equals(t.copy(), verbose=True))
-    #--- End: def
+
 
     def test_CoordinateReference_default_value(self):
         f = cf.read(self.filename)[0]
@@ -139,7 +139,7 @@ class CoordinateReferenceTest(unittest.TestCase):
         cr = f.construct('standard_name:atmosphere_hybrid_height_coordinate')
         self.assertTrue(cr.default_value('qwerty') == 0.0)
         self.assertTrue(cr.default_value('earth_depth') == 0.0)
-    #--- End: def
+
 
     def test_CoordinateReference_canonical_units(self):
         f = cf.read(self.filename)[0]
@@ -150,7 +150,7 @@ class CoordinateReferenceTest(unittest.TestCase):
         cr = f.construct('standard_name:atmosphere_hybrid_height_coordinate')
         self.assertTrue(cr.canonical_units('qwerty') is None)
         self.assertTrue(cr.canonical_units('earth_radius') == cf.Units('m'))
-    #--- End: def
+
     
     def test_CoordinateReference_match(self):
         self.assertTrue(self.vcr.match())
@@ -162,14 +162,14 @@ class CoordinateReferenceTest(unittest.TestCase):
         self.assertTrue(self.hcr.match('grid_mapping_name:rotated_latitude_longitude'))
         self.assertTrue(self.hcr.match('rotated_latitude_longitude'))
         self.assertTrue(self.hcr.match('grid_mapping_name:rotated_latitude_longitude', 'qwerty'))
-     #--- End: def
+
     
     def test_CoordinateReference_get__getitem__(self):
         self.assertTrue(self.vcr['earth_radius'] == self.datum.get_parameter('earth_radius'))
         self.assertTrue(self.vcr['standard_name'] == self.vconversion.get_parameter('standard_name'))
         self.assertTrue(self.vcr.get('earth_radius') is self.datum.get_parameter('earth_radius'))
         self.assertTrue(self.vcr.get('orog') is None)
-        self.assertTrue(self.vcr.get('orog', 'qwerty') is 'qwerty')
+        self.assertTrue(self.vcr.get('orog', 'qwerty') == 'qwerty')
         self.assertTrue(self.vcr.get('qwerty') is None)
         self.assertTrue(self.vcr['standard_name'] == self.vconversion.get_parameter('standard_name'))
         with self.assertRaises(Exception):
@@ -184,7 +184,7 @@ class CoordinateReferenceTest(unittest.TestCase):
         self.assertTrue(self.hcr.get('qwerty', 12) == 12)
         with self.assertRaises(Exception):
             _ = self.hcr['qwerty']
-    #--- End: def
+
     
 #--- End: class
 

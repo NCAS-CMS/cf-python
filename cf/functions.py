@@ -3,7 +3,6 @@ import os
 import platform
 import re
 import resource
-import copy
 import ctypes.util
 #import cPickle
 import netCDF4
@@ -19,12 +18,9 @@ from numpy import all               as _numpy_all
 from numpy import allclose          as _x_numpy_allclose
 from numpy import array             as _numpy_array
 from numpy import ascontiguousarray as _numpy_ascontiguousarray 
-from numpy import dtype             as _numpy_dtype
 from numpy import integer           as _numpy_integer
 from numpy import isclose           as _x_numpy_isclose
-from numpy import ndarray           as _numpy_ndarray
 from numpy import ndim              as _numpy_ndim
-from numpy import number            as _numpy_number
 from numpy import shape             as _numpy_shape
 from numpy import sign              as _numpy_sign
 from numpy import size              as _numpy_size
@@ -42,18 +38,13 @@ from collections import Iterable
 from hashlib     import md5 as hashlib_md5
 from marshal     import dumps as marshal_dumps
 from math        import ceil as math_ceil
-from os          import getpid, listdir, mkdir, curdir
-from os.path     import isfile       as _os_path_isfile
+from os          import getpid, listdir, mkdir
 from os.path     import abspath      as _os_path_abspath
-from os.path     import commonprefix as _os_path_commonprefix
 from os.path     import expanduser   as _os_path_expanduser
 from os.path     import expandvars   as _os_path_expandvars
 from os.path     import dirname      as _os_path_dirname
 from os.path     import join         as _os_path_join
 from os.path     import relpath      as _os_path_relpath 
-from inspect     import getargspec
-from itertools   import product as itertools_product
-#from platform    import system, platform, python_version
 from psutil      import virtual_memory, Process
 from sys         import executable as _sys_executable
 import urllib.parse
@@ -2258,7 +2249,7 @@ def _section(o, axes=None, data=False, stop=None, chunks=False,
             return
         
         for i in range(0, sizes[current_index], steps[current_index]):
-            if not stop is None and nl_vars['count'] >= stop:
+            if stop is not None and nl_vars['count'] >= stop:
                 return
             indices[current_index] = slice(i, i + steps[current_index])
             loop_over_index(current_index - 1)
@@ -2389,8 +2380,8 @@ def default_fillvals():
     return netCDF4.default_fillvals
 
 
-def _DEPRECATION_ERROR(message=''):  
-    raise DeprecationError("{0}".format(message))
+def _DEPRECATION_ERROR(message=''):
+    raise DeprecationError("{}".format(message))
 
 
 def _DEPRECATION_ERROR_ARG(instance, method, arg, message=''):  
@@ -2493,10 +2484,6 @@ def _DEPRECATION_ERROR_SEQUENCE(instance):
     raise DeprecationError(
         "Use of a {!r} to identify constructs has been deprecated and is no longer available. Use the * operator to unpack the arguments instead.".format(
             instance.__class__.__name__))
-
-
-def _DEPRECATION_ERROR(message=''):
-    raise DeprecationError("{}".format(message))
 
 
 # --------------------------------------------------------------------

@@ -90,13 +90,13 @@
 <h1>cf.Data.flatten<a class="headerlink" href="#cf-data-flatten" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Data.flatten">
-<code class="descclassname">Data.</code><code class="descname">flatten</code><span class="sig-paren">(</span><em>axes=None</em>, <em>inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/data/data.py#L9091"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.flatten" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Data.</code><code class="descname">flatten</code><span class="sig-paren">(</span><em>axes=None</em>, <em>inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/data/data.py#L9081"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.flatten" title="Permalink to this definition">¶</a></dt>
 <dd><p>Flatten axes of the data</p>
 <p>Any subset of the axes may be flattened.</p>
 <p>The shape of the data may change, but the size will not.</p>
 <p>The flattening is executed in row-major (C-style) order. For
-example, the array [[1, 2], [3, 4]] would be flattened across both
-dimensions to [1 2 3 4].</p>
+example, the array <code class="docutils literal notranslate"><span class="pre">[[1,</span> <span class="pre">2],</span> <span class="pre">[3,</span> <span class="pre">4]]</span></code> would be flattened across
+both dimensions to <code class="docutils literal notranslate"><span class="pre">[1</span> <span class="pre">2</span> <span class="pre">3</span> <span class="pre">4]</span></code>.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last"><a class="reference internal" href="cf.Data.insert_dimension.html#cf.Data.insert_dimension" title="cf.Data.insert_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_dimension</span></code></a>, <a class="reference internal" href="cf.Data.flip.html#cf.Data.flip" title="cf.Data.flip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flip</span></code></a>, <a class="reference internal" href="cf.Data.swapaxes.html#cf.Data.swapaxes" title="cf.Data.swapaxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">swapaxes</span></code></a>, <a class="reference internal" href="cf.Data.transpose.html#cf.Data.transpose" title="cf.Data.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></p>
@@ -141,14 +141,54 @@ in-place.</p>
 <p><strong>Examples</strong></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span>
-<span class="go">&lt;CF Data(1, 2, 3, 4): [[[[0, ..., 23]]]]&gt;    </span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+<span class="go">&lt;CF Data(1, 2, 3, 4): [[[[0, ..., 23]]]]&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[[[ 0  1  2  3]</span>
+<span class="go">   [ 4  5  6  7]</span>
+<span class="go">   [ 8  9 10 11]]</span>
+<span class="go">  [[12 13 14 15]</span>
+<span class="go">   [16 17 18 19]</span>
+<span class="go">   [20 21 22 23]]]]</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">e</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">e</span>
 <span class="go">&lt;CF Data(24): [0, ..., 23]&gt;   </span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">flatten</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="o">&lt;</span><span class="n">CF</span> <span class="n">Data</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">3</span><span class="p">):</span> <span class="p">[[[</span><span class="mi">0</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="mi">23</span><span class="p">]]]</span><span class="o">&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">flatten</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[ 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23]</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">e</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">flatten</span><span class="p">([])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">e</span>
+<span class="go">&lt;CF Data(1, 2, 3, 4): [[[[0, ..., 23]]]]&gt;</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">e</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">flatten</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">e</span>             
+<span class="go">&lt;CF Data(1, 8, 3): [[[0, ..., 23]]]&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[[ 0  4  8]</span>
+<span class="go">  [ 1  5  9]</span>
+<span class="go">  [ 2  6 10]</span>
+<span class="go">  [ 3  7 11]</span>
+<span class="go">  [12 16 20]</span>
+<span class="go">  [13 17 21]</span>
+<span class="go">  [14 18 22]</span>
+<span class="go">  [15 19 23]]]</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">flatten</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span>          
 <span class="go">&lt;CF Data(4, 2, 3): [[[0, ..., 23]]]&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[[ 0  4  8]</span>
+<span class="go">  [12 16 20]]</span>
+<span class="go"> [[ 1  5  9]</span>
+<span class="go">  [13 17 21]]</span>
+<span class="go"> [[ 2  6 10]</span>
+<span class="go">  [14 18 22]]</span>
+<span class="go"> [[ 3  7 11]</span>
+<span class="go">  [15 19 23]]]</span>
 </pre></div>
 </div>
 </dd></dl>

@@ -73,7 +73,7 @@ class aggregateTest(unittest.TestCase):
             self.assertTrue(d[0].equals(e[0], verbose=True))
 
         cf.CHUNKSIZE(self.original_chunksize)
-    #--- End: def
+
 
 #--- End: class
 

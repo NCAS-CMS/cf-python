@@ -493,10 +493,10 @@ class FieldTest(unittest.TestCase):
         g = f[[7, 4, 1], slice(6, 8)]
         
         g = f.squeeze()
-        h = g[0:3, 5]
+        _ = g[0:3, 5]
         
         g = f[0].squeeze()
-        h = g[5]        
+        _ = g[5]        
 
 
     def test_Field__setitem__(self):
@@ -598,8 +598,8 @@ class FieldTest(unittest.TestCase):
 
         f = self.f.copy()
 
-        m = f.domain_mask()
-        m = f.domain_mask(grid_longitude=cf.wi(25, 31))
+        _ = f.domain_mask()
+        _ = f.domain_mask(grid_longitude=cf.wi(25, 31))
 
 
     def test_Field_cumsum(self):
@@ -698,8 +698,7 @@ class FieldTest(unittest.TestCase):
                 x1 = g.coordinate('grid_longitude').datum(0)
                 self.assertTrue(
                     x0 < anchor <= x1,
-                    'INCREASING period=%s, x0=%s, anchor=%s, x1=%s' % \
-                    (period, x0, anchor, x1))
+                    'INCREASING period=%s, x0=%s, anchor=%s, x1=%s' % (period, x0, anchor, x1))
             #--- End: for
 
             # Decreasing dimension coordinate    
@@ -710,8 +709,7 @@ class FieldTest(unittest.TestCase):
                 x0 = g.coordinate('grid_longitude').datum(0)
                 self.assertTrue(
                     x1 > anchor >= x0,
-                    'DECREASING period=%s, x0=%s, anchor=%s, x1=%s' % \
-                    (period, x1, anchor, x0))
+                    'DECREASING period=%s, x0=%s, anchor=%s, x1=%s' % (period, x1, anchor, x0))
             #--- End: for
         #--- End: for
 

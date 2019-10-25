@@ -1,17 +1,9 @@
-import os
-
-from copy import deepcopy
-from csv  import reader as csv_reader
-from re   import match as re_match
-
 import cfdm
 
-from .          import __file__
 from .constants import cr_coordinates, cr_canonical_units, cr_default_values
-from .functions import RTOL, ATOL, equals, allclose
+from .functions import RTOL, ATOL, allclose
 from .functions import inspect as cf_inspect
 from .query     import Query
-from .units     import Units
 
 from . import CoordinateConversion
 from . import Datum

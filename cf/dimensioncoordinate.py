@@ -5,9 +5,8 @@ import cfdm
 
 from . import Bounds
 
-from .functions        import parse_indices
-from .timeduration     import TimeDuration
-from .units            import Units
+from .timeduration import TimeDuration
+from .units        import Units
 
 from .data.data import Data
 
@@ -16,7 +15,6 @@ from . import abstract
 
 from .functions import (_DEPRECATION_ERROR_KWARGS,
                         _DEPRECATION_ERROR_ATTRIBUTE,
-                        _DEPRECATION_ERROR_METHOD,
                         )
 
 

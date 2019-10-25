@@ -1,7 +1,5 @@
 import cfdm
 
-from .data.data import Data
-
 from . import mixin
 from . import abstract
 

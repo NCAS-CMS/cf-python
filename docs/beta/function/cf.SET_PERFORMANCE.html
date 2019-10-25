@@ -88,7 +88,7 @@
 <h1>cf.SET_PERFORMANCE<a class="headerlink" href="#cf-set-performance" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.SET_PERFORMANCE">
-<code class="descclassname">cf.</code><code class="descname">SET_PERFORMANCE</code><span class="sig-paren">(</span><em>chunksize=None</em>, <em>free_memory_factor=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/functions.py#L309"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.SET_PERFORMANCE" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">cf.</code><code class="descname">SET_PERFORMANCE</code><span class="sig-paren">(</span><em>chunksize=None</em>, <em>free_memory_factor=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/functions.py#L300"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.SET_PERFORMANCE" title="Permalink to this definition">¶</a></dt>
 <dd><p>Tune performance of parallelisation by setting chunksize and free
 memory factor. By just providing the chunksize it can be changed
 to a smaller value than an upper limit, which is determined by the
@@ -107,11 +107,11 @@ values of the parameters are returned in a tuple.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>chunksize: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>, optional</dt>
+<dt>chunksize: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>, optional</dt>
 <dd><p class="first last">The size in bytes of a chunk used by LAMA to partition the
 data array.</p>
 </dd>
-<dt>free_memory_factor: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>, optional</dt>
+<dt>free_memory_factor: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>, optional</dt>
 <dd><p class="first last">The fraction of memory to keep free as a temporary
 workspace.</p>
 </dd>
@@ -119,7 +119,7 @@ workspace.</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a></dt>
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a></dt>
 <dd><p class="first last">A tuple of the previous chunksize and free_memory_factor.</p>
 </dd>
 </dl>
@@ -143,7 +143,7 @@ workspace.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/function/cf.SET_PERFORMANCE.rst.txt"

@@ -86,7 +86,7 @@ class RegridTest(unittest.TestCase):
             f1.regridc(f6, axes='T', method='bilinear')
         
         cf.ATOL(original_atol)
-    #--- End: def
+
     
     @unittest.skipUnless(cf._found_ESMF, "Requires esmf package.")
     def test_Field_regridc(self):
@@ -122,7 +122,7 @@ class RegridTest(unittest.TestCase):
         cf.CHUNKSIZE(self.original_chunksize)
 
         cf.ATOL(original_atol)
-    #--- End: def
+
     
 #--- End: class
 

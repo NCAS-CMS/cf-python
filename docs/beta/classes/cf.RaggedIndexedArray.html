@@ -92,12 +92,13 @@
 <em class="property">class </em><code class="descclassname">cf.</code><code class="descname">RaggedIndexedArray</code><span class="sig-paren">(</span><em>compressed_array=None</em>, <em>shape=None</em>, <em>size=None</em>, <em>ndim=None</em>, <em>index_variable=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/data/raggedindexedarray.py#L6"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.RaggedIndexedArray" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.data.abstract.compressedarray.CompressedArray</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.raggedindexedarray.RaggedIndexedArray</span></code></p>
 <p>An underlying indexed ragged array.</p>
-<p>A collection of features stored using an indexed ragged array combines
-all features along a single dimension (the “sample dimension”) such
-that the values of each feature in the collection are interleaved.</p>
-<p>The information needed to uncompress the data is stored in an “index
-variable” that specifies the feature that each element of the sample
-dimension belongs to.</p>
+<p>A collection of features stored using an indexed ragged array
+combines all features along a single dimension (the “sample
+dimension”) such that the values of each feature in the collection
+are interleaved.</p>
+<p>The information needed to uncompress the data is stored in an
+“index variable” that specifies the feature that each element of
+the sample dimension belongs to.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 3.0.0.</span></p>
 </div>
@@ -110,13 +111,13 @@ dimension belongs to.</p>
 <dt>compressed_array: <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a></dt>
 <dd><p class="first last">The compressed array.</p>
 </dd>
-<dt>shape: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a></dt>
+<dt>shape: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a></dt>
 <dd><p class="first last">The uncompressed array dimension sizes.</p>
 </dd>
-<dt>size: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt>
+<dt>size: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt>
 <dd><p class="first last">Number of elements in the uncompressed array.</p>
 </dd>
-<dt>ndim: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt>
+<dt>ndim: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt>
 <dd><p class="first last">The number of uncompressed array dimensions</p>
 </dd>
 <dt>index_variable: <a class="reference internal" href="cf.Index.html#cf.Index" title="cf.Index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Index</span></code></a></dt>
@@ -222,7 +223,7 @@ corresponding to a CF-netCDF index variable.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/classes/cf.RaggedIndexedArray.rst.txt"

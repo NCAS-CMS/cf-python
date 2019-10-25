@@ -89,27 +89,28 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.CellMethod">
-<em class="property">class </em><code class="descclassname">cf.</code><code class="descname">CellMethod</code><span class="sig-paren">(</span><em>axes=None</em>, <em>method=None</em>, <em>qualifiers=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/cellmethod.py#L34"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.CellMethod" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cf.</code><code class="descname">CellMethod</code><span class="sig-paren">(</span><em>axes=None</em>, <em>method=None</em>, <em>qualifiers=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/cellmethod.py#L29"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.CellMethod" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.cellmethod.CellMethod</span></code></p>
 <p>A cell method construct of the CF data model.</p>
-<p>One or more cell method constructs describe how the cell values of the
-field construct represent the variation of the physical quantity
-within its cells, i.e. the structure of the data at a higher
-resolution.</p>
-<p>A single cell method construct consists of a set of axes, a “method”
-property which describes how a value of the field construct’s data
-array describes the variation of the quantity within a cell over those
-axes (e.g. a value might represent the cell area average), and
-descriptive qualifiers serving to indicate more precisely how the
-method was applied (e.g. recording the spacing of the original data,
-or the fact that the method was applied only over El Nino years).</p>
+<p>One or more cell method constructs describe how the cell values of
+the field construct represent the variation of the physical
+quantity within its cells, i.e. the structure of the data at a
+higher resolution.</p>
+<p>A single cell method construct consists of a set of axes, a
+“method” property which describes how a value of the field
+construct’s data array describes the variation of the quantity
+within a cell over those axes (e.g. a value might represent the
+cell area average), and descriptive qualifiers serving to indicate
+more precisely how the method was applied (e.g. recording the
+spacing of the original data, or the fact that the method was
+applied only over El Nino years).</p>
 <p><strong>Initialisation</strong></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
-<dt>axes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dt>axes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
 <dd><p class="first">Set the axes of the cell method construct, specified either by
 the construct identifiers of domain axis constructs, standard
 names, or the special string <code class="docutils literal notranslate"><span class="pre">'area'</span></code>.</p>
@@ -137,7 +138,7 @@ names, or the special string <code class="docutils literal notranslate"><span cl
 <a class="reference internal" href="../method/cf.CellMethod.set_axes.html#cf.CellMethod.set_axes" title="cf.CellMethod.set_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_axes</span></code></a> method.</p>
 </div></blockquote>
 </dd>
-<dt>method: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dt>method: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
 <dd><p class="first">Set the axes of the cell method construct. Either one or more
 domain axis construct identifiers or standard names. Ignored
 if the <em>source</em> parameter is set.</p>
@@ -153,7 +154,7 @@ if the <em>source</em> parameter is set.</p>
 <a class="reference internal" href="../method/cf.CellMethod.set_method.html#cf.CellMethod.set_method" title="cf.CellMethod.set_method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_method</span></code></a> method.</p>
 </div></blockquote>
 </dd>
-<dt>qualifiers: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt>
+<dt>qualifiers: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt>
 <dd><p class="first">Set descriptive qualifiers. The dictionary keys are qualifer
 names, with corresponding values. Ignored if the <em>source</em>
 parameter is set.</p>
@@ -172,7 +173,7 @@ parameter is set.</p>
 <dd><p class="first last">Initialize the axes, method and qualifiers from those of
 <em>source</em>.</p>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If False then do not deep copy input parameters prior to
 initialization By default parameters are deep copied.</p>
 </dd>
@@ -349,13 +350,13 @@ initialization By default parameters are deep copied.</p>
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td><a class="reference internal" href="../method/cf.CellMethod.__deepcopy__.html#cf.CellMethod.__deepcopy__" title="cf.CellMethod.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></td>
-<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</td>
+<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cf.CellMethod.__repr__.html#cf.CellMethod.__repr__" title="cf.CellMethod.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></td>
-<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</td>
+<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cf.CellMethod.__str__.html#cf.CellMethod.__str__" title="cf.CellMethod.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></td>
-<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</td>
+<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</td>
 </tr>
 </tbody>
 </table>
@@ -374,7 +375,7 @@ initialization By default parameters are deep copied.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/classes/cf.CellMethod.rst.txt"

@@ -1,13 +1,8 @@
-from re import sub    as re_sub
-from re import search as re_search
 from ast import literal_eval as ast_literal_eval
 import re
 
-from numpy import argsort as numpy_argsort
-
 import cfdm
 
-from .functions import equals
 from .functions import inspect as cf_inspect
 
 from .data.data import Data
@@ -34,18 +29,19 @@ _collapse_cell_methods = {
 class CellMethod(cfdm.CellMethod):
     '''A cell method construct of the CF data model.
 
-One or more cell method constructs describe how the cell values of the
-field construct represent the variation of the physical quantity
-within its cells, i.e. the structure of the data at a higher
-resolution.
-
-A single cell method construct consists of a set of axes, a "method"
-property which describes how a value of the field construct's data
-array describes the variation of the quantity within a cell over those
-axes (e.g. a value might represent the cell area average), and
-descriptive qualifiers serving to indicate more precisely how the
-method was applied (e.g. recording the spacing of the original data,
-or the fact that the method was applied only over El Nino years).
+    One or more cell method constructs describe how the cell values of
+    the field construct represent the variation of the physical
+    quantity within its cells, i.e. the structure of the data at a
+    higher resolution.
+    
+    A single cell method construct consists of a set of axes, a
+    "method" property which describes how a value of the field
+    construct's data array describes the variation of the quantity
+    within a cell over those axes (e.g. a value might represent the
+    cell area average), and descriptive qualifiers serving to indicate
+    more precisely how the method was applied (e.g. recording the
+    spacing of the original data, or the fact that the method was
+    applied only over El Nino years).
 
     '''
     def __repr__(self):

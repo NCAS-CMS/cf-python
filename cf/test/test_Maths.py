@@ -6,7 +6,7 @@ import inspect
 
 import numpy
 from scipy.ndimage import convolve1d
-from scipy.signal import get_window
+#from scipy.signal import get_window
 
 import cf
 
@@ -63,7 +63,7 @@ class MathTest(unittest.TestCase):
         #--- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
-    #--- End: def
+
 
     def test_Field_derivative(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -100,7 +100,7 @@ class MathTest(unittest.TestCase):
         #--- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
-    #--- End: def
+
     
     def test_relative_vorticity_distance(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -143,7 +143,7 @@ class MathTest(unittest.TestCase):
         #--- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
-    #--- End: def
+
 
     def test_relative_vorticity_latlong(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -202,10 +202,9 @@ class MathTest(unittest.TestCase):
                         
             rv = cf.relative_vorticity(u, v, wrap=True)
             self.assertTrue(numpy.allclose(rv.array, rv_array))
-        #--- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
-    #--- End: def
+
 
 if __name__ == "__main__":
     print('Run date:', datetime.datetime.now())

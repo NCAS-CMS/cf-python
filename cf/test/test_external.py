@@ -86,7 +86,7 @@ def _make_files():
     _pp(external_missing_file, external_missing=True)
 
     return parent_file, external_file, combined_file, external_missing_file
-#--- End: def
+
 
 (parent_file,
  external_file,
@@ -109,13 +109,13 @@ class ExternalVariableTest(unittest.TestCase):
         os.close(fd)        
         (fd, self.tempfilename_external) = tempfile.mkstemp(suffix='.nc', prefix='cf_external_', dir='.')
         os.close(fd)        
-    #--- End: def
+
 
     def tearDown(self):
         os.remove(self.tempfilename)
         os.remove(self.tempfilename_parent)
         os.remove(self.tempfilename_external)
-    #--- End: def
+
 
     def test_EXTERNAL_READ(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -188,7 +188,7 @@ class ExternalVariableTest(unittest.TestCase):
 
         for i in range(len(f)):
             self.assertTrue(c[i].equals(f[i], verbose=True))
-    #--- End: def        
+
    
     def test_EXTERNAL_WRITE(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -236,7 +236,7 @@ class ExternalVariableTest(unittest.TestCase):
 
         for i in range(len(h)):
             self.assertTrue(external[i].equals(h[i], verbose=True))
-    #--- End: def        
+
     
 #--- End: class
 

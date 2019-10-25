@@ -1,20 +1,4 @@
-from copy      import deepcopy
-from functools import partial as functools_partial
-from re        import escape  as re_escape
-from re        import match   as re_match
-from re        import findall as re_findall
-from re        import search as re_search
-from netCDF4   import default_fillvals as _netCDF4_default_fillvals
-from operator  import truediv  as truediv
-from operator  import itruediv as itruediv
-from re        import compile as re_compile
-
-
-from numpy import array       as numpy_array
-from numpy import result_type as numpy_result_type
-from numpy import size        as numpy_size
-from numpy import vectorize   as numpy_vectorize
-
+from numpy import size as numpy_size
 
 from . import PropertiesData
 
