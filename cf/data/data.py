@@ -9095,8 +9095,8 @@ returned.
     The shape of the data may change, but the size will not.
 
     The flattening is executed in row-major (C-style) order. For
-    example, the array [[1, 2], [3, 4]] would be flattened across both
-    dimensions to [1 2 3 4].
+    example, the array ``[[1, 2], [3, 4]]`` would be flattened across
+    both dimensions to ``[1 2 3 4]``.
 
     .. versionaddedd:: 3.0.2
 
@@ -9129,23 +9129,52 @@ returned.
 
     >>> d = cf.Data(numpy.arange(24).reshape(1, 2, 3, 4))
     >>> d
-    <CF Data(1, 2, 3, 4): [[[[0, ..., 23]]]]>    
-    >>> d.flatten()
+    <CF Data(1, 2, 3, 4): [[[[0, ..., 23]]]]>
+    >>> print(d.array)
+    [[[[ 0  1  2  3]
+       [ 4  5  6  7]
+       [ 8  9 10 11]]
+      [[12 13 14 15]
+       [16 17 18 19]
+       [20 21 22 23]]]]
+
+    >>> e = d.flatten()
+    >>> e
     <CF Data(24): [0, ..., 23]>   
-    >>> d.flatten([1, 3])
-    >>> <CF Data(1, 8, 3): [[[0, ..., 23]]]>
+    >>> print(e.array)
+    [ 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23]
+
+    >>> e = d.flatten([])
+    >>> e
+    <CF Data(1, 2, 3, 4): [[[[0, ..., 23]]]]>
+
+    >>> e = d.flatten([1, 3])
+    >>> e             
+    <CF Data(1, 8, 3): [[[0, ..., 23]]]>
+    >>> print(e.array)
+    [[[ 0  4  8]
+      [ 1  5  9]
+      [ 2  6 10]
+      [ 3  7 11]
+      [12 16 20]
+      [13 17 21]
+      [14 18 22]
+      [15 19 23]]]
+
     >>> d.flatten([0, -1], inplace=True)
-    >>> d
+    >>> d          
     <CF Data(4, 2, 3): [[[0, ..., 23]]]>
+    >>> print(d.array)
+    [[[ 0  4  8]
+      [12 16 20]]
+     [[ 1  5  9]
+      [13 17 21]]
+     [[ 2  6 10]
+      [14 18 22]]
+     [[ 3  7 11]
+      [15 19 23]]]
 
         '''
-        def _new_shape(old_shape, flatten_axes):
-            new_shape = [old_shape[i] for i in range(len(old_shape))
-                         if i not in flatten_axes]
-            new_shape.insert(axes[0], numpy_prod([old_shape[i] for i in flatten_axes]))
-            return new_shape
-        #--- End: def
-        
         ndim = self._ndim
         if not ndim:
             if axes or axes == 0:
@@ -9159,6 +9188,8 @@ returned.
 
         shape = list(self._shape)
 
+        # Note that it is important that the first axis in the list is
+        # the left-most flattened axis
         if axes is None:
             axes = list(range(ndim))
         else:
@@ -9170,15 +9201,15 @@ returned.
                 return
             return self
 
-        n_non_flattened_axes = self.ndim - n_axes
+        new_shape = [n for i, n in enumerate(shape) if i not in axes]
+        new_shape.insert(axes[0], numpy_prod([shape[i] for i in axes]))
 
-        out = self.empty(_new_shape(shape, axes), dtype=self.dtype,
+        out = self.empty(new_shape, dtype=self.dtype,
                          units=self.Units, chunk=True)
         out.hardmask = False
-#        print (self.section(axes))
 
+        n_non_flattened_axes = ndim - n_axes
 
-        # 
         for key, data in self.section(axes).items():
             flattened_array = data.array.flatten()
             size = flattened_array.size
@@ -9191,64 +9222,7 @@ returned.
             shape = [1] * n_non_flattened_axes
             shape.insert(first_None_index, size)
 
-#            print('key=', key, indices, shape)
             out[tuple(indices)] = flattened_array.reshape(shape)
-            
-
-#        config = self.partition_configuration(readonly=True)
-#
-#        xxx= [n for i, n in enumerate(shape) if i in axes]
-#        yyy = []
-#        for i in axes:
-#            yyy.append(int(numpy_prod(xxx[i+1:])) )
-#        print ('size=', self.size)
-#        print ('axes=', axes)
-#        print('xxx=', xxx)
-#        print('yyy=', yyy)
-#        
-#        first_flat_axis = axes[0]
-#        last_flat_axis  = axes[-1]
-#        print ('first_flat_axis=',first_flat_axis)
-#        print ('last_flat_axis =', last_flat_axis )
-#        for partition in self.partitions.matrix.flat:
-#            partition.open(config)
-#            array = partition.array
-#
-#            new_shape = _new_shape(array.shape, axes)
-#
-#            # Create indices to out which correspond to this
-#            # partition's array
-#            indices = list(partition.indices)
-#            location = partition.location
-#
-#            
-#            start = 0
-#            stop = 0
-#            for i in axes[:last_flat_axis]:
-##                start += (indices[i].stop - indices[i].start) * yyy[i]
-#                start += location[i][0] * yyy[i]
-#                stop += (location[i][1] - location[i][0]) * yyy[i]
-#
-##            stop = start + (indices[last_flat_axis].stop - indices[last_flat_axis].start)
-#
-#            print ('start, stop =', start, stop)
-#            
-#            new_indices = [indices[i] for i in range(len(indices))
-#                           if i not in axes]
-#            new_indices.insert(first_flat_axis, slice(start, stop))
-#            
-#            print (partition.location)
-#            print (indices, new_indices )
-#            indices   = [slice(0, n) for n in new_shape]
-#            size = indices[first_flat_axis].stop
-#            indices[first_flat_axis] = slice(start, start+size)
-#
-#            out[tuple(indices)] = array.reshape(new_shape)
-#            
-#            start += size
-#
-#            partition.close()
-
 
         out.hardmask = True
             

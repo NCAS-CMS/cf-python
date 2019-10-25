@@ -13541,7 +13541,7 @@ may be accessed with the `nc_global_attributes`,
     The shape of the data may change, but the size will not.
 
     Metadata constructs whose data spans the flattened axes will
-    either also be flattened, or removed.
+    either themselves be flattened, or else removed.
 
     Cell method constructs that apply to the flattened axes will be
     removed or, if possible, have their axes specifications changed to
@@ -13568,6 +13568,8 @@ may be accessed with the `nc_global_attributes`,
             If no axes are provided then all axes spanned by the field
             construct's data are flattened.
 
+            No axes are flattened if *axes* is an empty sequence.
+
         return_axis: `bool`, optional
             If True then also return either the key of the new,
             flattened domain axis construct; or `None` if the axes to
@@ -13588,10 +13590,15 @@ may be accessed with the `nc_global_attributes`,
  
     **Examples**
 
+    See `cf.Data.flatten` for more examples of how the data are
+    flattened.
+
     >>> f.shape
     (1, 2, 3, 4)
     >>> f.flatten().shape
     (24,)
+    >>> f.flatten([]).shape
+    (1, 2, 3, 4)
     >>> f.flatten([1, 3]).shape
     (1, 8, 3)
     >>> f.flatten([0, -1], inplace=True)
@@ -13665,7 +13672,7 @@ may be accessed with the `nc_global_attributes`,
             f = self
         else:
             f = self.copy()
-            
+
         data_axes = self.get_data_axes()
 
         if axes is None:
@@ -13677,44 +13684,43 @@ may be accessed with the `nc_global_attributes`,
             axes = [self.domain_axis(x, key=True) for x in axes]
             axes = set(axes).intersection(data_axes)
 
-        iaxes = [data_axes.index(axis) for axis in axes]      
+        # Note that it is important to sort the iaxes, as we rely on
+        # the first iaxis in the list being the left-most flattened
+        # axis
+        iaxes = sorted([data_axes.index(axis) for axis in axes])
 
         if not len(iaxes):
             if inplace:
                 f = None
-
             if return_axis:
-                return f, None            
-
+                return f, None
             return f
         
         if len(iaxes) == 1:
             if inplace:
                 f = None
-
             if return_axis:
                 return f, tuple(axes)[0]
-
             return f
         
         # Make sure that the metadata constructs have the same
         # relative axis order as the data (pre-flattening)
-        f.transpose(f.get_data_axes(), inplace=True, constructs=True)
+        f.transpose(f.get_data_axes(), constructs=True, inplace=True)
 
         # Create the new data axes
         shape = f.shape
-        new_data_axes = [data_axes[i] for i in range(len(data_axes))
+        new_data_axes = [axis for i, axis in enumerate(data_axes)
                          if i not in iaxes]
         new_axis_size = numpy_prod([shape[i] for i in iaxes])
         new_axis = f.set_construct(DomainAxis(new_axis_size))
         new_data_axes.insert(iaxes[0], new_axis)
-        print ('iaxes=', iaxes, f.shape)
+
         # Flatten the field's data
         super(Field, f).flatten(iaxes, inplace=True)
         
         # Set the new data axes
         f.set_data_axes(new_data_axes)
-        
+
         # Modify or remove cell methods that span the flatten axes
         for key, cm in tuple(f.cell_methods.items()):
             cm_axes = set(cm.get_axes(()))
@@ -13761,15 +13767,15 @@ may be accessed with the `nc_global_attributes`,
 
         for key, c in d.items():
             c_axes = f.get_data_axes(key)
-            c_iaxes = [c_axes.index(axis) for axis in axes if axis in c_axes]
+            c_iaxes = sorted([c_axes.index(axis) for axis in axes if axis in c_axes])
             c.flatten(c_iaxes, inplace=True)
-            new_data_axes = [c_axes[i] for i in range(len(c_axes))
+            new_data_axes = [axis for i, axis in enumerate(c_axes)
                              if i not in c_iaxes]
-            new_data_axes.insert(iaxes[0], new_axis)        
+            new_data_axes.insert(c_iaxes[0], new_axis)        
             f.set_data_axes(new_data_axes, key=key)
 
         # Remove constructs that span some, but not all, of the
-        # flattened axes.
+        # flattened axes
         for key in f.constructs.filter_by_axis('or', *axes):
             f.del_construct(key)
 

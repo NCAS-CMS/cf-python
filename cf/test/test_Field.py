@@ -1,5 +1,6 @@
 import datetime
 import inspect
+import itertools
 import os
 import re
 import unittest
@@ -7,6 +8,12 @@ import unittest
 import numpy
 
 import cf
+
+def axes_combinations(f):
+    return [axes
+            for n in range(1, f.ndim+1)
+            for axes in itertools.permutations(range(f.ndim), n)]
+
 
 class FieldTest(unittest.TestCase):
     def setUp(self):
@@ -27,7 +34,7 @@ class FieldTest(unittest.TestCase):
 #        self.test_only = ['NOTHING!!!!']
 #        self.test_only = ['test_Field_ATOL_RTOL']
 #        self.test_only = ['test_Field_cumsum']
-#        self.test_only = ['test_Field_flatten']
+        self.test_only = ['test_Field_flatten']
 #        self.test_only = ['test_Field_transpose']
 #        self.test_only = ['test_Field_item']
 #        self.test_only = ['test_Field_field_ancillary']
@@ -53,21 +60,50 @@ class FieldTest(unittest.TestCase):
         
         f = self.f.copy()
         print(f)
+        print(f.constructs)
+        axis = f.set_construct(cf.DomainAxis(1))
+        d = cf.DimensionCoordinate()
+        d.standard_name = 'time'
+        d.set_data(cf.Data(123., 'days since 2000-01-02'))
+        f.set_construct(d, axes=axis)
+        print(f)
+        print(f.constructs)
+
+        g = f.flatten()
+        h = f.flatten(list(range(f.ndim)))
+        self.assertTrue(h.equals(g, verbose=True))
+
+        g = f.flatten('time')
+        self.assertTrue(g.equals(f, verbose=True))
+
+        for i in (0, 1, 2):
+            g = f.flatten(i)
+            self.assertTrue(g.equals(f, verbose=True))
+            g = f.flatten([i, 'time'])
+            self.assertTrue(g.equals(f, verbose=True))
+
+        for axes in axes_combinations(f):
+#            print (axes)
+            g = f.flatten(axes)
+#            print (g)
+
+            if len(axes) <= 1:
+                shape  = f.shape
+            else:                    
+                shape = [n for i, n in enumerate(f.shape) if i not in axes]
+                shape.insert(sorted(axes)[0],
+                             numpy.prod([n for i, n in enumerate(f.shape)
+                                         if i in axes]))
+                
+            self.assertTrue(g.shape == tuple(shape))
+            self.assertTrue(g.ndim == f.ndim-len(axes)+1)
+            self.assertTrue(g.size == f.size)
+        #--- End: for
+
         self.assertTrue(f.equals(f.flatten([]), verbose=True))
         self.assertTrue(f.flatten(inplace=True) is None)
 
-        f = self.f.copy()
-           
-        f.flatten()                       
-#        f.flatten(0)
-#        f.flatten(1)
-#        f.flatten([2])  One of these three make teh next one p[ass !!!!!!!!! ARRRRRRGG
-        f.flatten([0, 1, 2])
-        f.flatten([1, 2])
-        f.flatten([0, 1])
-        f.flatten([0, 2])
         
-
     def test_Field_bin(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return

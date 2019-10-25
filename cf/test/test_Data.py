@@ -85,7 +85,7 @@ class DataTest(unittest.TestCase):
                           'test_Data_flatten',
                           'test_Data_transpose']
         
-        self.test_only = ['test_Data_flatten']
+#        self.test_only = ['test_Data_flatten']
 #        self.test_only = ['test_Data_AUXILIARY_MASK']
 #        self.test_only = ['test_Data_outerproduct']
 #        self.test_only = ['test_Data__collapse_SHAPE']
