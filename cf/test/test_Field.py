@@ -735,15 +735,15 @@ class FieldTest(unittest.TestCase):
         f = self.f.copy()
         _ = f.del_data_axes()
         self.assertFalse(f.has_data_axes())
-        self.assertTrue(f.del_data_axes(default=None) == None)
+        self.assertTrue(f.del_data_axes(default=None) is None)
 
         f = self.f.copy()
         for key in f.constructs.filter_by_data():
             self.assertTrue(f.has_data_axes(key))
             _ = f.get_data_axes(key)
             _ = f.del_data_axes(key)
-            self.assertTrue(f.del_data_axes(key, default=None) == None)
-            self.assertTrue(f.get_data_axes(key, default=None) == None)
+            self.assertTrue(f.del_data_axes(key, default=None) is None)
+            self.assertTrue(f.get_data_axes(key, default=None) is None)
             self.assertFalse(f.has_data_axes(key))
 
         g = cf.Field()            
@@ -1492,7 +1492,7 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(f.coordinate_reference('rotated_latitude_longitude', key=True) == key)
 
         # Delete        
-        self.assertTrue(f.del_coordinate_reference('qwerty', default=None) == None)
+        self.assertTrue(f.del_coordinate_reference('qwerty', default=None) is None)
         
         self.assertTrue(len(f.coordinate_references) == 2)
         self.assertTrue(len(f.domain_ancillaries) == 3)
@@ -1750,7 +1750,7 @@ class FieldTest(unittest.TestCase):
 
         f = self.f.copy()
         g = f.mask_invalid()        
-        self.assertTrue(f.mask_invalid(inplace=True) == None)
+        self.assertTrue(f.mask_invalid(inplace=True) is None)
 
 
 #--- End: class

@@ -61,7 +61,7 @@ class ExtraData(dict):
         """
         Compare two extra data dictionaries returned by unpacker
         """
-        if other == None:
+        if other is None:
             return 1
         ka = self.sorted_keys()
         kb = other.sorted_keys()

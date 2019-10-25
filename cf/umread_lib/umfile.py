@@ -237,7 +237,7 @@ class Rec:
 using cached read
 
         '''
-        if self._extra_data == None:
+        if self._extra_data is None:
             self._extra_data = self.read_extra_data()
 
         return self._extra_data
