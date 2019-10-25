@@ -34,7 +34,7 @@ class FieldTest(unittest.TestCase):
 #        self.test_only = ['NOTHING!!!!']
 #        self.test_only = ['test_Field_ATOL_RTOL']
 #        self.test_only = ['test_Field_cumsum']
-        self.test_only = ['test_Field_flatten']
+#        self.test_only = ['test_Field_flatten']
 #        self.test_only = ['test_Field_transpose']
 #        self.test_only = ['test_Field_item']
 #        self.test_only = ['test_Field_field_ancillary']
@@ -59,15 +59,15 @@ class FieldTest(unittest.TestCase):
             return
         
         f = self.f.copy()
-        print(f)
-        print(f.constructs)
+#        print(f)
+#        print(f.constructs)
         axis = f.set_construct(cf.DomainAxis(1))
         d = cf.DimensionCoordinate()
         d.standard_name = 'time'
         d.set_data(cf.Data(123., 'days since 2000-01-02'))
         f.set_construct(d, axes=axis)
-        print(f)
-        print(f.constructs)
+#        print(f)
+#        print(f.constructs)
 
         g = f.flatten()
         h = f.flatten(list(range(f.ndim)))
@@ -771,15 +771,15 @@ class FieldTest(unittest.TestCase):
         f = self.f.copy()
         _ = f.del_data_axes()
         self.assertFalse(f.has_data_axes())
-        self.assertTrue(f.del_data_axes(default=None) == None)
+        self.assertTrue(f.del_data_axes(default=None) is None)
 
         f = self.f.copy()
         for key in f.constructs.filter_by_data():
             self.assertTrue(f.has_data_axes(key))
             _ = f.get_data_axes(key)
             _ = f.del_data_axes(key)
-            self.assertTrue(f.del_data_axes(key, default=None) == None)
-            self.assertTrue(f.get_data_axes(key, default=None) == None)
+            self.assertTrue(f.del_data_axes(key, default=None) is None)
+            self.assertTrue(f.get_data_axes(key, default=None) is None)
             self.assertFalse(f.has_data_axes(key))
 
         g = cf.Field()            
@@ -1528,7 +1528,7 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(f.coordinate_reference('rotated_latitude_longitude', key=True) == key)
 
         # Delete        
-        self.assertTrue(f.del_coordinate_reference('qwerty', default=None) == None)
+        self.assertTrue(f.del_coordinate_reference('qwerty', default=None) is None)
         
         self.assertTrue(len(f.coordinate_references) == 2)
         self.assertTrue(len(f.domain_ancillaries) == 3)
@@ -1786,7 +1786,7 @@ class FieldTest(unittest.TestCase):
 
         f = self.f.copy()
         g = f.mask_invalid()        
-        self.assertTrue(f.mask_invalid(inplace=True) == None)
+        self.assertTrue(f.mask_invalid(inplace=True) is None)
 
 
 #--- End: class

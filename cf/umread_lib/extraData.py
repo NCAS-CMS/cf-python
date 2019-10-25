@@ -57,11 +57,12 @@ class ExtraData(dict):
                 return c
         return 0
 
+
     def __cmp__(self, other):
+        """Compare two extra data dictionaries returned by unpacker
+
         """
-        Compare two extra data dictionaries returned by unpacker
-        """
-        if other == None:
+        if other is None:
             return 1
         ka = self.sorted_keys()
         kb = other.sorted_keys()

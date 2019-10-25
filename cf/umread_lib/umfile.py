@@ -234,17 +234,18 @@ class Rec:
 
     def get_extra_data(self):
         '''Get extra data associated with the record, either by reading or
-using cached read
+    using cached read
 
         '''
-        if self._extra_data == None:
+        if self._extra_data is None:
             self._extra_data = self.read_extra_data()
 
         return self._extra_data
 
+    
     def get_type_and_num_words(self):
-        """
-        get the data type (as numpy type) and number of words as 2-tuple
+        """get the data type (as numpy type) and number of words as 2-tuple
+
         """
         c = self.file._c_interface
         ntype, num_words = c.get_type_and_num_words(self.int_hdr)
@@ -254,9 +255,10 @@ using cached read
             dtype = numpy.dtype(c.file_data_real_type)
         return dtype, num_words
 
+    
     def get_data(self):
-        """
-        get the data array associated with the record
+        """get the data array associated with the record
+
         """
         c = self.file._c_interface
         file = self.file

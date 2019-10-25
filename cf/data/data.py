@@ -2693,7 +2693,7 @@ place.
                 "Can't cumsum: Invalid axis specification: Expected -{0}<=axis<{0}, got axis={1}".format(
                     ndim, axis))
 
-        sections = self.section([axis], chunks=True)
+        sections = self.section(axis, chunks=True)
 
         # Cumulatively sum each section
         for key, data in sections.items():
@@ -7452,7 +7452,7 @@ returned.
                 "Can't argmax: Invalid axis specification: Expected -{0}<=axis<{0}, got axis={1}".format(
                     ndim, axis))
         
-        sections = self.section([axis], chunks=True)
+        sections = self.section(axis, chunks=True)
         for key, d in sections.items():
             array = d.varray.argmax(axis=axis)
             array = numpy_expand_dims(array, axis)
@@ -12122,11 +12122,11 @@ returned.
     
     :Parameters:
     
-        axes: optional
-            This is should be a tuple or a list of the m indices of
+        axes: (seqeunce of) `int`
+            This is should be one or more integers of the m indices of
             the m axes that define the sections of the `Data`
-            object. If axes is `None` (the default) all axes are
-            selected.
+            object. If axes is `None` (the default) or an empty
+            sequence then all axes are selected.
     
         stop: `int`, optional
             Stop after this number of sections and return. If stop is

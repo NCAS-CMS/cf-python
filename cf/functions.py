@@ -2174,7 +2174,10 @@ def _section(o, axes=None, data=False, stop=None, chunks=False,
     '''
     # retrieve the index of each axis defining the sections
     if data:
-        if axes == None:
+        if isinstance(axes, int):
+            axes = (axes,)
+
+        if not axes:            
             axis_indices = range(o.ndim)
         else:
             axis_indices = axes
