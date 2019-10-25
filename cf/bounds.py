@@ -60,7 +60,7 @@ the `nc_set_dimension`, `nc_get_dimension`, `nc_del_dimension` and
             return True
 
         if nbounds == 4 and data.ndim == 3:
-            if overlap == True:
+            if overlap:
                 raise ValueError(
                     "overlap=True and can't tell if 2-d bounds are contiguous")
             
