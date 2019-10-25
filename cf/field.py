@@ -13538,7 +13538,7 @@ may be accessed with the `nc_global_attributes`,
     either themselves be flattened, or else removed.
 
     Cell method constructs that apply to the flattened axes will be
-    removed or, if possible, have their axes specifications changed to
+    removed or, if possible, have their axis specifications changed to
     standard names.
 
     The flattening is executed in row-major (C-style) order. For
