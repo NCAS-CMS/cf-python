@@ -58,7 +58,7 @@ def _make_contiguous_file(filename):
     row_size[...] = [3, 7, 5, 9]
     
     time = n.createVariable('time', 'f8', ('obs',))
-    time.standard_name = "time";
+    time.standard_name = "time"
     time.long_name = "time of measurement" 
     time.units = "days since 1970-01-01 00:00:00"
     time[ 0: 3] = [-3, -2, -1]
@@ -141,7 +141,7 @@ def _make_indexed_file(filename):
          range(-2, 7)]
     
     time = n.createVariable('time', 'f8', ('obs',))
-    time.standard_name = "time";
+    time.standard_name = "time"
     time.long_name = "time of measurement" 
     time.units = "days since 1970-01-01 00:00:00"
     ssi = [0, 0, 0, 0]
@@ -244,7 +244,7 @@ def _make_indexed_contiguous_file(filename):
                      2, 2, 2, 1, 2, 3, 3, 3, 2, 3, 1, 1] # sum = 118
     
     time = n.createVariable('time', 'f8', ('profile',))
-    time.standard_name = "time";
+    time.standard_name = "time"
     time.long_name = "time"
     time.units = "days since 1970-01-01 00:00:00"
     t0 = [3, 0, -3]
