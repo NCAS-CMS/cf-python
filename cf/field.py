@@ -9788,7 +9788,7 @@ may be accessed with the `nc_global_attributes`,
     When creating an actual subspace with the indices, if the first
     element of the tuple of indices is ``'mask'`` then the extent of
     the subspace is defined only by the values of elements three and
-    onwards. In this case the second elements contains an "auxiliary"
+    onwards. In this case the second element contains an "auxiliary"
     data mask that is applied to the subspace after its initial
     creation, in order to set unselected locations to missing data.
 
