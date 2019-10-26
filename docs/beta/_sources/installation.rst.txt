@@ -185,8 +185,12 @@ Required
   filename) of the ``udunits2.xml`` file in the ``UDUNITS2_XML_PATH``
   environment variable (although the default location is usually
   correct). For example, ``export
-  UDUNITS2_XML_PATH=/home/user/anaconda3/share/udunits/udunits2.xml``
-
+  UDUNITS2_XML_PATH=/home/user/anaconda3/share/udunits/udunits2.xml``.
+  If you get an error that looks like ``assert(0 ==
+  _ut_unmap_symbol_to_unit(_ut_system, _c_char_p(b'Sv'), _UT_ASCII))``
+  then updating the ``UDUNITS2_XML_PATH`` environment variable is the
+  likely solution.
+  
 .. _Optional:
 
 Optional

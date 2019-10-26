@@ -233,7 +233,11 @@ also be necessary to specify the location (directory path <em>and</em>
 filename) of the <code class="docutils literal notranslate"><span class="pre">udunits2.xml</span></code> file in the <code class="docutils literal notranslate"><span class="pre">UDUNITS2_XML_PATH</span></code>
 environment variable (although the default location is usually
 correct). For example, <code class="docutils literal notranslate"><span class="pre">export</span>
-<span class="pre">UDUNITS2_XML_PATH=/home/user/anaconda3/share/udunits/udunits2.xml</span></code></li>
+<span class="pre">UDUNITS2_XML_PATH=/home/user/anaconda3/share/udunits/udunits2.xml</span></code>.
+If you get an error that looks like <code class="docutils literal notranslate"><span class="pre">assert(0</span> <span class="pre">==</span>
+<span class="pre">_ut_unmap_symbol_to_unit(_ut_system,</span> <span class="pre">_c_char_p(b'Sv'),</span> <span class="pre">_UT_ASCII))</span></code>
+then updating the <code class="docutils literal notranslate"><span class="pre">UDUNITS2_XML_PATH</span></code> environment variable is the
+likely solution.</li>
 </ul>
 </div>
 <div class="section" id="optional">
