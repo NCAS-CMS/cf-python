@@ -52,6 +52,10 @@ dependencies, and the `cf-plot visualisation package
 The second of the two ``conda`` commands is required for
 :ref:`regridding <Regridding>` to work.
 
+Note that :ref:`some environment variables might also need setting
+<UNIDATA-UDUNITS-2-library>` in order for the UDUNITS library to work
+properly, although the defaults are usually sufficient.
+
 ----
 
 .. _pip:
@@ -89,6 +93,11 @@ options.
 
 The :ref:`optional dependencies <Optional>` are **not** automatically
 installed via ``pip``.
+
+
+Note that :ref:`some environment variables might also need setting
+<UNIDATA-UDUNITS-2-library>` in order for the UDUNITS library to work
+properly, although the defaults are usually sufficient.
 
 ----
 
@@ -129,6 +138,10 @@ To install from source:
     .. code:: bash
 
        python setup.py install --home=<directory>
+
+Note that :ref:`some environment variables might also need setting
+<UNIDATA-UDUNITS-2-library>` in order for the UDUNITS library to work
+properly, although the defaults are usually sufficient.
 
 ----
 
@@ -173,6 +186,8 @@ Required
 * `cfunits <https://pypi.org/project/cfunits/>`_, version 3.2.2 or newer.
   
 * `psutil <https://pypi.org/project/psutil/>`_, version 0.6.0 or newer.
+
+.. _UNIDATA-UDUNITS-2-library:
 
 * `UNIDATA UDUNITS-2 library
   <http://www.unidata.ucar.edu/software/udunits>`_, version 2.2.20 or
