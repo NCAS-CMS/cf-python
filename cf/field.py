@@ -261,7 +261,13 @@ may be accessed with the `nc_global_attributes`,
         '''
         super().__init__(properties=properties, source=source,
                          copy=copy, _use_data=_use_data)
-        
+
+        if source:
+            flags = getattr(source, 'Flags', None)
+            if flags is not None:
+                self.Flags = flags.copy()
+        #--- End: if
+                
 
     def __getitem__(self, indices):
         '''Return a subspace of the field construct defined by indices.
@@ -794,7 +800,7 @@ may be accessed with the `nc_global_attributes`,
         return True
         
 
-    def _binary_operation(self, other, method):
+    def _binary_operation_old(self, other, method):
         '''Implement binary arithmetic and comparison operations on the master
     data array with metadata-aware broadcasting.
     
@@ -853,7 +859,7 @@ may be accessed with the `nc_global_attributes`,
                 return super()._binary_operation(other, method)
             
             raise ValueError(
-                "Can't combine {!r} with {!r} (incompatible shapes: {}, {})".format(
+                "Can't combine {!r} with {!r} due to incompatible data shapes: {}, {})".format(
                     self.__class__.__name__, other.__class__.__name__,
                     self.shape, numpy_shape(other)))
 
@@ -1623,7 +1629,7 @@ may be accessed with the `nc_global_attributes`,
             
         return field0
 
-    def _binary_operation2(self, other, method):
+    def _binary_operation(self, other, method):
         '''Implement binary arithmetic and comparison operations on the master
     data array with metadata-aware broadcasting.
     
@@ -1653,8 +1659,7 @@ may be accessed with the `nc_global_attributes`,
     >>> f._binary_operation(g, '__rdiv__')
 
         '''        
-        _debug = False
-        verbose = True
+        verbose = False # True
         
         if isinstance(other, Query):
             # --------------------------------------------------------
@@ -1683,14 +1688,13 @@ may be accessed with the `nc_global_attributes`,
                 return super()._binary_operation(other, method)
             
             raise ValueError(
-                "Can't combine {!r} with {!r} (incompatible shapes: {}, {})".format(
+                "Can't combine {!r} with {!r} due to incompatible data shapes: {}, {})".format(
                     self.__class__.__name__, other.__class__.__name__,
                     self.shape, numpy_shape(other)))
 
         # ============================================================
         # Still here? Then combine the field with another field
         # ============================================================
-
         relaxed_identities = RELAXED_IDENTITIES()
         
         units = self.Units
@@ -1710,14 +1714,14 @@ may be accessed with the `nc_global_attributes`,
             field0 = self
 
         # Analyse the two fields' data array dimensions
-        out0 = {} #OrderedDict()
-        out1 = {} #OrderedDict()
+        out0 = {}
+        out1 = {}
         for i, (f, out) in enumerate(zip((field0, field1),
                                          (out0  , out1))):
 
             data_axes = f.get_data_axes()
             
-            for axis in f.domain_axes: #f.get_data_axes():
+            for axis in f.domain_axes:
                 identity   = None
                 key        = None
                 coord      = None
@@ -1792,21 +1796,21 @@ may be accessed with the `nc_global_attributes`,
             if a.scalar and asdas:
                 del out0[identity]
         #--- End: for
-        
-        print ()
-        print ('out0', out0)
-        print ()
-        print ('out1', out1)
+
+        if verbose:
+            print ()
+            print ('out0', out0)
+            print ()
+            print ('out1', out1)
                
         squeeze1 = []
         insert0  = []
-        overlap1 = []
 
-        # List of field1 axes which have been added to field0 as new
+        # List of axes that will have been added to field0 as new
         # trailing dimensions. E.g. ['domainaxis1']
         axes_added_from_field1 = []
         
-        # Dictionary of size > 1 axes from field1 which have replaced
+        # Dictionary of size > 1 axes from field1 which will replace
         # matching size 1 axes in field0. E.g. {'domainaxis1':
         #   data_dimension(size=8,
         #                  axis='domainaxis1',
@@ -1814,12 +1818,12 @@ may be accessed with the `nc_global_attributes`,
         #                  coord=<CF DimensionCoordinate: longitude(8) degrees_east>,
         #                  coord_type='dimension_coordinate',
         #                  scalar=False)}
-        axes_replaced_from_field1 = {}
+        axes_to_replace_from_field1 = {}
         
-        # List of field1 coordinate reference constucts which have
-        # been added to field0 E.g.
+        # List of field1 coordinate reference constucts which will
+        # be added to field0. E.g.        
         #  [<CF CoordinateReference: grid_mapping_name:rotated_latitude_longitude>]
-        refs_added_from_field1 = []
+        refs_to_add_from_field1 = []
         
         # Check that the two fields are combinable
         for i, (identity, y) in enumerate(tuple(out1.items())):
@@ -1827,38 +1831,42 @@ may be accessed with the `nc_global_attributes`,
             if isinstance(identity, int):
                 if y.size == 1:
                     del out1[identity]
-                    squeeze.append(i)
+                    squeeze1.append(i)
                 else:
                     insert0.append(y.axis)            
             elif identity not in out0:
                 insert0.append(y.axis)
-            else:                
-                a = out0[identity]
-
-                if y.size > 1 and a.size == 1:
-                    axes_replaced_from_field1[y.axis] = y                    
-                elif y.size == 1 and a.size > 1:
-                    pass
-                else:
-                    overlap1.append(y.axis)
-
-                    if y.size != a.size:
-                        raise  ValueError(
-                            "Can't broadcast size {} {!r} axis to size {} {!r} axis".format(
-                                y.size, identity, a.size, identity))
-                    
-                    # Check for matching coordinate directions
-                    if y.coord.direction() != a.coord.direction():
-                        other.flip(y.axis, inplace=True)
-                    
-                    # Check for matching coordinate values
-                    if not y.coord._equivalent_data(a.coord, verbose=verbose):
-                        raise  ValueError(
-                            "Can't broadcast combine {} axes with different coordinate values".format(
-                                identity))
-                    
-                    # Check coord refs
-                    pass
+#            else:                
+#                a = out0[identity]
+#
+#                if y.size == 1:
+#                    pass
+#                elif y.size > 1 and a.size == 1:
+#                    axes_to_replace_from_field1[y.axis] = y                    
+#                else:
+#                    pass
+#                
+#                    if y.size != a.size:
+#                        raise  ValueError(
+#                            "Can't broadcast size {} {!r} axis to size {} {!r} axis".format(
+#                                y.size, identity, a.size, identity))
+#                    
+#                    # Ensure matching axis directions
+#                    if y.coord.direction() != a.coord.direction():
+#                        other.flip(y.axis, inplace=True)
+#                    
+#                    # Check for matching coordinate values
+#                    if not y.coord._equivalent_data(a.coord, verbose=verbose):
+#                        raise  ValueError(
+#                            "Can't combine {!r} axes with different coordinate values".format(
+#                                identity))
+#
+#                    # Check coord refs
+#                    refs0 = field0.get_coordinate_reference(construct=a.key)
+#                    refs1 = field1.get_coordinate_reference(construct=y.key)
+#                    print (y.coord)
+#                    print(refs0,refs1)
+#                    pass
         #--- End: for        
 
         # Make sure that both data ararys have the same number of
@@ -1882,17 +1890,20 @@ may be accessed with the `nc_global_attributes`,
         # Make sure that the dimensions in data1 are in the same order
         # as the dimensions in data0
         for identity, y in out1.items():
-            print ('\n',identity, y)
+            if verbose:
+                print ('\n',identity, y)
             if isinstance(identity, int) or identity not in out0:                
                 field1.swapaxes(field1.get_data_axes().index(y.axis), -1,
                                 inplace=True)
             else:
                 # This identity is also in out0
                 a = out0[identity]
-                print (identity, y.axis, a.axis)
-                print (a, field0.get_data_axes(), field1.get_data_axes(),
-                       field1.get_data_axes().index(y.axis),
-                       field0.get_data_axes().index(a.axis))
+                if verbose:
+                    print (identity, y.axis, a.axis)
+                    print (a, field0.get_data_axes(), field1.get_data_axes(),
+                           field1.get_data_axes().index(y.axis),
+                           field0.get_data_axes().index(a.axis))
+                    
                 field1.swapaxes(field1.get_data_axes().index(y.axis),
                                 field0.get_data_axes().index(a.axis),
                                 inplace=True)
@@ -1900,11 +1911,70 @@ may be accessed with the `nc_global_attributes`,
 
         axis_map = {axis1: axis0 for axis1, axis0 in zip(field1.get_data_axes(),
                                                          field0.get_data_axes())}
-        
-        print ('axis_map=', axis_map, '\n')
-        print (repr(field0))
-        print (repr(field1))
+                
+#        axis_map_0_to_1 = {axis0: axis1 for axis1, axis0 in zip(field1.get_data_axes(),
+#                                                                field0.get_data_axes())}
+                
+        if verbose:
+            print ('axis_map=', axis_map, '\n')
+            print (repr(field0))
+            print (repr(field1))
 
+        # ------------------------------------------------------------
+        # Check that the two fields have compatible metadata
+        # ------------------------------------------------------------
+        for i, (identity, y) in enumerate(tuple(out1.items())):
+            if isinstance(identity, int) or identity not in out0:
+                continue
+
+            a = out0[identity]
+            
+            if y.size == 1:
+                continue
+
+            if y.size > 1 and a.size == 1:
+                axes_to_replace_from_field1[y.axis] = y
+                continue                
+
+            if y.size != a.size:
+                raise  ValueError(
+                    "Can't broadcast size {} {!r} axis to size {} {!r} axis".format(
+                        y.size, identity, a.size, identity))
+
+            # Ensure matching axis directions
+            if y.coord.direction() != a.coord.direction():
+                other.flip(y.axis, inplace=True)
+            
+            # Check for matching coordinate values
+            if not y.coord._equivalent_data(a.coord, verbose=verbose):
+                raise  ValueError(
+                    "Can't combine {!r} axes with different coordinate values".format(
+                        identity))
+
+            # Check coord refs
+            refs1 = field1.get_coordinate_reference(construct=y.key, key=True)
+            refs0 = field0.get_coordinate_reference(construct=a.key, key=True)
+
+            n_refs = len(refs1)
+            
+            if n_refs != len(refs0):
+                raise  ValueError("TODO")
+                
+            n_equivalent_refs = 0
+            for ref1 in refs1:
+                for ref0 in refs0[:]:
+                    if field1._equivalent_coordinate_references(
+                            field0, key0=ref1, key1=ref0, verbose=verbose,
+                            axis_map=axis_map):
+                        n_equivalent_refs += 1
+                        refs0.remove(ref0)
+                        break
+            #--- End: for
+            
+            if n_equivalent_refs != n_refs:
+                raise  ValueError("TODO")
+        #--- End: for
+            
         # Change the domain axis sizes in field0 so that they match
         # the broadcasted result data
         for identity, y in out1.items():
@@ -1912,7 +1982,8 @@ may be accessed with the `nc_global_attributes`,
                 a = out0[identity]
                 if y.size > 1 and a.size == 1:
                     for key0, c in tuple(field0.constructs.filter_by_axis('or', a.axis).items()):
-                        removed_refs0 = field0.del_coordinate_reference(construct=key0)
+                        removed_refs0 = field0.del_coordinate_reference(construct=key0,
+                                                                        default=None)
                         if removed_refs0 and c.construct_type in ('dimension_coordinate',
                                                                   'auxiliary_coordinate'):
                             for ref in removed_refs0:
@@ -1925,62 +1996,91 @@ may be accessed with the `nc_global_attributes`,
             elif y.size > 1:
                 axis0 = axis_map[y.axis]
                 field0.domain_axis(axis0).set_size(y.size)
-        #--- End: for        
-        print ()
-        print (repr(field0))
-        print (repr(field1))
-        print (repr(field0.data))
-        print (repr(field1.data))
-
-
+        #--- End: for
+        if verbose:
+            print ()
+            print (repr(field0))
+            print (repr(field1))
+            print (repr(field0.data))
+            print (repr(field1.data))
+            
+        # ------------------------------------------------------------
+        # Operate on the data
+        # ------------------------------------------------------------
         new_data = field0.data._binary_operation(field1.data, method)
 
         field0.set_data(new_data, set_axes=False, copy=False)
-
-        print (field0)
-        print (field0.array)
-        print ()
-        print ('axes_added_from_field1=', axes_added_from_field1)
-        print ()
-        print ('axes_replaced_from_field1=', axes_replaced_from_field1)
+        if verbose:
+            print (field0)
+            print (field0.array)
+            print ()
+            print ('axes_added_from_field1=', axes_added_from_field1)
+            print ()
+            print ('axes_to_replace_from_field1=', axes_to_replace_from_field1)
 
         already_copied = {}
+
+        # ------------------------------------------------------------
+        # Copy over coordinate and cell meausure constructs from
+        # field1
+        # ------------------------------------------------------------
+ #       if axes_added_from_field1:
+ #           constructs = field1.constructs.filter_by_type('dimension_coordinate',
+ #                                                         'auxiliary_coordinate',
+ #                                                         'cell_measure')
+##            constructs = constructs.filter_by_axis('subset', *axes_added_from_field1)
+#            
+#            for key1, c in constructs.items():
+#                axes = [axis_map[axis1] for axis1 in field1.get_data_axes(key1)]
+#                key0 = field0.set_construct(c, axes=axes, copy=False)
+#                already_copied[key1] = key0
+#        #--- End: if
+            
+#        for axis1, y in axes_to_replace_from_field1.items():
+#            axis0 = axis_map[axis1]
+        new_axes = set(axes_added_from_field1).union(axes_to_replace_from_field1)
         
-        # Copy over any coordinate metadata constructs from field1
-        if axes_added_from_field1:
-            for key1, c in field1.coordinates.filter_by_axis('subset', *axes_added_from_field1).items():
-                axes = [axis_map[axis1] for axis1 in field1.get_data_axes(key1)]
+        if new_axes:
+            constructs = field1.constructs.filter_by_type('dimension_coordinate',
+                                                          'auxiliary_coordinate',
+                                                          'cell_measure')        
+            constructs = constructs.filter_by_axis('subset', *new_axes)
+            
+            for key, c in constructs.items():
+                axes = [axis_map[axis1] for axis1 in axes_to_replace_from_field1]
                 key0 = field0.set_construct(c, axes=axes, copy=False)
-                already_copied[key1] = key0
+                already_copied[key] = key0
         #--- End: if
             
-        for axis1, y in axes_replaced_from_field1.items():
-            axis0 = axis_map[axis1]
-            for c in field1.coordinates.filter_by_axis('exact', axis1).values():
-                c.data.inspect()
-                key0 = field0.set_construct(c, axes=axis0, copy=False)
-                already_copied[y.key] = key0
-        #--- End: for
+#        for axis1, y in axes_to_replace_from_field1.items():
+#            axis0 = axis_map[axis1]
+#            for c in field1.coordinates.filter_by_axis('exact', axis1).values():
+#                key0 = field0.set_construct(c, axes=axis0, copy=False)
+#                already_copied[y.key] = key0
+#        #--- End: for
             
-        # Copy over any coordinate reference metadata constructs from
-        # field1, including their domain ancillary constructs
-        df = set(axes_added_from_field1).union(axes_replaced_from_field1)
+        # ------------------------------------------------------------
+        # Copy over coordinate reference constructs from field1,
+        # including their domain ancillary constructs.
+        # ------------------------------------------------------------
         for key, ref in field1.coordinate_references.items():
             axes = field1._coordinate_reference_axes(key)
-            if axes.issubset(df):
-                refs_added_from_field1.append(ref)
-            elif axes.intersection(axes_replaced_from_field1):
-                refs_added_from_field1.append(ref)
+            if axes.issubset(new_axes):
+                refs_to_add_from_field1.append(ref)
+            elif axes.intersection(axes_to_replace_from_field1):
+                refs_to_add_from_field1.append(ref)
         #--- End: for
-        print ()
-        print ('refs_added_from_field1=', refs_added_from_field1)
+        
+        if verbose:
+            print ()
+            print ('refs_to_add_from_field1=', refs_to_add_from_field1)
 
-        for ref in refs_added_from_field1:
-            # Copy cooridnates
+        for ref in refs_to_add_from_field1:
+            # Copy coordinates
             coords = []
             for key1 in ref.coordinates():
                 if key1 not in already_copied:
-                    c = field1.construct.get(key1, None)
+                    c = field1.constructs.get(key1, None)
                     if c is None:
                         already_copied[key1] = None
                     else:
@@ -1997,10 +2097,10 @@ may be accessed with the `nc_global_attributes`,
             ref.clear_coordinates()
             ref.set_coordinates(coords)
 
-            # Copy domain ancillires
+            # Copy domain ancillaries to field0
             for term, key1 in ref.coordinate_conversion.domain_ancillaries().items():
                 if key1 not in already_copied:
-                    c = field1.construct.get(key1, None)
+                    c = field1.constructs.get(key1, None)
                     if c is None:
                         already_copied[key1] = None
                     else:
@@ -2008,17 +2108,18 @@ may be accessed with the `nc_global_attributes`,
                         key0 = field0.set_construct(c, axes=axes, copy=False)
                         already_copied[key1] = key0
                 #--- End: if
+                
                 key0 = already_copied[key1]
                 ref.coordinate_conversion.set_domain_ancillary(term, key0)                
 
-            # Copy ref
+            # Copy coordinate reference to field0
             field0.set_construct(ref, copy=False)
         #--- End: for
             
         # ------------------------------------------------------------
         # Remove misleading identities
         # ------------------------------------------------------------
-        # Warning: This code is replicated in PropertiesData
+        # Warning: This block of code is replicated in PropertiesData
         if sn != other_sn:
             if sn is not None and other_sn is not None:
                 field0.del_property('standard_name', None)
@@ -2042,7 +2143,10 @@ may be accessed with the `nc_global_attributes`,
 
         if method in _relational_methods:
             field0.override_units(Units(), inplace=True)
-            
+
+        # ------------------------------------------------------------
+        # Return the result field
+        # ------------------------------------------------------------        
         return field0
 
 
@@ -2096,10 +2200,10 @@ may be accessed with the `nc_global_attributes`,
         axes = []
         
         for c_key in ref.coordinates():
-            axes.extend(self.get_data_axes(key))
+            axes.extend(self.get_data_axes(c_key))
             
-        for da_key in ref.coordinate_conversion.domain_ancilaries().values():
-            axes.extend(self.get_data_axes(key))
+        for da_key in ref.coordinate_conversion.domain_ancillaries().values():
+            axes.extend(self.get_data_axes(da_key))
             
         return set(axes)
     
@@ -2138,7 +2242,8 @@ may be accessed with the `nc_global_attributes`,
     def _equivalent_coordinate_references(self, field1, key0, key1,
                                           atol=None, rtol=None,
                                           s=None, t=None,
-                                          verbose=False):
+                                          verbose=False,
+                                          axis_map=None):
         '''TODO
 
     Two real numbers ``x`` and ``y`` are considered equal if
@@ -2183,9 +2288,12 @@ may be accessed with the `nc_global_attributes`,
             key1 = field1.domain_ancillaries.filter_by_key(identifier1).key()
 
             if not self._equivalent_construct_data(field1, key0=key0,
-                                                   key1=key1, rtol=rtol,
-                                                   atol=atol, s=s, t=t,
-                                                   verbose=verbose):
+                                                   key1=key1,
+                                                   rtol=rtol,
+                                                   atol=atol, s=s,
+                                                   t=t,
+                                                   verbose=verbose,
+                                                   axis_map=axis_map):
                 # add traceback TODO
                 return False
         #--- End: for
@@ -2542,9 +2650,9 @@ may be accessed with the `nc_global_attributes`,
 
 
     def _equivalent_construct_data(self, field1, key0=None, key1=None,
-                                   s=None, t=None,
-                                   atol=None, rtol=None,
-                                   verbose=False):
+                                   s=None, t=None, atol=None,
+                                   rtol=None, verbose=False,
+                                   axis_map=None):
         '''TODO
 
     Two real numbers ``x`` and ``y`` are considered equal if
@@ -2612,19 +2720,28 @@ may be accessed with the `nc_global_attributes`,
         if t is None:
             t = field1.analyse_items()
 
-#        axis_map = self.constructs.equals(field1.constructs,
-#                                          _return_axis_map=True)
-
         transpose_axes = []
-        for axis0 in axes0:
-            axis1 = t['id_to_axis'].get(s['axis_to_id'][axis0], None)
-            if axis1 is None:
-                if verbose:
-                    print("%s: TTTTTTTTTTT w2345nb34589*D*& TODO" % self.__class__.__name__) # pragma: no cover
-                return False
-
-            transpose_axes.append(axes1.index(axis1))
-
+        if axis_map is None:
+            for axis0 in axes0:
+                axis1 = t['id_to_axis'].get(s['axis_to_id'][axis0], None)
+                if axis1 is None:
+                    if verbose:
+                        print("%s: TTTTTTTTTTT w2345nb34589*D*& TODO" % self.__class__.__name__) # pragma: no cover
+                    return False
+    
+                transpose_axes.append(axes1.index(axis1))
+        else:
+            for axis0 in axes0:
+                axis1 = axis_map.get(axis0)
+                if axis1 is None:
+                    if verbose:
+                        print("%s: ****** 56 xdcv f7y edc TODO" % self.__class__.__name__) # pragma: no cover
+                    return False
+    
+                transpose_axes.append(axes1.index(axis1))
+        #--- End: if
+            
+            
 #        transpose_axes = []
 #        for axis0 in axes0:
 #            axis1 = axis_map.get(axis0)
@@ -6644,7 +6761,6 @@ may be accessed with the `nc_global_attributes`,
             return ref
         elif identity is not None:
             raise ValueError("TODO")
-            
 
         out = []
         
@@ -6670,7 +6786,127 @@ may be accessed with the `nc_global_attributes`,
         
         return out
 
+
+    def get_coordinate_reference(self, identity=None, key=False,
+                                 construct=None, default=ValueError()):
+        '''TODO
+            
+    .. versionadded:: 3.0.2
     
+    .. seealso:: `construct`
+
+    :Parameters:
+
+        identity:
+            Select the coordinate reference construct by one of:
+    
+              * The identity or key of a coordinate reference
+                construct.
+    
+            A construct identity is specified by a string
+            (e.g. ``'grid_mapping_name:latitude_longitude'``,
+            ``'latitude_longitude'``, ``'ncvar%lat_lon'``, etc.); a
+            `Query` object (e.g. ``cf.eq('latitude_longitude')``); or
+            a compiled regular expression
+            (e.g. ``re.compile('^atmosphere')``) that selects the
+            relevant constructs whose identities match via
+            `re.search`.
+    
+            Each construct has a number of identities, and is selected
+            if any of them match any of those provided. A construct's
+            identities are those returned by its `!identities`
+            method. In the following example, the construct ``x`` has
+            two identites:
+    
+               >>> x.identities()
+               ['grid_mapping_name:latitude_longitude', 'ncvar%lat_lon']
+    
+            A identity's prefix of ``'grid_mapping_name:'`` or
+            ``'standard_name:'`` may be omitted
+            (e.g. ``'standard_name:atmosphere_hybrid_height_coordinate'``
+            and ``'atmosphere_hybrid_height_coordinate'`` are both
+            acceptable identities).
+    
+            A construct key may optionally have the ``'key%'``
+            prefix. For example ``'coordinatereference2'`` and
+            ``'key%coordinatereference2'`` are both acceptable keys.
+    
+            Note that in the output of a `print` call or `!dump`
+            method, a construct is always described by one of its
+            identities, and so this description may always be used as
+            an *identity* argument.
+    
+            *Parameter example:*
+              ``identity='standard_name:atmosphere_hybrid_height_coordinate'``
+    
+            *Parameter example:*
+              ``identity='grid_mapping_name:rotated_latitude_longitude'``
+    
+            *Parameter example:*
+              ``identity='transverse_mercator'``
+    
+            *Parameter example:*
+              ``identity='coordinatereference1'``
+    
+            *Parameter example:*
+              ``identity='key%coordinatereference1'``
+    
+            *Parameter example:*
+              ``identity='ncvar%lat_lon'``
+    
+        key: `bool`, optional
+            If True then return the selected construct key. By
+            default the construct itself is returned.
+    
+        default: optional
+            Return the value of the *default* parameter if a construct
+            can not be found. If set to an `Exception` instance then
+            it will be raised instead.
+    
+    :Returns:
+    
+        `CoordinateReference` or `str`
+            The selected coordinate reference construct, or its key.
+    
+    **Examples:**
+    
+    TODO
+        '''
+        if construct is None:
+            return self.coordinate_reference(identity=identity,
+                                             key=key, default=default)
+
+        out = []
+        
+        c_key = self.construct(construct, key=True, default=None)
+        if c_key is None:
+            return self._default(
+                default,
+                "Can't identify construct from {!r}".format(construct))
+        
+        for cr_key, ref in tuple(self.coordinate_references.items()):
+            if c_key in ref.coordinates():
+                if key:
+                    if cr_key not in out:
+                        out.append(cr_key)
+                elif ref not in out:
+                    out.append(ref)
+
+                continue
+
+            if c_key in ref.coordinate_conversion.domain_ancillaries().values():
+                if key:
+                    if cr_key not in out:
+                        out.append(cr_key)
+                elif ref not in out:
+                    out.append(ref)
+                    
+                continue
+        #--- End: for
+
+        return out
+
+        
     def set_coordinate_reference(self, coordinate_reference, key=None,
                                  field=None, strict=True):
         '''Set a coordinate reference construct.
@@ -13565,9 +13801,9 @@ may be accessed with the `nc_global_attributes`,
             No axes are flattened if *axes* is an empty sequence.
 
         return_axis: `bool`, optional
-            If True then also return either the key of the new,
-            flattened domain axis construct; or `None` if the axes to
-            be flattened do not span the data.
+            If True then also return either the key of the flattened
+            domain axis construct; or `None` if the axes to be
+            flattened do not span the data.
 
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
@@ -13579,8 +13815,8 @@ may be accessed with the `nc_global_attributes`,
             operation was in-place.
 
             If *return_axis* is True then also return either the key
-            of the new, flattened domain axis construct; or `None` if
-            the axes to be flattened do not span the data.
+            of the flattened domain axis construct; or `None` if the
+            axes to be flattened do not span the data.
  
     **Examples**
 
@@ -13697,9 +13933,9 @@ may be accessed with the `nc_global_attributes`,
                 return f, tuple(axes)[0]
             return f
         
-        # Make sure that the metadata constructs have the same
-        # relative axis order as the data (pre-flattening)
-        f.transpose(f.get_data_axes(), constructs=True, inplace=True)
+#        # Make sure that the metadata constructs have the same
+#        # relative axis order as the data (pre-flattening)
+#        f.transpose(f.get_data_axes(), constructs=True, inplace=True)
 
         # Create the new data axes
         shape = f.shape
@@ -13754,12 +13990,14 @@ may be accessed with the `nc_global_attributes`,
 
         # Flatten the constructs that span all of the flattened axes,
         # or all of the flattened axes all bar some which have size 1.
-        d = dict(f.constructs.filter_by_axis('exact', *axes))
-        axes2 = [axis for axis in axes  if f.domain_axes[axis].get_size() > 1]
-        if axes2 != axes:
-            d.update(f.constructs.filter_by_axis('subset', *axes).filter_by_axis('and', *axes2))
+#        d = dict(f.constructs.filter_by_axis('exact', *axes))
+#        axes2 = [axis for axis in axes  if f.domain_axes[axis].get_size() > 1]
+#        if axes2 != axes:
+#            d.update(f.constructs.filter_by_axis('subset', *axes).filter_by_axis('and', *axes2))
 
-        for key, c in d.items():
+        # Flatten the constructs that span all of the flattened axes,
+        # and no others.
+        for key, c in f.constructs.filter_by_axis('and', *axes).items():
             c_axes = f.get_data_axes(key)
             c_iaxes = sorted([c_axes.index(axis) for axis in axes if axis in c_axes])
             c.flatten(c_iaxes, inplace=True)
@@ -13772,7 +14010,7 @@ may be accessed with the `nc_global_attributes`,
         # flattened axes
         for key in f.constructs.filter_by_axis('or', *axes):
             f.del_construct(key)
-
+        
         # Remove the domain axis constructs for the flattened axes
         for key in axes:
             f.del_construct(key)

@@ -1515,12 +1515,20 @@ place.
         # ------------------------------------------------------------
 #        indices, roll, flip_axes = _parse_indices(self, indices)
         indices_in = indices
-        indices, roll, flip_axes = parse_indices(self._shape, indices_in, True, True)
+        indices, roll, flip_axes, mask = parse_indices(self._shape,
+                                                       indices_in,
+                                                       cyclic=True,
+                                                       reverse=True,
+                                                       mask=True)
 
         if roll:
             for iaxis, shift in roll.items():
                 self.roll(iaxis, shift, inplace=True)
-         
+        #--- End: if
+
+        if mask:
+            original_self = self.copy()
+        
         scalar_value = False
         if value is cf_masked:
             scalar_value  = True
@@ -1540,13 +1548,12 @@ place.
                     copied = True
                 else:
                     raise ValueError(
-"Can't assign values with units {!r} to data with units {!r}".format(
-     value.Units, self.Units))
+                        "Can't assign values with units {!r} to data with units {!r}".format(
+                            value.Units, self.Units))
             #--- End: if
 
             if value._size == 1:
-                scalar_value = True                
-
+                scalar_value = True
                 value = value.datum(0)
         #--- End: if
 
@@ -1579,7 +1586,18 @@ place.
             if roll:
                 for iaxis, shift in roll.items():
                     self.roll(iaxis, -shift, inplace=True)
+            #--- End: if            
 
+            if mask:
+                indices = tuple(indices)
+                original_self = original_self[indices]
+                u = self[indices]
+                for m in mask:
+                    u.where(m, original_self, inplace=True)
+
+                self[indices] = u
+            #--- End: if
+                    
             return
 
         # ------------------------------------------------------------
@@ -1709,8 +1727,19 @@ place.
             # Unroll
             for iaxis, shift in roll.items():
                 self.roll(iaxis, -shift, inplace=True)
-    #--- End: def
-    
+        #--- End: def
+        
+
+        if mask:
+            indices = tuple(indices)
+            original_self = original_self[indices]
+            u = self[indices]
+            for m in mask:
+                u.where(m, original_self, inplace=True)
+                
+            self[indices] = u
+
+            
     def _flag_partitions_for_processing(self, parallelise=True):
         '''
         '''
@@ -8808,9 +8837,12 @@ returned.
             If True then data arrays with different fill values are
             considered equal. By default they are considered unequal.
     
-        traceback: `bool`, optional
-            If True then print a traceback highlighting where the two
-            instances differ.
+        verbose: `bool`, optional
+            If True then print information about differences that lead
+            to inequality.
+        
+        traceback: deprecated at version 3.0.0
+            Use *verbose* parameter instead.
     
     :Returns: 
     
@@ -8852,7 +8884,6 @@ returned.
             if verbose:
                 print("{}: Different Units ({!r}, {!r}".format(
                     self.__class__.__name__, self.Units, other.Units))
-
             return False
         
         config = self.partition_configuration(readonly=True)
@@ -10516,8 +10547,7 @@ returned.
     thereby making the data mask "soft" and allowing masked elements
     to be set to non-masked values.
     
-    .. seealso:: `cf.masked`, `hardmask`, `__setitem__`
-    
+    .. seealso:: `cf.masked`, `hardmask`, `__setitem__`    
     
     :Parameters:
     

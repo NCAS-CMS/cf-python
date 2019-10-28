@@ -32,7 +32,7 @@ class FieldTest(unittest.TestCase):
 
         self.test_only = []
 #        self.test_only = ['NOTHING!!!!']
-#        self.test_only = ['test_Field_ATOL_RTOL']
+#        self.test_only = ['test_Field__add__']
 #        self.test_only = ['test_Field_cumsum']
 #        self.test_only = ['test_Field_flatten']
 #        self.test_only = ['test_Field_transpose']
@@ -548,25 +548,39 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = cf.read(self.filename)[0].squeeze()
-        g = f.copy()
-        f_plus_g = f + g
-        g_plus_f = g + f
-#            self.assertTrue((f_plus_g).equals(g_plus_f, traceback=True),
-#                            'f\n{}\nf.copy()\n{}\nf+f.copy()\n{}\nf.copy()+f\n{}'.format(
-#                                str(f), str(g), str(f_plus_g), str(g_plus_f)))
+        f = cf.read(self.filename)[0] #.squeeze()
 
-        g = f[0]
-        f_plus_g = f + g
-        g_plus_f = g + f
-        #            self.assertTrue((f_plus_g).equals(g_plus_f, traceback=True),
-#                            'f\n{}\nf[0]\n{}\nf+f[0]\n{}\nf[0]+f\n{}'.format(
-#                                str(f), str(g), str(f_plus_g), str(g_plus_f)))
-
-        with self.assertRaises(Exception):
-            h = f + ('qwerty',)
-
+        g = f * 0
+        self.assertTrue((f + g).equals(f, verbose=True))
+        self.assertTrue((g + f).equals(f, verbose=True))
+        
+        g.transpose(inplace=True)
+        self.assertTrue((f + g).equals(f, verbose=True))
+        
+        for g in (f, f.copy(), f * 0):
+            self.assertTrue((f + g).equals(g + f, verbose=True))        
+            self.assertTrue((g + f).equals(f + g, verbose=True))        
             
+        g = f.subspace(grid_longitude=[0]) * 0
+
+        a = f + g
+        b = g + f
+        print (a)
+        print (b)
+        axis = a.domain_axis('grid_longitude', key=1)
+        for key in a.field_ancillaries.filter_by_axis('or', axis):
+            a.del_construct(key)
+
+        for key in a.cell_measures.filter_by_axis('or', axis):
+            a.del_construct(key)
+            
+        self.assertTrue(a.equals(b, verbose=True))        
+        self.assertTrue(b.equals(a, verbose=True))        
+        
+        with self.assertRaises(Exception):
+            _ = f + ('a string',)
+
+           
     def test_Field__mul__(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return

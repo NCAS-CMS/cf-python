@@ -78,14 +78,16 @@ class DataTest(unittest.TestCase):
                           'test_Data_datetime_array', 'test_Data_cumsum',
                           'test_Data_dumpd_loadd_dumps',
 #                          'test_Data_sin_cos_tan',
+#                          'test_Data_root_mean_square',
+#                          'test_Data_integral',
                           'test_Data_squeeze_insert_dimension',
                           'test_Data_months_years', 'test_Data_binary_mask',
                           'test_Data_CachedArray', 'test_Data_digitize',
                           'test_Data_outerproduct',
                           'test_Data_flatten',
                           'test_Data_transpose']
-        
-#        self.test_only = ['test_Data_flatten']
+
+#        self.test_only = ['test_Data_integral']
 #        self.test_only = ['test_Data_AUXILIARY_MASK']
 #        self.test_only = ['test_Data_outerproduct']
 #        self.test_only = ['test_Data__collapse_SHAPE']
@@ -1492,11 +1494,13 @@ class DataTest(unittest.TestCase):
         a = numpy.arange(-100, 200., dtype=float).reshape(3, 4, 5, 5)
         ones = numpy.ones(a.shape, dtype=float)
         
-        for h in ('sample_size', 'sum', 'min', 'max', 'mean', 'var', 'sd',
-                  'mid_range', 'range'):
+        for h in ('sample_size', 'sum', 'min', 'max', 'mean', 'var',
+                  'sd', 'mid_range', 'range', 'integral',
+                  'maximum_absolute_value', 'minimum_absolute_value',
+                  'sum_of_squares', 'root_mean_square'):
             for chunksize in self.chunk_sizes:   
                 cf.CHUNKSIZE(chunksize)          
-    
+
                 d = cf.Data(a[(slice(None, None, -1),) * a.ndim].copy())
                 d.flip(inplace=True)
                 x = cf.Data(self.w.copy())
@@ -1512,9 +1516,9 @@ class DataTest(unittest.TestCase):
                         shape[i] = 1
                         
                     shape = tuple(shape)
-                    self.assertTrue(
-                        e.shape == shape,
-                        "%s, axes=%s, not squeezed bad shape: %s != %s" % (h, axes, e.shape, shape))
+                    self.assertTrue(e.shape == shape,
+                                    "{}, axes={}, not squeezed bad shape: {} != {}".format(
+                                    h, axes, e.shape, shape))
                 #--- End: for
     
                 for axes in self.axes_combinations:
@@ -1525,29 +1529,30 @@ class DataTest(unittest.TestCase):
                         shape.pop(i)
     
                     shape = tuple(shape)
-                    assert(e.shape == shape, 
-                           "%s, axes=%s, squeezed bad shape: %s != %s" % (h, axis, e.shape, shape))
+                    self.assertTrue(e.shape == shape, 
+                                    "{}, axes={}, squeezed bad shape: {} != {}".format(
+                                        h, axes, e.shape, shape))
                 #--- End: for
     
                 e = getattr(d, h)(squeeze=True,
                                   _preserve_partitions=False)
                 shape = ()
-                self.assertTrue(
-                    e.shape == shape,
-                    "%s, axes=%s, squeezed bad shape: %s != %s" % (h, None, e.shape, shape))
+                self.assertTrue(e.shape == shape,
+                    "{}, axes={}, squeezed bad shape: {} != {}".format(
+                        h, None, e.shape, shape))
     
                 e = getattr(d, h)(squeeze=False,
                                   _preserve_partitions=False)
                 shape = (1,) * d.ndim
-                self.assertTrue(
-                    e.shape == shape,
-                    "%s, axes=%s, not squeezed bad shape: %s != %s" % (h, None, e.shape, shape))
+                self.assertTrue(e.shape == shape,
+                    "{}, axes={}, not squeezed bad shape: {} != {}".format(
+                        h, None, e.shape, shape))
         #--- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
 
 
-    def test_Data_max_min_sum(self):        
+    def test_Data_max_min_sum(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -1558,7 +1563,7 @@ class DataTest(unittest.TestCase):
                 # unweighted, unmasked
                 d = cf.Data(self.a)
                 for np, h in zip((numpy.sum, numpy.amin, numpy.amax),
-                                 (     'sum',     'min',     'max')):
+                                 (     'sum',      'min',      'max')):
                     for axes in self.axes_combinations:
                         b = reshape_array(self.a, axes)
                         b = np(b, axis=-1)                
@@ -1590,6 +1595,56 @@ class DataTest(unittest.TestCase):
                             e.allclose(b, rtol=1e-05, atol=1e-08),
                             "%s, axis=%s, unweighted, masked \ne=%s, \nb=%s, \ne-b=%s" %
                             (h, axes, e.array, b, e.array-b))
+        #--- End: for
+
+        cf.CHUNKSIZE(self.original_chunksize)
+
+
+    def test_Data_integral(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        for chunksize in self.chunk_sizes:
+            for pp in (True, False):
+                cf.CHUNKSIZE(chunksize)          
+               
+                # unmasked
+                d = cf.Data(self.a)
+                x = cf.Data(self.w)
+                for axes in self.axes_combinations:
+                    b = reshape_array(self.a, axes)
+                    v = reshape_array(self.w, axes)
+                    b = numpy.sum(b * v, axis=-1)
+                    
+                    e = d.integral(axes=axes, squeeze=True, weights=x,
+                                   _preserve_partitions=pp)
+                    
+                    self.assertTrue(
+                        e.allclose(b, rtol=1e-05, atol=1e-08),
+                        "axis={}, unmasked \ne={}, \nb={}, \ne-b={}".format(
+                            axes, e.array, b, e.array-b))
+                #--- End: for
+        
+                # masked
+                d = cf.Data(self.ma)
+                for axes in self.axes_combinations:
+                    b = reshape_array(self.ma, axes)
+                    v = reshape_array(self.w, axes)
+                    b = numpy.sum(b * v, axis=-1)                
+                    b = numpy.ma.asanyarray(b)
+
+                    e = d.integral(axes=axes, squeeze=True, weights=x,
+                                   _preserve_partitions=pp)
+        
+                    self.assertTrue(
+                        (e.mask.array == b.mask).all(),
+                        "axis={} masked, \ne.mask={}, \nb.mask={}, \ne.mask==b.mask={}".format(
+                            axes, e.mask.array, b.mask, e.mask.array==b.mask))
+                    
+                    self.assertTrue(
+                        e.allclose(b, rtol=1e-05, atol=1e-08),
+                        "axis={}, masked \ne={}, \nb={}, \ne-b={}".format(
+                            axes, e.array, b, e.array-b))
         #--- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
@@ -1752,7 +1807,84 @@ class DataTest(unittest.TestCase):
                     e.allclose(b, rtol=1e-05, atol=1e-08),
                     "axis=%s, \ne=%s, \nb=%s, \ne-b=%s" %
                     (axes, e.array, b, e.array-b))
+        #--- End: for
+
+        cf.CHUNKSIZE(self.original_chunksize)
+
+
+    def test_Data_root_mean_square(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        for chunksize in self.chunk_sizes:   
+            cf.CHUNKSIZE(chunksize)          
+
+            # unweighted, unmasked
+            d = cf.Data(self.a)
+            for axes in self.axes_combinations:
+                b = reshape_array(self.a, axes) ** 2
+                b = numpy.mean(b, axis=-1) ** 0.5
+                e = d.root_mean_square(axes=axes, squeeze=True)
+                self.assertTrue(
+                    e.allclose(b, rtol=1e-05, atol=1e-08),
+                    "axis={}, unweighted, unmasked \ne={}, \nb={}, \ne-b={}".format(
+                        axes, e.array, b, e.array-b))
             #--- End: for
+    
+            # weighted, unmasked
+            x = cf.Data(self.w)
+            for axes in self.axes_combinations:
+                b = reshape_array(self.a, axes) ** 2
+                v = reshape_array(self.w, axes)
+                b = numpy.average(b, axis=-1, weights=v) ** 0.5
+                
+                e = d.root_mean_square(axes=axes, weights=x, squeeze=True)
+
+                self.assertTrue(
+                    e.allclose(b, rtol=1e-05, atol=1e-08),
+                    "axis={}, weighted, unmasked \ne={}, \nb={}, \ne-b={}".format(
+                        axes, e.array, b, e.array-b))
+            #--- End: for
+
+            # unweighted, masked
+            d = cf.Data(self.ma)
+            for axes in self.axes_combinations:
+                b = reshape_array(self.ma, axes) ** 2
+                b = numpy.ma.average(b, axis=-1)
+                b = numpy.ma.asanyarray(b) ** 0.5
+    
+                e = d.root_mean_square(axes=axes, squeeze=True)
+    
+                self.assertTrue(
+                    (e.mask.array == b.mask).all(),
+                    "axis={}, unweighted, masked \ne.mask={}, \nb.mask={}, \ne.mask==b.mask={}".format(
+                        axes, e.mask.array, b.mask, e.mask.array==b.mask))
+
+                self.assertTrue(
+                    e.allclose(b, rtol=1e-05, atol=1e-08),
+                    "axis={}, unweighted, masked \ne={}, \nb={}, \ne-b={}".format(
+                        axes, e.array, b, e.array-b))
+            #--- End: for
+     
+            # weighted, masked
+            for axes in self.axes_combinations:
+                b = reshape_array(self.ma, axes) ** 2
+                v = reshape_array(self.mw, axes)
+                b = numpy.ma.average(b, axis=-1, weights=v)
+                b = numpy.ma.asanyarray(b) ** 0.5
+    
+                e = d.root_mean_square(axes=axes, weights=x, squeeze=True)
+    
+                self.assertTrue(
+                    (e.mask.array == b.mask).all(),
+                    "axis={}, weighted, masked \ne.mask={}, \nb.mask={}, \ne.mask==b.mask={}".format(
+                        axes, e.mask.array, b.mask, e.mask.array==b.mask))
+
+                self.assertTrue(
+                    e.allclose(b, rtol=1e-05, atol=1e-08),
+                    "axis={}, weighted, masked \ne={}, \nb={}, \ne-b={}".format(
+                        axes, e.array, b, e.array-b))
+        #--- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
 

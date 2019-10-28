@@ -1414,8 +1414,8 @@ The output units are '1' (nondimensionsal).
     The shape of the data may change, but the size will not.
 
     The flattening is executed in row-major (C-style) order. For
-    example, the array [[1, 2], [3, 4]] would be flattened across both
-    dimensions to [1 2 3 4].
+    example, the array ``[[1, 2], [3, 4]]`` would be flattened across
+    both dimensions to ``[1 2 3 4]``.
 
     .. versionaddedd:: 3.0.2
 

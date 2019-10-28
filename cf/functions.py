@@ -1024,7 +1024,8 @@ def _numpy_isclose(a, b, rtol=None, atol=None):
         return a == b
 
 
-def parse_indices(shape, indices, cyclic=False, reverse=False, envelope=False):
+def parse_indices(shape, indices, cyclic=False, reverse=False,
+                  envelope=False, mask=False):
     '''TODO
 
     :Parameters:
@@ -1037,15 +1038,30 @@ def parse_indices(shape, indices, cyclic=False, reverse=False, envelope=False):
     
         `list` [, `dict`]
 
-    '''
-    parsed_indices = []
-    roll           = {}
-    flip           = []
-    compressed_indices = []
+    **Examples:**
+    
+    >>> cf.parse_indices((5, 8), ([1, 2, 4, 6],))
+    [array([1, 2, 4, 6]), slice(0, 8, 1)]
+    >>> cf.parse_indices((5, 8), ([2, 4, 6],))
+    [slice(2, 7, 2), slice(0, 8, 1)]
 
+    '''
+    parsed_indices     = []
+    roll               = {}
+    flip               = []
+    compressed_indices = []
+    mask_indices       = []
+    
     if not isinstance(indices, tuple):
         indices = (indices,)
 
+    if mask and indices:
+        arg0 = indices[0]
+        if isinstance(arg0, str) and arg0 == 'mask':
+            mask_indices = indices[1]
+            indices = indices[2:]
+    #--- End: if
+    
     # Initialize the list of parsed indices as the input indices with any
     # Ellipsis objects expanded
     length = len(indices)
@@ -1061,12 +1077,12 @@ def parse_indices(shape, indices, cyclic=False, reverse=False, envelope=False):
             n -= 1
 
         length -= 1
-    #--- End: for
+
     len_parsed_indices = len(parsed_indices)
 
     if ndim and len_parsed_indices > ndim:
-        raise IndexError("Invalid indices %s for array with shape %s" %
-                         (parsed_indices, shape))
+        raise IndexError("Invalid indices {} for array with shape {}".format(
+            parsed_indices, shape))
 
     if len_parsed_indices < ndim:
         parsed_indices.extend([slice(None)]*(ndim-len_parsed_indices))
@@ -1327,7 +1343,7 @@ def parse_indices(shape, indices, cyclic=False, reverse=False, envelope=False):
         parsed_indices[i] = index    
     #--- End: for
 
-    if not (cyclic or reverse or envelope):
+    if not (cyclic or reverse or envelope or mask):
         return parsed_indices
 
     out = [parsed_indices]
@@ -1340,6 +1356,9 @@ def parse_indices(shape, indices, cyclic=False, reverse=False, envelope=False):
 
     if envelope:
         out.append(compressed_indices)
+
+    if mask:
+        out.append(mask_indices)
 
     return out
 
