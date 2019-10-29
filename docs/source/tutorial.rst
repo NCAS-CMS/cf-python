@@ -1218,9 +1218,9 @@ The `~Field._FillValue` and `~Field.missing_value` attributes of the
 field construct are not stored as values of the field construct's
 data. They are only used when :ref:`writing the data to a netCDF
 dataset <Writing-to-a-netCDF-dataset>`. Therefore testing for missing
-values by testing the for equality to one of these properties will
-produce incorrect results, and the `~Field.any` and `~Field.all`
-methods of the field construct should be used instead.
+values by testing for equality to one of these properties will produce
+incorrect results; the `~Field.any` and `~Field.all` methods of the
+field construct should be used instead.
 
 .. code-block:: python
    :caption: *See if all, or any, data points are masked.*

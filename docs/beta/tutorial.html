@@ -1399,9 +1399,9 @@ section) and inspect the new data mask.</em></span><a class="headerlink" href="#
 field construct are not stored as values of the field construct’s
 data. They are only used when <a class="reference internal" href="#writing-to-a-netcdf-dataset"><span class="std std-ref">writing the data to a netCDF
 dataset</span></a>. Therefore testing for missing
-values by testing the for equality to one of these properties will
-produce incorrect results, and the <a class="reference internal" href="method/cf.Field.any.html#cf.Field.any" title="cf.Field.any"><code class="xref py py-obj docutils literal notranslate"><span class="pre">any</span></code></a> and <a class="reference internal" href="method/cf.Field.all.html#cf.Field.all" title="cf.Field.all"><code class="xref py py-obj docutils literal notranslate"><span class="pre">all</span></code></a>
-methods of the field construct should be used instead.</p>
+values by testing for equality to one of these properties will produce
+incorrect results; the <a class="reference internal" href="method/cf.Field.any.html#cf.Field.any" title="cf.Field.any"><code class="xref py py-obj docutils literal notranslate"><span class="pre">any</span></code></a> and <a class="reference internal" href="method/cf.Field.all.html#cf.Field.all" title="cf.Field.all"><code class="xref py py-obj docutils literal notranslate"><span class="pre">all</span></code></a> methods of the
+field construct should be used instead.</p>
 <div class="literal-block-wrapper docutils container" id="id132">
 <div class="code-block-caption"><span class="caption-text"><em>See if all, or any, data points are masked.</em></span><a class="headerlink" href="#id132" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
