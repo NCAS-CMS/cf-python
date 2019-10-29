@@ -90,7 +90,7 @@
 <h1>cf.Data.equals<a class="headerlink" href="#cf-data-equals" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Data.equals">
-<code class="descclassname">Data.</code><code class="descname">equals</code><span class="sig-paren">(</span><em>other</em>, <em>rtol=None</em>, <em>atol=None</em>, <em>ignore_fill_value=False</em>, <em>ignore_data_type=False</em>, <em>ignore_type=False</em>, <em>verbose=False</em>, <em>traceback=False</em>, <em>ignore_compression=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/data/data.py#L8782"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.equals" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Data.</code><code class="descname">equals</code><span class="sig-paren">(</span><em>other</em>, <em>rtol=None</em>, <em>atol=None</em>, <em>ignore_fill_value=False</em>, <em>ignore_data_type=False</em>, <em>ignore_type=False</em>, <em>verbose=False</em>, <em>traceback=False</em>, <em>ignore_compression=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/data/data.py#L8811"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.equals" title="Permalink to this definition">¶</a></dt>
 <dd><p>True if two data arrays are logically equal, False otherwise.</p>
 <p>Two real numbers <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> are considered equal if
 <code class="docutils literal notranslate"><span class="pre">|x-y|&lt;=atol+rtol|y|</span></code>, where <code class="docutils literal notranslate"><span class="pre">atol</span></code> (the tolerance on absolute
@@ -117,9 +117,12 @@ default the value returned by the <a class="reference internal" href="../functio
 <dd><p class="first last">If True then data arrays with different fill values are
 considered equal. By default they are considered unequal.</p>
 </dd>
-<dt>traceback: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If True then print a traceback highlighting where the two
-instances differ.</p>
+<dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dd><p class="first last">If True then print information about differences that lead
+to inequality.</p>
+</dd>
+<dt>traceback: deprecated at version 3.0.0</dt>
+<dd><p class="first last">Use <em>verbose</em> parameter instead.</p>
 </dd>
 </dl>
 </td>

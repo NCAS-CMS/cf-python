@@ -90,7 +90,7 @@
 <h1>cf.FieldAncillary.match_by_ncvar<a class="headerlink" href="#cf-fieldancillary-match-by-ncvar" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.FieldAncillary.match_by_ncvar">
-<code class="descclassname">FieldAncillary.</code><code class="descname">match_by_ncvar</code><span class="sig-paren">(</span><em>*ncvars</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/mixin/properties.py#L794"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.FieldAncillary.match_by_ncvar" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">FieldAncillary.</code><code class="descname">match_by_ncvar</code><span class="sig-paren">(</span><em>*ncvars</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/mixin/properties.py#L725"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.FieldAncillary.match_by_ncvar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether or not the construct has a netCDF variable name.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
@@ -110,7 +110,7 @@
 (e.g. <code class="docutils literal notranslate"><span class="pre">'lat'</span></code>), etc.); a <a class="reference internal" href="../classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object
 (e.g. <code class="docutils literal notranslate"><span class="pre">cf.eq('lon')</span></code>); or a compiled regular expression
 (e.g. <code class="docutils literal notranslate"><span class="pre">re.compile('^t')</span></code>) that is compared with the
-construct’s netCDF variable name via <a class="reference external" href="https://docs.python.org/3/library/re.html#re.search" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.search</span></code></a>.</p>
+construct’s netCDF variable name via <a class="reference external" href="https://docs.python.org/3/library/re.html#re.search" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.search</span></code></a>.</p>
 <p class="last">The condition is satisfied if the netCDF variable name, as
 returned by the <a class="reference internal" href="cf.FieldAncillary.nc_get_variable.html#cf.FieldAncillary.nc_get_variable" title="cf.FieldAncillary.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a> method, exists and
 equals the condition value.</p>
@@ -119,7 +119,7 @@ equals the condition value.</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt>
+<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt>
 <dd><p class="first last">Whether or not at least one of the conditions are met.</p>
 </dd>
 </dl>

@@ -106,7 +106,7 @@ changed.
 
 Note, however, that datasets of different CF versions may be
 :ref:`read <Reading-datasets>` from, or :ref:`written
-<Writing-to-disk>` to, disk.
+<Writing-to-a-netCDF-dataset>` to netCDF.
 
 ----
 
@@ -1158,10 +1158,86 @@ have the same relative order as the field construct:
 
 .. code-block:: python
    :caption: *Also permute the data dimension of metadata constructs
-             using the 'contracts' keyword.*
+             using the 'contructs' keyword.*
 
-   >>> t4 = t.transpose([2, 0, 1], constructs=True)
+   >>> t4 = t.transpose(['X', 'Z', 'Y'], constructs=True)
 
+.. _Data-mask:
+   
+Data mask
+^^^^^^^^^
+
+There is always a data mask, which may be thought of as a separate
+data array of booleans with the same shape as the original data. The
+data mask is `False` where the the data has values, and `True` where
+the data is missing. The data mask may be inspected with the
+`~Field.mask` attribute of the field construct, which returns the data
+mask in a field construct with the same metadata constructs as the
+original field construct.
+
+
+.. code-block:: python
+   :caption: *Inspect the data mask of a field constuct.*
+
+   >>> print(q)
+   Field: specific_humidity (ncvar%q)
+   ----------------------------------
+   Data            : specific_humidity(latitude(5), longitude(8)) 1
+   Cell methods    : area: mean
+   Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                   : longitude(8) = [22.5, ..., 337.5] degrees_east
+                   : time(1) = [2019-01-01 00:00:00]
+   >>> print(q.mask)
+   Field: long_name=mask
+   ---------------------
+   Data            : long_name=mask(latitude(5), longitude(8))
+   Cell methods    : area: mean
+   Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                   : longitude(8) = [22.5, ..., 337.5] degrees_east
+                   : time(1) = [2019-01-01 00:00:00]
+   >>> print(q.mask.array)
+   array([[False, False, False, False, False, False, False, False],
+          [False, False, False, False, False, False, False, False],
+          [False, False, False, False, False, False, False, False],
+          [False, False, False, False, False, False, False, False],
+          [False, False, False, False, False, False, False, False]])
+
+.. code-block:: python
+   :caption: *Mask the polar rows (see the "Assignment by index"
+             section) and inspect the new data mask.*
+	  
+   >>> q[[0, 4], :] = cf.masked            
+   >>> print(q.mask.array)
+   array([[ True,  True,  True,  True,  True,  True,  True,  True],
+          [False, False, False, False, False, False, False, False],
+          [False, False, False, False, False, False, False, False],
+          [False, False, False, False, False, False, False, False],
+          [ True,  True,  True,  True,  True,  True,  True,  True]])
+
+The `~Field._FillValue` and `~Field.missing_value` attributes of the
+field construct are not stored as values of the field construct's
+data. They are only used when :ref:`writing the data to a netCDF
+dataset <Writing-to-a-netCDF-dataset>`. Therefore locating missing
+values by testing the for equality to one of these properties will
+produce incorrect results
+
+.. code-block:: python
+   :caption: *See if all, or any, data points are masked.*
+	     
+   >>> q.mask.all()
+   False
+   >>> q.mask.any()
+   True
+   >>> fv = q.fill_value(default='netCDF')
+   >>> fv
+   9.969209968386869e+36
+   >>> (q == fv).array
+   [[   --    --    --    --    --    --    --    --]
+    [False False False False False False False False]
+    [False False False False False False False False]
+    [False False False False False False False False]
+    [   --    --    --    --    --    --    --    --]]
+	  
 ----
 
 .. _Subspacing-by-index:
@@ -1292,9 +1368,11 @@ A `cf.Data` instance can also directly be indexed in the same way:
 -----------------------
 
 Data elements can be changed by assigning to elements selected by
-indices of the data (as described in this section) or by conditions
-based on the data values of the field construct or its metadata
-constructs (see :ref:`Assignment-by-condition`).
+indices of the data (as described in this section); by conditions
+based on the data values of the field construct or one of its metadata
+constructs (see :ref:`Assignment-by-condition`); or by identifying
+indices based on arbitrary metadata constructs (see
+:ref:`Assignment-by-metadata`).
 
 Assignment by indices uses rules that are very similar to the `numpy
 indexing rules
@@ -2927,7 +3005,7 @@ Multiple dimensions
 ^^^^^^^^^^^^^^^^^^^
 
 Conditions may also be applied to multi-dimensionsal metadata
-constructs.
+constructs
 
 .. code-block:: python
    :caption: *Create TODO*
@@ -2975,6 +3053,80 @@ may not be acting along orthogonal dimensions, some missing data may
 still need to be inserted into the field construct's data, as is the
 case in this example.
 
+.. _Assignment-by-metadata:
+
+Assignment by metadata
+^^^^^^^^^^^^^^^^^^^^^^
+
+Data elements can be changed by assigning to elements selected by
+indices of the data (see :ref:`Assignment-by-index`); by conditions
+based on the data values of the field construct or one if its metadata
+constructs (see :ref:`Assignment-by-condition`); or by identifying
+indices based on arbitrary metadata constructs (as described in this
+section).
+     
+Assignment by metadata makes use of the `~Field.indices` method of the
+field construct to select metadata constructs and specify conditions
+on their data. Indices for subspacing are then automatically inferred
+from where the conditions are met. The tuple of indices returned by
+the `~Field.indices` may the be used in normal :ref:`assignment by
+index <Assignment-by-index>`.
+
+The `~Field.indices` method akes exactly the same arguments as the
+`~Field.subspace` method of the field construct. See
+:ref:`Subspacing-by-metadata` for details.
+
+.. code-block:: python
+   :caption: *Create TODO*
+
+   >>> q, t = cf.read('file.nc')
+   >>> print(t)
+   Field: air_temperature (ncvar%ta)
+   ---------------------------------
+   Data            : air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K
+   Cell methods    : grid_latitude(10): grid_longitude(9): mean where land (interval: 0.1 degrees) time(1): maximum
+   Field ancils    : air_temperature standard_error(grid_latitude(10), grid_longitude(9)) = [[0.76, ..., 0.32]] K
+   Dimension coords: atmosphere_hybrid_height_coordinate(1) = [1.5]
+                   : grid_latitude(10) = [2.2, ..., -1.76] degrees
+                   : grid_longitude(9) = [-4.7, ..., -1.18] degrees
+                   : time(1) = [2019-01-01 00:00:00]
+   Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
+                   : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
+                   : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., b'kappa']
+   Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
+   Coord references: grid_mapping_name:rotated_latitude_longitude
+                   : standard_name:atmosphere_hybrid_height_coordinate
+   Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
+                   : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
+                   : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
+   >>> indices = t.indices(grid_longitude=cf.wi(-4, -2))
+   >>> indices           
+   (slice(0, 1, 1), slice(0, 10, 1), slice(2, 7, 1))
+   >>> t[indices] = -11
+   >>> print(t.array)
+   [[[262.8 270.5 -11.  -11.  -11.  -11.  -11.  278.9 269.2]
+     [272.7 268.4 -11.  -11.  -11.  -11.  -11.  265.7 279.5]
+     [269.7 279.1 -11.  -11.  -11.  -11.  -11.  272.5 263.7]
+     [261.7 260.6 -11.  -11.  -11.  -11.  -11.  267.6 260.6]
+     [264.2 275.9 -11.  -11.  -11.  -11.  -11.  268.6 275.3]
+     [263.9 263.8 -11.  -11.  -11.  -11.  -11.  263.5 270.2]
+     [273.8 273.1 -11.  -11.  -11.  -11.  -11.  273.  270.6]
+     [267.9 273.5 -11.  -11.  -11.  -11.  -11.  260.8 268.9]
+     [270.9 278.7 -11.  -11.  -11.  -11.  -11.  278.5 266.4]
+     [276.4 264.2 -11.  -11.  -11.  -11.  -11.  273.4 269.7]]]
+   >>> t[t.indices(latitude=cf.wi(51, 53))] = -99
+   >>> print(t.array)
+   [[[262.8 270.5 -11.  -11.  -11.  -11.  -11.  278.9 269.2]
+     [272.7 268.4 -11.  -11.  -11.  -11.  -11.  265.7 279.5]
+     [269.7 279.1 -11.  -11.  -11.  -11.  -11.  272.5 263.7]
+     [-99.  -99.  -99.  -99.  -99.  -99.  -99.  -99.  -99. ]
+     [-99.  -99.  -99.  -99.  -99.  -99.  -99.  -99.  -99. ]
+     [-99.  -99.  -99.  -99.  -99.  -99.  -99.  -99.  -99. ]
+     [-99.  -99.  -99.  -99.  -99.  -99.  -99.  -99.  -99. ]
+     [267.9 273.5 -11.  -11.  -99.  -99.  -99.  -99.  -99. ]
+     [270.9 278.7 -11.  -11.  -11.  -11.  -11.  278.5 266.4]
+     [276.4 264.2 -11.  -11.  -11.  -11.  -11.  273.4 269.7]]]
+   
 ----
 
 .. _Sorting-and-selecting-from-field-lists:
@@ -2991,15 +3143,15 @@ criteria are possible.
    :caption: *Sort a field list by the field construct identities, and
              by field construct units.*
 
-   >>> fl = cf.read('file.nc')                                                                        
+   >>> fl = cf.read('file.nc')
    >>> fl
    [<CF Field: specific_humidity(latitude(5), longitude(8)) 1>,
     <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>]   
-   >>> fl.sort()                                                                                      
+   >>> fl.sort()
    >>> fl
    [<CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>,
     <CF Field: specific_humidity(latitude(5), longitude(8)) 1>]   
-   >>> fl.sort(key=lambda f: f.units)                                                                 
+   >>> fl.sort(key=lambda f: f.units)
    >>> fl
    [<CF Field: specific_humidity(latitude(5), longitude(8)) 1>,
     <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>]
@@ -3334,10 +3486,12 @@ Constructor    Description
 ---------------------------
 
 Data elements can be changed by assigning to elements selected by
-indices of the data (see :ref:`Assignment-by-index`) or by conditions
-based on the data values of the field construct or its metadata
-constructs (as described in this section).
-
+indices of the data (see :ref:`Assignment-by-index`); by conditions
+based on the data values of the field construct or one of its metadata
+constructs (as described in this section); or by identifying indices
+based on arbitrary metadata constructs (see
+:ref:`Assignment-by-metadata`).
+     
 Assignment by condition uses the `~Field.where` method of the field
 construct. This method automatically infers indices for assignment
 from conditions on the field construct's data, or its metadata. In
@@ -3702,8 +3856,8 @@ automatically included in output files as a netCDF global
 "Conventions" attribute, either as the CF version of the cf package
 (as returned by the `cf.CF` function), or else specified via the
 *Conventions* keyword of the `cf.write` function. See
-:ref:`Writing-to-disk` for details on how to specify additional
-conventions.
+:ref:`Writing-to-a-netCDF-dataset` for details on how to specify
+additional conventions.
 
 If this field were to be written to a netCDF dataset then, in the
 absence of predefined names, default netCDF variable and dimension
@@ -4014,7 +4168,7 @@ The `cf.read` function :ref:`reads a netCDF dataset
 field constructs, each one corresponding to a unique CF-netCDF data
 variable in the dataset. For example, the field construct ``tas`` that
 was created manually can be :ref:`written to a netCDF dataset
-<Writing-to-disk>` and then read back into memory:
+<Writing-to-a-netCDF-dataset>` and then read back into memory:
 
 .. code-block:: python
    :caption: *Write the field construct that was created manually to
@@ -4393,10 +4547,10 @@ Method                            Classes                                       
 
 ----
 
-.. _Writing-to-disk:
+.. _Writing-to-a-netCDF-dataset:
    
-**Writing to disk**
--------------------
+**Writing to a netCDF dataset**
+-------------------------------
 
 The `cf.write` function writes a field construct, or a sequence of
 field constructs, to a new netCDF file on disk:

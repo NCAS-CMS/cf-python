@@ -112,7 +112,7 @@ exception is raised.</p>
 <p>The identity is specified by a string (e.g. <code class="docutils literal notranslate"><span class="pre">'latitude'</span></code>,
 <code class="docutils literal notranslate"><span class="pre">'long_name=time'</span></code>, etc.); or a compiled regular expression
 (e.g. <code class="docutils literal notranslate"><span class="pre">re.compile('^atmosphere')</span></code>), for which all constructs
-whose identities match (via <a class="reference external" href="https://docs.python.org/3/library/re.html#re.search" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.search</span></code></a>) are selected.</p>
+whose identities match (via <a class="reference external" href="https://docs.python.org/3/library/re.html#re.search" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.search</span></code></a>) are selected.</p>
 <p>Each construct has a number of identities, and is selected if
 any of them match any of those provided. A construct’s
 identities are those returned by its <code class="xref py py-obj docutils literal notranslate"><span class="pre">identities</span></code> method. In
@@ -124,14 +124,14 @@ identities:</p>
 </div>
 <p>In addition, each construct also has an identity based its
 construct key (e.g. <code class="docutils literal notranslate"><span class="pre">'key%dimensioncoordinate2'</span></code>)</p>
-<p>Note that in the output of a <a class="reference external" href="https://docs.python.org/3/library/functions.html#print" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a> call or <code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code> method, a
+<p>Note that in the output of a <a class="reference external" href="https://docs.python.org/3/library/functions.html#print" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a> call or <code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code> method, a
 construct is always described by one of its identities, and so
 this description may always be used as an <em>identity</em> argument.</p>
 </div></blockquote>
 <dl class="docutils">
 <dt>default: optional</dt>
 <dd><p class="first last">Return the value of the <em>default</em> parameter if the property
-has not been set. If set to an <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code></a> instance then it
+has not been set. If set to an <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code></a> instance then it
 will be raised instead.</p>
 </dd>
 </dl>
@@ -189,7 +189,7 @@ letter ‘l’:</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/method/cf.Domain.construct.rst.txt"

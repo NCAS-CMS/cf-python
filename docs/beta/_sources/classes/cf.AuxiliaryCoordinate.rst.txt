@@ -203,6 +203,13 @@ Data
 
 .. autosummary::
    :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.AuxiliaryCoordinate.fill_value
+
+.. autosummary::
+   :nosignatures:
    :toctree: ../attribute/
    :template: attribute.rst
 
@@ -210,7 +217,6 @@ Data
    ~cf.AuxiliaryCoordinate.count
    ~cf.AuxiliaryCoordinate.count_masked
    ~cf.AuxiliaryCoordinate.hardmask
-   ~cf.AuxiliaryCoordinate.fill_value
    ~cf.AuxiliaryCoordinate.mask
    ~cf.AuxiliaryCoordinate.mask_invalid
 

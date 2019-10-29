@@ -96,7 +96,7 @@
 <ul class="simple">
 <li>The <a class="reference internal" href="../attribute/cf.CellMeasure.measure.html#cf.CellMeasure.measure" title="cf.CellMeasure.measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">measure</span></code></a> attribute, preceeded by <code class="docutils literal notranslate"><span class="pre">'measure:'</span></code>.</li>
 <li>The <a class="reference internal" href="../attribute/cf.CellMeasure.standard_name.html#cf.CellMeasure.standard_name" title="cf.CellMeasure.standard_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_name</span></code></a> property.</li>
-<li>The <a class="reference internal" href="../attribute/cf.CellMeasure.id.html#cf.CellMeasure.id" title="cf.CellMeasure.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code></a> attribute, preceeded by <code class="docutils literal notranslate"><span class="pre">'id%'</span></code>.</li>
+<li>The <a class="reference internal" href="cf.CellMeasure.id.html#cf.CellMeasure.id" title="cf.CellMeasure.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code></a> attribute, preceeded by <code class="docutils literal notranslate"><span class="pre">'id%'</span></code>.</li>
 <li>The <a class="reference internal" href="../attribute/cf.CellMeasure.long_name.html#cf.CellMeasure.long_name" title="cf.CellMeasure.long_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">long_name</span></code></a> property, preceeded by <code class="docutils literal notranslate"><span class="pre">'long_name='</span></code>.</li>
 <li>The netCDF variable name, preceeded by <code class="docutils literal notranslate"><span class="pre">'ncvar%'</span></code>.</li>
 <li>The value of the <em>default</em> parameter.</li>
@@ -106,7 +106,7 @@
 </div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="../attribute/cf.CellMeasure.id.html#cf.CellMeasure.id" title="cf.CellMeasure.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code></a>, <a class="reference internal" href="cf.CellMeasure.identities.html#cf.CellMeasure.identities" title="cf.CellMeasure.identities"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identities</span></code></a>, <a class="reference internal" href="../attribute/cf.CellMeasure.long_name.html#cf.CellMeasure.long_name" title="cf.CellMeasure.long_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">long_name</span></code></a>, <a class="reference internal" href="../attribute/cf.CellMeasure.measure.html#cf.CellMeasure.measure" title="cf.CellMeasure.measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">measure</span></code></a>,
+<p class="last"><a class="reference internal" href="cf.CellMeasure.id.html#cf.CellMeasure.id" title="cf.CellMeasure.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code></a>, <a class="reference internal" href="cf.CellMeasure.identities.html#cf.CellMeasure.identities" title="cf.CellMeasure.identities"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identities</span></code></a>, <a class="reference internal" href="../attribute/cf.CellMeasure.long_name.html#cf.CellMeasure.long_name" title="cf.CellMeasure.long_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">long_name</span></code></a>, <a class="reference internal" href="../attribute/cf.CellMeasure.measure.html#cf.CellMeasure.measure" title="cf.CellMeasure.measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">measure</span></code></a>,
 <a class="reference internal" href="cf.CellMeasure.nc_get_variable.html#cf.CellMeasure.nc_get_variable" title="cf.CellMeasure.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a>, <a class="reference internal" href="../attribute/cf.CellMeasure.standard_name.html#cf.CellMeasure.standard_name" title="cf.CellMeasure.standard_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_name</span></code></a></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
@@ -118,18 +118,18 @@
 <dd><p class="first last">If no identity can be found then return the value of the
 default parameter.</p>
 </dd>
-<dt>strict: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional </dt>
+<dt>strict: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional </dt>
 <dd><p class="first last">If True then only take the identity from the “measure”
 arttribute, the “standard_name” property or the “id”
 attribute, in that order.</p>
 </dd>
-<dt>relaxed: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>relaxed: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then only take the identity from the “measure”
 arttribute, the “standard_name” property, the “id”
 attribute, the “long_name” property or netCDF variable
 name, in that order.</p>
 </dd>
-<dt>nc_only: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional       </dt>
+<dt>nc_only: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional       </dt>
 <dd><p class="first last">If True then only take the identity from the netCDF
 variable name.</p>
 </dd>
@@ -181,7 +181,7 @@ variable name.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/method/cf.CellMeasure.identity.rst.txt"

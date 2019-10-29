@@ -164,7 +164,7 @@ Data
    ~cf.Field.size
    ~cf.Field.varray
 
-.. rubric:: Rearranging elements
+.. rubric:: *Rearranging elements*
 
 .. autosummary::
    :nosignatures:
@@ -181,9 +181,15 @@ Data
    ~cf.Field.transpose
    ~cf.Field.unsqueeze
 
-   
-.. rubric:: Data array mask
+.. rubric:: *Data array mask*
 
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Field.fill_value
+	    
 .. autosummary::
    :nosignatures:
    :toctree: ../attribute/
@@ -191,16 +197,12 @@ Data
 
    ~cf.Field.binary_mask
    ~cf.Field.count
+   ~cf.Field.count_masked
    ~cf.Field.hardmask
-   ~cf.Field.fill_value
    ~cf.Field.mask
-
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-.. rubric:: Changing data values
+   ~cf.Field.mask_invalid
+   
+.. rubric:: *Changing data values*
 
 .. autosummary::
    :nosignatures:
@@ -213,8 +215,11 @@ Data
    ~cf.Field.subspace
    ~cf.Field.where
 
-.. rubric:: Miscellaneous
+Miscellaneous data operations
+-----------------------------
 
+.. rubric:: Methods
+	    
 .. autosummary::
    :nosignatures:
    :toctree: ../method/

@@ -200,6 +200,13 @@ Data
 
 .. autosummary::
    :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.DomainAncillary.fill_value
+
+.. autosummary::
+   :nosignatures:
    :toctree: ../attribute/
    :template: attribute.rst
 
@@ -207,7 +214,6 @@ Data
    ~cf.DomainAncillary.count
    ~cf.DomainAncillary.count_masked
    ~cf.DomainAncillary.hardmask
-   ~cf.DomainAncillary.fill_value
    ~cf.DomainAncillary.mask
    ~cf.DomainAncillary.mask_invalid
 

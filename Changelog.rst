@@ -17,6 +17,7 @@ version 3.0.2
   `cf.Data.masked_all`, `cf.Data.maximum_absolute_value`,
   `cf.Data.minimum_absolute_value`, `cf.Data.sum_of_squares`,
   `cf.Data.root_mean_square`, `cf.Data.flatten`.
+* Renamed `cf.default_fillvals` to `cf.default_netCDF_fillvals`.
 * Fixed occasional failure to delete all temporary directories at
   exit.
 * Fixed bug in `cf.Data.func` when overriding units. Affects all

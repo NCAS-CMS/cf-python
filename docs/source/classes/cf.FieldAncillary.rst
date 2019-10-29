@@ -167,6 +167,13 @@ Data
 
 .. autosummary::
    :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.FieldAncillary.fill_value
+
+.. autosummary::
+   :nosignatures:
    :toctree: ../attribute/
    :template: attribute.rst
 
@@ -174,7 +181,6 @@ Data
    ~cf.FieldAncillary.count
    ~cf.FieldAncillary.count_masked
    ~cf.FieldAncillary.hardmask
-   ~cf.FieldAncillary.fill_value
    ~cf.FieldAncillary.mask
    ~cf.FieldAncillary.mask_invalid
 

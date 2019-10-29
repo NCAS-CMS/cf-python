@@ -190,7 +190,7 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.CellMeasure.construct_type.html#cf.CellMeasure.construct_type" title="cf.CellMeasure.construct_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code></a></td>
 <td>Return a description of the construct type.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.CellMeasure.id.html#cf.CellMeasure.id" title="cf.CellMeasure.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.CellMeasure.id.html#cf.CellMeasure.id" title="cf.CellMeasure.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code></a></td>
 <td>A canonical identity.</td>
 </tr>
 </tbody>
@@ -481,6 +481,17 @@ initialization. By default arguments are deep copied.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.CellMeasure.fill_value.html#cf.CellMeasure.fill_value" title="cf.CellMeasure.fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fill_value</span></code></a></td>
+<td>Return the data array missing data value.</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
 <tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.CellMeasure.binary_mask.html#cf.CellMeasure.binary_mask" title="cf.CellMeasure.binary_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_mask</span></code></a></td>
 <td>A binary (0 and 1) missing data mask of the data array.</td>
 </tr>
@@ -493,13 +504,10 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-even"><td><a class="reference internal" href="../attribute/cf.CellMeasure.hardmask.html#cf.CellMeasure.hardmask" title="cf.CellMeasure.hardmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></a></td>
 <td>Whether the mask is hard (True) or soft (False).</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.CellMeasure.fill_value.html#cf.CellMeasure.fill_value" title="cf.CellMeasure.fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fill_value</span></code></a></td>
-<td>Return the data array missing data value.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.CellMeasure.mask.html#cf.CellMeasure.mask" title="cf.CellMeasure.mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.CellMeasure.mask.html#cf.CellMeasure.mask" title="cf.CellMeasure.mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code></a></td>
 <td>The mask of the data array.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cf.CellMeasure.mask_invalid.html#cf.CellMeasure.mask_invalid" title="cf.CellMeasure.mask_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask_invalid</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.CellMeasure.mask_invalid.html#cf.CellMeasure.mask_invalid" title="cf.CellMeasure.mask_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask_invalid</span></code></a></td>
 <td>Mask the array where invalid values occur.</td>
 </tr>
 </tbody>
@@ -577,7 +585,7 @@ initialization. By default arguments are deep copied.</p>
 <td>Return a deep copy.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cf.CellMeasure.equals.html#cf.CellMeasure.equals" title="cf.CellMeasure.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></td>
-<td>Whether two cell measure constructs are the same.</td>
+<td>Whether two instances are the same.</td>
 </tr>
 </tbody>
 </table>
@@ -588,19 +596,19 @@ initialization. By default arguments are deep copied.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.CellMeasure.T.html#cf.CellMeasure.T" title="cf.CellMeasure.T"><code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code></a></td>
 <td><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if and only if the data are coordinates for a CF ‘T’ axis.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">X</span></code></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.CellMeasure.X.html#cf.CellMeasure.X" title="cf.CellMeasure.X"><code class="xref py py-obj docutils literal notranslate"><span class="pre">X</span></code></a></td>
 <td>Always False.</td>
 </tr>
-<tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">Y</span></code></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.CellMeasure.Y.html#cf.CellMeasure.Y" title="cf.CellMeasure.Y"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Y</span></code></a></td>
 <td>Always False.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">Z</span></code></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.CellMeasure.Z.html#cf.CellMeasure.Z" title="cf.CellMeasure.Z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Z</span></code></a></td>
 <td>Always False.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.CellMeasure.id.html#cf.CellMeasure.id" title="cf.CellMeasure.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.CellMeasure.id.html#cf.CellMeasure.id" title="cf.CellMeasure.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code></a></td>
 <td>A canonical identity.</td>
 </tr>
 </tbody>
@@ -770,7 +778,7 @@ initialization. By default arguments are deep copied.</p>
 <td>Test whether all data are element-wise equal to other, broadcastable data.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cf.CellMeasure.equals.html#cf.CellMeasure.equals" title="cf.CellMeasure.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></td>
-<td>Whether two cell measure constructs are the same.</td>
+<td>Whether two instances are the same.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cf.CellMeasure.equivalent.html#cf.CellMeasure.equivalent" title="cf.CellMeasure.equivalent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equivalent</span></code></a></td>
 <td>True if two constructs are equal, False otherwise.</td>

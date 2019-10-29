@@ -191,6 +191,13 @@ Data
 
 .. autosummary::
    :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.CellMeasure.fill_value
+
+.. autosummary::
+   :nosignatures:
    :toctree: ../attribute/
    :template: attribute.rst
 
@@ -198,7 +205,6 @@ Data
    ~cf.CellMeasure.count
    ~cf.CellMeasure.count_masked
    ~cf.CellMeasure.hardmask
-   ~cf.CellMeasure.fill_value
    ~cf.CellMeasure.mask
    ~cf.CellMeasure.mask_invalid
 

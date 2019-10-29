@@ -90,13 +90,13 @@
 <h1>cf.FieldAncillary.flatten<a class="headerlink" href="#cf-fieldancillary-flatten" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.FieldAncillary.flatten">
-<code class="descclassname">FieldAncillary.</code><code class="descname">flatten</code><span class="sig-paren">(</span><em>axes=None</em>, <em>inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/mixin/propertiesdata.py#L3039"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.FieldAncillary.flatten" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">FieldAncillary.</code><code class="descname">flatten</code><span class="sig-paren">(</span><em>axes=None</em>, <em>inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/mixin/propertiesdata.py#L3245"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.FieldAncillary.flatten" title="Permalink to this definition">¶</a></dt>
 <dd><p>Flatten axes of the data</p>
 <p>Any subset of the axes may be flattened.</p>
 <p>The shape of the data may change, but the size will not.</p>
 <p>The flattening is executed in row-major (C-style) order. For
-example, the array [[1, 2], [3, 4]] would be flattened across both
-dimensions to [1 2 3 4].</p>
+example, the array <code class="docutils literal notranslate"><span class="pre">[[1,</span> <span class="pre">2],</span> <span class="pre">[3,</span> <span class="pre">4]]</span></code> would be flattened across
+both dimensions to <code class="docutils literal notranslate"><span class="pre">[1</span> <span class="pre">2</span> <span class="pre">3</span> <span class="pre">4]</span></code>.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last"><a class="reference internal" href="cf.FieldAncillary.insert_dimension.html#cf.FieldAncillary.insert_dimension" title="cf.FieldAncillary.insert_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_dimension</span></code></a>, <a class="reference internal" href="cf.FieldAncillary.flip.html#cf.FieldAncillary.flip" title="cf.FieldAncillary.flip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flip</span></code></a>, <a class="reference internal" href="cf.FieldAncillary.swapaxes.html#cf.FieldAncillary.swapaxes" title="cf.FieldAncillary.swapaxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">swapaxes</span></code></a>, <a class="reference internal" href="cf.FieldAncillary.transpose.html#cf.FieldAncillary.transpose" title="cf.FieldAncillary.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></p>

@@ -207,6 +207,13 @@ Data
 
 .. autosummary::
    :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.DimensionCoordinate.fill_value
+
+.. autosummary::
+   :nosignatures:
    :toctree: ../attribute/
    :template: attribute.rst
 
@@ -214,7 +221,6 @@ Data
    ~cf.DimensionCoordinate.count
    ~cf.DimensionCoordinate.count_masked
    ~cf.DimensionCoordinate.hardmask
-   ~cf.DimensionCoordinate.fill_value
    ~cf.DimensionCoordinate.mask
    ~cf.DimensionCoordinate.mask_invalid
 

@@ -2372,7 +2372,7 @@ def environment(display=True):
         return(out)
 
 
-def default_fillvals():
+def default_netCDF_fillvals():
     '''Default data array fill values for each data type.
 
     :Returns:
@@ -2382,7 +2382,7 @@ def default_fillvals():
 
     **Examples:**
 
-    >>> cf.default_fillvals() 
+    >>> cf.default_netCDF_fillvals() 
     {'S1': '\x00',
      'i1': -127,
      'u1': 255,
@@ -2399,11 +2399,12 @@ def default_fillvals():
     return netCDF4.default_fillvals
 
 
-def _DEPRECATION_ERROR(message=''):
+
+def _DEPRECATION_ERROR(message='', version='3.0.0'):
     raise DeprecationError("{}".format(message))
 
 
-def _DEPRECATION_ERROR_ARG(instance, method, arg, message=''):  
+def _DEPRECATION_ERROR_ARG(instance, method, arg, message='', version='3.0.0'):  
     raise DeprecationError("Argument {2!r} of method '{0}.{1}' has been deprecated at version 3.0.0 and is no longer available. {3}".format(
             instance.__class__.__name__,
             method,
@@ -2412,7 +2413,8 @@ def _DEPRECATION_ERROR_ARG(instance, method, arg, message=''):
 
 
 def _DEPRECATION_ERROR_FUNCTION_KWARGS(func, kwargs={}, message='',
-                                       exact=False, traceback=False):
+                                       exact=False, traceback=False,
+                                       version='3.0.0'):
     if exact:
         kwargs={'exact': None}
         message = "Use 're.compile' objects instead."
@@ -2430,7 +2432,8 @@ def _DEPRECATION_ERROR_FUNCTION_KWARGS(func, kwargs={}, message='',
     
 def _DEPRECATION_ERROR_KWARGS(instance, method, kwargs={}, message='',
                               i=False, traceback=False, axes=False,
-                              exact=False, relaxed_identity=False):
+                              exact=False, relaxed_identity=False,
+                              version='3.0.0'):
     if relaxed_identity:
         kwargs={'relaxed_identity': None}
         message = "Use keywords 'strict' or 'relaxed' instead."
@@ -2453,30 +2456,33 @@ def _DEPRECATION_ERROR_KWARGS(instance, method, kwargs={}, message='',
 
         
     for key in kwargs.keys():
-        raise DeprecationError("Keyword {2!r} of method '{0}.{1}' has been deprecated at version 3.0.0 and is no longer available. {3}".format(
+        raise DeprecationError("Keyword {2!r} of method '{0}.{1}' has been deprecated at version {} and is no longer available. {3}".format(
             instance.__class__.__name__,
             method,
             key,
+            version,
             message))
 
     
-def _DEPRECATION_ERROR_METHOD(instance, method, message=''):
+def _DEPRECATION_ERROR_METHOD(instance, method, message='', version='3.0.0'):
     raise DeprecationError("{} method {!r} has been deprecated at version 3.0.0 and is no longer available. {}".format(
         instance.__class__.__name__,
         method,
         message))
 
 
-def _DEPRECATION_ERROR_ATTRIBUTE(instance, attribute, message=''):
-    raise DeprecationError("{} attribute {!r} has been deprecate at version 3.0.0 and is no longer available. {}".format(
+def _DEPRECATION_ERROR_ATTRIBUTE(instance, attribute, message='', version='3.0.0'):
+    raise DeprecationError("{} attribute {!r} has been deprecate at version {} and is no longer available. {}".format(
         instance.__class__.__name__,
         attribute,
+        version,
         message))
 
 
-def _DEPRECATION_ERROR_FUNCTION(func, message=''):
-    raise DeprecationError("Function {!r} has been deprecated at version 3.0.0 and is no longer available. {}".format(
+def _DEPRECATION_ERROR_FUNCTION(func, message='', version='3.0.0'):
+    raise DeprecationError("Function {!r} has been deprecated at version {} and is no longer available. {}".format(
         func,
+        version,
         message))
 
 
@@ -2486,20 +2492,20 @@ def _DEPRECATION_ERROR_CLASS(cls, message=''):
         message))
 
 
-def _DEPRECATION_WARNING_METHOD(instance, method, message='', new=None):    
+def _DEPRECATION_WARNING_METHOD(instance, method, message='', new=None, version='3.0.0'):    
     warnings.warn(
         "{} method {!r} has been deprecated at version 3.0.0 and will be removed in a future version. {}".format(
             instance.__class__.__name__, method, message),
         DeprecationWarning)
 
 
-def _DEPRECATION_ERROR_DICT(message=''):
+def _DEPRECATION_ERROR_DICT(message='', version='3.0.0'):
     raise DeprecationError(
         "Use of a 'dict' to identify constructs has been deprecated and is no longer available. {}".format(
             message))
 
 
-def _DEPRECATION_ERROR_SEQUENCE(instance):
+def _DEPRECATION_ERROR_SEQUENCE(instance, version='3.0.0'):
     raise DeprecationError(
         "Use of a {!r} to identify constructs has been deprecated and is no longer available. Use the * operator to unpack the arguments instead.".format(
             instance.__class__.__name__))
@@ -2508,6 +2514,19 @@ def _DEPRECATION_ERROR_SEQUENCE(instance):
 # --------------------------------------------------------------------
 # Deprecated functions
 # --------------------------------------------------------------------
+def default_fillvals():
+    '''Default data array fill values for each data type.
+
+    Deprecated at version 3.0.2 and is no longer available. Use
+    function `cf.default_netCDF_fillvals` instead.
+
+    '''
+    _DEPRECATION_ERROR_FUNCTION(
+        'default_fillvals',
+        "Use function 'cf.default_netCDF_fillvals' instead.",
+        version='3.0.2') # pragma: no cover
+
+
 def set_equals(x, y, rtol=None, atol=None, ignore_fill_value=False,
                traceback=False):
     '''Deprecated at version 3.0.0.

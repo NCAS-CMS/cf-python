@@ -99,10 +99,11 @@ for details.</p>
 disk and is independent of the missing data mask. It may, however,
 be used when unmasking data array elements.</p>
 <p>The recommended way of retrieving the missing data value is with
-the <a class="reference internal" href="cf.Count.fill_value.html#cf.Count.fill_value" title="cf.Count.fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fill_value</span></code></a> method.</p>
+the <a class="reference internal" href="../method/cf.Count.fill_value.html#cf.Count.fill_value" title="cf.Count.fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fill_value</span></code></a> method.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="cf.Count._FillValue.html#cf.Count._FillValue" title="cf.Count._FillValue"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_FillValue</span></code></a>, <a class="reference internal" href="cf.Count.fill_value.html#cf.Count.fill_value" title="cf.Count.fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fill_value</span></code></a></p>
+<p class="last"><a class="reference internal" href="cf.Count._FillValue.html#cf.Count._FillValue" title="cf.Count._FillValue"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_FillValue</span></code></a>, <a class="reference internal" href="../method/cf.Count.fill_value.html#cf.Count.fill_value" title="cf.Count.fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fill_value</span></code></a>,
+<a class="reference internal" href="../function/cf.default_netCDF_fillvals.html#cf.default_netCDF_fillvals" title="cf.default_netCDF_fillvals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.default_netCDF_fillvals</span></code></a></p>
 </div>
 <p><strong>Examples:</strong></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">missing_value</span> <span class="o">=</span> <span class="mf">1.0e30</span>
@@ -111,8 +112,13 @@ the <a class="reference internal" href="cf.Count.fill_value.html#cf.Count.fill_v
 <span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">f</span><span class="o">.</span><span class="n">missing_value</span>
 </pre></div>
 </div>
-<p>Mask the data array where it equals a missing data value:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">setitem</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">masked</span><span class="p">,</span> <span class="n">condition</span><span class="o">=</span><span class="n">f</span><span class="o">.</span><span class="n">fill_value</span><span class="p">())</span> <span class="n">DCH</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">set_property</span><span class="p">(</span><span class="s1">&#39;missing_value&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0e30</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s1">&#39;missing_value&#39;</span><span class="p">)</span>
+<span class="go">-1e+30              </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">del_property</span><span class="p">(</span><span class="s1">&#39;missing_value&#39;</span><span class="p">)</span>
+<span class="go">-1e30               </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">del_property</span><span class="p">(</span><span class="s1">&#39;missing_value&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+<span class="go">None</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -131,7 +137,7 @@ the <a class="reference internal" href="cf.Count.fill_value.html#cf.Count.fill_v
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/attribute/cf.Count.missing_value.rst.txt"

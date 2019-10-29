@@ -440,7 +440,7 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-<p class="rubric">Rearranging elements</p>
+<p class="rubric"><em>Rearranging elements</em></p>
 <table border="1" class="longtable docutils">
 <colgroup>
 <col width="10%" />
@@ -476,7 +476,18 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-<p class="rubric">Data array mask</p>
+<p class="rubric"><em>Data array mask</em></p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.Field.fill_value.html#cf.Field.fill_value" title="cf.Field.fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fill_value</span></code></a></td>
+<td>Return the data array missing data value.</td>
+</tr>
+</tbody>
+</table>
 <table border="1" class="longtable docutils">
 <colgroup>
 <col width="10%" />
@@ -489,26 +500,21 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-even"><td><a class="reference internal" href="../attribute/cf.Field.count.html#cf.Field.count" title="cf.Field.count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count</span></code></a></td>
 <td>Count the non-masked elements of the data.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.Field.hardmask.html#cf.Field.hardmask" title="cf.Field.hardmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></a></td>
-<td>Whether the mask is hard (True) or soft (False).</td>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.Field.count_masked.html#cf.Field.count_masked" title="cf.Field.count_masked"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count_masked</span></code></a></td>
+<td>Count the masked elements of the data.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.Field.fill_value.html#cf.Field.fill_value" title="cf.Field.fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fill_value</span></code></a></td>
-<td>Return the data array missing data value.</td>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.Field.hardmask.html#cf.Field.hardmask" title="cf.Field.hardmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></a></td>
+<td>Whether the mask is hard (True) or soft (False).</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.Field.mask.html#cf.Field.mask" title="cf.Field.mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code></a></td>
 <td>The mask of the data array.</td>
 </tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.Field.mask_invalid.html#cf.Field.mask_invalid" title="cf.Field.mask_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask_invalid</span></code></a></td>
+<td>Mask the array where invalid values occur.</td>
+</tr>
 </tbody>
 </table>
-<table border="1" class="longtable docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<tbody valign="top">
-</tbody>
-</table>
-<p class="rubric">Changing data values</p>
+<p class="rubric"><em>Changing data values</em></p>
 <table border="1" class="longtable docutils">
 <colgroup>
 <col width="10%" />
@@ -524,7 +530,7 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cf.Field.mask_invalid.html#cf.Field.mask_invalid" title="cf.Field.mask_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask_invalid</span></code></a></td>
 <td>Mask the array where invalid values occur.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a></td>
 <td>Create a subspace of the field construct.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cf.Field.where.html#cf.Field.where" title="cf.Field.where"><code class="xref py py-obj docutils literal notranslate"><span class="pre">where</span></code></a></td>
@@ -532,14 +538,17 @@ initialization. By default arguments are deep copied.</p>
 </tr>
 </tbody>
 </table>
-<p class="rubric">Miscellaneous</p>
+</div>
+<div class="section" id="miscellaneous-data-operations">
+<h2>Miscellaneous data operations<a class="headerlink" href="#miscellaneous-data-operations" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
 <table border="1" class="longtable docutils">
 <colgroup>
 <col width="10%" />
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.Field.chunk.html#cf.Field.chunk" title="cf.Field.chunk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunk</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.Field.chunk.html#cf.Field.chunk" title="cf.Field.chunk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunk</span></code></a></td>
 <td>Partition the data array.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cf.Field.close.html#cf.Field.close" title="cf.Field.close"><code class="xref py py-obj docutils literal notranslate"><span class="pre">close</span></code></a></td>
@@ -714,7 +723,7 @@ initialization. By default arguments are deep copied.</p>
 <td>Return a deep copy of the field construct.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cf.Field.equals.html#cf.Field.equals" title="cf.Field.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></td>
-<td>Whether two field constructs are the same.</td>
+<td>Whether two instances are the same.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cf.Field.convert.html#cf.Field.convert" title="cf.Field.convert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert</span></code></a></td>
 <td>Convert a metadata construct into a new field construct.</td>
@@ -861,7 +870,7 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cf.Field.__getitem__.html#cf.Field.__getitem__" title="cf.Field.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></td>
 <td>Return a subspace of the field construct defined by indices.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a></td>
 <td>Create a subspace of the field construct.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cf.Field.indices.html#cf.Field.indices" title="cf.Field.indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">indices</span></code></a></td>
@@ -1050,7 +1059,7 @@ initialization. By default arguments are deep copied.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.Field.chunk.html#cf.Field.chunk" title="cf.Field.chunk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunk</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.Field.chunk.html#cf.Field.chunk" title="cf.Field.chunk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunk</span></code></a></td>
 <td>Partition the data array.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../attribute/cf.Field.isscalar.html#cf.Field.isscalar" title="cf.Field.isscalar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isscalar</span></code></a></td>
@@ -1147,7 +1156,7 @@ initialization. By default arguments are deep copied.</p>
 <td>Test whether all data are element-wise equal to other, broadcastable data.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cf.Field.equals.html#cf.Field.equals" title="cf.Field.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></td>
-<td>Whether two field constructs are the same.</td>
+<td>Whether two instances are the same.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cf.Field.equivalent.html#cf.Field.equivalent" title="cf.Field.equivalent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equivalent</span></code></a></td>
 <td>True if two fields are equivalent, False otherwise.</td>

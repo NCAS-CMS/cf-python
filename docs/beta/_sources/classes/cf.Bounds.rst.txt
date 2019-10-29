@@ -168,6 +168,13 @@ Data
 
 .. autosummary::
    :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Bounds.fill_value
+
+.. autosummary::
+   :nosignatures:
    :toctree: ../attribute/
    :template: attribute.rst
 
@@ -175,7 +182,6 @@ Data
    ~cf.Bounds.count
    ~cf.Bounds.count_masked
    ~cf.Bounds.hardmask
-   ~cf.Bounds.fill_value
    ~cf.Bounds.mask
    ~cf.Bounds.mask_invalid
 

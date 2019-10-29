@@ -19,8 +19,8 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cf.DimensionCoordinate.binary_mask" href="../attribute/cf.DimensionCoordinate.binary_mask.html" />
-    <link rel="prev" title="cf.DimensionCoordinate.squeeze" href="cf.DimensionCoordinate.squeeze.html" />
+    <link rel="next" title="cf.DimensionCoordinate.fill_value" href="cf.DimensionCoordinate.fill_value.html" />
+    <link rel="prev" title="cf.DimensionCoordinate.swapaxes" href="cf.DimensionCoordinate.swapaxes.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -51,8 +51,8 @@
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
   <li><a href="../classes/cf.DimensionCoordinate.html">cf.DimensionCoordinate</a><ul>
-      <li>Previous: <a href="cf.DimensionCoordinate.squeeze.html" title="previous chapter">cf.DimensionCoordinate.squeeze</a></li>
-      <li>Next: <a href="../attribute/cf.DimensionCoordinate.binary_mask.html" title="next chapter">cf.DimensionCoordinate.binary_mask</a></li>
+      <li>Previous: <a href="cf.DimensionCoordinate.swapaxes.html" title="previous chapter">cf.DimensionCoordinate.swapaxes</a></li>
+      <li>Next: <a href="cf.DimensionCoordinate.fill_value.html" title="next chapter">cf.DimensionCoordinate.fill_value</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -108,7 +108,7 @@ Boundaries” of the CF conventions for details.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>axes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt>
+<dt>axes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt>
 <dd><p class="first">The new axis order. By default the order is reversed. Each
 axis in the new order is identified by its original integer
 position. Negative integers counting from the last position
@@ -122,14 +122,14 @@ are allowed.</p>
 </dd>
 </dl>
 </dd>
-<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If True then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dd><p class="first last">If True then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
 </dd>
 </dl>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The new construct with permuted data axes. If the operation
-was in-place then <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is returned.</p>
+was in-place then <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is returned.</p>
 </td>
 </tr>
 </tbody>
@@ -164,7 +164,7 @@ was in-place then <a class="reference external" href="https://docs.python.org/3/
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/method/cf.DimensionCoordinate.transpose.rst.txt"

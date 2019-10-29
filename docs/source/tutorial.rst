@@ -106,7 +106,7 @@ changed.
 
 Note, however, that datasets of different CF versions may be
 :ref:`read <Reading-datasets>` from, or :ref:`written
-<Writing-to-disk>` to, disk.
+<Writing-to-a-netCDF-dataset>` to netCDF.
 
 ----
 
@@ -1167,8 +1167,14 @@ have the same relative order as the field construct:
 Data mask
 ^^^^^^^^^
 
-The data always have a data mask, which may be thought of as another
-boolean data array of the same shape that has values of `False`  where the TODO
+There is always a data mask, which may be thought of as a separate
+data array of booleans with the same shape as the original data. The
+data mask is `False` where the the data has values, and `True` where
+the data is missing. The data mask may be inspected with the
+`~Field.mask` attribute of the field construct, which returns the data
+mask in a field construct with the same metadata constructs as the
+original field construct.
+
 
 .. code-block:: python
    :caption: *Inspect the data mask of a field constuct.*
@@ -1207,6 +1213,14 @@ boolean data array of the same shape that has values of `False`  where the TODO
           [False, False, False, False, False, False, False, False],
           [False, False, False, False, False, False, False, False],
           [ True,  True,  True,  True,  True,  True,  True,  True]])
+
+The `~Field._FillValue` and `~Field.missing_value` attributes of the
+field construct are not stored as values of the field construct's
+data. They are only used when :ref:`writing the data to a netCDF
+dataset <Writing-to-a-netCDF-dataset>`. Therefore testing for missing
+values by testing the for equality to one of these properties will
+produce incorrect results, and the `~Field.any` and `~Field.all`
+methods of the field construct should be used instead.
 
 .. code-block:: python
    :caption: *See if all, or any, data points are masked.*
@@ -3834,8 +3848,8 @@ automatically included in output files as a netCDF global
 "Conventions" attribute, either as the CF version of the cf package
 (as returned by the `cf.CF` function), or else specified via the
 *Conventions* keyword of the `cf.write` function. See
-:ref:`Writing-to-disk` for details on how to specify additional
-conventions.
+:ref:`Writing-to-a-netCDF-dataset` for details on how to specify
+additional conventions.
 
 If this field were to be written to a netCDF dataset then, in the
 absence of predefined names, default netCDF variable and dimension
@@ -4146,7 +4160,7 @@ The `cf.read` function :ref:`reads a netCDF dataset
 field constructs, each one corresponding to a unique CF-netCDF data
 variable in the dataset. For example, the field construct ``tas`` that
 was created manually can be :ref:`written to a netCDF dataset
-<Writing-to-disk>` and then read back into memory:
+<Writing-to-a-netCDF-dataset>` and then read back into memory:
 
 .. code-block:: python
    :caption: *Write the field construct that was created manually to
@@ -4525,10 +4539,10 @@ Method                            Classes                                       
 
 ----
 
-.. _Writing-to-disk:
+.. _Writing-to-a-netCDF-dataset:
    
-**Writing to disk**
--------------------
+**Writing to a netCDF dataset**
+-------------------------------
 
 The `cf.write` function writes a field construct, or a sequence of
 field constructs, to a new netCDF file on disk:

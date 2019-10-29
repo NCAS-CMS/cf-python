@@ -157,42 +157,6 @@ class Properties:
     @comment.deleter
     def comment(self):        self.del_property('comment', default=AttributeError())
 
-    
-    @property
-    def _FillValue(self):
-        '''The _FillValue CF property.
-
-    A value used to represent missing or undefined data.
-    
-    Note that this property is primarily for writing data to disk and
-    is independent of the missing data mask. It may, however, get used
-    when unmasking data array elements. See
-    http://cfconventions.org/latest.html for details.
-    
-    The recommended way of retrieving the missing data value is with
-    the `fill_value` method.
-    
-    .. seealso:: `fill_value`, `missing_value`
-    
-    **Examples:**
-    
-    >>> f._FillValue = -1.0e30
-    >>> f._FillValue
-    -1e+30
-    >>> del f._FillValue
-    
-    Mask the data array where it equals a missing data value:
-    
-    >>> f.setitem(cf.masked, condition=f.fill_value()) DCH
-
-        '''
-        return self.get_property('_FillValue', default=AttributeError())
-
-    @_FillValue.setter
-    def _FillValue(self, value): self.set_property('_FillValue', value)
-    @_FillValue.deleter
-    def _FillValue(self):        self.del_property('_FillValue', default=AttributeError())
-
 
     @property
     def history(self):
@@ -217,11 +181,12 @@ class Properties:
 
         '''
         return self.get_property('history', default=AttributeError())
-
     @history.setter
-    def history(self, value): self.set_property('history', value)
+    def history(self, value):
+        self.set_property('history', value)
     @history.deleter
-    def history(self):        self.del_property('history', default=AttributeError())
+    def history(self):
+        self.del_property('history', default=AttributeError())
 
     
     @property
@@ -248,11 +213,12 @@ class Properties:
 
         '''
         return self.get_property('leap_month', default=AttributeError())
-
     @leap_month.setter
-    def leap_month(self, value): self.set_property('leap_month', value)
+    def leap_month(self, value):
+        self.set_property('leap_month', value)
     @leap_month.deleter
-    def leap_month(self):        self.del_property('leap_month', default=AttributeError())
+    def leap_month(self):
+        self.del_property('leap_month', default=AttributeError())
 
 
     @property
@@ -280,11 +246,12 @@ class Properties:
 
         '''
         return self.get_property('leap_year', default=AttributeError())
-
     @leap_year.setter
-    def leap_year(self, value): self.set_property('leap_year', value)
+    def leap_year(self, value):
+        self.set_property('leap_year', value)
     @leap_year.deleter
-    def leap_year(self):        self.del_property('leap_year', default=AttributeError())
+    def leap_year(self):
+        self.del_property('leap_year', default=AttributeError())
 
     
     @property
@@ -311,49 +278,13 @@ class Properties:
 
         '''
         return self.get_property('long_name', default=AttributeError())
-
     @long_name.setter
-    def long_name(self, value): self.set_property('long_name', value)
+    def long_name(self, value):
+        self.set_property('long_name', value)
     @long_name.deleter
-    def long_name(self):        self.del_property('long_name', default=AttributeError())
+    def long_name(self):
+        self.del_property('long_name', default=AttributeError())
 
-
-    @property
-    def missing_value(self):
-        '''The missing_value CF property.
-
-    A value used to represent missing or undefined data (deprecated by
-    the netCDF user guide). See http://cfconventions.org/latest.html
-    for details.
-    
-    Note that this attribute is used primarily for writing data to
-    disk and is independent of the missing data mask. It may, however,
-    be used when unmasking data array elements.
-    
-    The recommended way of retrieving the missing data value is with
-    the `fill_value` method.
-    
-    .. seealso:: `_FillValue`, `fill_value`
-    
-    **Examples:**
-    
-    >>> f.missing_value = 1.0e30
-    >>> f.missing_value
-    1e+30
-    >>> del f.missing_value
-    
-    Mask the data array where it equals a missing data value:
-    
-    >>> f.setitem(cf.masked, condition=f.fill_value()) DCH
-
-        '''
-        return self.get_property('missing_value', default=AttributeError())
-
-    @missing_value.setter
-    def missing_value(self, value): self.set_property('missing_value', value)
-    @missing_value.deleter
-    def missing_value(self):        self.del_property('missing_value', default=AttributeError())
-    
 
     @property
     def month_lengths(self):

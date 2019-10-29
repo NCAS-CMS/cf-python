@@ -166,6 +166,13 @@ Data
 
 .. autosummary::
    :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.List.fill_value
+   
+.. autosummary::
+   :nosignatures:
    :toctree: ../attribute/
    :template: attribute.rst
 
@@ -173,7 +180,6 @@ Data
    ~cf.List.count
    ~cf.List.count_masked
    ~cf.List.hardmask
-   ~cf.List.fill_value
    ~cf.List.mask
    ~cf.List.mask_invalid
 

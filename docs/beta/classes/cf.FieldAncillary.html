@@ -179,7 +179,7 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.FieldAncillary.construct_type.html#cf.FieldAncillary.construct_type" title="cf.FieldAncillary.construct_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code></a></td>
 <td>Return a description of the construct type.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.FieldAncillary.id.html#cf.FieldAncillary.id" title="cf.FieldAncillary.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.FieldAncillary.id.html#cf.FieldAncillary.id" title="cf.FieldAncillary.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code></a></td>
 <td>A canonical identity.</td>
 </tr>
 </tbody>
@@ -434,6 +434,17 @@ initialization. By default arguments are deep copied.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.FieldAncillary.fill_value.html#cf.FieldAncillary.fill_value" title="cf.FieldAncillary.fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fill_value</span></code></a></td>
+<td>Return the data array missing data value.</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
 <tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.FieldAncillary.binary_mask.html#cf.FieldAncillary.binary_mask" title="cf.FieldAncillary.binary_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_mask</span></code></a></td>
 <td>A binary (0 and 1) missing data mask of the data array.</td>
 </tr>
@@ -446,13 +457,10 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-even"><td><a class="reference internal" href="../attribute/cf.FieldAncillary.hardmask.html#cf.FieldAncillary.hardmask" title="cf.FieldAncillary.hardmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></a></td>
 <td>Whether the mask is hard (True) or soft (False).</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.FieldAncillary.fill_value.html#cf.FieldAncillary.fill_value" title="cf.FieldAncillary.fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fill_value</span></code></a></td>
-<td>Return the data array missing data value.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.FieldAncillary.mask.html#cf.FieldAncillary.mask" title="cf.FieldAncillary.mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.FieldAncillary.mask.html#cf.FieldAncillary.mask" title="cf.FieldAncillary.mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code></a></td>
 <td>The mask of the data array.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cf.FieldAncillary.mask_invalid.html#cf.FieldAncillary.mask_invalid" title="cf.FieldAncillary.mask_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask_invalid</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.FieldAncillary.mask_invalid.html#cf.FieldAncillary.mask_invalid" title="cf.FieldAncillary.mask_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask_invalid</span></code></a></td>
 <td>Mask the array where invalid values occur.</td>
 </tr>
 </tbody>
@@ -530,7 +538,7 @@ initialization. By default arguments are deep copied.</p>
 <td>Return a deep copy.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cf.FieldAncillary.equals.html#cf.FieldAncillary.equals" title="cf.FieldAncillary.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></td>
-<td>Whether two field ancillary constructs are the same.</td>
+<td>Whether two instances are the same.</td>
 </tr>
 </tbody>
 </table>
@@ -553,7 +561,7 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-even"><td><a class="reference internal" href="../method/cf.FieldAncillary.Z.html#cf.FieldAncillary.Z" title="cf.FieldAncillary.Z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Z</span></code></a></td>
 <td>Always False.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.FieldAncillary.id.html#cf.FieldAncillary.id" title="cf.FieldAncillary.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.FieldAncillary.id.html#cf.FieldAncillary.id" title="cf.FieldAncillary.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code></a></td>
 <td>A canonical identity.</td>
 </tr>
 </tbody>
@@ -683,7 +691,7 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.FieldAncillary.month.html#cf.FieldAncillary.month" title="cf.FieldAncillary.month"><code class="xref py py-obj docutils literal notranslate"><span class="pre">month</span></code></a></td>
 <td>The month of each date-time data array element.</td>
 </tr>
-<tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">reference_datetime</span></code></td>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.FieldAncillary.reference_datetime.html#cf.FieldAncillary.reference_datetime" title="cf.FieldAncillary.reference_datetime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reference_datetime</span></code></a></td>
 <td>The reference date-time of units of elapsed time.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.FieldAncillary.second.html#cf.FieldAncillary.second" title="cf.FieldAncillary.second"><code class="xref py py-obj docutils literal notranslate"><span class="pre">second</span></code></a></td>
@@ -723,7 +731,7 @@ initialization. By default arguments are deep copied.</p>
 <td>Test whether all data are element-wise equal to other, broadcastable data.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cf.FieldAncillary.equals.html#cf.FieldAncillary.equals" title="cf.FieldAncillary.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></td>
-<td>Whether two field ancillary constructs are the same.</td>
+<td>Whether two instances are the same.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cf.FieldAncillary.equivalent.html#cf.FieldAncillary.equivalent" title="cf.FieldAncillary.equivalent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equivalent</span></code></a></td>
 <td>True if two constructs are equal, False otherwise.</td>

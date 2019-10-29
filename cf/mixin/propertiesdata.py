@@ -1,5 +1,5 @@
 from functools import partial as functools_partial
-from netCDF4   import default_fillvals
+#from netCDF4   import default_fillvals
 
 from numpy import array       as numpy_array
 from numpy import result_type as numpy_result_type
@@ -9,6 +9,7 @@ from numpy import vectorize   as numpy_vectorize
 from ..cfdatetime   import dt
 from ..functions    import equivalent as cf_equivalent
 from ..functions    import inspect    as cf_inspect
+from ..functions    import default_netCDF_fillvals
 from ..query        import Query
 from ..timeduration import TimeDuration
 from ..units        import Units
@@ -1454,6 +1455,90 @@ class PropertiesData(Properties):
                     self.__class__.__name__))
         
         self.Units = Units(getattr(self, 'units', None))
+    
+    @property
+    def _FillValue(self):
+        '''The _FillValue CF property.
+
+    A value used to represent missing or undefined data.
+    
+    Note that this property is primarily for writing data to disk and
+    is independent of the missing data mask. It may, however, get used
+    when unmasking data array elements. See
+    http://cfconventions.org/latest.html for details.
+    
+    The recommended way of retrieving the missing data value is with
+    the `fill_value` method.
+    
+    .. seealso:: `fill_value`, `missing_value`,
+                 `cf.default_netCDF_fillvals`
+    
+    **Examples:**
+    
+    >>> f._FillValue = -1.0e30
+    >>> f._FillValue
+    -1e+30
+    >>> del f._FillValue
+
+    >>> f.set_property('_FillValue', -1.0e30)
+    >>> f.get_property('_FillValue')
+    -1e+30
+    >>> f.del_property('_FillValue')
+    -1e30
+    >>> f.del_property('_FillValue', None)
+    None
+
+        '''
+        return self.get_property('_FillValue', default=AttributeError())
+    @_FillValue.setter
+    def _FillValue(self, value):
+        self.set_property('_FillValue', value)
+    @_FillValue.deleter
+    def _FillValue(self):
+        self.del_property('_FillValue', default=AttributeError())
+
+
+    @property
+    def missing_value(self):
+        '''The missing_value CF property.
+
+    A value used to represent missing or undefined data (deprecated by
+    the netCDF user guide). See http://cfconventions.org/latest.html
+    for details.
+    
+    Note that this attribute is used primarily for writing data to
+    disk and is independent of the missing data mask. It may, however,
+    be used when unmasking data array elements.
+    
+    The recommended way of retrieving the missing data value is with
+    the `fill_value` method.
+    
+    .. seealso:: `_FillValue`, `fill_value`,
+                 `cf.default_netCDF_fillvals`
+    
+    **Examples:**
+    
+    >>> f.missing_value = 1.0e30
+    >>> f.missing_value
+    1e+30
+    >>> del f.missing_value
+        
+    >>> f.set_property('missing_value', -1.0e30)
+    >>> f.get_property('missing_value')
+    -1e+30              
+    >>> f.del_property('missing_value')
+    -1e30               
+    >>> f.del_property('missing_value', None)
+    None
+
+        '''
+        return self.get_property('missing_value', default=AttributeError())
+    @missing_value.setter
+    def missing_value(self, value):
+        self.set_property('missing_value', value)
+    @missing_value.deleter
+    def missing_value(self):
+        self.del_property('missing_value', default=AttributeError())
 
 
     @property
@@ -3587,6 +3672,9 @@ TODO
     missing data value for the array's data type is assumed if a
     missing data value is required.
     
+    .. seealso:: `cf.default_netCDF_fillvals`, `_FillValue`,
+                 `missing_value`
+
     :Parameters:
     
         default: optional
@@ -3594,15 +3682,26 @@ TODO
             default, *default* is `None`. If *default* is the special
             value ``'netCDF'`` then return the netCDF default value
             appropriate to the data array's data type is used. These
-            may be found as follows:
+            may be found with the `cf.default_netCDF_fillvals`
+            function. For example:
     
-            >>> import netCDF4
-            >>> print(netCDF4.default_fillvals)
-    
+            >>> cf.default_netCDF_fillvals()
+            {'S1': '\x00',
+             'i1': -127,
+             'u1': 255,
+             'i2': -32767,
+             'u2': 65535,
+             'i4': -2147483647,
+             'u4': 4294967295,
+             'i8': -9223372036854775806,
+             'u8': 18446744073709551614,
+             'f4': 9.969209968386869e+36,
+             'f8': 9.969209968386869e+36}
+
     :Returns:
     
-            The missing data value, or the value specified by
-            *default* if one has not been set.
+            The missing deata value or, if one has not been set, the
+            value specified by *default*
     
     **Examples:**
     
@@ -3636,7 +3735,7 @@ TODO
         if fillval is None:
             if default == 'netCDF':
                 d = self.dtype
-                fillval = default_fillvals[d.kind + str(d.itemsize)]
+                fillval = default_netCDF_fillvals()[d.kind + str(d.itemsize)]
             else:
                 fillval = default 
         #--- End: if
