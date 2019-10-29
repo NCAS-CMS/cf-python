@@ -1622,7 +1622,7 @@ rules</a>.</p>
 <div class="section" id="masked-values">
 <span id="id25"></span><h3><a class="toc-backref" href="#id351">Masked values</a><a class="headerlink" href="#masked-values" title="Permalink to this headline">¶</a></h3>
 <p>Data array elements may be set to missing values by assigning them to
-the <a class="reference internal" href="constant.html#cf.cf.masked" title="cf.cf.masked"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.masked</span></code></a> constant.</p>
+the <a class="reference internal" href="constant.html#cf.cf.masked" title="cf.cf.masked"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.masked</span></code></a> constant, thereby updating the the <a class="reference internal" href="#data-mask"><span class="std std-ref">data mask</span></a>.</p>
 <div class="literal-block-wrapper docutils container" id="id141">
 <div class="code-block-caption"><span class="caption-text"><em>Set a column of elements to missing values.</em></span><a class="headerlink" href="#id141" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">masked</span>

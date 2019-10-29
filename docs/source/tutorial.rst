@@ -1457,7 +1457,8 @@ Masked values
 ^^^^^^^^^^^^^
  
 Data array elements may be set to missing values by assigning them to
-the `cf.masked` constant.
+the `cf.masked` constant, thereby updating the the :ref:`data mask
+<Data-mask>`.
 
 .. code-block:: python
    :caption: *Set a column of elements to missing values.*
