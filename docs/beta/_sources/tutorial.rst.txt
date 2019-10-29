@@ -1217,9 +1217,10 @@ original field construct.
 The `~Field._FillValue` and `~Field.missing_value` attributes of the
 field construct are not stored as values of the field construct's
 data. They are only used when :ref:`writing the data to a netCDF
-dataset <Writing-to-a-netCDF-dataset>`. Therefore locating missing
+dataset <Writing-to-a-netCDF-dataset>`. Therefore testing for missing
 values by testing the for equality to one of these properties will
-produce incorrect results
+produce incorrect results, and the `~Field.any` and `~Field.all`
+methods of the field construct should be used instead.
 
 .. code-block:: python
    :caption: *See if all, or any, data points are masked.*
@@ -1228,15 +1229,6 @@ produce incorrect results
    False
    >>> q.mask.any()
    True
-   >>> fv = q.fill_value(default='netCDF')
-   >>> fv
-   9.969209968386869e+36
-   >>> (q == fv).array
-   [[   --    --    --    --    --    --    --    --]
-    [False False False False False False False False]
-    [False False False False False False False False]
-    [False False False False False False False False]
-    [   --    --    --    --    --    --    --    --]]
 	  
 ----
 

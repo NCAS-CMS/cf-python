@@ -565,8 +565,7 @@ class FieldTest(unittest.TestCase):
 
         a = f + g
         b = g + f
-        print (a)
-        print (b)
+
         axis = a.domain_axis('grid_longitude', key=1)
         for key in a.field_ancillaries.filter_by_axis('or', axis):
             a.del_construct(key)
