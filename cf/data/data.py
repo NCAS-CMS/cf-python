@@ -6833,25 +6833,27 @@ Tuple of the data array's dimension sizes.
         return array_out
 
 
-    # 0
     @property
     def mask(self):
         '''The boolean missing data mask of the data array.
 
-The boolean mask has True where the data array has missing data and
-False otherwise.
-
-**Examples:**
-
->>> d.shape
-(12, 73, 96)
->>> m = d.mask
->>> m
-<CF Data: >
->>> m.dtype
-dtype('bool')
->>> m.shape
-(12, 73, 96])
+    The boolean mask has True where the data array has missing data
+    and False otherwise.
+        
+    :Returns:
+        
+        `Data`
+            TODO
+        
+    **Examples:**
+    
+    >>> d.shape
+    (12, 73, 96)
+    >>> m = d.mask
+    >>> m.dtype
+    dtype('bool')
+    >>> m.shape
+    (12, 73, 96])
 
         '''
         mask = self.copy()

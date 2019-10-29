@@ -1360,6 +1360,8 @@ class PropertiesData(Properties):
 
         out.set_data(self.data.mask, copy=False)
 
+        out.override_units(Units(), inplace=True)
+        
         out.clear_properties()
         out.set_property('long_name', 'mask')
 
