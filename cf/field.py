@@ -4375,7 +4375,7 @@ may be accessed with the `nc_global_attributes`,
                 if not r.Units:
                     r.override_units('m', inplace=True)
     
-                get = False
+                got = False
                 for _ in radii:
                     if r == _:
                         got = True
@@ -5608,26 +5608,27 @@ may be accessed with the `nc_global_attributes`,
     result in masked values in the output field construct of indices.
                 
     The output field contruct is given a ``long_name`` property, and
-    properties that define the bins:
+    some or all of the following properties that define the bins:
 
     =====================  ===========================================
     Property               Description
     =====================  ===========================================
     ``bin_count``          An integer giving the number of bins
                            
-    ``bin_bounds``         A 1-d array giving the bin bounds. The
+    ``bin_bounds``         A 1-d vector giving the bin bounds. The
                            first two numbers describe the lower and
                            upper boundaries of the first bin, the
                            second two numbers describe the lower and
                            upper boundaries of the second bin, and so
-                           on. The presence of left-open and
-                           right-open bins (see the *bins* and
+                           on. The presence of left-unbounded and
+                           right-unbounded bins (see the *bins* and
                            *open_ends* parameters) is deduced from the
                            ``bin_count`` property. If the
-                           ``bin_bounds`` array has 2N elements then
+                           ``bin_bounds`` vector has 2N elements then
                            the ``bin_count`` property will be N if
-                           there are no left-open and right-open bins
-                           or N+2 if such bins are present.
+                           there are no left-unbounded and
+                           right-unbounded bins or N+2 if such bins
+                           are present.
                            
     ``bin_interval_type``  A string that specifies the nature of the
                            bin boundaries, i.e. if they are closed or
@@ -5669,6 +5670,10 @@ may be accessed with the `nc_global_attributes`,
                            property will be omitted.
     =====================  ===========================================
 
+    Of these properties, the ``bin_count`` and ``bin_bounds`` are
+    guaranteed to be output, with the others being dependent on the
+    available metadata.
+
     .. versionadded:: 3.0.2
 
     .. seealso:: `bin`, `histogram`
@@ -5681,18 +5686,19 @@ may be accessed with the `nc_global_attributes`,
             * An integer.
            
               Create this many equally sized, contiguous bins spanning
-              the range of the data. I.e. the smallest bin boundary is
-              the minimum of the data and the largest bin boundary is
-              the maximum of the data. In order to guarantee that each
-              data value lies inside a bin, the most extreme open
-              boundary is extended by multiplying it by ``1.0 -
-              epsilon`` or ``1.0 + epsilon`` (where ``epsilon`` is the
-              smallest positive 64-bit float such that ``1.0 +
-              epsilson != 1.0``), whichever extends the boundary in
-              the appropriate direction. I.e. if *upper* is False then
-              the largest upper bin boundary is made slightly larger
-              and if *upper* is True then the lowest lower bin
-              boundary is made slightly lower.
+              the range of the data. I.e. the smallest bin boundary
+              will be the minimum of the data and the largest bin
+              boundary will be the maximum of the data.
+
+              In order to guarantee that each data value lies inside a
+              bin, the most extreme open boundary is extended by
+              multiplying it by ``1.0 - epsilon`` or ``1.0 + epsilon``
+              (where ``epsilon`` is the smallest positive 64-bit float
+              such that ``1.0 + epsilson != 1.0``), whichever extends
+              the boundary in the appropriate direction. I.e. if
+              *upper* is False then the largest upper bin boundary is
+              made slightly larger and if *upper* is True then the
+              lowest lower bin boundary is made slightly lower.
 
             * A 1-d array of numbers.
         
@@ -5701,9 +5707,9 @@ may be accessed with the `nc_global_attributes`,
               boundaries, counts as the upper boundary of one bin and
               the lower boundary of next. If the *open_ends* parameter
               is True then the lowest lower bin boundary also defines
-              a left-open (i.e. not bounded below) bin, and the
-              largest upper bin boundary also defines a right-open
-              (i.e. not bounded above) bin.
+              a left-unbounded (i.e. not bounded below) bin, and the
+              largest upper bin boundary also defines a
+              right-unbounded (i.e. not bounded above) bin.
 
             * A 2-d array of numbers.
         
@@ -5711,9 +5717,9 @@ may be accessed with the `nc_global_attributes`,
               the lower and upper boundaries of each bin. The bins to
               not have to be contiguous, but must not overlap. If the
               *open_ends* parameter is True then the lowest lower bin
-              boundary also defines a left-open (i.e. not bounded
+              boundary also defines a left-unbounded (i.e. not bounded
               below) bin, and the largest upper bin boundary also
-              defines a right-open (i.e. not bounded above) bin.
+              defines a right-unbounded (i.e. not bounded above) bin.
 
         upper: `bool`, optional
             If True then each bin includes its upper bound but not its
@@ -5721,10 +5727,11 @@ may be accessed with the `nc_global_attributes`,
             bin includes its lower bound but not its upper bound.
 
         open_ends: `bool`, optional
-            If True then create left-open (i.e. not bounded below) and
-            right-open (i.e. not bounded above) bins from the lowest
-            lower bin boundary and largest upper bin boundary
-            respectively. By default these bins are not created
+            If True then create left-unbounded (i.e. not bounded
+            below) and right-unbounded (i.e. not bounded above) bins
+            from the lowest lower bin boundary and largest upper bin
+            boundary respectively. By default these bins are not
+            created
 
         return_bins: `bool`, optional
             If True then also return the bins in their 2-d form.
@@ -6030,15 +6037,15 @@ may be accessed with the `nc_global_attributes`,
             ``'integral'``                The integral of values.       Always
             ============================  ============================  ========
     
-            Collapse methods that are "Never" weighted ignore the
-            *weights* parameter, even if it is set.
+            * Collapse methods that are "Never" weighted ignore the
+              *weights* parameter, even if it is set.
 
-            Collapse methods that "May be" weighted will only be
-            weighted if the *weights* parameter is set.
+            * Collapse methods that "May be" weighted will only be
+              weighted if the *weights* parameter is set.
 
-            Collapse methods that are "Always" weighted require the
-            *weights* parameter to be set.
-
+            * Collapse methods that are "Always" weighted require the
+              *weights* parameter to be set.
+  
         digitized: (sequence of) `Field`
             One or more field constructs that contain digitized data
             with corresponding metadata, as would be output by
@@ -7327,14 +7334,14 @@ may be accessed with the `nc_global_attributes`,
             ``'integral'``                The integral of values.       Always
             ============================  ============================  ========
     
-            Collapse methods that are "Never" weighted ignore the
-            *weights* parameter, even if it is set.
+            * Collapse methods that are "Never" weighted ignore the
+              *weights* parameter, even if it is set.
 
-            Collapse methods that "May be" weighted will only be
-            weighted if the *weights* parameter is set.
+            * Collapse methods that "May be" weighted will only be
+              weighted if the *weights* parameter is set.
 
-            Collapse methods that are "Always" weighted require the
-            *weights* parameter to be set.
+            * Collapse methods that are "Always" weighted require the
+              *weights* parameter to be set.
 
             An alternative form of providing the collapse method is to
             provide a CF cell methods-like string. In this case an

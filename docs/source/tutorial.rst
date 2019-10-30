@@ -1215,12 +1215,12 @@ original field construct.
           [ True,  True,  True,  True,  True,  True,  True,  True]])
 
 The `~Field._FillValue` and `~Field.missing_value` attributes of the
-field construct are not stored as values of the field construct's
+field construct are *not* stored as values of the field construct's
 data. They are only used when :ref:`writing the data to a netCDF
 dataset <Writing-to-a-netCDF-dataset>`. Therefore testing for missing
-values by testing for equality to one of these properties will produce
-incorrect results; the `~Field.any` and `~Field.all` methods of the
-field construct should be used instead.
+data by testing for equality to one of these property values will
+produce incorrect results; the `~Field.any` and `~Field.all` methods
+of the field construct should be used instead.
 
 .. code-block:: python
    :caption: *See if all, or any, data points are masked.*
@@ -5805,97 +5805,6 @@ method constructs.
                    : air_pressure(1) = [850.0] hPa
 
 
-.. _Binned-collapses:
-
-Binned collapses
-^^^^^^^^^^^^^^^^
-
-A binned collapse is one for which the data is collapsed in groups,
-where each group is defined by how the data corresponds to the
-:ref:`N-dimensionsal histogram bins of another set of variables
-<Histograms>`.
-
-The result of a binned collapse is a field construct whose domain axes
-and dimension coordinate constructs describe the sizes of the
-N-dimensional bins of the other set of variables. To make clear the
-distinction between this and other types of collapse, the `~Field.bin`
-method of the field construct is used instead.
-
-.. code-block:: python
-   :caption: *Find the range of values that lie in each of bin 10
-             equally-sized bins of the data itself.*
-
-   >>> q, t = cf.read('file.nc')     
-   Field: specific_humidity (ncvar%q)
-   ----------------------------------
-   Data            : specific_humidity(latitude(5), longitude(8)) 0.001 1
-   Cell methods    : area: mean
-   Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
-                   : longitude(8) = [22.5, ..., 337.5] degrees_east
-                   : time(1) = [2019-01-01 00:00:00]       
-   >>> print(q.array)
-   [[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]
-    [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
-    [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
-    [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
-    [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]
-   >>> indices = q.digitize(5)                                             
-   >>> b = q.bin('range', digitized=indices)                             
-   >>> print(b)                                    
-   Field: specific_humidity
-   ------------------------
-   Data            : specific_humidity(specific_humidity(5)) 1
-   Cell methods    : latitude: longitude: range
-   Dimension coords: specific_humidity(5) = [0.0173, ..., 0.1317] 1
-   >>> print(b.array)
-   [0.026 0.025 0.025 0.007 0.022]  
-   >>> print(b.coordinate('specific_humidity').bounds.array)
-   [[0.003  0.0316]
-    [0.0316 0.0602]
-    [0.0602 0.0888]
-    [0.0888 0.1174]
-    [0.1174 0.146 ]]
-
-.. code-block:: python
-   :caption: *Find the area-weighted mean of specific humidity values
-             that correspond to two-dimensional bins defined by
-             temperature and pressure values.*
-
-   >>> p, t = cf.read('file2.nc')
-   >>> print(t)
-   Field: air_temperature (ncvar%t)
-   --------------------------------
-   Data            : air_temperature(latitude(5), longitude(8)) degreesC
-   Cell methods    : area: mean
-   Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
-                   : longitude(8) = [22.5, ..., 337.5] degrees_east
-                   : time(1) = [2019-01-01 00:00:00]
-   >>> print(p)      
-   Field: air_pressure (ncvar%p)
-   -----------------------------
-   Data            : air_pressure(latitude(5), longitude(8)) hPa
-   Cell methods    : area: mean
-   Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
-                   : longitude(8) = [22.5, ..., 337.5] degrees_east
-                   : time(1) = [2019-01-01 00:00:00]
-   >>> t_indices = t.digitize(4)
-   >>> p_indices = p.digitize(6)
-   >>> b = q.bin('mean', digitized=[t_indices, p_indices], weights='area')  
-   >>> print(b)
-   Field: specific_humidity
-   ------------------------
-   Data            : specific_humidity(air_pressure(6), air_temperature(4)) 1
-   Cell methods    : latitude: longitude: mean
-   Dimension coords: air_pressure(6) = [966.6225003326126, ..., 1033.6456080043665] hPa
-                   : air_temperature(4) = [-12.735821567738295, ..., 9.9702610462581] degreesC
-   >>> print(b.array)
-   [[     --       --       --  0.011  ]
-    [0.131    0.0145   0.0345   0.05052]
-    [0.05742  0.01727  0.06392  0.0105 ]
-    [     --  0.04516  0.05272  0.10194]
-    [0.124    0.024    0.059    0.006  ]
-    [     --  0.08971       --       --]]
-
 ----
 
 .. _Regridding:
@@ -6892,6 +6801,99 @@ indices to the bins that each value of one of the variables belongs.
     [0.1031 0.1174]
     [0.1174 0.1317]
     [0.1317 0.146 ]]
+
+.. _Binning-operations:
+
+Binning operations
+^^^^^^^^^^^^^^^^^^
+
+The `~Field.bin` method of the field construct groups its data into
+bins, where each group is defined by the elements that correspond to
+an :ref:`N-dimensionsal histogram bin of another set of variables
+<Histograms>`, and collapses the elements in each group to a single
+representative value. The same :ref:`collapse methods
+<Collapse-methods>` and :ref:`weighting options <Collapse-weights>` as
+the `~Field.collapse` method are available.
+
+The result of the binning operation is a field construct whose domain
+axis and dimension coordinate constructs describe the sizes of the
+N-dimensional bins of the other set of variables.
+
+.. code-block:: python
+   :caption: *Find the range of values that lie in each of bin 10
+             equally-sized bins of the data itself.*
+
+   >>> q, t = cf.read('file.nc')     
+   Field: specific_humidity (ncvar%q)
+   ----------------------------------
+   Data            : specific_humidity(latitude(5), longitude(8)) 0.001 1
+   Cell methods    : area: mean
+   Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                   : longitude(8) = [22.5, ..., 337.5] degrees_east
+                   : time(1) = [2019-01-01 00:00:00]       
+   >>> print(q.array)
+   [[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]
+    [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
+    [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
+    [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
+    [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]
+   >>> indices = q.digitize(5)                                             
+   >>> b = q.bin('range', digitized=indices)                             
+   >>> print(b)                                    
+   Field: specific_humidity
+   ------------------------
+   Data            : specific_humidity(specific_humidity(5)) 1
+   Cell methods    : latitude: longitude: range
+   Dimension coords: specific_humidity(5) = [0.0173, ..., 0.1317] 1
+   >>> print(b.array)
+   [0.026 0.025 0.025 0.007 0.022]  
+   >>> print(b.coordinate('specific_humidity').bounds.array)
+   [[0.003  0.0316]
+    [0.0316 0.0602]
+    [0.0602 0.0888]
+    [0.0888 0.1174]
+    [0.1174 0.146 ]]
+
+.. code-block:: python
+   :caption: *Find the area-weighted mean of specific humidity values
+             that correspond to two-dimensional bins defined by
+             temperature and pressure values.*
+
+   >>> p, t = cf.read('file2.nc')
+   >>> print(t)
+   Field: air_temperature (ncvar%t)
+   --------------------------------
+   Data            : air_temperature(latitude(5), longitude(8)) degreesC
+   Cell methods    : area: mean
+   Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                   : longitude(8) = [22.5, ..., 337.5] degrees_east
+                   : time(1) = [2019-01-01 00:00:00]
+   >>> print(p)      
+   Field: air_pressure (ncvar%p)
+   -----------------------------
+   Data            : air_pressure(latitude(5), longitude(8)) hPa
+   Cell methods    : area: mean
+   Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                   : longitude(8) = [22.5, ..., 337.5] degrees_east
+                   : time(1) = [2019-01-01 00:00:00]
+   >>> t_indices = t.digitize(4)
+   >>> p_indices = p.digitize(6)
+   >>> b = q.bin('mean', digitized=[t_indices, p_indices], weights='area')  
+   >>> print(b)
+   Field: specific_humidity
+   ------------------------
+   Data            : specific_humidity(air_pressure(6), air_temperature(4)) 1
+   Cell methods    : latitude: longitude: mean
+   Dimension coords: air_pressure(6) = [966.6225003326126, ..., 1033.6456080043665] hPa
+                   : air_temperature(4) = [-12.735821567738295, ..., 9.9702610462581] degreesC
+   >>> print(b.array)
+   [[     --       --       --  0.011  ]
+    [0.131    0.0145   0.0345   0.05052]
+    [0.05742  0.01727  0.06392  0.0105 ]
+    [     --  0.04516  0.05272  0.10194]
+    [0.124    0.024    0.059    0.006  ]
+    [     --  0.08971       --       --]]
+
 
 .. .. _Binning-operations:
 
