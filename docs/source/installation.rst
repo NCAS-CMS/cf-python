@@ -55,8 +55,9 @@ dependencies, and the `cf-plot visualisation package
    conda install -c conda-forge mpich esmpy
 
 The second of the two ``conda`` commands is required for
-:ref:`regridding <Regridding>` to work. Note that the installation of
-``esmpy`` does not work for Anaconda version ``2019.10``.
+:ref:`regridding <Regridding>` to work. (Note, however, that the
+installation of ``esmpy`` does not work for Anaconda version
+``2019.10``.)
 
 Note that :ref:`some environment variables might also need setting
 <UNIDATA-UDUNITS-2-library>` in order for the UDUNITS library to work
@@ -187,7 +188,7 @@ Required
 * `cftime <https://pypi.org/project/cftime/>`_, version 1.0.2 or
   newer. (Note that this package is installed with netCDF4.)
 
-* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.7.7 or newer.
+* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.7.8 or newer.
   
 * `cfunits <https://pypi.org/project/cfunits/>`_, version 3.2.2 or newer.
   

@@ -5978,7 +5978,7 @@ may be accessed with the `nc_global_attributes`,
             The collapse method used to combine values that map to
             each cell of the output field construct. The following
             methods are available (see
-            https://ncas-cms.github.io/cf-python/beta/tutorial.html#collapse-methods
+            https://ncas-cms.github.io/cf-python/tutorial.html#collapse-methods
             for precise definitions):
 
             ============================  ============================  ========
@@ -7275,7 +7275,7 @@ may be accessed with the `nc_global_attributes`,
             the *axes* parameter are collapsed simultaneously by this
             method. The method is given by one of the following
             strings (see
-            https://ncas-cms.github.io/cf-python/beta/tutorial.html#collapse-methods
+            https://ncas-cms.github.io/cf-python/tutorial.html#collapse-methods
             for precise definitions):
 
             ============================  ============================  ========
