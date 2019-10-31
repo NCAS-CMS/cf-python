@@ -23,9 +23,9 @@ if [[ $rm_doctrees = "true" ]] ; then
 fi
 make html $dir
 
-cd $dir
+cp -pv source/sample_files/cf_tutorial_files.zip source/tutorial.py $dir/_downloads
 
-cp -pv source/sample_files/cf_tutorial_files.zip source/tutorial.py _downloads
+cd $dir
 
 for download_file in cf_tutorial_files.zip tutorial.py
 do		     
@@ -33,7 +33,7 @@ do
 done
 
 # --------------------------------------------------------------------
-# Add and commit the latest
+# Add and commit the latest beta docs
 # --------------------------------------------------------------------
 git add \
     *.html \

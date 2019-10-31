@@ -1,0 +1,7 @@
+cf.DimensionCoordinate.swapaxes
+===============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DimensionCoordinate.swapaxes
