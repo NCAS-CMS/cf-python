@@ -405,7 +405,7 @@ def read(files, external=None, verbose=False, warnings=False,
     >>> cf.read('file*.nc')[-1]
     <CF Field: temperature_wind(17, 29, 24)>
     
-    >>> cf.read('file*.nc', select='units=K)
+    >>> cf.read('file*.nc', select='units=K')
     [<CF Field: temperature(17, 30, 24)>,
      <CF Field: temperature_wind(17, 29, 24)>]
     
@@ -598,7 +598,7 @@ def _plural(n): # pragma: no cover
     return 's' if n !=1 else '' # pragma: no cover
 
 
-def _read_a_file(filename, aggregate=True, aggregate_options={},
+def _read_a_file(filename, aggregate=True, aggregate_options=None,
                  ignore_read_error=False, verbose=False,
                  warnings=False, external=None, selected_fmt=None,
                  um=None, extra=None, height_at_top_of_model=None,
@@ -630,6 +630,8 @@ def _read_a_file(filename, aggregate=True, aggregate_options={},
             The fields in the file.
 
     '''
+    if aggregate_options is None:
+        aggregate_options = {}
     # Find this file's type
     fmt                    = None
     word_size              = None
@@ -678,10 +680,8 @@ def _read_a_file(filename, aggregate=True, aggregate_options={},
     # ----------------------------------------------------------------
     # Still here? Read the file into fields.
     # ----------------------------------------------------------------
-    cdl = False
     if ftype == 'CDL':
         # Create a temporary netCDF file from input CDL
-        cdl = True
         cdl_filename = filename
         filename = netcdf.cdl_to_netcdf(filename)
         ftype = 'netCDF'
