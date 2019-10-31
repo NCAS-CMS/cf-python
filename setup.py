@@ -6,6 +6,7 @@ import sys
 import re
 import subprocess
 
+
 def find_package_data_files(directory):
     for root, dirs, files in os.walk(directory):
         for basename in files:
@@ -13,33 +14,32 @@ def find_package_data_files(directory):
                 filename = os.path.join(root, basename)
                 yield filename.replace('cf/', '', 1)
 
+                
 def find_test_data_files(directory):
-    print ('dir=', directory)
     for root, dirs, files in os.walk(directory):        
         for basename in files:
             if fnmatch.fnmatch(basename, '*.nc') or fnmatch.fnmatch(basename, '*.pp'):
-                print ('basename=', basename)
                 filename = os.path.join(root, basename)
                 yield filename.replace('cf/', '', 1)
-#--- End: def
+
 
 def _read(fname):
-    """Returns content of a file.
+    '''Returns content of a file.
 
-    """
+    '''
     fpath = os.path.dirname(__file__)
     fpath = os.path.join(fpath, fname)
     with open(fpath, 'r') as file_:
         return file_.read()
 
+    
 def _get_version():
-    """Returns library version by inspecting __init__.py file.
+    '''Returns library version by inspecting __init__.py file.
 
-    """
+    '''
     return re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
                      _read("cf/__init__.py"),
                      re.MULTILINE).group(1)
-
 
 
 version      = _get_version()
@@ -51,9 +51,10 @@ test_files   = [f for f in find_test_data_files('cf/test')]
 package_data = etc_files + umread_files + test_files
 
 class build_umread(build):
+    '''Adpated from
+    https://github.com/Turbo87/py-xcsoar/blob/master/setup.py
+
     '''
-Adpated from https://github.com/Turbo87/py-xcsoar/blob/master/setup.py
-'''
     def run(self):
         # Run original build code
         build.run(self)
@@ -91,8 +92,8 @@ Adpated from https://github.com/Turbo87/py-xcsoar/blob/master/setup.py
             print()
             print("cf build successful")
             print()
-        #--- End: def
 
+            
         self.execute(compile, [], 'compiling umread')
 #--- End: class
 
@@ -207,10 +208,10 @@ setup(name = "cf-python",
       maintainer   = "David Hassell",
       maintainer_email  = "david.hassell@ncas.ac.uk",
       author_email = "david.hassell@ncas.ac.uk",
-      url          = "http://cfpython.bitbucket.io/",
+      url          = "https://ncas-cms.github.io/cf-python",
       platforms    = ["Linux", "MacOS"],
-      keywords     = ['cf','netcdf','data','science',
-                      'oceanography','meteorology','climate'],
+      keywords     = ['cf', 'netcdf', 'UM', 'data', 'science',
+                      'oceanography', 'meteorology', 'climate'],
       classifiers  = ["Development Status :: 5 - Production/Stable",
                       "Intended Audience :: Science/Research", 
                       "License :: OSI Approved :: MIT License", 
@@ -236,9 +237,9 @@ setup(name = "cf-python",
       scripts      = ['scripts/cfa'],
       install_requires = ['netCDF4>=1.4.0',                        
                           'numpy>=1.15',
-                          'cfdm>=1.7.5',
+                          'cfdm>=1.7.8',
                           'psutil>=0.6.0',
-                          'cfunits>=3.2.0'
+                          'cfunits>=3.2.2'
 #                          'scipy>=1.1.0',
 #                          'matplotlib>=3.0.0',
 #                          'mpi4py>=3.0.0',

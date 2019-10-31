@@ -100,6 +100,9 @@
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.minimum_absolute_value</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.sum_of_squares</span></code>,
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.root_mean_square</span></code>, <a class="reference internal" href="method/cf.Data.flatten.html#cf.Data.flatten" title="cf.Data.flatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.flatten</span></code></a>.</li>
 <li>Renamed <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.default_fillvals</span></code> to <a class="reference internal" href="function/cf.default_netCDF_fillvals.html#cf.default_netCDF_fillvals" title="cf.default_netCDF_fillvals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.default_netCDF_fillvals</span></code></a>.</li>
+<li>Changed minimum cfdm dependency to version 1.7.8.</li>
+<li>Changed minimum cfunits dependency to version 3.2.2.</li>
+<li>Changed minimum cftime dependency to version 1.0.4.2.</li>
 <li>Fixed occasional failure to delete all temporary directories at
 exit.</li>
 <li>Fixed bug in <a class="reference internal" href="method/cf.Data.func.html#cf.Data.func" title="cf.Data.func"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.func</span></code></a> when overriding units. Affects all
@@ -111,6 +114,8 @@ construct arithmetic.</li>
 <a class="reference internal" href="method/cf.Field.properties.html#cf.Field.properties" title="cf.Field.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.properties</span></code></a>.</li>
 <li>Fixed bug in <a class="reference internal" href="method/cf.Data.squeeze.html#cf.Data.squeeze" title="cf.Data.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.squeeze</span></code></a> that sometimes created
 inconsistencies with the cyclic dimensions.</li>
+<li>Fixed bug in <a class="reference internal" href="attribute/cf.Field.mask.html#cf.Field.mask" title="cf.Field.mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.mask</span></code></a> that assigned incorrect units to the
+result.</li>
 </ul>
 </div>
 <div class="section" id="version-3-0-1">
@@ -128,8 +133,8 @@ inconsistencies with the cyclic dimensions.</li>
 <ul>
 <li><p class="first">Complete refactor for Python 3, including some API changes.</p>
 <p>Scripts written for version 2.x but running under version 3.x should
-either work as expected, or provide informative error mesages on the
-new API usage. However, it is advised that the outputs of older
+either work as expected, or provide informative error messages on
+the new API usage. However, it is advised that the outputs of older
 scripts be checked when running with Python 3 versions of the cf
 library.</p>
 </li>
