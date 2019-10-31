@@ -405,7 +405,7 @@ def read(files, external=None, verbose=False, warnings=False,
     >>> cf.read('file*.nc')[-1]
     <CF Field: temperature_wind(17, 29, 24)>
     
-    >>> cf.read('file*.nc', select='units=K)
+    >>> cf.read('file*.nc', select='units=K')
     [<CF Field: temperature(17, 30, 24)>,
      <CF Field: temperature_wind(17, 29, 24)>]
     
