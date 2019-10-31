@@ -678,10 +678,8 @@ def _read_a_file(filename, aggregate=True, aggregate_options=None,
     # ----------------------------------------------------------------
     # Still here? Read the file into fields.
     # ----------------------------------------------------------------
-    cdl = False
     if ftype == 'CDL':
         # Create a temporary netCDF file from input CDL
-        cdl = True
         cdl_filename = filename
         filename = netcdf.cdl_to_netcdf(filename)
         ftype = 'netCDF'
