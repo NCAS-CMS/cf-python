@@ -8,6 +8,8 @@ from . import implementation
 from ..fieldlist import FieldList
 from ..functions import flat
 
+from ..aggregate import aggregate as cf_aggregate
+
 from .netcdf import NetCDFRead
 from .um     import UMRead
 
@@ -540,6 +542,8 @@ def read(files, external=None, verbose=False, warnings=False,
     if aggregate and len(field_list) > 1:
         if verbose:
             org_len = len(field_list) # pragma: no cover
+
+        field_list = cf_aggregate(field_list, **aggregate_options)
 
         if verbose:
             n = len(field_list) # pragma: no cover
