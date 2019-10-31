@@ -5242,9 +5242,24 @@ Method                        Description                               Cell met
                               is
 			      
                               .. math:: \hat{\mu}=\frac{1}{V_{1}}
-                                                    \sum_{i=1}^{N} w_i
-                                                    x_i
+                                                    \sum_{i=1}^{N}
+                                         w_i x_i
+					
+``'mean_absolute_value'``     The unweighted mean of :math:`N`          ``mean_absolute_value``
+                              values :math:`x_i` absoluted is 
+                              
+                              .. math:: \mu_{abs}=\frac{1}{N}
+				       \sum_{i=1}^{N}|x_i|
+                              
+                              The :ref:`weighted <Collapse-weights>`
+                              mean of :math:`N` values :math:`x_i`
+                              absoluted with corresponding weights
+                              :math:`w_i` is
 			      
+                              .. math:: \hat{\mu}_{abs}=
+                                             \frac{1}{V_{1}}
+					     \sum_{i=1}^{N} w_i |x_i|					
+
 ``'variance'``                The unweighted variance of :math:`N`      ``variance``
                               values :math:`x_i` and with 
                               :math:`N-ddof` degrees of freedom
@@ -6755,7 +6770,7 @@ indices to the bins that each value of one of the variables belongs.
     [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
     [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
     [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]
-   >>> indices = q.digitize(10, return_bins=True)
+   >>> indices, bins = q.digitize(10, return_bins=True)
    >>> print(indices)
    Field: long_name=Bin index to which each 'specific_humidity' value belongs (ncvar%q)
    ------------------------------------------------------------------------------------
@@ -6893,65 +6908,6 @@ N-dimensional bins of the other set of variables.
     [     --  0.04516  0.05272  0.10194]
     [0.124    0.024    0.059    0.006  ]
     [     --  0.08971       --       --]]
-
-
-.. .. _Binning-operations:
-
-   Binning operations
-   ^^^^^^^^^^^^^^^^^^
-   
-   The `~Field.bin` method of the field construct allows its data to be
-   collapsed in groups, where each group is defined by how the data
-   corresponds to the :ref:`N-dimensionsal histogram bin of another set
-   of variables <Histograms>`. Any of the :ref:`collapse methods
-   <Collapse-methods>` are available.
-   
-   .. code-block:: python
-      :caption: *Find the range of values that lie in each bin.*
-   
-      >>> q, t = cf.read('file.nc')     
-      Field: specific_humidity (ncvar%q)
-      ----------------------------------
-      Data            : specific_humidity(latitude(5), longitude(8)) 0.001 1
-      Cell methods    : area: mean
-      Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
-                      : longitude(8) = [22.5, ..., 337.5] degrees_east
-                      : time(1) = [2019-01-01 00:00:00]       
-      >>> print(q.array)
-      [[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]
-       [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
-       [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
-       [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
-       [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]
-      >>> indices = q.digitize(5)                                             
-      >>> b = q.bin('range', digitized=indices)                             
-      >>> print(b)                                    
-      Field: specific_humidity
-      ------------------------
-      Data            : specific_humidity(specific_humidity(5)) 1
-      Cell methods    : latitude: longitude: range
-      Dimension coords: specific_humidity(5) = [0.0173, ..., 0.1317] 1
-      >>> print(b.array)
-      [0.026 0.025 0.025 0.007 0.022]  
-      >>> print(b.coordinate('specific_humidity').bounds.array)
-      [[0.003  0.0316]
-       [0.0316 0.0602]
-       [0.0602 0.0888]
-       [0.0888 0.1174]
-       [0.1174 0.146 ]]
-   
-   .. code-block:: python
-      :caption: *Find the area-weighted mean of specific humidity values
-                that correspond to two-dimensional bins defined by
-                temperature and pressure values.*
-   
-      >>> t_indices = t.digitize(4)
-      >>> p_indices = t.digitize(6)
-      >>> b = q.bin('mean', digitized=[t_indices, p_indices], weights='area')  
-      >>> print(b)
-      TODO
-      >>> print(b.array)
-      TODO
 
 ----
   

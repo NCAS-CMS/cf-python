@@ -32,13 +32,13 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.1</a></b></h3>
-<ul>
+<h3><b><a href="../index.html">cf 3.0.2</a></b></h3>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
@@ -90,7 +90,7 @@
 <h1>cf.TimeDuration.interval<a class="headerlink" href="#cf-timeduration-interval" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.TimeDuration.interval">
-<code class="descclassname">TimeDuration.</code><code class="descname">interval</code><span class="sig-paren">(</span><em>dt</em>, <em>end=False</em>, <em>iso=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/timeduration.py#L1222"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.TimeDuration.interval" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">TimeDuration.</code><code class="descname">interval</code><span class="sig-paren">(</span><em>dt</em>, <em>end=False</em>, <em>iso=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/timeduration.py#L1216"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.TimeDuration.interval" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a time interval of exactly the time duration.</p>
 <blockquote>
 <div><p>The start (or end, if the <em>end</em> parameter is True) date-time of
@@ -111,13 +111,13 @@ and <code class="xref py py-obj docutils literal notranslate"><span class="pre">
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
-<dt>year, month, day, hour, minute, second: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional  TODO</dt>
+<dt>year, month, day, hour, minute, second: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional  TODO</dt>
 <dd><p class="first">The date-time of the start (or end) of the time
 interval. If any parameter is unset then its value
 defaults to the attribute of the same name. The time
 interval calculation requires that all of the parameters
 have numerical values, so if an unset parameter has a
-corresponding attribute whose value is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> then an
+corresponding attribute whose value is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> then an
 exception will be raised.</p>
 <dl class="last docutils">
 <dt><em>Parameter example:</em></dt>
@@ -127,7 +127,7 @@ exception will be raised.</p>
 </dd>
 </dl>
 </dd>
-<dt>end: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>end: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then the date-time given by the <em>year</em>, <em>month</em>,
 <em>day</em>, <em>hour</em>, <em>minute</em> and <em>second</em> parameters defines
 the end of the time interval. By default it defines the
@@ -139,7 +139,7 @@ start of the time interval.</p>
 </tbody>
 </table>
 </div></blockquote>
-<p>#        calendar: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional
+<p>#        calendar: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional
 #            Define the CF calendar for the input date-time and output
 #            time interval. By default the calendar of the input
 #            date-time is used. If <em>calendar</em> is set, then the calendar
@@ -151,7 +151,7 @@ start of the time interval.</p>
 <blockquote>
 <div><blockquote>
 <div><dl class="docutils">
-<dt>iso: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dt>iso: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
 <dd><p class="first">Return the time interval as an ISO 8601 time interval
 string rather than the default of a tuple of date-time
 objects. Valid values are (with example outputs for the
@@ -294,7 +294,7 @@ coordinate object’s bounds lie inside a time interval:</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cf.TimeDuration.interval.rst.txt"

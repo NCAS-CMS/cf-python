@@ -20,7 +20,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.Data.dumps" href="cf.Data.dumps.html" />
-    <link rel="prev" title="cf.Data.dump" href="cf.Data.dump.html" />
+    <link rel="prev" title="cf.Data.digitize" href="cf.Data.digitize.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -32,13 +32,13 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.1</a></b></h3>
-<ul>
+<h3><b><a href="../index.html">cf 3.0.2</a></b></h3>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
@@ -51,7 +51,7 @@
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
   <li><a href="../classes/cf.Data.html">cf.Data</a><ul>
-      <li>Previous: <a href="cf.Data.dump.html" title="previous chapter">cf.Data.dump</a></li>
+      <li>Previous: <a href="cf.Data.digitize.html" title="previous chapter">cf.Data.digitize</a></li>
       <li>Next: <a href="cf.Data.dumps.html" title="next chapter">cf.Data.dumps</a></li>
   </ul></li>
   </ul></li>
@@ -90,10 +90,10 @@
 <h1>cf.Data.dumpd<a class="headerlink" href="#cf-data-dumpd" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Data.dumpd">
-<code class="descclassname">Data.</code><code class="descname">dumpd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/data/data.py#L2021"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.dumpd" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Data.</code><code class="descname">dumpd</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/data/data.py#L2234"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.dumpd" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a serialization of the data array.</p>
-<p>The serialization may be used to reconstruct the data array as it was
-at the time of the serialization creation.</p>
+<p>The serialization may be used to reconstruct the data array as it
+was at the time of the serialization creation.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last"><a class="reference internal" href="cf.Data.loadd.html#cf.Data.loadd" title="cf.Data.loadd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">loadd</span></code></a></p>
@@ -103,7 +103,7 @@ at the time of the serialization creation.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt>
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt>
 <dd><p class="first last">The serialization.</p>
 </dd>
 </dl>
@@ -172,7 +172,7 @@ at the time of the serialization creation.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cf.Data.dumpd.rst.txt"

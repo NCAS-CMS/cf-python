@@ -32,13 +32,13 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.1</a></b></h3>
-<ul>
+<h3><b><a href="../index.html">cf 3.0.2</a></b></h3>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
@@ -90,18 +90,19 @@
 <h1>cf.Field.nc_set_global_attribute<a class="headerlink" href="#cf-field-nc-set-global-attribute" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.nc_set_global_attribute">
-<code class="descclassname">Field.</code><code class="descname">nc_set_global_attribute</code><span class="sig-paren">(</span><em>prop</em>, <em>value=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/../../cfdm/cfdm/mixin/netcdf.py#L1036"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.nc_set_global_attribute" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">nc_set_global_attribute</code><span class="sig-paren">(</span><em>prop</em>, <em>value=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.8/cfdm/mixin/netcdf.py#L677"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.nc_set_global_attribute" title="Permalink to this definition">¶</a></dt>
 <dd><p>Select a property to be written as a netCDF global attribute.</p>
-<p>When multiple field constructs are being written to the same file, it
-is only possible to create a netCDF global attribute from a property
-that has identical values for each field construct. If any field
-construct’s property has a different value then the property will not
-be written as a netCDF global attribute, even if it has been selected
-as such, but will appear instead as attributes on the netCDF data
-variables corresponding to each field construct.</p>
+<p>When multiple field constructs are being written to the same file,
+it is only possible to create a netCDF global attribute from a
+property that has identical values for each field construct. If
+any field construct’s property has a different value then the
+property will not be written as a netCDF global attribute, even if
+it has been selected as such, but will appear instead as
+attributes on the netCDF data variables corresponding to each
+field construct.</p>
 <p>The standard description-of-file-contents properties are always
-written as netCDF global attributes, if possible, so selecting them is
-optional.</p>
+written as netCDF global attributes, if possible, so selecting
+them is optional.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.0.</span></p>
 </div>
@@ -115,21 +116,22 @@ optional.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>prop: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt>
-<dd><p class="first last">Select the property to be written (if possible) as a netCDF
-global attribute.</p>
+<dt>prop: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt>
+<dd><p class="first last">Select the property to be written (if possible) as a
+netCDF global attribute.</p>
 </dd>
 <dt>value: optional</dt>
 <dd><p class="first last">The value of the netCDF global attribute, which will be
-created (if possible) in addition to the property as written
-to a netCDF data variable. If unset (or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>) then this acts
-as an instruction to write the property (if possible) to a
-netCDF global attribute instead of to a netCDF data variable.</p>
+created (if possible) in addition to the property as
+written to a netCDF data variable. If unset (or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>)
+then this acts as an instruction to write the property (if
+possible) to a netCDF global attribute instead of to a
+netCDF data variable.</p>
 </dd>
 </dl>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 </td>
 </tr>
 </tbody>
@@ -165,7 +167,7 @@ netCDF global attribute instead of to a netCDF data variable.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cf.Field.nc_set_global_attribute.rst.txt"

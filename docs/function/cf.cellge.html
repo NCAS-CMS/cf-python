@@ -32,13 +32,13 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.1</a></b></h3>
-<ul>
+<h3><b><a href="../index.html">cf 3.0.2</a></b></h3>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
@@ -88,7 +88,7 @@
 <h1>cf.cellge<a class="headerlink" href="#cf-cellge" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.cellge">
-<code class="descclassname">cf.</code><code class="descname">cellge</code><span class="sig-paren">(</span><em>value</em>, <em>units=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/query.py#L1671"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.cellge" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">cf.</code><code class="descname">cellge</code><span class="sig-paren">(</span><em>value</em>, <em>units=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/query.py#L1667"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.cellge" title="Permalink to this definition">¶</a></dt>
 <dd><p>A <a class="reference internal" href="../classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object for a “cell bounds greater than or equal”
 condition.</p>
 <div class="admonition seealso">
@@ -104,13 +104,13 @@ condition.</p>
 <dt>value:</dt>
 <dd><p class="first last">The query condition’s value.</p>
 </dd>
-<dt>units: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference internal" href="../classes/cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a>, optional</dt>
+<dt>units: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference internal" href="../classes/cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a>, optional</dt>
 <dd><p class="first last">The units of <em>value</em>. By default, the same units as the
 operand being tested are assumed, if applicable. If <em>units</em> is
 specified and the already <em>value</em> has units (such as a <a class="reference internal" href="../classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>
 object`), then they must be equivalent.</p>
 </dd>
-<dt>attr: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dt>attr: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
 <dd><p class="first last">Apply the condition to the attribute, or nested attributes, of
 the operand, rather than the operand itself. Nested attributes
 are specified by separating them with a <code class="docutils literal notranslate"><span class="pre">.</span></code>. For example,
@@ -147,7 +147,7 @@ as <code class="docutils literal notranslate"><span class="pre">'bounds.month'</
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/function/cf.cellge.rst.txt"

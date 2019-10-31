@@ -32,13 +32,13 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.1</a></b></h3>
-<ul>
+<h3><b><a href="../index.html">cf 3.0.2</a></b></h3>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
@@ -89,8 +89,8 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.TimeDuration">
-<em class="property">class </em><code class="descclassname">cf.</code><code class="descname">TimeDuration</code><span class="sig-paren">(</span><em>duration</em>, <em>units=None</em>, <em>month=1</em>, <em>day=1</em>, <em>hour=0</em>, <em>minute=0</em>, <em>second=0</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/timeduration.py#L47"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.TimeDuration" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<em class="property">class </em><code class="descclassname">cf.</code><code class="descname">TimeDuration</code><span class="sig-paren">(</span><em>duration</em>, <em>units=None</em>, <em>month=1</em>, <em>day=1</em>, <em>hour=0</em>, <em>minute=0</em>, <em>second=0</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/timeduration.py#L41"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.TimeDuration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>A duration of time.</p>
 <p>The duration of time is a number of either calendar years, calender
 months, days, hours, minutes or seconds.</p>
@@ -187,7 +187,7 @@ values are taken from the <code class="xref py py-obj docutils literal notransla
 </div>
 <p><strong>Arithmetic operations</strong></p>
 <p>Arithmetic operations are defined for <a class="reference internal" href="#cf.TimeDuration" title="cf.TimeDuration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.TimeDuration</span></code></a> objects,
-date-time-like objects (such as <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Datetime</span></code>, <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime.datetime</span></code></a>,
+date-time-like objects (such as <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Datetime</span></code>, <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime.datetime</span></code></a>,
 etc.), <a href="#id3"><span class="problematic" id="id4">``</span></a>cf.Data` objects, <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/index.html#module-numpy" title="(in NumPy v1.17)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> arrays and numbers:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="s1">&#39;days&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">28</span><span class="p">,</span> <span class="s1">&#39;days&#39;</span><span class="p">)</span>
 <span class="go">&lt;CF TimeDuration: P92D (Y-M-D 00:00:00)&gt;</span>
@@ -320,12 +320,12 @@ scalar data which could be used to create a <a class="reference internal" href="
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last">Instances, <code class="docutils literal notranslate"><span class="pre">x</span></code>, of following types are all examples of
 data-like objects (because <code class="docutils literal notranslate"><span class="pre">cf.Data(x)</span></code> creates a valid
-<a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> object), <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>,
+<a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> object), <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>,
 <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>, <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Coordinate</span></code>, <a class="reference internal" href="cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a>.</p>
 </dd>
 </dl>
 </dd>
-<dt>units: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference internal" href="cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Units</span></code></a>, optional</dt>
+<dt>units: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference internal" href="cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Units</span></code></a>, optional</dt>
 <dd><blockquote class="first">
 <div><p>The units of the time duration. Required if, and only if,
 <em>duration</em> is not a <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> object which already contains
@@ -344,7 +344,7 @@ months, days, hours, minutes or seconds.</p>
 </dl>
 </div></blockquote>
 <dl class="last docutils">
-<dt>month, day, hour, minute, second: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional         </dt>
+<dt>month, day, hour, minute, second: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, optional         </dt>
 <dd><p class="first">The offset used when creating, with the <a class="reference internal" href="../method/cf.TimeDuration.bounds.html#cf.TimeDuration.bounds" title="cf.TimeDuration.bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bounds</span></code></a> method, a
 time interval containing a given date-time. Only the offset
 elements for units smaller that of the time duration are used.</p>
@@ -447,7 +447,7 @@ elements for units smaller that of the time duration are used.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/classes/cf.TimeDuration.rst.txt"

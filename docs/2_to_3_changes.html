@@ -30,7 +30,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="index.html">cf 3.0.1</a></b></h3>
+<h3><b><a href="index.html">cf 3.0.2</a></b></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -93,7 +93,7 @@ for python version 2.7.</p>
 </div>
 <div class="section" id="in-place-operations">
 <h2>In-place operations<a class="headerlink" href="#in-place-operations" title="Permalink to this headline">¶</a></h2>
-<p>At version 3.x, in-place operations return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, rather than the
+<p>At version 3.x, in-place operations return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, rather than the
 modified construct. The keyword that defines the operation to be
 in-place is now <em>inplace</em> (rather than <em>i</em>).</p>
 <div class="code python highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">tranpose</span><span class="p">()</span>
@@ -105,8 +105,8 @@ in-place is now <em>inplace</em> (rather than <em>i</em>).</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="new-methods">
-<h2>New methods<a class="headerlink" href="#new-methods" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="new-methods-that-replace-deprecated-ones">
+<h2>New methods that replace deprecated ones<a class="headerlink" href="#new-methods-that-replace-deprecated-ones" title="Permalink to this headline">¶</a></h2>
 <p>Version 3.x methods that replace deprecated version 2.x methods:</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -138,7 +138,16 @@ in-place is now <em>inplace</em> (rather than <em>i</em>).</p>
 <tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.insert_dimension.html#cf.Field.insert_dimension" title="cf.Field.insert_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.insert_dimension</span></code></a></td>
 <td><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.expand_dims</span></code></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="method/cf.Field.set_construct.html#cf.Field.set_construct" title="cf.Field.set_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.set_construct</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="method/cf.Field.nc_del_variable.html#cf.Field.nc_del_variable" title="cf.Field.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.nc_del_variable</span></code></a></td>
+<td><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.ncvar</span></code></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.nc_get_variable.html#cf.Field.nc_get_variable" title="cf.Field.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.nc_get_variable</span></code></a></td>
+<td><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.ncvar</span></code></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="method/cf.Field.nc_set_variable.html#cf.Field.nc_set_variable" title="cf.Field.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.nc_set_variable</span></code></a></td>
+<td><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.ncvar</span></code></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.set_construct.html#cf.Field.set_construct" title="cf.Field.set_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.set_construct</span></code></a></td>
 <td><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.insert_aux</span></code>,
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.insert_axis</span></code>,
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.insert_dim</span></code>,
@@ -148,31 +157,31 @@ in-place is now <em>inplace</em> (rather than <em>i</em>).</p>
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.insert_measure</span></code>,
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.insert_ref</span></code></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.set_data.html#cf.Field.set_data" title="cf.Field.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.set_data</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="method/cf.Field.set_data.html#cf.Field.set_data" title="cf.Field.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.set_data</span></code></a></td>
 <td><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.insert_data</span></code></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="method/cf.Constructs.data_axes.html#cf.Constructs.data_axes" title="cf.Constructs.data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Constructs.data_axes</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="method/cf.Constructs.data_axes.html#cf.Constructs.data_axes" title="cf.Constructs.data_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Constructs.data_axes</span></code></a></td>
 <td><a class="reference internal" href="method/cf.Field.items_axes.html#cf.Field.items_axes" title="cf.Field.items_axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.items_axes</span></code></a></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="method/cf.Data.nc_hdf5_chunksizes.html#cf.Data.nc_hdf5_chunksizes" title="cf.Data.nc_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.nc_hdf5_chunksizes</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="method/cf.Data.nc_hdf5_chunksizes.html#cf.Data.nc_hdf5_chunksizes" title="cf.Data.nc_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.nc_hdf5_chunksizes</span></code></a></td>
 <td><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.HDF_chunks</span></code></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="method/cf.Data.nc_set_hdf5_chunksizes.html#cf.Data.nc_set_hdf5_chunksizes" title="cf.Data.nc_set_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.nc_set_hdf5_chunksizes</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="method/cf.Data.nc_set_hdf5_chunksizes.html#cf.Data.nc_set_hdf5_chunksizes" title="cf.Data.nc_set_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.nc_set_hdf5_chunksizes</span></code></a></td>
 <td><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.HDF_chunks</span></code></td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="method/cf.Data.nc_clear_hdf5_chunksizes.html#cf.Data.nc_clear_hdf5_chunksizes" title="cf.Data.nc_clear_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.nc_clear_hdf5_chunksizes</span></code></a></td>
+<tr class="row-even"><td><a class="reference internal" href="method/cf.Data.nc_clear_hdf5_chunksizes.html#cf.Data.nc_clear_hdf5_chunksizes" title="cf.Data.nc_clear_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.nc_clear_hdf5_chunksizes</span></code></a></td>
 <td><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.HDF_chunks</span></code></td>
 </tr>
 </tbody>
 </table>
 </div>
-<div class="section" id="changes-to-method-apis">
-<h2>Changes to method APIs<a class="headerlink" href="#changes-to-method-apis" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="changes-to-the-api-of-existing-methods">
+<h2>Changes to the  API of existing methods<a class="headerlink" href="#changes-to-the-api-of-existing-methods" title="Permalink to this headline">¶</a></h2>
 <p>Methods that have a different API in version 3.x</p>
 <table border="1" class="docutils">
 <colgroup>
-<col width="49%" />
-<col width="51%" />
+<col width="38%" />
+<col width="62%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Version 3.x</th>
@@ -185,26 +194,33 @@ in-place is now <em>inplace</em> (rather than <em>i</em>).</p>
 No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.aux.html#cf.Field.aux" title="cf.Field.aux"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.aux</span></code></a></td>
-<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
+<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters. Construct identity arguments
+are no longer assumed to be an abbreviation.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="method/cf.Field.auxs.html#cf.Field.auxs" title="cf.Field.auxs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.auxs</span></code></a></td>
-<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
+<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters. Construct identity arguments
+are no longer assumed to be an abbreviation.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.axes.html#cf.Field.axes" title="cf.Field.axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.axes</span></code></a></td>
-<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
+<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters. Construct identity arguments
+are no longer assumed to be an abbreviation.</td>
 </tr>
 <tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.axes_names</span></code></td>
-<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
+<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters. Construct identity arguments
+are no longer assumed to be an abbreviation.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.axis.html#cf.Field.axis" title="cf.Field.axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.axis</span></code></a></td>
-<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
+<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters. Construct identity arguments
+are no longer assumed to be an abbreviation.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="method/cf.Field.axis_size.html#cf.Field.axis_size" title="cf.Field.axis_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.axis_size</span></code></a></td>
 <td><code class="docutils literal notranslate"><span class="pre">identity</span></code> replaces <code class="docutils literal notranslate"><span class="pre">axes</span></code> parameter.
-No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
+No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters. Construct identity arguments
+are no longer assumed to be an abbreviation.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.ceil.html#cf.Field.ceil" title="cf.Field.ceil"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.ceil</span></code></a></td>
-<td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.</td>
+<td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter. Construct identity
+arguments are no longer assumed to be an abbreviation.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="method/cf.Field.cell_area.html#cf.Field.cell_area" title="cf.Field.cell_area"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.cell_area</span></code></a></td>
 <td>No <code class="docutils literal notranslate"><span class="pre">insert</span></code> parameter.</td>
@@ -215,55 +231,68 @@ No <code class="docutils literal notranslate"><span class="pre">**kwargs</span><
 <tr class="row-even"><td><a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.collapse</span></code></a></td>
 <td>New <code class="docutils literal notranslate"><span class="pre">verbose</span></code> parameter.
 <code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.
-No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
+No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters. Construct identity arguments
+are no longer assumed to be an abbreviation.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.convert_reference_time.html#cf.Field.convert_reference_time" title="cf.Field.convert_reference_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.convert_reference_time</span></code></a></td>
 <td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="method/cf.Field.convolution_filter.html#cf.Field.convolution_filter" title="cf.Field.convolution_filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.convolution_filter</span></code></a></td>
 <td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.
-<code class="docutils literal notranslate"><span class="pre">weights</span></code> parameter can not be a string.</td>
+<code class="docutils literal notranslate"><span class="pre">weights</span></code> parameter can not be a string. Construct identity
+arguments are no longer assumed to be an abbreviation.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.coord.html#cf.Field.coord" title="cf.Field.coord"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.coord</span></code></a></td>
-<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
+<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters. Construct identity
+arguments are no longer assumed to be an abbreviation.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="method/cf.Field.coords.html#cf.Field.coords" title="cf.Field.coords"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.coords</span></code></a></td>
-<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
+<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters. Construct identity
+arguments are no longer assumed to be an abbreviation.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.cos.html#cf.Field.cos" title="cf.Field.cos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.cos</span></code></a></td>
 <td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="method/cf.Field.cyclic.html#cf.Field.cyclic" title="cf.Field.cyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.cyclic</span></code></a></td>
-<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
+<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters. Construct identity
+arguments are no longer assumed to be an abbreviation.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.derivative.html#cf.Field.derivative" title="cf.Field.derivative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.derivative</span></code></a></td>
 <td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.
-<code class="docutils literal notranslate"><span class="pre">wrap</span></code> replaces <code class="docutils literal notranslate"><span class="pre">cyclic</span></code> parameter.</td>
+<code class="docutils literal notranslate"><span class="pre">wrap</span></code> replaces <code class="docutils literal notranslate"><span class="pre">cyclic</span></code> parameter. Construct identity
+arguments are no longer assumed to be an abbreviation.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="method/cf.Field.dim.html#cf.Field.dim" title="cf.Field.dim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.dim</span></code></a></td>
-<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
+<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters. Construct identity
+arguments are no longer assumed to be an abbreviation.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.dims.html#cf.Field.dims" title="cf.Field.dims"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.dims</span></code></a></td>
-<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
+<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters. Construct identity
+arguments are no longer assumed to be an abbreviation.</td>
 </tr>
 <tr class="row-even"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.direction</span></code></td>
 <td>No <code class="docutils literal notranslate"><span class="pre">axes</span></code> parameter.
-No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
+No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters. Construct identity
+arguments are no longer assumed to be an abbreviation.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.domain_anc.html#cf.Field.domain_anc" title="cf.Field.domain_anc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.domain_anc</span></code></a></td>
-<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
+<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters. Construct identity
+arguments are no longer assumed to be an abbreviation.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="method/cf.Field.domain_ancs.html#cf.Field.domain_ancs" title="cf.Field.domain_ancs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.domain_ancs</span></code></a></td>
-<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
+<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters. Construct identity
+arguments are no longer assumed to be an abbreviation.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.exp.html#cf.Field.exp" title="cf.Field.exp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.exp</span></code></a></td>
 <td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="method/cf.Field.field_anc.html#cf.Field.field_anc" title="cf.Field.field_anc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.field_anc</span></code></a></td>
-<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
+<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters. Construct identity
+arguments are no longer assumed to be an abbreviation.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.field_ancs.html#cf.Field.field_ancs" title="cf.Field.field_ancs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.field_ancs</span></code></a></td>
-<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
+<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters. Construct identity
+arguments are no longer assumed to be an abbreviation.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="method/cf.Field.flip.html#cf.Field.flip" title="cf.Field.flip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.flip</span></code></a></td>
 <td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.
@@ -276,19 +305,24 @@ No <code class="docutils literal notranslate"><span class="pre">**kwargs</span><
 <td>No <code class="docutils literal notranslate"><span class="pre">relaxed_identity</span></code> parameter.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.indices.html#cf.Field.indices" title="cf.Field.indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.indices</span></code></a></td>
-<td>No <code class="docutils literal notranslate"><span class="pre">'exact'</span></code> mode.</td>
+<td>No <code class="docutils literal notranslate"><span class="pre">'exact'</span></code> mode. Construct identity
+arguments are no longer assumed to be an abbreviation.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="method/cf.Field.iscyclic.html#cf.Field.iscyclic" title="cf.Field.iscyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.iscyclic</span></code></a></td>
-<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
+<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters. Construct identity
+arguments are no longer assumed to be an abbreviation.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.item.html#cf.Field.item" title="cf.Field.item"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.item</span></code></a></td>
-<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
+<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters. Construct identity
+arguments are no longer assumed to be an abbreviation.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="method/cf.Field.items.html#cf.Field.items" title="cf.Field.items"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.items</span></code></a></td>
-<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
+<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters. Construct identity
+arguments are no longer assumed to be an abbreviation.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.key.html#cf.Field.key" title="cf.Field.key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.key</span></code></a></td>
-<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
+<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters. Construct identity
+arguments are no longer assumed to be an abbreviation.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="method/cf.Field.log.html#cf.Field.log" title="cf.Field.log"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.log</span></code></a></td>
 <td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.</td>
@@ -297,10 +331,12 @@ No <code class="docutils literal notranslate"><span class="pre">**kwargs</span><
 <td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="method/cf.Field.measure.html#cf.Field.measure" title="cf.Field.measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.measure</span></code></a></td>
-<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
+<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters. Construct identity
+arguments are no longer assumed to be an abbreviation.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.measures.html#cf.Field.measures" title="cf.Field.measures"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.measures</span></code></a></td>
-<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
+<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters. Construct identity
+arguments are no longer assumed to be an abbreviation.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="method/cf.Field.override_calendar.html#cf.Field.override_calendar" title="cf.Field.override_calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.override_calendar</span></code></a></td>
 <td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.</td>
@@ -309,25 +345,31 @@ No <code class="docutils literal notranslate"><span class="pre">**kwargs</span><
 <td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="method/cf.Field.period.html#cf.Field.period" title="cf.Field.period"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.period</span></code></a></td>
-<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
+<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters. Construct identity
+arguments are no longer assumed to be an abbreviation.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.ref.html#cf.Field.ref" title="cf.Field.ref"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.ref</span></code></a></td>
-<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
+<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters. Construct identity
+arguments are no longer assumed to be an abbreviation.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="method/cf.Field.refs.html#cf.Field.refs" title="cf.Field.refs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.refs</span></code></a></td>
-<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
+<td>No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters. Construct identity
+arguments are no longer assumed to be an abbreviation.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.regridc.html#cf.Field.regridc" title="cf.Field.regridc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.regridc</span></code></a></td>
-<td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.</td>
+<td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter. Construct identity
+arguments are no longer assumed to be an abbreviation.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="method/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.regrids</span></code></a></td>
-<td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.</td>
+<td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter. Construct identity
+arguments are no longer assumed to be an abbreviation.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.rint.html#cf.Field.rint" title="cf.Field.rint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.rint</span></code></a></td>
 <td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="method/cf.Field.roll.html#cf.Field.roll" title="cf.Field.roll"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.roll</span></code></a></td>
-<td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.</td>
+<td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter. Construct identity
+arguments are no longer assumed to be an abbreviation.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.round.html#cf.Field.round" title="cf.Field.round"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.round</span></code></a></td>
 <td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.</td>
@@ -336,7 +378,8 @@ No <code class="docutils literal notranslate"><span class="pre">**kwargs</span><
 <td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="method/cf.Field.squeeze.html#cf.Field.squeeze" title="cf.Field.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.squeeze</span></code></a></td>
-<td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.
+<td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter. Construct identity
+arguments are no longer assumed to be an abbreviation.
 No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="method/cf.Field.tan.html#cf.Field.tan" title="cf.Field.tan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.tan</span></code></a></td>
@@ -345,7 +388,8 @@ No <code class="docutils literal notranslate"><span class="pre">**kwargs</span><
 <tr class="row-odd"><td><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.tranpose</span></code></td>
 <td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.
 <code class="docutils literal notranslate"><span class="pre">constructs</span></code> replaces <code class="docutils literal notranslate"><span class="pre">items</span></code> parameter.
-No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters.</td>
+No <code class="docutils literal notranslate"><span class="pre">**kwargs</span></code> parameters. Construct identity
+arguments are no longer assumed to be an abbreviation.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="method/cf.Field.trunc.html#cf.Field.trunc" title="cf.Field.trunc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.trunc</span></code></a></td>
 <td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.</td>
@@ -359,7 +403,8 @@ No <code class="docutils literal notranslate"><span class="pre">**kwargs</span><
 <td><code class="docutils literal notranslate"><span class="pre">inplace</span></code> replaces <code class="docutils literal notranslate"><span class="pre">i</span></code> parameter.
 <code class="docutils literal notranslate"><span class="pre">construct</span></code> replaces <code class="docutils literal notranslate"><span class="pre">item</span></code> parameter.
 No <code class="docutils literal notranslate"><span class="pre">axes</span></code> parameter.
-No <code class="docutils literal notranslate"><span class="pre">**item_options</span></code> parameters.</td>
+No <code class="docutils literal notranslate"><span class="pre">**item_options</span></code> parameters. Construct identity
+arguments are no longer assumed to be an abbreviation.</td>
 </tr>
 </tbody>
 </table>
@@ -378,7 +423,7 @@ No <code class="docutils literal notranslate"><span class="pre">**item_options</
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="_sources/2_to_3_changes.rst.txt"

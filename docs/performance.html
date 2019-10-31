@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="index.html">cf 3.0.1</a></b></h3>
+<h3><b><a href="index.html">cf 3.0.2</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -83,7 +83,7 @@
   <div class="section" id="performance">
 <h1><strong>Performance</strong><a class="headerlink" href="#performance" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 3.0.1 for version 1.7 of the CF conventions.</p>
+<p>Version 3.0.2 for version 1.7 of the CF conventions.</p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
 <li><a class="reference internal" href="#lazy-operations" id="id3"><strong>Lazy operations</strong></a></li>
@@ -121,7 +121,7 @@ data from disk until it is needed. These are:</p>
 <li>Changing the units</li>
 </ul>
 <p>Operations that involve changing the data values (apart from changing
-the units) are not lazy; such arithmetic, trigonometrial, rounding,
+the units) are not lazy; such arithmetic, trigonometrical, rounding,
 collapse, etc. functions.</p>
 <p>All of these lazy techniques make use of <a class="reference internal" href="#lama"><span class="std std-ref">LAMA (Large Amounts
 of Massive Arrays)</span></a> functionality.</p>
@@ -261,7 +261,7 @@ dimensions, etc.) always reflect the data array in its entirety,
 regardless of how the array is partitioned and whether or not its
 partitions are in memory, constructs containing data arrays may be
 used in the API as if they were normal, in-memory objects (like
-numpy arrays). Partitioning does carry a performance overhead, but
+<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/index.html#module-numpy" title="(in NumPy v1.17)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> arrays). Partitioning does carry a performance overhead, but
 this may be minimised for particular applications or hardware
 configurations.</p>
 </li>
@@ -277,9 +277,9 @@ uses up only a very small amount of memory.</p>
 <div class="section" id="copying">
 <span id="lama-copying"></span><h3><a class="toc-backref" href="#id10">Copying</a><a class="headerlink" href="#copying" title="Permalink to this headline">¶</a></h3>
 <p>When a field construct is deep copied with its <a class="reference internal" href="method/cf.Field.copy.html#cf.Field.copy" title="cf.Field.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a> method or
-the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.7)"><code class="xref py py-func docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function, the partitions of its data
-array are transferred to the new field construct as object identities
-and are <em>not</em> deep copied. Therefore copying even very large field
+the Python <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function, the partitions of its data array
+are transferred to the new field construct as object identities and
+are <em>not</em> deep copied. Therefore copying even very large field
 constructs is initially very fast and uses up only a very small amount
 of memory.</p>
 <p>The independence of the copied field construct is preserved, however,
@@ -346,7 +346,7 @@ therefore has fast access.</p>
 sub-arrays, each of which is smaller than the chunk size. By default
 this size is set to 1% of the total physical memory and is found and
 set with the <a class="reference internal" href="function/cf.CHUNKSIZE.html#cf.CHUNKSIZE" title="cf.CHUNKSIZE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.CHUNKSIZE</span></code></a> function.</li>
-<li>In-memory sub-arrays may be written to tempoary files on disk when
+<li>In-memory sub-arrays may be written to temporary files on disk when
 the amount of available physical memory falls below a specified
 amount. By default this amount is 10% of the total physical memory
 and is found and set with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.MINNCFCM</span></code> function.</li>
@@ -374,21 +374,19 @@ in the original directory from being garbage collected.</p>
 </div>
 <div class="section" id="partitioning">
 <h3><a class="toc-backref" href="#id15">Partitioning</a><a class="headerlink" href="#partitioning" title="Permalink to this headline">¶</a></h3>
-<p>To maximise looping efficiency, array partitioning preserves as much
-as is possible the faster varying (inner) dimensions’ sizes in each of
-the sub-arrays.</p>
-<dl class="docutils">
-<dt><strong>Examples</strong></dt>
-<dd><p class="first">If an array with shape (2, 4, 6) is partitioned into 2 partitions then both
-sub-arrays will have shape (1, 4, 6).</p>
-<p>If the same array is partitioned into 4 partitions then all four sub-arrays
-will have shape (1, 2, 6).</p>
-<p>If the same array is partitioned into 8 partitions then all eight
-sub-arrays will have shape (1, 2, 3).</p>
-<p class="last">If the same array is partitioned into 48 partitions then all forty eight
-sub-arrays will have shape (1, 1, 1).</p>
-</dd>
-</dl>
+<p>Data partitioning preserves as much as is possible the faster varying
+(inner) dimensions’ sizes in each of the sub-arrays.</p>
+<p><strong>Examples</strong></p>
+<ul class="simple">
+<li>If an array with shape (2, 4, 6) is partitioned into 2 partitions
+then both sub-arrays will have shape (1, 4, 6).</li>
+<li>If the same array is partitioned into 4 partitions then all four
+sub-arrays will have shape (1, 2, 6).</li>
+<li>If the same array is partitioned into 8 partitions then all eight
+sub-arrays will have shape (1, 2, 3).</li>
+<li>If the same array is partitioned into 48 partitions then all forty
+eight sub-arrays will have shape (1, 1, 1).</li>
+</ul>
 </div>
 </div>
 </div>
@@ -405,7 +403,7 @@ sub-arrays will have shape (1, 1, 1).</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="_sources/performance.rst.txt"

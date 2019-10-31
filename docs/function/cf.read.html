@@ -32,13 +32,13 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.1</a></b></h3>
-<ul>
+<h3><b><a href="../index.html">cf 3.0.2</a></b></h3>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
@@ -88,12 +88,46 @@
 <h1>cf.read<a class="headerlink" href="#cf-read" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.read">
-<code class="descclassname">cf.</code><code class="descname">read</code><span class="sig-paren">(</span><em>files</em>, <em>external=None</em>, <em>verbose=False</em>, <em>warnings=False</em>, <em>ignore_read_error=False</em>, <em>aggregate=True</em>, <em>nfields=None</em>, <em>squeeze=False</em>, <em>unsqueeze=False</em>, <em>fmt=None</em>, <em>select=None</em>, <em>extra=None</em>, <em>recursive=False</em>, <em>followlinks=False</em>, <em>um=None</em>, <em>chunk=True</em>, <em>field=None</em>, <em>height_at_top_of_model=None</em>, <em>select_options=None</em>, <em>follow_symlinks=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/read_write/read.py#L28"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.read" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read field constructs from netCDF, PP or UM fields files.</p>
-<p>Files may be on disk or on an OPeNDAP server.</p>
-<p>Any amount of any combination of CF-netCDF and CFA-netCDF files
-(or URLs if DAP access is enabled), Met Office (UK) PP files and
-Met Office (UK) fields files format files may be read.</p>
+<code class="descclassname">cf.</code><code class="descname">read</code><span class="sig-paren">(</span><em>files</em>, <em>external=None</em>, <em>verbose=False</em>, <em>warnings=False</em>, <em>ignore_read_error=False</em>, <em>aggregate=True</em>, <em>nfields=None</em>, <em>squeeze=False</em>, <em>unsqueeze=False</em>, <em>fmt=None</em>, <em>select=None</em>, <em>extra=None</em>, <em>recursive=False</em>, <em>followlinks=False</em>, <em>um=None</em>, <em>chunk=True</em>, <em>field=None</em>, <em>height_at_top_of_model=None</em>, <em>select_options=None</em>, <em>follow_symlinks=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/read_write/read.py#L27"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read field constructs from netCDF, CDL, PP or UM fields files.</p>
+<p>NetCDF files may be on disk or on an OPeNDAP server.</p>
+<p>Any amount of files of any combination of file types may be read.</p>
+<p><strong>NetCDF unlimited dimensions</strong></p>
+<p>Domain axis constructs that correspond to NetCDF unlimited
+dimensions may be accessed with the
+<a class="reference internal" href="../method/cf.DomainAxis.nc_is_unlimited.html#cf.DomainAxis.nc_is_unlimited" title="cf.DomainAxis.nc_is_unlimited"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_is_unlimited</span></code></a> and
+<a class="reference internal" href="../method/cf.DomainAxis.nc_set_unlimited.html#cf.DomainAxis.nc_set_unlimited" title="cf.DomainAxis.nc_set_unlimited"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_unlimited</span></code></a> methods of a domain axis
+construct.</p>
+<p><strong>CF-compliance</strong></p>
+<p>If the dataset is partially CF-compliant to the extent that it is
+not possible to unambiguously map an element of the netCDF dataset
+to an element of the CF data model, then a field construct is
+still returned, but may be incomplete. This is so that datasets
+which are partially conformant may nonetheless be modified in
+memory and written to new datasets.</p>
+<p>Such “structural” non-compliance would occur, for example, if the
+“coordinates” attribute of a CF-netCDF data variable refers to
+another variable that does not exist, or refers to a variable that
+spans a netCDF dimension that does not apply to the data
+variable. Other types of non-compliance are not checked, such
+whether or not controlled vocabularies have been adhered to. The
+structural compliance of the dataset may be checked with the
+<a class="reference internal" href="../method/cf.Field.dataset_compliance.html#cf.Field.dataset_compliance" title="cf.Field.dataset_compliance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dataset_compliance</span></code></a> method of the field construct, as
+well as optionally displayed when the dataset is read by setting
+the warnings parameter.</p>
+<p><strong>CDL files</strong></p>
+<p>A file is considered to be a CDL representation of a netCDF
+dataset
+(<a class="reference external" href="https://www.unidata.ucar.edu/software/netcdf/netcdf/CDL-Syntax.html">https://www.unidata.ucar.edu/software/netcdf/netcdf/CDL-Syntax.html</a>)
+if it is a text file that starts with the seven characters “netcdf
+” (six letters followed by a space). It is converted to a
+temporary netCDF4 file using the external <code class="docutils literal notranslate"><span class="pre">ncgen</span></code> command, and
+the temporary file persists until the end of the Python session,
+at which time it is automatically deleted. The CDL file may omit
+data array values (as would be the case, for example, if the file
+was created with the <code class="docutils literal notranslate"><span class="pre">-h</span></code> or <code class="docutils literal notranslate"><span class="pre">-c</span></code> option to <code class="docutils literal notranslate"><span class="pre">ncdump</span></code>), in
+which case the the relevant constructs in memory will be created
+with data containing missing values.</p>
 <p><strong>PP and UM fields files</strong></p>
 <p>32-bit and 64-bit PP and UM fields files of any endian-ness can be
 read. In nearly all cases the file format is auto-detected from
@@ -106,20 +140,28 @@ possible, into field constructs with 3-d, 4-d or 5-d data. This is
 done prior to the field construct aggregation carried out by the
 <a class="reference internal" href="#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a> function.</p>
 <p>When reading PP and UM fields files, the <em>relaxed_units</em> aggregate
-option is set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> by default, because units are not always
+option is set to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> by default, because units are not always
 available to field constructs derived from UM fields files or PP
 files.</p>
+<p><strong>Performance</strong></p>
+<p>Descriptive properties are always read into memory, but lazy
+loading is employed for all data arrays, which means that no data
+is read into memory until the data is required for inspection or
+to modify the array contents. This maximises the number of field
+constructs that may be read within a session, and makes the read
+operation fast.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last"><a class="reference internal" href="cf.aggregate.html#cf.aggregate" title="cf.aggregate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.aggregate</span></code></a>, <a class="reference internal" href="cf.load_stash2standard_name.html#cf.load_stash2standard_name" title="cf.load_stash2standard_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.load_stash2standard_name</span></code></a>,
-<a class="reference internal" href="cf.write.html#cf.write" title="cf.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.write</span></code></a></p>
+<a class="reference internal" href="cf.write.html#cf.write" title="cf.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.write</span></code></a>, <a class="reference internal" href="../method/cf.Field.convert.html#cf.Field.convert" title="cf.Field.convert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.convert</span></code></a>,
+<a class="reference internal" href="../method/cf.Field.dataset_compliance.html#cf.Field.dataset_compliance" title="cf.Field.dataset_compliance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.dataset_compliance</span></code></a></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>files: (arbitrarily nested sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt>
+<dt>files: (arbitrarily nested sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt>
 <dd><blockquote class="first">
 <div><p>A string or arbitrarily nested sequence of strings giving
 the file names, directory names, or OPenDAP URLs from
@@ -149,7 +191,7 @@ of environment variable <em>name</em>.</td>
 <tr class="row-even"><td>Pathname</td>
 <td>A string containing UNIX file name
 metacharacters as understood by the
-Python <a class="reference external" href="https://docs.python.org/3/library/glob.html#module-glob" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">glob</span></code></a> module is replaced by
+Python <a class="reference external" href="https://docs.python.org/3/library/glob.html#module-glob" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">glob</span></code></a> module is replaced by
 the list of matching file names. This
 type of expansion is ignored for
 OPenDAP URLs.</td>
@@ -175,7 +217,7 @@ be raised, unless the <em>ignore_read_error</em> parameter is
 True.</p>
 </div></blockquote>
 <dl class="last docutils">
-<dt>external: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dt>external: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
 <dd><p class="first">Read external variables (i.e. variables which are named by
 attributes, but are not present, in the parent file given
 by the <em>filename</em> parameter) from the given external
@@ -187,7 +229,7 @@ for the required external variables.</p>
 files, or is found in multiple external files, then the
 relevant metadata construct is still created, but without
 any metadata or data. In this case the construct’s
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">is_external</span></code> method will return <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>.</p>
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">is_external</span></code> method will return <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>.</p>
 <dl class="last docutils">
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">external='cell_measure.nc'</span></code></p>
@@ -202,7 +244,7 @@ any metadata or data. In this case the construct’s
 </dd>
 </dl>
 </dd>
-<dt>extra: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dt>extra: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
 <dd><p class="first">Create extra, independent field constructs from netCDF
 variables that correspond to particular types metadata
 constructs. The <em>extra</em> parameter may be one, or a
@@ -257,30 +299,30 @@ parent field construct’s domain as possible by using the
 <a class="reference internal" href="../method/cf.Field.convert.html#cf.Field.convert" title="cf.Field.convert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert</span></code></a> method of a returned field construct,
 instead of setting the <em>extra</em> parameter.</p>
 </dd>
-<dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then print a description of how the contents of
 the netCDF file were parsed and mapped to CF data model
 constructs.</p>
 </dd>
-<dt>warnings: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>warnings: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then print warnings when an output field construct
 is incomplete due to structural non-compliance of the
 dataset. By default such warnings are not displayed.</p>
 </dd>
-<dt>ignore_read_error: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>ignore_read_error: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then ignore any file which raises an IOError
 whilst being read, as would be the case for an empty file,
 unknown file format, etc. By default the IOError is
 raised.</p>
 </dd>
-<dt>fmt: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dt>fmt: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
 <dd><p class="first last">Only read files of the given format, ignoring all other
 files. Valid formats are <code class="docutils literal notranslate"><span class="pre">'NETCDF'</span></code> for CF-netCDF files,
-<code class="docutils literal notranslate"><span class="pre">'CFA'</span></code> for CFA-netCDF files, and <code class="docutils literal notranslate"><span class="pre">'UM'</span></code> for PP or UM
-fields files. By default files of any of these formats are
-read.</p>
+<code class="docutils literal notranslate"><span class="pre">'CFA'</span></code> for CFA-netCDF files, <code class="docutils literal notranslate"><span class="pre">'UM'</span></code> for PP or UM
+fields files, and <code class="docutils literal notranslate"><span class="pre">'CDL'</span></code> for CDL text files. By default
+files of any of these formats are read.</p>
 </dd>
-<dt>aggregate: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt>
+<dt>aggregate: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt>
 <dd><p class="first">If True (the default) or a dictionary (possibly empty)
 then aggregate the field constructs read in from all input
 files into as few field constructs as possible by passing
@@ -293,11 +335,11 @@ keyword arguments to the <a class="reference internal" href="cf.aggregate.html#c
 <p class="last">If <em>aggregate</em> is False then the field constructs are not
 aggregated.</p>
 </dd>
-<dt>squeeze: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>squeeze: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then remove size 1 axes from each field construct’s
 data array.</p>
 </dd>
-<dt>unsqueeze: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>unsqueeze: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then insert size 1 axes from each field
 construct’s domain into its data array.</p>
 </dd>
@@ -308,11 +350,11 @@ which, prior to any aggregation, satisfy
 <code class="docutils literal notranslate"><span class="pre">f.match(description=select,</span> <span class="pre">**select_options)</span> <span class="pre">==</span> <span class="pre">True</span></code>
 are returned. See <a class="reference internal" href="../method/cf.Field.match.html#cf.Field.match" title="cf.Field.match"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.match</span></code></a> for details.</p>
 </dd>
-<dt>recursive: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>recursive: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then recursively read sub-directories of any
 directories specified with the <em>files</em> parameter.</p>
 </dd>
-<dt>followlinks: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>followlinks: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first">If True, and <em>recursive</em> is True, then also search for
 files in sub-directories which resolve to symbolic
 links. By default directories which resolve to symbolic
@@ -322,7 +364,7 @@ which are symbolic links are always followed.</p>
 lead to infinite recursion if a symbolic link points to a
 parent directory of itself.</p>
 </dd>
-<dt>um: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt>
+<dt>um: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt>
 <dd><p class="first">For Met Office (UK) PP files and Met Office (UK) fields
 files only, provide extra decoding instructions. This
 option is ignored for input files which are not PP or
@@ -471,7 +513,7 @@ particular types metadata constructs:</p>
 <span class="go">&lt;CF Field: temperature_wind(17, 29, 24)&gt;</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file*.nc&#39;</span><span class="p">,</span> <span class="n">select</span><span class="o">=</span><span class="s1">&#39;units=K)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file*.nc&#39;</span><span class="p">,</span> <span class="n">select</span><span class="o">=</span><span class="s1">&#39;units=K&#39;</span><span class="p">)</span>
 <span class="go">[&lt;CF Field: temperature(17, 30, 24)&gt;,</span>
 <span class="go"> &lt;CF Field: temperature_wind(17, 29, 24)&gt;]</span>
 </pre></div>
@@ -496,7 +538,7 @@ particular types metadata constructs:</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/function/cf.read.rst.txt"

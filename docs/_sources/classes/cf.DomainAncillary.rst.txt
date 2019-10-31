@@ -188,13 +188,22 @@ Data
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.DomainAncillary.flatten
    ~cf.DomainAncillary.flip
    ~cf.DomainAncillary.insert_dimension
    ~cf.DomainAncillary.roll
    ~cf.DomainAncillary.squeeze
+   ~cf.DomainAncillary.swapaxes
    ~cf.DomainAncillary.transpose
    
 .. rubric:: *Data array mask*
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.DomainAncillary.fill_value
 
 .. autosummary::
    :nosignatures:
@@ -205,7 +214,6 @@ Data
    ~cf.DomainAncillary.count
    ~cf.DomainAncillary.count_masked
    ~cf.DomainAncillary.hardmask
-   ~cf.DomainAncillary.fill_value
    ~cf.DomainAncillary.mask
    ~cf.DomainAncillary.mask_invalid
 

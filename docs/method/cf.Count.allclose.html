@@ -32,13 +32,13 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.1</a></b></h3>
-<ul>
+<h3><b><a href="../index.html">cf 3.0.2</a></b></h3>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
@@ -90,7 +90,7 @@
 <h1>cf.Count.allclose<a class="headerlink" href="#cf-count-allclose" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Count.allclose">
-<code class="descclassname">Count.</code><code class="descname">allclose</code><span class="sig-paren">(</span><em>y</em>, <em>atol=None</em>, <em>rtol=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/mixin/propertiesdata.py#L3224"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Count.allclose" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Count.</code><code class="descname">allclose</code><span class="sig-paren">(</span><em>y</em>, <em>atol=None</em>, <em>rtol=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/mixin/propertiesdata.py#L3535"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Count.allclose" title="Permalink to this definition">¶</a></dt>
 <dd><p>Test whether all data are element-wise equal to other,
 broadcastable data.</p>
 <p>Two real numbers <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> are considered equal if
@@ -114,11 +114,11 @@ they must be compatible. May be any object that can be
 converted to a <a class="reference internal" href="../classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object (which includes numpy array
 and <a class="reference internal" href="../classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects).</p>
 </dd>
-<dt>atol: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>, optional</dt>
+<dt>atol: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>, optional</dt>
 <dd><p class="first last">The tolerance on absolute differences between real
 numbers. The default value is set by the <a class="reference internal" href="../function/cf.ATOL.html#cf.ATOL" title="cf.ATOL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ATOL</span></code></a> function.</p>
 </dd>
-<dt>rtol: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>, optional</dt>
+<dt>rtol: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>, optional</dt>
 <dd><p class="first last">The tolerance on relative differences between real
 numbers. The default value is set by the <a class="reference internal" href="../function/cf.RTOL.html#cf.RTOL" title="cf.RTOL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RTOL</span></code></a> function.</p>
 </dd>
@@ -126,9 +126,9 @@ numbers. The default value is set by the <a class="reference internal" href="../
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> </dt>
-<dd><p class="first last">Returns <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if the data are equal within the given
-tolerance; <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> otherwise.</p>
+<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a> </dt>
+<dd><p class="first last">Returns <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> if the data are equal within the given
+tolerance; <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> otherwise.</p>
 </dd>
 </dl>
 </td>
@@ -155,7 +155,7 @@ tolerance; <a class="reference external" href="https://docs.python.org/3/library
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cf.Count.allclose.rst.txt"

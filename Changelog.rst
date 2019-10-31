@@ -2,23 +2,27 @@ version 3.0.2
 -------------
 ----
 
-**Not yet released**
+**2019-10-31**
 
 * Now reads CDL files (https://github.com/NCAS-CMS/cf-python/issues/1)
 * New methods: `cf.Field.cumsum`, `cf.Field.digitize`, `cf.Field.bin`,
   `cf.Field.swapaxes`, `cf.Field.flatten`, `cf.Field.radius`.
-* New methods: `cf.histogram`.
+* New function: `cf.histogram`.
 * New field construct collapse methods: ``integral``,
-  ``maximum_absolute_value``, ``minimum_absolute_value``,
-  ``sum_of_squares``, ``root_mean_square``.
+  ``mean_absolute_value``, ``maximum_absolute_value``,
+  ``minimum_absolute_value``, ``sum_of_squares``,
+  ``root_mean_square``.
 * New keywords to `cf.Field.collapse` and `cf.Field.weights`:
   ``measure``, ``scale``, ``radius``
 * New methods: `cf.Data.cumsum`, `cf.Data.digitize`,
-  `cf.Data.masked_all`, `cf.Data.maximum_absolute_value`,
-  `cf.Data.minimum_absolute_value`, `cf.Data.sum_of_squares`,
-  `cf.Data.root_mean_square`, `cf.Data.flatten`.
+  `cf.Data.masked_all`, `cf.Data.mean_absolute_value`,
+  `cf.Data.maximum_absolute_value`, `cf.Data.minimum_absolute_value`,
+  `cf.Data.sum_of_squares`, `cf.Data.root_mean_square`,
+  `cf.Data.flatten`.
 * Renamed `cf.default_fillvals` to `cf.default_netCDF_fillvals`.
-* Changed minimum cfdm dependency to version 1.7.8.
+* Changed minimum cfdm dependency to version 1.7.8. This fixes a bug
+  that sometimes occurs when writing to disk and the _FillValue and
+  data have different data types.
 * Changed minimum cfunits dependency to version 3.2.2.
 * Changed minimum cftime dependency to version 1.0.4.2.
 * Fixed occasional failure to delete all temporary directories at
@@ -751,7 +755,7 @@ version 0.9.8.3
 **2014-07-14**
 
 * Implemented multiple grid_mappings (CF trac ticket #70)
-* Improved functionality and speed of field aggregation and ``cfa``a
+* Improved functionality and speed of field aggregation and ``cfa``
   and ``cfdump`` command line utilities.
 * Collapse methods on `cf.Data` object (min, max, mean, var, sd,
   sum, range, mid_range).

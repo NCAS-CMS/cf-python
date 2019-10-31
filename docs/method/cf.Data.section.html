@@ -32,13 +32,13 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.1</a></b></h3>
-<ul>
+<h3><b><a href="../index.html">cf 3.0.2</a></b></h3>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
@@ -90,7 +90,7 @@
 <h1>cf.Data.section<a class="headerlink" href="#cf-data-section" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Data.section">
-<code class="descclassname">Data.</code><code class="descname">section</code><span class="sig-paren">(</span><em>axes</em>, <em>stop=None</em>, <em>chunks=False</em>, <em>min_step=1</em>, <em>mode='dictionary'</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/data/data.py#L11268"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.section" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Data.</code><code class="descname">section</code><span class="sig-paren">(</span><em>axes</em>, <em>stop=None</em>, <em>chunks=False</em>, <em>min_step=1</em>, <em>mode='dictionary'</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/data/data.py#L12211"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.section" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a dictionary of Data objects, which are the m dimensional
 sections of this n dimensional Data object, where m &lt;= n. The keys
 of the dictionary are the indicies of the sections in the original
@@ -103,23 +103,23 @@ sections of type <a class="reference internal" href="../classes/cf.Data.html#cf.
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>axes: optional</dt>
-<dd><p class="first last">This is should be a tuple or a list of the m indices of
+<dt>axes: (seqeunce of) <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt>
+<dd><p class="first last">This is should be one or more integers of the m indices of
 the m axes that define the sections of the <a class="reference internal" href="../classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>
-object. If axes is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default) all axes are
-selected.</p>
+object. If axes is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> (the default) or an empty
+sequence then all axes are selected.</p>
 </dd>
-<dt>stop: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt>
+<dt>stop: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt>
 <dd><p class="first last">Stop after this number of sections and return. If stop is
 None all sections are taken.</p>
 </dd>
-<dt>chunks: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>chunks: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True return sections that are of the maximum possible
 size that will fit in one chunk of memory instead of
 sectioning into slices of size 1 along the dimensions that
 are being sectioned.</p>
 </dd>
-<dt>min_step: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt>
+<dt>min_step: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt>
 <dd><p class="first last">The minimum step size when making chunks. By default this
 is 1. Can be set higher to avoid size 1 dimensions, which
 are problematic for bilinear regridding.</p>
@@ -128,7 +128,7 @@ are problematic for bilinear regridding.</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt>
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt>
 <dd><p class="first last">The dictionary of m dimensional sections of the Data
 object.</p>
 </dd>
@@ -158,7 +158,7 @@ object.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cf.Data.section.rst.txt"

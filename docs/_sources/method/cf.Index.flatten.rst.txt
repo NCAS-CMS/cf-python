@@ -1,0 +1,7 @@
+cf.Index.flatten
+================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Index.flatten

@@ -32,13 +32,13 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.1</a></b></h3>
-<ul>
+<h3><b><a href="../index.html">cf 3.0.2</a></b></h3>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
@@ -90,7 +90,7 @@
 <h1>cf.Datum.equals<a class="headerlink" href="#cf-datum-equals" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Datum.equals">
-<code class="descclassname">Datum.</code><code class="descname">equals</code><span class="sig-paren">(</span><em>other</em>, <em>rtol=None</em>, <em>atol=None</em>, <em>verbose=False</em>, <em>ignore_data_type=False</em>, <em>ignore_fill_value=False</em>, <em>ignore_type=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/../../cfdm/cfdm/mixin/parameters.py#L47"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Datum.equals" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Datum.</code><code class="descname">equals</code><span class="sig-paren">(</span><em>other</em>, <em>rtol=None</em>, <em>atol=None</em>, <em>verbose=False</em>, <em>ignore_data_type=False</em>, <em>ignore_fill_value=False</em>, <em>ignore_type=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.8/cfdm/mixin/parameters.py#L47"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Datum.equals" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether two instances are the same.</p>
 <p>Equality is strict by default. This means that:</p>
 <ul class="simple">
@@ -114,31 +114,31 @@ one. See the <em>ignore_type</em> parameter.</p>
 <dt>other:</dt>
 <dd><p class="first last">The object to compare for equality.</p>
 </dd>
-<dt>atol: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>, optional</dt>
+<dt>atol: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>, optional</dt>
 <dd><p class="first last">The tolerance on absolute differences between real
 numbers. The default value is set by the <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.ATOL</span></code> function.</p>
 </dd>
-<dt>rtol: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>, optional</dt>
+<dt>rtol: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>, optional</dt>
 <dd><p class="first last">The tolerance on relative differences between real
 numbers. The default value is set by the <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.RTOL</span></code> function.</p>
 </dd>
-<dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then print information about differences that lead to
 inequality.</p>
 </dd>
-<dt>ignore_data_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>ignore_data_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then ignore the data types in all numerical
 comparisons. By default different numerical data types imply
 inequality, regardless of whether the elements are within the
 tolerance for equality.</p>
 </dd>
-<dt>ignore_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>ignore_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">Any type of object may be tested but, in general, equality is
 only possible with another object of the same type, or a
 subclass of one. If <em>ignore_type</em> is True then equality is
 possible for any object with a compatible API.</p>
 </dd>
-<dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then print a verbose highlighting where the two
 instances differ.</p>
 </dd>
@@ -146,7 +146,7 @@ instances differ.</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt>
+<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt>
 <dd><p class="first last">Whether the two instances are equal.</p>
 </dd>
 </dl>
@@ -179,7 +179,7 @@ instances differ.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cf.Datum.equals.rst.txt"

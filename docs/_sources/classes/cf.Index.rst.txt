@@ -154,13 +154,22 @@ Data
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.Index.flatten
    ~cf.Index.flip
    ~cf.Index.insert_dimension
    ~cf.Index.roll
    ~cf.Index.squeeze
+   ~cf.Index.swapaxes
    ~cf.Index.transpose
    
 .. rubric:: *Data array mask*
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Index.fill_value
 
 .. autosummary::
    :nosignatures:
@@ -171,7 +180,6 @@ Data
    ~cf.Index.count
    ~cf.Index.count_masked
    ~cf.Index.hardmask
-   ~cf.Index.fill_value
    ~cf.Index.mask
    ~cf.Index.mask_invalid
 

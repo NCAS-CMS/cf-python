@@ -32,13 +32,13 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.1</a></b></h3>
-<ul>
+<h3><b><a href="../index.html">cf 3.0.2</a></b></h3>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
@@ -90,11 +90,11 @@
 <h1>cf.Data.datum<a class="headerlink" href="#cf-data-datum" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Data.datum">
-<code class="descclassname">Data.</code><code class="descname">datum</code><span class="sig-paren">(</span><em>*index</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/data/data.py#L9011"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.datum" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Data.</code><code class="descname">datum</code><span class="sig-paren">(</span><em>*index</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/data/data.py#L9730"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.datum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return an element of the data array as a standard Python scalar.</p>
-<p>The first and last elements are always returned with <code class="docutils literal notranslate"><span class="pre">d.datum(0)</span></code>
-and <code class="docutils literal notranslate"><span class="pre">d.datum(-1)</span></code> respectively, even if the data array is a scalar
-array or has two or more dimensions.</p>
+<p>The first and last elements are always returned with
+<code class="docutils literal notranslate"><span class="pre">d.datum(0)</span></code> and <code class="docutils literal notranslate"><span class="pre">d.datum(-1)</span></code> respectively, even if the data
+array is a scalar array or has two or more dimensions.</p>
 <p>The returned object is of the same type as is stored internally.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
@@ -106,53 +106,47 @@ array or has two or more dimensions.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
 <dt>index: <em>optional</em></dt>
-<dd><p class="first">Specify which element to return. When no positional arguments
-are provided, the method only works for data arrays with one
-element (but any number of dimensions), and the single element
-is returned. If positional arguments are given then they must
-be one of the following:</p>
-<blockquote>
-<div><ul>
+<dd><p class="first">Specify which element to return. When no positional
+arguments are provided, the method only works for data
+arrays with one element (but any number of dimensions),
+and the single element is returned. If positional
+arguments are given then they must be one of the
+following:</p>
+<ul>
 <li><p class="first">An integer. This argument is interpreted as a flat index
 into the array, specifying which element to copy and
 return.</p>
-<blockquote>
-<div><dl class="docutils">
-<dt>Example: If the data aray shape is <code class="docutils literal notranslate"><span class="pre">(2,</span> <span class="pre">3,</span> <span class="pre">6)</span></code> then:</dt>
-<dd><ul class="first last simple">
-<li><code class="docutils literal notranslate"><span class="pre">d.datum(0)</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">d.datum(0,</span> <span class="pre">0,</span> <span class="pre">0)</span></code>.</li>
-<li><code class="docutils literal notranslate"><span class="pre">d.datum(-1)</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">d.datum(1,</span> <span class="pre">2,</span> <span class="pre">5)</span></code>.</li>
-<li><code class="docutils literal notranslate"><span class="pre">d.datum(16)</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">d.datum(0,</span> <span class="pre">2,</span> <span class="pre">4)</span></code>.</li>
-</ul>
+<dl class="docutils">
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last">If the data aray shape is <code class="docutils literal notranslate"><span class="pre">(2,</span> <span class="pre">3,</span> <span class="pre">6)</span></code> then:
+* <code class="docutils literal notranslate"><span class="pre">d.datum(0)</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">d.datum(0,</span> <span class="pre">0,</span> <span class="pre">0)</span></code>.
+* <code class="docutils literal notranslate"><span class="pre">d.datum(-1)</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">d.datum(1,</span> <span class="pre">2,</span> <span class="pre">5)</span></code>.
+* <code class="docutils literal notranslate"><span class="pre">d.datum(16)</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">d.datum(0,</span> <span class="pre">2,</span> <span class="pre">4)</span></code>.</p>
 </dd>
 </dl>
-</div></blockquote>
 <p>If <em>index</em> is <code class="docutils literal notranslate"><span class="pre">0</span></code> or <code class="docutils literal notranslate"><span class="pre">-1</span></code> then the first or last data
 array element respecitively will be returned, even if the
 data array is a scalar array.</p>
 </li>
 </ul>
-</div></blockquote>
-<blockquote>
-<div><ul class="simple">
+<ul class="simple">
 <li>Two or more integers. These arguments are interpreted as a
 multidimensionsal index to the array. There must be the
 same number of integers as data array dimensions.</li>
 </ul>
-</div></blockquote>
-<blockquote class="last">
-<div><ul>
+<ul class="last">
 <li><p class="first">A tuple of integers. This argument is interpreted as a
 multidimensionsal index to the array. There must be the
 same number of integers as data array dimensions.</p>
-<blockquote>
-<div><p>Example: <code class="docutils literal notranslate"><span class="pre">d.datum((0,</span> <span class="pre">2,</span> <span class="pre">4))</span></code> is equivalent to
-<code class="docutils literal notranslate"><span class="pre">d.datum(0,</span> <span class="pre">2,</span> <span class="pre">4)</span></code>; and <code class="docutils literal notranslate"><span class="pre">d.datum(())</span></code> is equivalent
-to <code class="docutils literal notranslate"><span class="pre">d.datum()</span></code>.</p>
-</div></blockquote>
+<dl class="docutils">
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">d.datum((0,</span> <span class="pre">2,</span> <span class="pre">4))</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">d.datum(0,</span>
+<span class="pre">2,</span> <span class="pre">4)</span></code>; and <code class="docutils literal notranslate"><span class="pre">d.datum(())</span></code> is equivalent to
+<code class="docutils literal notranslate"><span class="pre">d.datum()</span></code>.</p>
+</dd>
+</dl>
 </li>
 </ul>
-</div></blockquote>
 </dd>
 </dl>
 </td>
@@ -219,7 +213,7 @@ Python scalar.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cf.Data.datum.rst.txt"

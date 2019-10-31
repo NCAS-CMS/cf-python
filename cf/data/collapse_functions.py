@@ -541,6 +541,37 @@ def mean_ffinalise(out, sub_samples=None):
 
 
 #---------------------------------------------------------------------
+# mean_absolute_value
+#---------------------------------------------------------------------
+def mean_abs_f(a, axis=None, weights=None, masked=False):
+    '''Return the mean of the absolute array, or the means of the absolute
+    array along an axis.
+    
+    :Parameters:
+    
+        a: numpy array_like
+            Input array
+    
+        axis: `int`, optional
+            Axis along which to operate. By default, flattened input is
+            used.
+    
+        masked: `bool`
+    
+    :Returns:
+    
+        out: 2-tuple of `numpy.ndarray`
+            The sample sizes and the means of the absolute values.
+
+    '''
+    return mean_f(numpy_abs(a), axis=axis, weights=weights, masked=masked)
+    
+
+mean_abs_fpartial  = mean_fpartial
+mean_abs_ffinalise = mean_ffinalise
+
+
+#---------------------------------------------------------------------
 # root_mean_square
 #---------------------------------------------------------------------
 def root_mean_square_f(a, axis=None, weights=None, masked=False):

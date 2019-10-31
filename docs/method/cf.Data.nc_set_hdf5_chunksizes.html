@@ -32,13 +32,13 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.1</a></b></h3>
-<ul>
+<h3><b><a href="../index.html">cf 3.0.2</a></b></h3>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
@@ -90,10 +90,9 @@
 <h1>cf.Data.nc_set_hdf5_chunksizes<a class="headerlink" href="#cf-data-nc-set-hdf5-chunksizes" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Data.nc_set_hdf5_chunksizes">
-<code class="descclassname">Data.</code><code class="descname">nc_set_hdf5_chunksizes</code><span class="sig-paren">(</span><em>chunksizes</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/../../cfdm/cfdm/mixin/netcdf.py#L1533"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.nc_set_hdf5_chunksizes" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Data.</code><code class="descname">nc_set_hdf5_chunksizes</code><span class="sig-paren">(</span><em>chunksizes</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.8/cfdm/mixin/netcdf.py#L1213"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.nc_set_hdf5_chunksizes" title="Permalink to this definition">¶</a></dt>
 <dd><p>TODO</p>
-<blockquote>
-<div><div class="admonition note">
+<div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">Chunksizes are cleared from the output of methods that
 change the data shape.</p>
@@ -103,7 +102,6 @@ change the data shape.</p>
 <p class="last">Chunksizes are ignored for netCDF3 files that do not use
 HDF5.</p>
 </div>
-</div></blockquote>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.2.</span></p>
 </div>
@@ -116,14 +114,14 @@ HDF5.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>chunksizes: sequence of <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt>
-<dd><p class="first last">The chunksizes for each dimension. Can be integers from 0 to
-the dimension size.</p>
+<dt>chunksizes: sequence of <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt>
+<dd><p class="first last">The chunksizes for each dimension. Can be integers from 0
+to the dimension size.</p>
 </dd>
 </dl>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
 </td>
 </tr>
 </tbody>
@@ -156,7 +154,7 @@ the dimension size.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cf.Data.nc_set_hdf5_chunksizes.rst.txt"

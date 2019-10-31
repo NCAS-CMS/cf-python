@@ -19,7 +19,7 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cf.Index.transpose" href="cf.Index.transpose.html" />
+    <link rel="next" title="cf.Index.swapaxes" href="cf.Index.swapaxes.html" />
     <link rel="prev" title="cf.Index.roll" href="cf.Index.roll.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -32,13 +32,13 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.1</a></b></h3>
-<ul>
+<h3><b><a href="../index.html">cf 3.0.2</a></b></h3>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
@@ -52,7 +52,7 @@
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
   <li><a href="../classes/cf.Index.html">cf.Index</a><ul>
       <li>Previous: <a href="cf.Index.roll.html" title="previous chapter">cf.Index.roll</a></li>
-      <li>Next: <a href="cf.Index.transpose.html" title="next chapter">cf.Index.transpose</a></li>
+      <li>Next: <a href="cf.Index.swapaxes.html" title="next chapter">cf.Index.swapaxes</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -90,7 +90,7 @@
 <h1>cf.Index.squeeze<a class="headerlink" href="#cf-index-squeeze" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Index.squeeze">
-<code class="descclassname">Index.</code><code class="descname">squeeze</code><span class="sig-paren">(</span><em>axes=None</em>, <em>inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/../../cfdm/cfdm/mixin/propertiesdata.py#L405"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Index.squeeze" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Index.</code><code class="descname">squeeze</code><span class="sig-paren">(</span><em>axes=None</em>, <em>inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.8/cfdm/mixin/propertiesdata.py#L405"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Index.squeeze" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove size one axes from the data array.</p>
 <p>By default all size one axes are removed, but particular size one axes
 may be selected for removal.</p>
@@ -106,7 +106,7 @@ may be selected for removal.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>axes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt>
+<dt>axes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt>
 <dd><p class="first">The positions of the size one axes to be removed. By default
 all size one axes are removed. Each axis is identified by its
 original integer position. Negative integers counting from the
@@ -123,14 +123,14 @@ last position are allowed.</p>
 </dd>
 </dl>
 </dd>
-<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If True then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dd><p class="first last">If True then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
 </dd>
 </dl>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A new instance with removed data axes. If the operation was
-in-place then <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is returned.</p>
+in-place then <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is returned.</p>
 </td>
 </tr>
 </tbody>
@@ -162,7 +162,7 @@ in-place then <a class="reference external" href="https://docs.python.org/3/libr
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cf.Index.squeeze.rst.txt"

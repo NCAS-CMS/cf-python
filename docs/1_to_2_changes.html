@@ -30,7 +30,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="index.html">cf 3.0.1</a></b></h3>
+<h3><b><a href="index.html">cf 3.0.2</a></b></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -109,8 +109,8 @@ attributes.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p>At version 2.x <a class="reference internal" href="method/cf.Field.axes.html#cf.Field.axes" title="cf.Field.axes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.axes</span></code></a> returns, by default, a
-<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>. If the <code class="xref py py-obj docutils literal notranslate"><span class="pre">ordered</span></code> parameter is <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> then
-it returns an <a class="reference external" href="https://docs.python.org/3/library/collections.html#collections.OrderedDict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OrderedDict</span></code></a>.</p>
+<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>. If the <code class="xref py py-obj docutils literal notranslate"><span class="pre">ordered</span></code> parameter is <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> then
+it returns an <a class="reference external" href="https://docs.python.org/3/library/collections.html#collections.OrderedDict" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OrderedDict</span></code></a>.</p>
 <div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">__version__</span>
 <span class="go">2.0</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span>
@@ -129,7 +129,7 @@ it returns an <a class="reference external" href="https://docs.python.org/3/libr
 </div>
 </div>
 <p>At version 1.x it returned a <code class="xref py py-obj docutils literal notranslate"><span class="pre">set</span></code> by default or, if the <code class="xref py py-obj docutils literal notranslate"><span class="pre">ordered</span></code>
-parameter was <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>, it returned a <code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>.</p>
+parameter was <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>, it returned a <code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>.</p>
 </div>
 <div class="section" id="axis">
 <span id="id2"></span><h2>axis<a class="headerlink" href="#axis" title="Permalink to this headline">¶</a></h2>
@@ -138,7 +138,7 @@ parameter was <a class="reference external" href="https://docs.python.org/3/libr
 <p>At version 2.x <a class="reference internal" href="method/cf.Field.axis.html#cf.Field.axis" title="cf.Field.axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.axis</span></code></a> returns, by default, a
 <a class="reference internal" href="classes/cf.DomainAxis.html#cf.DomainAxis" title="cf.DomainAxis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.DomainAxis</span></code></a> object. A domain axis identifier (such as
 “dim2”) may be returned by setting the <code class="xref py py-obj docutils literal notranslate"><span class="pre">key</span></code> parameter to
-<a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>.</p>
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>.</p>
 <div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">__version__</span>
 <span class="go">2.0</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span>
@@ -198,7 +198,7 @@ library could produce scientifically different results.</p>
 <p class="first admonition-title">Note</p>
 <p>At version 2.x <a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.collapse</span></code></a> does not, by default,
 weight the calculations, i.e. the <code class="xref py py-obj docutils literal notranslate"><span class="pre">weights</span></code> parameter
-defaults to <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+defaults to <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">__version__</span>
 <span class="go">2.0</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span>
@@ -460,7 +460,7 @@ with no subspacing.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="_sources/1_to_2_changes.rst.txt"

@@ -1,0 +1,7 @@
+cf.Field.histogram
+==================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Field.histogram

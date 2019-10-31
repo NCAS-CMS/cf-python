@@ -32,13 +32,13 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.1</a></b></h3>
-<ul>
+<h3><b><a href="../index.html">cf 3.0.2</a></b></h3>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
@@ -90,7 +90,7 @@
 <h1>cf.NetCDFArray.get_subspace<a class="headerlink" href="#cf-netcdfarray-get-subspace" title="Permalink to this headline">¶</a></h1>
 <dl class="classmethod">
 <dt id="cf.NetCDFArray.get_subspace">
-<em class="property">classmethod </em><code class="descclassname">NetCDFArray.</code><code class="descname">get_subspace</code><span class="sig-paren">(</span><em>array</em>, <em>indices</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/../../cfdm/cfdm/data/abstract/array.py#L122"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.NetCDFArray.get_subspace" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descclassname">NetCDFArray.</code><code class="descname">get_subspace</code><span class="sig-paren">(</span><em>array</em>, <em>indices</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.8/cfdm/data/abstract/array.py#L122"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.NetCDFArray.get_subspace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a subspace, defined by indices, of a numpy array.</p>
 <p>Only certain type of indices are allowed. See the <em>indices</em> parameter
 for details.</p>
@@ -117,9 +117,9 @@ then these indices work independently along each dimension
 </dd>
 <dt>indices: </dt>
 <dd><p class="first">The indices that define the subspace.</p>
-<p>Must be either <a class="reference external" href="https://docs.python.org/3/library/constants.html#Ellipsis" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Ellipsis</span></code></a> or a sequence that contains an index
+<p>Must be either <a class="reference external" href="https://docs.python.org/3/library/constants.html#Ellipsis" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Ellipsis</span></code></a> or a sequence that contains an index
 for each dimension. In the latter case, each dimension’s index
-must either be a <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a> object or a sequence of two or more
+must either be a <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a> object or a sequence of two or more
 integers.</p>
 <blockquote class="last">
 <div><dl class="docutils">
@@ -141,8 +141,8 @@ integers.</p>
 </dl>
 </div></blockquote>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt>
-<dd><p class="first last">If <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> then the returned subspace may (or may not) be
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt>
+<dd><p class="first last">If <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> then the returned subspace may (or may not) be
 independent of the input <em>array</em>. By default the returned
 subspace is independent of the input <em>array</em>.</p>
 </dd>
@@ -170,7 +170,7 @@ subspace is independent of the input <em>array</em>.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cf.NetCDFArray.get_subspace.rst.txt"

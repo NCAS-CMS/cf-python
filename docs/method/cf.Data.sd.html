@@ -32,13 +32,13 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.1</a></b></h3>
-<ul>
+<h3><b><a href="../index.html">cf 3.0.2</a></b></h3>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
@@ -90,7 +90,7 @@
 <h1>cf.Data.sd<a class="headerlink" href="#cf-data-sd" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Data.sd">
-<code class="descclassname">Data.</code><code class="descname">sd</code><span class="sig-paren">(</span><em>axes=None</em>, <em>squeeze=False</em>, <em>mtol=1</em>, <em>weights=None</em>, <em>ddof=0</em>, <em>inplace=False</em>, <em>i=False</em>, <em>_preserve_partitions=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/data/data.py#L11062"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.sd" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Data.</code><code class="descname">sd</code><span class="sig-paren">(</span><em>axes=None</em>, <em>squeeze=False</em>, <em>mtol=1</em>, <em>weights=None</em>, <em>ddof=0</em>, <em>inplace=False</em>, <em>i=False</em>, <em>_preserve_partitions=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/data/data.py#L12005"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.sd" title="Permalink to this definition">¶</a></dt>
 <dd><p>Collapse axes by calculating their standard deviation.</p>
 <blockquote>
 <div><p>The standard deviation may be adjusted for the number of degrees of
@@ -145,12 +145,12 @@ collectively coprime then setting <span class="math notranslate nohighlight">\(f
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>axes <span class="classifier-delimiter">:</span> <span class="classifier">(sequence of) <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</span></dt>
+<dt>axes <span class="classifier-delimiter">:</span> <span class="classifier">(sequence of) <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</span></dt>
 <dd><p class="first last">The axes to be collapsed. By default flattened input is
 used. Each axis is identified by its integer position. No
 axes are collapsed if <em>axes</em> is an empty sequence.</p>
 </dd>
-<dt>squeeze <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</span></dt>
+<dt>squeeze <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</span></dt>
 <dd><p class="first">If True then collapsed axes are removed. By default the
 axes which are collapsed are left in the result as axes
 with size 1. When the collapsed axes are retained, the
@@ -166,7 +166,7 @@ and, for example, <code class="docutils literal notranslate"><span class="pre">d
 </dd>
 </dl>
 </dd>
-<dt>weights <span class="classifier-delimiter">:</span> <span class="classifier">data-like or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</span></dt>
+<dt>weights <span class="classifier-delimiter">:</span> <span class="classifier">data-like or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</span></dt>
 <dd><p class="first">Weights associated with values of the array. By default
 all non-missing elements of the array are assumed to have
 equal weights of 1. If <em>weights</em> is a data-like object
@@ -220,8 +220,8 @@ estimated according to the usual formula with (N-1) in the
 denominator to avoid the bias caused by the use of the
 sample mean (Bessel’s correction).</p>
 </dd>
-<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If True then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dd><p class="first last">If True then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
 </dd>
 <dt>i: deprecated at version 3.0.0</dt>
 <dd><p class="first last">Use <em>inplace</em> parameter instead.</p>
@@ -270,7 +270,7 @@ sample mean (Bessel’s correction).</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cf.Data.sd.rst.txt"

@@ -32,13 +32,13 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.1</a></b></h3>
-<ul>
+<h3><b><a href="../index.html">cf 3.0.2</a></b></h3>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
@@ -90,7 +90,7 @@
 <h1>cf.Field.convolution_filter<a class="headerlink" href="#cf-field-convolution-filter" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.convolution_filter">
-<code class="descclassname">Field.</code><code class="descname">convolution_filter</code><span class="sig-paren">(</span><em>weights</em>, <em>axis=None</em>, <em>mode=None</em>, <em>cval=None</em>, <em>origin=0</em>, <em>update_bounds=True</em>, <em>inplace=False</em>, <em>i=False</em>, <em>_bounds=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/field.py#L8989"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.convolution_filter" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">convolution_filter</code><span class="sig-paren">(</span><em>weights</em>, <em>axis=None</em>, <em>mode=None</em>, <em>cval=None</em>, <em>origin=0</em>, <em>update_bounds=True</em>, <em>inplace=False</em>, <em>i=False</em>, <em>_bounds=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/field.py#L11097"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.convolution_filter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the field convolved along the given axis with the specified
 filter.</p>
 <p>Can be used to create running means.</p>
@@ -122,7 +122,7 @@ construct’s <a class="reference internal" href="cf.Field.domain_axis.html#cf.F
 of <code class="docutils literal notranslate"><span class="pre">'X'</span></code>, the domain axis construct returned by
 <code class="docutils literal notranslate"><span class="pre">f.domain_axis('X'))</span></code> is selected.</p>
 </dd>
-<dt>mode: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dt>mode: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
 <dd><p class="first">The <em>mode</em> parameter determines how the input array is
 extended when the filter overlaps a border. The default
 value is <code class="docutils literal notranslate"><span class="pre">'constant'</span></code> or, if the dimension being
@@ -176,7 +176,7 @@ around to the opposite edge.</td>
 </dd>
 <dt>cval: scalar, optional</dt>
 <dd><p class="first">Value to fill past the edges of the array if <em>mode</em> is
-<code class="docutils literal notranslate"><span class="pre">'constant'</span></code>. Defaults to <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, in which case the
+<code class="docutils literal notranslate"><span class="pre">'constant'</span></code>. Defaults to <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, in which case the
 edges of the array will be filled with missing data.</p>
 <dl class="last docutils">
 <dt><em>Parameter example:</em></dt>
@@ -185,7 +185,7 @@ edge with zero: <code class="docutils literal notranslate"><span class="pre">cva
 </dd>
 </dl>
 </dd>
-<dt>origin: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt>
+<dt>origin: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt>
 <dd><p class="first">Controls the placement of the filter. Defaults to 0, which
 is the centre of the window. If the window has an even
 number weights then then a value of 0 defines the index
@@ -202,15 +202,15 @@ the and the next three points.</p>
 </dd>
 </dl>
 </dd>
-<dt>update_bounds: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>update_bounds: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If False then the bounds of a dimension coordinate
 construct that spans the convolved axis are not
 altered. By default, the bounds of a dimension coordinate
 construct that spans the convolved axis are updated to
 reflect the width and origin of the window.</p>
 </dd>
-<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If True then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dd><p class="first last">If True then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
 </dd>
 <dt>i: deprecated at version 3.0.0</dt>
 <dd><p class="first last">Use the <em>inplace</em> parameter instead.</p>
@@ -236,7 +236,7 @@ reflect the width and origin of the window.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cf.Field.convolution_filter.rst.txt"

@@ -32,13 +32,13 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.1</a></b></h3>
-<ul>
+<h3><b><a href="../index.html">cf 3.0.2</a></b></h3>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
@@ -90,7 +90,7 @@
 <h1>cf.Field.set_construct<a class="headerlink" href="#cf-field-set-construct" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.set_construct">
-<code class="descclassname">Field.</code><code class="descname">set_construct</code><span class="sig-paren">(</span><em>construct</em>, <em>key=None</em>, <em>axes=None</em>, <em>set_axes=True</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/field.py#L11289"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.set_construct" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">set_construct</code><span class="sig-paren">(</span><em>construct</em>, <em>key=None</em>, <em>axes=None</em>, <em>set_axes=True</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/field.py#L13478"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.set_construct" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set a metadata construct.</p>
 <p>When inserting a construct with data, the domain axes constructs
 spanned by the data are either inferred, or specified with the
@@ -112,7 +112,7 @@ associated with a given domain axis construct).</p>
 <dt>construct:</dt>
 <dd><p class="first last">The metadata construct to be inserted.</p>
 </dd>
-<dt>key: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dt>key: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
 <dd><p class="first">The construct identifier to be used for the construct. If
 not set then a new, unique identifier is created
 automatically. If the identifier already exisits then the
@@ -123,7 +123,7 @@ exisiting construct will be replaced.</p>
 </dd>
 </dl>
 </dd>
-<dt>axes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt>
+<dt>axes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt>
 <dd><p class="first">Set the domain axes constructs that are spanned by the
 construct’s data. If unset, and the <em>set_axes</em> parameter
 is True, then an attempt will be made to assign existing
@@ -149,14 +149,14 @@ axis construct key via the <a class="reference internal" href="cf.Field.domain_a
 </dd>
 </dl>
 </dd>
-<dt>set_axes: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>set_axes: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If False then do not set the domain axes constructs that
 are spanned by the data, even if the <em>axes</em> parameter has
 been set. By default the axes are set either according to
 the <em>axes</em> parameter, or an attempt will be made to assign
 existing domain axis constructs to the data.</p>
 </dd>
-<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then set a copy of the construct. By default the
 construct is not copied.</p>
 </dd>
@@ -164,7 +164,7 @@ construct is not copied.</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt>
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt>
 <dd><p class="first last">The construct identifier for the construct.</p>
 </dd>
 </dl>
@@ -195,7 +195,7 @@ construct is not copied.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cf.Field.set_construct.rst.txt"

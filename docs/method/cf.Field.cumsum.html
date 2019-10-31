@@ -19,7 +19,7 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cf.Field.unique" href="cf.Field.unique.html" />
+    <link rel="next" title="cf.Field.bin" href="cf.Field.bin.html" />
     <link rel="prev" title="cf.Field.convolution_filter" href="cf.Field.convolution_filter.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -32,13 +32,13 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.1</a></b></h3>
-<ul>
+<h3><b><a href="../index.html">cf 3.0.2</a></b></h3>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
@@ -52,7 +52,7 @@
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
   <li><a href="../classes/cf.Field.html">cf.Field</a><ul>
       <li>Previous: <a href="cf.Field.convolution_filter.html" title="previous chapter">cf.Field.convolution_filter</a></li>
-      <li>Next: <a href="cf.Field.unique.html" title="next chapter">cf.Field.unique</a></li>
+      <li>Next: <a href="cf.Field.bin.html" title="next chapter">cf.Field.bin</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -90,16 +90,17 @@
 <h1>cf.Field.cumsum<a class="headerlink" href="#cf-field-cumsum" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.cumsum">
-<code class="descclassname">Field.</code><code class="descname">cumsum</code><span class="sig-paren">(</span><em>axis</em>, <em>masked_as_zero=False</em>, <em>coordinate=None</em>, <em>inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/field.py#L9296"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.cumsum" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">cumsum</code><span class="sig-paren">(</span><em>axis</em>, <em>masked_as_zero=False</em>, <em>coordinate=None</em>, <em>inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/field.py#L11404"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.cumsum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the field cumulatively summed along the given axis.</p>
-<p>The cell bounds (if any) of the summed axis are updated, and a
-“sum” cell method construct is added.</p>
+<p>The cell bounds of the axis are updated to describe the range over
+which the sums apply, and a new “sum” cell method construct is
+added to the resulting field construct.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 3.0.0.</span></p>
 </div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collapse</span></code></a>, <a class="reference internal" href="cf.Field.convolution_filter.html#cf.Field.convolution_filter" title="cf.Field.convolution_filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convolution_filter</span></code></a></p>
+<p class="last"><a class="reference internal" href="cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collapse</span></code></a>, <a class="reference internal" href="cf.Field.convolution_filter.html#cf.Field.convolution_filter" title="cf.Field.convolution_filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convolution_filter</span></code></a>, <a class="reference internal" href="cf.Field.sum.html#cf.Field.sum" title="cf.Field.sum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sum</span></code></a></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -114,29 +115,28 @@ field construct’s <a class="reference internal" href="cf.Field.domain_axis.htm
 value of <code class="docutils literal notranslate"><span class="pre">'X'</span></code>, the domain axis construct returned by
 <code class="docutils literal notranslate"><span class="pre">f.domain_axis('X'))</span></code> is selected.</p>
 </dd>
-<dt>masked_as_zero: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dt>masked_as_zero: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then set missing data values to zero before
 calculating the cumulative sum. By default the output data
-will be masked where any missing values contribute to a
-cumulative sum.</p>
+will be masked at the same locations as the original data.</p>
 </dd>
-<dt>coordinate: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dt>coordinate: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
 <dd><p class="first last">Set how the cell coordinate values for the summed axis are
 defined. By default they are unchanged from the original
 field construct, but if <em>coordinate</em> is set to
 <code class="docutils literal notranslate"><span class="pre">'mid_range'</span></code> then the each coordinate value is replaced
 by the mid_range of the updated cell bounds.</p>
 </dd>
-<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If True then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dd><p class="first last">If True then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
 </dd>
 </dl>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><a class="reference internal" href="../classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt>
+<dt><a class="reference internal" href="../classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt>
 <dd><p class="first last">The field construct with the cumulatively summed
-dimension, or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> of the operation was in-place.</p>
+dimension, or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> if the operation was in-place.</p>
 </dd>
 </dl>
 </td>
@@ -172,7 +172,7 @@ dimension, or <a class="reference external" href="https://docs.python.org/3/libr
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cf.Field.cumsum.rst.txt"

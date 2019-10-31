@@ -32,13 +32,13 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.1</a></b></h3>
-<ul>
+<h3><b><a href="../index.html">cf 3.0.2</a></b></h3>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
@@ -88,7 +88,7 @@
 <h1>cf.open_files<a class="headerlink" href="#cf-open-files" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.open_files">
-<code class="descclassname">cf.</code><code class="descname">open_files</code><span class="sig-paren">(</span><em>file_format=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/functions.py#L854"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.open_files" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">cf.</code><code class="descname">open_files</code><span class="sig-paren">(</span><em>file_format=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/functions.py#L846"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.open_files" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the open files containing sub-arrays of master data arrays.</p>
 <p>By default all such files are returned, but the selection may be
 restricted to files of a particular format.</p>
@@ -102,7 +102,7 @@ restricted to files of a particular format.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>file_format: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dt>file_format: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
 <dd><p class="first last">Only return files of the given format. Recognised formats
 are <code class="docutils literal notranslate"><span class="pre">'netCDF'</span></code> and <code class="docutils literal notranslate"><span class="pre">'PP'</span></code>. By default all files are
 returned.</p>
@@ -111,7 +111,7 @@ returned.</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt>
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt>
 <dd><p class="first last">If <em>file_format</em> is set then return a dictionary of file
 names of the specified format and their open file
 objects. If <em>file_format</em> is not set then return a
@@ -149,7 +149,7 @@ is the dictionary that would have been returned if the
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/function/cf.open_files.rst.txt"

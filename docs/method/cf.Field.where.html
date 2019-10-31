@@ -32,13 +32,13 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.1</a></b></h3>
-<ul>
+<h3><b><a href="../index.html">cf 3.0.2</a></b></h3>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
@@ -90,7 +90,7 @@
 <h1>cf.Field.where<a class="headerlink" href="#cf-field-where" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.where">
-<code class="descclassname">Field.</code><code class="descname">where</code><span class="sig-paren">(</span><em>condition</em>, <em>x=None</em>, <em>y=None</em>, <em>inplace=False</em>, <em>construct=None</em>, <em>i=False</em>, <em>_debug=False</em>, <em>item=None</em>, <em>**item_options</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/field.py#L11764"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.where" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">where</code><span class="sig-paren">(</span><em>condition</em>, <em>x=None</em>, <em>y=None</em>, <em>inplace=False</em>, <em>construct=None</em>, <em>i=False</em>, <em>_debug=False</em>, <em>item=None</em>, <em>**item_options</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/field.py#L14214"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.where" title="Permalink to this definition">¶</a></dt>
 <dd><p>Assign to data elements depending on a condition.</p>
 <p>Data can be changed by assigning to elements that are selected by
 a condition based on the data values of the field construct or on
@@ -104,12 +104,12 @@ elements of array-valued <em>x</em> and <em>y</em> parameters.</p>
 <p>By default the data mask is “hard”, meaning that masked values can
 not be changed by assigning them to another value. This behaviour
 may be changed by setting the <a class="reference internal" href="../attribute/cf.Field.hardmask.html#cf.Field.hardmask" title="cf.Field.hardmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></a> attribute of the field
-construct to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, thereby making the data mask “soft” and
+construct to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>, thereby making the data mask “soft” and
 allowing masked elements to be set to non-masked values.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last"><a class="reference internal" href="../constant.html#cf.cf.masked" title="cf.cf.masked"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.masked</span></code></a>, <a class="reference internal" href="../attribute/cf.Field.hardmask.html#cf.Field.hardmask" title="cf.Field.hardmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></a>, <a class="reference internal" href="cf.Field.indices.html#cf.Field.indices" title="cf.Field.indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">indices</span></code></a>, <a class="reference internal" href="../attribute/cf.Field.mask.html#cf.Field.mask" title="cf.Field.mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code></a>,
-<a class="reference internal" href="../attribute/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a>, <a class="reference internal" href="cf.Field.__setitem__.html#cf.Field.__setitem__" title="cf.Field.__setitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__setitem__</span></code></a></p>
+<a class="reference internal" href="cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a>, <a class="reference internal" href="cf.Field.__setitem__.html#cf.Field.__setitem__" title="cf.Field.__setitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__setitem__</span></code></a></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -123,7 +123,7 @@ data.</p>
 as a <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/index.html#module-numpy" title="(in NumPy v1.17)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a>, <a class="reference internal" href="../classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> or <a class="reference internal" href="../classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> object) that is
 broadcastable to the shape of the data. Assignment from
 the <em>x</em> and <em>y</em> parameters will be done where elements of
-the condition evaluate to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> and <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> respectively.</p>
+the condition evaluate to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> and <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> respectively.</p>
 <dl class="docutils">
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">f.where(f.data&lt;0,</span> <span class="pre">x=-999)</span></code> will set all data values
@@ -185,12 +185,12 @@ broadcast to the shape of the <code class="docutils literal notranslate"><span c
 </dd>
 <dt>x, y: <em>optional</em></dt>
 <dd><p class="first">Specify the assignment values. Where the condition
-evaluates to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>, assign to the field construct’s data
-from <em>x</em>, and where the condition evaluates to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>,
+evaluates to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>, assign to the field construct’s data
+from <em>x</em>, and where the condition evaluates to <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a>,
 assign to the field construct’s data from <em>y</em>. The <em>x</em> and
 <em>y</em> parameters are each one of:</p>
 <ul class="last simple">
-<li><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>. The appropriate data elements array are
+<li><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>. The appropriate data elements array are
 unchanged. This the default.</li>
 <li>Any scalar or array-like object (such as a <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/index.html#module-numpy" title="(in NumPy v1.17)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a>,
 <a class="reference internal" href="../classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> or <a class="reference internal" href="../classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> object) that is broadcastable to the
@@ -238,7 +238,7 @@ shape of the <code class="docutils literal notranslate"><span class="pre">f</spa
 </dl>
 </div></blockquote>
 <dl class="docutils">
-<dt>construct: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dt>construct: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
 <dd><p class="first">Define the condition by applying the <em>construct</em> parameter
 to the given metadata construct’s data, rather then the
 data of the field construct. Must be</p>
@@ -262,23 +262,23 @@ that is returned by this call of the field construct’s
 </dl>
 </div></blockquote>
 <dl class="docutils">
-<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If True then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dd><p class="first last">If True then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
 </dd>
 <dt>i: deprecated at version 3.0.0</dt>
 <dd><p class="first last">Use the <em>inplace</em> parameter instead.</p>
 </dd>
 <dt>item: deprecated at version 3.0.0</dt>
-<dd><p class="first last">Use the <em>constuct</em> parameter instead.</p>
+<dd><p class="first last">Use the <em>construct</em> parameter instead.</p>
 </dd>
 </dl>
 <p>item_options: deprecated at version 3.0.0</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><a class="reference internal" href="../classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt>
+<dt><a class="reference internal" href="../classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt>
 <dd><p class="first last">A new field construct with an updated data array, or
-<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> if the operation was in-place.</p>
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> if the operation was in-place.</p>
 </dd>
 </dl>
 </td>
@@ -360,7 +360,7 @@ by indices:</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cf.Field.where.rst.txt"

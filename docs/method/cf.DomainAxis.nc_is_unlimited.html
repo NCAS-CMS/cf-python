@@ -32,13 +32,13 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.1</a></b></h3>
-<ul>
+<h3><b><a href="../index.html">cf 3.0.2</a></b></h3>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
@@ -90,24 +90,25 @@
 <h1>cf.DomainAxis.nc_is_unlimited<a class="headerlink" href="#cf-domainaxis-nc-is-unlimited" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.DomainAxis.nc_is_unlimited">
-<code class="descclassname">DomainAxis.</code><code class="descname">nc_is_unlimited</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/../../cfdm/cfdm/mixin/netcdf.py#L1752"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DomainAxis.nc_is_unlimited" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO</p>
-<p>By default output netCDF dimensions are not unlimited.</p>
+<code class="descclassname">DomainAxis.</code><code class="descname">nc_is_unlimited</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.8/cfdm/mixin/netcdf.py#L1432"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DomainAxis.nc_is_unlimited" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inspect the unlimited status of the a netCDF dimension.</p>
+<p>By default output netCDF dimensions are not unlimited. The status
+is used by the <a class="reference internal" href="../function/cf.write.html#cf.write" title="cf.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write</span></code></a> function.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.4.</span></p>
 </div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.write</span></code>, <a class="reference internal" href="cf.DomainAxis.nc_set_unlimited.html#cf.DomainAxis.nc_set_unlimited" title="cf.DomainAxis.nc_set_unlimited"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_unlimited</span></code></a></p>
+<p class="last"><a class="reference internal" href="cf.DomainAxis.nc_set_unlimited.html#cf.DomainAxis.nc_set_unlimited" title="cf.DomainAxis.nc_set_unlimited"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_unlimited</span></code></a></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt>
-<dd><p class="first last">TODO The selection of domain axis constructs to be written as
-netCDF unlimited dimensions.</p>
+<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt>
+<dd><p class="first last">The existing unlimited status. True and False signify
+“unlimited” and “not unlimited” repectively.</p>
 </dd>
 </dl>
 </td>
@@ -115,17 +116,18 @@ netCDF unlimited dimensions.</p>
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<p>TODO 
-&gt;&gt;&gt; f.nc_set_unlimited_dimensions([‘domainaxis0’])
-&gt;&gt;&gt; f.nc_unlimited_dimensions()
-{‘domainaxis0’}
-&gt;&gt;&gt; f.nc_set_unlimited_dimensions([‘domainaxis1’])
-&gt;&gt;&gt; f.nc_unlimited_dimensions()
-{‘domainaxis0’, ‘domainaxis1’}
-&gt;&gt;&gt; f.nc_clear_unlimited_dimensions()
-{‘domainaxis0’, ‘domainaxis1’}
-&gt;&gt;&gt; f.nc_unlimited_dimensions()
-set()</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">da</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">domain_axis</span><span class="p">(</span><span class="s1">&#39;domainaxis1&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">da</span><span class="o">.</span><span class="n">nc_is_unlimited</span><span class="p">()</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">da</span><span class="o">.</span><span class="n">nc_set_unlimited</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">da</span><span class="o">.</span><span class="n">nc_is_unlimited</span><span class="p">()</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">da</span><span class="o">.</span><span class="n">nc_set_unlimited</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">da</span><span class="o">.</span><span class="n">nc_is_unlimited</span><span class="p">()</span>
+<span class="go">True</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
@@ -142,7 +144,7 @@ set()</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cf.DomainAxis.nc_is_unlimited.rst.txt"

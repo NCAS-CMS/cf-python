@@ -36,7 +36,6 @@ script (:download:`download <../source/tutorial.py>`, 36kB).
    :local:
    :backlinks: entry
 
-
 .. _Sample-datasets:
 
 **Sample datasets**
@@ -55,6 +54,7 @@ be found in the zip file ``cf_tutorial_files.zip``
    cf_tutorial_files.zip
    contiguous.nc
    external.nc
+   file2.nc
    file.nc
    gathered.nc
    parent.nc
@@ -106,7 +106,7 @@ changed.
 
 Note, however, that datasets of different CF versions may be
 :ref:`read <Reading-datasets>` from, or :ref:`written
-<Writing-to-disk>` to, disk.
+<Writing-to-a-netCDF-dataset>` to netCDF.
 
 ----
 
@@ -144,13 +144,23 @@ A :ref:`field list <Field-lists>` is very much like a Python `list`,
 with the addition of extra methods that operate on its field construct
 elements.
 
-All formats of netCDF3 and netCDF4 files (including `CFA-netCDF
-<http://www.met.reading.ac.uk/~david/cfa/0.4/index.html>`_ files),
-containing datasets for any version of CF up to and including
-CF-|version|, can be read.
+The following file type can be read:
 
-:ref:`PP and UM fields files <PP-and-UM-fields-files>` can also be
-read, the contents of which are mapped into field constructs.
+* All formats of netCDF3 and netCDF4 files (including `CFA-netCDF
+  <http://www.met.reading.ac.uk/~david/cfa/0.4/index.html>`_ files)
+  can be read, containing datasets for any version of CF up to and
+  including CF-|version|.
+
+..
+
+* Files in `CDL format
+  <https://www.unidata.ucar.edu/software/netcdf/netcdf/CDL-Syntax.html>`_,
+  with or without the data array values.
+
+..
+
+* :ref:`PP and UM fields files <PP-and-UM-fields-files>`, whose
+  contents are mapped into field constructs.
 
 For example, to read the file ``file.nc``, which contains two field
 constructs:
@@ -184,7 +194,7 @@ cards). Shell environment variables are also permitted.
 		
    >>> y = cf.read('*.nc')
    >>> len(y)
-   12
+   14
 
 .. code-block:: python
    :caption: *Read two particular files, noting that they contain more
@@ -207,7 +217,7 @@ with the *ignore_read_error* keyword.
    Exception: Can't determine format of file cf_tutorial_files.zip
    >>> y = cf.read('$PWD', ignore_read_error=True)
    >>> len(y)
-   13
+   15
 
 In all cases, the default behaviour is to aggregate the contents of
 all input datasets into as few field constructs as possible, and it is
@@ -1097,6 +1107,8 @@ by using the following field construct methods:
 =========================  ===========================================
 Method                     Description
 =========================  ===========================================
+`~Field.flatten`           Flatten domain axes of the field construct
+
 `~Field.flip`              Reverse the direction of a data dimension
 
 `~Field.insert_dimension`  Insert a new size one data dimension. The
@@ -1146,10 +1158,78 @@ have the same relative order as the field construct:
 
 .. code-block:: python
    :caption: *Also permute the data dimension of metadata constructs
-             using the 'contracts' keyword.*
+             using the 'contructs' keyword.*
 
-   >>> t4 = t.transpose([2, 0, 1], constructs=True)
+   >>> t4 = t.transpose(['X', 'Z', 'Y'], constructs=True)
 
+.. _Data-mask:
+   
+Data mask
+^^^^^^^^^
+
+There is always a data mask, which may be thought of as a separate
+data array of booleans with the same shape as the original data. The
+data mask is `False` where the the data has values, and `True` where
+the data is missing. The data mask may be inspected with the
+`~Field.mask` attribute of the field construct, which returns the data
+mask in a field construct with the same metadata constructs as the
+original field construct.
+
+
+.. code-block:: python
+   :caption: *Inspect the data mask of a field constuct.*
+
+   >>> print(q)
+   Field: specific_humidity (ncvar%q)
+   ----------------------------------
+   Data            : specific_humidity(latitude(5), longitude(8)) 1
+   Cell methods    : area: mean
+   Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                   : longitude(8) = [22.5, ..., 337.5] degrees_east
+                   : time(1) = [2019-01-01 00:00:00]
+   >>> print(q.mask)
+   Field: long_name=mask
+   ---------------------
+   Data            : long_name=mask(latitude(5), longitude(8))
+   Cell methods    : area: mean
+   Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                   : longitude(8) = [22.5, ..., 337.5] degrees_east
+                   : time(1) = [2019-01-01 00:00:00]
+   >>> print(q.mask.array)
+   array([[False, False, False, False, False, False, False, False],
+          [False, False, False, False, False, False, False, False],
+          [False, False, False, False, False, False, False, False],
+          [False, False, False, False, False, False, False, False],
+          [False, False, False, False, False, False, False, False]])
+
+.. code-block:: python
+   :caption: *Mask the polar rows (see the "Assignment by index"
+             section) and inspect the new data mask.*
+	  
+   >>> q[[0, 4], :] = cf.masked            
+   >>> print(q.mask.array)
+   array([[ True,  True,  True,  True,  True,  True,  True,  True],
+          [False, False, False, False, False, False, False, False],
+          [False, False, False, False, False, False, False, False],
+          [False, False, False, False, False, False, False, False],
+          [ True,  True,  True,  True,  True,  True,  True,  True]])
+
+The `~Field._FillValue` and `~Field.missing_value` attributes of the
+field construct are *not* stored as values of the field construct's
+data. They are only used when :ref:`writing the data to a netCDF
+dataset <Writing-to-a-netCDF-dataset>`. Therefore testing for missing
+data by testing for equality to one of these property values will
+produce incorrect results; the `~Field.any` and `~Field.all` methods
+of the field construct should be used instead.
+
+.. code-block:: python
+   :caption: *See if all, or any, data points are masked.*
+	     
+   >>> q.mask.all()
+   False
+   >>> q.mask.any()
+   True
+	  
 ----
 
 .. _Subspacing-by-index:
@@ -1280,9 +1360,11 @@ A `cf.Data` instance can also directly be indexed in the same way:
 -----------------------
 
 Data elements can be changed by assigning to elements selected by
-indices of the data (as described in this section) or by conditions
-based on the data values of the field construct or its metadata
-constructs (see :ref:`Assignment-by-condition`).
+indices of the data (as described in this section); by conditions
+based on the data values of the field construct or one of its metadata
+constructs (see :ref:`Assignment-by-condition`); or by identifying
+indices based on arbitrary metadata constructs (see
+:ref:`Assignment-by-metadata`).
 
 Assignment by indices uses rules that are very similar to the `numpy
 indexing rules
@@ -1375,7 +1457,8 @@ Masked values
 ^^^^^^^^^^^^^
  
 Data array elements may be set to missing values by assigning them to
-the `cf.masked` constant.
+the `cf.masked` constant, thereby updating the the :ref:`data mask
+<Data-mask>`.
 
 .. code-block:: python
    :caption: *Set a column of elements to missing values.*
@@ -1689,6 +1772,8 @@ easy to perform further filters on their results:
     
 Construct identities
 ^^^^^^^^^^^^^^^^^^^^
+
+TODO1 : mention relaxed identities
 
 Another method of selection is by metadata construct "identity".
 Construct identities are used to describe constructs when they are
@@ -2913,7 +2998,7 @@ Multiple dimensions
 ^^^^^^^^^^^^^^^^^^^
 
 Conditions may also be applied to multi-dimensionsal metadata
-constructs.
+constructs
 
 .. code-block:: python
    :caption: *Create TODO*
@@ -2961,6 +3046,80 @@ may not be acting along orthogonal dimensions, some missing data may
 still need to be inserted into the field construct's data, as is the
 case in this example.
 
+.. _Assignment-by-metadata:
+
+Assignment by metadata
+^^^^^^^^^^^^^^^^^^^^^^
+
+Data elements can be changed by assigning to elements selected by
+indices of the data (see :ref:`Assignment-by-index`); by conditions
+based on the data values of the field construct or one if its metadata
+constructs (see :ref:`Assignment-by-condition`); or by identifying
+indices based on arbitrary metadata constructs (as described in this
+section).
+     
+Assignment by metadata makes use of the `~Field.indices` method of the
+field construct to select metadata constructs and specify conditions
+on their data. Indices for subspacing are then automatically inferred
+from where the conditions are met. The tuple of indices returned by
+the `~Field.indices` may the be used in normal :ref:`assignment by
+index <Assignment-by-index>`.
+
+The `~Field.indices` method akes exactly the same arguments as the
+`~Field.subspace` method of the field construct. See
+:ref:`Subspacing-by-metadata` for details.
+
+.. code-block:: python
+   :caption: *Create TODO*
+
+   >>> q, t = cf.read('file.nc')
+   >>> print(t)
+   Field: air_temperature (ncvar%ta)
+   ---------------------------------
+   Data            : air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K
+   Cell methods    : grid_latitude(10): grid_longitude(9): mean where land (interval: 0.1 degrees) time(1): maximum
+   Field ancils    : air_temperature standard_error(grid_latitude(10), grid_longitude(9)) = [[0.76, ..., 0.32]] K
+   Dimension coords: atmosphere_hybrid_height_coordinate(1) = [1.5]
+                   : grid_latitude(10) = [2.2, ..., -1.76] degrees
+                   : grid_longitude(9) = [-4.7, ..., -1.18] degrees
+                   : time(1) = [2019-01-01 00:00:00]
+   Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
+                   : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
+                   : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., b'kappa']
+   Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
+   Coord references: grid_mapping_name:rotated_latitude_longitude
+                   : standard_name:atmosphere_hybrid_height_coordinate
+   Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
+                   : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
+                   : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
+   >>> indices = t.indices(grid_longitude=cf.wi(-4, -2))
+   >>> indices           
+   (slice(0, 1, 1), slice(0, 10, 1), slice(2, 7, 1))
+   >>> t[indices] = -11
+   >>> print(t.array)
+   [[[262.8 270.5 -11.  -11.  -11.  -11.  -11.  278.9 269.2]
+     [272.7 268.4 -11.  -11.  -11.  -11.  -11.  265.7 279.5]
+     [269.7 279.1 -11.  -11.  -11.  -11.  -11.  272.5 263.7]
+     [261.7 260.6 -11.  -11.  -11.  -11.  -11.  267.6 260.6]
+     [264.2 275.9 -11.  -11.  -11.  -11.  -11.  268.6 275.3]
+     [263.9 263.8 -11.  -11.  -11.  -11.  -11.  263.5 270.2]
+     [273.8 273.1 -11.  -11.  -11.  -11.  -11.  273.  270.6]
+     [267.9 273.5 -11.  -11.  -11.  -11.  -11.  260.8 268.9]
+     [270.9 278.7 -11.  -11.  -11.  -11.  -11.  278.5 266.4]
+     [276.4 264.2 -11.  -11.  -11.  -11.  -11.  273.4 269.7]]]
+   >>> t[t.indices(latitude=cf.wi(51, 53))] = -99
+   >>> print(t.array)
+   [[[262.8 270.5 -11.  -11.  -11.  -11.  -11.  278.9 269.2]
+     [272.7 268.4 -11.  -11.  -11.  -11.  -11.  265.7 279.5]
+     [269.7 279.1 -11.  -11.  -11.  -11.  -11.  272.5 263.7]
+     [-99.  -99.  -99.  -99.  -99.  -99.  -99.  -99.  -99. ]
+     [-99.  -99.  -99.  -99.  -99.  -99.  -99.  -99.  -99. ]
+     [-99.  -99.  -99.  -99.  -99.  -99.  -99.  -99.  -99. ]
+     [-99.  -99.  -99.  -99.  -99.  -99.  -99.  -99.  -99. ]
+     [267.9 273.5 -11.  -11.  -99.  -99.  -99.  -99.  -99. ]
+     [270.9 278.7 -11.  -11.  -11.  -11.  -11.  278.5 266.4]
+     [276.4 264.2 -11.  -11.  -11.  -11.  -11.  273.4 269.7]]]
+   
 ----
 
 .. _Sorting-and-selecting-from-field-lists:
@@ -2977,15 +3136,15 @@ criteria are possible.
    :caption: *Sort a field list by the field construct identities, and
              by field construct units.*
 
-   >>> fl = cf.read('file.nc')                                                                        
+   >>> fl = cf.read('file.nc')
    >>> fl
    [<CF Field: specific_humidity(latitude(5), longitude(8)) 1>,
     <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>]   
-   >>> fl.sort()                                                                                      
+   >>> fl.sort()
    >>> fl
    [<CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>,
     <CF Field: specific_humidity(latitude(5), longitude(8)) 1>]   
-   >>> fl.sort(key=lambda f: f.units)                                                                 
+   >>> fl.sort(key=lambda f: f.units)
    >>> fl
    [<CF Field: specific_humidity(latitude(5), longitude(8)) 1>,
     <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>]
@@ -3225,8 +3384,20 @@ of attributes) of an object.
 Condition constructors
 ^^^^^^^^^^^^^^^^^^^^^^
 
-For convenience, many commonly used conditions can be created with the
-following `cf.Query` instance constructors:
+For convenience, many commonly used conditions can be created with 
+`cf.Query` instance constructors.
+
+.. code-block:: python
+   :caption: *A example of a constructor (for a cell contaiing a
+             value) and its equivalent construction from construtor
+             cf.Query instances.*
+
+   >>> cf.contains(4)
+   <CF Query: [lower_bounds(le 4) & upper_bounds(ge 4)]>
+   >>> cf.Query('lt', 4, attr='lower_bounds') &  cf.Query('ge', 4, attr='upper_bounds')
+   <CF Query: [lower_bounds(lt 4) & upper_bounds(ge 4)]>
+
+The following `cf.Query` constructors are available:
 
 =============  ======================================================================
 *General conditions*
@@ -3291,6 +3462,8 @@ Constructor    Description
    <CF Query: (ge 2000-03-23 00:00:00)>
    >>> cf.year(1999)
    <CF Query: year(eq 1999)>
+   >>> cf.month(cf.wi(6, 8))
+   <CF Query: month(wi [6, 8])>
    >>> cf.jja()
    <CF Query: month(wi (6, 8))>
    >>> cf.contains(4)
@@ -3306,10 +3479,12 @@ Constructor    Description
 ---------------------------
 
 Data elements can be changed by assigning to elements selected by
-indices of the data (see :ref:`Assignment-by-index`) or by conditions
-based on the data values of the field construct or its metadata
-constructs (as described in this section).
-
+indices of the data (see :ref:`Assignment-by-index`); by conditions
+based on the data values of the field construct or one of its metadata
+constructs (as described in this section); or by identifying indices
+based on arbitrary metadata constructs (see
+:ref:`Assignment-by-metadata`).
+     
 Assignment by condition uses the `~Field.where` method of the field
 construct. This method automatically infers indices for assignment
 from conditions on the field construct's data, or its metadata. In
@@ -3674,8 +3849,8 @@ automatically included in output files as a netCDF global
 "Conventions" attribute, either as the CF version of the cf package
 (as returned by the `cf.CF` function), or else specified via the
 *Conventions* keyword of the `cf.write` function. See
-:ref:`Writing-to-disk` for details on how to specify additional
-conventions.
+:ref:`Writing-to-a-netCDF-dataset` for details on how to specify
+additional conventions.
 
 If this field were to be written to a netCDF dataset then, in the
 absence of predefined names, default netCDF variable and dimension
@@ -3986,7 +4161,7 @@ The `cf.read` function :ref:`reads a netCDF dataset
 field constructs, each one corresponding to a unique CF-netCDF data
 variable in the dataset. For example, the field construct ``tas`` that
 was created manually can be :ref:`written to a netCDF dataset
-<Writing-to-disk>` and then read back into memory:
+<Writing-to-a-netCDF-dataset>` and then read back into memory:
 
 .. code-block:: python
    :caption: *Write the field construct that was created manually to
@@ -4365,10 +4540,10 @@ Method                            Classes                                       
 
 ----
 
-.. _Writing-to-disk:
+.. _Writing-to-a-netCDF-dataset:
    
-**Writing to disk**
--------------------
+**Writing to a netCDF dataset**
+-------------------------------
 
 The `cf.write` function writes a field construct, or a sequence of
 field constructs, to a new netCDF file on disk:
@@ -4923,10 +5098,10 @@ constructs each now have a single cell. The air pressure time
 dimension was not included in the collapse because it already had size
 1 in the original field construct.
 
-The collapse can be applied to only a subset of the field construct's
-dimensions. In this case, the domain axis and coordinate constructs
-for the non-collapsed dimensions remain the same. This is implemented
-either with the *axes* keyword, or with a `CF-netCDF cell
+The collapse can also be applied to any subset of the field
+construct's dimensions. In this case, the domain axis and coordinate
+constructs for the non-collapsed dimensions remain the same. This is
+implemented either with the *axes* keyword, or with a `CF-netCDF cell
 methods`_\ -like syntax for describing both the collapse dimensions
 and the collapse method in a single string. The latter syntax uses
 :ref:`construct identities <Construct-identities>` instead of netCDF
@@ -4998,97 +5173,164 @@ Collapse methods
 ^^^^^^^^^^^^^^^^
 
 The following collapse methods are available, over any subset of the
-domain axes:
+domain axes. The "Cell method" column in the table gives the method of
+the new cell method construct (if one is created).
 
-========================  =====================================================
-Method                    Description
-========================  =====================================================
-``'maximum'``             The maximum of the values.
+============================  ========================================  ==========================
+Method                        Description                               Cell method
+============================  ========================================  ==========================
+``'maximum'``                 The maximum of the values.                ``maximum``
                           
-``'minimum'``             The minimum of the values.
+``'minimum'``                 The minimum of the values.                ``minimum``
                                    
-``'sum'``                 The sum of the values.
+``'maximum_absolute_value'``  The maximum of the absolute values.       ``maximum_absolute_value``
                           
-``'mid_range'``           The average of the maximum and the minimum of the
-                          values.
+``'minimum_absolute_value'``  The minimum of the absolute values.       ``minimum_absolute_value``
                           
-``'range'``               The absolute difference between the maximum and
-                          the minimum of the values.
-                          
-``'mean'``                The unweighted mean of :math:`N` values
-                          :math:`x_i` is
-                          
-                          .. math:: \mu=\frac{1}{N}\sum_{i=1}^{N} x_i
-                          
-                          The :ref:`weighted <Weights>` mean of
-                          :math:`N` values :math:`x_i` with
-                          corresponding weights :math:`w_i` is
+``'mid_range'``               The average of the maximum and the        ``mid_range``
+                              minimum of the values.
+                              
+``'range'``                   The absolute difference between the       ``range``
+                              maximum and the minimum of the values.
+			      
+``'sample_size'``             The sample size, :math:`N`, as would be   ``point``
+                              used for other calculations, i.e. the
+			      number of non-missing values.
+                              
+``'sum_of_weights'``          The sum of :math:`N` weights              ``sum``
+                              :math:`w_i`, as would be used for other
+                              calculations, is
 
-                          .. math:: \hat{\mu}=\frac{1}{V_{1}}
-                                                \sum_{i=1}^{N} w_i
-                                                x_i
+			      .. math:: V_{1}=\sum_{i=1}^{N} w_i
+			      
+``'sum_of_weights2'``         The sum of the squares of :math:`N`       ``sum``
+                              weights :math:`w_i`, as would be used
+                              for other calculations, is
 
-                          where :math:`V_{1}=\sum_{i=1}^{N} w_i`, the
-                          sum of the weights.
-                               
-``'variance'``            The unweighted variance of :math:`N` values
-                          :math:`x_i` and with :math:`N-ddof` degrees
-                          of freedom (:math:`ddof\ge0`) is
+			      .. math:: V_{2}=\sum_{i=1}^{N}  w_i^{2}
 
-                          .. math:: s_{N-ddof}^{2}=\frac{1}{N-ddof}
-                                      \sum_{i=1}^{N} (x_i - \mu)^2
+``'sum'``                     The unweighted sum of :math:`N` values    ``sum``
+                              :math:`x_i` is
+			      
+                              .. math:: t=\sum_{i=1}^{N} x_i
 
-                          The unweighted biased estimate of the
-                          variance (:math:`s_{N}^{2}`) is given by
-                          :math:`ddof=0` and the unweighted unbiased
-                          estimate of the variance using Bessel's
-                          correction (:math:`s^{2}=s_{N-1}^{2}`) is
-                          given by :math:`ddof=1`.
+``'sum_of_squares'``          The unweighted sum of the squares of      ``sum_of_squares``
+                              :math:`N` values :math:`x_i` is
+			      
+                              .. math:: t_2=\sum_{i=1}^{N} x_{i}^{2}
+                              
+``'integral'``                The integral of :math:`N` values          ``sum``
+                              :math:`x_i` with corresponding cell       
+                              measures :math:`m_i` is
+			      
+                              .. math:: i=\sum_{i=1}^{N} m_i x_i
 
-                          The :ref:`weighted <Weights>` biased
-                          estimate of the variance of :math:`N` values
-                          :math:`x_i` with corresponding weights
-                          :math:`w_i` is
+			      Note that the integral differs from a
+			      weighted sum in that the units of the
+			      cell measures are incorporated into the
+			      result.
+			      
+``'mean'``                    The unweighted mean of :math:`N` values   ``mean``
+                              :math:`x_i` is
+                              
+                              .. math:: \mu=\frac{1}{N}\sum_{i=1}^{N}
+					               x_i
+                              
+                              The :ref:`weighted <Collapse-weights>`
+                              mean of :math:`N` values :math:`x_i`
+                              with corresponding weights :math:`w_i`
+                              is
+			      
+                              .. math:: \hat{\mu}=\frac{1}{V_{1}}
+                                                    \sum_{i=1}^{N}
+                                         w_i x_i
+					
+``'mean_absolute_value'``     The unweighted mean of :math:`N`          ``mean_absolute_value``
+                              values :math:`x_i` absoluted is 
+                              
+                              .. math:: \mu_{abs}=\frac{1}{N}
+				       \sum_{i=1}^{N}|x_i|
+                              
+                              The :ref:`weighted <Collapse-weights>`
+                              mean of :math:`N` values :math:`x_i`
+                              absoluted with corresponding weights
+                              :math:`w_i` is
+			      
+                              .. math:: \hat{\mu}_{abs}=
+                                             \frac{1}{V_{1}}
+					     \sum_{i=1}^{N} w_i |x_i|					
 
-                          .. math:: \hat{s}_{N}^{2}=\frac{1}{V_{1}}
+``'variance'``                The unweighted variance of :math:`N`      ``variance``
+                              values :math:`x_i` and with 
+                              :math:`N-ddof` degrees of freedom
+   			      (:math:`ddof\ge0`) is
+			      
+                              .. math:: s_{N-ddof}^{2}=
+          		                \frac{1}{N-ddof}
+                                        \sum_{i=1}^{N} (x_i - \mu)^2
+			      
+                              The unweighted biased estimate of the
+                              variance (:math:`s_{N}^{2}`) is given by
+                              :math:`ddof=0` and the unweighted
+                              unbiased estimate of the variance using
+                              Bessel's correction
+                              (:math:`s^{2}=s_{N-1}^{2}`) is given by
+                              :math:`ddof=1`.
+			      
+                              The :ref:`weighted <Collapse-weights>`
+                              biased estimate of the variance of
+                              :math:`N` values :math:`x_i` with
+                              corresponding weights :math:`w_i` is
+			      
+                              .. math:: \hat{s}_{N}^{2}=
+					\frac{1}{V_{1}}
+                                        \sum_{i=1}^{N}
+                                        w_i(x_i -
+                                        \hat{\mu})^{2}
+                                   
+                              The corresponding :ref:`weighted
+                              <Collapse-weights>` unbiased estimate of
+                              the variance is
+                              
+                              .. math:: \hat{s}^{2}=\frac{1}{V_{1} -
+                                                    (V_{1}/V_{2})}
                                                     \sum_{i=1}^{N}
                                                     w_i(x_i -
                                                     \hat{\mu})^{2}
-                               
-                          The corresponding :ref:`weighted <Weights>`
-                          unbiased estimate of the variance is
-                          
-                          .. math:: \hat{s}^{2}=\frac{1}{V_{1} -
-                                                (V_{1}/V_{2})}
-                                                \sum_{i=1}^{N}
-                                                w_i(x_i -
-                                                \hat{\mu})^{2}
-
-                          where :math:`V_{2}=\sum_{i=1}^{N} w_i^{2}`,
-                          the sum of the squares of weights. In both
-                          cases, the weights are assumed to be
-                          non-random reliability weights, as
-                          opposed to frequency weights.
-                              
-``'standard_deviation'``  The variance is the square root of the variance.
-
-``'sample_size'``         The sample size, :math:`N`, as would be used for 
-                          other statistical calculations.
-                          
-``'sum_of_weights'``      The sum of weights, :math:`V_{1}`, as would be
-                          used for other statistical calculations.
-
-``'sum_of_weights2'``     The sum of squares of weights, :math:`V_{2}`, as
-                          would be used for other statistical calculations.
-========================  =====================================================
-
+			      
+                              In both cases, the weights are assumed
+                              to be non-random reliability weights, as
+                              opposed to frequency weights.
+                                  
+``'standard_deviation'``      The standard deviation is the square      ``standard_deviation``
+                              root of the unweighted or
+			      :ref:`weighted <Collapse-weights>`
+		              variance, as defined in this table.
+			       
+``'root_mean_square'``        The unweighted root mean square of        ``root_mean_square`` 
+                              :math:`N` values :math:`x_i` is
+			      
+                              .. math:: RMS=\sqrt{\frac{1}{N}
+				                   \sum_{i=1}^{N}
+				                   x_{i}^2}
+			      
+                              The :ref:`weighted <Collapse-weights>`
+                              root mean square of :math:`N` values
+                              :math:`x_i` with corresponding weights
+                              :math:`w_i` is
+			      
+                              .. math:: \hat{RMS}=\sqrt{
+				              \frac{1}{V_{1}}
+				              \sum_{i=1}^{N} w_i
+				              x_{i}^2}			      
+============================  ========================================  ==========================
 
 .. _Data-type-and-missing-data:
 
 Data type and missing data
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-In all collapses, missing data array elements are accounted for in the
+In all collapses, missing data array elements are accounted for in the 
 calculation.
 
 Any collapse method that involves a calculation (such as calculating a
@@ -5103,9 +5345,78 @@ construct.
 Collapse weights
 ^^^^^^^^^^^^^^^^
 
-The calculations of means, standard deviations and variances are, by
-default, not weighted. For weights to be incorporated in the collapse,
-the axes to be weighted must be identified with the *weights* keyword.
+.. The calculations of means, standard deviations and variances are,
+   by default, not weighted. For weights to be incorporated in the
+   collapse, the axes to be weighted must be identified with the
+   *weights* keyword.
+
+For weights to be incorporated in the collapse, the axes to be
+weighted must be identified with the *weights* keyword. A collapse by
+a particular method is either never weighted, or may be weighted, or
+is always weighted, as described in the following table:
+
+============================  ============================  ========
+Method                        Description                   Weighted  
+============================  ============================  ========
+``'maximum'``                 The maximum of the values.    Never
+                          
+``'minimum'``                 The minimum of the values.    Never
+
+``'maximum_absolute_value'``  The maximum of the absolute.  Never
+              
+``'minimum_absolute_value'``  The minimum of the absolute.  Never
+
+``'mid_range'``               The average of the maximum    Never
+                              and the minimum of the
+                              values.
+                              
+``'range'``                   The absolute difference       Never
+                              between the maximum and the
+                              minimum of the values.
+                              
+``'sum'``                     The sum of the values.        Never
+                                                                        
+``'sum_of_squares'``          The sum of the squares of     Never
+                              values.
+                              
+``'sample_size'``             The sample size, i.e. the     Never
+                              number of non-missing
+                              values.
+
+``'sum_of_weights'``          The sum of weights, as        Never
+                              would be used for other
+                              calculations.
+                              
+``'sum_of_weights2'``         The sum of squares of         Never
+                              weights, as would be used
+                              for other calculations.
+
+``'mean'``                    The weighted or unweighted    May be
+                              mean of the values.
+                              
+``'variance'``                The weighted or unweighted    May be
+                              variance of the values, with
+                              a given number of degrees of
+                              freedom.
+                                  
+``'standard_deviation'``      The square root of the        May be
+                              weighted or unweighted
+                              variance.
+                              
+``'root_mean_square'``        The square root of the        May be
+                              weighted or unweighted mean
+                              of the squares of the
+                              values.
+                              
+``'integral'``                The integral of values.       Always                                          
+============================  ============================  ========
+
+
+Collapse methods that are "Never" weighted ignore the *weights*
+parameter, even if it is set. Collapse methods that "May be" weighted
+will only be weighted if the *weights* parameter is set. Collapse
+methods that are "Always" weighted require the *weights* parameter to
+be set.
 
 Weights are either derived from the field construct's metadata (such
 as cell sizes), or may be provided explicitly in the form of other
@@ -5237,11 +5548,14 @@ collapses).
 Grouped collapses
 ^^^^^^^^^^^^^^^^^
 
-A grouped collapse is one for which as axis is not collapsed
+A grouped collapse is one for which an axis is not collapsed
 completely to size 1. Instead the collapse axis is partitioned into
 groups and each group is collapsed to size 1. The resulting axis will
 generally have more than one element. For example, creating 12 annual
-means from a timeseries of 120 months would be a grouped collapse.
+means from a timeseries of 120 months would be a grouped collapse. The
+groups do not need to be created from adjacent cells, as would be the
+case when creating 12 multi-annual monthly means from a timeseries of
+120 months.
 
 The *group* keyword of `~Field.collapse` defines the size of the
 groups. Groups can be defined in a variety of ways, including with
@@ -5506,7 +5820,6 @@ method constructs.
                    : air_pressure(1) = [850.0] hPa
 
 
-		   
 ----
 
 .. _Regridding:
@@ -5796,10 +6109,10 @@ Vertical regridding
 The only option for regridding along a vertical axis is to use
 Cartesian regridding. However, care must be taken to ensure that the
 vertical axis is transformed so that it's coordinate values are vary
-linearly. For example, to regrid a data on one set of vertical
-pressure coordinates to another set, the pressure coordinates may
-first be transformed into the logarithm of pressure, and then changed
-back to pressure coordinates after the regridding operation.
+linearly. For example, to regrid data on one set of vertical pressure
+coordinates to another set, the pressure coordinates may first be
+transformed into the logarithm of pressure, and then changed back to
+pressure coordinates after the regridding operation.
 
 .. code-block:: python
    :caption: *Regrid a field construct from one set of pressure levels
@@ -5844,8 +6157,8 @@ back to pressure coordinates after the regridding operation.
 
 Note that the `~Field.replace_construct` method of the field construct
 is used to easily replace the vertical dimension coordinate construct,
-without having to match up the corresponding domain axis construct and
-construct key.
+without having to manually match up the corresponding domain axis
+construct and construct key.
 
 ----
    
@@ -5876,7 +6189,8 @@ In any case, a field construct may appear as the left or right
 operand, and augmented assignments are possible.
 
 Automatic units conversions are also carried out between operands
-during operations.
+during operations, and if one operand has no units then the units of
+the other are assumed.
 
 .. code-block:: python
   :caption: *TODO*
@@ -5937,6 +6251,45 @@ they have different standard names.
     'units=1000 s-1.K',
     'ncvar%ta']
 
+.. note:: Care must be taken when combining a field construct with a
+          `numpy` array or a `Data` instance, due to the ways in which
+          both of these objects allow themselves to be combined with
+          other types:
+
+	  * If the field construct is on the left hand side (LHS) of
+            the operation then, as expected, a field construct is
+            returned whose data is the combination of the original
+            field construct's data and the `numpy` array or `Data`
+            instance on the right hand side (RHS).
+
+	  * If, however, the field construct is on the RHS then a
+            `numpy` array or `Data` innstance (which ever type is on
+            the LHS) is returned, containing the same data as in the
+            first case.
+    
+          .. code-block:: python
+             :caption: *A field construct will not be returned if the
+                       left hand operand is a numpy array or a 'Data'
+                       instance.*
+
+	     >>> import numpy
+	     >>> q, t = cf.read('fil.nc')
+             >>> a = numpy.array(1000)
+             >>> type(t * a)
+	     cf.field.Field
+	     >>> type(a + t)
+	     numpy.ndarray
+	     >>> b = numpy.random.randn(t.size).reshape(t.shape)
+	     >>> type(t * b)
+	     cf.field.Field
+	     >>> type(b * t)
+	     numpy.ndarray
+	     >>> type(t - cf.Data(b))
+	     cf.field.Field
+	     >>> type(cf.Data(b) * t)
+	     cf.data.data.Data
+	     
+
 .. _Unary-operations:
 
 Unary operations
@@ -5957,13 +6310,13 @@ returning a new field construct with modified data values. See the
     [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
     [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
     [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]   
-   >>> print(-q.array)                    
+   >>> print(-q.array)
    [[-0.007 -0.034 -0.003 -0.014 -0.018 -0.037 -0.024 -0.029]
     [-0.023 -0.036 -0.045 -0.062 -0.046 -0.073 -0.006 -0.066]
     [-0.11  -0.131 -0.124 -0.146 -0.087 -0.103 -0.057 -0.011]
     [-0.029 -0.059 -0.039 -0.07  -0.058 -0.072 -0.009 -0.017]
     [-0.006 -0.036 -0.019 -0.035 -0.018 -0.037 -0.034 -0.013]]
-   >>> print(abs(-q.array))  
+   >>> print(abs(-q).array)
    [[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]
     [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
     [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
@@ -5994,7 +6347,8 @@ In any case, a field construct may appear as the left or right
 operand.
 
 Automatic units conversions are also carried out between operands
-during operations.
+during operations, and if one operand has no units then the units of
+the other are assumed.
 
 .. code-block:: python
   :caption: *TODO*
@@ -6344,11 +6698,10 @@ Cumulative sums
 ^^^^^^^^^^^^^^^
 
 The `~Field.cumsum` method of the field construct calculates the
-cumulative sum of elements along a given axis. The cell bounds of of
-the axis are updated to describe the range over which the sum applies,
-and a new "sum" cell method construct is added to the resulting field
+cumulative sum of elements along a given axis. The cell bounds of the
+axis are updated to describe the ranges over which the sums apply, and
+a new ``sum`` cell method construct is added to the resulting field
 construct.
-
 
 .. code-block:: python
    :caption: *Calculate cumulative sums along the "T" axis, showing
@@ -6385,6 +6738,177 @@ The treatment of missing values can be specified, as well as the
 positioning of coordinate values in the summed axis of the returned
 field construct.
 
+.. _Histograms:
+
+Histograms
+^^^^^^^^^^
+
+The `cf.histogram` function is used to record the distribution of a
+set of variables in the form of an N-dimensional histogram.
+
+Each dimension of the histogram is defined by a field construct
+returned by the `~Field.digitize` method of a field construct. This
+"digitized" field construct defines a sequence of bins and provides
+indices to the bins that each value of one of the variables belongs.
+
+.. code-block:: python
+   :caption: *Create a one-dimensional histogram of a field construct
+             based on 10 equally-sized bins that exactly span the data
+             range.*
+   
+   >>> q, t = cf.read('file.nc')     
+   Field: specific_humidity (ncvar%q)
+   ----------------------------------
+   Data            : specific_humidity(latitude(5), longitude(8)) 1
+   Cell methods    : area: mean
+   Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                   : longitude(8) = [22.5, ..., 337.5] degrees_east
+                   : time(1) = [2019-01-01 00:00:00]       
+   >>> print(q.array)
+   [[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]
+    [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
+    [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
+    [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
+    [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]
+   >>> indices, bins = q.digitize(10, return_bins=True)
+   >>> print(indices)
+   Field: long_name=Bin index to which each 'specific_humidity' value belongs (ncvar%q)
+   ------------------------------------------------------------------------------------
+   Data            : long_name=Bin index to which each 'specific_humidity' value belongs(latitude(5), longitude(8))
+   Cell methods    : area: mean
+   Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                   : longitude(8) = [22.5, ..., 337.5] degrees_eastg
+                   : time(1) = [2019-01-01 00:00:00]
+   >>> print(indices.array)
+   [[0 2 0 0 1 2 1 1]
+    [1 2 2 4 3 4 0 4]
+    [7 8 8 9 5 6 3 0]
+    [1 3 2 4 3 4 0 0]
+    [0 2 1 2 1 2 2 0]]
+   >>> print(bins.array)
+   [[0.003  0.0173]
+    [0.0173 0.0316]
+    [0.0316 0.0459]
+    [0.0459 0.0602]
+    [0.0602 0.0745]
+    [0.0745 0.0888]
+    [0.0888 0.1031]
+    [0.1031 0.1174]
+    [0.1174 0.1317]
+    [0.1317 0.146 ]]
+   >>> h = cf.histogram(indices)                             
+   >>> print(h) 
+   Field: number_of_observations
+   -----------------------------
+   Data            : number_of_observations(specific_humidity(10)) 1
+   Cell methods    : latitude: longitude: point
+   Dimension coords: specific_humidity(10) = [10.15, ..., 138.85000000000002] 1
+   >>> print(h.array)
+   [9 7 9 4 5 1 1 1 2 1]
+   >>> print(h.coordinate('specific_humidity').bounds.array)
+   [[0.003  0.0173]
+    [0.0173 0.0316]
+    [0.0316 0.0459]
+    [0.0459 0.0602]
+    [0.0602 0.0745]
+    [0.0745 0.0888]
+    [0.0888 0.1031]
+    [0.1031 0.1174]
+    [0.1174 0.1317]
+    [0.1317 0.146 ]]
+
+.. _Binning-operations:
+
+Binning operations
+^^^^^^^^^^^^^^^^^^
+
+The `~Field.bin` method of the field construct groups its data into
+bins, where each group is defined by the elements that correspond to
+an :ref:`N-dimensionsal histogram bin of another set of variables
+<Histograms>`, and collapses the elements in each group to a single
+representative value. The same :ref:`collapse methods
+<Collapse-methods>` and :ref:`weighting options <Collapse-weights>` as
+the `~Field.collapse` method are available.
+
+The result of the binning operation is a field construct whose domain
+axis and dimension coordinate constructs describe the sizes of the
+N-dimensional bins of the other set of variables.
+
+.. code-block:: python
+   :caption: *Find the range of values that lie in each of bin 10
+             equally-sized bins of the data itself.*
+
+   >>> q, t = cf.read('file.nc')     
+   Field: specific_humidity (ncvar%q)
+   ----------------------------------
+   Data            : specific_humidity(latitude(5), longitude(8)) 0.001 1
+   Cell methods    : area: mean
+   Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                   : longitude(8) = [22.5, ..., 337.5] degrees_east
+                   : time(1) = [2019-01-01 00:00:00]       
+   >>> print(q.array)
+   [[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]
+    [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
+    [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
+    [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
+    [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]
+   >>> indices = q.digitize(5)                                             
+   >>> b = q.bin('range', digitized=indices)                             
+   >>> print(b)                                    
+   Field: specific_humidity
+   ------------------------
+   Data            : specific_humidity(specific_humidity(5)) 1
+   Cell methods    : latitude: longitude: range
+   Dimension coords: specific_humidity(5) = [0.0173, ..., 0.1317] 1
+   >>> print(b.array)
+   [0.026 0.025 0.025 0.007 0.022]  
+   >>> print(b.coordinate('specific_humidity').bounds.array)
+   [[0.003  0.0316]
+    [0.0316 0.0602]
+    [0.0602 0.0888]
+    [0.0888 0.1174]
+    [0.1174 0.146 ]]
+
+.. code-block:: python
+   :caption: *Find the area-weighted mean of specific humidity values
+             that correspond to two-dimensional bins defined by
+             temperature and pressure values.*
+
+   >>> p, t = cf.read('file2.nc')
+   >>> print(t)
+   Field: air_temperature (ncvar%t)
+   --------------------------------
+   Data            : air_temperature(latitude(5), longitude(8)) degreesC
+   Cell methods    : area: mean
+   Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                   : longitude(8) = [22.5, ..., 337.5] degrees_east
+                   : time(1) = [2019-01-01 00:00:00]
+   >>> print(p)      
+   Field: air_pressure (ncvar%p)
+   -----------------------------
+   Data            : air_pressure(latitude(5), longitude(8)) hPa
+   Cell methods    : area: mean
+   Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                   : longitude(8) = [22.5, ..., 337.5] degrees_east
+                   : time(1) = [2019-01-01 00:00:00]
+   >>> t_indices = t.digitize(4)
+   >>> p_indices = p.digitize(6)
+   >>> b = q.bin('mean', digitized=[t_indices, p_indices], weights='area')  
+   >>> print(b)
+   Field: specific_humidity
+   ------------------------
+   Data            : specific_humidity(air_pressure(6), air_temperature(4)) 1
+   Cell methods    : latitude: longitude: mean
+   Dimension coords: air_pressure(6) = [966.6225003326126, ..., 1033.6456080043665] hPa
+                   : air_temperature(4) = [-12.735821567738295, ..., 9.9702610462581] degreesC
+   >>> print(b.array)
+   [[     --       --       --  0.011  ]
+    [0.131    0.0145   0.0345   0.05052]
+    [0.05742  0.01727  0.06392  0.0105 ]
+    [     --  0.04516  0.05272  0.10194]
+    [0.124    0.024    0.059    0.006  ]
+    [     --  0.08971       --       --]]
+
 ----
   
 .. _Aggregation:
@@ -6412,7 +6936,7 @@ constructs in memory with the `cf.aggregate` function.
    >>> a = cf.read('air_temperature.nc')[0]
    >>> a
    <CF Field: air_temperature(time(2), latitude(73), longitude(96)) K>
-   >>> a_parts = [a[0, : , 0:30], a[0, :, 30:], a[1, :, 0:30], a[1, :, 30:]]
+   >>> a_parts = [a[0, : , 0:30], a[0, :, 30:96], a[1, :, 0:30], a[1, :, 30:96]]
    >>> a_parts
    [<CF Field: air_temperature(time(1), latitude(73), longitude(30)) K>,
     <CF Field: air_temperature(time(1), latitude(73), longitude(66)) K>,
@@ -6424,6 +6948,10 @@ constructs in memory with the `cf.aggregate` function.
    >>> x = cf.read('[0-3]_air_temperature.nc')
    >>> y = cf.read('[0-3]_air_temperature.nc', aggregate=False)
    >>> z = cf.aggregate(y)
+   >>> x
+   [<CF Field: air_temperature(time(2), latitude(73), longitude(96)) K>]
+   >>> z
+   [<CF Field: air_temperature(time(2), latitude(73), longitude(96)) K>]
    >>> x.equals(z)
    True
 
@@ -6448,6 +6976,30 @@ Note that when reading :ref:`PP and UM fields files
 <PP-and-UM-fields-files>` with `cf.read`, the *relaxed_units* option
 is `True` by default, because units are not always available to field
 constructs derived from :ref:`PP-and-UM-fields-files`.
+
+Field constructs that are logically similar but aranged differently
+are also aggregatable.
+
+.. code-block:: python
+   :caption: *Show that the aggregation is unchanged when one of the
+             field constructs has a different axis order and different
+             units.*
+
+   >>> x = cf.aggregate(a_parts)
+   >>> x
+   [<CF Field: air_temperature(time(2), latitude(73), longitude(96)) K>]
+   >>> a_parts[1].transpose(inplace=True)
+   >>> a_parts[1].units = 'degreesC'
+   >>> a_parts
+   [<CF Field: air_temperature(time(1), latitude(73), longitude(30)) K>,
+    <CF Field: air_temperature(longitude(66), latitude(73), time(1)) degreesC>,
+    <CF Field: air_temperature(time(1), latitude(73), longitude(30)) K>,
+    <CF Field: air_temperature(time(1), latitude(73), longitude(66)) K>]
+   >>> z = cf.aggregate(a_parts)
+   >>> z   
+   [<CF Field: air_temperature(time(2), latitude(73), longitude(96)) K>]
+   >>> x.equals(z)
+   True
 
 ----
 

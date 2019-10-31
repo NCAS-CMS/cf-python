@@ -32,13 +32,13 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.1</a></b></h3>
-<ul>
+<h3><b><a href="../index.html">cf 3.0.2</a></b></h3>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
@@ -90,7 +90,7 @@
 <h1>cf.FieldList.select_by_property<a class="headerlink" href="#cf-fieldlist-select-by-property" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.FieldList.select_by_property">
-<code class="descclassname">FieldList.</code><code class="descname">select_by_property</code><span class="sig-paren">(</span><em>*mode</em>, <em>**properties</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/fieldlist.py#L853"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.FieldList.select_by_property" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">FieldList.</code><code class="descname">select_by_property</code><span class="sig-paren">(</span><em>*mode</em>, <em>**properties</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/fieldlist.py#L852"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.FieldList.select_by_property" title="Permalink to this definition">¶</a></dt>
 <dd><p>Select field constructs by property.</p>
 <p>To find the inverse of the selection, use a list comprehension
 with <a class="reference internal" href="cf.Field.match_by_property.html#cf.Field.match_by_property" title="cf.Field.match_by_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_property</span></code></a> method of the field
@@ -138,7 +138,7 @@ property name. The value may be a scalar or vector
 (e.g. <code class="docutils literal notranslate"><span class="pre">'air_temperature'</span></code>, <code class="docutils literal notranslate"><span class="pre">4</span></code>, <code class="docutils literal notranslate"><span class="pre">['foo',</span> <span class="pre">'bar']</span></code>);
 or a compiled regular expression
 (e.g. <code class="docutils literal notranslate"><span class="pre">re.compile('^ocean')</span></code>), for which all constructs
-whose methods match (via <a class="reference external" href="https://docs.python.org/3/library/re.html#re.search" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.search</span></code></a>) are selected.</p>
+whose methods match (via <a class="reference external" href="https://docs.python.org/3/library/re.html#re.search" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.search</span></code></a>) are selected.</p>
 </dd>
 </dl>
 </td>
@@ -170,7 +170,7 @@ whose methods match (via <a class="reference external" href="https://docs.python
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cf.FieldList.select_by_property.rst.txt"

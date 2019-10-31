@@ -21,8 +21,7 @@
 Version |release| for version |version| of the CF conventions.
 
 The Python cf package is an Earth science data analysis library that
-is built on a complete implementation of the :ref:`CF-data-model`
-[#cfdm]_.
+is built on a complete implementation of the :ref:`CF-data-model`.
 
 
 **Functionality**
@@ -36,7 +35,7 @@ is built on a complete implementation of the :ref:`CF-data-model`
 
 	  Scripts written for version 2.x but running under version
           3.x should either work as expected, or provide informative
-          error mesages on the new API usage. However, it is advised
+          error messages on the new API usage. However, it is advised
           that the outputs of older scripts be checked when running
           with Python 3 versions of the cf library.
 
@@ -106,10 +105,12 @@ The cf package can:
 **Visualization**
 -----------------
 
+----
+
 Powerful, flexible, and very simple to produce visualizations of field
 constructs are available with the `cf-plot package
-<http://ajheaps.github.io/cf-plot>`_ (that needs to be installed
-seprately to cf).
+<http://ajheaps.github.io/cf-plot>`_, that needs to be installed
+separately to cf.
 
 See the `cf-plot gallery
 <http://ajheaps.github.io/cf-plot/gallery.html>`_ for the wide range

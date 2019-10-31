@@ -32,13 +32,13 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.1</a></b></h3>
-<ul>
+<h3><b><a href="../index.html">cf 3.0.2</a></b></h3>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
@@ -116,7 +116,7 @@ doesn’t matter which order they are specified in.</li>
 <li>Subspace criteria may be provided for size 1 domain axes that
 are not spanned by the field construct’s data.</li>
 <li>Explicit indices may also be assigned to a domain axis
-identified by a metadata construct, with either a Python <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a>
+identified by a metadata construct, with either a Python <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a>
 object, or a sequence of integers or booleans.</li>
 <li>For a dimension that is cyclic, a subspace defined by a slice or
 by a <a class="reference internal" href="../classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> instance is assumed to “wrap” around the edges of
@@ -142,7 +142,7 @@ then these indices work independently along each dimension
 the same indexing behaviour as on a Variable object of the
 netCDF4 package.</li>
 <li>For a dimension that is cyclic, a range of indices specified by
-a <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.7)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a> that spans the edges of the data (such as <code class="docutils literal notranslate"><span class="pre">-2:3</span></code> or
+a <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a> that spans the edges of the data (such as <code class="docutils literal notranslate"><span class="pre">-2:3</span></code> or
 <code class="docutils literal notranslate"><span class="pre">3:-2:-1</span></code>) is assumed to “wrap” around, rather then producing
 a null result.</li>
 </ul>
@@ -260,7 +260,7 @@ the original field.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/attribute/cf.Field.subspace.rst.txt"

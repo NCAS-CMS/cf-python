@@ -64,12 +64,14 @@ Data methods
    ~cf.Data.cos
    ~cf.Data.count
    ~cf.Data.count_masked
+   ~cf.Data.cumsum
    ~cf.Data.cyclic
    ~cf.Data.datum
    ~cf.Data.del_calendar
    ~cf.Data.del_fill_value
    ~cf.Data.del_units
    ~cf.Data.dump
+   ~cf.Data.digitize
    ~cf.Data.dumpd
    ~cf.Data.dumps
    ~cf.Data.empty
@@ -81,6 +83,7 @@ Data methods
    ~cf.Data.fits_in_memory
    ~cf.Data.fits_in_one_chunk_in_memory
    ~cf.Data.flat
+   ~cf.Data.flatten
    ~cf.Data.flip
    ~cf.Data.floor
    ~cf.Data.full

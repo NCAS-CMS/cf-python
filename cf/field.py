@@ -89,6 +89,7 @@ _units_metres  = Units('m')
 # --------------------------------------------------------------------
 _collapse_methods = {
     'mean'                  : 'mean',
+    'mean_absolute_value'   : 'mean_absolute_value',
     'avg'                   : 'mean',
     'average'               : 'mean',
     'max'                   : 'max',
@@ -119,6 +120,7 @@ _collapse_methods = {
 _collapse_cell_methods = {
     'point'                 : 'point',
     'mean'                  : 'mean',
+    'mean_absolute_value'   : 'mean_absolute_value',
     'avg'                   : 'mean',
     'average'               : 'mean',
     'max'                   : 'maximum',
@@ -6060,9 +6062,11 @@ may be accessed with the `nc_global_attributes`,
                                       
             ``'minimum'``                 The minimum of the values.    Never
             
-            ``'maximum_absolute_value'``  The maximum of the absolute.  Never
-                          
-            ``'minimum_absolute_value'``  The minimum of the absolute.  Never
+            ``'maximum_absolute_value'``  The maximum of the absolute   Never
+                                          values.
+
+            ``'minimum_absolute_value'``  The minimum of the absolute   Never
+                                          values.
             
             ``'mid_range'``               The average of the maximum    Never
                                           and the minimum of the
@@ -6092,6 +6096,8 @@ may be accessed with the `nc_global_attributes`,
             ``'mean'``                    The weighted or unweighted    May be
                                           mean of the values.
                                           
+            ``'mean_absolute_value'``     The mean of the absolute.     May be
+
             ``'variance'``                The weighted or unweighted    May be
                                           variance of the values, with
                                           a given number of degrees of
@@ -7354,9 +7360,11 @@ may be accessed with the `nc_global_attributes`,
                                       
             ``'minimum'``                 The minimum of the values.    Never
             
-            ``'maximum_absolute_value'``  The maximum of the absolute.  Never
+            ``'maximum_absolute_value'``  The maximum of the absolute   Never
+                                          values.
                           
-            ``'minimum_absolute_value'``  The minimum of the absolute.  Never
+            ``'minimum_absolute_value'``  The minimum of the absolute   Never
+                                          values.
             
             ``'mid_range'``               The average of the maximum    Never
                                           and the minimum of the
@@ -7386,6 +7394,8 @@ may be accessed with the `nc_global_attributes`,
             ``'mean'``                    The weighted or unweighted    May be
                                           mean of the values.
                                           
+            ``'mean_absolute_value'``     The mean of the absolute.     May be
+
             ``'variance'``                The weighted or unweighted    May be
                                           variance of the values, with
                                           a given number of degrees of
@@ -8464,9 +8474,9 @@ may be accessed with the `nc_global_attributes`,
                                           radius=radius)
                     if not g_weights:
                         g_weights = None
-                        
-                elif weights is not None:
-                    raise ValueError("Can't weight a {!r} collapse".format(method))
+                #--- End: if                       
+#                elif weights is not None:
+#                    raise ValueError("Can't weight a {!r} collapse".format(method))
 
                 axis = collapse_axes.key()
                 
@@ -8570,7 +8580,7 @@ may be accessed with the `nc_global_attributes`,
 
                     if d_weights:
                         d_kwargs['weights'] = d_weights
-
+                #--- End: if
 #                elif weights is not None:
 #                    raise ValueError("Can't weight a {!r} collapse".format(method))
 

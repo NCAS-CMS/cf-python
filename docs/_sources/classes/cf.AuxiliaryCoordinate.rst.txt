@@ -191,13 +191,22 @@ Data
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.AuxiliaryCoordinate.flatten
    ~cf.AuxiliaryCoordinate.flip
    ~cf.AuxiliaryCoordinate.insert_dimension
    ~cf.AuxiliaryCoordinate.roll
    ~cf.AuxiliaryCoordinate.squeeze
+   ~cf.AuxiliaryCoordinate.swapaxes
    ~cf.AuxiliaryCoordinate.transpose
    
 .. rubric:: *Data array mask*
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.AuxiliaryCoordinate.fill_value
 
 .. autosummary::
    :nosignatures:
@@ -208,7 +217,6 @@ Data
    ~cf.AuxiliaryCoordinate.count
    ~cf.AuxiliaryCoordinate.count_masked
    ~cf.AuxiliaryCoordinate.hardmask
-   ~cf.AuxiliaryCoordinate.fill_value
    ~cf.AuxiliaryCoordinate.mask
    ~cf.AuxiliaryCoordinate.mask_invalid
 

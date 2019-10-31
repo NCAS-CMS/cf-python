@@ -7722,7 +7722,7 @@ returned.
     
     **Examples:**
 
-    >>> d=cf.Data([[-1, 2, 3], [9, -8, -12]], 'm')                              
+    >>> d = cf.Data([[-1, 2, 3], [9, -8, -12]], 'm')                              
     >>> d.maximum_absolute_value()                                             
     <CF Data(1, 1): [[12]] m>
     >>> d.max()                                                                 
@@ -7804,7 +7804,7 @@ returned.
     
     **Examples:**
 
-    >>> d=cf.Data([[-1, 2, 3], [9, -8, -12]], 'm')                              
+    >>> d = cf.Data([[-1, 2, 3], [9, -8, -12]], 'm')                              
     >>> d.minimum_absolute_value()                                              
     <CF Data(1, 1): [[1]] m>
     >>> d.d.min()                                                                 
@@ -7999,6 +7999,81 @@ returned.
                               inplace=inplace,
                               _preserve_partitions=_preserve_partitions)
 
+
+    def mean_absolute_value(self, axes=None, squeeze=False, mtol=1,
+                            weights=None, inplace=False,
+                            _preserve_partitions=False):
+        '''Collapse axes with their mean absolute value.
+
+    Missing data elements are omitted from the calculation.
+    
+    .. seealso:: `max`, `min`, `mean`, `mid_range`, `sum`, `sd`, `var`
+    
+    :Parameters:
+    
+        axes : (sequence of) int, optional
+            TODO
+
+        weights: TODO
+
+        squeeze : bool, optional
+            TODO
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+    :Returns:
+    
+        `Data` or `None`
+            The collapsed data, or `None` if the operation was
+            in-place.
+    
+    **Examples:**
+
+    >>> d = cf.Data([[-1, 2, 3], [9, -8, -12]], 'm')                              
+    >>> d.mean_absolute_value()                                              
+    <CF Data(1, 1): [[5.833333333333333]] m>
+    >>> d.mean_absolute_value(axes=1)                                        
+    <CF Data(2, 1): [[2.0, 9.666666666666666]] m>
+
+        '''
+        return self._collapse(mean_abs_f, mean_abs_fpartial,
+                              mean_abs_ffinalise, axes=axes,
+                              squeeze=squeeze, weights=weights,
+                              mtol=mtol, inplace=inplace,
+                              _preserve_partitions=_preserve_partitions)
+
+
+    def mean_of_upper_decile(self, axes=None, squeeze=False, mtol=1, weights=None,
+             inplace=False, i=False, _preserve_partitions=False):
+        '''TODO'''
+        # Parse axis
+        ndim = self._ndim 
+        if -ndim-1 <= axis < 0:
+            axis += ndim + 1
+        elif not 0 <= axis <= ndim:
+            raise ValueError(
+                "Can't cumsum: Invalid axis specification: Expected -{0}<=axis<{0}, got axis={1}".format(
+                    ndim, axis))
+
+        sections = self.section(axis, chunks=True)
+
+        # Cumulatively sum each section
+        for key, data in sections.items():
+            array = data.array
+
+            if masked_as_zero and numpy_ma_is_masked(array):
+                array = array.filled(0)
+            
+            output_array = numpy_cumsum(array, axis=axis)
+            sections[key] = type(self)(output_array, units=self.Units,
+                                       fill_value=self.fill_value)
+
+        # Glue the sections back together again
+        out = self.reconstruct_sectioned_data(sections)
+        return out
+
+    
     def integral(self, axes=None, squeeze=False, mtol=1, weights=None,
                  inplace=False, _preserve_partitions=False):
         '''TODO
