@@ -596,7 +596,7 @@ def _plural(n): # pragma: no cover
     return 's' if n !=1 else '' # pragma: no cover
 
 
-def _read_a_file(filename, aggregate=True, aggregate_options={},
+def _read_a_file(filename, aggregate=True, aggregate_options=None,
                  ignore_read_error=False, verbose=False,
                  warnings=False, external=None, selected_fmt=None,
                  um=None, extra=None, height_at_top_of_model=None,
@@ -628,6 +628,8 @@ def _read_a_file(filename, aggregate=True, aggregate_options={},
             The fields in the file.
 
     '''
+    if aggregate_options is None:
+        aggregate_options = {}
     # Find this file's type
     fmt                    = None
     word_size              = None
