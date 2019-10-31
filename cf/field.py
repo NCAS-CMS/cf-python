@@ -4269,24 +4269,22 @@ may be accessed with the `nc_global_attributes`,
 
     .. versionadded:: 1.0
     
-    .. seealso:: `weights`
+    .. seealso:: `bin`, `collapse`, `radius`, `weights`
     
     :Parameters:
     
         radius: optional
-            The radius used for calculating the areas of cells defined
-            in spherical polar coordinates. By default (or if *radius*
-            is ``'earth'``) the radius taken as 6371229 metres,
-            representing the radius of the Earth. May be set to any
-            numeric scalar object, including `numpy` and `Data`
-            objects. The units of the radius are assumed to be metres,
-            unless specified by a `Data` object.
-    
-            *Parameter example:*         
-              Five equivalent ways to set a radius of 6371200 metres:
-              ``radius=6371200``, ``radius=numpy.array(6371200)``,
-              ``radius=cf.Data(6371200)``, ``radius=cf.Data(6371200,
-              'm')``, ``radius=cf.Data(6371.2, 'km')``.
+            Specify the radius used for calculating the areas of cells
+            defined in spherical polar coordinates. The radius is that
+            which would be returned by this call of the field
+            construct's `~cf.Field.radius` method:
+            ``f.radius(radius)``. See the `cf.Field.radius` for
+            details.
+
+            By default *radius* is ``'earth'`` which means that if and
+            only if the radius can not found from the datums of any
+            coordinate reference constucts, then the default radius
+            taken as 6371229 metres.
     
         insert: `bool`, optional
             If True then calculated cell areas are also inserted in
@@ -4350,23 +4348,56 @@ may be accessed with the `nc_global_attributes`,
 
 
     def radius(self, default=None):
-        '''TODO
+        '''Return the radius used for calculating cell areas in spherical
+    polar coordinates.
+
+    The radius is taken from the datums of any coordinate reference
+    constucts, but if and only if this is not possible then a default
+    value may be used instead.
+
+    .. versionadded:: 3.0.2
+
+    .. seealso:: `bin`, `cell_area`, `collapse`, `weights`
 
     :Parameters:
         
         default: optional
+            The radius is taken from the datums of any coordinate
+            reference constucts, but if and only if this is not
+            possible then the value set by the *default* parameter is
+            used. May be set to any numeric scalar object, including
+            `numpy` and `Data` objects. The units of the radius are
+            assumed to be metres, unless specified by a `Data`
+            object. If the special value ``'earth'`` is given then the
+            default radius taken as 6371229 metres. If *default* is
+            `None` an exception will be raised if no unique datum can
+            be found in the coordinate reference constucts.
+    
+            *Parameter example:*         
+              Five equivalent ways to set a default radius of 6371200
+              metres: ``default=6371200``,
+              ``default=numpy.array(6371200)``,
+              ``default=cf.Data(6371200)``, ``default=cf.Data(6371200,
+              'm')``, ``default=cf.Data(6371.2, 'km')``.
 
     :Returns:
 
         `Data`
+            The radius of the sphere, in units of metres.
 
     **Examples:**
 
-    TODO
+    >>> f.radius()
+    <CF Data(): 6371178.98 m>
+
+    >>> g.radius()
+    ValueError: No radius found in coordinate reference constructs and no default provided
+    >>> g.radius('earth')
+    <CF Data(): 6371229.0 m>
+    >>> g.radius(1234)
+    <CF Data(): 1234.0 m>
 
         '''
-        
-        
         radii = []
         for cr in self.coordinate_references.values():
             r = cr.datum.get_parameter('earth_radius', None)
@@ -4374,7 +4405,11 @@ may be accessed with the `nc_global_attributes`,
                 r = Data.asdata(r)
                 if not r.Units:
                     r.override_units('m', inplace=True)
-    
+
+                if r.size != 1:
+                    radii.append(r)
+                    continue
+                    
                 got = False
                 for _ in radii:
                     if r == _:
@@ -4393,9 +4428,13 @@ may be accessed with the `nc_global_attributes`,
 
         if not radii:
             if default is None:
-                raise ValueError("TODO")
-
-            if default == 'earth':
+                raise ValueError(
+                    "No radius found in coordinate reference constructs and no default provided")
+            
+            if isinstance(default, str):
+                if default != 'earth':
+                    raise ValueError("The default parameter must be numeric or the string 'earth'")
+                
                 return _earth_radius.copy()
         
             r = Data.asdata(default).squeeze()
@@ -4782,7 +4821,7 @@ may be accessed with the `nc_global_attributes`,
     
     .. versionadded:: 1.0
     
-    .. seealso:: `cell_area`, `collapse`
+    .. seealso:: `bin`, `cell_area`, `collapse`, `radius`
     
     :Parameters:
     
@@ -4890,8 +4929,41 @@ may be accessed with the `nc_global_attributes`,
               ``scale=1``.
 
         measure: `bool`, optional
-            TODO
-        
+            Create weights that are cell measures, i.e. which describe
+            actual cell sizes (e.g. cell areas) with appropriate units
+            (e.g. metres squared).
+
+            Cell measures can be created for any combination of
+            axes. For example, cell measures for a time axis are the
+            time span for each cell with canonical units of seconds;
+            cell measures for the combination of four axes
+            representing time and three dimensional space could have
+            canonical units of metres cubed seconds.
+
+            .. note:: Specifying cell volume weights via
+                      ``weights=['X', 'Y', 'Z']`` or
+                      ``weights=['area', 'Z']`` (or other equivalents)
+                      will produce **an incorrect result if the
+                      vertical dimension coordinates do not define the
+                      actual height or depth thickness of every cell
+                      in the domain**. In this case,
+                      ``weights='volume'`` should be used instead,
+                      which requires the field construct to have a
+                      "volume" cell measure construct.
+
+        radius: optional
+            Specify the radius used for calculating the areas of cells
+            defined in spherical polar coordinates. The radius is that
+            which would be returned by this call of the field
+            construct's `~cf.Field.radius` method:
+            ``f.radius(radius)``. See the `cf.Field.radius` for
+            details.
+
+            By default *radius* is ``'earth'`` which means that if and
+            only if the radius can not found from the datums of any
+            coordinate reference constucts, then the default radius
+            taken as 6371229 metres.
+
         components: `bool`, optional
             If True then a dictionary of orthogonal weights components
             is returned instead of a field. Each key is a tuple of
@@ -5978,7 +6050,7 @@ may be accessed with the `nc_global_attributes`,
             The collapse method used to combine values that map to
             each cell of the output field construct. The following
             methods are available (see
-            https://ncas-cms.github.io/cf-python/beta/tutorial.html#collapse-methods
+            https://ncas-cms.github.io/cf-python/tutorial.html#collapse-methods
             for precise definitions):
 
             ============================  ============================  ========
@@ -6158,19 +6230,17 @@ may be accessed with the `nc_global_attributes`,
             sample mean (Bessel's correction).
     
         radius: optional
-            The radius used for calculating area cell measures for
-            cells defined in spherical polar coordinates. By default
-            (or if *radius* is ``'earth'``) the radius taken as
-            6371229 metres, representing the radius of the Earth. May
-            be set to any numeric scalar object, including `numpy` and
-            `Data` objects. The units of the radius are assumed to be
-            metres, unless specified by a `Data` object.
-    
-            *Parameter example:*         
-              Five equivalent ways to set a radius of 6371200 metres:
-              ``radius=6371200``, ``radius=numpy.array(6371200)``,
-              ``radius=cf.Data(6371200)``, ``radius=cf.Data(6371200,
-              'm')``, ``radius=cf.Data(6371.2, 'km')``.
+            Specify the radius used for calculating the areas of cells
+            defined in spherical polar coordinates. The radius is that
+            which would be returned by this call of the field
+            construct's `~cf.Field.radius` method:
+            ``f.radius(radius)``. See the `cf.Field.radius` for
+            details.
+
+            By default *radius* is ``'earth'`` which means that if and
+            only if the radius can not found from the datums of any
+            coordinate reference constucts, then the default radius
+            taken as 6371229 metres.
 
         verbose: `bool`, optional    
             If True then print a description of the binned field
@@ -7264,8 +7334,7 @@ may be accessed with the `nc_global_attributes`,
 
     .. versionadded:: 1.0
     
-    .. seealso:: `bin`, `weights`, `max`, `mean`, `mid_range`, `min`,
-                 `range`, `sample_size`, `sd`, `sum`, `var`
+    .. seealso:: `bin`, `cell_area`, `weights`, `radius`
     
     :Parameters:
         
@@ -7275,7 +7344,7 @@ may be accessed with the `nc_global_attributes`,
             the *axes* parameter are collapsed simultaneously by this
             method. The method is given by one of the following
             strings (see
-            https://ncas-cms.github.io/cf-python/beta/tutorial.html#collapse-methods
+            https://ncas-cms.github.io/cf-python/tutorial.html#collapse-methods
             for precise definitions):
 
             ============================  ============================  ========
@@ -7468,6 +7537,19 @@ may be accessed with the `nc_global_attributes`,
             *Parameter example:*
               To scale all weights so that they lie between 0 and 0.5:
               ``scale=0.5``.            
+
+        radius: optional
+            Specify the radius used for calculating the areas of cells
+            defined in spherical polar coordinates. The radius is that
+            which would be returned by this call of the field
+            construct's `~cf.Field.radius` method:
+            ``f.radius(radius)``. See the `cf.Field.radius` for
+            details.
+
+            By default *radius* is ``'earth'`` which means that if and
+            only if the radius can not found from the datums of any
+            coordinate reference constucts, then the default radius
+            taken as 6371229 metres.
 
         squeeze: `bool`, optional
             If True then size 1 collapsed axes are removed from the

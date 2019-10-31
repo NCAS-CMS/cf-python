@@ -38,10 +38,10 @@ in-place is now *inplace* (rather than *i*).
    >>> x = f.tranpose(inplace=True)
    >>> print(x)
    None
-	  
 
-New methods
------------
+   
+New methods that replace deprecated ones
+----------------------------------------
 
 Version 3.x methods that replace deprecated version 2.x methods:
 
@@ -60,6 +60,12 @@ Version 3.x                                      	  Version 2.x
                                                           `cf.Field.item_axes`            
 						 	                                   
 `cf.Field.insert_dimension`			 	  `cf.Field.expand_dims`           
+						 	                                   
+`cf.Field.nc_del_variable`			 	  `cf.Field.ncvar`
+						 	                                   
+`cf.Field.nc_get_variable`			 	  `cf.Field.ncvar`
+						 	                                   
+`cf.Field.nc_set_variable`			 	  `cf.Field.ncvar`
 						 	                                   
 `cf.Field.set_construct`			 	  `cf.Field.insert_aux`,            
                            			 	  `cf.Field.insert_axis`,          
@@ -82,31 +88,39 @@ Version 3.x                                      	  Version 2.x
 ========================================================  ===============================  
 
 
-Changes to method APIs
-----------------------
+
+Changes to the  API of existing methods
+---------------------------------------
 
 Methods that have a different API in version 3.x
 
-==========================================  ============================================
+==========================================  =====================================================================
 Version 3.x                                 API changes compared to version 2.x
-==========================================  ============================================
+==========================================  =====================================================================
 `cf.Field.anchor`  			    ``inplace`` replaces ``i`` parameter.
 			 	            No ``**kwargs`` parameters.
 
-`cf.Field.aux`  			    No ``**kwargs`` parameters.
+`cf.Field.aux`  			    No ``**kwargs`` parameters. Construct identity arguments
+                                            are no longer assumed to be an abbreviation.
 
-`cf.Field.auxs`  			    No ``**kwargs`` parameters.
+`cf.Field.auxs`  			    No ``**kwargs`` parameters. Construct identity arguments
+                                            are no longer assumed to be an abbreviation.
 
-`cf.Field.axes`  			    No ``**kwargs`` parameters.
+`cf.Field.axes`  			    No ``**kwargs`` parameters. Construct identity arguments
+                                            are no longer assumed to be an abbreviation.
 
-`cf.Field.axes_names`  			    No ``**kwargs`` parameters.
+`cf.Field.axes_names`  			    No ``**kwargs`` parameters. Construct identity arguments
+                                            are no longer assumed to be an abbreviation.
 
-`cf.Field.axis`  			    No ``**kwargs`` parameters.
+`cf.Field.axis`  			    No ``**kwargs`` parameters. Construct identity arguments
+                                            are no longer assumed to be an abbreviation.
 
 `cf.Field.axis_size`  			    ``identity`` replaces ``axes`` parameter.
-			 	            No ``**kwargs`` parameters.
+			 	            No ``**kwargs`` parameters. Construct identity arguments
+                                            are no longer assumed to be an abbreviation.
 
-`cf.Field.ceil`    		 	    ``inplace`` replaces ``i`` parameter.
+`cf.Field.ceil`    		 	    ``inplace`` replaces ``i`` parameter. Construct identity 
+                                            arguments are no longer assumed to be an abbreviation.
 					    
 `cf.Field.cell_area`			    No ``insert`` parameter.
 					                                   
@@ -114,40 +128,53 @@ Version 3.x                                 API changes compared to version 2.x
 					    
 `cf.Field.collapse`			    New ``verbose`` parameter.
 			 	            ``inplace`` replaces ``i`` parameter.
-			 	            No ``**kwargs`` parameters.
+			 	            No ``**kwargs`` parameters. Construct identity arguments
+                                            are no longer assumed to be an abbreviation.
  
 `cf.Field.convert_reference_time`	    ``inplace`` replaces ``i`` parameter.
 					    
 `cf.Field.convolution_filter`		    ``inplace`` replaces ``i`` parameter.
-			 	            ``weights`` parameter can not be a string.
+			 	            ``weights`` parameter can not be a string. Construct identity 
+                                            arguments are no longer assumed to be an abbreviation.
 					                                   
-`cf.Field.coord`  			    No ``**kwargs`` parameters.
+`cf.Field.coord`  			    No ``**kwargs`` parameters. Construct identity 
+                                            arguments are no longer assumed to be an abbreviation.
 
-`cf.Field.coords`  			    No ``**kwargs`` parameters.
+`cf.Field.coords`  			    No ``**kwargs`` parameters. Construct identity 
+                                            arguments are no longer assumed to be an abbreviation.
 
 `cf.Field.cos`    		 	    ``inplace`` replaces ``i`` parameter.
 					    
-`cf.Field.cyclic`			    No ``**kwargs`` parameters.
+`cf.Field.cyclic`			    No ``**kwargs`` parameters. Construct identity 
+                                            arguments are no longer assumed to be an abbreviation.
 					                                   
 `cf.Field.derivative`  			    ``inplace`` replaces ``i`` parameter.
-  			 	            ``wrap`` replaces ``cyclic`` parameter.
+  			 	            ``wrap`` replaces ``cyclic`` parameter. Construct identity 
+                                            arguments are no longer assumed to be an abbreviation.
 
-`cf.Field.dim`  			    No ``**kwargs`` parameters.
+`cf.Field.dim`  			    No ``**kwargs`` parameters. Construct identity 
+                                            arguments are no longer assumed to be an abbreviation.
 
-`cf.Field.dims`  			    No ``**kwargs`` parameters.
+`cf.Field.dims`  			    No ``**kwargs`` parameters. Construct identity 
+                                            arguments are no longer assumed to be an abbreviation.
 
 `cf.Field.direction`			    No ``axes`` parameter.
-                                            No ``**kwargs`` parameters.
+                                            No ``**kwargs`` parameters. Construct identity 
+                                            arguments are no longer assumed to be an abbreviation.
 
-`cf.Field.domain_anc`  			    No ``**kwargs`` parameters.
+`cf.Field.domain_anc`  			    No ``**kwargs`` parameters. Construct identity 
+                                            arguments are no longer assumed to be an abbreviation.
 
-`cf.Field.domain_ancs`  		    No ``**kwargs`` parameters.
+`cf.Field.domain_ancs`  		    No ``**kwargs`` parameters. Construct identity 
+                                            arguments are no longer assumed to be an abbreviation.
 
 `cf.Field.exp`    		 	    ``inplace`` replaces ``i`` parameter.
 					    
-`cf.Field.field_anc`  			    No ``**kwargs`` parameters.
+`cf.Field.field_anc`  			    No ``**kwargs`` parameters. Construct identity 
+                                            arguments are no longer assumed to be an abbreviation.
 
-`cf.Field.field_ancs`  	 	 	    No ``**kwargs`` parameters.
+`cf.Field.field_ancs`  	 	 	    No ``**kwargs`` parameters. Construct identity 
+                                            arguments are no longer assumed to be an abbreviation.
 
 `cf.Field.flip`  			    ``inplace`` replaces ``i`` parameter.
 			 	            No ``**kwargs`` parameters.
@@ -156,54 +183,69 @@ Version 3.x                                 API changes compared to version 2.x
 					    
 `cf.Field.identity`    		 	    No ``relaxed_identity`` parameter.
 					    
-`cf.Field.indices`			    No ``'exact'`` mode.
+`cf.Field.indices`			    No ``'exact'`` mode. Construct identity 
+                                            arguments are no longer assumed to be an abbreviation.
 					                                   
-`cf.Field.iscyclic`			    No ``**kwargs`` parameters.
+`cf.Field.iscyclic`			    No ``**kwargs`` parameters. Construct identity 
+                                            arguments are no longer assumed to be an abbreviation.
 					                                   
-`cf.Field.item`  			    No ``**kwargs`` parameters.
+`cf.Field.item`  			    No ``**kwargs`` parameters. Construct identity 
+                                            arguments are no longer assumed to be an abbreviation.
 
-`cf.Field.items`  	 	 	    No ``**kwargs`` parameters.
+`cf.Field.items`  	 	 	    No ``**kwargs`` parameters. Construct identity 
+                                            arguments are no longer assumed to be an abbreviation.
 
-`cf.Field.key`  			    No ``**kwargs`` parameters.
+`cf.Field.key`  			    No ``**kwargs`` parameters. Construct identity 
+                                            arguments are no longer assumed to be an abbreviation.
 
 `cf.Field.log`    		 	    ``inplace`` replaces ``i`` parameter.
 					    
 `cf.Field.mask_invalid`  		    ``inplace`` replaces ``i`` parameter.
 
-`cf.Field.measure`  			    No ``**kwargs`` parameters.
+`cf.Field.measure`  			    No ``**kwargs`` parameters. Construct identity 
+                                            arguments are no longer assumed to be an abbreviation.
 
-`cf.Field.measures`  	 	 	    No ``**kwargs`` parameters.
+`cf.Field.measures`  	 	 	    No ``**kwargs`` parameters. Construct identity 
+                                            arguments are no longer assumed to be an abbreviation.
 
 `cf.Field.override_calendar`   	 	    ``inplace`` replaces ``i`` parameter.
 
 `cf.Field.override_units`   	 	    ``inplace`` replaces ``i`` parameter.
 
-`cf.Field.period`  			    No ``**kwargs`` parameters.
+`cf.Field.period`  			    No ``**kwargs`` parameters. Construct identity 
+                                            arguments are no longer assumed to be an abbreviation.
 
-`cf.Field.ref`  			    No ``**kwargs`` parameters.
+`cf.Field.ref`  			    No ``**kwargs`` parameters. Construct identity 
+                                            arguments are no longer assumed to be an abbreviation.
 
-`cf.Field.refs`  	 	 	    No ``**kwargs`` parameters.
+`cf.Field.refs`  	 	 	    No ``**kwargs`` parameters. Construct identity 
+                                            arguments are no longer assumed to be an abbreviation.
 
-`cf.Field.regridc`  			    ``inplace`` replaces ``i`` parameter.
+`cf.Field.regridc`  			    ``inplace`` replaces ``i`` parameter. Construct identity 
+                                            arguments are no longer assumed to be an abbreviation.
 
-`cf.Field.regrids`  			    ``inplace`` replaces ``i`` parameter.
+`cf.Field.regrids`  			    ``inplace`` replaces ``i`` parameter. Construct identity 
+                                            arguments are no longer assumed to be an abbreviation.
 
 `cf.Field.rint`    		 	    ``inplace`` replaces ``i`` parameter.
 					    
-`cf.Field.roll`  			    ``inplace`` replaces ``i`` parameter.
+`cf.Field.roll`  			    ``inplace`` replaces ``i`` parameter. Construct identity 
+                                            arguments are no longer assumed to be an abbreviation.
 
 `cf.Field.round`    		 	    ``inplace`` replaces ``i`` parameter.
 					    
 `cf.Field.sin`    		 	    ``inplace`` replaces ``i`` parameter.
 					    
-`cf.Field.squeeze`  			    ``inplace`` replaces ``i`` parameter.
+`cf.Field.squeeze`  			    ``inplace`` replaces ``i`` parameter. Construct identity 
+                                            arguments are no longer assumed to be an abbreviation.
 			 	            No ``**kwargs`` parameters.
 
 `cf.Field.tan`    		 	    ``inplace`` replaces ``i`` parameter.
 					    
 `cf.Field.tranpose`  			    ``inplace`` replaces ``i`` parameter.
 			 	            ``constructs`` replaces ``items`` parameter.
-			 	            No ``**kwargs`` parameters.
+			 	            No ``**kwargs`` parameters. Construct identity 
+                                            arguments are no longer assumed to be an abbreviation.
 
 `cf.Field.trunc`    		 	    ``inplace`` replaces ``i`` parameter.
 					    
@@ -214,5 +256,7 @@ Version 3.x                                 API changes compared to version 2.x
 `cf.Field.where`  			    ``inplace`` replaces ``i`` parameter.
 			 	            ``construct`` replaces ``item`` parameter.
 			 	            No ``axes`` parameter.
-                                            No ``**item_options`` parameters.
-==========================================  ============================================  
+                                            No ``**item_options`` parameters. Construct identity 
+                                            arguments are no longer assumed to be an abbreviation.
+==========================================  =====================================================================
+

@@ -36,7 +36,7 @@ class FieldTest(unittest.TestCase):
 #        self.test_only = ['test_Field_cumsum']
 #        self.test_only = ['test_Field_flatten']
 #        self.test_only = ['test_Field_transpose']
-#        self.test_only = ['test_Field_item']
+#        self.test_only = ['test_Field_radius']
 #        self.test_only = ['test_Field_field_ancillary']
 #        self.test_only = ['test_Field_AUXILIARY_MASK']
 #        self.test_only = ['test_Field__getitem__']
@@ -757,6 +757,73 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(y.has_bounds())
 
 
+    def test_Field_radius(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = self.f.copy()
+
+        with self.assertRaises(Exception):
+            _ = f.radius()
+
+        for default in ('earth', cf.field._earth_radius):
+            r = f.radius(default=default)
+            self.assertTrue(r.Units == cf.Units('m'))
+            self.assertTrue(r == cf.field._earth_radius)
+
+        a = cf.Data(1234, 'm')
+        for default in (1234,
+                        cf.Data(1234, 'm'),
+                        cf.Data([1234], 'm'),
+                        cf.Data([[1234]], 'm'),
+                        cf.Data(1234, 'm'),
+                        cf.Data(1.234, 'km')):
+            r = f.radius(default=default)
+            self.assertTrue(r.Units == cf.Units('m'))
+            self.assertTrue(r == a)
+        
+        with self.assertRaises(Exception):
+            _ = f.radius()
+
+        with self.assertRaises(Exception):
+            _ = f.radius(default=[12, 34])
+
+        with self.assertRaises(Exception):
+            _ = f.radius(default=[[12, 34]])
+
+        with self.assertRaises(Exception):
+            _ = f.radius(default='qwerty')
+
+        cr = f.coordinate_reference('rotated_latitude_longitude')
+        cr.datum.set_parameter('earth_radius', a.copy())
+
+        r = f.radius(default=None)
+        self.assertTrue(r.Units == cf.Units('m'))
+        self.assertTrue(r == a)
+            
+        cr = f.coordinate_reference('atmosphere_hybrid_height_coordinate')
+        cr.datum.set_parameter('earth_radius', a.copy())
+
+        r = f.radius(default=None)
+        self.assertTrue(r.Units == cf.Units('m'))
+        self.assertTrue(r == a)
+            
+        cr = f.coordinate_reference('atmosphere_hybrid_height_coordinate')
+        cr.datum.set_parameter('earth_radius', cf.Data(5678, 'km'))
+
+        with self.assertRaises(Exception):
+            _ = f.radius(default=None)
+                       
+        cr = f.coordinate_reference('atmosphere_hybrid_height_coordinate')
+        cr.datum.del_parameter('earth_radius')
+
+        cr = f.coordinate_reference('rotated_latitude_longitude')
+        cr.datum.set_parameter('earth_radius', cf.Data([123, 456], 'm'))
+
+        with self.assertRaises(Exception):
+            _ = f.radius(default=None)
+
+            
     def test_Field_DATA(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return

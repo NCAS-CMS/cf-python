@@ -33,12 +33,12 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
 <h3><b><a href="../index.html">cf 3.0.2</a></b></h3>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
@@ -90,7 +90,7 @@
 <h1>cf.Field.collapse<a class="headerlink" href="#cf-field-collapse" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.collapse">
-<code class="descclassname">Field.</code><code class="descname">collapse</code><span class="sig-paren">(</span><em>method</em>, <em>axes=None</em>, <em>squeeze=False</em>, <em>mtol=1</em>, <em>weights=None</em>, <em>ddof=1</em>, <em>a=None</em>, <em>inplace=False</em>, <em>group=None</em>, <em>regroup=False</em>, <em>within_days=None</em>, <em>within_years=None</em>, <em>over_days=None</em>, <em>over_years=None</em>, <em>coordinate='mid_range'</em>, <em>group_by='coords'</em>, <em>group_span=None</em>, <em>group_contiguous=None</em>, <em>measure=False</em>, <em>scale=None</em>, <em>radius='earth'</em>, <em>verbose=False</em>, <em>_create_zero_size_cell_bounds=False</em>, <em>_update_cell_methods=True</em>, <em>i=False</em>, <em>_debug=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/field.py#L6989"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.collapse" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">collapse</code><span class="sig-paren">(</span><em>method</em>, <em>axes=None</em>, <em>squeeze=False</em>, <em>mtol=1</em>, <em>weights=None</em>, <em>ddof=1</em>, <em>a=None</em>, <em>inplace=False</em>, <em>group=None</em>, <em>regroup=False</em>, <em>within_days=None</em>, <em>within_years=None</em>, <em>over_days=None</em>, <em>over_years=None</em>, <em>coordinate='mid_range'</em>, <em>group_by='coords'</em>, <em>group_span=None</em>, <em>group_contiguous=None</em>, <em>measure=False</em>, <em>scale=None</em>, <em>radius='earth'</em>, <em>verbose=False</em>, <em>_create_zero_size_cell_bounds=False</em>, <em>_update_cell_methods=True</em>, <em>i=False</em>, <em>_debug=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/field.py#L7066"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.collapse" title="Permalink to this definition">¶</a></dt>
 <dd><p>Collapse axes of the field.</p>
 <p>Collapsing one or more dimensions reduces their size and replaces
 the data along those axes with representative statistical
@@ -373,8 +373,7 @@ deviations with two separate collapse calls:</p>
 </div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="cf.Field.bin.html#cf.Field.bin" title="cf.Field.bin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bin</span></code></a>, <a class="reference internal" href="cf.Field.weights.html#cf.Field.weights" title="cf.Field.weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">weights</span></code></a>, <a class="reference internal" href="cf.Field.max.html#cf.Field.max" title="cf.Field.max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max</span></code></a>, <a class="reference internal" href="cf.Field.mean.html#cf.Field.mean" title="cf.Field.mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean</span></code></a>, <a class="reference internal" href="cf.Field.mid_range.html#cf.Field.mid_range" title="cf.Field.mid_range"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mid_range</span></code></a>, <a class="reference internal" href="cf.Field.min.html#cf.Field.min" title="cf.Field.min"><code class="xref py py-obj docutils literal notranslate"><span class="pre">min</span></code></a>,
-<a class="reference internal" href="cf.Field.range.html#cf.Field.range" title="cf.Field.range"><code class="xref py py-obj docutils literal notranslate"><span class="pre">range</span></code></a>, <a class="reference internal" href="cf.Field.sample_size.html#cf.Field.sample_size" title="cf.Field.sample_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_size</span></code></a>, <a class="reference internal" href="cf.Field.sd.html#cf.Field.sd" title="cf.Field.sd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sd</span></code></a>, <a class="reference internal" href="cf.Field.sum.html#cf.Field.sum" title="cf.Field.sum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sum</span></code></a>, <a class="reference internal" href="cf.Field.var.html#cf.Field.var" title="cf.Field.var"><code class="xref py py-obj docutils literal notranslate"><span class="pre">var</span></code></a></p>
+<p class="last"><a class="reference internal" href="cf.Field.bin.html#cf.Field.bin" title="cf.Field.bin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bin</span></code></a>, <a class="reference internal" href="cf.Field.cell_area.html#cf.Field.cell_area" title="cf.Field.cell_area"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cell_area</span></code></a>, <a class="reference internal" href="cf.Field.weights.html#cf.Field.weights" title="cf.Field.weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">weights</span></code></a>, <a class="reference internal" href="cf.Field.radius.html#cf.Field.radius" title="cf.Field.radius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">radius</span></code></a></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -487,12 +486,14 @@ values.</td>
 </tr>
 </tbody>
 </table>
-<p>Collapse methods that are “Never” weighted ignore the
-<em>weights</em> parameter, even if it is set.</p>
-<p>Collapse methods that “May be” weighted will only be
-weighted if the <em>weights</em> parameter is set.</p>
-<p>Collapse methods that are “Always” weighted require the
-<em>weights</em> parameter to be set.</p>
+<ul class="simple">
+<li>Collapse methods that are “Never” weighted ignore the
+<em>weights</em> parameter, even if it is set.</li>
+<li>Collapse methods that “May be” weighted will only be
+weighted if the <em>weights</em> parameter is set.</li>
+<li>Collapse methods that are “Always” weighted require the
+<em>weights</em> parameter to be set.</li>
+</ul>
 <p>An alternative form of providing the collapse method is to
 provide a CF cell methods-like string. In this case an
 ordered sequence of collapses may be defined and both the
@@ -629,6 +630,18 @@ is 1), and have arbitrary units.</p>
 <code class="docutils literal notranslate"><span class="pre">scale=0.5</span></code>.</p>
 </dd>
 </dl>
+</dd>
+<dt>radius: optional</dt>
+<dd><p class="first">Specify the radius used for calculating the areas of cells
+defined in spherical polar coordinates. The radius is that
+which would be returned by this call of the field
+construct’s <a class="reference internal" href="cf.Field.radius.html#cf.Field.radius" title="cf.Field.radius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">radius</span></code></a> method:
+<code class="docutils literal notranslate"><span class="pre">f.radius(radius)</span></code>. See the <a class="reference internal" href="cf.Field.radius.html#cf.Field.radius" title="cf.Field.radius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.radius</span></code></a> for
+details.</p>
+<p class="last">By default <em>radius</em> is <code class="docutils literal notranslate"><span class="pre">'earth'</span></code> which means that if and
+only if the radius can not found from the datums of any
+coordinate reference constucts, then the default radius
+taken as 6371229 metres.</p>
 </dd>
 <dt>squeeze: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then size 1 collapsed axes are removed from the
