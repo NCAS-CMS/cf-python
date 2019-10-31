@@ -88,7 +88,7 @@
 <h1>cf.read<a class="headerlink" href="#cf-read" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.read">
-<code class="descclassname">cf.</code><code class="descname">read</code><span class="sig-paren">(</span><em>files</em>, <em>external=None</em>, <em>verbose=False</em>, <em>warnings=False</em>, <em>ignore_read_error=False</em>, <em>aggregate=True</em>, <em>nfields=None</em>, <em>squeeze=False</em>, <em>unsqueeze=False</em>, <em>fmt=None</em>, <em>select=None</em>, <em>extra=None</em>, <em>recursive=False</em>, <em>followlinks=False</em>, <em>um=None</em>, <em>chunk=True</em>, <em>field=None</em>, <em>height_at_top_of_model=None</em>, <em>select_options=None</em>, <em>follow_symlinks=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/read_write/read.py#L25"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.read" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">cf.</code><code class="descname">read</code><span class="sig-paren">(</span><em>files</em>, <em>external=None</em>, <em>verbose=False</em>, <em>warnings=False</em>, <em>ignore_read_error=False</em>, <em>aggregate=True</em>, <em>nfields=None</em>, <em>squeeze=False</em>, <em>unsqueeze=False</em>, <em>fmt=None</em>, <em>select=None</em>, <em>extra=None</em>, <em>recursive=False</em>, <em>followlinks=False</em>, <em>um=None</em>, <em>chunk=True</em>, <em>field=None</em>, <em>height_at_top_of_model=None</em>, <em>select_options=None</em>, <em>follow_symlinks=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/read_write/read.py#L27"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.read" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read field constructs from netCDF, CDL, PP or UM fields files.</p>
 <p>NetCDF files may be on disk or on an OPeNDAP server.</p>
 <p>Any amount of files of any combination of file types may be read.</p>
@@ -513,7 +513,7 @@ particular types metadata constructs:</p>
 <span class="go">&lt;CF Field: temperature_wind(17, 29, 24)&gt;</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file*.nc&#39;</span><span class="p">,</span> <span class="n">select</span><span class="o">=</span><span class="s1">&#39;units=K)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file*.nc&#39;</span><span class="p">,</span> <span class="n">select</span><span class="o">=</span><span class="s1">&#39;units=K&#39;</span><span class="p">)</span>
 <span class="go">[&lt;CF Field: temperature(17, 30, 24)&gt;,</span>
 <span class="go"> &lt;CF Field: temperature_wind(17, 29, 24)&gt;]</span>
 </pre></div>
@@ -538,7 +538,7 @@ particular types metadata constructs:</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/function/cf.read.rst.txt"

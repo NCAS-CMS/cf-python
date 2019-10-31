@@ -5519,12 +5519,29 @@ with corresponding weights <span class="math notranslate nohighlight">\(w_i\)</s
 is</p>
 <div class="last math notranslate nohighlight">
 \[\hat{\mu}=\frac{1}{V_{1}}
-\sum_{i=1}^{N} w_i
-x_i\]</div>
+           \sum_{i=1}^{N}
+w_i x_i\]</div>
 </td>
 <td><code class="docutils literal notranslate"><span class="pre">mean</span></code></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'variance'</span></code></td>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'mean_absolute_value'</span></code></td>
+<td><p class="first">The unweighted mean of <span class="math notranslate nohighlight">\(N\)</span>
+values <span class="math notranslate nohighlight">\(x_i\)</span> absoluted is</p>
+<div class="math notranslate nohighlight">
+\[\mu_{abs}=\frac{1}{N}
+\sum_{i=1}^{N}|x_i|\]</div>
+<p>The <a class="reference internal" href="#collapse-weights"><span class="std std-ref">weighted</span></a>
+mean of <span class="math notranslate nohighlight">\(N\)</span> values <span class="math notranslate nohighlight">\(x_i\)</span>
+absoluted with corresponding weights
+<span class="math notranslate nohighlight">\(w_i\)</span> is</p>
+<div class="last math notranslate nohighlight">
+\[\hat{\mu}_{abs}=
+\frac{1}{V_{1}}
+\sum_{i=1}^{N} w_i |x_i|\]</div>
+</td>
+<td><code class="docutils literal notranslate"><span class="pre">mean_absolute_value</span></code></td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'variance'</span></code></td>
 <td><p class="first">The unweighted variance of <span class="math notranslate nohighlight">\(N\)</span>
 values <span class="math notranslate nohighlight">\(x_i\)</span> and with
 <span class="math notranslate nohighlight">\(N-ddof\)</span> degrees of freedom
@@ -5564,14 +5581,14 @@ opposed to frequency weights.</p>
 </td>
 <td><code class="docutils literal notranslate"><span class="pre">variance</span></code></td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'standard_deviation'</span></code></td>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'standard_deviation'</span></code></td>
 <td>The standard deviation is the square
 root of the unweighted or
 <a class="reference internal" href="#collapse-weights"><span class="std std-ref">weighted</span></a>
 variance, as defined in this table.</td>
 <td><code class="docutils literal notranslate"><span class="pre">standard_deviation</span></code></td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'root_mean_square'</span></code></td>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'root_mean_square'</span></code></td>
 <td><p class="first">The unweighted root mean square of
 <span class="math notranslate nohighlight">\(N\)</span> values <span class="math notranslate nohighlight">\(x_i\)</span> is</p>
 <div class="math notranslate nohighlight">
@@ -7078,7 +7095,7 @@ range.</em></span><a class="headerlink" href="#id303" title="Permalink to this c
 <span class="go"> [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]</span>
 <span class="go"> [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]</span>
 <span class="go"> [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">indices</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">return_bins</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">indices</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">return_bins</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
 <span class="go">Field: long_name=Bin index to which each &#39;specific_humidity&#39; value belongs (ncvar%q)</span>
 <span class="go">------------------------------------------------------------------------------------</span>
@@ -8002,7 +8019,7 @@ format can not reliably be detected automatically.</td></tr>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="_sources/tutorial.rst.txt"

@@ -84,23 +84,27 @@
 <div class="section" id="version-3-0-2">
 <h2>version 3.0.2<a class="headerlink" href="#version-3-0-2" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
-<p><strong>Not yet released</strong></p>
+<p><strong>2019-10-31</strong></p>
 <ul class="simple">
 <li>Now reads CDL files (<a class="reference external" href="https://github.com/NCAS-CMS/cf-python/issues/1">https://github.com/NCAS-CMS/cf-python/issues/1</a>)</li>
 <li>New methods: <a class="reference internal" href="method/cf.Field.cumsum.html#cf.Field.cumsum" title="cf.Field.cumsum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.cumsum</span></code></a>, <a class="reference internal" href="method/cf.Field.digitize.html#cf.Field.digitize" title="cf.Field.digitize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.digitize</span></code></a>, <a class="reference internal" href="method/cf.Field.bin.html#cf.Field.bin" title="cf.Field.bin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.bin</span></code></a>,
 <a class="reference internal" href="method/cf.Field.swapaxes.html#cf.Field.swapaxes" title="cf.Field.swapaxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.swapaxes</span></code></a>, <a class="reference internal" href="method/cf.Field.flatten.html#cf.Field.flatten" title="cf.Field.flatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.flatten</span></code></a>, <a class="reference internal" href="method/cf.Field.radius.html#cf.Field.radius" title="cf.Field.radius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.radius</span></code></a>.</li>
-<li>New methods: <a class="reference internal" href="function/cf.histogram.html#cf.histogram" title="cf.histogram"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.histogram</span></code></a>.</li>
+<li>New function: <a class="reference internal" href="function/cf.histogram.html#cf.histogram" title="cf.histogram"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.histogram</span></code></a>.</li>
 <li>New field construct collapse methods: <code class="docutils literal notranslate"><span class="pre">integral</span></code>,
-<code class="docutils literal notranslate"><span class="pre">maximum_absolute_value</span></code>, <code class="docutils literal notranslate"><span class="pre">minimum_absolute_value</span></code>,
-<code class="docutils literal notranslate"><span class="pre">sum_of_squares</span></code>, <code class="docutils literal notranslate"><span class="pre">root_mean_square</span></code>.</li>
+<code class="docutils literal notranslate"><span class="pre">mean_absolute_value</span></code>, <code class="docutils literal notranslate"><span class="pre">maximum_absolute_value</span></code>,
+<code class="docutils literal notranslate"><span class="pre">minimum_absolute_value</span></code>, <code class="docutils literal notranslate"><span class="pre">sum_of_squares</span></code>,
+<code class="docutils literal notranslate"><span class="pre">root_mean_square</span></code>.</li>
 <li>New keywords to <a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.collapse</span></code></a> and <a class="reference internal" href="method/cf.Field.weights.html#cf.Field.weights" title="cf.Field.weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.weights</span></code></a>:
 <code class="docutils literal notranslate"><span class="pre">measure</span></code>, <code class="docutils literal notranslate"><span class="pre">scale</span></code>, <code class="docutils literal notranslate"><span class="pre">radius</span></code></li>
 <li>New methods: <a class="reference internal" href="method/cf.Data.cumsum.html#cf.Data.cumsum" title="cf.Data.cumsum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.cumsum</span></code></a>, <a class="reference internal" href="method/cf.Data.digitize.html#cf.Data.digitize" title="cf.Data.digitize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.digitize</span></code></a>,
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.masked_all</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.maximum_absolute_value</span></code>,
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.minimum_absolute_value</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.sum_of_squares</span></code>,
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.root_mean_square</span></code>, <a class="reference internal" href="method/cf.Data.flatten.html#cf.Data.flatten" title="cf.Data.flatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.flatten</span></code></a>.</li>
-<li>Renamed <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.default_fillvals</span></code> to <a class="reference internal" href="function/cf.default_netCDF_fillvals.html#cf.default_netCDF_fillvals" title="cf.default_netCDF_fillvals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.default_netCDF_fillvals</span></code></a>.</li>
-<li>Changed minimum cfdm dependency to version 1.7.8.</li>
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.masked_all</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.mean_absolute_value</span></code>,
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.maximum_absolute_value</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.minimum_absolute_value</span></code>,
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.sum_of_squares</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.root_mean_square</span></code>,
+<a class="reference internal" href="method/cf.Data.flatten.html#cf.Data.flatten" title="cf.Data.flatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.flatten</span></code></a>.</li>
+<li>Renamed <a class="reference internal" href="function/cf.default_fillvals.html#cf.default_fillvals" title="cf.default_fillvals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.default_fillvals</span></code></a> to <a class="reference internal" href="function/cf.default_netCDF_fillvals.html#cf.default_netCDF_fillvals" title="cf.default_netCDF_fillvals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.default_netCDF_fillvals</span></code></a>.</li>
+<li>Changed minimum cfdm dependency to version 1.7.8. This fixes a bug
+that sometimes occurs when writing to disk and the _FillValue and
+data have different data types.</li>
 <li>Changed minimum cfunits dependency to version 3.2.2.</li>
 <li>Changed minimum cftime dependency to version 1.0.4.2.</li>
 <li>Fixed occasional failure to delete all temporary directories at
@@ -831,8 +835,8 @@ with formula_terms.</li>
 <p><strong>2014-07-14</strong></p>
 <ul class="simple">
 <li>Implemented multiple grid_mappings (CF trac ticket #70)</li>
-<li>Improved functionality and speed of field aggregation and <code class="docutils literal notranslate"><span class="pre">cfa``a</span>
-<span class="pre">and</span> <span class="pre">``cfdump</span></code> command line utilities.</li>
+<li>Improved functionality and speed of field aggregation and <code class="docutils literal notranslate"><span class="pre">cfa</span></code>
+and <code class="docutils literal notranslate"><span class="pre">cfdump</span></code> command line utilities.</li>
 <li>Collapse methods on <a class="reference internal" href="classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> object (min, max, mean, var, sd,
 sum, range, mid_range).</li>
 <li>Improved match/select functionality</li>
@@ -1047,7 +1051,7 @@ to Jeff Whitaker).</li>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="_sources/Changelog.rst.txt"

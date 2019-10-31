@@ -157,7 +157,14 @@ print(t2.dimension_coordinates)
 t3 = t2.insert_dimension(axis='domainaxis3', position=1)
 t3
 t3.transpose([2, 0, 1])
-t4 = t.transpose([2, 0, 1], constructs=True)
+t4 = t.transpose(['X', 'Z', 'Y'], constructs=True)
+print(q)
+print(q.mask)
+print(q.mask.array)
+q[[0, 4], :] = cf.masked            
+print(q.mask.array)
+q.mask.all()
+q.mask.any()
 
 print("\n**Subspacing by index**\n")
 
@@ -165,12 +172,13 @@ q, t = cf.read('file.nc')
 print(q)
 new = q[::-1, 0]
 print(new)
-q
+t
 t[:, :, 1]
 t[:, 0]
 t[..., 6:3:-1, 3:6]
 t[0, [2, 3, 9], [4, 8]]
 t[0, :, -2]
+t[..., [True, False, True, True, False, False, True, False, False]]
 q
 q.cyclic()
 q.constructs.domain_axis_identity('domainaxis1')
@@ -463,14 +471,22 @@ print(t)
 print(t.construct('latitude').array)
 t2 = t.subspace(latitude=cf.wi(51, 53))
 print(t2.array)
+q, t = cf.read('file.nc')
+print(t)
+indices = t.indices(grid_longitude=cf.wi(-4, -2))
+indices           
+t[indices] = -11
+print(t.array)
+t[t.indices(latitude=cf.wi(51, 53))] = -99
+print(t.array)
 
 print("\n**Sorting and selecting from field lists**\n")
 
-fl = cf.read('file.nc')                                                                        
+fl = cf.read('file.nc')
 fl
-fl.sort()                                                                                      
+fl.sort()
 fl
-fl.sort(key=lambda f: f.units)                                                                 
+fl.sort(key=lambda f: f.units)
 fl
 fl = cf.read('*.nc')
 fl
@@ -516,9 +532,12 @@ X = t.dimension_coordinate('X')
 X
 print(X.bounds.array)
 print((upper_bounds_ge_minus4 == X).array)
+cf.contains(4)
+cf.Query('lt', 4, attr='lower_bounds') &  cf.Query('ge', 4, attr='upper_bounds')
 cf.ge(3)
 cf.ge(cf.dt('2000-3-23'))
 cf.year(1999)
+cf.month(cf.wi(6, 8))
 cf.jja()
 cf.contains(4)
 cf.cellsize(cf.lt(10, 'degrees'))
@@ -800,7 +819,7 @@ cell_measure = cf.CellMeasure(measure='area',
                  data=cf.Data(numpy.arange(90.).reshape(9, 10)))
 
 tas.set_construct(cell_measure)
-
+   
 print(tas)
 import netCDF4
 nc = netCDF4.Dataset('file.nc', 'r')
@@ -865,7 +884,7 @@ q.nc_set_variable('humidity')
 q.nc_get_variable()
 q.constructs('latitude').value().nc_get_variable()
 
-print("\n**Writing to disk**\n")
+print("\n**Writing to a netCDF dataset**\n")
 
 print(q)
 cf.write(q, 'q_file.nc')
@@ -1049,10 +1068,12 @@ t + u[0]
 t.identities()
 u = t * cf.Data(10, 'ms-1')
 u.identities()
+a = numpy.array(1000)
+type(t * a)
 q, t = cf.read('file.nc')
 print(q.array)  
-print(-q.array)                    
-print(abs(-q.array))  
+print(-q.array)
+print(abs(-q).array)
 q, t = cf.read('file.nc')
 print(q.array)         
 print((q == q).array)                                   
@@ -1110,12 +1131,37 @@ b = a.cumsum('T')
 print(b)
 print(a.coordinate('T').bounds[-1].dtarray)
 print(b.coordinate('T').bounds[-1].dtarray)
+q, t = cf.read('file.nc')     
+print(q.array)
+indices, bins = q.digitize(10, return_bins=True)
+print(indices)
+print(indices.array)
+print(bins.array)
+h = cf.histogram(indices)                             
+print(h) 
+print(h.array)
+print(h.coordinate('specific_humidity').bounds.array)
+q, t = cf.read('file.nc')     
+print(q.array)
+indices = q.digitize(5)                                             
+b = q.bin('range', digitized=indices)                             
+print(b)                                    
+print(b.array)
+print(b.coordinate('specific_humidity').bounds.array)
+p, t = cf.read('file2.nc')
+print(t)
+print(p)      
+t_indices = t.digitize(4)
+p_indices = p.digitize(6)
+b = q.bin('mean', digitized=[t_indices, p_indices], weights='area')  
+print(b)
+print(b.array)
 
 print("\n**Aggregation**\n")
 
 a = cf.read('air_temperature.nc')[0]
 a
-a_parts = [a[0, : , 0:30], a[0, :, 30:], a[1, :, 0:30], a[1, :, 30:]]
+a_parts = [a[0, : , 0:30], a[0, :, 30:96], a[1, :, 0:30], a[1, :, 30:96]]
 a_parts
 for i, f in enumerate(a_parts):
      cf.write(f, str(i)+'_air_temperature.nc')
@@ -1123,6 +1169,16 @@ for i, f in enumerate(a_parts):
 x = cf.read('[0-3]_air_temperature.nc')
 y = cf.read('[0-3]_air_temperature.nc', aggregate=False)
 z = cf.aggregate(y)
+x
+z
+x.equals(z)
+x = cf.aggregate(a_parts)
+x
+a_parts[1].transpose(inplace=True)
+a_parts[1].units = 'degreesC'
+a_parts
+z = cf.aggregate(a_parts)
+z   
 x.equals(z)
 
 print("\n**Compression**\n")

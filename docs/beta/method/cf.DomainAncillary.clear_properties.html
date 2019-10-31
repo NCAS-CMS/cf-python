@@ -113,9 +113,22 @@
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">clear</span> <span class="n">properties</span><span class="p">()</span>
-<span class="go">{&#39;standard_name&#39;: &#39;altitude&#39;,</span>
-<span class="go"> &#39;foo&#39;: &#39;bar&#39;}</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">properties</span><span class="p">()</span>
+<span class="go">{}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">set_properties</span><span class="p">({</span><span class="s1">&#39;standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;air_pressure&#39;</span><span class="p">,</span> <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="s1">&#39;Air Pressure&#39;</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">properties</span><span class="p">()</span>
+<span class="go">{&#39;standard_name&#39;: &#39;air_pressure&#39;,</span>
+<span class="go"> &#39;foo&#39;: &#39;bar&#39;,</span>
+<span class="go"> &#39;long_name&#39;: &#39;Air Pressure&#39;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">set_properties</span><span class="p">({</span><span class="s1">&#39;standard_name&#39;</span><span class="p">:</span> <span class="s1">&#39;air_pressure&#39;</span><span class="p">,</span> <span class="s1">&#39;foo&#39;</span><span class="p">:</span> <span class="s1">&#39;bar&#39;</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">properties</span><span class="p">()</span>
+<span class="go">{&#39;standard_name&#39;: &#39;air_pressure&#39;,</span>
+<span class="go"> &#39;foo&#39;: &#39;bar&#39;,</span>
+<span class="go"> &#39;long_name&#39;: &#39;Air Pressure&#39;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">clear_properties</span><span class="p">()</span>
+<span class="go">{&#39;standard_name&#39;: &#39;air_pressure&#39;,</span>
+<span class="go"> &#39;foo&#39;: &#39;bar&#39;,</span>
+<span class="go"> &#39;long_name&#39;: &#39;Air Pressure&#39;}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">properties</span><span class="p">()</span>
 <span class="go">{}</span>
 </pre></div>
@@ -136,7 +149,7 @@
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cf.DomainAncillary.clear_properties.rst.txt"
