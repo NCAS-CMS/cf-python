@@ -1,0 +1,7 @@
+cf.Field.set_data
+=================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Field.set_data

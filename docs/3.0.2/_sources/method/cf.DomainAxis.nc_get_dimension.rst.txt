@@ -1,0 +1,7 @@
+cf.DomainAxis.nc_get_dimension
+==============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DomainAxis.nc_get_dimension

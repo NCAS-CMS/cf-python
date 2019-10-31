@@ -1,0 +1,7 @@
+cf.List.hardmask
+================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.List.hardmask

@@ -1,0 +1,7 @@
+cf.Bounds.__ilshift__
+=====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.__ilshift__

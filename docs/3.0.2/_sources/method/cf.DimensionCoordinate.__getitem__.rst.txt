@@ -1,0 +1,7 @@
+cf.DimensionCoordinate.__getitem__
+==================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DimensionCoordinate.__getitem__

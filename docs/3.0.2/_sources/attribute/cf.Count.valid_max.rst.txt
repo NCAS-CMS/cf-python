@@ -1,0 +1,7 @@
+cf.Count.valid_max
+==================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.Count.valid_max

@@ -1,0 +1,7 @@
+cf.Bounds.exp
+=============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.exp

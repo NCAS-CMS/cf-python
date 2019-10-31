@@ -1,0 +1,7 @@
+cf.Data.first_element
+=====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Data.first_element

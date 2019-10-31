@@ -1,0 +1,250 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>cf.Field.convolution_filter &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cf.Field.cumsum" href="cf.Field.cumsum.html" />
+    <link rel="prev" title="cf.Field.derivative" href="cf.Field.derivative.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><b><a href="../index.html">cf 3.0.2</a></b></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../class.html"><strong>cf classes</strong></a><ul>
+  <li><a href="../classes/cf.Field.html">cf.Field</a><ul>
+      <li>Previous: <a href="cf.Field.derivative.html" title="previous chapter">cf.Field.derivative</a></li>
+      <li>Next: <a href="cf.Field.cumsum.html" title="next chapter">cf.Field.cumsum</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/method/cf.Field.convolution_filter.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="cf-field-convolution-filter">
+<h1>cf.Field.convolution_filter<a class="headerlink" href="#cf-field-convolution-filter" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="cf.Field.convolution_filter">
+<code class="descclassname">Field.</code><code class="descname">convolution_filter</code><span class="sig-paren">(</span><em>weights</em>, <em>axis=None</em>, <em>mode=None</em>, <em>cval=None</em>, <em>origin=0</em>, <em>update_bounds=True</em>, <em>inplace=False</em>, <em>i=False</em>, <em>_bounds=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/field.py#L11097"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.convolution_filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the field convolved along the given axis with the specified
+filter.</p>
+<p>Can be used to create running means.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="cf.Field.derivative.html#cf.Field.derivative" title="cf.Field.derivative"><code class="xref py py-obj docutils literal notranslate"><span class="pre">derivative</span></code></a>, <a class="reference internal" href="../function/cf.relative_vorticity.html#cf.relative_vorticity" title="cf.relative_vorticity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.relative_vorticity</span></code></a></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt>weights: sequence of numbers</dt>
+<dd><p class="first">Specify the window of weights to use for the filter.</p>
+<dl class="docutils">
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last">An unweighted 5-point moving average can be computed
+with <code class="docutils literal notranslate"><span class="pre">weights=[0.2,</span> <span class="pre">0.2,</span> <span class="pre">0.2,</span> <span class="pre">0.2,</span> <span class="pre">02]</span></code></p>
+</dd>
+</dl>
+<p class="last">Note that the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.3.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package has suite of
+window functions for creating weights for filtering.</p>
+</dd>
+<dt>axis:</dt>
+<dd><p class="first last">Select the domain axis over which the filter is to be
+applied, defined by that which would be selected by
+passing the given axis description to a call of the field
+construct’s <a class="reference internal" href="cf.Field.domain_axis.html#cf.Field.domain_axis" title="cf.Field.domain_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axis</span></code></a> method. For example, for a value
+of <code class="docutils literal notranslate"><span class="pre">'X'</span></code>, the domain axis construct returned by
+<code class="docutils literal notranslate"><span class="pre">f.domain_axis('X'))</span></code> is selected.</p>
+</dd>
+<dt>mode: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dd><p class="first">The <em>mode</em> parameter determines how the input array is
+extended when the filter overlaps a border. The default
+value is <code class="docutils literal notranslate"><span class="pre">'constant'</span></code> or, if the dimension being
+convolved is cyclic (as ascertained by the <a class="reference internal" href="cf.Field.iscyclic.html#cf.Field.iscyclic" title="cf.Field.iscyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iscyclic</span></code></a>
+method), <code class="docutils literal notranslate"><span class="pre">'wrap'</span></code>. The valid values and their behaviour
+is as follows:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="43%" />
+<col width="40%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head"><em>mode</em></th>
+<th class="head">Description</th>
+<th class="head">Behaviour</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'reflect'</span></code></td>
+<td>The input is extended by reflecting
+about the edge</td>
+<td><code class="docutils literal notranslate"><span class="pre">(d</span> <span class="pre">c</span> <span class="pre">b</span> <span class="pre">a</span> <span class="pre">|</span> <span class="pre">a</span> <span class="pre">b</span> <span class="pre">c</span> <span class="pre">d</span> <span class="pre">|</span> <span class="pre">d</span> <span class="pre">c</span> <span class="pre">b</span> <span class="pre">a)</span></code></td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'constant'</span></code></td>
+<td>The input is extended by filling
+all values beyond the edge with
+the same constant value, defined
+by the <em>cval</em> parameter.</td>
+<td><code class="docutils literal notranslate"><span class="pre">(k</span> <span class="pre">k</span> <span class="pre">k</span> <span class="pre">k</span> <span class="pre">|</span> <span class="pre">a</span> <span class="pre">b</span> <span class="pre">c</span> <span class="pre">d</span> <span class="pre">|</span> <span class="pre">k</span> <span class="pre">k</span> <span class="pre">k</span> <span class="pre">k)</span></code></td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'nearest'</span></code></td>
+<td>The input is extended by
+replicating the last point.</td>
+<td><code class="docutils literal notranslate"><span class="pre">(a</span> <span class="pre">a</span> <span class="pre">a</span> <span class="pre">a</span> <span class="pre">|</span> <span class="pre">a</span> <span class="pre">b</span> <span class="pre">c</span> <span class="pre">d</span> <span class="pre">|</span> <span class="pre">d</span> <span class="pre">d</span> <span class="pre">d</span> <span class="pre">d)</span></code></td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'mirror'</span></code></td>
+<td>The input is extended by reflecting
+about the center of the last point.</td>
+<td><code class="docutils literal notranslate"><span class="pre">(d</span> <span class="pre">c</span> <span class="pre">b</span> <span class="pre">|</span> <span class="pre">a</span> <span class="pre">b</span> <span class="pre">c</span> <span class="pre">d</span> <span class="pre">|</span> <span class="pre">c</span> <span class="pre">b</span> <span class="pre">a)</span></code></td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'wrap'</span></code></td>
+<td>The input is extended by wrapping
+around to the opposite edge.</td>
+<td><code class="docutils literal notranslate"><span class="pre">(a</span> <span class="pre">b</span> <span class="pre">c</span> <span class="pre">d</span> <span class="pre">|</span> <span class="pre">a</span> <span class="pre">b</span> <span class="pre">c</span> <span class="pre">d</span> <span class="pre">|</span> <span class="pre">a</span> <span class="pre">b</span> <span class="pre">c</span> <span class="pre">d)</span></code></td>
+</tr>
+</tbody>
+</table>
+<p class="last">The position of the window can be changed by using the
+<em>origin</em> parameter.</p>
+</dd>
+<dt>cval: scalar, optional</dt>
+<dd><p class="first">Value to fill past the edges of the array if <em>mode</em> is
+<code class="docutils literal notranslate"><span class="pre">'constant'</span></code>. Defaults to <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, in which case the
+edges of the array will be filled with missing data.</p>
+<dl class="last docutils">
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last">To extend the input by filling all values beyond the
+edge with zero: <code class="docutils literal notranslate"><span class="pre">cval=0</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>origin: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt>
+<dd><p class="first">Controls the placement of the filter. Defaults to 0, which
+is the centre of the window. If the window has an even
+number weights then then a value of 0 defines the index
+defined by <code class="docutils literal notranslate"><span class="pre">width/2</span> <span class="pre">-1</span></code>.</p>
+<dl class="last docutils">
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last">For a weighted moving average computed with a weights
+window of <code class="docutils literal notranslate"><span class="pre">[0.1,</span> <span class="pre">0.15,</span> <span class="pre">0.5,</span> <span class="pre">0.15,</span> <span class="pre">0.1]</span></code>, if
+<code class="docutils literal notranslate"><span class="pre">origin=0</span></code> then the average is centred on each
+point. If <code class="docutils literal notranslate"><span class="pre">origin=-2</span></code> then the average is shifted to
+inclued the previous four points. If <code class="docutils literal notranslate"><span class="pre">origin=1</span></code> then
+the average is shifted to include the previous point and
+the and the next three points.</p>
+</dd>
+</dl>
+</dd>
+<dt>update_bounds: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dd><p class="first last">If False then the bounds of a dimension coordinate
+construct that spans the convolved axis are not
+altered. By default, the bounds of a dimension coordinate
+construct that spans the convolved axis are updated to
+reflect the width and origin of the window.</p>
+</dd>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dd><p class="first last">If True then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+</dd>
+<dt>i: deprecated at version 3.0.0</dt>
+<dd><p class="first last">Use the <em>inplace</em> parameter instead.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2019, David Hassell.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      
+      |
+      <a href="../_sources/method/cf.Field.convolution_filter.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

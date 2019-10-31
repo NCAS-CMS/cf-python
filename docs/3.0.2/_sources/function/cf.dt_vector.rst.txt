@@ -1,0 +1,7 @@
+cf.dt_vector
+============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autofunction:: cf.dt_vector

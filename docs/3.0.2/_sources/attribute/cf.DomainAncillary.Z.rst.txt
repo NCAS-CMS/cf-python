@@ -1,0 +1,7 @@
+cf.DomainAncillary.Z
+====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.DomainAncillary.Z

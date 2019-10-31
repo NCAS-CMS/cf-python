@@ -1,0 +1,7 @@
+cf.Domain.del_construct
+=======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Domain.del_construct

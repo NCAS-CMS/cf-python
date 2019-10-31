@@ -1,0 +1,7 @@
+cf.IGNORE_IDENTITIES
+====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autofunction:: cf.IGNORE_IDENTITIES

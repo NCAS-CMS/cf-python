@@ -1,0 +1,7 @@
+cf.Constructs.unfilter
+======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Constructs.unfilter

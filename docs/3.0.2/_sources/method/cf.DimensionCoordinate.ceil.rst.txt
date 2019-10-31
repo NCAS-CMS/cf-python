@@ -1,0 +1,7 @@
+cf.DimensionCoordinate.ceil
+===========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DimensionCoordinate.ceil

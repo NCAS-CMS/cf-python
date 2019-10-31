@@ -1,0 +1,7 @@
+cf.Data.set_units
+=================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Data.set_units

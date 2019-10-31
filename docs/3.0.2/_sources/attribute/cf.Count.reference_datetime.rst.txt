@@ -1,0 +1,7 @@
+cf.Count.reference_datetime
+===========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.Count.reference_datetime

@@ -1,0 +1,7 @@
+cf.Count.del_property
+=====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Count.del_property

@@ -1,0 +1,7 @@
+cf.Constructs.filter_by_method
+==============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Constructs.filter_by_method

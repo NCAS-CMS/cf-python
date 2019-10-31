@@ -1,0 +1,7 @@
+cf.List.del_data
+================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.List.del_data

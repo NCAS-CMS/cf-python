@@ -1,0 +1,7 @@
+cf.AuxiliaryCoordinate.__deepcopy__
+===================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.AuxiliaryCoordinate.__deepcopy__

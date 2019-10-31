@@ -1,0 +1,7 @@
+cf.Index.rint
+=============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Index.rint

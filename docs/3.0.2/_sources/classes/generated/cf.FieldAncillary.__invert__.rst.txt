@@ -1,0 +1,7 @@
+cf.FieldAncillary.__invert__
+============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.FieldAncillary.__invert__

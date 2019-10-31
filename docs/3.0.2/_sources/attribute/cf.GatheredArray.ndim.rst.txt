@@ -1,0 +1,7 @@
+cf.GatheredArray.ndim
+=====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.GatheredArray.ndim
