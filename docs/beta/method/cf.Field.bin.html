@@ -33,12 +33,12 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
 <h3><b><a href="../index.html">cf 3.0.2</a></b></h3>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
@@ -90,7 +90,7 @@
 <h1>cf.Field.bin<a class="headerlink" href="#cf-field-bin" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.bin">
-<code class="descclassname">Field.</code><code class="descname">bin</code><span class="sig-paren">(</span><em>method</em>, <em>digitized</em>, <em>weights=None</em>, <em>measure=False</em>, <em>scale=None</em>, <em>mtol=1</em>, <em>ddof=1</em>, <em>radius='earth'</em>, <em>return_indices=False</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/field.py#L5927"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.bin" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">bin</code><span class="sig-paren">(</span><em>method</em>, <em>digitized</em>, <em>weights=None</em>, <em>measure=False</em>, <em>scale=None</em>, <em>mtol=1</em>, <em>ddof=1</em>, <em>radius='earth'</em>, <em>return_indices=False</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/field.py#L6006"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.bin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Collapse the data values that lie in N-dimensional bins.</p>
 <p>The data values of the field construct are binned according to how
 they correspond to the N-dimensionsal histogram bins of another
@@ -236,12 +236,14 @@ values.</td>
 </tr>
 </tbody>
 </table>
-<p>Collapse methods that are “Never” weighted ignore the
-<em>weights</em> parameter, even if it is set.</p>
-<p>Collapse methods that “May be” weighted will only be
-weighted if the <em>weights</em> parameter is set.</p>
-<p class="last">Collapse methods that are “Always” weighted require the
-<em>weights</em> parameter to be set.</p>
+<ul class="last simple">
+<li>Collapse methods that are “Never” weighted ignore the
+<em>weights</em> parameter, even if it is set.</li>
+<li>Collapse methods that “May be” weighted will only be
+weighted if the <em>weights</em> parameter is set.</li>
+<li>Collapse methods that are “Always” weighted require the
+<em>weights</em> parameter to be set.</li>
+</ul>
 </dd>
 <dt>digitized: (sequence of) <a class="reference internal" href="../classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a></dt>
 <dd><p class="first">One or more field constructs that contain digitized data
@@ -361,21 +363,16 @@ denominator to avoid the bias caused by the use of the
 sample mean (Bessel’s correction).</p>
 </dd>
 <dt>radius: optional</dt>
-<dd><p class="first">The radius used for calculating area cell measures for
-cells defined in spherical polar coordinates. By default
-(or if <em>radius</em> is <code class="docutils literal notranslate"><span class="pre">'earth'</span></code>) the radius taken as
-6371229 metres, representing the radius of the Earth. May
-be set to any numeric scalar object, including <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/index.html#module-numpy" title="(in NumPy v1.17)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> and
-<a class="reference internal" href="../classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects. The units of the radius are assumed to be
-metres, unless specified by a <a class="reference internal" href="../classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object.</p>
-<dl class="last docutils">
-<dt><em>Parameter example:</em>         </dt>
-<dd><p class="first last">Five equivalent ways to set a radius of 6371200 metres:
-<code class="docutils literal notranslate"><span class="pre">radius=6371200</span></code>, <code class="docutils literal notranslate"><span class="pre">radius=numpy.array(6371200)</span></code>,
-<code class="docutils literal notranslate"><span class="pre">radius=cf.Data(6371200)</span></code>, <code class="docutils literal notranslate"><span class="pre">radius=cf.Data(6371200,</span>
-<span class="pre">'m')</span></code>, <code class="docutils literal notranslate"><span class="pre">radius=cf.Data(6371.2,</span> <span class="pre">'km')</span></code>.</p>
-</dd>
-</dl>
+<dd><p class="first">Specify the radius used for calculating the areas of cells
+defined in spherical polar coordinates. The radius is that
+which would be returned by this call of the field
+construct’s <a class="reference internal" href="cf.Field.radius.html#cf.Field.radius" title="cf.Field.radius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">radius</span></code></a> method:
+<code class="docutils literal notranslate"><span class="pre">f.radius(radius)</span></code>. See the <a class="reference internal" href="cf.Field.radius.html#cf.Field.radius" title="cf.Field.radius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.radius</span></code></a> for
+details.</p>
+<p class="last">By default <em>radius</em> is <code class="docutils literal notranslate"><span class="pre">'earth'</span></code> which means that if and
+only if the radius can not found from the datums of any
+coordinate reference constucts, then the default radius
+taken as 6371229 metres.</p>
 </dd>
 <dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional    </dt>
 <dd><p class="first last">If True then print a description of the binned field

@@ -18,6 +18,9 @@ version 3.0.2
   `cf.Data.minimum_absolute_value`, `cf.Data.sum_of_squares`,
   `cf.Data.root_mean_square`, `cf.Data.flatten`.
 * Renamed `cf.default_fillvals` to `cf.default_netCDF_fillvals`.
+* Changed minimum cfdm dependency to version 1.7.8.
+* Changed minimum cfunits dependency to version 3.2.2.
+* Changed minimum cftime dependency to version 1.0.4.2.
 * Fixed occasional failure to delete all temporary directories at
   exit.
 * Fixed bug in `cf.Data.func` when overriding units. Affects all
@@ -29,7 +32,9 @@ version 3.0.2
   `cf.Field.properties`.
 * Fixed bug in `cf.Data.squeeze` that sometimes created
   inconsistencies with the cyclic dimensions.
-  
+* Fixed bug in `cf.Field.mask` that assigned incorrect units to the
+  result.
+
 version 3.0.1
 -------------
 ----
@@ -47,8 +52,8 @@ version 3.0.0 (*first Python 3 version*)
 * Complete refactor for Python 3, including some API changes.
 
   Scripts written for version 2.x but running under version 3.x should
-  either work as expected, or provide informative error mesages on the
-  new API usage. However, it is advised that the outputs of older
+  either work as expected, or provide informative error messages on
+  the new API usage. However, it is advised that the outputs of older
   scripts be checked when running with Python 3 versions of the cf
   library.
 

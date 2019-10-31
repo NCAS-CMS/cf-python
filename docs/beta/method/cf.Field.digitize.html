@@ -33,12 +33,12 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
 <h3><b><a href="../index.html">cf 3.0.2</a></b></h3>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
@@ -90,12 +90,12 @@
 <h1>cf.Field.digitize<a class="headerlink" href="#cf-field-digitize" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.digitize">
-<code class="descclassname">Field.</code><code class="descname">digitize</code><span class="sig-paren">(</span><em>bins</em>, <em>upper=False</em>, <em>open_ends=False</em>, <em>return_bins=False</em>, <em>inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/field.py#L5603"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.digitize" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">digitize</code><span class="sig-paren">(</span><em>bins</em>, <em>upper=False</em>, <em>open_ends=False</em>, <em>return_bins=False</em>, <em>inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.2/cf/field.py#L5675"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.digitize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the indices of the bins to which each value belongs.</p>
 <p>Values (including masked values) that do not belong to any bin
 result in masked values in the output field construct of indices.</p>
 <p>The output field contruct is given a <code class="docutils literal notranslate"><span class="pre">long_name</span></code> property, and
-properties that define the bins:</p>
+some or all of the following properties that define the bins:</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="33%" />
@@ -111,19 +111,20 @@ properties that define the bins:</p>
 <td>An integer giving the number of bins</td>
 </tr>
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">bin_bounds</span></code></td>
-<td>A 1-d array giving the bin bounds. The
+<td>A 1-d vector giving the bin bounds. The
 first two numbers describe the lower and
 upper boundaries of the first bin, the
 second two numbers describe the lower and
 upper boundaries of the second bin, and so
-on. The presence of left-open and
-right-open bins (see the <em>bins</em> and
+on. The presence of left-unbounded and
+right-unbounded bins (see the <em>bins</em> and
 <em>open_ends</em> parameters) is deduced from the
 <code class="docutils literal notranslate"><span class="pre">bin_count</span></code> property. If the
-<code class="docutils literal notranslate"><span class="pre">bin_bounds</span></code> array has 2N elements then
+<code class="docutils literal notranslate"><span class="pre">bin_bounds</span></code> vector has 2N elements then
 the <code class="docutils literal notranslate"><span class="pre">bin_count</span></code> property will be N if
-there are no left-open and right-open bins
-or N+2 if such bins are present.</td>
+there are no left-unbounded and
+right-unbounded bins or N+2 if such bins
+are present.</td>
 </tr>
 <tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">bin_interval_type</span></code></td>
 <td>A string that specifies the nature of the
@@ -171,6 +172,9 @@ property will be omitted.</td>
 </tr>
 </tbody>
 </table>
+<p>Of these properties, the <code class="docutils literal notranslate"><span class="pre">bin_count</span></code> and <code class="docutils literal notranslate"><span class="pre">bin_bounds</span></code> are
+guaranteed to be output, with the others being dependent on the
+available metadata.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 3.0.2.</span></p>
 </div>
@@ -188,18 +192,18 @@ property will be omitted.</td>
 <ul class="last">
 <li><p class="first">An integer.</p>
 <p>Create this many equally sized, contiguous bins spanning
-the range of the data. I.e. the smallest bin boundary is
-the minimum of the data and the largest bin boundary is
-the maximum of the data. In order to guarantee that each
-data value lies inside a bin, the most extreme open
-boundary is extended by multiplying it by <code class="docutils literal notranslate"><span class="pre">1.0</span> <span class="pre">-</span>
-<span class="pre">epsilon</span></code> or <code class="docutils literal notranslate"><span class="pre">1.0</span> <span class="pre">+</span> <span class="pre">epsilon</span></code> (where <code class="docutils literal notranslate"><span class="pre">epsilon</span></code> is the
-smallest positive 64-bit float such that <code class="docutils literal notranslate"><span class="pre">1.0</span> <span class="pre">+</span>
-<span class="pre">epsilson</span> <span class="pre">!=</span> <span class="pre">1.0</span></code>), whichever extends the boundary in
-the appropriate direction. I.e. if <em>upper</em> is False then
-the largest upper bin boundary is made slightly larger
-and if <em>upper</em> is True then the lowest lower bin
-boundary is made slightly lower.</p>
+the range of the data. I.e. the smallest bin boundary
+will be the minimum of the data and the largest bin
+boundary will be the maximum of the data.</p>
+<p>In order to guarantee that each data value lies inside a
+bin, the most extreme open boundary is extended by
+multiplying it by <code class="docutils literal notranslate"><span class="pre">1.0</span> <span class="pre">-</span> <span class="pre">epsilon</span></code> or <code class="docutils literal notranslate"><span class="pre">1.0</span> <span class="pre">+</span> <span class="pre">epsilon</span></code>
+(where <code class="docutils literal notranslate"><span class="pre">epsilon</span></code> is the smallest positive 64-bit float
+such that <code class="docutils literal notranslate"><span class="pre">1.0</span> <span class="pre">+</span> <span class="pre">epsilson</span> <span class="pre">!=</span> <span class="pre">1.0</span></code>), whichever extends
+the boundary in the appropriate direction. I.e. if
+<em>upper</em> is False then the largest upper bin boundary is
+made slightly larger and if <em>upper</em> is True then the
+lowest lower bin boundary is made slightly lower.</p>
 </li>
 <li><p class="first">A 1-d array of numbers.</p>
 <p>When sorted into a monotonically increasing sequence,
@@ -207,18 +211,18 @@ each boundary, with the exception of the two end
 boundaries, counts as the upper boundary of one bin and
 the lower boundary of next. If the <em>open_ends</em> parameter
 is True then the lowest lower bin boundary also defines
-a left-open (i.e. not bounded below) bin, and the
-largest upper bin boundary also defines a right-open
-(i.e. not bounded above) bin.</p>
+a left-unbounded (i.e. not bounded below) bin, and the
+largest upper bin boundary also defines a
+right-unbounded (i.e. not bounded above) bin.</p>
 </li>
 <li><p class="first">A 2-d array of numbers.</p>
 <p>The second dimension, that must have size 2, contains
 the lower and upper boundaries of each bin. The bins to
 not have to be contiguous, but must not overlap. If the
 <em>open_ends</em> parameter is True then the lowest lower bin
-boundary also defines a left-open (i.e. not bounded
+boundary also defines a left-unbounded (i.e. not bounded
 below) bin, and the largest upper bin boundary also
-defines a right-open (i.e. not bounded above) bin.</p>
+defines a right-unbounded (i.e. not bounded above) bin.</p>
 </li>
 </ul>
 </dd>
@@ -228,10 +232,11 @@ lower bound. By default the opposite is applied, i.e. each
 bin includes its lower bound but not its upper bound.</p>
 </dd>
 <dt>open_ends: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If True then create left-open (i.e. not bounded below) and
-right-open (i.e. not bounded above) bins from the lowest
-lower bin boundary and largest upper bin boundary
-respectively. By default these bins are not created</p>
+<dd><p class="first last">If True then create left-unbounded (i.e. not bounded
+below) and right-unbounded (i.e. not bounded above) bins
+from the lowest lower bin boundary and largest upper bin
+boundary respectively. By default these bins are not
+created</p>
 </dd>
 <dt>return_bins: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then also return the bins in their 2-d form.</p>

@@ -178,14 +178,14 @@ installed, which
 Required
 ^^^^^^^^
 
-* `Python <https://www.python.org/>`_, version 3 or newer.
+* `Python <https://www.python.org/>`_, version 3.5 or newer.
 
 * `numpy <https://pypi.org/project/numpy/>`_, version 1.15 or newer.
 
 * `netCDF4 <https://pypi.org/project/netcdf4/>`_, version 1.4.0 or
   newer.
 
-* `cftime <https://pypi.org/project/cftime/>`_, version 1.0.2 or
+* `cftime <https://pypi.org/project/cftime/>`_, version 1.0.4.2 or
   newer. (Note that this package is installed with netCDF4.)
 
 * `cfdm <https://pypi.org/project/cfdm/>`_, version 1.7.8 or newer.
