@@ -31,7 +31,7 @@ data from disk until it is needed. These are:
 * Changing the units
   
 Operations that involve changing the data values (apart from changing
-the units) are not lazy; such arithmetic, trigonometrial, rounding,
+the units) are not lazy; such arithmetic, trigonometrical, rounding,
 collapse, etc. functions.
 
 All of these lazy techniques make use of :ref:`LAMA (Large Amounts
@@ -179,7 +179,7 @@ The basic functionality is:
   regardless of how the array is partitioned and whether or not its
   partitions are in memory, constructs containing data arrays may be
   used in the API as if they were normal, in-memory objects (like
-  numpy arrays). Partitioning does carry a performance overhead, but
+  `numpy` arrays). Partitioning does carry a performance overhead, but
   this may be minimised for particular applications or hardware
   configurations.
 
@@ -202,9 +202,9 @@ Copying
 ^^^^^^^
 
 When a field construct is deep copied with its `~Field.copy` method or
-the :py:func:`copy.deepcopy` function, the partitions of its data
-array are transferred to the new field construct as object identities
-and are *not* deep copied. Therefore copying even very large field
+the Python `copy.deepcopy` function, the partitions of its data array
+are transferred to the new field construct as object identities and
+are *not* deep copied. Therefore copying even very large field
 constructs is initially very fast and uses up only a very small amount
 of memory.
 
@@ -283,7 +283,7 @@ The data array memory management is configurable as follows:
   this size is set to 1% of the total physical memory and is found and
   set with the `cf.CHUNKSIZE` function.
 
-* In-memory sub-arrays may be written to tempoary files on disk when
+* In-memory sub-arrays may be written to temporary files on disk when
   the amount of available physical memory falls below a specified
   amount. By default this amount is 10% of the total physical memory
   and is found and set with the `cf.MINNCFCM` function.
@@ -317,20 +317,20 @@ in the original directory from being garbage collected.
 Partitioning
 ^^^^^^^^^^^^
 
-To maximise looping efficiency, array partitioning preserves as much
-as is possible the faster varying (inner) dimensions' sizes in each of
-the sub-arrays.
+Data partitioning preserves as much as is possible the faster varying
+(inner) dimensions' sizes in each of the sub-arrays.
 
 **Examples**
-   If an array with shape (2, 4, 6) is partitioned into 2 partitions then both
-   sub-arrays will have shape (1, 4, 6).
+
+* If an array with shape (2, 4, 6) is partitioned into 2 partitions
+  then both sub-arrays will have shape (1, 4, 6).
  
-   If the same array is partitioned into 4 partitions then all four sub-arrays
-   will have shape (1, 2, 6).
+* If the same array is partitioned into 4 partitions then all four
+  sub-arrays will have shape (1, 2, 6).
 
-   If the same array is partitioned into 8 partitions then all eight
-   sub-arrays will have shape (1, 2, 3).
+* If the same array is partitioned into 8 partitions then all eight
+  sub-arrays will have shape (1, 2, 3).
 
-   If the same array is partitioned into 48 partitions then all forty eight
-   sub-arrays will have shape (1, 1, 1).
+* If the same array is partitioned into 48 partitions then all forty
+  eight sub-arrays will have shape (1, 1, 1).
 
