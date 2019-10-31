@@ -4269,7 +4269,7 @@ may be accessed with the `nc_global_attributes`,
 
     .. versionadded:: 1.0
     
-    .. seealso:: `bin`, `collapse`, `weights`
+    .. seealso:: `bin`, `collapse`, `radius`, `weights`
     
     :Parameters:
     

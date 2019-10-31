@@ -540,7 +540,7 @@ def read(files, external=None, verbose=False, warnings=False,
     if aggregate and len(field_list) > 1:
         if verbose:
             org_len = len(field_list) # pragma: no cover
-            
+
         if verbose:
             n = len(field_list) # pragma: no cover
             print('{0} input field{1} aggregated into {2} field{3}'.format(
