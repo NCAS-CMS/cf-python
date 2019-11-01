@@ -6097,7 +6097,8 @@ may be accessed with the `nc_global_attributes`,
             ``'mean'``                    The weighted or unweighted    May be
                                           mean of the values.
                                           
-            ``'mean_absolute_value'``     The mean of the absolute.     May be
+            ``'mean_absolute_value'``     The mean of the absolute      May be
+                                          values.
 
             ``'variance'``                The weighted or unweighted    May be
                                           variance of the values, with
@@ -7395,7 +7396,8 @@ may be accessed with the `nc_global_attributes`,
             ``'mean'``                    The weighted or unweighted    May be
                                           mean of the values.
                                           
-            ``'mean_absolute_value'``     The mean of the absolute.     May be
+            ``'mean_absolute_value'``     The mean of the absolute      May be
+                                          values.
 
             ``'variance'``                The weighted or unweighted    May be
                                           variance of the values, with
@@ -7429,7 +7431,7 @@ may be accessed with the `nc_global_attributes`,
             collapse methods and their axes are provided. The axes are
             interpreted as for the *axes* parameter, which must not
             also be set. For example:
-              
+
             >>> g = f.collapse('time: max (interval 1 hr) X: Y: mean dim3: sd')
             
             is equivalent to:
