@@ -1147,7 +1147,6 @@ def var_ffinalise(out, sub_samples=None):
         avg *= avg
         var /= V1
         var -= avg
-    #--- End: if
 
     # ----------------------------------------------------------------
     # var is now the biased global variance
@@ -1172,11 +1171,11 @@ def var_ffinalise(out, sub_samples=None):
         var /= V1
     elif ddof:
         raise ValueError(
-            "Can only calculate a weighted variance with a delta degrees of freedom (ddof) of 0 or 1: ddof={}".format(
+            "Can only calculate a weighted variance with a delta degrees of freedom (ddof) of 0 or 1: Got {}".format(
                 ddof))
 
     return asanyarray(N, var)
-#--- End: def
+
 
 #---------------------------------------------------------------------
 # standard_deviation

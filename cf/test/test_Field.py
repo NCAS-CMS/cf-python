@@ -35,7 +35,7 @@ class FieldTest(unittest.TestCase):
 #        self.test_only = ['test_Field__add__']
 #        self.test_only = ['test_Field_cumsum']
 #        self.test_only = ['test_Field_flatten']
-#        self.test_only = ['test_Field_collapse']
+        self.test_only = ['test_Field_collapse']
 #        self.test_only = ['test_Field_radius']
 #        self.test_only = ['test_Field_field_ancillary']
 #        self.test_only = ['test_Field_AUXILIARY_MASK']
@@ -246,40 +246,49 @@ class FieldTest(unittest.TestCase):
         f = self.f.copy()
         f[0, 3] *= -1
         f[0, 5, ::2] = cf.masked
+        
+        for axes in axes_combinations(f):
+            for method in ('sum', 'min', 'max', 'minimum_absolute_value',
+                           'maximum_absolute_value', 'mid_range', 'range',
+                           'median', 'sample_size', 'sum_of_squares',
+                           'mean', 'mean_absolute_value',
+                           'mean_of_upper_decile', 'root_mean_square',
+                           'integral', 'var', 'sd',
+                           'sum_of_weights', 'sum_of_weights2'):
+                a = f.collapse(method, axes=axes).data
+                b = getattr(f.data, method)(axes=axes)
+#                print(method, axes)
+#                print (a.array)
+#                print (b.array)
+#                print ((a-b).array)
+                self.assertTrue(a.equals(b, verbose=True),
+                                '{} unweighted axes={}, {!r}, {!r}'.format(method, axes, a, b))
+                
+            for method in ('sum', 'min', 'max', 'minimum_absolute_value',
+                           'maximum_absolute_value', 'mid_range', 'range',
+                           'sample_size', 'sum_of_squares', 'median',
+                           'sum_of_weights', 'sum_of_weights2'):
+                a = f.collapse(method, axes=axes, weights='area').data
+                b = getattr(f.data, method)(axes=axes)
+                self.assertTrue(a.equals(b, verbose=True),
+                                '{} weighted axes={}, {!r}, {!r}'.format(method, axes, a, b))
 
-        for method in ('sum', 'min', 'max', 'maximum_absolute_value',
-                       'maximum_absolute_value', 'mid_range', 'range',
-                       'sample_size', 'sum_of_squares', 'mean',
-                       'mean_absolute_value',
-                       'root_mean_square', 'integral', 'var', 'sd'):
-            a = f.collapse(method).data
-            b = getattr(f.data, method)()
-            self.assertTrue(a.equals(b, verbose=True),
-                            '{} unweighted {!r}, {!r}'.format(method, a, b))
-
-        for method in ('sum', 'min', 'max', 'maximum_absolute_value',
-                       'maximum_absolute_value', 'mid_range', 'range',
-                       'sample_size', 'sum_of_squares'):
-            a = f.collapse(method, weights='area').data
-            b = getattr(f.data, method)()
-            self.assertTrue(a.equals(b, verbose=True),
-                            '{} weighted, {!r}, {!r}'.format(method, a, b))
-
-        for method in ('mean', 'mean_absolute_value',
-                       'root_mean_square', 'var', 'sd'):
-            weights = f.weights('area', components=True)
-            a = f.collapse(method, weights='area').data
-            b = getattr(f.data, method)(weights=weights)
-            self.assertTrue(a.equals(b, verbose=True),
-                            '{} weighted, {!r}, {!r}'.format(method, a, b))
-            
-        for method in ('integral',):
-            weights = f.weights('area', components=True, measure=True)
-            a = f.collapse(method, weights='area', measure=True).data
-            b = getattr(f.data, method)(weights=weights)
-            self.assertTrue(a.equals(b, verbose=True),
-                            '{} weighted, {!r}, {!r}'.format(method, a, b))
-            
+            for method in ('mean', 'mean_absolute_value', 'mean_of_upper_decile',
+                           'root_mean_square', 'var', 'sd'):
+                weights = f.weights('area', components=True)
+                a = f.collapse(method, axes=axes, weights='area').data
+                b = getattr(f.data, method)(axes=axes, weights=weights)
+                self.assertTrue(a.equals(b, rtol=1e-05, atol=1e-08, verbose=True),
+                                '{} weighted axes={}, {!r}, {!r}'.format(method, axes, a, b))
+                
+            for method in ('integral',):
+                weights = f.weights('area', components=True, measure=True)
+                a = f.collapse(method, axes=axes, weights='area', measure=True).data
+                b = getattr(f.data, method)(axes=axes, weights=weights)
+                self.assertTrue(a.equals(b, verbose=True),
+                                '{} weighted axes={}, {!r}, {!r}'.format(method, axes, a, b))
+        #--- End: for
+        
 
     def test_Field_all(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

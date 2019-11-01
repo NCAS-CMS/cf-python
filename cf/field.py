@@ -90,6 +90,7 @@ _units_metres  = Units('m')
 _collapse_methods = {
     'mean'                  : 'mean',
     'mean_absolute_value'   : 'mean_absolute_value',
+    'mean_of_upper_decile'  : 'mean_of_upper_decile',
     'avg'                   : 'mean',
     'average'               : 'mean',
     'max'                   : 'max',
@@ -100,6 +101,7 @@ _collapse_methods = {
     'minimum_absolute_value': 'minimum_absolute_value',
     'mid_range'             : 'mid_range',
     'range'                 : 'range',
+    'median'                : 'median',
     'standard_deviation'    : 'sd',
     'sd'                    : 'sd',
     'sum'                   : 'sum',
@@ -121,6 +123,7 @@ _collapse_cell_methods = {
     'point'                 : 'point',
     'mean'                  : 'mean',
     'mean_absolute_value'   : 'mean_absolute_value',
+    'mean_of_upper_decile'  : 'mean_of_upper_decile',
     'avg'                   : 'mean',
     'average'               : 'mean',
     'max'                   : 'maximum',
@@ -131,6 +134,7 @@ _collapse_cell_methods = {
     'minimum_absolute_value': 'minimum_absolute_value',
     'mid_range'             : 'mid_range',
     'range'                 : 'range',
+    'median'                : 'median',
     'standard_deviation'    : 'standard_deviation',
     'sd'                    : 'standard_deviation',
     'sum'                   : 'sum',
@@ -158,14 +162,15 @@ _collapse_min_size = {'sd' : 2,
 # --------------------------------------------------------------------
 _collapse_weighted_methods = set(('mean',
                                   'mean_absolute_value',
+                                  'mean_of_upper_decile',
                                   'avg',
                                   'average',
                                   'sd',
                                   'standard_deviation',
                                   'var',
                                   'variance',
-                                  'sum_of_weights',
-                                  'sum_of_weights2',
+#                                  'sum_of_weights',
+#                                  'sum_of_weights2',
                                   'integral',
                                   'root_mean_square',
                                   ))
@@ -5675,7 +5680,7 @@ may be accessed with the `nc_global_attributes`,
         return field
 
 
-    def digitize(self, bins, upper=False, open_ends=False,
+    def digitize(self, bins, upper=False, open_ends=False, 
                  return_bins=False, inplace=False):
         '''Return the indices of the bins to which each value belongs.
 
@@ -6099,6 +6104,11 @@ may be accessed with the `nc_global_attributes`,
                                           
             ``'mean_absolute_value'``     The mean of the absolute      May be
                                           values.
+
+            ``'mean_of_upper_decile'``    The mean of the upper group   May be
+                                          of data values defined by
+                                          the upper tenth of their
+                                          distribution.
 
             ``'variance'``                The weighted or unweighted    May be
                                           variance of the values, with
@@ -7399,6 +7409,11 @@ may be accessed with the `nc_global_attributes`,
             ``'mean_absolute_value'``     The mean of the absolute      May be
                                           values.
 
+            ``'mean_of_upper_decile'``    The mean of the upper group   May be
+                                          of data values defined by
+                                          the upper tenth of their
+                                          distribution.
+
             ``'variance'``                The weighted or unweighted    May be
                                           variance of the values, with
                                           a given number of degrees of
@@ -8374,7 +8389,7 @@ may be accessed with the `nc_global_attributes`,
 
         if group is not None and len(all_axes) > 1:
             raise ValueError(
-                "Can't use group parameter for multiple collapses")
+                "Can't use the 'group' parameter for multiple collapses")
 
         # ------------------------------------------------------------
         #
@@ -8388,7 +8403,7 @@ may be accessed with the `nc_global_attributes`,
             method2 = _collapse_methods.get(method, None)
             if method2 is None:
                 raise ValueError(
-                    "Can't collapse: Unknown method: {!r}".format(method))
+                    "Unknown collapse method: {!r}".format(method))
 
             method = method2
 
@@ -8402,16 +8417,23 @@ may be accessed with the `nc_global_attributes`,
             if not collapse_axes_all_sizes:
                 raise ValueError("Can't collapse: Can not identify collapse axes")
 
-            if method not in ('sample_size', 'sum_of_weights', 'sum_of_weights2'):
-                collapse_axes = collapse_axes_all_sizes.filter_by_size(gt(1))
-            else:
-                collapse_axes = collapse_axes_all_sizes.copy()
+#            if method not in ('minimum_absolute_value',
+#                              'maximum_absolute_value', 'sample_size',
+#                              'sum_of_weights', 'sum_of_weights2',
+#                              'mid_range', 'range', 'median',
+#                              'sum_of_squares', 'mean_absolute_value',
+#                              'mean_of_upper_decile',
+#                              'root_mean_square', 'var', 'sd'):
+#                collapse_axes = collapse_axes_all_sizes.filter_by_size(gt(1))
+#            else:
+#                collapse_axes = collapse_axes_all_sizes.copy()
+            collapse_axes = collapse_axes_all_sizes.copy()
 
             if verbose:
                 print('    collapse_axes           =', collapse_axes) # pragma: no cover
 
             if not collapse_axes:
-               # Do nothing if there are no collapse axes
+                # Do nothing if there are no collapse axes
                 if _create_zero_size_cell_bounds:
                     # Create null bounds if requested
                     for axis in axes:
@@ -8430,9 +8452,9 @@ may be accessed with the `nc_global_attributes`,
             collapse_axes_sizes = [da.get_size() for da in collapse_axes.values()]
             size = reduce(operator_mul, collapse_axes_sizes, 1)
             min_size = _collapse_min_size.get(method, 1)
-            if size < min_size:
-                raise ValueError("Can't calculate {0} from fewer than {1} values".format(
-                    _collapse_cell_methods[method], min_size))
+#            if size < min_size:
+#                raise ValueError("Can't calculate {0} from fewer than {1} values".format(
+#                    _collapse_cell_methods[method], min_size))
 
             if verbose:
                 print('    collapse_axes_sizes     =', collapse_axes_sizes) # pragma: no cover

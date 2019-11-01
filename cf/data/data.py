@@ -14,10 +14,13 @@ from numpy import empty         as numpy_empty
 from numpy import exp           as numpy_exp
 from numpy import floor         as numpy_floor
 from numpy import finfo         as numpy_finfo
+from numpy import isnan         as numpy_isnan
 from numpy import linspace      as numpy_linspace
 from numpy import log           as numpy_log
 from numpy import log10         as numpy_log10
 from numpy import log2          as numpy_log2
+from numpy import nan           as numpy_nan
+from numpy import nanpercentile as numpy_nanpercentile
 from numpy import ndarray       as numpy_ndarray
 from numpy import ndenumerate   as numpy_ndenumerate
 from numpy import ndindex       as numpy_ndindex
@@ -25,6 +28,7 @@ from numpy import ndim          as numpy_ndim
 from numpy import newaxis       as numpy_newaxis
 from numpy import ones          as numpy_ones
 from numpy import prod          as numpy_prod
+from numpy import percentile    as numpy_percentile
 from numpy import ravel_multi_index as numpy_ravel_multi_index
 from numpy import reshape       as numpy_reshape
 from numpy import result_type   as numpy_result_type
@@ -42,13 +46,14 @@ from numpy import unravel_index as numpy_unravel_index
 from numpy import where         as numpy_where
 from numpy import vectorize     as numpy_vectorize
 from numpy import zeros         as numpy_zeros
-from numpy import floating         as numpy_floating
+from numpy import floating      as numpy_floating
 from numpy import bool_         as numpy_bool_
-from numpy import integer         as numpy_integer
+from numpy import integer      as numpy_integer
 
 from numpy.ma import array          as numpy_ma_array
 from numpy.ma import count          as numpy_ma_count
 from numpy.ma import empty          as numpy_ma_empty
+from numpy.ma import filled         as numpy_ma_filled
 from numpy.ma import is_masked      as numpy_ma_is_masked
 from numpy.ma import isMA           as numpy_ma_isMA
 from numpy.ma import masked         as numpy_ma_masked
@@ -81,8 +86,8 @@ from ..constants  import masked as cf_masked
 from ..functions import (CHUNKSIZE, FM_THRESHOLD, RTOL, ATOL,
                          FREE_MEMORY, COLLAPSE_PARALLEL_MODE,
                          parse_indices, _numpy_allclose,
-                         _numpy_isclose, pathjoin,
-                         hash_array, broadcast_array)
+                         _numpy_isclose, pathjoin, hash_array,
+                         broadcast_array)
 
 from ..functions import (_DEPRECATION_ERROR_KWARGS,
                          _DEPRECATION_ERROR_METHOD,
@@ -2200,6 +2205,94 @@ place.
         if return_bins:
             return out, type(self)(two_d_bins, units=bin_units)
 
+        return out
+
+
+    def median(self, axes=None, squeeze=False, inplace=False,
+               mtol='dummy?'):
+        '''TODO
+
+        '''
+        return self.percentile(50, axes=axes, squeeze=squeeze,
+                               inplace=inplace)
+
+    
+    def mean_of_upper_decile(self, axes=None, include_decile=True,
+                             squeeze=False, mtol=1, weights=None,
+                             inplace=False):
+        '''TODO
+
+        '''
+        if inplace:
+            d = self
+        else:
+            d = self.copy()
+            
+        p90 = d.percentile(90, axes=axes, squeeze=squeeze,
+                           inplace=False)
+#        print ('p90=', p90.array)
+        if include_decile:
+            mask = (d < p90)
+        else:
+            mask = (d <= p90)
+
+        d.where(mask, cf_masked, inplace=True)
+
+        d.mean(axes=axes, squeeze=squeeze, mtol=mtol, weights=weights,
+               inplace=True)
+        
+        if inplace:
+            d = None        
+        return d
+
+    
+    def percentile(self, percentile, axes=None, squeeze=False,
+                   inplace=False, mtol='dummy?'):
+        '''TODO
+
+        '''
+        if percentile > 100 or percentile < 0:
+            raise ValueError(
+                "Percentile must be in the range [0, 100]. Got {}".format(
+                    percentile))
+
+        percentile = numpy_array(percentile)
+        
+        if axes is None:
+            axes = list(range(self.ndim))
+        else:
+            axes = sorted(self._parse_axes(axes))
+        
+        sections = self.section(axes, chunks=True)
+
+        for key, data in sections.items():
+            array = data.array
+
+            if numpy_ma_is_masked(array):
+                masked = True
+                array = numpy_ma_filled(array, numpy_nan)
+                func = numpy_nanpercentile
+            else:
+                masked = False                                
+                func = numpy_percentile
+
+            p = func(array, percentile, axis=axes)
+            for axis in axes:
+                p = numpy_expand_dims(p, axis=axis)
+
+            if masked:
+                p = numpy_ma_masked_where(numpy_isnan(p), p, copy=False)
+                
+            sections[key] = type(self)(p, units=self.Units,
+                                       fill_value=self.fill_value)
+
+        # Glue the sections back together again
+        out = self.reconstruct_sectioned_data(sections)
+
+        if inplace:
+            self.__dict__ = out.__dict__
+            return None
+        
         return out
 
     
@@ -5729,7 +5822,8 @@ dimensions.
     @classmethod
     def _collapse_finalise(cls, ffinalise, out, sub_samples, masked,
                            Nmax, mtol, data, n_non_collapse_axes):
-        '''
+        '''TODO
+
         '''
         if out is not None:
             # Finalise
@@ -5739,32 +5833,31 @@ dimensions.
             # no data - return all masked
             out = numpy_ma_masked_all(data.shape[:n_non_collapse_axes],
                                       data.dtype)
-        #--- End: if
+
         return out
-    #--- End: def
 
 
     @staticmethod
     def _collapse_mask(array, masked, N, Nmax, mtol):
-        '''
+        '''TODO
  
-:Parameters:
-
-    array : numpy array
-
-    masked : bool
-
-    N : numpy array-like
-
-    Nmax : int
-
-    mtol : numpy array-like
-
-:Returns:
-
-   numpy array
-
-'''
+    :Parameters:
+    
+        array: numpy array
+    
+        masked: bool
+    
+        N: numpy array-like
+    
+        Nmax: int
+    
+        mtol: numpy array-like
+    
+    :Returns:
+    
+       numpy array
+    
+    '''
         if masked and mtol < 1:
             x = N < (1-mtol)*Nmax
             if x.any():
@@ -5772,7 +5865,6 @@ dimensions.
         #--- End: if
 
         return array
-    #--- End: def
 
 
     @staticmethod
@@ -8044,36 +8136,6 @@ returned.
                               _preserve_partitions=_preserve_partitions)
 
 
-    def mean_of_upper_decile(self, axes=None, squeeze=False, mtol=1, weights=None,
-             inplace=False, i=False, _preserve_partitions=False):
-        '''TODO'''
-        # Parse axis
-        ndim = self._ndim 
-        if -ndim-1 <= axis < 0:
-            axis += ndim + 1
-        elif not 0 <= axis <= ndim:
-            raise ValueError(
-                "Can't cumsum: Invalid axis specification: Expected -{0}<=axis<{0}, got axis={1}".format(
-                    ndim, axis))
-
-        sections = self.section(axis, chunks=True)
-
-        # Cumulatively sum each section
-        for key, data in sections.items():
-            array = data.array
-
-            if masked_as_zero and numpy_ma_is_masked(array):
-                array = array.filled(0)
-            
-            output_array = numpy_cumsum(array, axis=axis)
-            sections[key] = type(self)(output_array, units=self.Units,
-                                       fill_value=self.fill_value)
-
-        # Glue the sections back together again
-        out = self.reconstruct_sectioned_data(sections)
-        return out
-
-    
     def integral(self, axes=None, squeeze=False, mtol=1, weights=None,
                  inplace=False, _preserve_partitions=False):
         '''TODO
@@ -12226,6 +12288,10 @@ returned.
             object. If axes is `None` (the default) or an empty
             sequence then all axes are selected.
     
+            Note that the axes specified by the *axes* parameter are
+            the one which are to be kept whole. All other axes are
+            sectioned.
+
         stop: `int`, optional
             Stop after this number of sections and return. If stop is
             None all sections are taken.
