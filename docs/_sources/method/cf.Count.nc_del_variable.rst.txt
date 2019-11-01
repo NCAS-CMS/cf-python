@@ -1,0 +1,7 @@
+cf.Count.nc_del_variable
+========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Count.nc_del_variable

@@ -17,6 +17,7 @@
 ----------
 ----
 
+* `Version 3.0.3 <https://ncas-cms.github.io/cf-python/3.0.3>`_
 * `Version 3.0.2 <https://ncas-cms.github.io/cf-python/3.0.2>`_
 * `Version 3.0.1 <https://ncas-cms.github.io/cf-python/3.0.0>`_
 * `Version 3.0.0 <https://ncas-cms.github.io/cf-python/3.0.0>`_ (*first Python 3 release*)
