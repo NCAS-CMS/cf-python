@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.2</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.3</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -90,10 +90,10 @@
 <h1>cf.Count.squeeze<a class="headerlink" href="#cf-count-squeeze" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Count.squeeze">
-<code class="descclassname">Count.</code><code class="descname">squeeze</code><span class="sig-paren">(</span><em>axes=None</em>, <em>inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.8/cfdm/mixin/propertiesdata.py#L405"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Count.squeeze" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Count.</code><code class="descname">squeeze</code><span class="sig-paren">(</span><em>axes=None</em>, <em>inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.8/cfdm/mixin/propertiesdata.py#L413"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Count.squeeze" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove size one axes from the data array.</p>
-<p>By default all size one axes are removed, but particular size one axes
-may be selected for removal.</p>
+<p>By default all size one axes are removed, but particular size one
+axes may be selected for removal.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.0.</span></p>
 </div>
@@ -107,10 +107,10 @@ may be selected for removal.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
 <dt>axes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt>
-<dd><p class="first">The positions of the size one axes to be removed. By default
-all size one axes are removed. Each axis is identified by its
-original integer position. Negative integers counting from the
-last position are allowed.</p>
+<dd><p class="first">The positions of the size one axes to be removed. By
+default all size one axes are removed. Each axis is
+identified by its original integer position. Negative
+integers counting from the last position are allowed.</p>
 <dl class="last docutils">
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">axes=0</span></code></p>
@@ -129,8 +129,8 @@ last position are allowed.</p>
 </dl>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A new instance with removed data axes. If the operation was
-in-place then <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is returned.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A new instance with removed data axes. If the operation
+was in-place then <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is returned.</p>
 </td>
 </tr>
 </tbody>
@@ -162,7 +162,7 @@ in-place then <a class="reference external" href="https://docs.python.org/3/libr
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/method/cf.Count.squeeze.rst.txt"

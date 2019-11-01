@@ -35,7 +35,7 @@ class FieldTest(unittest.TestCase):
 #        self.test_only = ['test_Field__add__']
 #        self.test_only = ['test_Field_cumsum']
 #        self.test_only = ['test_Field_flatten']
-#        self.test_only = ['test_Field_transpose']
+#        self.test_only = ['test_Field_collapse']
 #        self.test_only = ['test_Field_radius']
 #        self.test_only = ['test_Field_field_ancillary']
 #        self.test_only = ['test_Field_AUXILIARY_MASK']
@@ -238,6 +238,48 @@ class FieldTest(unittest.TestCase):
         self.assertFalse(f.allclose(g.data))
         self.assertFalse(f.allclose(g.array))
 
+        
+    def test_Field_collapse(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = self.f.copy()
+        f[0, 3] *= -1
+        f[0, 5, ::2] = cf.masked
+
+        for method in ('sum', 'min', 'max', 'maximum_absolute_value',
+                       'maximum_absolute_value', 'mid_range', 'range',
+                       'sample_size', 'sum_of_squares', 'mean',
+                       'mean_absolute_value',
+                       'root_mean_square', 'integral', 'var', 'sd'):
+            a = f.collapse(method).data
+            b = getattr(f.data, method)()
+            self.assertTrue(a.equals(b, verbose=True),
+                            '{} unweighted {!r}, {!r}'.format(method, a, b))
+
+        for method in ('sum', 'min', 'max', 'maximum_absolute_value',
+                       'maximum_absolute_value', 'mid_range', 'range',
+                       'sample_size', 'sum_of_squares'):
+            a = f.collapse(method, weights='area').data
+            b = getattr(f.data, method)()
+            self.assertTrue(a.equals(b, verbose=True),
+                            '{} weighted, {!r}, {!r}'.format(method, a, b))
+
+        for method in ('mean', 'mean_absolute_value',
+                       'root_mean_square', 'var', 'sd'):
+            weights = f.weights('area', components=True)
+            a = f.collapse(method, weights='area').data
+            b = getattr(f.data, method)(weights=weights)
+            self.assertTrue(a.equals(b, verbose=True),
+                            '{} weighted, {!r}, {!r}'.format(method, a, b))
+            
+        for method in ('integral',):
+            weights = f.weights('area', components=True, measure=True)
+            a = f.collapse(method, weights='area', measure=True).data
+            b = getattr(f.data, method)(weights=weights)
+            self.assertTrue(a.equals(b, verbose=True),
+                            '{} weighted, {!r}, {!r}'.format(method, a, b))
+            
 
     def test_Field_all(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

@@ -13,7 +13,7 @@
 * Create a source tarball using `python setup.py sdist`
 
 * Test the tarball release using `test_release <vn>`
-  (e.g. ./test_release 3.0.2).
+  (e.g. ./test_release 3.0.4).
 
 * Test tutorial code:
 
@@ -24,16 +24,16 @@ cd test_tutorial
 python ../tutorial.py
 
 * Update the latest documentation using `./release_latest_docs <vn>`
-  (e.g. ./release_latest_docs 3.0.2)
+  (e.g. ./release_latest_docs 3.0.4)
 
 * Create an archived copy of the documentation using
-  `./release_archive_docs <vn>` (e.g. ./release_archive_docs 3.0.2)
+  `./release_archive_docs <vn>` (e.g. ./release_archive_docs 3.0.4)
 
 * Update the beta documentation using `./release_beta_docs`
 
 * Push recent commits using `git push origin master`
 
-* Tag the release using `./tag <vn>` (e.g. ./tag 3.0.2)
+* Tag the release using `./tag <vn>` (e.g. ./tag 3.0.4)
 
 * Upload the source tarball to PyPi
 

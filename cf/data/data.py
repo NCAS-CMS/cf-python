@@ -9989,9 +9989,8 @@ returned.
         return cls(array, units=units, chunk=chunk)
 
 
-    def mid_range(self, axes=None, squeeze=True, mtol=1,
-                  inplace=False, _preserve_partitions=False,
-                  i=False):
+    def mid_range(self, axes=None, squeeze=False, mtol=1,
+                  inplace=False, _preserve_partitions=False, i=False):
         '''Collapse axes with the unweighted average of their maximum and
     minimum values.
     
@@ -11701,7 +11700,7 @@ returned.
         return d
 
 
-    def range(self, axes=None, squeeze=True, mtol=1, inplace=False,
+    def range(self, axes=None, squeeze=False, mtol=1, inplace=False,
               _preserve_partitions=False, i=False):
         '''Collapse axes with the absolute difference between their maximum
     and minimum values.
@@ -12003,7 +12002,7 @@ returned.
 
 
     def sd(self, axes=None, squeeze=False, mtol=1, weights=None,
-           ddof=0, inplace=False, i=False, _preserve_partitions=False):
+           ddof=1, inplace=False, i=False, _preserve_partitions=False):
         '''Collapse axes by calculating their standard deviation.
     
     The standard deviation may be adjusted for the number of degrees of
@@ -12160,10 +12159,11 @@ returned.
                               weights=weights, mtol=mtol, ddof=ddof,
                               inplace=inplace,
                               _preserve_partitions=_preserve_partitions)
-
+                              
 
     def var(self, axes=None, squeeze=False, weights=None, mtol=1,
-            ddof=0, inplace=False, i=False, _preserve_partitions=False):
+            ddof=1, inplace=False, i=False,
+            _preserve_partitions=False):
         '''Collapse axes with their weighted variance.
     
     The units of the returned array are the square of the units of the

@@ -157,6 +157,7 @@ _collapse_min_size = {'sd' : 2,
 # These Data methods may be weighted
 # --------------------------------------------------------------------
 _collapse_weighted_methods = set(('mean',
+                                  'mean_absolute_value',
                                   'avg',
                                   'average',
                                   'sd',
@@ -8440,13 +8441,16 @@ may be accessed with the `nc_global_attributes`,
 
             if grouped_collapse:
                 if len(collapse_axes) > 1:
-                    raise ValueError("Can't do a grouped collapse on multiple axes simultaneously")
+                    raise ValueError(
+                        "Can't do a grouped collapse on multiple axes simultaneously")
 
                 # ------------------------------------------------------------
                 # Calculate weights
                 # ------------------------------------------------------------
                 g_weights = weights
-                if method in _collapse_weighted_methods:
+                if method not in _collapse_weighted_methods:
+                    g_weights = None
+                else:
                     if isinstance(weights, (dict, self.__class__, Data)):
                         if measure:
                             raise ValueError(
@@ -8458,11 +8462,11 @@ may be accessed with the `nc_global_attributes`,
                     elif method == 'integral':
                         if not measure:
                             raise ValueError(
-                                "Must set measure=True for creation of weights for 'integral' calculations.")
-                        
+                                "Must set measure=True for 'integral' collapses.")
+                    
                         if scale is not None:
                             raise ValueError(
-                                "Can't set scale for creation of weights for 'integral' calculations.")
+                                "Can't set scale for 'integral' collapses.")
                     elif not measure and scale is None:
                         scale = 1.0
                     elif measure and scale is not None:
@@ -8474,10 +8478,8 @@ may be accessed with the `nc_global_attributes`,
                                           radius=radius)
                     if not g_weights:
                         g_weights = None
-                #--- End: if                       
-#                elif weights is not None:
-#                    raise ValueError("Can't weight a {!r} collapse".format(method))
-
+                # --- End: if
+                    
                 axis = collapse_axes.key()
                 
                 f = f._collapse_grouped(method,
@@ -8548,52 +8550,44 @@ may be accessed with the `nc_global_attributes`,
             # ------------------------------------------------------------
             if verbose:
                 print('    Input weights           =', repr(weights)) # pragma: no cover
-                    
+
+            if method not in _collapse_weighted_methods:
+                weights = None
+
             d_kwargs = {}
             if weights is not None:
-                if method in _collapse_weighted_methods:
-                    if isinstance(weights, (dict, self.__class__, Data)):
-                        if measure:
-                            raise ValueError(
-                                "TODO")
-                        
-                        if scale is not None:
-                            raise ValueError(
-                                "TODO")
-                    elif method == 'integral':
-                        if not measure:
-                            raise ValueError(
-                                "Must set measure=True for 'integral' calculations.")
-                        
-                        if scale is not None:
-                            raise ValueError(
-                                "Can't set scale for 'integral' calculations.")
-                    elif not measure and scale is None:
-                        scale = 1.0
-                    elif measure and scale is not None:
-                        raise ValueError("TODO")
+                if isinstance(weights, (dict, self.__class__, Data)):
+                    if measure:
+                        raise ValueError(
+                            "TODO")
+                    
+                    if scale is not None:
+                        raise ValueError(
+                            "TODO")
+                elif method == 'integral':
+                    if not measure:
+                        raise ValueError(
+                            "Must set measure=True for 'integral' collapses.")
+                    
+                    if scale is not None:
+                        raise ValueError(
+                            "Can't set scale for 'integral' collapses.")
+                elif not measure and scale is None:
+                    scale = 1.0
+                elif measure and scale is not None:
+                    raise ValueError("TODO")
 
-                    d_weights = f.weights(weights, components=True,
-                                          scale=scale,
-                                          measure=measure,
-                                          radius=radius)
+                d_weights = f.weights(weights, components=True,
+                                      scale=scale,
+                                      measure=measure,
+                                      radius=radius)
 
-                    if d_weights:
-                        d_kwargs['weights'] = d_weights
-                #--- End: if
-#                elif weights is not None:
-#                    raise ValueError("Can't weight a {!r} collapse".format(method))
-
-                elif not equals(weights, 'auto'):  # doc this TODO is this right?
-                    for x in iaxes:
-                        if (x,) in d_kwargs:
-                            raise ValueError(
-                                "Can't collapse: Can't weight {!r} collapse method".format(
-                                    method))
+                if d_weights:
+                    d_kwargs['weights'] = d_weights
             #--- End: if
 
             if method in _collapse_ddof_methods:
-                d_kwargs['ddof'] = ddof
+                d_kwargs['ddof']       = ddof
 
             # ========================================================
             # Collapse the data array
@@ -9162,7 +9156,7 @@ may be accessed with the `nc_global_attributes`,
             >>> _group_weights(weights, 1, slice(2, 56))    
     
     
-        '''
+            '''
             if not isinstance(weights, dict):
                 return weights
 

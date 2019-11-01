@@ -72,6 +72,7 @@ class DataTest(unittest.TestCase):
 
         self.test_only = []
 #        self.test_only = ['NOTHING!!!!!']
+
 #        self.test_only = ['test_Data_AUXILIARY_MASK',
 #                          'test_Data_datum', 'test_Data_ERROR',
 #                          'test_Data_array', 'test_Data_varray',
@@ -86,6 +87,7 @@ class DataTest(unittest.TestCase):
 #                          'test_Data_outerproduct',
 #                          'test_Data_flatten',
 #                          'test_Data_transpose']
+        
 #        self.test_only = ['test_Data_mean_mean_absolute_value']
 #        self.test_only = ['test_Data_AUXILIARY_MASK']
 #        self.test_only = ['test_Data_outerproduct']

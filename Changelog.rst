@@ -1,3 +1,15 @@
+version 3.0.3
+-------------
+----
+
+**2019-11-01**
+
+* Changed default ``ddof`` from 0 to 1 in `cf.Data.var` and
+  `cf.Data.sd` (https://github.com/NCAS-CMS/cf-python/issues/8)
+* Fixed bug (introduced at v3.0.2) that caused ``mean_absolute_value``
+  collapses by `cf.Field.collapse` to be not weighted when they should
+  be (https://github.com/NCAS-CMS/cf-python/issues/9)
+   
 version 3.0.2
 -------------
 ----
