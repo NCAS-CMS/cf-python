@@ -1,0 +1,7 @@
+cf.FieldAncillary.copy
+======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.FieldAncillary.copy

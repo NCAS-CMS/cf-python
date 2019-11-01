@@ -1,0 +1,7 @@
+cf.AuxiliaryCoordinate.subspace
+===============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.AuxiliaryCoordinate.subspace

@@ -1,0 +1,7 @@
+cf.Count.override_units
+=======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Count.override_units

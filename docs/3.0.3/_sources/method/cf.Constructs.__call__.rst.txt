@@ -1,0 +1,7 @@
+cf.Constructs.__call__
+======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Constructs.__call__

@@ -1,0 +1,7 @@
+cf.DimensionCoordinate.log
+==========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DimensionCoordinate.log

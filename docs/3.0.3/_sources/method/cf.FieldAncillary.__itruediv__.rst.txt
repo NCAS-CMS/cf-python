@@ -1,0 +1,7 @@
+cf.FieldAncillary.__itruediv__
+==============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.FieldAncillary.__itruediv__

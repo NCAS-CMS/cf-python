@@ -1,0 +1,7 @@
+cf.DomainAncillary.nc_del_variable
+==================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DomainAncillary.nc_del_variable

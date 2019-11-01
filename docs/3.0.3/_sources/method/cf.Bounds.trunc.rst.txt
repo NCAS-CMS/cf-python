@@ -1,0 +1,7 @@
+cf.Bounds.trunc
+===============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.trunc

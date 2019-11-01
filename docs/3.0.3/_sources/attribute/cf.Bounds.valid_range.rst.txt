@@ -1,0 +1,7 @@
+cf.Bounds.valid_range
+=====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.Bounds.valid_range

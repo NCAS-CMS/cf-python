@@ -1,0 +1,7 @@
+cf.List.match_by_identity
+=========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.List.match_by_identity

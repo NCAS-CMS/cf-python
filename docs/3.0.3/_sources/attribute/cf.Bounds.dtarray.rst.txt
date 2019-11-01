@@ -1,0 +1,7 @@
+cf.Bounds.dtarray
+=================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.Bounds.dtarray

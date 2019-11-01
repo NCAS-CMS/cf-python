@@ -1,0 +1,7 @@
+cf.Index.cyclic
+===============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Index.cyclic

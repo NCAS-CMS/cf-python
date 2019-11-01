@@ -1,0 +1,7 @@
+cf.CellMeasure.year
+===================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.CellMeasure.year

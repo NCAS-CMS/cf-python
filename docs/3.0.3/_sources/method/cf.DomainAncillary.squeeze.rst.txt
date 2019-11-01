@@ -1,0 +1,7 @@
+cf.DomainAncillary.squeeze
+==========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DomainAncillary.squeeze

@@ -1,0 +1,7 @@
+cf.FieldAncillary.fill_value
+============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.FieldAncillary.fill_value

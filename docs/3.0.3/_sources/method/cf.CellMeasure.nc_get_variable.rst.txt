@@ -1,0 +1,7 @@
+cf.CellMeasure.nc_get_variable
+==============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CellMeasure.nc_get_variable

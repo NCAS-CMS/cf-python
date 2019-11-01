@@ -1,0 +1,7 @@
+cf.Index.mask
+=============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.Index.mask

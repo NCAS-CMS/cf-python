@@ -1,0 +1,7 @@
+cf.Count.nc_has_sample_dimension
+================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Count.nc_has_sample_dimension

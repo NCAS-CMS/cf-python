@@ -1,0 +1,7 @@
+cf.Datum.__repr__
+=================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Datum.__repr__

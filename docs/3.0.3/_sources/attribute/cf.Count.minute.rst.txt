@@ -1,0 +1,7 @@
+cf.Count.minute
+===============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.Count.minute

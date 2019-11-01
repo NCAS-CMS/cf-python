@@ -1,0 +1,7 @@
+cf.FieldAncillary.log
+=====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.FieldAncillary.log

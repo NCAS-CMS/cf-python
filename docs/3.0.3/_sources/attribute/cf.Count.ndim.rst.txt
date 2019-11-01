@@ -1,0 +1,7 @@
+cf.Count.ndim
+=============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.Count.ndim

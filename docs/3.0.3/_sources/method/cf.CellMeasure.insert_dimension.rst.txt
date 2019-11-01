@@ -1,0 +1,7 @@
+cf.CellMeasure.insert_dimension
+===============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CellMeasure.insert_dimension

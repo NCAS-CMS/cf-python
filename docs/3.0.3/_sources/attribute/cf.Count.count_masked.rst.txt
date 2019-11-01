@@ -1,0 +1,7 @@
+cf.Count.count_masked
+=====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.Count.count_masked

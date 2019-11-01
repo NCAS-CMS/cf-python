@@ -1,0 +1,7 @@
+cf.DomainAncillary.set_bounds
+=============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DomainAncillary.set_bounds

@@ -1,0 +1,7 @@
+cf.Count.__floordiv__
+=====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Count.__floordiv__

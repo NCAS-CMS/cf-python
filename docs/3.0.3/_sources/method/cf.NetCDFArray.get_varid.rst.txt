@@ -1,0 +1,7 @@
+cf.NetCDFArray.get_varid
+========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.NetCDFArray.get_varid
