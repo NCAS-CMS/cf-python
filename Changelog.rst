@@ -1,3 +1,17 @@
+version 3.0.4
+-------------
+----
+
+**2019-11-04**
+
+* Changed default ``ddof`` *back* to 1 in `cf.Data.var` and
+  `cf.Data.sd` (see version 3.0.3 and
+  https://github.com/NCAS-CMS/cf-python/issues/8)
+* New field construct collapse methods: ``median``,
+  ``mean_of_upper_decile``.
+* New methods: `cf.Data.median`, `cf.Data.mean_of_upper_decile`,
+  `cf.Data.percentile`.
+  
 version 3.0.3
 -------------
 ----

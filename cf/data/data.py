@@ -2,53 +2,53 @@ from functools   import reduce
 from operator    import itemgetter
 
 import numpy
-from numpy import array         as numpy_array
-from numpy import asanyarray    as numpy_asanyarray
-from numpy import ceil          as numpy_ceil
-from numpy import cos           as numpy_cos
-from numpy import cumsum        as numpy_cumsum
-from numpy import digitize      as numpy_digitize
-from numpy import dtype         as numpy_dtype
-from numpy import e             as numpy_e
-from numpy import empty         as numpy_empty
-from numpy import exp           as numpy_exp
-from numpy import floor         as numpy_floor
-from numpy import finfo         as numpy_finfo
-from numpy import isnan         as numpy_isnan
-from numpy import linspace      as numpy_linspace
-from numpy import log           as numpy_log
-from numpy import log10         as numpy_log10
-from numpy import log2          as numpy_log2
-from numpy import nan           as numpy_nan
-from numpy import nanpercentile as numpy_nanpercentile
-from numpy import ndarray       as numpy_ndarray
-from numpy import ndenumerate   as numpy_ndenumerate
-from numpy import ndindex       as numpy_ndindex
-from numpy import ndim          as numpy_ndim
-from numpy import newaxis       as numpy_newaxis
-from numpy import ones          as numpy_ones
-from numpy import prod          as numpy_prod
-from numpy import percentile    as numpy_percentile
+from numpy import array             as numpy_array
+from numpy import asanyarray        as numpy_asanyarray
+from numpy import ceil              as numpy_ceil
+from numpy import cos               as numpy_cos
+from numpy import cumsum            as numpy_cumsum
+from numpy import digitize          as numpy_digitize
+from numpy import dtype             as numpy_dtype
+from numpy import e                 as numpy_e
+from numpy import empty             as numpy_empty
+from numpy import exp               as numpy_exp
+from numpy import floor             as numpy_floor
+from numpy import finfo             as numpy_finfo
+from numpy import isnan             as numpy_isnan
+from numpy import linspace          as numpy_linspace
+from numpy import log               as numpy_log
+from numpy import log10             as numpy_log10
+from numpy import log2              as numpy_log2
+from numpy import nan               as numpy_nan
+from numpy import nanpercentile     as numpy_nanpercentile
+from numpy import ndarray           as numpy_ndarray
+from numpy import ndenumerate       as numpy_ndenumerate
+from numpy import ndindex           as numpy_ndindex
+from numpy import ndim              as numpy_ndim
+from numpy import newaxis           as numpy_newaxis
+from numpy import ones              as numpy_ones
+from numpy import prod              as numpy_prod
+from numpy import percentile        as numpy_percentile
 from numpy import ravel_multi_index as numpy_ravel_multi_index
-from numpy import reshape       as numpy_reshape
-from numpy import result_type   as numpy_result_type
-from numpy import rint          as numpy_rint
-from numpy import round         as numpy_round
-from numpy import seterr        as numpy_seterr
-from numpy import shape         as numpy_shape
-from numpy import sin           as numpy_sin
-from numpy import size          as numpy_size
-from numpy import tan           as numpy_tan
-from numpy import tile          as numpy_tile
-from numpy import trunc         as numpy_trunc
-from numpy import unique        as numpy_unique
-from numpy import unravel_index as numpy_unravel_index
-from numpy import where         as numpy_where
-from numpy import vectorize     as numpy_vectorize
-from numpy import zeros         as numpy_zeros
-from numpy import floating      as numpy_floating
-from numpy import bool_         as numpy_bool_
-from numpy import integer      as numpy_integer
+from numpy import reshape           as numpy_reshape
+from numpy import result_type       as numpy_result_type
+from numpy import rint              as numpy_rint
+from numpy import round             as numpy_round
+from numpy import seterr            as numpy_seterr
+from numpy import shape             as numpy_shape
+from numpy import sin               as numpy_sin
+from numpy import size              as numpy_size
+from numpy import tan               as numpy_tan
+from numpy import tile              as numpy_tile
+from numpy import trunc             as numpy_trunc
+from numpy import unique            as numpy_unique
+from numpy import unravel_index     as numpy_unravel_index
+from numpy import where             as numpy_where
+from numpy import vectorize         as numpy_vectorize
+from numpy import zeros             as numpy_zeros
+from numpy import floating          as numpy_floating
+from numpy import bool_             as numpy_bool_
+from numpy import integer           as numpy_integer
 
 from numpy.ma import array          as numpy_ma_array
 from numpy.ma import count          as numpy_ma_count
@@ -74,7 +74,6 @@ import operator
 from json import dumps as json_dumps
 from json import loads as json_loads
 
-#from functools import partial
 from operator  import mul as operator_mul
 from math      import ceil as math_ceil
 from itertools import product as itertools_product
@@ -2246,17 +2245,41 @@ place.
         return d
 
     
-    def percentile(self, percentile, axes=None, squeeze=False,
+    def percentile(self, percentile, axes=None,
+                   interpolation='linear', squeeze=False,
                    inplace=False, mtol='dummy?'):
         '''TODO
 
-        '''
+    :Parameters:
+
+        interpolation: `str`, optional
+            Specify the interpolation method to use when the desired
+            percentile lies between two data values ``i < j``:
+
+            ===============  =========================================
+            *interpolation*  Description
+            ===============  =========================================
+            ``'linear'``     ``i+(j-i)*fraction``, where ``fraction``
+                             is the fractional part of the index
+                             surrounded by ``i`` and j``
+           ``'lower'``     ``i``
+           ``'‘higher'``   ``j``
+           ``'nearest'``   ``i`` or ``j``, whichever is nearest.
+           ``'midpoint'``  ``(i+j)/2``
+            ===============  =========================================
+
+        '''        
+        if numpy_size(percentile) != 1:
+            raise ValueError(
+                "Percentile must be logically scalar. Got {!r}".format(
+                    percentile))
+
+        percentile = numpy_array(percentile).squeeze()
+        
         if percentile > 100 or percentile < 0:
             raise ValueError(
                 "Percentile must be in the range [0, 100]. Got {}".format(
-                    percentile))
-
-        percentile = numpy_array(percentile)
+                    percentile.item()))
         
         if axes is None:
             axes = list(range(self.ndim))
@@ -2268,19 +2291,32 @@ place.
         for key, data in sections.items():
             array = data.array
 
-            if numpy_ma_is_masked(array):
-                masked = True
+            masked = numpy_ma_is_masked(array)
+            if masked:
+                if array.dtype != _dtype_float:
+                    # Can't assign NaNs to integer arrays
+                    array = array.astype(float, copy=True)
+                    
                 array = numpy_ma_filled(array, numpy_nan)
                 func = numpy_nanpercentile
             else:
-                masked = False                                
                 func = numpy_percentile
 
-            p = func(array, percentile, axis=axes)
-            for axis in axes:
-                p = numpy_expand_dims(p, axis=axis)
+            if masked:
+                with numpy.testing.suppress_warnings() as sup:
+#                    sup.filter(RuntimeWarning, message='.*All-NaN slice encountered')
+                    sup.filter(RuntimeWarning, message='.*encountered')
+                    p = func(array, percentile, axis=axes,
+                             keepdims=True, overwrite_input=False)
+            else:
+                p = func(array, percentile, axis=axes, keepdims=True,
+                         overwrite_input=False)
+                
+#            for axis in axes:
+#                p = numpy_expand_dims(p, axis=axis)
 
             if masked:
+                # Replace NaNs with missing data
                 p = numpy_ma_masked_where(numpy_isnan(p), p, copy=False)
                 
             sections[key] = type(self)(p, units=self.Units,
@@ -2289,6 +2325,9 @@ place.
         # Glue the sections back together again
         out = self.reconstruct_sectioned_data(sections)
 
+        if squeeze:
+            out.squeeze(inplace=True)
+            
         if inplace:
             self.__dict__ = out.__dict__
             return None
@@ -12064,7 +12103,7 @@ returned.
 
 
     def sd(self, axes=None, squeeze=False, mtol=1, weights=None,
-           ddof=1, inplace=False, i=False, _preserve_partitions=False):
+           ddof=0, inplace=False, i=False, _preserve_partitions=False):
         '''Collapse axes by calculating their standard deviation.
     
     The standard deviation may be adjusted for the number of degrees of
@@ -12177,11 +12216,7 @@ returned.
         ddof : number, optional
             The delta degrees of freedom. The number of degrees of
             freedom used in the calculation is (N-*ddof*) where N
-            represents the number of elements. By default *ddof* is 1,
-            meaning the standard deviation of the population is
-            estimated according to the usual formula with (N-1) in the
-            denominator to avoid the bias caused by the use of the
-            sample mean (Bessel's correction).
+            represents the number of elements. By default *ddof* is 0
     
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
@@ -12224,7 +12259,7 @@ returned.
                               
 
     def var(self, axes=None, squeeze=False, weights=None, mtol=1,
-            ddof=1, inplace=False, i=False,
+            ddof=0, inplace=False, i=False,
             _preserve_partitions=False):
         '''Collapse axes with their weighted variance.
     

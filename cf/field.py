@@ -6608,6 +6608,9 @@ may be accessed with the `nc_global_attributes`,
             for a, n in zip(bin_indices[1:], i[1:]):
                 b &= (a == n)
 
+            b.hardmask = False
+            b.where(b.mask, False, inplace=True)
+                
             c.set_data(self.data.where(b, None, cf_masked),
                        set_axes=False, copy=False)
 
@@ -8417,17 +8420,49 @@ may be accessed with the `nc_global_attributes`,
             if not collapse_axes_all_sizes:
                 raise ValueError("Can't collapse: Can not identify collapse axes")
 
-#            if method not in ('minimum_absolute_value',
+
+#            _collapse_methods = {
+#    'mean'                  : 'mean',
+#    'mean_absolute_value'   : 'mean_absolute_value',
+#    'mean_of_upper_decile'  : 'mean_of_upper_decile',
+#    'maximum'               : 'max',
+#    'maximum_absolute_value': 'maximum_absolute_value',
+#    'minimum'               : 'min',
+#    'minimum_absolute_value': 'minimum_absolute_value',
+#    'mid_range'             : 'mid_range',
+#    'range'                 : 'range',
+#    'median'                : 'median',
+#    'standard_deviation'    : 'sd',
+#    'sd'                    : 'sd',
+#    'sum'                   : 'sum',
+#    'sum_of_squares'        : 'sum_of_squares',
+#    'integral'              : 'integral',
+#    'root_mean_square'      : 'root_mean_square',
+#    'variance'              : 'var',
+#    'var'                   : 'var',
+#    'sample_size'           : 'sample_size', 
+#    'sum_of_weights'        : 'sum_of_weights',
+#    'sum_of_weights2'       : 'sum_of_weights2',
+#}
+
+            if method in ('sum_of_weights', 'sum_of_weights2',
+                          'sample_size', 'integral', 'maximum_absolute_value',
+                          'minimum_absolute_value', 'mean_absolute_value',
+                          'range', 'root_mean_square', 'sum_of_squares'):
+                collapse_axes = collapse_axes_all_sizes.copy()
+            else:
+                collapse_axes = collapse_axes_all_sizes.filter_by_size(gt(1))
+
+#            if method not in (ppp'minimum_absolute_value',
 #                              'maximum_absolute_value', 'sample_size',
 #                              'sum_of_weights', 'sum_of_weights2',
 #                              'mid_range', 'range', 'median',
 #                              'sum_of_squares', 'mean_absolute_value',
 #                              'mean_of_upper_decile',
-#                              'root_mean_square', 'var', 'sd'):
+#                              ):
 #                collapse_axes = collapse_axes_all_sizes.filter_by_size(gt(1))
 #            else:
 #                collapse_axes = collapse_axes_all_sizes.copy()
-            collapse_axes = collapse_axes_all_sizes.copy()
 
             if verbose:
                 print('    collapse_axes           =', collapse_axes) # pragma: no cover

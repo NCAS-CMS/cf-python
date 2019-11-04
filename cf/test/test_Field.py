@@ -35,8 +35,8 @@ class FieldTest(unittest.TestCase):
 #        self.test_only = ['test_Field__add__']
 #        self.test_only = ['test_Field_cumsum']
 #        self.test_only = ['test_Field_flatten']
-        self.test_only = ['test_Field_collapse']
-#        self.test_only = ['test_Field_radius']
+#        self.test_only = ['test_Field_collapse']
+        self.test_only = ['test_Field_radius']
 #        self.test_only = ['test_Field_field_ancillary']
 #        self.test_only = ['test_Field_AUXILIARY_MASK']
 #        self.test_only = ['test_Field__getitem__']
@@ -248,16 +248,18 @@ class FieldTest(unittest.TestCase):
         f[0, 5, ::2] = cf.masked
         
         for axes in axes_combinations(f):
-            for method in ('sum', 'min', 'max', 'minimum_absolute_value',
-                           'maximum_absolute_value', 'mid_range', 'range',
-                           'median', 'sample_size', 'sum_of_squares',
-                           'mean', 'mean_absolute_value',
+            for method in ('sum', 'min', 'max',
+                           'minimum_absolute_value',
+                           'maximum_absolute_value', 'mid_range',
+                           'range', 'median', 'sample_size',
+                           'sum_of_squares', 'mean',
+                           'mean_absolute_value',
                            'mean_of_upper_decile', 'root_mean_square',
-                           'integral', 'var', 'sd',
-                           'sum_of_weights', 'sum_of_weights2'):
+                           'integral', 'sum_of_weights',
+                           'sum_of_weights2'):
                 a = f.collapse(method, axes=axes).data
                 b = getattr(f.data, method)(axes=axes)
-#                print(method, axes)
+                print(method, axes)
 #                print (a.array)
 #                print (b.array)
 #                print ((a-b).array)
@@ -273,8 +275,8 @@ class FieldTest(unittest.TestCase):
                 self.assertTrue(a.equals(b, verbose=True),
                                 '{} weighted axes={}, {!r}, {!r}'.format(method, axes, a, b))
 
-            for method in ('mean', 'mean_absolute_value', 'mean_of_upper_decile',
-                           'root_mean_square', 'var', 'sd'):
+            for method in ('mean', 'mean_absolute_value',
+                           'mean_of_upper_decile', 'root_mean_square'):
                 weights = f.weights('area', components=True)
                 a = f.collapse(method, axes=axes, weights='area').data
                 b = getattr(f.data, method)(axes=axes, weights=weights)
@@ -286,6 +288,24 @@ class FieldTest(unittest.TestCase):
                 a = f.collapse(method, axes=axes, weights='area', measure=True).data
                 b = getattr(f.data, method)(axes=axes, weights=weights)
                 self.assertTrue(a.equals(b, verbose=True),
+                                '{} weighted axes={}, {!r}, {!r}'.format(method, axes, a, b))
+        #--- End: for
+        
+        for axes in axes_combinations(f):
+            if axes == (0,):
+                continue
+            
+            for method in ('var', 'sd'):
+                a = f.collapse(method, axes=axes).data
+                b = getattr(f.data, method)(axes=axes, ddof=1)
+                self.assertTrue(a.equals(b, verbose=True),
+                                '{} unweighted axes={}, {!r}, {!r}'.format(method, axes, a, b))
+                
+            for method in ('var', 'sd'):
+                weights = f.weights('area', components=True)
+                a = f.collapse(method, axes=axes, weights='area').data
+                b = getattr(f.data, method)(axes=axes, ddof=1, weights=weights)
+                self.assertTrue(a.equals(b, rtol=1e-05, atol=1e-08, verbose=True),
                                 '{} weighted axes={}, {!r}, {!r}'.format(method, axes, a, b))
         #--- End: for
         
