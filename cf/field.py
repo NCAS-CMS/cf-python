@@ -5680,13 +5680,23 @@ may be accessed with the `nc_global_attributes`,
         return field
 
 
-    def digitize(self, bins, upper=False, open_ends=False, 
-                 return_bins=False, inplace=False):
+    def digitize(self, bins, upper=False, open_ends=False,
+                 closed_ends=None, return_bins=False, inplace=False):
         '''Return the indices of the bins to which each value belongs.
 
     Values (including masked values) that do not belong to any bin
     result in masked values in the output field construct of indices.
-                
+            
+    Bins defined by percentiles are easily created with the
+    `percentiles` method
+
+    *Example*:
+      Find the indices for bins defined by the 10th, 50th and 90th
+      percentiles:
+
+      >>> bins = f.percentile([0, 10, 50, 90, 100], squeeze=True)
+      >>> i = f.digitize(bins, closed_ends=True)
+        
     The output field contruct is given a ``long_name`` property, and
     some or all of the following properties that define the bins:
 
@@ -5756,31 +5766,23 @@ may be accessed with the `nc_global_attributes`,
 
     .. versionadded:: 3.0.2
 
-    .. seealso:: `bin`, `histogram`
+    .. seealso:: `bin`, `histogram`, `percentile`
 
     :Parameters:
 
         bins: array_like
             The bin boundaries. One of:
 
-            * An integer.
-           
+            * An integer
+                   
               Create this many equally sized, contiguous bins spanning
-              the range of the data. I.e. the smallest bin boundary
-              will be the minimum of the data and the largest bin
-              boundary will be the maximum of the data.
+              the range of the data. I.e. the smallest bin boundary is
+              the minimum of the data and the largest bin boundary is
+              the maximum of the data. In order to guarantee that each
+              data value lies inside a bin, the *closed_ends*
+              parameter is assumed to be True.
 
-              In order to guarantee that each data value lies inside a
-              bin, the most extreme open boundary is extended by
-              multiplying it by ``1.0 - epsilon`` or ``1.0 + epsilon``
-              (where ``epsilon`` is the smallest positive 64-bit float
-              such that ``1.0 + epsilson != 1.0``), whichever extends
-              the boundary in the appropriate direction. I.e. if
-              *upper* is False then the largest upper bin boundary is
-              made slightly larger and if *upper* is True then the
-              lowest lower bin boundary is made slightly lower.
-
-            * A 1-d array of numbers.
+            * A 1-d array
         
               When sorted into a monotonically increasing sequence,
               each boundary, with the exception of the two end
@@ -5791,7 +5793,7 @@ may be accessed with the `nc_global_attributes`,
               largest upper bin boundary also defines a
               right-unbounded (i.e. not bounded above) bin.
 
-            * A 2-d array of numbers.
+            * A 2-d array
         
               The second dimension, that must have size 2, contains
               the lower and upper boundaries of each bin. The bins to
@@ -5812,6 +5814,21 @@ may be accessed with the `nc_global_attributes`,
             from the lowest lower bin boundary and largest upper bin
             boundary respectively. By default these bins are not
             created
+
+        closed_ends: `bool`, optional
+            If True then extend the most extreme open boundary by a
+            small amount so that its bin includes values that are
+            equal to the unadjusted boundary value. This is done by
+            multiplying it by ``1.0 - epsilon`` or ``1.0 + epsilon``,
+            whichever extends the boundary in the appropriate
+            direction, where ``epsilon`` is the smallest positive
+            64-bit float such that ``1.0 + epsilson != 1.0``. I.e. if
+            *upper* is False then the largest upper bin boundary is
+            made slightly larger and if *upper* is True then the
+            lowest lower bin boundary is made slightly lower.
+
+            By default *closed_ends* is assumed to be True if *bins*
+            is a scalar and False otherwise.
 
         return_bins: `bool`, optional
             If True then also return the bins in their 2-d form.
@@ -5956,6 +5973,7 @@ may be accessed with the `nc_global_attributes`,
 
         new_data, bins = self.data.digitize(bins, upper=upper,
                                             open_ends=open_ends,
+                                            closed_ends=closed_ends,
                                             return_bins=True)
         units = new_data.Units
         
@@ -6540,35 +6558,6 @@ may be accessed with the `nc_global_attributes`,
 
         c = self.copy()
 
-#        if return_indices:
-#            # Create a field for storing the bin indices of each value
-#            d = self.copy()
-#            shape = d.shape
-#            d.del_data(None)
-#            d.Units = Units()
-#            n_indices = len(bin_indices)
-#            axis = d.set_construct(DomainAxis(n_indices))
-#            data = Data.masked_all(shape=(n_indices,) + self.shape,
-#                                   dtype=int, units=None)
-#
-#            d.set_data(data, axes=(axis,) + d.get_data_axes(), copy=False)
-#
-#            d.hardmask = False
-#            
-#            aux = AuxiliaryCoordinate()
-#            aux.long_name = 'Bin name'            
-#            data = Data([dim.identity(strict=True) for dim in dims])
-#            aux.set_data(data, copy=False)
-#            d.set_construct(aux, axes=axis, copy=False)
-#
-#            d.del_property('standard_name', None)
-#            d.long_name = 'Bin index to which each {!r} value belongs'.format(
-#                self.identity())
-#
-#            for key in d.cell_methods:
-#                d.del_construct(key)
-#        #--- End: if
-
         # ------------------------------------------------------------
         # Parse the weights
         # ------------------------------------------------------------
@@ -6616,12 +6605,6 @@ may be accessed with the `nc_global_attributes`,
 
             result = c.collapse(method=method, weights=weights, verbose=False).data
             out.data[i] = result.datum()
-
-#            if return_indices:
-#                b.insert_dimension(0, inplace=True)
-#                for n, ind in enumerate(i):
-#                    d.data[n] = d.data[n].where(b, ind)
-        #--- End: for
 
         if verbose:
             print()
@@ -13746,6 +13729,218 @@ may be accessed with the `nc_global_attributes`,
         return super().get_data_axes(key=key, default=default)
 
 
+    def percentile(self, percentiles, axes=None,
+                   interpolation='linear', squeeze=False):
+        '''Compute percentiles of the data along the specified axes.
+
+    The default is to compute the percentiles along a flattened
+    version of the data.
+
+    If the input data are integers, or floats smaller than float64, or
+    the input data contains missing values, then output data type is
+    float64. Otherwise, the output data type is the same as that of
+    the input.
+    
+    .. versionadded:: 3.0.4
+
+    .. seealso:: `bin`, ppp`collapse`, `digitize`, `where`
+
+    :Parameters:
+
+        percentile: (sequence of) number
+            Percentile, or sequence of percentiles, to compute, which
+            must be between 0 and 100 inclusive.
+
+        axes: (sequence of) `str` or `int`, optional
+            Select the domain axes over which to calculate the
+            percentiles, defined by the domain axes that would be
+            selected by passing the each given axis description to a
+            call of the field construct's `domain_axis` method. For
+            example, for a value of ``'X'``, the domain axis construct
+            returned by ``f.domain_axis('X'))`` is selected.
+
+             By default, of *axes* is `None`, all axes are selected.
+
+        interpolation: `str`, optional
+            Specify the interpolation method to use when the desired
+            percentile lies between two data values ``i < j``:
+
+            ===============  =========================================
+            *interpolation*  Description
+            ===============  =========================================
+            ``'linear'``     ``i+(j-i)*fraction``, where ``fraction``
+                             is the fractional part of the index
+                             surrounded by ``i`` and ``j``
+            ``'lower'``      ``i``
+            ``'higher'``     ``j``
+            ``'nearest'``    ``i`` or ``j``, whichever is nearest.
+            ``'midpoint'``   ``(i+j)/2``
+            ===============  =========================================       
+
+            By default ``'linear'`` interpolation is used.
+
+        squeeze: `bool`, optional
+            If True then all size 1 axes are removed from the returned
+            percentiles data. By default axes over which percentiles
+            have been calculated are left in the result as axes with
+            size 1, meaning that the result is guaranteed to broadcast
+            correctly against the original data.
+    
+    :Returns:
+
+        `Field`
+
+            The percentiles of the original data.
+
+    **Examples:**
+
+    >>> d = cf.Data(numpy.arange(12).reshape(3, 4), 'm')
+    >>> print(d.array)
+    [[ 0  1  2  3]
+     [ 4  5  6  7]
+     [ 8  9 10 11]]
+    >>> p = d.percentile([20, 40, 50, 60, 80])
+    >>> p
+    <CF Data(4, 1, 1): [[[2.2, ..., 8.8]]] m>
+
+    >>> p = d.percentile([20, 40, 50, 60, 80], squeeze=True)
+    >>> print(p.array)
+    [2.2 4.4 5.5 6.6 8.8]
+
+    Find the standard deviation of the values above the 80th percentile:
+
+    >>> p80 = d.percentile(80)
+    <CF Data(1, 1): [[8.8]] m>
+    >>> e = d.where(d<=p80, cf.masked)
+    print(e.array)
+    [[-- -- -- --]
+     [-- -- -- --]
+     [-- 9 10 11]]
+    >>> e.sd()
+    <CF Data(1, 1): [[0.816496580927726]] m>
+
+    Find the mean of the values above the 45th percentile along the
+    second axis:
+
+    >>> p45 = d.percentile(45, axes=1)
+    >>> print(p45.array)
+    [[1.35],
+     [5.35],
+     [9.35]]
+    >>> e = d.where(d<=p45, cf.masked)
+    >>> print(e.array)
+    [[-- -- 2 3]
+     [-- -- 6 7]
+     [-- -- 10 11]]
+    >>> f = e.mean(axes=1)
+    >>> f
+    <CF Data(3, 1): [[2.5, ..., 10.5]] m> 
+    >>> print(f.array)
+    [[ 2.5]
+     [ 6.5]
+     [10.5]]
+
+    Find the histogram bin boundaries associated with given
+    percentiles:
+
+    >>> bins = d.percentile([0, 10, 50, 90, 100], squeeze=True)
+    >>> print(bins.array)
+    [ 0.   1.1  5.5  9.9 11. ]
+    >>> e = d.digitize(bins, closed_ends=True)
+    >>> print(e.array)
+    [[0 0 1 1]
+     [1 1 2 2]
+     [2 2 3 3]]
+
+        '''
+        data_axes = self.get_data_axes(default=())
+
+        if axes is None:
+            axes = data_axes[:]
+            iaxes = list(range(self.ndim))
+        else:
+            if isinstance(axes, (str, int)):
+                 axes = (axes,)
+                
+            axes = set([self.domain_axis(axis, key=True) for axis in axes])
+            iaxes = [data_axes.index(axis) for axis in
+                     axes.intersection(self.get_data_axes())]
+
+        data = self.data.percentile(percentiles, axes=iaxes,
+                                    interpolation=interpolation,
+                                    squeeze=False)
+
+        # ------------------------------------------------------------
+        # Initialize the output field wit the percentile data
+        # ------------------------------------------------------------
+        out = type(self)()
+        out.set_properties(self.properties())
+
+        for axis in [axis for axis in self.domain_axes if axis not in data_axes]:
+            out.set_construct(self._DomainAxis(1), key=axis)
+        
+        out_data_axes = []
+        if data.ndim == self.ndim:
+            for n, axis in zip(data.shape, data_axes):
+                out_data_axes.append(out.set_construct(self._DomainAxis(n), key=axis))
+
+        elif data.ndim == self.ndim + 1:
+            for n, axis in zip(data.shape[1:], data_axes):
+                out_data_axes.append(out.set_construct(self._DomainAxis(n), key=axis))
+
+            out_data_axes.insert(0, out.set_construct(self._DomainAxis(data.shape[0])))
+                
+        out.set_data(data, axes=out_data_axes, copy=False)
+
+        # ------------------------------------------------------------
+        # Create a dimension coordinate for the percentiles
+        # ------------------------------------------------------------
+        dim = DimensionCoordinate()
+        data = Data(percentiles).squeeze()
+        data.override_units(Units(), inplace=True)
+        dim.set_data(data, copy=False)
+
+        if out.ndim == self.ndim:
+            axis = out.set_construct(self._DomainAxis(1))
+        else:
+            axis = out_data_axes[0]
+
+        axes = sorted(axes)
+        if len(axes) == 1:
+            dim.long_name = "Percentile ranks for "+self.constructs.domain_axis_identity(axes[0])+" dimensions"
+        else:
+            dim.long_name = "Percentile ranks for "+', '.join(map(self.constructs.domain_axis_identity, axes))+" dimensions"
+
+        out.set_construct(dim, axes=axis, copy=False)
+
+        # TODO
+        if axes:
+            for key, c in self.dimension_coordinates.filter_by_axis('subset', *axes).items():
+                c_axes = self.get_data_axes(key)
+
+                bounds = c.get_bounds_data(c.get_data(None))
+                if bounds is not None:        
+                    bounds = Data([bounds.min().datum(), bounds.max().datum()], units=c.Units)
+                    data = bounds.mean(squeeze=True)
+                    c = c.copy()
+                    c.set_data(data, copy=False)
+                    c.set_bounds(Bounds(data=bounds), copy=False)
+                    out.set_construct(c, axes=c_axes)
+        #--- End: if
+        
+        # TODO
+        other_axes = [axis for axis in self.domain_axes if axis not in axes]
+        if other_axes:
+            for key, c in self.constructs.filter_by_axis('subset', *other_axes).items():
+                c_axes = self.get_data_axes(key)
+                out.set_construct(c, axes=c_axes)
+        #--- End: if
+
+        out.squeeze(axes, inplace=True)
+        
+        return out
+
+    
     def period(self, axis, **kwargs):
         '''Return the period of an axis.
 

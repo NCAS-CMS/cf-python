@@ -1966,13 +1966,25 @@ place.
 
     
     def digitize(self, bins, upper=False, open_ends=False,
-                 return_bins=False):
+                 closed_ends=None, return_bins=False):
         '''Return the indices of the bins to which each value belongs.
 
     Values (including masked values) that do not belong to any bin
     result in masked values in the output data.
              
+    Bins defined by percentiles are easily created with the
+    `percentiles` method
+
+    *Example*:
+      Find the indices for bins defined by the 10th, 50th and 90th
+      percentiles:
+
+      >>> bins = d.percentile([0, 10, 50, 90, 100], squeeze=True)
+      >>> i = f.digitize(bins, closed_ends=True)
+    
     .. versionadded:: 3.0.2
+
+    .. seealso:: `percentile`
 
     :Parameters:
 
@@ -1985,15 +1997,8 @@ place.
               the range of the data. I.e. the smallest bin boundary is
               the minimum of the data and the largest bin boundary is
               the maximum of the data. In order to guarantee that each
-              data value lies inside a bin, the most extreme open
-              boundary is extended by multiplying it by ``1.0 -
-              epsilon`` or ``1.0 + epsilon``, whichever extends the
-              boundary in the appropriate direction, where ``epsilon``
-              is the smallest positive 64-bit float such that ``1.0 +
-              epsilson != 1.0``. I.e. if *upper* is False then the
-              largest upper bin boundary is made slightly larger and
-              if *upper* is True then the lowest lower bin boundary is
-              made slightly lower.
+              data value lies inside a bin, the *closed_ends*
+              parameter is assumed to be True.
 
             * A 1-d array of numbers.
         
@@ -2026,6 +2031,21 @@ place.
             right-open (i.e. not bounded above) bins from the lowest
             lower bin boundary and largest upper bin boundary
             respectively. By default these bins are not created
+
+        closed_ends: `bool`, optional
+            If True then extend the most extreme open boundary by a
+            small amount so that its bin includes values that are
+            equal to the unadjusted boundary value. This is done by
+            multiplying it by ``1.0 - epsilon`` or ``1.0 + epsilon``,
+            whichever extends the boundary in the appropriate
+            direction, where ``epsilon`` is the smallest positive
+            64-bit float such that ``1.0 + epsilson != 1.0``. I.e. if
+            *upper* is False then the largest upper bin boundary is
+            made slightly larger and if *upper* is True then the
+            lowest lower bin boundary is made slightly lower.
+
+            By default *closed_ends* is assumed to be True if *bins*
+            is a scalar and False otherwise.
 
         return_bins: `bool`, optional
             If True then also return the bins in their 2-d form.
@@ -2080,10 +2100,18 @@ place.
     [[ 0  1  2  3]
      [ 4 --  6  7]
      [ 8  9 10 11]]
-    >>> print(d.digitize([2, 6, 10]).array)
+    >>> print(d.digitize([2, 6, 10], open_ends=True).array)
     [[ 0  0  1  1]
      [ 1 --  2  2]
      [ 2  2  3  3]]
+    >>> print(d.digitize([2, 6, 10]).array)
+    [[-- --  0  0]
+     [ 0 --  1  1]
+     [ 1  1 -- --]]
+    >>> print(d.digitize([2, 6, 10], closed_ends=True).array)
+    [[-- --  0  0]
+     [ 0 --  1  1]
+     [ 1  1  1 --]]
 
         '''
         out = self.copy()
@@ -2145,20 +2173,40 @@ place.
             # --------------------------------------------------------
             # 0-d bins:
             # --------------------------------------------------------
+            if closed_ends is None:
+                closed_ends = True
+                
+            if not closed_ends:
+                raise ValueError(
+                    "Can't set closed_ends=False when specifying bins as a scalar.")
+
             if open_ends:
                 raise ValueError(
                     "Can't set open_ends=True when specifying bins as a scalar.")
-            
-            epsilon = numpy_finfo(float).eps
+
             mx = self.max().datum()
             mn = self.min().datum()
             bins = numpy_linspace(mn, mx, int(bins) + 1, dtype=float)
-            if upper:
-                bins[0] -= abs(mn) * epsilon
-            else:
-                bins[-1] += abs(mx) * epsilon
                     
             delete_bins = []
+
+        if closed_ends:
+            # Adjust the lowest/largest bin boundary to be inclusive
+            if open_ends:
+                raise ValueError(
+                    "Can't set open_ends=True when closed_ends is True.")
+
+            bins = bins.astype(float, copy=True)
+            
+            epsilon = numpy_finfo(float).eps
+            ndim = bins.ndim
+            if upper:
+                mn = bins[(0,) * ndim]
+                bins[(0,) * ndim] -= abs(mn) * epsilon
+            else:
+                mx = bins[(-1,) * ndim]
+                bins[(-1,) * ndim] += abs(mx) * epsilon
+        #--- End: if
 
         if not open_ends:
             delete_bins.insert(0, 0)
@@ -2229,7 +2277,7 @@ place.
             
         p90 = d.percentile(90, axes=axes, squeeze=squeeze,
                            inplace=False)
-#        print ('p90=', p90.array)
+
         if include_decile:
             mask = (d < p90)
         else:
@@ -2245,13 +2293,35 @@ place.
         return d
 
     
-    def percentile(self, percentile, axes=None,
-                   interpolation='linear', squeeze=False,
-                   inplace=False, mtol='dummy?'):
-        '''TODO
+    def percentile(self, percentiles, axes=None,
+                   interpolation='linear', squeeze=False):
+        '''Compute percentiles of the data along the specified axes.
+
+    The default is to compute the percentiles along a flattened
+    version of the data.
+
+    If the input data are integers, or floats smaller than float64, or
+    the input data contains missing values, then output data type is
+    float64. Otherwise, the output data type is the same as that of
+    the input.
+    
+    .. versionadded:: 3.0.4
+
+    .. seealso:: `digitize`, `median`, `mean_of_upper_decile`, `where`
 
     :Parameters:
 
+        percentile: (sequence of) number
+            Percentile, or sequence of percentiles, to compute, which
+            must be between 0 and 100 inclusive.
+
+        axes: (sequence of) `int`, optional
+            Select the axes. The *axes* argument may be one, or a
+            sequence, of integers that select the axis coresponding to
+            the given position in the list of axes of the data array.
+    
+            By default, of *axes* is `None`, all axes are selected.
+    
         interpolation: `str`, optional
             Specify the interpolation method to use when the desired
             percentile lies between two data values ``i < j``:
@@ -2261,32 +2331,109 @@ place.
             ===============  =========================================
             ``'linear'``     ``i+(j-i)*fraction``, where ``fraction``
                              is the fractional part of the index
-                             surrounded by ``i`` and j``
-           ``'lower'``     ``i``
-           ``'‘higher'``   ``j``
-           ``'nearest'``   ``i`` or ``j``, whichever is nearest.
-           ``'midpoint'``  ``(i+j)/2``
-            ===============  =========================================
+                             surrounded by ``i`` and ``j``
+            ``'lower'``      ``i``
+            ``'higher'``     ``j``
+            ``'nearest'``    ``i`` or ``j``, whichever is nearest.
+            ``'midpoint'``   ``(i+j)/2``
+            ===============  =========================================       
 
-        '''        
-        if numpy_size(percentile) != 1:
-            raise ValueError(
-                "Percentile must be logically scalar. Got {!r}".format(
-                    percentile))
+            By default ``'linear'`` interpolation is used.
 
-        percentile = numpy_array(percentile).squeeze()
-        
-        if percentile > 100 or percentile < 0:
+        squeeze: `bool`, optional
+            If True then all size 1 axes are removed from the returned
+            percentiles data. By default axes over which percentiles
+            have been calculated are left in the result as axes with
+            size 1, meaning that the result is guaranteed to broadcast
+            correctly against the original data.
+    
+    :Returns:
+
+        `Data`
+
+            The percentiles of the original data.
+
+    **Examples:**
+
+    >>> d = cf.Data(numpy.arange(12).reshape(3, 4), 'm')
+    >>> print(d.array)
+    [[ 0  1  2  3]
+     [ 4  5  6  7]
+     [ 8  9 10 11]]
+    >>> p = d.percentile([20, 40, 50, 60, 80])
+    >>> p
+    <CF Data(4, 1, 1): [[[2.2, ..., 8.8]]] m>
+
+    >>> p = d.percentile([20, 40, 50, 60, 80], squeeze=True)
+    >>> print(p.array)
+    [2.2 4.4 5.5 6.6 8.8]
+
+    Find the standard deviation of the values above the 80th percentile:
+
+    >>> p80 = d.percentile(80)
+    <CF Data(1, 1): [[8.8]] m>
+    >>> e = d.where(d<=p80, cf.masked)
+    print(e.array)
+    [[-- -- -- --]
+     [-- -- -- --]
+     [-- 9 10 11]]
+    >>> e.sd()
+    <CF Data(1, 1): [[0.816496580927726]] m>
+
+    Find the mean of the values above the 45th percentile along the
+    second axis:
+
+    >>> p45 = d.percentile(45, axes=1)
+    >>> print(p45.array)
+    [[1.35],
+     [5.35],
+     [9.35]]
+    >>> e = d.where(d<=p45, cf.masked)
+    >>> print(e.array)
+    [[-- -- 2 3]
+     [-- -- 6 7]
+     [-- -- 10 11]]
+    >>> f = e.mean(axes=1)
+    >>> f
+    <CF Data(3, 1): [[2.5, ..., 10.5]] m> 
+    >>> print(f.array)
+    [[ 2.5]
+     [ 6.5]
+     [10.5]]
+
+    Find the histogram bin boundaries associated with given
+    percentiles:
+
+    >>> bins = d.percentile([0, 10, 50, 90, 100], squeeze=True)
+    >>> print(bins.array)
+    [ 0.   1.1  5.5  9.9 11. ]
+    >>> e = d.digitize(bins, closed_ends=True)
+    >>> print(e.array)
+    [[0 0 1 1]
+     [1 1 2 2]
+     [2 2 3 3]]
+
+        '''
+        percentiles = numpy_array(percentiles).flatten()
+        percentiles.sort()
+
+        if percentiles[0] < 0 or percentiles[-1] > 100:
             raise ValueError(
-                "Percentile must be in the range [0, 100]. Got {}".format(
-                    percentile.item()))
+                "Each percentile must be in the range [0, 100]. Got {!r}".format(
+                    percentiles))
+
+        n_percentiles = percentiles.size
+        if n_percentiles == 1:
+            percentiles = percentiles.squeeze()
         
         if axes is None:
             axes = list(range(self.ndim))
         else:
             axes = sorted(self._parse_axes(axes))
-        
+
+        org_chunksize = CHUNKSIZE(CHUNKSIZE()/n_percentiles)
         sections = self.section(axes, chunks=True)
+        CHUNKSIZE(org_chunksize)
 
         for key, data in sections.items():
             array = data.array
@@ -2302,36 +2449,26 @@ place.
             else:
                 func = numpy_percentile
 
-            if masked:
-                with numpy.testing.suppress_warnings() as sup:
-#                    sup.filter(RuntimeWarning, message='.*All-NaN slice encountered')
-                    sup.filter(RuntimeWarning, message='.*encountered')
-                    p = func(array, percentile, axis=axes,
-                             keepdims=True, overwrite_input=False)
-            else:
-                p = func(array, percentile, axis=axes, keepdims=True,
-                         overwrite_input=False)
-                
-#            for axis in axes:
-#                p = numpy_expand_dims(p, axis=axis)
+            with numpy.testing.suppress_warnings() as sup:
+                sup.filter(RuntimeWarning, message='.*All-NaN slice encountered')
+                p = func(array, percentiles, axis=axes,
+                         interpolation=interpolation,
+                         keepdims=True, overwrite_input=False)
 
             if masked:
                 # Replace NaNs with missing data
                 p = numpy_ma_masked_where(numpy_isnan(p), p, copy=False)
-                
+                       
             sections[key] = type(self)(p, units=self.Units,
                                        fill_value=self.fill_value)
-
+        #--- End: for
+        
         # Glue the sections back together again
         out = self.reconstruct_sectioned_data(sections)
 
         if squeeze:
             out.squeeze(inplace=True)
             
-        if inplace:
-            self.__dict__ = out.__dict__
-            return None
-        
         return out
 
     
@@ -11246,16 +11383,11 @@ returned.
     
     :Parameters:
     
-        axes: (sequence of) int or str, optional
+        axes: (sequence of) int, optional
             Select the axes.  By default all size 1 axes are
-            removed. The *axes* argument may be one, or a sequence,
-            of:
-    
-              * An internal axis identifier. Selects this axis.
-            ..
-    
-              * An integer. Selects the axis coresponding to the given
-                position in the list of axes of the data array.
+            removed. The *axes* argument may be one, or a sequence, of
+            integers that select the axis coresponding to the given
+            position in the list of axes of the data array.
     
             No axes are removed if *axes* is an empty sequence.
     
