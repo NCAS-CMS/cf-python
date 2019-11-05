@@ -90,7 +90,7 @@
 <h1>cf.Index.insert_dimension<a class="headerlink" href="#cf-index-insert-dimension" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Index.insert_dimension">
-<code class="descclassname">Index.</code><code class="descname">insert_dimension</code><span class="sig-paren">(</span><em>position=0</em>, <em>inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.8/cfdm/mixin/propertiesdata.py#L350"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Index.insert_dimension" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Index.</code><code class="descname">insert_dimension</code><span class="sig-paren">(</span><em>position=0</em>, <em>inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.8/cfdm/mixin/propertiesdata.py#L358"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Index.insert_dimension" title="Permalink to this definition">¶</a></dt>
 <dd><p>Expand the shape of the data array.</p>
 <p>Inserts a new size 1 axis into the data array.</p>
 <div class="versionadded">
@@ -106,10 +106,10 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
 <dt>position: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt>
-<dd><p class="first">Specify the position that the new axis will have in the data
-array. By default the new axis has position 0, the slowest
-varying position. Negative integers counting from the last
-position are allowed.</p>
+<dd><p class="first">Specify the position that the new axis will have in the
+data array. By default the new axis has position 0, the
+slowest varying position. Negative integers counting from
+the last position are allowed.</p>
 <dl class="last docutils">
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">position=2</span></code></p>
@@ -125,8 +125,8 @@ position are allowed.</p>
 </dl>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A new instance with expanded data axes. If the operation was
-in-place then <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is returned.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A new instance with expanded data axes. If the operation
+was in-place then <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is returned.</p>
 </td>
 </tr>
 </tbody>
@@ -156,7 +156,7 @@ in-place then <a class="reference external" href="https://docs.python.org/3/libr
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/method/cf.Index.insert_dimension.rst.txt"

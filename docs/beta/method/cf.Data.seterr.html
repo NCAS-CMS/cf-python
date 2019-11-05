@@ -90,7 +90,7 @@
 <h1>cf.Data.seterr<a class="headerlink" href="#cf-data-seterr" title="Permalink to this headline">¶</a></h1>
 <dl class="staticmethod">
 <dt id="cf.Data.seterr">
-<em class="property">static </em><code class="descclassname">Data.</code><code class="descname">seterr</code><span class="sig-paren">(</span><em>all=None</em>, <em>divide=None</em>, <em>over=None</em>, <em>under=None</em>, <em>invalid=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.4/cf/data/data.py#L7266"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.seterr" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descclassname">Data.</code><code class="descname">seterr</code><span class="sig-paren">(</span><em>all=None</em>, <em>divide=None</em>, <em>over=None</em>, <em>under=None</em>, <em>invalid=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.4/cf/data/data.py#L7287"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.seterr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set how floating-point errors in the results of arithmetic operations
 are handled.</p>
 <p>The options for handling floating-point errors are:</p>
@@ -169,32 +169,34 @@ returned.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
 <dt>all: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
-<dd><p class="first last">Set the treatment for all types of floating-point errors at
-once. The default is not to change the current behaviour.</p>
+<dd><p class="first last">Set the treatment for all types of floating-point errors
+at once. The default is not to change the current
+behaviour.</p>
 </dd>
 <dt>divide: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
-<dd><p class="first last">Set the treatment for division by zero. The default is not to
-change the current behaviour.</p>
+<dd><p class="first last">Set the treatment for division by zero. The default is not
+to change the current behaviour.</p>
 </dd>
 <dt>over: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
-<dd><p class="first last">Set the treatment for floating-point overflow. The default is
-not to change the current behaviour.</p>
+<dd><p class="first last">Set the treatment for floating-point overflow. The default
+is not to change the current behaviour.</p>
 </dd>
 <dt>under: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
-<dd><p class="first last">Set the treatment for floating-point underflow. The default is
-not to change the current behaviour.</p>
+<dd><p class="first last">Set the treatment for floating-point underflow. The
+default is not to change the current behaviour.</p>
 </dd>
 <dt>invalid: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
-<dd><p class="first last">Set the treatment for invalid floating-point operation. The
-default is not to change the current behaviour.</p>
+<dd><p class="first last">Set the treatment for invalid floating-point
+operation. The default is not to change the current
+behaviour.</p>
 </dd>
 </dl>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
 <dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt>
-<dd><p class="first last">The behaviour prior to the change, or the current behaviour if
-no new values are specified.</p>
+<dd><p class="first last">The behaviour prior to the change, or the current
+behaviour if no new values are specified.</p>
 </dd>
 </dl>
 </td>
@@ -202,8 +204,8 @@ no new values are specified.</p>
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<p>Set treatment for all types of floating-point errors to <code class="docutils literal notranslate"><span class="pre">'raise'</span></code>
-and then reset to the previous behaviours:</p>
+<p>Set treatment for all types of floating-point errors to
+<code class="docutils literal notranslate"><span class="pre">'raise'</span></code> and then reset to the previous behaviours:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="o">.</span><span class="n">seterr</span><span class="p">()</span>
 <span class="go">{&#39;divide&#39;: &#39;warn&#39;, &#39;invalid&#39;: &#39;warn&#39;, &#39;over&#39;: &#39;warn&#39;, &#39;under&#39;: &#39;ignore&#39;}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">old</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="s1">&#39;raise&#39;</span><span class="p">)</span>
@@ -213,9 +215,9 @@ and then reset to the previous behaviours:</p>
 <span class="go">{&#39;divide&#39;: &#39;warn&#39;, &#39;invalid&#39;: &#39;warn&#39;, &#39;over&#39;: &#39;warn&#39;, &#39;under&#39;: &#39;ignore&#39;}</span>
 </pre></div>
 </div>
-<p>Set the treatment of division by zero to <code class="docutils literal notranslate"><span class="pre">'ignore'</span></code> and overflow to
-<code class="docutils literal notranslate"><span class="pre">'warn'</span></code> without changing the treatment of underflow and invalid
-operation:</p>
+<p>Set the treatment of division by zero to <code class="docutils literal notranslate"><span class="pre">'ignore'</span></code> and overflow
+to <code class="docutils literal notranslate"><span class="pre">'warn'</span></code> without changing the treatment of underflow and
+invalid operation:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">over</span><span class="o">=</span><span class="s1">&#39;warn&#39;</span><span class="p">)</span>
 <span class="go">{&#39;divide&#39;: &#39;warn&#39;, &#39;invalid&#39;: &#39;warn&#39;, &#39;over&#39;: &#39;warn&#39;, &#39;under&#39;: &#39;ignore&#39;}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="o">.</span><span class="n">seterr</span><span class="p">()</span>
@@ -279,7 +281,7 @@ operation:</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/method/cf.Data.seterr.rst.txt"

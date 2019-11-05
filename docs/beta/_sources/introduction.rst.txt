@@ -24,9 +24,9 @@ The Python cf package is an Earth science data analysis library that
 is built on a complete implementation of the :ref:`CF-data-model`.
 
 
+
 **Functionality**
 -----------------
-
 ----
 
 .. note:: **This version of cf is for Python 3 only** and there are

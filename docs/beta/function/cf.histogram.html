@@ -118,7 +118,8 @@ coordinate construct that defines the bin boundaries.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last"><a class="reference internal" href="../method/cf.Field.bin.html#cf.Field.bin" title="cf.Field.bin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.bin</span></code></a>, <a class="reference internal" href="../method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.collapse</span></code></a>,
-<a class="reference internal" href="../method/cf.Field.digitize.html#cf.Field.digitize" title="cf.Field.digitize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.digitize</span></code></a></p>
+<a class="reference internal" href="../method/cf.Field.digitize.html#cf.Field.digitize" title="cf.Field.digitize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.digitize</span></code></a>, <a class="reference internal" href="../method/cf.Field.percentile.html#cf.Field.percentile" title="cf.Field.percentile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.percentile</span></code></a>,
+<a class="reference internal" href="../method/cf.Field.where.html#cf.Field.where" title="cf.Field.where"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.where</span></code></a></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -160,20 +161,21 @@ construct’s data to ensure that broadcasting can occur.</p>
 <p><strong>Examples:</strong></p>
 <p>Create a one-dimensional histogram based on 10 equally-sized bins
 that exactly span the data range:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>                                                                                                   
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Field</span><span class="o">.</span><span class="n">example_field_1</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>                                                                         
 <span class="go">Field: specific_humidity (ncvar%q)</span>
 <span class="go">----------------------------------</span>
-<span class="go">Data            : specific_humidity(latitude(5), longitude(8)) 0.001 1</span>
+<span class="go">Data            : specific_humidity(latitude(5), longitude(8)) 1</span>
 <span class="go">Cell methods    : area: mean</span>
 <span class="go">Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north</span>
 <span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
 <span class="go">                : time(1) = [2019-01-01 00:00:00]       </span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>                                                                                            
-<span class="go">[[  7.  34.   3.  14.  18.  37.  24.  29.]</span>
-<span class="go"> [ 23.  36.  45.  62.  46.  73.   6.  66.]</span>
-<span class="go"> [110. 131. 124. 146.  87. 103.  57.  11.]</span>
-<span class="go"> [ 29.  59.  39.  70.  58.  72.   9.  17.]</span>
-<span class="go"> [  6.  36.  19.  35.  18.  37.  34.  13.]]</span>
+<span class="go">[[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]</span>
+<span class="go"> [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]</span>
+<span class="go"> [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]</span>
+<span class="go"> [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]</span>
+<span class="go"> [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">indices</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">return_bins</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
 <span class="go">Field: long_name=Bin index to which each &#39;specific_humidity&#39; value belongs (ncvar%q)</span>
@@ -184,36 +186,36 @@ that exactly span the data range:</p>
 <span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
 <span class="go">                : time(1) = [2019-01-01 00:00:00]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">bins</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
-<span class="go">[[  3.   17.3]</span>
-<span class="go"> [ 17.3  31.6]</span>
-<span class="go"> [ 31.6  45.9]</span>
-<span class="go"> [ 45.9  60.2]</span>
-<span class="go"> [ 60.2  74.5]</span>
-<span class="go"> [ 74.5  88.8]</span>
-<span class="go"> [ 88.8 103.1]</span>
-<span class="go"> [103.1 117.4]</span>
-<span class="go"> [117.4 131.7]</span>
-<span class="go"> [131.7 146. ]]</span>
+<span class="go">[[0.003  0.0173]</span>
+<span class="go"> [0.0173 0.0316]</span>
+<span class="go"> [0.0316 0.0459]</span>
+<span class="go"> [0.0459 0.0602]</span>
+<span class="go"> [0.0602 0.0745]</span>
+<span class="go"> [0.0745 0.0888]</span>
+<span class="go"> [0.0888 0.1031]</span>
+<span class="go"> [0.1031 0.1174]</span>
+<span class="go"> [0.1174 0.1317]</span>
+<span class="go"> [0.1317 0.146 ]]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">h</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">h</span><span class="p">)</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rint</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
 <span class="go">Field: number_of_observations</span>
 <span class="go">-----------------------------</span>
 <span class="go">Data            : number_of_observations(specific_humidity(10)) 1</span>
 <span class="go">Cell methods    : latitude: longitude: point</span>
-<span class="go">Dimension coords: specific_humidity(10) = [10.15, ..., 138.85000000000002] 0.001 1</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>                                                                                             
+<span class="go">Dimension coords: specific_humidity(10) = [0.01015, ..., 0.13885] 1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>      
 <span class="go">[9 7 9 4 5 1 1 1 2 1]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;specific_humidity&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
-<span class="go">[[  3.   17.3]</span>
-<span class="go"> [ 17.3  31.6]</span>
-<span class="go"> [ 31.6  45.9]</span>
-<span class="go"> [ 45.9  60.2]</span>
-<span class="go"> [ 60.2  74.5]</span>
-<span class="go"> [ 74.5  88.8]</span>
-<span class="go"> [ 88.8 103.1]</span>
-<span class="go"> [103.1 117.4]</span>
-<span class="go"> [117.4 131.7]</span>
-<span class="go"> [131.7 146. ]]</span>
+<span class="go">[[0.003  0.0173]</span>
+<span class="go"> [0.0173 0.0316]</span>
+<span class="go"> [0.0316 0.0459]</span>
+<span class="go"> [0.0459 0.0602]</span>
+<span class="go"> [0.0602 0.0745]</span>
+<span class="go"> [0.0745 0.0888]</span>
+<span class="go"> [0.0888 0.1031]</span>
+<span class="go"> [0.1031 0.1174]</span>
+<span class="go"> [0.1174 0.1317]</span>
+<span class="go"> [0.1317 0.146 ]]</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -232,7 +234,7 @@ that exactly span the data range:</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/function/cf.histogram.rst.txt"
