@@ -101,7 +101,7 @@ class DataTest(unittest.TestCase):
 #        self.test_only = ['test_Data__collapse_UNWEIGHTED_UNMASKED']
 #        self.test_only = ['test_Data__collapse_WEIGHTED_UNMASKED']
 #        self.test_only = ['test_Data__collapse_WEIGHTED_MASKED']
-#        self.test_only = ['test_Data_clip']
+        self.test_only = ['test_Data_ERROR']
 #        self.test_only = ['test_Data_sample_size']
 #        self.test_only = ['test_Data_section']
 #        self.test_only = ['test_Data_sd_var']

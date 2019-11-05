@@ -2852,12 +2852,12 @@ subspaces any metadata constructs of the field construct
 (e.g. coordinate metadata constructs) which span any of the domain
 axis constructs that are affected. The new field construct is created
 with the same properties as the original field construct.</p>
-<p>Subspacing by metadata uses the <a class="reference internal" href="attribute/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a> method of the field
+<p>Subspacing by metadata uses the <a class="reference internal" href="method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a> method of the field
 construct to select metadata constructs and specify conditions on
 their data. Indices for subspacing are then automatically inferred
 from where the conditions are met.</p>
 <p>Metadata constructs and the conditions on their data are defined by
-keyword parameters to the <a class="reference internal" href="attribute/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a> method. A keyword name is
+keyword parameters to the <a class="reference internal" href="method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a> method. A keyword name is
 <a class="reference internal" href="#metadata-construct-properties"><span class="std std-ref">an identity</span></a> of a metadata
 construct, and the keyword value provides a condition for inferring
 indices that apply to the dimension (or dimensions) spanned by the
@@ -2893,7 +2893,7 @@ remaining unchanged.</em></span><a class="headerlink" href="#id194" title="Perma
 <p>Any domain axes that have not been identified remain
 unchanged.</p>
 <p>Multiple domain axes may be subspaced simultaneously, and it doesn’t
-matter which order they are specified in the <a class="reference internal" href="attribute/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a> call.</p>
+matter which order they are specified in the <a class="reference internal" href="method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a> call.</p>
 <div class="literal-block-wrapper docutils container" id="id195">
 <div class="code-block-caption"><span class="caption-text"><em>Create a new field construct whose domain spans only
 112.5 degrees east and has latitude greater than -60
@@ -3206,7 +3206,7 @@ from where the conditions are met. The tuple of indices returned by
 the <a class="reference internal" href="method/cf.Field.indices.html#cf.Field.indices" title="cf.Field.indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">indices</span></code></a> may the be used in normal <a class="reference internal" href="#assignment-by-index"><span class="std std-ref">assignment by
 index</span></a>.</p>
 <p>The <a class="reference internal" href="method/cf.Field.indices.html#cf.Field.indices" title="cf.Field.indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">indices</span></code></a> method akes exactly the same arguments as the
-<a class="reference internal" href="attribute/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a> method of the field construct. See
+<a class="reference internal" href="method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a> method of the field construct. See
 <a class="reference internal" href="#subspacing-by-metadata"><span class="std std-ref">Subspacing by metadata</span></a> for details.</p>
 <div class="literal-block-wrapper docutils container" id="id204">
 <div class="code-block-caption"><span class="caption-text"><em>Create TODO</em></span><a class="headerlink" href="#id204" title="Permalink to this code">¶</a></div>
