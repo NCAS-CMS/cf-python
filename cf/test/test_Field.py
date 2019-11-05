@@ -261,7 +261,7 @@ class FieldTest(unittest.TestCase):
                            'sum_of_weights',
                            'sum_of_weights2',):
                 for weights in (None, 'area'):
-                    print(method, axes, weights)
+#                    print(method, axes, weights)
                     a = f.collapse(method, axes=axes, weights=weights).data
                     b = getattr(f.data, method)(axes=axes)
                     self.assertTrue(a.equals(b, rtol=1e-05, atol=1e-08, verbose=True),
@@ -273,7 +273,7 @@ class FieldTest(unittest.TestCase):
 #                           'mean_of_upper_decile',
                            'root_mean_square'):
                 for weights in (None, 'area'):
-                    print(method, axes, weights)
+#                    print(method, axes, weights)
                     if weights is not None:
                         d_weights = f.weights(weights, components=True)
                     else:
@@ -287,7 +287,7 @@ class FieldTest(unittest.TestCase):
             
             for method in ('integral',):
                 weights = 'area'
-                print(method, axes, weights)
+#                print(method, axes, weights)
                 d_weights = f.weights(weights, components=True, measure=True)               
                 a = f.collapse(method, axes=axes, weights=weights, measure=True).data
                 b = getattr(f.data, method)(axes=axes, weights=d_weights)
@@ -302,7 +302,7 @@ class FieldTest(unittest.TestCase):
             for method in ('var',
                            'sd'):
                 for weights in (None, 'area'):            
-                    print(method, axes, weights)
+#                    print(method, axes, weights)
                     if weights is not None:
                         d_weights = f.weights(weights, components=True)
                     else:
@@ -316,7 +316,7 @@ class FieldTest(unittest.TestCase):
             
             for method in ('mean_of_upper_decile',):
                 for weights in (None, 'area'):            
-                    print(method, axes, weights)
+#                    print(method, axes, weights)
                     if weights is not None:
                         d_weights = f.weights(weights, components=True)
                     else:

@@ -220,7 +220,8 @@ def histogram(*digitized):
     .. versionadded:: 3.0.2
 
     .. seealso:: `cf.Field.bin`, `cf.Field.collapse`,
-                 `cf.Field.digitize`
+                 `cf.Field.digitize`, `cf.Field.percentile`,
+                 `cf.Field.where`
 
     :Parameters:
 
@@ -256,20 +257,21 @@ def histogram(*digitized):
     Create a one-dimensional histogram based on 10 equally-sized bins
     that exactly span the data range:
 
-    >>> print(f)                                                                                                   
+    >>> f = cf.Field.example_field_1()
+    >>> print(f)                                                                         
     Field: specific_humidity (ncvar%q)
     ----------------------------------
-    Data            : specific_humidity(latitude(5), longitude(8)) 0.001 1
+    Data            : specific_humidity(latitude(5), longitude(8)) 1
     Cell methods    : area: mean
     Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
                     : longitude(8) = [22.5, ..., 337.5] degrees_east
                     : time(1) = [2019-01-01 00:00:00]       
     >>> print(f.array)                                                                                            
-    [[  7.  34.   3.  14.  18.  37.  24.  29.]
-     [ 23.  36.  45.  62.  46.  73.   6.  66.]
-     [110. 131. 124. 146.  87. 103.  57.  11.]
-     [ 29.  59.  39.  70.  58.  72.   9.  17.]
-     [  6.  36.  19.  35.  18.  37.  34.  13.]]
+    [[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]
+     [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
+     [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
+     [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
+     [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]
     >>> indices, bins = f.digitize(10, return_bins=True)
     >>> print(indices)
     Field: long_name=Bin index to which each 'specific_humidity' value belongs (ncvar%q)
@@ -280,36 +282,36 @@ def histogram(*digitized):
                     : longitude(8) = [22.5, ..., 337.5] degrees_east
                     : time(1) = [2019-01-01 00:00:00]
     >>> print(bins.array)
-    [[  3.   17.3]
-     [ 17.3  31.6]
-     [ 31.6  45.9]
-     [ 45.9  60.2]
-     [ 60.2  74.5]
-     [ 74.5  88.8]
-     [ 88.8 103.1]
-     [103.1 117.4]
-     [117.4 131.7]
-     [131.7 146. ]]
+    [[0.003  0.0173]
+     [0.0173 0.0316]
+     [0.0316 0.0459]
+     [0.0459 0.0602]
+     [0.0602 0.0745]
+     [0.0745 0.0888]
+     [0.0888 0.1031]
+     [0.1031 0.1174]
+     [0.1174 0.1317]
+     [0.1317 0.146 ]]
     >>> h = cf.histogram(indices)
-    >>> print(h) 
+    >>> rint(h)
     Field: number_of_observations
     -----------------------------
     Data            : number_of_observations(specific_humidity(10)) 1
     Cell methods    : latitude: longitude: point
-    Dimension coords: specific_humidity(10) = [10.15, ..., 138.85000000000002] 0.001 1
-    >>> print(h.array)                                                                                             
+    Dimension coords: specific_humidity(10) = [0.01015, ..., 0.13885] 1
+    >>> print(h.array)      
     [9 7 9 4 5 1 1 1 2 1]
     >>> print(h.coordinate('specific_humidity').bounds.array)
-    [[  3.   17.3]
-     [ 17.3  31.6]
-     [ 31.6  45.9]
-     [ 45.9  60.2]
-     [ 60.2  74.5]
-     [ 74.5  88.8]
-     [ 88.8 103.1]
-     [103.1 117.4]
-     [117.4 131.7]
-     [131.7 146. ]]
+    [[0.003  0.0173]
+     [0.0173 0.0316]
+     [0.0316 0.0459]
+     [0.0459 0.0602]
+     [0.0602 0.0745]
+     [0.0745 0.0888]
+     [0.0888 0.1031]
+     [0.1031 0.1174]
+     [0.1174 0.1317]
+     [0.1317 0.146 ]]
 
     '''
     if not digitized:

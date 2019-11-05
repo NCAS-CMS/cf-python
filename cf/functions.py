@@ -2399,7 +2399,6 @@ def default_netCDF_fillvals():
     return netCDF4.default_fillvals
 
 
-
 def _DEPRECATION_ERROR(message='', version='3.0.0'):
     raise DeprecationError("{}".format(message))
 

@@ -75,11 +75,11 @@ class DataTest(unittest.TestCase):
 
         self.test_only = ['test_Data_AUXILIARY_MASK',
                           'test_Data_datum',
-#                          'test_Data_ERROR',
+                          'test_Data_ERROR',
                           'test_Data_array',
                           'test_Data_varray',
                           'test_Data_datetime_array',
-                          'test_Data_cumsum',
+#                          'test_Data_cumsum',
                           'test_Data_dumpd_loadd_dumps',
 #                          'test_Data_sin_cos_tan',
 #                          'test_Data_root_mean_square',
@@ -87,21 +87,25 @@ class DataTest(unittest.TestCase):
                           'test_Data_squeeze_insert_dimension',
                           'test_Data_months_years',
                           'test_Data_binary_mask',
-                          'test_Data_CachedArray',
+#                          'test_Data_CachedArray',
                           'test_Data_digitize',
 #                          'test_Data_outerproduct',
 #                          'test_Data_flatten',
                           'test_Data_transpose',
+                          'test_Data__collapse_SHAPE',
+                          'test_Data_range_mid_range',
+                          'test_Data_median',
+                          'test_Data_mean_of_upper_decile',
         ]
 #        self.test_only = ['test_Data_mean_mean_absolute_value']
 #        self.test_only = ['test_Data_AUXILIARY_MASK']
-#        self.test_only = ['test_Data_outerproduct']
+        self.test_only = ['test_Data_mean_of_upper_decile']
 #        self.test_only = ['test_Data__collapse_SHAPE']
 #        self.test_only = ['test_Data__collapse_UNWEIGHTED_MASKED']
 #        self.test_only = ['test_Data__collapse_UNWEIGHTED_UNMASKED']
 #        self.test_only = ['test_Data__collapse_WEIGHTED_UNMASKED']
 #        self.test_only = ['test_Data__collapse_WEIGHTED_MASKED']
-        self.test_only = ['test_Data_ERROR']
+#        self.test_only = ['test_Data_ERROR']
 #        self.test_only = ['test_Data_sample_size']
 #        self.test_only = ['test_Data_section']
 #        self.test_only = ['test_Data_sd_var']
@@ -1499,62 +1503,71 @@ class DataTest(unittest.TestCase):
         a = numpy.arange(-100, 200., dtype=float).reshape(3, 4, 5, 5)
         ones = numpy.ones(a.shape, dtype=float)
         
-        for h in ('sample_size', 'sum', 'min', 'max', 'mean', 'var',
-                  'sd', 'mid_range', 'range', 'integral',
-                  'maximum_absolute_value', 'minimum_absolute_value',
-                  'sum_of_squares', 'root_mean_square', 'mean_absolute_value'):
-            for chunksize in self.chunk_sizes:   
-                cf.CHUNKSIZE(chunksize)          
+        for h in ('sample_size',
+                  'sum',
+                  'min',
+                  'max',
+                  'mean',
+                  'var',
+                  'sd',
+                  'mid_range',
+                  'range',
+                  'integral',
+                  'maximum_absolute_value',
+                  'minimum_absolute_value',
+                  'sum_of_squares',
+                  'root_mean_square',
+                  'mean_absolute_value',
+                  'median',
+                  'mean_of_upper_decile',
+                  'sum_of_weights',
+                  'sum_of_weights2',):
 
-                d = cf.Data(a[(slice(None, None, -1),) * a.ndim].copy())
-                d.flip(inplace=True)
-                x = cf.Data(self.w.copy())
+            d = cf.Data(a[(slice(None, None, -1),) * a.ndim].copy())
+            d.flip(inplace=True)
+            x = cf.Data(self.w.copy())
+            
+            shape = list(d.shape)
+ 
+            for axes in self.axes_combinations:
+                e = getattr(d, h)(axes=axes, squeeze=False,
+                                  _preserve_partitions=False)
                 
                 shape = list(d.shape)
-     
-                for axes in self.axes_combinations:
-                    e = getattr(d, h)(axes=axes, squeeze=False,
-                                      _preserve_partitions=False)
+                for i in axes:                        
+                    shape[i] = 1
                     
-                    shape = list(d.shape)
-                    for i in axes:                        
-                        shape[i] = 1
-                        
-                    shape = tuple(shape)
-                    self.assertTrue(e.shape == shape,
-                                    "{}, axes={}, not squeezed bad shape: {} != {}".format(
-                                    h, axes, e.shape, shape))
-                #--- End: for
-    
-                for axes in self.axes_combinations:
-                    e = getattr(d, h)(axes=axes, squeeze=True,
-                                      _preserve_partitions=False)
-                    shape = list(d.shape)
-                    for i in sorted(axes, reverse=True):                        
-                        shape.pop(i)
-    
-                    shape = tuple(shape)
-                    self.assertTrue(e.shape == shape, 
-                                    "{}, axes={}, squeezed bad shape: {} != {}".format(
-                                        h, axes, e.shape, shape))
-                #--- End: for
-    
-                e = getattr(d, h)(squeeze=True,
-                                  _preserve_partitions=False)
-                shape = ()
+                shape = tuple(shape)
                 self.assertTrue(e.shape == shape,
-                    "{}, axes={}, squeezed bad shape: {} != {}".format(
-                        h, None, e.shape, shape))
-    
-                e = getattr(d, h)(squeeze=False,
-                                  _preserve_partitions=False)
-                shape = (1,) * d.ndim
-                self.assertTrue(e.shape == shape,
-                    "{}, axes={}, not squeezed bad shape: {} != {}".format(
-                        h, None, e.shape, shape))
-        #--- End: for
+                                "{}, axes={}, not squeezed bad shape: {} != {}".format(
+                                h, axes, e.shape, shape))
 
-        cf.CHUNKSIZE(self.original_chunksize)
+            for axes in self.axes_combinations:
+                e = getattr(d, h)(axes=axes, squeeze=True,
+                                  _preserve_partitions=False)
+                shape = list(d.shape)
+                for i in sorted(axes, reverse=True):                        
+                    shape.pop(i)
+
+                shape = tuple(shape)
+                self.assertTrue(e.shape == shape, 
+                                "{}, axes={}, squeezed bad shape: {} != {}".format(
+                                    h, axes, e.shape, shape))
+
+            e = getattr(d, h)(squeeze=True,
+                              _preserve_partitions=False)
+            shape = ()
+            self.assertTrue(e.shape == shape,
+                "{}, axes={}, squeezed bad shape: {} != {}".format(
+                    h, None, e.shape, shape))
+
+            e = getattr(d, h)(squeeze=False,
+                              _preserve_partitions=False)
+            shape = (1,) * d.ndim
+            self.assertTrue(e.shape == shape,
+                "{}, axes={}, not squeezed bad shape: {} != {}".format(
+                    h, None, e.shape, shape))
+        #--- End: for
 
 
     def test_Data_max_min_sum(self):
@@ -1588,6 +1601,177 @@ class DataTest(unittest.TestCase):
                         b = reshape_array(self.ma, axes)
                         b = np(b, axis=-1)                
                         b = numpy.ma.asanyarray(b)
+                        e = getattr(d, h)(axes=axes, squeeze=True,
+                                          _preserve_partitions=pp)
+        
+                        self.assertTrue(
+                            (e.mask.array == b.mask).all(),
+                            "%s, axis=%s, \ne.mask=%s, \nb.mask=%s, \ne.mask==b.mask=%s" %
+                            (h, axes, e.mask.array, b.mask, e.mask.array==b.mask))
+    
+                        self.assertTrue(
+                            e.allclose(b, rtol=1e-05, atol=1e-08),
+                            "%s, axis=%s, unweighted, masked \ne=%s, \nb=%s, \ne-b=%s" %
+                            (h, axes, e.array, b, e.array-b))
+        #--- End: for
+
+        cf.CHUNKSIZE(self.original_chunksize)
+
+
+    def test_Data_median(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        for chunksize in self.chunk_sizes:   
+            for pp in (True, False):
+                cf.CHUNKSIZE(chunksize)          
+               
+                # unweighted, unmasked
+                d = cf.Data(self.a)
+                for axes in self.axes_combinations:
+                    b = reshape_array(self.a, axes)
+                    b = numpy.median(b, axis=-1)
+                        
+                    e = d.median(axes=axes, squeeze=True,
+                                 _preserve_partitions=pp)
+                    self.assertTrue(
+                        e.allclose(b, rtol=1e-05, atol=1e-08),
+                        "median, axis=%s, unweighted, unmasked \ne=%s, \nb=%s, \ne-b=%s" %
+                        (axes, e.array, b, e.array-b))
+        
+                # unweighted, masked
+                d = cf.Data(self.ma)
+                for axes in self.axes_combinations:
+                    b = reshape_array(self.ma, axes)
+                    b = numpy.ma.filled(b, numpy.nan)
+                    with numpy.testing.suppress_warnings() as sup:
+                        sup.filter(RuntimeWarning, message='.*All-NaN slice encountered')
+                        b = numpy.nanpercentile(b, 50, axis=-1)
+                        
+                    b = numpy.ma.masked_where(numpy.isnan(b), b, copy=False)
+                    b = numpy.ma.asanyarray(b)
+                    
+                    e = d.median(axes=axes, squeeze=True,
+                                 _preserve_partitions=pp)
+                    
+                    self.assertTrue(
+                        (e.mask.array == b.mask).all(),
+                        "median, axis=%s, \ne.mask=%s, \nb.mask=%s, \ne.mask==b.mask=%s" %
+                        (axes, e.mask.array, b.mask, e.mask.array==b.mask))
+                    
+                    self.assertTrue(
+                        e.allclose(b, rtol=1e-05, atol=1e-08),
+                        "median, axis=%s, unweighted, masked \ne=%s, \nb=%s, \ne-b=%s" %
+                        (axes, e.array, b, e.array-b))
+        #--- End: for
+
+        cf.CHUNKSIZE(self.original_chunksize)
+
+
+    def test_Data_mean_of_upper_decile(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        for chunksize in self.chunk_sizes:   
+            for pp in (True, False):
+                cf.CHUNKSIZE(chunksize)          
+               
+                # unweighted, unmasked
+                d = cf.Data(self.a)
+                for axes in self.axes_combinations:
+                    b = reshape_array(self.a, axes)
+                    p = numpy.percentile(b, 90, axis=-1, keepdims=True)
+                    b = numpy.ma.where(b < p, numpy.ma.masked, b)
+                    b = numpy.average(b, axis=-1)
+                    
+                    e = d.mean_of_upper_decile(axes=axes, squeeze=True,
+                                               _preserve_partitions=pp)
+
+                    self.assertTrue(
+                        e.allclose(b, rtol=1e-05, atol=1e-08),
+                        "mean_of_upper_decile, axis=%s, unweighted, unmasked \ne=%s, \nb=%s, \ne-b=%s" %
+                        (axes, e.array, b, e.array-b))
+        
+                # unweighted, masked
+                d = cf.Data(self.ma)
+                for axes in self.axes_combinations:
+                    print (axes)
+                    b = reshape_array(self.ma, axes)
+                    b = numpy.ma.filled(b, numpy.nan)
+                    with numpy.testing.suppress_warnings() as sup:
+                        sup.filter(RuntimeWarning, message='.*All-NaN slice encountered')
+                        p = numpy.nanpercentile(b, 90, axis=-1, keepdims=True)
+
+                    b = numpy.ma.masked_where(numpy.isnan(b), b, copy=False)                  
+
+                    p = numpy.where(numpy.isnan(p), b.max() + 1, p)
+                        
+                    with numpy.testing.suppress_warnings() as sup:
+                        sup.filter(RuntimeWarning, message='.*invalid value encountered in less')
+                        b = numpy.ma.where(b < p, numpy.ma.masked, b)
+                        
+                    b = numpy.ma.average(b, axis=-1)
+                    b = numpy.ma.asanyarray(b)
+                    
+                    e = d.mean_of_upper_decile(axes=axes, squeeze=True,
+                                               _preserve_partitions=pp)
+                    
+                    self.assertTrue(
+                        (e.mask.array == b.mask).all(),
+                        "mean_of_upper_decile, axis=%s, \ne.mask=%s, \nb.mask=%s, \ne.mask==b.mask=%s" %
+                        (axes, e.mask.array, b.mask, e.mask.array==b.mask))
+                    
+                    self.assertTrue(
+                        e.allclose(b, rtol=1e-05, atol=1e-08),
+                        "mean_of_upper_decile, axis=%s, unweighted, masked \ne=%s, \nb=%s, \ne-b=%s" %
+                        (axes, e.array, b, e.array-b))
+        #--- End: for
+
+        cf.CHUNKSIZE(self.original_chunksize)
+
+        
+    def test_Data_range_mid_range(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        for chunksize in self.chunk_sizes:   
+            for pp in (True, False):
+                cf.CHUNKSIZE(chunksize)          
+               
+                # unweighted, unmasked
+                d = cf.Data(self.a)
+                for h in ('range', 'mid_range'):
+                    for axes in self.axes_combinations:
+                        b = reshape_array(self.a, axes)
+                        mn = numpy.amin(b, axis=-1)
+                        mx = numpy.amax(b, axis=-1)
+                        if h == 'range':
+                            b = mx - mn
+                        elif h == 'mid_range':
+                            b = (mx + mn) * 0.5
+                            
+                        e = getattr(d, h)(axes=axes, squeeze=True,
+                                          _preserve_partitions=pp)
+                        self.assertTrue(
+                            e.allclose(b, rtol=1e-05, atol=1e-08),
+                            "%s, axis=%s, unweighted, unmasked \ne=%s, \nb=%s, \ne-b=%s" %
+                            (h, axes, e.array, b, e.array-b))
+                #--- End: for
+        
+                # unweighted, masked
+                d = cf.Data(self.ma)
+                for h in ('range', 'mid_range'):
+                    for axes in self.axes_combinations:
+                        b = reshape_array(self.ma, axes)
+                        mn = numpy.amin(b, axis=-1)
+                        mx = numpy.amax(b, axis=-1)
+                        if h == 'range':
+                            b = mx - mn
+                        elif h == 'mid_range':
+                            b = (mx + mn) * 0.5
+
+                        b = numpy.ma.asanyarray(b)
+                        
                         e = getattr(d, h)(axes=axes, squeeze=True,
                                           _preserve_partitions=pp)
         

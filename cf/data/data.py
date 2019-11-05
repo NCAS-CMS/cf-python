@@ -2255,17 +2255,22 @@ place.
         return out
 
 
-    def median(self, axes=None, squeeze=False, mtol=1, inplace=False):
+    def median(self, axes=None, squeeze=False, mtol=1, inplace=False,
+               _preserve_partitions=False):
         '''TODO
 
         '''
-        return self.percentile(50, axes=axes, squeeze=squeeze,
-                               mtol=mtol, inplace=inplace)
 
+        
+        return self.percentile(50, axes=axes, squeeze=squeeze,
+                               mtol=mtol, inplace=inplace,
+                               _preserve_partitions=_preserve_partitions)
+    
     
     def mean_of_upper_decile(self, axes=None, include_decile=True,
                              squeeze=False, weights=None, mtol=1,
-                             inplace=False):
+                             inplace=False,
+                             _preserve_partitions=False):
         '''TODO
 
         '''
@@ -2274,21 +2279,26 @@ place.
         else:
             d = self.copy()
             
-        p90 = d.percentile(90, axes=axes, squeeze=squeeze, mtol=mtol,
-                           inplace=False)
+        p90 = d.percentile(90, axes=axes, squeeze=False, mtol=mtol,
+                           inplace=False,
+                           _preserve_partitions=_preserve_partitions)
 
-        if include_decile:
-            mask = (d < p90)
-        else:
-            mask = (d <= p90)
-
+        with numpy.testing.suppress_warnings() as sup:
+            sup.filter(RuntimeWarning, message='.*invalid value encountered in less')
+            if include_decile:
+                mask = (d < p90)                
+            else:
+                mask = (d <= p90)
+        #--- End: with
+        
         if mtol < 1:
             mask.filled(False, inplace=True)
             
         d.where(mask, cf_masked, inplace=True)
 
         d.mean(axes=axes, squeeze=squeeze, weights=weights,
-               inplace=True)
+               inplace=True,
+               _preserve_partitions=_preserve_partitions)
         
         if inplace:
             d = None        
@@ -2296,7 +2306,8 @@ place.
 
     
     def percentile(self, ranks, axes=None, interpolation='linear',
-                   squeeze=False, mtol=1, inplace=False):
+                   squeeze=False, mtol=1, inplace=False,
+                   _preserve_partitions=False):
         '''Compute percentiles of the data along the specified axes.
 
     The default is to compute the percentiles along a flattened
@@ -2457,6 +2468,12 @@ place.
             axes = list(range(self.ndim))
         else:
             axes = sorted(self._parse_axes(axes))
+
+        # If the input data array 'fits' in one chunk of memory, then
+        # make sure that it has only one partition
+        if (not mpi_on and not _preserve_partitions and self._pmndim and
+            self.fits_in_one_chunk_in_memory(self.dtype.itemsize)):
+            self.varray
 
         org_chunksize = CHUNKSIZE(CHUNKSIZE()/n_ranks)
         sections = self.section(axes, chunks=True)
@@ -5341,7 +5358,8 @@ place.
 
     def _collapse(self, func, fpartial, ffinalise, axes=None,
                   squeeze=False, weights=None, mtol=1, units=None,
-                  inplace=False, i=False, _preserve_partitions=False, **kwargs):
+                  inplace=False, i=False, _preserve_partitions=False,
+                  **kwargs):
         '''Collapse the data.
 
     :Parameters:
