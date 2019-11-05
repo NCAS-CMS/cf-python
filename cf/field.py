@@ -2186,6 +2186,7 @@ may be accessed with the `nc_global_attributes`,
             if identity in ref._coordinate_identities:
                 ref.set_coordinate(key)
 
+
     def _coordinate_reference_axes(self, key):
         '''TODO
 
@@ -13865,13 +13866,13 @@ may be accessed with the `nc_global_attributes`,
             axes = set([self.domain_axis(axis, key=True) for axis in axes])
             iaxes = [data_axes.index(axis) for axis in
                      axes.intersection(self.get_data_axes())]
-
+        print(iaxes, axes)
         data = self.data.percentile(percentiles, axes=iaxes,
                                     interpolation=interpolation,
                                     squeeze=False)
 
         # ------------------------------------------------------------
-        # Initialize the output field wit the percentile data
+        # Initialize the output field with the percentile data
         # ------------------------------------------------------------
         out = type(self)()
         out.set_properties(self.properties())
@@ -13893,7 +13894,60 @@ may be accessed with the `nc_global_attributes`,
         out.set_data(data, axes=out_data_axes, copy=False)
 
         # ------------------------------------------------------------
-        # Create a dimension coordinate for the percentiles
+        # Create dimension coordinate constructs for the percentile
+        # axes
+        # ------------------------------------------------------------
+        if axes:
+            for key, c in self.dimension_coordinates.filter_by_axis('subset', *axes).items():
+                c_axes = self.get_data_axes(key)
+
+                c = c.copy()
+                
+                bounds = c.get_bounds_data(c.get_data(None))
+                if bounds is not None and bounds.shape[0] > 1:
+                    bounds = Data([bounds.min().datum(), bounds.max().datum()],
+                                  units=c.Units)
+                    data = bounds.mean(squeeze=True)
+                    c.set_data(data, copy=False)
+                    c.set_bounds(Bounds(data=bounds), copy=False)
+                    
+                out.set_construct(c, axes=c_axes, key=key, copy=False)
+        #--- End: if
+
+        # TODO
+        other_axes = set([axis
+                          for axis in self.domain_axes
+                          if axis not in axes or self.domain_axis(axis).size == 1])
+
+        # ------------------------------------------------------------
+        # Copy constructs to the output field
+        # ------------------------------------------------------------
+        if other_axes:
+            for key, c in self.constructs.filter_by_axis('subset', *other_axes).items():
+                c_axes = self.get_data_axes(key)
+                out.set_construct(c, axes=c_axes, key=key)
+        #--- End: if
+
+        # ------------------------------------------------------------
+        # Copy coordinate reference constructs to the output field
+        # ------------------------------------------------------------
+        for cr_key, ref in self.coordinate_references.items():
+            ref = ref.copy()
+
+            for c_key in ref.coordinates():
+                if c_key not in out.coordinates:
+                    ref.del_coordinate(c_key)
+            #--- End:for
+            
+            for term, da_key in ref.coordinate_conversion.domain_ancillaries().items():
+                if da_key not in out.domain_ancillaries:
+                    ref.coordinate_conversion.set_domain_ancillary(term, None)
+            #--- End:for
+
+            out.set_construct(ref, key=cr_key, copy=False)
+
+        # ------------------------------------------------------------
+        # Create a dimension coordinate for the percentile ranks
         # ------------------------------------------------------------
         dim = DimensionCoordinate()
         data = Data(percentiles).squeeze()
@@ -13913,30 +13967,8 @@ may be accessed with the `nc_global_attributes`,
 
         out.set_construct(dim, axes=axis, copy=False)
 
-        # TODO
-        if axes:
-            for key, c in self.dimension_coordinates.filter_by_axis('subset', *axes).items():
-                c_axes = self.get_data_axes(key)
-
-                bounds = c.get_bounds_data(c.get_data(None))
-                if bounds is not None:        
-                    bounds = Data([bounds.min().datum(), bounds.max().datum()], units=c.Units)
-                    data = bounds.mean(squeeze=True)
-                    c = c.copy()
-                    c.set_data(data, copy=False)
-                    c.set_bounds(Bounds(data=bounds), copy=False)
-                    out.set_construct(c, axes=c_axes)
-        #--- End: if
-        
-        # TODO
-        other_axes = [axis for axis in self.domain_axes if axis not in axes]
-        if other_axes:
-            for key, c in self.constructs.filter_by_axis('subset', *other_axes).items():
-                c_axes = self.get_data_axes(key)
-                out.set_construct(c, axes=c_axes)
-        #--- End: if
-
-        out.squeeze(axes, inplace=True)
+        if squeeze:
+            out.squeeze(axes, inplace=True)
         
         return out
 

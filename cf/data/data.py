@@ -2294,7 +2294,8 @@ place.
 
     
     def percentile(self, percentiles, axes=None,
-                   interpolation='linear', squeeze=False):
+                   interpolation='linear', squeeze=False,
+                   inplace=False):
         '''Compute percentiles of the data along the specified axes.
 
     The default is to compute the percentiles along a flattened
@@ -2341,17 +2342,21 @@ place.
             By default ``'linear'`` interpolation is used.
 
         squeeze: `bool`, optional
-            If True then all size 1 axes are removed from the returned
-            percentiles data. By default axes over which percentiles
-            have been calculated are left in the result as axes with
-            size 1, meaning that the result is guaranteed to broadcast
-            correctly against the original data.
+            If True then all axes over which percentiles are
+            calculated are removed from the returned data. By default
+            axes over which percentiles have been calculated are left
+            in the result as axes with size 1, meaning that the result
+            is guaranteed to broadcast correctly against the original
+            data.
     
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+
     :Returns:
 
-        `Data`
-
-            The percentiles of the original data.
+        `Data` or `None`
+            The percentiles of the original data, or `None` if the
+            operation was in-place.
 
     **Examples:**
 
@@ -2467,7 +2472,11 @@ place.
         out = self.reconstruct_sectioned_data(sections)
 
         if squeeze:
-            out.squeeze(inplace=True)
+            out.squeeze(axes, inplace=True)
+
+        if inplace:
+            self.__dict__ = out.__dict__
+            return
             
         return out
 
