@@ -251,7 +251,7 @@ second axis:</p>
 </pre></div>
 </div>
 <p>Find the histogram bin boundaries associated with given
-percentiles:</p>
+percentiles, and digitize the data based on these bins:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bins</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">percentile</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span> <span class="n">squeeze</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">bins</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[ 0.   1.1  5.5  9.9 11. ]</span>
