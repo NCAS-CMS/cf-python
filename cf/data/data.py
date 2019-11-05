@@ -65,8 +65,9 @@ from numpy.ma import nomask         as numpy_ma_nomask
 from numpy.ma import var            as numpy_ma_var
 from numpy.ma import where          as numpy_ma_where
 
-import cftime
+from numpy.testing import suppress_warnings as numpy_testing_suppress_warnings
 
+import cftime
 import cfdm
 
 import operator
@@ -189,6 +190,7 @@ _seterr_raise_to_ignore = _seterr.copy()
 for key, value in _seterr.items():
     if value == 'raise':
         _seterr_raise_to_ignore[key] = 'ignore'
+#--- End: for
 
 # --------------------------------------------------------------------
 # _mask_fpe[0] = Whether or not to automatically set
@@ -2283,8 +2285,8 @@ place.
                            inplace=False,
                            _preserve_partitions=_preserve_partitions)
 
-        with numpy.testing.suppress_warnings() as sup:
-            sup.filter(RuntimeWarning, message='.*invalid value encountered in less')
+        with numpy_testing_suppress_warnings() as sup:
+            sup.filter(RuntimeWarning, message='.*invalid value encountered in less.*')
             if include_decile:
                 mask = (d < p90)                
             else:
@@ -2490,19 +2492,21 @@ place.
                     
                 array = numpy_ma_filled(array, numpy_nan)
                 func = numpy_nanpercentile
+                
+                with numpy_testing_suppress_warnings() as sup:
+                    sup.filter(RuntimeWarning, message='.*All-NaN slice encountered')
+                    p = func(array, ranks, axis=axes,
+                             interpolation=interpolation, keepdims=True,
+                             overwrite_input=False)
+                    
+                # Replace NaNs with missing data
+                p = numpy_ma_masked_where(numpy_isnan(p), p, copy=False)      
             else:
                 func = numpy_percentile
-
-            with numpy.testing.suppress_warnings() as sup:
-                sup.filter(RuntimeWarning, message='.*All-NaN slice encountered')
                 p = func(array, ranks, axis=axes,
                          interpolation=interpolation, keepdims=True,
                          overwrite_input=False)
-
-            if masked:
-                # Replace NaNs with missing data
-                p = numpy_ma_masked_where(numpy_isnan(p), p, copy=False)
-                       
+                
             sections[key] = type(self)(p, units=self.Units,
                                        fill_value=self.fill_value)
         #--- End: for
@@ -7280,139 +7284,140 @@ FloatingPointError: overflow encountered in power
         return old
     #--- End: def
 
-    # 0
     @staticmethod
     def seterr(all=None, divide=None, over=None, under=None, invalid=None):
         '''Set how floating-point errors in the results of arithmetic operations
-are handled.
+    are handled.
 
-The options for handling floating-point errors are:
+    The options for handling floating-point errors are:
 
-============  ========================================================
-Treatment     Action
-============  ========================================================
-``'ignore'``  Take no action. Allows invalid values to occur in the
-              result data array.
-
-``'warn'``    Print a `RuntimeWarning` (via the Python `warnings`
-              module). Allows invalid values to occur in the result
-              data array.
-
-``'raise'``   Raise a `FloatingPointError` exception.
-============  ========================================================
-
-The different types of floating-point errors are:
-
-=================  =================================  =================
-Error              Description                        Default treatment
-=================  =================================  =================
-Division by zero   Infinite result obtained from      ``'warn'``
-                   finite numbers.
-
-Overflow           Result too large to be expressed.  ``'warn'``
-
-Invalid operation  Result is not an expressible       ``'warn'``
-                   number, typically indicates that  
-                   a NaN was produced.
-
-Underflow          Result so close to zero that some  ``'ignore'``
-                   precision was lost.
-=================  =================================  =================
-
-Note that operations on integer scalar types (such as int16) are
-handled like floating point, and are affected by these settings.
-
-If called without any arguments then the current behaviour is
-returned.
-
-.. seealso:: `cf.Data.mask_fpe`, `mask_invalid`
-
-:Parameters:
-
-    all: `str`, optional
-        Set the treatment for all types of floating-point errors at
-        once. The default is not to change the current behaviour.
-
-    divide: `str`, optional
-        Set the treatment for division by zero. The default is not to
-        change the current behaviour.
-
-    over: `str`, optional
-        Set the treatment for floating-point overflow. The default is
-        not to change the current behaviour.
-
-    under: `str`, optional
-        Set the treatment for floating-point underflow. The default is
-        not to change the current behaviour.
-
-    invalid: `str`, optional
-        Set the treatment for invalid floating-point operation. The
-        default is not to change the current behaviour.
-
-:Returns:
-
-    `dict`
-        The behaviour prior to the change, or the current behaviour if
-        no new values are specified.
-
-**Examples:**
-
-Set treatment for all types of floating-point errors to ``'raise'``
-and then reset to the previous behaviours:
-
->>> cf.Data.seterr()
-{'divide': 'warn', 'invalid': 'warn', 'over': 'warn', 'under': 'ignore'}
->>> old = cf.Data.seterr('raise')
->>> cf.Data.seterr(**old)
-{'divide': 'raise', 'invalid': 'raise', 'over': 'raise', 'under': 'raise'}
->>> cf.Data.seterr()
-{'divide': 'warn', 'invalid': 'warn', 'over': 'warn', 'under': 'ignore'}
-
-Set the treatment of division by zero to ``'ignore'`` and overflow to
-``'warn'`` without changing the treatment of underflow and invalid
-operation:
-
->>> cf.Data.seterr(divide='ignore', over='warn')
-{'divide': 'warn', 'invalid': 'warn', 'over': 'warn', 'under': 'ignore'}
->>> cf.Data.seterr()
-{'divide': 'ignore', 'invalid': 'warn', 'over': 'ignore', 'under': 'ignore'}
-
-Some examples with data arrays:
-
->>> d = cf.Data([0., 1])
->>> e = cf.Data([1., 2])
-
->>> old = cf.Data.seterr('ignore')
->>> e/d
-<CF Data: [inf, 2.0] >
->>> e**12345
-<CF Data: [1.0, inf] >
-
->>> cf.Data.seterr(divide='warn')
-{'divide': 'ignore', 'invalid': 'ignore', 'over': 'ignore', 'under': 'ignore'}
->>> e/d
-RuntimeWarning: divide by zero encountered in divide
-<CF Data: [inf, 2.0] >
->>> e**12345
-<CF Data: [1.0, inf] >
-
->>> old = cf.Data.mask_fpe(False)
->>> cf.Data.seterr(over='raise')
-{'divide': 'warn', 'invalid': 'ignore', 'over': 'ignore', 'under': 'ignore'}
->>> e/d
-RuntimeWarning: divide by zero encountered in divide
-<CF Data: [inf, 2.0] >
->>> e**12345
-FloatingPointError: overflow encountered in power
-
->>> cf.Data.mask_fpe(True)
-False
->>> cf.Data.seterr(divide='ignore')
-{'divide': 'warn', 'invalid': 'ignore', 'over': 'raise', 'under': 'ignore'}
->>> e/d
-<CF Data: [inf, 2.0] >
->>> e**12345
-<CF Data: [1.0, --] >
+    ============  ========================================================
+    Treatment     Action
+    ============  ========================================================
+    ``'ignore'``  Take no action. Allows invalid values to occur in the
+                  result data array.
+    
+    ``'warn'``    Print a `RuntimeWarning` (via the Python `warnings`
+                  module). Allows invalid values to occur in the result
+                  data array.
+    
+    ``'raise'``   Raise a `FloatingPointError` exception.
+    ============  ========================================================
+    
+    The different types of floating-point errors are:
+    
+    =================  =================================  =================
+    Error              Description                        Default treatment
+    =================  =================================  =================
+    Division by zero   Infinite result obtained from      ``'warn'``
+                       finite numbers.
+    
+    Overflow           Result too large to be expressed.  ``'warn'``
+    
+    Invalid operation  Result is not an expressible       ``'warn'``
+                       number, typically indicates that  
+                       a NaN was produced.
+    
+    Underflow          Result so close to zero that some  ``'ignore'``
+                       precision was lost.
+    =================  =================================  =================
+    
+    Note that operations on integer scalar types (such as int16) are
+    handled like floating point, and are affected by these settings.
+    
+    If called without any arguments then the current behaviour is
+    returned.
+    
+    .. seealso:: `cf.Data.mask_fpe`, `mask_invalid`
+    
+    :Parameters:
+    
+        all: `str`, optional
+            Set the treatment for all types of floating-point errors
+            at once. The default is not to change the current
+            behaviour.
+    
+        divide: `str`, optional
+            Set the treatment for division by zero. The default is not
+            to change the current behaviour.
+    
+        over: `str`, optional
+            Set the treatment for floating-point overflow. The default
+            is not to change the current behaviour.
+    
+        under: `str`, optional
+            Set the treatment for floating-point underflow. The
+            default is not to change the current behaviour.
+    
+        invalid: `str`, optional
+            Set the treatment for invalid floating-point
+            operation. The default is not to change the current
+            behaviour.
+    
+    :Returns:
+    
+        `dict`
+            The behaviour prior to the change, or the current
+            behaviour if no new values are specified.
+    
+    **Examples:**
+    
+    Set treatment for all types of floating-point errors to
+    ``'raise'`` and then reset to the previous behaviours:
+    
+    >>> cf.Data.seterr()
+    {'divide': 'warn', 'invalid': 'warn', 'over': 'warn', 'under': 'ignore'}
+    >>> old = cf.Data.seterr('raise')
+    >>> cf.Data.seterr(**old)
+    {'divide': 'raise', 'invalid': 'raise', 'over': 'raise', 'under': 'raise'}
+    >>> cf.Data.seterr()
+    {'divide': 'warn', 'invalid': 'warn', 'over': 'warn', 'under': 'ignore'}
+    
+    Set the treatment of division by zero to ``'ignore'`` and overflow
+    to ``'warn'`` without changing the treatment of underflow and
+    invalid operation:
+    
+    >>> cf.Data.seterr(divide='ignore', over='warn')
+    {'divide': 'warn', 'invalid': 'warn', 'over': 'warn', 'under': 'ignore'}
+    >>> cf.Data.seterr()
+    {'divide': 'ignore', 'invalid': 'warn', 'over': 'ignore', 'under': 'ignore'}
+    
+    Some examples with data arrays:
+    
+    >>> d = cf.Data([0., 1])
+    >>> e = cf.Data([1., 2])
+    
+    >>> old = cf.Data.seterr('ignore')
+    >>> e/d
+    <CF Data: [inf, 2.0] >
+    >>> e**12345
+    <CF Data: [1.0, inf] >
+    
+    >>> cf.Data.seterr(divide='warn')
+    {'divide': 'ignore', 'invalid': 'ignore', 'over': 'ignore', 'under': 'ignore'}
+    >>> e/d
+    RuntimeWarning: divide by zero encountered in divide
+    <CF Data: [inf, 2.0] >
+    >>> e**12345
+    <CF Data: [1.0, inf] >
+    
+    >>> old = cf.Data.mask_fpe(False)
+    >>> cf.Data.seterr(over='raise')
+    {'divide': 'warn', 'invalid': 'ignore', 'over': 'ignore', 'under': 'ignore'}
+    >>> e/d
+    RuntimeWarning: divide by zero encountered in divide
+    <CF Data: [inf, 2.0] >
+    >>> e**12345
+    FloatingPointError: overflow encountered in power
+    
+    >>> cf.Data.mask_fpe(True)
+    False
+    >>> cf.Data.seterr(divide='ignore')
+    {'divide': 'warn', 'invalid': 'ignore', 'over': 'raise', 'under': 'ignore'}
+    >>> e/d
+    <CF Data: [inf, 2.0] >
+    >>> e**12345
+    <CF Data: [1.0, --] >
 
         '''
         old = _seterr.copy()

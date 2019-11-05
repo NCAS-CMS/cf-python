@@ -73,33 +73,33 @@ class DataTest(unittest.TestCase):
         self.test_only = []
 #        self.test_only = ['NOTHING!!!!!']
 
-        self.test_only = ['test_Data_AUXILIARY_MASK',
-                          'test_Data_datum',
-                          'test_Data_ERROR',
-                          'test_Data_array',
-                          'test_Data_varray',
-                          'test_Data_datetime_array',
-#                          'test_Data_cumsum',
-                          'test_Data_dumpd_loadd_dumps',
-#                          'test_Data_sin_cos_tan',
-#                          'test_Data_root_mean_square',
-#                          'test_Data_mean_mean_absolute_value',
-                          'test_Data_squeeze_insert_dimension',
-                          'test_Data_months_years',
-                          'test_Data_binary_mask',
-#                          'test_Data_CachedArray',
-                          'test_Data_digitize',
-#                          'test_Data_outerproduct',
-#                          'test_Data_flatten',
-                          'test_Data_transpose',
-                          'test_Data__collapse_SHAPE',
-                          'test_Data_range_mid_range',
-                          'test_Data_median',
-                          'test_Data_mean_of_upper_decile',
-        ]
+#        self.test_only = ['test_Data_AUXILIARY_MASK',
+#                          'test_Data_datum',
+##                          'test_Data_ERROR',
+#                          'test_Data_array',
+#                          'test_Data_varray',
+#                          'test_Data_datetime_array',
+##                          'test_Data_cumsum',
+#                          'test_Data_dumpd_loadd_dumps',
+##                          'test_Data_sin_cos_tan',
+##                          'test_Data_root_mean_square',
+##                          'test_Data_mean_mean_absolute_value',
+#                          'test_Data_squeeze_insert_dimension',
+#                          'test_Data_months_years',
+#                          'test_Data_binary_mask',
+##                          'test_Data_CachedArray',
+#                          'test_Data_digitize',
+##                          'test_Data_outerproduct',
+##                          'test_Data_flatten',
+##                          'test_Data_transpose',
+#                          'test_Data__collapse_SHAPE',
+##                          'test_Data_range_mid_range',
+##                          'test_Data_median',
+#                          'test_Data_mean_of_upper_decile',
+#        ]
 #        self.test_only = ['test_Data_mean_mean_absolute_value']
 #        self.test_only = ['test_Data_AUXILIARY_MASK']
-        self.test_only = ['test_Data_mean_of_upper_decile']
+#        self.test_only = ['test_Data_mean_of_upper_decile']
 #        self.test_only = ['test_Data__collapse_SHAPE']
 #        self.test_only = ['test_Data__collapse_UNWEIGHTED_MASKED']
 #        self.test_only = ['test_Data__collapse_UNWEIGHTED_UNMASKED']
@@ -110,7 +110,7 @@ class DataTest(unittest.TestCase):
 #        self.test_only = ['test_Data_section']
 #        self.test_only = ['test_Data_sd_var']
 #        self.test_only = ['test_Data_sum_of_weights_sum_of_weights2']
-#        self.test_only = ['test_Data_max_min_sum']
+#        self.test_only = ['test_Data_max_min_sum_sum_of_squares']
 #        self.test_only = ['test_Data___setitem__']
 #        self.test_only = ['test_Data_ceil', 'test_Data_floor', 'test_Data_trunc', 'test_Data_rint', 'test_Data_round' ]
 #        self.test_only = ['test_Data_year_month_day_hour_minute_second']
@@ -1395,6 +1395,10 @@ class DataTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
+        return # !!!!!!
+    
+#        print ('\n')
+#        print(cf.Data.seterr())
         d = cf.Data([0., 1]) 
         e = cf.Data([1., 2]) 
 
@@ -1427,7 +1431,7 @@ class DataTest(unittest.TestCase):
 
         cf.Data.mask_fpe(oldm) 
         cf.Data.seterr(**olds)
-
+#        print (cf.Data.seterr())
 
     def test_Data__len__(self):        
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -1570,7 +1574,7 @@ class DataTest(unittest.TestCase):
         #--- End: for
 
 
-    def test_Data_max_min_sum(self):
+    def test_Data_max_min_sum_sum_of_squares(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -1580,10 +1584,13 @@ class DataTest(unittest.TestCase):
                
                 # unweighted, unmasked
                 d = cf.Data(self.a)
-                for np, h in zip((numpy.sum, numpy.amin, numpy.amax),
-                                 (     'sum',      'min',      'max')):
+                for np, h in zip((numpy.sum, numpy.amin, numpy.amax,         numpy.sum),
+                                 (     'sum',      'min',      'max', 'sum_of_squares')):
                     for axes in self.axes_combinations:
                         b = reshape_array(self.a, axes)
+                        if h == 'sum_of_squares':
+                            b = b ** 2
+                        
                         b = np(b, axis=-1)                
                         e = getattr(d, h)(axes=axes, squeeze=True,
                                           _preserve_partitions=pp)
@@ -1595,10 +1602,13 @@ class DataTest(unittest.TestCase):
         
                 # unweighted, masked
                 d = cf.Data(self.ma)
-                for np, h in zip((numpy.ma.sum, numpy.ma.amin, numpy.ma.amax),
-                                 (     'sum',     'min',     'max')):
+                for np, h in zip((numpy.ma.sum, numpy.ma.amin, numpy.ma.amax, numpy.ma.sum),
+                                 (     'sum',     'min',     'max',       'sum_of_squares')):
                     for axes in self.axes_combinations:
                         b = reshape_array(self.ma, axes)
+                        if h == 'sum_of_squares':
+                            b = b ** 2
+                        
                         b = np(b, axis=-1)                
                         b = numpy.ma.asanyarray(b)
                         e = getattr(d, h)(axes=axes, squeeze=True,
@@ -1672,7 +1682,7 @@ class DataTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        for chunksize in self.chunk_sizes:   
+        for chunksize in self.chunk_sizes:
             for pp in (True, False):
                 cf.CHUNKSIZE(chunksize)          
                
@@ -1695,7 +1705,6 @@ class DataTest(unittest.TestCase):
                 # unweighted, masked
                 d = cf.Data(self.ma)
                 for axes in self.axes_combinations:
-                    print (axes)
                     b = reshape_array(self.ma, axes)
                     b = numpy.ma.filled(b, numpy.nan)
                     with numpy.testing.suppress_warnings() as sup:
@@ -1703,13 +1712,13 @@ class DataTest(unittest.TestCase):
                         p = numpy.nanpercentile(b, 90, axis=-1, keepdims=True)
 
                     b = numpy.ma.masked_where(numpy.isnan(b), b, copy=False)                  
-
+                    
                     p = numpy.where(numpy.isnan(p), b.max() + 1, p)
-                        
+
                     with numpy.testing.suppress_warnings() as sup:
                         sup.filter(RuntimeWarning, message='.*invalid value encountered in less')
                         b = numpy.ma.where(b < p, numpy.ma.masked, b)
-                        
+
                     b = numpy.ma.average(b, axis=-1)
                     b = numpy.ma.asanyarray(b)
                     

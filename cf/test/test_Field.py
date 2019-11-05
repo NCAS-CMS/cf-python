@@ -428,21 +428,21 @@ class FieldTest(unittest.TestCase):
         ac = numpy.ma.masked_all((3, 7))
         ac[0, 0:5] = [1.0, 2.0, 3.0, -99, 5.0]
         ac[0, 3  ] = numpy.ma.masked
-        ac[1, 1:5] =      [1.5, 2.5, 3.5, 4.5]
-        ac[2, 3:7] =                [1.0, 2.0, 3.0, 5.0]
+        ac[1, 1:5] = [1.5, 2.5, 3.5, 4.5]
+        ac[2, 3:7] = [1.0, 2.0, 3.0, 5.0]
         
         ae = numpy.ma.masked_all((3, 8))
         ae[0, 0:5] = [1.0, 2.0, 3.0, -99, 5.0]
         ae[0, 3  ] = numpy.ma.masked
-        ae[1, 1:5] =      [1.5, 2.5, 3.5, 4.5]
-        ae[2, 3:8] =                [1.0, 2.0, 3.0, -99, 5.0]
+        ae[1, 1:5] = [1.5, 2.5, 3.5, 4.5]
+        ae[2, 3:8] = [1.0, 2.0, 3.0, -99, 5.0]
         ae[2, 6  ] = numpy.ma.masked
 
         af = numpy.ma.masked_all((4, 9))
         af[1, 0:5] = [1.0, 2.0, 3.0, -99, 5.0]
         af[1, 3  ] = numpy.ma.masked
-        af[2, 1:5] =      [1.5, 2.5, 3.5, 4.5]
-        af[3, 3:8] =                [1.0, 2.0, 3.0, -99, 5.0]
+        af[2, 1:5] = [1.5, 2.5, 3.5, 4.5]
+        af[3, 3:8] = [1.0, 2.0, 3.0, -99, 5.0]
         af[3, 6  ] = numpy.ma.masked
         
         query1 = cf.wi(1, 5) & cf.ne(4)
@@ -455,10 +455,9 @@ class FieldTest(unittest.TestCase):
                                           [ac.shape, ae.shape, af.shape],
                                           [ac, ae, af]):
                 message = 'method={!r}'.format(method)
-
                 g = f.subspace(method, time=query1)
                 t = g.coordinate('time')
-
+                
                 self.assertTrue(g.shape == shape, message)
                 self.assertTrue(t.shape == shape, message)
 
