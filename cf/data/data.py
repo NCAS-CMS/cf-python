@@ -2429,7 +2429,7 @@ place.
      [10.5]]
 
     Find the histogram bin boundaries associated with given
-    percentiles:
+    percentiles, and digitize the data based on these bins:
 
     >>> bins = d.percentile([0, 10, 50, 90, 100], squeeze=True)
     >>> print(bins.array)

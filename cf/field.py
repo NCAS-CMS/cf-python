@@ -13987,7 +13987,7 @@ may be accessed with the `nc_global_attributes`,
      [0.0355 ]]
 
     Find the histogram bin boundaries associated with given
-    percentiles:
+    percentiles, and digitize the data based on these bins:
 
     >>> bins = f.percentile([0, 10, 50, 90, 100], squeeze=True)
     >>> print(bins.array)
