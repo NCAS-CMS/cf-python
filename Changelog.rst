@@ -2,15 +2,16 @@ version 3.0.4
 -------------
 ----
 
-**2019-11-04**
+**2019-11-??**
 
-* Changed default ``ddof`` *back* to 1 in `cf.Data.var` and
-  `cf.Data.sd` (see version 3.0.3 and
-  https://github.com/NCAS-CMS/cf-python/issues/8)
+* New methods: `cf.Field.percentile`, `cf.Field.example_field_1`
 * New field construct collapse methods: ``median``,
   ``mean_of_upper_decile``.
 * New methods: `cf.Data.median`, `cf.Data.mean_of_upper_decile`,
-  `cf.Data.percentile`.
+  `cf.Data.percentile`, `cf.Data.filled`.
+* Changed default ``ddof`` *back* to 1 in `cf.Data.var` and
+  `cf.Data.sd` (see version 3.0.3 and
+  https://github.com/NCAS-CMS/cf-python/issues/8)
   
 version 3.0.3
 -------------
@@ -18,11 +19,11 @@ version 3.0.3
 
 **2019-11-01**
 
-* Changed default ``ddof`` from 0 to 1 in `cf.Data.var` and
-  `cf.Data.sd` (https://github.com/NCAS-CMS/cf-python/issues/8)
 * Fixed bug (introduced at v3.0.2) that caused ``mean_absolute_value``
   collapses by `cf.Field.collapse` to be not weighted when they should
   be (https://github.com/NCAS-CMS/cf-python/issues/9)
+* Changed default ``ddof`` from 0 to 1 in `cf.Data.var` and
+  `cf.Data.sd` (https://github.com/NCAS-CMS/cf-python/issues/8)
    
 version 3.0.2
 -------------

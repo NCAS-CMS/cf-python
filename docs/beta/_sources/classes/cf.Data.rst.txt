@@ -79,6 +79,7 @@ Data methods
    ~cf.Data.exp
    ~cf.Data.expand_dims
    ~cf.Data.files
+   ~cf.Data.filled
    ~cf.Data.first_element
    ~cf.Data.fits_in_memory
    ~cf.Data.fits_in_one_chunk_in_memory
@@ -103,6 +104,7 @@ Data methods
    ~cf.Data.has_units
    ~cf.Data.insert_dimension
    ~cf.Data.inspect
+   ~cf.Data.integral
    ~cf.Data.isclose
    ~cf.Data.last_element
    ~cf.Data.loadd
@@ -111,9 +113,15 @@ Data methods
    ~cf.Data.mask_fpe
    ~cf.Data.mask_invalid
    ~cf.Data.max
+   ~cf.Data.maximum
+   ~cf.Data.maximum_absolute_value
    ~cf.Data.mean
+   ~cf.Data.mean_of_upper_decile
+   ~cf.Data.median
    ~cf.Data.mid_range
    ~cf.Data.min
+   ~cf.Data.minimum
+   ~cf.Data.minimum_absolute_value
    ~cf.Data.nc_clear_hdf5_chunksizes
    ~cf.Data.nc_hdf5_chunksizes
    ~cf.Data.nc_set_hdf5_chunksizes
@@ -124,10 +132,12 @@ Data methods
    ~cf.Data.override_units
    ~cf.Data.partition_boundaries
    ~cf.Data.partition_configuration
+   ~cf.Data.percentile
    ~cf.Data.range
    ~cf.Data.reconstruct_sectioned_data
    ~cf.Data.rint
    ~cf.Data.roll
+   ~cf.Data.root_mean_square
    ~cf.Data.round
    ~cf.Data.sample_size
    ~cf.Data.save_to_disk
@@ -141,8 +151,10 @@ Data methods
    ~cf.Data.sin
    ~cf.Data.source
    ~cf.Data.squeeze
+   ~cf.Data.standard_deviation      
    ~cf.Data.stats
    ~cf.Data.sum
+   ~cf.Data.sum_of_squares
    ~cf.Data.sum_of_weights
    ~cf.Data.sum_of_weights2
    ~cf.Data.swapaxes
@@ -155,6 +167,7 @@ Data methods
    ~cf.Data.uncompress
    ~cf.Data.unique
    ~cf.Data.var
+   ~cf.Data.variance
    ~cf.Data.where
    ~cf.Data.zeros
 

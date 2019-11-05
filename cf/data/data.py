@@ -86,7 +86,7 @@ from ..functions import (CHUNKSIZE, FM_THRESHOLD, RTOL, ATOL,
                          FREE_MEMORY, COLLAPSE_PARALLEL_MODE,
                          parse_indices, _numpy_allclose,
                          _numpy_isclose, pathjoin, hash_array,
-                         broadcast_array)
+                         broadcast_array, default_netCDF_fillvals)
 
 from ..functions import (_DEPRECATION_ERROR_KWARGS,
                          _DEPRECATION_ERROR_METHOD,
@@ -2255,17 +2255,16 @@ place.
         return out
 
 
-    def median(self, axes=None, squeeze=False, inplace=False,
-               mtol='dummy?'):
+    def median(self, axes=None, squeeze=False, mtol=1, inplace=False):
         '''TODO
 
         '''
         return self.percentile(50, axes=axes, squeeze=squeeze,
-                               inplace=inplace)
+                               mtol=mtol, inplace=inplace)
 
     
     def mean_of_upper_decile(self, axes=None, include_decile=True,
-                             squeeze=False, mtol=1, weights=None,
+                             squeeze=False, weights=None, mtol=1,
                              inplace=False):
         '''TODO
 
@@ -2275,7 +2274,7 @@ place.
         else:
             d = self.copy()
             
-        p90 = d.percentile(90, axes=axes, squeeze=squeeze,
+        p90 = d.percentile(90, axes=axes, squeeze=squeeze, mtol=mtol,
                            inplace=False)
 
         if include_decile:
@@ -2283,9 +2282,12 @@ place.
         else:
             mask = (d <= p90)
 
+        if mtol < 1:
+            mask.filled(False, inplace=True)
+            
         d.where(mask, cf_masked, inplace=True)
 
-        d.mean(axes=axes, squeeze=squeeze, mtol=mtol, weights=weights,
+        d.mean(axes=axes, squeeze=squeeze, weights=weights,
                inplace=True)
         
         if inplace:
@@ -2293,9 +2295,8 @@ place.
         return d
 
     
-    def percentile(self, percentiles, axes=None,
-                   interpolation='linear', squeeze=False,
-                   inplace=False):
+    def percentile(self, ranks, axes=None, interpolation='linear',
+                   squeeze=False, mtol=1, inplace=False):
         '''Compute percentiles of the data along the specified axes.
 
     The default is to compute the percentiles along a flattened
@@ -2306,15 +2307,19 @@ place.
     float64. Otherwise, the output data type is the same as that of
     the input.
     
+    If multiple percentile ranks are given then a new, leading data
+    dimension is created so that percentiles can be stored for each
+    percentile rank.
+
     .. versionadded:: 3.0.4
 
     .. seealso:: `digitize`, `median`, `mean_of_upper_decile`, `where`
 
     :Parameters:
 
-        percentile: (sequence of) number
-            Percentile, or sequence of percentiles, to compute, which
-            must be between 0 and 100 inclusive.
+        ranks: (sequence of) number
+            Percentile rank, or sequence of percentile ranks, to
+            compute, which must be between 0 and 100 inclusive.
 
         axes: (sequence of) `int`, optional
             Select the axes. The *axes* argument may be one, or a
@@ -2349,6 +2354,23 @@ place.
             is guaranteed to broadcast correctly against the original
             data.
     
+        mtol: number, optional        
+            Set the fraction of input data elements which is allowed
+            to contain missing data when contributing to an individual
+            output data element. Where this fraction exceeds *mtol*,
+            missing data is returned. The default is 1, meaning that a
+            missing datum in the output array occurs when its
+            contributing input array elements are all missing data. A
+            value of 0 means that a missing datum in the output array
+            occurs whenever any of its contributing input array
+            elements are missing data. Any intermediate value is
+            permitted.
+    
+            *Parameter example:*
+              To ensure that an output array element is a missing
+              datum if more than 25% of its input array elements are
+              missing data: ``mtol=0.25``.
+    
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
 
@@ -2378,7 +2400,7 @@ place.
     >>> p80 = d.percentile(80)
     <CF Data(1, 1): [[8.8]] m>
     >>> e = d.where(d<=p80, cf.masked)
-    print(e.array)
+    >>> print(e.array)
     [[-- -- -- --]
      [-- -- -- --]
      [-- 9 10 11]]
@@ -2419,24 +2441,24 @@ place.
      [2 2 3 3]]
 
         '''
-        percentiles = numpy_array(percentiles).flatten()
-        percentiles.sort()
+        ranks = numpy_array(ranks).flatten()
+        ranks.sort()
 
-        if percentiles[0] < 0 or percentiles[-1] > 100:
+        if ranks[0] < 0 or ranks[-1] > 100:
             raise ValueError(
-                "Each percentile must be in the range [0, 100]. Got {!r}".format(
-                    percentiles))
+                "Each percentile rank must be in the range [0, 100]. Got {!r}".format(
+                    ranks))
 
-        n_percentiles = percentiles.size
-        if n_percentiles == 1:
-            percentiles = percentiles.squeeze()
+        n_ranks = ranks.size
+        if n_ranks == 1:
+            ranks = ranks.squeeze()
         
         if axes is None:
             axes = list(range(self.ndim))
         else:
             axes = sorted(self._parse_axes(axes))
 
-        org_chunksize = CHUNKSIZE(CHUNKSIZE()/n_percentiles)
+        org_chunksize = CHUNKSIZE(CHUNKSIZE()/n_ranks)
         sections = self.section(axes, chunks=True)
         CHUNKSIZE(org_chunksize)
 
@@ -2456,9 +2478,9 @@ place.
 
             with numpy.testing.suppress_warnings() as sup:
                 sup.filter(RuntimeWarning, message='.*All-NaN slice encountered')
-                p = func(array, percentiles, axis=axes,
-                         interpolation=interpolation,
-                         keepdims=True, overwrite_input=False)
+                p = func(array, ranks, axis=axes,
+                         interpolation=interpolation, keepdims=True,
+                         overwrite_input=False)
 
             if masked:
                 # Replace NaNs with missing data
@@ -2471,6 +2493,14 @@ place.
         # Glue the sections back together again
         out = self.reconstruct_sectioned_data(sections)
 
+        if mtol < 1:
+            mask = (self.sample_size(axes, mtol=mtol) == 0)
+            mask.filled(True, inplace=True)
+            if out.ndim == self.ndim + 1:
+                mask.insert_dimension(0, inplace=True)
+
+            out.where(mask, cf_masked, inplace=True)
+            
         if squeeze:
             out.squeeze(axes, inplace=True)
 
@@ -6483,26 +6513,24 @@ the partition matrix.
 
     @property
     def fill_value(self):
+        '''The data array missing data value.
+
+    If set to `None` then the default `numpy` fill value appropriate to
+    the data array's data type will be used.
+    
+    Deleting this attribute is equivalent to setting it to None, so
+    this attribute is guaranteed to always exist.
+    
+    **Examples:**
+    
+    >>> d.fill_value = 9999.0
+    >>> d.fill_value
+    9999.0
+    >>> del d.fill_value
+    >>> d.fill_value
+    None
+
         '''
-
-The data array missing data value.
-
-If set to None then the default numpy fill value appropriate to the
-data array's data type will be used.
-
-Deleting this attribute is equivalent to setting it to None, so this
-attribute is guaranteed to always exist.
-
-**Examples:**
-
->>> d.fill_value = 9999.0
->>> d.fill_value
-9999.0
->>> del d.fill_value
->>> d.fill_value
-None
-
-'''
         return self.get_fill_value(None)
     #--- End: def
     @fill_value.setter
@@ -8146,16 +8174,6 @@ returned.
               is equivalent to ``weights=y.transpose([2, 0, 1])``.
     
         mtol: number, optional
-            For each element in the output data array, the fraction of
-            contributing input array elements which is allowed to
-            contain missing data. Where this fraction exceeds *mtol*,
-            missing data is returned. The default is 1, meaning a
-            missing datum in the output array only occurs when its
-            contributing input array elements are all missing data. A
-            value of 0 means that a missing datum in the output array
-            occurs whenever any of its contributing input array
-            elements are missing data. Any intermediate value is
-            permitted.
     
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
@@ -8366,16 +8384,6 @@ returned.
               is equivalent to ``weights=y.transpose([2, 0, 1])``.
     
         mtol: number, optional
-            For each element in the output data array, the fraction of
-            contributing input array elements which is allowed to
-            contain missing data. Where this fraction exceeds *mtol*,
-            missing data is returned. The default is 1, meaning a
-            missing datum in the output array only occurs when its
-            contributing input array elements are all missing data. A
-            value of 0 means that a missing datum in the output array
-            occurs whenever any of its contributing input array
-            elements are missing data. Any intermediate value is
-            permitted.
     
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
@@ -9385,6 +9393,49 @@ returned.
         return out
 
 
+    def filled(self, fill_value=None, inplace=False):
+        '''TODO
+
+    :Parameters:
+    
+        fill_value: scalar, optional
+            TODO
+    
+    :Returns:
+    
+        `Data` or `None`
+            TODO
+
+    **Examples:**
+
+    TODO
+
+        '''
+        if inplace:
+            d = self
+        else:
+            d = self.copy()
+
+        if fill_value is None:
+            fill_value = d.get_fill_value(None)
+            if fill_value is None:
+                fill_value = default_netCDF_fillvals().get(d.dtype.str[1:], None)
+                if fill_value is None:
+                    raise ValueError("TODO")
+        #--- End: if
+        
+        hardmask = d.hardmask
+        d.hardmask = False
+            
+        d.where(d.mask, fill_value, inplace=True)
+
+        d.hardmask = hardmask
+
+        if inplace:
+            d = None
+        return d
+
+                
     def flat(self, ignore_masked=True):
         '''Return a flat iterator over elements of the data array.
 
@@ -10590,16 +10641,6 @@ returned.
               is equivalent to ``weights=y.transpose([2, 0, 1])``.
     
         mtol: number, optional
-            For each element in the output data array, the fraction of
-            contributing input array elements which is allowed to
-            contain missing data. Where this fraction exceeds *mtol*,
-            missing data is returned. The default is 1, meaning a
-            missing datum in the output array only occurs when its
-            contributing input array elements are all missing data. A
-            value of 0 means that a missing datum in the output array
-            occurs whenever any of its contributing input array
-            elements are missing data. Any intermediate value is
-            permitted.
     
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
@@ -11802,8 +11843,8 @@ returned.
     @classmethod
     def full(cls, shape, fill_value, dtype=None, units=None,
              chunk=True):
-        '''Return a new data array of given shape and type, filled with
-    *fill_value*.
+        '''Return a new data array of given shape and type, filled with the
+    given value.
     
     .. seealso:: `empty`, `ones`, `zeros`
     

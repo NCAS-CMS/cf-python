@@ -79,6 +79,7 @@ Data methods
    ~cf.Data.exp
    ~cf.Data.expand_dims
    ~cf.Data.files
+   ~cf.Data.filled
    ~cf.Data.first_element
    ~cf.Data.fits_in_memory
    ~cf.Data.fits_in_one_chunk_in_memory

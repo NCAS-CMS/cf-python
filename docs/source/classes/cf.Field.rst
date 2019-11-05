@@ -322,6 +322,7 @@ Miscellaneous
    ~cf.Field.equals
    ~cf.Field.convert
    cf.Field.concatenate
+   cf.Field.example_field_1
    ~cf.Field.radius
    
 .. rubric:: Attributes
@@ -494,6 +495,7 @@ Mathematical operations
 
    ~cf.Field.bin
    ~cf.Field.digitize
+   ~cf.Field.percentile
 
 Data array operations
 ---------------------

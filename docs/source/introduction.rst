@@ -94,6 +94,9 @@ The cf package can:
 
 * Perform statistical collapses on field constructs,
 
+* Perform histogram, percentile and binning operations on field
+  constructs,
+  
 * Regrid field constructs,
 
 * Apply convolution filters to field constructs,

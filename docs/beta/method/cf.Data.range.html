@@ -20,7 +20,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.Data.reconstruct_sectioned_data" href="cf.Data.reconstruct_sectioned_data.html" />
-    <link rel="prev" title="cf.Data.partition_configuration" href="cf.Data.partition_configuration.html" />
+    <link rel="prev" title="cf.Data.percentile" href="cf.Data.percentile.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.3</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.4</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -51,7 +51,7 @@
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
   <li><a href="../classes/cf.Data.html">cf.Data</a><ul>
-      <li>Previous: <a href="cf.Data.partition_configuration.html" title="previous chapter">cf.Data.partition_configuration</a></li>
+      <li>Previous: <a href="cf.Data.percentile.html" title="previous chapter">cf.Data.percentile</a></li>
       <li>Next: <a href="cf.Data.reconstruct_sectioned_data.html" title="next chapter">cf.Data.reconstruct_sectioned_data</a></li>
   </ul></li>
   </ul></li>
@@ -90,7 +90,7 @@
 <h1>cf.Data.range<a class="headerlink" href="#cf-data-range" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Data.range">
-<code class="descclassname">Data.</code><code class="descname">range</code><span class="sig-paren">(</span><em>axes=None</em>, <em>squeeze=False</em>, <em>mtol=1</em>, <em>inplace=False</em>, <em>_preserve_partitions=False</em>, <em>i=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.3/cf/data/data.py#L11703"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.range" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Data.</code><code class="descname">range</code><span class="sig-paren">(</span><em>axes=None</em>, <em>squeeze=False</em>, <em>mtol=1</em>, <em>inplace=False</em>, <em>_preserve_partitions=False</em>, <em>i=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.4/cf/data/data.py#L11986"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.range" title="Permalink to this definition">¶</a></dt>
 <dd><p>Collapse axes with the absolute difference between their maximum
 and minimum values.</p>
 <p>Missing data array elements are omitted from the calculation.</p>
@@ -142,7 +142,7 @@ and minimum values.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cf.Data.range.rst.txt"

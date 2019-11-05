@@ -5689,7 +5689,7 @@ may be accessed with the `nc_global_attributes`,
     result in masked values in the output field construct of indices.
             
     Bins defined by percentiles are easily created with the
-    `percentiles` method
+    `percentile` method
 
     *Example*:
       Find the indices for bins defined by the 10th, 50th and 90th
@@ -5849,6 +5849,7 @@ may be accessed with the `nc_global_attributes`,
 
     **Examples:**
 
+    >>> f = cf.Field.example_field_1()
     >>> f
     <CF Field: specific_humidity(latitude(5), longitude(8)) 0.001 1>
     >>> f.properties()
@@ -6239,9 +6240,9 @@ may be accessed with the `nc_global_attributes`,
               ``scale=0.5``.            
 
         mtol: number, optional        
-            Set the fraction of input array elements which is allowed
+            Set the fraction of input data elements which is allowed
             to contain missing data when contributing to an individual
-            output array element. Where this fraction exceeds *mtol*,
+            output data element. Where this fraction exceeds *mtol*,
             missing data is returned. The default is 1, meaning that a
             missing datum in the output array occurs when its
             contributing input array elements are all missing data. A
@@ -6598,8 +6599,9 @@ may be accessed with the `nc_global_attributes`,
             for a, n in zip(bin_indices[1:], i[1:]):
                 b &= (a == n)
 
-            b.hardmask = False
-            b.where(b.mask, False, inplace=True)
+            b.filled(False, inplace=True)
+#            b.hardmask = False
+#            b.where(b.mask, False, inplace=True)
                 
             c.set_data(self.data.where(b, None, cf_masked),
                        set_axes=False, copy=False)
@@ -7572,9 +7574,9 @@ may be accessed with the `nc_global_attributes`,
             are retained in the result's data array.
     
         mtol: number, optional        
-            Set the fraction of input array elements which is allowed
+            Set the fraction of input data elements which is allowed
             to contain missing data when contributing to an individual
-            output array element. Where this fraction exceeds *mtol*,
+            output data element. Where this fraction exceeds *mtol*,
             missing data is returned. The default is 1, meaning that a
             missing datum in the output array occurs when its
             contributing input array elements are all missing data. A
@@ -10208,6 +10210,7 @@ may be accessed with the `nc_global_attributes`,
 
     **Examples:**
     
+    >>> q = cf.Field.example_field_1()
     >>> print(q)
     Field: specific_humidity (ncvar%q)
     ----------------------------------
@@ -11537,7 +11540,95 @@ may be accessed with the `nc_global_attributes`,
             f = None
         return f
 
+    
+    @classmethod
+    def example_field_1(cls):
+        '''Create a small example field construct.
 
+    The field construct has properties as well as cell method and
+    dimension coordinate constructs.
+
+    :Returns:
+
+        `Field`
+            The example field construct.
+
+    **Examples:**
+
+    >>> f = cf.Field.example_field_1()
+    >>> print(f)
+    Field: specific_humidity
+    ------------------------
+    Data            : specific_humidity(latitude(5), longitude(8)) 1
+    Cell methods    : area: mean
+    Dimension coords: time(1) = [2019-01-01 00:00:00]
+                    : latitude(5) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(8) = [22.5, ..., 337.5] degrees_east
+    >>> print(f.array)
+    [[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]
+     [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
+     [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
+     [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
+     [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]
+
+        '''
+        f = cls()
+        f.set_properties({'Conventions': 'CF-1.7',
+                          'project': 'research',
+                          'standard_name': 'specific_humidity'})
+
+        axisT = f.set_construct(DomainAxis(1))
+        axisY = f.set_construct(DomainAxis(5))
+        axisX = f.set_construct(DomainAxis(8))
+
+        dim = DimensionCoordinate()
+        dim.standard_name = 'latitude'
+        data = Data([-75., -45., 0., 45., 75.], 'degrees_north')
+        dim.set_data(data)
+        bounds = Data([[-90., -60.],
+                       [-60., -30.],
+                       [-30.,  30.],
+                       [ 30.,  60.],
+                       [ 60.,  90.]])
+        dim.set_bounds(Bounds(data=bounds))
+        f.set_construct(dim, axes=axisY, copy=False)
+    
+        dim = DimensionCoordinate()
+        dim.standard_name = 'longitude'
+        data = Data([22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5],
+                    'degrees_east')
+        dim.set_data(data)
+        bounds = Data([[  0.,  45.],
+                       [ 45.,  90.],
+                       [ 90., 135.],
+                       [135., 180.],
+                       [180., 225.],
+                       [225., 270.],
+                       [270., 315.],
+                       [315., 360.]])
+        dim.set_bounds(Bounds(data=bounds))
+        f.set_construct(dim, axes=axisX, copy=False)
+    
+        dim = DimensionCoordinate()
+        dim.standard_name = 'time'
+        data = Data([31.0], 'days since 2018-12-01')
+        dim.set_data(data)
+        f.set_construct(dim, axes=axisT, copy=False)
+
+        f.set_construct(CellMethod(axes='area', method='mean'))
+
+
+        data = Data([[0.007, 0.034, 0.003, 0.014, 0.018, 0.037, 0.024, 0.029],
+                     [0.023, 0.036, 0.045, 0.062, 0.046, 0.073, 0.006, 0.066],
+                     [0.11 , 0.131, 0.124, 0.146, 0.087, 0.103, 0.057, 0.011],
+                     [0.029, 0.059, 0.039, 0.07 , 0.058, 0.072, 0.009, 0.017],
+                     [0.006, 0.036, 0.019, 0.035, 0.018, 0.037, 0.034, 0.013]],
+                    units='1')
+        f.set_data(data, axes=[axisY, axisX], copy=False)
+        
+        return f
+
+    
     def flip(self, axes=None, inplace=False, i=False, **kwargs):
         '''Flip (reverse the direction of) axes of the field.
 
@@ -13730,8 +13821,8 @@ may be accessed with the `nc_global_attributes`,
         return super().get_data_axes(key=key, default=default)
 
 
-    def percentile(self, percentiles, axes=None,
-                   interpolation='linear', squeeze=False):
+    def percentile(self, ranks, axes=None, interpolation='linear',
+                   squeeze=False, mtol=1):
         '''Compute percentiles of the data along the specified axes.
 
     The default is to compute the percentiles along a flattened
@@ -13742,15 +13833,23 @@ may be accessed with the `nc_global_attributes`,
     float64. Otherwise, the output data type is the same as that of
     the input.
     
+    If multiple percentile ranks are given then a new, leading data
+    dimension is created so that percentiles can be stored for each
+    percentile rank.
+
+    The output field construct has a new dimension coordinate
+    construct that records the precentile ranks represented by its
+    data.
+
     .. versionadded:: 3.0.4
 
-    .. seealso:: `bin`, ppp`collapse`, `digitize`, `where`
+    .. seealso:: `bin`, `collapse`, `digitize`, `where`
 
     :Parameters:
 
-        percentile: (sequence of) number
-            Percentile, or sequence of percentiles, to compute, which
-            must be between 0 and 100 inclusive.
+        ranks: (sequence of) number
+            Percentile ranks, or sequence of percentile ranks, to
+            compute, which must be between 0 and 100 inclusive.
 
         axes: (sequence of) `str` or `int`, optional
             Select the domain axes over which to calculate the
@@ -13787,71 +13886,119 @@ may be accessed with the `nc_global_attributes`,
             size 1, meaning that the result is guaranteed to broadcast
             correctly against the original data.
     
+        mtol: number, optional        
+            Set the fraction of input data elements which is allowed
+            to contain missing data when contributing to an individual
+            output data element. Where this fraction exceeds *mtol*,
+            missing data is returned. The default is 1, meaning that a
+            missing datum in the output array occurs when its
+            contributing input array elements are all missing data. A
+            value of 0 means that a missing datum in the output array
+            occurs whenever any of its contributing input array
+            elements are missing data. Any intermediate value is
+            permitted.
+    
+            *Parameter example:*
+              To ensure that an output array element is a missing
+              datum if more than 25% of its input array elements are
+              missing data: ``mtol=0.25``.
+    
     :Returns:
 
         `Field`
-
             The percentiles of the original data.
 
     **Examples:**
 
-    >>> d = cf.Data(numpy.arange(12).reshape(3, 4), 'm')
-    >>> print(d.array)
-    [[ 0  1  2  3]
-     [ 4  5  6  7]
-     [ 8  9 10 11]]
-    >>> p = d.percentile([20, 40, 50, 60, 80])
-    >>> p
-    <CF Data(4, 1, 1): [[[2.2, ..., 8.8]]] m>
-
-    >>> p = d.percentile([20, 40, 50, 60, 80], squeeze=True)
+    >>> f = cf.Field.example_field_1()
+    >>> print(f)
+    Field: specific_humidity
+    ------------------------
+    Data            : specific_humidity(latitude(5), longitude(8)) 1
+    Cell methods    : area: mean
+    Dimension coords: time(1) = [2019-01-01 00:00:00]
+                    : latitude(5) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(8) = [22.5, ..., 337.5] degrees_east
+    >>> print(f.array)
+    [[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]
+     [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
+     [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
+     [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
+     [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]
+    >>> p = f.percentile([20, 40, 50, 60, 80])
+    >>> print(p)
+    Field: specific_humidity
+    ------------------------
+    Data            : specific_humidity(long_name=Percentile ranks for latitude, longitude dimensions(5), latitude(1), longitude(1)) 1
+    Dimension coords: time(1) = [2019-01-01 00:00:00]
+                    : latitude(1) = [0.0] degrees_north
+                    : longitude(1) = [180.0] degrees_east
+                    : long_name=Percentile ranks for latitude, longitude dimensions(5) = [20, ..., 80]
     >>> print(p.array)
-    [2.2 4.4 5.5 6.6 8.8]
+    [[[0.0164]]
+     [[0.032 ]]
+     [[0.036 ]]
+     [[0.0414]]
+     [[0.0704]]]
 
     Find the standard deviation of the values above the 80th percentile:
 
-    >>> p80 = d.percentile(80)
-    <CF Data(1, 1): [[8.8]] m>
-    >>> e = d.where(d<=p80, cf.masked)
-    print(e.array)
-    [[-- -- -- --]
-     [-- -- -- --]
-     [-- 9 10 11]]
-    >>> e.sd()
-    <CF Data(1, 1): [[0.816496580927726]] m>
+    >>> p80 = f.percentile(80)
+    >>> print(p80)
+    Field: specific_humidity
+    ------------------------
+    Data            : specific_humidity(latitude(1), longitude(1)) 1
+    Dimension coords: time(1) = [2019-01-01 00:00:00]
+                    : latitude(1) = [0.0] degrees_north
+                    : longitude(1) = [180.0] degrees_east
+                    : long_name=Percentile ranks for latitude, longitude dimensions(1) = [80]
+    >>> g = f.where(f<=p80, cf.masked)
+    >>> print(g.array)
+    [[  --    --    --    --    --    -- -- --]
+     [  --    --    --    --    -- 0.073 -- --]
+     [0.11 0.131 0.124 0.146 0.087 0.103 -- --]
+     [  --    --    --    --    -- 0.072 -- --]
+     [  --    --    --    --    --    -- -- --]]
+    >>> g.collapse('standard_deviation', weights='area').data
+    <CF Data(1, 1): [[0.024609938742357642]] 1>
 
     Find the mean of the values above the 45th percentile along the
-    second axis:
+    X axis:
 
-    >>> p45 = d.percentile(45, axes=1)
+    >>> p45 = f.percentile(45, axes='X')
     >>> print(p45.array)
-    [[1.35],
-     [5.35],
-     [9.35]]
-    >>> e = d.where(d<=p45, cf.masked)
-    >>> print(e.array)
-    [[-- -- 2 3]
-     [-- -- 6 7]
-     [-- -- 10 11]]
-    >>> f = e.mean(axes=1)
-    >>> f
-    <CF Data(3, 1): [[2.5, ..., 10.5]] m> 
-    >>> print(f.array)
-    [[ 2.5]
-     [ 6.5]
-     [10.5]]
+    [[0.0189 ]
+     [0.04515]
+     [0.10405]
+     [0.04185]
+     [0.02125]]
+    >>> g = f.where(f<=p45, cf.masked)
+    >>> print(g.array)
+    [[  -- 0.034    --    --    -- 0.037 0.024 0.029]
+     [  --    --    -- 0.062 0.046 0.073    -- 0.066]
+     [0.11 0.131 0.124 0.146    --    --    --    --]
+     [  -- 0.059    -- 0.07  0.058 0.072    --    --]
+     [  -- 0.036    -- 0.035   --  0.037 0.034    --]]
+    >>> print(g.collapse('X: mean', weights='X').array)
+    [[0.031  ]
+     [0.06175]
+     [0.12775]
+     [0.06475]
+     [0.0355 ]]
 
     Find the histogram bin boundaries associated with given
     percentiles:
 
-    >>> bins = d.percentile([0, 10, 50, 90, 100], squeeze=True)
+    >>> bins = f.percentile([0, 10, 50, 90, 100], squeeze=True)
     >>> print(bins.array)
-    [ 0.   1.1  5.5  9.9 11. ]
-    >>> e = d.digitize(bins, closed_ends=True)
-    >>> print(e.array)
-    [[0 0 1 1]
-     [1 1 2 2]
-     [2 2 3 3]]
+    [0.003  0.0088 0.036  0.1037 0.146 ]
+    >>> i = f.digitize(bins, closed_ends=True)
+    >>> print(i.array)
+    [[0 1 0 1 1 2 1 1]
+     [1 2 2 2 2 2 0 2]
+     [3 3 3 3 2 2 2 1]
+     [1 2 2 2 2 2 1 1]
+     [0 2 1 1 1 2 1 1]]
 
         '''
         data_axes = self.get_data_axes(default=())
@@ -13866,10 +14013,10 @@ may be accessed with the `nc_global_attributes`,
             axes = set([self.domain_axis(axis, key=True) for axis in axes])
             iaxes = [data_axes.index(axis) for axis in
                      axes.intersection(self.get_data_axes())]
-        print(iaxes, axes)
-        data = self.data.percentile(percentiles, axes=iaxes,
+
+        data = self.data.percentile(ranks, axes=iaxes,
                                     interpolation=interpolation,
-                                    squeeze=False)
+                                    squeeze=False, mtol=mtol)
 
         # ------------------------------------------------------------
         # Initialize the output field with the percentile data
@@ -13884,7 +14031,6 @@ may be accessed with the `nc_global_attributes`,
         if data.ndim == self.ndim:
             for n, axis in zip(data.shape, data_axes):
                 out_data_axes.append(out.set_construct(self._DomainAxis(n), key=axis))
-
         elif data.ndim == self.ndim + 1:
             for n, axis in zip(data.shape[1:], data_axes):
                 out_data_axes.append(out.set_construct(self._DomainAxis(n), key=axis))
@@ -13950,7 +14096,7 @@ may be accessed with the `nc_global_attributes`,
         # Create a dimension coordinate for the percentile ranks
         # ------------------------------------------------------------
         dim = DimensionCoordinate()
-        data = Data(percentiles).squeeze()
+        data = Data(ranks).squeeze()
         data.override_units(Units(), inplace=True)
         dim.set_data(data, copy=False)
 

@@ -19,7 +19,6 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cf.Data.stats" href="cf.Data.stats.html" />
     <link rel="prev" title="cf.Data.source" href="cf.Data.source.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -32,7 +31,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.3</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.4</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -52,7 +51,6 @@
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
   <li><a href="../classes/cf.Data.html">cf.Data</a><ul>
       <li>Previous: <a href="cf.Data.source.html" title="previous chapter">cf.Data.source</a></li>
-      <li>Next: <a href="cf.Data.stats.html" title="next chapter">cf.Data.stats</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -90,7 +88,7 @@
 <h1>cf.Data.squeeze<a class="headerlink" href="#cf-data-squeeze" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Data.squeeze">
-<code class="descclassname">Data.</code><code class="descname">squeeze</code><span class="sig-paren">(</span><em>axes=None</em>, <em>inplace=False</em>, <em>i=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.3/cf/data/data.py#L11137"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.squeeze" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Data.</code><code class="descname">squeeze</code><span class="sig-paren">(</span><em>axes=None</em>, <em>inplace=False</em>, <em>i=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.4/cf/data/data.py#L11425"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.squeeze" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove size 1 axes from the data array.</p>
 <p>By default all size 1 axes are removed, but particular axes may be
 selected with the keyword arguments.</p>
@@ -104,21 +102,11 @@ selected with the keyword arguments.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>axes: (sequence of) int or str, optional</dt>
+<dt>axes: (sequence of) int, optional</dt>
 <dd><p class="first">Select the axes.  By default all size 1 axes are
-removed. The <em>axes</em> argument may be one, or a sequence,
-of:</p>
-<blockquote>
-<div><ul class="simple">
-<li>An internal axis identifier. Selects this axis.</li>
-</ul>
-</div></blockquote>
-<blockquote>
-<div><ul class="simple">
-<li>An integer. Selects the axis coresponding to the given
-position in the list of axes of the data array.</li>
-</ul>
-</div></blockquote>
+removed. The <em>axes</em> argument may be one, or a sequence, of
+integers that select the axis coresponding to the given
+position in the list of axes of the data array.</p>
 <p class="last">No axes are removed if <em>axes</em> is an empty sequence.</p>
 </dd>
 <dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
@@ -182,7 +170,7 @@ position in the list of axes of the data array.</li>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cf.Data.squeeze.rst.txt"

@@ -35,7 +35,7 @@ class FieldTest(unittest.TestCase):
 #        self.test_only = ['test_Field__add__']
 #        self.test_only = ['test_Field_cumsum']
 #        self.test_only = ['test_Field_flatten']
-        self.test_only = ['test_Field_collapse']
+#        self.test_only = ['test_Field_collapse']
 #        self.test_only = ['test_Field_radius']
 #        self.test_only = ['test_Field_field_ancillary']
 #        self.test_only = ['test_Field_AUXILIARY_MASK']
