@@ -11661,7 +11661,7 @@ may be accessed with the `nc_global_attributes`,
             "Must select an example field construct with an argument of 1 or 2. Got {!r}".format(n))
         
 
-    def creation_code(self, include_data=False):
+    def _creation_code(self, include_data=False):
         '''Create an example field construct.
 
     :Parameters:
@@ -11717,13 +11717,8 @@ may be accessed with the `nc_global_attributes`,
             out.append("f.set_construct(cf.{}(size={}), key={!r})".format(
                 c.__class__.__name__, c.size, key))
 
-
         out.append("")
-        data = self.data
-        out.append("EDIT: data = {!r}".format(data))
-        if include_data:
-            out.append('EDIT: '+repr(data.array))
-            
+        out.append(self.data._creation_code())            
         out.append("f.set_data(data, axes={})".format(self.get_data_axes()))
 
         for key, c in self.constructs.filter_by_type('dimension_coordinate',
@@ -11732,38 +11727,17 @@ may be accessed with the `nc_global_attributes`,
                                                      'domain_ancillary',
                                                      'field_ancillary').items():
             out.append("")
-            out.append("# {}".format(c.construct_type))
+            out.append("# "+c.construct_type)
             out.append("d = cf.{}()".format(c.__class__.__name__))
             out.append("d.set_properties({})".format(c.properties()))
 
-            data = c.data
-            if include_data:
-                out.append("data = cf.Data({})".format(data.array.tolist()))
-                mask = data.mask
-                if mask.any():
-                    out.append("mask = cf.Data({})".format(mask.array.tolist()))
-                    out.append("data.where(mask, cf.masked, inplace=True)")           
-            else:
-                out.append("data = {!r}".format(data))
-                
-            out.append("data.dtype = {!r}".format(data.dtype.name))
+            out.append(c.data._creation_code())
             out.append("d.set_data(data)")
             if c.has_bounds():
                 out.append("b = cf.Bounds()".format(c.__class__.__name__))
                 out.append("b.set_properties({})".format(c.bounds.properties()))
           
-                data = c.bounds.data
-                if include_data:
-                    values = data.array.tolist()                    
-                    out.append("data = cf.Data({})".format(values))
-                    mask = data.mask
-                    if mask.any():
-                        out.append("mask = cf.Data({})".format(mask.array.tolist()))
-                        out.append("data.where(mask, cf.masked, inplace=True)")                        
-                else:
-                    out.append("data = {!r}".format(data))
-
-                out.append("data.dtype = {!r}".format(data.dtype.name))
+                out.append(c.bounds.data._creation_code())
                 out.append("b.set_data(data)")
                 out.append("d.set_bounds(b)")
 
@@ -11785,33 +11759,43 @@ may be accessed with the `nc_global_attributes`,
             if axes is not None:
                 out.append("d.axes = {!r}".format(axes))
                 
-            qualifiers  = c.qualifiers()
-            if 'interval' in qualifiers:
-                edit = 'EDIT: '
-            else:
-                edit = ''
+            for term, value in c.qualifiers().items():
+                if term == 'interval':
+                    for i, data in enumerate(value[:]):
+                        name = "interval{}".format(i)
+                        out.append(data._creation_code(name=name))
+                        value[i] = name
                 
-            if qualifiers:
-                out.append("{}d.set_qualifiers({})".format(edit, qualifiers))
-
+                out.append("d.set_qualifier({!r}, {!r})".format(term, value))
+            #--- End: for
+            
             out.append("f.set_construct(d)")
                 
         for key, c in self.coordinate_references.items():
             out.append("")
-            out.append("# {}".format(c.construct_type))
+            out.append("# "+c.construct_type)
             out.append("d = cf.{}()".format(c.__class__.__name__))
             
             coordinates = c.coordinates()
             if coordinates:
                 out.append("d.set_coordinates({})".format(coordinates))
-                            
-            parameters = c.datum.parameters()
-            if parameters:
-                out.append("EDIT: d.datum.set_parameters({})".format(parameters))
-                
-            parameters = c.coordinate_conversion.parameters()
-            if parameters:
-                out.append("EDIT: d.coordinate_conversion.set_parameters({})".format(parameters))
+
+            for term, value in c.datum.parameters().items():
+                if isinstance(value, Data):
+                    name = "parameter{}".format(i)
+                    out.append(data._creation_code(name=name))
+                    value = name
+                    
+                out.append("d.datum.set_parameter({!r}, {!r})".format(term, value))
+                   
+            for term, value in c.coordinate_conversion.parameters().items():
+                if isinstance(value, Data):
+                    name = "parameter{}".format(i)
+                    out.append(data._creation_code(name=name))
+                    value = name
+                    
+                out.append("d.coordinate_conversion.set_parameter({!r}, {!r})".format(
+                    term, value))
                 
             domain_ancillaries = c.coordinate_conversion.domain_ancillaries()
             if domain_ancillaries:

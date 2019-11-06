@@ -130,7 +130,7 @@ Convert a non-JSON-encodable object to a JSON-encodable built-in type.
 Possible conversions are:
 
 ==============  =============  ======================================
-Input object    Output object  numpy data types covered
+Input object    Output object  numpy data-types covered
 ==============  =============  ======================================
 numpy.bool_     bool           bool
 numpy.integer   int            int, int8, int16, int32, int64, uint8,
@@ -317,7 +317,7 @@ place.
     def __init__(self, array=None, units=None, calendar=None,
                  fill_value=None, hardmask=True, chunk=True,
                  loadd=None, loads=None, dt=False, source=None,
-                 copy=True, _use_array=True):
+                 copy=True, dtype=None, _use_array=True):
         '''**Initialization**
 
     :Parameters:
@@ -341,38 +341,54 @@ place.
             provided then this an also set the calendar. Ignored if
             the *source* parameter is set.
     
+            The units (without the calendar) may also be set after
+            initialisation with the `set_units` method.
+    
             *Parameter example:*
               ``units='km hr-1'``
     
             *Parameter example:*
               ``units='days since 2018-12-01'``
     
-            The units (without the calendar) may also be set after
-            initialisation with the `set_units` method.
-    
         calendar: `str`, optional
             The calendar for reference time units. Ignored if the
             *source* parameter is set.
     
+            The calendar may also be set after initialisation with the
+            `set_calendar` method.
+
             *Parameter example:*
               ``calendar='360_day'``
             
-            The calendar may also be set after initialisation with the
-            `set_calendar` method.
-    
         fill_value: optional 
             The fill value of the data. By default, or if set to
             `None`, the `numpy` fill value appropriate to the array's
-            data type will be used (see
+            data-type will be used (see
             `numpy.ma.default_fill_value`). Ignored if the *source*
             parameter is set.
-    
-            *Parameter example:*
-              ``fill_value=-999.``
-                    
+
             The fill value may also be set after initialisation with
             the `set_fill_value` method.
-    
+
+            *Parameter example:*
+              ``fill_value=-999.``
+
+        dtype: data-type, optional
+            The desired data-type for the data. By default the
+            data-type will be inferred form the *array* parameter.
+
+            The data-type may also be set after initialisation with
+            the `dtype` attribute.
+
+            *Parameter example:*
+                ``dtype=float``
+
+            *Parameter example:*
+                ``dtype='float32'``
+
+            *Parameter example:*
+                ``dtype=numpy.dtype('i2')``
+
         source: optional
             Initialize the array, units, calendar and fill value from
             those of *source*.
@@ -477,7 +493,10 @@ place.
         data = array
 
         if data is None:
-            self._dtype = None
+            if dtype is not None:
+                dtype = numpy_dtype(dtype)
+
+            self._dtype = dtype
             return
 
         if not isinstance(data, Array):
@@ -497,11 +516,11 @@ place.
         else:
             check_free_memory = False
 
-        dtype = data.dtype
+        _dtype = data.dtype
 
         if dt or units.isreftime:
             # TODO raise exception if compressed
-            kind = dtype.kind
+            kind = _dtype.kind
             if kind in 'US':
                 # Convert date-time strings to reference time floats
                 if not units:
@@ -510,7 +529,7 @@ place.
                     self._Units = units
 
                 data = st2rt(data, units, units)
-                dtype = data.dtype
+                _dtype = data.dtype
             elif kind == 'O':
                 # Convert date-time objects to reference time floats        
                 x = data.item(0)
@@ -544,8 +563,9 @@ place.
                 # equivalent calendars
                 calendars = set([getattr(x, 'calendar', 'gregorian') for x in data.flat])
                 if len(calendars) > 1:
-                    raise ValueError('Not all date-time objects have equivalent calendars: {}'.format(
-                        tuple(calendars)))
+                    raise ValueError(
+                        'Not all date-time objects have equivalent calendars: {}'.format(
+                            tuple(calendars)))
 
                 # If the date-times are calendar-agnostic, assign the
                 # given calendar, defaulting to Gregorian.                
@@ -561,7 +581,7 @@ place.
                 # Convert the date-time objects to reference times
                 data = dt2rt(data, None, units)                
 
-            dtype = data.dtype
+            _dtype = data.dtype
 
             if not units.isreftime:
                 raise ValueError(
@@ -579,10 +599,14 @@ place.
         # string. DO NOT CHANGE IN PLACE.
         self._axes = axes
 
-        self._dtype = dtype
         self._ndim  = ndim
         self._shape = shape
         self._size  = size
+
+        if dtype is not None:
+            _dtype = numpy_dtype(dtype)
+        
+        self._dtype = _dtype
         
         if isinstance(data, CompressedArray):
             self._create_partition_matrix_for_compressed_array(data)
@@ -1090,7 +1114,7 @@ place.
     Generating the hash temporarily realizes the entire array in
     memory, which may not be possible for large arrays.
     
-    The hash value is dependent on the data type and shape of the data
+    The hash value is dependent on the data-type and shape of the data
     array. If the array is a masked array then the hash value is
     independent of the fill value and of data array values underlying
     any masked elements.
@@ -1950,7 +1974,7 @@ place.
         if '_cyclic' in d:
             d['_cyclic'] = list(d['_cyclic'])
 
-        # Change numpy.dtype object to a data type string
+        # Change numpy.dtype object to a data-type string
         if 'dtype' in d:
             d['dtype'] = str(d['dtype'])
 
@@ -2316,8 +2340,8 @@ place.
     version of the data.
 
     If the input data are integers, or floats smaller than float64, or
-    the input data contains missing values, then output data type is
-    float64. Otherwise, the output data type is the same as that of
+    the input data contains missing values, then output data-type is
+    float64. Otherwise, the output data-type is the same as that of
     the input.
     
     If multiple percentile ranks are given then a new, leading data
@@ -4097,7 +4121,7 @@ place.
 #        new_isdt = data0._isdt and new_Units.isreftime
         
         # ------------------------------------------------------------
-        # Set the data type of the result
+        # Set the data-type of the result
         # ------------------------------------------------------------
         if method_type in ('_eq', '_ne', '_lt', '_le', '_gt', '_ge'):
             new_dtype = numpy_dtype(bool)
@@ -4207,7 +4231,7 @@ place.
             except TypeError as error:
                 if inplace:
                     raise TypeError(
-                        "Incompatible result data type ({0!r}) for in-place {1!r} arithmetic".format(
+                        "Incompatible result data-type ({0!r}) for in-place {1!r} arithmetic".format(
                             numpy_result_type(array0.dtype, array1.dtype).name, array0.dtype.name))
                 else:
                     raise TypeError(error)
@@ -4274,7 +4298,38 @@ place.
 
             return self
 
+    def _creation_code(self, name='data'):
+        '''TODO 
+        '''
+        mask = self.mask
+        if mask.any():
+            masked = True
+            array = self.filled().array.tolist()
+        else:
+            masked = False
+            array = self.array.tolist()
 
+        out = []
+        out.append("{} = cf.{}({}, units={!r}, calendar={!r}, dtype={!r}, fill_value={!r})".format(
+            name,
+            self.__class__.__name__,
+            array,
+            self.get_units(None),
+            self.get_calendar(None),
+            self.dtype.name,
+            self.get_fill_value(None)))
+        
+        if masked:
+            out.append("{}_mask = cf.{}({})".format(
+                name,
+                self.__class__.__name__,
+                mask.array.tolist()))
+
+            out.append("{0}.where({0}_mask, cf.masked, inplace=True)".format(name))
+            
+        return '\n'.join(out)
+                       
+        
     def __query_set__(self, values):
         '''TODO
 
@@ -6462,28 +6517,28 @@ the partition matrix.
 
     @property
     def dtype(self):
-        '''The `numpy` data type of the data array.
+        '''The `numpy` data-type of the data array.
 
-    By default this is the data type with the smallest size and
+    By default this is the data-type with the smallest size and
     smallest scalar kind to which all sub-arrays of the master data
     array may be safely cast without loss of information. For example,
-    if the sub-arrays have data types 'int64' and 'float32' then the
-    master data array's data type will be 'float64'; or if the
-    sub-arrays have data types 'int64' and 'int32' then the master
-    data array's data type will be 'int64'.
+    if the sub-arrays have data-types 'int64' and 'float32' then the
+    master data array's data-type will be 'float64'; or if the
+    sub-arrays have data-types 'int64' and 'int32' then the master
+    data array's data-type will be 'int64'.
     
-    Setting the data type to a `numpy.dtype` object, or any object
+    Setting the data-type to a `numpy.dtype` object, or any object
     convertible to a `numpy.dtype` object, will cause the master data
     array elements to be recast to the specified type at the time that
     they are next accessed, and not before. This does not immediately
     change the master data array elements, so, for example,
-    reinstating the original data type prior to data access results in
+    reinstating the original data-type prior to data access results in
     no loss of information.
     
-    Deleting the data type forces the default behaviour. Note that if
-    the data type of any sub-arrays has changed after `dtype` has been
+    Deleting the data-type forces the default behaviour. Note that if
+    the data-type of any sub-arrays has changed after `dtype` has been
     set (which could occur if the data array is accessed) then the
-    reinstated default data type may be different to the data type
+    reinstated default data-type may be different to the data-type
     prior to `dtype` being set.
     
     **Examples:**
@@ -6538,7 +6593,7 @@ the partition matrix.
         '''The data array missing data value.
 
     If set to `None` then the default `numpy` fill value appropriate to
-    the data array's data type will be used.
+    the data array's data-type will be used.
     
     Deleting this attribute is equivalent to setting it to None, so
     this attribute is guaranteed to always exist.
@@ -6891,7 +6946,7 @@ Tuple of the data array's dimension sizes.
 #        elif self._isdatetime():
 #            out_data_type = numpy_dtype(float)
 #            pda_args['func']   = dt2rt
-#            # Turn off data type checking and partition updating
+#            # Turn off data-type checking and partition updating
 #            pda_args['dtype']  = None
 #            pda_args['update'] = False
 
@@ -7003,7 +7058,7 @@ Tuple of the data array's dimension sizes.
     If the calendar has not been set then the CF default calendar will
     be used and the units will be updated accordingly.
     
-    The data type of the data array is unchanged.
+    The data-type of the data array is unchanged.
     
     .. seealso:: `array`, `varray`
     
@@ -7070,7 +7125,7 @@ Tuple of the data array's dimension sizes.
         elif self._isdatetime(): #self._isdt:
             data_type = numpy_dtype(float)
             config['func'] = dt2rt
-            # Turn off data type checking and partition updating
+            # Turn off data-type checking and partition updating
             config['dtype']  = None
            
         if self.partitions.size == 1:
@@ -9442,9 +9497,12 @@ returned.
         if fill_value is None:
             fill_value = d.get_fill_value(None)
             if fill_value is None:
-                fill_value = default_netCDF_fillvals().get(d.dtype.str[1:], None)
+                fill_value = default_netCDF_fillvals().get(d.dtype.str[1:], None)                
+                if fill_value is None and d.dtype.kind in ('SU'):
+                    fill_value = default_netCDF_fillvals().get('S1', None)
+                    
                 if fill_value is None:
-                    raise ValueError("TODO")
+                    raise ValueError("TODO{}".format(d.dtype.str))
         #--- End: if
         
         hardmask = d.hardmask
@@ -10026,7 +10084,7 @@ returned.
     def partition_configuration(self, readonly, **kwargs):
         '''Return parameters for opening and closing array partitions.
 
-    If dtype=None then data type checking is disabled.
+    If dtype=None then data-type checking is disabled.
 
         '''
         config = {'readonly'       : readonly,
@@ -10286,8 +10344,8 @@ returned.
             The shape of the new array.
     
         dtype: data-type
-            The data type of the new array. By default the data type
-            is `numpy.float64`.
+            The data-type of the new array. By default the data-type
+            is ``float``.
     
         units: `str` or `Units`
             The units for the new data array.
@@ -10830,7 +10888,7 @@ returned.
 #
 #    itemsize : int, optional
 #        The number of bytes per word of the master data array. By
-#        default it taken from the array's data type.
+#        default it taken from the array's data-type.
 #
 #:Returns:
 #
@@ -11844,8 +11902,8 @@ returned.
             The shape of the new array.
     
         dtype: `numpy.dtype` or any object convertible to `numpy.dtype`
-            The data type of the new array. By default the data type
-            is numpy.float64.
+            The data-type of the new array. By default the data-type
+            is ``float``.
     
         units: `str` or `Units`
             The units for the new data array.
@@ -11880,8 +11938,8 @@ returned.
             The fill value.
     
         dtype: data-type
-            The data type of the new array. By default the data type
-            is `numpy.float64`.
+            The data-type of the new array. By default the data-type
+            is ``float``.
     
         units: `str` or `Units`
             The units for the new data array.

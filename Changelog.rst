@@ -11,7 +11,8 @@ version 3.0.4
   ``mean_of_upper_decile``.
 * New methods: `cf.Data.median`, `cf.Data.mean_of_upper_decile`,
   `cf.Data.percentile`, `cf.Data.filled`.
-* Changed default ``ddof`` *back* to 1 in `cf.Data.var` and
+* New keyword parameters to `cf.Data`: ``dtype``.
+* New * Changed default ``ddof`` *back* to 1 in `cf.Data.var` and
   `cf.Data.sd` (see version 3.0.3 and
   https://github.com/NCAS-CMS/cf-python/issues/8)
   
@@ -41,8 +42,8 @@ version 3.0.2
   ``mean_absolute_value``, ``maximum_absolute_value``,
   ``minimum_absolute_value``, ``sum_of_squares``,
   ``root_mean_square``.
-* New keywords to `cf.Field.collapse` and `cf.Field.weights`:
-  ``measure``, ``scale``, ``radius``
+* New keyword parameters to `cf.Field.collapse` and
+  `cf.Field.weights`: ``measure``, ``scale``, ``radius``
 * New methods: `cf.Data.cumsum`, `cf.Data.digitize`,
   `cf.Data.masked_all`, `cf.Data.mean_absolute_value`,
   `cf.Data.maximum_absolute_value`, `cf.Data.minimum_absolute_value`,
