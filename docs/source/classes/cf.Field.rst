@@ -322,7 +322,7 @@ Miscellaneous
    ~cf.Field.equals
    ~cf.Field.convert
    cf.Field.concatenate
-   cf.Field.example_field_1
+   cf.Field.example_field
    ~cf.Field.radius
    
 .. rubric:: Attributes

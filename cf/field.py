@@ -5849,7 +5849,7 @@ may be accessed with the `nc_global_attributes`,
 
     **Examples:**
 
-    >>> f = cf.Field.example_field_1()
+    >>> f = cf.Field.example_field(1)
     >>> f
     <CF Field: specific_humidity(latitude(5), longitude(8)) 0.001 1>
     >>> f.properties()
@@ -10210,7 +10210,7 @@ may be accessed with the `nc_global_attributes`,
 
     **Examples:**
     
-    >>> q = cf.Field.example_field_1()
+    >>> q = cf.Field.example_field(1)
     >>> print(q)
     Field: specific_humidity (ncvar%q)
     ----------------------------------
@@ -11542,11 +11542,23 @@ may be accessed with the `nc_global_attributes`,
 
     
     @classmethod
-    def example_field_1(cls):
-        '''Create a small example field construct.
+    def example_field(cls, n):
+        '''Create an example field construct.
 
-    The field construct has properties as well as cell method and
-    dimension coordinate constructs.
+    :Parameters:
+
+        n: `int`
+            Select the example field construct to return, one of:
+
+            =====  ===================================================
+            *n*    Description
+            =====  ===================================================
+            ``1``  The field construct has properties as well as cell
+                   method and dimension coordinate constructs.
+
+            ``2``  The field construct has properties as well as at
+                   least one of every type of metadata construct.
+            =====  ===================================================
 
     :Returns:
 
@@ -11555,7 +11567,7 @@ may be accessed with the `nc_global_attributes`,
 
     **Examples:**
 
-    >>> f = cf.Field.example_field_1()
+    >>> f = cf.Field.example_field(1)
     >>> print(f)
     Field: specific_humidity
     ------------------------
@@ -11571,63 +11583,244 @@ may be accessed with the `nc_global_attributes`,
      [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
      [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]
 
+    >>> f = cf.Field.example_field(2)
+    >>> print(f)
+    TODO
+
         '''
-        f = cls()
-        f.set_properties({'Conventions': 'CF-1.7',
-                          'project': 'research',
-                          'standard_name': 'specific_humidity'})
-
-        axisT = f.set_construct(DomainAxis(1))
-        axisY = f.set_construct(DomainAxis(5))
-        axisX = f.set_construct(DomainAxis(8))
-
-        dim = DimensionCoordinate()
-        dim.standard_name = 'latitude'
-        data = Data([-75., -45., 0., 45., 75.], 'degrees_north')
-        dim.set_data(data)
-        bounds = Data([[-90., -60.],
-                       [-60., -30.],
-                       [-30.,  30.],
-                       [ 30.,  60.],
-                       [ 60.,  90.]])
-        dim.set_bounds(Bounds(data=bounds))
-        f.set_construct(dim, axes=axisY, copy=False)
+        if n == 1:
+            f = cls()
     
-        dim = DimensionCoordinate()
-        dim.standard_name = 'longitude'
-        data = Data([22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5],
-                    'degrees_east')
-        dim.set_data(data)
-        bounds = Data([[  0.,  45.],
-                       [ 45.,  90.],
-                       [ 90., 135.],
-                       [135., 180.],
-                       [180., 225.],
-                       [225., 270.],
-                       [270., 315.],
-                       [315., 360.]])
-        dim.set_bounds(Bounds(data=bounds))
-        f.set_construct(dim, axes=axisX, copy=False)
-    
-        dim = DimensionCoordinate()
-        dim.standard_name = 'time'
-        data = Data([31.0], 'days since 2018-12-01')
-        dim.set_data(data)
-        f.set_construct(dim, axes=axisT, copy=False)
+            f.set_properties({'Conventions': 'CF-1.7',
+                              'project': 'research',
+                              'standard_name': 'specific_humidity',
+                              'units': '1'})
+            
+            f.set_construct(cf.DomainAxis(size=5), key='domainaxis0')
+            f.set_construct(cf.DomainAxis(size=8), key='domainaxis1')
+            f.set_construct(cf.DomainAxis(size=1), key='domainaxis2')
+            
+            data = cf.Data([[0.007, 0.034, 0.003, 0.014, 0.018, 0.037, 0.024, 0.029],
+                            [0.023, 0.036, 0.045, 0.062, 0.046, 0.073, 0.006, 0.066],
+                            [0.11 , 0.131, 0.124, 0.146, 0.087, 0.103, 0.057, 0.011],
+                            [0.029, 0.059, 0.039, 0.07 , 0.058, 0.072, 0.009, 0.017],
+                            [0.006, 0.036, 0.019, 0.035, 0.018, 0.037, 0.034, 0.013]])
+            f.set_data(data, axes=('domainaxis0', 'domainaxis1'))
+            
+            d = cf.DimensionCoordinate()
+            d.set_properties({'units': 'degrees_north', 'standard_name': 'latitude'})
+            data = cf.Data([-75., -45.,   0.,  45.,  75.])
+            d.set_data(data)
+            b = cf.Bounds()
+            b.set_properties({'units': 'degrees_north'})
+            bounds = cf.Data([[-90., -60.],
+                              [-60., -30.],
+                              [-30.,  30.],
+                              [ 30.,  60.],
+                              [ 60.,  90.]])
+            b.set_data(bounds)
+            d.set_bounds(b)
+            f.set_construct(d, axes=('domainaxis0',), key='dimensioncoordinate0', copy=False)
+            
+            d = cf.DimensionCoordinate()
+            d.set_properties({'units': 'degrees_east', 'standard_name': 'longitude'})
+            data = cf.Data([ 22.5,  67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5])
+            d.set_data(data)
+            b = cf.Bounds()
+            b.set_properties({'units': 'degrees_east'})
+            bounds = cf.Data([[  0.,  45.],
+                              [ 45.,  90.],
+                              [ 90., 135.],
+                              [135., 180.],
+                              [180., 225.],
+                              [225., 270.],
+                              [270., 315.],
+                              [315., 360.]])
+            b.set_data(bounds)
+            d.set_bounds(b)
+            f.set_construct(d, axes=('domainaxis1',), key='dimensioncoordinate1', copy=False)
+            
+            d = cf.DimensionCoordinate()
+            d.set_properties({'units': 'days since 2018-12-01', 'standard_name': 'time'})
+            data = cf.Data([31.])
+            d.set_data(data)
+            f.set_construct(d, axes=('domainaxis2',), key='dimensioncoordinate2', copy=False)
+            
+            d = cf.CellMethod()
+            d.method = 'mean'
+            d.axes = ('area',)
+            f.set_construct(d)
 
-        f.set_construct(CellMethod(axes='area', method='mean'))
+            return f
 
-
-        data = Data([[0.007, 0.034, 0.003, 0.014, 0.018, 0.037, 0.024, 0.029],
-                     [0.023, 0.036, 0.045, 0.062, 0.046, 0.073, 0.006, 0.066],
-                     [0.11 , 0.131, 0.124, 0.146, 0.087, 0.103, 0.057, 0.011],
-                     [0.029, 0.059, 0.039, 0.07 , 0.058, 0.072, 0.009, 0.017],
-                     [0.006, 0.036, 0.019, 0.035, 0.018, 0.037, 0.034, 0.013]],
-                    units='1')
-        f.set_data(data, axes=[axisY, axisX], copy=False)
+        if n == 2:
+            raise ValueError("2: Not ready yet, but will be soon ....")
+            # TODO
+            
+        raise ValueError(
+            "Must select an example field construct with an argument of 1 or 2. Got {!r}".format(n))
         
-        return f
 
+    def creation_code(self, include_data=False):
+        '''Create an example field construct.
+
+    :Parameters:
+
+        n: `int`
+            Select the example field construct to return, one of:
+
+            =====  ===================================================
+            *n*    Description
+            =====  ===================================================
+            ``1``  The field construct has properties as well as cell
+                   method and dimension coordinate constructs.
+
+            ``2``  The field construct has properties as well as at
+                   least one of every type of metadata construct.
+            =====  ===================================================
+
+    :Returns:
+
+        `Field`
+            The example field construct.
+
+    **Examples:**
+
+    >>> f = cf.Field.example_field(1)
+    >>> print(f)
+    Field: specific_humidity
+    ------------------------
+    Data            : specific_humidity(latitude(5), longitude(8)) 1
+    Cell methods    : area: mean
+    Dimension coords: time(1) = [2019-01-01 00:00:00]
+                    : latitude(5) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(8) = [22.5, ..., 337.5] degrees_east
+    >>> print(f.array)
+    [[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]
+     [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
+     [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
+     [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
+     [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]
+
+    >>> f = cf.Field.example_field(2)
+    >>> print(f)
+    TODO
+
+        '''
+        out = ["f = cf.{}()".format(self.__class__.__name__)]
+        
+        out.append("")
+        out.append("f.set_properties({})".format(self.properties()))
+
+        out.append("")
+        for key, c in self.domain_axes.items():
+            out.append("f.set_construct(cf.{}(size={}), key={!r})".format(
+                c.__class__.__name__, c.size, key))
+
+
+        out.append("")
+        data = self.data
+        out.append("EDIT: data = {!r}".format(data))
+        if include_data:
+            out.append('EDIT: '+repr(data.array))
+            
+        out.append("f.set_data(data, axes={})".format(self.get_data_axes()))
+
+        for key, c in self.constructs.filter_by_type('dimension_coordinate',
+                                                     'auxiliary_coordinate',
+                                                     'cell_measure',
+                                                     'domain_ancillary',
+                                                     'field_ancillary').items():
+            out.append("")
+            out.append("# {}".format(c.construct_type))
+            out.append("d = cf.{}()".format(c.__class__.__name__))
+            out.append("d.set_properties({})".format(c.properties()))
+
+            data = c.data
+            if include_data:
+                out.append("data = cf.Data({})".format(data.array.tolist()))
+                mask = data.mask
+                if mask.any():
+                    out.append("mask = cf.Data({})".format(mask.array.tolist()))
+                    out.append("data.where(mask, cf.masked, inplace=True)")           
+            else:
+                out.append("data = {!r}".format(data))
+                
+            out.append("data.dtype = {!r}".format(data.dtype.name))
+            out.append("d.set_data(data)")
+            if c.has_bounds():
+                out.append("b = cf.Bounds()".format(c.__class__.__name__))
+                out.append("b.set_properties({})".format(c.bounds.properties()))
+          
+                data = c.bounds.data
+                if include_data:
+                    values = data.array.tolist()                    
+                    out.append("data = cf.Data({})".format(values))
+                    mask = data.mask
+                    if mask.any():
+                        out.append("mask = cf.Data({})".format(mask.array.tolist()))
+                        out.append("data.where(mask, cf.masked, inplace=True)")                        
+                else:
+                    out.append("data = {!r}".format(data))
+
+                out.append("data.dtype = {!r}".format(data.dtype.name))
+                out.append("b.set_data(data)")
+                out.append("d.set_bounds(b)")
+
+            if c.construct_type == 'cell_measure' and c.get_measure(None) is not None:
+                out.append("d.set_measure({!r})".format(c.measure))
+                    
+            out.append("f.set_construct(d, axes={}, key={!r}, copy=False)".format(
+                self.get_data_axes(key), key))
+            
+        for key, c in self.cell_methods.items():
+            out.append("")
+            out.append("# {}".format(c.construct_type))
+            out.append("d = cf.{}()".format(c.__class__.__name__))
+            method = c.get_method(None)
+            if method is not None:
+                out.append("d.method = {!r}".format(method))
+                
+            axes = c.get_axes(None)
+            if axes is not None:
+                out.append("d.axes = {!r}".format(axes))
+                
+            qualifiers  = c.qualifiers()
+            if 'interval' in qualifiers:
+                edit = 'EDIT: '
+            else:
+                edit = ''
+                
+            if qualifiers:
+                out.append("{}d.set_qualifiers({})".format(edit, qualifiers))
+
+            out.append("f.set_construct(d)")
+                
+        for key, c in self.coordinate_references.items():
+            out.append("")
+            out.append("# {}".format(c.construct_type))
+            out.append("d = cf.{}()".format(c.__class__.__name__))
+            
+            coordinates = c.coordinates()
+            if coordinates:
+                out.append("d.set_coordinates({})".format(coordinates))
+                            
+            parameters = c.datum.parameters()
+            if parameters:
+                out.append("EDIT: d.datum.set_parameters({})".format(parameters))
+                
+            parameters = c.coordinate_conversion.parameters()
+            if parameters:
+                out.append("EDIT: d.coordinate_conversion.set_parameters({})".format(parameters))
+                
+            domain_ancillaries = c.coordinate_conversion.domain_ancillaries()
+            if domain_ancillaries:
+                out.append("d.coordinate_conversion.set_domain_ancillaries({})".format(domain_ancillaries))
+
+            out.append("f.set_construct(d)")
+            
+        return '\n'.join(out)
+        
     
     def flip(self, axes=None, inplace=False, i=False, **kwargs):
         '''Flip (reverse the direction of) axes of the field.

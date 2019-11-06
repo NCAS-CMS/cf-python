@@ -4,7 +4,9 @@ version 3.0.4
 
 **2019-11-??**
 
-* New methods: `cf.Field.percentile`, `cf.Field.example_field_1`
+* New methods: `cf.Field.percentile`, `cf.Field.example_field`,
+  `cf.Field.filled`.
+* New method: `cf.FieldList.select_field`.
 * New field construct collapse methods: ``median``,
   ``mean_of_upper_decile``.
 * New methods: `cf.Data.median`, `cf.Data.mean_of_upper_decile`,

@@ -1,3 +1,5 @@
+from copy import copy
+
 from .functions import (_DEPRECATION_ERROR,
                         _DEPRECATION_ERROR_KWARGS,
                         _DEPRECATION_ERROR_METHOD,
@@ -699,18 +701,22 @@ that when a field element needs to be assesed for equality its
         '''Select field constructs by identity.
 
     To find the inverse of the selection, use a list comprehension
-    with `~cf.Field.match_by_identity` method of the field
+    with the `~cf.Field.match_by_identity` method of the field
     constucts. For example, to select all field constructs whose
     identity is *not* ``'air_temperature'``:
             
-       >>> gl = cf.FieldList(f for f in fl if not f.match_by_identity('air_temperature'))
+       >>> gl = cf.FieldList(f for f in fl
+       ...                   if not f.match_by_identity('air_temperature'))
     
     .. versionadded:: 3.0.0
     
-    .. seealso:: `select`, `select_by_units`, `select_by_construct`,
-                 `select_by_naxes`, `select_by_rank`,
-                 `select_by_property`, `cf.Field.match_by_identity`
+    .. seealso:: `select`, `__call__`, `select_by_units`,
+                 `select_by_construct`, `select_by_naxes`,
+                 `select_by_rank`, `select_by_property`,
+                 `cf.Field.match_by_identity`
     
+    :Parameters:
+
         identities: optional
             Select field constructs. By default all field constructs
             are selected. May be one or more of:
@@ -730,7 +736,11 @@ that when a field element needs to be assesed for equality its
             five identities:
     
                >>> x.identities()
-               ['air_temperature', 'long_name=Air Temperature', 'foo=bar', 'standard_name=air_temperature', 'ncvar%tas']
+               ['air_temperature',
+                'long_name=Air Temperature',
+                'foo=bar',
+                'standard_name=air_temperature',
+                'ncvar%tas']
     
             Note that in the output of a `print` call or `!dump`
             method, a construct is always described by one of its
@@ -747,7 +757,7 @@ that when a field element needs to be assesed for equality its
     >>> fl
     [<CF Field: specific_humidity(latitude(73), longitude(96)) 1>,
      <CF Field: air_temperature(time(12), latitude(64), longitude(128)) K>]
-    >>> fl('air_temperature')
+    >>> fl.select('air_temperature')
     [<CF Field: air_temperature(time(12), latitude(64), longitude(128)) K>]
 
         '''       
@@ -857,7 +867,8 @@ that when a field element needs to be assesed for equality its
     constucts. For example, to select all field constructs which do
     *not* have a long_name property of 'Air Pressure':
             
-       >>> gl = cf.FieldList(f for f in fl if not f.match_by_property(long_name='Air Pressure))
+       >>> gl = cf.FieldList(f for f in fl
+       ...                   if not f.match_by_property(long_name='Air Pressure))
     
     .. versionadded:: 3.0.0
     
@@ -967,11 +978,105 @@ that when a field element needs to be assesed for equality its
                           if f.match_by_units(*units, exact=exact))
 
 
+    def select_field(self, identity, default=ValueError()):
+        '''Select a unique field construct by its identity.
+    
+    .. versionadded:: 3.0.4
+    
+    .. seealso:: `select`, `select_by_identity` 
+    
+    :Parameters:
+
+        identity:
+            Select the field construct. May be:
+    
+              * The identity of a field construct.
+    
+            A construct identity is specified by a string (e.g.
+            ``'air_temperature'``, ``'long_name=Air Temperature',
+            ``'ncvar%tas'``, etc.); or a compiled regular expression
+            (e.g. ``re.compile('^air_')``) that selects the relevant
+            constructs whose identities match via `re.search`.
+    
+            Each construct has a number of identities, and is selected
+            if any of them match any of those provided. A construct's
+            identities are those returned by its `!identities`
+            method. In the following example, the construct ``x`` has
+            five identities:
+    
+               >>> x.identities()
+               ['air_temperature',
+                'long_name=Air Temperature',
+                'foo=bar',
+                'standard_name=air_temperature',
+                'ncvar%tas']
+    
+            Note that in the output of a `print` call or `!dump`
+            method, a construct is always described by one of its
+            identities, and so this description may always be used as
+            an *identity* argument.
+    
+        default: optional
+            Return the value of the *default* parameter if a unique
+            field construct can not be found. If set to an `Exception`
+            instance then it will be raised instead.
+    
+    :Returns:
+    
+        `Field`
+            The unique matching field construct.
+    
+    **Examples:**
+    
+    >>> fl
+    [<CF Field: specific_humidity(latitude(73), longitude(96)) 1>,
+     <CF Field: specific_humidity(latitude(73), longitude(96)) 1>,
+     <CF Field: air_temperature(time(12), latitude(64), longitude(128)) K>]
+    >>> fl.select_field('air_temperature')
+    <CF Field: air_temperature(time(12), latitude(64), longitude(128)) K>
+    >>> f.select_field('specific_humidity')
+    ValueError: Multiple fields found
+    >>> f.select_field('specific_humidity', 'No unique field')
+    'No unique field'
+    >>> f.select_field('snowfall_amount')
+    ValueError: No fields found
+
+        '''       
+        out = self.select_by_identity(identity)
+        
+        if not out or len(out) > 1:
+            if isinstance(default, Exception):
+                if not default.args:                    
+                    if not out:
+                        message = "No fields found"
+                    else:
+                        message = "Multiple fields found"
+                    
+                    default = copy(default)
+                    default.args = (message,)
+                
+                raise default
+        
+            return default
+
+        return out[0]            
+
+    
     # ----------------------------------------------------------------
     # Aliases
     # ----------------------------------------------------------------
     def select(self, *identities, **kwargs):
         '''Alias of `cf.FieldList.select_by_identity`.
+
+    To find the inverse of the selection, use a list comprehension
+    with the `~cf.Field.match_by_identity` method of the field
+    constucts. For example, to select all field constructs whose
+    identity is *not* ``'air_temperature'``:
+            
+       >>> gl = cf.FieldList(f for f in fl
+       ...                   if not f.match_by_identity('air_temperature'))
+
+    .. seealso:: `select_field`
 
         '''
         if kwargs:
@@ -1028,20 +1133,12 @@ that when a field element needs to be assesed for equality its
                                   "Use method 'equals' instead.") # pragma: no cover
 
 
-    def select_field(self, *args, **kwargs):
-        '''Deprecated at version 3.0.0. Use method 'fl.select' instead.
-
-        '''
-        _DEPRECATION_ERROR_METHOD(self, 'select_field',
-                                  " Use method 'fl.select' instead.") # pragma: no cover
-
-
     def select1(self, *args, **kwargs):
-        '''Deprecated at version 3.0.0. Use method 'fl.select' instead.
+        '''Deprecated at version 3.0.0. Use method 'fl.select_field' instead.
 
         '''
         _DEPRECATION_ERROR_METHOD(self, 'select1', 
-                                  "Use method 'fl.select' instead.") # pragma: no cover
+                                  "Use method 'fl.select_field' instead.") # pragma: no cover
 
 
 #--- End: class

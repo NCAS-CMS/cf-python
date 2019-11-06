@@ -370,6 +370,27 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(len(f.select_by_units(re.compile('^mile|watt'))) == 2)
 
 
+    def test_FieldList_select_field(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = cf.read(self.filename)
+
+        with self.assertRaises(Exception):            
+            _ = f.select_field('not this one')
+            
+        self.assertTrue(f.select_field('not this one', None) is None)
+        
+        g = f.select_field('eastward_wind')
+        self.assertTrue(isinstance(g, cf.Field))
+
+        g = f.select_field(re.compile('^eastw'))
+        self.assertTrue(isinstance(g, cf.Field))
+
+        with self.assertRaises(Exception):            
+            g = f.select_field(re.compile('^QWERTY'))
+            
+
     def test_FieldList_concatenate(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
