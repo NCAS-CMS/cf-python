@@ -237,7 +237,7 @@ setup(name = "cf-python",
       scripts      = ['scripts/cfa'],
       install_requires = ['netCDF4>=1.4.0',                        
                           'numpy>=1.15',
-                          'cfdm>=1.7.8',
+                          'cfdm>=1.7.9',
                           'psutil>=0.6.0',
                           'cfunits>=3.2.2'
 #                          'scipy>=1.1.0',

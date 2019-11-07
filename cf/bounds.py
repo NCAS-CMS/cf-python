@@ -6,34 +6,43 @@ from . import mixin
 class Bounds(mixin.PropertiesData,
              cfdm.Bounds):
     '''A cell bounds component of a coordinate or domain ancillary
-construct of the CF data model.
-
-An array of cell bounds spans the same domain axes as its coordinate
-array, with the addition of an extra dimension whose size is that of
-the number of vertices of each cell. This extra dimension does not
-correspond to a domain axis construct since it does not relate to an
-independent axis of the domain. Note that, for climatological time
-axes, the bounds are interpreted in a special way indicated by the
-cell method constructs.
-
-In the CF data model, a bounds component does not have its own
-properties because they can not logically be different to those of the
-coordinate construct itself. However, it is sometimes desired to store
-attributes on a CF-netCDF bounds variable, so it is also allowed to
-provide properties to a bounds component.
-
-**NetCDF interface**
-
-The netCDF variable name of the bounds may be accessed with the
-`nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
-`nc_has_variable` methods.
-
-The name of the trailing netCDF dimension spanned by bounds (which
-does not correspond to a domain axis construct) may be accessed with
-the `nc_set_dimension`, `nc_get_dimension`, `nc_del_dimension` and
-`nc_has_dimension` methods.
+    construct of the CF data model.
+    
+    An array of cell bounds spans the same domain axes as its
+    coordinate array, with the addition of an extra dimension whose
+    size is that of the number of vertices of each cell. This extra
+    dimension does not correspond to a domain axis construct since it
+    does not relate to an independent axis of the domain. Note that,
+    for climatological time axes, the bounds are interpreted in a
+    special way indicated by the cell method constructs.
+    
+    In the CF data model, a bounds component does not have its own
+    properties because they can not logically be different to those of
+    the coordinate construct itself. However, it is sometimes desired
+    to store attributes on a CF-netCDF bounds variable, so it is also
+    allowed to provide properties to a bounds component.
+    
+    **NetCDF interface**
+    
+    The netCDF variable name of the bounds may be accessed with the
+    `nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
+    `nc_has_variable` methods.
+    
+    The name of the trailing netCDF dimension spanned by bounds (which
+    does not correspond to a domain axis construct) may be accessed
+    with the `nc_set_dimension`, `nc_get_dimension`,
+    `nc_del_dimension` and `nc_has_dimension` methods.
 
     '''
+    def __repr__(self):
+        '''Called by the `repr` built-in function.
+
+    x.__repr__() <==> repr(x)
+
+        '''
+        return super().__repr__().replace('<', '<CF ', 1)
+
+    
     def contiguous(self, overlap=True, direction=None):
         '''Return True if the bounds are contiguous.
 

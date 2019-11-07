@@ -23,51 +23,51 @@ class DimensionCoordinate(abstract.Coordinate,
                           cfdm.DimensionCoordinate):
     '''A dimension coordinate construct of the CF data model.
 
-A dimension coordinate construct provides information which locate the
-cells of the domain and which depend on a subset of the domain axis
-constructs. The dimension coordinate construct is able to
-unambiguously describe cell locations because a domain axis can be
-associated with at most one dimension coordinate construct, whose data
-array values must all be non-missing and strictly monotonically
-increasing or decreasing. They must also all be of the same numeric
-data type. If cell bounds are provided, then each cell must have
-exactly two vertices. CF-netCDF coordinate variables and numeric
-scalar coordinate variables correspond to dimension coordinate
-constructs.
-
-The dimension coordinate construct consists of a data array of the
-coordinate values which spans a subset of the domain axis constructs,
-an optional array of cell bounds recording the extents of each cell
-(stored in a `cf.Bounds` object), and properties to describe the
-coordinates. An array of cell bounds spans the same domain axes as its
-coordinate array, with the addition of an extra dimension whose size
-is that of the number of vertices of each cell. This extra dimension
-does not correspond to a domain axis construct since it does not
-relate to an independent axis of the domain. Note that, for
-climatological time axes, the bounds are interpreted in a special way
-indicated by the cell method constructs.
-
-**NetCDF interface**
-
-The netCDF variable name of the construct may be accessed with the
-`nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
-`nc_has_variable` methods.
+    A dimension coordinate construct provides information which locate
+    the cells of the domain and which depend on a subset of the domain
+    axis constructs. The dimension coordinate construct is able to
+    unambiguously describe cell locations because a domain axis can be
+    associated with at most one dimension coordinate construct, whose
+    data array values must all be non-missing and strictly
+    monotonically increasing or decreasing. They must also all be of
+    the same numeric data type. If cell bounds are provided, then each
+    cell must have exactly two vertices. CF-netCDF coordinate
+    variables and numeric scalar coordinate variables correspond to
+    dimension coordinate constructs.
+    
+    The dimension coordinate construct consists of a data array of the
+    coordinate values which spans a subset of the domain axis
+    constructs, an optional array of cell bounds recording the extents
+    of each cell (stored in a `cf.Bounds` object), and properties to
+    describe the coordinates. An array of cell bounds spans the same
+    domain axes as its coordinate array, with the addition of an extra
+    dimension whose size is that of the number of vertices of each
+    cell. This extra dimension does not correspond to a domain axis
+    construct since it does not relate to an independent axis of the
+    domain. Note that, for climatological time axes, the bounds are
+    interpreted in a special way indicated by the cell method
+    constructs.
+    
+    **NetCDF interface**
+    
+    The netCDF variable name of the construct may be accessed with the
+    `nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
+    `nc_has_variable` methods.
 
     '''
     def __repr__(self):
         '''Called by the `repr` built-in function.
 
-x.__repr__() <==> repr(x)
+    x.__repr__() <==> repr(x)
 
         '''
         return super().__repr__().replace('<', '<CF ', 1)
-    #--- End: def
 
-    # 0
+
     def _centre(self, period):
         '''It assumed, but not checked, that the period has been set.
 
-.. seealso:: `roll`
+    .. seealso:: `roll`
 
         '''
         if self.direction():
@@ -76,40 +76,39 @@ x.__repr__() <==> repr(x)
             mx = self.data[0]
             
         return ((mx // period) * period).squeeze()
-    #--- End: def
 
-    # 0
+
     def _infer_direction(self):
         '''Return True if a coordinate is increasing, otherwise return False.
 
-A coordinate is considered to be increasing if its *raw* data array
-values are increasing in index space or if it has no data not bounds
-data.
-
-If the direction can not be inferred from the coordinate's data then
-the coordinate's units are used.
-
-The direction is inferred from the coordinate's data array values or
-its from coordinates. It is not taken directly from its `cf.Data`
-object.
-
-:Returns:
-
-    `bool`
-        Whether or not the coordinate is increasing.
-        
-**Examples:**
-
->>> c.array
-array([  0  30  60])
->>> c._get_direction()
-True
->>> c.array
-array([15])
->>> c.bounds.array
-array([  30  0])
->>> c._get_direction()
-False
+    A coordinate is considered to be increasing if its *raw* data
+    array values are increasing in index space or if it has no data
+    not bounds data.
+    
+    If the direction can not be inferred from the coordinate's data
+    then the coordinate's units are used.
+    
+    The direction is inferred from the coordinate's data array values
+    or its from coordinates. It is not taken directly from its
+    `cf.Data` object.
+    
+    :Returns:
+    
+        `bool`
+            Whether or not the coordinate is increasing.
+            
+    **Examples:**
+    
+    >>> c.array
+    array([  0  30  60])
+    >>> c._get_direction()
+    True
+    >>> c.array
+    array([15])
+    >>> c.bounds.array
+    array([  30  0])
+    >>> c._get_direction()
+    False
 
         '''
         data = self.get_data(None)
@@ -128,11 +127,10 @@ False
             # bounds
             b  = data[(0,)*(data.ndim-1)].array
             return bool(b.item(0,) < b.item(1,))
-        #--- End: if
 
         # Still here? Then infer the direction from the units.
         return not self.Units.ispressure
-    #--- End: def
+
 
     # ----------------------------------------------------------------
     # Attributes
@@ -183,66 +181,77 @@ False
            
     @property
     def decreasing(self): 
+        '''True if the dimension coordinate is decreasing, otherwise False.
+
+    A dimension coordinate is increasing if its coordinate values are
+    increasing in index space.
+    
+    The direction is inferred from one of, in order of precedence:
+    
+    * The data array
+    * The bounds data array
+    * The `units` CF property
+    
+    :Returns:
+    
+        `bool`
+            Whether or not the coordinate is decreasing.
+
+    **Examples:**
+    
+    >>> c.decreasing
+    False
+    >>> c.flip().increasing
+    True
+
         '''
-
-True if the dimension coordinate is increasing, otherwise
-False.
-
-A dimension coordinate is increasing if its coordinate values are
-increasing in index space.
-
-The direction is inferred from one of, in order of precedence:
-
-* The data array
-* The bounds data array
-* The `units` CF property
-
-:Returns:
-
-    out : bool
-        Whether or not the coordinate is increasing.
-        
-True for dimension coordinate constructs, False otherwise.
-
->>> c.decreasing
-False
->>> c.flip().increasing
-True
-
-'''
         return not self.direction()
-    #--- End: def
+
 
     @property
     def increasing(self): 
+        '''`True` for dimension coordinate constructs, `False` otherwise.
+
+    A dimension coordinate is increasing if its coordinate values are
+    increasing in index space.
+    
+    The direction is inferred from one of, in order of precedence:
+    
+    * The data array
+    * The bounds data array
+    * The `units` CF property
+    
+    :Returns:
+    
+        `bool`
+            Whether or not the coordinate is increasing.
+
+    **Examples:**
+    
+    >>> c.decreasing
+    False
+    >>> c.flip().increasing
+    True
+
         '''
-
-True for dimension coordinate constructs, False otherwise.
-
->>> c.increasing
-True
->>> c.flip().increasing
-False
-
-'''
         return self.direction()
-    #--- End: def
+
 
     @property
     def isdimension(self): 
         '''True, denoting that the variable is a dimension coordinate object.
 
-.. seealso::`isauxiliary`, `isdomainancillary`, `isfieldancillary`,
-            `ismeasure`
-
-**Examples:**
-
->>> c.isdimension
-True
+    .. seealso::`isauxiliary`, `isdomainancillary`, `isfieldancillary`,
+                `ismeasure`
+    
+    **Examples:**
+    
+    >>> c.isdimension
+    True
 
         '''
         return True
-    #--- End: def
+
 
 #    @property
 #    def lower_bounds(self):
@@ -306,36 +315,36 @@ True
 #        return data[..., i].squeeze(1)
 #    #--- End: def
 
-    # 0
+
     def direction(self):
         '''Return True if the dimension coordinate values are increasing,
-otherwise return False.
-
-Dimension coordinates values are increasing if its coordinate values
-are increasing in index space.
-
-The direction is inferred from one of, in order of precedence:
-
-* The data array
-* The bounds data array
-* The `units` CF property
-
-:Returns:
-
-    `bool`
-        Whether or not the coordinate is increasing.
-        
-**Examples:**
-
->>> c.array
-array([  0  30  60])
->>> c.direction()
-True
-
->>> c.bounds.array
-array([  30  0])
->>> c.direction()
-False
+    otherwise return False.
+    
+    Dimension coordinates values are increasing if its coordinate
+    values are increasing in index space.
+    
+    The direction is inferred from one of, in order of precedence:
+    
+    * The data array
+    * The bounds data array
+    * The `units` CF property
+    
+    :Returns:
+    
+        `bool`
+            Whether or not the coordinate is increasing.
+            
+    **Examples:**
+    
+    >>> c.array
+    array([  0  30  60])
+    >>> c.direction()
+    True
+    
+    >>> c.bounds.array
+    array([  30  0])
+    >>> c.direction()
+    False
 
         '''
         _direction = self._custom.get('direction')
@@ -346,7 +355,7 @@ False
         self._custom['direction'] = _direction
 
         return _direction
-    #--- End: def
+
 
     def create_bounds(self, bound=None, cellsize=None, flt=0.5,
                       max=None, min=None):
@@ -566,8 +575,8 @@ False
                 # ----------------------------------------------------
                 if not self.Units.isreftime:
                     raise ValueError(
-"Can't create reference time bounds for non-reference time coordinates: {0!r}".format(
-    self.Units))
+                        "Can't create reference time bounds for non-reference time coordinates: {0!r}".format(
+                            self.Units))
 
                 bounds = numpy_empty((size, 2), dtype=object)
 
@@ -641,12 +650,11 @@ False
                         copy=False)
 
         return bounds            
-    #--- End: def
 
-    # 0
+
     def flip(self, axes=None, inplace=False, i=False):
         '''TODO
-'''
+        '''
         if i:
             _DEPRECATION_ERROR_KWARGS(self, 'flip', i=True) # pragma: no cover
 
@@ -661,7 +669,7 @@ False
         if inplace:
             d = None
         return d
-    #--- End: def
+
             
     def get_bounds(self, default=ValueError(), **kwargs):
         '''Return the bounds.
@@ -849,7 +857,6 @@ False
         return True
     
 
-    # 0
     def roll(self, axis, shift, inplace=False, i=False):
         '''TODO
         '''
@@ -924,7 +931,7 @@ False
         if inplace:
             c = None
         return c
-    #--- End: def
+
 
     # ----------------------------------------------------------------
     # Deprecated attributes and methods
@@ -939,5 +946,6 @@ False
             self, 'role',
             "Use attribute 'construct_type' instead") # pragma: no cover
 
+        
 #--- End: class
 

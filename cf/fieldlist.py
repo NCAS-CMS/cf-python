@@ -66,8 +66,7 @@ that when a field element needs to be assesed for equality its
 
     x.__repr__() <==> repr(x)
 
-        '''
-        
+        '''        
         out = [repr(f) for f in self]
         out = ',\n '.join(out)
         return '['+out+']'
@@ -980,7 +979,7 @@ that when a field element needs to be assesed for equality its
 
     def select_field(self, identity, default=ValueError()):
         '''Select a unique field construct by its identity.
-    
+
     .. versionadded:: 3.0.4
     
     .. seealso:: `select`, `select_by_identity` 

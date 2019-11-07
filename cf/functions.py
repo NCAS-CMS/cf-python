@@ -1975,7 +1975,7 @@ def inspect(self):
     
     if hasattr(self, '__dict__'):
         for key, value in sorted(self.__dict__.items()):
-            out.append('%s: %s' % (key, repr(value)))
+            out.append('{}: {!r}'.format(key, value))
         
     print('\n'.join(out))
 

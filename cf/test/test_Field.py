@@ -34,7 +34,6 @@ class FieldTest(unittest.TestCase):
 #        self.test_only = ['NOTHING!!!!']
 #        self.test_only = ['test_Field__add__']
 #        self.test_only = ['test_Field_cumsum']
-#        self.test_only = ['test_Field_flatten']
 #        self.test_only = ['test_Field_collapse']
 #        self.test_only = ['test_Field_radius']
 #        self.test_only = ['test_Field_field_ancillary']
@@ -1636,6 +1635,15 @@ class FieldTest(unittest.TestCase):
         c = f.auxiliary_coordinates(identities[0])
         self.assertTrue(f.auxs(identities[0]).equals(c, verbose=True))
 
+        self.assertTrue(f.aux('long_name=qwerty:asd', None) is None)
+        self.assertTrue(len(f.auxs('long_name=qwerty:asd')) == 0)
+
+        with self.assertRaises(Exception):
+            f.aux('long_name:qwerty')
+        
+        with self.assertRaises(Exception):
+            f.auxs('long_name:qwerty')
+        
     
     def test_Field_coordinate(self):        
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -1666,7 +1674,16 @@ class FieldTest(unittest.TestCase):
             c = f.coordinates(identities[0])
             self.assertTrue(f.coords(identities[0]).equals(c, verbose=True))
 
-    
+        self.assertTrue(f.coord('long_name=qwerty:asd', None) is None)
+        self.assertTrue(len(f.coords('long_name=qwerty:asd')) == 0)
+        
+        with self.assertRaises(Exception):
+            f.coord('long_name:qwerty')
+            
+        with self.assertRaises(Exception):
+            f.coords('long_name:qwerty')
+
+            
     def test_Field_coordinate_reference(self):        
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -1765,6 +1782,15 @@ class FieldTest(unittest.TestCase):
             c = f.dimension_coordinates(identities[0])
             self.assertTrue(f.dims(identities[0]).equals(c, verbose=True))
 
+        self.assertTrue(f.dim('long_name=qwerty:asd', None) is None)
+        self.assertTrue(len(f.dims('long_name=qwerty:asd')) == 0)
+
+        with self.assertRaises(Exception):
+            f.dim('long_name:qwerty')
+        
+        with self.assertRaises(Exception):
+            f.dims('long_name:qwerty')
+        
             
     def test_Field_cell_measure(self):        
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -1786,6 +1812,15 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(len(f.measures('measure:area')) == 1)
         self.assertTrue(len(f.measures(*['measure:area'])) == 1)
 
+        self.assertTrue(f.measure('long_name=qwerty:asd', None) is None)
+        self.assertTrue(len(f.measures('long_name=qwerty:asd')) == 0)
+
+        with self.assertRaises(Exception):
+            f.measure('long_name:qwerty')
+        
+        with self.assertRaises(Exception):
+            f.measures('long_name:qwerty')
+        
     
     def test_Field_cell_method(self):        
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -1825,6 +1860,15 @@ class FieldTest(unittest.TestCase):
         c = f.domain_ancillaries(identities[0])
         self.assertTrue(f.domain_ancs(identities[0]).equals(c, verbose=True))
 
+        self.assertTrue(f.domain_anc('long_name=qwerty:asd', None) is None)
+        self.assertTrue(len(f.domain_ancs('long_name=qwerty:asd')) == 0)
+
+        with self.assertRaises(Exception):
+            f.domain_anc('long_name:qwerty')
+        
+        with self.assertRaises(Exception):
+            f.domain_ancs('long_name:qwerty')
+        
     
     def test_Field_field_ancillary(self):        
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -1854,7 +1898,16 @@ class FieldTest(unittest.TestCase):
         c = f.field_ancillaries(identities[0])
         self.assertTrue(f.field_ancs(identities[0]).equals(c, verbose=True))
 
-    
+        self.assertTrue(f.field_anc('long_name=qwerty:asd', None) is None)
+        self.assertTrue(len(f.field_ancs('long_name=qwerty:asd')) == 0)
+
+        with self.assertRaises(Exception):
+            f.field_anc('long_name:qwerty')
+        
+        with self.assertRaises(Exception):
+            f.field_ancs('long_name:qwerty')
+        
+   
     def test_Field_transpose(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return

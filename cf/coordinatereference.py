@@ -14,61 +14,63 @@ from .functions import (_DEPRECATION_ERROR_METHOD,
                         _DEPRECATION_ERROR_ATTRIBUTE,
                         )
 
-
 _units = {}
+
 
 class CoordinateReference(cfdm.CoordinateReference):
     '''A coordinate reference construct of the CF data model. 
 
-A coordinate reference construct relates the coordinate values of the
-coordinate system to locations in a planetary reference frame.
-
-The domain of a field construct may contain various coordinate
-systems, each of which is constructed from a subset of the dimension
-and auxiliary coordinate constructs. For example, the domain of a
-four-dimensional field construct may contain horizontal (y-x),
-vertical (z), and temporal (t) coordinate systems. There may be more
-than one of each of these, if there is more than one coordinate
-construct applying to a particular spatiotemporal dimension (for
-example, there could be both latitude-longitude and y-x projection
-coordinate systems). In general, a coordinate system may be
-constructed implicitly from any subset of the coordinate constructs,
-yet a coordinate construct does not need to be explicitly or
-exclusively associated with any coordinate system.
-
-A coordinate system of the field construct can be explicitly defined
-by a coordinate reference construct which relates the coordinate
-values of the coordinate system to locations in a planetary reference
-frame and consists of the following:
-
-* References to the dimension coordinate and auxiliary coordinate
-  constructs that define the coordinate system to which the coordinate
-  reference construct applies. Note that the coordinate values are not
-  relevant to the coordinate reference construct, only their
-  properties.
-
-..
-
-* A definition of a datum specifying the zeroes of the dimension and
-  auxiliary coordinate constructs which define the coordinate
-  system. The datum may be implied by the metadata of the referenced
-  dimension and auxiliary coordinate constructs, or explicitly
-  provided.
-
-..
-
-* A coordinate conversion, which defines a formula for converting
-  coordinate values taken from the dimension or auxiliary coordinate
-  constructs to a different coordinate system. A coordinate reference
-  construct relates the coordinate values of the field to locations in
-  a planetary reference frame.
-
-
-**NetCDF interface**
-
-The netCDF grid mapping variable name of a coordinate reference
-construct may be accessed with the `nc_set_variable`,
-`nc_get_variable`, `nc_del_variable` and `nc_has_variable` methods.
+    A coordinate reference construct relates the coordinate values of
+    the coordinate system to locations in a planetary reference frame.
+    
+    The domain of a field construct may contain various coordinate
+    systems, each of which is constructed from a subset of the
+    dimension and auxiliary coordinate constructs. For example, the
+    domain of a four-dimensional field construct may contain
+    horizontal (y-x), vertical (z), and temporal (t) coordinate
+    systems. There may be more than one of each of these, if there is
+    more than one coordinate construct applying to a particular
+    spatiotemporal dimension (for example, there could be both
+    latitude-longitude and y-x projection coordinate systems). In
+    general, a coordinate system may be constructed implicitly from
+    any subset of the coordinate constructs, yet a coordinate
+    construct does not need to be explicitly or exclusively associated
+    with any coordinate system.
+    
+    A coordinate system of the field construct can be explicitly
+    defined by a coordinate reference construct which relates the
+    coordinate values of the coordinate system to locations in a
+    planetary reference frame and consists of the following:
+    
+    * References to the dimension coordinate and auxiliary coordinate
+      constructs that define the coordinate system to which the
+      coordinate reference construct applies. Note that the coordinate
+      values are not relevant to the coordinate reference construct,
+      only their properties.
+    
+    ..
+    
+    * A definition of a datum specifying the zeroes of the dimension
+      and auxiliary coordinate constructs which define the coordinate
+      system. The datum may be implied by the metadata of the
+      referenced dimension and auxiliary coordinate constructs, or
+      explicitly provided.
+    
+    ..
+    
+    * A coordinate conversion, which defines a formula for converting
+      coordinate values taken from the dimension or auxiliary
+      coordinate constructs to a different coordinate system. A
+      coordinate reference construct relates the coordinate values of
+      the field to locations in a planetary reference frame.
+    
+    
+    **NetCDF interface**
+    
+    The netCDF grid mapping variable name of a coordinate reference
+    construct may be accessed with the `nc_set_variable`,
+    `nc_get_variable`, `nc_del_variable` and `nc_has_variable`
+    methods.
 
     '''
     def __new__(cls, *args, **kwargs):

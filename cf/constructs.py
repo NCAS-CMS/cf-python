@@ -6,16 +6,16 @@ from .query import Query
 class Constructs(cfdm.Constructs):
     '''A container for metadata constructs.
 
-Calling a `Constructs` instance selects metadata constructs by
-identity and is an alias for the `filter_by_identity` method.
-
-**Examples:**
-
-Select constructs that have a "standard_name" property of 'latitude':
-
->>> d = c('latitude')
-
-.. versionadded:: 3.0.0
+    Calling a `Constructs` instance selects metadata constructs by
+    identity and is an alias for the `filter_by_identity` method.
+    
+    **Examples:**
+    
+    Select constructs that have a "standard_name" property of 'latitude':
+    
+    >>> d = c('latitude')
+    
+    .. versionadded:: 3.0.0
 
     '''
     def _matching_values(self, value0, construct, value1):
@@ -25,7 +25,7 @@ Select constructs that have a "standard_name" property of 'latitude':
             return value0.evaluate(value1)
 
         return super()._matching_values(value0, construct, value1)
-    #--- End: 
+
 
 #    def domain_axis_key(self, identity, default=ValueError()):
 #        '''Return the key of the domain axis construct that is spanned by 1-d

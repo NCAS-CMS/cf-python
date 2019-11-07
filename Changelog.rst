@@ -2,20 +2,23 @@ version 3.0.4
 -------------
 ----
 
-**2019-11-??**
+**2019-11-07**
 
 * New methods: `cf.Field.percentile`, `cf.Field.example_field`,
   `cf.Field.filled`.
-* New method: `cf.FieldList.select_field`.
 * New field construct collapse methods: ``median``,
   ``mean_of_upper_decile``.
+* New method: `cf.FieldList.select_field`.
 * New methods: `cf.Data.median`, `cf.Data.mean_of_upper_decile`,
   `cf.Data.percentile`, `cf.Data.filled`.
-* New keyword parameters to `cf.Data`: ``dtype``.
-* New * Changed default ``ddof`` *back* to 1 in `cf.Data.var` and
+* New keyword parameter to `cf.Data`: ``dtype``.
+* Changed default ``ddof`` *back* to 1 in `cf.Data.var` and
   `cf.Data.sd` (see version 3.0.3 and
   https://github.com/NCAS-CMS/cf-python/issues/8)
-  
+* Fixed bug that sometimes caused an exception to be raised when
+  metadata constructs were selected by a property value that
+  legitimately contained a colon.
+
 version 3.0.3
 -------------
 ----

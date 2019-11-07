@@ -6,20 +6,20 @@ from .functions import inspect as cf_inspect
 class DomainAxis(cfdm.DomainAxis):
     '''A domain axis construct of the CF data model. 
 
-A domain axis construct specifies the number of points along an
-independent axis of the domain. It comprises a positive integer
-representing the size of the axis. In CF-netCDF it is usually defined
-either by a netCDF dimension or by a scalar coordinate variable, which
-implies a domain axis of size one. The field construct's data array
-spans the domain axis constructs of the domain, with the optional
-exception of size one axes, because their presence makes no difference
-to the order of the elements.
-
-**NetCDF interface**
-
-The netCDF dimension name of the construct may be accessed with the
-`nc_set_dimension`, `nc_get_dimension`, `nc_del_dimension` and
-`nc_has_dimension` methods.
+    A domain axis construct specifies the number of points along an
+    independent axis of the domain. It comprises a positive integer
+    representing the size of the axis. In CF-netCDF it is usually
+    defined either by a netCDF dimension or by a scalar coordinate
+    variable, which implies a domain axis of size one. The field
+    construct's data array spans the domain axis constructs of the
+    domain, with the optional exception of size one axes, because
+    their presence makes no difference to the order of the elements.
+    
+    **NetCDF interface**
+    
+    The netCDF dimension name of the construct may be accessed with
+    the `nc_set_dimension`, `nc_get_dimension`, `nc_del_dimension` and
+    `nc_has_dimension` methods.
 
     '''
     def __repr__(self):

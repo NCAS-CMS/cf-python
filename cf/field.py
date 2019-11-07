@@ -11545,6 +11545,8 @@ may be accessed with the `nc_global_attributes`,
     def example_field(cls, n):
         '''Create an example field construct.
 
+    .. versionadded:: 3.0.4
+
     :Parameters:
 
         n: `int`
@@ -11555,9 +11557,6 @@ may be accessed with the `nc_global_attributes`,
             =====  ===================================================
             ``1``  The field construct has properties as well as cell
                    method and dimension coordinate constructs.
-
-            ``2``  The field construct has properties as well as at
-                   least one of every type of metadata construct.
             =====  ===================================================
 
     :Returns:
@@ -11583,11 +11582,9 @@ may be accessed with the `nc_global_attributes`,
      [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
      [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]
 
-    >>> f = cf.Field.example_field(2)
-    >>> print(f)
-    TODO
-
         '''
+#            ``2``  The field construct has properties as well as at
+#                   least one of every type of metadata construct.
         if n == 1:
             f = cls()
     
@@ -11661,65 +11658,28 @@ may be accessed with the `nc_global_attributes`,
             "Must select an example field construct with an argument of 1 or 2. Got {!r}".format(n))
         
 
-    def _creation_code(self, include_data=False):
+    def _creation_code(self, representative_data=False):
         '''Create an example field construct.
 
     :Parameters:
 
-        n: `int`
-            Select the example field construct to return, one of:
-
-            =====  ===================================================
-            *n*    Description
-            =====  ===================================================
-            ``1``  The field construct has properties as well as cell
-                   method and dimension coordinate constructs.
-
-            ``2``  The field construct has properties as well as at
-                   least one of every type of metadata construct.
-            =====  ===================================================
-
-    :Returns:
-
-        `Field`
-            The example field construct.
-
-    **Examples:**
-
-    >>> f = cf.Field.example_field(1)
-    >>> print(f)
-    Field: specific_humidity
-    ------------------------
-    Data            : specific_humidity(latitude(5), longitude(8)) 1
-    Cell methods    : area: mean
-    Dimension coords: time(1) = [2019-01-01 00:00:00]
-                    : latitude(5) = [-75.0, ..., 75.0] degrees_north
-                    : longitude(8) = [22.5, ..., 337.5] degrees_east
-    >>> print(f.array)
-    [[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]
-     [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
-     [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
-     [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
-     [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]
-
-    >>> f = cf.Field.example_field(2)
-    >>> print(f)
-    TODO
-
         '''
-        out = ["f = cf.{}()".format(self.__class__.__name__)]
+        name = 'f'
+        
+        out = ["{} = cf.{}()".format(name, self.__class__.__name__)]
         
         out.append("")
-        out.append("f.set_properties({})".format(self.properties()))
+        out.append("{}.set_properties({})".format(name, self.properties()))
 
         out.append("")
         for key, c in self.domain_axes.items():
-            out.append("f.set_construct(cf.{}(size={}), key={!r})".format(
-                c.__class__.__name__, c.size, key))
+            out.append("{}.set_construct(cf.{}(size={}), key={!r})".format(
+                name, c.__class__.__name__, c.size, key))
 
         out.append("")
         out.append(self.data._creation_code())            
-        out.append("f.set_data(data, axes={})".format(self.get_data_axes()))
+        out.append("{}.set_data(data, axes={})".format(
+            name, self.get_data_axes()))
 
         for key, c in self.constructs.filter_by_type('dimension_coordinate',
                                                      'auxiliary_coordinate',
@@ -11731,21 +11691,30 @@ may be accessed with the `nc_global_attributes`,
             out.append("d = cf.{}()".format(c.__class__.__name__))
             out.append("d.set_properties({})".format(c.properties()))
 
-            out.append(c.data._creation_code())
+            if representative_data:
+                out.append("{!r}".format(data))
+            else:
+                out.append(c.data._creation_code())
+                
             out.append("d.set_data(data)")
             if c.has_bounds():
                 out.append("b = cf.Bounds()".format(c.__class__.__name__))
                 out.append("b.set_properties({})".format(c.bounds.properties()))
-          
-                out.append(c.bounds.data._creation_code())
+
+                data = c.bounds.data
+                if representative_data:
+                    out.append("{!r}".format(data))
+                else:
+                    out.append(data._creation_code())
+                    
                 out.append("b.set_data(data)")
                 out.append("d.set_bounds(b)")
 
             if c.construct_type == 'cell_measure' and c.get_measure(None) is not None:
                 out.append("d.set_measure({!r})".format(c.measure))
                     
-            out.append("f.set_construct(d, axes={}, key={!r}, copy=False)".format(
-                self.get_data_axes(key), key))
+            out.append("{}.set_construct(d, axes={}, key={!r}, copy=False)".format(
+                name, self.get_data_axes(key), key))
             
         for key, c in self.cell_methods.items():
             out.append("")
@@ -11762,14 +11731,17 @@ may be accessed with the `nc_global_attributes`,
             for term, value in c.qualifiers().items():
                 if term == 'interval':
                     for i, data in enumerate(value[:]):
-                        name = "interval{}".format(i)
-                        out.append(data._creation_code(name=name))
-                        value[i] = name
+                        data_name = "interval{}".format(i)
+                        if representative_data:
+                            value[i] = data
+                        else:
+                            out.append(data._creation_code(name=data_name))
+                            value[i] = data_name
+                #--- End: if
                 
-                out.append("d.set_qualifier({!r}, {!r})".format(term, value))
-            #--- End: for
+                out.append("d.set_qualifier({!r}, {})".format(term, repr(value)))
             
-            out.append("f.set_construct(d)")
+            out.append("{}.set_construct(d)".format(name))
                 
         for key, c in self.coordinate_references.items():
             out.append("")
@@ -11782,27 +11754,35 @@ may be accessed with the `nc_global_attributes`,
 
             for term, value in c.datum.parameters().items():
                 if isinstance(value, Data):
-                    name = "parameter{}".format(i)
-                    out.append(data._creation_code(name=name))
-                    value = name
+                    if representative_data:
+                        value = data
+                    else:
+                        data_name = "parameter{}".format(i)
+                        out.append(data._creation_code(name=data_name))
+                        value = data_name
                     
-                out.append("d.datum.set_parameter({!r}, {!r})".format(term, value))
+                out.append("d.datum.set_parameter({!r}, {})".format(term, repr(value)))
                    
             for term, value in c.coordinate_conversion.parameters().items():
                 if isinstance(value, Data):
-                    name = "parameter{}".format(i)
-                    out.append(data._creation_code(name=name))
-                    value = name
+                    if representative_data:
+                        value = data
+                    else:
+                        data_name = "parameter{}".format(i)
+                        out.append(data._creation_code(name=data_name))
+                        value = data_name
                     
-                out.append("d.coordinate_conversion.set_parameter({!r}, {!r})".format(
-                    term, value))
+                out.append("d.coordinate_conversion.set_parameter({!r}, {})".format(
+                    term, repr(value)))
                 
             domain_ancillaries = c.coordinate_conversion.domain_ancillaries()
             if domain_ancillaries:
-                out.append("d.coordinate_conversion.set_domain_ancillaries({})".format(domain_ancillaries))
+                out.append("d.coordinate_conversion.set_domain_ancillaries({})".format(
+                    domain_ancillaries))
 
-            out.append("f.set_construct(d)")
-            
+            out.append("{}.set_construct(d)".format(name))
+        #--- End: for
+        
         return '\n'.join(out)
         
     
@@ -12812,7 +12792,7 @@ may be accessed with the `nc_global_attributes`,
     def cell_measure(self, identity, default=ValueError(), key=False):
         '''Select a cell measure construct by its identity.
 
-    New in version 3.0.0
+    .. versionadded:: 3.0.0
     
     .. seealso:: `construct`, `auxiliary_coordinate`, `cell_measures`,
                  `cell_method`, `coordinate`, `coordinate_reference`,
@@ -16661,13 +16641,17 @@ may be accessed with the `nc_global_attributes`,
                 _DEPRECATION_ERROR_DICT() # pragma: no cover
             elif isinstance(i, (list, tuple, set)):
                 _DEPRECATION_ERROR_SEQUENCE(i) # pragma: no cover
-            try:
-                if ':' in i:
+            elif isinstance(i, str) and ':' in i:
+                error = True
+                if '=' in i:
+                    index0 = i.index('=')
+                    index1 = i.index(':')
+                    error = index0 > index1
+                    
+                if error:
                     _DEPRECATION_ERROR(
-                        "The identity format {!r} has been deprecated. Use {!r} instead.".format(
+                        "The identity format {!r} has been deprecated at version 3.0.0. Try {!r} instead.".format(
                             i,  i.replace(':', '=', 1))) # pragma: no cover
-            except TypeError:
-                pass
         #--- End: for
         
         return self.auxiliary_coordinates(*identities)
@@ -16716,13 +16700,17 @@ may be accessed with the `nc_global_attributes`,
                 _DEPRECATION_ERROR_DICT() # pragma: no cover
             elif isinstance(i, (list, tuple, set)):
                 _DEPRECATION_ERROR_SEQUENCE(i) # pragma: no cover
-            try:
-                if ':' in i:
+            elif isinstance(i, str) and ':' in i:
+                error = True
+                if '=' in i:
+                    index0 = i.index('=')
+                    index1 = i.index(':')
+                    error = index0 > index1
+                        
+                if error:
                     _DEPRECATION_ERROR(
-                        "The identity format {!r} has been deprecated. Use {!r} instead.".format(
+                        "The identity format {!r} has been deprecated at version 3.0.0. Try {!r} instead.".format(
                             i,  i.replace(':', '=', 1))) # pragma: no cover
-            except TypeError:
-                pass
         #--- End: for
 
         return self.coordinates.filter_by_identity(*identities)
@@ -16754,13 +16742,17 @@ may be accessed with the `nc_global_attributes`,
                 _DEPRECATION_ERROR_DICT() # pragma: no cover
             elif isinstance(i, (list, tuple, set)):
                 _DEPRECATION_ERROR_SEQUENCE(i) # pragma: no cover
-            try:
-                if ':' in i:
+            elif isinstance(i, str) and ':' in i:
+                error = True
+                if '=' in i:
+                    index0 = i.index('=')
+                    index1 = i.index(':')
+                    error = index0 > index1
+                        
+                if error:
                     _DEPRECATION_ERROR(
-                        "The identity format {!r} has been deprecated. Use {!r} instead.".format(
+                        "The identity format {!r} has been deprecated at version 3.0.0. Try {!r} instead.".format(
                             i,  i.replace(':', '=', 1))) # pragma: no cover
-            except TypeError:
-                pass
         #--- End: for
 
         return self.dimension_coordinates.filter_by_identity(*identities)
@@ -16790,13 +16782,17 @@ may be accessed with the `nc_global_attributes`,
                 _DEPRECATION_ERROR_DICT() # pragma: no cover
             elif isinstance(i, (list, tuple, set)):
                 _DEPRECATION_ERROR_SEQUENCE(i) # pragma: no cover
-            try:
-                if ':' in i:
+            elif isinstance(i, str) and ':' in i:
+                error = True
+                if '=' in i:
+                    index0 = i.index('=')
+                    index1 = i.index(':')
+                    error = index0 > index1
+                    
+                if error:
                     _DEPRECATION_ERROR(
-                        "The identity format {!r} has been deprecated. Use {!r} instead.".format(
+                        "The identity format {!r} has been deprecated at version 3.0.0. Try {!r} instead.".format(
                             i,  i.replace(':', '=', 1))) # pragma: no cover
-            except TypeError:
-                pass
         #--- End: for
         
         return self.domain_ancillaries.filter_by_identity(*identities)
@@ -16827,13 +16823,17 @@ may be accessed with the `nc_global_attributes`,
                 _DEPRECATION_ERROR_DICT() # pragma: no cover
             elif isinstance(i, (list, tuple, set)):
                 _DEPRECATION_ERROR_SEQUENCE(i) # pragma: no cover
-            try:
-                if ':' in i:
+            elif isinstance(i, str) and ':' in i:
+                error = True
+                if '=' in i:
+                    index0 = i.index('=')
+                    index1 = i.index(':')
+                    error = index0 > index1
+                    
+                if error:
                     _DEPRECATION_ERROR(
-                        "The identity format {!r} has been deprecated. Use {!r} instead.".format(
+                        "The identity format {!r} has been deprecated at version 3.0.0. Try {!r} instead.".format(
                             i,  i.replace(':', '=', 1))) # pragma: no cover
-            except TypeError:
-                pass
         #--- End: for
         
         return self.field_ancillaries.filter_by_identity(*identities)
@@ -16908,13 +16908,20 @@ may be accessed with the `nc_global_attributes`,
                 _DEPRECATION_ERROR_DICT() # pragma: no cover
             elif isinstance(i, (list, tuple, set)):
                 _DEPRECATION_ERROR_SEQUENCE(i) # pragma: no cover
-            try:
-                if ':' in i and not i.startswith('measure:'):
+            elif isinstance(i, str) and ':' in i:
+                error = True
+                if '=' in i:
+                    index0 = i.index('=')
+                    index1 = i.index(':')
+                    error = index0 > index1
+
+                if error and i.startswith('measure:'):
+                    error = False
+                    
+                if error:
                     _DEPRECATION_ERROR(
-                        "The identity format {!r} has been deprecated. Use {!r} instead.".format(
+                        "The identity format {!r} has been deprecated at version 3.0.0. Try {!r} instead.".format(
                             i,  i.replace(':', '=', 1))) # pragma: no cover
-            except TypeError:
-                pass
         #--- End: for
         
         return self.cell_measures(*identities)
