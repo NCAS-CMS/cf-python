@@ -424,7 +424,7 @@ class CellMethod(cfdm.CellMethod):
         self.set_qualifier('interval', tuple(values))
 
     @intervals.deleter
-    def interval(self):
+    def intervals(self):
         self.del_qualifier('interval', default=AttributeError())
 
         

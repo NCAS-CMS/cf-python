@@ -4298,9 +4298,66 @@ place.
 
             return self
 
-    def _creation_code(self, name='data'):
-        '''TODO 
+        
+    def creation_commands(self, name='data', namespace='cf', string=True):
+        '''Return the commands that would create the data object.
+
+    .. versionaddedd:: 3.0.4
+
+    :Parameters:
+
+        name: `str`, optional
+            Set the name of `Data` object that the commands create.
+
+        namespace: `str`, optional
+            The namespace containing the cf package classes. By
+            default it is assumed that ``cf`` was imported as ``import
+            cf``.
+        
+            *Parameter example:*
+              If ``cf`` was imported as ``import cf as cfp`` then set
+              ``namespace='cfp'``
+
+            *Parameter example:*
+              If ``cf`` was imported as ``from cf import *`` then set
+              ``namespace=''``
+
+        string: `bool`, optional
+            Return each command an element of a `list`. By default the
+            the commands are concatenated into a string.
+
+    :Returns:
+        
+        `str` or `list`
+            The commands in a string, with a new line inserted between
+            each command. If *string* is False then the commands are
+            returned in a `list`.
+
+    **Examples:**
+
+    >>> d
+    <CF Data(3, 2): [[0.0, ..., 135.0]]] 'degrees_east'>
+    >>> print(d.array)
+    [[  0.  45.]
+     [ 45.  90.]
+     [ 90. 135.]]
+    >>> print(d.creation_commands())
+    data = cf.Data([[0.0, 45.0], [45.0, 90.0], [90.0, 135.0]], units='degrees_east', dtype='f8')
+
+    >>> print(d.array)
+    [-- 'beta' 'gamma' 'delta' 'epsilon']
+    >>> d.creation_commands(name='d', package='', string=0)
+    ["d = Data(['', 'beta', 'gamma', 'delta', 'epsilon'], dtype='S7')",
+     "d_mask = Data([True, False, False, False, False], dtype='b1')",
+     'd.where(d_mask, masked, inplace=True)']
+
         '''
+        namespace0 = namespace
+        if namespace0:
+            namespace = namespace+"."
+        else:
+            namespace = ""
+            
         mask = self.mask
         if mask.any():
             masked = True
@@ -4309,25 +4366,47 @@ place.
             masked = False
             array = self.array.tolist()
 
+        units = self.get_units(None)
+        if units is None:
+            units = ''
+        else:
+            units = ", units={!r}".format(units)
+            
+        calendar = self.get_calendar(None)
+        if calendar is None:
+            calendar = ''
+        else:
+            calendar = ", calendar={!r}".format(calendar)
+            
+        fill_value = self.get_fill_value(None)
+        if fill_value is None:
+            fill_value = ''
+        else:
+            fill_value = ", fill_value={}".format(fill_value)
+
+        dtype = self.dtype.descr[0][1][1:]
+            
         out = []
-        out.append("{} = cf.{}({}, units={!r}, calendar={!r}, dtype={!r}, fill_value={!r})".format(
+        out.append("{} = {}{}({}{}{}, dtype={!r}{})".format(
             name,
+            namespace,
             self.__class__.__name__,
             array,
-            self.get_units(None),
-            self.get_calendar(None),
-            self.dtype.name,
-            self.get_fill_value(None)))
+            units,
+            calendar,
+            dtype,
+            fill_value))
         
         if masked:
-            out.append("{}_mask = cf.{}({})".format(
-                name,
-                self.__class__.__name__,
-                mask.array.tolist()))
+            out.append(mask.creation_commands(name="{}_mask".format(name),
+                                              namespace=namespace0))
+            out.append("{0}.where({0}_mask, {1}masked, inplace=True)".format(
+                name, namespace))
 
-            out.append("{0}.where({0}_mask, cf.masked, inplace=True)".format(name))
-            
-        return '\n'.join(out)
+        if string:
+            out = '\n'.join(out)
+
+        return out
                        
         
     def __query_set__(self, values):

@@ -188,8 +188,8 @@ from .cellmethod           import CellMethod
 from .cellmeasure          import CellMeasure
 from .domainancillary      import DomainAncillary
 from .domainaxis           import DomainAxis
-from .field                import Field #, FieldList
 from .fieldancillary       import FieldAncillary
+from .field                import Field
 from .data                 import (Data,
                                    FilledArray,
                                    GatheredArray,

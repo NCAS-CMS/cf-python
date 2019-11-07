@@ -1,4 +1,5 @@
 from collections import namedtuple
+from copy        import deepcopy
 from functools   import reduce
 from operator    import mul as operator_mul
 from operator    import itemgetter
@@ -42,11 +43,14 @@ import cfdm
 
 from . import AuxiliaryCoordinate
 from . import Bounds
+from . import CellMeasure
 from . import CellMethod
+from . import CoordinateReference
 from . import DimensionCoordinate
 from . import Domain
 from . import DomainAncillary
 from . import DomainAxis
+from . import FieldAncillary
 from . import Flags
 from . import Constructs
 from . import FieldList
@@ -11543,7 +11547,7 @@ may be accessed with the `nc_global_attributes`,
     
     @classmethod
     def example_field(cls, n):
-        '''Create an example field construct.
+        '''Return an example field construct.
 
     .. versionadded:: 3.0.4
 
@@ -11555,9 +11559,15 @@ may be accessed with the `nc_global_attributes`,
             =====  ===================================================
             *n*    Description
             =====  ===================================================
-            ``1``  The field construct has properties as well as cell
-                   method and dimension coordinate constructs.
+            ``1``  The field construct has properties as well as a
+                   cell method constucts and dimension coordinate
+                   constructs with bounds.
+
+            ``2``  The field construct has properties as well as at
+                   least one of every type of metadata construct.
             =====  ===================================================
+
+            See the examples for details.
 
     :Returns:
 
@@ -11568,8 +11578,8 @@ may be accessed with the `nc_global_attributes`,
 
     >>> f = cf.Field.example_field(1)
     >>> print(f)
-    Field: specific_humidity
-    ------------------------
+    Field: specific_humidity(ncvar%q)
+    ---------------------------------
     Data            : specific_humidity(latitude(5), longitude(8)) 1
     Cell methods    : area: mean
     Dimension coords: time(1) = [2019-01-01 00:00:00]
@@ -11582,102 +11592,484 @@ may be accessed with the `nc_global_attributes`,
      [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
      [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]
 
+    >>> print(cf.Field.example_field(2))
+    Field: air_temperature (ncvar%ta)
+    ---------------------------------
+    Data            : air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K
+    Cell methods    : grid_latitude(10): grid_longitude(9): mean where land (interval: 0.1 degrees) time(1): maximum
+    Field ancils    : air_temperature standard_error(grid_latitude(10), grid_longitude(9)) = [[0.76, ..., 0.32]] K
+    Dimension coords: atmosphere_hybrid_height_coordinate(1) = [1.5]
+                    : grid_latitude(10) = [2.2, ..., -1.76] degrees
+                    : grid_longitude(9) = [-4.7, ..., -1.18] degrees
+                    : time(1) = [2019-01-01 00:00:00]
+    Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
+                    : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
+                    : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., b'kappa']
+    Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
+    Coord references: grid_mapping_name:rotated_latitude_longitude
+                    : standard_name:atmosphere_hybrid_height_coordinate
+    Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
+                    : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
+                    : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
+
         '''
-#            ``2``  The field construct has properties as well as at
-#                   least one of every type of metadata construct.
         if n == 1:
             f = cls()
-    
-            f.set_properties({'Conventions': 'CF-1.7',
-                              'project': 'research',
-                              'standard_name': 'specific_humidity',
-                              'units': '1'})
+
+            f.set_properties({'Conventions': 'CF-1.7', 'project': 'research', 'standard_name': 'specific_humidity', 'units': '1'})
+            f.nc_set_variable('q')
             
-            f.set_construct(cf.DomainAxis(size=5), key='domainaxis0')
-            f.set_construct(cf.DomainAxis(size=8), key='domainaxis1')
-            f.set_construct(cf.DomainAxis(size=1), key='domainaxis2')
+            c = DomainAxis(size=5)
+            c.nc_set_dimension('lat')
+            f.set_construct(c, key='domainaxis0')
+            c = DomainAxis(size=8)
+            c.nc_set_dimension('lon')
+            f.set_construct(c, key='domainaxis1')
+            c = DomainAxis(size=1)
+            f.set_construct(c, key='domainaxis2')
             
-            data = cf.Data([[0.007, 0.034, 0.003, 0.014, 0.018, 0.037, 0.024, 0.029],
-                            [0.023, 0.036, 0.045, 0.062, 0.046, 0.073, 0.006, 0.066],
-                            [0.11 , 0.131, 0.124, 0.146, 0.087, 0.103, 0.057, 0.011],
-                            [0.029, 0.059, 0.039, 0.07 , 0.058, 0.072, 0.009, 0.017],
-                            [0.006, 0.036, 0.019, 0.035, 0.018, 0.037, 0.034, 0.013]])
+            data = Data([[0.007, 0.034, 0.003, 0.014, 0.018, 0.037, 0.024, 0.029], [0.023, 0.036, 0.045, 0.062, 0.046, 0.073, 0.006, 0.066], [0.11, 0.131, 0.124, 0.146, 0.087, 0.103, 0.057, 0.011], [0.029, 0.059, 0.039, 0.07, 0.058, 0.072, 0.009, 0.017], [0.006, 0.036, 0.019, 0.035, 0.018, 0.037, 0.034, 0.013]], units='1', dtype='f8')
             f.set_data(data, axes=('domainaxis0', 'domainaxis1'))
             
-            d = cf.DimensionCoordinate()
-            d.set_properties({'units': 'degrees_north', 'standard_name': 'latitude'})
-            data = cf.Data([-75., -45.,   0.,  45.,  75.])
-            d.set_data(data)
-            b = cf.Bounds()
+            # dimension_coordinate
+            c = DimensionCoordinate()
+            c.set_properties({'units': 'degrees_north', 'standard_name': 'latitude'})
+            c.nc_set_variable('lat')
+            data = Data([-75.0, -45.0, 0.0, 45.0, 75.0], units='degrees_north', dtype='f8')
+            c.set_data(data)
+            b = Bounds()
             b.set_properties({'units': 'degrees_north'})
-            bounds = cf.Data([[-90., -60.],
-                              [-60., -30.],
-                              [-30.,  30.],
-                              [ 30.,  60.],
-                              [ 60.,  90.]])
-            b.set_data(bounds)
-            d.set_bounds(b)
-            f.set_construct(d, axes=('domainaxis0',), key='dimensioncoordinate0', copy=False)
+            b.nc_set_variable('lat_bnds')
+            data = Data([[-90.0, -60.0], [-60.0, -30.0], [-30.0, 30.0], [30.0, 60.0], [60.0, 90.0]], units='degrees_north', dtype='f8')
+            b.set_data(data)
+            c.set_bounds(b)
+            f.set_construct(c, axes=('domainaxis0',), key='dimensioncoordinate0', copy=False)
             
-            d = cf.DimensionCoordinate()
-            d.set_properties({'units': 'degrees_east', 'standard_name': 'longitude'})
-            data = cf.Data([ 22.5,  67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5])
-            d.set_data(data)
-            b = cf.Bounds()
+            # dimension_coordinate
+            c = DimensionCoordinate()
+            c.set_properties({'units': 'degrees_east', 'standard_name': 'longitude'})
+            c.nc_set_variable('lon')
+            data = Data([22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5], units='degrees_east', dtype='f8')
+            c.set_data(data)
+            b = Bounds()
             b.set_properties({'units': 'degrees_east'})
-            bounds = cf.Data([[  0.,  45.],
-                              [ 45.,  90.],
-                              [ 90., 135.],
-                              [135., 180.],
-                              [180., 225.],
-                              [225., 270.],
-                              [270., 315.],
-                              [315., 360.]])
-            b.set_data(bounds)
-            d.set_bounds(b)
-            f.set_construct(d, axes=('domainaxis1',), key='dimensioncoordinate1', copy=False)
+            b.nc_set_variable('lon_bnds')
+            data = Data([[0.0, 45.0], [45.0, 90.0], [90.0, 135.0], [135.0, 180.0], [180.0, 225.0], [225.0, 270.0], [270.0, 315.0], [315.0, 360.0]], units='degrees_east', dtype='f8')
+            b.set_data(data)
+            c.set_bounds(b)
+            f.set_construct(c, axes=('domainaxis1',), key='dimensioncoordinate1', copy=False)
             
-            d = cf.DimensionCoordinate()
-            d.set_properties({'units': 'days since 2018-12-01', 'standard_name': 'time'})
-            data = cf.Data([31.])
-            d.set_data(data)
-            f.set_construct(d, axes=('domainaxis2',), key='dimensioncoordinate2', copy=False)
+            # dimension_coordinate
+            c = DimensionCoordinate()
+            c.set_properties({'units': 'days since 2018-12-01', 'standard_name': 'time'})
+            c.nc_set_variable('time')
+            data = Data([31.0], units='days since 2018-12-01', dtype='f8')
+            c.set_data(data)
+            f.set_construct(c, axes=('domainaxis2',), key='dimensioncoordinate2', copy=False)
             
-            d = cf.CellMethod()
-            d.method = 'mean'
-            d.axes = ('area',)
-            f.set_construct(d)
+            # cell_method
+            c = CellMethod()
+            c.method = 'mean'
+            c.axes = ('area',)
+            f.set_construct(c)
 
-            return f
+        elif n == 2:
+            f = cls()
 
-        if n == 2:
-            raise ValueError("2: Not ready yet, but will be soon ....")
-            # TODO
+            f.set_properties({'Conventions': 'CF-1.7', 'project': 'research', 'standard_name': 'air_temperature', 'units': 'K'})
+            f.nc_set_variable('ta')
             
-        raise ValueError(
-            "Must select an example field construct with an argument of 1 or 2. Got {!r}".format(n))
+            c = DomainAxis(size=1)
+            c.nc_set_dimension('atmosphere_hybrid_height_coordinate')
+            f.set_construct(c, key='domainaxis0')
+            c = DomainAxis(size=10)
+            c.nc_set_dimension('y')
+            f.set_construct(c, key='domainaxis1')
+            c = DomainAxis(size=9)
+            c.nc_set_dimension('x')
+            f.set_construct(c, key='domainaxis2')
+            c = DomainAxis(size=1)
+            f.set_construct(c, key='domainaxis3')
+            
+            data = Data([[[262.8, 270.5, 279.8, 269.5, 260.9, 265.0, 263.5, 278.9, 269.2], [272.7, 268.4, 279.5, 278.9, 263.8, 263.3, 274.2, 265.7, 279.5], [269.7, 279.1, 273.4, 274.2, 279.6, 270.2, 280.0, 272.5, 263.7], [261.7, 260.6, 270.8, 260.3, 265.6, 279.4, 276.9, 267.6, 260.6], [264.2, 275.9, 262.5, 264.9, 264.7, 270.2, 270.4, 268.6, 275.3], [263.9, 263.8, 272.1, 263.7, 272.2, 264.2, 260.0, 263.5, 270.2], [273.8, 273.1, 268.5, 272.3, 264.3, 278.7, 270.6, 273.0, 270.6], [267.9, 273.5, 279.8, 260.3, 261.2, 275.3, 271.2, 260.8, 268.9], [270.9, 278.7, 273.2, 261.7, 271.6, 265.8, 273.0, 278.5, 266.4], [276.4, 264.2, 276.3, 266.1, 276.1, 268.1, 277.0, 273.4, 269.7]]], units='K', dtype='f8')
+            f.set_data(data, axes=('domainaxis0', 'domainaxis1', 'domainaxis2'))
+            
+            # domain_ancillary
+            c = DomainAncillary()
+            c.set_properties({'units': 'm'})
+            c.nc_set_variable('a')
+            data = Data([10.0], units='m', dtype='f8')
+            c.set_data(data)
+            b = Bounds()
+            b.set_properties({'units': 'm'})
+            b.nc_set_variable('a_bounds')
+            data = Data([[5.0, 15.0]], units='m', dtype='f8')
+            b.set_data(data)
+            c.set_bounds(b)
+            f.set_construct(c, axes=('domainaxis0',), key='domainancillary0', copy=False)
+            
+            # domain_ancillary
+            c = DomainAncillary()
+            c.set_properties({})
+            c.nc_set_variable('b')
+            data = Data([20.0], dtype='f8')
+            c.set_data(data)
+            b = Bounds()
+            b.set_properties({})
+            b.nc_set_variable('b_bounds')
+            data = Data([[14.0, 26.0]], dtype='f8')
+            b.set_data(data)
+            c.set_bounds(b)
+            f.set_construct(c, axes=('domainaxis0',), key='domainancillary1', copy=False)
+            
+            # domain_ancillary
+            c = DomainAncillary()
+            c.set_properties({'units': 'm', 'standard_name': 'surface_altitude'})
+            c.nc_set_variable('surface_altitude')
+            data = Data([[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.0, 12.0, 10.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 17.0, 52.0, 40.0], [0.0, 0.0, 0.0, 7.0, 12.0, 8.0, 37.0, 73.0, 107.0], [0.0, 0.0, 28.0, 30.0, 30.0, 30.0, 83.0, 102.0, 164.0], [34.0, 38.0, 34.0, 32.0, 30.0, 31.0, 105.0, 281.0, 370.0], [91.0, 89.0, 95.0, 94.0, 132.0, 194.0, 154.0, 318.0, 357.0], [93.0, 114.0, 116.0, 178.0, 323.0, 365.0, 307.0, 289.0, 270.0]], units='m', dtype='f4')
+            c.set_data(data)
+            f.set_construct(c, axes=('domainaxis1', 'domainaxis2'), key='domainancillary2', copy=False)
+            
+            # cell_measure
+            c = CellMeasure()
+            c.set_properties({'units': 'km2'})
+            c.nc_set_variable('cell_measure')
+            data = Data([[2391.9657, 2391.9657, 2391.9657, 2391.9657, 2391.9657, 2391.9657, 2391.9657, 2391.9657, 2391.9657, 2392.6009], [2392.6009, 2392.6009, 2392.6009, 2392.6009, 2392.6009, 2392.6009, 2392.6009, 2392.6009, 2393.0949, 2393.0949], [2393.0949, 2393.0949, 2393.0949, 2393.0949, 2393.0949, 2393.0949, 2393.0949, 2393.4478, 2393.4478, 2393.4478], [2393.4478, 2393.4478, 2393.4478, 2393.4478, 2393.4478, 2393.4478, 2393.6595, 2393.6595, 2393.6595, 2393.6595], [2393.6595, 2393.6595, 2393.6595, 2393.6595, 2393.6595, 2393.7301, 2393.7301, 2393.7301, 2393.7301, 2393.7301], [2393.7301, 2393.7301, 2393.7301, 2393.7301, 2393.6595, 2393.6595, 2393.6595, 2393.6595, 2393.6595, 2393.6595], [2393.6595, 2393.6595, 2393.6595, 2393.4478, 2393.4478, 2393.4478, 2393.4478, 2393.4478, 2393.4478, 2393.4478], [2393.4478, 2393.4478, 2393.0949, 2393.0949, 2393.0949, 2393.0949, 2393.0949, 2393.0949, 2393.0949, 2393.0949], [2393.0949, 2392.6009, 2392.6009, 2392.6009, 2392.6009, 2392.6009, 2392.6009, 2392.6009, 2392.6009, 2392.6009]], units='km2', dtype='f8')
+            c.set_data(data)
+            c.set_measure('area')
+            f.set_construct(c, axes=('domainaxis2', 'domainaxis1'), key='cellmeasure0', copy=False)
+            
+            # auxiliary_coordinate
+            c = AuxiliaryCoordinate()
+            c.set_properties({'units': 'degrees_N', 'standard_name': 'latitude'})
+            c.nc_set_variable('latitude_1')
+            data = Data([[53.941, 53.987, 54.029, 54.066, 54.099, 54.127, 54.15, 54.169, 54.184], [53.504, 53.55, 53.591, 53.627, 53.66, 53.687, 53.711, 53.729, 53.744], [53.067, 53.112, 53.152, 53.189, 53.221, 53.248, 53.271, 53.29, 53.304], [52.629, 52.674, 52.714, 52.75, 52.782, 52.809, 52.832, 52.85, 52.864], [52.192, 52.236, 52.276, 52.311, 52.343, 52.37, 52.392, 52.41, 52.424], [51.754, 51.798, 51.837, 51.873, 51.904, 51.93, 51.953, 51.971, 51.984], [51.316, 51.36, 51.399, 51.434, 51.465, 51.491, 51.513, 51.531, 51.545], [50.879, 50.922, 50.96, 50.995, 51.025, 51.052, 51.074, 51.091, 51.105], [50.441, 50.484, 50.522, 50.556, 50.586, 50.612, 50.634, 50.652, 50.665], [50.003, 50.045, 50.083, 50.117, 50.147, 50.173, 50.194, 50.212, 50.225]], units='degrees_N', dtype='f8')
+            c.set_data(data)
+            f.set_construct(c, axes=('domainaxis1', 'domainaxis2'), key='auxiliarycoordinate0', copy=False)
+            
+            # auxiliary_coordinate
+            c = AuxiliaryCoordinate()
+            c.set_properties({'units': 'degrees_E', 'standard_name': 'longitude'})
+            c.nc_set_variable('longitude_1')
+            data = Data([[2.004, 2.747, 3.492, 4.238, 4.986, 5.734, 6.484, 7.234, 7.985, 2.085], [2.821, 3.558, 4.297, 5.037, 5.778, 6.52, 7.262, 8.005, 2.165, 2.893], [3.623, 4.355, 5.087, 5.821, 6.555, 7.29, 8.026, 2.243, 2.964, 3.687], [4.411, 5.136, 5.862, 6.589, 7.317, 8.045, 2.319, 3.033, 3.749, 4.466], [5.184, 5.903, 6.623, 7.344, 8.065, 2.394, 3.101, 3.81, 4.52, 5.231], [5.944, 6.656, 7.37, 8.084, 2.467, 3.168, 3.87, 4.573, 5.278, 5.983], [6.689, 7.395, 8.102, 2.539, 3.233, 3.929, 4.626, 5.323, 6.022, 6.721], [7.42, 8.121, 2.61, 3.298, 3.987, 4.677, 5.368, 6.059, 6.752, 7.445], [8.139, 2.679, 3.361, 4.043, 4.727, 5.411, 6.097, 6.783, 7.469, 8.156]], units='degrees_E', dtype='f8')
+            c.set_data(data)
+            f.set_construct(c, axes=('domainaxis2', 'domainaxis1'), key='auxiliarycoordinate1', copy=False)
+            
+            # auxiliary_coordinate
+            c = AuxiliaryCoordinate()
+            c.set_properties({'long_name': 'Grid latitude name'})
+            c.nc_set_variable('auxiliary')
+            data = Data([b'', b'beta', b'gamma', b'delta', b'epsilon', b'zeta', b'eta', b'theta', b'iota', b'kappa'], dtype='S7')
+            data_mask = Data([True, False, False, False, False, False, False, False, False, False], dtype='b1')
+            data.where(data_mask, cf_masked, inplace=True)
+            c.set_data(data)
+            f.set_construct(c, axes=('domainaxis1',), key='auxiliarycoordinate2', copy=False)
+            
+            # dimension_coordinate
+            c = DimensionCoordinate()
+            c.set_properties({'computed_standard_name': 'altitude', 'standard_name': 'atmosphere_hybrid_height_coordinate'})
+            c.nc_set_variable('atmosphere_hybrid_height_coordinate')
+            data = Data([1.5], dtype='f8')
+            c.set_data(data)
+            b = Bounds()
+            b.set_properties({})
+            b.nc_set_variable('atmosphere_hybrid_height_coordinate_bounds')
+            data = Data([[1.0, 2.0]], dtype='f8')
+            b.set_data(data)
+            c.set_bounds(b)
+            f.set_construct(c, axes=('domainaxis0',), key='dimensioncoordinate0', copy=False)
+            
+            # dimension_coordinate
+            c = DimensionCoordinate()
+            c.set_properties({'units': 'degrees', 'standard_name': 'grid_latitude'})
+            c.nc_set_variable('y')
+            data = Data([2.2, 1.76, 1.32, 0.88, 0.44, 0.0, -0.44, -0.88, -1.32, -1.76], units='degrees', dtype='f8')
+            c.set_data(data)
+            b = Bounds()
+            b.set_properties({'units': 'degrees'})
+            b.nc_set_variable('y_bnds')
+            data = Data([[2.42, 1.98], [1.98, 1.54], [1.54, 1.1], [1.1, 0.66], [0.66, 0.22], [0.22, -0.22], [-0.22, -0.66], [-0.66, -1.1], [-1.1, -1.54], [-1.54, -1.98]], units='degrees', dtype='f8')
+            b.set_data(data)
+            c.set_bounds(b)
+            f.set_construct(c, axes=('domainaxis1',), key='dimensioncoordinate1', copy=False)
+            
+            # dimension_coordinate
+            c = DimensionCoordinate()
+            c.set_properties({'units': 'degrees', 'standard_name': 'grid_longitude'})
+            c.nc_set_variable('x')
+            data = Data([-4.7, -4.26, -3.82, -3.38, -2.94, -2.5, -2.06, -1.62, -1.18], units='degrees', dtype='f8')
+            c.set_data(data)
+            b = Bounds()
+            b.set_properties({'units': 'degrees'})
+            b.nc_set_variable('x_bnds')
+            data = Data([[-4.92, -4.48], [-4.48, -4.04], [-4.04, -3.6], [-3.6, -3.16], [-3.16, -2.72], [-2.72, -2.28], [-2.28, -1.84], [-1.84, -1.4], [-1.4, -0.96]], units='degrees', dtype='f8')
+            b.set_data(data)
+            c.set_bounds(b)
+            f.set_construct(c, axes=('domainaxis2',), key='dimensioncoordinate2', copy=False)
+            
+            # dimension_coordinate
+            c = DimensionCoordinate()
+            c.set_properties({'units': 'days since 2018-12-01', 'standard_name': 'time'})
+            c.nc_set_variable('time')
+            data = Data([31.0], units='days since 2018-12-01', dtype='f8')
+            c.set_data(data)
+            f.set_construct(c, axes=('domainaxis3',), key='dimensioncoordinate3', copy=False)
+            
+            # field_ancillary
+            c = FieldAncillary()
+            c.set_properties({'units': 'K', 'standard_name': 'air_temperature standard_error'})
+            c.nc_set_variable('air_temperature_standard_error')
+            data = Data([[0.76, 0.38, 0.68, 0.19, 0.14, 0.52, 0.57, 0.19, 0.81], [0.59, 0.68, 0.25, 0.13, 0.37, 0.12, 0.26, 0.45, 0.36], [0.88, 0.4, 0.35, 0.87, 0.24, 0.64, 0.78, 0.28, 0.11], [0.73, 0.49, 0.69, 0.54, 0.17, 0.6, 0.82, 0.89, 0.71], [0.43, 0.39, 0.45, 0.74, 0.85, 0.47, 0.37, 0.87, 0.46], [0.47, 0.31, 0.76, 0.69, 0.61, 0.26, 0.43, 0.75, 0.23], [0.43, 0.26, 0.5, 0.79, 0.25, 0.63, 0.25, 0.24, 0.74], [0.33, 0.26, 0.89, 0.48, 0.79, 0.88, 0.41, 0.89, 0.47], [0.25, 0.42, 0.61, 0.87, 0.58, 0.89, 0.58, 0.8, 0.32], [0.49, 0.48, 0.49, 0.16, 0.65, 0.66, 0.86, 0.74, 0.32]], units='K', dtype='f8')
+            c.set_data(data)
+            f.set_construct(c, axes=('domainaxis1', 'domainaxis2'), key='fieldancillary0', copy=False)
+            
+            # cell_method
+            c = CellMethod()
+            c.method = 'mean'
+            c.axes = ('domainaxis1', 'domainaxis2')
+            c.set_qualifier('where', 'land')
+            interval0 = Data(0.1, units='degrees', dtype='f8')
+            c.set_qualifier('interval', [interval0])
+            f.set_construct(c)
+            
+            # cell_method
+            c = CellMethod()
+            c.method = 'maximum'
+            c.axes = ('domainaxis3',)
+            f.set_construct(c)
+            
+            # coordinate_reference
+            c = CoordinateReference()
+            c.set_coordinates({'dimensioncoordinate0'})
+            c.datum.set_parameter('earth_radius', 6371007)
+            c.coordinate_conversion.set_parameter('standard_name', 'atmosphere_hybrid_height_coordinate')
+            c.coordinate_conversion.set_parameter('computed_standard_name', 'altitude')
+            c.coordinate_conversion.set_domain_ancillaries({'a': 'domainancillary0', 'b': 'domainancillary1', 'orog': 'domainancillary2'})
+            f.set_construct(c)
+            
+            # coordinate_reference
+            c = CoordinateReference()
+            c.nc_set_variable('rotated_latitude_longitude')
+            c.set_coordinates({'dimensioncoordinate2', 'auxiliarycoordinate1', 'dimensioncoordinate1', 'auxiliarycoordinate0'})
+            c.datum.set_parameter('earth_radius', 6371007)
+            c.coordinate_conversion.set_parameter('grid_north_pole_latitude', 38.0)
+            c.coordinate_conversion.set_parameter('grid_north_pole_longitude', 190.0)
+            c.coordinate_conversion.set_parameter('grid_mapping_name', 'rotated_latitude_longitude')
+            f.set_construct(c)
+
+        else:
+            raise ValueError(
+                "Must select an example field construct with an argument of 1 or 2. Got {!r}".format(n))
         
+        return f
+    
 
-    def _creation_code(self, representative_data=False):
-        '''Create an example field construct.
+    def creation_commands(self, representative_data=False,
+                          namespace='cf', indent=0, string=True):
+        '''Return the commands that would create the field construct.
+
+    .. versionaddedd:: 3.0.4
+
+    .. seealso:: `cf.Data.creation_commands`
 
     :Parameters:
 
+        representative_data: `bool`, optional
+            Return one-line representations of `Data` instances, which
+            are not executable code but prevent the data being
+            converted in its entirety to a string representation.
+
+        namespace: `str`, optional
+            The namespace containing the cf package classes. By
+            default it is assumed that ``cf`` was imported as ``import
+            cf``.
+        
+            *Parameter example:*
+              If ``cf`` was imported as ``import cf as cfp`` then set
+              ``namespace='cfp'``
+
+            *Parameter example:*
+              If ``cf`` was imported as ``from cf import *`` then set
+              ``namespace=''``
+
+        indent: `int`, optional
+            Indent each line by this many spaces. ignore if *string*
+            is False.
+
+        string: `bool`, optional
+            Return each command an element of a `list`. By default the
+            the commands are concatenated into a string.
+
+    :Returns:
+        
+        `str` or `list`
+            The commands in a string, with a new line inserted between
+            each command. If *string* is False then the commands are
+            returned in a `list`.
+
+    **Examples:**
+
+    >>> q = cf.Field.example_field(1)
+    >>> print(q.creation_commands())
+    f = cf.Field()
+    #
+    f.set_properties({'Conventions': 'CF-1.7', 'project': 'research', 'standard_name': 'specific_humidity', 'units': '1'})
+    f.nc_set_variable('q')
+    #
+    c = cf.DomainAxis(size=5)
+    c.nc_set_dimension('lat')
+    f.set_construct(c, key='domainaxis0')
+    c = cf.DomainAxis(size=8)
+    c.nc_set_dimension('lon')
+    f.set_construct(c, key='domainaxis1')
+    c = cf.DomainAxis(size=1)
+    f.set_construct(c, key='domainaxis2')
+    #
+    data = cf.Data([[0.007, 0.034, 0.003, 0.014, 0.018, 0.037, 0.024, 0.029], [0.023, 0.036, 0.045, 0.062, 0.046, 0.073, 0.006, 0.066], [0.11, 0.131, 0.124, 0.146, 0.087, 0.103, 0.057, 0.011], [0.029, 0.059, 0.039, 0.07, 0.058, 0.072, 0.009, 0.017], [0.006, 0.036, 0.019, 0.035, 0.018, 0.037, 0.034, 0.013]], units='1', dtype='f8')
+    f.set_data(data, axes=('domainaxis0', 'domainaxis1'))
+    #
+    # dimension_coordinate
+    c = cf.DimensionCoordinate()
+    c.set_properties({'units': 'degrees_north', 'standard_name': 'latitude'})
+    c.nc_set_variable('lat')
+    data = cf.Data([-75.0, -45.0, 0.0, 45.0, 75.0], units='degrees_north', dtype='f8')
+    c.set_data(data)
+    b = cf.Bounds()
+    b.set_properties({'units': 'degrees_north'})
+    b.nc_set_variable('lat_bnds')
+    data = cf.Data([[-90.0, -60.0], [-60.0, -30.0], [-30.0, 30.0], [30.0, 60.0], [60.0, 90.0]], units='degrees_north', dtype='f8')
+    b.set_data(data)
+    c.set_bounds(b)
+    f.set_construct(c, axes=('domainaxis0',), key='dimensioncoordinate0', copy=False)
+    #
+    # dimension_coordinate
+    c = cf.DimensionCoordinate()
+    c.set_properties({'units': 'degrees_east', 'standard_name': 'longitude'})
+    c.nc_set_variable('lon')
+    data = cf.Data([22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5], units='degrees_east', dtype='f8')
+    c.set_data(data)
+    b = cf.Bounds()
+    b.set_properties({'units': 'degrees_east'})
+    b.nc_set_variable('lon_bnds')
+    data = cf.Data([[0.0, 45.0], [45.0, 90.0], [90.0, 135.0], [135.0, 180.0], [180.0, 225.0], [225.0, 270.0], [270.0, 315.0], [315.0, 360.0]], units='degrees_east', dtype='f8')
+    b.set_data(data)
+    c.set_bounds(b)
+    f.set_construct(c, axes=('domainaxis1',), key='dimensioncoordinate1', copy=False)
+    #
+    # dimension_coordinate
+    c = cf.DimensionCoordinate()
+    c.set_properties({'units': 'days since 2018-12-01', 'standard_name': 'time'})
+    c.nc_set_variable('time')
+    data = cf.Data([31.0], units='days since 2018-12-01', dtype='f8')
+    c.set_data(data)
+    f.set_construct(c, axes=('domainaxis2',), key='dimensioncoordinate2', copy=False)
+    #
+    # cell_method
+    c = cf.CellMethod()
+    c.method = 'mean'
+    c.axes = ('area',)
+    f.set_construct(c)
+
+    >>> print(q.creation_commands(representative_data=True, namespace='', indent=4))
+        f = Field()
+        #
+        f.set_properties({'Conventions': 'CF-1.7', 'project': 'research', 'standard_name': 'specific_humidity', 'units': '1'})
+        f.nc_set_variable('q')
+        #
+        c = DomainAxis(size=5)
+        c.nc_set_dimension('lat')
+        f.set_construct(c, key='domainaxis0')
+        c = DomainAxis(size=8)
+        c.nc_set_dimension('lon')
+        f.set_construct(c, key='domainaxis1')
+        c = DomainAxis(size=1)
+        f.set_construct(c, key='domainaxis2')
+        #
+        data = <CF Data(5, 8): [[0.007, ..., 0.013]] 1> # Representative data
+        f.set_data(data, axes=('domainaxis0', 'domainaxis1'))
+        #
+        # dimension_coordinate
+        c = DimensionCoordinate()
+        c.set_properties({'units': 'degrees_north', 'standard_name': 'latitude'})
+        c.nc_set_variable('lat')
+        data = <CF Data(5): [-75.0, ..., 75.0] degrees_north> # Representative data
+        c.set_data(data)
+        b = Bounds()
+        b.set_properties({'units': 'degrees_north'})
+        b.nc_set_variable('lat_bnds')
+        data = <CF Data(5, 2): [[-90.0, ..., 90.0]] degrees_north> # Representative data
+        b.set_data(data)
+        c.set_bounds(b)
+        f.set_construct(c, axes=('domainaxis0',), key='dimensioncoordinate0', copy=False)
+        #
+        # dimension_coordinate
+        c = DimensionCoordinate()
+        c.set_properties({'units': 'degrees_east', 'standard_name': 'longitude'})
+        c.nc_set_variable('lon')
+        data = <CF Data(8): [22.5, ..., 337.5] degrees_east> # Representative data
+        c.set_data(data)
+        b = Bounds()
+        b.set_properties({'units': 'degrees_east'})
+        b.nc_set_variable('lon_bnds')
+        data = <CF Data(8, 2): [[0.0, ..., 360.0]] degrees_east> # Representative data
+        b.set_data(data)
+        c.set_bounds(b)
+        f.set_construct(c, axes=('domainaxis1',), key='dimensioncoordinate1', copy=False)
+        #
+        # dimension_coordinate
+        c = DimensionCoordinate()
+        c.set_properties({'units': 'days since 2018-12-01', 'standard_name': 'time'})
+        c.nc_set_variable('time')
+        data = <CF Data(1): [2019-01-01 00:00:00]> # Representative data
+        c.set_data(data)
+        f.set_construct(c, axes=('domainaxis2',), key='dimensioncoordinate2', copy=False)
+        #
+        # cell_method
+        c = CellMethod()
+        c.method = 'mean'
+        c.axes = ('area',)
+        f.set_construct(c)
+
         '''
         name = 'f'
-        
-        out = ["{} = cf.{}()".format(name, self.__class__.__name__)]
+
+        namespace0 = namespace
+        if namespace0:
+            namespace = namespace+"."
+        else:
+            namespace = ""
+
+        indent = ' ' * indent
+            
+        out = ["{} = {}{}()".format(name, namespace, self.__class__.__name__)]
         
         out.append("")
         out.append("{}.set_properties({})".format(name, self.properties()))
 
-        out.append("")
-        for key, c in self.domain_axes.items():
-            out.append("{}.set_construct(cf.{}(size={}), key={!r})".format(
-                name, c.__class__.__name__, c.size, key))
+        nc = self.nc_get_variable(None)
+        if nc is not None:
+            out.append("{}.nc_set_variable({!r})".format(name, nc))
 
         out.append("")
-        out.append(self.data._creation_code())            
+        for key, c in self.domain_axes.items():
+            out.append("c = {}{}(size={})".format(namespace, c.__class__.__name__, c.size))
+            
+            nc = c.nc_get_dimension(None)
+            if nc is not None:
+                out.append("c.nc_set_dimension({!r})".format(nc))
+
+            if c.nc_is_unlimited():
+                out.append("c.nc_set_unlimited(True)")
+
+            out.append("{}.set_construct(c, key={!r})".format(name, key))
+
+        out.append("")
+        data = self.data
+        if representative_data:
+            out.append("data = {!r} # Representative data".format(data))
+        else:
+            out.extend(data.creation_commands(name='data', namespace=namespace0, string=False))
+
         out.append("{}.set_data(data, axes={})".format(
             name, self.get_data_axes()))
 
@@ -11688,102 +12080,123 @@ may be accessed with the `nc_global_attributes`,
                                                      'field_ancillary').items():
             out.append("")
             out.append("# "+c.construct_type)
-            out.append("d = cf.{}()".format(c.__class__.__name__))
-            out.append("d.set_properties({})".format(c.properties()))
+            out.append("c = {}{}()".format(namespace, c.__class__.__name__))
+            out.append("c.set_properties({})".format(c.properties()))
 
+            nc = c.nc_get_variable(None)
+            if nc is not None:
+                out.append("c.nc_set_variable({!r})".format(nc))
+
+            data = c.data
             if representative_data:
-                out.append("{!r}".format(data))
+                out.append("data = {!r} # Representative data".format(data))
             else:
-                out.append(c.data._creation_code())
+                out.extend(data.creation_commands(name='data', namespace=namespace0, string=False))
                 
-            out.append("d.set_data(data)")
+            out.append("c.set_data(data)")
             if c.has_bounds():
-                out.append("b = cf.Bounds()".format(c.__class__.__name__))
+                out.append("b = {}{}()".format(namespace, c.bounds.__class__.__name__))
                 out.append("b.set_properties({})".format(c.bounds.properties()))
 
+                nc = c.bounds.nc_get_variable(None)
+                if nc is not None:
+                    out.append("b.nc_set_variable({!r})".format(nc))
+                    
                 data = c.bounds.data
                 if representative_data:
-                    out.append("{!r}".format(data))
+                    out.append("data = {!r} # Representative data".format(data))
                 else:
-                    out.append(data._creation_code())
+                    out.extend(data.creation_commands(name='data', namespace=namespace0, string=False))
                     
                 out.append("b.set_data(data)")
-                out.append("d.set_bounds(b)")
+                out.append("c.set_bounds(b)")
 
             if c.construct_type == 'cell_measure' and c.get_measure(None) is not None:
-                out.append("d.set_measure({!r})".format(c.measure))
+                out.append("c.set_measure({!r})".format(c.measure))
                     
-            out.append("{}.set_construct(d, axes={}, key={!r}, copy=False)".format(
+            out.append("{}.set_construct(c, axes={}, key={!r}, copy=False)".format(
                 name, self.get_data_axes(key), key))
             
         for key, c in self.cell_methods.items():
             out.append("")
             out.append("# {}".format(c.construct_type))
-            out.append("d = cf.{}()".format(c.__class__.__name__))
+            out.append("c = {}{}()".format(namespace, c.__class__.__name__))
             method = c.get_method(None)
             if method is not None:
-                out.append("d.method = {!r}".format(method))
+                out.append("c.method = {!r}".format(method))
                 
             axes = c.get_axes(None)
             if axes is not None:
-                out.append("d.axes = {!r}".format(axes))
+                out.append("c.axes = {!r}".format(axes))
                 
             for term, value in c.qualifiers().items():
                 if term == 'interval':
+                    value = deepcopy(value)
                     for i, data in enumerate(value[:]):
-                        data_name = "interval{}".format(i)
-                        if representative_data:
-                            value[i] = data
-                        else:
-                            out.append(data._creation_code(name=data_name))
+                        if isinstance(data, Data):
+                            data_name = "interval{}".format(i)                        
+                            out.extend(data.creation_commands(name=data_name, namespace=namespace0, string=False))
                             value[i] = data_name
-                #--- End: if
-                
-                out.append("d.set_qualifier({!r}, {})".format(term, repr(value)))
+                        else:
+                            value[i] = str(data)
+                    #--- End: for
+
+                    value = ', '.join(value)
+                    value = "["+value+"]"
+                else:
+                    value = repr(value)
+                    
+                out.append("c.set_qualifier({!r}, {})".format(term, value))
             
-            out.append("{}.set_construct(d)".format(name))
+            out.append("{}.set_construct(c)".format(name))
                 
         for key, c in self.coordinate_references.items():
             out.append("")
             out.append("# "+c.construct_type)
-            out.append("d = cf.{}()".format(c.__class__.__name__))
-            
+            out.append("c = {}{}()".format(namespace, c.__class__.__name__))
+
+            nc = c.nc_get_variable(None)
+            if nc is not None:
+                out.append("c.nc_set_variable({!r})".format(nc))
+
             coordinates = c.coordinates()
             if coordinates:
-                out.append("d.set_coordinates({})".format(coordinates))
+                out.append("c.set_coordinates({})".format(coordinates))
 
             for term, value in c.datum.parameters().items():
                 if isinstance(value, Data):
-                    if representative_data:
-                        value = data
-                    else:
-                        data_name = "parameter{}".format(i)
-                        out.append(data._creation_code(name=data_name))
-                        value = data_name
-                    
-                out.append("d.datum.set_parameter({!r}, {})".format(term, repr(value)))
+                    data_name = "parameter{}".format(i)
+                    out.extend(data.creation_commands(name=data_name, namespace=namespace0, string=False))
+                    value = data_name
+                else:
+                    value = repr(value)
+
+                out.append("c.datum.set_parameter({!r}, {})".format(term, value))
                    
             for term, value in c.coordinate_conversion.parameters().items():
                 if isinstance(value, Data):
-                    if representative_data:
-                        value = data
-                    else:
-                        data_name = "parameter{}".format(i)
-                        out.append(data._creation_code(name=data_name))
-                        value = data_name
+                    data_name = "parameter{}".format(i)
+                    out.extend(data.creation_commands(name=data_name, namespace=namespace0, string=False))
+                    value = data_name
+                else:
+                    value = repr(value)
                     
-                out.append("d.coordinate_conversion.set_parameter({!r}, {})".format(
-                    term, repr(value)))
+                out.append("c.coordinate_conversion.set_parameter({!r}, {})".format(
+                    term, value))
                 
             domain_ancillaries = c.coordinate_conversion.domain_ancillaries()
             if domain_ancillaries:
-                out.append("d.coordinate_conversion.set_domain_ancillaries({})".format(
+                out.append("c.coordinate_conversion.set_domain_ancillaries({})".format(
                     domain_ancillaries))
 
-            out.append("{}.set_construct(d)".format(name))
+            out.append("{}.set_construct(c)".format(name))
         #--- End: for
-        
-        return '\n'.join(out)
+
+        if string:
+            out[0] = indent+out[0]
+            out = ('\n'+indent).join(out)
+
+        return out
         
     
     def flip(self, axes=None, inplace=False, i=False, **kwargs):

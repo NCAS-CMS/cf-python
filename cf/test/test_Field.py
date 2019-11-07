@@ -46,27 +46,46 @@ class FieldTest(unittest.TestCase):
 #        self.test_only = ['test_Field_autocyclic']
 #        self.test_only = ['test_Field_anchor']
 #        self.test_only = ['test_Field_mask_invalid']
-#        self.test_only = ['test_Field_item']
+#        self.test_only = ['test_Field_test_Field_creation_commands']
 #        self.test_only = ['test_Field_section']
 #        self.test_only = ['test_Field_flip']
 #        self.test_only = ['test_Field_Field_domain_mask']
 #        self.test_only = ['test_Field_bin']
 
+    def test_Field_example_field(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
 
+        for n in (1, 2):
+            f = cf.Field.example_field(n)
+            
+        
+    def test_Field_creation_commands(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = self.f.copy()
+
+        for rd in (False, True):
+            for indent in (0, 4):
+                for s in (False, True):
+                    _ = f.creation_commands(representative_data=rd,
+                                            indent=indent,
+                                            string=s)
+        #--- End: for
+            
+        
     def test_Field_flatten(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
         
         f = self.f.copy()
-#        print(f)
-#        print(f.constructs)
+
         axis = f.set_construct(cf.DomainAxis(1))
         d = cf.DimensionCoordinate()
         d.standard_name = 'time'
         d.set_data(cf.Data(123., 'days since 2000-01-02'))
         f.set_construct(d, axes=axis)
-#        print(f)
-#        print(f.constructs)
 
         g = f.flatten()
         h = f.flatten(list(range(f.ndim)))
@@ -82,9 +101,7 @@ class FieldTest(unittest.TestCase):
             self.assertTrue(g.equals(f, verbose=True))
 
         for axes in axes_combinations(f):
-#            print (axes)
             g = f.flatten(axes)
-#            print (g)
 
             if len(axes) <= 1:
                 shape  = f.shape
