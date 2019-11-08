@@ -1,0 +1,7 @@
+cf.DomainAxis.copy
+==================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DomainAxis.copy

@@ -1,0 +1,7 @@
+cf.DomainAncillary.history
+==========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.DomainAncillary.history

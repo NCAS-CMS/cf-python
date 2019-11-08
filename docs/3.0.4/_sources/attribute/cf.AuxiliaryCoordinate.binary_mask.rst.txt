@@ -1,0 +1,7 @@
+cf.AuxiliaryCoordinate.binary_mask
+==================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.AuxiliaryCoordinate.binary_mask

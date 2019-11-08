@@ -1,0 +1,7 @@
+cf.List.chunk
+=============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.List.chunk

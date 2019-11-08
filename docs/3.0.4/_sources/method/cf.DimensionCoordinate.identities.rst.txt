@@ -1,0 +1,7 @@
+cf.DimensionCoordinate.identities
+=================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DimensionCoordinate.identities

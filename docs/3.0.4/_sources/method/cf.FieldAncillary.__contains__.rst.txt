@@ -1,0 +1,7 @@
+cf.FieldAncillary.__contains__
+==============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.FieldAncillary.__contains__

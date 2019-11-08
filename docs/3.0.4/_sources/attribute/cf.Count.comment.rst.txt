@@ -1,0 +1,7 @@
+cf.Count.comment
+================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.Count.comment

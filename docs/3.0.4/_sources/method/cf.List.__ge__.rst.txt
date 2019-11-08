@@ -1,0 +1,7 @@
+cf.List.__ge__
+==============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.List.__ge__

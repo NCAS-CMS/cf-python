@@ -1,0 +1,7 @@
+cf.Datum.has_parameter
+======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Datum.has_parameter

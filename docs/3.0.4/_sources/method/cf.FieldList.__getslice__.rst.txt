@@ -1,0 +1,7 @@
+cf.FieldList.__getslice__
+=========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.FieldList.__getslice__

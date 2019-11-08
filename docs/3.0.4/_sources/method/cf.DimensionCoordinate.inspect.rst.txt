@@ -1,0 +1,7 @@
+cf.DimensionCoordinate.inspect
+==============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DimensionCoordinate.inspect

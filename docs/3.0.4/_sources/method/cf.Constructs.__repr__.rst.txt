@@ -1,0 +1,7 @@
+cf.Constructs.__repr__
+======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Constructs.__repr__

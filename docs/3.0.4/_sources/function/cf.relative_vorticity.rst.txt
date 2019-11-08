@@ -1,0 +1,7 @@
+cf.relative_vorticity
+=====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autofunction:: cf.relative_vorticity

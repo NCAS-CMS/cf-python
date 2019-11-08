@@ -1,0 +1,7 @@
+cf.List.Y
+=========
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.List.Y

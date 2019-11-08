@@ -1,0 +1,7 @@
+cf.List.__neg__
+===============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.List.__neg__

@@ -1,0 +1,7 @@
+cf.CellMeasure.convert_reference_time
+=====================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CellMeasure.convert_reference_time

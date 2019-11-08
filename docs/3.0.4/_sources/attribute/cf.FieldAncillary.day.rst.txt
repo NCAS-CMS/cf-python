@@ -1,0 +1,7 @@
+cf.FieldAncillary.day
+=====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.FieldAncillary.day

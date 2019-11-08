@@ -1,0 +1,253 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>cf.Field.anchor &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cf.Field.flatten" href="cf.Field.flatten.html" />
+    <link rel="prev" title="cf.Field.varray" href="../attribute/cf.Field.varray.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><b><a href="../index.html">cf 3.0.4</a></b></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../class.html"><strong>cf classes</strong></a><ul>
+  <li><a href="../classes/cf.Field.html">cf.Field</a><ul>
+      <li>Previous: <a href="../attribute/cf.Field.varray.html" title="previous chapter">cf.Field.varray</a></li>
+      <li>Next: <a href="cf.Field.flatten.html" title="next chapter">cf.Field.flatten</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/method/cf.Field.anchor.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="cf-field-anchor">
+<h1>cf.Field.anchor<a class="headerlink" href="#cf-field-anchor" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="cf.Field.anchor">
+<code class="descclassname">Field.</code><code class="descname">anchor</code><span class="sig-paren">(</span><em>axis</em>, <em>value</em>, <em>inplace=False</em>, <em>dry_run=False</em>, <em>i=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.4/cf/field.py#L12286"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.anchor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Roll a cyclic axis so that the given value lies in the first
+coordinate cell.</p>
+<p>A unique axis is selected with the <em>axes</em> and <em>kwargs</em> parameters.</p>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.0.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="cf.Field.axis.html#cf.Field.axis" title="cf.Field.axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">axis</span></code></a>, <a class="reference internal" href="cf.Field.cyclic.html#cf.Field.cyclic" title="cf.Field.cyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cyclic</span></code></a>, <a class="reference internal" href="cf.Field.iscyclic.html#cf.Field.iscyclic" title="cf.Field.iscyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iscyclic</span></code></a>, <a class="reference internal" href="cf.Field.period.html#cf.Field.period" title="cf.Field.period"><code class="xref py py-obj docutils literal notranslate"><span class="pre">period</span></code></a>, <a class="reference internal" href="cf.Field.roll.html#cf.Field.roll" title="cf.Field.roll"><code class="xref py py-obj docutils literal notranslate"><span class="pre">roll</span></code></a></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>axis:</dt>
+<dd><p class="first last">The cyclic axis to be rolled, defined by that which would
+be selected by passing the given axis description to a
+call of the field construct’s <a class="reference internal" href="cf.Field.domain_axis.html#cf.Field.domain_axis" title="cf.Field.domain_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axis</span></code></a> method. For
+example, for a value of <code class="docutils literal notranslate"><span class="pre">'X'</span></code>, the domain axis construct
+returned by <code class="docutils literal notranslate"><span class="pre">f.domain_axis('X'))</span></code> is selected.</p>
+</dd>
+<dt>value:</dt>
+<dd><p class="first">Anchor the dimension coordinate values for the selected
+cyclic axis to the <em>value</em>. May be any numeric scalar
+object that can be converted to a <a class="reference internal" href="../classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object (which
+includes <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/index.html#module-numpy" title="(in NumPy v1.17)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> and <a class="reference internal" href="../classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> objects). If <em>value</em> has units
+then they must be compatible with those of the dimension
+coordinates, otherwise it is assumed to have the same
+units as the dimension coordinates. The coordinate values
+are transformed so that <em>value</em> is “equal to or just
+before” the new first coordinate value. More specifically:</p>
+<blockquote class="last">
+<div><ul class="simple">
+<li>Increasing dimension coordinates with positive period,
+P, are transformed so that <em>value</em> lies in the
+half-open range (L-P, F], where F and L are the
+transformed first and last coordinate values,
+respectively.</li>
+</ul>
+</div></blockquote>
+</dd>
+</dl>
+<blockquote>
+<div><blockquote>
+<div><ul class="simple">
+<li>Decreasing dimension coordinates with positive period,
+P, are transformed so that <em>value</em> lies in the
+half-open range (L+P, F], where F and L are the
+transformed first and last coordinate values,
+respectively.</li>
+</ul>
+</div></blockquote>
+<dl class="docutils">
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last">If the original dimension coordinates are <code class="docutils literal notranslate"><span class="pre">0,</span> <span class="pre">5,</span> <span class="pre">...,</span>
+<span class="pre">355</span></code> (evenly spaced) and the period is <code class="docutils literal notranslate"><span class="pre">360</span></code> then
+<code class="docutils literal notranslate"><span class="pre">value=0</span></code> implies transformed coordinates of <code class="docutils literal notranslate"><span class="pre">0,</span> <span class="pre">5,</span>
+<span class="pre">...,</span> <span class="pre">355</span></code>; <code class="docutils literal notranslate"><span class="pre">value=-12</span></code> implies transformed
+coordinates of <code class="docutils literal notranslate"><span class="pre">-10,</span> <span class="pre">-5,</span> <span class="pre">...,</span> <span class="pre">345</span></code>; <code class="docutils literal notranslate"><span class="pre">value=380</span></code>
+implies transformed coordinates of <code class="docutils literal notranslate"><span class="pre">380,</span> <span class="pre">385,</span> <span class="pre">...,</span>
+<span class="pre">715</span></code>.</p>
+</dd>
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last">If the original dimension coordinates are <code class="docutils literal notranslate"><span class="pre">355,</span> <span class="pre">350,</span>
+<span class="pre">...,</span> <span class="pre">0</span></code> (evenly spaced) and the period is <code class="docutils literal notranslate"><span class="pre">360</span></code> then
+<code class="docutils literal notranslate"><span class="pre">value=355</span></code> implies transformed coordinates of <code class="docutils literal notranslate"><span class="pre">355,</span>
+<span class="pre">350,</span> <span class="pre">...,</span> <span class="pre">0</span></code>; <code class="docutils literal notranslate"><span class="pre">value=0</span></code> implies transformed
+coordinates of <code class="docutils literal notranslate"><span class="pre">0,</span> <span class="pre">-5,</span> <span class="pre">...,</span> <span class="pre">-355</span></code>; <code class="docutils literal notranslate"><span class="pre">value=392</span></code>
+implies transformed coordinates of <code class="docutils literal notranslate"><span class="pre">390,</span> <span class="pre">385,</span> <span class="pre">...,</span>
+<span class="pre">30</span></code>.</p>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="docutils">
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dd><p class="first last">If True then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+</dd>
+<dt>dry_run: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dd><p class="first last">Return a dictionary of parameters which describe the
+anchoring process. The field is not changed, even if <em>i</em>
+is True.</p>
+</dd>
+<dt>i: deprecated at version 3.0.0</dt>
+<dd><p class="first last">Use the <em>inplace</em> parameter instead.</p>
+</dd>
+</dl>
+<p>kwargs: deprecated at version 3.0.0</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><a class="reference internal" href="../classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a>        </dt>
+<dd><p class="first last">The rolled field.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">iscyclic</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">dimension_coordinate</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">data</span>
+<span class="go">&lt;CF Data(8): [0, ..., 315] degrees_east&gt; TODO</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">dimension_coordinate</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[  0  45  90 135 180 225 270 315]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">anchor</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="mi">230</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">dimension_coordinate</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[270 315   0  45  90 135 180 225]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">anchor</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="mi">590</span><span class="p">,</span> <span class="s1">&#39;degreesE&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">dimension_coordinate</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[630 675 360 405 450 495 540 585]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">anchor</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="o">-</span><span class="mi">490</span><span class="p">,</span> <span class="s1">&#39;degreesE&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">dimension_coordinate</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[-450 -405 -720 -675 -630 -585 -540 -495]</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">iscyclic</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">dimension_coordinate</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">data</span>
+<span class="go">&lt;CF Data(8): [0.0, ..., 357.1875] degrees_east&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">anchor</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="mi">10000</span><span class="p">)</span><span class="o">.</span><span class="n">dimension_coordinate</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">data</span>
+<span class="go">&lt;CF Data(8): [10001.25, ..., 10358.4375] degrees_east&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">anchor</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="mi">10000</span><span class="p">,</span> <span class="n">dry_run</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span>
+<span class="go">{&#39;axis&#39;: &#39;domainaxis2&#39;,</span>
+<span class="go"> &#39;nperiod&#39;: &lt;CF Data(1): [10080.0] 0.0174532925199433 rad&gt;,</span>
+<span class="go"> &#39;roll&#39;: 28}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;axis&#39;</span><span class="p">],</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;roll&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">dimension_coordinate</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s1">&#39;axis&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;nperiod&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">data</span>
+<span class="go">&lt;CF Data(8): [10001.25, ..., 10358.4375] degrees_east&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2019, David Hassell.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/method/cf.Field.anchor.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

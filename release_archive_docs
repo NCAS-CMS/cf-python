@@ -7,6 +7,11 @@ if [[ ! $1 ]] ; then
   exit 1
 fi
 
+rm_doctrees=true
+if [[ $2 ]] ; then 
+  rm_doctrees=$2
+fi
+
 version=$1
 
 # Make zip file
@@ -18,8 +23,9 @@ cd -
 # Make the archive docs    
 # --------------------------------------------------------------------
 cd docs
-
-rm -fr $version/.doctrees
+if [[ $rm_doctrees = "true" ]] ; then
+  rm -fr $version/.doctrees
+fi
 
 make html $version
 

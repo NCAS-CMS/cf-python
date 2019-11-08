@@ -1,0 +1,7 @@
+cf.DimensionCoordinate.__eq__
+=============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DimensionCoordinate.__eq__

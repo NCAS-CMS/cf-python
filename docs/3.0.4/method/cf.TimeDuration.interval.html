@@ -1,0 +1,308 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>cf.TimeDuration.interval &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cf.TimeDuration.is_day_factor" href="cf.TimeDuration.is_day_factor.html" />
+    <link rel="prev" title="cf.TimeDuration.inspect" href="cf.TimeDuration.inspect.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><b><a href="../index.html">cf 3.0.4</a></b></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../class.html"><strong>cf classes</strong></a><ul>
+  <li><a href="../classes/cf.TimeDuration.html">cf.TimeDuration</a><ul>
+      <li>Previous: <a href="cf.TimeDuration.inspect.html" title="previous chapter">cf.TimeDuration.inspect</a></li>
+      <li>Next: <a href="cf.TimeDuration.is_day_factor.html" title="next chapter">cf.TimeDuration.is_day_factor</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/method/cf.TimeDuration.interval.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="cf-timeduration-interval">
+<h1>cf.TimeDuration.interval<a class="headerlink" href="#cf-timeduration-interval" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="cf.TimeDuration.interval">
+<code class="descclassname">TimeDuration.</code><code class="descname">interval</code><span class="sig-paren">(</span><em>dt</em>, <em>end=False</em>, <em>iso=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.4/cf/timeduration.py#L1216"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.TimeDuration.interval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a time interval of exactly the time duration.</p>
+<blockquote>
+<div><p>The start (or end, if the <em>end</em> parameter is True) date-time of
+the time interval is determined by the <em>year</em>, <em>month</em>, <em>day</em>,
+<em>hour</em>, <em>minute</em> and <em>second</em> parameters, but if any of these is
+unset then its default value is taken from the attribute of the
+same name (i.e. the <code class="xref py py-obj docutils literal notranslate"><span class="pre">year</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">month</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">day</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">hour</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">minute</span></code>
+and <code class="xref py py-obj docutils literal notranslate"><span class="pre">second</span></code> attributes respectively).</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="cf.TimeDuration.bounds.html#cf.TimeDuration.bounds" title="cf.TimeDuration.bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bounds</span></code></a></p>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.0.</span></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt>year, month, day, hour, minute, second: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional  TODO</dt>
+<dd><p class="first">The date-time of the start (or end) of the time
+interval. If any parameter is unset then its value
+defaults to the attribute of the same name. The time
+interval calculation requires that all of the parameters
+have numerical values, so if an unset parameter has a
+corresponding attribute whose value is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> then an
+exception will be raised.</p>
+<dl class="last docutils">
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">t.interval(year=1999,</span> <span class="pre">day=16)</span></code> is equivalent to
+<code class="docutils literal notranslate"><span class="pre">t.interval(1999,</span> <span class="pre">t.month,</span> <span class="pre">16,</span> <span class="pre">t.hour,</span> <span class="pre">t.minute,</span>
+<span class="pre">t.second)</span></code>.</p>
+</dd>
+</dl>
+</dd>
+<dt>end: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dd><p class="first last">If True then the date-time given by the <em>year</em>, <em>month</em>,
+<em>day</em>, <em>hour</em>, <em>minute</em> and <em>second</em> parameters defines
+the end of the time interval. By default it defines the
+start of the time interval.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p>#        calendar: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional
+#            Define the CF calendar for the input date-time and output
+#            time interval. By default the calendar of the input
+#            date-time is used. If <em>calendar</em> is set, then the calendar
+#            of the input date-time is overridden.
+#    
+#            <em>Parameter example:</em>
+#               To set a calendar without leap years:
+#               <code class="docutils literal notranslate"><span class="pre">calendar='noleap'</span></code>.</p>
+<blockquote>
+<div><blockquote>
+<div><dl class="docutils">
+<dt>iso: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
+<dd><p class="first">Return the time interval as an ISO 8601 time interval
+string rather than the default of a tuple of date-time
+objects. Valid values are (with example outputs for the
+time interval “3 years from 2007-03-01 13:00:00”):</p>
+<blockquote class="last">
+<div><table border="1" class="docutils">
+<colgroup>
+<col width="35%" />
+<col width="65%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">iso</th>
+<th class="head">Example output</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'start</span> <span class="pre">and</span> <span class="pre">end'</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">'2007-03-01</span> <span class="pre">13:00:00/2010-03-01</span> <span class="pre">13:00:00'</span></code></td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'start</span> <span class="pre">and</span> <span class="pre">duration'</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">'2007-03-01</span> <span class="pre">13:00:00/P3Y'</span></code></td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'duration</span> <span class="pre">and</span> <span class="pre">end'</span></code></td>
+<td><code class="docutils literal notranslate"><span class="pre">'P3Y/2010-03-01</span> <span class="pre">13:00:00'</span></code></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</dd>
+</dl>
+</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The date-times at each end of the time interval. The first
+date-time is always earlier than or equal to the second
+date-time. If <em>iso</em> has been set then an ISO 8601 time
+interval string is returned instead of a tuple.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Examples:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;calendar_years&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">interval</span><span class="p">(</span><span class="mi">1999</span><span class="p">)</span>
+<span class="go">(&lt;CF Datetime: 1999-01-01 00:00:00&gt;, &lt;CF Datetime: 2000-01-01 00:00:00&gt;)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;calendar_months&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">interval</span><span class="p">(</span><span class="mi">1999</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
+<span class="go">(&lt;CF Datetime: 1999-12-01 00:00:00&gt;, &lt;CF Datetime: 2000-01-01 00:00:00&gt;)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;calendar_years&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">interval</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">(&lt;CF Datetime: 1998-02-01 00:00:00&gt;, &lt;CF Datetime: 2000-02-01 00:00:00&gt;)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="s1">&#39;days&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">interval</span><span class="p">(</span><span class="mi">1983</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+<span class="go">(&lt;CF Datetime: 1983-12-01 06:00:00&gt;, &lt;CF Datetime: 1983-12-31 06:00:00&gt;)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="s1">&#39;days&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">interval</span><span class="p">(</span><span class="mi">1983</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">(&lt;CF Datetime: 1983-11-01 06:00:00&gt;, &lt;CF Datetime: 1983-12-01 06:00:00&gt;)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;days&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">interval</span><span class="p">(</span><span class="mi">1984</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="go">(&lt;CF Datetime: 1984-02-03 00:00:00&gt;, &lt;CF Datetime: 1984-02-03 00:00:00&gt;)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;days&#39;</span><span class="p">,</span> <span class="n">hour</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">interval</span><span class="p">(</span><span class="mi">2004</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">(&lt;CF Datetime: 2004-02-26 06:00:00&gt;, &lt;CF Datetime: 2004-03-02 06:00:00&gt;)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;days&#39;</span><span class="p">,</span> <span class="n">hour</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">interval</span><span class="p">(</span><span class="mi">2004</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">calendar</span><span class="o">=</span><span class="s1">&#39;noleap&#39;</span><span class="p">)</span>
+<span class="go">(&lt;CF Datetime: 2004-02-25 06:00:00&gt;, &lt;CF Datetime: 2004-03-02 06:00:00&gt;)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;days&#39;</span><span class="p">,</span> <span class="n">hour</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">interval</span><span class="p">(</span><span class="mi">2004</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">calendar</span><span class="o">=</span><span class="s1">&#39;360_day&#39;</span><span class="p">)</span>
+<span class="go">(&lt;CF Datetime: 2004-02-27 06:00:00&gt;, &lt;CF Datetime: 2004-03-02 06:00:00&gt;)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;days&#39;</span><span class="p">,</span> <span class="n">hour</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">interval</span><span class="p">(</span><span class="mi">2004</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">(datetime.datetime(2004, 2, 26, 13, 0), &lt;CF Datetime: 2004-03-02 13:00:00&gt;)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mf">19897.546</span><span class="p">,</span> <span class="s1">&#39;hours&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">interval</span><span class="p">(</span><span class="mi">1984</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="go">(&lt;CF Datetime: 1984-02-03 00:00:00&gt;, &lt;CF Datetime: 1986-05-12 01:32:46&gt;)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mf">19897.546</span><span class="p">,</span> <span class="s1">&#39;hours&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">interval</span><span class="p">(</span><span class="mi">1984</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">(&lt;CF Datetime: 1981-10-26 22:27:14&gt;, &lt;CF Datetime: 1984-02-03 00:00:00&gt;)</span>
+</pre></div>
+</div>
+<p>Create <a class="reference internal" href="../classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Query</span></code></a> objects for a time interval - one including both
+bounds and one which excludes the upper bound:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;calendar_years&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">interval</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">interval</span><span class="p">(</span><span class="mi">1999</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">wi</span><span class="p">(</span><span class="o">*</span><span class="n">interval</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span>
+<span class="go">&lt;CF Query: (wi [&lt;CF Datetime: 1999-12-01 00:00:00&gt;, &lt;CF Datetime: 2001-01-01 00:00:00&gt;])&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">ge</span><span class="p">(</span><span class="n">interval</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> <span class="n">cf</span><span class="o">.</span><span class="n">lt</span><span class="p">(</span><span class="n">interval</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span>
+<span class="go">&lt;CF Query: [(ge &lt;CF Datetime: 1999-12-01 00:00:00&gt;) &amp; (lt &lt;CF Datetime: 2000-01-01 00:00:00&gt;)]&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">==</span> <span class="n">cf</span><span class="o">.</span><span class="n">dt</span><span class="p">(</span><span class="s1">&#39;2001-1-1&#39;</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">==</span> <span class="n">cf</span><span class="o">.</span><span class="n">dt</span><span class="p">(</span><span class="s1">&#39;2001-1-1&#39;</span><span class="p">)</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<p>Create a <a class="reference internal" href="../classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Query</span></code></a> object which may be used to test where a time
+coordinate object’s bounds lie inside a time interval:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;calendar_months&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">cellwi</span><span class="p">(</span><span class="o">*</span><span class="n">t</span><span class="o">.</span><span class="n">interval</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span>
+<span class="go">&lt;CF Query: [lower_bounds(ge &lt;CF Datetime: 1999-12-01 00:00:00&gt;) &amp; upper_bounds(le &lt;CF Datetime: 2000-01-01 00:00:00&gt;)]&gt;</span>
+</pre></div>
+</div>
+<p>Create ISO 8601 time interval strings:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">TimeDuration</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="s1">&#39;calendar_years&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">interval</span><span class="p">(</span><span class="mi">1999</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">iso</span><span class="o">=</span><span class="s1">&#39;start and end&#39;</span><span class="p">)</span> 
+<span class="go">&#39;1993-12-01 00:00:00/1999-12-01 00:00:00&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">interval</span><span class="p">(</span><span class="mi">1999</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">iso</span><span class="o">=</span><span class="s1">&#39;start and duration&#39;</span><span class="p">)</span>
+<span class="go">&#39;1993-12-01 00:00:00/P6Y&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">interval</span><span class="p">(</span><span class="mi">1999</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">iso</span><span class="o">=</span><span class="s1">&#39;duration and end&#39;</span><span class="p">)</span>
+<span class="go">&#39;P6Y/1999-12-01 00:00:00&#39;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2019, David Hassell.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/method/cf.TimeDuration.interval.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,7 @@
+cf.Count.__pos__
+================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Count.__pos__

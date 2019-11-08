@@ -1,0 +1,7 @@
+cf.Field.nc_has_variable
+========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Field.nc_has_variable

@@ -1,0 +1,7 @@
+cf.FieldAncillary.mid_range
+===========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.FieldAncillary.mid_range

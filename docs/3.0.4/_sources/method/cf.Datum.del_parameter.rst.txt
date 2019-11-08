@@ -1,0 +1,7 @@
+cf.Datum.del_parameter
+======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Datum.del_parameter

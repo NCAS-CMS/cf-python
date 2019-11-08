@@ -1,0 +1,7 @@
+cf.GatheredArray.compressed_array
+=================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.GatheredArray.compressed_array

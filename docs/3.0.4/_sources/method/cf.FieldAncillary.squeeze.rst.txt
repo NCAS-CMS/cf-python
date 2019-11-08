@@ -1,0 +1,7 @@
+cf.FieldAncillary.squeeze
+=========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.FieldAncillary.squeeze

@@ -1,0 +1,7 @@
+cf.FieldAncillary.__ifloordiv__
+===============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.FieldAncillary.__ifloordiv__

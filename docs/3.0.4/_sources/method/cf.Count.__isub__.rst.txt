@@ -1,0 +1,7 @@
+cf.Count.__isub__
+=================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Count.__isub__
