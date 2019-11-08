@@ -369,6 +369,7 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(len(f.select_by_units('m s-1', exact=False)) == 8)
         self.assertTrue(len(f.select_by_units(re.compile('^mile|watt'))) == 2)
 
+        self.assertTrue(len(f.select_by_units('long_name=qwery:asd')) == 0)
 
     def test_FieldList_select_field(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

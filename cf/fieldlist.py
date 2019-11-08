@@ -1092,13 +1092,18 @@ that when a field element needs to be assesed for equality its
             if isinstance(i, dict):
                 _DEPRECATION_ERROR_DICT(
                     "Use methods 'select_by_units', 'select_by_construct', 'select_by_properties', 'select_by_naxes', 'select_by_rank' instead.") # pragma: no cover
-            try:
-                if ':' in i:
-                    new = i.replace(':', '=', 1)
+
+            if isinstance(i, str) and ':' in i:
+                error = True
+                if '=' in i:
+                    index0 = i.index('=')
+                    index1 = i.index(':')
+                    error = index0 > index1
+                    
+                if error:
                     _DEPRECATION_ERROR(
-                        "The ':' format has been deprecated. Use {!r} instead.".format(new)) # pragma: no cover
-            except TypeError:
-                pass
+                        "The identity format {!r} has been deprecated at version 3.0.0. Try {!r} instead.".format(
+                            i,  i.replace(':', '=', 1))) # pragma: no cover           
         #--- End: for
         
         return self.select_by_identity(*identities)
