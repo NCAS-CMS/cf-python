@@ -90,7 +90,7 @@
 <h1>cf.CoordinateReference.del_datum<a class="headerlink" href="#cf-coordinatereference-del-datum" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.CoordinateReference.del_datum">
-<code class="descclassname">CoordinateReference.</code><code class="descname">del_datum</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.8/cfdm/core/coordinatereference.py#L358"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.CoordinateReference.del_datum" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">CoordinateReference.</code><code class="descname">del_datum</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.9/cfdm/core/coordinatereference.py#L364"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.CoordinateReference.del_datum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove the datum component.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.0.</span></p>
@@ -114,9 +114,9 @@
 </table>
 <p><strong>Examples:</strong></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">del_datum</span><span class="p">()</span>
-<span class="go">&lt;Datum: Parameters(earth_radius)&gt;</span>
+<span class="go">&lt;Datum: Parameters: earth_radius&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">get_datum</span><span class="p">()</span>
-<span class="go">&lt;Datum: &gt;</span>
+<span class="go">&lt;Datum: Parameters: &gt;</span>
 </pre></div>
 </div>
 </dd></dl>

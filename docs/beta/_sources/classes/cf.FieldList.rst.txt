@@ -28,6 +28,7 @@ Selecting
    ~cf.FieldList.select_by_rank
    ~cf.FieldList.select_by_units
    ~cf.FieldList.select
+   ~cf.FieldList.select_field
    ~cf.FieldList.__call__
     
 Comparison

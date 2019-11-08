@@ -92,28 +92,29 @@
 <em class="property">class </em><code class="descclassname">cf.</code><code class="descname">DimensionCoordinate</code><span class="sig-paren">(</span><em>properties=None</em>, <em>data=None</em>, <em>bounds=None</em>, <em>geometry=None</em>, <em>interior_ring=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.4/cf/dimensioncoordinate.py#L21"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DimensionCoordinate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.abstract.coordinate.Coordinate</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.propertiesdatabounds.PropertiesDataBounds</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.dimensioncoordinate.DimensionCoordinate</span></code></p>
 <p>A dimension coordinate construct of the CF data model.</p>
-<p>A dimension coordinate construct provides information which locate the
-cells of the domain and which depend on a subset of the domain axis
-constructs. The dimension coordinate construct is able to
+<p>A dimension coordinate construct provides information which locate
+the cells of the domain and which depend on a subset of the domain
+axis constructs. The dimension coordinate construct is able to
 unambiguously describe cell locations because a domain axis can be
-associated with at most one dimension coordinate construct, whose data
-array values must all be non-missing and strictly monotonically
-increasing or decreasing. They must also all be of the same numeric
-data type. If cell bounds are provided, then each cell must have
-exactly two vertices. CF-netCDF coordinate variables and numeric
-scalar coordinate variables correspond to dimension coordinate
-constructs.</p>
+associated with at most one dimension coordinate construct, whose
+data array values must all be non-missing and strictly
+monotonically increasing or decreasing. They must also all be of
+the same numeric data type. If cell bounds are provided, then each
+cell must have exactly two vertices. CF-netCDF coordinate
+variables and numeric scalar coordinate variables correspond to
+dimension coordinate constructs.</p>
 <p>The dimension coordinate construct consists of a data array of the
-coordinate values which spans a subset of the domain axis constructs,
-an optional array of cell bounds recording the extents of each cell
-(stored in a <a class="reference internal" href="cf.Bounds.html#cf.Bounds" title="cf.Bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Bounds</span></code></a> object), and properties to describe the
-coordinates. An array of cell bounds spans the same domain axes as its
-coordinate array, with the addition of an extra dimension whose size
-is that of the number of vertices of each cell. This extra dimension
-does not correspond to a domain axis construct since it does not
-relate to an independent axis of the domain. Note that, for
-climatological time axes, the bounds are interpreted in a special way
-indicated by the cell method constructs.</p>
+coordinate values which spans a subset of the domain axis
+constructs, an optional array of cell bounds recording the extents
+of each cell (stored in a <a class="reference internal" href="cf.Bounds.html#cf.Bounds" title="cf.Bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Bounds</span></code></a> object), and properties to
+describe the coordinates. An array of cell bounds spans the same
+domain axes as its coordinate array, with the addition of an extra
+dimension whose size is that of the number of vertices of each
+cell. This extra dimension does not correspond to a domain axis
+construct since it does not relate to an independent axis of the
+domain. Note that, for climatological time axes, the bounds are
+interpreted in a special way indicated by the cell method
+constructs.</p>
 <p><strong>NetCDF interface</strong></p>
 <p>The netCDF variable name of the construct may be accessed with the
 <a class="reference internal" href="../method/cf.DimensionCoordinate.nc_set_variable.html#cf.DimensionCoordinate.nc_set_variable" title="cf.DimensionCoordinate.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a>, <a class="reference internal" href="../method/cf.DimensionCoordinate.nc_get_variable.html#cf.DimensionCoordinate.nc_get_variable" title="cf.DimensionCoordinate.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a>, <a class="reference internal" href="../method/cf.DimensionCoordinate.nc_del_variable.html#cf.DimensionCoordinate.nc_del_variable" title="cf.DimensionCoordinate.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a> and
@@ -214,10 +215,10 @@ initialization. By default arguments are deep copied.</p>
 <td>True if and only if the data are coordinates for a CF ‘Z’ axis.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.decreasing.html#cf.DimensionCoordinate.decreasing" title="cf.DimensionCoordinate.decreasing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decreasing</span></code></a></td>
-<td>True if the dimension coordinate is increasing, otherwise False.</td>
+<td>True if the dimension coordinate is decreasing, otherwise False.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.increasing.html#cf.DimensionCoordinate.increasing" title="cf.DimensionCoordinate.increasing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">increasing</span></code></a></td>
-<td>True for dimension coordinate constructs, False otherwise.</td>
+<td><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> for dimension coordinate constructs, <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> otherwise.</td>
 </tr>
 </tbody>
 </table>

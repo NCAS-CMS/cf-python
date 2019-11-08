@@ -89,7 +89,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.Field">
-<em class="property">class </em><code class="descclassname">cf.</code><code class="descname">Field</code><span class="sig-paren">(</span><em>properties=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.4/cf/field.py#L193"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cf.</code><code class="descname">Field</code><span class="sig-paren">(</span><em>properties=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.4/cf/field.py#L197"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.field.Field</span></code></p>
 <p>A field construct of the CF data model.</p>
 <p>The field construct is central to the CF data model, and includes all
@@ -728,14 +728,17 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cf.Field.convert.html#cf.Field.convert" title="cf.Field.convert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert</span></code></a></td>
 <td>Convert a metadata construct into a new field construct.</td>
 </tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.Field.creation_commands.html#cf.Field.creation_commands" title="cf.Field.creation_commands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">creation_commands</span></code></a></td>
+<td>Return the commands that would create the field construct.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.Field.radius.html#cf.Field.radius" title="cf.Field.radius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">radius</span></code></a></td>
+<td>Return the radius used for calculating cell areas in spherical polar coordinates.</td>
+</tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cf.Field.concatenate.html#cf.Field.concatenate" title="cf.Field.concatenate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.concatenate</span></code></a></td>
 <td>Join a sequence of fields together.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cf.Field.example_field_1.html#cf.Field.example_field_1" title="cf.Field.example_field_1"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.example_field_1</span></code></a></td>
-<td>Create a small example field construct.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../method/cf.Field.radius.html#cf.Field.radius" title="cf.Field.radius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">radius</span></code></a></td>
-<td>Return the radius used for calculating cell areas in spherical polar coordinates.</td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.Field.example_field.html#cf.Field.example_field" title="cf.Field.example_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.example_field</span></code></a></td>
+<td>Return an example field construct.</td>
 </tr>
 </tbody>
 </table>

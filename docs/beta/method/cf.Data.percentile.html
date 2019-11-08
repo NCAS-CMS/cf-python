@@ -90,13 +90,13 @@
 <h1>cf.Data.percentile<a class="headerlink" href="#cf-data-percentile" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Data.percentile">
-<code class="descclassname">Data.</code><code class="descname">percentile</code><span class="sig-paren">(</span><em>ranks</em>, <em>axes=None</em>, <em>interpolation='linear'</em>, <em>squeeze=False</em>, <em>mtol=1</em>, <em>inplace=False</em>, <em>_preserve_partitions=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.4/cf/data/data.py#L2310"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.percentile" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Data.</code><code class="descname">percentile</code><span class="sig-paren">(</span><em>ranks</em>, <em>axes=None</em>, <em>interpolation='linear'</em>, <em>squeeze=False</em>, <em>mtol=1</em>, <em>inplace=False</em>, <em>_preserve_partitions=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.4/cf/data/data.py#L2334"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.percentile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute percentiles of the data along the specified axes.</p>
 <p>The default is to compute the percentiles along a flattened
 version of the data.</p>
 <p>If the input data are integers, or floats smaller than float64, or
-the input data contains missing values, then output data type is
-float64. Otherwise, the output data type is the same as that of
+the input data contains missing values, then output data-type is
+float64. Otherwise, the output data-type is the same as that of
 the input.</p>
 <p>If multiple percentile ranks are given then a new, leading data
 dimension is created so that percentiles can be stored for each

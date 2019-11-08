@@ -90,7 +90,7 @@
 <h1>cf.Field.bin<a class="headerlink" href="#cf-field-bin" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.bin">
-<code class="descclassname">Field.</code><code class="descname">bin</code><span class="sig-paren">(</span><em>method</em>, <em>digitized</em>, <em>weights=None</em>, <em>measure=False</em>, <em>scale=None</em>, <em>mtol=1</em>, <em>ddof=1</em>, <em>radius='earth'</em>, <em>return_indices=False</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.4/cf/field.py#L6034"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.bin" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">bin</code><span class="sig-paren">(</span><em>method</em>, <em>digitized</em>, <em>weights=None</em>, <em>measure=False</em>, <em>scale=None</em>, <em>mtol=1</em>, <em>ddof=1</em>, <em>radius='earth'</em>, <em>return_indices=False</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.4/cf/field.py#L6038"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.bin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Collapse the data values that lie in N-dimensional bins.</p>
 <p>The data values of the field construct are binned according to how
 they correspond to the N-dimensionsal histogram bins of another
@@ -180,71 +180,75 @@ between the maximum and the
 minimum of the values.</td>
 <td>Never</td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'sum'</span></code></td>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'median'</span></code></td>
+<td>The median of the values.</td>
+<td>Never</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'sum'</span></code></td>
 <td>The sum of the values.</td>
 <td>Never</td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'sum_of_squares'</span></code></td>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'sum_of_squares'</span></code></td>
 <td>The sum of the squares of
 values.</td>
 <td>Never</td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'sample_size'</span></code></td>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'sample_size'</span></code></td>
 <td>The sample size, i.e. the
 number of non-missing
 values.</td>
 <td>Never</td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'sum_of_weights'</span></code></td>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'sum_of_weights'</span></code></td>
 <td>The sum of weights, as
 would be used for other
 calculations.</td>
 <td>Never</td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'sum_of_weights2'</span></code></td>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'sum_of_weights2'</span></code></td>
 <td>The sum of squares of
 weights, as would be used
 for other calculations.</td>
 <td>Never</td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'mean'</span></code></td>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'mean'</span></code></td>
 <td>The weighted or unweighted
 mean of the values.</td>
 <td>May be</td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'mean_absolute_value'</span></code></td>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'mean_absolute_value'</span></code></td>
 <td>The mean of the absolute
 values.</td>
 <td>May be</td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'mean_of_upper_decile'</span></code></td>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'mean_of_upper_decile'</span></code></td>
 <td>The mean of the upper group
 of data values defined by
 the upper tenth of their
 distribution.</td>
 <td>May be</td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'variance'</span></code></td>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'variance'</span></code></td>
 <td>The weighted or unweighted
 variance of the values, with
 a given number of degrees of
 freedom.</td>
 <td>May be</td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'standard_deviation'</span></code></td>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'standard_deviation'</span></code></td>
 <td>The square root of the
 weighted or unweighted
 variance.</td>
 <td>May be</td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'root_mean_square'</span></code></td>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'root_mean_square'</span></code></td>
 <td>The square root of the
 weighted or unweighted mean
 of the squares of the
 values.</td>
 <td>May be</td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'integral'</span></code></td>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'integral'</span></code></td>
 <td>The integral of values.</td>
 <td>Always</td>
 </tr>

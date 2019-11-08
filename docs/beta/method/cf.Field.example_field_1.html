@@ -19,8 +19,6 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cf.Field.radius" href="cf.Field.radius.html" />
-    <link rel="prev" title="cf.Field.concatenate" href="cf.Field.concatenate.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -33,12 +31,12 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
 <h3><b><a href="../index.html">cf 3.0.4</a></b></h3>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
@@ -48,14 +46,6 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
-  <li><a href="../class.html"><strong>cf classes</strong></a><ul>
-  <li><a href="../classes/cf.Field.html">cf.Field</a><ul>
-      <li>Previous: <a href="cf.Field.concatenate.html" title="previous chapter">cf.Field.concatenate</a></li>
-      <li>Next: <a href="cf.Field.radius.html" title="next chapter">cf.Field.radius</a></li>
-  </ul></li>
-  </ul></li>
-  </ul></li>
   </ul></li>
 </ul>
 </div>
@@ -88,45 +78,6 @@
             
   <div class="section" id="cf-field-example-field-1">
 <h1>cf.Field.example_field_1<a class="headerlink" href="#cf-field-example-field-1" title="Permalink to this headline">¶</a></h1>
-<dl class="classmethod">
-<dt id="cf.Field.example_field_1">
-<em class="property">classmethod </em><code class="descclassname">Field.</code><code class="descname">example_field_1</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.4/cf/field.py#L11544"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.example_field_1" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a small example field construct.</p>
-<p>The field construct has properties as well as cell method and
-dimension coordinate constructs.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><a class="reference internal" href="../classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a></dt>
-<dd><p class="first last">The example field construct.</p>
-</dd>
-</dl>
-</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Examples:</strong></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Field</span><span class="o">.</span><span class="n">example_field_1</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-<span class="go">Field: specific_humidity</span>
-<span class="go">------------------------</span>
-<span class="go">Data            : specific_humidity(latitude(5), longitude(8)) 1</span>
-<span class="go">Cell methods    : area: mean</span>
-<span class="go">Dimension coords: time(1) = [2019-01-01 00:00:00]</span>
-<span class="go">                : latitude(5) = [-75.0, ..., 75.0] degrees_north</span>
-<span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
-<span class="go">[[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]</span>
-<span class="go"> [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]</span>
-<span class="go"> [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]</span>
-<span class="go"> [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]</span>
-<span class="go"> [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]</span>
-</pre></div>
-</div>
-</dd></dl>
-
 </div>
 
 

@@ -64,6 +64,7 @@ Data methods
    ~cf.Data.cos
    ~cf.Data.count
    ~cf.Data.count_masked
+   ~cf.Data.creation_commands
    ~cf.Data.cumsum
    ~cf.Data.cyclic
    ~cf.Data.datum

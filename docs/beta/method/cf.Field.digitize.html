@@ -90,7 +90,7 @@
 <h1>cf.Field.digitize<a class="headerlink" href="#cf-field-digitize" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.digitize">
-<code class="descclassname">Field.</code><code class="descname">digitize</code><span class="sig-paren">(</span><em>bins</em>, <em>upper=False</em>, <em>open_ends=False</em>, <em>closed_ends=None</em>, <em>return_bins=False</em>, <em>inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.4/cf/field.py#L5684"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.digitize" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">digitize</code><span class="sig-paren">(</span><em>bins</em>, <em>upper=False</em>, <em>open_ends=False</em>, <em>closed_ends=None</em>, <em>return_bins=False</em>, <em>inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.4/cf/field.py#L5688"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.digitize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the indices of the bins to which each value belongs.</p>
 <p>Values (including masked values) that do not belong to any bin
 result in masked values in the output field construct of indices.</p>
@@ -280,7 +280,7 @@ their 2-d form.</p>
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Field</span><span class="o">.</span><span class="n">example_field_1</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Field</span><span class="o">.</span><span class="n">example_field</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span>
 <span class="go">&lt;CF Field: specific_humidity(latitude(5), longitude(8)) 0.001 1&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">properties</span><span class="p">()</span>

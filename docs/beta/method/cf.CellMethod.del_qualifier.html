@@ -90,7 +90,7 @@
 <h1>cf.CellMethod.del_qualifier<a class="headerlink" href="#cf-cellmethod-del-qualifier" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.CellMethod.del_qualifier">
-<code class="descclassname">CellMethod.</code><code class="descname">del_qualifier</code><span class="sig-paren">(</span><em>qualifier</em>, <em>default=ValueError()</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.8/cfdm/core/cellmethod.py#L255"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.CellMethod.del_qualifier" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">CellMethod.</code><code class="descname">del_qualifier</code><span class="sig-paren">(</span><em>qualifier</em>, <em>default=ValueError()</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.9/cfdm/core/cellmethod.py#L257"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.CellMethod.del_qualifier" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove a qualifier of the cell method.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.0.</span></p>
@@ -106,9 +106,7 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
 <dt>qualifier:</dt>
-<dd><blockquote class="first">
-<div><p>The name of the qualifier to be removed.</p>
-</div></blockquote>
+<dd><p class="first">The name of the qualifier to be removed.</p>
 <dl class="last docutils">
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">qualifier='where'</span></code></p>
@@ -116,9 +114,9 @@
 </dl>
 </dd>
 <dt>default: optional</dt>
-<dd><p class="first last">Return the value of the <em>default</em> parameter if the qualifier
-has not been set. If set to an <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code></a> instance then it
-will be raised instead.</p>
+<dd><p class="first last">Return the value of the <em>default</em> parameter if the
+qualifier has not been set. If set to an <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code></a>
+instance then it will be raised instead.</p>
 </dd>
 </dl>
 </td>

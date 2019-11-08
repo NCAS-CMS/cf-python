@@ -92,49 +92,51 @@
 <em class="property">class </em><code class="descclassname">cf.</code><code class="descname">CoordinateReference</code><span class="sig-paren">(</span><em>coordinates=None</em>, <em>datum=None</em>, <em>coordinate_conversion=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.4/cf/coordinatereference.py#L20"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.CoordinateReference" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.coordinatereference.CoordinateReference</span></code></p>
 <p>A coordinate reference construct of the CF data model.</p>
-<p>A coordinate reference construct relates the coordinate values of the
-coordinate system to locations in a planetary reference frame.</p>
+<p>A coordinate reference construct relates the coordinate values of
+the coordinate system to locations in a planetary reference frame.</p>
 <p>The domain of a field construct may contain various coordinate
-systems, each of which is constructed from a subset of the dimension
-and auxiliary coordinate constructs. For example, the domain of a
-four-dimensional field construct may contain horizontal (y-x),
-vertical (z), and temporal (t) coordinate systems. There may be more
-than one of each of these, if there is more than one coordinate
-construct applying to a particular spatiotemporal dimension (for
-example, there could be both latitude-longitude and y-x projection
-coordinate systems). In general, a coordinate system may be
-constructed implicitly from any subset of the coordinate constructs,
-yet a coordinate construct does not need to be explicitly or
-exclusively associated with any coordinate system.</p>
-<p>A coordinate system of the field construct can be explicitly defined
-by a coordinate reference construct which relates the coordinate
-values of the coordinate system to locations in a planetary reference
-frame and consists of the following:</p>
+systems, each of which is constructed from a subset of the
+dimension and auxiliary coordinate constructs. For example, the
+domain of a four-dimensional field construct may contain
+horizontal (y-x), vertical (z), and temporal (t) coordinate
+systems. There may be more than one of each of these, if there is
+more than one coordinate construct applying to a particular
+spatiotemporal dimension (for example, there could be both
+latitude-longitude and y-x projection coordinate systems). In
+general, a coordinate system may be constructed implicitly from
+any subset of the coordinate constructs, yet a coordinate
+construct does not need to be explicitly or exclusively associated
+with any coordinate system.</p>
+<p>A coordinate system of the field construct can be explicitly
+defined by a coordinate reference construct which relates the
+coordinate values of the coordinate system to locations in a
+planetary reference frame and consists of the following:</p>
 <ul class="simple">
 <li>References to the dimension coordinate and auxiliary coordinate
-constructs that define the coordinate system to which the coordinate
-reference construct applies. Note that the coordinate values are not
-relevant to the coordinate reference construct, only their
-properties.</li>
+constructs that define the coordinate system to which the
+coordinate reference construct applies. Note that the coordinate
+values are not relevant to the coordinate reference construct,
+only their properties.</li>
 </ul>
 <ul class="simple">
-<li>A definition of a datum specifying the zeroes of the dimension and
-auxiliary coordinate constructs which define the coordinate
-system. The datum may be implied by the metadata of the referenced
-dimension and auxiliary coordinate constructs, or explicitly
-provided.</li>
+<li>A definition of a datum specifying the zeroes of the dimension
+and auxiliary coordinate constructs which define the coordinate
+system. The datum may be implied by the metadata of the
+referenced dimension and auxiliary coordinate constructs, or
+explicitly provided.</li>
 </ul>
 <ul class="simple">
 <li>A coordinate conversion, which defines a formula for converting
-coordinate values taken from the dimension or auxiliary coordinate
-constructs to a different coordinate system. A coordinate reference
-construct relates the coordinate values of the field to locations in
-a planetary reference frame.</li>
+coordinate values taken from the dimension or auxiliary
+coordinate constructs to a different coordinate system. A
+coordinate reference construct relates the coordinate values of
+the field to locations in a planetary reference frame.</li>
 </ul>
 <p><strong>NetCDF interface</strong></p>
 <p>The netCDF grid mapping variable name of a coordinate reference
 construct may be accessed with the <a class="reference internal" href="../method/cf.CoordinateReference.nc_set_variable.html#cf.CoordinateReference.nc_set_variable" title="cf.CoordinateReference.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a>,
-<a class="reference internal" href="../method/cf.CoordinateReference.nc_get_variable.html#cf.CoordinateReference.nc_get_variable" title="cf.CoordinateReference.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a>, <a class="reference internal" href="../method/cf.CoordinateReference.nc_del_variable.html#cf.CoordinateReference.nc_del_variable" title="cf.CoordinateReference.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a> and <a class="reference internal" href="../method/cf.CoordinateReference.nc_has_variable.html#cf.CoordinateReference.nc_has_variable" title="cf.CoordinateReference.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_variable</span></code></a> methods.</p>
+<a class="reference internal" href="../method/cf.CoordinateReference.nc_get_variable.html#cf.CoordinateReference.nc_get_variable" title="cf.CoordinateReference.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a>, <a class="reference internal" href="../method/cf.CoordinateReference.nc_del_variable.html#cf.CoordinateReference.nc_del_variable" title="cf.CoordinateReference.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a> and <a class="reference internal" href="../method/cf.CoordinateReference.nc_has_variable.html#cf.CoordinateReference.nc_has_variable" title="cf.CoordinateReference.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_variable</span></code></a>
+methods.</p>
 <p><strong>Initialization</strong></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
