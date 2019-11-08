@@ -4341,8 +4341,8 @@ may be accessed with the `nc_global_attributes`,
             if (x is None or y is None or 
                 not x.Units.equivalent(_units_radians) or
                 not y.Units.equivalent(_units_radians)):
-                raise ValueError("Can't create cell areas: X or Y coordinates have incompatible units({!r}, {!r}). Expected units equivalent to radians".format(
-                    x.Units, y.Units))
+                raise ValueError("X or Y coordinates have incompatible units ({!r}, {!r}). Expected units equivalent to {!r}".format(
+                    x.Units, y.Units, _units_radians))
             
             # Got x and y coordinates in radians, so we can calculate.
     
