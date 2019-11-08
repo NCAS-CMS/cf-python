@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.3</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.4</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -90,7 +90,7 @@
 <h1>cf.Data.sd<a class="headerlink" href="#cf-data-sd" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Data.sd">
-<code class="descclassname">Data.</code><code class="descname">sd</code><span class="sig-paren">(</span><em>axes=None</em>, <em>squeeze=False</em>, <em>mtol=1</em>, <em>weights=None</em>, <em>ddof=1</em>, <em>inplace=False</em>, <em>i=False</em>, <em>_preserve_partitions=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.3/cf/data/data.py#L12004"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.sd" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Data.</code><code class="descname">sd</code><span class="sig-paren">(</span><em>axes=None</em>, <em>squeeze=False</em>, <em>mtol=1</em>, <em>weights=None</em>, <em>ddof=0</em>, <em>inplace=False</em>, <em>i=False</em>, <em>_preserve_partitions=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.4/cf/data/data.py#L12447"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.sd" title="Permalink to this definition">¶</a></dt>
 <dd><p>Collapse axes by calculating their standard deviation.</p>
 <blockquote>
 <div><p>The standard deviation may be adjusted for the number of degrees of
@@ -214,11 +214,7 @@ permitted.</p>
 <dt>ddof <span class="classifier-delimiter">:</span> <span class="classifier">number, optional</span></dt>
 <dd><p class="first last">The delta degrees of freedom. The number of degrees of
 freedom used in the calculation is (N-<em>ddof</em>) where N
-represents the number of elements. By default <em>ddof</em> is 1,
-meaning the standard deviation of the population is
-estimated according to the usual formula with (N-1) in the
-denominator to avoid the bias caused by the use of the
-sample mean (Bessel’s correction).</p>
+represents the number of elements. By default <em>ddof</em> is 0</p>
 </dd>
 <dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>

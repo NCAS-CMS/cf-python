@@ -819,8 +819,10 @@ cell_measure = cf.CellMeasure(measure='area',
                  data=cf.Data(numpy.arange(90.).reshape(9, 10)))
 
 tas.set_construct(cell_measure)
-   
+
 print(tas)
+q, t = cf.read('file.nc')
+print(q.creation_commands())
 import netCDF4
 nc = netCDF4.Dataset('file.nc', 'r')
 v = nc.variables['ta']
@@ -1286,7 +1288,7 @@ Y = P.set_construct(cf.DomainAxis(3))
 X = P.set_construct(cf.DomainAxis(2))
 
 # Set the data for the field
-P.set_data(cf.Data(array), axes=[T, Y, X])
+P.set_data(cf.Data(array), axes=[T, Y, X])			      
 
 P
 print(P.data.array)

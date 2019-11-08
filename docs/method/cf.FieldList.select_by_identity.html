@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.3</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.4</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -90,13 +90,14 @@
 <h1>cf.FieldList.select_by_identity<a class="headerlink" href="#cf-fieldlist-select-by-identity" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.FieldList.select_by_identity">
-<code class="descclassname">FieldList.</code><code class="descname">select_by_identity</code><span class="sig-paren">(</span><em>*identities</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.3/cf/fieldlist.py#L698"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.FieldList.select_by_identity" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">FieldList.</code><code class="descname">select_by_identity</code><span class="sig-paren">(</span><em>*identities</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.4/cf/fieldlist.py#L699"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.FieldList.select_by_identity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Select field constructs by identity.</p>
 <p>To find the inverse of the selection, use a list comprehension
-with <a class="reference internal" href="cf.Field.match_by_identity.html#cf.Field.match_by_identity" title="cf.Field.match_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_identity</span></code></a> method of the field
+with the <a class="reference internal" href="cf.Field.match_by_identity.html#cf.Field.match_by_identity" title="cf.Field.match_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_identity</span></code></a> method of the field
 constucts. For example, to select all field constructs whose
 identity is <em>not</em> <code class="docutils literal notranslate"><span class="pre">'air_temperature'</span></code>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gl</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">FieldList</span><span class="p">(</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fl</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">f</span><span class="o">.</span><span class="n">match_by_identity</span><span class="p">(</span><span class="s1">&#39;air_temperature&#39;</span><span class="p">))</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gl</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">FieldList</span><span class="p">(</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fl</span>
+<span class="gp">... </span>                  <span class="k">if</span> <span class="ow">not</span> <span class="n">f</span><span class="o">.</span><span class="n">match_by_identity</span><span class="p">(</span><span class="s1">&#39;air_temperature&#39;</span><span class="p">))</span>
 </pre></div>
 </div>
 <div class="versionadded">
@@ -104,10 +105,16 @@ identity is <em>not</em> <code class="docutils literal notranslate"><span class=
 </div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<dl class="last docutils">
-<dt><a class="reference internal" href="cf.FieldList.select.html#cf.FieldList.select" title="cf.FieldList.select"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select</span></code></a>, <a class="reference internal" href="cf.FieldList.select_by_units.html#cf.FieldList.select_by_units" title="cf.FieldList.select_by_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select_by_units</span></code></a>, <a class="reference internal" href="cf.FieldList.select_by_construct.html#cf.FieldList.select_by_construct" title="cf.FieldList.select_by_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select_by_construct</span></code></a>,</dt>
-<dd><a class="reference internal" href="cf.FieldList.select_by_naxes.html#cf.FieldList.select_by_naxes" title="cf.FieldList.select_by_naxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select_by_naxes</span></code></a>, <a class="reference internal" href="cf.FieldList.select_by_rank.html#cf.FieldList.select_by_rank" title="cf.FieldList.select_by_rank"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select_by_rank</span></code></a>,
-<a class="reference internal" href="cf.FieldList.select_by_property.html#cf.FieldList.select_by_property" title="cf.FieldList.select_by_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select_by_property</span></code></a>, <a class="reference internal" href="cf.Field.match_by_identity.html#cf.Field.match_by_identity" title="cf.Field.match_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.match_by_identity</span></code></a></dd>
+<p class="last"><a class="reference internal" href="cf.FieldList.select.html#cf.FieldList.select" title="cf.FieldList.select"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select</span></code></a>, <a class="reference internal" href="cf.FieldList.__call__.html#cf.FieldList.__call__" title="cf.FieldList.__call__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code></a>, <a class="reference internal" href="cf.FieldList.select_by_units.html#cf.FieldList.select_by_units" title="cf.FieldList.select_by_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select_by_units</span></code></a>,
+<a class="reference internal" href="cf.FieldList.select_by_construct.html#cf.FieldList.select_by_construct" title="cf.FieldList.select_by_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select_by_construct</span></code></a>, <a class="reference internal" href="cf.FieldList.select_by_naxes.html#cf.FieldList.select_by_naxes" title="cf.FieldList.select_by_naxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select_by_naxes</span></code></a>,
+<a class="reference internal" href="cf.FieldList.select_by_rank.html#cf.FieldList.select_by_rank" title="cf.FieldList.select_by_rank"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select_by_rank</span></code></a>, <a class="reference internal" href="cf.FieldList.select_by_property.html#cf.FieldList.select_by_property" title="cf.FieldList.select_by_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select_by_property</span></code></a>,
+<a class="reference internal" href="cf.Field.match_by_identity.html#cf.Field.match_by_identity" title="cf.Field.match_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.match_by_identity</span></code></a></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
 <dt>identities: optional</dt>
 <dd><p class="first">Select field constructs. By default all field constructs
 are selected. May be one or more of:</p>
@@ -127,7 +134,11 @@ identities are those returned by its <code class="xref py py-obj docutils litera
 method. In the following example, the construct <code class="docutils literal notranslate"><span class="pre">x</span></code> has
 five identities:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">identities</span><span class="p">()</span>
-<span class="go">[&#39;air_temperature&#39;, &#39;long_name=Air Temperature&#39;, &#39;foo=bar&#39;, &#39;standard_name=air_temperature&#39;, &#39;ncvar%tas&#39;]</span>
+<span class="go">[&#39;air_temperature&#39;,</span>
+<span class="go"> &#39;long_name=Air Temperature&#39;,</span>
+<span class="go"> &#39;foo=bar&#39;,</span>
+<span class="go"> &#39;standard_name=air_temperature&#39;,</span>
+<span class="go"> &#39;ncvar%tas&#39;]</span>
 </pre></div>
 </div>
 <p class="last">Note that in the output of a <a class="reference external" href="https://docs.python.org/3/library/functions.html#print" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a> call or <code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code>
@@ -136,12 +147,9 @@ identities, and so this description may always be used as
 an <em>identities</em> argument.</p>
 </dd>
 </dl>
-</div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
 <dt><a class="reference internal" href="../classes/cf.FieldList.html#cf.FieldList" title="cf.FieldList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FieldList</span></code></a></dt>
 <dd><p class="first last">The matching field constructs.</p>
 </dd>
@@ -154,7 +162,7 @@ an <em>identities</em> argument.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span>
 <span class="go">[&lt;CF Field: specific_humidity(latitude(73), longitude(96)) 1&gt;,</span>
 <span class="go"> &lt;CF Field: air_temperature(time(12), latitude(64), longitude(128)) K&gt;]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span><span class="p">(</span><span class="s1">&#39;air_temperature&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fl</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;air_temperature&#39;</span><span class="p">)</span>
 <span class="go">[&lt;CF Field: air_temperature(time(12), latitude(64), longitude(128)) K&gt;]</span>
 </pre></div>
 </div>

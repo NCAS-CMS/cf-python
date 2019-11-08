@@ -4073,9 +4073,9 @@ Command modification
 ^^^^^^^^^^^^^^^^^^^^
 
 It is sometimes convenient to produce the commands that would create
-an already exising field construct, and modify them to create the
+an already existing field construct, and modify them to create the
 desired field constuct. The commands are produced by the
-`~Field.creation_commands` metod of the existing field construct.
+`~Field.creation_commands` method of the existing field construct.
 
 .. code-block:: python
    :caption: *Create the commands that would create an exisiting field
@@ -5278,6 +5278,8 @@ Method                        Description                               Cell met
 ``'range'``                   The absolute difference between the       ``range``
                               maximum and the minimum of the values.
 			      
+``'median'``                  The median of the values.                 ``median`` 
+
 ``'sample_size'``             The sample size, :math:`N`, as would be   ``point``
                               used for other calculations, i.e. the
 			      number of non-missing values.
@@ -5343,7 +5345,11 @@ Method                        Description                               Cell met
 			      
                               .. math:: \hat{\mu}_{abs}=
                                              \frac{1}{V_{1}}
-					     \sum_{i=1}^{N} w_i |x_i|					
+					     \sum_{i=1}^{N} w_i |x_i|
+
+``'mean_of_upper_decile'``    The weighted or unweighted mean of the    ``mean_of_upper_decile``
+                              upper group of data values defined by
+                              the upper tenth of their distribution
 
 ``'variance'``                The unweighted variance of :math:`N`      ``variance``
                               values :math:`x_i` and with 
@@ -5459,6 +5465,8 @@ Method                        Description                   Weighted
                               between the maximum and the
                               minimum of the values.
                               
+``'median'``                  The median of the values.     Never
+                              
 ``'sum'``                     The sum of the values.        Never
                                                                         
 ``'sum_of_squares'``          The sum of the squares of     Never
@@ -5478,6 +5486,14 @@ Method                        Description                   Weighted
 
 ``'mean'``                    The weighted or unweighted    May be
                               mean of the values.
+
+``'mean_absolute_value'``     The mean of the absolute      May be
+                              values.
+			      
+``'mean_of_upper_decile'``    The mean of the upper group   May be
+                              of data values defined by
+			      the upper tenth of their
+			      distribution.
                               
 ``'variance'``                The weighted or unweighted    May be
                               variance of the values, with
@@ -5493,15 +5509,18 @@ Method                        Description                   Weighted
                               of the squares of the
                               values.
                               
-``'integral'``                The integral of values.       Always                                          
+``'integral'``                The integral of values.       Always
 ============================  ============================  ========
 
 
-Collapse methods that are "Never" weighted ignore the *weights*
-parameter, even if it is set. Collapse methods that "May be" weighted
-will only be weighted if the *weights* parameter is set. Collapse
-methods that are "Always" weighted require the *weights* parameter to
-be set.
+* Collapse methods that are "Never" weighted ignore the *weights*
+  parameter, even if it is set.
+
+* Collapse methods that "May be" weighted will only be weighted if the
+  *weights* parameter is set.
+
+* Collapse methods that are "Always" weighted require the *weights*
+  parameter to be set.
 
 Weights are either derived from the field construct's metadata (such
 as cell sizes), or may be provided explicitly in the form of other
@@ -5904,6 +5923,335 @@ method constructs.
                    : longitude(8) = [22.5, ..., 337.5] degrees_east
                    : air_pressure(1) = [850.0] hPa
 
+----
+   
+.. _ Other-statistical-operations:
+
+**Other statistical operations**
+--------------------------------
+
+.. _Cumulative-sums:
+
+Cumulative sums
+^^^^^^^^^^^^^^^
+
+The `~Field.cumsum` method of the field construct calculates the
+cumulative sum of elements along a given axis. The cell bounds of the
+axis are updated to describe the ranges over which the sums apply, and
+a new ``sum`` cell method construct is added to the resulting field
+construct.
+
+.. code-block:: python
+   :caption: *Calculate cumulative sums along the "T" axis, showing
+             the cell bounds before and after the operation.*
+   
+   >>> a = cf.read('timeseries.nc')[0]
+   >>> print(a)
+   Field: air_potential_temperature (ncvar%air_potential_temperature)
+   ------------------------------------------------------------------
+   Data            : air_potential_temperature(time(120), latitude(5), longitude(8)) K
+   Cell methods    : area: mean
+   Dimension coords: time(120) = [1959-12-16 12:00:00, ..., 1969-11-16 00:00:00]
+                   : latitude(5) = [-75.0, ..., 75.0] degrees_north
+                   : longitude(8) = [22.5, ..., 337.5] degrees_east
+                   : air_pressure(1) = [850.0] hPa
+   >>> b = a.cumsum('T')
+   >>> print(b)
+   Field: air_potential_temperature (ncvar%air_potential_temperature)
+   ------------------------------------------------------------------
+   Data            : air_potential_temperature(time(120), latitude(5), longitude(8)) K
+   Cell methods    : area: mean time(120): sum
+   Dimension coords: time(120) = [1959-12-16 12:00:00, ..., 1969-11-16 00:00:00]
+                   : latitude(5) = [-75.0, ..., 75.0] degrees_north
+                   : longitude(8) = [22.5, ..., 337.5] degrees_east
+                   : air_pressure(1) = [850.0] hPa
+   >>> print(a.coordinate('T').bounds[-1].dtarray)
+   [[cftime.DatetimeGregorian(1969-11-01 00:00:00)
+     cftime.DatetimeGregorian(1969-12-01 00:00:00))]]
+   >>> print(b.coordinate('T').bounds[-1].dtarray)
+   [[cftime.DatetimeGregorian(1959-11-01 00:00:00)
+     cftime.DatetimeGregorian(1969-12-01 00:00:00))]]
+
+The treatment of missing values can be specified, as well as the
+positioning of coordinate values in the summed axis of the returned
+field construct.
+
+.. _Histograms:
+
+Histograms
+^^^^^^^^^^
+
+The `cf.histogram` function is used to record the distribution of a
+set of variables in the form of an N-dimensional histogram.
+
+Each dimension of the histogram is defined by a field construct
+returned by the `~Field.digitize` method of a field construct. This
+"digitized" field construct defines a sequence of bins and provides
+indices to the bins that each value of one of the variables belongs.
+
+.. code-block:: python
+   :caption: *Create a one-dimensional histogram of a field construct
+             based on 10 equally-sized bins that exactly span the data
+             range.*
+   
+   >>> q, t = cf.read('file.nc')     
+   Field: specific_humidity (ncvar%q)
+   ----------------------------------
+   Data            : specific_humidity(latitude(5), longitude(8)) 1
+   Cell methods    : area: mean
+   Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                   : longitude(8) = [22.5, ..., 337.5] degrees_east
+                   : time(1) = [2019-01-01 00:00:00]       
+   >>> print(q.array)
+   [[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]
+    [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
+    [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
+    [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
+    [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]
+   >>> indices, bins = q.digitize(10, return_bins=True)
+   >>> print(indices)
+   Field: long_name=Bin index to which each 'specific_humidity' value belongs (ncvar%q)
+   ------------------------------------------------------------------------------------
+   Data            : long_name=Bin index to which each 'specific_humidity' value belongs(latitude(5), longitude(8))
+   Cell methods    : area: mean
+   Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                   : longitude(8) = [22.5, ..., 337.5] degrees_eastg
+                   : time(1) = [2019-01-01 00:00:00]
+   >>> print(indices.array)
+   [[0 2 0 0 1 2 1 1]
+    [1 2 2 4 3 4 0 4]
+    [7 8 8 9 5 6 3 0]
+    [1 3 2 4 3 4 0 0]
+    [0 2 1 2 1 2 2 0]]
+   >>> print(bins.array)
+   [[0.003  0.0173]
+    [0.0173 0.0316]
+    [0.0316 0.0459]
+    [0.0459 0.0602]
+    [0.0602 0.0745]
+    [0.0745 0.0888]
+    [0.0888 0.1031]
+    [0.1031 0.1174]
+    [0.1174 0.1317]
+    [0.1317 0.146 ]]
+   >>> h = cf.histogram(indices)                             
+   >>> print(h) 
+   Field: number_of_observations
+   -----------------------------
+   Data            : number_of_observations(specific_humidity(10)) 1
+   Cell methods    : latitude: longitude: point
+   Dimension coords: specific_humidity(10) = [10.15, ..., 138.85000000000002] 1
+   >>> print(h.array)
+   [9 7 9 4 5 1 1 1 2 1]
+   >>> print(h.coordinate('specific_humidity').bounds.array)
+   [[0.003  0.0173]
+    [0.0173 0.0316]
+    [0.0316 0.0459]
+    [0.0459 0.0602]
+    [0.0602 0.0745]
+    [0.0745 0.0888]
+    [0.0888 0.1031]
+    [0.1031 0.1174]
+    [0.1174 0.1317]
+    [0.1317 0.146 ]]
+
+.. _Binning-operations:
+
+Binning operations
+^^^^^^^^^^^^^^^^^^
+
+The `~Field.bin` method of the field construct groups its data into
+bins, where each group is defined by the elements that correspond to
+an :ref:`N-dimensionsal histogram bin of another set of variables
+<Histograms>`, and collapses the elements in each group to a single
+representative value. The same :ref:`collapse methods
+<Collapse-methods>` and :ref:`weighting options <Collapse-weights>` as
+the `~Field.collapse` method are available.
+
+The result of the binning operation is a field construct whose domain
+axis and dimension coordinate constructs describe the sizes of the
+N-dimensional bins of the other set of variables.
+
+.. code-block:: python
+   :caption: *Find the range of values that lie in each of bin 10
+             equally-sized bins of the data itself.*
+
+   >>> q, t = cf.read('file.nc')     
+   Field: specific_humidity (ncvar%q)
+   ----------------------------------
+   Data            : specific_humidity(latitude(5), longitude(8)) 0.001 1
+   Cell methods    : area: mean
+   Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                   : longitude(8) = [22.5, ..., 337.5] degrees_east
+                   : time(1) = [2019-01-01 00:00:00]       
+   >>> print(q.array)
+   [[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]
+    [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
+    [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
+    [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
+    [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]
+   >>> indices = q.digitize(5)                                             
+   >>> b = q.bin('range', digitized=indices)                             
+   >>> print(b)                                    
+   Field: specific_humidity
+   ------------------------
+   Data            : specific_humidity(specific_humidity(5)) 1
+   Cell methods    : latitude: longitude: range
+   Dimension coords: specific_humidity(5) = [0.0173, ..., 0.1317] 1
+   >>> print(b.array)
+   [0.026 0.025 0.025 0.007 0.022]  
+   >>> print(b.coordinate('specific_humidity').bounds.array)
+   [[0.003  0.0316]
+    [0.0316 0.0602]
+    [0.0602 0.0888]
+    [0.0888 0.1174]
+    [0.1174 0.146 ]]
+
+.. code-block:: python
+   :caption: *Find the area-weighted mean of specific humidity values
+             that correspond to two-dimensional bins defined by
+             temperature and pressure values.*
+
+   >>> p, t = cf.read('file2.nc')
+   >>> print(t)
+   Field: air_temperature (ncvar%t)
+   --------------------------------
+   Data            : air_temperature(latitude(5), longitude(8)) degreesC
+   Cell methods    : area: mean
+   Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                   : longitude(8) = [22.5, ..., 337.5] degrees_east
+                   : time(1) = [2019-01-01 00:00:00]
+   >>> print(p)      
+   Field: air_pressure (ncvar%p)
+   -----------------------------
+   Data            : air_pressure(latitude(5), longitude(8)) hPa
+   Cell methods    : area: mean
+   Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                   : longitude(8) = [22.5, ..., 337.5] degrees_east
+                   : time(1) = [2019-01-01 00:00:00]
+   >>> t_indices = t.digitize(4)
+   >>> p_indices = p.digitize(6)
+   >>> b = q.bin('mean', digitized=[t_indices, p_indices], weights='area')  
+   >>> print(b)
+   Field: specific_humidity
+   ------------------------
+   Data            : specific_humidity(air_pressure(6), air_temperature(4)) 1
+   Cell methods    : latitude: longitude: mean
+   Dimension coords: air_pressure(6) = [966.6225003326126, ..., 1033.6456080043665] hPa
+                   : air_temperature(4) = [-12.735821567738295, ..., 9.9702610462581] degreesC
+   >>> print(b.array)
+   [[     --       --       --  0.011  ]
+    [0.131    0.0145   0.0345   0.05052]
+    [0.05742  0.01727  0.06392  0.0105 ]
+    [     --  0.04516  0.05272  0.10194]
+    [0.124    0.024    0.059    0.006  ]
+    [     --  0.08971       --       --]]
+
+
+.. _Percentiles:
+
+Percentiles
+^^^^^^^^^^^
+
+Percentiles of the data can be computed along any subset of the axes
+with the `~Field.percentile` method fof the field construct.
+
+.. code-block:: python
+   :caption: *Find the 20th, 40th, 50th, 60th and 80th percentiles.*
+
+   >>> q, t = cf.read('file.nc')
+   >>> print(q)
+   Field: specific_humidity
+   ------------------------
+   Data            : specific_humidity(latitude(5), longitude(8)) 1
+   Cell methods    : area: mean
+   Dimension coords: time(1) = [2019-01-01 00:00:00]
+                   : latitude(5) = [-75.0, ..., 75.0] degrees_north
+                   : longitude(8) = [22.5, ..., 337.5] degrees_east
+   >>> print(q.array)
+   [[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]
+    [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
+    [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
+    [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
+    [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]
+   >>> p = q.percentile([20, 40, 50, 60, 80])
+   >>> print(p)
+   Field: specific_humidity
+   ------------------------
+   Data            : specific_humidity(long_name=Percentile ranks for latitude, longitude dimensions(5), latitude(1), longitude(1)) 1
+   Dimension coords: time(1) = [2019-01-01 00:00:00]
+                   : latitude(1) = [0.0] degrees_north
+                   : longitude(1) = [180.0] degrees_east
+                   : long_name=Percentile ranks for latitude, longitude dimensions(5) = [20, ..., 80]
+   >>> print(p.array)
+   [[[0.0164]]
+    [[0.032 ]]
+    [[0.036 ]]
+    [[0.0414]]
+    [[0.0704]]]
+
+.. code-block:: python
+   :caption: *Find the standard deviation of the values above the 80th
+             percentile.*
+
+   >>> p80 = q.percentile(80)
+   >>> print(p80)
+   Field: specific_humidity
+   ------------------------
+   Data            : specific_humidity(latitude(1), longitude(1)) 1
+   Dimension coords: time(1) = [2019-01-01 00:00:00]
+                   : latitude(1) = [0.0] degrees_north
+                   : longitude(1) = [180.0] degrees_east
+                   : long_name=Percentile ranks for latitude, longitude dimensions(1) = [80]
+   >>> g = q.where(q<=p80, cf.masked)
+   >>> print(g.array)
+   [[  --    --    --    --    --    -- -- --]
+    [  --    --    --    --    -- 0.073 -- --]
+    [0.11 0.131 0.124 0.146 0.087 0.103 -- --]
+    [  --    --    --    --    -- 0.072 -- --]
+    [  --    --    --    --    --    -- -- --]]
+   >>> g.collapse('standard_deviation', weights='area').data
+   <CF Data(1, 1): [[0.024609938742357642]] 1>
+
+.. code-block:: python
+   :caption: *Find the mean of the values above the 45th percentile
+             along the X axis.*
+
+   >>> p45 = q.percentile(45, axes='X')
+   >>> print(p45.array)
+   [[0.0189 ]
+    [0.04515]
+    [0.10405]
+    [0.04185]
+    [0.02125]]
+   >>> g = q.where(q<=p45, cf.masked)
+   >>> print(g.array)
+   [[  -- 0.034    --    --    -- 0.037 0.024 0.029]
+    [  --    --    -- 0.062 0.046 0.073    -- 0.066]
+    [0.11 0.131 0.124 0.146    --    --    --    --]
+    [  -- 0.059    -- 0.07  0.058 0.072    --    --]
+    [  -- 0.036    -- 0.035   --  0.037 0.034    --]]
+   >>> print(g.collapse('X: mean', weights='X').array)
+   [[0.031  ]
+    [0.06175]
+    [0.12775]
+    [0.06475]
+    [0.0355 ]]
+
+.. code-block:: python
+   :caption: *Find the histogram bin boundaries associated with given
+             percentiles, and digitize the data based on these bins.*
+
+   >>> bins = q.percentile([0, 10, 50, 90, 100], squeeze=True)
+   >>> print(bins.array)
+   [0.003  0.0088 0.036  0.1037 0.146 ]
+   >>> i = q.digitize(bins, closed_ends=True)
+   >>> print(i.array)
+   [[0 1 0 1 1 2 1 1]
+    [1 2 2 2 2 2 0 2]
+    [3 3 3 3 2 2 2 1]
+    [1 2 2 2 2 2 1 1]
+    [0 2 1 1 1 2 1 1]]
 
 ----
 
@@ -6776,223 +7124,6 @@ is inserted at the edges by default; otherwise it may be forced to
 wrap around, or a one-sided difference is calculated at the edges. If
 the longitudinal axis is :ref:`cyclic <Cyclic-domain-axes>` then the
 derivative wraps around by default.
-
-.. _Cumulative-sums:
-
-Cumulative sums
-^^^^^^^^^^^^^^^
-
-The `~Field.cumsum` method of the field construct calculates the
-cumulative sum of elements along a given axis. The cell bounds of the
-axis are updated to describe the ranges over which the sums apply, and
-a new ``sum`` cell method construct is added to the resulting field
-construct.
-
-.. code-block:: python
-   :caption: *Calculate cumulative sums along the "T" axis, showing
-             the cell bounds before and after the operation.*
-   
-   >>> a = cf.read('timeseries.nc')[0]
-   >>> print(a)
-   Field: air_potential_temperature (ncvar%air_potential_temperature)
-   ------------------------------------------------------------------
-   Data            : air_potential_temperature(time(120), latitude(5), longitude(8)) K
-   Cell methods    : area: mean
-   Dimension coords: time(120) = [1959-12-16 12:00:00, ..., 1969-11-16 00:00:00]
-                   : latitude(5) = [-75.0, ..., 75.0] degrees_north
-                   : longitude(8) = [22.5, ..., 337.5] degrees_east
-                   : air_pressure(1) = [850.0] hPa
-   >>> b = a.cumsum('T')
-   >>> print(b)
-   Field: air_potential_temperature (ncvar%air_potential_temperature)
-   ------------------------------------------------------------------
-   Data            : air_potential_temperature(time(120), latitude(5), longitude(8)) K
-   Cell methods    : area: mean time(120): sum
-   Dimension coords: time(120) = [1959-12-16 12:00:00, ..., 1969-11-16 00:00:00]
-                   : latitude(5) = [-75.0, ..., 75.0] degrees_north
-                   : longitude(8) = [22.5, ..., 337.5] degrees_east
-                   : air_pressure(1) = [850.0] hPa
-   >>> print(a.coordinate('T').bounds[-1].dtarray)
-   [[cftime.DatetimeGregorian(1969-11-01 00:00:00)
-     cftime.DatetimeGregorian(1969-12-01 00:00:00))]]
-   >>> print(b.coordinate('T').bounds[-1].dtarray)
-   [[cftime.DatetimeGregorian(1959-11-01 00:00:00)
-     cftime.DatetimeGregorian(1969-12-01 00:00:00))]]
-
-The treatment of missing values can be specified, as well as the
-positioning of coordinate values in the summed axis of the returned
-field construct.
-
-.. _Histograms:
-
-Histograms
-^^^^^^^^^^
-
-The `cf.histogram` function is used to record the distribution of a
-set of variables in the form of an N-dimensional histogram.
-
-Each dimension of the histogram is defined by a field construct
-returned by the `~Field.digitize` method of a field construct. This
-"digitized" field construct defines a sequence of bins and provides
-indices to the bins that each value of one of the variables belongs.
-
-.. code-block:: python
-   :caption: *Create a one-dimensional histogram of a field construct
-             based on 10 equally-sized bins that exactly span the data
-             range.*
-   
-   >>> q, t = cf.read('file.nc')     
-   Field: specific_humidity (ncvar%q)
-   ----------------------------------
-   Data            : specific_humidity(latitude(5), longitude(8)) 1
-   Cell methods    : area: mean
-   Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
-                   : longitude(8) = [22.5, ..., 337.5] degrees_east
-                   : time(1) = [2019-01-01 00:00:00]       
-   >>> print(q.array)
-   [[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]
-    [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
-    [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
-    [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
-    [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]
-   >>> indices, bins = q.digitize(10, return_bins=True)
-   >>> print(indices)
-   Field: long_name=Bin index to which each 'specific_humidity' value belongs (ncvar%q)
-   ------------------------------------------------------------------------------------
-   Data            : long_name=Bin index to which each 'specific_humidity' value belongs(latitude(5), longitude(8))
-   Cell methods    : area: mean
-   Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
-                   : longitude(8) = [22.5, ..., 337.5] degrees_eastg
-                   : time(1) = [2019-01-01 00:00:00]
-   >>> print(indices.array)
-   [[0 2 0 0 1 2 1 1]
-    [1 2 2 4 3 4 0 4]
-    [7 8 8 9 5 6 3 0]
-    [1 3 2 4 3 4 0 0]
-    [0 2 1 2 1 2 2 0]]
-   >>> print(bins.array)
-   [[0.003  0.0173]
-    [0.0173 0.0316]
-    [0.0316 0.0459]
-    [0.0459 0.0602]
-    [0.0602 0.0745]
-    [0.0745 0.0888]
-    [0.0888 0.1031]
-    [0.1031 0.1174]
-    [0.1174 0.1317]
-    [0.1317 0.146 ]]
-   >>> h = cf.histogram(indices)                             
-   >>> print(h) 
-   Field: number_of_observations
-   -----------------------------
-   Data            : number_of_observations(specific_humidity(10)) 1
-   Cell methods    : latitude: longitude: point
-   Dimension coords: specific_humidity(10) = [10.15, ..., 138.85000000000002] 1
-   >>> print(h.array)
-   [9 7 9 4 5 1 1 1 2 1]
-   >>> print(h.coordinate('specific_humidity').bounds.array)
-   [[0.003  0.0173]
-    [0.0173 0.0316]
-    [0.0316 0.0459]
-    [0.0459 0.0602]
-    [0.0602 0.0745]
-    [0.0745 0.0888]
-    [0.0888 0.1031]
-    [0.1031 0.1174]
-    [0.1174 0.1317]
-    [0.1317 0.146 ]]
-
-.. _Binning-operations:
-
-Binning operations
-^^^^^^^^^^^^^^^^^^
-
-The `~Field.bin` method of the field construct groups its data into
-bins, where each group is defined by the elements that correspond to
-an :ref:`N-dimensionsal histogram bin of another set of variables
-<Histograms>`, and collapses the elements in each group to a single
-representative value. The same :ref:`collapse methods
-<Collapse-methods>` and :ref:`weighting options <Collapse-weights>` as
-the `~Field.collapse` method are available.
-
-The result of the binning operation is a field construct whose domain
-axis and dimension coordinate constructs describe the sizes of the
-N-dimensional bins of the other set of variables.
-
-.. code-block:: python
-   :caption: *Find the range of values that lie in each of bin 10
-             equally-sized bins of the data itself.*
-
-   >>> q, t = cf.read('file.nc')     
-   Field: specific_humidity (ncvar%q)
-   ----------------------------------
-   Data            : specific_humidity(latitude(5), longitude(8)) 0.001 1
-   Cell methods    : area: mean
-   Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
-                   : longitude(8) = [22.5, ..., 337.5] degrees_east
-                   : time(1) = [2019-01-01 00:00:00]       
-   >>> print(q.array)
-   [[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]
-    [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
-    [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
-    [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
-    [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]
-   >>> indices = q.digitize(5)                                             
-   >>> b = q.bin('range', digitized=indices)                             
-   >>> print(b)                                    
-   Field: specific_humidity
-   ------------------------
-   Data            : specific_humidity(specific_humidity(5)) 1
-   Cell methods    : latitude: longitude: range
-   Dimension coords: specific_humidity(5) = [0.0173, ..., 0.1317] 1
-   >>> print(b.array)
-   [0.026 0.025 0.025 0.007 0.022]  
-   >>> print(b.coordinate('specific_humidity').bounds.array)
-   [[0.003  0.0316]
-    [0.0316 0.0602]
-    [0.0602 0.0888]
-    [0.0888 0.1174]
-    [0.1174 0.146 ]]
-
-.. code-block:: python
-   :caption: *Find the area-weighted mean of specific humidity values
-             that correspond to two-dimensional bins defined by
-             temperature and pressure values.*
-
-   >>> p, t = cf.read('file2.nc')
-   >>> print(t)
-   Field: air_temperature (ncvar%t)
-   --------------------------------
-   Data            : air_temperature(latitude(5), longitude(8)) degreesC
-   Cell methods    : area: mean
-   Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
-                   : longitude(8) = [22.5, ..., 337.5] degrees_east
-                   : time(1) = [2019-01-01 00:00:00]
-   >>> print(p)      
-   Field: air_pressure (ncvar%p)
-   -----------------------------
-   Data            : air_pressure(latitude(5), longitude(8)) hPa
-   Cell methods    : area: mean
-   Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
-                   : longitude(8) = [22.5, ..., 337.5] degrees_east
-                   : time(1) = [2019-01-01 00:00:00]
-   >>> t_indices = t.digitize(4)
-   >>> p_indices = p.digitize(6)
-   >>> b = q.bin('mean', digitized=[t_indices, p_indices], weights='area')  
-   >>> print(b)
-   Field: specific_humidity
-   ------------------------
-   Data            : specific_humidity(air_pressure(6), air_temperature(4)) 1
-   Cell methods    : latitude: longitude: mean
-   Dimension coords: air_pressure(6) = [966.6225003326126, ..., 1033.6456080043665] hPa
-                   : air_temperature(4) = [-12.735821567738295, ..., 9.9702610462581] degreesC
-   >>> print(b.array)
-   [[     --       --       --  0.011  ]
-    [0.131    0.0145   0.0345   0.05052]
-    [0.05742  0.01727  0.06392  0.0105 ]
-    [     --  0.04516  0.05272  0.10194]
-    [0.124    0.024    0.059    0.006  ]
-    [     --  0.08971       --       --]]
 
 ----
   

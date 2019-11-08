@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.3</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.4</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -89,19 +89,21 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.Datum">
-<em class="property">class </em><code class="descclassname">cf.</code><code class="descname">Datum</code><span class="sig-paren">(</span><em>parameters=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.3/cf/datum.py#L4"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Datum" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cf.</code><code class="descname">Datum</code><span class="sig-paren">(</span><em>parameters=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.4/cf/datum.py#L4"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Datum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.datum.Datum</span></code></p>
 <p>A datum component of a coordinate reference construct of the CF
 data model.</p>
 <p>A datum is a complete or partial definition of the zeroes of the
 dimension and auxiliary coordinate constructs which define a
 coordinate system.</p>
-<p>The datum may contain the definition of a geophysical surface which
-corresponds to the zero of a vertical coordinate construct, and this
-may be required for both horizontal and vertical coordinate systems.</p>
-<p>Elements of the datum not specified may be implied by the properties
-of the dimension and auxiliary coordinate constructs referenced by the
-<a class="reference internal" href="cf.CoordinateReference.html#cf.CoordinateReference" title="cf.CoordinateReference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.CoordinateReference</span></code></a> instance that contains the datum.</p>
+<p>The datum may contain the definition of a geophysical surface
+which corresponds to the zero of a vertical coordinate construct,
+and this may be required for both horizontal and vertical
+coordinate systems.</p>
+<p>Elements of the datum not specified may be implied by the
+properties of the dimension and auxiliary coordinate constructs
+referenced by the <a class="reference internal" href="cf.CoordinateReference.html#cf.CoordinateReference" title="cf.CoordinateReference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.CoordinateReference</span></code></a> instance that contains
+the datum.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 3.0.0.</span></p>
 </div>

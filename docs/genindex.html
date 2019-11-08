@@ -31,7 +31,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="index.html">cf 3.0.3</a></b></h3>
+<h3><b><a href="index.html">cf 3.0.4</a></b></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -2474,6 +2474,12 @@
 </li>
       <li><a href="method/cf.DimensionCoordinate.create_bounds.html#cf.DimensionCoordinate.create_bounds">create_bounds() (cf.DimensionCoordinate method)</a>
 </li>
+      <li><a href="method/cf.Data.creation_commands.html#cf.Data.creation_commands">creation_commands() (cf.Data method)</a>
+
+      <ul>
+        <li><a href="method/cf.Field.creation_commands.html#cf.Field.creation_commands">(cf.Field method)</a>
+</li>
+      </ul></li>
       <li><a href="attribute/cf.AuxiliaryCoordinate.ctype.html#cf.AuxiliaryCoordinate.ctype">ctype (cf.AuxiliaryCoordinate attribute)</a>
 
       <ul>
@@ -2994,6 +3000,8 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="method/cf.Query.evaluate.html#cf.Query.evaluate">evaluate() (cf.Query method)</a>
 </li>
+      <li><a href="method/cf.Field.example_field.html#cf.Field.example_field">example_field() (cf.Field class method)</a>
+</li>
       <li><a href="method/cf.AuxiliaryCoordinate.exp.html#cf.AuxiliaryCoordinate.exp">exp() (cf.AuxiliaryCoordinate method)</a>
 
       <ul>
@@ -3118,6 +3126,8 @@
         <li><a href="method/cf.List.fill_value.html#cf.List.fill_value">(cf.List method)</a>
 </li>
       </ul></li>
+      <li><a href="method/cf.Data.filled.html#cf.Data.filled">filled() (cf.Data method)</a>
+</li>
       <li><a href="method/cf.Constructs.filter_by_axis.html#cf.Constructs.filter_by_axis">filter_by_axis() (cf.Constructs method)</a>
 </li>
       <li><a href="method/cf.Constructs.filter_by_data.html#cf.Constructs.filter_by_data">filter_by_data() (cf.Constructs method)</a>
@@ -3140,10 +3150,10 @@
 </li>
       <li><a href="method/cf.Constructs.filter_by_size.html#cf.Constructs.filter_by_size">filter_by_size() (cf.Constructs method)</a>
 </li>
-      <li><a href="method/cf.Constructs.filter_by_type.html#cf.Constructs.filter_by_type">filter_by_type() (cf.Constructs method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="method/cf.Constructs.filter_by_type.html#cf.Constructs.filter_by_type">filter_by_type() (cf.Constructs method)</a>
+</li>
       <li><a href="method/cf.Constructs.filters_applied.html#cf.Constructs.filters_applied">filters_applied() (cf.Constructs method)</a>
 </li>
       <li><a href="method/cf.Data.first_element.html#cf.Data.first_element">first_element() (cf.Data method)</a>
@@ -3810,7 +3820,7 @@
       </ul></li>
       <li><a href="attribute/cf.Field.institution.html#cf.Field.institution">institution (cf.Field attribute)</a>
 </li>
-      <li><a href="attribute/cf.CellMethod.interval.html#cf.CellMethod.interval">interval (cf.CellMethod attribute)</a>
+      <li><a href="method/cf.Data.integral.html#cf.Data.integral">integral() (cf.Data method)</a>
 </li>
       <li><a href="method/cf.TimeDuration.interval.html#cf.TimeDuration.interval">interval() (cf.TimeDuration method)</a>
 </li>
@@ -4268,6 +4278,8 @@
         <li><a href="method/cf.List.max.html#cf.List.max">(cf.List method)</a>
 </li>
       </ul></li>
+      <li><a href="method/cf.Data.maximum_absolute_value.html#cf.Data.maximum_absolute_value">maximum_absolute_value() (cf.Data method)</a>
+</li>
       <li><a href="method/cf.AuxiliaryCoordinate.mean.html#cf.AuxiliaryCoordinate.mean">mean() (cf.AuxiliaryCoordinate method)</a>
 
       <ul>
@@ -4292,11 +4304,15 @@
         <li><a href="method/cf.List.mean.html#cf.List.mean">(cf.List method)</a>
 </li>
       </ul></li>
+      <li><a href="method/cf.Data.mean_of_upper_decile.html#cf.Data.mean_of_upper_decile">mean_of_upper_decile() (cf.Data method)</a>
+</li>
       <li><a href="attribute/cf.CellMeasure.measure.html#cf.CellMeasure.measure">measure (cf.CellMeasure attribute)</a>
 </li>
       <li><a href="method/cf.Field.measure.html#cf.Field.measure">measure() (cf.Field method)</a>
 </li>
       <li><a href="method/cf.Field.measures.html#cf.Field.measures">measures() (cf.Field method)</a>
+</li>
+      <li><a href="method/cf.Data.median.html#cf.Data.median">median() (cf.Data method)</a>
 </li>
       <li><a href="attribute/cf.CellMethod.method.html#cf.CellMethod.method">method (cf.CellMethod attribute)</a>
 </li>
@@ -4348,6 +4364,8 @@
         <li><a href="method/cf.List.min.html#cf.List.min">(cf.List method)</a>
 </li>
       </ul></li>
+      <li><a href="method/cf.Data.minimum_absolute_value.html#cf.Data.minimum_absolute_value">minimum_absolute_value() (cf.Data method)</a>
+</li>
       <li><a href="attribute/cf.AuxiliaryCoordinate.minute.html#cf.AuxiliaryCoordinate.minute">minute (cf.AuxiliaryCoordinate attribute)</a>
 
       <ul>
@@ -4776,6 +4794,12 @@
 </li>
       <li><a href="function/cf.pathjoin.html#cf.pathjoin">pathjoin() (in module cf)</a>
 </li>
+      <li><a href="method/cf.Data.percentile.html#cf.Data.percentile">percentile() (cf.Data method)</a>
+
+      <ul>
+        <li><a href="method/cf.Field.percentile.html#cf.Field.percentile">(cf.Field method)</a>
+</li>
+      </ul></li>
       <li><a href="method/cf.DimensionCoordinate.period.html#cf.DimensionCoordinate.period">period() (cf.DimensionCoordinate method)</a>
 
       <ul>
@@ -4966,6 +4990,8 @@
         <li><a href="method/cf.List.roll.html#cf.List.roll">(cf.List method)</a>
 </li>
       </ul></li>
+      <li><a href="method/cf.Data.root_mean_square.html#cf.Data.root_mean_square">root_mean_square() (cf.Data method)</a>
+</li>
       <li><a href="method/cf.AuxiliaryCoordinate.round.html#cf.AuxiliaryCoordinate.round">round() (cf.AuxiliaryCoordinate method)</a>
 
       <ul>
@@ -5119,6 +5145,8 @@
       <li><a href="method/cf.FieldList.select_by_rank.html#cf.FieldList.select_by_rank">select_by_rank() (cf.FieldList method)</a>
 </li>
       <li><a href="method/cf.FieldList.select_by_units.html#cf.FieldList.select_by_units">select_by_units() (cf.FieldList method)</a>
+</li>
+      <li><a href="method/cf.FieldList.select_field.html#cf.FieldList.select_field">select_field() (cf.FieldList method)</a>
 </li>
       <li><a href="function/cf.set.html#cf.set">set() (in module cf)</a>
 </li>
@@ -5474,6 +5502,8 @@
         <li><a href="method/cf.List.sum.html#cf.List.sum">(cf.List method)</a>
 </li>
       </ul></li>
+      <li><a href="method/cf.Data.sum_of_squares.html#cf.Data.sum_of_squares">sum_of_squares() (cf.Data method)</a>
+</li>
       <li><a href="method/cf.Data.sum_of_weights.html#cf.Data.sum_of_weights">sum_of_weights() (cf.Data method)</a>
 </li>
       <li><a href="method/cf.Data.sum_of_weights2.html#cf.Data.sum_of_weights2">sum_of_weights2() (cf.Data method)</a>

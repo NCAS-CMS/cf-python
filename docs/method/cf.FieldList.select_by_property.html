@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.3</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.4</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -90,13 +90,14 @@
 <h1>cf.FieldList.select_by_property<a class="headerlink" href="#cf-fieldlist-select-by-property" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.FieldList.select_by_property">
-<code class="descclassname">FieldList.</code><code class="descname">select_by_property</code><span class="sig-paren">(</span><em>*mode</em>, <em>**properties</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.3/cf/fieldlist.py#L852"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.FieldList.select_by_property" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">FieldList.</code><code class="descname">select_by_property</code><span class="sig-paren">(</span><em>*mode</em>, <em>**properties</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.4/cf/fieldlist.py#L861"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.FieldList.select_by_property" title="Permalink to this definition">¶</a></dt>
 <dd><p>Select field constructs by property.</p>
 <p>To find the inverse of the selection, use a list comprehension
 with <a class="reference internal" href="cf.Field.match_by_property.html#cf.Field.match_by_property" title="cf.Field.match_by_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_property</span></code></a> method of the field
 constucts. For example, to select all field constructs which do
 <em>not</em> have a long_name property of ‘Air Pressure’:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gl</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">FieldList</span><span class="p">(</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fl</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">f</span><span class="o">.</span><span class="n">match_by_property</span><span class="p">(</span><span class="n">long_name</span><span class="o">=</span><span class="s1">&#39;Air Pressure))</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gl</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">FieldList</span><span class="p">(</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fl</span>
+<span class="gp">... </span>                  <span class="k">if</span> <span class="ow">not</span> <span class="n">f</span><span class="o">.</span><span class="n">match_by_property</span><span class="p">(</span><span class="n">long_name</span><span class="o">=</span><span class="s1">&#39;Air Pressure))</span>
 </pre></div>
 </div>
 <div class="versionadded">

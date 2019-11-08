@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.3</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.4</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -90,7 +90,7 @@
 <h1>cf.Field.collapse<a class="headerlink" href="#cf-field-collapse" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.collapse">
-<code class="descclassname">Field.</code><code class="descname">collapse</code><span class="sig-paren">(</span><em>method</em>, <em>axes=None</em>, <em>squeeze=False</em>, <em>mtol=1</em>, <em>weights=None</em>, <em>ddof=1</em>, <em>a=None</em>, <em>inplace=False</em>, <em>group=None</em>, <em>regroup=False</em>, <em>within_days=None</em>, <em>within_years=None</em>, <em>over_days=None</em>, <em>over_years=None</em>, <em>coordinate='mid_range'</em>, <em>group_by='coords'</em>, <em>group_span=None</em>, <em>group_contiguous=None</em>, <em>measure=False</em>, <em>scale=None</em>, <em>radius='earth'</em>, <em>verbose=False</em>, <em>_create_zero_size_cell_bounds=False</em>, <em>_update_cell_methods=True</em>, <em>i=False</em>, <em>_debug=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.3/cf/field.py#L7073"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.collapse" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">collapse</code><span class="sig-paren">(</span><em>method</em>, <em>axes=None</em>, <em>squeeze=False</em>, <em>mtol=1</em>, <em>weights=None</em>, <em>ddof=1</em>, <em>a=None</em>, <em>inplace=False</em>, <em>group=None</em>, <em>regroup=False</em>, <em>within_days=None</em>, <em>within_years=None</em>, <em>over_days=None</em>, <em>over_years=None</em>, <em>coordinate='mid_range'</em>, <em>group_by='coords'</em>, <em>group_span=None</em>, <em>group_contiguous=None</em>, <em>measure=False</em>, <em>scale=None</em>, <em>radius='earth'</em>, <em>verbose=False</em>, <em>_create_zero_size_cell_bounds=False</em>, <em>_update_cell_methods=True</em>, <em>i=False</em>, <em>_debug=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.4/cf/field.py#L7079"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.collapse" title="Permalink to this definition">¶</a></dt>
 <dd><p>Collapse axes of the field.</p>
 <p>Collapsing one or more dimensions reduces their size and replaces
 the data along those axes with representative statistical
@@ -424,46 +424,58 @@ and the minimum of the
 values.</td>
 <td>Never</td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'range'</span></code></td>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'median'</span></code></td>
+<td>The median of the values.</td>
+<td>Never</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'range'</span></code></td>
 <td>The absolute difference
 between the maximum and the
 minimum of the values.</td>
 <td>Never</td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'sum'</span></code></td>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'sum'</span></code></td>
 <td>The sum of the values.</td>
 <td>Never</td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'sum_of_squares'</span></code></td>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'sum_of_squares'</span></code></td>
 <td>The sum of the squares of
 values.</td>
 <td>Never</td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'sample_size'</span></code></td>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'sample_size'</span></code></td>
 <td>The sample size, i.e. the
 number of non-missing
 values.</td>
 <td>Never</td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'sum_of_weights'</span></code></td>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'sum_of_weights'</span></code></td>
 <td>The sum of weights, as
 would be used for other
 calculations.</td>
 <td>Never</td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'sum_of_weights2'</span></code></td>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'sum_of_weights2'</span></code></td>
 <td>The sum of squares of
 weights, as would be used
 for other calculations.</td>
 <td>Never</td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'mean'</span></code></td>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'mean'</span></code></td>
 <td>The weighted or unweighted
 mean of the values.</td>
 <td>May be</td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'mean_absolute_value'</span></code></td>
-<td>The mean of the absolute.</td>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'mean_absolute_value'</span></code></td>
+<td>The mean of the absolute
+values.</td>
+<td>May be</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">'mean_of_upper_decile'</span></code></td>
+<td>The mean of the upper group
+of data values defined by
+the upper tenth of their
+distribution.</td>
 <td>May be</td>
 </tr>
 <tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">'variance'</span></code></td>
@@ -655,9 +667,9 @@ output data array. By default the axes which are collapsed
 are retained in the result’s data array.</p>
 </dd>
 <dt>mtol: number, optional        </dt>
-<dd><p class="first">Set the fraction of input array elements which is allowed
+<dd><p class="first">Set the fraction of input data elements which is allowed
 to contain missing data when contributing to an individual
-output array element. Where this fraction exceeds <em>mtol</em>,
+output data element. Where this fraction exceeds <em>mtol</em>,
 missing data is returned. The default is 1, meaning that a
 missing datum in the output array occurs when its
 contributing input array elements are all missing data. A

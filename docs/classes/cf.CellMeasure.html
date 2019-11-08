@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.3</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.4</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -89,24 +89,25 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.CellMeasure">
-<em class="property">class </em><code class="descclassname">cf.</code><code class="descname">CellMeasure</code><span class="sig-paren">(</span><em>measure=None</em>, <em>properties=None</em>, <em>data=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.3/cf/cellmeasure.py#L8"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.CellMeasure" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cf.</code><code class="descname">CellMeasure</code><span class="sig-paren">(</span><em>measure=None</em>, <em>properties=None</em>, <em>data=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.4/cf/cellmeasure.py#L8"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.CellMeasure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.cellmeasure.CellMeasure</span></code></p>
 <p>A cell measure construct of the CF data model.</p>
-<p>A cell measure construct provides information that is needed about the
-size or shape of the cells and that depends on a subset of the domain
-axis constructs. Cell measure constructs have to be used when the size
-or shape of the cells cannot be deduced from the dimension or
-auxiliary coordinate constructs without special knowledge that a
-generic application cannot be expected to have.</p>
-<p>The cell measure construct consists of a numeric array of the metric
-data which spans a subset of the domain axis constructs, and
-properties to describe the data. The cell measure construct specifies
-a “measure” to indicate which metric of the space it supplies,
-e.g. cell horizontal areas, and must have a units property consistent
-with the measure, e.g. square metres. It is assumed that the metric
-does not depend on axes of the domain which are not spanned by the
-array, along which the values are implicitly propagated. CF-netCDF
-cell measure variables correspond to cell measure constructs.</p>
+<p>A cell measure construct provides information that is needed about
+the size or shape of the cells and that depends on a subset of the
+domain axis constructs. Cell measure constructs have to be used
+when the size or shape of the cells cannot be deduced from the
+dimension or auxiliary coordinate constructs without special
+knowledge that a generic application cannot be expected to have.</p>
+<p>The cell measure construct consists of a numeric array of the
+metric data which spans a subset of the domain axis constructs,
+and properties to describe the data. The cell measure construct
+specifies a “measure” to indicate which metric of the space it
+supplies, e.g. cell horizontal areas, and must have a units
+property consistent with the measure, e.g. square metres. It is
+assumed that the metric does not depend on axes of the domain
+which are not spanned by the array, along which the values are
+implicitly propagated. CF-netCDF cell measure variables correspond
+to cell measure constructs.</p>
 <p><strong>NetCDF interface</strong></p>
 <p>The netCDF variable name of the construct may be accessed with the
 <a class="reference internal" href="../method/cf.CellMeasure.nc_set_variable.html#cf.CellMeasure.nc_set_variable" title="cf.CellMeasure.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a>, <a class="reference internal" href="../method/cf.CellMeasure.nc_get_variable.html#cf.CellMeasure.nc_get_variable" title="cf.CellMeasure.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a>, <a class="reference internal" href="../method/cf.CellMeasure.nc_del_variable.html#cf.CellMeasure.nc_del_variable" title="cf.CellMeasure.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a> and

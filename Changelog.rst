@@ -2,7 +2,7 @@ version 3.0.4
 -------------
 ----
 
-**2019-11-07**
+**2019-11-08**
 
 * New methods: `cf.Field.percentile`, `cf.Field.example_field`,
   `cf.Field.filled`, `cf.Field.creation_commands`.
@@ -202,7 +202,7 @@ version 2.2.6
 
 * Improved error messages
 * Changed behaviour when printing reference times with a calendar of
-  ``'none'`` - no longer attemps a to create a date-time
+  ``'none'`` - no longer attempts a to create a date-time
   representation
 	
 version 2.2.5
@@ -318,7 +318,7 @@ version 2.1.3
 
 **2018-02-07**
 
-* Allowed `scipy` and `matplotlib` imorts to be optional
+* Allowed `scipy` and `matplotlib` imports to be optional
 	
 version 2.1.2
 -------------
@@ -335,7 +335,7 @@ version 2.1.1
 
 **2017-11-10**
 
-* Dissallowed raising offset units to a power (e.g. taking the square
+* Disallowed raising offset units to a power (e.g. taking the square
   of data in units of K @ 273.15).
 * Removed len() of `cf.Field` (previously always, and misleadingly,
   returned 1)
@@ -381,7 +381,7 @@ version 2.0.4
   by default
 * Bug fix in `cf.Field.where`
 * Bug fix when initializing a field with the source parameter
-* Changed default ouptut format to NETCDF4 (from NETCDF3_CLASSIC)
+* Changed default output format to NETCDF4 (from NETCDF3_CLASSIC)
 
 version 2.0.1.post1
 -------------------
@@ -542,8 +542,8 @@ version 1.2.2
 **2016-08-22**
 
 * Fixed bug in binary operations to do with the setting of
-  Partition.part
-* Added TimeDuration functionality to get_bounds cellsizes
+  `Partition.part`
+* Added `cf.TimeDuration` functionality to get_bounds cellsizes
   parameter. Also new parameter flt ("fraction less than") to position
   the coordinate within the cell.
 
@@ -602,7 +602,7 @@ version 1.1.8
 * Slightly changed the compression API to `cf.write`
 * Added compression support to the ``cfa`` command line script
 * Added functionality to change data type on writing to `cf.write` and
-  ``cfa`` - both in general and for with extra convienience for the
+  ``cfa`` - both in general and for with extra convenience for the
   common case of double to single (and vice versa).
 * Removed annoying debug print statements from `cf.um.read.read`
 
@@ -613,7 +613,7 @@ version 1.1.7
 **2016-05-04**
 
 * Added fix for change in numpy behaviour (`numpy.number` types do not
-  support assingment)
+  support assignment)
 * Added capability to load in a user STASH to standard name table:
   `cf.um.read.load_stash2standard_name`
 	
@@ -638,8 +638,8 @@ version 1.1.5
 * Bug fix in `cf.Field.where` when using `cf.masked`
 * conda installation (with thanks to Andy Heaps)
 * Bug fix for type casting in `cf.Field.collapse`
-* Dispay long_name if it exists and there is no standard_name
-* Fix for compiling the UM C code on certiain OSs (with thanks to Simon Wilson)
+* Display long_name if it exists and there is no standard_name
+* Fix for compiling the UM C code on certain OSs (with thanks to Simon Wilson)
 * Fixed incorrect assignment of cyclicity in `cf.Field.regrids`
 * Nearest neighbour regridding in `cf.Field.regrids`
 	
@@ -721,7 +721,7 @@ version 1.0.3
 **2015-06-23**
 
 * Added default keyword to fill_value() and fixed bugs when doing
-  delattr on _fillValue and missinge_value properties.
+  delattr on _fillValue and missing_value properties.
 
 version 1.0.2 - 05 June 2015
 ----------------------------
@@ -743,7 +743,7 @@ version 1.0
 **2015-05-27**
 
 * Mac OS support
-* Limited Nd funtionality to `cf.Field.indices`
+* Limited Nd functionality to `cf.Field.indices`
 * Correct treatment of add_offset and scale_factor
 * Replaced -a with -x in ``cfa`` and ``cfdump`` scripts
 * added ncvar_identities parameter to `cf.aggregate`
@@ -751,7 +751,7 @@ version 1.0
 * Documentation
 * Improved API to match, select, items, axes, etc.
 * Reads UM fields files
-* Optimised readin PP and UM fields files
+* Optimised reading PP and UM fields files
 * `cf.collapse` replaced by `cf.Field.collapse`
 * `cf.Field.collapse` includes CF climatological time statistics
 
@@ -847,7 +847,7 @@ version 0.9.7
 * New command line utilities: ``cfa``, ``cfdump``
 * Redesigned repr, str and dump() output (which is shared with ``cfa``
   and ``cfdump``)
-* Removed superceded (by ``cfa``) command line utilities ``pp2cf``,
+* Removed superseded (by ``cfa``) command line utilities ``pp2cf``,
   ``cf2cf``
 * Renamed the 'subset' method to 'select'
 * Now needs netCDF4-python 0.9.7 or later (and numpy 1.6 or later)

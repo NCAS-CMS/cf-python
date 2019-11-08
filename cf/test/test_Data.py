@@ -95,7 +95,7 @@ class DataTest(unittest.TestCase):
 #                          'test_Data__collapse_SHAPE',
 ##                          'test_Data_range_mid_range',
 ##                          'test_Data_median',
-#                          'test_Data_mean_of_upper_decile',
+##                          'test_Data_mean_of_upper_decile',
 #        ]
         
 #        self.test_only = ['test_Data_mean_mean_absolute_value']

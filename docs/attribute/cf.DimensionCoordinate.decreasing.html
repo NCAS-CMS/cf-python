@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.3</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.4</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -91,8 +91,7 @@
 <dl class="attribute">
 <dt id="cf.DimensionCoordinate.decreasing">
 <code class="descclassname">DimensionCoordinate.</code><code class="descname">decreasing</code><a class="headerlink" href="#cf.DimensionCoordinate.decreasing" title="Permalink to this definition">¶</a></dt>
-<dd><p>True if the dimension coordinate is increasing, otherwise
-False.</p>
+<dd><p>True if the dimension coordinate is decreasing, otherwise False.</p>
 <p>A dimension coordinate is increasing if its coordinate values are
 increasing in index space.</p>
 <p>The direction is inferred from one of, in order of precedence:</p>
@@ -106,15 +105,15 @@ increasing in index space.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt>out <span class="classifier-delimiter">:</span> <span class="classifier">bool</span></dt>
-<dd><p class="first last">Whether or not the coordinate is increasing.</p>
+<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt>
+<dd><p class="first last">Whether or not the coordinate is decreasing.</p>
 </dd>
 </dl>
 </td>
 </tr>
 </tbody>
 </table>
-<p>True for dimension coordinate constructs, False otherwise.</p>
+<p><strong>Examples:</strong></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">decreasing</span>
 <span class="go">False</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">flip</span><span class="p">()</span><span class="o">.</span><span class="n">increasing</span>

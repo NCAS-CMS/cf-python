@@ -6105,6 +6105,8 @@ may be accessed with the `nc_global_attributes`,
             ``'range'``                   The absolute difference       Never
                                           between the maximum and the
                                           minimum of the values.
+
+            ``'median'``                  The median of the values.     Never
                                           
             ``'sum'``                     The sum of the values.        Never
                                                                                     
@@ -7375,6 +7377,8 @@ may be accessed with the `nc_global_attributes`,
                                           and the minimum of the
                                           values.
                                           
+            ``'median'``                  The median of the values.     Never
+
             ``'range'``                   The absolute difference       Never
                                           between the maximum and the
                                           minimum of the values.
@@ -14480,7 +14484,7 @@ may be accessed with the `nc_global_attributes`,
 
     **Examples:**
 
-    >>> f = cf.Field.example_field_1()
+    >>> f = cf.Field.example_field(1)
     >>> print(f)
     Field: specific_humidity
     ------------------------
