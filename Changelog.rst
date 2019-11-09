@@ -1,3 +1,13 @@
+version 3.0.5
+-------------
+----
+
+**Not yet released**
+
+* Fixed bug that omitted bounds having their units changed by
+  `override_units` and `override calendar`
+  (https://github.com/NCAS-CMS/cf-python/issues/13).
+
 version 3.0.4
 -------------
 ----

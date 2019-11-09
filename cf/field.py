@@ -5198,7 +5198,7 @@ may be accessed with the `nc_global_attributes`,
                 pass
             elif (xcoord.Units.equivalent(Units('metres')) and
                   ycoord.Units.equivalent(Units('metres'))):
-                pass
+                radius = None
             else:
                 if auto:
                     return
@@ -5241,7 +5241,7 @@ may be accessed with the `nc_global_attributes`,
                             cells *= radius
                             cells.override_units(radius.Units, inplace=True)
                     else:
-                        cellgs.Units = Units('metres')
+                        cells.Units = Units('metres')
                         
                     comp[(xaxis,)] = cells
 

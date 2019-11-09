@@ -4535,6 +4535,7 @@ TODO
         if data is not None:
             data.override_units(units, inplace=True)
             v._custom['Units'] = units
+            v.Units = units
         else:
             v.Units = units
 

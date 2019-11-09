@@ -117,9 +117,52 @@ class DimensionCoordinateTest(unittest.TestCase):
         c = d.cellsize
         self.assertTrue(numpy.allclose(c.array, 0.2))
         
+        self.assertTrue(d.Units.equals(cf.Units('degrees_north')))
+        self.assertTrue(d.bounds.Units.equals(cf.Units('degrees_north')))
+
+        d.override_units('km', inplace=True)
+        self.assertTrue(d.Units.equals(cf.Units('km')))
+        self.assertTrue(d.bounds.Units.equals(cf.Units('km')))
+
+        c = d.cellsize
+        self.assertTrue(c.Units.equals(cf.Units('km')))
+
         d.del_bounds()
         c = d.cellsize
         self.assertTrue(numpy.allclose(c.array, 0))
+
+                
+    def test_DimensionCoordinate_override_units(self):
+        d = self.dim.copy()
+
+        self.assertTrue(d.Units.equals(cf.Units('degrees_north')))
+        self.assertTrue(d.bounds.Units.equals(cf.Units('degrees_north')))
+
+        d.override_units('km', inplace=True)
+        self.assertTrue(d.Units.equals(cf.Units('km')))
+        self.assertTrue(d.bounds.Units.equals(cf.Units('km')))
+
+        c = d.cellsize
+        self.assertTrue(c.Units.equals(cf.Units('km')))
+
+                
+    def test_DimensionCoordinate_override_calendar(self):
+        d = self.dim.copy()
+
+        self.assertTrue(d.Units.equals(cf.Units('degrees_north')))
+        self.assertTrue(d.bounds.Units.equals(cf.Units('degrees_north')))
+
+        d.override_units('days since 2000-01-01', inplace=True)
+        self.assertTrue(d.Units.equals(cf.Units('days since 2000-01-01')))
+        self.assertTrue(d.bounds.Units.equals(cf.Units('days since 2000-01-01')))
+
+        d.override_calendar('360_day', inplace=True)
+        self.assertTrue(d.Units.equals(cf.Units('days since 2000-01-01', calendar='360_day')))
+        self.assertTrue(d.bounds.Units.equals(cf.Units('days since 2000-01-01', calendar='360_day')))
+
+        d.override_calendar('365_day', inplace=True)
+        self.assertTrue(d.Units.equals(cf.Units('days since 2000-01-01', calendar='365_day')))
+        self.assertTrue(d.bounds.Units.equals(cf.Units('days since 2000-01-01', calendar='365_day')))
 
                 
     def test_DimensionCoordinate_bounds(self):

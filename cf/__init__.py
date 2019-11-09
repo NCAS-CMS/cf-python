@@ -79,8 +79,8 @@ except ImportError as error1:
 
 __Conventions__  = 'CF-1.7'
 __author__       = 'David Hassell'
-__date__         = '2019-11-08'
-__version__      = '3.0.4'
+__date__         = 'Not yet released'
+__version__      = '3.0.5'
 __cf_version__   = cfdm.core.__cf_version__
 
 from distutils.version import LooseVersion

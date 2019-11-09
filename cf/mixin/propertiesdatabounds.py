@@ -1617,17 +1617,17 @@ properties.
     def match_by_identity(self, *identities):
         '''Determine whether or not a variable satisfies conditions.
 
-Conditions may be specified on the variable's attributes and CF
-properties.
-
-:Parameters:
-
-:Returns:
-
-    out: `bool`
-        Whether or not the variable matches the given criteria.
-
-**Examples:**
+    Conditions may be specified on the variable's attributes and CF
+    properties.
+    
+    :Parameters:
+    
+    :Returns:
+    
+        `bool`
+            Whether or not the variable matches the given criteria.
+    
+    **Examples:**
 
         '''
         # Return all constructs if no identities have been provided
@@ -1649,29 +1649,143 @@ properties.
         #--- End: for
 
         return ok
-    #--- End: def
 
 
-    # 0
+    def override_calendar(self, calendar, inplace=False,  i=False):
+        '''Override the calendar of date-time units.
+
+    The new calendar **need not** be equivalent to the original one
+    and the data array elements will not be changed to reflect the new
+    units. Therefore, this method should only be used when it is known
+    that the data array values are correct but the calendar has been
+    incorrectly encoded.
+    
+    Not to be confused with setting the `calendar` or `Units`
+    attributes to a calendar which is equivalent to the original
+    calendar
+    
+    .. seealso:: `calendar`, `override_units`, `units`, `Units`
+    
+    :Parameters:
+    
+        calendar: `str`
+            The new calendar.
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+        i: deprecated at version 3.0.0
+            Use *inplace* parameter instead.
+    
+    :Returns:
+    
+    TODO
+    
+    **Examples:**
+    
+    TODO
+    
+    >>> g = f.override_calendar('noleap')
+
+        '''
+        if i:
+            _DEPRECATION_ERROR_KWARGS(self, 'override_calendar', i=True) # pragma: no cover
+
+        v = super().override_calendar(calendar, inplace=inplace)
+        if inplace:
+            v = self
+
+        bounds = v.get_bounds(None)
+        if bounds is not None:
+            bounds.override_calendar(calendar, inplace=True)
+
+        if inplace:
+            v = None
+        return v
+
+
+    def override_units(self, units, inplace=False, i=False):
+        '''Override the units.
+
+    The new units **need not** be equivalent to the original ones and
+    the data array elements will not be changed to reflect the new
+    units. Therefore, this method should only be used when it is known
+    that the data array values are correct but the units have
+    incorrectly encoded.
+    
+    Not to be confused with setting `units` or `Units` attributes to
+    units which are equivalent to the original units.
+    
+    .. seealso:: `calendar`, `override_calendar`, `units`, `Units`
+    
+    :Parameters:
+    
+        units: `str` or `Units`
+            The new units for the data array.
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+        i: deprecated at version 3.0.0
+            Use *inplace* parameter instead.
+    
+    :Returns:
+    
+    TODO
+    
+    **Examples:**
+    
+    >>> f.Units
+    <Units: hPa>
+    >>> f.datum(0)
+    100000.0
+    >>> f.override_units('km')
+    >>> f.Units
+    <Units: km>
+    >>> f.datum(0)
+    100000.0
+    >>> f.override_units(Units('watts'))
+    >>> f.Units
+    <Units: watts>
+    >>> f.datum(0)
+    100000.0
+
+        '''        
+        if i:
+            _DEPRECATION_ERROR_KWARGS(self, 'override_units', i=True) # pragma: no cover
+
+        v = super().override_units(units, inplace=inplace)
+        if inplace:
+            v = self
+
+        bounds = v.get_bounds(None)
+        if bounds is not None:
+            bounds.override_units(units, inplace=True)
+
+        if inplace:
+            v = None
+        return v
+
+
     def files(self):
         '''Return the names of any files containing parts of the data array.
 
-.. seealso:: `close`
-
-:Returns:
-
-    `!set`
-        The file names in normalized, absolute form.
-
-**Examples:**
-
->>> c.files()
-{'/data/user/file1.nc',
- '/data/user/file2.nc',
- '/data/user/file3.nc'}
->>> a = c.array
->>> f.files()
-set()
+    .. seealso:: `close`
+    
+    :Returns:
+    
+        `set`
+            The file names in normalized, absolute form.
+    
+    **Examples:**
+    
+    >>> c.files()
+    {'/data/user/file1.nc',
+     '/data/user/file2.nc',
+     '/data/user/file3.nc'}
+    >>> a = c.array
+    >>> f.files()
+    set()
 
         '''
         out = super().files()
@@ -1681,43 +1795,42 @@ set()
             out.update(bounds.files())
 
         return out
-    #--- End: def
 
-    # 0
+
     def flip(self, axes=None, inplace=False, i=False):
         '''Flip (reverse the direction of) data dimensions.
 
-.. seealso:: `insert_dimension`, `squeeze`, `transpose`, `unsqueeze`
-
-:Parameters:
-
-    axes: optional
-       Select the domain axes to flip. One, or a sequence, of:
-
-          * The position of the dimension in the data.
-
-        If no axes are specified then all axes are flipped.
-
-    inplace: `bool`, optional
-        If True then do the operation in-place and return `None`.
-
-    i: deprecated at version 3.0.0
-        Use the *inplace* parameter instead.
-
-:Returns:
-
-        The construct with flipped axes, or `None` if the operation
-        was in-place.
-
-**Examples:**
-
->>> f.flip()
->>> f.flip(1)
->>> f.flip([0, 1])
-
->>> g = f[::-1, :, ::-1]
->>> f.flip([2, 0]).equals(g)
-True
+    .. seealso:: `insert_dimension`, `squeeze`, `transpose`, `unsqueeze`
+    
+    :Parameters:
+    
+        axes: optional
+           Select the domain axes to flip. One, or a sequence, of:
+    
+              * The position of the dimension in the data.
+    
+            If no axes are specified then all axes are flipped.
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+        i: deprecated at version 3.0.0
+            Use the *inplace* parameter instead.
+    
+    :Returns:
+    
+            The construct with flipped axes, or `None` if the operation
+            was in-place.
+    
+    **Examples:**
+    
+    >>> f.flip()
+    >>> f.flip(1)
+    >>> f.flip([0, 1])
+    
+    >>> g = f[::-1, :, ::-1]
+    >>> f.flip([2, 0]).equals(g)
+    True
 
         '''
         if i:
@@ -1756,7 +1869,7 @@ True
         if inplace:
             v = None            
         return v
-    #--- End: def
+
 
     # 1
     def exp(self, bounds=True, inplace=False, i=False):
