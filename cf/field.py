@@ -55,6 +55,10 @@ from . import Flags
 from . import Constructs
 from . import FieldList
 
+from . import Count
+from . import Index
+from . import List
+
 from .constants import masked as cf_masked
 
 from .functions import (parse_indices, CHUNKSIZE, equals,
@@ -65,6 +69,14 @@ from .timeduration    import TimeDuration
 from .units           import Units
 from .subspacefield   import SubspaceField
 
+from .data import Data
+from .data import RaggedContiguousArray
+from .data import RaggedIndexedArray
+from .data import RaggedIndexedContiguousArray
+from .data import GatheredArray
+
+from . import mixin
+
 from .functions import (_DEPRECATION_ERROR,
                         _DEPRECATION_ERROR_ARG,
                         _DEPRECATION_ERROR_KWARGS,
@@ -72,11 +84,6 @@ from .functions import (_DEPRECATION_ERROR,
                         _DEPRECATION_ERROR_ATTRIBUTE,
                         _DEPRECATION_ERROR_DICT,
                         _DEPRECATION_ERROR_SEQUENCE)
-
-from .data.data import Data
-
-from . import mixin
-
 
 _debug = False
 
@@ -5408,29 +5415,17 @@ may be accessed with the `nc_global_attributes`,
                 weights_axes.update(axes0)
         #--- End: def
 
-        def _scale(w, scale, wmax=None):
+        def _scale(w, scale):
             '''Scale the weights so that they are <= scale.
 
             '''
             scale = Data.asdata(scale).datum()
             if scale <= 0:
-                raise ValueError("'scale' parameter must be a positive number")
-
-#            if isinstance(w, dict):
-#                wmax = Data(max([x.max().datum() for x in w.values()]))
-#                for key, x in comp.items(): 
-#                    w[key] = _scale(x, scale, wmax=wmax)
-#
-#                return w
-
-            if wmax is None:
-                wmax = w.max()
-                
-            if wmax <= 0:
                 raise ValueError(
-                    "Can't scale when all weights are non-positive. max(weights)={}".format(
-                        wmax))
+                    "'scale' parameter must be a positive number. Got {}".format(
+                        scale))
 
+            wmax = w.max()
             factor = wmax / scale
             factor.dtype = float
             if numpy_can_cast(factor.dtype, w.dtype):
@@ -5612,11 +5607,17 @@ may be accessed with the `nc_global_attributes`,
             # --------------------------------------------------------
             # Scale the weights so that they are <= scale
             # --------------------------------------------------------
-#            comp = _scale(comp, scale)
             for key, w in comp.items(): 
                 comp[key] = _scale(w, scale)
         #--- End: if
 
+        for w in comp.values():
+            mn = w.min()
+            if mn <= 0:
+                raise ValueError(
+                    "All weights must be positive. Got a weight of {}".format(mn))
+        #--- End: for                
+        
         if components:
             # --------------------------------------------------------
             # Return a dictionary of component weights, which may be
@@ -5627,7 +5628,7 @@ may be accessed with the `nc_global_attributes`,
                 key = [data_axes.index(axis) for axis in key]
                 if not key:
                     continue
-
+                
                 components[tuple(key)] = v
 
             return components
@@ -5662,6 +5663,7 @@ may be accessed with the `nc_global_attributes`,
             wdata = _scale(wdata, scale)
             
         field = self.copy()
+        field.nc_del_variable(None)
         field.del_data()
         field.del_data_axes()
 
@@ -11147,7 +11149,253 @@ may be accessed with the `nc_global_attributes`,
 
         return False
 
+    
+    def compress(self, method, inplace=False):
+        '''TODO
 
+    .. versionadded:: 3.0.5
+    
+    .. seealso: `cf.write`, `flatten`
+    
+        '''
+        def _empty_compressed_data(data, N):            
+            return Data.empty(shape=(N,), units=data.Units,
+                              dtype=data.dtype)
+        #--- End: def
+        
+        def _RaggedContiguousArray(compressed_data, data,
+                                   count_variable):
+            return RaggedContiguousArray(compressed_array,
+                                         shape=data.shape,
+                                         size=data.size,
+                                         ndim=data.ndim,
+                                         count_variable=count_variable)
+        #--- End: def
+        
+        def _RaggedIndexedArray(compressed_data, data, index_variable):
+            return RaggedIndexedArray(compressed_data,
+                                      shape=data.shape,
+                                      size=data.size, ndim=data.ndim,
+                                      index_variable=index_variable)
+        #--- End: def
+        
+        def _RaggedIndexedContiguousArray(compressed_data, data,
+                                          count_variable, index_variable):
+            return RaggedIndexArray(compressed_data,
+                                    shape=data.shape, size=data.size,
+                                    ndim=data.ndim,
+                                    count_variable=count_variable,
+                                    index_variable=index_variable)
+        #--- End: def
+        
+        if inplace:
+            f = self
+        else:
+            f = self.copy()
+
+        data = f.get_data(None)
+        if data is None:
+            if inplace:
+                f = None
+            return f
+            
+        current_compression_type = data.get_compression_type().replace(' ', '_')
+        if current_compression_type and current_compression_type == method:
+            # Already compressed
+            if inplace:
+                f = None
+            return f
+       
+        count = []
+        for d in data.flatten(range(data.ndim-1)):
+            last = d.size
+            for i in d[::-1]:
+                if i is not cf_masked:
+                    break
+                else:
+                    last -= 1
+            #--- End: for
+
+            count.append(last)
+
+        N = sum(count)
+        compressed_data = _empty_compressed_data(data, N)
+
+        if method == 'ragged_contiguous':
+            # --------------------------------------------------------
+            # Ragged contiguous
+            # --------------------------------------------------------
+            if self.ndim != 2:
+                raise ValueError(
+                    "The data must have exactly 2 dimensions for ragged contiguous compression. got {}".format(
+                        self.ndim))
+
+            count_variable = Count(data=Data([n for n in count if n]))
+
+            start = 0            
+            for last, d in zip(count, data):
+                if not last:
+                    continue
+                
+                end = start + last
+                compressed_data[start:end] = d[:last]
+                start += last
+
+            x = _RaggedContiguousArray(compressed_data, data,
+                                       count_variable)
+
+            data_axes = f.get_data_axes()
+            for key, c in f.constructs.filter_by_axis('or').items():
+                c_axes = f.get_data_axes(key)
+                if c_axes != data_axes:
+                    # Skip metadata constructs which don't span
+                    # exactly the same axes in the same order
+                    continue
+
+                # Initialize the compressed data for the metadata
+                # construct
+                data = c.data
+                compressed_data = _empty_compressed_data(data, N)
+                
+                # Populate the compressed data for the metadata
+                # construct
+                start = 0            
+                for last, d in zip(count, data):
+                    end = start + last
+                    compressed_data[start:end] = d[:last]
+                    start += last
+
+                # Insert the compressed data into the metadata
+                # construct
+                y = _RaggedContiguousArray(compressed_data, data,
+                                           count_variable)
+                data._create_partition_matrix_for_compressed_array(y)
+                            
+        elif method == 'ragged_indexed':
+            # --------------------------------------------------------
+            # Ragged indexed
+            # --------------------------------------------------------
+            if self.ndim != 2:
+                raise ValueError(
+                    "The data must have exactly 2 dimensions for ragged indexed compression. got {}".format(
+                        self.ndim))
+
+            index = []
+            start = 0            
+            for i, (last, d) in enumerate(zip(count, data)):
+                if not last:
+                    continue
+
+                end = start + last
+                compressed_data[start:end] = d[:last]
+                start += last
+
+                index.extend([i] * last)
+                                             
+            index_variable = Index(data=Data(index))
+            
+            x = _RaggedIndexedArray(compressed_data, data, index_variable)
+
+            data_axes = f.get_data_axes()
+            for key, c in f.constructs.filter_by_axis('or').items():
+                c_axes = f.get_data_axes(key)
+                if c_axes != data_axes:
+                    # Skip metadata constructs which don't span
+                    # exactly the same axes in the same order
+                    continue
+
+                # Initialize the compressed data for the metadata
+                # construct
+                data = c.data
+                compressed_data = _empty_compressed_data(data, N)                
+                
+                # Populate the compressed data for the metadata
+                # construct
+                start = 0            
+                for last, d in zip(count, data):
+                    if not last:
+                        continue
+
+                    end = start + last
+                    compressed_data[start:end] = d[:last]
+                    start += last
+
+                # Insert the compressed data into the metadata
+                # construct
+                y = _RaggedIndexedArray(compressed_data, data,
+                                        index_variable)
+                data._create_partition_matrix_for_compressed_array(y)
+                            
+        elif method == 'ragged_indexed_contiguous':
+            # --------------------------------------------------------
+            # Ragged indexed contiguous
+            # --------------------------------------------------------
+            if self.ndim != 3:
+                raise ValueError(
+                    "The data must have exactly 3 dimensions for ragged indexed contiguous compression. got {}".format(
+                        self.ndim))
+
+            raise ValueError("RaggedIndexedContiguousArray not yet ready")
+        
+            count_variable = Count(data=Data([n for n in count if n]))
+            
+            x = _RaggedIndexedContiguousArray(compressed_data, data,
+                                              count_variable,
+                                              index_variable)
+
+            data_axes = f.get_data_axes()
+            for key, c in f.constructs.filter_by_axis('or').items():
+                c_axes = f.get_data_axes(key)
+                if c_axes == data_axes:
+                    # Initialize the compressed data for the metadata
+                    # construct
+                    data = c.data
+                    compressed_data = _empty_compressed_data(data, N)
+                    
+                    # Populate the compressed data for the metadata
+                    # construct
+                    start = 0            
+                    for last, d in zip(count, data):
+                        end = start + last
+                        compressed_data[start:end] = d[:last]
+                        start += last
+    # TODO not right yet!
+                    # Insert the compressed data into the metadata
+                    # construct
+                    y = _RaggedIndexedContiguousArray(compressed_data,
+                                                      data,
+                                                      count_variable,
+                                                      index_variable)
+                elif c_axes == data_axes[0:2]:
+                    pass    
+                    y = _RaggedIndexedArray(compressed_data, data,
+                                            index_variable)                
+                else:
+                    continue
+
+                data._create_partition_matrix_for_compressed_array(y)
+
+        elif method == 'gathered':
+            # --------------------------------------------------------
+            # Gathered
+            # --------------------------------------------------------
+            raise ValueError("GatheredArray not yet ready")
+            #x = GatheredArray(compressed_array, shape=self.shape,
+            #                  size=self.size, ndim=self.ndim,
+            #                  compressed_dimension=None,
+            #                  list_variable=list_variable)
+            # TODO
+            
+        else:
+            raise ValueError("Bad method TODO {}".format(method))
+        
+        f.data._create_partition_matrix_for_compressed_array(x)
+
+        if inplace:
+            f = None
+        return f
+
+    
     def convolution_filter(self, weights, axis=None, mode=None,
                            cval=None, origin=0, update_bounds=True,
                            inplace=False, i=False, _bounds=True):
@@ -11720,12 +11968,10 @@ may be accessed with the `nc_global_attributes`,
             
             # domain_ancillary
             c = DomainAncillary()
-            c.set_properties({})
             c.nc_set_variable('b')
             data = Data([20.0], dtype='f8')
             c.set_data(data)
             b = Bounds()
-            b.set_properties({})
             b.nc_set_variable('b_bounds')
             data = Data([[14.0, 26.0]], dtype='f8')
             b.set_data(data)
@@ -11782,7 +12028,6 @@ may be accessed with the `nc_global_attributes`,
             data = Data([1.5], dtype='f8')
             c.set_data(data)
             b = Bounds()
-            b.set_properties({})
             b.nc_set_variable('atmosphere_hybrid_height_coordinate_bounds')
             data = Data([[1.0, 2.0]], dtype='f8')
             b.set_data(data)
@@ -11903,19 +12148,20 @@ may be accessed with the `nc_global_attributes`,
               ``namespace=''``
 
         indent: `int`, optional
-            Indent each line by this many spaces. ignore if *string*
+            Indent each line by this many spaces. Ignored if *string*
             is False.
 
         string: `bool`, optional
-            Return each command an element of a `list`. By default the
-            the commands are concatenated into a string.
+            Return each command as an element of a `list`. By default
+            the the commands are concatenated into a string, with a
+            new line inserted between each command.
 
     :Returns:
         
         `str` or `list`
             The commands in a string, with a new line inserted between
-            each command. If *string* is False then the commands are
-            returned in a `list`.
+            each command. If *string* is False then the separate
+            commands are returned as each element of a `list`.
 
     **Examples:**
 
@@ -12054,12 +12300,20 @@ may be accessed with the `nc_global_attributes`,
         out = ["{} = {}{}()".format(name, namespace, self.__class__.__name__)]
         
         out.append("")
-        out.append("{}.set_properties({})".format(name, self.properties()))
+        properties = self.properties()
+        if properties:
+            out.append("{}.set_properties({})".format(name, properties))
 
         nc = self.nc_get_variable(None)
         if nc is not None:
             out.append("{}.nc_set_variable({!r})".format(name, nc))
 
+        if self.nc_global_attributes():
+            for key, value in self.nc_global_attributes().items():
+                out.append("{}.nc_set_global_attribute({!r}, {!r}))".format(
+                    name, key, value))
+        #--- End: if
+        
         out.append("")
         for key, c in self.domain_axes.items():
             out.append("c = {}{}(size={})".format(namespace, c.__class__.__name__, c.size))
@@ -12091,7 +12345,9 @@ may be accessed with the `nc_global_attributes`,
             out.append("")
             out.append("# "+c.construct_type)
             out.append("c = {}{}()".format(namespace, c.__class__.__name__))
-            out.append("c.set_properties({})".format(c.properties()))
+            properties = c.properties()
+            if properties:
+                out.append("c.set_properties({})".format(properties))
 
             nc = c.nc_get_variable(None)
             if nc is not None:
@@ -12106,7 +12362,9 @@ may be accessed with the `nc_global_attributes`,
             out.append("c.set_data(data)")
             if c.has_bounds():
                 out.append("b = {}{}()".format(namespace, c.bounds.__class__.__name__))
-                out.append("b.set_properties({})".format(c.bounds.properties()))
+                properties = c.bounds.properties()
+                if properties:
+                    out.append("b.set_properties({})".format(properties))
 
                 nc = c.bounds.nc_get_variable(None)
                 if nc is not None:
@@ -14888,7 +15146,8 @@ may be accessed with the `nc_global_attributes`,
 
     .. versionadded:: 3.0.2
 
-    .. seealso:: `insert_dimension`, `flip`, `swapaxes`, `transpose`
+    .. seealso:: `compress`, `insert_dimension`, `flip`, `swapaxes`,
+                 `transpose`
 
     :Parameters:
 
@@ -15127,7 +15386,7 @@ may be accessed with the `nc_global_attributes`,
         
         return f
 
-    
+
     def roll(self, axis, shift, inplace=False, i=False, **kwargs):
         '''Roll the field along a cyclic axis.
 

@@ -363,6 +363,7 @@ NetCDF
    ~cf.Field.nc_global_attributes
    ~cf.Field.nc_clear_global_attributes
    ~cf.Field.nc_set_global_attribute
+   ~cf.Field.nc_set_global_attributes
    ~cf.Field.dataset_compliance
 
 .. _field_methods:

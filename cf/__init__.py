@@ -155,11 +155,18 @@ if LooseVersion(numpy.__version__) < LooseVersion(_minimum_vn):
             _minimum_vn, numpy.__version__, numpy.__file__))
 
 # Check the version of cfunits
-_minimum_vn = '3.1.1'
+_minimum_vn = '3.2.2'
 if LooseVersion(cfunits.__version__) < LooseVersion(_minimum_vn):
     raise ValueError(
         "Bad cfunits version: cf requires cfunits version {} or later. Got {} at {}".format(
             _minimum_vn, cfunits.__version__, cfunits.__file__))
+
+# Check the version of cfdm
+_minimum_vn = '1.7.10'
+if LooseVersion(cfdm.__version__) < LooseVersion(_minimum_vn):
+    raise ValueError(
+        "Bad cfdm version: cf requires cfdm version {} or later. Got {} at {}".format(
+            _minimum_vn, cfdm.__version__, cfdm.__file__))
 
 from .constructs import Constructs
 

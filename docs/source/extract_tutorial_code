@@ -5,34 +5,41 @@
 # 
 # --------------------------------------------------------------------
 
-# Files
-tutorial_source=tutorial.rst
-test_tutorial=tutorial.py
-temp_file=tutorial_tmp.$$
+# Filesx
 
-# Get code and section headings
-grep -e "^ *>>>" \
-     -e "^ *\.\.\." \
-     -e "^\*\*" \
-     -e "^\.\. Code Block" \
-     $tutorial_source > $test_tutorial
+for file in tutorial field_analysis
+do
+  source=$file.rst
+  test=$file.py
+  temp_file=${file}_tmp.$$
+  
+  # Get code and section headings
+  grep -e "^ *>>>" \
+       -e "^ *\.\.\." \
+       -e "^\*\*" \
+       -e "^\.\. Code Block" \
+       $source > $test
+  
+  # Strip >>> and ...
+  sed 's/^\s*>>>\s*//' $test > $temp_file
+  sed 's/^\s*\.\.\.//' $temp_file > $test
+  
+  # Process headings
+  sed 's/^\*\*\(.*\)/\nprint("\\n**\1\\n")\n/' $test > $temp_file
+  cp $temp_file $test
+  
+  # Handle known exceptions
+  sed 's/^\(.*\)\# Raises Exception/try:\n    \1\nexcept:\n    pass\nelse:\n    raise Exception("This should have failed!")/' $test > $temp_file
+  cp $temp_file $test
+  
+  # Process code block instructsions
+  sed 's/^\.\. Code Block \(.*\)/raise Exception("To proceeed, insert code block \1")/' $test > $temp_file
+  cp $temp_file $test
+  
+  rm $temp_file
+done
 
-# Strip >>> and ...
-sed 's/^\s*>>>\s*//' $test_tutorial > $temp_file
-sed 's/^\s*\.\.\.//' $temp_file > $test_tutorial
+cat tutorial.py field_analysis.py > $$.py
+mv $$.py tutorial.py  
 
-# Process headings
-sed 's/^\*\*\(.*\)/\nprint("\\n**\1\\n")\n/' $test_tutorial > $temp_file
-cp $temp_file $test_tutorial
-
-# Handle known exceptions
-sed 's/^\(.*\)\# Raises Exception/try:\n    \1\nexcept:\n    pass\nelse:\n    raise Exception("This should have failed!")/' $test_tutorial > $temp_file
-cp $temp_file $test_tutorial
-
-# Process code block instructsions
-sed 's/^\.\. Code Block \(.*\)/raise Exception("To proceeed, insert code block \1")/' $test_tutorial > $temp_file
-cp $temp_file $test_tutorial
-
-rm $temp_file
-
-cat $test_tutorial
+cat tutorial.py

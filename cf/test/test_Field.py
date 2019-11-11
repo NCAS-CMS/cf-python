@@ -33,7 +33,7 @@ class FieldTest(unittest.TestCase):
         self.test_only = []
 #        self.test_only = ['NOTHING!!!!']
 #        self.test_only = ['test_Field__add__']
-#        self.test_only = ['test_Field_cumsum']
+#        self.test_only = ['test_Field_weights']
 #        self.test_only = ['test_Field_collapse']
 #        self.test_only = ['test_Field_radius']
 #        self.test_only = ['test_Field_field_ancillary']
@@ -69,9 +69,11 @@ class FieldTest(unittest.TestCase):
         for rd in (False, True):
             for indent in (0, 4):
                 for s in (False, True):
-                    _ = f.creation_commands(representative_data=rd,
-                                            indent=indent,
-                                            string=s)
+                    for ns in ('cf', ''):
+                        _ = f.creation_commands(representative_data=rd,
+                                                indent=indent,
+                                                namespace=ns,
+                                                string=s)
         #--- End: for
             
         
@@ -199,7 +201,8 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = self.f
+        f = self.f.copy()
+        f += 1
 
         w = f.weights()
 
@@ -207,13 +210,15 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(x.equals(w, verbose=True))
 
         for components in (False, True):
-            y = f.weights(w.data.transpose(), components=components)
-            y = f.weights(w.data.transpose()[0].squeeze(), components=components)
-            y = f.weights(w.data.transpose()[0], components=components)
-            y = f.weights(f.data.squeeze(), components=components)
-            y = f.weights('auto', components=components)
-            y = f.weights('grid_longitude', components=components)
-            y = f.weights(['grid_longitude'], components=components)
+            for m in (False, True):
+                y = f.weights(w.data.transpose(), components=components, measure=m)
+                y = f.weights(w.data.transpose()[0].squeeze(), components=components, measure=m)
+                y = f.weights(w.data.transpose()[0], components=components, measure=m)
+                y = f.weights(f.data.squeeze(), components=components, measure=m)
+                y = f.weights('auto', components=components, measure=m)
+                y = f.weights('grid_longitude', components=components, measure=m)
+                y = f.weights(['grid_longitude'], components=components, measure=m)
+    #--- End: for
             
 
     def test_Field_replace_construct(self):

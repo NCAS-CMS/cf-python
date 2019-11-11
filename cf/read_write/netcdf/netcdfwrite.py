@@ -12,11 +12,13 @@ from ... import DomainAncillary, Coordinate, Bounds
 
 class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
     '''TODO
+
     '''
     def _write_as_cfa(self, cfvar):
         '''TODO
 
-.. versionadded:: 3.0.0
+    .. versionadded:: 3.0.0
+
         '''
         if not self.write_vars['cfa']:
             return False
@@ -38,18 +40,18 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             return cfvar.ndim > 2
 
         return True
-    #--- End: def
+
     
     def _customize_createVariable(self, cfvar, kwargs):
         '''TODO
 
-.. versionadded:: 3.0.0
-
-:Returns:
-
-    `dict`
-        Dictionary of keyword arguments to be passed to
-        `netCDF4.Dataset.createVariable`.
+    .. versionadded:: 3.0.0
+    
+    :Returns:
+    
+        `dict`
+            Dictionary of keyword arguments to be passed to
+            `netCDF4.Dataset.createVariable`.
 
         '''
         kwargs = super()._customize_createVariable(cfvar, kwargs)
@@ -59,23 +61,23 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             kwargs['chunksizes'] = None
             
         return kwargs
-    #--- End: def
+
 
     def _write_data(self, data, cfvar, ncvar, ncdimensions,
                     unset_values=(), compressed=False):
         '''TODO
 
-:Parameters:
-
-    data: Data instance
-
-    cfvar: cf instance
-
-    ncvar: `str`
-
-    ncdimensions: `tuple` of `str`
-
-    unset_values: sequence of numbers
+    :Parameters:
+    
+        data: Data instance
+    
+        cfvar: cf instance
+    
+        ncvar: `str`
+    
+        ncdimensions: `tuple` of `str`
+    
+        unset_values: sequence of numbers
 
         '''
         g = self.write_vars
@@ -119,7 +121,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             g['nc'][ncvar][partition.indices] = array        
     
             partition.close()
-    #--- End: def
+
 
     def _write_dimension_coordinate(self, f, key, coord):
         '''Write a coordinate variable and its bound variable to the file.

@@ -4,9 +4,15 @@ version 3.0.5
 
 **Not yet released**
 
+* Fixed bug that didn't allow `cf.Field.cell_area` to work with
+  dimension coordinates in units equivalent to metres
+  (https://github.com/NCAS-CMS/cf-python/issues/12)
 * Fixed bug that omitted bounds having their units changed by
   `override_units` and `override calendar`
   (https://github.com/NCAS-CMS/cf-python/issues/13).
+* Changed minimum cfdm dependency to version 1.7.10. This fixes a bug
+  that didn't allow CDL files to start with comments or blank lines
+  (https://github.com/NCAS-CMS/cfdm/issues/5).
 
 version 3.0.4
 -------------

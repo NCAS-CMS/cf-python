@@ -14,7 +14,7 @@ from ..query        import Query
 from ..timeduration import TimeDuration
 from ..units        import Units
 
-from ..data.data import Data
+from ..data import Data
 
 from . import Properties
 
@@ -2621,7 +2621,7 @@ TODO
         
         return out
     
-
+    
     def cos(self, bounds=True, inplace=False, i=False):
         '''Take the trigonometric cosine of the data, element-wise.
 

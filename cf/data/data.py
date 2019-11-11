@@ -649,7 +649,7 @@ place.
         
         new = type(self).empty(shape=compressed_array.shape,
                                units=self.Units, chunk=False)
-        
+
         source_data = compressed_array.source()
         compression_type = compressed_array.get_compression_type()
         
@@ -1250,7 +1250,9 @@ place.
         else:
             # ndim > 1
             for n in range(self._shape[0]):
-                yield self[n, ...].squeeze(0, inplace=True)
+                out = self[n, ...]
+                out.squeeze(0, inplace=True)
+                yield out
 
 
     def __len__(self):
@@ -7592,32 +7594,30 @@ FloatingPointError: overflow encountered in power
         return old
     #--- End: def
 
-    # 0
+    
     def add_partitions(self, extra_boundaries, pdim):
         '''Add partition boundaries.
 
-:Parameters:
-
-    extra_boundaries: `list` of `int`
-        The boundaries of the new partitions.
-
-    pdim: `str`
-        The name of the axis to have the new partitions.
-
-:Returns:
-
-    `None`
-
-**Examples:**
-
->>> d.add_partitions(    )
+    :Parameters:
+    
+        extra_boundaries: `list` of `int`
+            The boundaries of the new partitions.
+    
+        pdim: `str`
+            The name of the axis to have the new partitions.
+    
+    :Returns:
+    
+        `None`
+    
+    **Examples:**
+    
+    >>> d.add_partitions(    )
 
         '''            
-#        self.partitions.add_partitions(self._axes, self._flip,
         self.partitions.add_partitions(self._axes, self._flip(),
                                        extra_boundaries, 
                                        pdim)
-    #--- End: def
 
 
     def all(self):
@@ -8807,7 +8807,7 @@ returned.
         '''    
         for partition in self.partitions.matrix.flat:
             partition.file_close()
-
+   
 
     def cos(self, inplace=False, i=False):
         '''Take the trigonometric cosine of the data array in place.
@@ -8888,16 +8888,37 @@ returned.
 
 
     def count(self):
-        '''Count the non-masked elements of the array.
+        '''Count the non-masked elements of the data.
+
+    .. seealso:: `count_masked`
 
     :Returns:
     
         ``int`
-    
+        
     **Examples:**
     
-    >>> n = d.count()
+    >>> d = cf.Data(numpy.arange(24).reshape(3, 4))
+    >>> print(d.array)
+    [[ 0  1  2  3]
+     [ 4  5  6  7]
+     [ 8  9 10 11]]
+    >>> d.count()
+    12
+    >>> d[0, :] = cf.masked
+    >>> print(d.array)
+    [[-- -- -- --]
+     [ 4  5  6  7]
+     [ 8  9 10 11]]
+    >>> d.count()
+    8
 
+    >>> print(d.count(0).array) 
+    [2 2 2 2]
+    >>> print(d.count(1).array)
+    [0 4 4]
+    >>> print(d.count((0, 1))
+    8
         '''
         config = self.partition_configuration(readonly=True)
         
@@ -8948,7 +8969,9 @@ returned.
 
 
     def count_masked(self):
-        '''TODO
+        '''Count the masked elements of the data.
+
+    .. seealso:: `count`
 
         '''
         return self._size - self.count()

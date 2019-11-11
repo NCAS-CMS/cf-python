@@ -663,7 +663,6 @@ dimY.set_bounds(bounds)
 Q.set_construct(dimT)
 Q.set_construct(dimY)
 Q.set_construct(dimX)
-
 Q.dump()
 
 import numpy
@@ -819,7 +818,6 @@ cell_measure = cf.CellMeasure(measure='area',
                  data=cf.Data(numpy.arange(90.).reshape(9, 10)))
 
 tas.set_construct(cell_measure)
-
 print(tas)
 q, t = cf.read('file.nc')
 print(q.creation_commands())
@@ -941,6 +939,163 @@ area.data
 area.nc_set_external(True)
 cf.write(g, 'new_parent.nc')
 cf.write(g, 'new_parent.nc', external='new_external.nc')
+
+print("\n**Aggregation**\n")
+
+a = cf.read('air_temperature.nc')[0]
+a
+a_parts = [a[0, : , 0:30], a[0, :, 30:96], a[1, :, 0:30], a[1, :, 30:96]]
+a_parts
+for i, f in enumerate(a_parts):
+     cf.write(f, str(i)+'_air_temperature.nc')
+
+x = cf.read('[0-3]_air_temperature.nc')
+y = cf.read('[0-3]_air_temperature.nc', aggregate=False)
+z = cf.aggregate(y)
+x
+z
+x.equals(z)
+x = cf.aggregate(a_parts)
+x
+a_parts[1].transpose(inplace=True)
+a_parts[1].units = 'degreesC'
+a_parts
+z = cf.aggregate(a_parts)
+z   
+x.equals(z)
+
+print("\n**Compression**\n")
+
+h = cf.read('contiguous.nc')[0]
+print(h)
+print(h.array)
+h.data.get_compression_type()
+print(h.data.compressed_array)
+count_variable = h.data.get_count()
+count_variable
+print(count_variable.array)
+station2 = h[1]
+station2
+print(station2.array)
+h.data.get_compression_type()
+h.data[1, 2] = -9
+print(h.array)
+h.data.get_compression_type()
+
+import numpy
+import cf
+
+# Define the ragged array values
+ragged_array = cf.Data([280, 281, 279, 278, 279.5])
+
+# Define the count array values
+count_array = [1, 4]
+
+# Create the count variable
+count_variable = cf.Count(data=cf.Data(count_array))
+count_variable.set_property('long_name', 'number of obs for this timeseries')
+
+# Create the contiguous ragged array object, specifying the
+# uncompressed shape
+array = cf.RaggedContiguousArray(
+                 compressed_array=ragged_array,
+                 shape=(2, 4), size=8, ndim=2,
+                 count_variable=count_variable)
+
+# Create the field construct with the domain axes and the ragged
+# array
+T = cf.Field()
+T.set_properties({'standard_name': 'air_temperature',
+                  'units': 'K',
+                  'featureType': 'timeSeries'})
+
+# Create the domain axis constructs for the uncompressed array
+X = T.set_construct(cf.DomainAxis(4))
+Y = T.set_construct(cf.DomainAxis(2))
+
+# Set the data for the field
+T.set_data(cf.Data(array))
+
+T
+print(T.array)
+T.data.get_compression_type()
+print(T.data.compressed_array)
+count_variable = T.data.get_count()
+count_variable
+print(count_variable.array)
+cf.write(T, 'T_contiguous.nc')
+p = cf.read('gathered.nc')[0]
+print(p)
+print(p.array)
+p.data.get_compression_type()
+print(p.data.compressed_array)
+list_variable = p.data.get_list()
+list_variable
+print(list_variable.array)
+p[0]
+p[1, :, 3:5]
+p.data.get_compression_type()
+p.data[1] = -9
+p.data.get_compression_type()
+
+import numpy	  
+import cf
+
+# Define the gathered values
+gathered_array = cf.Data([[2, 1, 3], [4, 0, 5]])
+
+# Define the list array values
+list_array = [1, 4, 5]
+
+# Create the list variable
+list_variable = cf.List(data=cf.Data(list_array))
+
+# Create the gathered array object, specifying the uncompressed
+# shape
+array = cf.GatheredArray(
+                 compressed_array=gathered_array,
+     	    compressed_dimension=1,
+                 shape=(2, 3, 2), size=12, ndim=3,
+                 list_variable=list_variable)
+
+# Create the field construct with the domain axes and the gathered
+# array
+P = cf.Field(properties={'standard_name': 'precipitation_flux',
+                           'units': 'kg m-2 s-1'})
+
+# Create the domain axis constructs for the uncompressed array
+T = P.set_construct(cf.DomainAxis(2))
+Y = P.set_construct(cf.DomainAxis(3))
+X = P.set_construct(cf.DomainAxis(2))
+
+# Set the data for the field
+P.set_data(cf.Data(array), axes=[T, Y, X])			      
+
+P
+print(P.data.array)
+P.data.get_compression_type()
+print(P.data.compressed_array)
+list_variable = P.data.get_list()
+list_variable 
+print(list_variable.array)
+cf.write(P, 'P_gathered.nc')
+
+print("\n**PP and UM fields files**\n")
+
+pp = cf.read('umfile.pp')
+pp
+print(pp[0])
+cf.write(pp, 'umfile1.nc')
+type(cf.read_write.um.umread.stash2standard_name)                       
+cf.read_write.um.umread.stash2standard_name[(1, 4)]                    
+cf.read_write.um.umread.stash2standard_name[(1, 2)]
+cf.read_write.um.umread.stash2standard_name[(1, 7)]                    
+(1, 999) in cf.read_write.um.umread.stash2standard_name
+with open('new_STASH.txt', 'w') as new:  
+     new.write('1!999!My STASH code!1!!!ultraviolet_index!!') 
+ 
+_ = cf.load_stash2standard_name('new_STASH.txt', merge=True)
+cf.read_write.um.umread.stash2standard_name[(1, 999)]
 
 print("\n**Statistical collapses**\n")
 
@@ -1181,160 +1336,3 @@ u, v = cf.read('wind_components.nc')
 zeta = cf.relative_vorticity(u, v)
 print(zeta)
 print(zeta.array.round(8))
-
-print("\n**Aggregation**\n")
-
-a = cf.read('air_temperature.nc')[0]
-a
-a_parts = [a[0, : , 0:30], a[0, :, 30:96], a[1, :, 0:30], a[1, :, 30:96]]
-a_parts
-for i, f in enumerate(a_parts):
-     cf.write(f, str(i)+'_air_temperature.nc')
-
-x = cf.read('[0-3]_air_temperature.nc')
-y = cf.read('[0-3]_air_temperature.nc', aggregate=False)
-z = cf.aggregate(y)
-x
-z
-x.equals(z)
-x = cf.aggregate(a_parts)
-x
-a_parts[1].transpose(inplace=True)
-a_parts[1].units = 'degreesC'
-a_parts
-z = cf.aggregate(a_parts)
-z   
-x.equals(z)
-
-print("\n**Compression**\n")
-
-h = cf.read('contiguous.nc')[0]
-print(h)
-print(h.array)
-h.data.get_compression_type()
-print(h.data.compressed_array)
-count_variable = h.data.get_count()
-count_variable
-print(count_variable.array)
-station2 = h[1]
-station2
-print(station2.array)
-h.data.get_compression_type()
-h.data[1, 2] = -9
-print(h.array)
-h.data.get_compression_type()
-
-import numpy
-import cf
-
-# Define the ragged array values
-ragged_array = cf.Data([280, 281, 279, 278, 279.5])
-
-# Define the count array values
-count_array = [1, 4]
-
-# Create the count variable
-count_variable = cf.Count(data=cf.Data(count_array))
-count_variable.set_property('long_name', 'number of obs for this timeseries')
-
-# Create the contiguous ragged array object, specifying the
-# uncompressed shape
-array = cf.RaggedContiguousArray(
-                 compressed_array=ragged_array,
-                 shape=(2, 4), size=8, ndim=2,
-                 count_variable=count_variable)
-
-# Create the field construct with the domain axes and the ragged
-# array
-T = cf.Field()
-T.set_properties({'standard_name': 'air_temperature',
-                  'units': 'K',
-                  'featureType': 'timeSeries'})
-
-# Create the domain axis constructs for the uncompressed array
-X = T.set_construct(cf.DomainAxis(4))
-Y = T.set_construct(cf.DomainAxis(2))
-
-# Set the data for the field
-T.set_data(cf.Data(array))
-
-T
-print(T.array)
-T.data.get_compression_type()
-print(T.data.compressed_array)
-count_variable = T.data.get_count()
-count_variable
-print(count_variable.array)
-cf.write(T, 'T_contiguous.nc')
-p = cf.read('gathered.nc')[0]
-print(p)
-print(p.array)
-p.data.get_compression_type()
-print(p.data.compressed_array)
-list_variable = p.data.get_list()
-list_variable
-print(list_variable.array)
-p[0]
-p[1, :, 3:5]
-p.data.get_compression_type()
-p.data[1] = -9
-p.data.get_compression_type()
-
-import numpy	  
-import cf
-
-# Define the gathered values
-gathered_array = cf.Data([[2, 1, 3], [4, 0, 5]])
-
-# Define the list array values
-list_array = [1, 4, 5]
-
-# Create the list variable
-list_variable = cf.List(data=cf.Data(list_array))
-
-# Create the gathered array object, specifying the uncompressed
-# shape
-array = cf.GatheredArray(
-                 compressed_array=gathered_array,
-     	    compressed_dimension=1,
-                 shape=(2, 3, 2), size=12, ndim=3,
-                 list_variable=list_variable)
-
-# Create the field construct with the domain axes and the gathered
-# array
-P = cf.Field(properties={'standard_name': 'precipitation_flux',
-                           'units': 'kg m-2 s-1'})
-
-# Create the domain axis constructs for the uncompressed array
-T = P.set_construct(cf.DomainAxis(2))
-Y = P.set_construct(cf.DomainAxis(3))
-X = P.set_construct(cf.DomainAxis(2))
-
-# Set the data for the field
-P.set_data(cf.Data(array), axes=[T, Y, X])			      
-
-P
-print(P.data.array)
-P.data.get_compression_type()
-print(P.data.compressed_array)
-list_variable = P.data.get_list()
-list_variable 
-print(list_variable.array)
-cf.write(P, 'P_gathered.nc')
-
-print("\n**PP and UM fields files**\n")
-
-pp = cf.read('umfile.pp')
-pp
-print(pp[0])
-cf.write(pp, 'umfile1.nc')
-type(cf.read_write.um.umread.stash2standard_name)                       
-cf.read_write.um.umread.stash2standard_name[(1, 4)]                    
-cf.read_write.um.umread.stash2standard_name[(1, 2)]
-cf.read_write.um.umread.stash2standard_name[(1, 7)]                    
-(1, 999) in cf.read_write.um.umread.stash2standard_name
-with open('new_STASH.txt', 'w') as new:  
-     new.write('1!999!My STASH code!1!!!ultraviolet_index!!') 
- 
-_ = cf.load_stash2standard_name('new_STASH.txt', merge=True)
-cf.read_write.um.umread.stash2standard_name[(1, 999)]
