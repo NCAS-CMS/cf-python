@@ -4328,32 +4328,35 @@ may be accessed with the `nc_global_attributes`,
             _DEPRECATION_ERROR_KWARGS(self, 'cell_area',
                                       {'insert': insert}) # pragma: no cover
 
-        x_axis = self.domain_axis('X', key=True, default=None)
-        y_axis = self.domain_axis('Y', key=True, default=None)
-        area_clm = self.cell_measures.filter_by_measure('area').filter_by_axis(
-            'exact', x_axis, y_axis)
+#        x_axis = self.domain_axis('X', key=True, default=None)
+#        y_axis = self.domain_axis('Y', key=True, default=None)
+#        area_clm = self.cell_measures.filter_by_measure('area').filter_by_axis(
+#            'exact', x_axis, y_axis)
 
-        if not force and area_clm:
-            w = self.weights('area')
-        else:
-            x = self.dimension_coordinate('X', default=None)
-            y = self.dimension_coordinate('Y', default=None)
-            if (x is None or y is None or 
-                not x.Units.equivalent(_units_radians) or
-                not y.Units.equivalent(_units_radians)):
-                raise ValueError("X or Y coordinates have incompatible units ({!r}, {!r}). Expected units equivalent to {!r}".format(
-                    x.Units, y.Units, _units_radians))
-            
-            # Got x and y coordinates in radians, so we can calculate.
-    
-            # Parse the radius of the sphere
-            radius = self.radius(default=radius)
-            
-            w = self.weights('area')
-            radius **= 2
-            w *= radius
-            w.override_units(radius.Units, inplace=True)
-        #--- End: if               
+
+        w = self.weights('area', radius=radius, measure=True, scale=None)
+        
+#        if not force and area_clm:
+#            w = self.weights('area')
+#        else:
+#            x = self.dimension_coordinate('X', default=None)
+#            y = self.dimension_coordinate('Y', default=None)
+#            if (x is None or y is None or 
+#                not x.Units.equivalent(_units_radians) or
+#                not y.Units.equivalent(_units_radians)):
+#                raise ValueError("X or Y coordinates have incompatible units ({!r}, {!r}). Expected units equivalent to {!r}".format(
+#                    x.Units, y.Units, _units_radians))
+#            
+#            # Got x and y coordinates in radians, so we can calculate.
+#    
+#            # Parse the radius of the sphere
+#            radius = self.radius(default=radius)
+#            
+#            w = self.weights('area')
+#            radius **= 2
+#            w *= radius
+#            w.override_units(radius.Units, inplace=True)
+#        #--- End: if               
 
         w.set_property('standard_name', 'cell_area')
         
@@ -5445,7 +5448,7 @@ may be accessed with the `nc_global_attributes`,
             _DEPRECATION_ERROR_KWARGS(self, 'weights', kwargs) # pragma: no cover
 
         if measure and scale is not None:
-            raise ValueError("Can't scale and measure TODO")
+            raise ValueError("Can't scale and measure=True")
 
         if weights is None:
             # --------------------------------------------------------
@@ -5665,6 +5668,9 @@ may be accessed with the `nc_global_attributes`,
         not_needed_axes = set(field.domain_axes).difference(weights_axes)
 
         for key in self.cell_methods:            
+            field.del_construct(key)
+            
+        for key in self.field_ancillaries:
             field.del_construct(key)
             
         for key in field.coordinate_references:

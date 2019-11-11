@@ -21,6 +21,7 @@
    cf_data_model
    installation
    tutorial
+   analysis
    api_reference
    aggregation_rules
    performance
