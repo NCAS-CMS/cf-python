@@ -5133,10 +5133,6 @@ External variables will be written into new datasets if the *-v*
 option is omitted.
 
 ----
-
-.. include:: field_analysis.rst
-
-----
   
 .. _Aggregation:
    
@@ -5906,6 +5902,10 @@ is straight forward with the `cf.load_stash2standard_name` function.
      'ultraviolet_index',
      {},
      ''],)
+
+----
+
+.. include:: field_analysis.rst
 
 ----
 
