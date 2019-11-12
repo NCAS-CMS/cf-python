@@ -5238,10 +5238,10 @@ are also aggregatable.
 **Compression**
 ---------------
 
-The CF conventions have support for saving space by identifying
-unwanted missing data.  Such compression techniques store the data
-more efficiently and result in no precision loss. The CF data model,
-however, views compressed arrays in their uncompressed form.
+The CF conventions have support for saving space by identifying and
+removing unwanted missing data.  Such compression techniques store the
+data more efficiently and result in no precision loss. The CF data
+model, however, views compressed arrays in their uncompressed form.
 
 Therefore, the field construct contains domain axis constructs for the
 compressed dimensions and presents a view of compressed data in its

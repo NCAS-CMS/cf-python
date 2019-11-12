@@ -11153,18 +11153,35 @@ may be accessed with the `nc_global_attributes`,
     def compress(self, method, axes=None, count_properties=None,
                  index_properties=None, list_properties=None,
                  inplace=False):
-        '''TODO
+        '''Compress the field construct.
+
+    Compression saves space by identifying and removing unwanted
+    missing data. Such compression techniques store the data more
+    efficiently and result in no precision loss. 
+
+    Whether or not the field construct is compressed does not alter
+    its functionality nor external appearance, but when writing a
+    compressed field construct to dataset, space will be saved by the
+    creation of compressed netCDF variables.
+
+    The following type of compression are available (see the *method*
+    parameter):
+
+    * Ragged arrays for discrete sampling geometries (DSG). Three
+      different types of ragged array representation are supported.
+
+  ..
+
+    * Compression by gathering. 
 
     .. versionadded:: 3.0.5
     
-    .. seealso: `cf.write`, `flatten`
+    .. seealso:: `cf.write`, `flatten`
 
     :Parameters:
 
         method: `str`
-
-
-            asdasdas
+            The compression method. One of:
 
             * ``'contiguous'``
 
@@ -11202,6 +11219,13 @@ may be accessed with the `nc_global_attributes`,
               dimension contains the elements for the timeseries or
               trajectories. Trailing missing data values in the third
               dimension are removed to created the compressed data.
+
+            * ``'gathered'``
+
+              Compression by gathering over any subset of the field
+              construct data dimensions.
+
+              *Not yet available.*
 
         count_properties: `dict`, optional
             Provide properties to the count variable for contiguous
@@ -11918,12 +11942,18 @@ may be accessed with the `nc_global_attributes`,
             =====  ===================================================
             *n*    Description
             =====  ===================================================
-            ``1``  The field construct has properties as well as a
+            ``1``  A field construct with properties as well as a
                    cell method constucts and dimension coordinate
                    constructs with bounds.
 
-            ``2``  The field construct has properties as well as at
+            ``2``  A field construct with properties as well as at
                    least one of every type of metadata construct.
+
+            ``3``  A field construct that contains discrete sampling
+                   geometry (DSG) "timeseries" features.
+
+            ``4``  A field construct that contains discrete sampling
+                   geometry (DSG) "timeSeriesProfile" features.
             =====  ===================================================
 
             See the examples for details.
@@ -11970,6 +12000,17 @@ may be accessed with the `nc_global_attributes`,
     Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
                     : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
                     : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
+
+    >>> print(cf.Field.example_field(3))          
+    Field: precipitation_flux (ncvar%humidity)
+    ------------------------------------------
+    Data            : precipitation_flux(cf_role=timeseries_id(4), ncdim%timeseries(9)) kg m-2 day-1
+    Auxiliary coords: time(cf_role=timeseries_id(4), ncdim%timeseries(9)) = [[1969-12-29 00:00:00, ..., 1970-01-07 00:00:00]]
+                    : latitude(cf_role=timeseries_id(4)) = [-9.0, ..., 78.0] degrees_north
+                    : longitude(cf_role=timeseries_id(4)) = [-23.0, ..., 178.0] degrees_east
+                    : height(cf_role=timeseries_id(4)) = [0.5, ..., 345.0] m
+                    : cf_role=timeseries_id(cf_role=timeseries_id(4)) = [b'station1', ..., b'station4']
+                    : long_name=some kind of station info(cf_role=timeseries_id(4)) = [-10, ..., -7]
 
         '''
         if n == 1:
@@ -12213,6 +12254,179 @@ may be accessed with the `nc_global_attributes`,
             c.coordinate_conversion.set_parameter('grid_mapping_name', 'rotated_latitude_longitude')
             f.set_construct(c)
 
+        elif n == 3:
+            f = Field()
+            
+            f.set_properties({'Conventions': 'CF-1.7', 'featureType': 'timeSeries', '_FillValue': -999.9, 'standard_name': 'precipitation_flux', 'units': 'kg m-2 day-1'})
+            f.nc_set_variable('humidity')
+            f.nc_set_global_attribute('Conventions', None)
+            f.nc_set_global_attribute('featureType', None)
+            
+            # domain_axis
+            c = DomainAxis(size=4)
+            c.nc_set_dimension('station')
+            f.set_construct(c, key='domainaxis0')
+            
+            # domain_axis
+            c = DomainAxis(size=9)
+            c.nc_set_dimension('timeseries')
+            f.set_construct(c, key='domainaxis1')
+            
+            # field data
+            data = Data([[3.98, 0.0, 0.0, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [0.0, 0.0, 0.0, 3.4, 0.0, 0.0, 4.61, 9.969209968386869e+36, 9.969209968386869e+36], [0.86, 0.8, 0.75, 0.0, 4.56, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [0.0, 0.09, 0.0, 0.91, 2.96, 1.14, 3.86, 0.0, 0.0]], units='kg m-2 day-1', dtype='f8')
+            data_mask = Data([[False, False, False, True, True, True, True, True, True], [False, False, False, False, False, False, False, True, True], [False, False, False, False, False, True, True, True, True], [False, False, False, False, False, False, False, False, False]], dtype='b1')
+            data.where(data_mask, cf_masked, inplace=True)
+            f.set_data(data, axes=('domainaxis0', 'domainaxis1'))
+            
+            # auxiliary_coordinate
+            c = AuxiliaryCoordinate()
+            c.set_properties({'standard_name': 'time', 'long_name': 'time of measurement', 'units': 'days since 1970-01-01 00:00:00'})
+            c.nc_set_variable('time')
+            data = Data([[-3.0, -2.0, -1.0, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 9.969209968386869e+36, 9.969209968386869e+36], [0.5, 1.5, 2.5, 3.5, 4.5, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [-2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0]], units='days since 1970-01-01 00:00:00', dtype='f8')
+            data_mask = Data([[False, False, False, True, True, True, True, True, True], [False, False, False, False, False, False, False, True, True], [False, False, False, False, False, True, True, True, True], [False, False, False, False, False, False, False, False, False]], dtype='b1')
+            data.where(data_mask, cf_masked, inplace=True)
+            c.set_data(data)
+            f.set_construct(c, axes=('domainaxis0', 'domainaxis1'), key='auxiliarycoordinate0', copy=False)
+            
+            # auxiliary_coordinate
+            c = AuxiliaryCoordinate()
+            c.set_properties({'standard_name': 'latitude', 'long_name': 'station latitude', 'units': 'degrees_north'})
+            c.nc_set_variable('lat')
+            data = Data([-9.0, 2.0, 34.0, 78.0], units='degrees_north', dtype='f8')
+            c.set_data(data)
+            f.set_construct(c, axes=('domainaxis0',), key='auxiliarycoordinate1', copy=False)
+            
+            # auxiliary_coordinate
+            c = AuxiliaryCoordinate()
+            c.set_properties({'standard_name': 'longitude', 'long_name': 'station longitude', 'units': 'degrees_east'})
+            c.nc_set_variable('lon')
+            data = Data([-23.0, 0.0, 67.0, 178.0], units='degrees_east', dtype='f8')
+            c.set_data(data)
+            f.set_construct(c, axes=('domainaxis0',), key='auxiliarycoordinate2', copy=False)
+            
+            # auxiliary_coordinate
+            c = AuxiliaryCoordinate()
+            c.set_properties({'long_name': 'vertical distance above the surface', 'standard_name': 'height', 'units': 'm', 'positive': 'up', 'axis': 'Z'})
+            c.nc_set_variable('alt')
+            data = Data([0.5, 12.6, 23.7, 345.0], units='m', dtype='f8')
+            c.set_data(data)
+            f.set_construct(c, axes=('domainaxis0',), key='auxiliarycoordinate3', copy=False)
+            
+            # auxiliary_coordinate
+            c = AuxiliaryCoordinate()
+            c.set_properties({'long_name': 'station name', 'cf_role': 'timeseries_id'})
+            c.nc_set_variable('station_name')
+            data = Data([b'station1', b'station2', b'station3', b'station4'], dtype='S8')
+            c.set_data(data)
+            f.set_construct(c, axes=('domainaxis0',), key='auxiliarycoordinate4', copy=False)
+            
+            # auxiliary_coordinate
+            c = AuxiliaryCoordinate()
+            c.set_properties({'long_name': 'some kind of station info'})
+            c.nc_set_variable('station_info')
+            data = Data([-10, -9, -8, -7], dtype='i4')
+            c.set_data(data)
+            f.set_construct(c, axes=('domainaxis0',), key='auxiliarycoordinate5', copy=False)
+
+        elif n == 4:
+            f = Field()
+            
+            f.set_properties({'Conventions': 'CF-1.6', 'featureType': 'timeSeriesProfile', '_FillValue': -999.9, 'standard_name': 'precipitation_flux', 'units': 'kg m-2 day-1'})
+            f.nc_set_variable('humidity')
+            f.nc_set_global_attribute('Conventions', None)
+            f.nc_set_global_attribute('featureType', None)
+            
+            # domain_axis
+            c = DomainAxis(size=3)
+            c.nc_set_dimension('station')
+            f.set_construct(c, key='domainaxis0')
+            
+            # domain_axis
+            c = DomainAxis(size=26)
+            c.nc_set_dimension('timeseries')
+            f.set_construct(c, key='domainaxis1')
+            
+            # domain_axis
+            c = DomainAxis(size=4)
+            c.nc_set_dimension('profile_1')
+            f.set_construct(c, key='domainaxis2')
+            
+            # field data
+            data = Data([[[0.0, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [3.15, 3.84, 0.0, 9.969209968386869e+36], [1.65, 0.0, 9.969209968386869e+36, 9.969209968386869e+36], [0.45, 1.14, 9.969209968386869e+36, 9.969209968386869e+36], [0.0, 0.0, 9.969209968386869e+36, 9.969209968386869e+36], [0.0, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [1.65, 3.57, 9.969209968386869e+36, 9.969209968386869e+36], [0.0, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [3.27, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [0.0, 0.0, 9.969209968386869e+36, 9.969209968386869e+36], [3.36, 0.99, 5.46, 9.969209968386869e+36], [1.2, 0.96, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36]], [[1.74, 0.72, 3.21, 0.0], [0.0, 0.0, 9.969209968386869e+36, 9.969209968386869e+36], [0.0, 0.0, 9.969209968386869e+36, 9.969209968386869e+36], [0.15, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [1.08, 0.0, 9.969209968386869e+36, 9.969209968386869e+36], [1.32, 3.66, 9.969209968386869e+36, 9.969209968386869e+36], [0.0, 9.18, 9.969209968386869e+36, 9.969209968386869e+36], [0.0, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [0.0, 1.05, 0.0, 9.969209968386869e+36], [1.23, 0.0, 1.11, 9.969209968386869e+36], [5.88, 1.83, 5.01, 9.969209968386869e+36], [2.37, 0.6, 0.0, 9.969209968386869e+36], [0.0, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [10.11, 0.0, 0.0, 9.969209968386869e+36], [0.0, 2.4, 9.969209968386869e+36, 9.969209968386869e+36], [0.0, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [1.5, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [0.0, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [4.98, 5.64, 9.969209968386869e+36, 9.969209968386869e+36], [0.66, 7.92, 0.0, 9.969209968386869e+36], [0.24, 0.36, 0.36, 9.969209968386869e+36], [0.0, 0.0, 9.969209968386869e+36, 9.969209968386869e+36], [0.0, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [2.79, 0.0, 9.969209968386869e+36, 9.969209968386869e+36], [0.0, 2.22, 0.0, 9.969209968386869e+36], [0.0, 1.14, 0.0, 9.969209968386869e+36]], [[1.74, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [1.44, 2.25, 0.0, 9.969209968386869e+36], [2.76, 0.0, 0.0, 9.969209968386869e+36], [1.59, 1.71, 4.47, 9.969209968386869e+36], [2.19, 1.35, 9.969209968386869e+36, 9.969209968386869e+36], [5.67, 0.0, 9.969209968386869e+36, 9.969209968386869e+36], [0.0, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [0.45, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [0.0, 0.0, 9.969209968386869e+36, 9.969209968386869e+36], [3.69, 0.9, 0.03, 9.969209968386869e+36], [0.0, 0.27, 0.87, 9.969209968386869e+36], [0.0, 0.0, 9.969209968386869e+36, 9.969209968386869e+36], [0.12, 1.44, 2.01, 9.969209968386869e+36], [1.23, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [2.97, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [0.0, 1.71, 9.969209968386869e+36, 9.969209968386869e+36], [2.01, 0.0, 9.969209968386869e+36, 9.969209968386869e+36], [4.62, 0.33, 2.01, 9.969209968386869e+36], [0.0, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [2.64, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36]]], units='kg m-2 day-1', dtype='f8')
+            data_mask = Data([[[False, True, True, True], [False, False, False, True], [False, False, True, True], [False, False, True, True], [False, False, True, True], [False, True, True, True], [False, False, True, True], [False, True, True, True], [False, True, True, True], [False, False, True, True], [False, False, False, True], [False, False, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True]], [[False, False, False, False], [False, False, True, True], [False, False, True, True], [False, True, True, True], [False, False, True, True], [False, False, True, True], [False, False, True, True], [False, True, True, True], [False, False, False, True], [False, False, False, True], [False, False, False, True], [False, False, False, True], [False, True, True, True], [False, False, False, True], [False, False, True, True], [False, True, True, True], [False, True, True, True], [False, True, True, True], [False, False, True, True], [False, False, False, True], [False, False, False, True], [False, False, True, True], [False, True, True, True], [False, False, True, True], [False, False, False, True], [False, False, False, True]], [[False, True, True, True], [False, False, False, True], [False, False, False, True], [False, False, False, True], [False, False, True, True], [False, False, True, True], [False, True, True, True], [False, True, True, True], [False, False, True, True], [False, False, False, True], [False, False, False, True], [False, False, True, True], [False, False, False, True], [False, True, True, True], [False, True, True, True], [False, False, True, True], [False, False, True, True], [False, False, False, True], [False, True, True, True], [False, True, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True]]], dtype='b1')
+            data.where(data_mask, cf_masked, inplace=True)
+            f.set_data(data, axes=('domainaxis0', 'domainaxis1', 'domainaxis2'))
+            
+            # auxiliary_coordinate
+            c = AuxiliaryCoordinate()
+            c.set_properties({'standard_name': 'time', 'long_name': 'time', 'units': 'days since 1970-01-01 00:00:00'})
+            c.nc_set_variable('time')
+            data = Data([[3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 20.0, 21.0, 22.0, 23.0, 24.0, 25.0], [-3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36]], units='days since 1970-01-01 00:00:00', dtype='f8')
+            data_mask = Data([[False, False, False, False, False, False, False, False, False, False, False, False, True, True, True, True, True, True, True, True, True, True, True, True, True, True], [False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False], [False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, True, True, True, True, True, True]], dtype='b1')
+            data.where(data_mask, cf_masked, inplace=True)
+            c.set_data(data)
+            f.set_construct(c, axes=('domainaxis0', 'domainaxis1'), key='auxiliarycoordinate0', copy=False)
+            
+            # auxiliary_coordinate
+            c = AuxiliaryCoordinate()
+            c.set_properties({'standard_name': 'latitude', 'long_name': 'station latitude', 'units': 'degrees_north'})
+            c.nc_set_variable('lat')
+            data = Data([-9.0, 2.0, 34.0], units='degrees_north', dtype='f8')
+            c.set_data(data)
+            f.set_construct(c, axes=('domainaxis0',), key='auxiliarycoordinate1', copy=False)
+            
+            # auxiliary_coordinate
+            c = AuxiliaryCoordinate()
+            c.set_properties({'standard_name': 'longitude', 'long_name': 'station longitude', 'units': 'degrees_east'})
+            c.nc_set_variable('lon')
+            data = Data([-23.0, 0.0, 67.0], units='degrees_east', dtype='f8')
+            c.set_data(data)
+            f.set_construct(c, axes=('domainaxis0',), key='auxiliarycoordinate2', copy=False)
+            
+            # auxiliary_coordinate
+            c = AuxiliaryCoordinate()
+            c.set_properties({'long_name': 'vertical distance above the surface', 'standard_name': 'height', 'units': 'm', 'positive': 'up', 'axis': 'Z'})
+            c.nc_set_variable('alt')
+            data = Data([0.5, 12.6, 23.7], units='m', dtype='f8')
+            c.set_data(data)
+            f.set_construct(c, axes=('domainaxis0',), key='auxiliarycoordinate3', copy=False)
+            
+            # auxiliary_coordinate
+            c = AuxiliaryCoordinate()
+            c.set_properties({'standard_name': 'altitude', 'long_name': 'height above mean sea level', 'units': 'km', 'axis': 'Z', 'positive': 'up'})
+            c.nc_set_variable('z')
+            data = Data([[[2.07, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [1.01, 1.18, 1.82, 9.969209968386869e+36], [1.1, 1.18, 9.969209968386869e+36, 9.969209968386869e+36], [1.63, 2.0, 9.969209968386869e+36, 9.969209968386869e+36], [1.38, 1.83, 9.969209968386869e+36, 9.969209968386869e+36], [1.59, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [1.57, 2.12, 9.969209968386869e+36, 9.969209968386869e+36], [2.25, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [1.8, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [1.26, 2.17, 9.969209968386869e+36, 9.969209968386869e+36], [1.05, 1.29, 2.1, 9.969209968386869e+36], [1.6, 1.97, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36]], [[0.52, 0.58, 1.08, 1.38], [0.26, 0.92, 9.969209968386869e+36, 9.969209968386869e+36], [0.07, 0.4, 9.969209968386869e+36, 9.969209968386869e+36], [1.57, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [0.25, 1.6, 9.969209968386869e+36, 9.969209968386869e+36], [0.46, 0.98, 9.969209968386869e+36, 9.969209968386869e+36], [0.06, 0.31, 9.969209968386869e+36, 9.969209968386869e+36], [0.38, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [0.57, 1.29, 1.81, 9.969209968386869e+36], [0.39, 0.69, 1.69, 9.969209968386869e+36], [0.73, 1.38, 1.6, 9.969209968386869e+36], [0.45, 0.98, 1.13, 9.969209968386869e+36], [0.15, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [0.09, 0.43, 0.62, 9.969209968386869e+36], [0.17, 0.99, 9.969209968386869e+36, 9.969209968386869e+36], [0.93, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [0.07, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [1.57, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [0.07, 0.12, 9.969209968386869e+36, 9.969209968386869e+36], [0.45, 1.24, 1.3, 9.969209968386869e+36], [0.35, 0.68, 0.79, 9.969209968386869e+36], [0.81, 1.22, 9.969209968386869e+36, 9.969209968386869e+36], [0.59, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [0.1, 0.96, 9.969209968386869e+36, 9.969209968386869e+36], [0.56, 0.78, 0.91, 9.969209968386869e+36], [0.71, 0.9, 1.04, 9.969209968386869e+36]], [[3.52, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [3.47, 3.89, 4.81, 9.969209968386869e+36], [3.52, 3.93, 3.96, 9.969209968386869e+36], [4.03, 4.04, 4.8, 9.969209968386869e+36], [3.0, 3.65, 9.969209968386869e+36, 9.969209968386869e+36], [3.33, 4.33, 9.969209968386869e+36, 9.969209968386869e+36], [3.77, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [3.35, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [3.19, 3.37, 9.969209968386869e+36, 9.969209968386869e+36], [3.41, 3.54, 4.1, 9.969209968386869e+36], [3.02, 3.37, 3.87, 9.969209968386869e+36], [3.24, 4.24, 9.969209968386869e+36, 9.969209968386869e+36], [3.32, 3.49, 3.97, 9.969209968386869e+36], [3.32, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [3.85, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [3.73, 3.99, 9.969209968386869e+36, 9.969209968386869e+36], [3.0, 3.91, 9.969209968386869e+36, 9.969209968386869e+36], [3.64, 3.91, 4.56, 9.969209968386869e+36], [4.1, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [3.11, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36]]], units='km', dtype='f8')
+            data_mask = Data([[[False, True, True, True], [False, False, False, True], [False, False, True, True], [False, False, True, True], [False, False, True, True], [False, True, True, True], [False, False, True, True], [False, True, True, True], [False, True, True, True], [False, False, True, True], [False, False, False, True], [False, False, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True]], [[False, False, False, False], [False, False, True, True], [False, False, True, True], [False, True, True, True], [False, False, True, True], [False, False, True, True], [False, False, True, True], [False, True, True, True], [False, False, False, True], [False, False, False, True], [False, False, False, True], [False, False, False, True], [False, True, True, True], [False, False, False, True], [False, False, True, True], [False, True, True, True], [False, True, True, True], [False, True, True, True], [False, False, True, True], [False, False, False, True], [False, False, False, True], [False, False, True, True], [False, True, True, True], [False, False, True, True], [False, False, False, True], [False, False, False, True]], [[False, True, True, True], [False, False, False, True], [False, False, False, True], [False, False, False, True], [False, False, True, True], [False, False, True, True], [False, True, True, True], [False, True, True, True], [False, False, True, True], [False, False, False, True], [False, False, False, True], [False, False, True, True], [False, False, False, True], [False, True, True, True], [False, True, True, True], [False, False, True, True], [False, False, True, True], [False, False, False, True], [False, True, True, True], [False, True, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True]]], dtype='b1')
+            data.where(data_mask, cf_masked, inplace=True)
+            c.set_data(data)
+            f.set_construct(c, axes=('domainaxis0', 'domainaxis1', 'domainaxis2'), key='auxiliarycoordinate4', copy=False)
+            
+            # auxiliary_coordinate
+            c = AuxiliaryCoordinate()
+            c.set_properties({'long_name': 'station name', 'cf_role': 'timeseries_id'})
+            c.nc_set_variable('station_name')
+            data = Data([b'station1', b'station2', b'station3'], dtype='S8')
+            c.set_data(data)
+            f.set_construct(c, axes=('domainaxis0',), key='auxiliarycoordinate5', copy=False)
+            
+            # auxiliary_coordinate
+            c = AuxiliaryCoordinate()
+            c.set_properties({'long_name': 'some kind of station info'})
+            c.nc_set_variable('station_info')
+            data = Data([-10, -9, -8], dtype='i4')
+            c.set_data(data)
+            f.set_construct(c, axes=('domainaxis0',), key='auxiliarycoordinate6', copy=False)
+            
+            # auxiliary_coordinate
+            c = AuxiliaryCoordinate()
+            c.set_properties({'cf_role': 'profile_id'})
+            c.nc_set_variable('profile')
+            data = Data([[102, 106, 109, 117, 121, 124, 132, 136, 139, 147, 151, 154, -2147483647, -2147483647, -2147483647, -2147483647, -2147483647, -2147483647, -2147483647, -2147483647, -2147483647, -2147483647, -2147483647, -2147483647, -2147483647, -2147483647], [101, 104, 105, 108, 110, 113, 114, 116, 119, 120, 123, 125, 128, 129, 131, 134, 135, 138, 140, 143, 144, 146, 149, 150, 153, 155], [100, 103, 107, 111, 112, 115, 118, 122, 126, 127, 130, 133, 137, 141, 142, 145, 148, 152, 156, 157, -2147483647, -2147483647, -2147483647, -2147483647, -2147483647, -2147483647]], dtype='i4')
+            data_mask = Data([[False, False, False, False, False, False, False, False, False, False, False, False, True, True, True, True, True, True, True, True, True, True, True, True, True, True], [False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False], [False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, True, True, True, True, True, True]], dtype='b1')
+            data.where(data_mask, cf_masked, inplace=True)
+            c.set_data(data)
+            f.set_construct(c, axes=('domainaxis0', 'domainaxis1'), key='auxiliarycoordinate7', copy=False)
+            
         else:
             raise ValueError(
                 "Must select an example field construct with an argument of 1 or 2. Got {!r}".format(n))
@@ -12411,12 +12625,14 @@ may be accessed with the `nc_global_attributes`,
 
         if self.nc_global_attributes():
             for key, value in self.nc_global_attributes().items():
-                out.append("{}.nc_set_global_attribute({!r}, {!r}))".format(
+                out.append("{}.nc_set_global_attribute({!r}, {!r})".format(
                     name, key, value))
         #--- End: if
-        
-        out.append("")
+
+        # Domain axes
         for key, c in self.domain_axes.items():
+            out.append("")
+            out.append("# "+c.construct_type)
             out.append("c = {}{}(size={})".format(namespace, c.__class__.__name__, c.size))
             
             nc = c.nc_get_dimension(None)
@@ -12428,7 +12644,9 @@ may be accessed with the `nc_global_attributes`,
 
             out.append("{}.set_construct(c, key={!r})".format(name, key))
 
+        # Field data
         out.append("")
+        out.append("# field data")
         data = self.data
         if representative_data:
             out.append("data = {!r} # Representative data".format(data))
