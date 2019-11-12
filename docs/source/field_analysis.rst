@@ -1997,7 +1997,6 @@ derivative wraps around by default.
 .. External links
 
 .. _Tripolar:                 https://doi.org/10.1007%2FBF00211684
-.. _numpy broadcasting rules: https://docs.scipy.org/doc/numpy/user/basics.broadcasting.html
 
 .. External links to the CF conventions (will need updating with new versions of CF)
    

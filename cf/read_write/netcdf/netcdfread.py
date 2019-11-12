@@ -4,6 +4,8 @@ from ast import literal_eval as ast_literal_eval
 
 import cfdm
 
+from ...constants import _file_to_fh
+
 
 class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
     '''TODO
@@ -274,5 +276,23 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                     g['do_not_create_field'].add(ncvar)                
 
     
+    def file_open(self, filename):
+        '''Open the netCDf file for reading.
+
+    :Paramters:
+    
+        filename: `str`
+            The netCDF file to be read.
+    
+    :Returns:
+    
+        out: `netCDF4.Dataset`
+            A `netCDF4.Dataset` object for the file.
+
+        '''
+        out = super().file_open(filename)
+        _file_to_fh['netCDF'].pop(filename, None)
+        return out
+
 #--- End: class
 

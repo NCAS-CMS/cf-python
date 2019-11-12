@@ -14,34 +14,35 @@ from ..umread_lib.umfile import File #, UMFileException
 _file_to_UM      = _file_to_fh.setdefault('UM', {})
 _file_to_Dataset = _file_to_fh.setdefault('netCDF', {})
 
+
 def _open_netcdf_file(filename, mode, fmt='NETCDF4'): #set_auto_mask=True):
     '''Open a netCDF file and read it into a netCDF4.Dataset object.
 
-If the file is already open then the existing netCDF4.Dataset object
-will be returned.
-
-:Parameters:
-
-    filename : str
-        The netCDF file to be opened.
-
-#    set_auto_mask: `bool`, optional
-#        Turn on or off automatic conversion of variable data to and
-#        from masked arrays.
-
-:Returns:
-
-    out : netCDF4.Dataset
-         A netCDF4.Dataset instance for the netCDF file.
-
-:Examples:
-
->>> nc1 = _open_netcdf_file('file.nc')
->>> nc1
-<netCDF4.Dataset at 0x1a7dad0>
->>> nc2 = _open_netcdf_file('file.nc')
->>> nc2 is nc1
-True
+    If the file is already open then the existing netCDF4.Dataset
+    object will be returned.
+    
+    :Parameters:
+    
+        filename: `str`
+            The netCDF file to be opened.
+    
+    #    set_auto_mask: `bool`, optional
+    #        Turn on or off automatic conversion of variable data to and
+    #        from masked arrays.
+    
+    :Returns:
+    
+        `netCDF4.Dataset`
+            A netCDF4.Dataset instance for the netCDF file.
+    
+    **Examples:**
+    
+    >>> nc1 = _open_netcdf_file('file.nc')
+    >>> nc1
+    <netCDF4.Dataset at 0x1a7dad0>
+    >>> nc2 = _open_netcdf_file('file.nc')
+    >>> nc2 is nc1
+    True
 
     '''
     if filename in _file_to_Dataset and mode == 'r':
@@ -68,51 +69,49 @@ True
         _file_to_Dataset[filename] = nc
 
     return nc
-#--- End: def
+
 
 def _close_netcdf_file(filename):
+    '''Close a netCDF file
+    
+    does nothing if the file is already closed.
+    
+    :Parameters:
+    
+        filename: `str`
+            The netCDF file to be closed.
+    
+    :Returns:
+    
+        `None`
+    
+    **Examples:**
+
     '''
-
-Close a netCDF file
-
-does nothing if the file is already closed.
-
-:Parameters:
-
-    filename : str
-        The netCDF file to be closed.
-
-:Returns:
-
-    None
-
-:Examples:
-
-'''
     nc = _file_to_Dataset.pop(filename, None)
     if nc is not None:
         nc.close()
-#--- End: def
+
 
 def _open_um_file(filename, aggregate=True, fmt=None, word_size=None,
                   byte_ordering=None):
     '''Open a UM fields file or PP file and read it into a `umfile.File`
-object.
-
-If there is already a `umfile.File` object for the file then it is
-returned with an open file descriptor.
-
-:Parameters:
-
-    filename: `str`
-        The file to be opened.
-
-:Returns:
-
-    `umfile.File`
-        The opened file with an open file descriptor.
-
-**Examples:**
+    object.
+    
+    If there is already a `umfile.File` object for the file then it is
+    returned with an open file descriptor.
+    
+    :Parameters:
+    
+        filename: `str`
+            The file to be opened.
+    
+    :Returns:
+    
+        `umfile.File`
+            The opened file with an open file descriptor.
+    
+    **Examples:**
 
     '''
 #    filename = abspath(filename)
@@ -151,27 +150,27 @@ returned with an open file descriptor.
     _file_to_UM[filename] = f
 
     return f
-#--- End: def
+
 
 def _close_um_file(filename):
     '''Close a PP or UM fields file.
 
-Does nothing if the file is already closed.
-
-:Parameters:
-
-    filename : str
-        The file to be closed.
-
-:Returns:
-
-    None
-
-:Examples:
+    Does nothing if the file is already closed.
+    
+    :Parameters:
+    
+        filename : str
+            The file to be closed.
+    
+    :Returns:
+    
+        None
+    
+    **Examples:**
 
     '''
     f = _file_to_UM.pop(filename, None)
     if f is not None:
         f.close_fd()
-#--- End: def
+
 

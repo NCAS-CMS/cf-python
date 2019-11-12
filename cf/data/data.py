@@ -9755,6 +9755,11 @@ returned.
       [15 19 23]]]
 
         '''
+        if inplace:
+            d = self
+        else:
+            d = self.copy()
+            
         ndim = self._ndim
         if not ndim:
             if axes or axes == 0:
@@ -9763,34 +9768,34 @@ returned.
                         self.__class__.__name__))
             
             if inplace:
-                return
-            return self
+                d = None
+            return d
 
-        shape = list(self._shape)
+        shape = list(d._shape)
 
         # Note that it is important that the first axis in the list is
         # the left-most flattened axis
         if axes is None:
             axes = list(range(ndim))
         else:
-            axes = sorted(self._parse_axes(axes))
+            axes = sorted(d._parse_axes(axes))
 
         n_axes = len(axes)
         if n_axes <= 1:
             if inplace:
-                return
-            return self
+                d = None
+            return d
 
         new_shape = [n for i, n in enumerate(shape) if i not in axes]
         new_shape.insert(axes[0], numpy_prod([shape[i] for i in axes]))
 
-        out = self.empty(new_shape, dtype=self.dtype,
-                         units=self.Units, chunk=True)
+        out = d.empty(new_shape, dtype=d.dtype, units=d.Units,
+                      chunk=True)
         out.hardmask = False
 
         n_non_flattened_axes = ndim - n_axes
 
-        for key, data in self.section(axes).items():
+        for key, data in d.section(axes).items():
             flattened_array = data.array.flatten()
             size = flattened_array.size
             
@@ -9807,11 +9812,11 @@ returned.
         out.hardmask = True
             
         if inplace:
-            self.__dict__ = out.__dict__
-            return
+            d.__dict__ = out.__dict__
+            out = None
                   
         return out
-        
+    
         
     def floor(self, inplace=False, i=False):
         '''Return the floor of the data array.

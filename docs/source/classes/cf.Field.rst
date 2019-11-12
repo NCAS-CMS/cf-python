@@ -320,6 +320,7 @@ Miscellaneous
 
    ~cf.Field.copy
    ~cf.Field.equals
+   ~cf.Field.compress
    ~cf.Field.convert
    ~cf.Field.creation_commands
    ~cf.Field.radius

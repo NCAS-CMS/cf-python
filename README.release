@@ -5,6 +5,9 @@
 
 * Make sure that Changelog.rst is up to date.
 
+* Check external links to the CF conventions are up to date in
+  docs/source/tutorial.rst and docs/source/field_analysis.rst
+
 * Create a link to the new documentation in docs/source/releases.rst
 
 * Make sure that the Data tests are not commented out

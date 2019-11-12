@@ -5299,7 +5299,10 @@ both:
   back to disk with the same compression, unless data elements have
   been modified by assignment. Any compressed arrays that have been
   modified will be written to an output dataset as uncompressed
-  arrays.
+  arrays. However, prior to writing, a field construct's underlying
+  data may be compressed by any of the ragged array or gathering
+  techniques via its `~Field.compress` method, which also compresses
+  the metadata constructs, as required.
 
 Examples of all of the above may be found in the sections on
 :ref:`discrete sampling geometries <Discrete-sampling-geometries>` and
@@ -5439,52 +5442,44 @@ data array elements are modified:
    >>> h.data.get_compression_type()
    ''
 
-A construct with an underlying ragged array is created by initialising
-a `cf.Data` instance with a ragged array that is stored in one of three
-special array objects: `RaggedContiguousArray`, `RaggedIndexedArray`
-or `RaggedIndexedContiguousArray`. The following code creates a simple
-field construct with an underlying contiguous ragged array:
-
-.. Code Block 3
+Perhaps the easist way to create a compressed field construct is to
+create the equivalent uncompressed field construct and then compress
+it with its `~Field.compress` method, which also compresses the
+metadata constructs, as required.
+   
+.. Code Block 2.9
 
 .. code-block:: python
-   :caption: *Create a field construct with compressed data.*
+   :caption: *Create a field construct and then compress it.*
 
    import numpy
    import cf
    
-   # Define the ragged array values
-   ragged_array = cf.Data([280, 281, 279, 278, 279.5])
-
-   # Define the count array values
-   count_array = [1, 4]
-
-   # Create the count variable
-   count_variable = cf.Count(data=cf.Data(count_array))
-   count_variable.set_property('long_name', 'number of obs for this timeseries')
-
-   # Create the contiguous ragged array object, specifying the
-   # uncompressed shape
-   array = cf.RaggedContiguousArray(
-                    compressed_array=ragged_array,
-                    shape=(2, 4), size=8, ndim=2,
-                    count_variable=count_variable)
-
-   # Create the field construct with the domain axes and the ragged
-   # array
+   # Define the array values
+   array = cf.Data([[280.0,   -99,   -99,   -99],
+                    [281.0, 279.0, 278.0, 279.5]])
+   array[0, 1:] = cf.masked
+   
+   # Create the field construct
    T = cf.Field()
    T.set_properties({'standard_name': 'air_temperature',
                      'units': 'K',
                      'featureType': 'timeSeries'})
    
-   # Create the domain axis constructs for the uncompressed array
+   # Create the domain axis constructs
    X = T.set_construct(cf.DomainAxis(4))
    Y = T.set_construct(cf.DomainAxis(2))
    
    # Set the data for the field
    T.set_data(cf.Data(array))
+
+   # Compress the data 
+   T.compress('contiguous',
+              count_properties={'long_name': 'number of obs for this timeseries'},
+              inplace=True)
 				
-The new field construct can now be inspected and written to a netCDF file:
+The new compressed field construct can now be inspected and written to
+a netCDF file:
 
 .. code-block:: python
    :caption: *Inspect the new field construct and write it to disk.*
@@ -5533,7 +5528,52 @@ The content of the new file is:
    
     air_temperature = 280, 281, 279, 278, 279.5 ;
    }
+	
+Exactly the same field construct may be also created explicitly with
+underlying compressed data. A construct with an underlying ragged
+array is created by initialising a `cf.Data` instance with a ragged
+array that is stored in one of three special array objects:
+`RaggedContiguousArray`, `RaggedIndexedArray` or
+`RaggedIndexedContiguousArray`.
 
+.. Code Block 3
+
+.. code-block:: python
+   :caption: *Create a field construct explicitly with compressed
+             data.*
+
+   import numpy
+   import cf
+   
+   # Define the ragged array values
+   ragged_array = cf.Data([280, 281, 279, 278, 279.5])
+
+   # Define the count array values
+   count_array = [1, 4]
+
+   # Create the count variable
+   count_variable = cf.Count(data=cf.Data(count_array))
+   count_variable.set_property('long_name', 'number of obs for this timeseries')
+
+   # Create the contiguous ragged array object, specifying the
+   # uncompressed shape
+   array = cf.RaggedContiguousArray(
+                    compressed_array=ragged_array,
+                    shape=(2, 4), size=8, ndim=2,
+                    count_variable=count_variable)
+
+   # Create the field construct
+   T.set_properties({'standard_name': 'air_temperature',
+                     'units': 'K',
+                     'featureType': 'timeSeries'})
+   
+   # Create the domain axis constructs for the uncompressed array
+   X = T.set_construct(cf.DomainAxis(4))
+   Y = T.set_construct(cf.DomainAxis(2))
+   
+   # Set the data for the field
+   T.set_data(cf.Data(array))
+	
 .. _Gathering:
 
 Gathering
@@ -5930,9 +5970,7 @@ is straight forward with the `cf.load_stash2standard_name` function.
 
 .. External links
 
-.. _Tripolar:                 https://doi.org/10.1007%2FBF00211684
 .. _numpy broadcasting rules: https://docs.scipy.org/doc/numpy/user/basics.broadcasting.html
-
 
 .. External links to the CF conventions (will need updating with new versions of CF)
    
@@ -5943,5 +5981,3 @@ is straight forward with the `cf.load_stash2standard_name` function.
 .. _contiguous:                       http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#_contiguous_ragged_array_representation
 .. _indexed:                          http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#_indexed_ragged_array_representation
 .. _indexed contiguous:               http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#_ragged_array_representation_of_time_series_profiles
-.. _CF-netCDF cell methods:           http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#cell-methods
-.. _Climatological statistics:        http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#climatological-statistics

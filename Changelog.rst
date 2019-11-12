@@ -4,6 +4,7 @@ version 3.0.5
 
 **Not yet released**
 
+* New method: `cf.Field.compress`.
 * Fixed bug that didn't allow `cf.Field.cell_area` to work with
   dimension coordinates in units equivalent to metres
   (https://github.com/NCAS-CMS/cf-python/issues/12)
