@@ -26,7 +26,7 @@ cd docs/source
 cd test_tutorial
 python ../tutorial.py
 
-* Test cfa
+* Test cfa:
 
 mkdir delme.$$
 for opt in vs vm vc
