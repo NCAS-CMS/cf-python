@@ -6,6 +6,7 @@ version 3.0.5
 
 * New method: `cf.Field.compress`.
 * New function: `cf.example_field`
+* New keyword parameter to `cf.Data`: ``mask``.
 * Deprecated method: `cf.Field.example_field`
 * Fixed bug that didn't allow `cf.Field.cell_area` to work with
   dimension coordinates with units equivalent to metres

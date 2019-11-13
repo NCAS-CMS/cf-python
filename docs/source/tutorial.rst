@@ -4077,6 +4077,8 @@ an already existing field construct, and then modify them to create
 the desired field constuct. The commands are produced by the
 `~Field.creation_commands` method of the existing field construct.
 
+.. Code Block 3
+
 .. code-block:: python
    :caption: *Create the commands that would create an exisiting field
              construct.*
@@ -4087,18 +4089,24 @@ the desired field constuct. The commands are produced by the
    
    f.set_properties({'Conventions': 'CF-1.7', 'project': 'research', 'standard_name': 'specific_humidity', 'units': '1'})
    f.nc_set_variable('q')
+   f.nc_set_global_attributes({'Conventions': None, 'project': None})
    
+   # domain_axis
    c = cf.DomainAxis(size=5)
    c.nc_set_dimension('lat')
    f.set_construct(c, key='domainaxis0')
+   
+   # domain_axis
    c = cf.DomainAxis(size=8)
    c.nc_set_dimension('lon')
    f.set_construct(c, key='domainaxis1')
+   
+   # domain_axis
    c = cf.DomainAxis(size=1)
    f.set_construct(c, key='domainaxis2')
    
-   data = cf.Data([[0.007, 0.034, 0.003, 0.014, 0.018, 0.037, 0.024, 0.029], [0.023, 0.036, 0.045, 0.062, 0.046, 0.073, 0.006, 0.066], [0.11, 0.131, 0.124, 0.146, 0.087, 0.103, 0.0
-   57, 0.011], [0.029, 0.059, 0.039, 0.07, 0.058, 0.072, 0.009, 0.017], [0.006, 0.036, 0.019, 0.035, 0.018, 0.037, 0.034, 0.013]], units='1', dtype='f8')
+   # field data
+   data = cf.Data([[0.007, 0.034, 0.003, 0.014, 0.018, 0.037, 0.024, 0.029], [0.023, 0.036, 0.045, 0.062, 0.046, 0.073, 0.006, 0.066], [0.11, 0.131, 0.124, 0.146, 0.087, 0.103, 0.057, 0.011], [0.029, 0.059, 0.039, 0.07, 0.058, 0.072, 0.009, 0.017], [0.006, 0.036, 0.019, 0.035, 0.018, 0.037, 0.034, 0.013]], units='1', dtype='f8')
    f.set_data(data, axes=('domainaxis0', 'domainaxis1'))
    
    # dimension_coordinate
@@ -5448,7 +5456,7 @@ create the equivalent uncompressed field construct and then compress
 it with its `~Field.compress` method, which also compresses the
 metadata constructs, as required.
    
-.. Code Block 2.9
+.. Code Block 4
 
 .. code-block:: python
    :caption: *Create a field construct and then compress it.*
@@ -5537,7 +5545,7 @@ array that is stored in one of three special array objects:
 `RaggedContiguousArray`, `RaggedIndexedArray` or
 `RaggedIndexedContiguousArray`.
 
-.. Code Block 3
+.. Code Block 5
 
 .. code-block:: python
    :caption: *Create a field construct explicitly with compressed
@@ -5696,7 +5704,7 @@ initializing a `cf.Data` instance with a gathered array that is stored
 in the special `cf.GatheredArray` array object. The following code
 creates a simple field construct with an underlying gathered array:
 
-.. Code Block 4
+.. Code Block 6
 
 .. code-block:: python
    :caption: *Create a field construct with compressed data.*

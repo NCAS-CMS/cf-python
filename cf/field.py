@@ -11996,10 +11996,12 @@ may be accessed with the `nc_global_attributes`,
             converted in its entirety to a string representation.
 
         namespace: `str`, optional
-            The namespace containing the cf package classes. By
-            default it is assumed that ``cf`` was imported as ``import
-            cf``.
-        
+            The namespace containing classes of the ``cf``
+            package. This is prepended to the class name in commands
+            that instantiate instances of ``cf`` objects. By default,
+            *namespace* is ``'cf'``, i.e. it is assumed that ``cf``
+            was imported as ``import cf``.
+
             *Parameter example:*
               If ``cf`` was imported as ``import cf as cfp`` then set
               ``namespace='cfp'``
@@ -12013,9 +12015,9 @@ may be accessed with the `nc_global_attributes`,
             is False.
 
         string: `bool`, optional
-            Return each command as an element of a `list`. By default
-            the the commands are concatenated into a string, with a
-            new line inserted between each command.
+            If False then return each command as an element of a
+            `list`. By default the the commands are concatenated into
+            a string, with a new line inserted between each command.
 
     :Returns:
         
@@ -12169,10 +12171,13 @@ may be accessed with the `nc_global_attributes`,
         if nc is not None:
             out.append("{}.nc_set_variable({!r})".format(name, nc))
 
-        if self.nc_global_attributes():
-            for key, value in self.nc_global_attributes().items():
-                out.append("{}.nc_set_global_attribute({!r}, {!r})".format(
-                    name, key, value))
+        nc_global_attributes = self.nc_global_attributes()
+        if nc_global_attributes:
+            out.append("{}.nc_set_global_attributes({!r})".format(
+                name, nc_global_attributes))
+#            for key, value in self.nc_global_attributes().items():
+#                out.append("{}.nc_set_global_attribute({!r}, {!r})".format(
+#                    name, key, value))
         #--- End: if
 
         # Domain axes
@@ -17524,7 +17529,7 @@ may be accessed with the `nc_global_attributes`,
 
     @property
     def Items(self):
-        '''Deprecated at version 3.0.0. Use attribute 'constructs' instead.
+        '''Deprecated at version 3.0.0. Use attribute `constructs`r instead.
 
         '''
         _DEPRECATION_ERROR_ATTRIBUTE(
@@ -17573,7 +17578,7 @@ may be accessed with the `nc_global_attributes`,
     def example_field(cls, n):
         '''Return an example field construct.
 
-    Deprecated at version 3.0.5. Use function 'cf.example_field' instead.
+    Deprecated at version 3.0.5. Use function `cf.example_field` instead.
 
     .. versionadded:: 3.0.4
 

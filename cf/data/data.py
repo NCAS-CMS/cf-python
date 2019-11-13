@@ -317,7 +317,7 @@ place.
     def __init__(self, array=None, units=None, calendar=None,
                  fill_value=None, hardmask=True, chunk=True,
                  loadd=None, loads=None, dt=False, source=None,
-                 copy=True, dtype=None, _use_array=True):
+                 copy=True, dtype=None, mask=None, _use_array=True):
         '''**Initialization**
 
     :Parameters:
@@ -389,6 +389,17 @@ place.
             *Parameter example:*
                 ``dtype=numpy.dtype('i2')``
 
+        mask: optional
+            Apply this mask to the data given by the *array*
+            parameter. By default, or if *mask* is `None`, no mask is
+            applied. May be any scalar or array-like object (such as a
+            `numpy` array or `Data` instance) that is broadcastable to
+            the shape of *array*. Masking will be carried out where
+            elements *mask* evaluate to `True`.
+
+            This mask will applied in addition to any mask already
+            defined by the *array* parameter.
+
         source: optional
             Initialize the array, units, calendar and fill value from
             those of *source*.
@@ -422,13 +433,13 @@ place.
             if it is larger than the chunk size, as returned by the
             `cf.CHUNKSIZE` function.
       
-        **Examples:**
+    **Examples:**
         
-        >>> d = cf.Data(5)
-        >>> d = cf.Data([1,2,3], units='K')
-        >>> import numpy   
-        >>> d = cf.Data(numpy.arange(10).reshape(2,5), units=Units('m/s'), fill_value=-999)
-        >>> d = cf.Data(tuple('fly'))
+    >>> d = cf.Data(5)
+    >>> d = cf.Data([1,2,3], units='K')
+    >>> import numpy   
+    >>> d = cf.Data(numpy.arange(10).reshape(2,5), units=Units('m/s'), fill_value=-999)
+    >>> d = cf.Data(tuple('fly'))
 
         '''
         data = array
@@ -610,6 +621,9 @@ place.
         
         if isinstance(data, CompressedArray):
             self._create_partition_matrix_for_compressed_array(data)
+            if mask is not None:
+                self.where(mask, cf_masked, inplace=True)
+
             return 
 
         # Still here?
@@ -631,6 +645,9 @@ place.
         if chunk:
             self.chunk()
             
+        if mask is not None:
+            self.where(mask, cf_masked, inplace=True)
+
             
     def _create_partition_matrix_for_compressed_array(self, compressed_array):
         '''Create and insert a partition matrix for a compressed array.
@@ -4309,12 +4326,15 @@ place.
     :Parameters:
 
         name: `str`, optional
-            Set the name of `Data` object that the commands create.
+            Set the variable name of `Data` object that the commands
+            create.
 
         namespace: `str`, optional
-            The namespace containing the cf package classes. By
-            default it is assumed that ``cf`` was imported as ``import
-            cf``.
+            The namespace containing classes of the ``cf``
+            package. This is prepended to the class name in commands
+            that instantiate instances of ``cf`` objects. By default,
+            *namespace* is ``'cf'``, i.e. it is assumed that ``cf``
+            was imported as ``import cf``.
         
             *Parameter example:*
               If ``cf`` was imported as ``import cf as cfp`` then set
@@ -4325,15 +4345,16 @@ place.
               ``namespace=''``
 
         string: `bool`, optional
-            Return each command an element of a `list`. By default the
-            the commands are concatenated into a string.
+            If False then return each command as an element of a
+            `list`. By default the the commands are concatenated into
+            a string, with a new line inserted between each command.
 
     :Returns:
         
         `str` or `list`
             The commands in a string, with a new line inserted between
-            each command. If *string* is False then the commands are
-            returned in a `list`.
+            each command. If *string* is False then the separate
+            commands are returned as each element of a `list`.
 
     **Examples:**
 
@@ -4348,10 +4369,9 @@ place.
 
     >>> print(d.array)
     [-- 'beta' 'gamma' 'delta' 'epsilon']
-    >>> d.creation_commands(name='d', package='', string=0)
-    ["d = Data(['', 'beta', 'gamma', 'delta', 'epsilon'], dtype='S7')",
-     "d_mask = Data([True, False, False, False, False], dtype='b1')",
-     'd.where(d_mask, masked, inplace=True)']
+    >>> d.creation_commands(name='d', namespace='', string=False)
+    ["d_mask = Data([True, False, False, False, False], dtype='b1')",
+     "d = Data([b'', b'beta', b'gamma', b'delta', b'epsilon'], dtype='S7', mask=d_mask)"]
 
         '''
         namespace0 = namespace
@@ -4389,7 +4409,14 @@ place.
         dtype = self.dtype.descr[0][1][1:]
             
         out = []
-        out.append("{} = {}{}({}{}{}, dtype={!r}{})".format(
+        if masked:
+            out.append(mask.creation_commands(name="{}_mask".format(name),
+                                              namespace=namespace0))
+            mask = ", mask={}_mask".format(name)
+        else:
+            mask = ''
+
+        out.append("{0} = {1}{2}({3}{4}{5}, dtype={6!r}{7}{8})".format(
             name,
             namespace,
             self.__class__.__name__,
@@ -4397,14 +4424,9 @@ place.
             units,
             calendar,
             dtype,
+            mask,
             fill_value))
         
-        if masked:
-            out.append(mask.creation_commands(name="{}_mask".format(name),
-                                              namespace=namespace0))
-            out.append("{0}.where({0}_mask, {1}masked, inplace=True)".format(
-                name, namespace))
-
         if string:
             out = '\n'.join(out)
 
@@ -9604,7 +9626,7 @@ returned.
                     fill_value = default_netCDF_fillvals().get('S1', None)
                     
                 if fill_value is None:
-                    raise ValueError("TODO{}".format(d.dtype.str))
+                    raise ValueError("TODO {}".format(d.dtype.str))
         #--- End: if
         
         hardmask = d.hardmask
