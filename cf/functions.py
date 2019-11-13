@@ -2464,9 +2464,10 @@ def _DEPRECATION_ERROR_KWARGS(instance, method, kwargs={}, message='',
 
     
 def _DEPRECATION_ERROR_METHOD(instance, method, message='', version='3.0.0'):
-    raise DeprecationError("{} method {!r} has been deprecated at version 3.0.0 and is no longer available. {}".format(
+    raise DeprecationError("{} method {!r} has been deprecated at version {} and is no longer available. {}".format(
         instance.__class__.__name__,
         method,
+        version,
         message))
 
 

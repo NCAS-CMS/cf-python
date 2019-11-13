@@ -52,13 +52,6 @@ class FieldTest(unittest.TestCase):
 #        self.test_only = ['test_Field_Field_domain_mask']
 #        self.test_only = ['test_Field_bin']
 
-    def test_Field_example_field(self):
-        if self.test_only and inspect.stack()[0][3] not in self.test_only:
-            return
-
-        for n in (1, 2):
-            f = cf.Field.example_field(n)
-            
         
     def test_Field_creation_commands(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -74,6 +67,18 @@ class FieldTest(unittest.TestCase):
                                                 indent=indent,
                                                 namespace=ns,
                                                 string=s)
+        #--- End: for
+            
+        for i in range(5):
+            f = cf.example_field(i)
+            for rd in (False, True):
+                for indent in (0, 4):
+                    for s in (False, True):
+                        for ns in ('cf', ''):                            
+                            _ = f.creation_commands(representative_data=rd,
+                                                    indent=indent,
+                                                    namespace=ns,
+                                                    string=s)
         #--- End: for
             
         

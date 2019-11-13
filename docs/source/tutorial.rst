@@ -4143,8 +4143,8 @@ the desired field constuct. The commands are produced by the
    c.axes = ('area',)
    f.set_construct(c)
 
-Some example fields are always available from the
-`cf.Field.example_field` method.
+Some example fields are always available from the `cf.example_field`
+function.
    
 .. _Creating-data-from-an-array-on-disk:
 

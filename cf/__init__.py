@@ -214,6 +214,7 @@ from .query                import (Query, lt, le, gt, ge, eq, ne, contain, conta
 from .constants            import *
 from .functions            import *
 from .maths                import relative_vorticity, histogram
+from .examplefield         import example_field
 
 
 from .read_write import (read,

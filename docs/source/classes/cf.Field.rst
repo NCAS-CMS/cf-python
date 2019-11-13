@@ -325,7 +325,6 @@ Miscellaneous
    ~cf.Field.creation_commands
    ~cf.Field.radius
    cf.Field.concatenate
-   cf.Field.example_field
    
 .. rubric:: Attributes
 	    
