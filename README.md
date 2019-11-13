@@ -75,7 +75,7 @@ The `cf` package can:
 >
 > Scripts written for version 2.x but running under version
 > 3.x should either work as expected, or provide informative
-> error mesages on the new API usage. However, it is advised
+> error messages on the new API usage. However, it is advised
 > that the outputs of older scripts be checked when running
 > with Python 3 versions of the cf library.
 > 
