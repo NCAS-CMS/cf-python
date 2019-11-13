@@ -11157,12 +11157,18 @@ may be accessed with the `nc_global_attributes`,
 
     Compression saves space by identifying and removing unwanted
     missing data. Such compression techniques store the data more
-    efficiently and result in no precision loss. 
+    efficiently and result in no precision loss.
+
+    The field construct data is compressesed, along with any
+    applicable metadata constructs.
 
     Whether or not the field construct is compressed does not alter
-    its functionality nor external appearance, but when writing a
-    compressed field construct to dataset, space will be saved by the
-    creation of compressed netCDF variables.
+    its functionality nor external appearance.
+
+    When writing a compressed field construct to a dataset space will
+    be saved by the creation of compressed netCDF variables, along
+    with the supplementary netCDF variables and attributes that are
+    required for the encoding.
 
     The following type of compression are available (see the *method*
     parameter):
@@ -11170,7 +11176,7 @@ may be accessed with the `nc_global_attributes`,
     * Ragged arrays for discrete sampling geometries (DSG). Three
       different types of ragged array representation are supported.
 
-  ..
+    ..
 
     * Compression by gathering. 
 
@@ -11261,7 +11267,53 @@ may be accessed with the `nc_global_attributes`,
 
     **Examples:**
 
-    TODO
+    >>> f = cf.Field.example_field(3)
+    >>> print(f)                                                                
+    Field: precipitation_flux (ncvar%p)
+    -----------------------------------
+    Data            : precipitation_flux(cf_role=timeseries_id(4), ncdim%timeseries(9)) kg m-2 day-1
+    Auxiliary coords: time(cf_role=timeseries_id(4), ncdim%timeseries(9)) = [[1969-12-29 00:00:00, ..., 1970-01-07 00:00:00]]
+                    : latitude(cf_role=timeseries_id(4)) = [-9.0, ..., 78.0] degrees_north
+                    : longitude(cf_role=timeseries_id(4)) = [-23.0, ..., 178.0] degrees_east
+                    : height(cf_role=timeseries_id(4)) = [0.5, ..., 345.0] m
+                    : cf_role=timeseries_id(cf_role=timeseries_id(4)) = [b'station1', ..., b'station4']
+                    : long_name=some kind of station info(cf_role=timeseries_id(4)) = [-10, ..., -7]
+    >>> f.data.get_compression_type()
+    ''
+    >>> f.compress('contiguous', inplace=True)
+    >>> f.data.get_compression_type()
+    'ragged contiguous'
+    >>> f.data.get_count()                     
+    <CF Count: (4) >
+    >>> print(f.data.get_count().array)                         
+    [3 7 5 9]
+
+    >>> f = cf.Field.example_field(4)
+    >>> print(f)
+    Field: precipitation_flux (ncvar%p)
+    -----------------------------------
+    Data            : precipitation_flux(cf_role=timeseries_id(3), ncdim%timeseries(26), ncdim%profile_1(4)) kg m-2 day-1
+    Auxiliary coords: time(cf_role=timeseries_id(3), ncdim%timeseries(26)) = [[1970-01-04 00:00:00, ..., --]]
+                    : latitude(cf_role=timeseries_id(3)) = [-9.0, 2.0, 34.0] degrees_north
+                    : longitude(cf_role=timeseries_id(3)) = [-23.0, 0.0, 67.0] degrees_east
+                    : height(cf_role=timeseries_id(3)) = [0.5, 12.6, 23.7] m
+                    : altitude(cf_role=timeseries_id(3), ncdim%timeseries(26), ncdim%profile_1(4)) = [[[2.07, ..., --]]] km
+                    : cf_role=timeseries_id(cf_role=timeseries_id(3)) = [b'station1', b'station2', b'station3']
+                    : long_name=some kind of station info(cf_role=timeseries_id(3)) = [-10, -9, -8]
+                    : cf_role=profile_id(cf_role=timeseries_id(3), ncdim%timeseries(26)) = [[102, ..., --]]
+    >>> f.data.get_compression_type()                     
+    ''
+    >>> g = f.compress('indexed_contiguous', 
+    ...                count_properties={'long_name': 'number of obs for each profile'})
+    >>> g.data.get_compression_type()                     
+    'ragged indexed contiguous'
+    >> g.data.get_count()
+    <CF Count: long_name=number of obs for each profile(58) >
+    >>> g.data.get_index()
+    <CF Index: (58) >
+    >>> print(g.data.get_index().array)                     
+    [0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+     1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2]
 
         '''
         def _empty_compressed_data(data, N):            
@@ -12002,15 +12054,30 @@ may be accessed with the `nc_global_attributes`,
                     : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
 
     >>> print(cf.Field.example_field(3))          
-    Field: precipitation_flux (ncvar%humidity)
-    ------------------------------------------
+    >>> print(f)     
+    Field: precipitation_flux (ncvar%p)
+    -----------------------------------
     Data            : precipitation_flux(cf_role=timeseries_id(4), ncdim%timeseries(9)) kg m-2 day-1
     Auxiliary coords: time(cf_role=timeseries_id(4), ncdim%timeseries(9)) = [[1969-12-29 00:00:00, ..., 1970-01-07 00:00:00]]
                     : latitude(cf_role=timeseries_id(4)) = [-9.0, ..., 78.0] degrees_north
                     : longitude(cf_role=timeseries_id(4)) = [-23.0, ..., 178.0] degrees_east
                     : height(cf_role=timeseries_id(4)) = [0.5, ..., 345.0] m
                     : cf_role=timeseries_id(cf_role=timeseries_id(4)) = [b'station1', ..., b'station4']
-                    : long_name=some kind of station info(cf_role=timeseries_id(4)) = [-10, ..., -7]
+                    : long_name=station information(cf_role=timeseries_id(4)) = [-10, ..., -7]
+
+    >>> f = cf.Field.example_field(4)
+    >>> print(f)
+    Field: air_temperature (ncvar%ta)
+    ---------------------------------
+    Data            : air_temperature(cf_role=timeseries_id(3), ncdim%timeseries(26), ncdim%profile_1(4)) K
+    Auxiliary coords: time(cf_role=timeseries_id(3), ncdim%timeseries(26)) = [[1970-01-04 00:00:00, ..., --]]
+                    : latitude(cf_role=timeseries_id(3)) = [-9.0, 2.0, 34.0] degrees_north
+                    : longitude(cf_role=timeseries_id(3)) = [-23.0, 0.0, 67.0] degrees_east
+                    : height(cf_role=timeseries_id(3)) = [0.5, 12.6, 23.7] m
+                    : altitude(cf_role=timeseries_id(3), ncdim%timeseries(26), ncdim%profile_1(4)) = [[[2.07, ..., --]]] km
+                    : cf_role=timeseries_id(cf_role=timeseries_id(3)) = [b'station1', b'station2', b'station3']
+                    : long_name=station information(cf_role=timeseries_id(3)) = [-10, -9, -8]
+                    : cf_role=profile_id(cf_role=timeseries_id(3), ncdim%timeseries(26)) = [[102, ..., --]]
 
         '''
         if n == 1:
@@ -12255,10 +12322,10 @@ may be accessed with the `nc_global_attributes`,
             f.set_construct(c)
 
         elif n == 3:
-            f = Field()
+            f = cls()
             
             f.set_properties({'Conventions': 'CF-1.7', 'featureType': 'timeSeries', '_FillValue': -999.9, 'standard_name': 'precipitation_flux', 'units': 'kg m-2 day-1'})
-            f.nc_set_variable('humidity')
+            f.nc_set_variable('p')
             f.nc_set_global_attribute('Conventions', None)
             f.nc_set_global_attribute('featureType', None)
             
@@ -12322,17 +12389,17 @@ may be accessed with the `nc_global_attributes`,
             
             # auxiliary_coordinate
             c = AuxiliaryCoordinate()
-            c.set_properties({'long_name': 'some kind of station info'})
+            c.set_properties({'long_name': 'station information'})
             c.nc_set_variable('station_info')
             data = Data([-10, -9, -8, -7], dtype='i4')
             c.set_data(data)
             f.set_construct(c, axes=('domainaxis0',), key='auxiliarycoordinate5', copy=False)
 
         elif n == 4:
-            f = Field()
+            f = cls()
             
-            f.set_properties({'Conventions': 'CF-1.6', 'featureType': 'timeSeriesProfile', '_FillValue': -999.9, 'standard_name': 'precipitation_flux', 'units': 'kg m-2 day-1'})
-            f.nc_set_variable('humidity')
+            f.set_properties({'Conventions': 'CF-1.7', 'featureType': 'timeSeriesProfile', '_FillValue': -999.9, 'standard_name': 'air_temperature', 'units': 'K'})
+            f.nc_set_variable('ta')
             f.nc_set_global_attribute('Conventions', None)
             f.nc_set_global_attribute('featureType', None)
             
@@ -12352,7 +12419,7 @@ may be accessed with the `nc_global_attributes`,
             f.set_construct(c, key='domainaxis2')
             
             # field data
-            data = Data([[[0.0, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [3.15, 3.84, 0.0, 9.969209968386869e+36], [1.65, 0.0, 9.969209968386869e+36, 9.969209968386869e+36], [0.45, 1.14, 9.969209968386869e+36, 9.969209968386869e+36], [0.0, 0.0, 9.969209968386869e+36, 9.969209968386869e+36], [0.0, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [1.65, 3.57, 9.969209968386869e+36, 9.969209968386869e+36], [0.0, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [3.27, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [0.0, 0.0, 9.969209968386869e+36, 9.969209968386869e+36], [3.36, 0.99, 5.46, 9.969209968386869e+36], [1.2, 0.96, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36]], [[1.74, 0.72, 3.21, 0.0], [0.0, 0.0, 9.969209968386869e+36, 9.969209968386869e+36], [0.0, 0.0, 9.969209968386869e+36, 9.969209968386869e+36], [0.15, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [1.08, 0.0, 9.969209968386869e+36, 9.969209968386869e+36], [1.32, 3.66, 9.969209968386869e+36, 9.969209968386869e+36], [0.0, 9.18, 9.969209968386869e+36, 9.969209968386869e+36], [0.0, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [0.0, 1.05, 0.0, 9.969209968386869e+36], [1.23, 0.0, 1.11, 9.969209968386869e+36], [5.88, 1.83, 5.01, 9.969209968386869e+36], [2.37, 0.6, 0.0, 9.969209968386869e+36], [0.0, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [10.11, 0.0, 0.0, 9.969209968386869e+36], [0.0, 2.4, 9.969209968386869e+36, 9.969209968386869e+36], [0.0, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [1.5, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [0.0, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [4.98, 5.64, 9.969209968386869e+36, 9.969209968386869e+36], [0.66, 7.92, 0.0, 9.969209968386869e+36], [0.24, 0.36, 0.36, 9.969209968386869e+36], [0.0, 0.0, 9.969209968386869e+36, 9.969209968386869e+36], [0.0, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [2.79, 0.0, 9.969209968386869e+36, 9.969209968386869e+36], [0.0, 2.22, 0.0, 9.969209968386869e+36], [0.0, 1.14, 0.0, 9.969209968386869e+36]], [[1.74, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [1.44, 2.25, 0.0, 9.969209968386869e+36], [2.76, 0.0, 0.0, 9.969209968386869e+36], [1.59, 1.71, 4.47, 9.969209968386869e+36], [2.19, 1.35, 9.969209968386869e+36, 9.969209968386869e+36], [5.67, 0.0, 9.969209968386869e+36, 9.969209968386869e+36], [0.0, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [0.45, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [0.0, 0.0, 9.969209968386869e+36, 9.969209968386869e+36], [3.69, 0.9, 0.03, 9.969209968386869e+36], [0.0, 0.27, 0.87, 9.969209968386869e+36], [0.0, 0.0, 9.969209968386869e+36, 9.969209968386869e+36], [0.12, 1.44, 2.01, 9.969209968386869e+36], [1.23, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [2.97, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [0.0, 1.71, 9.969209968386869e+36, 9.969209968386869e+36], [2.01, 0.0, 9.969209968386869e+36, 9.969209968386869e+36], [4.62, 0.33, 2.01, 9.969209968386869e+36], [0.0, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [2.64, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36]]], units='kg m-2 day-1', dtype='f8')
+            data = Data([[[290.0, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [293.15, 288.84, 280.0, 9.969209968386869e+36], [291.65, 285.0, 9.969209968386869e+36, 9.969209968386869e+36], [290.45, 286.14, 9.969209968386869e+36, 9.969209968386869e+36], [290.0, 285.0, 9.969209968386869e+36, 9.969209968386869e+36], [290.0, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [291.65, 288.57, 9.969209968386869e+36, 9.969209968386869e+36], [290.0, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [293.27, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [290.0, 285.0, 9.969209968386869e+36, 9.969209968386869e+36], [293.36, 285.99, 285.46, 9.969209968386869e+36], [291.2, 285.96, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36]], [[291.74, 285.72, 283.21, 275.0], [290.0, 285.0, 9.969209968386869e+36, 9.969209968386869e+36], [290.0, 285.0, 9.969209968386869e+36, 9.969209968386869e+36], [290.15, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [291.08, 285.0, 9.969209968386869e+36, 9.969209968386869e+36], [291.32, 288.66, 9.969209968386869e+36, 9.969209968386869e+36], [290.0, 294.18, 9.969209968386869e+36, 9.969209968386869e+36], [290.0, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [290.0, 286.05, 280.0, 9.969209968386869e+36], [291.23, 285.0, 281.11, 9.969209968386869e+36], [295.88, 286.83, 285.01, 9.969209968386869e+36], [292.37, 285.6, 280.0, 9.969209968386869e+36], [290.0, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [300.11, 285.0, 280.0, 9.969209968386869e+36], [290.0, 287.4, 9.969209968386869e+36, 9.969209968386869e+36], [290.0, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [291.5, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [290.0, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [294.98, 290.64, 9.969209968386869e+36, 9.969209968386869e+36], [290.66, 292.92, 280.0, 9.969209968386869e+36], [290.24, 285.36, 280.36, 9.969209968386869e+36], [290.0, 285.0, 9.969209968386869e+36, 9.969209968386869e+36], [290.0, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [292.79, 285.0, 9.969209968386869e+36, 9.969209968386869e+36], [290.0, 287.22, 280.0, 9.969209968386869e+36], [290.0, 286.14, 280.0, 9.969209968386869e+36]], [[291.74, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [291.44, 287.25, 280.0, 9.969209968386869e+36], [292.76, 285.0, 280.0, 9.969209968386869e+36], [291.59, 286.71, 284.47, 9.969209968386869e+36], [292.19, 286.35, 9.969209968386869e+36, 9.969209968386869e+36], [295.67, 285.0, 9.969209968386869e+36, 9.969209968386869e+36], [290.0, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [290.45, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [290.0, 285.0, 9.969209968386869e+36, 9.969209968386869e+36], [293.69, 285.9, 280.03, 9.969209968386869e+36], [290.0, 285.27, 280.87, 9.969209968386869e+36], [290.0, 285.0, 9.969209968386869e+36, 9.969209968386869e+36], [290.12, 286.44, 282.01, 9.969209968386869e+36], [291.23, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [292.97, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [290.0, 286.71, 9.969209968386869e+36, 9.969209968386869e+36], [292.01, 285.0, 9.969209968386869e+36, 9.969209968386869e+36], [294.62, 285.33, 282.01, 9.969209968386869e+36], [290.0, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [292.64, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36]]], units='K', dtype='f8')
             data_mask = Data([[[False, True, True, True], [False, False, False, True], [False, False, True, True], [False, False, True, True], [False, False, True, True], [False, True, True, True], [False, False, True, True], [False, True, True, True], [False, True, True, True], [False, False, True, True], [False, False, False, True], [False, False, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True]], [[False, False, False, False], [False, False, True, True], [False, False, True, True], [False, True, True, True], [False, False, True, True], [False, False, True, True], [False, False, True, True], [False, True, True, True], [False, False, False, True], [False, False, False, True], [False, False, False, True], [False, False, False, True], [False, True, True, True], [False, False, False, True], [False, False, True, True], [False, True, True, True], [False, True, True, True], [False, True, True, True], [False, False, True, True], [False, False, False, True], [False, False, False, True], [False, False, True, True], [False, True, True, True], [False, False, True, True], [False, False, False, True], [False, False, False, True]], [[False, True, True, True], [False, False, False, True], [False, False, False, True], [False, False, False, True], [False, False, True, True], [False, False, True, True], [False, True, True, True], [False, True, True, True], [False, False, True, True], [False, False, False, True], [False, False, False, True], [False, False, True, True], [False, False, False, True], [False, True, True, True], [False, True, True, True], [False, False, True, True], [False, False, True, True], [False, False, False, True], [False, True, True, True], [False, True, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True], [True, True, True, True]]], dtype='b1')
             data.where(data_mask, cf_masked, inplace=True)
             f.set_data(data, axes=('domainaxis0', 'domainaxis1', 'domainaxis2'))
@@ -12411,7 +12478,7 @@ may be accessed with the `nc_global_attributes`,
             
             # auxiliary_coordinate
             c = AuxiliaryCoordinate()
-            c.set_properties({'long_name': 'some kind of station info'})
+            c.set_properties({'long_name': 'station information'})
             c.nc_set_variable('station_info')
             data = Data([-10, -9, -8], dtype='i4')
             c.set_data(data)
@@ -12429,7 +12496,7 @@ may be accessed with the `nc_global_attributes`,
             
         else:
             raise ValueError(
-                "Must select an example field construct with an argument of 1 or 2. Got {!r}".format(n))
+                "Must select an example field construct with an argument of 1, 2, 3 or 4. Got {!r}".format(n))
         
         return f
     

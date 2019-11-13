@@ -418,10 +418,9 @@ def rt2dt(array, units_in, units_out=None, dummy1=None):
 
     units = units_in.units
     calendar = getattr(units_in, 'calendar', 'standard')
-    
+
     array = cftime.num2date(array, units, calendar,
                             only_use_cftime_datetimes=True)
-    
 #    array = units_in._utime.num2date(array)
 
     if mask is not None:

@@ -5297,12 +5297,13 @@ both:
   attributes that are required for the encoding. This means that if a
   dataset using compression is read from disk then it will be written
   back to disk with the same compression, unless data elements have
-  been modified by assignment. Any compressed arrays that have been
-  modified will be written to an output dataset as uncompressed
-  arrays. However, prior to writing, a field construct's underlying
-  data may be compressed by any of the ragged array or gathering
-  techniques via its `~Field.compress` method, which also compresses
-  the metadata constructs, as required.
+  been modified by assignment.
+
+..
+
+* An uncompressed field construct can be compressed, prior to being
+  written to a dataset, with its `~Field.compress` method, which also
+  compresses the metadata constructs as required.
 
 Examples of all of the above may be found in the sections on
 :ref:`discrete sampling geometries <Discrete-sampling-geometries>` and
@@ -5456,10 +5457,10 @@ metadata constructs, as required.
    import cf
    
    # Define the array values
-   array = cf.Data([[280.0,   -99,   -99,   -99],
-                    [281.0, 279.0, 278.0, 279.5]])
-   array[0, 1:] = cf.masked
-   
+   data = cf.Data([[280.0,   -99,   -99,   -99],
+                   [281.0, 279.0, 278.0, 279.5]])
+   data.where(cf.eq(-99), cf.masked, inplace=True)
+   	     
    # Create the field construct
    T = cf.Field()
    T.set_properties({'standard_name': 'air_temperature',
@@ -5471,8 +5472,8 @@ metadata constructs, as required.
    Y = T.set_construct(cf.DomainAxis(2))
    
    # Set the data for the field
-   T.set_data(cf.Data(array))
-
+   T.set_data(data)
+ 
    # Compress the data 
    T.compress('contiguous',
               count_properties={'long_name': 'number of obs for this timeseries'},
