@@ -10105,7 +10105,7 @@ may be accessed with the `nc_global_attributes`,
     
     :Returns:
     
-        `Field`, or `None`
+        `Field` or `None`
             The field construct with expanded data, or `None` if the
             operation was in-place.
     

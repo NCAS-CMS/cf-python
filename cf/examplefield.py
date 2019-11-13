@@ -28,16 +28,17 @@ def example_field(n):
             *n*    Description
             =====  ===================================================
             ``0``  A field construct with properties as well as a
-                   cell method constucts and dimension coordinate
+                   cell method constuct and dimension coordinate
                    constructs with bounds.
 
             ``1``  A field construct with properties as well as at
                    least one of every type of metadata construct.
 
-            ``2``  TODO
+            ``2``  A field construct that contains a time series at
+                   each latitude-longitude location.
 
             ``3``  A field construct that contains discrete sampling
-                   geometry (DSG) "timeseries" features.
+                   geometry (DSG) "timeSeries" features.
 
             ``4``  A field construct that contains discrete sampling
                    geometry (DSG) "timeSeriesProfile" features.
@@ -52,7 +53,7 @@ def example_field(n):
 
     **Examples:**
 
-    >>> f = cf.example_field(1)
+    >>> f = cf.example_field(0)
     >>> print(f)
     Field: specific_humidity(ncvar%q)
     ---------------------------------
@@ -68,7 +69,8 @@ def example_field(n):
      [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
      [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]
 
-    >>> print(cf.example_field(2))
+    >>> f = cf.example_field(1)
+    >>> print(f)
     Field: air_temperature (ncvar%ta)
     ---------------------------------
     Data            : air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K
@@ -87,6 +89,17 @@ def example_field(n):
     Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
                     : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
                     : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
+
+    >>> f = cf.example_field(2)
+    >>> print(f)
+    Field: air_potential_temperature (ncvar%air_potential_temperature)
+    ------------------------------------------------------------------
+    Data            : air_potential_temperature(time(36), latitude(5), longitude(8)) K
+    Cell methods    : area: mean
+    Dimension coords: time(36) = [1959-12-16 12:00:00, ..., 1962-11-16 00:00:00]
+                    : latitude(5) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(8) = [22.5, ..., 337.5] degrees_east
+                    : air_pressure(1) = [850.0] hPa
 
     >>> print(cf.example_field(3))          
     >>> print(f)     
@@ -113,16 +126,6 @@ def example_field(n):
                     : cf_role=timeseries_id(cf_role=timeseries_id(3)) = [b'station1', b'station2', b'station3']
                     : long_name=station information(cf_role=timeseries_id(3)) = [-10, -9, -8]
                     : cf_role=profile_id(cf_role=timeseries_id(3), ncdim%timeseries(26)) = [[102, ..., --]]
-
-    >>> f = cf.example_field(5)
-    Field: air_potential_temperature (ncvar%air_potential_temperature)
-    ------------------------------------------------------------------
-    Data            : air_potential_temperature(time(36), latitude(5), longitude(8)) K
-    Cell methods    : area: mean
-    Dimension coords: time(36) = [1959-12-16 12:00:00, ..., 1962-11-16 00:00:00]
-                    : latitude(5) = [-75.0, ..., 75.0] degrees_north
-                    : longitude(8) = [22.5, ..., 337.5] degrees_east
-                    : air_pressure(1) = [850.0] hPa
 
     '''
     if n == 0:

@@ -8,14 +8,17 @@ version 3.0.5
 * New function: `cf.example_field`
 * Deprecated method: `cf.Field.example_field`
 * Fixed bug that didn't allow `cf.Field.cell_area` to work with
-  dimension coordinates in units equivalent to metres
+  dimension coordinates with units equivalent to metres
   (https://github.com/NCAS-CMS/cf-python/issues/12)
 * Fixed bug that omitted bounds having their units changed by
   `override_units` and `override calendar`
   (https://github.com/NCAS-CMS/cf-python/issues/13).
+* Removed specific user shebang from ``cfa`` script
+  (https://github.com/NCAS-CMS/cf-python/pull/14).
 * Changed minimum cfdm dependency to version 1.7.10. This fixes a bug
   that didn't allow CDL files to start with comments or blank lines
   (https://github.com/NCAS-CMS/cfdm/issues/5).
+* Changed minimum cftime dependency to version 1.0.4.2
 
 version 3.0.4
 -------------
