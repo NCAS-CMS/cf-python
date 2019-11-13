@@ -4331,7 +4331,7 @@ place.
 
         namespace: `str`, optional
             The namespace containing classes of the ``cf``
-            package. This is prepended to the class name in commands
+            package. This is prefixed to the class name in commands
             that instantiate instances of ``cf`` objects. By default,
             *namespace* is ``'cf'``, i.e. it is assumed that ``cf``
             was imported as ``import cf``.

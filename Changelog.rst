@@ -2,7 +2,7 @@ version 3.0.5
 -------------
 ----
 
-**Not yet released**
+**2019-11-14**
 
 * New method: `cf.Field.compress`.
 * New function: `cf.example_field`
