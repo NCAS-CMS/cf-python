@@ -11262,7 +11262,7 @@ may be accessed with the `nc_global_attributes`,
     :Returns:
 
         `Field` or `None`
-            The compressed field construct, or `None` of the operation
+            The compressed field construct, or `None` if the operation
             was in-place.
 
     **Examples:**
@@ -11394,7 +11394,7 @@ may be accessed with the `nc_global_attributes`,
 
                 # Insert the compressed data into the metadata
                 # construct
-                y = Array_func(compressed_data, data, **variables)                
+                y = Array_func(compressed_data, data, **variables)
                 data._create_partition_matrix_for_compressed_array(y)
         #--- End: def
 
@@ -11984,9 +11984,19 @@ may be accessed with the `nc_global_attributes`,
                           namespace='cf', indent=0, string=True):
         '''Return the commands that would create the field construct.
 
+    **Construct keys**
+
+    The *key* parameter of the output `set_construct` commands is used
+    to reduce the number of commands needed to implement
+    cross-referencing between constructs (e.g. between a coordinate
+    reference construct and corodinate constructs). This is usually
+    not necessary when building field constructs, as the
+    `set_construct` returns sets and returns a unique construct key
+    for the construct being set.
+
     .. versionaddedd:: 3.0.4
 
-    .. seealso:: `cf.Data.creation_commands`
+    .. seealso:: `set_construct`, `cf.Data.creation_commands`
 
     :Parameters:
 
@@ -12011,8 +12021,8 @@ may be accessed with the `nc_global_attributes`,
               ``namespace=''``
 
         indent: `int`, optional
-            Indent each line by this many spaces. Ignored if *string*
-            is False.
+            Indent each line by this many spaces. By default no
+            indentation is applied. Ignored if *string* is False.
 
         string: `bool`, optional
             If False then return each command as an element of a
@@ -12195,23 +12205,21 @@ may be accessed with the `nc_global_attributes`,
         if nc_global_attributes:
             out.append("{}.nc_set_global_attributes({!r})".format(
                 name, nc_global_attributes))
-#            for key, value in self.nc_global_attributes().items():
-#                out.append("{}.nc_set_global_attribute({!r}, {!r})".format(
-#                    name, key, value))
-        #--- End: if
 
         # Domain axes
         for key, c in self.domain_axes.items():
             out.append("")
             out.append("# "+c.construct_type)
-            out.append("c = {}{}(size={})".format(namespace, c.__class__.__name__, c.size))
+            out.append("c = {}{}(size={})".format(namespace,
+                                                  c.__class__.__name__,
+                                                  c.size))
             
             nc = c.nc_get_dimension(None)
             if nc is not None:
                 out.append("c.nc_set_dimension({!r})".format(nc))
 
             if c.nc_is_unlimited():
-                out.append("c.nc_set_unlimited(True)")
+                out.append("c.nc_set_unlimited({})".format(True))
 
             out.append("{}.set_construct(c, key={!r})".format(name, key))
 
@@ -12222,7 +12230,9 @@ may be accessed with the `nc_global_attributes`,
         if representative_data:
             out.append("data = {!r} # Representative data".format(data))
         else:
-            out.extend(data.creation_commands(name='data', namespace=namespace0, string=False))
+            out.extend(data.creation_commands(name='data',
+                                              namespace=namespace0,
+                                              string=False))
 
         out.append("{}.set_data(data, axes={})".format(
             name, self.get_data_axes()))
@@ -12247,7 +12257,9 @@ may be accessed with the `nc_global_attributes`,
             if representative_data:
                 out.append("data = {!r} # Representative data".format(data))
             else:
-                out.extend(data.creation_commands(name='data', namespace=namespace0, string=False))
+                out.extend(data.creation_commands(name='data',
+                                                  namespace=namespace0,
+                                                  string=False))
                 
             out.append("c.set_data(data)")
             if c.has_bounds():
@@ -12264,7 +12276,9 @@ may be accessed with the `nc_global_attributes`,
                 if representative_data:
                     out.append("data = {!r} # Representative data".format(data))
                 else:
-                    out.extend(data.creation_commands(name='data', namespace=namespace0, string=False))
+                    out.extend(data.creation_commands(name='data',
+                                                      namespace=namespace0,
+                                                      string=False))
                     
                 out.append("b.set_data(data)")
                 out.append("c.set_bounds(b)")
@@ -12293,7 +12307,9 @@ may be accessed with the `nc_global_attributes`,
                     for i, data in enumerate(value[:]):
                         if isinstance(data, Data):
                             data_name = "interval{}".format(i)                        
-                            out.extend(data.creation_commands(name=data_name, namespace=namespace0, string=False))
+                            out.extend(data.creation_commands(name=data_name,
+                                                              namespace=namespace0,
+                                                              string=False))
                             value[i] = data_name
                         else:
                             value[i] = str(data)
@@ -12324,7 +12340,9 @@ may be accessed with the `nc_global_attributes`,
             for term, value in c.datum.parameters().items():
                 if isinstance(value, Data):
                     data_name = "parameter{}".format(i)
-                    out.extend(data.creation_commands(name=data_name, namespace=namespace0, string=False))
+                    out.extend(data.creation_commands(name=data_name,
+                                                      namespace=namespace0,
+                                                      string=False))
                     value = data_name
                 else:
                     value = repr(value)
@@ -12334,7 +12352,9 @@ may be accessed with the `nc_global_attributes`,
             for term, value in c.coordinate_conversion.parameters().items():
                 if isinstance(value, Data):
                     data_name = "parameter{}".format(i)
-                    out.extend(data.creation_commands(name=data_name, namespace=namespace0, string=False))
+                    out.extend(data.creation_commands(name=data_name,
+                                                      namespace=namespace0,
+                                                      string=False))
                     value = data_name
                 else:
                     value = repr(value)
@@ -14346,8 +14366,9 @@ may be accessed with the `nc_global_attributes`,
 
     .. vesionadded:: 3.0.0
     
-    .. seealso:: `constructs`, `del_construct`, `get_construct`,
-                 `set_coordinate_reference`, `set_data_axes`
+    .. seealso:: `constructs`, `creation_commands`, `del_construct`,
+                 `get_construct`, `set_coordinate_reference`,
+                 `set_data_axes`
     
     :Parameters:
     
