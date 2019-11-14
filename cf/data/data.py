@@ -9523,7 +9523,6 @@ returned.
         elif not 0 <= position <= ndim:
             raise ValueError(
                 "Can't insert dimension: Invalid position (%d)" % position)
-        #--- End: for
             
         if inplace:
             d = self
