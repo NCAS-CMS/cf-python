@@ -1,0 +1,7 @@
+cf.Bounds.nc_has_dimension
+==========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.nc_has_dimension

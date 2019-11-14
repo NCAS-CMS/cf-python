@@ -1,0 +1,7 @@
+cf.CellMeasure.concatenate
+==========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CellMeasure.concatenate

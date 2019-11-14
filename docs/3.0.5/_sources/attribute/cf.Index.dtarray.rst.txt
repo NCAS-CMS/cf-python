@@ -1,0 +1,7 @@
+cf.Index.dtarray
+================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.Index.dtarray

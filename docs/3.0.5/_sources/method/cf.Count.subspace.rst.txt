@@ -1,0 +1,7 @@
+cf.Count.subspace
+=================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Count.subspace

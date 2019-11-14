@@ -1,0 +1,7 @@
+cf.RaggedContiguousArray.get_compression_type
+=============================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.RaggedContiguousArray.get_compression_type

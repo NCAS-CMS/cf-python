@@ -1,0 +1,7 @@
+cf.DomainAncillary.__rxor__
+===========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DomainAncillary.__rxor__

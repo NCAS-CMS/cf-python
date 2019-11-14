@@ -1,0 +1,7 @@
+cf.Domain.construct_key
+=======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Domain.construct_key

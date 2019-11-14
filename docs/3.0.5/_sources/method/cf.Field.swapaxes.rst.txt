@@ -1,0 +1,7 @@
+cf.Field.swapaxes
+=================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Field.swapaxes

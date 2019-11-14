@@ -1,0 +1,7 @@
+cf.Field.files
+==============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Field.files

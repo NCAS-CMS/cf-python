@@ -1,0 +1,1184 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>cf.DimensionCoordinate &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cf.DimensionCoordinate.dump" href="../method/cf.DimensionCoordinate.dump.html" />
+    <link rel="prev" title="cf.CoordinateReference.__str__" href="../method/cf.CoordinateReference.__str__.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><b><a href="../index.html">cf 3.0.5</a></b></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../class.html"><strong>cf classes</strong></a><ul>
+      <li>Previous: <a href="../method/cf.CoordinateReference.__str__.html" title="previous chapter">cf.CoordinateReference.__str__</a></li>
+      <li>Next: <a href="../method/cf.DimensionCoordinate.dump.html" title="next chapter">cf.DimensionCoordinate.dump</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/classes/cf.DimensionCoordinate.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="cf-dimensioncoordinate">
+<h1>cf.DimensionCoordinate<a class="headerlink" href="#cf-dimensioncoordinate" title="Permalink to this headline">¶</a></h1>
+<hr class="docutils" />
+<dl class="class">
+<dt id="cf.DimensionCoordinate">
+<em class="property">class </em><code class="descclassname">cf.</code><code class="descname">DimensionCoordinate</code><span class="sig-paren">(</span><em>properties=None</em>, <em>data=None</em>, <em>bounds=None</em>, <em>geometry=None</em>, <em>interior_ring=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.5/cf/dimensioncoordinate.py#L21"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DimensionCoordinate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.abstract.coordinate.Coordinate</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.propertiesdatabounds.PropertiesDataBounds</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.dimensioncoordinate.DimensionCoordinate</span></code></p>
+<p>A dimension coordinate construct of the CF data model.</p>
+<p>A dimension coordinate construct provides information which locate
+the cells of the domain and which depend on a subset of the domain
+axis constructs. The dimension coordinate construct is able to
+unambiguously describe cell locations because a domain axis can be
+associated with at most one dimension coordinate construct, whose
+data array values must all be non-missing and strictly
+monotonically increasing or decreasing. They must also all be of
+the same numeric data type. If cell bounds are provided, then each
+cell must have exactly two vertices. CF-netCDF coordinate
+variables and numeric scalar coordinate variables correspond to
+dimension coordinate constructs.</p>
+<p>The dimension coordinate construct consists of a data array of the
+coordinate values which spans a subset of the domain axis
+constructs, an optional array of cell bounds recording the extents
+of each cell (stored in a <a class="reference internal" href="cf.Bounds.html#cf.Bounds" title="cf.Bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Bounds</span></code></a> object), and properties to
+describe the coordinates. An array of cell bounds spans the same
+domain axes as its coordinate array, with the addition of an extra
+dimension whose size is that of the number of vertices of each
+cell. This extra dimension does not correspond to a domain axis
+construct since it does not relate to an independent axis of the
+domain. Note that, for climatological time axes, the bounds are
+interpreted in a special way indicated by the cell method
+constructs.</p>
+<p><strong>NetCDF interface</strong></p>
+<p>The netCDF variable name of the construct may be accessed with the
+<a class="reference internal" href="../method/cf.DimensionCoordinate.nc_set_variable.html#cf.DimensionCoordinate.nc_set_variable" title="cf.DimensionCoordinate.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a>, <a class="reference internal" href="../method/cf.DimensionCoordinate.nc_get_variable.html#cf.DimensionCoordinate.nc_get_variable" title="cf.DimensionCoordinate.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a>, <a class="reference internal" href="../method/cf.DimensionCoordinate.nc_del_variable.html#cf.DimensionCoordinate.nc_del_variable" title="cf.DimensionCoordinate.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a> and
+<a class="reference internal" href="../method/cf.DimensionCoordinate.nc_has_variable.html#cf.DimensionCoordinate.nc_has_variable" title="cf.DimensionCoordinate.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_variable</span></code></a> methods.</p>
+<p><strong>Initialisation</strong></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt>
+<dd><p class="first">Set descriptive properties. The dictionary keys are property
+names, with corresponding values. Ignored if the <em>source</em>
+parameter is set.</p>
+<dl class="docutils">
+<dt><em>Parameter example:</em></dt>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">properties={'standard_name':</span> <span class="pre">'time'}</span></code></p>
+</dd>
+</dl>
+<p class="last">Properties may also be set after initialisation with the
+<a class="reference internal" href="../method/cf.DimensionCoordinate.set_properties.html#cf.DimensionCoordinate.set_properties" title="cf.DimensionCoordinate.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a> and <a class="reference internal" href="../method/cf.DimensionCoordinate.set_property.html#cf.DimensionCoordinate.set_property" title="cf.DimensionCoordinate.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a> methods.</p>
+</dd>
+<dt>data: <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>, optional</dt>
+<dd><p class="first">Set the data array. Ignored if the <em>source</em> parameter is set.</p>
+<p class="last">The data array may also be set after initialisation with the
+<a class="reference internal" href="../method/cf.DimensionCoordinate.set_data.html#cf.DimensionCoordinate.set_data" title="cf.DimensionCoordinate.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a> method.</p>
+</dd>
+<dt>bounds: <a class="reference internal" href="cf.Bounds.html#cf.Bounds" title="cf.Bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Bounds</span></code></a>, optional</dt>
+<dd><p class="first">Set the bounds array. Ignored if the <em>source</em> parameter is
+set.</p>
+<p class="last">The bounds array may also be set after initialisation with the
+<a class="reference internal" href="../method/cf.DimensionCoordinate.set_bounds.html#cf.DimensionCoordinate.set_bounds" title="cf.DimensionCoordinate.set_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_bounds</span></code></a> method.</p>
+</dd>
+<dt>source: optional</dt>
+<dd><p class="first last">Initialize the properties, data and bounds from those of
+<em>source</em>.</p>
+</dd>
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dd><p class="first last">If False then do not deep copy input parameters prior to
+initialization. By default arguments are deep copied.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<div class="section" id="inspection">
+<h2>Inspection<a class="headerlink" href="#inspection" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.dump.html#cf.DimensionCoordinate.dump" title="cf.DimensionCoordinate.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a></td>
+<td>A full description of the dimension coordinate construct.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.identity.html#cf.DimensionCoordinate.identity" title="cf.DimensionCoordinate.identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identity</span></code></a></td>
+<td>Return the canonical identity.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.identities.html#cf.DimensionCoordinate.identities" title="cf.DimensionCoordinate.identities"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identities</span></code></a></td>
+<td>Return all possible identities.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.direction.html#cf.DimensionCoordinate.direction" title="cf.DimensionCoordinate.direction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">direction</span></code></a></td>
+<td>Return True if the dimension coordinate values are increasing, otherwise return False.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.construct_type.html#cf.DimensionCoordinate.construct_type" title="cf.DimensionCoordinate.construct_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct_type</span></code></a></td>
+<td>Return a description of the construct type.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.id.html#cf.DimensionCoordinate.id" title="cf.DimensionCoordinate.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code></a></td>
+<td>A canonical identity.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.ctype.html#cf.DimensionCoordinate.ctype" title="cf.DimensionCoordinate.ctype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ctype</span></code></a></td>
+<td>The CF coordinate type.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.T.html#cf.DimensionCoordinate.T" title="cf.DimensionCoordinate.T"><code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code></a></td>
+<td>True if and only if the data are coordinates for a CF ‘T’ axis.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.X.html#cf.DimensionCoordinate.X" title="cf.DimensionCoordinate.X"><code class="xref py py-obj docutils literal notranslate"><span class="pre">X</span></code></a></td>
+<td>True if and only if the data are coordinates for a CF ‘X’ axis.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.Y.html#cf.DimensionCoordinate.Y" title="cf.DimensionCoordinate.Y"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Y</span></code></a></td>
+<td>True if and only if the data are coordinates for a CF ‘Y’ axis.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.Z.html#cf.DimensionCoordinate.Z" title="cf.DimensionCoordinate.Z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Z</span></code></a></td>
+<td>True if and only if the data are coordinates for a CF ‘Z’ axis.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.decreasing.html#cf.DimensionCoordinate.decreasing" title="cf.DimensionCoordinate.decreasing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decreasing</span></code></a></td>
+<td>True if the dimension coordinate is decreasing, otherwise False.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.increasing.html#cf.DimensionCoordinate.increasing" title="cf.DimensionCoordinate.increasing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">increasing</span></code></a></td>
+<td><a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> for dimension coordinate constructs, <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> otherwise.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="bounds">
+<h2>Bounds<a class="headerlink" href="#bounds" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.del_bounds.html#cf.DimensionCoordinate.del_bounds" title="cf.DimensionCoordinate.del_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_bounds</span></code></a></td>
+<td>Remove the bounds.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.get_bounds.html#cf.DimensionCoordinate.get_bounds" title="cf.DimensionCoordinate.get_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_bounds</span></code></a></td>
+<td>Return the bounds.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.has_bounds.html#cf.DimensionCoordinate.has_bounds" title="cf.DimensionCoordinate.has_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_bounds</span></code></a></td>
+<td>Whether or not there are bounds.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.set_bounds.html#cf.DimensionCoordinate.set_bounds" title="cf.DimensionCoordinate.set_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_bounds</span></code></a></td>
+<td>Set the bounds.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.get_bounds_data.html#cf.DimensionCoordinate.get_bounds_data" title="cf.DimensionCoordinate.get_bounds_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_bounds_data</span></code></a></td>
+<td>Return the bounds data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.create_bounds.html#cf.DimensionCoordinate.create_bounds" title="cf.DimensionCoordinate.create_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_bounds</span></code></a></td>
+<td>Create cell bounds.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.contiguous.html#cf.DimensionCoordinate.contiguous" title="cf.DimensionCoordinate.contiguous"><code class="xref py py-obj docutils literal notranslate"><span class="pre">contiguous</span></code></a></td>
+<td>Return True if a construct has contiguous cells.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.bounds.html#cf.DimensionCoordinate.bounds" title="cf.DimensionCoordinate.bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bounds</span></code></a></td>
+<td>Return the bounds.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.cellsize.html#cf.DimensionCoordinate.cellsize" title="cf.DimensionCoordinate.cellsize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cellsize</span></code></a></td>
+<td>The cell sizes.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.lower_bounds.html#cf.DimensionCoordinate.lower_bounds" title="cf.DimensionCoordinate.lower_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lower_bounds</span></code></a></td>
+<td>The lower bounds of cells.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.upper_bounds.html#cf.DimensionCoordinate.upper_bounds" title="cf.DimensionCoordinate.upper_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">upper_bounds</span></code></a></td>
+<td>The upper bounds of cells.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="selection">
+<h2>Selection<a class="headerlink" href="#selection" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.match_by_identity.html#cf.DimensionCoordinate.match_by_identity" title="cf.DimensionCoordinate.match_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_identity</span></code></a></td>
+<td>Determine whether or not a variable satisfies conditions.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.match_by_naxes.html#cf.DimensionCoordinate.match_by_naxes" title="cf.DimensionCoordinate.match_by_naxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_naxes</span></code></a></td>
+<td>Whether or not the data has a given dimensionality.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.match_by_ncvar.html#cf.DimensionCoordinate.match_by_ncvar" title="cf.DimensionCoordinate.match_by_ncvar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_ncvar</span></code></a></td>
+<td>Whether or not the construct has a netCDF variable name.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.match_by_property.html#cf.DimensionCoordinate.match_by_property" title="cf.DimensionCoordinate.match_by_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_property</span></code></a></td>
+<td>Determine whether or not a variable satisfies conditions.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.match_by_units.html#cf.DimensionCoordinate.match_by_units" title="cf.DimensionCoordinate.match_by_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_units</span></code></a></td>
+<td>Whether or not the construct has given units.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="properties">
+<h2>Properties<a class="headerlink" href="#properties" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.del_property.html#cf.DimensionCoordinate.del_property" title="cf.DimensionCoordinate.del_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_property</span></code></a></td>
+<td>Remove a property.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.get_property.html#cf.DimensionCoordinate.get_property" title="cf.DimensionCoordinate.get_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_property</span></code></a></td>
+<td>Get a CF property.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.has_property.html#cf.DimensionCoordinate.has_property" title="cf.DimensionCoordinate.has_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_property</span></code></a></td>
+<td>Whether a property has been set.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.set_property.html#cf.DimensionCoordinate.set_property" title="cf.DimensionCoordinate.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a></td>
+<td>Set a property.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.properties.html#cf.DimensionCoordinate.properties" title="cf.DimensionCoordinate.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">properties</span></code></a></td>
+<td>Return all properties.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.clear_properties.html#cf.DimensionCoordinate.clear_properties" title="cf.DimensionCoordinate.clear_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_properties</span></code></a></td>
+<td>Remove all properties.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.set_properties.html#cf.DimensionCoordinate.set_properties" title="cf.DimensionCoordinate.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a></td>
+<td>Set properties.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.add_offset.html#cf.DimensionCoordinate.add_offset" title="cf.DimensionCoordinate.add_offset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_offset</span></code></a></td>
+<td>The add_offset CF property.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.axis.html#cf.DimensionCoordinate.axis" title="cf.DimensionCoordinate.axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">axis</span></code></a></td>
+<td>The axis CF property.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.calendar.html#cf.DimensionCoordinate.calendar" title="cf.DimensionCoordinate.calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calendar</span></code></a></td>
+<td>The calendar CF property.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.comment.html#cf.DimensionCoordinate.comment" title="cf.DimensionCoordinate.comment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">comment</span></code></a></td>
+<td>The comment CF property.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate._FillValue.html#cf.DimensionCoordinate._FillValue" title="cf.DimensionCoordinate._FillValue"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_FillValue</span></code></a></td>
+<td>The _FillValue CF property.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.history.html#cf.DimensionCoordinate.history" title="cf.DimensionCoordinate.history"><code class="xref py py-obj docutils literal notranslate"><span class="pre">history</span></code></a></td>
+<td>The history CF property.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.leap_month.html#cf.DimensionCoordinate.leap_month" title="cf.DimensionCoordinate.leap_month"><code class="xref py py-obj docutils literal notranslate"><span class="pre">leap_month</span></code></a></td>
+<td>The leap_month CF property.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.leap_year.html#cf.DimensionCoordinate.leap_year" title="cf.DimensionCoordinate.leap_year"><code class="xref py py-obj docutils literal notranslate"><span class="pre">leap_year</span></code></a></td>
+<td>The leap_year CF property.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.long_name.html#cf.DimensionCoordinate.long_name" title="cf.DimensionCoordinate.long_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">long_name</span></code></a></td>
+<td>The long_name CF property.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.missing_value.html#cf.DimensionCoordinate.missing_value" title="cf.DimensionCoordinate.missing_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">missing_value</span></code></a></td>
+<td>The missing_value CF property.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.month_lengths.html#cf.DimensionCoordinate.month_lengths" title="cf.DimensionCoordinate.month_lengths"><code class="xref py py-obj docutils literal notranslate"><span class="pre">month_lengths</span></code></a></td>
+<td>The month_lengths CF property.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.positive.html#cf.DimensionCoordinate.positive" title="cf.DimensionCoordinate.positive"><code class="xref py py-obj docutils literal notranslate"><span class="pre">positive</span></code></a></td>
+<td>The positive CF property.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.scale_factor.html#cf.DimensionCoordinate.scale_factor" title="cf.DimensionCoordinate.scale_factor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scale_factor</span></code></a></td>
+<td>The scale_factor CF property.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.standard_name.html#cf.DimensionCoordinate.standard_name" title="cf.DimensionCoordinate.standard_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_name</span></code></a></td>
+<td>The standard_name CF property.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.units.html#cf.DimensionCoordinate.units" title="cf.DimensionCoordinate.units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">units</span></code></a></td>
+<td>The units CF property.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.valid_max.html#cf.DimensionCoordinate.valid_max" title="cf.DimensionCoordinate.valid_max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">valid_max</span></code></a></td>
+<td>The valid_max CF property.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.valid_min.html#cf.DimensionCoordinate.valid_min" title="cf.DimensionCoordinate.valid_min"><code class="xref py py-obj docutils literal notranslate"><span class="pre">valid_min</span></code></a></td>
+<td>The valid_min CF property.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.valid_range.html#cf.DimensionCoordinate.valid_range" title="cf.DimensionCoordinate.valid_range"><code class="xref py py-obj docutils literal notranslate"><span class="pre">valid_range</span></code></a></td>
+<td>The valid_range CF property.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="units">
+<h2>Units<a class="headerlink" href="#units" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.override_units.html#cf.DimensionCoordinate.override_units" title="cf.DimensionCoordinate.override_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">override_units</span></code></a></td>
+<td>Override the units.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.override_calendar.html#cf.DimensionCoordinate.override_calendar" title="cf.DimensionCoordinate.override_calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">override_calendar</span></code></a></td>
+<td>Override the calendar of date-time units.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.Units.html#cf.DimensionCoordinate.Units" title="cf.DimensionCoordinate.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a></td>
+<td>The <a class="reference internal" href="cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Units</span></code></a> object containing the units of the data array.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="data">
+<h2>Data<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.array.html#cf.DimensionCoordinate.array" title="cf.DimensionCoordinate.array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a></td>
+<td>A numpy array deep copy of the data array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.data.html#cf.DimensionCoordinate.data" title="cf.DimensionCoordinate.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></td>
+<td>The <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object containing the data array.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.datetime_array.html#cf.DimensionCoordinate.datetime_array" title="cf.DimensionCoordinate.datetime_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime_array</span></code></a></td>
+<td>An independent numpy array of date-time objects.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.datum.html#cf.DimensionCoordinate.datum" title="cf.DimensionCoordinate.datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datum</span></code></a></td>
+<td>Return an element of the data array as a standard Python scalar.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.dtype.html#cf.DimensionCoordinate.dtype" title="cf.DimensionCoordinate.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></a></td>
+<td>The <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/index.html#module-numpy" title="(in NumPy v1.17)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> data type of the data array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.isscalar.html#cf.DimensionCoordinate.isscalar" title="cf.DimensionCoordinate.isscalar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isscalar</span></code></a></td>
+<td>True if the data array is scalar.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.ndim.html#cf.DimensionCoordinate.ndim" title="cf.DimensionCoordinate.ndim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndim</span></code></a></td>
+<td>The number of dimensions in the data array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.shape.html#cf.DimensionCoordinate.shape" title="cf.DimensionCoordinate.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></td>
+<td>A tuple of the data array’s dimension sizes.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.size.html#cf.DimensionCoordinate.size" title="cf.DimensionCoordinate.size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">size</span></code></a></td>
+<td>The number of elements in the data array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.varray.html#cf.DimensionCoordinate.varray" title="cf.DimensionCoordinate.varray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">varray</span></code></a></td>
+<td>A numpy array view of the data array.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__getitem__.html#cf.DimensionCoordinate.__getitem__" title="cf.DimensionCoordinate.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></td>
+<td>Return a subspace of the field construct defined by indices.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.del_data.html#cf.DimensionCoordinate.del_data" title="cf.DimensionCoordinate.del_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></a></td>
+<td>Remove the data.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.get_data.html#cf.DimensionCoordinate.get_data" title="cf.DimensionCoordinate.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a></td>
+<td>Return the data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.has_data.html#cf.DimensionCoordinate.has_data" title="cf.DimensionCoordinate.has_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_data</span></code></a></td>
+<td>Whether a data has been set.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.set_data.html#cf.DimensionCoordinate.set_data" title="cf.DimensionCoordinate.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a></td>
+<td>Set the data.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric"><em>Rearranging elements</em></p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.flatten.html#cf.DimensionCoordinate.flatten" title="cf.DimensionCoordinate.flatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flatten</span></code></a></td>
+<td>Flatten axes of the data</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.flip.html#cf.DimensionCoordinate.flip" title="cf.DimensionCoordinate.flip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flip</span></code></a></td>
+<td>TODO</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.insert_dimension.html#cf.DimensionCoordinate.insert_dimension" title="cf.DimensionCoordinate.insert_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_dimension</span></code></a></td>
+<td>Expand the shape of the data array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.roll.html#cf.DimensionCoordinate.roll" title="cf.DimensionCoordinate.roll"><code class="xref py py-obj docutils literal notranslate"><span class="pre">roll</span></code></a></td>
+<td>TODO</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.squeeze.html#cf.DimensionCoordinate.squeeze" title="cf.DimensionCoordinate.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></td>
+<td>Remove size 1 dimensions from the data array</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.swapaxes.html#cf.DimensionCoordinate.swapaxes" title="cf.DimensionCoordinate.swapaxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">swapaxes</span></code></a></td>
+<td>Interchange two axes of an array.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.transpose.html#cf.DimensionCoordinate.transpose" title="cf.DimensionCoordinate.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a></td>
+<td>Permute the axes of the data array.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric"><em>Data array mask</em></p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.fill_value.html#cf.DimensionCoordinate.fill_value" title="cf.DimensionCoordinate.fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fill_value</span></code></a></td>
+<td>Return the data array missing data value.</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.binary_mask.html#cf.DimensionCoordinate.binary_mask" title="cf.DimensionCoordinate.binary_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_mask</span></code></a></td>
+<td>A binary (0 and 1) missing data mask of the data array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.count.html#cf.DimensionCoordinate.count" title="cf.DimensionCoordinate.count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count</span></code></a></td>
+<td>Count the non-masked elements of the data.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.count_masked.html#cf.DimensionCoordinate.count_masked" title="cf.DimensionCoordinate.count_masked"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count_masked</span></code></a></td>
+<td>Count the masked elements of the data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.hardmask.html#cf.DimensionCoordinate.hardmask" title="cf.DimensionCoordinate.hardmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></a></td>
+<td>Whether the mask is hard (True) or soft (False).</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.mask.html#cf.DimensionCoordinate.mask" title="cf.DimensionCoordinate.mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code></a></td>
+<td>The mask of the data array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.mask_invalid.html#cf.DimensionCoordinate.mask_invalid" title="cf.DimensionCoordinate.mask_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask_invalid</span></code></a></td>
+<td>Mask the array where invalid values occur.</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+</tbody>
+</table>
+<p class="rubric"><em>Changing data values</em></p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__setitem__.html#cf.DimensionCoordinate.__setitem__" title="cf.DimensionCoordinate.__setitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__setitem__</span></code></a></td>
+<td>Called to implement assignment to x[indices]</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.mask_invalid.html#cf.DimensionCoordinate.mask_invalid" title="cf.DimensionCoordinate.mask_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask_invalid</span></code></a></td>
+<td>Mask the array where invalid values occur.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.subspace.html#cf.DimensionCoordinate.subspace" title="cf.DimensionCoordinate.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subspace</span></code></a></td>
+<td>Return a new variable whose data is subspaced.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.where.html#cf.DimensionCoordinate.where" title="cf.DimensionCoordinate.where"><code class="xref py py-obj docutils literal notranslate"><span class="pre">where</span></code></a></td>
+<td>Set data array elements depending on a condition.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric"><em>Miscellaneous</em></p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.chunk.html#cf.DimensionCoordinate.chunk" title="cf.DimensionCoordinate.chunk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chunk</span></code></a></td>
+<td>Partition the data array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.close.html#cf.DimensionCoordinate.close" title="cf.DimensionCoordinate.close"><code class="xref py py-obj docutils literal notranslate"><span class="pre">close</span></code></a></td>
+<td>Close all files referenced by the construct.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.convert_reference_time.html#cf.DimensionCoordinate.convert_reference_time" title="cf.DimensionCoordinate.convert_reference_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert_reference_time</span></code></a></td>
+<td>Convert reference time data values to have new units.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.cyclic.html#cf.DimensionCoordinate.cyclic" title="cf.DimensionCoordinate.cyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cyclic</span></code></a></td>
+<td>Set the cyclicity of axes of the data array.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.files.html#cf.DimensionCoordinate.files" title="cf.DimensionCoordinate.files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">files</span></code></a></td>
+<td>Return the names of any files containing parts of the data array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.period.html#cf.DimensionCoordinate.period" title="cf.DimensionCoordinate.period"><code class="xref py py-obj docutils literal notranslate"><span class="pre">period</span></code></a></td>
+<td>Set the period for cyclic coordinates.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="miscellaneous">
+<h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.concatenate.html#cf.DimensionCoordinate.concatenate" title="cf.DimensionCoordinate.concatenate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">concatenate</span></code></a></td>
+<td>Join a sequence of variables together.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.copy.html#cf.DimensionCoordinate.copy" title="cf.DimensionCoordinate.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a></td>
+<td>Return a deep copy.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.equals.html#cf.DimensionCoordinate.equals" title="cf.DimensionCoordinate.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equals</span></code></a></td>
+<td>Whether two instances are the same.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.inspect.html#cf.DimensionCoordinate.inspect" title="cf.DimensionCoordinate.inspect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inspect</span></code></a></td>
+<td>Inspect the object for debugging.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="mathematical-operations">
+<h2>Mathematical operations<a class="headerlink" href="#mathematical-operations" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<p class="rubric"><em>Trigonometrical functions</em></p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.cos.html#cf.DimensionCoordinate.cos" title="cf.DimensionCoordinate.cos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cos</span></code></a></td>
+<td>Take the trigonometric cosine of the data, element-wise.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.sin.html#cf.DimensionCoordinate.sin" title="cf.DimensionCoordinate.sin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sin</span></code></a></td>
+<td>The trigonometric sine of the data, element-wise.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.tan.html#cf.DimensionCoordinate.tan" title="cf.DimensionCoordinate.tan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tan</span></code></a></td>
+<td>The trigonometric tangent of the data, element-wise.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric"><em>Rounding and truncation</em></p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.ceil.html#cf.DimensionCoordinate.ceil" title="cf.DimensionCoordinate.ceil"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ceil</span></code></a></td>
+<td>The ceiling of the data, element-wise.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.clip.html#cf.DimensionCoordinate.clip" title="cf.DimensionCoordinate.clip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clip</span></code></a></td>
+<td>Limit the values in the data.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.floor.html#cf.DimensionCoordinate.floor" title="cf.DimensionCoordinate.floor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">floor</span></code></a></td>
+<td>Floor the data array, element-wise.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.rint.html#cf.DimensionCoordinate.rint" title="cf.DimensionCoordinate.rint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rint</span></code></a></td>
+<td>Round the data to the nearest integer, element-wise.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.round.html#cf.DimensionCoordinate.round" title="cf.DimensionCoordinate.round"><code class="xref py py-obj docutils literal notranslate"><span class="pre">round</span></code></a></td>
+<td>Round the data to the given number of decimals.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.trunc.html#cf.DimensionCoordinate.trunc" title="cf.DimensionCoordinate.trunc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trunc</span></code></a></td>
+<td>Truncate the data, element-wise.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric"><em>Statistical collapses</em></p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.max.html#cf.DimensionCoordinate.max" title="cf.DimensionCoordinate.max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max</span></code></a></td>
+<td>The maximum of the data array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.mean.html#cf.DimensionCoordinate.mean" title="cf.DimensionCoordinate.mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean</span></code></a></td>
+<td>The unweighted mean the data array.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.mid_range.html#cf.DimensionCoordinate.mid_range" title="cf.DimensionCoordinate.mid_range"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mid_range</span></code></a></td>
+<td>The unweighted average of the maximum and minimum of the data array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.min.html#cf.DimensionCoordinate.min" title="cf.DimensionCoordinate.min"><code class="xref py py-obj docutils literal notranslate"><span class="pre">min</span></code></a></td>
+<td>The minimum of the data array.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.range.html#cf.DimensionCoordinate.range" title="cf.DimensionCoordinate.range"><code class="xref py py-obj docutils literal notranslate"><span class="pre">range</span></code></a></td>
+<td>The absolute difference between the maximum and minimum of the data array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.sample_size.html#cf.DimensionCoordinate.sample_size" title="cf.DimensionCoordinate.sample_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_size</span></code></a></td>
+<td>The number of non-missing data elements in the data array.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.sum.html#cf.DimensionCoordinate.sum" title="cf.DimensionCoordinate.sum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sum</span></code></a></td>
+<td>The sum of the data array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.sd.html#cf.DimensionCoordinate.sd" title="cf.DimensionCoordinate.sd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sd</span></code></a></td>
+<td>The unweighted sample standard deviation of the data array.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.var.html#cf.DimensionCoordinate.var" title="cf.DimensionCoordinate.var"><code class="xref py py-obj docutils literal notranslate"><span class="pre">var</span></code></a></td>
+<td>The unweighted sample variance of the data array.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric"><em>Exponential and logarithmic functions</em></p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.exp.html#cf.DimensionCoordinate.exp" title="cf.DimensionCoordinate.exp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">exp</span></code></a></td>
+<td>The exponential of the data, element-wise.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.log.html#cf.DimensionCoordinate.log" title="cf.DimensionCoordinate.log"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log</span></code></a></td>
+<td>The logarithm of the data array.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="date-time-operations">
+<h2>Date-time operations<a class="headerlink" href="#date-time-operations" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.day.html#cf.DimensionCoordinate.day" title="cf.DimensionCoordinate.day"><code class="xref py py-obj docutils literal notranslate"><span class="pre">day</span></code></a></td>
+<td>The day of each date-time data array element.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.datetime_array.html#cf.DimensionCoordinate.datetime_array" title="cf.DimensionCoordinate.datetime_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime_array</span></code></a></td>
+<td>An independent numpy array of date-time objects.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.hour.html#cf.DimensionCoordinate.hour" title="cf.DimensionCoordinate.hour"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hour</span></code></a></td>
+<td>The hour of each date-time data array element.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.minute.html#cf.DimensionCoordinate.minute" title="cf.DimensionCoordinate.minute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">minute</span></code></a></td>
+<td>The minute of each date-time data array element.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.month.html#cf.DimensionCoordinate.month" title="cf.DimensionCoordinate.month"><code class="xref py py-obj docutils literal notranslate"><span class="pre">month</span></code></a></td>
+<td>The month of each date-time data array element.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.reference_datetime.html#cf.DimensionCoordinate.reference_datetime" title="cf.DimensionCoordinate.reference_datetime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reference_datetime</span></code></a></td>
+<td>The reference date-time of units of elapsed time.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.second.html#cf.DimensionCoordinate.second" title="cf.DimensionCoordinate.second"><code class="xref py py-obj docutils literal notranslate"><span class="pre">second</span></code></a></td>
+<td>The second of each date-time data array element.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.year.html#cf.DimensionCoordinate.year" title="cf.DimensionCoordinate.year"><code class="xref py py-obj docutils literal notranslate"><span class="pre">year</span></code></a></td>
+<td>The year of each date-time data array element.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="logic-functions">
+<h2>Logic functions<a class="headerlink" href="#logic-functions" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Truth value testing</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.all.html#cf.DimensionCoordinate.all" title="cf.DimensionCoordinate.all"><code class="xref py py-obj docutils literal notranslate"><span class="pre">all</span></code></a></td>
+<td>Test whether all data elements evaluate to True.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.any.html#cf.DimensionCoordinate.any" title="cf.DimensionCoordinate.any"><code class="xref py py-obj docutils literal notranslate"><span class="pre">any</span></code></a></td>
+<td>Test whether any data elements evaluate to True.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Comparison</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.allclose.html#cf.DimensionCoordinate.allclose" title="cf.DimensionCoordinate.allclose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">allclose</span></code></a></td>
+<td>Test whether all data are element-wise equal to other, broadcastable data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.equivalent.html#cf.DimensionCoordinate.equivalent" title="cf.DimensionCoordinate.equivalent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equivalent</span></code></a></td>
+<td>True if two constructs are equal, False otherwise.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Set operations</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.unique.html#cf.DimensionCoordinate.unique" title="cf.DimensionCoordinate.unique"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unique</span></code></a></td>
+<td>The unique elements of the data.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="netcdf">
+<h2>NetCDF<a class="headerlink" href="#netcdf" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.nc_del_variable.html#cf.DimensionCoordinate.nc_del_variable" title="cf.DimensionCoordinate.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a></td>
+<td>Remove the netCDF variable name.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.nc_get_variable.html#cf.DimensionCoordinate.nc_get_variable" title="cf.DimensionCoordinate.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a></td>
+<td>Return the netCDF variable name.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.nc_has_variable.html#cf.DimensionCoordinate.nc_has_variable" title="cf.DimensionCoordinate.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_variable</span></code></a></td>
+<td>Whether the netCDF variable name has been set.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.nc_set_variable.html#cf.DimensionCoordinate.nc_set_variable" title="cf.DimensionCoordinate.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a></td>
+<td>Set the netCDF variable name.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="aliases">
+<h2>Aliases<a class="headerlink" href="#aliases" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.match.html#cf.DimensionCoordinate.match" title="cf.DimensionCoordinate.match"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match</span></code></a></td>
+<td>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_identity</span></code>.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.DimensionCoordinate.dtarray.html#cf.DimensionCoordinate.dtarray" title="cf.DimensionCoordinate.dtarray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtarray</span></code></a></td>
+<td>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime_array</span></code>.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="arithmetic-and-comparison-operations">
+<h2>Arithmetic and comparison operations<a class="headerlink" href="#arithmetic-and-comparison-operations" title="Permalink to this headline">¶</a></h2>
+<p>Arithmetic, bitwise and comparison operations are defined as
+element-wise operations on the data, which yield a new construct or,
+for augmented assignments, modify the construct’s data in-place.</p>
+<p class="rubric">Comparison operators</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__lt__.html#cf.DimensionCoordinate.__lt__" title="cf.DimensionCoordinate.__lt__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__lt__</span></code></a></td>
+<td>The rich comparison operator <code class="docutils literal notranslate"><span class="pre">&lt;</span></code></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__le__.html#cf.DimensionCoordinate.__le__" title="cf.DimensionCoordinate.__le__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__le__</span></code></a></td>
+<td>The rich comparison operator <code class="docutils literal notranslate"><span class="pre">&lt;=</span></code></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__eq__.html#cf.DimensionCoordinate.__eq__" title="cf.DimensionCoordinate.__eq__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__eq__</span></code></a></td>
+<td>The rich comparison operator <code class="docutils literal notranslate"><span class="pre">==</span></code></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__ne__.html#cf.DimensionCoordinate.__ne__" title="cf.DimensionCoordinate.__ne__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__ne__</span></code></a></td>
+<td>The rich comparison operator <code class="docutils literal notranslate"><span class="pre">!=</span></code></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__gt__.html#cf.DimensionCoordinate.__gt__" title="cf.DimensionCoordinate.__gt__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__gt__</span></code></a></td>
+<td>The rich comparison operator <code class="docutils literal notranslate"><span class="pre">&gt;</span></code></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__ge__.html#cf.DimensionCoordinate.__ge__" title="cf.DimensionCoordinate.__ge__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__ge__</span></code></a></td>
+<td>The rich comparison operator <code class="docutils literal notranslate"><span class="pre">&gt;=</span></code></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Binary arithmetic operators</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__add__.html#cf.DimensionCoordinate.__add__" title="cf.DimensionCoordinate.__add__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__add__</span></code></a></td>
+<td>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">+</span></code></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__sub__.html#cf.DimensionCoordinate.__sub__" title="cf.DimensionCoordinate.__sub__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__sub__</span></code></a></td>
+<td>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">-</span></code></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__mul__.html#cf.DimensionCoordinate.__mul__" title="cf.DimensionCoordinate.__mul__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__mul__</span></code></a></td>
+<td>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">*</span></code></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__div__.html#cf.DimensionCoordinate.__div__" title="cf.DimensionCoordinate.__div__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__div__</span></code></a></td>
+<td>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">/</span></code></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__truediv__.html#cf.DimensionCoordinate.__truediv__" title="cf.DimensionCoordinate.__truediv__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__truediv__</span></code></a></td>
+<td>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">/</span></code> (true division)</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__floordiv__.html#cf.DimensionCoordinate.__floordiv__" title="cf.DimensionCoordinate.__floordiv__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__floordiv__</span></code></a></td>
+<td>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">//</span></code></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__pow__.html#cf.DimensionCoordinate.__pow__" title="cf.DimensionCoordinate.__pow__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__pow__</span></code></a></td>
+<td>The binary arithmetic operations <code class="docutils literal notranslate"><span class="pre">**</span></code> and <code class="docutils literal notranslate"><span class="pre">pow</span></code></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__mod__.html#cf.DimensionCoordinate.__mod__" title="cf.DimensionCoordinate.__mod__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__mod__</span></code></a></td>
+<td>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">%</span></code></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Binary arithmetic operators with reflected (swapped) operands</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__radd__.html#cf.DimensionCoordinate.__radd__" title="cf.DimensionCoordinate.__radd__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__radd__</span></code></a></td>
+<td>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">+</span></code> with reflected operands</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__rsub__.html#cf.DimensionCoordinate.__rsub__" title="cf.DimensionCoordinate.__rsub__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rsub__</span></code></a></td>
+<td>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">-</span></code> with reflected operands</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__rmul__.html#cf.DimensionCoordinate.__rmul__" title="cf.DimensionCoordinate.__rmul__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rmul__</span></code></a></td>
+<td>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">*</span></code> with reflected operands</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__rdiv__.html#cf.DimensionCoordinate.__rdiv__" title="cf.DimensionCoordinate.__rdiv__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rdiv__</span></code></a></td>
+<td>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">/</span></code> with reflected operands</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__rtruediv__.html#cf.DimensionCoordinate.__rtruediv__" title="cf.DimensionCoordinate.__rtruediv__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rtruediv__</span></code></a></td>
+<td>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">/</span></code> (true division) with reflected operands</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__rfloordiv__.html#cf.DimensionCoordinate.__rfloordiv__" title="cf.DimensionCoordinate.__rfloordiv__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rfloordiv__</span></code></a></td>
+<td>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">//</span></code> with reflected operands</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__rpow__.html#cf.DimensionCoordinate.__rpow__" title="cf.DimensionCoordinate.__rpow__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rpow__</span></code></a></td>
+<td>The binary arithmetic operations <code class="docutils literal notranslate"><span class="pre">**</span></code> and <code class="docutils literal notranslate"><span class="pre">pow</span></code> with reflected operands</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__rmod__.html#cf.DimensionCoordinate.__rmod__" title="cf.DimensionCoordinate.__rmod__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rmod__</span></code></a></td>
+<td>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">%</span></code> with reflected operands</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Augmented arithmetic assignments</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__iadd__.html#cf.DimensionCoordinate.__iadd__" title="cf.DimensionCoordinate.__iadd__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__iadd__</span></code></a></td>
+<td>The augmented arithmetic assignment <code class="docutils literal notranslate"><span class="pre">+=</span></code></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__isub__.html#cf.DimensionCoordinate.__isub__" title="cf.DimensionCoordinate.__isub__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__isub__</span></code></a></td>
+<td>The augmented arithmetic assignment <code class="docutils literal notranslate"><span class="pre">-=</span></code></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__imul__.html#cf.DimensionCoordinate.__imul__" title="cf.DimensionCoordinate.__imul__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__imul__</span></code></a></td>
+<td>The augmented arithmetic assignment <code class="docutils literal notranslate"><span class="pre">*=</span></code></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__idiv__.html#cf.DimensionCoordinate.__idiv__" title="cf.DimensionCoordinate.__idiv__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__idiv__</span></code></a></td>
+<td>The augmented arithmetic assignment <code class="docutils literal notranslate"><span class="pre">/=</span></code></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__itruediv__.html#cf.DimensionCoordinate.__itruediv__" title="cf.DimensionCoordinate.__itruediv__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__itruediv__</span></code></a></td>
+<td>The augmented arithmetic assignment <code class="docutils literal notranslate"><span class="pre">/=</span></code> (true division)</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__ifloordiv__.html#cf.DimensionCoordinate.__ifloordiv__" title="cf.DimensionCoordinate.__ifloordiv__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__ifloordiv__</span></code></a></td>
+<td>The augmented arithmetic assignment <code class="docutils literal notranslate"><span class="pre">//=</span></code></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__ipow__.html#cf.DimensionCoordinate.__ipow__" title="cf.DimensionCoordinate.__ipow__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__ipow__</span></code></a></td>
+<td>The augmented arithmetic assignment <code class="docutils literal notranslate"><span class="pre">**=</span></code></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__imod__.html#cf.DimensionCoordinate.__imod__" title="cf.DimensionCoordinate.__imod__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__imod__</span></code></a></td>
+<td>The binary arithmetic operation <code class="docutils literal notranslate"><span class="pre">%=</span></code></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Unary arithmetic operators</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__neg__.html#cf.DimensionCoordinate.__neg__" title="cf.DimensionCoordinate.__neg__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__neg__</span></code></a></td>
+<td>The unary arithmetic operation <code class="docutils literal notranslate"><span class="pre">-</span></code></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__pos__.html#cf.DimensionCoordinate.__pos__" title="cf.DimensionCoordinate.__pos__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__pos__</span></code></a></td>
+<td>The unary arithmetic operation <code class="docutils literal notranslate"><span class="pre">+</span></code></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__abs__.html#cf.DimensionCoordinate.__abs__" title="cf.DimensionCoordinate.__abs__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__abs__</span></code></a></td>
+<td>The unary arithmetic operation <code class="docutils literal notranslate"><span class="pre">abs</span></code></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Binary bitwise operators</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__and__.html#cf.DimensionCoordinate.__and__" title="cf.DimensionCoordinate.__and__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__and__</span></code></a></td>
+<td>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">&amp;</span></code></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__or__.html#cf.DimensionCoordinate.__or__" title="cf.DimensionCoordinate.__or__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__or__</span></code></a></td>
+<td>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">|</span></code></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__xor__.html#cf.DimensionCoordinate.__xor__" title="cf.DimensionCoordinate.__xor__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__xor__</span></code></a></td>
+<td>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">^</span></code></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__lshift__.html#cf.DimensionCoordinate.__lshift__" title="cf.DimensionCoordinate.__lshift__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__lshift__</span></code></a></td>
+<td>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">&lt;&lt;</span></code></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__rshift__.html#cf.DimensionCoordinate.__rshift__" title="cf.DimensionCoordinate.__rshift__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rshift__</span></code></a></td>
+<td>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">&gt;&gt;</span></code></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Binary bitwise operators with reflected (swapped) operands</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__rand__.html#cf.DimensionCoordinate.__rand__" title="cf.DimensionCoordinate.__rand__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rand__</span></code></a></td>
+<td>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">&amp;</span></code> with reflected operands</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__ror__.html#cf.DimensionCoordinate.__ror__" title="cf.DimensionCoordinate.__ror__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__ror__</span></code></a></td>
+<td>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">|</span></code> with reflected operands</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__rxor__.html#cf.DimensionCoordinate.__rxor__" title="cf.DimensionCoordinate.__rxor__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rxor__</span></code></a></td>
+<td>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">^</span></code> with reflected operands</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__rlshift__.html#cf.DimensionCoordinate.__rlshift__" title="cf.DimensionCoordinate.__rlshift__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rlshift__</span></code></a></td>
+<td>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">&lt;&lt;</span></code> with reflected operands</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__rrshift__.html#cf.DimensionCoordinate.__rrshift__" title="cf.DimensionCoordinate.__rrshift__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__rrshift__</span></code></a></td>
+<td>The binary bitwise operation <code class="docutils literal notranslate"><span class="pre">&gt;&gt;</span></code> with reflected operands</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Augmented bitwise assignments</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__iand__.html#cf.DimensionCoordinate.__iand__" title="cf.DimensionCoordinate.__iand__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__iand__</span></code></a></td>
+<td>The augmented bitwise assignment <code class="docutils literal notranslate"><span class="pre">&amp;=</span></code></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__ior__.html#cf.DimensionCoordinate.__ior__" title="cf.DimensionCoordinate.__ior__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__ior__</span></code></a></td>
+<td>The augmented bitwise assignment <code class="docutils literal notranslate"><span class="pre">|=</span></code></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__ixor__.html#cf.DimensionCoordinate.__ixor__" title="cf.DimensionCoordinate.__ixor__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__ixor__</span></code></a></td>
+<td>The augmented bitwise assignment <code class="docutils literal notranslate"><span class="pre">^=</span></code></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__ilshift__.html#cf.DimensionCoordinate.__ilshift__" title="cf.DimensionCoordinate.__ilshift__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__ilshift__</span></code></a></td>
+<td>The augmented bitwise assignment <code class="docutils literal notranslate"><span class="pre">&lt;&lt;=</span></code></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__irshift__.html#cf.DimensionCoordinate.__irshift__" title="cf.DimensionCoordinate.__irshift__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__irshift__</span></code></a></td>
+<td>The augmented bitwise assignment <code class="docutils literal notranslate"><span class="pre">&gt;&gt;=</span></code></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Unary bitwise operators</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__invert__.html#cf.DimensionCoordinate.__invert__" title="cf.DimensionCoordinate.__invert__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__invert__</span></code></a></td>
+<td>The unary bitwise operation <code class="docutils literal notranslate"><span class="pre">~</span></code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="special">
+<h2>Special<a class="headerlink" href="#special" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__contains__.html#cf.DimensionCoordinate.__contains__" title="cf.DimensionCoordinate.__contains__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__contains__</span></code></a></td>
+<td>Called to implement membership test operators.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__deepcopy__.html#cf.DimensionCoordinate.__deepcopy__" title="cf.DimensionCoordinate.__deepcopy__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__deepcopy__</span></code></a></td>
+<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/copy.html#copy.deepcopy" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy.deepcopy</span></code></a> function.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__getitem__.html#cf.DimensionCoordinate.__getitem__" title="cf.DimensionCoordinate.__getitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__getitem__</span></code></a></td>
+<td>Return a subspace of the field construct defined by indices.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__repr__.html#cf.DimensionCoordinate.__repr__" title="cf.DimensionCoordinate.__repr__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__repr__</span></code></a></td>
+<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repr</span></code></a> built-in function.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__setitem__.html#cf.DimensionCoordinate.__setitem__" title="cf.DimensionCoordinate.__setitem__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__setitem__</span></code></a></td>
+<td>Called to implement assignment to x[indices]</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__str__.html#cf.DimensionCoordinate.__str__" title="cf.DimensionCoordinate.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__str__</span></code></a></td>
+<td>Called by the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> built-in function.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__array__.html#cf.DimensionCoordinate.__array__" title="cf.DimensionCoordinate.__array__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__array__</span></code></a></td>
+<td>Returns a numpy array representation of the data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__data__.html#cf.DimensionCoordinate.__data__" title="cf.DimensionCoordinate.__data__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__data__</span></code></a></td>
+<td>Returns a new reference to the data.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__query_set__.html#cf.DimensionCoordinate.__query_set__" title="cf.DimensionCoordinate.__query_set__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__query_set__</span></code></a></td>
+<td>TODO</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__query_wi__.html#cf.DimensionCoordinate.__query_wi__" title="cf.DimensionCoordinate.__query_wi__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__query_wi__</span></code></a></td>
+<td>TODO</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.DimensionCoordinate.__query_wo__.html#cf.DimensionCoordinate.__query_wo__" title="cf.DimensionCoordinate.__query_wo__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__query_wo__</span></code></a></td>
+<td>TODO 1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2019, David Hassell.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      
+      |
+      <a href="../_sources/classes/cf.DimensionCoordinate.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

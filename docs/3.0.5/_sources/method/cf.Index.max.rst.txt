@@ -1,0 +1,7 @@
+cf.Index.max
+============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Index.max

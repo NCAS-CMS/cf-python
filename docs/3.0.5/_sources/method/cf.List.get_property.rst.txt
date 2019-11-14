@@ -1,0 +1,7 @@
+cf.List.get_property
+====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.List.get_property

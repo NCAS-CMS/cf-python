@@ -1,0 +1,7 @@
+cf.Field.match_by_units
+=======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Field.match_by_units

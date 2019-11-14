@@ -1,0 +1,7 @@
+cf.FREE_MEMORY
+==============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autofunction:: cf.FREE_MEMORY

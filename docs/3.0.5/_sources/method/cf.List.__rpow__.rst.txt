@@ -1,0 +1,7 @@
+cf.List.__rpow__
+================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.List.__rpow__

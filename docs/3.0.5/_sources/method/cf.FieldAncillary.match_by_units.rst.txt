@@ -1,0 +1,7 @@
+cf.FieldAncillary.match_by_units
+================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.FieldAncillary.match_by_units

@@ -1,0 +1,7 @@
+cf.Count.__ge__
+===============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Count.__ge__

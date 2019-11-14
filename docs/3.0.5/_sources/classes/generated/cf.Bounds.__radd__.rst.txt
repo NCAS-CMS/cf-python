@@ -1,0 +1,7 @@
+cf.Bounds.__radd__
+==================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.__radd__

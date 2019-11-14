@@ -1,0 +1,7 @@
+cf.AuxiliaryCoordinate.concatenate
+==================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.AuxiliaryCoordinate.concatenate

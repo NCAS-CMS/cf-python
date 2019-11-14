@@ -1,0 +1,7 @@
+cf.NetCDFArray.__getitem__
+==========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.NetCDFArray.__getitem__

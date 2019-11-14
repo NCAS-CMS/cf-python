@@ -1,0 +1,7 @@
+cf.RaggedIndexedArray.copy
+==========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.RaggedIndexedArray.copy

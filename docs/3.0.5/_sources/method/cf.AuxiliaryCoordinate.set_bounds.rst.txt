@@ -1,0 +1,7 @@
+cf.AuxiliaryCoordinate.set_bounds
+=================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.AuxiliaryCoordinate.set_bounds

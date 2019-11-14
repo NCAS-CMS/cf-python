@@ -1,0 +1,7 @@
+cf.CellMeasure.__floordiv__
+===========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CellMeasure.__floordiv__

@@ -1,0 +1,7 @@
+cf.NetCDFArray.to_memory
+========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.NetCDFArray.to_memory

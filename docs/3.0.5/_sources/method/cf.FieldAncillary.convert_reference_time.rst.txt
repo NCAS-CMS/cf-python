@@ -1,0 +1,7 @@
+cf.FieldAncillary.convert_reference_time
+========================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.FieldAncillary.convert_reference_time

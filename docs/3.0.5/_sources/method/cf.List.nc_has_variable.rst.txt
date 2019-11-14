@@ -1,0 +1,7 @@
+cf.List.nc_has_variable
+=======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.List.nc_has_variable

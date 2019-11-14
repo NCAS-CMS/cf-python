@@ -1,0 +1,7 @@
+cf.Index.__xor__
+================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Index.__xor__

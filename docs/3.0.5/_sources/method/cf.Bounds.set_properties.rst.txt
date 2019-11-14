@@ -1,0 +1,7 @@
+cf.Bounds.set_properties
+========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.set_properties

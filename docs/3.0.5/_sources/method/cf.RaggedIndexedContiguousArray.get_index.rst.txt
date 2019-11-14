@@ -1,0 +1,7 @@
+cf.RaggedIndexedContiguousArray.get_index
+=========================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.RaggedIndexedContiguousArray.get_index

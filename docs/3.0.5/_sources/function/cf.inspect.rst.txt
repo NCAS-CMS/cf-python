@@ -1,0 +1,7 @@
+cf.inspect
+==========
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autofunction:: cf.inspect

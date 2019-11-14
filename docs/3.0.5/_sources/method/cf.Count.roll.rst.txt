@@ -1,0 +1,7 @@
+cf.Count.roll
+=============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Count.roll
