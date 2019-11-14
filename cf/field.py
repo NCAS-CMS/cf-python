@@ -12029,21 +12029,35 @@ may be accessed with the `nc_global_attributes`,
     **Examples:**
 
     >>> q = cf.example_field(0)
+    >>> print(q)
+    Field: specific_humidity (ncvar%q)
+    ----------------------------------
+    Data            : specific_humidity(latitude(5), longitude(8)) 1
+    Cell methods    : area: mean
+    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(8) = [22.5, ..., 337.5] degrees_east
+                    : time(1) = [2019-01-01 00:00:00]
     >>> print(q.creation_commands())
     f = cf.Field()
     #
     f.set_properties({'Conventions': 'CF-1.7', 'project': 'research', 'standard_name': 'specific_humidity', 'units': '1'})
     f.nc_set_variable('q')
     #
+    # domain_axis
     c = cf.DomainAxis(size=5)
     c.nc_set_dimension('lat')
     f.set_construct(c, key='domainaxis0')
+    #
+    # domain_axis
     c = cf.DomainAxis(size=8)
     c.nc_set_dimension('lon')
     f.set_construct(c, key='domainaxis1')
+    #
+    # domain_axis
     c = cf.DomainAxis(size=1)
     f.set_construct(c, key='domainaxis2')
     #
+    # field data
     data = cf.Data([[0.007, 0.034, 0.003, 0.014, 0.018, 0.037, 0.024, 0.029], [0.023, 0.036, 0.045, 0.062, 0.046, 0.073, 0.006, 0.066], [0.11, 0.131, 0.124, 0.146, 0.087, 0.103, 0.057, 0.011], [0.029, 0.059, 0.039, 0.07, 0.058, 0.072, 0.009, 0.017], [0.006, 0.036, 0.019, 0.035, 0.018, 0.037, 0.034, 0.013]], units='1', dtype='f8')
     f.set_data(data, axes=('domainaxis0', 'domainaxis1'))
     #
@@ -12095,15 +12109,21 @@ may be accessed with the `nc_global_attributes`,
         f.set_properties({'Conventions': 'CF-1.7', 'project': 'research', 'standard_name': 'specific_humidity', 'units': '1'})
         f.nc_set_variable('q')
         #
+        # domain_axis
         c = DomainAxis(size=5)
         c.nc_set_dimension('lat')
         f.set_construct(c, key='domainaxis0')
+        #
+        # domain_axis
         c = DomainAxis(size=8)
         c.nc_set_dimension('lon')
         f.set_construct(c, key='domainaxis1')
+        #
+        # domain_axis
         c = DomainAxis(size=1)
         f.set_construct(c, key='domainaxis2')
         #
+        # field data
         data = <CF Data(5, 8): [[0.007, ..., 0.013]] 1> # Representative data
         f.set_data(data, axes=('domainaxis0', 'domainaxis1'))
         #

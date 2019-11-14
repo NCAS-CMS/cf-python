@@ -27,4 +27,5 @@ Version |release| for version |version| of the CF conventions.
    :local:
    :backlinks: entry
 
+.. include:: sample_datasets.rst
 .. include:: field_analysis.rst

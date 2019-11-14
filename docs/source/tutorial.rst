@@ -36,43 +36,43 @@ script (:download:`download <../source/tutorial.py>`, 36kB).
    :local:
    :backlinks: entry
 
-.. _Sample-datasets:
+.. include:: sample_datasets.rst
 
-**Sample datasets**
--------------------
+.. .. _Sample-datasets:
 
-This tutorial uses a number of small sample datasets, all of which can
-be found in the zip file ``cf_tutorial_files.zip``
-(:download:`download <../source/sample_files/cf_tutorial_files.zip>`, 164kB):
-		    
-.. code-block:: shell
-   :caption: *Unpack the sample datasets.*
-		
-   $ unzip -q cf_tutorial_files.zip
-   $ ls -1
-   air_temperature.nc
-   cf_tutorial_files.zip
-   contiguous.nc
-   external.nc
-   file2.nc
-   file.nc
-   gathered.nc
-   parent.nc
-   precipitation_flux.nc
-   timeseries.nc
-   umfile.pp
-   vertical.nc
-   wind_components.nc
-
-The tutorial examples assume that the Python session is being run from
-the directory that also contains the sample files.
+   **Sample datasets**
+   -------------------
    
-The tutorial files may be also found in the `downloads directory
-<https://github.com/NCAS-CMS/cf-python/tree/master/docs/_downloads>`_
-of the on-line code repository.
-
-----
-
+   This tutorial uses a number of small sample datasets, all of which can
+   be found in the zip file ``cf_tutorial_files.zip``
+   (:download:`download <../source/sample_files/cf_tutorial_files.zip>`, 164kB):
+   		    
+   .. code-block:: shell
+      :caption: *Unpack the sample datasets.*
+   		
+      $ unzip -q cf_tutorial_files.zip
+      $ ls -1
+      air_temperature.nc
+      cf_tutorial_files.zip
+      contiguous.nc
+      external.nc
+      file2.nc
+      file.nc
+      gathered.nc
+      parent.nc
+      precipitation_flux.nc
+      timeseries.nc
+      umfile.pp
+      vertical.nc
+      wind_components.nc
+   
+   The tutorial examples assume that the Python session is being run from
+   the directory that also contains the sample files.
+      
+   The tutorial files may be also found in the `downloads directory
+   <https://github.com/NCAS-CMS/cf-python/tree/master/docs/_downloads>`_
+   of the on-line code repository.
+    
 .. _Import:
 
 **Import**
@@ -5962,8 +5962,6 @@ is straight forward with the `cf.load_stash2standard_name` function.
 ----
 
 .. include:: field_analysis.rst
-
-----
 
 .. rubric:: Footnotes
 

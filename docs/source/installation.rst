@@ -38,33 +38,6 @@ later. (Versions 2.x of cf work only for Python 2.7.)
 
 ----
 
-.. _conda:
-  
-**conda**
----------
-
-cf-python is in the ``ncas`` conda channel. To install cf with all of
-its :ref:`required <Required>` and :ref:`optional <Optional>`
-dependencies, and the `cf-plot visualisation package
-<http://ajheaps.github.io/cf-plot>`_, run
-
-.. code-block:: shell
-   :caption: *Install with conda.*
-	     
-   conda install -c ncas -c conda-forge cf-python cf-plot udunits2==2.2.25
-   conda install -c conda-forge mpich esmpy
-
-The second of the two ``conda`` commands is required for
-:ref:`regridding <Regridding>` to work. (Note, however, that the
-installation of ``esmpy`` does not work for Anaconda version
-``2019.10``.)
-
-Note that :ref:`some environment variables might also need setting
-<UNIDATA-UDUNITS-2-library>` in order for the UDUNITS library to work
-properly, although the defaults are usually sufficient.
-
-----
-
 .. _pip:
   
 **pip**
@@ -101,6 +74,33 @@ options.
 The :ref:`optional dependencies <Optional>` are **not** automatically
 installed via ``pip``.
 
+
+Note that :ref:`some environment variables might also need setting
+<UNIDATA-UDUNITS-2-library>` in order for the UDUNITS library to work
+properly, although the defaults are usually sufficient.
+
+----
+
+.. _conda:
+  
+**conda**
+---------
+
+cf-python is in the ``ncas`` conda channel. To install cf with all of
+its :ref:`required <Required>` and :ref:`optional <Optional>`
+dependencies, and the `cf-plot visualisation package
+<http://ajheaps.github.io/cf-plot>`_, run
+
+.. code-block:: shell
+   :caption: *Install with conda.*
+	     
+   conda install -c ncas -c conda-forge cf-python cf-plot udunits2==2.2.25
+   conda install -c conda-forge mpich esmpy
+
+The second of the two ``conda`` commands is required for
+:ref:`regridding <Regridding>` to work. (Note, however, that the
+installation of ``esmpy`` does not work for Anaconda version
+``2019.10``.)
 
 Note that :ref:`some environment variables might also need setting
 <UNIDATA-UDUNITS-2-library>` in order for the UDUNITS library to work
@@ -186,7 +186,7 @@ Required
   newer.
 
 * `cftime <https://pypi.org/project/cftime/>`_, version 1.0.4.2 or
-  newer. (Note that this package is installed with netCDF4.)
+  newer (note that this package is installed with netCDF4).
 
 * `cfdm <https://pypi.org/project/cfdm/>`_, version 1.7.10 or newer.
   
