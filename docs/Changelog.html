@@ -31,12 +31,13 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="index.html">cf 3.0.4</a></b></h3>
+<h3><b><a href="index.html">cf 3.0.5</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="performance.html"><strong>Performance</strong></a></li>
@@ -81,6 +82,29 @@
   <div class="section" id="change-log">
 <h1><strong>Change log</strong><a class="headerlink" href="#change-log" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
+<div class="section" id="version-3-0-5">
+<h2>version 3.0.5<a class="headerlink" href="#version-3-0-5" title="Permalink to this headline">¶</a></h2>
+<hr class="docutils" />
+<p><strong>2019-11-14</strong></p>
+<ul class="simple">
+<li>New method: <a class="reference internal" href="method/cf.Field.compress.html#cf.Field.compress" title="cf.Field.compress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.compress</span></code></a>.</li>
+<li>New function: <a class="reference internal" href="function/cf.example_field.html#cf.example_field" title="cf.example_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.example_field</span></code></a></li>
+<li>New keyword parameter to <a class="reference internal" href="classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a>: <code class="docutils literal notranslate"><span class="pre">mask</span></code>.</li>
+<li>Deprecated method: <a class="reference internal" href="method/cf.Field.example_field.html#cf.Field.example_field" title="cf.Field.example_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.example_field</span></code></a></li>
+<li>Fixed bug that didn’t allow <a class="reference internal" href="method/cf.Field.cell_area.html#cf.Field.cell_area" title="cf.Field.cell_area"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.cell_area</span></code></a> to work with
+dimension coordinates with units equivalent to metres
+(<a class="reference external" href="https://github.com/NCAS-CMS/cf-python/issues/12">https://github.com/NCAS-CMS/cf-python/issues/12</a>)</li>
+<li>Fixed bug that omitted bounds having their units changed by
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">override_units</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">override</span> <span class="pre">calendar</span></code>
+(<a class="reference external" href="https://github.com/NCAS-CMS/cf-python/issues/13">https://github.com/NCAS-CMS/cf-python/issues/13</a>).</li>
+<li>Removed specific user shebang from <code class="docutils literal notranslate"><span class="pre">cfa</span></code> script
+(<a class="reference external" href="https://github.com/NCAS-CMS/cf-python/pull/14">https://github.com/NCAS-CMS/cf-python/pull/14</a>).</li>
+<li>Changed minimum cfdm dependency to version 1.7.10. This fixes a bug
+that didn’t allow CDL files to start with comments or blank lines
+(<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/5">https://github.com/NCAS-CMS/cfdm/issues/5</a>).</li>
+<li>Changed minimum cftime dependency to version 1.0.4.2</li>
+</ul>
+</div>
 <div class="section" id="version-3-0-4">
 <h2>version 3.0.4<a class="headerlink" href="#version-3-0-4" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
@@ -398,7 +422,7 @@ object.</li>
 <hr class="docutils" />
 <p><strong>2018-02-07</strong></p>
 <ul class="simple">
-<li>Allowed <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/index.html#module-scipy" title="(in SciPy v1.3.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy</span></code></a> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">matplotlib</span></code> imports to be optional</li>
+<li>Allowed <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/index.html#module-scipy" title="(in SciPy v1.3.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy</span></code></a> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">matplotlib</span></code> imports to be optional</li>
 </ul>
 </div>
 <div class="section" id="version-2-1-2">

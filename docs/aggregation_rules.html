@@ -32,12 +32,13 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="index.html">cf 3.0.4</a></b></h3>
+<h3><b><a href="index.html">cf 3.0.5</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="performance.html"><strong>Performance</strong></a></li>
@@ -84,19 +85,24 @@
 <span id="id1"></span><h1><strong>Aggregation rules</strong><a class="headerlink" href="#aggregation-rules" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
 <p><em>David Hassell and Jonathan Gregory</em></p>
-<p>Version 3.0.4 for version 1.7 of the CF conventions.</p>
+<p>Version 3.0.5 for version 1.7 of the CF conventions.</p>
+<p>Aggregation is the combination of two field constructs to create a new
+field construct that occupies a “larger” domain. In practice, this
+means combining the two field constructs so that their data are
+concatenated along one or more domain axis constructs, as are the data
+of their metadata constructs which span those domain axis constructs.</p>
 <p>These rules are be used for deciding whether or not two arbitrary
-field constructs may be aggregated into one, larger field
-construct. These rules are based solely on the field constructs’
-metadata as recognised by the <a class="reference external" href="https://doi.org/10.5194/gmd-10-4619-2017">CF data model</a>.</p>
-<p>Aggregation is the combination of one field construct into another to
-create a new field construct that occupies a “larger” domain. In
-practice, this means combining two field constructs so that their data
-concatenated along exactly one domain axis, as are the data of their
-metadata constructs which span that domain axis.</p>
-<p>More than two field constructs are be aggregated by repeated
-applications of the aggregation algorithm, and aggregations over
-multiple domain axes are similarly possible.</p>
+field constructs may be aggregated into one, larger field construct.
+The rules are based solely on the field constructs’ metadata as
+recognised by the <a class="reference external" href="https://doi.org/10.5194/gmd-10-4619-2017">CF data model</a>. For example, netCDF
+variable names are ignored during the aggregation process, meaning
+that having different netCDF variable names does not preclude the
+aggregation of two field constructs.</p>
+<p>More than two field constructs are aggregated by repeated applications
+of the aggregation algorithm, and aggregations over multiple domain
+axis constructs are similarly possible.</p>
+<p>Aggregation is implemented by the <a class="reference internal" href="function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a> and <a class="reference internal" href="function/cf.aggregate.html#cf.aggregate" title="cf.aggregate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.aggregate</span></code></a>
+functions.</p>
 <hr class="docutils" />
 <p>If all of the following statements are true for two arbitrary field
 constructs then the two field constructs may be aggregated to a new

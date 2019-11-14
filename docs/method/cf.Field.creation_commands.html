@@ -32,12 +32,13 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.4</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.5</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
@@ -90,7 +91,7 @@
 <h1>cf.Field.creation_commands<a class="headerlink" href="#cf-field-creation-commands" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.creation_commands">
-<code class="descclassname">Field.</code><code class="descname">creation_commands</code><span class="sig-paren">(</span><em>representative_data=False</em>, <em>namespace='cf'</em>, <em>indent=0</em>, <em>string=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.4/cf/field.py#L11871"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.creation_commands" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">creation_commands</code><span class="sig-paren">(</span><em>representative_data=False</em>, <em>namespace='cf'</em>, <em>indent=0</em>, <em>string=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.5/cf/field.py#L11983"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.creation_commands" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the commands that would create the field construct.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
@@ -107,9 +108,11 @@ are not executable code but prevent the data being
 converted in its entirety to a string representation.</p>
 </dd>
 <dt>namespace: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
-<dd><p class="first">The namespace containing the cf package classes. By
-default it is assumed that <code class="docutils literal notranslate"><span class="pre">cf</span></code> was imported as <code class="docutils literal notranslate"><span class="pre">import</span>
-<span class="pre">cf</span></code>.</p>
+<dd><p class="first">The namespace containing classes of the <code class="docutils literal notranslate"><span class="pre">cf</span></code>
+package. This is prefixed to the class name in commands
+that instantiate instances of <code class="docutils literal notranslate"><span class="pre">cf</span></code> objects. By default,
+<em>namespace</em> is <code class="docutils literal notranslate"><span class="pre">'cf'</span></code>, i.e. it is assumed that <code class="docutils literal notranslate"><span class="pre">cf</span></code>
+was imported as <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">cf</span></code>.</p>
 <dl class="last docutils">
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last">If <code class="docutils literal notranslate"><span class="pre">cf</span></code> was imported as <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">cf</span> <span class="pre">as</span> <span class="pre">cfp</span></code> then set
@@ -122,12 +125,13 @@ default it is assumed that <code class="docutils literal notranslate"><span clas
 </dl>
 </dd>
 <dt>indent: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt>
-<dd><p class="first last">Indent each line by this many spaces. ignore if <em>string</em>
+<dd><p class="first last">Indent each line by this many spaces. Ignored if <em>string</em>
 is False.</p>
 </dd>
 <dt>string: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">Return each command an element of a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>. By default the
-the commands are concatenated into a string.</p>
+<dd><p class="first last">If False then return each command as an element of a
+<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>. By default the the commands are concatenated into
+a string, with a new line inserted between each command.</p>
 </dd>
 </dl>
 </td>
@@ -135,8 +139,8 @@ the commands are concatenated into a string.</p>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
 <dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a></dt>
 <dd><p class="first last">The commands in a string, with a new line inserted between
-each command. If <em>string</em> is False then the commands are
-returned in a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>.</p>
+each command. If <em>string</em> is False then the separate
+commands are returned as each element of a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>.</p>
 </dd>
 </dl>
 </td>
@@ -144,22 +148,36 @@ returned in a <a class="reference external" href="https://docs.python.org/3/libr
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Field</span><span class="o">.</span><span class="n">example_field</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">example_field</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+<span class="go">Field: specific_humidity (ncvar%q)</span>
+<span class="go">----------------------------------</span>
+<span class="go">Data            : specific_humidity(latitude(5), longitude(8)) 1</span>
+<span class="go">Cell methods    : area: mean</span>
+<span class="go">Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north</span>
+<span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
+<span class="go">                : time(1) = [2019-01-01 00:00:00]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">creation_commands</span><span class="p">())</span>
 <span class="go">f = cf.Field()</span>
 <span class="go">#</span>
 <span class="go">f.set_properties({&#39;Conventions&#39;: &#39;CF-1.7&#39;, &#39;project&#39;: &#39;research&#39;, &#39;standard_name&#39;: &#39;specific_humidity&#39;, &#39;units&#39;: &#39;1&#39;})</span>
 <span class="go">f.nc_set_variable(&#39;q&#39;)</span>
 <span class="go">#</span>
+<span class="go"># domain_axis</span>
 <span class="go">c = cf.DomainAxis(size=5)</span>
 <span class="go">c.nc_set_dimension(&#39;lat&#39;)</span>
 <span class="go">f.set_construct(c, key=&#39;domainaxis0&#39;)</span>
+<span class="go">#</span>
+<span class="go"># domain_axis</span>
 <span class="go">c = cf.DomainAxis(size=8)</span>
 <span class="go">c.nc_set_dimension(&#39;lon&#39;)</span>
 <span class="go">f.set_construct(c, key=&#39;domainaxis1&#39;)</span>
+<span class="go">#</span>
+<span class="go"># domain_axis</span>
 <span class="go">c = cf.DomainAxis(size=1)</span>
 <span class="go">f.set_construct(c, key=&#39;domainaxis2&#39;)</span>
 <span class="go">#</span>
+<span class="go"># field data</span>
 <span class="go">data = cf.Data([[0.007, 0.034, 0.003, 0.014, 0.018, 0.037, 0.024, 0.029], [0.023, 0.036, 0.045, 0.062, 0.046, 0.073, 0.006, 0.066], [0.11, 0.131, 0.124, 0.146, 0.087, 0.103, 0.057, 0.011], [0.029, 0.059, 0.039, 0.07, 0.058, 0.072, 0.009, 0.017], [0.006, 0.036, 0.019, 0.035, 0.018, 0.037, 0.034, 0.013]], units=&#39;1&#39;, dtype=&#39;f8&#39;)</span>
 <span class="go">f.set_data(data, axes=(&#39;domainaxis0&#39;, &#39;domainaxis1&#39;))</span>
 <span class="go">#</span>
@@ -212,15 +230,21 @@ returned in a <a class="reference external" href="https://docs.python.org/3/libr
 <span class="go">    f.set_properties({&#39;Conventions&#39;: &#39;CF-1.7&#39;, &#39;project&#39;: &#39;research&#39;, &#39;standard_name&#39;: &#39;specific_humidity&#39;, &#39;units&#39;: &#39;1&#39;})</span>
 <span class="go">    f.nc_set_variable(&#39;q&#39;)</span>
 <span class="go">    #</span>
+<span class="go">    # domain_axis</span>
 <span class="go">    c = DomainAxis(size=5)</span>
 <span class="go">    c.nc_set_dimension(&#39;lat&#39;)</span>
 <span class="go">    f.set_construct(c, key=&#39;domainaxis0&#39;)</span>
+<span class="go">    #</span>
+<span class="go">    # domain_axis</span>
 <span class="go">    c = DomainAxis(size=8)</span>
 <span class="go">    c.nc_set_dimension(&#39;lon&#39;)</span>
 <span class="go">    f.set_construct(c, key=&#39;domainaxis1&#39;)</span>
+<span class="go">    #</span>
+<span class="go">    # domain_axis</span>
 <span class="go">    c = DomainAxis(size=1)</span>
 <span class="go">    f.set_construct(c, key=&#39;domainaxis2&#39;)</span>
 <span class="go">    #</span>
+<span class="go">    # field data</span>
 <span class="go">    data = &lt;CF Data(5, 8): [[0.007, ..., 0.013]] 1&gt; # Representative data</span>
 <span class="go">    f.set_data(data, axes=(&#39;domainaxis0&#39;, &#39;domainaxis1&#39;))</span>
 <span class="go">    #</span>

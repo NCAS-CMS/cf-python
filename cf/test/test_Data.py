@@ -110,7 +110,7 @@ class DataTest(unittest.TestCase):
 #        self.test_only = ['test_Data_ERROR']
 #        self.test_only = ['test_Data_sample_size']
 #        self.test_only = ['test_Data__init__mask']
-#        self.test_only = ['test_Data_sd_var']
+#        self.test_only = ['test_Data_section']
 #        self.test_only = ['test_Data_sum_of_weights_sum_of_weights2']
 #        self.test_only = ['test_Data_max_min_sum_sum_of_squares']
 #        self.test_only = ['test_Data___setitem__']

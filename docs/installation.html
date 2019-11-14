@@ -32,12 +32,13 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="index.html">cf 3.0.4</a></b></h3>
+<h3><b><a href="index.html">cf 3.0.5</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="analysis.html"><strong>Analysis</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="performance.html"><strong>Performance</strong></a></li>
@@ -83,13 +84,13 @@
   <div class="section" id="installation">
 <span id="id1"></span><h1><strong>Installation</strong><a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 3.0.4 for version 1.7 of the CF conventions.</p>
+<p>Version 3.0.5 for version 1.7 of the CF conventions.</p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
 <li><a class="reference internal" href="#operating-systems" id="id18"><strong>Operating systems</strong></a></li>
 <li><a class="reference internal" href="#python-versions" id="id19"><strong>Python versions</strong></a></li>
-<li><a class="reference internal" href="#conda" id="id20"><strong>conda</strong></a></li>
-<li><a class="reference internal" href="#pip" id="id21"><strong>pip</strong></a></li>
+<li><a class="reference internal" href="#pip" id="id20"><strong>pip</strong></a></li>
+<li><a class="reference internal" href="#conda" id="id21"><strong>conda</strong></a></li>
 <li><a class="reference internal" href="#source" id="id22"><strong>Source</strong></a></li>
 <li><a class="reference internal" href="#cfa-utility" id="id23"><strong>cfa utility</strong></a></li>
 <li><a class="reference internal" href="#dependencies" id="id24"><strong>Dependencies</strong></a><ul>
@@ -115,13 +116,47 @@ installing a Linux Virtual Machine also works.</p>
 later. (Versions 2.x of cf work only for Python 2.7.)</p>
 <hr class="docutils" />
 </div>
+<div class="section" id="pip">
+<span id="id4"></span><h2><a class="toc-backref" href="#id20"><strong>pip</strong></a><a class="headerlink" href="#pip" title="Permalink to this headline">¶</a></h2>
+<p>cf-python is in the Python package index:
+<a class="reference external" href="https://pypi.org/project/cf-python">https://pypi.org/project/cf-python</a></p>
+<p>To install cf and all of its <a class="reference internal" href="#required"><span class="std std-ref">required dependencies</span></a>
+run, for example:</p>
+<div class="literal-block-wrapper docutils container" id="id14">
+<div class="code-block-caption"><span class="caption-text"><em>Install as root, with any missing dependencies.</em></span><a class="headerlink" href="#id14" title="Permalink to this code">¶</a></div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip install cf-python
+</pre></div>
+</div>
+</div>
+<div class="literal-block-wrapper docutils container" id="id15">
+<div class="code-block-caption"><span class="caption-text"><em>Install as a user, with any missing dependencies.</em></span><a class="headerlink" href="#id15" title="Permalink to this code">¶</a></div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip install cf-python --user
+</pre></div>
+</div>
+</div>
+<p>To install cf without any of its dependencies then run, for example:</p>
+<div class="literal-block-wrapper docutils container" id="id16">
+<div class="code-block-caption"><span class="caption-text"><em>Install as root without installing any of the
+dependencies.</em></span><a class="headerlink" href="#id16" title="Permalink to this code">¶</a></div>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip install cf-python --no-deps
+</pre></div>
+</div>
+</div>
+<p>See the <a class="reference external" href="https://pip.pypa.io/en/stable/reference/pip_install/">documentation for pip install</a> for further
+options.</p>
+<p>The <a class="reference internal" href="#optional"><span class="std std-ref">optional dependencies</span></a> are <strong>not</strong> automatically
+installed via <code class="docutils literal notranslate"><span class="pre">pip</span></code>.</p>
+<p>Note that <a class="reference internal" href="#unidata-udunits-2-library"><span class="std std-ref">some environment variables might also need setting</span></a> in order for the UDUNITS library to work
+properly, although the defaults are usually sufficient.</p>
+<hr class="docutils" />
+</div>
 <div class="section" id="conda">
-<span id="id4"></span><h2><a class="toc-backref" href="#id20"><strong>conda</strong></a><a class="headerlink" href="#conda" title="Permalink to this headline">¶</a></h2>
+<span id="id5"></span><h2><a class="toc-backref" href="#id21"><strong>conda</strong></a><a class="headerlink" href="#conda" title="Permalink to this headline">¶</a></h2>
 <p>cf-python is in the <code class="docutils literal notranslate"><span class="pre">ncas</span></code> conda channel. To install cf with all of
 its <a class="reference internal" href="#required"><span class="std std-ref">required</span></a> and <a class="reference internal" href="#optional"><span class="std std-ref">optional</span></a>
 dependencies, and the <a class="reference external" href="http://ajheaps.github.io/cf-plot">cf-plot visualisation package</a>, run</p>
-<div class="literal-block-wrapper docutils container" id="id14">
-<div class="code-block-caption"><span class="caption-text"><em>Install with conda.</em></span><a class="headerlink" href="#id14" title="Permalink to this code">¶</a></div>
+<div class="literal-block-wrapper docutils container" id="id17">
+<div class="code-block-caption"><span class="caption-text"><em>Install with conda.</em></span><a class="headerlink" href="#id17" title="Permalink to this code">¶</a></div>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>conda install -c ncas -c conda-forge cf-python cf-plot <span class="nv">udunits2</span><span class="o">==</span><span class="m">2</span>.2.25
 conda install -c conda-forge mpich esmpy
 </pre></div>
@@ -131,40 +166,6 @@ conda install -c conda-forge mpich esmpy
 <a class="reference internal" href="tutorial.html#regridding"><span class="std std-ref">regridding</span></a> to work. (Note, however, that the
 installation of <code class="docutils literal notranslate"><span class="pre">esmpy</span></code> does not work for Anaconda version
 <code class="docutils literal notranslate"><span class="pre">2019.10</span></code>.)</p>
-<p>Note that <a class="reference internal" href="#unidata-udunits-2-library"><span class="std std-ref">some environment variables might also need setting</span></a> in order for the UDUNITS library to work
-properly, although the defaults are usually sufficient.</p>
-<hr class="docutils" />
-</div>
-<div class="section" id="pip">
-<span id="id5"></span><h2><a class="toc-backref" href="#id21"><strong>pip</strong></a><a class="headerlink" href="#pip" title="Permalink to this headline">¶</a></h2>
-<p>cf-python is in the Python package index:
-<a class="reference external" href="https://pypi.org/project/cf-python">https://pypi.org/project/cf-python</a></p>
-<p>To install cf and all of its <a class="reference internal" href="#required"><span class="std std-ref">required dependencies</span></a>
-run, for example:</p>
-<div class="literal-block-wrapper docutils container" id="id15">
-<div class="code-block-caption"><span class="caption-text"><em>Install as root, with any missing dependencies.</em></span><a class="headerlink" href="#id15" title="Permalink to this code">¶</a></div>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip install cf-python
-</pre></div>
-</div>
-</div>
-<div class="literal-block-wrapper docutils container" id="id16">
-<div class="code-block-caption"><span class="caption-text"><em>Install as a user, with any missing dependencies.</em></span><a class="headerlink" href="#id16" title="Permalink to this code">¶</a></div>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip install cf-python --user
-</pre></div>
-</div>
-</div>
-<p>To install cf without any of its dependencies then run, for example:</p>
-<div class="literal-block-wrapper docutils container" id="id17">
-<div class="code-block-caption"><span class="caption-text"><em>Install as root without installing any of the
-dependencies.</em></span><a class="headerlink" href="#id17" title="Permalink to this code">¶</a></div>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip install cf-python --no-deps
-</pre></div>
-</div>
-</div>
-<p>See the <a class="reference external" href="https://pip.pypa.io/en/stable/reference/pip_install/">documentation for pip install</a> for further
-options.</p>
-<p>The <a class="reference internal" href="#optional"><span class="std std-ref">optional dependencies</span></a> are <strong>not</strong> automatically
-installed via <code class="docutils literal notranslate"><span class="pre">pip</span></code>.</p>
 <p>Note that <a class="reference internal" href="#unidata-udunits-2-library"><span class="std std-ref">some environment variables might also need setting</span></a> in order for the UDUNITS library to work
 properly, although the defaults are usually sufficient.</p>
 <hr class="docutils" />
@@ -230,23 +231,23 @@ files</span></a>, and</li>
 <li><a class="reference external" href="https://pypi.org/project/netcdf4/">netCDF4</a>, version 1.4.0 or
 newer.</li>
 <li><a class="reference external" href="https://pypi.org/project/cftime/">cftime</a>, version 1.0.4.2 or
-newer. (Note that this package is installed with netCDF4.)</li>
-<li><a class="reference external" href="https://pypi.org/project/cfdm/">cfdm</a>, version 1.7.9 or newer.</li>
+newer (note that this package is installed with netCDF4).</li>
+<li><a class="reference external" href="https://pypi.org/project/cfdm/">cfdm</a>, version 1.7.10 or newer.</li>
 <li><a class="reference external" href="https://pypi.org/project/cfunits/">cfunits</a>, version 3.2.2 or newer.</li>
 <li><a class="reference external" href="https://pypi.org/project/psutil/">psutil</a>, version 0.6.0 or newer.</li>
 </ul>
 <ul id="unidata-udunits-2-library">
 <li><p class="first"><a class="reference external" href="http://www.unidata.ucar.edu/software/udunits">UNIDATA UDUNITS-2 library</a>, version 2.2.20 or
 newer.</p>
-<p>This is a C library which provides support for units of physical
+<p>UDUNITS-2 is a C library that provides support for units of physical
 quantities. If the UDUNITS-2 shared library file
 (<code class="docutils literal notranslate"><span class="pre">libudunits2.so.0</span></code> on GNU/Linux or <code class="docutils literal notranslate"><span class="pre">libudunits2.0.dylibfile</span></code> on
 MacOS) is in a non-standard location then its directory path should
 be added to the <code class="docutils literal notranslate"><span class="pre">LD_LIBRARY_PATH</span></code> environment variable. It may
-also be necessary to specify the location (directory path <em>and</em>
-file name) of the <code class="docutils literal notranslate"><span class="pre">udunits2.xml</span></code> file in the <code class="docutils literal notranslate"><span class="pre">UDUNITS2_XML_PATH</span></code>
-environment variable (although the default location is usually
-correct). For example, <code class="docutils literal notranslate"><span class="pre">export</span>
+also be necessary to specify the location (directory path <em>and</em> file
+name) of the <code class="docutils literal notranslate"><span class="pre">udunits2.xml</span></code> file in the <code class="docutils literal notranslate"><span class="pre">UDUNITS2_XML_PATH</span></code>
+environment variable, although the default location is usually
+correct. For example, <code class="docutils literal notranslate"><span class="pre">export</span>
 <span class="pre">UDUNITS2_XML_PATH=/home/user/anaconda3/share/udunits/udunits2.xml</span></code>.
 If you get an error that looks like <code class="docutils literal notranslate"><span class="pre">assert(0</span> <span class="pre">==</span>
 <span class="pre">_ut_unmap_symbol_to_unit(_ut_system,</span> <span class="pre">_c_char_p(b'Sv'),</span> <span class="pre">_UT_ASCII))</span></code>
