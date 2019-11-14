@@ -1,3 +1,6 @@
+.. currentmodule:: cf
+.. default-role:: obj
+
 .. _Aggregation-rules:
    
 **Aggregation rules**
@@ -9,24 +12,27 @@
 
 Version |release| for version |version| of the CF conventions.
 
+Aggregation is the combination of two field constructs to create a new
+field construct that occupies a "larger" domain. In practice, this
+means combining the two field constructs so that their data are
+concatenated along one or more domain axis constructs, as are the data
+of their metadata constructs which span those domain axis constructs.
+
 These rules are be used for deciding whether or not two arbitrary
-field constructs may be aggregated into one, larger field
-construct. These rules are based solely on the field constructs'
-metadata as recognised by the `CF data model
+field constructs may be aggregated into one, larger field construct.
+The rules are based solely on the field constructs' metadata as
+recognised by the `CF data model
 <https://doi.org/10.5194/gmd-10-4619-2017>`_. For example, netCDF
 variable names are ignored during the aggregation process, meaning
 that having different netCDF variable names does not preclude the
 aggregation of two field constructs.
 
-Aggregation is the combination of one field construct into another to
-create a new field construct that occupies a "larger" domain. In
-practice, this means combining two field constructs so that their data
-concatenated along exactly one domain axis, as are the data of their
-metadata constructs which span that domain axis.
-
 More than two field constructs are aggregated by repeated applications
 of the aggregation algorithm, and aggregations over multiple domain
-axes are similarly possible.
+axis constructs are similarly possible.
+
+Aggregation is implemented by the `cf.read` and `cf.aggregate`
+functions.
 
 ----
 

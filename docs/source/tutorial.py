@@ -2,9 +2,6 @@
 print("\n**Tutorial**\n")
 
 
-print("\n**Sample datasets**\n")
-
-
 print("\n**Import**\n")
 
 import cf
@@ -663,6 +660,7 @@ dimY.set_bounds(bounds)
 Q.set_construct(dimT)
 Q.set_construct(dimY)
 Q.set_construct(dimX)
+
 Q.dump()
 
 import numpy
@@ -818,7 +816,75 @@ cell_measure = cf.CellMeasure(measure='area',
                  data=cf.Data(numpy.arange(90.).reshape(9, 10)))
 
 tas.set_construct(cell_measure)
+
 print(tas)
+
+f = cf.Field()
+
+f.set_properties({'Conventions': 'CF-1.7', 'project': 'research', 'standard_name': 'specific_humidity', 'units': '1'})
+f.nc_set_variable('q')
+f.nc_set_global_attributes({'Conventions': None, 'project': None})
+
+# domain_axis
+c = cf.DomainAxis(size=5)
+c.nc_set_dimension('lat')
+f.set_construct(c, key='domainaxis0')
+
+# domain_axis
+c = cf.DomainAxis(size=8)
+c.nc_set_dimension('lon')
+f.set_construct(c, key='domainaxis1')
+
+# domain_axis
+c = cf.DomainAxis(size=1)
+f.set_construct(c, key='domainaxis2')
+
+# field data
+data = cf.Data([[0.007, 0.034, 0.003, 0.014, 0.018, 0.037, 0.024, 0.029], [0.023, 0.036, 0.045, 0.062, 0.046, 0.073, 0.006, 0.066], [0.11, 0.131, 0.124, 0.146, 0.087, 0.103, 0.057, 0.011], [0.029, 0.059, 0.039, 0.07, 0.058, 0.072, 0.009, 0.017], [0.006, 0.036, 0.019, 0.035, 0.018, 0.037, 0.034, 0.013]], units='1', dtype='f8')
+f.set_data(data, axes=('domainaxis0', 'domainaxis1'))
+
+# dimension_coordinate
+c = cf.DimensionCoordinate()
+c.set_properties({'units': 'degrees_north', 'standard_name': 'latitude'})
+c.nc_set_variable('lat')
+data = cf.Data([-75.0, -45.0, 0.0, 45.0, 75.0], units='degrees_north', dtype='f8')
+c.set_data(data)
+b = cf.Bounds()
+b.set_properties({'units': 'degrees_north'})
+b.nc_set_variable('lat_bnds')
+data = cf.Data([[-90.0, -60.0], [-60.0, -30.0], [-30.0, 30.0], [30.0, 60.0], [60.0, 90.0]], units='degrees_north', dtype='f8')
+b.set_data(data)
+c.set_bounds(b)
+f.set_construct(c, axes=('domainaxis0',), key='dimensioncoordinate0', copy=False)
+
+# dimension_coordinate
+c = cf.DimensionCoordinate()
+c.set_properties({'units': 'degrees_east', 'standard_name': 'longitude'})
+c.nc_set_variable('lon')
+data = cf.Data([22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5], units='degrees_east', dtype='f8')
+c.set_data(data)
+b = cf.Bounds()
+b.set_properties({'units': 'degrees_east'})
+b.nc_set_variable('lon_bnds')
+data = cf.Data([[0.0, 45.0], [45.0, 90.0], [90.0, 135.0], [135.0, 180.0], [180.0, 225.0], [225.0, 270.0], [270.0, 315.0], [315.0, 360.0]], units='degrees_east', dtype='f8')
+b.set_data(data)
+c.set_bounds(b)
+f.set_construct(c, axes=('domainaxis1',), key='dimensioncoordinate1', copy=False)
+
+# dimension_coordinate
+c = cf.DimensionCoordinate()
+c.set_properties({'units': 'days since 2018-12-01', 'standard_name': 'time'})
+c.nc_set_variable('time')
+data = cf.Data([31.0], units='days since 2018-12-01', dtype='f8')
+c.set_data(data)
+f.set_construct(c, axes=('domainaxis2',), key='dimensioncoordinate2', copy=False)
+
+# cell_method
+c = cf.CellMethod()
+c.method = 'mean'
+c.axes = ('area',)
+f.set_construct(c)
+
 q, t = cf.read('file.nc')
 print(q.creation_commands())
 import netCDF4
@@ -982,6 +1048,42 @@ h.data[1, 2] = -9
 print(h.array)
 h.data.get_compression_type()
 
+
+import numpy
+import cf
+
+# Define the array values
+data = cf.Data([[280.0,   -99,   -99,   -99],
+                [281.0, 279.0, 278.0, 279.5]])
+data.where(cf.eq(-99), cf.masked, inplace=True)
+	     
+# Create the field construct
+T = cf.Field()
+T.set_properties({'standard_name': 'air_temperature',
+                  'units': 'K',
+                  'featureType': 'timeSeries'})
+
+# Create the domain axis constructs
+X = T.set_construct(cf.DomainAxis(4))
+Y = T.set_construct(cf.DomainAxis(2))
+
+# Set the data for the field
+T.set_data(data)
+
+# Compress the data 
+T.compress('contiguous',
+           count_properties={'long_name': 'number of obs for this timeseries'},
+           inplace=True)
+		
+T
+print(T.array)
+T.data.get_compression_type()
+print(T.data.compressed_array)
+count_variable = T.data.get_count()
+count_variable
+print(count_variable.array)
+cf.write(T, 'T_contiguous.nc')
+
 import numpy
 import cf
 
@@ -1002,9 +1104,7 @@ array = cf.RaggedContiguousArray(
                  shape=(2, 4), size=8, ndim=2,
                  count_variable=count_variable)
 
-# Create the field construct with the domain axes and the ragged
-# array
-T = cf.Field()
+# Create the field construct
 T.set_properties({'standard_name': 'air_temperature',
                   'units': 'K',
                   'featureType': 'timeSeries'})
@@ -1016,14 +1116,6 @@ Y = T.set_construct(cf.DomainAxis(2))
 # Set the data for the field
 T.set_data(cf.Data(array))
 
-T
-print(T.array)
-T.data.get_compression_type()
-print(T.data.compressed_array)
-count_variable = T.data.get_count()
-count_variable
-print(count_variable.array)
-cf.write(T, 'T_contiguous.nc')
 p = cf.read('gathered.nc')[0]
 print(p)
 print(p.array)

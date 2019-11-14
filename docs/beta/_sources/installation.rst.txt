@@ -38,33 +38,6 @@ later. (Versions 2.x of cf work only for Python 2.7.)
 
 ----
 
-.. _conda:
-  
-**conda**
----------
-
-cf-python is in the ``ncas`` conda channel. To install cf with all of
-its :ref:`required <Required>` and :ref:`optional <Optional>`
-dependencies, and the `cf-plot visualisation package
-<http://ajheaps.github.io/cf-plot>`_, run
-
-.. code-block:: shell
-   :caption: *Install with conda.*
-	     
-   conda install -c ncas -c conda-forge cf-python cf-plot udunits2==2.2.25
-   conda install -c conda-forge mpich esmpy
-
-The second of the two ``conda`` commands is required for
-:ref:`regridding <Regridding>` to work. (Note, however, that the
-installation of ``esmpy`` does not work for Anaconda version
-``2019.10``.)
-
-Note that :ref:`some environment variables might also need setting
-<UNIDATA-UDUNITS-2-library>` in order for the UDUNITS library to work
-properly, although the defaults are usually sufficient.
-
-----
-
 .. _pip:
   
 **pip**
@@ -101,6 +74,33 @@ options.
 The :ref:`optional dependencies <Optional>` are **not** automatically
 installed via ``pip``.
 
+
+Note that :ref:`some environment variables might also need setting
+<UNIDATA-UDUNITS-2-library>` in order for the UDUNITS library to work
+properly, although the defaults are usually sufficient.
+
+----
+
+.. _conda:
+  
+**conda**
+---------
+
+cf-python is in the ``ncas`` conda channel. To install cf with all of
+its :ref:`required <Required>` and :ref:`optional <Optional>`
+dependencies, and the `cf-plot visualisation package
+<http://ajheaps.github.io/cf-plot>`_, run
+
+.. code-block:: shell
+   :caption: *Install with conda.*
+	     
+   conda install -c ncas -c conda-forge cf-python cf-plot udunits2==2.2.25
+   conda install -c conda-forge mpich esmpy
+
+The second of the two ``conda`` commands is required for
+:ref:`regridding <Regridding>` to work. (Note, however, that the
+installation of ``esmpy`` does not work for Anaconda version
+``2019.10``.)
 
 Note that :ref:`some environment variables might also need setting
 <UNIDATA-UDUNITS-2-library>` in order for the UDUNITS library to work
@@ -186,9 +186,9 @@ Required
   newer.
 
 * `cftime <https://pypi.org/project/cftime/>`_, version 1.0.4.2 or
-  newer. (Note that this package is installed with netCDF4.)
+  newer (note that this package is installed with netCDF4).
 
-* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.7.8 or newer.
+* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.7.10 or newer.
   
 * `cfunits <https://pypi.org/project/cfunits/>`_, version 3.2.2 or newer.
   
@@ -200,15 +200,15 @@ Required
   <http://www.unidata.ucar.edu/software/udunits>`_, version 2.2.20 or
   newer.
 
-  This is a C library which provides support for units of physical
+  UDUNITS-2 is a C library that provides support for units of physical
   quantities. If the UDUNITS-2 shared library file
   (``libudunits2.so.0`` on GNU/Linux or ``libudunits2.0.dylibfile`` on
   MacOS) is in a non-standard location then its directory path should
   be added to the ``LD_LIBRARY_PATH`` environment variable. It may
-  also be necessary to specify the location (directory path *and*
-  file name) of the ``udunits2.xml`` file in the ``UDUNITS2_XML_PATH``
-  environment variable (although the default location is usually
-  correct). For example, ``export
+  also be necessary to specify the location (directory path *and* file
+  name) of the ``udunits2.xml`` file in the ``UDUNITS2_XML_PATH``
+  environment variable, although the default location is usually
+  correct. For example, ``export
   UDUNITS2_XML_PATH=/home/user/anaconda3/share/udunits/udunits2.xml``.
   If you get an error that looks like ``assert(0 ==
   _ut_unmap_symbol_to_unit(_ut_system, _c_char_p(b'Sv'), _UT_ASCII))``

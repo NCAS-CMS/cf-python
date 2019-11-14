@@ -1,0 +1,7 @@
+cf.Field.example_field_1
+========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Field.example_field_1

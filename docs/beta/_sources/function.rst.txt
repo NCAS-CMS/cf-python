@@ -158,6 +158,7 @@ Version |release| for version |version| of the CF conventions.
    cf.dirname
    cf.dump
    cf.environment
+   cf.example_field
    cf.flat
    cf.hash_array
    cf.implementation
