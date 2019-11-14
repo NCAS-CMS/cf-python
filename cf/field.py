@@ -11173,12 +11173,12 @@ may be accessed with the `nc_global_attributes`,
     The following type of compression are available (see the *method*
     parameter):
 
-    * Ragged arrays for discrete sampling geometries (DSG). Three
-      different types of ragged array representation are supported.
-
-    ..
-
-    * Compression by gathering. 
+      * Ragged arrays for discrete sampling geometries (DSG). Three
+        different types of ragged array representation are supported.
+    
+      ..
+    
+      * Compression by gathering. 
 
     .. versionadded:: 3.0.5
     
