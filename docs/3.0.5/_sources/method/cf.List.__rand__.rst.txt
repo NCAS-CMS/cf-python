@@ -1,0 +1,7 @@
+cf.List.__rand__
+================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.List.__rand__

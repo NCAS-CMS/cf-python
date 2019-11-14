@@ -1,0 +1,7 @@
+cf.DomainAncillary.__imul__
+===========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DomainAncillary.__imul__

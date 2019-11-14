@@ -1,0 +1,7 @@
+cf.DomainAncillary.valid_min
+============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.DomainAncillary.valid_min

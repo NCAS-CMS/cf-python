@@ -1,0 +1,7 @@
+cf.List.array
+=============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.List.array

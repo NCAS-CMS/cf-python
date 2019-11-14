@@ -1,0 +1,7 @@
+cf.CellMeasure.minute
+=====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.CellMeasure.minute

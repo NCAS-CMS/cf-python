@@ -1,0 +1,7 @@
+cf.Bounds.has_bounds
+====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.has_bounds

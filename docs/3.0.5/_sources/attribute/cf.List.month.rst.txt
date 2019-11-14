@@ -1,0 +1,7 @@
+cf.List.month
+=============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.List.month

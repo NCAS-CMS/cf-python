@@ -1,0 +1,7 @@
+cf.DomainAncillary.convert_reference_time
+=========================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DomainAncillary.convert_reference_time

@@ -1,0 +1,7 @@
+cf.Data.creation_code
+=====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Data.creation_code

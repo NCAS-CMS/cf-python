@@ -1,0 +1,7 @@
+cf.Index.match
+==============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Index.match

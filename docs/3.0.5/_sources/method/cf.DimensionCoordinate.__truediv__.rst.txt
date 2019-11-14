@@ -1,0 +1,7 @@
+cf.DimensionCoordinate.__truediv__
+==================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DimensionCoordinate.__truediv__

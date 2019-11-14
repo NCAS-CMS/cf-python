@@ -1,0 +1,7 @@
+cf.CellMeasure.files
+====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CellMeasure.files

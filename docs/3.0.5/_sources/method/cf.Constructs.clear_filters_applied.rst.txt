@@ -1,0 +1,7 @@
+cf.Constructs.clear_filters_applied
+===================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Constructs.clear_filters_applied

@@ -1,0 +1,7 @@
+cf.Count.size
+=============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.Count.size

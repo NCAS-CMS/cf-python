@@ -1,0 +1,7 @@
+cf.Constructs.inverse_filter
+============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Constructs.inverse_filter

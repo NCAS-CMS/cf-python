@@ -1,0 +1,7 @@
+cf.Constructs.values
+====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Constructs.values

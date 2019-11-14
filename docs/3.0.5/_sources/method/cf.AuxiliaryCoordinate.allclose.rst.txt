@@ -1,0 +1,7 @@
+cf.AuxiliaryCoordinate.allclose
+===============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.AuxiliaryCoordinate.allclose

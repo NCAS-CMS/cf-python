@@ -1,0 +1,7 @@
+cf.AuxiliaryCoordinate.range
+============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.AuxiliaryCoordinate.range

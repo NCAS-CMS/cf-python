@@ -1,0 +1,7 @@
+cf.TimeDuration.days_in_month
+=============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.TimeDuration.days_in_month

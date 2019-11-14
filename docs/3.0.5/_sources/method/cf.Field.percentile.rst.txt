@@ -1,0 +1,7 @@
+cf.Field.percentile
+===================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Field.percentile

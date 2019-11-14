@@ -1,0 +1,7 @@
+cf.Index.identity
+=================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Index.identity

@@ -1,0 +1,7 @@
+cf.Data.get_compressed_dimension
+================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Data.get_compressed_dimension

@@ -1,0 +1,7 @@
+cf.Constructs.filter_by_axis
+============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Constructs.filter_by_axis

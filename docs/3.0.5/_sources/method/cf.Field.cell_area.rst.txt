@@ -1,0 +1,7 @@
+cf.Field.cell_area
+==================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Field.cell_area

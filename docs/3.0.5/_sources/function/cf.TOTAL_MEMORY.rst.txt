@@ -1,0 +1,7 @@
+cf.TOTAL_MEMORY
+===============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autofunction:: cf.TOTAL_MEMORY

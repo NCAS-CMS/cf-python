@@ -1,0 +1,7 @@
+cf.List.__ixor__
+================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.List.__ixor__

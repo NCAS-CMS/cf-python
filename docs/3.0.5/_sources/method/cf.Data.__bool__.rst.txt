@@ -1,0 +1,7 @@
+cf.Data.__bool__
+================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Data.__bool__
