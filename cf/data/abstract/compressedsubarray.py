@@ -48,6 +48,17 @@ class CompressedSubarray(abc.ABC):
         raise NotImplementedError() # pragma: no cover
 
 
+    def __repr__(self):
+        '''x.__repr__() <==> repr(x)
+
+        '''
+        array = self.array
+        shape = str(array.shape)
+        shape = shape.replace(',)', ')')
+        
+        return "<CF {}{}: {}>".format(self.__class__.__name__, shape, str(array))
+
+
     @property
     def dtype(self):
         return self.array.dtype

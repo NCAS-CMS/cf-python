@@ -515,6 +515,9 @@ place.
 
             if isinstance(data, self.__class__):
                 self.loadd(data.dumpd(), chunk=chunk)
+                if mask is not None:
+                    self.where(mask, cf_masked, inplace=True)
+
                 return
 
             if not isinstance(data, numpy_ndarray):
@@ -621,34 +624,71 @@ place.
         
         if isinstance(data, CompressedArray):
             self._create_partition_matrix_for_compressed_array(data)
-            if mask is not None:
-                self.where(mask, cf_masked, inplace=True)
-
-            return 
-
-        # Still here?
-        matrix = _xxx.copy()
-        
-        matrix[()] = Partition(location = [(0, n) for n in shape],
-                               shape    = list(shape),
-                               axes     = axes,
-                               flip     = empty_list,
-                               Units    = units,
-                               subarray = data,
-                               part     = empty_list)
-        
-        self.partitions = PartitionMatrix(matrix, empty_list)
-        
-        if check_free_memory and FREE_MEMORY() < FM_THRESHOLD():
-            self.to_disk()
-
-        if chunk:
-            self.chunk()
+            #if mask is not None:
+            #    self.where(mask, cf_masked, inplace=True)
+#
+ #           r#eturn 
+        else:
+            matrix = _xxx.copy()
             
+            matrix[()] = Partition(location = [(0, n) for n in shape],
+                                   shape    = list(shape),
+                                   axes     = axes,
+                                   flip     = empty_list,
+                                   Units    = units,
+                                   subarray = data,
+                                   part     = empty_list)
+            
+            self.partitions = PartitionMatrix(matrix, empty_list)
+            
+            if check_free_memory and FREE_MEMORY() < FM_THRESHOLD():
+                self.to_disk()
+    
+            if chunk:
+                self.chunk()
+        #--- End: if
+        
         if mask is not None:
             self.where(mask, cf_masked, inplace=True)
 
             
+#    def _set_Array(self, array, copy=True, chunk=True,
+#                   check_free_memory=True):
+#        '''Set the array.
+#
+#    :Parameters:
+#    
+#        array: subclass of `Array`
+#            The array to be inserted.
+#    
+#    :Returns:
+#    
+#        `None`
+#    
+#    **Examples:**
+#    
+#    >>> d._set_Array(a)
+#
+#        '''
+#        matrix = _xxx.copy()
+#        
+#        matrix[()] = Partition(location = [(0, n) for n in shape],
+#                               shape    = list(shape),
+#                               axes     = axes,
+#                               flip     = empty_list,
+#                               Units    = units,
+#                               subarray = data,
+#                               part     = empty_list)
+#        
+#        self.partitions = PartitionMatrix(matrix, empty_list)
+#        
+#        if check_free_memory and FREE_MEMORY() < FM_THRESHOLD():
+#            self.to_disk()
+#            
+#        if chunk:
+#            self.chunk()
+#        #--- End: if
+        
     def _create_partition_matrix_for_compressed_array(self, compressed_array):
         '''Create and insert a partition matrix for a compressed array.
         
@@ -9218,6 +9258,58 @@ returned.
 
         '''
         return self._YMDhms('second')
+
+
+    def uncompress(self, inplace=False):
+        '''Uncompress the underlying data.
+    
+    If the data is not compressed, then no change is made.
+    
+    .. versionadded:: 3.0.0
+    
+    .. seealso:: `array`, `compressed_array`, `source`
+    
+
+    :Parameters:
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+    :Returns:
+    
+        `Data` or `None`
+            The uncompressed data, or `None` of the operation was
+            in-place.
+
+    **Examples:**
+    
+    >>> d.get_compression_type()
+    'ragged contiguous'
+    >>> d.uncompress()
+    >>> d.get_compression_type()
+    ''
+
+        '''
+        if inplace:
+            d = self
+        else:
+            d = self.copy()
+
+        if not d.get_compression_type():            
+            if inplace:
+                d = None
+            return d
+            
+        config = d.partition_configuration(readonly=True)
+
+        for partition in d.partitions.matrix.flat:
+            partition.open(config)
+            _ = partition.array
+            partition.close()
+
+        if inplace:
+            d = None
+        return d
 
 
     def unique(self):
