@@ -23,6 +23,10 @@ class FieldTest(unittest.TestCase):
                                       'test_file2.nc')
         self.contiguous = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                        'DSG_timeSeries_contiguous.nc')
+        self.indexed = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                    'DSG_timeSeries_indexed.nc')
+        self.indexed_contiguous = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                               'DSG_timeSeriesProfile_indexed_contiguous.nc')
         
         self.chunk_sizes = (17, 34, 300, 100000)[::-1]
         self.original_chunksize = cf.CHUNKSIZE()
@@ -50,7 +54,7 @@ class FieldTest(unittest.TestCase):
 #        self.test_only = ['test_Field_section']
 #        self.test_only = ['test_Field_flip']
 #        self.test_only = ['test_Field_Field_domain_mask']
-#        self.test_only = ['test_Field_bin']
+        self.test_only = ['test_Field_compress_uncompress']
 
         
     def test_Field_creation_commands(self):
@@ -81,6 +85,44 @@ class FieldTest(unittest.TestCase):
                                                     string=s)
         #--- End: for
             
+        
+    def test_Field_compress_uncompress(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        methods = ('contiguous', 'indexed', 'indexed_contiguous')
+        
+        for method in methods:
+            message = 'method='+method
+            for f in cf.read(getattr(self, method)):
+                print(f)
+                self.assertTrue(bool(f.data.get_compression_type()), message)
+
+                u = f.uncompress()
+                self.assertFalse(bool(u.data.get_compression_type()), message)
+                self.assertTrue(f.equals(u, verbose=True), message)
+
+                for method1 in methods:
+                    if method1 == 'indexed_contiguous':
+                        if f.ndim != 3:
+                            continue
+                    elif f.ndim != 2:
+                        continue
+                    
+                    print(method, method1, f.ndim)
+                    c = u.compress(method1)
+                    self.assertTrue(bool(c.data.get_compression_type()), message)
+
+                    self.assertTrue(u.equals(c, verbose=True), message)
+                    self.assertTrue(f.equals(c, verbose=True), message)
+                    
+                    c = f.compress(method1)
+                    self.assertTrue(bool(c.data.get_compression_type()), message)
+                
+                    self.assertTrue(u.equals(c, verbose=True), message)
+                    self.assertTrue(f.equals(c, verbose=True), message)
+        #--- End: for
+        
         
     def test_Field_flatten(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

@@ -4128,6 +4128,59 @@ TODO
         return v
 
 
+    def uncompress(self, inplace=False):
+        '''Uncompress the construct.
+
+    Compression saves space by identifying and removing unwanted
+    missing data. Such compression techniques store the data more
+    efficiently and result in no precision loss.
+
+    Whether or not the construct is compressed does not alter its
+    functionality nor external appearance.
+
+    The following type of compression are available:
+
+        * Ragged arrays for discrete sampling geometries (DSG). Three
+          different types of ragged array representation are
+          supported.
+        
+        ..
+        
+        * Compression by gathering.
+
+    .. versionadded:: 3.0.6
+    
+    .. seealso:: `cf.write`, `flatten`
+
+    :Parameters:
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+    :Returns:
+
+            The uncompressed construct, or `None` if the operation was
+            in-place.
+
+    **Examples:** 
+
+    TODO
+
+        '''
+        if inplace:
+            f = self
+        else:
+            f = self.copy()
+            
+        data = f.get_data(None)
+        if data is not None:
+            data.uncompress(inplace=True)
+            
+        if inplace:
+            f = None
+        return f    
+
+    
     def unique(self):
         '''The unique elements of the data.
 

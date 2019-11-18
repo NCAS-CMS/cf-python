@@ -244,6 +244,14 @@ may be accessed with the `nc_global_attributes`,
         instance._Constructs = Constructs
         instance._Domain     = Domain
         instance._DomainAxis = DomainAxis
+        instance._Data       = Data
+        instance._RaggedContiguousArray        = RaggedContiguousArray         
+        instance._RaggedIndexedArray           = RaggedIndexedArray            
+        instance._RaggedIndexedContiguousArray = RaggedIndexedContiguousArray  
+        instance._GatheredArray                = GatheredArray                  
+        instance._Count = Count
+        instance._Index = Index
+        instance._List  = List
         return instance
 
 
@@ -11180,432 +11188,430 @@ may be accessed with the `nc_global_attributes`,
         return False
 
     
-    def compress(self, method, axes=None, count_properties=None,
-                 index_properties=None, list_properties=None,
-                 inplace=False):
-        '''Compress the field construct.
-
-    Compression saves space by identifying and removing unwanted
-    missing data. Such compression techniques store the data more
-    efficiently and result in no precision loss.
-
-    The field construct data is compressesed, along with any
-    applicable metadata constructs.
-
-    Whether or not the field construct is compressed does not alter
-    its functionality nor external appearance.
-
-    When writing a compressed field construct to a dataset space will
-    be saved by the creation of compressed netCDF variables, along
-    with the supplementary netCDF variables and attributes that are
-    required for the encoding.
-
-    The following type of compression are available (see the *method*
-    parameter):
-
-        * Ragged arrays for discrete sampling geometries (DSG). Three
-          different types of ragged array representation are
-          supported.
-        
-        ..
-        
-        * Compression by gathering.
-
-    .. versionadded:: 3.0.5
-    
-    .. seealso:: `cf.write`, `flatten`
-
-    :Parameters:
-
-        method: `str`
-            The compression method. One of:
-
-            * ``'contiguous'``
-
-              Contiguous ragged array representation for DSG "point",
-              "timeSeries", "trajectory" or "profile" features. 
-
-              The field construct data must have exactly 2 dimensions
-              for which the first (leftmost) dimension indexes each
-              feature and the second (rightmost) dimension contains
-              the elements for the features. Trailing missing data
-              values in the second dimension are removed to created
-              the compressed data.
-
-            * ``'indexed'``
-
-              Indexed ragged array representation for DSG "point",
-              "timeSeries", "trajectory", or "profile" features.
-
-              The field construct data must have exactly 2 dimensions
-              for which the first (leftmost) dimension indexes each
-              feature and the second (rightmost) dimension contains
-              the elements for the features. Trailing missing data
-              values in the second dimension are removed to created
-              the compressed data.
-
-            * ``'indexed_contiguous'``
-
-              Indexed contiguous ragged array representation for DSG
-              "timeSeriesProfile", or "trajectoryProfile" features.
-
-              The field construct data must have exactly 3 dimensions
-              for which the first (leftmost) dimension indexes each
-              feature; the second (middle) dimension indexes each
-              timeseries or trajectory; and the third (rightmost)
-              dimension contains the elements for the timeseries or
-              trajectories. Trailing missing data values in the third
-              dimension are removed to created the compressed data.
-
-            * ``'gathered'``
-
-              Compression by gathering over any subset of the field
-              construct data dimensions.
-
-              *Not yet available.*
-
-        count_properties: `dict`, optional
-            Provide properties to the count variable for contiguous
-            ragged array representation or indexed contiguous ragged
-            array representation.
-
-            *Parameter example:*
-              ``count_properties={'long_name': 'number of obs for this timeseries'}``
-
-        index_properties: `dict`, optional
-            Provide properties to the index variable for indexed
-            ragged array representation or indexed contiguous ragged
-            array representation.
-
-            *Parameter example:*
-              ``index_properties={'long_name': 'which station this profile is for'}``
-
-        list_properties: `dict`, optional
-            Provide properties to the list variable for compression by
-            gathering.
-
-            *Parameter example:*
-              ``list_properties={'long_name': 'uncompression indices'}``
-
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
-    
-    :Returns:
-
-        `Field` or `None`
-            The compressed field construct, or `None` if the operation
-            was in-place.
-
-    **Examples:**
-
-    >>> f = cf.example_field(3)
-    >>> print(f)                                                                
-    Field: precipitation_flux (ncvar%p)
-    -----------------------------------
-    Data            : precipitation_flux(cf_role=timeseries_id(4), ncdim%timeseries(9)) kg m-2 day-1
-    Auxiliary coords: time(cf_role=timeseries_id(4), ncdim%timeseries(9)) = [[1969-12-29 00:00:00, ..., 1970-01-07 00:00:00]]
-                    : latitude(cf_role=timeseries_id(4)) = [-9.0, ..., 78.0] degrees_north
-                    : longitude(cf_role=timeseries_id(4)) = [-23.0, ..., 178.0] degrees_east
-                    : height(cf_role=timeseries_id(4)) = [0.5, ..., 345.0] m
-                    : cf_role=timeseries_id(cf_role=timeseries_id(4)) = [b'station1', ..., b'station4']
-                    : long_name=some kind of station info(cf_role=timeseries_id(4)) = [-10, ..., -7]
-    >>> f.data.get_compression_type()
-    ''
-    >>> f.compress('contiguous', inplace=True)
-    >>> f.data.get_compression_type()
-    'ragged contiguous'
-    >>> f.data.get_count()                     
-    <CF Count: (4) >
-    >>> print(f.data.get_count().array)                         
-    [3 7 5 9]
-
-    >>> f = cf.example_field(4)
-    >>> print(f)
-    Field: precipitation_flux (ncvar%p)
-    -----------------------------------
-    Data            : precipitation_flux(cf_role=timeseries_id(3), ncdim%timeseries(26), ncdim%profile_1(4)) kg m-2 day-1
-    Auxiliary coords: time(cf_role=timeseries_id(3), ncdim%timeseries(26)) = [[1970-01-04 00:00:00, ..., --]]
-                    : latitude(cf_role=timeseries_id(3)) = [-9.0, 2.0, 34.0] degrees_north
-                    : longitude(cf_role=timeseries_id(3)) = [-23.0, 0.0, 67.0] degrees_east
-                    : height(cf_role=timeseries_id(3)) = [0.5, 12.6, 23.7] m
-                    : altitude(cf_role=timeseries_id(3), ncdim%timeseries(26), ncdim%profile_1(4)) = [[[2.07, ..., --]]] km
-                    : cf_role=timeseries_id(cf_role=timeseries_id(3)) = [b'station1', b'station2', b'station3']
-                    : long_name=some kind of station info(cf_role=timeseries_id(3)) = [-10, -9, -8]
-                    : cf_role=profile_id(cf_role=timeseries_id(3), ncdim%timeseries(26)) = [[102, ..., --]]
-    >>> f.data.get_compression_type()                     
-    ''
-    >>> g = f.compress('indexed_contiguous', 
-    ...                count_properties={'long_name': 'number of obs for each profile'})
-    >>> g.data.get_compression_type()                     
-    'ragged indexed contiguous'
-    >> g.data.get_count()
-    <CF Count: long_name=number of obs for each profile(58) >
-    >>> g.data.get_index()
-    <CF Index: (58) >
-    >>> print(g.data.get_index().array)                     
-    [0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
-     1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2]
-
-        '''
-        def _empty_compressed_data(data, N):            
-            return Data.empty(shape=(N,), units=data.Units,
-                              dtype=data.dtype)
-        #--- End: def
-        
-        def _RaggedContiguousArray(compressed_data, data,
-                                   count_variable):
-            return RaggedContiguousArray(compressed_data,
-                                         shape=data.shape,
-                                         size=data.size,
-                                         ndim=data.ndim,
-                                         count_variable=count_variable)
-        #--- End: def
-        
-        def _RaggedIndexedArray(compressed_data, data, index_variable):
-            return RaggedIndexedArray(compressed_data,
-                                      shape=data.shape,
-                                      size=data.size, ndim=data.ndim,
-                                      index_variable=index_variable)
-        #--- End: def
-        
-        def _RaggedIndexedContiguousArray(compressed_data, data,
-                                          count_variable, index_variable):
-            return RaggedIndexedContiguousArray(compressed_data,
-                                                shape=data.shape,
-                                                size=data.size,
-                                                ndim=data.ndim,
-                                                count_variable=count_variable,
-                                                index_variable=index_variable)
-        #--- End: def
-
-        def _compress_metadata(f, count, N, Array_func,
-                               **variables):
-            '''TODO
-
-        :Parameters:
-    
-            f: `Field`
-    
-            count: sequence of `int`
-    
-            N: `int`
-    
-            Array_func: 
-                
-            variables:
-    
-        :Returns:
-    
-            `None`
-
-            '''
-            axes = f.get_data_axes()
-            for key, c in f.constructs.filter_by_axis('or').items():
-                c_axes = f.get_data_axes(key)
-                if c_axes != axes:
-                    # Skip metadata constructs which don't span
-                    # exactly the same axes in the same order
-                    continue
-
-                # Initialize the compressed data for the metadata
-                # construct
-                data = c.data
-                compressed_data = _empty_compressed_data(data, N)                
-                
-                # Populate the compressed data for the metadata
-                # construct
-                start = 0            
-                for last, d in zip(count, data.flatten(range(data.ndim-1))):
-                    if not last:
-                        continue
-
-                    end = start + last
-                    compressed_data[start:end] = d[:last]
-                    start += last
-
-                # Insert the compressed data into the metadata
-                # construct
-                y = Array_func(compressed_data, data, **variables)
-#                data._create_partition_matrix_for_compressed_array(y)
-                data._set_Array(y)
-        #--- End: def
-
-        if inplace:
-            f = self
-        else:
-            f = self.copy()
-
-        data = f.get_data(None)
-        if data is None:
-            if inplace:
-                f = None
-            return f
-            
-        current_compression_type = data.get_compression_type().replace(' ', '_')
-        if current_compression_type and current_compression_type == 'ragged_'+method:
-            # The field is already compressed by the correct method
-            if inplace:
-                f = None
-            return f
-
-        if method == 'contiguous':
-            if self.ndim != 2:
-                raise ValueError(
-                    "The data must have exactly 2 dimensions for DSG ragged contiguous compression. Got {}".format(
-                        self.ndim))
-        elif method == 'indexed':
-            if self.ndim != 2:
-                raise ValueError(
-                    "The data must have exactly 2 dimensions for DSG ragged indexed compression. Got {}".format(
-                        self.ndim))                            
-        elif method == 'indexed_contiguous':
-            if self.ndim != 3:
-                raise ValueError(
-                    "The data must have exactly 3 dimensions for DSG ragged indexed contiguous compression. Got {}".format(
-                        self.ndim))
-        #--- End: if
-
-        if method != 'gathered':
-            # --------------------------------------------------------
-            # DSG compression
-            # --------------------------------------------------------
-            flattened_data = data.flatten(range(data.ndim-1))
-            
-            count = []
-            for d in flattened_data:
-                last = d.size
-                for i in d[::-1]:
-                    if i is not cf_masked:
-                        break
-                    else:
-                        last -= 1
-                #--- End: for
-    
-                count.append(last)
-    
-            N = sum(count)
-            compressed_field_data = _empty_compressed_data(data, N)
-    
-            start = 0            
-            for last, d in zip(count, flattened_data):
-                if not last:
-                    continue
-                
-                end = start + last
-                compressed_field_data[start:end] = d[:last]
-                start += last
-        #--- End: if
-                                   
-        if method == 'contiguous':
-            # --------------------------------------------------------
-            # Ragged contiguous
-            # --------------------------------------------------------
-            count_variable = Count(properties=count_properties,
-                                   data=Data([n for n in count if n]))
-
-            x = _RaggedContiguousArray(compressed_field_data, data,
-                                       count_variable)
-
-            _compress_metadata(f, count, N, _RaggedContiguousArray,
-                               count_variable=count_variable)
-            
-        elif method == 'indexed':
-            # --------------------------------------------------------
-            # Ragged indexed
-            # --------------------------------------------------------
-            index_variable = Index(properties=index_properties,
-                                   data=Data.empty(shape=(N,), dtype=int))
-
-            start = 0            
-            for i, (last, d) in enumerate(zip(count, flattened_data)):
-                if not last:
-                    continue
-
-                end = start + last
-                index_variable[start:end] = i
-                start += last
-            
-            x = _RaggedIndexedArray(compressed_field_data, data,
-                                    index_variable)
-
-            _compress_metadata(f, count, N, _RaggedIndexedArray,
-                               index_variable=index_variable)
-            
-        elif method == 'indexed_contiguous':
-            # --------------------------------------------------------
-            # Ragged indexed contiguous
-            # --------------------------------------------------------
-            index = []
-            shape1 = f.shape[1]
-            for i in range(f.shape[0]):
-                start = shape1 * i
-                end = start + shape1
-                index.extend([i] * sum(n > 0 for n in count[start:end]))
-
-            count_variable = Count(properties=count_properties,
-                                   data=Data([n for n in count if n]))
-            index_variable = Index(properties=index_properties,
-                                   data=Data(index))
-
-            x = _RaggedIndexedContiguousArray(compressed_field_data,
-                                              data, count_variable,
-                                              index_variable)
-                                   
-            _compress_metadata(f, count, N,
-                               _RaggedIndexedContiguousArray,
-                               count_variable=count_variable,
-                               index_variable=index_variable)
-            
-            axes = f.get_data_axes()[:-1]
-            for key, c in f.constructs.filter_by_axis('or').items():
-                c_axes = f.get_data_axes(key)
-                if c_axes != axes:
-                    # Skip metadata constructs which don't span
-                    # exactly the same axes in the same order
-                    continue
-                
-                # Initialize the compressed data for the metadata
-                # construct
-                data = c.data
-                compressed_data = _empty_compressed_data(data, len(index))                
-                
-                # Populate the compressed data for the metadata
-                # construct
-                start = 0
-                c_start = 0                
-                for i, d in enumerate(data.flatten(range(data.ndim-1))):
-                    c_start = shape1 * i
-                    c_end = c_start + shape1
-                    last = sum(n > 0 for n in count[c_start:c_end])
-
-                    end = start + last
-                    compressed_data[start:end] = d[:last]
-                    start += last
-                    
-                # Insert the compressed data into the metadata
-                # construct
-                y = _RaggedIndexedArray(compressed_data, data,
-                                        index_variable=index_variable)                
-#                data._create_partition_matrix_for_compressed_array(y)
-                data._set_Array(y)
-        #--- End: def
-
-        elif method == 'gathered':
-            # --------------------------------------------------------
-            # Gathered
-            # --------------------------------------------------------
-            raise ValueError("Compression by gathering is not yet available - sorry!")
-            
-        else:
-            raise ValueError("Unknown compression method: {!r}".format(method))
-        
-        # Set the compressed field data
-#        f.data._create_partition_matrix_for_compressed_array(x)
-        f.data._set_Array(x)
-
-        if inplace:
-            f = None
-        return f
+#    def compress(self, method, axes=None, count_properties=None,
+#                 index_properties=None, list_properties=None,
+#                 inplace=False):
+#        '''Compress the field construct.
+#
+#    Compression saves space by identifying and removing unwanted
+#    missing data. Such compression techniques store the data more
+#    efficiently and result in no precision loss.
+#
+#    The field construct data is compressesed, along with any
+#    applicable metadata constructs.
+#
+#    Whether or not the field construct is compressed does not alter
+#    its functionality nor external appearance.
+#
+#    When writing a compressed field construct to a dataset space will
+#    be saved by the creation of compressed netCDF variables, along
+#    with the supplementary netCDF variables and attributes that are
+#    required for the encoding.
+#
+#    The following type of compression are available (see the *method*
+#    parameter):
+#
+#        * Ragged arrays for discrete sampling geometries (DSG). Three
+#          different types of ragged array representation are
+#          supported.
+#        
+#        ..
+#        
+#        * Compression by gathering.
+#
+#    .. versionadded:: 3.0.5
+#    
+#    .. seealso:: `cf.write`, `flatten`
+#
+#    :Parameters:
+#
+#        method: `str`
+#            The compression method. One of:
+#
+#            * ``'contiguous'``
+#
+#              Contiguous ragged array representation for DSG "point",
+#              "timeSeries", "trajectory" or "profile" features. 
+#
+#              The field construct data must have exactly 2 dimensions
+#              for which the first (leftmost) dimension indexes each
+#              feature and the second (rightmost) dimension contains
+#              the elements for the features. Trailing missing data
+#              values in the second dimension are removed to created
+#              the compressed data.
+#
+#            * ``'indexed'``
+#
+#              Indexed ragged array representation for DSG "point",
+#              "timeSeries", "trajectory", or "profile" features.
+#
+#              The field construct data must have exactly 2 dimensions
+#              for which the first (leftmost) dimension indexes each
+#              feature and the second (rightmost) dimension contains
+#              the elements for the features. Trailing missing data
+#              values in the second dimension are removed to created
+#              the compressed data.
+#
+#            * ``'indexed_contiguous'``
+#
+#              Indexed contiguous ragged array representation for DSG
+#              "timeSeriesProfile", or "trajectoryProfile" features.
+#
+#              The field construct data must have exactly 3 dimensions
+#              for which the first (leftmost) dimension indexes each
+#              feature; the second (middle) dimension indexes each
+#              timeseries or trajectory; and the third (rightmost)
+#              dimension contains the elements for the timeseries or
+#              trajectories. Trailing missing data values in the third
+#              dimension are removed to created the compressed data.
+#
+#            * ``'gathered'``
+#
+#              Compression by gathering over any subset of the field
+#              construct data dimensions.
+#
+#              *Not yet available.*
+#
+#        count_properties: `dict`, optional
+#            Provide properties to the count variable for contiguous
+#            ragged array representation or indexed contiguous ragged
+#            array representation.
+#
+#            *Parameter example:*
+#              ``count_properties={'long_name': 'number of obs for this timeseries'}``
+#
+#        index_properties: `dict`, optional
+#            Provide properties to the index variable for indexed
+#            ragged array representation or indexed contiguous ragged
+#            array representation.
+#
+#            *Parameter example:*
+#              ``index_properties={'long_name': 'which station this profile is for'}``
+#
+#        list_properties: `dict`, optional
+#            Provide properties to the list variable for compression by
+#            gathering.
+#
+#            *Parameter example:*
+#              ``list_properties={'long_name': 'uncompression indices'}``
+#
+#        inplace: `bool`, optional
+#            If True then do the operation in-place and return `None`.
+#    
+#    :Returns:
+#
+#        `Field` or `None`
+#            The compressed field construct, or `None` if the operation
+#            was in-place.
+#
+#    **Examples:**
+#
+#    >>> f = cf.example_field(3)
+#    >>> print(f)                                                                
+#    Field: precipitation_flux (ncvar%p)
+#    -----------------------------------
+#    Data            : precipitation_flux(cf_role=timeseries_id(4), ncdim%timeseries(9)) kg m-2 day-1
+#    Auxiliary coords: time(cf_role=timeseries_id(4), ncdim%timeseries(9)) = [[1969-12-29 00:00:00, ..., 1970-01-07 00:00:00]]
+#                    : latitude(cf_role=timeseries_id(4)) = [-9.0, ..., 78.0] degrees_north
+#                    : longitude(cf_role=timeseries_id(4)) = [-23.0, ..., 178.0] degrees_east
+#                    : height(cf_role=timeseries_id(4)) = [0.5, ..., 345.0] m
+#                    : cf_role=timeseries_id(cf_role=timeseries_id(4)) = [b'station1', ..., b'station4']
+#                    : long_name=some kind of station info(cf_role=timeseries_id(4)) = [-10, ..., -7]
+#    >>> f.data.get_compression_type()
+#    ''
+#    >>> f.compress('contiguous', inplace=True)
+#    >>> f.data.get_compression_type()
+#    'ragged contiguous'
+#    >>> f.data.get_count()                     
+#    <CF Count: (4) >
+#    >>> print(f.data.get_count().array)                         
+#    [3 7 5 9]
+#
+#    >>> f = cf.example_field(4)
+#    >>> print(f)
+#    Field: precipitation_flux (ncvar%p)
+#    -----------------------------------
+#    Data            : precipitation_flux(cf_role=timeseries_id(3), ncdim%timeseries(26), ncdim%profile_1(4)) kg m-2 day-1
+#    Auxiliary coords: time(cf_role=timeseries_id(3), ncdim%timeseries(26)) = [[1970-01-04 00:00:00, ..., --]]
+#                    : latitude(cf_role=timeseries_id(3)) = [-9.0, 2.0, 34.0] degrees_north
+#                    : longitude(cf_role=timeseries_id(3)) = [-23.0, 0.0, 67.0] degrees_east
+#                    : height(cf_role=timeseries_id(3)) = [0.5, 12.6, 23.7] m
+#                    : altitude(cf_role=timeseries_id(3), ncdim%timeseries(26), ncdim%profile_1(4)) = [[[2.07, ..., --]]] km
+#                    : cf_role=timeseries_id(cf_role=timeseries_id(3)) = [b'station1', b'station2', b'station3']
+#                    : long_name=some kind of station info(cf_role=timeseries_id(3)) = [-10, -9, -8]
+#                    : cf_role=profile_id(cf_role=timeseries_id(3), ncdim%timeseries(26)) = [[102, ..., --]]
+#    >>> f.data.get_compression_type()                     
+#    ''
+#    >>> g = f.compress('indexed_contiguous', 
+#    ...                count_properties={'long_name': 'number of obs for each profile'})
+#    >>> g.data.get_compression_type()                     
+#    'ragged indexed contiguous'
+#    >> g.data.get_count()
+#    <CF Count: long_name=number of obs for each profile(58) >
+#    >>> g.data.get_index()
+#    <CF Index: (58) >
+#    >>> print(g.data.get_index().array)                     
+#    [0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+#     1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2]
+#
+#        '''
+#        def _empty_compressed_data(data, N):            
+#            return Data.empty(shape=(N,), units=data.Units,
+#                              dtype=data.dtype)
+#        #--- End: def
+#        
+#        def _RaggedContiguousArray(compressed_data, data,
+#                                   count_variable):
+#            return RaggedContiguousArray(compressed_data,
+#                                         shape=data.shape,
+#                                         size=data.size,
+#                                         ndim=data.ndim,
+#                                         count_variable=count_variable)
+#        #--- End: def
+#        
+#        def _RaggedIndexedArray(compressed_data, data, index_variable):
+#            return RaggedIndexedArray(compressed_data,
+#                                      shape=data.shape,
+#                                      size=data.size, ndim=data.ndim,
+#                                      index_variable=index_variable)
+#        #--- End: def
+#        
+#        def _RaggedIndexedContiguousArray(compressed_data, data,
+#                                          count_variable, index_variable):
+#            return RaggedIndexedContiguousArray(compressed_data,
+#                                                shape=data.shape,
+#                                                size=data.size,
+#                                                ndim=data.ndim,
+#                                                count_variable=count_variable,
+#                                                index_variable=index_variable)
+#        #--- End: def
+#
+#        def _compress_metadata(f, count, N, Array_func,
+#                               **variables):
+#            '''TODO
+#
+#        :Parameters:
+#    
+#            f: `Field`
+#    
+#            count: sequence of `int`
+#    
+#            N: `int`
+#    
+#            Array_func: 
+#                
+#            variables:
+#    
+#        :Returns:
+#    
+#            `None`
+#
+#            '''
+#            axes = f.get_data_axes()
+#            for key, c in f.constructs.filter_by_axis('or').items():
+#                c_axes = f.get_data_axes(key)
+#                if c_axes != axes:
+#                    # Skip metadata constructs which don't span
+#                    # exactly the same axes in the same order
+#                    continue
+#
+#                # Initialize the compressed data for the metadata
+#                # construct
+#                data = c.data
+#                compressed_data = _empty_compressed_data(data, N)                
+#                
+#                # Populate the compressed data for the metadata
+#                # construct
+#                start = 0            
+#                for last, d in zip(count, data.flatten(range(data.ndim-1))):
+#                    if not last:
+#                        continue
+#
+#                    end = start + last
+#                    compressed_data[start:end] = d[:last]
+#                    start += last
+#
+#                # Insert the compressed data into the metadata
+#                # construct
+#                y = Array_func(compressed_data, data, **variables)
+#                data._set_CompressedArray(y)
+#        #--- End: def
+#
+#        if inplace:
+#            f = self
+#        else:
+#            f = self.copy()
+#
+#        data = f.get_data(None)
+#        if data is None:
+#            if inplace:
+#                f = None
+#            return f
+#            
+#        current_compression_type = data.get_compression_type().replace(' ', '_')
+#        if current_compression_type and current_compression_type == 'ragged_'+method:
+#            # The field is already compressed by the correct method
+#            if inplace:
+#                f = None
+#            return f
+#
+#        if method == 'contiguous':
+#            if self.ndim != 2:
+#                raise ValueError(
+#                    "The data must have exactly 2 dimensions for DSG ragged contiguous compression. Got {}".format(
+#                        self.ndim))
+#        elif method == 'indexed':
+#            if self.ndim != 2:
+#                raise ValueError(
+#                    "The data must have exactly 2 dimensions for DSG ragged indexed compression. Got {}".format(
+#                        self.ndim))                            
+#        elif method == 'indexed_contiguous':
+#            if self.ndim != 3:
+#                raise ValueError(
+#                    "The data must have exactly 3 dimensions for DSG ragged indexed contiguous compression. Got {}".format(
+#                        self.ndim))
+#        #--- End: if
+#
+#        if method != 'gathered':
+#            # --------------------------------------------------------
+#            # DSG compression
+#            # --------------------------------------------------------
+#            flattened_data = data.flatten(range(data.ndim-1))
+#            
+#            count = []
+#            for d in flattened_data:
+#                last = d.size
+#                for i in d[::-1]:
+#                    if i is not cf_masked:
+#                        break
+#                    else:
+#                        last -= 1
+#                #--- End: for
+#    
+#                count.append(last)
+#    
+#            N = sum(count)
+#            compressed_field_data = _empty_compressed_data(data, N)
+#    
+#            start = 0            
+#            for last, d in zip(count, flattened_data):
+#                if not last:
+#                    continue
+#                
+#                end = start + last
+#                compressed_field_data[start:end] = d[:last]
+#                start += last
+#        #--- End: if
+#                                   
+#        if method == 'contiguous':
+#            # --------------------------------------------------------
+#            # Ragged contiguous
+#            # --------------------------------------------------------
+#            count_variable = Count(properties=count_properties,
+#                                   data=Data([n for n in count if n]))
+#
+#            x = _RaggedContiguousArray(compressed_field_data, data,
+#                                       count_variable)
+#
+#            _compress_metadata(f, count, N, _RaggedContiguousArray,
+#                               count_variable=count_variable)
+#            
+#        elif method == 'indexed':
+#            # --------------------------------------------------------
+#            # Ragged indexed
+#            # --------------------------------------------------------
+#            index_variable = Index(properties=index_properties,
+#                                   data=Data.empty(shape=(N,), dtype=int))
+#
+#            start = 0            
+#            for i, (last, d) in enumerate(zip(count, flattened_data)):
+#                if not last:
+#                    continue
+#
+#                end = start + last
+#                index_variable[start:end] = i
+#                start += last
+#            
+#            x = _RaggedIndexedArray(compressed_field_data, data,
+#                                    index_variable)
+#
+#            _compress_metadata(f, count, N, _RaggedIndexedArray,
+#                               index_variable=index_variable)
+#            
+#        elif method == 'indexed_contiguous':
+#            # --------------------------------------------------------
+#            # Ragged indexed contiguous
+#            # --------------------------------------------------------
+#            index = []
+#            shape1 = f.shape[1]
+#            for i in range(f.shape[0]):
+#                start = shape1 * i
+#                end = start + shape1
+#                index.extend([i] * sum(n > 0 for n in count[start:end]))
+#
+#            count_variable = Count(properties=count_properties,
+#                                   data=Data([n for n in count if n]))
+#            index_variable = Index(properties=index_properties,
+#                                   data=Data(index))
+#
+#            x = _RaggedIndexedContiguousArray(compressed_field_data,
+#                                              data, count_variable,
+#                                              index_variable)
+#                                   
+#            _compress_metadata(f, count, N,
+#                               _RaggedIndexedContiguousArray,
+#                               count_variable=count_variable,
+#                               index_variable=index_variable)
+#            
+#            axes = f.get_data_axes()[:-1]
+#            for key, c in f.constructs.filter_by_axis('or').items():
+#                c_axes = f.get_data_axes(key)
+#                if c_axes != axes:
+#                    # Skip metadata constructs which don't span
+#                    # exactly the same axes in the same order
+#                    continue
+#                
+#                # Initialize the compressed data for the metadata
+#                # construct
+#                data = c.data
+#                compressed_data = _empty_compressed_data(data, len(index))                
+#                
+#                # Populate the compressed data for the metadata
+#                # construct
+#                start = 0
+#                c_start = 0                
+#                for i, d in enumerate(data.flatten(range(data.ndim-1))):
+#                    c_start = shape1 * i
+#                    c_end = c_start + shape1
+#                    last = sum(n > 0 for n in count[c_start:c_end])
+#
+#                    end = start + last
+#                    compressed_data[start:end] = d[:last]
+#                    start += last
+#                    
+#                # Insert the compressed data into the metadata
+#                # construct
+#                y = _RaggedIndexedArray(compressed_data, data,
+#                                        index_variable=index_variable)                
+#                data._set_CompressedArray(y)
+#        #--- End: def
+#
+#        elif method == 'gathered':
+#            # --------------------------------------------------------
+#            # Gathered
+#            # --------------------------------------------------------
+#            raise ValueError("Compression by gathering is not yet available - sorry!")
+#            
+#        else:
+#            raise ValueError("Unknown compression method: {!r}".format(method))
+#        
+#        # Set the compressed field data
+##        f.data._create_partition_matrix_for_compressed_array(x)
+#        f.data._set_Array(x)
+#
+#        if inplace:
+#            f = None
+#        return f
 
     
     def convolution_filter(self, weights, axis=None, mode=None,
@@ -13126,25 +13132,16 @@ may be accessed with the `nc_global_attributes`,
 
 
     def uncompress(self, inplace=False):
-        '''Uncompress the field construct.
+        '''Uncompress the construct.
 
     Compression saves space by identifying and removing unwanted
     missing data. Such compression techniques store the data more
     efficiently and result in no precision loss.
 
-    The field construct data is compressesed, along with any
-    applicable metadata constructs.
+    Whether or not the construct is compressed does not alter its
+    functionality nor external appearance.
 
-    Whether or not the field construct is compressed does not alter
-    its functionality nor external appearance.
-
-    When writing a compressed field construct to a dataset space will
-    be saved by the creation of compressed netCDF variables, along
-    with the supplementary netCDF variables and attributes that are
-    required for the encoding.
-
-    The following type of compression are available (see the *method*
-    parameter):
+    The following type of compression are available:
 
         * Ragged arrays for discrete sampling geometries (DSG). Three
           different types of ragged array representation are
@@ -13169,16 +13166,22 @@ may be accessed with the `nc_global_attributes`,
             The uncompressed field construct, or `None` if the
             operation was in-place.
 
-        '''
-        data = self.get_data(None)
-        if data is not None:
-            data.uncompress(inplace=inplace)
-            
-        for c in self.constructs.filter_by_data().values():
-            data = c.get_data(None)
-            if data is not None:
-                data.uncompress(inplace=inplace)
+    **Examples:** 
 
+    TODO
+
+        '''
+        f = super().uncompress(inplace=inplace)
+        if inplace:
+            f = self
+           
+        for c in f.constructs.filter_by_data().values():
+            c.uncompress(inplace=True)
+
+        if inplace:
+            f = None
+        return f    
+    
                 
     def unsqueeze(self, inplace=False, i=False, axes=None, **kwargs):
         '''Insert size 1 axes into the data array.

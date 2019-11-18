@@ -622,11 +622,11 @@ place.
         
         self._dtype = _dtype
 
-        self._set_partition_matrix(data, copy=False, chunk=chunk,
+        self._set_partition_matrix(data, chunk=chunk,
                                    check_free_memory=check_free_memory)
         
 #        if isinstance(data, CompressedArray):
-#            self._create_partition_matrix_for_compressed_array(data,
+#            self._set_CompressedArray(data,
 #                                                               axes=axes)
 #            #if mask is not None:
 #            #    self.where(mask, cf_masked, inplace=True)
@@ -656,8 +656,8 @@ place.
             self.where(mask, cf_masked, inplace=True)
 
             
-    def _set_partition_matrix(self, array, copy=None, axes=None,
-                              chunk=True, check_free_memory=True):
+    def _set_partition_matrix(self, array, chunk=True,
+                              check_free_memory=True):
         '''Set the array.
 
     :Parameters:
@@ -665,9 +665,6 @@ place.
         array: subclass of `Array`
             The array to be inserted.
 
-        copy: optional
-            Ignored.
-        
     :Returns:
     
         `None`
@@ -678,7 +675,8 @@ place.
 
         '''
         if isinstance(array, CompressedArray):
-            self._create_partition_matrix_for_compressed_array(array)
+            self._set_CompressedArray(array,
+                                      check_free_memory=check_free_memory)
             return
 
         empty_list = []
@@ -707,20 +705,30 @@ place.
             self._del_Array(None)            
 
             
-    def _create_partition_matrix_for_compressed_array(self,
-                                                      compressed_array):
+    def _set_CompressedArray(self, compressed_array, copy=None,
+                             check_free_memory=True):
         '''Create and insert a partition matrix for a compressed array.
         
+    .. versionadded:: 3.0.6
+
+    .. seealso:: `_set_Array`, `_set_partition_matrix`, `compress`
+
     :Parameters:
             
         compressed_array: subclass of `CompressedArray`
     
+        copy: optional
+            Ignored.
+
+        check_free_memory: `bool`, optional
+            TODO
+
     :Returns:
     
         `None`
 
         '''
-        if FREE_MEMORY() < FM_THRESHOLD():
+        if check_free_memory and FREE_MEMORY() < FM_THRESHOLD():
             compressed_array.to_disk()
         
         new = type(self).empty(shape=compressed_array.shape,
@@ -868,7 +876,6 @@ place.
         self.partitions = new.partitions
         
         self._set_Array(compressed_array, copy=False)
-#        super()._set_Array(compressed_array, copy=False)
 
         
     def __contains__(self, value):
@@ -7363,7 +7370,7 @@ Tuple of the data array's dimension sizes.
         if not array_out.ndim and not isinstance(array_out, numpy_ndarray):
             array_out = numpy_asanyarray(array_out)
 
-        self._set_partition_matrix(array_out, copy=False, chunk=False,
+        self._set_partition_matrix(array_out, chunk=False,
                                    check_free_memory=False)
             
 #        matrix[()] = Partition(subarray = array_out,
@@ -9331,7 +9338,7 @@ returned.
                 d = None
             return d
             
-        config = d.partition_configuration(readonly=True)
+        config = d.partition_configuration(readonly=False)
 
         for partition in d.partitions.matrix.flat:
             partition.open(config)
@@ -12130,7 +12137,8 @@ returned.
 
 
     @classmethod
-    def empty(cls, shape, dtype=None, units=None, chunk=True):
+    def empty(cls, shape, dtype=None, units=None, calendar=None,
+              chunk=True):
         '''Create a new data array without initializing the elements.
 
     Note that the mask of the returned empty data is hard.
@@ -12149,6 +12157,9 @@ returned.
         units: `str` or `Units`
             The units for the new data array.
     
+        calendar: `str`, optional
+            The calendar for reference time units.
+            
     :Returns:
     
         `Data`
@@ -12159,12 +12170,12 @@ returned.
 
         '''
         return cls.full(shape, fill_value=None, dtype=dtype,
-                        units=units, chunk=chunk)
+                        units=units, calendar=calendar, chunk=chunk)
 
 
     @classmethod
     def full(cls, shape, fill_value, dtype=None, units=None,
-             chunk=True):
+             calendar=None, chunk=True):
         '''Return a new data array of given shape and type, filled with the
     given value.
     
@@ -12185,6 +12196,9 @@ returned.
         units: `str` or `Units`
             The units for the new data array.
     
+        calendar: `str`, optional
+            The calendar for reference time units.
+            
     :Returns:
     
         `Data`
@@ -12200,23 +12214,27 @@ returned.
                             ndim=len(shape), dtype=numpy_dtype(dtype),
                             fill_value=fill_value)
         
-        return cls(array, units=units, chunk=chunk)
+        return cls(array, units=units, calendar=calendar, chunk=chunk)
 
 
     @classmethod
-    def ones(cls, shape, dtype=None, units=None, chunk=True):
+    def ones(cls, shape, dtype=None, units=None, calendar=None,
+             chunk=True):
         '''TODO
 
         '''
-        return cls.full(shape, 1, dtype=dtype, units=units, chunk=chunk)
+        return cls.full(shape, 1, dtype=dtype, units=units,
+                        calendar=calendar, chunk=chunk)
 
     
     @classmethod
-    def zeros(cls, shape, dtype=None, units=None, chunk=True):
+    def zeros(cls, shape, dtype=None, units=None, calendar=None,
+              chunk=True):
         '''TODO
 
         '''
-        return cls.full(shape, 0, dtype=dtype, units=units, chunk=chunk)
+        return cls.full(shape, 0, dtype=dtype, units=units,
+                        calendar=calendar, chunk=chunk)
 
 
 

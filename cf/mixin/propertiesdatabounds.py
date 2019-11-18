@@ -2649,6 +2649,59 @@ ValueError: Can't take the logarithm to the base 2.718281828459045 of <Units: >
         return v
 
 
+
+    def uncompress(self, inplace=False):
+        '''Uncompress the construct.
+
+    Compression saves space by identifying and removing unwanted
+    missing data. Such compression techniques store the data more
+    efficiently and result in no precision loss.
+
+    Whether or not the construct is compressed does not alter its
+    functionality nor external appearance.
+
+    The following type of compression are available:
+
+        * Ragged arrays for discrete sampling geometries (DSG). Three
+          different types of ragged array representation are
+          supported.
+        
+        ..
+        
+        * Compression by gathering.
+
+    .. versionadded:: 3.0.6
+    
+    .. seealso:: `cf.write`, `flatten`
+
+    :Parameters:
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+    :Returns:
+
+            The uncompressed construct, or `None` if the operation was
+            in-place.
+
+    **Examples:** 
+
+    TODO
+
+        '''
+        v = super().uncompress(inplace=inplace)
+        if inplace:
+            v = self
+        
+        bounds = v.get_bounds(None)
+        if bounds is not None:
+            bounds.uncompress(inplace=True)
+
+        if inplace:
+            v = None            
+        return v
+
+    
     # ----------------------------------------------------------------
     # Deprecated attributes and methods
     # ----------------------------------------------------------------

@@ -5,8 +5,12 @@ import unittest
 import cf
 
 # Build the test suite from the tests found in the test files.
-testsuite_setup = unittest.TestSuite()
-testsuite_setup.addTests(unittest.TestLoader().discover('.', pattern='setup_create_field.py'))
+testsuite_setup_0 = unittest.TestSuite()
+testsuite_setup_0.addTests(unittest.TestLoader().discover('.', pattern='create_test_files.py'))
+
+# Build the test suite from the tests found in the test files.
+testsuite_setup_1 = unittest.TestSuite()
+testsuite_setup_1.addTests(unittest.TestLoader().discover('.', pattern='setup_create_field.py'))
 
 testsuite = unittest.TestSuite()
 testsuite.addTests(unittest.TestLoader().discover('.', pattern='test_*.py'))
@@ -14,7 +18,13 @@ testsuite.addTests(unittest.TestLoader().discover('.', pattern='test_*.py'))
 # Run the test suite.
 def run_test_suite_setup(verbosity=2):
     runner = unittest.TextTestRunner(verbosity=verbosity)
-    runner.run(testsuite_setup)
+    runner.run(testsuite_setup_0)
+
+    
+# Run the test suite.
+def run_test_suite_setup(verbosity=2):
+    runner = unittest.TextTestRunner(verbosity=verbosity)
+    runner.run(testsuite_setup_1)
 
     
 # Run the test suite.
