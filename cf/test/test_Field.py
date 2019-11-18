@@ -481,9 +481,12 @@ class FieldTest(unittest.TestCase):
                                           [ac.shape, ae.shape, af.shape],
                                           [ac, ae, af]):
                 message = 'method={!r}'.format(method)
+
+                i = f.indices(method, time=query1)
+
                 g = f.subspace(method, time=query1)
                 t = g.coordinate('time')
-                
+
                 self.assertTrue(g.shape == shape, message)
                 self.assertTrue(t.shape == shape, message)
 
@@ -734,36 +737,32 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
-            f = cf.read(self.filename)[0]
+        f = cf.read(self.filename)[0]
 
-            g = f.copy()
-            h = g.cumsum(2)
-            self.assertTrue(g.cumsum(2, inplace=True) is None)
-            self.assertTrue(g.equals(h, verbose=True))
+        g = f.copy()
+        h = g.cumsum(2)
+        self.assertTrue(g.cumsum(2, inplace=True) is None)
+        self.assertTrue(g.equals(h, verbose=True))
 
-            for i in range(f.ndim):
-                a = numpy.cumsum(f.array, axis=i)
-                self.assertTrue((f.cumsum(i).array == a).all())
-                
-            f[0, 0, 3] = cf.masked
-            f[0, 2, 7] = cf.masked
+        for i in range(f.ndim):
+            a = numpy.cumsum(f.array, axis=i)
+            self.assertTrue((f.cumsum(i).array == a).all())
             
-            for i in range(f.ndim):
-                a = f.array
-                a = numpy.cumsum(a, axis=i)
-                g = f.cumsum(i)
-                self.assertTrue(cf.functions._numpy_allclose(g.array, a))
+        f[0, 0, 3] = cf.masked
+        f[0, 2, 7] = cf.masked
+        
+        for i in range(f.ndim):
+            a = f.array
+            a = numpy.cumsum(a, axis=i)
+            g = f.cumsum(i)
+            self.assertTrue(cf.functions._numpy_allclose(g.array, a))
 
-            for i in range(f.ndim):
-                a = f.array
-                a = a.filled(0)
-                a = numpy.cumsum(a, axis=i)
-                g = f.cumsum(i, masked_as_zero=True)
-                self.assertTrue(cf.functions._numpy_allclose(g.array, a))
-        #--- End: for
-        cf.CHUNKSIZE(self.original_chunksize)
+        for i in range(f.ndim):
+            a = f.array
+            a = a.filled(0)
+            a = numpy.cumsum(a, axis=i)
+            g = f.cumsum(i, masked_as_zero=True)
+            self.assertTrue(cf.functions._numpy_allclose(g.array, a))
 
         
     def test_Field_flip(self):

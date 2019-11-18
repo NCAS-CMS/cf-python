@@ -3883,6 +3883,36 @@ may be accessed with the `nc_global_attributes`,
         return len(self.domain_axes)
 
 
+    @property
+    def varray(self):
+        '''A numpy array view of the data array.
+
+    Changing the elements of the returned view changes the data array.
+    
+    .. seealso:: `array`, `data`, `datetime_array`
+    
+    **Examples:**
+    
+    >>> f.data
+    <CF Data(5): [0, ... 4] kg m-1 s-2>
+    >>> a = f.array
+    >>> type(a)
+    <type 'numpy.ndarray'>
+    >>> print(a)
+    [0 1 2 3 4]
+    >>> a[0] = 999
+    >>> print(a)
+    [999 1 2 3 4]
+    >>> print(f.array)
+    [999 1 2 3 4]
+    >>> f.data
+    <CF Data(5): [999, ... 4] kg m-1 s-2>
+
+        '''
+        self.uncompress(inplace=True)
+        return super().varray
+    
+
     # ----------------------------------------------------------------
     # CF properties
     # ----------------------------------------------------------------
@@ -11396,7 +11426,8 @@ may be accessed with the `nc_global_attributes`,
                 # Insert the compressed data into the metadata
                 # construct
                 y = Array_func(compressed_data, data, **variables)
-                data._create_partition_matrix_for_compressed_array(y)
+#                data._create_partition_matrix_for_compressed_array(y)
+                data._set_Array(y)
         #--- End: def
 
         if inplace:
@@ -11555,7 +11586,8 @@ may be accessed with the `nc_global_attributes`,
                 # construct
                 y = _RaggedIndexedArray(compressed_data, data,
                                         index_variable=index_variable)                
-                data._create_partition_matrix_for_compressed_array(y)
+#                data._create_partition_matrix_for_compressed_array(y)
+                data._set_Array(y)
         #--- End: def
 
         elif method == 'gathered':
@@ -11567,7 +11599,9 @@ may be accessed with the `nc_global_attributes`,
         else:
             raise ValueError("Unknown compression method: {!r}".format(method))
         
-        f.data._create_partition_matrix_for_compressed_array(x)
+        # Set the compressed field data
+#        f.data._create_partition_matrix_for_compressed_array(x)
+        f.data._set_Array(x)
 
         if inplace:
             f = None
@@ -13091,6 +13125,61 @@ may be accessed with the `nc_global_attributes`,
                                  inplace=inplace)
 
 
+    def uncompress(self, inplace=False):
+        '''Uncompress the field construct.
+
+    Compression saves space by identifying and removing unwanted
+    missing data. Such compression techniques store the data more
+    efficiently and result in no precision loss.
+
+    The field construct data is compressesed, along with any
+    applicable metadata constructs.
+
+    Whether or not the field construct is compressed does not alter
+    its functionality nor external appearance.
+
+    When writing a compressed field construct to a dataset space will
+    be saved by the creation of compressed netCDF variables, along
+    with the supplementary netCDF variables and attributes that are
+    required for the encoding.
+
+    The following type of compression are available (see the *method*
+    parameter):
+
+        * Ragged arrays for discrete sampling geometries (DSG). Three
+          different types of ragged array representation are
+          supported.
+        
+        ..
+        
+        * Compression by gathering.
+
+    .. versionadded:: 3.0.6
+    
+    .. seealso:: `cf.write`, `compress`, `flatten`, `varray`
+
+    :Parameters:
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+    :Returns:
+
+        `Field` or `None`
+            The uncompressed field construct, or `None` if the
+            operation was in-place.
+
+        '''
+        data = self.get_data(None)
+        if data is not None:
+            data.uncompress(inplace=inplace)
+            
+        for c in self.constructs.filter_by_data().values():
+            data = c.get_data(None)
+            if data is not None:
+                data.uncompress(inplace=inplace)
+
+                
     def unsqueeze(self, inplace=False, i=False, axes=None, **kwargs):
         '''Insert size 1 axes into the data array.
 

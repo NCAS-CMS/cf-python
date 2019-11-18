@@ -454,7 +454,7 @@ place.
             auxiliary_mask = self._custom.get('_auxiliary_mask')
             if auxiliary_mask is not None:
                 self._auxiliary_mask = [mask.copy() for mask in auxiliary_mask]
-                
+
             return
 
         if not (loadd or loads):
@@ -621,80 +621,99 @@ place.
             _dtype = numpy_dtype(dtype)
         
         self._dtype = _dtype
+
+        self._set_partition_matrix(data, copy=False, chunk=chunk,
+                                   check_free_memory=check_free_memory)
         
-        if isinstance(data, CompressedArray):
-            self._create_partition_matrix_for_compressed_array(data)
-            #if mask is not None:
-            #    self.where(mask, cf_masked, inplace=True)
-#
- #           r#eturn 
-        else:
-            matrix = _xxx.copy()
-            
-            matrix[()] = Partition(location = [(0, n) for n in shape],
-                                   shape    = list(shape),
-                                   axes     = axes,
-                                   flip     = empty_list,
-                                   Units    = units,
-                                   subarray = data,
-                                   part     = empty_list)
-            
-            self.partitions = PartitionMatrix(matrix, empty_list)
-            
-            if check_free_memory and FREE_MEMORY() < FM_THRESHOLD():
-                self.to_disk()
-    
-            if chunk:
-                self.chunk()
-        #--- End: if
+#        if isinstance(data, CompressedArray):
+#            self._create_partition_matrix_for_compressed_array(data,
+#                                                               axes=axes)
+#            #if mask is not None:
+#            #    self.where(mask, cf_masked, inplace=True)
+##
+# #           r#eturn 
+#        else:
+#            matrix = _xxx.copy()
+#            
+#            matrix[()] = Partition(location = [(0, n) for n in shape],
+#                                   shape    = list(shape),
+#                                   axes     = axes,
+#                                   flip     = empty_list,
+#                                   Units    = units,
+#                                   subarray = data,
+#                                   part     = empty_list)
+#            
+#            self.partitions = PartitionMatrix(matrix, empty_list)
+#            
+#            if check_free_memory and FREE_MEMORY() < FM_THRESHOLD():
+#                self.to_disk()
+#    
+#            if chunk:
+#                self.chunk()
+#        #--- End: if
         
         if mask is not None:
             self.where(mask, cf_masked, inplace=True)
 
             
-#    def _set_Array(self, array, copy=True, chunk=True,
-#                   check_free_memory=True):
-#        '''Set the array.
-#
-#    :Parameters:
-#    
-#        array: subclass of `Array`
-#            The array to be inserted.
-#    
-#    :Returns:
-#    
-#        `None`
-#    
-#    **Examples:**
-#    
-#    >>> d._set_Array(a)
-#
-#        '''
-#        matrix = _xxx.copy()
-#        
-#        matrix[()] = Partition(location = [(0, n) for n in shape],
-#                               shape    = list(shape),
-#                               axes     = axes,
-#                               flip     = empty_list,
-#                               Units    = units,
-#                               subarray = data,
-#                               part     = empty_list)
-#        
-#        self.partitions = PartitionMatrix(matrix, empty_list)
-#        
-#        if check_free_memory and FREE_MEMORY() < FM_THRESHOLD():
-#            self.to_disk()
-#            
-#        if chunk:
-#            self.chunk()
-#        #--- End: if
+    def _set_partition_matrix(self, array, copy=None, axes=None,
+                              chunk=True, check_free_memory=True):
+        '''Set the array.
+
+    :Parameters:
+    
+        array: subclass of `Array`
+            The array to be inserted.
+
+        copy: optional
+            Ignored.
         
-    def _create_partition_matrix_for_compressed_array(self, compressed_array):
+    :Returns:
+    
+        `None`
+    
+    **Examples:**
+    
+    >>> d._set_partition_matrix(array)
+
+        '''
+        if isinstance(array, CompressedArray):
+            self._create_partition_matrix_for_compressed_array(array)
+            return
+
+        empty_list = []
+        shape = array.shape
+        
+        matrix = _xxx.copy()
+        
+        matrix[()] = Partition(location = [(0, n) for n in shape],
+                               shape    = list(shape),
+                               axes     = self._axes,
+                               flip     = empty_list,
+                               Units    = self.Units,
+                               subarray = array,
+                               part     = empty_list)
+        
+        self.partitions = PartitionMatrix(matrix, empty_list)
+        
+        if check_free_memory and FREE_MEMORY() < FM_THRESHOLD():
+            self.to_disk()
+            
+        if chunk:
+            self.chunk()
+
+        source = self.source(None)
+        if source is not None and source.get_compression_type():
+            self._del_Array(None)            
+
+            
+    def _create_partition_matrix_for_compressed_array(self,
+                                                      compressed_array):
         '''Create and insert a partition matrix for a compressed array.
         
     :Parameters:
             
-        compressed_array: subclass of `CompresedArray`
+        compressed_array: subclass of `CompressedArray`
     
     :Returns:
     
@@ -706,6 +725,7 @@ place.
         
         new = type(self).empty(shape=compressed_array.shape,
                                units=self.Units, chunk=False)
+        new._axes = self._axes
 
         source_data = compressed_array.source()
         compression_type = compressed_array.get_compression_type()
@@ -848,6 +868,7 @@ place.
         self.partitions = new.partitions
         
         self._set_Array(compressed_array, copy=False)
+#        super()._set_Array(compressed_array, copy=False)
 
         
     def __contains__(self, value):
@@ -1451,7 +1472,7 @@ place.
         
         source = new.source(None) # 
         if source is not None and source.get_compression_type():
-            new._del_Array()
+            new._del_Array(None)
 
 #        new.get_fill_value = d.get_fill_value(None)
                         
@@ -1648,7 +1669,7 @@ place.
 
         source = self.source(None)
         if source is not None and source.get_compression_type():
-            self._del_Array()
+            self._del_Array(None)
         
         if scalar_value:
             # --------------------------------------------------------
@@ -1818,7 +1839,6 @@ place.
                 self.roll(iaxis, -shift, inplace=True)
         #--- End: def
         
-
         if mask:
             indices = tuple(indices)
             original_self = original_self[indices]
@@ -3457,7 +3477,6 @@ place.
         if d._isdatetime():
             if inplace:
                 d = None
-                    
             return d
 
         config = d.partition_configuration(readonly=False, func=rt2dt, dtype=None)
@@ -3524,7 +3543,6 @@ place.
             if units.isreftime:
                 if inplace:
                     d = None
-                    
                 return d
             else:
                 raise ValueError(
@@ -3991,7 +4009,7 @@ place.
 #                other.override_units(self.Units, i=True)
 
         data0 = self.copy()
-        
+
         data0, other, new_Units = data0._combined_units(other, method, True)
 
 #        calendar_arithmetic = data0.Units.isreftime and other.Units.iscalendartime
@@ -4217,7 +4235,6 @@ place.
 #        dimensions     = self._axes
 #        direction = self.direction
 #        units     = self.Units
-
     
         config = data0.partition_configuration(readonly=not inplace)
 
@@ -4272,7 +4289,7 @@ place.
                 elif method == '__ne__':
                     array0 = ~_numpy_isclose(array0, array1, rtol=rtol, atol=atol)
                 else:
-                    array0 = getattr(array0, method)(array1)    
+                    array0 = getattr(array0, method)(array1)
 #            try:
 #                array0 = getattr(array0, method)(array1)
             except FloatingPointError as error:
@@ -4327,6 +4344,9 @@ place.
         # Reset numpy.seterr
         numpy_seterr(**original_numpy_seterr)
 
+        source = result.source(None)
+        if source is not None and source.get_compression_type():
+            result._del_Array(None)
 
         if not inplace:
             result._Units = new_Units
@@ -7282,6 +7302,10 @@ Tuple of the data array's dimension sizes.
             # Note that there is no need to close the partition here.
             self._dtype = data_type
 
+#            source = self.source(None)
+#            if source is not None and source.get_compression_type():
+#                self._del_Array(None)
+
 # Flip to []?
             return array
 
@@ -7334,26 +7358,33 @@ Tuple of the data array's dimension sizes.
             # Harden the mask of the output array
             array_out.harden_mask()
 
-        matrix = _xxx.copy()
+#        matrix = _xxx.copy()
 
         if not array_out.ndim and not isinstance(array_out, numpy_ndarray):
             array_out = numpy_asanyarray(array_out)
 
-        matrix[()] = Partition(subarray = array_out,
-                               location = [(0, n) for n in shape],
-                               axes     = self._axes,
-                               flip     = [],
-                               shape    = list(shape),
-                               Units    = self.Units,
-                               part     = []
-                               )
-
-        self.partitions = PartitionMatrix(matrix, [])
+        self._set_partition_matrix(array_out, copy=False, chunk=False,
+                                   check_free_memory=False)
+            
+#        matrix[()] = Partition(subarray = array_out,
+#                               location = [(0, n) for n in shape],
+#                               axes     = self._axes,
+#                               flip     = [],
+#                               shape    = list(shape),
+#                               Units    = self.Units,
+#                               part     = []
+#                               )
+#
+#        self.partitions = PartitionMatrix(matrix, [])
 
         self._dtype = data_type
 
 #        self._flip  = []
         self._flip([])
+
+#        source = self.source(None)
+#        if source is not None and source.get_compression_type():
+#            self._del_Array(None)            
 
         return array_out
 
@@ -9307,6 +9338,8 @@ returned.
             _ = partition.array
             partition.close()
 
+        d._del_Array(None)
+            
         if inplace:
             d = None
         return d
@@ -9577,7 +9610,6 @@ returned.
 
         if inplace:
             d = None
-
         return d
 
 
@@ -10068,7 +10100,6 @@ returned.
 
         if inplace:
             d = None
-            
         return d
 
 
@@ -10194,7 +10225,6 @@ returned.
 
         if inplace:
             d = None
-            
         return d
 
 
@@ -10547,7 +10577,6 @@ returned.
 
         if inplace:
             d = None
-        
         return d
 
 
@@ -10676,7 +10705,6 @@ returned.
             # Null flip
             if inplace:
                 d = None
-                
             return d
 
         if axes is None:
@@ -10729,7 +10757,6 @@ returned.
 
         if inplace:
             d = None
-            
         return d
 
     
@@ -11462,7 +11489,6 @@ returned.
 
                 if inplace:
                     d = None
-                    
                 return d
             else:
                 if y is not None:
@@ -11470,7 +11496,6 @@ returned.
                     
                 if inplace:
                     d = None
-                    
                 return d
         #--- End: if
 
@@ -11614,7 +11639,6 @@ returned.
 
         if inplace:
             d = None
-                    
         return d
 
 
@@ -11719,7 +11743,6 @@ returned.
             
         if inplace:
             d = None
-            
         return d
 
 
@@ -11797,7 +11820,6 @@ returned.
             
             if inplace:
                 d = None
-                    
             return d
 
         shape = list(d._shape)
@@ -11818,7 +11840,6 @@ returned.
         if not axes:
             if inplace:
                 d = None
-                    
             return d
 
         # Still here? Then the data array is not scalar and at least
@@ -11875,7 +11896,8 @@ returned.
         if d._auxiliary_mask:
             for mask in d._auxiliary_mask:
                 mask.squeeze(axes, inplace=True)
-                
+        #--- End: if
+        
         if inplace:
             d = None
         return d
@@ -12037,7 +12059,6 @@ returned.
             if iaxes == tuple(range(ndim)):
                 if inplace:
                     d = None
-            
                 return d
 
             if len(iaxes) != ndim:
