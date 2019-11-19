@@ -324,6 +324,7 @@ Miscellaneous
    ~cf.Field.convert
    ~cf.Field.creation_commands
    ~cf.Field.radius
+   ~cf.Field.uncompress
    cf.Field.concatenate
    
 .. rubric:: Attributes

@@ -10607,7 +10607,19 @@ may be accessed with the `nc_global_attributes`,
                 if _debug:
                     print('    transposed N-d constructs: {!r}'.format(constructs)) # pragma: no cover
 
-                    
+#                print ('value=', repr(value))
+#                for value, construct in zip(points, constructs):
+#                    print (repr(construct))
+#                    construct.inspect()
+#                    print(construct.data.dumpd())
+#                    try:
+#                        print(construct.bounds.data.dumpd())
+#                    except:
+#                        pass
+#                    _ = (value == construct).data
+##
+
+                
                 item_matches = [(value == construct).data
                                 for value, construct in zip(points, constructs)]
 
@@ -11188,118 +11200,7 @@ may be accessed with the `nc_global_attributes`,
         return False
 
     
-#    def compress(self, method, axes=None, count_properties=None,
-#                 index_properties=None, list_properties=None,
-#                 inplace=False):
-#        '''Compress the field construct.
-#
-#    Compression saves space by identifying and removing unwanted
-#    missing data. Such compression techniques store the data more
-#    efficiently and result in no precision loss.
-#
-#    The field construct data is compressesed, along with any
-#    applicable metadata constructs.
-#
-#    Whether or not the field construct is compressed does not alter
-#    its functionality nor external appearance.
-#
-#    When writing a compressed field construct to a dataset space will
-#    be saved by the creation of compressed netCDF variables, along
-#    with the supplementary netCDF variables and attributes that are
-#    required for the encoding.
-#
-#    The following type of compression are available (see the *method*
-#    parameter):
-#
-#        * Ragged arrays for discrete sampling geometries (DSG). Three
-#          different types of ragged array representation are
-#          supported.
-#        
-#        ..
-#        
-#        * Compression by gathering.
-#
-#    .. versionadded:: 3.0.5
-#    
-#    .. seealso:: `cf.write`, `flatten`
-#
-#    :Parameters:
-#
-#        method: `str`
-#            The compression method. One of:
-#
-#            * ``'contiguous'``
-#
-#              Contiguous ragged array representation for DSG "point",
-#              "timeSeries", "trajectory" or "profile" features. 
-#
-#              The field construct data must have exactly 2 dimensions
-#              for which the first (leftmost) dimension indexes each
-#              feature and the second (rightmost) dimension contains
-#              the elements for the features. Trailing missing data
-#              values in the second dimension are removed to created
-#              the compressed data.
-#
-#            * ``'indexed'``
-#
-#              Indexed ragged array representation for DSG "point",
-#              "timeSeries", "trajectory", or "profile" features.
-#
-#              The field construct data must have exactly 2 dimensions
-#              for which the first (leftmost) dimension indexes each
-#              feature and the second (rightmost) dimension contains
-#              the elements for the features. Trailing missing data
-#              values in the second dimension are removed to created
-#              the compressed data.
-#
-#            * ``'indexed_contiguous'``
-#
-#              Indexed contiguous ragged array representation for DSG
-#              "timeSeriesProfile", or "trajectoryProfile" features.
-#
-#              The field construct data must have exactly 3 dimensions
-#              for which the first (leftmost) dimension indexes each
-#              feature; the second (middle) dimension indexes each
-#              timeseries or trajectory; and the third (rightmost)
-#              dimension contains the elements for the timeseries or
-#              trajectories. Trailing missing data values in the third
-#              dimension are removed to created the compressed data.
-#
-#            * ``'gathered'``
-#
-#              Compression by gathering over any subset of the field
-#              construct data dimensions.
-#
-#              *Not yet available.*
-#
-#        count_properties: `dict`, optional
-#            Provide properties to the count variable for contiguous
-#            ragged array representation or indexed contiguous ragged
-#            array representation.
-#
-#            *Parameter example:*
-#              ``count_properties={'long_name': 'number of obs for this timeseries'}``
-#
-#        index_properties: `dict`, optional
-#            Provide properties to the index variable for indexed
-#            ragged array representation or indexed contiguous ragged
-#            array representation.
-#
-#            *Parameter example:*
-#              ``index_properties={'long_name': 'which station this profile is for'}``
-#
-#        list_properties: `dict`, optional
-#            Provide properties to the list variable for compression by
-#            gathering.
-#
-#            *Parameter example:*
-#              ``list_properties={'long_name': 'uncompression indices'}``
-#
-#        inplace: `bool`, optional
-#            If True then do the operation in-place and return `None`.
-#    
-#    :Returns:
-#
+
 #        `Field` or `None`
 #            The compressed field construct, or `None` if the operation
 #            was in-place.

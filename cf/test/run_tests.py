@@ -16,13 +16,13 @@ testsuite = unittest.TestSuite()
 testsuite.addTests(unittest.TestLoader().discover('.', pattern='test_*.py'))
 
 # Run the test suite.
-def run_test_suite_setup(verbosity=2):
+def run_test_suite_setup_0(verbosity=2):
     runner = unittest.TextTestRunner(verbosity=verbosity)
     runner.run(testsuite_setup_0)
 
     
 # Run the test suite.
-def run_test_suite_setup(verbosity=2):
+def run_test_suite_setup_1(verbosity=2):
     runner = unittest.TextTestRunner(verbosity=verbosity)
     runner.run(testsuite_setup_1)
 
@@ -45,7 +45,8 @@ if __name__ == '__main__':
 
     cf.CHUNKSIZE(original_chunksize)
 
-    run_test_suite_setup()
+    run_test_suite_setup_0()
+    run_test_suite_setup_1()
     run_test_suite()
 
     cf.CHUNKSIZE(original_chunksize)

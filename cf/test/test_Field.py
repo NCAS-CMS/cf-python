@@ -28,7 +28,7 @@ class FieldTest(unittest.TestCase):
         self.indexed_contiguous = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                                'DSG_timeSeriesProfile_indexed_contiguous.nc')
         
-        self.chunk_sizes = (17, 34, 300, 100000)[::-1]
+        self.chunk_sizes = (100000, 300, 34, 17)
         self.original_chunksize = cf.CHUNKSIZE()
         self.atol = cf.ATOL()
         self.rtol = cf.RTOL()
@@ -54,7 +54,7 @@ class FieldTest(unittest.TestCase):
 #        self.test_only = ['test_Field_section']
 #        self.test_only = ['test_Field_flip']
 #        self.test_only = ['test_Field_Field_domain_mask']
-        self.test_only = ['test_Field_compress_uncompress']
+#        self.test_only = ['test_Field_compress_uncompress']
 
         
     def test_Field_creation_commands(self):
@@ -95,7 +95,7 @@ class FieldTest(unittest.TestCase):
         for method in methods:
             message = 'method='+method
             for f in cf.read(getattr(self, method)):
-                print(f)
+
                 self.assertTrue(bool(f.data.get_compression_type()), message)
 
                 u = f.uncompress()
@@ -103,13 +103,14 @@ class FieldTest(unittest.TestCase):
                 self.assertTrue(f.equals(u, verbose=True), message)
 
                 for method1 in methods:
+                    message += ', method1='+method1
                     if method1 == 'indexed_contiguous':
                         if f.ndim != 3:
                             continue
                     elif f.ndim != 2:
                         continue
                     
-                    print(method, method1, f.ndim)
+#                    print(method, method1, f.ndim)
                     c = u.compress(method1)
                     self.assertTrue(bool(c.data.get_compression_type()), message)
 
@@ -120,6 +121,12 @@ class FieldTest(unittest.TestCase):
                     self.assertTrue(bool(c.data.get_compression_type()), message)
                 
                     self.assertTrue(u.equals(c, verbose=True), message)
+                    self.assertTrue(f.equals(c, verbose=True), message)
+
+                    cf.write(c, 'delme.nc')
+                    c = cf.read('delme.nc')[0]
+
+                    self.assertTrue(bool(c.data.get_compression_type()), message)
                     self.assertTrue(f.equals(c, verbose=True), message)
         #--- End: for
         
@@ -515,10 +522,11 @@ class FieldTest(unittest.TestCase):
         
         query1 = cf.wi(1, 5) & cf.ne(4)
 
-        for chunksize in self.chunk_sizes:
+        for chunksize in self.chunk_sizes[0:2]:
             cf.CHUNKSIZE(chunksize)
-            f = cf.read(self.contiguous)[0]
-            
+
+            f = cf.read(self.contiguous, verbose=False)[0]
+
             for (method, shape, a) in zip(['compress', 'envelope', 'full'],
                                           [ac.shape, ae.shape, af.shape],
                                           [ac, ae, af]):
@@ -552,7 +560,7 @@ class FieldTest(unittest.TestCase):
         ae2 = numpy.ma.where((ae==1)| (ae==3) | (ae==5), ae, numpy.ma.masked)
         af2 = numpy.ma.where((af==1)| (af==3) | (af==5), af, numpy.ma.masked)
 
-        for chunksize in self.chunk_sizes:
+        for chunksize in self.chunk_sizes[0:2]:
             cf.CHUNKSIZE(chunksize)
             f = cf.read(self.contiguous)[0]
             
@@ -593,7 +601,7 @@ class FieldTest(unittest.TestCase):
         
         query3 = cf.set([-2, 3, 4])
 
-        for chunksize in self.chunk_sizes:
+        for chunksize in self.chunk_sizes[0:2]:
             cf.CHUNKSIZE(chunksize)
             f = cf.read(self.contiguous)[0].subspace[[0, 2, 3], 1:]
             

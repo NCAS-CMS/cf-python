@@ -27,7 +27,7 @@ class RaggedContiguousSubarray(abstract.CompressedSubarray):
         # Initialize the full, uncompressed output array with missing
         # data everywhere
         uarray = numpy_ma_masked_all(self.shape, dtype=array.dtype)
-        print ('arase')
+
         r_indices = [slice(None)] * array.ndim
         p_indices = [slice(None)] * uarray.ndim        
         
@@ -36,6 +36,7 @@ class RaggedContiguousSubarray(abstract.CompressedSubarray):
         instance_index = compression['instance_index']
         element_axis   = compression['c_element_axis']
         sample_indices = compression['c_element_indices']
+
         p_indices[instance_axis] = instance_index
         p_indices[element_axis]  = slice(0, sample_indices.stop - sample_indices.start)
         
@@ -61,13 +62,6 @@ class RaggedContiguousSubarray(abstract.CompressedSubarray):
                 print('parse_indices(self.shape, indices) =', indices)
                 
             return get_subspace(uarray, indices)
-
-
-#    def __repr__(self):
-#        '''x.__repr__() <==> repr(x)
-#
-#        '''
-#        return "<CF %s: %s>" % (self.__class__.__name__, str(self.array))
 
 
 #--- End: class

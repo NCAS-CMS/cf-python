@@ -8,7 +8,7 @@ import netCDF4
 import cf
 
 
-def _make_contiguous_file_with_bounds(filename):        
+def _make_contiguous_file(filename):        
     n = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
     
     n.Conventions = 'CF-1.7'
@@ -77,83 +77,7 @@ def _make_contiguous_file_with_bounds(filename):
     time_bounds = n.createVariable('time_bounds', 'f8', ('obs', 'bounds'))
     time_bounds[..., 0] = time[...] - 0.5
     time_bounds[..., 1] = time[...] + 0.5
-    
-    humidity = n.createVariable('humidity', 'f8', ('obs',), fill_value=-999.9)
-    humidity.standard_name = "specific_humidity"
-    humidity.coordinates = "time lat lon alt station_name station_info"
-    humidity[ 0: 3] = numpy.arange(0, 3)
-    humidity[ 3:10] = numpy.arange(1, 71, 10)
-    humidity[10:15] = numpy.arange(2, 502, 100)
-    humidity[15:24] = numpy.arange(3, 9003, 1000)
-    
-    temp = n.createVariable('temp', 'f8', ('obs',), fill_value=-999.9)
-    temp.standard_name = "air_temperature"
-    temp.units = "Celsius"
-    temp.coordinates = "time lat lon alt station_name station_info"
-    temp[...] = humidity[...] + 273.15
-    
-    n.close()
-    
-    return filename
-
-
-def _make_contiguous_file(filename):        
-    n = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
-    
-    n.Conventions = 'CF-1.7'
-    n.featureType = 'timeSeries'
-
-    station = n.createDimension('station', 4)
-    obs     = n.createDimension('obs'    , 24)
-    name_strlen = n.createDimension('name_strlen', 8)
-    
-    lon = n.createVariable('lon', 'f8', ('station',))
-    lon.standard_name = "longitude"
-    lon.long_name = "station longitude"
-    lon.units = "degrees_east"
-    lon[...] = [-23, 0, 67, 178]
-    
-    lat = n.createVariable('lat', 'f8', ('station',))
-    lat.standard_name = "latitude"
-    lat.long_name = "station latitude" 
-    lat.units = "degrees_north"
-    lat[...] = [-9, 2, 34, 78]
-    
-    alt = n.createVariable('alt', 'f8', ('station',))
-    alt.long_name = "vertical distance above the surface" 
-    alt.standard_name = "height" 
-    alt.units = "m"
-    alt.positive = "up"
-    alt.axis = "Z"
-    alt[...] = [0.5, 12.6, 23.7, 345]
-    
-    station_name = n.createVariable('station_name', 'S1',
-                                    ('station', 'name_strlen'))
-    station_name.long_name = "station name"
-    station_name.cf_role = "timeseries_id"
-    station_name[...] = numpy.array([[x for x in 'station1'],
-                                     [x for x in 'station2'],
-                                     [x for x in 'station3'],
-                                     [x for x in 'station4']])
-    
-    station_info = n.createVariable('station_info', 'i4', ('station',))
-    station_info.long_name = "some kind of station info"
-    station_info[...] = [-10, -9, -8, -7]
-    
-    row_size = n.createVariable('row_size', 'i4', ('station',))
-    row_size.long_name = "number of observations for this station"
-    row_size.sample_dimension = "obs"
-    row_size[...] = [3, 7, 5, 9]
-    
-    time = n.createVariable('time', 'f8', ('obs',))
-    time.standard_name = "time"
-    time.long_name = "time of measurement" 
-    time.units = "days since 1970-01-01 00:00:00"
-    time[ 0: 3] = [-3, -2, -1]
-    time[ 3:10] = [1, 2, 3, 4, 5, 6, 7]
-    time[10:15] = [0.5, 1.5, 2.5, 3.5, 4.5]
-    time[15:24] = range(-2, 7)
-    
+     
     humidity = n.createVariable('humidity', 'f8', ('obs',), fill_value=-999.9)
     humidity.standard_name = "specific_humidity"
     humidity.coordinates = "time lat lon alt station_name station_info"
@@ -182,12 +106,20 @@ def _make_indexed_file(filename):
     station = n.createDimension('station', 4)
     obs     = n.createDimension('obs'    , None)
     name_strlen = n.createDimension('name_strlen', 8)
+    bounds  = n.createDimension('bounds', 2)
     
     lon = n.createVariable('lon', 'f8', ('station',))
     lon.standard_name = "longitude"
     lon.long_name = "station longitude"
     lon.units = "degrees_east"
+    lon.bounds = "lon_bounds"
     lon[...] = [-23, 0, 67, 178]
+    
+    lon_bounds = n.createVariable('lon_bounds', 'f8', ('station', 'bounds'))
+    lon_bounds[...] = [[-24, -22],
+                       [ -1,   1],
+                       [ 66,  68],
+                       [177, 179]]
     
     lat = n.createVariable('lat', 'f8', ('station',))
     lat.standard_name = "latitude"
@@ -229,14 +161,19 @@ def _make_indexed_file(filename):
          range(-2, 7)]
     
     time = n.createVariable('time', 'f8', ('obs',))
-    time.standard_name = "time"
+    time.standard_name = "time";
     time.long_name = "time of measurement" 
     time.units = "days since 1970-01-01 00:00:00"
+    time.bounds = "time_bounds"
     ssi = [0, 0, 0, 0]
     for i, si in enumerate(stationIndex[...]):
         time[i] = t[si][ssi[si]]
         ssi[si] += 1
-        
+
+    time_bounds = n.createVariable('time_bounds', 'f8', ('obs', 'bounds'))
+    time_bounds[..., 0] = time[...] - 0.5
+    time_bounds[..., 1] = time[...] + 0.5
+    
     humidity = n.createVariable('humidity', 'f8', ('obs',), fill_value=-999.9)
     humidity.standard_name = "specific_humidity"
     humidity.coordinates = "time lat lon alt station_name station_info"
@@ -269,17 +206,24 @@ def _make_indexed_contiguous_file(filename):
     n.featureType = "timeSeriesProfile"
 
     # 3 stations
-    station = n.createDimension('station', 3)
+    station     = n.createDimension('station', 3)
     # 58 profiles spreadover 4 stations, each at a different time
-    profile = n.createDimension('profile', 58) 
-    obs      = n.createDimension('obs'    , None) # 
+    profile     = n.createDimension('profile', 58) 
+    obs         = n.createDimension('obs'    , None)
     name_strlen = n.createDimension('name_strlen', 8)
+    bounds      = n.createDimension('bounds', 2)
     
     lon = n.createVariable('lon', 'f8', ('station',))
     lon.standard_name = "longitude"
     lon.long_name = "station longitude"
     lon.units = "degrees_east"
+    lon.bounds = "lon_bounds"
     lon[...] = [-23, 0, 67]
+    
+    lon_bounds = n.createVariable('lon_bounds', 'f8', ('station', 'bounds'))
+    lon_bounds[...] = [[-24, -22],
+                       [ -1,   1],
+                       [ 66,  68]]
     
     lat = n.createVariable('lat', 'f8', ('station',))
     lat.standard_name = "latitude"
@@ -335,19 +279,25 @@ def _make_indexed_contiguous_file(filename):
     time.standard_name = "time"
     time.long_name = "time"
     time.units = "days since 1970-01-01 00:00:00"
+    time.bounds = "time_bounds"
     t0 = [3, 0, -3]
     ssi = [0, 0, 0]
     for i, si in enumerate(stationIndex[...]):
         time[i] = t0[si] + ssi[si]
         ssi[si] += 1
         
+    time_bounds = n.createVariable('time_bounds', 'f8', ('profile', 'bounds'))
+    time_bounds[..., 0] = time[...] - 0.5
+    time_bounds[..., 1] = time[...] + 0.5
+
     z = n.createVariable('z', 'f8', ('obs',))
     z.standard_name = "altitude"
     z.long_name = "height above mean sea level"
     z.units = "km"
     z.axis = "Z"  
     z.positive = "up"
-        
+    z.bounds = "z_bounds"
+
 #        z0 = [1, 0, 3]
 #        i = 0
 #        for s, r in zip(stationIndex[...], row_size[...]):
@@ -388,7 +338,11 @@ def _make_indexed_contiguous_file(filename):
              3.1059214185543]        
     data = numpy.around(data, 2)
     z[...] = data
-    
+       
+    z_bounds = n.createVariable('z_bounds', 'f8', ('obs', 'bounds'))
+    z_bounds[..., 0] = z[...] - 0.01
+    z_bounds[..., 1] = z[...] + 0.01
+
     humidity = n.createVariable('humidity', 'f8', ('obs',), fill_value=-999.9)
     humidity.standard_name = "specific_humidity"
     humidity.coordinates = "time lat lon alt z station_name station_info profile"
@@ -412,7 +366,6 @@ def _make_indexed_contiguous_file(filename):
 
 
 contiguous_file = _make_contiguous_file('DSG_timeSeries_contiguous.nc')
-_ = _make_contiguous_file_with_bounds('DSG_timeSeries_contiguous_bounds.nc')
 indexed_file    = _make_indexed_file('DSG_timeSeries_indexed.nc')
 indexed_contiguous_file = _make_indexed_contiguous_file('DSG_timeSeriesProfile_indexed_contiguous.nc')
 

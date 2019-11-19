@@ -306,6 +306,140 @@ bounds.
         return self._binary_operation(y, '__lt__', False)
 
     
+    def __and__(self, other):
+        '''The binary bitwise operation ``&``
+
+    x.__and__(y) <==> x&y
+
+        '''
+        return self._binary_operation(other, '__and__', False)
+
+
+    def __iand__(self, other):
+        '''The augmented bitwise assignment ``&=``
+
+    x.__iand__(y) <==> x&=y
+
+        '''
+        return self._binary_operation(other, '__iand__', False)
+
+
+    def __rand__(self, other):
+        '''The binary bitwise operation ``&`` with reflected operands
+
+    x.__rand__(y) <==> y&x
+
+        '''
+        return self._binary_operation(other, '__rand__', False)
+
+
+    def __or__(self, other):
+        '''The binary bitwise operation ``|``
+
+    x.__or__(y) <==> x|y
+
+        '''
+        return self._binary_operation(other, '__or__', False)
+
+
+    def __ior__(self, other):
+        '''The augmented bitwise assignment ``|=``
+
+    x.__ior__(y) <==> x|=y
+
+        '''
+        return self._binary_operation(other, '__ior__', False)
+
+
+    def __ror__(self, other):
+        '''The binary bitwise operation ``|`` with reflected operands
+
+    x.__ror__(y) <==> y|x
+
+        '''
+        return self._binary_operation(other, '__ror__', False)
+
+    def __xor__(self, other):
+        '''The binary bitwise operation ``^``
+
+    x.__xor__(y) <==> x^y
+
+        '''
+        return self._binary_operation(other, '__xor__', False)
+
+
+    def __ixor__(self, other):
+        '''The augmented bitwise assignment ``^=``
+
+    x.__ixor__(y) <==> x^=y
+
+        '''
+        return self._binary_operation(other, '__ixor__', False)
+
+
+    def __rxor__(self, other):
+        '''The binary bitwise operation ``^`` with reflected operands
+
+    x.__rxor__(y) <==> y^x
+
+        '''
+        return self._binary_operation(other, '__rxor__', False)
+
+
+    def __lshift__(self, y):
+        '''The binary bitwise operation ``<<``
+
+    x.__lshift__(y) <==> x<<y
+
+        '''
+        return self._binary_operation(y, '__lshift__', False)
+
+
+    def __ilshift__(self, y):
+        '''The augmented bitwise assignment ``<<=``
+
+    x.__ilshift__(y) <==> x<<=y
+
+        '''
+        return self._binary_operation(y, '__ilshift__', False)
+
+
+    def __rlshift__(self, y):
+        '''The binary bitwise operation ``<<`` with reflected operands
+
+    x.__rlshift__(y) <==> y<<x
+
+        '''
+        return self._binary_operation(y, '__rlshift__', False)
+
+
+    def __rshift__(self, y):
+        '''The binary bitwise operation ``>>``
+
+    x.__lshift__(y) <==> x>>y
+
+        '''
+        return self._binary_operation(y, '__rshift__', False)
+
+    
+    def __irshift__(self, y):
+        '''The augmented bitwise assignment ``>>=``
+
+    x.__irshift__(y) <==> x>>=y
+
+        '''
+        return self._binary_operation(y, '__irshift__', False)
+
+
+    def __rrshift__(self, y):
+        '''The binary bitwise operation ``>>`` with reflected operands
+
+    x.__rrshift__(y) <==> y>>x
+
+        '''
+        return self._binary_operation(y, '__rrshift__', False)
+
+
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
@@ -349,11 +483,20 @@ bounds.
         new = super()._binary_operation(other, method)
 
         if has_bounds:
+#            try:
+#                other_has_bounds = other.has_bounds()
+#            except AttributeError:
+#                other_has_bounds = False
+
+#            if other_has_bounds:
+#                new_bounds = self.bounds._binary_operation(other.bounds, method)
+#            else:                
             if numpy_size(other) > 1:
                 try:
                     other = other.insert_dimension(-1)
                 except AttributeError:
                     other = numpy_expand_dims(other, -1)
+            #-- End: if
                 
             new_bounds = self.bounds._binary_operation(other, method)
 
@@ -518,9 +661,14 @@ bounds.
 
         '''
         data = self.get_bounds_data(None)
-        if data is not None:            
-            out = abs(data[:, 1] - data[:, 0])
-            out.squeeze(1, inplace=True)
+        if data is not None:
+            if data.shape[-1] != 2:
+                raise ValueError(
+                    "Can only calculate cell sizes from bounds when there are exactly two bounds per cell. Got {}".format(
+                        data.shape[-1]))
+            
+            out = abs(data[..., 1] - data[..., 0])
+            out.squeeze(-1, inplace=True)                
             return out
         else:
             data = self.get_data(None)
@@ -2647,7 +2795,6 @@ ValueError: Can't take the logarithm to the base 2.718281828459045 of <Units: >
         if inplace:
             v = None
         return v
-
 
 
     def uncompress(self, inplace=False):

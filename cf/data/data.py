@@ -1286,7 +1286,7 @@ place.
 
 
     def __iter__(self):
-        '''Efficient iteration.
+        '''Called when an iterator is required.
 
     x.__iter__() <==> iter(x)
     
@@ -3977,15 +3977,15 @@ place.
     >>> e = cf.Data([1, 1, 3, 4])
     
     >>> f = d._binary_operation(e, '__add__')
-    >>> print f.array
+    >>> print(f.array)
     [1 2 5 7]
     
     >>> e = d._binary_operation(e, '__lt__')
-    >>> print e.array
+    >>> print(e.array)
     [ True False  True  True]
     
     >>> d._binary_operation(2, '__imul__')
-    >>> print d.array
+    >>> print(d.array)
     [0 2 4 6]
 
         '''
@@ -4296,6 +4296,10 @@ place.
                 elif method == '__ne__':
                     array0 = ~_numpy_isclose(array0, array1, rtol=rtol, atol=atol)
                 else:
+#                    print(method)
+#                    print (repr(array0))
+#                    print(repr(array1))
+#                    print()
                     array0 = getattr(array0, method)(array1)
 #            try:
 #                array0 = getattr(array0, method)(array1)

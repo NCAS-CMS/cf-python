@@ -112,7 +112,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                 else:
                     temp_array = array
 
-                if numpy.intersect1d(unset_values, temp_array):
+                if numpy.intersect1d(unset_values, temp_array).size:
                     raise ValueError(
                         "ERROR: Can't write field when array has _FillValue or missing_value at unmasked point: {!r}".format(ncvar))
             #--- End: if

@@ -253,6 +253,7 @@ Miscellaneous
    ~cf.CellMeasure.concatenate
    ~cf.CellMeasure.copy
    ~cf.CellMeasure.equals
+   ~cf.CellMeasure.uncompress
 
 .. rubric:: Attributes
 	    

@@ -5264,6 +5264,18 @@ both:
 
 ..
 
+* An uncompressed field construct can be compressed, prior to being
+  written to a dataset, with its `~Field.compress` method, which also
+  compresses the metadata constructs as required.
+
+..
+
+* An compressed field construct can be uncompressed with its
+  `~Field.uncompress` method, which also uncompresses the metadata
+  constructs as required.
+
+..
+
 * If an underlying array is compressed at the time of writing to disk
   with the `cf.write` function, then it is written to the file as a
   compressed array, along with the supplementary netCDF variables and
@@ -5271,12 +5283,6 @@ both:
   dataset using compression is read from disk then it will be written
   back to disk with the same compression, unless data elements have
   been modified by assignment.
-
-..
-
-* An uncompressed field construct can be compressed, prior to being
-  written to a dataset, with its `~Field.compress` method, which also
-  compresses the metadata constructs as required.
 
 Examples of all of the above may be found in the sections on
 :ref:`discrete sampling geometries <Discrete-sampling-geometries>` and
@@ -5419,7 +5425,7 @@ data array elements are modified:
 Perhaps the easist way to create a compressed field construct is to
 create the equivalent uncompressed field construct and then compress
 it with its `~Field.compress` method, which also compresses the
-metadata constructs, as required.
+metadata constructs as required.
    
 .. Code Block 4
 

@@ -1,3 +1,13 @@
+version 3.0.6
+-------------
+----
+
+**Not yet released**
+
+* Fixed bug that sometimes gave incorrect cell sizes from the
+  `cellsize` attribute when used on multidimensional coordinates
+  (https://github.com/NCAS-CMS/cf-python/issues/15).
+
 version 3.0.5
 -------------
 ----

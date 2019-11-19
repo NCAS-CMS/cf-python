@@ -229,6 +229,7 @@ Miscellaneous
    ~cf.FieldAncillary.concatenate
    ~cf.FieldAncillary.copy
    ~cf.FieldAncillary.equals
+   ~cf.FieldAncillary.uncompress
 
 .. rubric:: Attributes
 	    
