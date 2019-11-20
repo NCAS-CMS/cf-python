@@ -4,9 +4,16 @@ version 3.0.6
 
 **Not yet released**
 
+* New method: `cf.Field.uncompress`.
+* New method: `cf.Data.uncompress`.
+* Changed the default value of the ``ignore_compression`` parameter to
+  `True`.
 * Fixed bug that sometimes gave incorrect cell sizes from the
   `cellsize` attribute when used on multidimensional coordinates
   (https://github.com/NCAS-CMS/cf-python/issues/15).
+* Fixed bug that sometimes gave an error when the LHS and RHS operands
+  are swapped reversed in field construct arithmetic
+  (https://github.com/NCAS-CMS/cf-python/issues/16).
 
 version 3.0.5
 -------------

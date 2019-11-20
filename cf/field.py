@@ -55,9 +55,9 @@ from . import Flags
 from . import Constructs
 from . import FieldList
 
-from . import Count
-from . import Index
-from . import List
+#from . import Count
+#from . import Index
+#from . import List
 
 from .constants import masked as cf_masked
 
@@ -70,10 +70,10 @@ from .units           import Units
 from .subspacefield   import SubspaceField
 
 from .data import Data
-from .data import RaggedContiguousArray
-from .data import RaggedIndexedArray
-from .data import RaggedIndexedContiguousArray
-from .data import GatheredArray
+#from .data import RaggedContiguousArray
+#from .data import RaggedIndexedArray
+#from .data import RaggedIndexedContiguousArray
+#from .data import GatheredArray
 
 from . import mixin
 
@@ -245,13 +245,13 @@ may be accessed with the `nc_global_attributes`,
         instance._Domain     = Domain
         instance._DomainAxis = DomainAxis
         instance._Data       = Data
-        instance._RaggedContiguousArray        = RaggedContiguousArray         
-        instance._RaggedIndexedArray           = RaggedIndexedArray            
-        instance._RaggedIndexedContiguousArray = RaggedIndexedContiguousArray  
-        instance._GatheredArray                = GatheredArray                  
-        instance._Count = Count
-        instance._Index = Index
-        instance._List  = List
+#        instance._RaggedContiguousArray        = RaggedContiguousArray         
+#        instance._RaggedIndexedArray           = RaggedIndexedArray            
+#        instance._RaggedIndexedContiguousArray = RaggedIndexedContiguousArray  
+#        instance._GatheredArray                = GatheredArray                  
+#        instance._Count = Count
+#        instance._Index = Index
+#        instance._List  = List
         return instance
 
 
@@ -1686,7 +1686,7 @@ may be accessed with the `nc_global_attributes`,
     >>> f._binary_operation(g, '__rdiv__')
 
         '''        
-        verbose = False # True
+        verbose = False #True
         
         if isinstance(other, Query):
             # --------------------------------------------------------
@@ -1825,10 +1825,10 @@ may be accessed with the `nc_global_attributes`,
         #--- End: for
 
         if verbose:
-            print ()
-            print ('out0', out0)
-            print ()
-            print ('out1', out1)
+            print()
+            print('out0', out0)
+            print()
+            print('out1', out1)
                
         squeeze1 = []
         insert0  = []
@@ -1891,34 +1891,34 @@ may be accessed with the `nc_global_attributes`,
 #                    # Check coord refs
 #                    refs0 = field0.get_coordinate_reference(construct=a.key)
 #                    refs1 = field1.get_coordinate_reference(construct=y.key)
-#                    print (y.coord)
+#                    print(y.coord)
 #                    print(refs0,refs1)
 #                    pass
         #--- End: for        
 
-        # Make sure that both data ararys have the same number of
+        # Make sure that both data arrays have the same number of
         # dimensions
         if squeeze1:
             field1.squeeze(squeeze, inplace=True)
 
         for axis1 in insert0:
-            new_axis0 = field0.set_construct(DomainAxis(1))
+            new_axis0 = field0.set_construct(self._DomainAxis(1))
             field0.insert_dimension(new_axis0, position=field0.ndim, inplace=True)
             axes_added_from_field1.append(axis1)
             
         while field1.ndim < field0.ndim:
-            new_axis = field1.set_construct(DomainAxis(1))
+            new_axis = field1.set_construct(self._DomainAxis(1))
             field1.insert_dimension(new_axis, position=0, inplace=True)
 
         while field0.ndim < field1.ndim:
-            new_axis = field0.set_construct(DomainAxis(1))
+            new_axis = field0.set_construct(self._DomainAxis(1))
             field0.insert_dimension(new_axis, position=field0.ndim, inplace=True)
 
         # Make sure that the dimensions in data1 are in the same order
         # as the dimensions in data0
         for identity, y in out1.items():
             if verbose:
-                print ('\n',identity, y)
+                print('\n',identity, y)
             if isinstance(identity, int) or identity not in out0:                
                 field1.swapaxes(field1.get_data_axes().index(y.axis), -1,
                                 inplace=True)
@@ -1926,10 +1926,10 @@ may be accessed with the `nc_global_attributes`,
                 # This identity is also in out0
                 a = out0[identity]
                 if verbose:
-                    print (identity, y.axis, a.axis)
-                    print (a, field0.get_data_axes(), field1.get_data_axes(),
-                           field1.get_data_axes().index(y.axis),
-                           field0.get_data_axes().index(a.axis))
+                    print(identity, y.axis, a.axis)
+                    print(a, field0.get_data_axes(), field1.get_data_axes(),
+                          field1.get_data_axes().index(y.axis),
+                          field0.get_data_axes().index(a.axis))
                     
                 field1.swapaxes(field1.get_data_axes().index(y.axis),
                                 field0.get_data_axes().index(a.axis),
@@ -1943,9 +1943,9 @@ may be accessed with the `nc_global_attributes`,
 #                                                                field0.get_data_axes())}
                 
         if verbose:
-            print ('axis_map=', axis_map, '\n')
-            print (repr(field0))
-            print (repr(field1))
+            print('axis_map=', axis_map, '\n')
+            print(repr(field0))
+            print(repr(field1))
 
         # ------------------------------------------------------------
         # Check that the two fields have compatible metadata
@@ -1975,8 +1975,8 @@ may be accessed with the `nc_global_attributes`,
             # Check for matching coordinate values
             if not y.coord._equivalent_data(a.coord, verbose=verbose):
                 raise  ValueError(
-                    "Can't combine {!r} axes with different coordinate values".format(
-                        identity))
+                    "Can't combine size {} {!r} axes with non-matching coordinate values".format(
+                        y.size, identity))
 
             # Check coord refs
             refs1 = field1.get_coordinate_reference(construct=y.key, key=True)
@@ -2025,11 +2025,11 @@ may be accessed with the `nc_global_attributes`,
                 field0.domain_axis(axis0).set_size(y.size)
         #--- End: for
         if verbose:
-            print ()
-            print (repr(field0))
-            print (repr(field1))
-            print (repr(field0.data))
-            print (repr(field1.data))
+            print()
+            print(repr(field0))
+            print(repr(field1))
+            print(repr(field0.data))
+            print(repr(field1.data))
             
         # ------------------------------------------------------------
         # Operate on the data
@@ -2038,12 +2038,12 @@ may be accessed with the `nc_global_attributes`,
 
         field0.set_data(new_data, set_axes=False, copy=False)
         if verbose:
-            print (field0)
-            print (field0.array)
-            print ()
-            print ('axes_added_from_field1=', axes_added_from_field1)
-            print ()
-            print ('axes_to_replace_from_field1=', axes_to_replace_from_field1)
+            print(field0)
+#            print(field0.array)
+            print()
+            print('axes_added_from_field1=', axes_added_from_field1)
+            print()
+            print('axes_to_replace_from_field1=', axes_to_replace_from_field1)
 
         already_copied = {}
 
@@ -2072,9 +2072,9 @@ may be accessed with the `nc_global_attributes`,
                                                           'auxiliary_coordinate',
                                                           'cell_measure')        
             constructs = constructs.filter_by_axis('subset', *new_axes)
-            
             for key, c in constructs.items():
-                axes = [axis_map[axis1] for axis1 in axes_to_replace_from_field1]
+#                axes = [axis_map[axis1] for axis1 in axes_to_replace_from_field1]
+                axes = [axis_map[axis1] for axis1 in new_axes]
                 key0 = field0.set_construct(c, axes=axes, copy=False)
                 already_copied[key] = key0
         #--- End: if
@@ -2099,8 +2099,8 @@ may be accessed with the `nc_global_attributes`,
         #--- End: for
         
         if verbose:
-            print ()
-            print ('refs_to_add_from_field1=', refs_to_add_from_field1)
+            print()
+            print('refs_to_add_from_field1=', refs_to_add_from_field1)
 
         for ref in refs_to_add_from_field1:
             # Copy coordinates
@@ -6588,7 +6588,7 @@ may be accessed with the `nc_global_attributes`,
                     dim.identity(), bounds_data)) # pragma: no cover
             
             # Set domain axis and dimension coordinate for bins
-            axis = out.set_construct(DomainAxis(dim.size))            
+            axis = out.set_construct(self._DomainAxis(dim.size))            
             out.set_construct(dim, axes=[axis], copy=False)
 
             axes.append(axis)
@@ -13032,56 +13032,56 @@ may be accessed with the `nc_global_attributes`,
                                  inplace=inplace)
 
 
-    def uncompress(self, inplace=False):
-        '''Uncompress the construct.
-
-    Compression saves space by identifying and removing unwanted
-    missing data. Such compression techniques store the data more
-    efficiently and result in no precision loss.
-
-    Whether or not the construct is compressed does not alter its
-    functionality nor external appearance.
-
-    The following type of compression are available:
-
-        * Ragged arrays for discrete sampling geometries (DSG). Three
-          different types of ragged array representation are
-          supported.
-        
-        ..
-        
-        * Compression by gathering.
-
-    .. versionadded:: 3.0.6
-    
-    .. seealso:: `cf.write`, `compress`, `flatten`, `varray`
-
-    :Parameters:
-
-        inplace: `bool`, optional
-            If True then do the operation in-place and return `None`.
-    
-    :Returns:
-
-        `Field` or `None`
-            The uncompressed field construct, or `None` if the
-            operation was in-place.
-
-    **Examples:** 
-
-    TODO
-
-        '''
-        f = super().uncompress(inplace=inplace)
-        if inplace:
-            f = self
-           
-        for c in f.constructs.filter_by_data().values():
-            c.uncompress(inplace=True)
-
-        if inplace:
-            f = None
-        return f    
+#    def uncompress(self, inplace=False):
+#        '''Uncompress the construct.
+#
+#    Compression saves space by identifying and removing unwanted
+#    missing data. Such compression techniques store the data more
+#    efficiently and result in no precision loss.
+#
+#    Whether or not the construct is compressed does not alter its
+#    functionality nor external appearance.
+#
+#    The following type of compression are available:
+#
+#        * Ragged arrays for discrete sampling geometries (DSG). Three
+#          different types of ragged array representation are
+#          supported.
+#        
+#        ..
+#        
+#        * Compression by gathering.
+#
+#    .. versionadded:: 3.0.6
+#    
+#    .. seealso:: `cf.write`, `compress`, `flatten`, `varray`
+#
+#    :Parameters:
+#
+#        inplace: `bool`, optional
+#            If True then do the operation in-place and return `None`.
+#    
+#    :Returns:
+#
+#        `Field` or `None`
+#            The uncompressed field construct, or `None` if the
+#            operation was in-place.
+#
+#    **Examples:** 
+#
+#    TODO
+#
+#        '''
+#        f = super().uncompress(inplace=inplace)
+#        if inplace:
+#            f = self
+#           
+#        for c in f.constructs.filter_by_data().values():
+#            c.uncompress(inplace=True)
+#
+#        if inplace:
+#            f = None
+#        return f    
     
                 
     def unsqueeze(self, inplace=False, i=False, axes=None, **kwargs):
@@ -15211,7 +15211,7 @@ may be accessed with the `nc_global_attributes`,
         new_data_axes = [axis for i, axis in enumerate(data_axes)
                          if i not in iaxes]
         new_axis_size = numpy_prod([shape[i] for i in iaxes])
-        new_axis = f.set_construct(DomainAxis(new_axis_size))
+        new_axis = f.set_construct(self._DomainAxis(new_axis_size))
         new_data_axes.insert(iaxes[0], new_axis)
 
         # Flatten the field's data
