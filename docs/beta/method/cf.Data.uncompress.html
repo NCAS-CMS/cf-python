@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.5</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.6</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -91,11 +91,11 @@
 <h1>cf.Data.uncompress<a class="headerlink" href="#cf-data-uncompress" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Data.uncompress">
-<code class="descclassname">Data.</code><code class="descname">uncompress</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.10/cfdm/data/data.py#L1797"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.uncompress" title="Permalink to this definition">¶</a></dt>
-<dd><p>Uncompress the underlying array in-place.</p>
-<p>If the array is not compressed, then no change is made.</p>
+<code class="descclassname">Data.</code><code class="descname">uncompress</code><span class="sig-paren">(</span><em>inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.6/cf/data/data.py#L9305"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.uncompress" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uncompress the underlying data.</p>
+<p>If the data is not compressed, then no change is made.</p>
 <div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.3.</span></p>
+<p><span class="versionmodified">New in version 3.0.0.</span></p>
 </div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
@@ -105,20 +105,29 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
+<dd><p class="first last">If True then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><a class="reference internal" href="../classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt>
+<dd><p class="first last">The uncompressed data, or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> of the operation was
+in-place.</p>
+</dd>
+</dl>
+</td>
 </tr>
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">get_compression_type</span><span class="p">()</span>
 <span class="go">&#39;ragged contiguous&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">source</span><span class="p">()</span>
-<span class="go">&lt;RaggedContiguousArray(4, 9): &gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">uncompress</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">get_compression_type</span><span class="p">()</span>
 <span class="go">&#39;&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">source</span><span class="p">()</span>
-<span class="go">&lt;NumpyArray(4, 9): &gt;</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -137,7 +146,7 @@
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cf.Data.uncompress.rst.txt"

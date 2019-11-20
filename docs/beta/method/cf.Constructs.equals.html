@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.5</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.6</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -91,16 +91,16 @@
 <h1>cf.Constructs.equals<a class="headerlink" href="#cf-constructs-equals" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Constructs.equals">
-<code class="descclassname">Constructs.</code><code class="descname">equals</code><span class="sig-paren">(</span><em>other</em>, <em>rtol=None</em>, <em>atol=None</em>, <em>verbose=False</em>, <em>ignore_data_type=False</em>, <em>ignore_fill_value=False</em>, <em>ignore_compression=False</em>, <em>_ignore_type=False</em>, <em>_return_axis_map=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.10/cfdm/constructs.py#L593"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Constructs.equals" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Constructs.</code><code class="descname">equals</code><span class="sig-paren">(</span><em>other</em>, <em>rtol=None</em>, <em>atol=None</em>, <em>verbose=False</em>, <em>ignore_data_type=False</em>, <em>ignore_fill_value=False</em>, <em>ignore_compression=True</em>, <em>_ignore_type=False</em>, <em>_return_axis_map=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.10/cfdm/constructs.py#L593"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Constructs.equals" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether two <a class="reference internal" href="../classes/cf.Constructs.html#cf.Constructs" title="cf.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs</span></code></a> instances are the same.</p>
 <p>Two real numbers <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> are considered equal if
 <code class="docutils literal notranslate"><span class="pre">|x-y|&lt;=atol+rtol|y|</span></code>, where <code class="docutils literal notranslate"><span class="pre">atol</span></code> (the tolerance on absolute
 differences) and <code class="docutils literal notranslate"><span class="pre">rtol</span></code> (the tolerance on relative differences) are
 positive, typically very small numbers. See the <em>atol</em> and <em>rtol</em>
 parameters.</p>
-<p>If data arrays are compressed then the compression type and the
-underlying compressed arrays must be the same, as well as the arrays
-in their uncompressed forms. See the <em>ignore_compression</em> parameter.</p>
+<p>Any compression is ignored by default, with only the arrays in
+their uncompressed forms being compared. See the
+<em>ignore_compression</em> parameter.</p>
 <p>Any type of object may be tested but equality is only possible with
 another <a class="reference internal" href="../classes/cf.Constructs.html#cf.Constructs" title="cf.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs</span></code></a> construct, or a subclass of one.</p>
 <p>NetCDF elements, such as netCDF variable and dimension names, do not
@@ -140,11 +140,10 @@ inequality, regardless of whether the elements are within the
 tolerance for equality.</p>
 </dd>
 <dt>ignore_compression: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If True then any compression applied to underlying arrays is
-ignored and only uncompressed arrays are tested for
-equality. By default the compression type and, if applicable,
-the underlying compressed arrays must be the same, as well as
-the arrays in their uncompressed forms</p>
+<dd><p class="first last">If False then the compression type and, if applicable, the
+underlying compressed arrays must be the same, as well as
+the arrays in their uncompressed forms. By default only
+the arrays in their uncompressed forms are compared.</p>
 </dd>
 </dl>
 </td>
@@ -183,7 +182,7 @@ the arrays in their uncompressed forms</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cf.Constructs.equals.rst.txt"

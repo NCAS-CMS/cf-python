@@ -265,6 +265,7 @@ Miscellaneous
    ~cf.AuxiliaryCoordinate.copy
    ~cf.AuxiliaryCoordinate.equals
    ~cf.AuxiliaryCoordinate.inspect
+   ~cf.AuxiliaryCoordinate.uncompress
    
 Mathematical operations
 -----------------------

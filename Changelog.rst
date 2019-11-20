@@ -6,6 +6,8 @@ version 3.0.6
 
 * New method: `cf.Field.uncompress`.
 * New method: `cf.Data.uncompress`.
+* Can now insert a size 1 data dimension for a new, previously
+  non-existent domain axis with `cf.Field.insert_dimension`.
 * Changed the default value of the ``ignore_compression`` parameter to
   `True`.
 * Fixed bug that sometimes gave incorrect cell sizes from the

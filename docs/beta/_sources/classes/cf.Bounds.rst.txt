@@ -230,6 +230,7 @@ Miscellaneous
    ~cf.Bounds.concatenate
    ~cf.Bounds.copy
    ~cf.Bounds.equals
+   ~cf.Bounds.uncompress
 
 .. rubric:: Attributes
 	    

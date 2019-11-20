@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.5</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.6</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -89,7 +89,7 @@
 <h1>cf.Data<a class="headerlink" href="#cf-data" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="cf.Data">
-<em class="property">class </em><code class="descclassname">cf.</code><code class="descname">Data</code><span class="sig-paren">(</span><em>array=None</em>, <em>units=None</em>, <em>calendar=None</em>, <em>fill_value=None</em>, <em>hardmask=True</em>, <em>chunk=True</em>, <em>loadd=None</em>, <em>loads=None</em>, <em>dt=False</em>, <em>source=None</em>, <em>copy=True</em>, <em>dtype=None</em>, <em>mask=None</em>, <em>_use_array=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.5/cf/data/data.py#L246"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cf.</code><code class="descname">Data</code><span class="sig-paren">(</span><em>array=None</em>, <em>units=None</em>, <em>calendar=None</em>, <em>fill_value=None</em>, <em>hardmask=True</em>, <em>chunk=True</em>, <em>loadd=None</em>, <em>loads=None</em>, <em>dt=False</em>, <em>source=None</em>, <em>copy=True</em>, <em>dtype=None</em>, <em>mask=None</em>, <em>_use_array=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.6/cf/data/data.py#L246"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.data.data.Data</span></code></p>
 <p>An N-dimensional data array with units and masked values.</p>
 <ul class="simple">
@@ -517,7 +517,7 @@ if it is larger than the chunk size, as returned by the
 <td>Return the type of compression applied to the underlying array.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cf.Data.get_count.html#cf.Data.get_count" title="cf.Data.get_count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_count</span></code></a></td>
-<td>Return the countcount_va variable for a compressed array.</td>
+<td>Return the count variable for a compressed array.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cf.Data.get_data.html#cf.Data.get_data" title="cf.Data.get_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_data</span></code></a></td>
 <td>TODO</td>
@@ -730,7 +730,7 @@ if it is larger than the chunk size, as returned by the
 <td>Return the truncated values of the data array.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cf.Data.uncompress.html#cf.Data.uncompress" title="cf.Data.uncompress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">uncompress</span></code></a></td>
-<td>Uncompress the underlying array in-place.</td>
+<td>Uncompress the underlying data.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cf.Data.unique.html#cf.Data.unique" title="cf.Data.unique"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unique</span></code></a></td>
 <td>The unique elements of the array.</td>
@@ -1040,7 +1040,7 @@ or, for augmented assignments, modify the data in-place.</p>
 <td>The built-in function <a class="reference external" href="https://docs.python.org/3/library/functions.html#hash" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hash</span></code></a></td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cf.Data.__iter__.html#cf.Data.__iter__" title="cf.Data.__iter__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__iter__</span></code></a></td>
-<td>Efficient iteration.</td>
+<td>Called when an iterator is required.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../method/cf.Data.__len__.html#cf.Data.__len__" title="cf.Data.__len__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__len__</span></code></a></td>
 <td>The built-in function <a class="reference external" href="https://docs.python.org/3/library/functions.html#len" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">len</span></code></a></td>
@@ -1080,7 +1080,7 @@ or, for augmented assignments, modify the data in-place.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/classes/cf.Data.rst.txt"

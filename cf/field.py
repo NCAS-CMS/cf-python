@@ -55,9 +55,9 @@ from . import Flags
 from . import Constructs
 from . import FieldList
 
-#from . import Count
-#from . import Index
-#from . import List
+from . import Count
+from . import Index
+from . import List
 
 from .constants import masked as cf_masked
 
@@ -70,10 +70,10 @@ from .units           import Units
 from .subspacefield   import SubspaceField
 
 from .data import Data
-#from .data import RaggedContiguousArray
-#from .data import RaggedIndexedArray
-#from .data import RaggedIndexedContiguousArray
-#from .data import GatheredArray
+from .data import RaggedContiguousArray
+from .data import RaggedIndexedArray
+from .data import RaggedIndexedContiguousArray
+from .data import GatheredArray
 
 from . import mixin
 
@@ -245,13 +245,13 @@ may be accessed with the `nc_global_attributes`,
         instance._Domain     = Domain
         instance._DomainAxis = DomainAxis
         instance._Data       = Data
-#        instance._RaggedContiguousArray        = RaggedContiguousArray         
-#        instance._RaggedIndexedArray           = RaggedIndexedArray            
-#        instance._RaggedIndexedContiguousArray = RaggedIndexedContiguousArray  
-#        instance._GatheredArray                = GatheredArray                  
-#        instance._Count = Count
-#        instance._Index = Index
-#        instance._List  = List
+        instance._RaggedContiguousArray        = RaggedContiguousArray         
+        instance._RaggedIndexedArray           = RaggedIndexedArray            
+        instance._RaggedIndexedContiguousArray = RaggedIndexedContiguousArray  
+        instance._GatheredArray                = GatheredArray                  
+        instance._Count = Count
+        instance._Index = Index
+        instance._List  = List
         return instance
 
 
@@ -10127,11 +10127,14 @@ may be accessed with the `nc_global_attributes`,
     :Parameters:
     
         axis:
-            Select the domain axis to, defined by that which would be
-            selected by passing the given axis description to a call
-            of the field construct's `domain_axis` method. For
+            Select the domain axis to, generally defined by that which
+            would be selected by passing the given axis description to
+            a call of the field construct's `domain_axis` method. For
             example, for a value of ``'X'``, the domain axis construct
             returned by ``f.domain_axis('X'))`` is selected.
+
+            If *axis* is `None` then a new domain axis construct will
+            created for the inserted dimension.
     
         position: `int`, optional
             Specify the position that the new axis will have in the
@@ -10149,20 +10152,45 @@ may be accessed with the `nc_global_attributes`,
     
     **Examples:**
     
-    >>> g = f.insert_dimension('time')
-    >>> g = f.insert_dimension('time', 2)
-    >>> g = f.insert_dimension(1)
-    >>> g = f.insert_dimension('domainaxis2', -1)
-    >>> f.insert_dimension('Z', inplace=True)
+    >>> f = cf.example_field(0)
+    >>> print(f)
+    Field: specific_humidity (ncvar%q)
+    ----------------------------------
+    Data            : specific_humidity(latitude(5), longitude(8)) 1
+    Cell methods    : area: mean
+    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(8) = [22.5, ..., 337.5] degrees_east
+                    : time(1) = [2019-01-01 00:00:00]
+    >>> g = f.insert_dimension('T', 0)
+    >>> print(g)
+    Field: specific_humidity (ncvar%q)
+    ----------------------------------
+    Data            : specific_humidity(time(1), latitude(5), longitude(8)) 1
+    Cell methods    : area: mean
+    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(8) = [22.5, ..., 337.5] degrees_east
+                    : time(1) = [2019-01-01 00:00:00]
+    >>> g.insert_dimension(None, 1, inplace=True)
+    >>> print(g)
+    Field: specific_humidity (ncvar%q)
+    ----------------------------------
+    Data            : specific_humidity(time(1), key%domainaxis3(1), latitude(5), longitude(8)) 1
+    Cell methods    : area: mean
+    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(8) = [22.5, ..., 337.5] degrees_east
+                    : time(1) = [2019-01-01 00:00:00]
 
-        '''
+       '''
         if inplace:
             f = self
         else:
             f = self.copy()
-            
-        axis = self.domain_axis(axis, key=True, default=ValueError(
-            "Can't identify a unique axis to insert"))
+
+        if axis is None:
+            axis = f.set_construct(self._DomainAxis(1))                
+        else:
+            axis = f.domain_axis(axis, key=True, default=ValueError(
+                "Can't identify a unique axis to insert"))
 
         # Expand the dims in the field construct's data array
         super(Field, f).insert_dimension(axis=axis, position=position,
