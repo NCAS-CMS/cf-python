@@ -55,7 +55,7 @@ class FieldTest(unittest.TestCase):
 #        self.test_only = ['test_Field_flip']
 #        self.test_only = ['test_Field_Field_domain_mask']
 #        self.test_only = ['test_Field_compress_uncompress']
-
+#        self.test_only = ['test_Field_coordinate_reference']
         
     def test_Field_creation_commands(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

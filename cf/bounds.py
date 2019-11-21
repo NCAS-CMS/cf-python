@@ -104,7 +104,8 @@ class Bounds(mixin.PropertiesData,
             else:
                 return (data[1:, 0] >= data[:-1, 1]).all()
 
-    def identity(self, default=''):
+    def identity(self, default='', strict=False, relaxed=False,
+                 nc_only=False, relaxed_identity=None):
         '''Return the canonical identity.
 
     By default the identity is the first found of the following:
@@ -146,6 +147,10 @@ class Bounds(mixin.PropertiesData,
     'long_name=Longitude'
 
         '''
+        if relaxed_identity:
+            _DEPRECATION_ERROR_KWARGS(self, 'identity',
+                                      relaxed_identity=True) # pragma: no cover
+
         inherited_properties = self.inherited_properties()
         if inherited_properties:
             bounds = self.copy()
@@ -154,7 +159,8 @@ class Bounds(mixin.PropertiesData,
             bounds.set_properties(properties)
             self = bounds
             
-        return super().identity(default=default)
+        return super().identity(default=default, strict=strict,
+                                relaxed=relaxed, nc_only=nc_only)
 
     
 #--- End: class    
