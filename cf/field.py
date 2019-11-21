@@ -11255,7 +11255,7 @@ may be accessed with the `nc_global_attributes`,
     
             *Parameter example:*
               An unweighted 5-point moving average can be computed
-              with ``weights=[0.2, 0.2, 0.2, 0.2, 02]``
+              with ``weights=[0.2, 0.2, 0.2, 0.2, 0.2]``
     
             Note that the `scipy.signal.windows` package has suite of
             window functions for creating weights for filtering.
