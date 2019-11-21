@@ -370,7 +370,7 @@ indexed_file    = _make_indexed_file('DSG_timeSeries_indexed.nc')
 indexed_contiguous_file = _make_indexed_contiguous_file('DSG_timeSeriesProfile_indexed_contiguous.nc')
 
 
-def _make_files():
+def _make_external_files():
     '''
     '''
     def _pp(filename, parent=False, external=False, combined=False, external_missing=False):
@@ -451,7 +451,7 @@ def _make_files():
 (parent_file,
  external_file,
  combined_file,
- external_missing_file) = _make_files()
+ external_missing_file) = _make_external_files()
 
 
 def _make_gathered_file(filename):

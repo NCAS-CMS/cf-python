@@ -11,8 +11,8 @@ from .functions import inspect as cf_inspect
 class Flags:
     '''Self-describing CF flag values.
 
-Stores the flag_values, flag_meanings and flag_masks CF attributes in
-an internally consistent manner.
+    Stores the flag_values, flag_meanings and flag_masks CF attributes
+    in an internally consistent manner.
 
     '''
     def __init__(self, **kwargs):

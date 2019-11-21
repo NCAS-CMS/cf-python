@@ -23,7 +23,7 @@ _year_units  = ('year', 'years', 'yr')
 
 class PropertiesDataBounds(PropertiesData):
     '''Mixin class for a data array with descriptive properties and cell
-bounds.
+    bounds.
 
     '''
     # Define the reserved attributes. These are methods which can't be
@@ -513,53 +513,6 @@ bounds.
             return new
 
 
-#    def _change_axis_names(self, dim_name_map):
-#        '''
-#
-#Change the axis names.
-#
-#Warning: dim_name_map may be changed in place
-#
-#:Parameters:
-#
-#    dim_name_map : dict
-#
-#:Returns:
-#
-#    None
-#
-#**Examples:**
-#
-#'''
-#        # Change the axis names of the data array
-#        super()._change_axis_names(dim_name_map)
-#
-#        bounds = self.get_bounds(None)
-#        bounds_data = bounds.get_data(None)
-#        if bounds_data is not None:
-#            b_axes = bounds_data._axes # TODO
-#            data = self.get_data(None)
-#            if data is not None:
-#                # Change the dimension names of the bounds
-#                # array. Note that it is assumed that the bounds
-#                # array dimensions are in the same order as the
-#                # variable's data array dimensions. It is not
-#                # required that the set of original bounds
-#                # dimension names (bar the trailing dimension)
-#                # equals the set of original variable's data array
-#                # dimension names. The bounds array dimension
-#                # names will be changed to match the updated
-#                # variable's data array dimension names.
-#                dim_name_map = {b_axes[-1]: 'bounds'}
-#                for c_dim, b_dim in zip(data._axes, b_axes):
-#                     dim_name_map[b_dim] = c_dim
-#            else:
-#                dim_name_map[b_axes[-1]] = 'bounds'
-#
-#            bounds._change_axis_names(dim_name_map)
-#    #--- End: def
-
-
     def _equivalent_data(self, other, rtol=None, atol=None,
                          verbose=False):
         '''TODO
@@ -961,58 +914,60 @@ dtype('float64')
                 return bounds.dtype
             
             raise AttributeError(error)
-    #--- End: def
+
     @dtype.setter
     def dtype(self, value):
-# DCH - allow dtype to be set before data c.f.  Units
+        # DCH - allow dtype to be set before data c.f.  Units
         data = self.get_data(None)
         if data is not None:
             self.Data.dtype = value
-    #--- End: def
+
     @dtype.deleter
     def dtype(self):
         data = self.get_data(None)
         if data is not None:
             del self.Data.dtype
-    #--- End: def
 
-    # 1
+
+    # ----------------------------------------------------------------
+    # Methods
+    # ----------------------------------------------------------------
     def ceil(self, bounds=True, inplace=False, i=False):
         '''The ceiling of the data, element-wise.
 
-The ceiling of ``x`` is the smallest integer ``n``, such that ``n >=
-x``.
-
-.. versionadded:: 1.0
-
-.. seealso:: `floor`, `rint`, `trunc`
-
-:Parameters:
-
-    bounds: `bool`, optional
-        If False then do not alter any bounds. By default any bounds
-        are also altered.
-
-    inplace: `bool`, optional
-        If True then do the operation in-place and return `None`.
-
-    i: deprecated at version 3.0.0
-        Use *inplace* parameter instead.
-
-:Returns:
-
-        The construct with ceilinged of data. If the operation was
-        in-place then `None` is returned.
-
-**Examples:**
-
->>> print(f.array)
-[-1.9 -1.5 -1.1 -1.   0.   1.   1.1  1.5  1.9]
->>> print(f.ceil().array)
-[-1. -1. -1. -1.  0.  1.  2.  2.  2.]
->>> f.ceil(inplace=True)
->>> print(f.array)
-[-1. -1. -1. -1.  0.  1.  2.  2.  2.]
+    The ceiling of ``x`` is the smallest integer ``n``, such that
+     ``n >= x``.
+    
+    .. versionadded:: 1.0
+    
+    .. seealso:: `floor`, `rint`, `trunc`
+    
+    :Parameters:
+    
+        bounds: `bool`, optional
+            If False then do not alter any bounds. By default any
+            bounds are also altered.
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+        i: deprecated at version 3.0.0
+            Use *inplace* parameter instead.
+    
+    :Returns:
+    
+            The construct with ceilinged of data. If the operation was
+            in-place then `None` is returned.
+    
+    **Examples:**
+    
+    >>> print(f.array)
+    [-1.9 -1.5 -1.1 -1.   0.   1.   1.1  1.5  1.9]
+    >>> print(f.ceil().array)
+    [-1. -1. -1. -1.  0.  1.  2.  2.  2.]
+    >>> f.ceil(inplace=True)
+    >>> print(f.array)
+    [-1. -1. -1. -1.  0.  1.  2.  2.  2.]
 
         '''
         if i:
@@ -1026,16 +981,13 @@ x``.
             bounds = v.get_bounds(None)
             if bounds is not None:
                 bounds.ceil(inplace=True)
-        #--- End: def
+        #--- End: if
 
         if inplace:
             v = None
         return v
-    #--- End: def
 
-    # ----------------------------------------------------------------
-    # Methods
-    # ----------------------------------------------------------------
+
     def chunk(self, chunksize=None):
         '''Partition the data array.
 
@@ -1120,29 +1072,28 @@ x``.
             bounds = v.get_bounds(None)
             if bounds is not None:
                 bounds.clip(a_min, a_max, units=units, inplace=True)
-        #--- End: def
+        #--- End: if
 
         if inplace:
             v = None
         return v
 
     
-    # 0
     def close(self):
         '''Close all files referenced by the construct.
 
-Note that a closed file will be automatically reopened if its contents
-are subsequently required.
-
-.. seealso:: `files`
-
-:Returns:
-
-    `None`
-
-**Examples:**
-
->> c.close()
+    Note that a closed file will be automatically re-opened if its
+    contents are subsequently required.
+    
+    .. seealso:: `files`
+    
+    :Returns:
+    
+        `None`
+    
+    **Examples:**
+    
+    >> c.close()
 
         '''
         super().close()
@@ -1150,22 +1101,21 @@ are subsequently required.
         bounds = self.get_bounds(None)
         if bounds is not None:
             bounds.close()
-    #--- End: def
 
-    # 0
+
     @classmethod
     def concatenate(cls, variables, axis=0, _preserve=True):
         '''Join a sequence of variables together.
-
-:Parameters:
-
-    variables: sequence of constructs
-
-    axis: `int`, optional
-
-:Returns:
-
-TODO
+    
+    :Parameters:
+    
+        variables: sequence of constructs
+    
+        axis: `int`, optional
+    
+    :Returns:
+    
+    TODO
         '''
         variable0 = variables[0]
 
@@ -1182,59 +1132,58 @@ TODO
             out.set_bounds(bounds, copy=False)
 
         return out
-    #--- End: def
 
-    # 1
+
     def cos(self, bounds=True, inplace=False,  i=False):
         '''Take the trigonometric cosine of the data, element-wise.
 
-Units are accounted for in the calculation, so that the the cosine of
-90 degrees_east is 0.0, as is the cosine of 1.57079632 radians. If the
-units are not equivalent to radians (such as Kelvin) then they are
-treated as if they were radians.
-
-The output units are '1' (nondimensionsal).
-
-.. seealso:: `sin`, `tan`
-
-:Parameters:
-
-    bounds: `bool`, optional
-        If False then do not alter any bounds. By default any bounds
-        are also altered.
-
-    inplace: `bool`, optional
-        If True then do the operation in-place and return `None`.
-
-    i: deprecated at version 3.0.0
-        Use *inplace* parameter instead.
-
-:Returns:
-
-        The construct with the cosine of data values. If the
-        operation was in-place then `None` is returned.
-
-**Examples:**
-
->>> f.Units
-<Units: degrees_east>
->>> print(f.array)
-[[-90 0 90 --]]
->>> f.cos()
->>> f.Units
-<Units: 1>
->>> print(f.array)
-[[0.0 1.0 0.0 --]]
-
->>> f.Units
-<Units: m s-1>
->>> print(f.array)
-[[1 2 3 --]]
->>> f.cos()
->>> f.Units
-<Units: 1>
->>> print(f.array)
-[[0.540302305868 -0.416146836547 -0.9899924966 --]]
+    Units are accounted for in the calculation, so that the the cosine
+    of 90 degrees_east is 0.0, as is the cosine of 1.57079632
+    radians. If the units are not equivalent to radians (such as
+    Kelvin) then they are treated as if they were radians.
+    
+    The output units are '1' (nondimensionsal).
+    
+    .. seealso:: `sin`, `tan`
+    
+    :Parameters:
+    
+        bounds: `bool`, optional
+            If False then do not alter any bounds. By default any
+            bounds are also altered.
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+        i: deprecated at version 3.0.0
+            Use *inplace* parameter instead.
+    
+    :Returns:
+    
+            The construct with the cosine of data values. If the
+            operation was in-place then `None` is returned.
+    
+    **Examples:**
+    
+    >>> f.Units
+    <Units: degrees_east>
+    >>> print(f.array)
+    [[-90 0 90 --]]
+    >>> f.cos()
+    >>> f.Units
+    <Units: 1>
+    >>> print(f.array)
+    [[0.0 1.0 0.0 --]]
+    
+    >>> f.Units
+    <Units: m s-1>
+    >>> print(f.array)
+    [[1 2 3 --]]
+    >>> f.cos()
+    >>> f.Units
+    <Units: 1>
+    >>> print(f.array)
+    [[0.540302305868 -0.416146836547 -0.9899924966 --]]
 
         '''
         if i:
@@ -1253,9 +1202,8 @@ The output units are '1' (nondimensionsal).
         if inplace:
             v = None
         return v
-    #--- End: def
 
-    # 1
+
     def cyclic(self, axes=None, iscyclic=True):
         '''Set the cyclicity of axes of the data array.
 
@@ -1716,17 +1664,19 @@ The output units are '1' (nondimensionsal).
     def match_by_property(self, *mode, **properties):
         '''Determine whether or not a variable satisfies conditions.
 
-Conditions may be specified on the variable's attributes and CF
-properties.
+    Conditions may be specified on the variable's attributes and CF
+    properties.
+    
+    :Parameters:
+     
+    :Returns:
+    
+        out: `bool`
+            Whether or not the variable matches the given criteria.
+    
+    **Examples:**
 
-:Parameters:
- 
-:Returns:
-
-    out: `bool`
-        Whether or not the variable matches the given criteria.
-
-**Examples:**
+    TODO
 
         '''
         _or = False
@@ -1760,7 +1710,7 @@ properties.
         #--- End: for
 
         return ok
-    #--- End: def
+
 
     def match_by_identity(self, *identities):
         '''Determine whether or not a variable satisfies conditions.
@@ -2019,45 +1969,44 @@ properties.
         return v
 
 
-    # 1
     def exp(self, bounds=True, inplace=False, i=False):
         '''The exponential of the data, element-wise.
 
-.. seealso:: `log`
-
-:Parameters:
-
-    bounds: `bool`, optional
-        If False then do not alter any bounds. By default any bounds
-        are also altered.
-
-    inplace: `bool`, optional
-        If True then do the operation in-place and return `None`.
-
-    i: deprecated at version 3.0.0
-        Use *inplace* parameter instead.
-
-:Returns:
-
-        The construct with the exponential of data values. If the
-        operation was in-place then `None` is returned.
-
-**Examples:**
-
->>> f.data
-<CF Data(1, 2): [[1, 2]]>
->>> f.exp().data            
-<CF Data(1, 2): [[2.71828182846, 7.38905609893]]>
-
->>> f.data
-<CF Data(1, 2): [[1, 2]] 2>
->>> f.exp().data            
-<CF Data(1, 2): [[7.38905609893, 54.5981500331]]>
-
->>> f.data
-<CF Data(1, 2): [[1, 2]] kg m-1 s-2>
->>> f.exp()          
-ValueError: Can't take exponential of dimensional quantities: <Units: kg m-1 s-2>
+    .. seealso:: `log`
+    
+    :Parameters:
+    
+        bounds: `bool`, optional
+            If False then do not alter any bounds. By default any
+            bounds are also altered.
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+        i: deprecated at version 3.0.0
+            Use *inplace* parameter instead.
+    
+    :Returns:
+    
+            The construct with the exponential of data values. If the
+            operation was in-place then `None` is returned.
+    
+    **Examples:**
+    
+    >>> f.data
+    <CF Data(1, 2): [[1, 2]]>
+    >>> f.exp().data            
+    <CF Data(1, 2): [[2.71828182846, 7.38905609893]]>
+    
+    >>> f.data
+    <CF Data(1, 2): [[1, 2]] 2>
+    >>> f.exp().data            
+    <CF Data(1, 2): [[7.38905609893, 54.5981500331]]>
+    
+    >>> f.data
+    <CF Data(1, 2): [[1, 2]] kg m-1 s-2>
+    >>> f.exp()          
+    ValueError: Can't take exponential of dimensional quantities: <Units: kg m-1 s-2>
 
         '''
         if i:
@@ -2076,47 +2025,46 @@ ValueError: Can't take exponential of dimensional quantities: <Units: kg m-1 s-2
         if inplace:
             v = None
         return v
-    #--- End: def
 
-    # 0
+
     def set_bounds(self, bounds, copy=True):
         '''Set the bounds.
 
-.. versionadded:: 1.7.0
-
-.. seealso: `del_bounds`, `get_bounds`, `has_bounds`, `set_data`
-
-:Parameters:
-
-    bounds: `Bounds`
-        The bounds to be inserted.
-
-    copy: `bool`, optional
-        If False then do not copy the bounds prior to insertion. By
-        default the bounds are copied.
-
-:Returns:
-
-    `None`
-
-**Examples:**
-
->>> import numpy
->>> b = cfdm.Bounds(data=cfdm.Data(numpy.arange(10).reshape(5, 2)))
->>> c.set_bounds(b)
->>> c.has_bounds()
-True
->>> c.get_bounds()
-<Bounds: (5, 2) >
->>> b = c.del_bounds()
->>> b
-<Bounds: (5, 2) >
->>> c.has_bounds()
-False
->>> print(c.get_bounds(None))
-None
->>> print(c.del_bounds(None))
-None
+    .. versionadded:: 3.0.0
+    
+    .. seealso: `del_bounds`, `get_bounds`, `has_bounds`, `set_data`
+    
+    :Parameters:
+    
+        bounds: `Bounds`
+            The bounds to be inserted.
+    
+        copy: `bool`, optional
+            If False then do not copy the bounds prior to
+            insertion. By default the bounds are copied.
+    
+    :Returns:
+    
+        `None`
+    
+    **Examples:**
+    
+    >>> import numpy
+    >>> b = cfdm.Bounds(data=cfdm.Data(numpy.arange(10).reshape(5, 2)))
+    >>> c.set_bounds(b)
+    >>> c.has_bounds()
+    True
+    >>> c.get_bounds()
+    <Bounds: (5, 2) >
+    >>> b = c.del_bounds()
+    >>> b
+    <Bounds: (5, 2) >
+    >>> c.has_bounds()
+    False
+    >>> print(c.get_bounds(None))
+    None
+    >>> print(c.del_bounds(None))
+    None
 
         '''
         data = self.get_data(None)
@@ -2154,59 +2102,58 @@ None
         self._custom['direction'] = None
         
         super().set_bounds(bounds, copy=False)
-    #--- End: def
 
-    # 1
+
     def sin(self, bounds=True, inplace=False, i=False):
         '''The trigonometric sine of the data, element-wise.
 
-Units are accounted for in the calculation. For example, the the sine
-of 90 degrees_east is 1.0, as is the sine of 1.57079632 radians. If
-the units are not equivalent to radians (such as Kelvin) then they are
-treated as if they were radians.
-
-The Units are changed to '1' (nondimensionsal).
-
-.. seealso:: `cos`, `tan`
-
-:Parameters:
-
-    bounds: `bool`, optional
-        If False then do not alter any bounds. By default any bounds
-        are also altered.
-
-    inplace: `bool`, optional
-        If True then do the operation in-place and return `None`.
-
-    i: deprecated at version 3.0.0
-        Use *inplace* parameter instead.
-
-:Returns:
-
-        The construct with the sine of data values. If the
-        operation was in-place then `None` is returned.
-
-**Examples:**
-
->>> f.Units
-<Units: degrees_north>
->>> print(f.array)
-[[-90 0 90 --]]
->>> f.sin()
->>> f.Units
-<Units: 1>
->>> print(f.array)
-[[-1.0 0.0 1.0 --]]
-
->>> f.Units
-<Units: m s-1>
->>> print f.array
-[[1 2 3 --]]
->>> f.sin()
->>> f.Units
-<Units: 1>
->>> print(f.array)
-[[0.841470984808 0.909297426826 0.14112000806 --]]
+    Units are accounted for in the calculation. For example, the the
+    sine of 90 degrees_east is 1.0, as is the sine of 1.57079632
+    radians. If the units are not equivalent to radians (such as
+    Kelvin) then they are treated as if they were radians.
+    
+    The Units are changed to '1' (nondimensionsal).
+    
+    .. seealso:: `cos`, `tan`
+    
+    :Parameters:
+    
+        bounds: `bool`, optional
+            If False then do not alter any bounds. By default any
+            bounds are also altered.
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+        i: deprecated at version 3.0.0
+            Use *inplace* parameter instead.
+    
+    :Returns:
+    
+            The construct with the sine of data values. If the
+            operation was in-place then `None` is returned.
+    
+    **Examples:**
+    
+    >>> f.Units
+    <Units: degrees_north>
+    >>> print(f.array)
+    [[-90 0 90 --]]
+    >>> f.sin()
+    >>> f.Units
+    <Units: 1>
+    >>> print(f.array)
+    [[-1.0 0.0 1.0 --]]
+    
+    >>> f.Units
+    <Units: m s-1>
+    >>> print f.array
+    [[1 2 3 --]]
+    >>> f.sin()
+    >>> f.Units
+    <Units: 1>
+    >>> print(f.array)
+    [[0.841470984808 0.909297426826 0.14112000806 --]]
 
         '''
         if i:
@@ -2225,41 +2172,42 @@ The Units are changed to '1' (nondimensionsal).
         if inplace:
             v = None            
         return v
-    #--- End: def
 
-    # 0
+
     def tan(self, bounds=True, inplace=False, i=False):
         '''The trigonometric tangent of the data, element-wise.
 
-Units are accounted for in the calculation, so that the the tangent of
-180 degrees_east is 0.0, as is the sine of 3.141592653589793
-radians. If the units are not equivalent to radians (such as Kelvin)
-then they are treated as if they were radians.
+    Units are accounted for in the calculation, so that the the
+    tangent of 180 degrees_east is 0.0, as is the sine of
+    3.141592653589793 radians. If the units are not equivalent to
+    radians (such as Kelvin) then they are treated as if they were
+    radians.
+    
+    The Units are changed to '1' (nondimensionsal).
+    
+    .. seealso:: `cos`, `sin`
+    
+    :Parameters:
+    
+        bounds: `bool`, optional
+            If False then do not alter any bounds. By default any
+            bounds are also altered.
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+        i: deprecated at version 3.0.0
+            Use *inplace* parameter instead.
+    
+    :Returns:
+            
+            The construct with the tangent of data values. If the
+            operation was in-place then `None` is returned.
+    
+    **Examples:**
+    
+    TODO
 
-The Units are changed to '1' (nondimensionsal).
-
-.. seealso:: `cos`, `sin`
-
-:Parameters:
-
-    bounds: `bool`, optional
-        If False then do not alter any bounds. By default any bounds
-        are also altered.
-
-    inplace: `bool`, optional
-        If True then do the operation in-place and return `None`.
-
-    i: deprecated at version 3.0.0
-        Use *inplace* parameter instead.
-
-:Returns:
-        
-        The construct with the tangent of data values. If the
-        operation was in-place then `None` is returned.
-
-**Examples:**
-
-TODO
         '''
         if i:
             _DEPRECATION_ERROR_KWARGS(self, 'tan', i=True) # pragma: no cover  
@@ -2278,61 +2226,60 @@ TODO
             v = None
             
         return v
-    #--- End: def
 
-    # 1
+
     def log(self, base=None, bounds=True, inplace=False, i=False):
         '''The logarithm of the data array.
 
-By default the natural logarithm is taken, but any base may be
-specified.
-
-.. seealso:: `exp`
-
-:Parameters:
-
-    base: number, optional
-        The base of the logiarthm. By default a natural logiarithm is
-        taken.
-
-    bounds: `bool`, optional
-        If False then do not alter any bounds. By default any bounds
-        are also altered.
-
-    inplace: `bool`, optional
-        If True then do the operation in-place and return `None`.
-
-    i: deprecated at version 3.0.0
-        Use *inplace* parameter instead.
-
-:Returns:
-
-        The construct with the logarithm of data values. If the
-        operation was in-place then `None` is returned.
-
-**Examples:**
-
->>> f.data
-<CF Data(1, 2): [[1, 2]]>
->>> f.log().data
-<CF Data: [[0.0, 0.69314718056]] ln(re 1)>
-
->>> f.data
-<CF Data(1, 2): [[1, 2]] 2>
->>> f.log().data
-<CF Data(1, 2): [[0.0, 0.69314718056]] ln(re 2 1)>
-
->>> f.data
-<CF Data(1, 2): [[1, 2]] kg s-1 m-2>
->>> f.log().data
-<CF Data(1, 2): [[0.0, 0.69314718056]] ln(re 1 m-2.kg.s-1)>
-
->>> f.log(inplace=True)
-
->>> f.Units
-<Units: >
->>> f.log()
-ValueError: Can't take the logarithm to the base 2.718281828459045 of <Units: >
+    By default the natural logarithm is taken, but any base may be
+    specified.
+    
+    .. seealso:: `exp`
+    
+    :Parameters:
+    
+        base: number, optional
+            The base of the logiarthm. By default a natural logiarithm
+            is taken.
+    
+        bounds: `bool`, optional
+            If False then do not alter any bounds. By default any
+            bounds are also altered.
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+        i: deprecated at version 3.0.0
+            Use *inplace* parameter instead.
+    
+    :Returns:
+    
+            The construct with the logarithm of data values. If the
+            operation was in-place then `None` is returned.
+    
+    **Examples:**
+    
+    >>> f.data
+    <CF Data(1, 2): [[1, 2]]>
+    >>> f.log().data
+    <CF Data: [[0.0, 0.69314718056]] ln(re 1)>
+    
+    >>> f.data
+    <CF Data(1, 2): [[1, 2]] 2>
+    >>> f.log().data
+    <CF Data(1, 2): [[0.0, 0.69314718056]] ln(re 2 1)>
+    
+    >>> f.data
+    <CF Data(1, 2): [[1, 2]] kg s-1 m-2>
+    >>> f.log().data
+    <CF Data(1, 2): [[0.0, 0.69314718056]] ln(re 1 m-2.kg.s-1)>
+    
+    >>> f.log(inplace=True)
+    
+    >>> f.Units
+    <Units: >
+    >>> f.log()
+    ValueError: Can't take the logarithm to the base 2.718281828459045 of <Units: >
 
         '''
         if i:
@@ -2351,7 +2298,6 @@ ValueError: Can't take the logarithm to the base 2.718281828459045 of <Units: >
         if inplace:
             v = None    
         return v
-    #--- End: def
 
 
     def squeeze(self, axes=None, inplace=False, i=False):
@@ -2436,7 +2382,7 @@ ValueError: Can't take the logarithm to the base 2.718281828459045 of <Units: >
 
         '''
         if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'trunc', i=True) # pragma: no cover                    
+            _DEPRECATION_ERROR_KWARGS(self, 'trunc', i=True) # pragma: no cover
 
         v = super().trunc(inplace=inplace)
         if inplace:
@@ -2599,7 +2545,8 @@ ValueError: Can't take the logarithm to the base 2.718281828459045 of <Units: >
 
         '''
         if relaxed_identity:
-            _DEPRECATAION_ERROR_KWARGS(self, 'identity', relaxed_identity=True) # pragma: no cover
+            _DEPRECATAION_ERROR_KWARGS(
+                self, 'identity', relaxed_identity=True) # pragma: no cover
             
         identity = super().identity(default=None, strict=strict,
                                     relaxed=relaxed, nc_only=nc_only)
@@ -2797,58 +2744,6 @@ ValueError: Can't take the logarithm to the base 2.718281828459045 of <Units: >
         return v
 
 
-#    def uncompress(self, inplace=False):
-#        '''Uncompress the construct.
-#
-#    Compression saves space by identifying and removing unwanted
-#    missing data. Such compression techniques store the data more
-#    efficiently and result in no precision loss.
-#
-#    Whether or not the construct is compressed does not alter its
-#    functionality nor external appearance.
-#
-#    The following type of compression are available:
-#
-#        * Ragged arrays for discrete sampling geometries (DSG). Three
-#          different types of ragged array representation are
-#          supported.
-#        
-#        ..
-#        
-#        * Compression by gathering.
-#
-#    .. versionadded:: 3.0.6
-#    
-#    .. seealso:: `cf.write`, `flatten`
-#
-#    :Parameters:
-#
-#        inplace: `bool`, optional
-#            If True then do the operation in-place and return `None`.
-#    
-#    :Returns:
-#
-#            The uncompressed construct, or `None` if the operation was
-#            in-place.
-#
-#    **Examples:** 
-#
-#    TODO
-#
-#        '''
-#        v = super().uncompress(inplace=inplace)
-#        if inplace:
-#            v = self
-#        
-#        bounds = v.get_bounds(None)
-#        if bounds is not None:
-#            bounds.uncompress(inplace=True)
-#
-#        if inplace:
-#            v = None            
-#        return v
-
-    
     # ----------------------------------------------------------------
     # Deprecated attributes and methods
     # ----------------------------------------------------------------

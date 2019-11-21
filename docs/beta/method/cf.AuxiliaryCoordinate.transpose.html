@@ -91,15 +91,15 @@
 <h1>cf.AuxiliaryCoordinate.transpose<a class="headerlink" href="#cf-auxiliarycoordinate-transpose" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.AuxiliaryCoordinate.transpose">
-<code class="descclassname">AuxiliaryCoordinate.</code><code class="descname">transpose</code><span class="sig-paren">(</span><em>axes=None</em>, <em>inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.10/cfdm/mixin/propertiesdatabounds.py#L1174"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.AuxiliaryCoordinate.transpose" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">AuxiliaryCoordinate.</code><code class="descname">transpose</code><span class="sig-paren">(</span><em>axes=None</em>, <em>inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.10/cfdm/mixin/propertiesdatabounds.py#L1178"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.AuxiliaryCoordinate.transpose" title="Permalink to this definition">¶</a></dt>
 <dd><p>Permute the axes of the data array.</p>
 <p>Corresponding axes of the bounds data array, if present, are also
 permuted.</p>
-<p>Note that if i) the data array is two-dimensional, ii) the two axes
-have been permuted, and iii) each cell has four bounds values; then
-columns 1 and 3 (counting from 0) of the bounds axis are swapped to
-preserve contiguity bounds in adjacent cells. See section 7.1 “Cell
-Boundaries” of the CF conventions for details.</p>
+<p>Note that if i) the data array is two-dimensional, ii) the two
+axes have been permuted, and iii) each cell has four bounds
+values; then columns 1 and 3 (counting from 0) of the bounds axis
+are swapped to preserve contiguity bounds in adjacent cells. See
+section 7.1 “Cell Boundaries” of the CF conventions for details.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
 <p class="last"><a class="reference internal" href="cf.AuxiliaryCoordinate.insert_dimension.html#cf.AuxiliaryCoordinate.insert_dimension" title="cf.AuxiliaryCoordinate.insert_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">insert_dimension</span></code></a>, <a class="reference internal" href="cf.AuxiliaryCoordinate.squeeze.html#cf.AuxiliaryCoordinate.squeeze" title="cf.AuxiliaryCoordinate.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></p>
@@ -111,9 +111,9 @@ Boundaries” of the CF conventions for details.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
 <dt>axes: (sequence of) <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></dt>
 <dd><p class="first">The new axis order. By default the order is reversed. Each
-axis in the new order is identified by its original integer
-position. Negative integers counting from the last position
-are allowed.</p>
+axis in the new order is identified by its original
+integer position. Negative integers counting from the last
+position are allowed.</p>
 <dl class="last docutils">
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">axes=[2,</span> <span class="pre">0,</span> <span class="pre">1]</span></code></p>
@@ -129,8 +129,8 @@ are allowed.</p>
 </dl>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The new construct with permuted data axes. If the operation
-was in-place then <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is returned.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The new construct with permuted data axes. If the
+operation was in-place then <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is returned.</p>
 </td>
 </tr>
 </tbody>
@@ -165,7 +165,7 @@ was in-place then <a class="reference external" href="https://docs.python.org/3/
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/method/cf.AuxiliaryCoordinate.transpose.rst.txt"

@@ -12,7 +12,7 @@ from ..functions import (_DEPRECATION_ERROR_METHOD,
 class Properties:
     '''Mixin class for descriptive properties.
 
-.. versionadded:: 3.0.0
+    .. versionadded:: 3.0.0
 
     '''
 

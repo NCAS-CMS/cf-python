@@ -7393,7 +7393,8 @@ may be accessed with the `nc_global_attributes`,
 
     .. versionadded:: 1.0
     
-    .. seealso:: `bin`, `cell_area`, `weights`, `radius`
+    .. seealso:: `bin`, `cell_area`, `convolution_filter`, `weights`,
+                 `radius`
     
     :Parameters:
         
@@ -7677,10 +7678,13 @@ may be accessed with the `nc_global_attributes`,
               ===============  ===========================================
            
         group: optional
-            Independently collapse groups of axis elements. Upon
-            output, the results of the collapses are concatenated so
-            that the output axis has a size equal to the number of
-            groups. The *group* parameter defines how the elements are
+            A grouped collapse is one for which an axis is not
+            collapsed completely to size 1. Instead the collapse axis
+            is partitioned into groups and each group is collapsed to
+            size 1. The resulting axis will generally have more than
+            one element.
+
+            The *group* parameter defines how the elements are
             partitioned into groups, and may be one of:
     
               * A `Data` object defining the group size in terms of
@@ -11228,330 +11232,21 @@ may be accessed with the `nc_global_attributes`,
         return False
 
     
-
-#        `Field` or `None`
-#            The compressed field construct, or `None` if the operation
-#            was in-place.
-#
-#    **Examples:**
-#
-#    >>> f = cf.example_field(3)
-#    >>> print(f)                                                                
-#    Field: precipitation_flux (ncvar%p)
-#    -----------------------------------
-#    Data            : precipitation_flux(cf_role=timeseries_id(4), ncdim%timeseries(9)) kg m-2 day-1
-#    Auxiliary coords: time(cf_role=timeseries_id(4), ncdim%timeseries(9)) = [[1969-12-29 00:00:00, ..., 1970-01-07 00:00:00]]
-#                    : latitude(cf_role=timeseries_id(4)) = [-9.0, ..., 78.0] degrees_north
-#                    : longitude(cf_role=timeseries_id(4)) = [-23.0, ..., 178.0] degrees_east
-#                    : height(cf_role=timeseries_id(4)) = [0.5, ..., 345.0] m
-#                    : cf_role=timeseries_id(cf_role=timeseries_id(4)) = [b'station1', ..., b'station4']
-#                    : long_name=some kind of station info(cf_role=timeseries_id(4)) = [-10, ..., -7]
-#    >>> f.data.get_compression_type()
-#    ''
-#    >>> f.compress('contiguous', inplace=True)
-#    >>> f.data.get_compression_type()
-#    'ragged contiguous'
-#    >>> f.data.get_count()                     
-#    <CF Count: (4) >
-#    >>> print(f.data.get_count().array)                         
-#    [3 7 5 9]
-#
-#    >>> f = cf.example_field(4)
-#    >>> print(f)
-#    Field: precipitation_flux (ncvar%p)
-#    -----------------------------------
-#    Data            : precipitation_flux(cf_role=timeseries_id(3), ncdim%timeseries(26), ncdim%profile_1(4)) kg m-2 day-1
-#    Auxiliary coords: time(cf_role=timeseries_id(3), ncdim%timeseries(26)) = [[1970-01-04 00:00:00, ..., --]]
-#                    : latitude(cf_role=timeseries_id(3)) = [-9.0, 2.0, 34.0] degrees_north
-#                    : longitude(cf_role=timeseries_id(3)) = [-23.0, 0.0, 67.0] degrees_east
-#                    : height(cf_role=timeseries_id(3)) = [0.5, 12.6, 23.7] m
-#                    : altitude(cf_role=timeseries_id(3), ncdim%timeseries(26), ncdim%profile_1(4)) = [[[2.07, ..., --]]] km
-#                    : cf_role=timeseries_id(cf_role=timeseries_id(3)) = [b'station1', b'station2', b'station3']
-#                    : long_name=some kind of station info(cf_role=timeseries_id(3)) = [-10, -9, -8]
-#                    : cf_role=profile_id(cf_role=timeseries_id(3), ncdim%timeseries(26)) = [[102, ..., --]]
-#    >>> f.data.get_compression_type()                     
-#    ''
-#    >>> g = f.compress('indexed_contiguous', 
-#    ...                count_properties={'long_name': 'number of obs for each profile'})
-#    >>> g.data.get_compression_type()                     
-#    'ragged indexed contiguous'
-#    >> g.data.get_count()
-#    <CF Count: long_name=number of obs for each profile(58) >
-#    >>> g.data.get_index()
-#    <CF Index: (58) >
-#    >>> print(g.data.get_index().array)                     
-#    [0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
-#     1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2]
-#
-#        '''
-#        def _empty_compressed_data(data, N):            
-#            return Data.empty(shape=(N,), units=data.Units,
-#                              dtype=data.dtype)
-#        #--- End: def
-#        
-#        def _RaggedContiguousArray(compressed_data, data,
-#                                   count_variable):
-#            return RaggedContiguousArray(compressed_data,
-#                                         shape=data.shape,
-#                                         size=data.size,
-#                                         ndim=data.ndim,
-#                                         count_variable=count_variable)
-#        #--- End: def
-#        
-#        def _RaggedIndexedArray(compressed_data, data, index_variable):
-#            return RaggedIndexedArray(compressed_data,
-#                                      shape=data.shape,
-#                                      size=data.size, ndim=data.ndim,
-#                                      index_variable=index_variable)
-#        #--- End: def
-#        
-#        def _RaggedIndexedContiguousArray(compressed_data, data,
-#                                          count_variable, index_variable):
-#            return RaggedIndexedContiguousArray(compressed_data,
-#                                                shape=data.shape,
-#                                                size=data.size,
-#                                                ndim=data.ndim,
-#                                                count_variable=count_variable,
-#                                                index_variable=index_variable)
-#        #--- End: def
-#
-#        def _compress_metadata(f, count, N, Array_func,
-#                               **variables):
-#            '''TODO
-#
-#        :Parameters:
-#    
-#            f: `Field`
-#    
-#            count: sequence of `int`
-#    
-#            N: `int`
-#    
-#            Array_func: 
-#                
-#            variables:
-#    
-#        :Returns:
-#    
-#            `None`
-#
-#            '''
-#            axes = f.get_data_axes()
-#            for key, c in f.constructs.filter_by_axis('or').items():
-#                c_axes = f.get_data_axes(key)
-#                if c_axes != axes:
-#                    # Skip metadata constructs which don't span
-#                    # exactly the same axes in the same order
-#                    continue
-#
-#                # Initialize the compressed data for the metadata
-#                # construct
-#                data = c.data
-#                compressed_data = _empty_compressed_data(data, N)                
-#                
-#                # Populate the compressed data for the metadata
-#                # construct
-#                start = 0            
-#                for last, d in zip(count, data.flatten(range(data.ndim-1))):
-#                    if not last:
-#                        continue
-#
-#                    end = start + last
-#                    compressed_data[start:end] = d[:last]
-#                    start += last
-#
-#                # Insert the compressed data into the metadata
-#                # construct
-#                y = Array_func(compressed_data, data, **variables)
-#                data._set_CompressedArray(y)
-#        #--- End: def
-#
-#        if inplace:
-#            f = self
-#        else:
-#            f = self.copy()
-#
-#        data = f.get_data(None)
-#        if data is None:
-#            if inplace:
-#                f = None
-#            return f
-#            
-#        current_compression_type = data.get_compression_type().replace(' ', '_')
-#        if current_compression_type and current_compression_type == 'ragged_'+method:
-#            # The field is already compressed by the correct method
-#            if inplace:
-#                f = None
-#            return f
-#
-#        if method == 'contiguous':
-#            if self.ndim != 2:
-#                raise ValueError(
-#                    "The data must have exactly 2 dimensions for DSG ragged contiguous compression. Got {}".format(
-#                        self.ndim))
-#        elif method == 'indexed':
-#            if self.ndim != 2:
-#                raise ValueError(
-#                    "The data must have exactly 2 dimensions for DSG ragged indexed compression. Got {}".format(
-#                        self.ndim))                            
-#        elif method == 'indexed_contiguous':
-#            if self.ndim != 3:
-#                raise ValueError(
-#                    "The data must have exactly 3 dimensions for DSG ragged indexed contiguous compression. Got {}".format(
-#                        self.ndim))
-#        #--- End: if
-#
-#        if method != 'gathered':
-#            # --------------------------------------------------------
-#            # DSG compression
-#            # --------------------------------------------------------
-#            flattened_data = data.flatten(range(data.ndim-1))
-#            
-#            count = []
-#            for d in flattened_data:
-#                last = d.size
-#                for i in d[::-1]:
-#                    if i is not cf_masked:
-#                        break
-#                    else:
-#                        last -= 1
-#                #--- End: for
-#    
-#                count.append(last)
-#    
-#            N = sum(count)
-#            compressed_field_data = _empty_compressed_data(data, N)
-#    
-#            start = 0            
-#            for last, d in zip(count, flattened_data):
-#                if not last:
-#                    continue
-#                
-#                end = start + last
-#                compressed_field_data[start:end] = d[:last]
-#                start += last
-#        #--- End: if
-#                                   
-#        if method == 'contiguous':
-#            # --------------------------------------------------------
-#            # Ragged contiguous
-#            # --------------------------------------------------------
-#            count_variable = Count(properties=count_properties,
-#                                   data=Data([n for n in count if n]))
-#
-#            x = _RaggedContiguousArray(compressed_field_data, data,
-#                                       count_variable)
-#
-#            _compress_metadata(f, count, N, _RaggedContiguousArray,
-#                               count_variable=count_variable)
-#            
-#        elif method == 'indexed':
-#            # --------------------------------------------------------
-#            # Ragged indexed
-#            # --------------------------------------------------------
-#            index_variable = Index(properties=index_properties,
-#                                   data=Data.empty(shape=(N,), dtype=int))
-#
-#            start = 0            
-#            for i, (last, d) in enumerate(zip(count, flattened_data)):
-#                if not last:
-#                    continue
-#
-#                end = start + last
-#                index_variable[start:end] = i
-#                start += last
-#            
-#            x = _RaggedIndexedArray(compressed_field_data, data,
-#                                    index_variable)
-#
-#            _compress_metadata(f, count, N, _RaggedIndexedArray,
-#                               index_variable=index_variable)
-#            
-#        elif method == 'indexed_contiguous':
-#            # --------------------------------------------------------
-#            # Ragged indexed contiguous
-#            # --------------------------------------------------------
-#            index = []
-#            shape1 = f.shape[1]
-#            for i in range(f.shape[0]):
-#                start = shape1 * i
-#                end = start + shape1
-#                index.extend([i] * sum(n > 0 for n in count[start:end]))
-#
-#            count_variable = Count(properties=count_properties,
-#                                   data=Data([n for n in count if n]))
-#            index_variable = Index(properties=index_properties,
-#                                   data=Data(index))
-#
-#            x = _RaggedIndexedContiguousArray(compressed_field_data,
-#                                              data, count_variable,
-#                                              index_variable)
-#                                   
-#            _compress_metadata(f, count, N,
-#                               _RaggedIndexedContiguousArray,
-#                               count_variable=count_variable,
-#                               index_variable=index_variable)
-#            
-#            axes = f.get_data_axes()[:-1]
-#            for key, c in f.constructs.filter_by_axis('or').items():
-#                c_axes = f.get_data_axes(key)
-#                if c_axes != axes:
-#                    # Skip metadata constructs which don't span
-#                    # exactly the same axes in the same order
-#                    continue
-#                
-#                # Initialize the compressed data for the metadata
-#                # construct
-#                data = c.data
-#                compressed_data = _empty_compressed_data(data, len(index))                
-#                
-#                # Populate the compressed data for the metadata
-#                # construct
-#                start = 0
-#                c_start = 0                
-#                for i, d in enumerate(data.flatten(range(data.ndim-1))):
-#                    c_start = shape1 * i
-#                    c_end = c_start + shape1
-#                    last = sum(n > 0 for n in count[c_start:c_end])
-#
-#                    end = start + last
-#                    compressed_data[start:end] = d[:last]
-#                    start += last
-#                    
-#                # Insert the compressed data into the metadata
-#                # construct
-#                y = _RaggedIndexedArray(compressed_data, data,
-#                                        index_variable=index_variable)                
-#                data._set_CompressedArray(y)
-#        #--- End: def
-#
-#        elif method == 'gathered':
-#            # --------------------------------------------------------
-#            # Gathered
-#            # --------------------------------------------------------
-#            raise ValueError("Compression by gathering is not yet available - sorry!")
-#            
-#        else:
-#            raise ValueError("Unknown compression method: {!r}".format(method))
-#        
-#        # Set the compressed field data
-##        f.data._create_partition_matrix_for_compressed_array(x)
-#        f.data._set_Array(x)
-#
-#        if inplace:
-#            f = None
-#        return f
-
-    
     def convolution_filter(self, weights, axis=None, mode=None,
                            cval=None, origin=0, update_bounds=True,
                            inplace=False, i=False, _bounds=True):
         '''Return the field convolved along the given axis with the specified
     filter.
+
+    The magnitude of the integral of the filter (i.e. the sum of the
+    weights defined by the *weights* parameter) affects the convolved
+    values. For example, weights of ``[0.2, 0.2 0.2, 0.2, 0.2]`` will
+    produce a 5-point (non-weighted) running mean; and weights of
+    ``[1, 1, 1, 1, 1]`` will produce a 5-point running sum. Note that
+    the weights returned by functions of the `scipy.signal.windows`
+    package do not necessarily sum to 1.
     
-    Can be used to create running means.
-    
-    .. seealso:: `derivative`, `cf.relative_vorticity`
+    .. seealso:: `collapse`, `derivative`, `cf.relative_vorticity`
 
     :Parameters:
     
@@ -11575,32 +11270,35 @@ may be accessed with the `nc_global_attributes`,
                 
         mode: `str`, optional
             The *mode* parameter determines how the input array is
-            extended when the filter overlaps a border. The default
-            value is ``'constant'`` or, if the dimension being
+            extended when the filter overlaps an array border. The
+            default value is ``'constant'`` or, if the dimension being
             convolved is cyclic (as ascertained by the `iscyclic`
             method), ``'wrap'``. The valid values and their behaviour
             is as follows:
     
-            ==============  ====================================  =================================
-            *mode*          Description                           Behaviour
-            ==============  ====================================  =================================
-            ``'reflect'``   The input is extended by reflecting   ``(d c b a | a b c d | d c b a)``
-                            about the edge                        
-                                                                  
-            ``'constant'``  The input is extended by filling      ``(k k k k | a b c d | k k k k)``
-                            all values beyond the edge with       
-                            the same constant value, defined      
-                            by the *cval* parameter.              
-                                                                  
-            ``'nearest'``   The input is extended by              ``(a a a a | a b c d | d d d d)``
-                            replicating the last point.           
-                                                                  
-            ``'mirror'``    The input is extended by reflecting     ``(d c b | a b c d | c b a)``
-                            about the center of the last point.   
-                                                                  
-            ``'wrap'``      The input is extended by wrapping     ``(a b c d | a b c d | a b c d)``
-                            around to the opposite edge.
-            ==============  ====================================  =================================
+            ==============  ==========================  =================================
+            *mode*          Description                 Behaviour
+            ==============  ==========================  =================================
+            ``'reflect'``   The input is extended by    ``(d c b a | a b c d | d c b a)``
+                            reflecting about the edge              
+                                                        
+            ``'constant'``  The input is extended by    ``(k k k k | a b c d | k k k k)``
+                            filling  ll values beyond
+                            the edge with the same 
+                            constant value, defined 
+                            by the *cval* parameter.     
+                                                        
+            ``'nearest'``   The input is extended by    ``(a a a a | a b c d | d d d d)``
+                            replicating the last point  
+                                                        
+            ``'mirror'``    The input is extended by    ``(d c b | a b c d | c b a)``
+                            reflecting about the 
+                            center of the last point.  
+                                                        
+            ``'wrap'``      The input is extended by    ``(a b c d | a b c d | a b c d)``
+                            wrapping around to the
+                            opposite edge.
+            ==============  ==========================  =================================
     
             The position of the window can be changed by using the
             *origin* parameter.
@@ -11642,27 +11340,122 @@ may be accessed with the `nc_global_attributes`,
         i: deprecated at version 3.0.0
             Use the *inplace* parameter instead.
 
+    **Examples:**
+
+    >>> f = cf.example_field(2)
+    >>> print(f)
+    Field: air_potential_temperature (ncvar%air_potential_temperature)
+    ------------------------------------------------------------------
+    Data            : air_potential_temperature(time(36), latitude(5), longitude(8)) K
+    Cell methods    : area: mean
+    Dimension coords: time(36) = [1959-12-16 12:00:00, ..., 1962-11-16 00:00:00]
+                    : latitude(5) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(8) = [22.5, ..., 337.5] degrees_east
+                    : air_pressure(1) = [850.0] hPa    
+    >>> print(f.array[:, 0, 0])
+    [210.7 305.3 249.4 288.9 231.1 200.  234.4 289.2 204.3 203.6 261.8 256.2
+     212.3 231.7 255.1 213.9 255.8 301.2 213.3 200.1 204.6 203.2 244.6 238.4
+     304.5 269.8 267.9 282.4 215.  288.7 217.3 307.1 299.3 215.9 290.2 239.9]    
+    >>> print(f.coordinate('T').bounds.dtarray[0])
+    [cftime.DatetimeGregorian(1959-12-01 00:00:00)
+     cftime.DatetimeGregorian(1960-01-01 00:00:00)]    
+    >>> print(f.coordinate('T').bounds.dtarray[2])
+    [cftime.DatetimeGregorian(1960-02-01 00:00:00)
+     cftime.DatetimeGregorian(1960-03-01 00:00:00)]
+
+    Create a 5-point (non-weighted) running mean:
+
+    >>> g = f.convolution_filter([0.2, 0.2, 0.2, 0.2, 0.2], 'T')
+    >>> print(g)
+    Field: air_potential_temperature (ncvar%air_potential_temperature)
+    ------------------------------------------------------------------
+    Data            : air_potential_temperature(time(36), latitude(5), longitude(8)) K
+    Cell methods    : area: mean
+    Dimension coords: time(36) = [1959-12-16 12:00:00, ..., 1962-11-16 00:00:00]
+                    : latitude(5) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(8) = [22.5, ..., 337.5] degrees_east
+                    : air_pressure(1) = [850.0] hPa       
+    >>> print(g.array[:, 0, 0])
+    [ -- -- 257.08 254.94 240.76 248.72 231.8 226.3 238.66 243.02 227.64 
+     233.12 243.42 233.84 233.76 251.54 247.86 236.86 235.0 224.48 213.16 
+     218.18 239.06 252.1 265.04 272.6 267.92 264.76 254.26 262.1 265.48
+     265.66 265.96 270.48 -- --]   
+    >>> print(g.coordinate('T').bounds.dtarray[0])          
+    [cftime.DatetimeGregorian(1959-12-01 00:00:00)
+     cftime.DatetimeGregorian(1960-03-01 00:00:00)]
+    >>> print(g.coordinate('T').bounds.dtarray[2])
+    [cftime.DatetimeGregorian(1959-12-01 00:00:00)
+     cftime.DatetimeGregorian(1960-05-01 00:00:00)]
+
+    Create a 5-point running sum:
+
+    >>> g = f.convolution_filter([1, 1, 1, 1, 1], 'T')
+    >>> print(g)
+    Field: air_potential_temperature (ncvar%air_potential_temperature)
+    ------------------------------------------------------------------
+    Data            : air_potential_temperature(time(36), latitude(5), longitude(8)) K
+    Cell methods    : area: mean
+    Dimension coords: time(36) = [1959-12-16 12:00:00, ..., 1962-11-16 00:00:00]
+                    : latitude(5) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(8) = [22.5, ..., 337.5] degrees_east
+                    : air_pressure(1) = [850.0] hPa       
+    >>> print(g.array[:, 0, 0])
+    [ -- -- 1285.4 1274.7 1203.8 1243.6 1159.0 1131.5 1193.3 1215.1
+     1138.2 1165.6 1217.1 1169.2 1168.8 1257.7 1239.3 1184.3 1175.0 
+     1122.4 1065.8 1090.9 1195.3 1260.5 1325.2 1363.0 1339.6 1323.8 
+     1271.3 1310.5 1327.4 1328.3 1329.8 1352.4 -- --]
+    >>> print(g.coordinate('T').bounds.dtarray[0])          
+    [cftime.DatetimeGregorian(1959-12-01 00:00:00)
+     cftime.DatetimeGregorian(1960-03-01 00:00:00)]
+    >>> print(g.coordinate('T').bounds.dtarray[2])
+    [cftime.DatetimeGregorian(1959-12-01 00:00:00)
+     cftime.DatetimeGregorian(1960-05-01 00:00:00)]
+
+    Calculate a convolution along the time axis with Gaussian weights,
+    using the "nearest" mode at the border of the edges of the time
+    dimension (note that the weights returned by
+    `scipy.signal.windows` functions do not necessarily sum to 1):
+
+    >>> import scipy.signal.windows
+    >>> gaussian_weights = scipy.signal.windows.gaussian(3, std=0.4)
+    >>> print(gaussian_weights)
+    [0.04393693 1.         0.04393693]
+    >>> g = f.convolution_filter(gaussian_weights, 'T', mode='nearest')
+    >>> print(g.array[:, 0, 0])
+    [233.37145775 325.51538316 275.50732596 310.01169661 252.58076685
+     220.4526426  255.89394793 308.47513278 225.95212089 224.07900476
+     282.00220208 277.03050023 233.73682991 252.23612278 274.67829762
+     236.34737939 278.43191451 321.81081556 235.32558483 218.46124456
+     222.31976533 222.93647058 264.00254989 262.52577025 326.82874967
+     294.94950081 292.16197475 303.61714525 240.09238279 307.69393641
+     243.47762505 329.79781991 322.27901629 241.80082237 310.22645435
+     263.19096851]
+    >>> print(g.coordinate('T').bounds.dtarray[0])
+    [cftime.DatetimeGregorian(1959-12-01 00:00:00)
+     cftime.DatetimeGregorian(1960-02-01 00:00:00)]
+    >>> print(g.coordinate('T').bounds.dtarray[1])
+    [cftime.DatetimeGregorian(1959-12-01 00:00:00)
+     cftime.DatetimeGregorian(1960-03-01 00:00:00)]
+
         '''
         if i:
             _DEPRECATION_ERROR_KWARGS(self, 'convolution_filter', i=True) # pragma: no cover
 
         if isinstance(weights, str):
-            _DEPRECATION_ERROR("A string-valued 'weights' parameter  has been deprecated at version 3.0.0 and is no longer available. Provide a sequence of numerical weights instead.") # pragma: no cover
+            _DEPRECATION_ERROR("A string-valued 'weights' parameter  has been deprecated at version 3.0.0 and is no longer available. Provide a sequence of numerical weights instead. scipy.signal.windows may be used to generate particular window functions.") # pragma: no cover
 
         if isinstance(weights[0], str):
-            _DEPRECATION_ERROR("A string-valued 'weights' parameter element has been deprecated at version 3.0.0 and is no longer available. Provide a sequence of numerical weights instead.") # pragma: no cover
+            _DEPRECATION_ERROR("A string-valued 'weights' parameter element has been deprecated at version 3.0.0 and is no longer available. Provide a sequence of numerical weights instead. scipy.signal.windows may be used to generate particular window functions.") # pragma: no cover
 
         try:
             get_window
             convolve1d
         except NameError:
             raise ImportError(
-                "Must install scipy to use the Field.convolution_filter method.")
+                "Must install scipy to use the convolution_filter method.")
                 
         # Retrieve the axis
         axis_key = self.domain_axis(axis, key=True)
-        if axis_key is None:
-            raise ValueError('Invalid axis specifier: {!r}'.format(axis))
 
         # Default mode to 'wrap' if the axis is cyclic
         if mode is None:
@@ -11675,13 +11468,13 @@ may be accessed with the `nc_global_attributes`,
         # Get the axis index
         axis_index = self.get_data_axes().index(axis_key)
 
-        # Section the data into sections up to a chunk in size
-        sections = self.data.section([axis_index], chunks=True)
-
         # Set cval to NaN if it is currently None, so that the edges
         # will be filled with missing data if the mode is 'constant'
         if cval is None:
             cval = numpy_nan
+
+        # Section the data into sections up to a chunk in size
+        sections = self.data.section([axis_index], chunks=True)
 
         # Filter each section replacing masked points with numpy
         # NaNs and then remasking after filtering.
@@ -11956,17 +11749,18 @@ may be accessed with the `nc_global_attributes`,
 
     **Construct keys**
 
-    The *key* parameter of the output `set_construct` commands is used
-    to reduce the number of commands needed to implement
-    cross-referencing between constructs (e.g. between a coordinate
-    reference construct and corodinate constructs). This is usually
-    not necessary when building field constructs, as the
-    `set_construct` returns sets and returns a unique construct key
+    The *key* parameter of the output `set_construct` commands is
+    utilised in order minimise the number of commands needed to
+    implement cross-referencing between constructs (e.g. between a
+    coordinate reference construct and coordinate constructs). This is
+    usually not necessary when building field constructs, as by
+    default the `set_construct` method returns a unique construct key
     for the construct being set.
 
     .. versionaddedd:: 3.0.4
 
-    .. seealso:: `set_construct`, `cf.Data.creation_commands`
+    .. seealso:: `set_construct`, `cf.Data.creation_commands`,
+                 `cf.example_field`
 
     :Parameters:
 

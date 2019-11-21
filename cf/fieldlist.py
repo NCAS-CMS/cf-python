@@ -10,32 +10,33 @@ from .functions import (_DEPRECATION_ERROR,
 class FieldList(list):
     '''An ordered sequence of fields.
 
-Each element of a field list is a field construct.
-
-A field list supports the python list-like operations (such as
-indexing and methods like `!append`).
-
->>> fl = cf.FieldList()
->>> len(fl)
-0
->>> f
-<CF Field: air_temperaturetime(12), latitude(73), longitude(96) K>
->>> fl = cf.FieldList(f)
->>> len(fl)
-1
->>> fl = cf.FieldList([f, f])
->>> len(fl)
-2
->>> fl = cf.FieldList(cf.FieldList([f] * 3))
->>> len(fl)
-3
->>> len(fl + fl)
-6
-
-These methods provide functionality similar to that of a
-:ref:`built-in list <python:tut-morelists>`. The main difference is
-that when a field element needs to be assesed for equality its
-`~cf.Field.equals` method is used, rather than the ``==`` operator.
+    Each element of a field list is a field construct.
+    
+    A field list supports the python list-like operations (such as
+    indexing and methods like `!append`).
+    
+    >>> fl = cf.FieldList()
+    >>> len(fl)
+    0
+    >>> f
+    <CF Field: air_temperaturetime(12), latitude(73), longitude(96) K>
+    >>> fl = cf.FieldList(f)
+    >>> len(fl)
+    1
+    >>> fl = cf.FieldList([f, f])
+    >>> len(fl)
+    2
+    >>> fl = cf.FieldList(cf.FieldList([f] * 3))
+    >>> len(fl)
+    3
+    >>> len(fl + fl)
+    6
+    
+    These methods provide functionality similar to that of a
+    :ref:`built-in list <python:tut-morelists>`. The main difference
+    is that when a field element needs to be assesed for equality its
+    `~cf.Field.equals` method is used, rather than the ``==``
+    operator.
 
     '''   
     def __init__(self, fields=None):

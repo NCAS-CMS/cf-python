@@ -224,55 +224,58 @@ Function  Description
                  minute=0, second=0): 
         '''**Initialization**
 
-:Parameters:
-
-    duration: data-like
-        The length of the time duration.
-
-        A data-like object is any object containing array-like or
-        scalar data which could be used to create a `cf.Data` object.
+    :Parameters:
     
-        *Parameter example:*
-          Instances, ``x``, of following types are all examples of
-          data-like objects (because ``cf.Data(x)`` creates a valid
-          `cf.Data` object), `int`, `float`, `str`, `tuple`, `list`,
-          `numpy.ndarray`, `cf.Data`, `cf.Coordinate`, `cf.Field`.
-
-    units: `str` or `cf.Units`, optional
-        The units of the time duration. Required if, and only if,
-        *duration* is not a `cf.Data` object which already contains
-        the units. Units must be one of calendar years, calendar
-        months, days, hours, minutes or seconds.
-
-        *Parameter example:*
-          ``units='calendar_months'``
-
-        *Parameter example:*
-          ``units='days'``
-
-        *Parameter example:*
-          ``units=cf.Units('calendar_years')``
-
-     month, day, hour, minute, second: `int` or `None`, optional         
-        The offset used when creating, with the `bounds` method, a
-        time interval containing a given date-time. Only the offset
-        elements for units smaller that of the time duration are used.
-
-        *Parameter example:*
-          >>> cf.TimeDuration(1, 'calendar_month').bounds(cf.dt('2000-1-8'))
-          (<CF Datetime: 2000-01-01 00:00:00>, <CF Datetime: 2000-02-01 00:00:00>)
-          >>> cf.TimeDuration(1, 'calendar_month', day=15).bounds(cf.dt('2000-1-8'))
-          (<CF Datetime: 1999-12-15 00:00:00>, <CF Datetime: 2000-01-15 00:00:00>)
-          >>> cf.TimeDuration(1, 'calendar_month', month=4, day=30).bounds(cf.dt('2000-1-8'))
-          (<CF Datetime: 1999-12-30 00:00:00>, <CF Datetime: 2000-01-30 00:00:00>)
-
-**Examples:**
-
->>> t = cf.TimeDuration(cf.Data(3 , 'calendar_years'))
->>> t = cf.TimeDuration(cf.Data(12 , 'hours'))
->>> t = cf.TimeDuration(18 , 'calendar_months')
->>> t = cf.TimeDuration(30 , 'days')
->>> t = cf.TimeDuration(1 , 'day', hour=6)
+        duration: data-like
+            The length of the time duration.
+    
+            A data-like object is any object containing array-like or
+            scalar data which could be used to create a `cf.Data`
+            object.
+        
+            *Parameter example:*
+              Instances, ``x``, of following types are all examples of
+              data-like objects (because ``cf.Data(x)`` creates a
+              valid `cf.Data` object), `int`, `float`, `str`, `tuple`,
+              `list`, `numpy.ndarray`, `cf.Data`, `cf.Coordinate`,
+              `cf.Field`.
+    
+        units: `str` or `cf.Units`, optional
+            The units of the time duration. Required if, and only if,
+            *duration* is not a `cf.Data` object which already
+            contains the units. Units must be one of calendar years,
+            calendar months, days, hours, minutes or seconds.
+    
+            *Parameter example:*
+              ``units='calendar_months'``
+    
+            *Parameter example:*
+              ``units='days'``
+    
+            *Parameter example:*
+              ``units=cf.Units('calendar_years')``
+    
+         month, day, hour, minute, second: `int` or `None`, optional         
+            The offset used when creating, with the `bounds` method, a
+            time interval containing a given date-time. Only the
+            offset elements for units smaller that of the time
+            duration are used.
+    
+            *Parameter example:*
+              >>> cf.TimeDuration(1, 'calendar_month').bounds(cf.dt('2000-1-8'))
+              (<CF Datetime: 2000-01-01 00:00:00>, <CF Datetime: 2000-02-01 00:00:00>)
+              >>> cf.TimeDuration(1, 'calendar_month', day=15).bounds(cf.dt('2000-1-8'))
+              (<CF Datetime: 1999-12-15 00:00:00>, <CF Datetime: 2000-01-15 00:00:00>)
+              >>> cf.TimeDuration(1, 'calendar_month', month=4, day=30).bounds(cf.dt('2000-1-8'))
+              (<CF Datetime: 1999-12-30 00:00:00>, <CF Datetime: 2000-01-30 00:00:00>)
+    
+    **Examples:**
+    
+    >>> t = cf.TimeDuration(cf.Data(3 , 'calendar_years'))
+    >>> t = cf.TimeDuration(cf.Data(12 , 'hours'))
+    >>> t = cf.TimeDuration(18 , 'calendar_months')
+    >>> t = cf.TimeDuration(30 , 'days')
+    >>> t = cf.TimeDuration(1 , 'day', hour=6)
 
         '''
         if units is not None:
@@ -315,7 +318,7 @@ Function  Description
         self._compound = False
 
         self._NotImplemented_RHS_Data_op = True
-    #--- End: def
+
 
     def __abs__(self):
         '''x.__abs__() <==> abs(x)
@@ -330,7 +333,7 @@ Function  Description
 
     def __array__(self, *dtype):
         '''TODO
-'''
+        '''
         return self.duration.__array__(*dtype)
 
 
@@ -396,7 +399,7 @@ Function  Description
     def __ge__(self, other):
         '''The rich comparison operator ``>=``
 
-    x__ge__(y) <==> x>=y
+    x.__ge__(y) <==> x>=y
 
         '''
 
@@ -409,7 +412,7 @@ Function  Description
     def __gt__(self, other):
         '''The rich comparison operator ``>``
 
-    x__gt__(y) <==> x>y
+    x.__gt__(y) <==> x>y
 
         '''
 
@@ -422,7 +425,7 @@ Function  Description
     def __le__(self, other):
         '''The rich comparison operator ``<=``
 
-    x__le__(y) <==> x<=y
+    x.__le__(y) <==> x<=y
 
         '''
         if isinstance(other, (self.__class__, int, float, Data)):
@@ -434,7 +437,7 @@ Function  Description
     def __lt__(self, other):
         '''The rich comparison operator ``<``
 
-    x__lt__(y) <==> x<y
+    x.__lt__(y) <==> x<y
 
         '''
         if isinstance(other, (self.__class__, int, float, Data)):
@@ -458,7 +461,7 @@ Function  Description
     def __ne__(self, other):
         '''The rich comparison operator ``!=``
         
-    x__ne__(y) <==> x!=y
+    x.__ne__(y) <==> x!=y
 
         '''
         if isinstance(other, (self.__class__, int, float, Data)):
@@ -1759,155 +1762,146 @@ def D(duration=1, month=1, day=1, hour=0, minute=0, second=0):
 def h(duration=1, month=1, day=1, hour=0, minute=0, second=0):
     '''Return a time duration of hours in a `cf.TimeDuration` object.
 
-``cf.h()`` is equivalent to ``cf.TimeDuration(1, 'hour')``.
-
-.. seealso:: `cf.Y`, `cf.M`, `cf.D`, `cf.m`, `cf.s`
-
-.. versionadded:: 1.0
-
-:Parameters:
-
-    duration: number, optional
-        The number of hours in the time duration.
-
-    year, month, day, hour, minute, second: `int`, optional
-        The default date-time elements for defining the start and end
-        of a time interval based on this time duration. See
-        `cf.TimeDuration` and `cf.TimeDuration.interval` for details.
-
-        *Parameter example:*
-          ``cf.h(minute=30)`` is equivalent to ``cf.TimeDuration(1,
-          'hour', minute=30)``.
-
-:Returns:
-
-    `cf.TimeDuration`
-        The new `cf.TimeDuration` object.
-
-**Examples:**
-
->>> cf.h()
-<CF TimeDuration: 1 hour (from Y-M-D h:00:00)>
-
->>> cf.h(3, minute=15)
-<CF TimeDuration: 3 hours (from Y-M-D h:15:00)>
-
->>> cf.h(0.5)
-<CF TimeDuration: 0.5 hours (from Y-M-D h:00:00)>
-
->>> cf.h(6.5, minute=15, second=45)
-<CF TimeDuration: 6.5 hours (from Y-M-D h:15:45)>
-
->>> cf.h(0)
-<CF TimeDuration: 0 hours (from Y-M-D h:00:00)>
+    ``cf.h()`` is equivalent to ``cf.TimeDuration(1, 'hour')``.
+    
+    .. seealso:: `cf.Y`, `cf.M`, `cf.D`, `cf.m`, `cf.s`
+    
+    .. versionadded:: 1.0
+    
+    :Parameters:
+    
+        duration: number, optional
+            The number of hours in the time duration.
+    
+        year, month, day, hour, minute, second: `int`, optional
+            The default date-time elements for defining the start and
+            end of a time interval based on this time duration. See
+            `cf.TimeDuration` and `cf.TimeDuration.interval` for
+            details.
+    
+            *Parameter example:*
+              ``cf.h(minute=30)`` is equivalent to
+              ``cf.TimeDuration(1, 'hour', minute=30)``.
+    
+    :Returns:
+    
+        `cf.TimeDuration`
+            The new `cf.TimeDuration` object.
+    
+    **Examples:**
+    
+    >>> cf.h()
+    <CF TimeDuration: PT1H (Y-M-D h:00:00)>
+    >>> cf.h(3, minute=15)
+    <CF TimeDuration: PT3H (Y-M-D h:15:00)>
+    >>> cf.h(0.5)
+    <CF TimeDuration: PT0.5H (Y-M-D h:00:00)>
+    >>> cf.h(6.5, minute=15, second=45)
+    <CF TimeDuration: PT6.5H (Y-M-D h:15:45)>
+    >>> cf.h(0)
+    <CF TimeDuration: PT0H (Y-M-D h:00:00)>
 
     '''
     return TimeDuration(duration, 'hours', month=month, day=day,
                         hour=hour, minute=minute, second=second)
-#--- End: def
+
 
 def m(duration=1, month=1, day=1, hour=0, minute=0, second=0):
     '''Return a time duration of minutes in a `cf.TimeDuration` object.
 
-``cf.m()`` is equivalent to ``cf.TimeDuration(1, 'minute')``.
-
-.. seealso:: `cf.Y`, `cf.M`, `cf.D`, `cf.h`, `cf.s`
-
-.. versionadded:: 1.0
-
-:Parameters:
-
-    duration: number, optional
-        The number of hours in the time duration.
-
-    month, day, hour, minute, second: `int`, optional
-        The default date-time elements for defining when a time
-        interval based on this time duration begins or ends. See
-        `cf.TimeDuration` and `cf.TimeDuration.interval` for details.
-
-        *Parameter example:*
-          ``cf.m(second=30)`` is equivalent to ``cf.TimeDuration(1,
-          'minute', second=30)``.
-
-:Returns:
-
-    `cf.TimeDuration`
-        The new `cf.TimeDuration` object.
-
-**Examples:**
-
->>> cf.m()
-<CF TimeDuration: 1 minute (from Y-M-D h:mm:00)>
-
->>> cf.m(30, second=15)
-<CF TimeDuration: 30 minutes (from Y-M-D h:mm:15)>
-
->>> cf.m(0.5)
-<CF TimeDuration: 0.5 minutes (from Y-M-D h:mm:00)>
-
->>> cf.m(2.5, second=45)
-<CF TimeDuration: 2.5 minutes (from Y-M-D h:mm:45)>
-
->>> cf.m(0)
-<CF TimeDuration: 0 minutes (from Y-M-D h:mm:00)>
+    ``cf.m()`` is equivalent to ``cf.TimeDuration(1, 'minute')``.
+    
+    .. seealso:: `cf.Y`, `cf.M`, `cf.D`, `cf.h`, `cf.s`
+    
+    .. versionadded:: 1.0
+    
+    :Parameters:
+    
+        duration: number, optional
+            The number of hours in the time duration.
+    
+        month, day, hour, minute, second: `int`, optional
+            The default date-time elements for defining when a time
+            interval based on this time duration begins or ends. See
+            `cf.TimeDuration` and `cf.TimeDuration.interval` for
+            details.
+    
+            *Parameter example:*
+              ``cf.m(second=30)`` is equivalent to
+              ``cf.TimeDuration(1, 'minute', second=30)``.
+    
+    :Returns:
+    
+        `cf.TimeDuration`
+            The new `cf.TimeDuration` object.
+    
+    **Examples:**
+    
+    >>> cf.m()
+    <CF TimeDuration: PT1M (Y-M-D h:m:00)>
+    >>> cf.m(30, second=15)
+    <CF TimeDuration: PT30M (Y-M-D h:m:15)>
+    >>> cf.m(0.5)
+    <CF TimeDuration: PT0.5M (Y-M-D h:m:00)>
+    >>> cf.m(2.5, second=45)
+    <CF TimeDuration: PT2.5M (Y-M-D h:m:45)>
+    >>> cf.m(0)
+    <CF TimeDuration: PT0M (Y-M-D h:m:00)>
 
     '''
     return TimeDuration(duration, 'minutes', month=month, day=day, 
                         hour=hour, minute=minute, second=second)
-#--- End: def
+
 
 def s(duration=1, month=1, day=1, hour=0, minute=0, second=0):
     '''Return a time duration of seconds in a `cf.TimeDuration` object.
 
-``cf.s()`` is equivalent to ``cf.TimeDuration(1, 'second')``.
-
-.. seealso:: `cf.Y`, `cf.M`, `cf.D`, `cf.h`, `cf.m`
-
-.. versionadded:: 1.0
-
-:Parameters:
-
-    duration: number, optional
-        The number of hours in the time duration.
-
-    month, day, hour, minute, second: `int`, optional
-        The default date-time elements for defining the start and end
-        of a time interval based on this time duration. See
-        `cf.TimeDuration` and `cf.TimeDuration.interval` for details.
-
-        *Parameter example:*
-          ``cf.s(hour=6)`` is equivalent to ``cf.TimeDuration(1,
-          'seconds', hour=6)``.
-
-:Returns:
-
-    `cf.TimeDuration`
-        The new `cf.TimeDuration` object.
-
-**Examples:**
-
->>> cf.s()   
-<CF TimeDuration: 1 second (from Y-M-D h:m:s)>
-
->>> cf.s().interval(1999, 12, 1)
-(<CF Datetime: 1999-12-01 00:00:00>, datetime.datetime(1999, 12, 1, 0, 0, 1))
-
->>> cf.s(30)
-<CF TimeDuration: 30 seconds (from Y-M-D h:m:s)>
-
->>> cf.s(0.5)
-<CF TimeDuration: 0.5 seconds (from  Y-M-D h:m:s)>
-
->>> cf.s(12.25)
-<CF TimeDuration: 12.25 seconds (from Y-M-D h:m:s)>
-
->>> cf.s(2.5, year=1999, hour=12)
-<CF TimeDuration: 2.5 seconds (from 1999-01-01 12:00:00)>
-
->>> cf.s(0)
-<CF TimeDuration: 0 seconds (from Y-01-01 00:00:00)>
+    ``cf.s()`` is equivalent to ``cf.TimeDuration(1, 'second')``.
+    
+    .. seealso:: `cf.Y`, `cf.M`, `cf.D`, `cf.h`, `cf.m`
+    
+    .. versionadded:: 1.0
+    
+    :Parameters:
+    
+        duration: number, optional
+            The number of hours in the time duration.
+    
+        month, day, hour, minute, second: `int`, optional
+            The default date-time elements for defining the start and
+            end of a time interval based on this time duration. See
+            `cf.TimeDuration` and `cf.TimeDuration.interval` for
+            details.
+    
+            *Parameter example:*
+              ``cf.s(hour=6)`` is equivalent to ``cf.TimeDuration(1,
+              'seconds', hour=6)``.
+    
+    :Returns:
+    
+        `cf.TimeDuration`
+            The new `cf.TimeDuration` object.
+    
+    **Examples:**
+    
+    >>> cf.s()   
+    <CF TimeDuration: PT1S (Y-M-D h:m:s)>
+    >>> cf.s().interval(cf.dt(1999, 12, 1))
+    (cftime.DatetimeGregorian(1999-12-01 00:00:00),
+     cftime.DatetimeGregorian(1999-12-01 00:00:01))
+    >>> cf.s(30)
+    <CF TimeDuration: PT30S (Y-M-D h:m:s)>
+    >>> cf.s(0.5)
+    <CF TimeDuration: PT0.5S (Y-M-D h:m:s)>
+    >>> cf.s(12.25)
+    <CF TimeDuration: PT12.25S (Y-M-D h:m:s)>
+    >>> cf.s(2.5, year=1999, hour=12)
+    cf.s(30, month=2, hour=12)
+    <CF TimeDuration: PT30S (Y-M-D h:m:s)>
+    >>> cf.s(0)
+    <CF TimeDuration: PT0S (Y-M-D h:m:s)>
 
     '''
     return TimeDuration(duration, 'seconds', month=month, day=day, 
                         hour=hour, minute=minute, second=second)
-#--- End: def
+

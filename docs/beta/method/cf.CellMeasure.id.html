@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>&lt;no title&gt; &#8212; Documentation</title>
+    <title>cf.CellMeasure.id &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
@@ -20,7 +20,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.CellMeasure.cos" href="cf.CellMeasure.cos.html" />
-    <link rel="prev" title="&lt;no title&gt;" href="cf.CellMeasure.Z.html" />
+    <link rel="prev" title="cf.CellMeasure.Z" href="cf.CellMeasure.Z.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -33,13 +33,13 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
 <h3><b><a href="../index.html">cf 3.0.6</a></b></h3>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
@@ -52,7 +52,7 @@
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
   <li><a href="../classes/cf.CellMeasure.html">cf.CellMeasure</a><ul>
-      <li>Previous: <a href="cf.CellMeasure.Z.html" title="previous chapter">&lt;no title&gt;</a></li>
+      <li>Previous: <a href="cf.CellMeasure.Z.html" title="previous chapter">cf.CellMeasure.Z</a></li>
       <li>Next: <a href="cf.CellMeasure.cos.html" title="next chapter">cf.CellMeasure.cos</a></li>
   </ul></li>
   </ul></li>
@@ -87,7 +87,27 @@
 
           <div class="body" role="main">
             
-  
+  <div class="section" id="cf-cellmeasure-id">
+<h1>cf.CellMeasure.id<a class="headerlink" href="#cf-cellmeasure-id" title="Permalink to this headline">¶</a></h1>
+<dl class="attribute">
+<dt id="cf.CellMeasure.id">
+<code class="descclassname">CellMeasure.</code><code class="descname">id</code><a class="headerlink" href="#cf.CellMeasure.id" title="Permalink to this definition">¶</a></dt>
+<dd><p>A canonical identity.</p>
+<p>The <a class="reference internal" href="#cf.CellMeasure.id" title="cf.CellMeasure.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code></a> attribute can be used to unambiguously identify
+constructs in the absence of a <a class="reference internal" href="../attribute/cf.CellMeasure.standard_name.html#cf.CellMeasure.standard_name" title="cf.CellMeasure.standard_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_name</span></code></a> property.</p>
+<p>Note that <a class="reference internal" href="#cf.CellMeasure.id" title="cf.CellMeasure.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code></a> is not a CF property and so is not read from, or
+written to, datasets.</p>
+<p><strong>Examples:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="s1">&#39;um01002&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">id</span>
+<span class="go">&#39;um01002&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">f</span><span class="o">.</span><span class="n">id</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
 
           </div>
           
@@ -100,7 +120,7 @@
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/method/cf.CellMeasure.id.rst.txt"

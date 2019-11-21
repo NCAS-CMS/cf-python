@@ -177,7 +177,7 @@ class DimensionCoordinate(abstract.Coordinate,
 #        cells.squeeze(1, inplace=True)
 #        
 #        return cells
-    #--- End: def
+
            
     @property
     def decreasing(self): 
@@ -283,7 +283,7 @@ class DimensionCoordinate(abstract.Coordinate,
 #        out = data[..., i]
 #        out.squeeze(1, inplace=True)
 #        return out
-#    #--- End: def
+
 #
 #    @property
 #    def upper_bounds(self):
@@ -313,7 +313,6 @@ class DimensionCoordinate(abstract.Coordinate,
 #            i = 0
 #
 #        return data[..., i].squeeze(1)
-#    #--- End: def
 
 
     def direction(self):

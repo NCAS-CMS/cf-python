@@ -1910,6 +1910,14 @@ functions for creating weights for filtering:
     [0.07167 0.12044 0.09161 0.13659 0.09663 0.1235  0.04248 0.02583]
     [--      --      --      --      --      --      --      --     ]]
 
+The magnitude of the integral of the filter (i.e. the sum of the
+weights defined by the *weights* parameter) affects the convolved
+values. For example, weights of ``[0.2, 0.2 0.2, 0.2, 0.2]`` will
+produce a 5-point (non-weighted) running mean; and weights of ``[1, 1,
+1, 1, 1]`` will produce a 5-point running sum. Note that the weights
+returned by functions of the `scipy.signal.windows` package do not
+necessarily sum to 1.
+
 Derivatives
 ^^^^^^^^^^^
 

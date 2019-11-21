@@ -8194,6 +8194,13 @@ filter window extends beyond the array.</em></span><a class="headerlink" href="#
 </pre></div>
 </div>
 </div>
+<p>The magnitude of the integral of the filter (i.e. the sum of the
+weights defined by the <em>weights</em> parameter) affects the convolved
+values. For example, weights of <code class="docutils literal notranslate"><span class="pre">[0.2,</span> <span class="pre">0.2</span> <span class="pre">0.2,</span> <span class="pre">0.2,</span> <span class="pre">0.2]</span></code> will
+produce a 5-point (non-weighted) running mean; and weights of <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">1,</span>
+<span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">1]</span></code> will produce a 5-point running sum. Note that the weights
+returned by functions of the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.3.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package do not
+necessarily sum to 1.</p>
 </div>
 <div class="section" id="derivatives">
 <h3><a class="toc-backref" href="#id445">Derivatives</a><a class="headerlink" href="#derivatives" title="Permalink to this headline">¶</a></h3>
@@ -8304,7 +8311,7 @@ format can not reliably be detected automatically.</td></tr>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="_sources/tutorial.rst.txt"

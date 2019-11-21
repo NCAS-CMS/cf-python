@@ -5,7 +5,6 @@ import tempfile
 import unittest
 
 import numpy
-import netCDF4
 
 import cf
 

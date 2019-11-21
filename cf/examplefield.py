@@ -19,6 +19,8 @@ def example_field(n):
     
     .. versionadded:: 3.0.5
 
+    .. seealso:: `cf.Field.creation_commands`
+
     :Parameters:
 
         n: `int`
@@ -101,7 +103,7 @@ def example_field(n):
                     : longitude(8) = [22.5, ..., 337.5] degrees_east
                     : air_pressure(1) = [850.0] hPa
 
-    >>> print(cf.example_field(3))          
+    >>> f = cf.example_field(3)
     >>> print(f)     
     Field: precipitation_flux (ncvar%p)
     -----------------------------------
@@ -370,12 +372,12 @@ def example_field(n):
         f.set_construct(c)
 
     elif n == 3:
+                                          
         f = Field()
         
         f.set_properties({'Conventions': 'CF-1.7', 'featureType': 'timeSeries', '_FillValue': -999.9, 'standard_name': 'precipitation_flux', 'units': 'kg m-2 day-1'})
         f.nc_set_variable('p')
-        f.nc_set_global_attribute('Conventions', None)
-        f.nc_set_global_attribute('featureType', None)
+        f.nc_set_global_attributes({'Conventions': None, 'featureType': None})
         
         # domain_axis
         c = DomainAxis(size=4)
@@ -388,19 +390,23 @@ def example_field(n):
         f.set_construct(c, key='domainaxis1')
         
         # field data
-        data = Data([[3.98, 0.0, 0.0, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [0.0, 0.0, 0.0, 3.4, 0.0, 0.0, 4.61, 9.969209968386869e+36, 9.969209968386869e+36], [0.86, 0.8, 0.75, 0.0, 4.56, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [0.0, 0.09, 0.0, 0.91, 2.96, 1.14, 3.86, 0.0, 0.0]], units='kg m-2 day-1', dtype='f8')
         data_mask = Data([[False, False, False, True, True, True, True, True, True], [False, False, False, False, False, False, False, True, True], [False, False, False, False, False, True, True, True, True], [False, False, False, False, False, False, False, False, False]], dtype='b1')
-        data.where(data_mask, masked, inplace=True)
+        data = Data([[3.98, 0.0, 0.0, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [0.0, 0.0, 0.0, 3.4, 0.0, 0.0, 4.61, 9.969209968386869e+36, 9.969209968386869e+36], [0.86, 0.8, 0.75, 0.0, 4.56, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [0.0, 0.09, 0.0, 0.91, 2.96, 1.14, 3.86, 0.0, 0.0]], units='kg m-2 day-1', dtype='f8', mask=data_mask)
         f.set_data(data, axes=('domainaxis0', 'domainaxis1'))
         
         # auxiliary_coordinate
         c = AuxiliaryCoordinate()
         c.set_properties({'standard_name': 'time', 'long_name': 'time of measurement', 'units': 'days since 1970-01-01 00:00:00'})
         c.nc_set_variable('time')
-        data = Data([[-3.0, -2.0, -1.0, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 9.969209968386869e+36, 9.969209968386869e+36], [0.5, 1.5, 2.5, 3.5, 4.5, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [-2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0]], units='days since 1970-01-01 00:00:00', dtype='f8')
         data_mask = Data([[False, False, False, True, True, True, True, True, True], [False, False, False, False, False, False, False, True, True], [False, False, False, False, False, True, True, True, True], [False, False, False, False, False, False, False, False, False]], dtype='b1')
-        data.where(data_mask, masked, inplace=True)
+        data = Data([[-3.0, -2.0, -1.0, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 9.969209968386869e+36, 9.969209968386869e+36], [0.5, 1.5, 2.5, 3.5, 4.5, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36, 9.969209968386869e+36], [-2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0]], units='days since 1970-01-01 00:00:00', dtype='f8', mask=data_mask)
         c.set_data(data)
+        b = Bounds()
+        b.set_properties({'units': 'days since 1970-01-01 00:00:00'})
+        data_mask = Data([[[False, False], [False, False], [False, False], [True, True], [True, True], [True, True], [True, True], [True, True], [True, True]], [[False, False], [False, False], [False, False], [False, False], [False, False], [False, False], [False, False], [True, True], [True, True]], [[False, False], [False, False], [False, False], [False, False], [False, False], [True, True], [True, True], [True, True], [True, True]], [[False, False], [False, False], [False, False], [False, False], [False, False], [False, False], [False, False], [False, False], [False, False]]], dtype='b1')
+        data = Data([[[-3.5, -2.5], [-2.5, -1.5], [-1.5, -0.5], [9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36]], [[0.5, 1.5], [1.5, 2.5], [2.5, 3.5], [3.5, 4.5], [4.5, 5.5], [5.5, 6.5], [6.5, 7.5], [9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36]], [[0.0, 1.0], [1.0, 2.0], [2.0, 3.0], [3.0, 4.0], [4.0, 5.0], [9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36], [9.969209968386869e+36, 9.969209968386869e+36]], [[-2.5, -1.5], [-1.5, -0.5], [-0.5, 0.5], [0.5, 1.5], [1.5, 2.5], [2.5, 3.5], [3.5, 4.5], [4.5, 5.5], [5.5, 6.5]]], units='days since 1970-01-01 00:00:00', dtype='f8', mask=data_mask)
+        b.set_data(data)
+        c.set_bounds(b)
         f.set_construct(c, axes=('domainaxis0', 'domainaxis1'), key='auxiliarycoordinate0', copy=False)
         
         # auxiliary_coordinate

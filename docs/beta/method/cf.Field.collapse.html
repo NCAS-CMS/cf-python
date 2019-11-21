@@ -374,7 +374,8 @@ deviations with two separate collapse calls:</p>
 </div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="cf.Field.bin.html#cf.Field.bin" title="cf.Field.bin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bin</span></code></a>, <a class="reference internal" href="cf.Field.cell_area.html#cf.Field.cell_area" title="cf.Field.cell_area"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cell_area</span></code></a>, <a class="reference internal" href="cf.Field.weights.html#cf.Field.weights" title="cf.Field.weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">weights</span></code></a>, <a class="reference internal" href="cf.Field.radius.html#cf.Field.radius" title="cf.Field.radius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">radius</span></code></a></p>
+<p class="last"><a class="reference internal" href="cf.Field.bin.html#cf.Field.bin" title="cf.Field.bin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bin</span></code></a>, <a class="reference internal" href="cf.Field.cell_area.html#cf.Field.cell_area" title="cf.Field.cell_area"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cell_area</span></code></a>, <a class="reference internal" href="cf.Field.convolution_filter.html#cf.Field.convolution_filter" title="cf.Field.convolution_filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convolution_filter</span></code></a>, <a class="reference internal" href="cf.Field.weights.html#cf.Field.weights" title="cf.Field.weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">weights</span></code></a>,
+<a class="reference internal" href="cf.Field.radius.html#cf.Field.radius" title="cf.Field.radius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">radius</span></code></a></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -733,10 +734,12 @@ input coordinates.</td>
 </div></blockquote>
 </dd>
 <dt>group: optional</dt>
-<dd><p class="first">Independently collapse groups of axis elements. Upon
-output, the results of the collapses are concatenated so
-that the output axis has a size equal to the number of
-groups. The <em>group</em> parameter defines how the elements are
+<dd><p class="first">A grouped collapse is one for which an axis is not
+collapsed completely to size 1. Instead the collapse axis
+is partitioned into groups and each group is collapsed to
+size 1. The resulting axis will generally have more than
+one element.</p>
+<p>The <em>group</em> parameter defines how the elements are
 partitioned into groups, and may be one of:</p>
 <blockquote>
 <div><ul>
@@ -1572,7 +1575,7 @@ parameter is True then a <a class="reference external" href="https://docs.scipy.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/method/cf.Field.collapse.rst.txt"

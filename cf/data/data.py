@@ -4000,7 +4000,8 @@ place.
             return NotImplemented
 
         elif not isinstance(other, self.__class__):
-            if isinstance(other, cftime.datetime) and other.calendar == '' and self.Units.isreftime:
+            if (isinstance(other, cftime.datetime) and
+                other.calendar == '' and self.Units.isreftime):
                 other = cf_dt(other, #.timetuple()[0:6], microsecond=other.microsecond,
                               calendar=getattr(self.Units, 'calendar', 'standard'))
                 

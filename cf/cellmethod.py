@@ -607,14 +607,16 @@ class CellMethod(cfdm.CellMethod):
     Deprecated at version 3.0.0. Use 'str(cell_method)' instead.
 
         '''
-        _DEPRECATED_ERROR_METHOD(self, 'write', "Use 'str(cell_method)' instead.") # Pragma: no cover
+        _DEPRECATED_ERROR_METHOD(
+            self, 'write', "Use 'str(cell_method)' instead.") # Pragma: no cover
 
 
     def remove_axes(self, axes):
         '''Deprecated at version 3.0.0. Use method 'del_axes' instead."
 
         '''
-        _DEPRECATION_ERROR_METHOD(self, 'remove_axes', "Use method 'del_axes' instead.") # pragma: no cover
+        _DEPRECATION_ERROR_METHOD(
+            self, 'remove_axes', "Use method 'del_axes' instead.") # pragma: no cover
 
         
 #--- End: class

@@ -54,8 +54,8 @@ _datetime_object = {
 class Datetime(cftime.datetime):
     '''A date-time object which supports CF calendars.
 
-Deprecated at version 3.0.0 and is no longer available. Use functions
-'cf.dt' to create date-time objects instead.
+    Deprecated at version 3.0.0 and is no longer available. Use
+    functions 'cf.dt' to create date-time objects instead.
 
     '''
     def __init__(self, year, month=1, day=1, hour=0, minute=0, second=0,

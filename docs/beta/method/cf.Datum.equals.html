@@ -95,15 +95,16 @@
 <dd><p>Whether two instances are the same.</p>
 <p>Equality is strict by default. This means that:</p>
 <ul class="simple">
-<li>the named parameters must be the same, with the same values and data
-types, and vector-valued parameters must also have same the size and
-be element-wise equal (see the <em>ignore_data_type</em> parameter).</li>
+<li>the named parameters must be the same, with the same values and
+data types, and vector-valued parameters must also have same the
+size and be element-wise equal (see the <em>ignore_data_type</em>
+parameter).</li>
 </ul>
 <p>Two real numbers <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> are considered equal if
 <code class="docutils literal notranslate"><span class="pre">|x-y|&lt;=atol+rtol|y|</span></code>, where <code class="docutils literal notranslate"><span class="pre">atol</span></code> (the tolerance on absolute
-differences) and <code class="docutils literal notranslate"><span class="pre">rtol</span></code> (the tolerance on relative differences) are
-positive, typically very small numbers. See the <em>atol</em> and <em>rtol</em>
-parameters.</p>
+differences) and <code class="docutils literal notranslate"><span class="pre">rtol</span></code> (the tolerance on relative differences)
+are positive, typically very small numbers. See the <em>atol</em> and
+<em>rtol</em> parameters.</p>
 <p>Any type of object may be tested but, in general, equality is only
 possible with another object of the same type, or a subclass of
 one. See the <em>ignore_type</em> parameter.</p>
@@ -117,27 +118,29 @@ one. See the <em>ignore_type</em> parameter.</p>
 </dd>
 <dt>atol: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>, optional</dt>
 <dd><p class="first last">The tolerance on absolute differences between real
-numbers. The default value is set by the <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.ATOL</span></code> function.</p>
+numbers. The default value is set by the <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.ATOL</span></code>
+function.</p>
 </dd>
 <dt>rtol: <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></a>, optional</dt>
 <dd><p class="first last">The tolerance on relative differences between real
-numbers. The default value is set by the <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.RTOL</span></code> function.</p>
+numbers. The default value is set by the <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.RTOL</span></code>
+function.</p>
 </dd>
 <dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If True then print information about differences that lead to
-inequality.</p>
+<dd><p class="first last">If True then print information about differences that lead
+to inequality.</p>
 </dd>
 <dt>ignore_data_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then ignore the data types in all numerical
-comparisons. By default different numerical data types imply
-inequality, regardless of whether the elements are within the
-tolerance for equality.</p>
+comparisons. By default different numerical data types
+imply inequality, regardless of whether the elements are
+within the tolerance for equality.</p>
 </dd>
 <dt>ignore_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">Any type of object may be tested but, in general, equality is
-only possible with another object of the same type, or a
-subclass of one. If <em>ignore_type</em> is True then equality is
-possible for any object with a compatible API.</p>
+<dd><p class="first last">Any type of object may be tested but, in general, equality
+is only possible with another object of the same type, or
+a subclass of one. If <em>ignore_type</em> is True then equality
+is possible for any object with a compatible API.</p>
 </dd>
 <dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If True then print a verbose highlighting where the two
@@ -180,7 +183,7 @@ instances differ.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/method/cf.Datum.equals.rst.txt"

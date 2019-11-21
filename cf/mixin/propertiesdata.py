@@ -1,5 +1,4 @@
 from functools import partial as functools_partial
-#from netCDF4   import default_fillvals
 
 from numpy import array       as numpy_array
 from numpy import result_type as numpy_result_type
@@ -38,49 +37,7 @@ class PropertiesData(Properties):
     _special_properties = ('units',
                            'calendar')
 
-#    def __init__(self, properties=None, data=None, source=None,
-#                 copy=True, _use_data=True):
-#        '''**Initialization**
-#
-#    :Parameters:
-#    
-#        properties: `dict`, optional
-#            Set descriptive properties. The dictionary keys are
-#            property names, with corresponding values. Ignored if the
-#            *source* parameter is set.
-#    
-#            *Parameter example:*
-#              ``properties={'standard_name': 'altitude'}``
-#            
-#            Properties may also be set after initialisation with the
-#            `set_properties` and `set_property` methods.
-#    
-#        data: `Data`, optional
-#            Set the data. Ignored if the *source* parameter is set.
-#            
-#            The data also may be set after initialisation with the
-#            `set_data` method.
-#            
-#        source: optional
-#            Initialize the properties and data from those of *source*.
-#    
-#        copy: `bool`, optional
-#
-#            If False then do not deep copy input parameters prior to
-#            initialization. By default arguments are deep copied.
-#
-#        '''
-#        if _use_data and data is not None and properties:
-#            if not data.Units:
-#                units = properties.get('units')
-#                if units is not None:
-#                    data = data.override_units(Units(units, properties.get('calendar')))
-#        #--- End: if
-#        
-#        super().__init__(properties=properties, data=data, source=source,
-#                         copy=copy, _use_data=_use_data)
-
-        
+    
     def __array__(self, *dtype):
         '''Returns a numpy array representation of the data.
 
@@ -3188,7 +3145,8 @@ TODO
         #--- End: def
 
         if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'convert_reference_time', i=True) # pragma: no cover
+            _DEPRECATION_ERROR_KWARGS(
+                self, 'convert_reference_time', i=True) # pragma: no cover
             
         if not self.Units.isreftime:
             raise ValueError(

@@ -110,11 +110,12 @@
 <dt>month, day, hour, minute, second: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt>
 <dd><p class="first">The default date-time elements for defining when a time
 interval based on this time duration begins or ends. See
-<a class="reference internal" href="../classes/cf.TimeDuration.html#cf.TimeDuration" title="cf.TimeDuration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.TimeDuration</span></code></a> and <a class="reference internal" href="../method/cf.TimeDuration.interval.html#cf.TimeDuration.interval" title="cf.TimeDuration.interval"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.TimeDuration.interval</span></code></a> for details.</p>
+<a class="reference internal" href="../classes/cf.TimeDuration.html#cf.TimeDuration" title="cf.TimeDuration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.TimeDuration</span></code></a> and <a class="reference internal" href="../method/cf.TimeDuration.interval.html#cf.TimeDuration.interval" title="cf.TimeDuration.interval"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.TimeDuration.interval</span></code></a> for
+details.</p>
 <dl class="last docutils">
 <dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">cf.m(second=30)</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">cf.TimeDuration(1,</span>
-<span class="pre">'minute',</span> <span class="pre">second=30)</span></code>.</p>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">cf.m(second=30)</span></code> is equivalent to
+<code class="docutils literal notranslate"><span class="pre">cf.TimeDuration(1,</span> <span class="pre">'minute',</span> <span class="pre">second=30)</span></code>.</p>
 </dd>
 </dl>
 </dd>
@@ -132,23 +133,15 @@ interval based on this time duration begins or ends. See
 </table>
 <p><strong>Examples:</strong></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">m</span><span class="p">()</span>
-<span class="go">&lt;CF TimeDuration: 1 minute (from Y-M-D h:mm:00)&gt;</span>
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">m</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="n">second</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
-<span class="go">&lt;CF TimeDuration: 30 minutes (from Y-M-D h:mm:15)&gt;</span>
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">m</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
-<span class="go">&lt;CF TimeDuration: 0.5 minutes (from Y-M-D h:mm:00)&gt;</span>
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">m</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="n">second</span><span class="o">=</span><span class="mi">45</span><span class="p">)</span>
-<span class="go">&lt;CF TimeDuration: 2.5 minutes (from Y-M-D h:mm:45)&gt;</span>
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">m</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-<span class="go">&lt;CF TimeDuration: 0 minutes (from Y-M-D h:mm:00)&gt;</span>
+<span class="go">&lt;CF TimeDuration: PT1M (Y-M-D h:m:00)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">m</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="n">second</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+<span class="go">&lt;CF TimeDuration: PT30M (Y-M-D h:m:15)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">m</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="go">&lt;CF TimeDuration: PT0.5M (Y-M-D h:m:00)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">m</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="n">second</span><span class="o">=</span><span class="mi">45</span><span class="p">)</span>
+<span class="go">&lt;CF TimeDuration: PT2.5M (Y-M-D h:m:45)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">m</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">&lt;CF TimeDuration: PT0M (Y-M-D h:m:00)&gt;</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -167,7 +160,7 @@ interval based on this time duration begins or ends. See
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/function/cf.m.rst.txt"

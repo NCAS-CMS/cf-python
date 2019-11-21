@@ -1271,436 +1271,444 @@ def contains(value, units=None, attr=None):
 def year(value):
     '''A `Query` object for a "year" condition.
 
-.. seealso:: `cf.year`, `cf.month`, `cf.day`, `cf.hour`, `cf.minute`,
-             `cf.second`, cf.seasons`, `cf.djf`, `cf.mam`, `cf.jja`,
-             `cf.son`
-
-:Parameter:
-
-    value:
-        The query condition's value.
-
-:Returns:
-
-    `Query`
-        The query object.
-
-**Examples:**
-
->>> d = cf.dt(2002, 6, 16)
->>> d == cf.year(2002)
-True
->>> d == cf.year(cf.le(2003))
-True
->>> d == cf.year(2001)
-False
->>> d == cf.year(cf.wi(2003, 2006))
-False
+    .. seealso:: `cf.year`, `cf.month`, `cf.day`, `cf.hour`,
+                 `cf.minute`, `cf.second`, `cf.seasons`, `cf.djf`,
+                 `cf.mam`, `cf.jja`, `cf.son`
+    
+    :Parameter:
+    
+        value:
+            The query condition's value.
+    
+    :Returns:
+    
+        `Query`
+            The query object.
+    
+    **Examples:**
+    
+    >>> d = cf.dt(2002, 6, 16)
+    >>> d == cf.year(2002)
+    True
+    >>> d == cf.year(cf.le(2003))
+    True
+    >>> d == cf.year(2001)
+    False
+    >>> d == cf.year(cf.wi(2003, 2006))
+    False
 
     '''
     if isinstance(value, Query):
         return value.addattr('year')
     else:
         return Query('eq', value, attr='year')
-#--- End: def
+
 
 def month(value):
     '''A `Query` object for a "month of the year" condition.
 
-.. seealso:: `cf.year`, `cf.day`, `cf.hour`, `cf.minute`, `cf.second`,
-             cf.seasons`, `cf.djf`, `cf.mam`, `cf.jja`, `cf.son`
-
-:Parameter:
-
-    value:
-        The query condition's value.
-
-:Returns:
-
-    `Query`
-        The query object.
-
-**Examples:**
-
->>> d = cf.dt(2002, 6, 16)
->>> d == cf.month(6)
-True
->>> d == cf.month(cf.le(7))
-True
->>> d == cf.month(7)
-False
->>> d == cf.month(cf.wi(1, 6))
-True
+    .. seealso:: `cf.year`, `cf.day`, `cf.hour`, `cf.minute`,
+                 `cf.second`, `cf.seasons`, `cf.djf`, `cf.mam`,
+                 `cf.jja`, `cf.son`
+    
+    :Parameter:
+    
+        value:
+            The query condition's value.
+    
+    :Returns:
+    
+        `Query`
+            The query object.
+    
+    **Examples:**
+    
+    >>> d = cf.dt(2002, 6, 16)
+    >>> d == cf.month(6)
+    True
+    >>> d == cf.month(cf.le(7))
+    True
+    >>> d == cf.month(7)
+    False
+    >>> d == cf.month(cf.wi(1, 6))
+    True
 
     '''
     if isinstance(value, Query):
         return value.addattr('month')
     else:
         return Query('eq', value, attr='month')
-#--- End: def
+
 
 def day(value):
     '''A `Query` object for a "day of the month" condition.
 
-.. seealso:: `cf.year`, `cf.month`, `cf.hour`, `cf.minute`,
-             `cf.second`, cf.seasons`, `cf.djf`, `cf.mam`, `cf.jja`,
-             `cf.son`
-
-:Parameter:
-
-    value:
-        The query condition's value.
-
-:Returns:
-
-    `Query`
-        The query object.
-
-**Examples:**
-
->>> d = cf.dt(2002, 6, 16)
->>> d == cf.day(16)
-True
->>> d == cf.day(cf.le(19))
-True
->>> d == cf.day(7)
-False
->>> d == cf.day(cf.wi(1, 21))
-True
+    .. seealso:: `cf.year`, `cf.month`, `cf.hour`, `cf.minute`,
+                 `cf.second`, `cf.seasons`, `cf.djf`, `cf.mam`,
+                 `cf.jja`, `cf.son`
+    
+    :Parameter:
+    
+        value:
+            The query condition's value.
+    
+    :Returns:
+    
+        `Query`
+            The query object.
+    
+    **Examples:**
+    
+    >>> d = cf.dt(2002, 6, 16)
+    >>> d == cf.day(16)
+    True
+    >>> d == cf.day(cf.le(19))
+    True
+    >>> d == cf.day(7)
+    False
+    >>> d == cf.day(cf.wi(1, 21))
+    True
 
     '''
     if isinstance(value, Query):
         return value.addattr('day')
     else:
         return Query('eq', value, attr='day')
-#--- End: def
+
 
 def hour(value):
     '''A `Query` object for a "hour of the day" condition.
 
-.. seealso:: `cf.year`, `cf.month`, `cf.day`, `cf.minute`,
-             `cf.second`, cf.seasons`, `cf.djf`, `cf.mam`, `cf.jja`,
-             `cf.son`
-
-:Parameter:
-
-    value:
-        The query condition's value.
-
-:Returns:
-
-    `Query`
-        The query object.
-
-In this context, any object which has a `!hour` attribute is
-considered to be a date-time variable.
-
-If *value* is a `Query` object then ``cf.hour(value)`` is equivalent
-to ``value.addattr('hour')``. Otherwise ``cf.hour(value)`` is
-equivalent to ``cf.eq(value, attr='hour')``.
-
-.. seealso:: `cf.year`, `cf.month`, `cf.day`, `cf.minute`,
-             `cf.second`
-
-:Parameters:
-
-    value:   
-       Either the value that the hour is to be compared with, or a
-       `Query` object for testing the hour.
-
-:Returns:
-
-    `Query`
-        The query object.
-
-**Examples:**
-
->>> d = cf.dt(2002, 6, 16, 18)
->>> d == cf.hour(18)
-True
->>> d == cf.hour(cf.le(19))
-True
->>> d == cf.hour(7)
-False
->>> d == cf.hour(cf.wi(6, 23))
-True
+    .. seealso:: `cf.year`, `cf.month`, `cf.day`, `cf.minute`,
+                 `cf.second`, `cf.seasons`, `cf.djf`, `cf.mam`, `cf.jja`,
+                 `cf.son`
+    
+    :Parameter:
+    
+        value:
+            The query condition's value.
+    
+    :Returns:
+    
+        `Query`
+            The query object.
+    
+    In this context, any object which has a `!hour` attribute is
+    considered to be a date-time variable.
+    
+    If *value* is a `Query` object then ``cf.hour(value)`` is
+    equivalent to ``value.addattr('hour')``. Otherwise
+    ``cf.hour(value)`` is equivalent to ``cf.eq(value, attr='hour')``.
+    
+    .. seealso:: `cf.year`, `cf.month`, `cf.day`, `cf.minute`,
+                 `cf.second`
+    
+    :Parameters:
+    
+        value:   
+           Either the value that the hour is to be compared with, or a
+           `Query` object for testing the hour.
+    
+    :Returns:
+    
+        `Query`
+            The query object.
+    
+    **Examples:**
+    
+    >>> d = cf.dt(2002, 6, 16, 18)
+    >>> d == cf.hour(18)
+    True
+    >>> d == cf.hour(cf.le(19))
+    True
+    >>> d == cf.hour(7)
+    False
+    >>> d == cf.hour(cf.wi(6, 23))
+    True
 
     '''
     if isinstance(value, Query):
         return value.addattr('hour')
     else:
         return Query('eq', value, attr='hour')
-#--- End: def
+
 
 def minute(value):
     '''A `Query` object for a "minute of the hour" condition.
 
-.. seealso:: `cf.year`, `cf.month`, `cf.day`, `cf.hour`, `cf.second`,
-             cf.seasons`, `cf.djf`, `cf.mam`, `cf.jja`, `cf.son`
-
-:Parameter:
-
-    value:
-        The query condition's value.
-
-:Returns:
-
-    `Query`
-        The query object.
-
-**Examples:**
-
->>> d = cf.dt(2002, 6, 16, 18, 30, 0)
->>> d == cf.minute(30)
-True
->>> d == cf.minute(cf.le(45))
-True
->>> d == cf.minute(7)
-False
->>> d == cf.minute(cf.wi(15, 45))
-True
+    .. seealso:: `cf.year`, `cf.month`, `cf.day`, `cf.hour`,
+                 `cf.second`, `cf.seasons`, `cf.djf`, `cf.mam`,
+                 `cf.jja`, `cf.son`
+    
+    :Parameter:
+    
+        value:
+            The query condition's value.
+    
+    :Returns:
+    
+        `Query`
+            The query object.
+    
+    **Examples:**
+    
+    >>> d = cf.dt(2002, 6, 16, 18, 30, 0)
+    >>> d == cf.minute(30)
+    True
+    >>> d == cf.minute(cf.le(45))
+    True
+    >>> d == cf.minute(7)
+    False
+    >>> d == cf.minute(cf.wi(15, 45))
+    True
 
     '''
     if isinstance(value, Query):
         return value.addattr('minute')
     else:
         return Query('eq', value, attr='minute')
-#--- End: def
+
 
 def second(value):
     '''A `Query` object for a "second of the minute" condition.
 
-.. seealso:: `cf.year`, `cf.month`, `cf.day`, `cf.hour`, `cf.minute`,
-             `cf.seasons`, `cf.djf`, `cf.mam`, `cf.jja`, `cf.son`
-
-:Parameter:
-
-    value:
-        The query condition's value.
-
-:Returns:
-
-    `Query`
-        The query object.
-
-**Examples:**
-
->>> d = cf.dt(2002, 6, 16, 18, 30, 0)
->>> d == cf.second(0)
-True
->>> d == cf.second(cf.le(30))
-True
->>> d == cf.second(30)
-False
->>> d == cf.second(cf.wi(0, 30))
-True
+    .. seealso:: `cf.year`, `cf.month`, `cf.day`, `cf.hour`,
+                 `cf.minute`, `cf.seasons`, `cf.djf`, `cf.mam`,
+                 `cf.jja`, `cf.son`
+    
+    :Parameter:
+    
+        value:
+            The query condition's value.
+    
+    :Returns:
+    
+        `Query`
+            The query object.
+    
+    **Examples:**
+    
+    >>> d = cf.dt(2002, 6, 16, 18, 30, 0)
+    >>> d == cf.second(0)
+    True
+    >>> d == cf.second(cf.le(30))
+    True
+    >>> d == cf.second(30)
+    False
+    >>> d == cf.second(cf.wi(0, 30))
+    True
 
     '''
     if isinstance(value, Query):
         return value.addattr('second')
     else:
         return Query('eq', value, attr='second')
-#--- End: def
+
 
 def cellsize(value, units=None):
     '''A `Query` object for a "cell size" condition.
 
-.. seealso:: `cf.contains`, `cf.cellge`, `cf.cellgt`, `cf.cellne`,
-             `cf.cellle`, `cf.celllt`, `cf.cellwi`, `cf.cellwo`
-
-:Parameters:
-
-    value:
-        The query condition's value.
-
-    units: `str` or `Units`, optional
-        The units of *value*. By default, the same units as the
-        operand being tested are assumed, if applicable. If *units* is
-        specified and the already *value* has units (such as a `Data`
-        object`), then they must be equivalent.
-
-    attr: `str`, optional
-        Apply the condition to the attribute, or nested attributes, of
-        the operand, rather than the operand itself. Nested attributes
-        are specified by separating them with a ``.``. For example,
-        the "month" attribute of the "bounds" attribute is specified
-        as ``'bounds.month'``.
-
-:Returns:
-
-    `Query`
-        The query object.
-
-**Examples:**
-
->>> cf.cellsize(cf.lt(5, 'km'))
-<CF Query: cellsize(lt <CF Data: 5 km>)>
->>> cf.cellsize(5) 
-<CF Query: cellsize(eq 5)>
->>> cf.cellsize(cf.Data(5, 'km'))
-<CF Query: cellsize(eq <CF Data: 5 km>)>
->>> cf.cellsize(cf.Data(5, 'km'))  
-<CF Query: cellsize(eq <CF Data: 5 km>)>
->>> cf.cellsize(5, units='km')   
-<CF Query: cellsize(eq <CF Data: 5 km>)>
+    .. seealso:: `cf.contains`, `cf.cellge`, `cf.cellgt`, `cf.cellne`,
+                 `cf.cellle`, `cf.celllt`, `cf.cellwi`, `cf.cellwo`
+    
+    :Parameters:
+    
+        value:
+            The query condition's value.
+    
+        units: `str` or `Units`, optional
+            The units of *value*. By default, the same units as the
+            operand being tested are assumed, if applicable. If
+            *units* is specified and the already *value* has units
+            (such as a `Data` object`), then they must be equivalent.
+    
+        attr: `str`, optional
+            Apply the condition to the attribute, or nested
+            attributes, of the operand, rather than the operand
+            itself. Nested attributes are specified by separating them
+            with a ``.``. For example, the "month" attribute of the
+            "bounds" attribute is specified as ``'bounds.month'``.
+    
+    :Returns:
+    
+        `Query`
+            The query object.
+    
+    **Examples:**
+    
+    >>> cf.cellsize(cf.lt(5, 'km'))
+    <CF Query: cellsize(lt <CF Data: 5 km>)>
+    >>> cf.cellsize(5) 
+    <CF Query: cellsize(eq 5)>
+    >>> cf.cellsize(cf.Data(5, 'km'))
+    <CF Query: cellsize(eq <CF Data: 5 km>)>
+    >>> cf.cellsize(cf.Data(5, 'km'))  
+    <CF Query: cellsize(eq <CF Data: 5 km>)>
+    >>> cf.cellsize(5, units='km')   
+    <CF Query: cellsize(eq <CF Data: 5 km>)>
 
     '''
     if isinstance(value, Query):
         return value.addattr('cellsize')
     else:
         return Query('eq', value, units=units, attr='cellsize')
-#--- End: def
 
 
 def cellwi(value0, value1, units=None):
     '''A `Query` object for a "cell bounds lie within range" condition.
 
-.. seealso:: `cf.cellsize`, `cf.contains`, `cf.cellge`, `cf.cellgt`,
-             `cf.cellne`, `cf.cellle`, `cf.celllt`, `cf.cellwo`
-
-:Parameters:
-
-    value:
-        The query condition's value.
-
-    units: `str` or `Units`, optional
-        The units of *value*. By default, the same units as the
-        operand being tested are assumed, if applicable. If *units* is
-        specified and the already *value* has units (such as a `Data`
-        object`), then they must be equivalent.
-
-    attr: `str`, optional
-        Apply the condition to the attribute, or nested attributes, of
-        the operand, rather than the operand itself. Nested attributes
-        are specified by separating them with a ``.``. For example,
-        the "month" attribute of the "bounds" attribute is specified
-        as ``'bounds.month'``.
-
-:Returns:
-
-    `Query`
-        The query object.
-
-**Examples:**
-
-TODO
+    .. seealso:: `cf.cellsize`, `cf.contains`, `cf.cellge`,
+                 `cf.cellgt`, `cf.cellne`, `cf.cellle`, `cf.celllt`,
+                 `cf.cellwo`
+    
+    :Parameters:
+    
+        value:
+            The query condition's value.
+    
+        units: `str` or `Units`, optional
+            The units of *value*. By default, the same units as the
+            operand being tested are assumed, if applicable. If
+            *units* is specified and the already *value* has units
+            (such as a `Data` object`), then they must be equivalent.
+    
+        attr: `str`, optional
+            Apply the condition to the attribute, or nested
+            attributes, of the operand, rather than the operand
+            itself. Nested attributes are specified by separating them
+            with a ``.``. For example, the "month" attribute of the
+            "bounds" attribute is specified as ``'bounds.month'``.
+    
+    :Returns:
+    
+        `Query`
+            The query object.
+    
+    **Examples:**
+    
+    TODO
 
     ''' 
     return (Query('ge', value0, units=units, attr='lower_bounds') &
             Query('le', value1, units=units, attr='upper_bounds'))
-#--- End: def
+
 
 def cellwo(value0, value1, units=None):
     '''A `Query` object for a "cell bounds lie without range" condition.
 
-.. seealso:: `cf.cellsize`, `cf.contains`, `cf.cellge`, `cf.cellgt`,
-             `cf.cellne`, `cf.cellle`, `cf.celllt`, `cf.cellwi`
+    .. seealso:: `cf.cellsize`, `cf.contains`, `cf.cellge`,
+                 `cf.cellgt`, `cf.cellne`, `cf.cellle`, `cf.celllt`,
+                 `cf.cellwi`
+    
+    :Parameters:
+    
+        value:
+            The query condition's value.
+    
+        units: `str` or `Units`, optional
+            The units of *value*. By default, the same units as the
+            operand being tested are assumed, if applicable. If
+            *units* is specified and the already *value* has units
+            (such as a `Data` object`), then they must be equivalent.
+    
+        attr: `str`, optional
+            Apply the condition to the attribute, or nested
+            attributes, of the operand, rather than the operand
+            itself. Nested attributes are specified by separating them
+            with a ``.``. For example, the "month" attribute of the
+            "bounds" attribute is specified as ``'bounds.month'``.
+    
+    :Returns:
+    
+        `Query`
+            The query object.
+    
+    **Examples:**
+    
+    TODO
 
-:Parameters:
-
-    value:
-        The query condition's value.
-
-    units: `str` or `Units`, optional
-        The units of *value*. By default, the same units as the
-        operand being tested are assumed, if applicable. If *units* is
-        specified and the already *value* has units (such as a `Data`
-        object`), then they must be equivalent.
-
-    attr: `str`, optional
-        Apply the condition to the attribute, or nested attributes, of
-        the operand, rather than the operand itself. Nested attributes
-        are specified by separating them with a ``.``. For example,
-        the "month" attribute of the "bounds" attribute is specified
-        as ``'bounds.month'``.
-
-:Returns:
-
-    `Query`
-        The query object.
-
-**Examples:**
-
-TODO
     ''' 
     return (Query('lt', value0, units=units, attr='lower_bounds') &
             Query('gt', value1, units=units, attr='upper_bounds'))
-#--- End: def
+
 
 def cellgt(value, units=None):
     '''A `Query` object for a "cell bounds strictly greater than"
-condition.
+    condition.
+    
+    .. seealso:: `cf.cellsize`, `cf.contains`, `cf.cellge`
+                 `cf.cellne`, `cf.cellle`, `cf.celllt`, `cf.cellwi`,
+                 `cf.cellwo`
+    
+    :Parameters:
+    
+        value:
+            The query condition's value.
+    
+        units: `str` or `Units`, optional
+            The units of *value*. By default, the same units as the
+            operand being tested are assumed, if applicable. If
+            *units* is specified and the already *value* has units
+            (such as a `Data` object`), then they must be equivalent.
+    
+        attr: `str`, optional
+            Apply the condition to the attribute, or nested
+            attributes, of the operand, rather than the operand
+            itself. Nested attributes are specified by separating them
+            with a ``.``. For example, the "month" attribute of the
+            "bounds" attribute is specified as ``'bounds.month'``.
+    
+    :Returns:
+    
+        `Query`
+            The query object.
+    
+    **Examples:**
+    
+    TODO
 
-.. seealso:: `cf.cellsize`, `cf.contains`, `cf.cellge` `cf.cellne`,
-             `cf.cellle`, `cf.celllt`, `cf.cellwi`, `cf.cellwo`
-
-:Parameters:
-
-    value:
-        The query condition's value.
-
-    units: `str` or `Units`, optional
-        The units of *value*. By default, the same units as the
-        operand being tested are assumed, if applicable. If *units* is
-        specified and the already *value* has units (such as a `Data`
-        object`), then they must be equivalent.
-
-    attr: `str`, optional
-        Apply the condition to the attribute, or nested attributes, of
-        the operand, rather than the operand itself. Nested attributes
-        are specified by separating them with a ``.``. For example,
-        the "month" attribute of the "bounds" attribute is specified
-        as ``'bounds.month'``.
-
-:Returns:
-
-    `Query`
-        The query object.
-
-**Examples:**
-
-TODO
     ''' 
     return Query('gt', value, units=units, attr='lower_bounds')
-#--- End: def
+
 
 def cellge(value, units=None):
     '''A `Query` object for a "cell bounds greater than or equal"
-condition.
-
-.. seealso:: `cf.cellsize`, `cf.contains`, `cf.cellgt`, `cf.cellne`,
-             `cf.cellle`, `cf.celllt`, `cf.cellwi`, `cf.cellwo`
-
-:Parameters:
-
-    value:
-        The query condition's value.
-
-    units: `str` or `Units`, optional
-        The units of *value*. By default, the same units as the
-        operand being tested are assumed, if applicable. If *units* is
-        specified and the already *value* has units (such as a `Data`
-        object`), then they must be equivalent.
-
-    attr: `str`, optional
-        Apply the condition to the attribute, or nested attributes, of
-        the operand, rather than the operand itself. Nested attributes
-        are specified by separating them with a ``.``. For example,
-        the "month" attribute of the "bounds" attribute is specified
-        as ``'bounds.month'``.
-
-:Returns:
-
-    `Query`
-        The query object.
-
-**Examples:**
-
-TODO
+    condition.
+    
+    .. seealso:: `cf.cellsize`, `cf.contains`, `cf.cellgt`,
+                 `cf.cellne`, `cf.cellle`, `cf.celllt`, `cf.cellwi`,
+                 `cf.cellwo`
+    
+    :Parameters:
+    
+        value:
+            The query condition's value.
+    
+        units: `str` or `Units`, optional
+            The units of *value*. By default, the same units as the
+            operand being tested are assumed, if applicable. If
+            *units* is specified and the already *value* has units
+            (such as a `Data` object`), then they must be equivalent.
+    
+        attr: `str`, optional
+            Apply the condition to the attribute, or nested
+            attributes, of the operand, rather than the operand
+            itself. Nested attributes are specified by separating them
+            with a ``.``. For example, the "month" attribute of the
+            "bounds" attribute is specified as ``'bounds.month'``.
+    
+    :Returns:
+    
+        `Query`
+            The query object.
+    
+    **Examples:**
+    
+    TODO
 
     ''' 
     return Query('ge', value, units=units, attr='lower_bounds')
-#--- End: def
+
 
 def celllt(value, units=None):
     '''A `Query` object for a “cell bounds strictly less than” condition.
@@ -1780,105 +1788,108 @@ def cellle(value, units=None):
 
 def jja():
     '''A `Query` object for a "month of year in June, July or August"
-condition.
-
-.. versionadded:: 1.0
-
-.. seealso:: `cf.year`, `cf.month`, `cf.day`, `cf.hour`, `cf.minute`,
-             `cf.second`, cf.seasons`, `cf.djf`, `cf.mam`, `cf.son`
-
-:Returns:
-
-    `Query`
-        The query object.
-
-**Examples:**
-
->>> f
-<CF Field: air_temperature(time(365), latitude(64), longitude(128)) K>
->>> f.subspace(time=cf.jja())
-<CF Field: air_temperature(time(92), latitude(64), longitude(128)) K>
+    condition.
+    
+    .. versionadded:: 1.0
+    
+    .. seealso:: `cf.year`, `cf.month`, `cf.day`, `cf.hour`,
+                 `cf.minute`, `cf.second`, `cf.seasons`, `cf.djf`,
+                 `cf.mam`, `cf.son`
+    
+    :Returns:
+    
+        `Query`
+            The query object.
+    
+    **Examples:**
+    
+    >>> f
+    <CF Field: air_temperature(time(365), latitude(64), longitude(128)) K>
+    >>> f.subspace(time=cf.jja())
+    <CF Field: air_temperature(time(92), latitude(64), longitude(128)) K>
 
     '''
     return Query('wi', (6, 8), attr='month')
-#--- End: def
+
 
 def son():
     '''A `Query` object for a "month of year in September, October,
-November" condition.
-
-.. versionadded:: 1.0
-
-.. seealso:: `cf.year`, `cf.month`, `cf.day`, `cf.hour`, `cf.minute`,
-             `cf.second`, cf.seasons`, `cf.djf`, `cf.mam`, `cf.jja`
-
-:Returns:
-
-    `Query`
-        The query object.
-
-**Examples:**
-
->>> f
-<CF Field: air_temperature(time(365), latitude(64), longitude(128)) K>
->>> f.subspace(time=cf.son())
-<CF Field: air_temperature(time(91), latitude(64), longitude(128)) K>
+    November" condition.
+    
+    .. versionadded:: 1.0
+    
+    .. seealso:: `cf.year`, `cf.month`, `cf.day`, `cf.hour`,
+                 `cf.minute`, `cf.second`, `cf.seasons`, `cf.djf`,
+                 `cf.mam`, `cf.jja`
+    
+    :Returns:
+    
+        `Query`
+            The query object.
+    
+    **Examples:**
+    
+    >>> f
+    <CF Field: air_temperature(time(365), latitude(64), longitude(128)) K>
+    >>> f.subspace(time=cf.son())
+    <CF Field: air_temperature(time(91), latitude(64), longitude(128)) K>
 
     '''
     return Query('wi', (9, 11), attr='month')
-#--- End: def
+
 
 def djf():
     '''A `Query` object for a "month of year in December, January,
-February" condition.
-
-.. versionadded:: 1.0
-
-.. seealso:: `cf.year`, `cf.month`, `cf.day`, `cf.hour`, `cf.minute`,
-             `cf.second`, cf.seasons`, `cf.mam`, `cf.jja`, `cf.son`
-
-:Returns:
-
-    `Query`
-        The query object.
-
-**Examples:**
-
->>> f
-<CF Field: air_temperature(time(365), latitude(64), longitude(128)) K>
->>> f.subspace(time=cf.djf())
-<CF Field: air_temperature(time(90), latitude(64), longitude(128)) K>
+    February" condition.
+    
+    .. versionadded:: 1.0
+    
+    .. seealso:: `cf.year`, `cf.month`, `cf.day`, `cf.hour`,
+                 `cf.minute`, `cf.second`, `cf.seasons`, `cf.mam`,
+                 `cf.jja`, `cf.son`
+    
+    :Returns:
+    
+        `Query`
+            The query object.
+    
+    **Examples:**
+    
+    >>> f
+    <CF Field: air_temperature(time(365), latitude(64), longitude(128)) K>
+    >>> f.subspace(time=cf.djf())
+    <CF Field: air_temperature(time(90), latitude(64), longitude(128)) K>
 
     '''
     q = Query('ge', 12) | Query('le', 2)
     return q.addattr('month')
-#--- End: def
+
 
 def mam():
     '''A `Query` object for a "month of year in March, April, May"
-condition.
-
-.. versionadded:: 1.0
-
-.. seealso:: `cf.year`, `cf.month`, `cf.day`, `cf.hour`, `cf.minute`,
-             `cf.second`, cf.seasons`, `cf.djf`, `cf.jja`, `cf.son`
-
-:Returns:
-
-    `Query`
-        The query object.
-
-**Examples:**
-
->>> f
-<CF Field: air_temperature(time(365), latitude(64), longitude(128)) K>
->>> f.subspace(time=cf.mam())
-<CF Field: air_temperature(time(92), latitude(64), longitude(128)) K>
+    condition.
+    
+    .. versionadded:: 1.0
+    
+    .. seealso:: `cf.year`, `cf.month`, `cf.day`, `cf.hour`,
+                 `cf.minute`, `cf.second`, `cf.seasons`, `cf.djf`,
+                 `cf.jja`, `cf.son`
+    
+    :Returns:
+    
+        `Query`
+            The query object.
+    
+    **Examples:**
+    
+    >>> f
+    <CF Field: air_temperature(time(365), latitude(64), longitude(128)) K>
+    >>> f.subspace(time=cf.mam())
+    <CF Field: air_temperature(time(92), latitude(64), longitude(128)) K>
 
     '''
     return Query('wi', (3, 5), attr='month')
 
-#--- End: def
 
 def seasons(n=4, start=12):
     '''A customizable list of `Query` objects for "seasons in a year"
