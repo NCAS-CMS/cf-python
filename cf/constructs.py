@@ -18,6 +18,16 @@ class Constructs(cfdm.Constructs):
     .. versionadded:: 3.0.0
 
     '''
+
+    def __repr__(self):
+        '''Called by the `repr` built-in function.
+
+    x.__repr__() <==> repr(x)
+
+        '''
+        return super().__repr__().replace('<', '<CF ', 1)
+
+
     def _matching_values(self, value0, construct, value1):
         '''TODO
         '''

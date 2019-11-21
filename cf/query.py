@@ -592,8 +592,7 @@ value.
         x:
             See `evaluate`.
 
-        parent_attr: `tuple`
-       
+        parent_attr: `tuple`       
 
     :Returns:
 

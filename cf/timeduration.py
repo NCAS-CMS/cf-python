@@ -4,7 +4,7 @@ from collections import namedtuple
 
 import numpy
 
-from .cfdatetime import elements #Datetime
+from .cfdatetime import elements
 from .cfdatetime import dt as cf_dt
 from .functions  import inspect as cf_inspect
 from .units      import Units
@@ -36,188 +36,193 @@ _default_calendar = 'gregorian'
 Offset = namedtuple('offset', ('year', 'month', 'day', 'hour',
                                'minute', 'second', 'microsecond'))
 
-_relational_methods = ('__eq__', '__ne__', '__lt__', '__le__', '__gt__', '__ge__')
+_relational_methods = ('__eq__', '__ne__',
+                       '__lt__', '__le__',
+                       '__gt__', '__ge__')
 
 class TimeDuration:
     '''A duration of time.
 
-The duration of time is a number of either calendar years, calender
-months, days, hours, minutes or seconds.
-
-A calendar year (or month) is an arbitrary year (or month) in an
-arbitrary calendar. A calendar is as part of the time duration, but
-will be taken from the context in which the time duration instance is
-being used. For example, a calendar may be specified when creating
-time intervals (see below for examples).
-
-A default offset is specified that may be used by some applications to
-temporally position the time duration. For example, setting
-``cf.TimeDuration(1, 'calendar_month', day=16, hour=12)`` will define
-a duration of one calendar month which, by default, starts at 12:00 on
-the 16th of the month. Note that the offset
-
-**Changing the units**
-
-The time duration's units may be changed in place by assigning
-equivalent units to the `~cf.TimeDuration.Units` attribute:
-
->>> t = cf.TimeDuration(1, 'day')
->>> t
-<CF TimeDuration: 1 day (from Y-M-D 00:00:00)>
->>> t.Units = 's' 
->>> t
-<CF TimeDuration: 86400.0 s (from Y-M-D h:m:s)> 
->>> t.Units = cf.Units('minutes')
->>> t
-<CF TimeDuration: 1440.0 minutes (from Y-M-D h:m:00)> 
->>> t.Units = 'calendar_months'
-ValueError: Can't set units to non-equivalent units
-
-**Creating time intervals**
-
-A time interval of exactly the time duration, starting or ending at a
-particular date-time, may be produced with the `interval` method. If
-elements of the start or end date-time are not specified, then default
-values are taken from the `!year`, `!month`, `!day`, `!hour`,
-`!minute`, and `!second` attributes of the time duration instance:
-
->>> t = cf.TimeDuration(6, 'calendar_months')
->>> t
-<CF TimeDuration: 6 calendar_months (from Y-M-01 00:00:00)>
->>> t.interval(1999, 12)
-(<CF Datetime: 1999-12-01 00:00:00>, <CF Datetime: 2000-06-01 00:00:00>)
->>> t = cf.TimeDuration(5, 'days', hour=6)
->>> t
-<CF TimeDuration: 5 days (from Y-M-D 06:00:00)>
->>> t.interval(2004, 3, 2, end=True)
-(datetime.datetime(2004, 2, 26, 6, 0), <CF Datetime: 2004-03-02 06:00:00>)
->>> t.interval(2004, 3, 2, end=True, calendar='noleap')
-(<CF Datetime: 2004-02-25 06:00:00>, <CF Datetime: 2004-03-02 06:00:00>)
->>> t.interval(2004, 3, 2, end=True, calendar='360_day')
-(<CF Datetime: 2004-02-27 06:00:00>, <CF Datetime: 2004-03-02 06:00:00>)
->>> t.interval(2004, 3, 2, end=True, calendar='360_day', iso='start and duration')
-'2004-02-27 06:00:00/P5D'
-
-
-**Comparison operations**
-
-Comparison operations are defined for `cf.TimeDuration` objects,
-``cf.Data` objects, `numpy` arrays and numbers:
-
->>> cf.TimeDuration(2, 'calendar_years') > cf.TimeDuration(1, 'calendar_years')
-True
->>> cf.TimeDuration(2, 'calendar_years') < cf.TimeDuration(25, 'calendar_months')
-True
->>> cf.TimeDuration(2, 'hours') <= cf.TimeDuration(1, 'days')
-True
->>> cf.TimeDuration(2, 'hours') == cf.TimeDuration(1/12.0, 'days')
-True
->>> cf.TimeDuration(2, 'days') == cf.TimeDuration(48, 'hours')
-True
-
->>> cf.TimeDuration(2, 'hours') <= 2
-True
->>> 30.5 != cf.TimeDuration(2, 'days')
-True
-
->>> cf.TimeDuration(2, 'calendar_years') > numpy.array(1.5)
-True
->>> type(cf.TimeDuration(2, 'calendar_years') > numpy.array(1.5))
-numpy.bool_
->>> cf.TimeDuration(2, 'calendar_years') > numpy.array([1.5])
-array([ True], dtype=bool)
->>> numpy.array([[1, 12]]) > cf.TimeDuration(2, 'calendar_months')
-array([[False,  True]], dtype=bool)
-
->>> cf.TimeDuration(2, 'days') == cf.Data(2)
-<CF Data: True>
->>> cf.TimeDuration(2, 'days') == cf.Data([2.], 'days')
-<CF Data: [True]>
->>> cf.Data([[60]], 'seconds') < cf.TimeDuration(2, 'days')
-<CF Data: [[True]]>
->>> cf.Data([1, 12], 'calendar_months') < cf.TimeDuration(6, 'calendar_months')
-<CF Data: [True, False]>
-
-
-**Arithmetic operations**
-
-Arithmetic operations are defined for `cf.TimeDuration` objects,
-date-time-like objects (such as `cf.Datetime`, `datetime.datetime`,
-etc.), ``cf.Data` objects, `numpy` arrays and numbers:
-
->>> cf.TimeDuration(64, 'days') + cf.TimeDuration(28, 'days')
-<CF TimeDuration: P92D (Y-M-D 00:00:00)>
->>> cf.TimeDuration(64, 'days') + cf.TimeDuration(12, 'hours')
-<CF TimeDuration: P65.0D (Y-M-D 00:00:00)>
->>> cf.TimeDuration(64, 'days') + cf.TimeDuration(24, 'hours')
-<CF TimeDuration: P64.5D (Y-M-D 00:00:00)>
->>> cf.TimeDuration(64, 'calendar_years') + cf.TimeDuration(21, 'calendar_months')
-<CF TimeDuration: P65.75Y (Y-01-01 00:00:00)>
-
->>> cf.TimeDuration(30, 'days') + 2
-<CF TimeDuration: P32D (Y-M-D 00:00:00)>
->>> 4.5 + cf.TimeDuration(30, 'days')
-<CF TimeDuration: P34.5D (Y-M-D 00:00:00)>
->>> cf.TimeDuration(64, 'calendar_years') - 2.5
-<CF TimeDuration: P61.5Y (Y-01-01 00:00:00)>
-
- TODO : update repr output in examples
-
->>> cf.TimeDuration(36, 'hours') / numpy.array(8)
-<CF TimeDuration: 4.5 hours (from Y-M-D h:00:00)>
->>> cf.TimeDuration(36, 'hours') / numpy.array(8.0)
-<CF TimeDuration: 4.5 hours (from Y-M-D h:00:00)>
->>> cf.TimeDuration(36, 'hours') // numpy.array(8.0)
-<CF TimeDuration: 4.0 hours (from Y-M-D h:00:00)>
->>> cf.TimeDuration(36, 'calendar_months') * cf.Data([[2.25]])
-<CF TimeDuration: 81.0 calendar_months (from Y-M-01 00:00:00)>
->>> cf.TimeDuration(36, 'calendar_months') // cf.Data([0.825], '10')
-<CF TimeDuration: 4.3 calendar_months (from Y-M-01 00:00:00)>
->>> cf.TimeDuration(36, 'calendar_months') % 10
-<CF Data: 6 calendar_months>
->>> cf.TimeDuration(36, 'calendar_months') % cf.Data(1, 'calendar_year')
-<CF Data: 0.0 calendar_months>
->>> cf.TimeDuration(36, 'calendar_months') % cf.Data(2, 'calendar_year')
-<CF Data: 12.0 calendar_months>
-
-The in place operators (``+=``, ``//=``, etc.) are supported in a
-similar manner.
-
-**Attributes**
-
-===========  =========================================================
-Attribute    Description
-===========  =========================================================
-`!duration`  The length of the time duration in a `cf.Data` object
-             with units.
-`!year`      The default year for time interval creation.
-`!month`     The default month for time interval creation.
-`!day`       The default day for time interval creation.
-`!hour`      The default hour for time interval creation.
-`!minute`    The default minute for time interval creation.
-`!second`    The default second for time interval creation.
-===========  =========================================================
-
-
-**Constructors**
-
-For convenience, the following functions may also be used to create
-time duration objects:
-
-========  ============================================================
-Function  Description
-========  ============================================================
-`cf.Y`    Create a time duration of calendar years.
-`cf.M`    Create a time duration of calendar months.
-`cf.D`    Create a time duration of days.
-`cf.h`    Create a time duration of hours.
-`cf.m`    Create a time duration of minutes.
-`cf.s`    Create a time duration of seconds.
-========  ============================================================
-
-.. seealso:: `cf.dt`, `cf.Data`, `cf.Datetime`
-
-.. versionadded:: 1.0
+    The duration of time is a number of either calendar years,
+    calender months, days, hours, minutes or seconds.
+    
+    A calendar year (or month) is an arbitrary year (or month) in an
+    arbitrary calendar. A calendar is as part of the time duration,
+    but will be taken from the context in which the time duration
+    instance is being used. For example, a calendar may be specified
+    when creating time intervals (see below for examples).
+    
+    A default offset is specified that may be used by some
+    applications to temporally position the time duration. For
+    example, setting ``cf.TimeDuration(1, 'calendar_month', day=16,
+    hour=12)`` will define a duration of one calendar month which, by
+    default, starts at 12:00 on the 16th of the month. Note that the
+    offset
+    
+    **Changing the units**
+    
+    The time duration's units may be changed in place by assigning
+    equivalent units to the `~cf.TimeDuration.Units` attribute:
+    
+    >>> t = cf.TimeDuration(1, 'day')
+    >>> t
+    <CF TimeDuration: P1D (Y-M-D 00:00:00)>
+    >>> t.Units = 's' 
+    >>> t
+    <CF TimeDuration: PT86400.0S (Y-M-D 00:00:00)>
+    >>> t.Units = cf.Units('minutes')
+    >>> t
+    <CF TimeDuration: PT1440.0M (Y-M-D 00:00:00)>
+    >>> t.Units = 'calendar_months'
+    ValueError: Can't set units (currently <Units: minutes>) to non-equivalent units <Units: calendar_months>
+    
+    **Creating time intervals**
+    
+    A time interval of exactly the time duration, starting or ending
+    at a particular date-time, may be produced with the `interval`
+    method. If elements of the start or end date-time are not
+    specified, then default values are taken from the `!year`,
+    `!month`, `!day`, `!hour`, `!minute`, and `!second` attributes of
+    the time duration instance:
+    
+    >>> t = cf.TimeDuration(6, 'calendar_months')
+    >>> t
+    <CF TimeDuration: P6M (Y-M-01 00:00:00)>
+    >>> t.interval(cf.dt(1999, 12))                                              
+    (cftime.DatetimeGregorian(1999-12-01 00:00:00),
+     cftime.DatetimeGregorian(2000-06-01 00:00:00))
+    >>> t = cf.TimeDuration(5, 'days', hour=6)
+    >>> t
+    <CF TimeDuration: P5D (Y-M-D 06:00:00)>
+    >>> t.interval(cf.dt(2004, 3, 2), end=True)
+    (cftime.DatetimeGregorian(2004-02-26 00:00:00),
+     cftime.DatetimeGregorian(2004-03-02 00:00:00))
+    >>> t.interval(cf.dt(2004, 3, 2, calendar='noleap'), end=True)
+    (cftime.DatetimeNoLeap(2004-02-25 00:00:00),
+     cftime.DatetimeNoLeap(2004-03-02 00:00:00))
+    >>> t.interval(cf.dt(2004, 3, 2, calendar='360_day'), end=True)
+    (cftime.Datetime360Day(2004-02-27 00:00:00),
+     cftime.Datetime360Day(2004-03-02 00:00:00))
+    >>> t.interval(cf.dt(2004, 3, 2, calendar='360_day'), end=True, iso='start and duration')
+    '2004-02-27 00:00:00/P5D'
+    
+    **Comparison operations**
+    
+    Comparison operations are defined for `cf.TimeDuration` objects,
+    ``cf.Data` objects, `numpy` arrays and numbers:
+    
+    >>> cf.TimeDuration(2, 'calendar_years') > cf.TimeDuration(1, 'calendar_years')
+    True
+    >>> cf.TimeDuration(2, 'calendar_years') < cf.TimeDuration(25, 'calendar_months')
+    True
+    >>> cf.TimeDuration(2, 'hours') <= cf.TimeDuration(1, 'days')
+    True
+    >>> cf.TimeDuration(2, 'hours') == cf.TimeDuration(1/12.0, 'days')
+    True
+    >>> cf.TimeDuration(2, 'days') == cf.TimeDuration(48, 'hours')
+    True
+    
+    >>> cf.TimeDuration(2, 'hours') <= 2
+    True
+    >>> 30.5 != cf.TimeDuration(2, 'days')
+    True
+    
+    >>> cf.TimeDuration(2, 'calendar_years') > numpy.array(1.5)
+    True
+    >>> type(cf.TimeDuration(2, 'calendar_years') > numpy.array(1.5))
+    numpy.bool_
+    >>> cf.TimeDuration(2, 'calendar_years') > numpy.array([1.5])
+    array([ True])
+    >>> numpy.array([[1, 12]]) > cf.TimeDuration(2, 'calendar_months')
+    array([[False,  True]])
+    
+    >>> cf.TimeDuration(2, 'days') == cf.Data(2)
+    <CF Data(): True>
+    >>> cf.TimeDuration(2, 'days') == cf.Data([2.], 'days')
+    <CF Data(1): [True]>
+    >>> cf.Data([[60]], 'seconds') < cf.TimeDuration(2, 'days')
+    <CF Data(1, 1): [[True]]>
+    >>> cf.Data([1, 12], 'calendar_months') < cf.TimeDuration(6, 'calendar_months')
+    <CF Data(2): [True, False]>
+    
+    **Arithmetic operations**
+    
+    Arithmetic operations are defined for `cf.TimeDuration` objects,
+    date-time-like objects (such as `cf.Datetime`,
+    `datetime.datetime`, etc.), ``cf.Data` objects, `numpy` arrays and
+    numbers:
+    
+    >>> cf.TimeDuration(64, 'days') + cf.TimeDuration(28, 'days')
+    <CF TimeDuration: P92D (Y-M-D 00:00:00)>
+    >>> cf.TimeDuration(64, 'days') + cf.TimeDuration(12, 'hours')
+    <CF TimeDuration: P65.0D (Y-M-D 00:00:00)>
+    >>> cf.TimeDuration(64, 'days') + cf.TimeDuration(24, 'hours')
+    <CF TimeDuration: P64.5D (Y-M-D 00:00:00)>
+    >>> cf.TimeDuration(64, 'calendar_years') + cf.TimeDuration(21, 'calendar_months')
+    <CF TimeDuration: P65.75Y (Y-01-01 00:00:00)>
+    
+    >>> cf.TimeDuration(30, 'days') + 2
+    <CF TimeDuration: P32D (Y-M-D 00:00:00)>
+    >>> 4.5 + cf.TimeDuration(30, 'days')
+    <CF TimeDuration: P34.5D (Y-M-D 00:00:00)>
+    >>> cf.TimeDuration(64, 'calendar_years') - 2.5
+    <CF TimeDuration: P61.5Y (Y-01-01 00:00:00)>
+    
+    >>> cf.TimeDuration(36, 'hours') / numpy.array(8)
+    <CF TimeDuration: 4.5 hours (from Y-M-D h:00:00)>
+    >>> cf.TimeDuration(36, 'hours') / numpy.array(8.0)
+    <CF TimeDuration: 4.5 hours (from Y-M-D h:00:00)>
+    >>> cf.TimeDuration(36, 'hours') // numpy.array(8.0)
+    <CF TimeDuration: 4.0 hours (from Y-M-D h:00:00)>
+    >>> cf.TimeDuration(36, 'calendar_months') * cf.Data([[2.25]])
+    <CF TimeDuration: 81.0 calendar_months (from Y-M-01 00:00:00)>
+    >>> cf.TimeDuration(36, 'calendar_months') // cf.Data([0.825])               
+    <CF TimeDuration: P43.0M (Y-01-01 00:00:00)>
+    >>> cf.TimeDuration(36, 'calendar_months') % 10
+    <CF TimeDuration: P6M (Y-01-01 00:00:00)>
+    >>> cf.TimeDuration(36, 'calendar_months') % cf.Data(1, 'calendar_year')
+    <CF TimeDuration: P0.0M (Y-01-01 00:00:00)>
+    >>> cf.TimeDuration(36, 'calendar_months') % cf.Data(2, 'calendar_year')
+    <CF TimeDuration: P12.0M (Y-01-01 00:00:00)>
+    
+    The in place operators (``+=``, ``//=``, etc.) are supported in a
+    similar manner.
+    
+    **Attributes**
+    
+    ===========  =========================================================
+    Attribute    Description
+    ===========  =========================================================
+    `!duration`  The length of the time duration in a `cf.Data` object
+                 with units.
+    `!year`      The default year for time interval creation.
+    `!month`     The default month for time interval creation.
+    `!day`       The default day for time interval creation.
+    `!hour`      The default hour for time interval creation.
+    `!minute`    The default minute for time interval creation.
+    `!second`    The default second for time interval creation.
+    ===========  =========================================================
+    
+    
+    **Constructors**
+    
+    For convenience, the following functions may also be used to
+    create time duration objects:
+    
+    ========  ============================================================
+    Function  Description
+    ========  ============================================================
+    `cf.Y`    Create a time duration of calendar years.
+    `cf.M`    Create a time duration of calendar months.
+    `cf.D`    Create a time duration of days.
+    `cf.h`    Create a time duration of hours.
+    `cf.m`    Create a time duration of minutes.
+    `cf.s`    Create a time duration of seconds.
+    ========  ============================================================
+    
+    .. seealso:: `cf.dt`, `cf.Data`, `cf.Datetime`
+    
+    .. versionadded:: 1.0
 
     '''
     def __init__(self, duration, units=None, month=1, day=1, hour=0,
@@ -263,11 +268,14 @@ Function  Description
     
             *Parameter example:*
               >>> cf.TimeDuration(1, 'calendar_month').bounds(cf.dt('2000-1-8'))
-              (<CF Datetime: 2000-01-01 00:00:00>, <CF Datetime: 2000-02-01 00:00:00>)
+              (cftime.DatetimeGregorian(2000-01-01 00:00:00),
+               cftime.DatetimeGregorian(2000-02-01 00:00:00))
               >>> cf.TimeDuration(1, 'calendar_month', day=15).bounds(cf.dt('2000-1-8'))
-              (<CF Datetime: 1999-12-15 00:00:00>, <CF Datetime: 2000-01-15 00:00:00>)
+              (cftime.DatetimeGregorian(1999-12-15 00:00:00),
+               cftime.DatetimeGregorian(2000-01-15 00:00:00))
               >>> cf.TimeDuration(1, 'calendar_month', month=4, day=30).bounds(cf.dt('2000-1-8'))
-              (<CF Datetime: 1999-12-30 00:00:00>, <CF Datetime: 2000-01-30 00:00:00>)
+              (cftime.DatetimeGregorian(1999-12-30 00:00:00),
+               cftime.DatetimeGregorian(2000-01-30 00:00:00))
     
     **Examples:**
     
@@ -403,8 +411,11 @@ Function  Description
 
         '''
 
-        if isinstance(other, (self.__class__, int, float, Data)):
+        if isinstance(other, (self.__class__, int, float)):
             return bool(self._binary_operation(other, '__ge__'))
+
+        if isinstance(other, Data):
+            return self._data_binary_operation(other, '__ge__')
 
         return NotImplemented
 
@@ -416,8 +427,11 @@ Function  Description
 
         '''
 
-        if isinstance(other, (self.__class__, int, float, Data)):
+        if isinstance(other, (self.__class__, int, float)):
             return bool(self._binary_operation(other, '__gt__'))
+
+        if isinstance(other, Data):
+            return self._data_binary_operation(other, '__gt__')        
 
         return NotImplemented
 
@@ -428,9 +442,12 @@ Function  Description
     x.__le__(y) <==> x<=y
 
         '''
-        if isinstance(other, (self.__class__, int, float, Data)):
+        if isinstance(other, (self.__class__, int, float)):
             return bool(self._binary_operation(other, '__le__'))
         
+        if isinstance(other, Data):
+            return self._data_binary_operation(other, '__le__')        
+
         return NotImplemented
 
 
@@ -440,8 +457,11 @@ Function  Description
     x.__lt__(y) <==> x<y
 
         '''
-        if isinstance(other, (self.__class__, int, float, Data)):
+        if isinstance(other, (self.__class__, int, float)):
             return bool(self._binary_operation(other, '__lt__'))
+        
+        if isinstance(other, Data):
+            return self._data_binary_operation(other, '__lt__')
         
         return NotImplemented
 
@@ -452,8 +472,11 @@ Function  Description
     x.__eq__(y) <==> x==y
 
         '''
-        if isinstance(other, (self.__class__, int, float, Data)):
+        if isinstance(other, (self.__class__, int, float)):
             return bool(self._binary_operation(other, '__eq__'))
+        
+        if isinstance(other, Data):
+            return self._data_binary_operation(other, '__eq__')
         
         return NotImplemented
 
@@ -464,9 +487,12 @@ Function  Description
     x.__ne__(y) <==> x!=y
 
         '''
-        if isinstance(other, (self.__class__, int, float, Data)):
+        if isinstance(other, (self.__class__, int, float)):
             return bool(self._binary_operation(other, '__ne__'))
 
+        if isinstance(other, Data):
+            return self._data_binary_operation(other, '__ne__')
+        
         return NotImplemented
 
     def __add__(self, other):
@@ -591,6 +617,9 @@ Function  Description
         if isinstance(other, (int, float)):
             return self._binary_operation(other, '__idiv__', True)
 
+        if isinstance(other, Data):
+            return self._data_binary_operation(other, '__idiv__', True)
+
         return NotImplemented
 
 
@@ -651,6 +680,9 @@ Function  Description
         if isinstance(other, (int, float)):
             return self._binary_operation(other, '__imod__', True)
 
+        if isinstance(other, Data):
+            return self._data_binary_operation(other, '__imod__', True)
+
         return NotImplemented
 
 
@@ -702,6 +734,9 @@ Function  Description
         if isinstance(other, (self.__class__, int, float)):
             return self._binary_operation(other, '__mod__')
 
+        if isinstance(other, Data):
+            return self._data_arithmetic(other, '__mod__')        
+
         return NotImplemented
 
 
@@ -747,12 +782,11 @@ Function  Description
                 "Can't create {} with with negative duration {!r}".format(
                     self.__class__.__name__, duration))
 
-        if not duration.Units.equals(self.duration.Units):
-            if method not in _relational_methods:
-                # Operator is not one of ==, !=, >=, >, <=, <                
-                raise ValueError(
-                    "Can't create {} of {!r}".format(self.__class__.__name__, duration.Units))
-        #--- End: if
+        if (not duration.Units.equals(self.duration.Units) and 
+            method not in _relational_methods):
+            # Operator is not one of ==, !=, >=, >, <=, <                
+            raise ValueError("Can't create {} of {!r}".format(
+                self.__class__.__name__, duration.Units))
         
         if method not in _relational_methods:
             # Operator is not one of ==, !=, >=, >, <=, <                
@@ -761,6 +795,18 @@ Function  Description
         new.duration = duration
 
         return new
+
+    
+    def _data_binary_operation(self, other, method, inplace=False):
+        '''TODO
+
+        '''
+        if inplace:
+            new = self
+        else:
+            new = self.copy()
+
+        return getattr(self.duration, method)(other)
 
     
     def _datetime_arithmetic(self, other, op):
@@ -1220,11 +1266,8 @@ Function  Description
         '''Return a time interval of exactly the time duration.
 
     The start (or end, if the *end* parameter is True) date-time of
-    the time interval is determined by the *year*, *month*, *day*,
-    *hour*, *minute* and *second* parameters, but if any of these is
-    unset then its default value is taken from the attribute of the
-    same name (i.e. the `!year`, `!month`, `!day`, `!hour`, `!minute`
-    and `!second` attributes respectively).
+    the time interval is determined by the date-time given by the *dt*
+    parameter.
     
     .. seealso:: `bounds`
     
@@ -1232,35 +1275,20 @@ Function  Description
     
     :Parameters:
     
-        year, month, day, hour, minute, second: `int`, optional  TODO
-            The date-time of the start (or end) of the time
-            interval. If any parameter is unset then its value
-            defaults to the attribute of the same name. The time
-            interval calculation requires that all of the parameters
-            have numerical values, so if an unset parameter has a
-            corresponding attribute whose value is `None` then an
-            exception will be raised.
-            
-            *Parameter example:*
-              ``t.interval(year=1999, day=16)`` is equivalent to
-              ``t.interval(1999, t.month, 16, t.hour, t.minute,
-              t.second)``.
-    
+        dt:
+            The date-time. One of:
+
+            * A `str` specifying an ISO 8601-like date-time string (in
+              which non-Gregorian calendar dates are allowed).
+
+            * `datetime.datetime or sublcass `cftime.datetime` (such
+              as `Datetime360Day`).
+
         end: `bool`, optional
             If True then the date-time given by the *year*, *month*,
             *day*, *hour*, *minute* and *second* parameters defines
             the end of the time interval. By default it defines the
             start of the time interval.
-    
-#        calendar: `str`, optional
-#            Define the CF calendar for the input date-time and output
-#            time interval. By default the calendar of the input
-#            date-time is used. If *calendar* is set, then the calendar
-#            of the input date-time is overridden.
-#    
-#            *Parameter example:*
-#               To set a calendar without leap years:
-#               ``calendar='noleap'``.
     
         iso: `str`, optional
             Return the time interval as an ISO 8601 time interval
@@ -1285,74 +1313,55 @@ Function  Description
     
     **Examples:**
     
-    >>> cf.TimeDuration(1, 'calendar_years').interval(1999)
-    (<CF Datetime: 1999-01-01 00:00:00>, <CF Datetime: 2000-01-01 00:00:00>)
-    
-    >>> cf.TimeDuration(1, 'calendar_months').interval(1999, 12)
-    (<CF Datetime: 1999-12-01 00:00:00>, <CF Datetime: 2000-01-01 00:00:00>)
-    
-    >>> cf.TimeDuration(2, 'calendar_years').interval(2000, 2, end=True)
-    (<CF Datetime: 1998-02-01 00:00:00>, <CF Datetime: 2000-02-01 00:00:00>)
-    
-    >>> cf.TimeDuration(30, 'days').interval(1983, 12, 1, 6)
-    (<CF Datetime: 1983-12-01 06:00:00>, <CF Datetime: 1983-12-31 06:00:00>)
-    
-    >>> cf.TimeDuration(30, 'days').interval(1983, 12, 1, 6, end=True)
-    (<CF Datetime: 1983-11-01 06:00:00>, <CF Datetime: 1983-12-01 06:00:00>)
-    
-    >>> cf.TimeDuration(0, 'days').interval(1984, 2, 3)
-    (<CF Datetime: 1984-02-03 00:00:00>, <CF Datetime: 1984-02-03 00:00:00>)
-    
-    >>> cf.TimeDuration(5, 'days', hour=6).interval(2004, 3, 2, end=True)
-    (<CF Datetime: 2004-02-26 06:00:00>, <CF Datetime: 2004-03-02 06:00:00>)
-    
-    >>> cf.TimeDuration(5, 'days', hour=6).interval(2004, 3, 2, end=True, calendar='noleap')
-    (<CF Datetime: 2004-02-25 06:00:00>, <CF Datetime: 2004-03-02 06:00:00>)
-    
-    >>> cf.TimeDuration(5, 'days', hour=6).interval(2004, 3, 2, end=True, calendar='360_day')
-    (<CF Datetime: 2004-02-27 06:00:00>, <CF Datetime: 2004-03-02 06:00:00>)
-    
-    >>> cf.TimeDuration(5, 'days', hour=6).interval(2004, 3, 2, 13, end=True)
-    (datetime.datetime(2004, 2, 26, 13, 0), <CF Datetime: 2004-03-02 13:00:00>)
-    
-    >>> cf.TimeDuration(19897.546, 'hours').interval(1984, 2, 3, 0)
-    (<CF Datetime: 1984-02-03 00:00:00>, <CF Datetime: 1986-05-12 01:32:46>)
-    
-    >>> cf.TimeDuration(19897.546, 'hours').interval(1984, 2, 3, 0, end=True)
-    (<CF Datetime: 1981-10-26 22:27:14>, <CF Datetime: 1984-02-03 00:00:00>)
+    >>> t = cf.TimeDuration(6, 'calendar_months')
+    >>> t
+    <CF TimeDuration: P6M (Y-M-01 00:00:00)>
+    >>> t.interval(cf.dt(1999, 12))                                              
+    (cftime.DatetimeGregorian(1999-12-01 00:00:00),
+     cftime.DatetimeGregorian(2000-06-01 00:00:00))
+
+    >>> t = cf.TimeDuration(5, 'days', hour=6)
+    >>> t
+    <CF TimeDuration: P5D (Y-M-D 06:00:00)>
+    >>> t.interval(cf.dt(2004, 3, 2), end=True)
+    (cftime.DatetimeGregorian(2004-02-26 00:00:00),
+     cftime.DatetimeGregorian(2004-03-02 00:00:00))
+    >>> t.interval(cf.dt(2004, 3, 2, calendar='noleap'), end=True)
+    (cftime.DatetimeNoLeap(2004-02-25 00:00:00),
+     cftime.DatetimeNoLeap(2004-03-02 00:00:00))
+    >>> t.interval(cf.dt(2004, 3, 2, calendar='360_day'), end=True)
+    (cftime.Datetime360Day(2004-02-27 00:00:00),
+     cftime.Datetime360Day(2004-03-02 00:00:00))
+    >>> t.interval(cf.dt(2004, 3, 2, calendar='360_day'), end=True, iso='start and duration')
+    '2004-02-27 00:00:00/P5D'
     
     Create `cf.Query` objects for a time interval - one including both
     bounds and one which excludes the upper bound:
     
     >>> t = cf.TimeDuration(2, 'calendar_years')
-    >>> interval = t.interval(1999, 12)
+    >>> interval = t.interval(cf.dt(1999, 12))
     >>> c = cf.wi(*interval)
     >>> c
-    <CF Query: (wi [<CF Datetime: 1999-12-01 00:00:00>, <CF Datetime: 2001-01-01 00:00:00>])>
-    >>> d = cf.ge(interval[0]) & cf.lt(interval[1])
-    >>> d
-    <CF Query: [(ge <CF Datetime: 1999-12-01 00:00:00>) & (lt <CF Datetime: 2000-01-01 00:00:00>)]>
-    >>> c == cf.dt('2001-1-1')
+    <CF Query: (wi [cftime.DatetimeGregorian(1999-12-01 00:00:00), cftime.DatetimeGregorian(2001-12-01 00:00:00)])>
+    >>> c == cf.dt('2001-1-1', calendar='gregorian')
     True
-    >>> d == cf.dt('2001-1-1')
-    False
     
     Create a `cf.Query` object which may be used to test where a time
     coordinate object's bounds lie inside a time interval:
     
     >>> t = cf.TimeDuration(1, 'calendar_months')
-    >>> c = cf.cellwi(*t.interval(2000, 1, end=True))
+    >>> c = cf.cellwi(*t.interval(cf.dt(2000, 1), end=True))
     >>> c
-    <CF Query: [lower_bounds(ge <CF Datetime: 1999-12-01 00:00:00>) & upper_bounds(le <CF Datetime: 2000-01-01 00:00:00>)]>
+    <CF Query: [lower_bounds(ge 1999-12-01 00:00:00) & upper_bounds(le 2000-01-01 00:00:00)]>
     
     Create ISO 8601 time interval strings:
     
     >>> t = cf.TimeDuration(6, 'calendar_years')
-    >>> t.interval(1999, 12, end=True, iso='start and end') 
+    >>> t.interval(cf.dt(1999, 12), end=True, iso='start and end') 
     '1993-12-01 00:00:00/1999-12-01 00:00:00'
-    >>> t.interval(1999, 12, end=True, iso='start and duration')
+    >>> t.interval(cf.dt(1999, 12), end=True, iso='start and duration')
     '1993-12-01 00:00:00/P6Y'
-    >>> t.interval(1999, 12, end=True, iso='duration and end')
+    >>> t.interval(cf.dt(1999, 12), end=True, iso='duration and end')
     'P6Y/1999-12-01 00:00:00'
 
         '''   
@@ -1452,7 +1461,7 @@ Function  Description
             return '{0}/{1}'.format(self.iso, dt1)
 
 
-    def bounds(self, dt, direction=True): #calendar=None, 
+    def bounds(self, dt, direction=True):
         '''Return a time interval containing a date-time.
 
     The interval spans the time duration and starts and ends at
@@ -1475,16 +1484,6 @@ Function  Description
               ``dt=datetime.datetime(1999, 1, 16)`` (See `cf.dt` for
               details).
     
-        calendar: `str`, optional
-            Define the CF calendar for the input date-time and output
-            time interval. By default the calendar of the input
-            date-time is used. If *calendar* is set, then the calendar
-            of the input date-time is overridden.
-    
-            *Parameter example:*
-              To set a calendar without leap years:
-              ``calendar='noleap'``.
-     
         direction: `bool`, optional
             If `False` then the bounds are decreasing. By default the
             bounds are increasing. Note that ``t.bounds(dt,
@@ -1493,7 +1492,8 @@ Function  Description
             
     :Returns:
     
-        (`cf.Datetime`, `cf.Datetime`) TODO
+        `tuple`
+            The two bounds.
             
     **Examples:**
     
@@ -1501,21 +1501,23 @@ Function  Description
     
     >>> t = cf.M()
     >>> t.bounds(cf.dt(2000, 1, 1))
-    (<CF Datetime: 2000-1-1 00:00:00>, <CF Datetime: 2000-2-1 00:00:00>) TODO
-    >>> t.bounds(cf.dt(2000, 1, 1))
-    (<CF Datetime: 2000-1-1 00:00:00>, <CF Datetime: 2000-2-1 00:00:00>)
+    (cftime.DatetimeGregorian(2000-01-01 00:00:00),
+     cftime.DatetimeGregorian(2000-02-01 00:00:00))
     
     >>> t = cf.M(1)
     >>> t.bounds(cf.dt(2000, 3, 1))
-    (<CF Datetime: 2000-03-01 00:00:00>, <CF Datetime: 2000-04-01 00:00:00>)
+    (cftime.DatetimeGregorian(2000-03-01 00:00:00),
+     cftime.DatetimeGregorian(2000-04-01 00:00:00))
     
     >>> t = cf.M(1, day=15)
     >>> t.bounds(cf.dt(2000, 3, 1))
-    (<CF Datetime: 2000-02-15 00:00:00>, <CF Datetime: 2000-03-15 00:00:00>)
+    (cftime.DatetimeGregorian(2000-02-15 00:00:00),
+     cftime.DatetimeGregorian(2000-03-15 00:00:00))
     
     >>> t = cf.M(2, day=15)
     >>> t.bounds(cf.dt(2000, 3, 1), direction=False)
-    (<CF Datetime: 2000-03-15 00:00:00>, <CF Datetime: 2000-01-15 00:00:00>)
+    (cftime.DatetimeGregorian(2000-03-15 00:00:00),
+     cftime.DatetimeGregorian(2000-01-15 00:00:00))
 
         '''
         abs_self = abs(self)
@@ -1643,16 +1645,13 @@ def Y(duration=1, month=1, day=1, hour=0, minute=0, second=0):
     **Examples:**
     
     >>> cf.Y()
-    <CF TimeDuration: 1 calendar year (from Y-01-01 00:00:00)>
-    
+    <CF TimeDuration: P1Y (Y-01-01 00:00:00)>
     >>> cf.Y(10, month=12)   
-    <CF TimeDuration: 10 calendar years (from Y-12-01 00:00:00)>
-    
+    <CF TimeDuration: P10Y (Y-12-01 00:00:00)>
     >>> cf.Y(15, month=4, day=2, hour=12, minute=30, second=2)  
-    <CF TimeDuration: 15 calendar years (from Y-04-02 12:30:02)>
-    
+    <CF TimeDuration: P15Y (Y-04-02 12:30:02)>
     >>> cf.Y(0)       
-    <CF TimeDuration: 0 calendar years (from Y-01-01 00:00:00)>
+    <CF TimeDuration: P0Y (Y-M-01 00:00:00)>
 
     '''
     return TimeDuration(duration, 'calendar_years', month=month,
@@ -1662,7 +1661,7 @@ def Y(duration=1, month=1, day=1, hour=0, minute=0, second=0):
 
 def M(duration=1, month=1, day=1, hour=0, minute=0, second=0):
     '''Return a time duration of calendar months in a `cf.TimeDuration`
-object.
+    object.
     
     ``cf.M()`` is equivalent to ``cf.TimeDuration(1, 'calendar_month')``.
     
@@ -1693,16 +1692,13 @@ object.
     **Examples:**
     
     >>> cf.M()
-    <CF TimeDuration: 1 calendar month (from Y-M-01 00:00:00)>
-    
+    <CF TimeDuration: P1M (Y-M-01 00:00:00)>
     >>> cf.M(3, day=16)
-    <CF TimeDuration: 3 calendar months (from Y-M-16 00:00:00)>
-    
+    <CF TimeDuration: P3M (Y-M-16 00:00:00)>
     >>> cf.M(24, day=2, hour=12, minute=30, second=2)
-    <CF TimeDuration: 24 calendar months (from Y-M-02 12:30:02)>
-    
+    <CF TimeDuration: P24M (Y-01-02 12:30:02)>
     >>> cf.M(0)
-    <CF TimeDuration: 0 calendar months (from Y-M-01 00:00:00)>
+    <CF TimeDuration: P0M (Y-M-01 00:00:00)>
 
     '''
     return TimeDuration(duration, 'calendar_months', month=month, day=day, 
@@ -1740,19 +1736,15 @@ def D(duration=1, month=1, day=1, hour=0, minute=0, second=0):
     **Examples:**
     
     >>> cf.D()
-    <CF TimeDuration: 1 day (from Y-M-D 00:00:00)>
-    
+    <CF TimeDuration: P1D (Y-M-D 00:00:00)>
     >>> cf.D(5, hour=12)       
-    <CF TimeDuration: 5 days (from Y-M-D 12:00:00)>
-    
+    <CF TimeDuration: P5D (Y-M-D 12:00:00)>
     >>> cf.D(48.5, minute=30)
-    <CF TimeDuration: 48.5 days (from Y-M-D 00:30:00)>
-    
+    <CF TimeDuration: P48.5D (Y-M-D 00:30:00)>
     >>> cf.D(0.25, hour=6, minute=30, second=20)
-    <CF TimeDuration: 0.25 days (from Y-M-D 06:30:20)>
-    
+    <CF TimeDuration: P0.25D (Y-M-D 06:30:20)>
     >>> cf.D(0)
-    <CF TimeDuration: 0 days (from Y-M-D 00:00:00)>
+    <CF TimeDuration: P0D (Y-M-D 00:00:00)>
 
     '''
     return TimeDuration(duration, 'days', month=month, day=day, 

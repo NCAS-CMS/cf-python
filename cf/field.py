@@ -10174,8 +10174,13 @@ may be accessed with the `nc_global_attributes`,
     Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
                     : longitude(8) = [22.5, ..., 337.5] degrees_east
                     : time(1) = [2019-01-01 00:00:00]
-    >>> g.insert_dimension(None, 1, inplace=True)
-    >>> print(g)
+        
+    A previously non-existent size 1 axis must be created prior to
+    insertion:
+
+    >>> axis = f.set_construct(cf.DomainAxis(1))
+    >>> f.insert_dimension(axis, 1, inplace=True)
+    >>> print(f)
     Field: specific_humidity (ncvar%q)
     ----------------------------------
     Data            : specific_humidity(time(1), key%domainaxis3(1), latitude(5), longitude(8)) 1
@@ -10184,7 +10189,7 @@ may be accessed with the `nc_global_attributes`,
                     : longitude(8) = [22.5, ..., 337.5] degrees_east
                     : time(1) = [2019-01-01 00:00:00]
 
-       '''
+        '''
         if inplace:
             f = self
         else:
@@ -11240,11 +11245,11 @@ may be accessed with the `nc_global_attributes`,
 
     The magnitude of the integral of the filter (i.e. the sum of the
     weights defined by the *weights* parameter) affects the convolved
-    values. For example, weights of ``[0.2, 0.2 0.2, 0.2, 0.2]`` will
-    produce a 5-point (non-weighted) running mean; and weights of
-    ``[1, 1, 1, 1, 1]`` will produce a 5-point running sum. Note that
-    the weights returned by functions of the `scipy.signal.windows`
-    package do not necessarily sum to 1.
+    values. For example, filter weights of ``[0.2, 0.2 0.2, 0.2,
+    0.2]`` will produce a 5-point (non-weighted) running mean; and
+    weights of ``[1, 1, 1, 1, 1]`` will produce a 5-point running
+    sum. Note that the weights returned by functions of the
+    `scipy.signal.windows` package do not necessarily sum to 1.
     
     .. seealso:: `collapse`, `derivative`, `cf.relative_vorticity`
 

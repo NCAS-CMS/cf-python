@@ -121,6 +121,7 @@ intersphinx_mapping = {
     'numpy':   ('http://docs.scipy.org/doc/numpy', None),
     'scipy':   ('http://docs.scipy.org/doc/scipy/reference/', None),
     'netCDF4': ('http://unidata.github.io/netcdf4-python', None),
+    'cftime':  ('http://unidata.github.io/cftime', None),
     }
 
 # This extension is meant to help with the common pattern of having

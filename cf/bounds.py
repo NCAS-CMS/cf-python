@@ -104,5 +104,57 @@ class Bounds(mixin.PropertiesData,
             else:
                 return (data[1:, 0] >= data[:-1, 1]).all()
 
+    def identity(self, default=''):
+        '''Return the canonical identity.
 
-#--- End: class
+    By default the identity is the first found of the following:
+    
+    1. The "standard_name" property.
+    2. The "cf_role" property, preceeded by ``'cf_role='``.
+    3. The "long_name" property, preceeded by ``'long_name='``.
+    4. The netCDF variable name, preceeded by ``'ncvar%'``.
+    5. The value of the *default* parameter.
+    
+    Properties include any inherited properties.
+    
+    .. versionadded:: 3.0.6
+    
+    .. seealso:: `identities`
+    
+    :Parameters:
+    
+        default: optional
+            If no identity can be found then return the value of the
+            default parameter.
+    
+    :Returns:
+    
+            The identity.
+    
+    **Examples:**
+    
+    >>> b.inherited_properties()
+    {'foo': 'bar',
+     'long_name': 'Longitude'}
+    >>> b.properties()
+    {'long_name': 'A different long name'}
+    >>> b.identity()
+    'long_name=A different long name'
+    >>> b.del_property('long_name')
+    'A different long name'
+    >>> b.identity()
+    'long_name=Longitude'
+
+        '''
+        inherited_properties = self.inherited_properties()
+        if inherited_properties:
+            bounds = self.copy()
+            properties = bounds.properties()
+            bounds.set_properties(inherited_properties)
+            bounds.set_properties(properties)
+            self = bounds
+            
+        return super().identity(default=default)
+
+    
+#--- End: class    
