@@ -7,6 +7,11 @@ import cf
 class aggregateTest(unittest.TestCase):
     filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                             'test_file.nc')
+    file = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                        'file.nc')
+    file2 = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                         'file2.nc')
+    
     chunk_sizes = (17, 34, 300, 100000)[::-1]
     original_chunksize = cf.CHUNKSIZE()
     
@@ -61,8 +66,8 @@ class aggregateTest(unittest.TestCase):
             self.assertTrue(i[0].shape == (10,9), 'i[0].shape is '+repr(i[0].shape))
 
             #
-            q, t = cf.read('file.nc')
-            c = cf.read('file2.nc')[0]
+            q, t = cf.read(self.file)
+            c = cf.read(self.file2)[0]
 
             d = cf.aggregate([c, t], info=0, relaxed_identities=True)
             e = cf.aggregate([t, c], info=0, relaxed_identities=True)

@@ -8,7 +8,8 @@
 
 This tutorial uses a number of small sample datasets, all of which can
 be found in the zip file ``cf_tutorial_files.zip``
-(:download:`download <../source/sample_files/cf_tutorial_files.zip>`, 164kB):
+(:download:`download <../source/sample_files/cf_tutorial_files.zip>`,
+164kB):
 		    
 .. code-block:: shell
    :caption: *Unpack the sample datasets.*
@@ -30,7 +31,8 @@ be found in the zip file ``cf_tutorial_files.zip``
    wind_components.nc
 
 The tutorial examples assume that the Python session is being run from
-the directory that also contains the sample files.
+the directory that contains the zip file and its unpacked contents,
+and no other files.
    
 The tutorial files may be also found in the `downloads directory
 <https://github.com/NCAS-CMS/cf-python/tree/master/docs/_downloads>`_

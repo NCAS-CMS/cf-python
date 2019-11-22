@@ -131,7 +131,8 @@ import cf
     
 class DSGTest(unittest.TestCase):
     def setUp(self):
-        self.gathered = 'gathered.nc'
+        self.gathered = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                     'gathered.nc')
 
         (fd, self.tempfilename) = tempfile.mkstemp(suffix='.nc', prefix='cf_', dir='.')
         os.close(fd)

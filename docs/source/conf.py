@@ -409,6 +409,8 @@ def setup(app):
 import inspect, cf
 from os.path import relpath, dirname
 
+link_release = re.search('(\d+\.\d+\.\d+)', release).groups()[0]
+
 def linkcode_resolve(domain, info):
     
     #=================================================================
@@ -419,7 +421,6 @@ def linkcode_resolve(domain, info):
     #=================================================================
 
     online_source_code = True
-#    online_source_code = False
 
     if domain != 'py':
         return None
@@ -474,9 +475,8 @@ def linkcode_resolve(domain, info):
         else:
             # Point to on-line cf
             # code. E.g. https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/data/data.py#L4292
-            version = 'v'+release
             url = "https://github.com/NCAS-CMS/cf-python/blob/{0}/cf/{1}{2}".format(
-                version, fn, linespec)
+                link_release, fn, linespec)
             
         print(url)
         return url

@@ -95,10 +95,14 @@ import cf
 
 class ExternalVariableTest(unittest.TestCase):
     def setUp(self):
-        self.parent_file           = 'parent.nc'
-        self.external_file         = 'external.nc'
-        self.combined_file         = 'combined.nc'
-        self.external_missing_file = 'external_missing.nc'
+        self.parent_file           = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                  'parent.nc')
+        self.external_file         = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                  'external.nc')
+        self.combined_file         = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                  'combined.nc')
+        self.external_missing_file = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                  'external_missing.nc')
         
         self.test_only = []
 

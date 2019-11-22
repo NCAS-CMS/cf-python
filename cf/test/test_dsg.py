@@ -419,9 +419,12 @@ import cf
 
 class DSGTest(unittest.TestCase):
     def setUp(self):
-        self.contiguous         = 'DSG_timeSeries_contiguous.nc' #contiguous_file
-        self.indexed            = 'DSG_timeSeries_indexed.nc' #indexed_file
-        self.indexed_contiguous = 'DSG_timeSeriesProfile_indexed_contiguous.nc' #indexed_contiguous_file
+        self.contiguous         = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                               'DSG_timeSeries_contiguous.nc')
+        self.indexed            = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                               'DSG_timeSeries_indexed.nc')
+        self.indexed_contiguous = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                               'DSG_timeSeriesProfile_indexed_contiguous.nc')
 
         (fd, self.tempfilename) = tempfile.mkstemp(suffix='.nc', prefix='cf_', dir='.')
         os.close(fd)

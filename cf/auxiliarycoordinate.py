@@ -56,7 +56,7 @@ class AuxiliaryCoordinate(abstract.Coordinate,
     .. seealso::`isdimension`, `isdomainancillary`,
                 `isfieldancillary`, `ismeasure`
     
-    :Examples:
+    **Examples:**
     
     >>> c.isauxiliary
     True
