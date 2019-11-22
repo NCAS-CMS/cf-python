@@ -395,7 +395,7 @@ place.
             applied. May be any scalar or array-like object (such as a
             `numpy` array or `Data` instance) that is broadcastable to
             the shape of *array*. Masking will be carried out where
-            elements *mask* evaluate to `True`.
+            the mask elements evaluate to `True`.
 
             This mask will applied in addition to any mask already
             defined by the *array* parameter.

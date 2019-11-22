@@ -205,38 +205,39 @@ class Field(mixin.PropertiesData,
             cfdm.Field):
     '''A field construct of the CF data model.
 
-The field construct is central to the CF data model, and includes all
-the other constructs. A field corresponds to a CF-netCDF data variable
-with all of its metadata. All CF-netCDF elements are mapped to a field
-construct or some element of the CF field construct. The field
-construct contains all the data and metadata which can be extracted
-from the file using the CF conventions.
-
-The field construct consists of a data array and the definition of its
-domain (that describes the locations of each cell of the data array),
-field ancillary constructs containing metadata defined over the same
-domain, and cell method constructs to describe how the cell values
-represent the variation of the physical quantity within the cells of
-the domain. The domain is defined collectively by the following
-constructs of the CF data model: domain axis, dimension coordinate,
-auxiliary coordinate, cell measure, coordinate reference and domain
-ancillary constructs.
-
-The field construct also has optional properties to describe aspects
-of the data that are independent of the domain. These correspond to
-some netCDF attributes of variables (e.g. units, long_name and
-standard_name), and some netCDF global file attributes (e.g. history
-and institution).
-
-**NetCDF interface**
-
-The netCDF variable name of the construct may be accessed with the
-`nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
-`nc_has_variable` methods.
-
-The selection of properties to be written as netCDF global attributes
-may be accessed with the `nc_global_attributes`,
-`nc_clear_global_attributes` and `nc_set_global_attribute` methods.
+    The field construct is central to the CF data model, and includes
+    all the other constructs. A field corresponds to a CF-netCDF data
+    variable with all of its metadata. All CF-netCDF elements are
+    mapped to a field construct or some element of the CF field
+    construct. The field construct contains all the data and metadata
+    which can be extracted from the file using the CF conventions.
+    
+    The field construct consists of a data array and the definition of
+    its domain (that describes the locations of each cell of the data
+    array), field ancillary constructs containing metadata defined
+    over the same domain, and cell method constructs to describe how
+    the cell values represent the variation of the physical quantity
+    within the cells of the domain. The domain is defined collectively
+    by the following constructs of the CF data model: domain axis,
+    dimension coordinate, auxiliary coordinate, cell measure,
+    coordinate reference and domain ancillary constructs.
+    
+    The field construct also has optional properties to describe
+    aspects of the data that are independent of the domain. These
+    correspond to some netCDF attributes of variables (e.g. units,
+    long_name and standard_name), and some netCDF global file
+    attributes (e.g. history and institution).
+    
+    **NetCDF interface**
+    
+    The netCDF variable name of the construct may be accessed with the
+    `nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
+    `nc_has_variable` methods.
+    
+    The selection of properties to be written as netCDF global
+    attributes may be accessed with the `nc_global_attributes`,
+    `nc_clear_global_attributes` and `nc_set_global_attribute`
+    methods.
 
     '''
     def __new__(cls, *args, **kwargs):

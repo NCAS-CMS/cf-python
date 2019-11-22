@@ -73,34 +73,34 @@ class DataTest(unittest.TestCase):
         self.test_only = []
 #        self.test_only = ['NOTHING!!!!!']
 
-#        self.test_only = ['test_Data_AUXILIARY_MASK',
-#                          'test_Data_datum',
-##                          'test_Data_ERROR',
-#                          'test_Data_array',
-#                          'test_Data_varray',
-#                          'test_Data_datetime_array',
-##                          'test_Data_cumsum',
-#                          'test_Data_dumpd_loadd_dumps',
-##                          'test_Data_sin_cos_tan',
-##                          'test_Data_root_mean_square',
-##                          'test_Data_mean_mean_absolute_value',
-#                          'test_Data_squeeze_insert_dimension',
-#                          'test_Data_months_years',
-#                          'test_Data_binary_mask',
-##                          'test_Data_CachedArray',
-#                          'test_Data_digitize',
-##                          'test_Data_outerproduct',
-##                          'test_Data_flatten',
-##                          'test_Data_transpose',
-#                          'test_Data__collapse_SHAPE',
-##                          'test_Data_range_mid_range',
-##                          'test_Data_median',
-##                          'test_Data_mean_of_upper_decile',
-#                          'test_Data__init__mask',
-#        ]
+        self.test_only = ['test_Data_AUXILIARY_MASK',
+                          'test_Data_datum',
+#                          'test_Data_ERROR',
+                          'test_Data_array',
+                          'test_Data_varray',
+                          'test_Data_datetime_array',
+#                          'test_Data_cumsum',
+                          'test_Data_dumpd_loadd_dumps',
+#                          'test_Data_sin_cos_tan',
+#                          'test_Data_root_mean_square',
+#                          'test_Data_mean_mean_absolute_value',
+                          'test_Data_squeeze_insert_dimension',
+                          'test_Data_months_years',
+                          'test_Data_binary_mask',
+#                          'test_Data_CachedArray',
+                          'test_Data_digitize',
+#                          'test_Data_outerproduct',
+#                          'test_Data_flatten',
+#                          'test_Data_transpose',
+                          'test_Data__collapse_SHAPE',
+#                          'test_Data_range_mid_range',
+#                          'test_Data_median',
+#                          'test_Data_mean_of_upper_decile',
+                          'test_Data__init__dtype_mask',
+        ]
         
 #        self.test_only = ['test_Data_mean_mean_absolute_value']
-        self.test_only = ['test_Data_AUXILIARY_MASK']
+#        self.test_only = ['test_Data_AUXILIARY_MASK']
 #        self.test_only = ['test_Data_mean_of_upper_decile']
 #        self.test_only = ['test_Data__collapse_SHAPE']
 #        self.test_only = ['test_Data__collapse_UNWEIGHTED_MASKED']
@@ -109,7 +109,7 @@ class DataTest(unittest.TestCase):
 #        self.test_only = ['test_Data__collapse_WEIGHTED_MASKED']
 #        self.test_only = ['test_Data_ERROR']
 #        self.test_only = ['test_Data_sample_size']
-#        self.test_only = ['test_Data__init__mask']
+#        self.test_only = ['test_Data__init__dtype_mask']
 #        self.test_only = ['test_Data_section']
 #        self.test_only = ['test_Data_sum_of_weights_sum_of_weights2']
 #        self.test_only = ['test_Data_max_min_sum_sum_of_squares']
@@ -118,9 +118,10 @@ class DataTest(unittest.TestCase):
 #        self.test_only = ['test_Data_year_month_day_hour_minute_second']
 #        self.test_only = ['test_Data_BINARY_AND_UNARY_OPERATORS']
 #        self.test_only = ['test_Data_clip']
+#        self.test_only = ['test_Data__init__dtype_mask']
 
 
-    def test_Data__init__mask(self):
+    def test_Data__init__dtype_mask(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -143,12 +144,65 @@ class DataTest(unittest.TestCase):
         self.assertTrue(d.count() == 2)
         self.assertTrue(d.shape == (2, 3))
             
-        
         d = cf.Data([[1,2,3], [4,5,6]], mask=[[0, 1, 0], [1, 0, 1]])
         self.assertTrue(d.count() == 3)
         self.assertTrue(d.shape == (2, 3))
             
         
+        a = numpy.ma.array([[280.0,   -99,   -99,   -99], 
+                            [281.0, 279.0, 278.0, 279.0]],
+                           dtype=float,
+                           mask=[[0, 1, 1, 1], 
+                                 [0, 0, 0, 0]]) 
+
+        d = cf.Data([[280, -99, -99, -99], 
+                     [281, 279, 278, 279]])
+        self.assertTrue(d.dtype == numpy.dtype(int))
+
+        d = cf.Data([[280, -99, -99, -99], 
+                     [281, 279, 278, 279]],
+                    dtype=float,
+                    mask=[[0, 1, 1, 1], 
+                          [0, 0, 0, 0]])
+        
+        self.assertTrue(d.dtype==a.dtype)
+        self.assertTrue((d.array==a).all())
+        self.assertTrue(d.mask.shape==a.mask.shape)
+        self.assertTrue((d.mask.array==numpy.ma.getmaskarray(a)).all())
+        
+        a = numpy.array([[280.0,   -99,   -99,   -99], 
+                         [281.0, 279.0, 278.0, 279.0]],
+                        dtype=float)
+        mask = numpy.ma.masked_all(a.shape).mask
+
+        d = cf.Data([[280, -99, -99, -99], 
+                     [281, 279, 278, 279]],
+                    dtype=float)      
+
+        self.assertTrue(d.dtype==a.dtype)
+        self.assertTrue((d.array==a).all())
+        self.assertTrue(d.mask.shape==mask.shape)
+        self.assertTrue((d.mask.array==numpy.ma.getmaskarray(a)).all())
+
+
+        # Mask broadcasting
+        a = numpy.ma.array([[280.0,   -99,   -99,   -99], 
+                            [281.0, 279.0, 278.0, 279.0]],
+                           dtype=float,
+                           mask=[[0, 1, 1, 0], 
+                                 [0, 1, 1, 0]]) 
+
+        d = cf.Data([[280, -99, -99, -99], 
+                     [281, 279, 278, 279]],
+                    dtype=float,
+                    mask=[0, 1, 1, 0])
+
+        self.assertTrue(d.dtype==a.dtype)
+        self.assertTrue((d.array==a).all())
+        self.assertTrue(d.mask.shape==a.mask.shape)
+        self.assertTrue((d.mask.array==numpy.ma.getmaskarray(a)).all())
+        
+                
     def test_Data_digitize(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
