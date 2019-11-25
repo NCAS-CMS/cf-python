@@ -11090,6 +11090,13 @@ False
               squeeze=True, weights=False):
         '''TODO1
 
+    :Parameters:
+
+        
+
+    :Returns:
+
+        `dict`
         '''
 
         no_weights = ('minimum', 'maximum', 'range', 'mid_range',
