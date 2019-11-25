@@ -15,31 +15,33 @@ _debug = False
 
 from . import abstract
 
+
 class FilledArray(abstract.Array):
-    '''**Initialization**
-
-:Parameters:
-
-    dtype : numpy.dtype
-        The numpy data type of the data array.
-
-    ndim : int
-        Number of dimensions in the data array.
-
-    shape : tuple
-        The data array's dimension sizes.
-
-    size : int
-        Number of elements in the data array.
-
-    fill_value : scalar, optional
-
-#    masked_all: `bool`
+    '''TODO
 
     '''
     def __init__(self, dtype=None, ndim=None, shape=None, size=None,
                  fill_value=None, masked_all=False):
-        '''
+        '''**Initialization**
+
+    :Parameters:
+    
+        dtype : numpy.dtype
+            The numpy data type of the data array.
+    
+        ndim : int
+            Number of dimensions in the data array.
+    
+        shape : tuple
+            The data array's dimension sizes.
+    
+        size : int
+            Number of elements in the data array.
+    
+        fill_value : scalar, optional
+    
+#        masked_all: `bool`
+
         '''
         super().__init__(dtype=dtype, ndim=ndim, shape=shape,
                          size=size, fill_value=fill_value)

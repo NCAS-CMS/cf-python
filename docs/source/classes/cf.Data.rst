@@ -143,6 +143,7 @@ Data methods
    ~cf.Data.sample_size
    ~cf.Data.save_to_disk
    ~cf.Data.sd
+   ~cf.Data.standard_deviation
    ~cf.Data.second_element
    ~cf.Data.section
    ~cf.Data.set_calendar

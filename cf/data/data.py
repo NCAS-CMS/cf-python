@@ -2463,7 +2463,7 @@ place.
                              surrounded by ``i`` and ``j``
             ``'lower'``      ``i``
             ``'higher'``     ``j``
-            ``'nearest'``    ``i`` or ``j``, whichever is nearest.
+            ``'nearest'``    ``i`` or ``j``, whichever is nearest
             ``'midpoint'``   ``(i+j)/2``
             ===============  =========================================       
 
@@ -6455,7 +6455,7 @@ dimensions.
     def _collapse_optimize_weights(self, weights):
         '''Optimise when weights span only non-partitioned axes.
 
-    weights : dict
+    weights: `dict`
 
         '''
         non_partitioned_axes = set(self._axes).difference(self._pmaxes)
@@ -6487,43 +6487,41 @@ dimensions.
             weights[new_key] = type(self)(new_weight)
     
         return weights
-    #--- End: def
+
 
     def _new_axis_identifier(self, existing_axes=None):
+        '''Return an axis name not being used by the data array.
+
+    The returned axis name will also not be referenced by partitions
+    of the partition matrix.
+    
+    :Parameters:
+    
+        existing_axes: sequence of `str`, optional
+    
+    :Returns:
+    
+        `str`
+            The new axis name.
+    
+    **Examples:**
+    
+    >>> d._all_axis_names()   
+    ['dim1', 'dim0']
+    >>> d._new_axis_identifier()
+    'dim2'
+    
+    >>> d._all_axis_names()   
+    ['dim1', 'dim0', 'dim3']
+    >>> d._new_axis_identifier()
+    'dim4'
+    
+    >>> d._all_axis_names()   
+    ['dim5', 'dim6', 'dim7']
+    >>> d._new_axis_identifier()
+    'dim3'
+
         '''
-
-Return an axis name not being used by the data array.
-
-The returned axis name will also not be referenced by partitions of
-the partition matrix.
-
-:Parameters:
-
-    existing_axes : sequence of str, optional
-
-:Returns:
-
-    `str`
-        The new axis name.
-
-**Examples:**
-
->>> d._all_axis_names()   
-['dim1', 'dim0']
->>> d._new_axis_identifier()
-'dim2'
-
->>> d._all_axis_names()   
-['dim1', 'dim0', 'dim3']
->>> d._new_axis_identifier()
-'dim4'
-
->>> d._all_axis_names()   
-['dim5', 'dim6', 'dim7']
->>> d._new_axis_identifier()
-'dim3'
-
-'''
         if existing_axes is None:
             existing_axes = self._all_axis_names()
 
@@ -6534,7 +6532,7 @@ the partition matrix.
             axis = 'dim%d' % n
 
         return axis
-    #--- End: def
+
 
     # ----------------------------------------------------------------
     # Private attributes
@@ -6784,7 +6782,7 @@ the partition matrix.
 
         '''
         return self.get_fill_value(None)
-    #--- End: def
+
     @fill_value.setter
     def fill_value(self, value): self.set_fill_value(value)
     @fill_value.deleter
@@ -6816,24 +6814,22 @@ False
     @hardmask.deleter
     def hardmask(self):
         raise AttributeError(
-"Can't delete {} attribute 'hardmask'".format(self.__class__.__name__))
+            "Can't delete {} attribute 'hardmask'".format(self.__class__.__name__))
 
     @property
     def ismasked(self):
+        '''True if the data array has any masked values.
+    
+    **Examples:**
+    
+    >>> d = cf.Data([[1, 2, 3], [4, 5, 6]])
+    >>> print d.ismasked
+    False
+    >>> d[0, ...] = cf.masked
+    >>> d.ismasked
+    True
+
         '''
-
-True if the data array has any masked values.
-
-**Examples:**
-
->>> d = cf.Data([[1, 2, 3], [4, 5, 6]])
->>> print d.ismasked
-False
->>> d[0, ...] = cf.masked
->>> d.ismasked
-True
-
-'''
         if self._auxiliary_mask:
             for m in self._auxiliary_mask:
                 if m.any():
@@ -6844,7 +6840,6 @@ True
             # Still here? Then remove the auxiliary mask because it
             # must be all False.
             self._auxiliary_mask = None
-        #--- End: if
 
         # Still here?
         config = self.partition_configuration(readonly=True)
@@ -6858,223 +6853,232 @@ True
                 return True
             
             partition.close()
-        #--- End: for
         
         # There are no masked elements
         return False
-    #--- End: def
+
 
     @property
     def ispartitioned(self):
         '''True if the data array is partitioned.
-
-**Examples:**
-
->>> d._pmsize
-1        
->>> d.ispartitioned
-False
-
->>> d._pmsize
-2
->>> d.ispartitioned
-False
-
+    
+    **Examples:**
+    
+    >>> d._pmsize
+    1        
+    >>> d.ispartitioned
+    False
+    
+    >>> d._pmsize
+    2
+    >>> d.ispartitioned
+    False
+    
         '''
         return self._pmsize > 1
-    #--- End: def
+
 
     @property
     def isscalar(self):
+        '''True if the data array is a 0-d scalar array.
+
+    **Examples:**
+    
+    >>> d.ndim
+    0
+    >>> d.isscalar
+    True
+    
+    >>> d.ndim >= 1
+    True
+    >>> d.isscalar
+    False
+
         '''
-
-True if the data array is a 0-d scalar array.
-
-**Examples:**
-
->>> d.ndim
-0
->>> d.isscalar
-True
-
->>> d.ndim >= 1
-True
->>> d.isscalar
-False
-
-'''
         return not self._ndim
-    #--- End: def
+
 
     @property
     def nbytes(self):
+        '''Total number of bytes consumed by the elements of the array.
+
+    Does not include bytes consumed by the array mask
+    
+    **Examples:**
+    
+    >>> d = cf.Data([[1, 1.5, 2]])
+    >>> d.dtype
+    dtype('float64')
+    >>> d.size, d.dtype.itemsize
+    (3, 8)
+    >>> d.nbytes
+    24
+    >>> d[0] = cf.masked
+    >>> print d.array
+    [[-- 1.5 2.0]]
+    >>> d.nbytes
+    24
+    
         '''
-
-Total number of bytes consumed by the elements of the array.
-
-Does not include bytes consumed by the array mask
-
-**Examples:**
-
->>> d = cf.Data([[1, 1.5, 2]])
->>> d.dtype
-dtype('float64')
->>> d.size, d.dtype.itemsize
-(3, 8)
->>> d.nbytes
-24
->>> d[0] = cf.masked
->>> print d.array
-[[-- 1.5 2.0]]
->>> d.nbytes
-24
-
-'''
         return self._size * self.dtype.itemsize
-    #--- End: def
 
 
     @property
     def ndim(self):
         '''Number of dimensions in the data array.
 
-**Examples:**
+    **Examples:**
+    
+    >>> d = cf.Data([[1, 2, 3], [4, 5, 6]])
+    >>> d.ndim
+    2
 
->>> d.shape
-(73, 96)
->>> d.ndim
-2
+    >>> d = cf.Data([[1, 2, 3]])
+    >>> d.ndim
+    2
 
->>> d.shape
-()
->>> d.ndim
-0
+    >>> d = cf.Data([[3]])
+    >>> d.ndim
+    2    
+
+    >>> d = cf.Data([3])
+    >>> d.ndim
+    1
+
+
+    >>> d = cf.Data(3)
+    >>> d.ndim
+    0
 
         '''
         return self._ndim
-    #--- End: def
+
 
     @property
     def _pmaxes(self):
+        '''TODO
+
         '''
-'''
         return self.partitions.axes
-    #--- End: def
+
 
     @property
     def _pmndim(self):
+        '''Number of dimensions in the partition matrix.
+    
+    **Examples:**
+    
+    >>> d._pmshape
+    (4, 7)
+    >>> d._pmndim
+    2
+    
+    >>> d._pmshape
+    ()
+    >>> d._pmndim
+    0
+
         '''
-
-Number of dimensions in the partition matrix.
-
-**Examples:**
-
->>> d._pmshape
-(4, 7)
->>> d._pmndim
-2
-
->>> d._pmshape
-()
->>> d._pmndim
-0
-
-'''
         return self.partitions.ndim
-    #--- End: def
+
 
     @property
     def _pmsize(self):
+        '''Number of partitions in the partition matrix.
+
+    **Examples:**
+    
+    >>> d._pmshape
+    (4, 7)
+    >>> d._pmsize
+    28
+    
+    >>> d._pmndim
+    0
+    >>> d._pmsize
+    1
+
         '''
-
-Number of partitions in the partition matrix.
-
-**Examples:**
-
->>> d._pmshape
-(4, 7)
->>> d._pmsize
-28
-
->>> d._pmndim
-0
->>> d._pmsize
-1
-
-'''
         return self.partitions.size
-    #--- End: def
+
 
     @property
     def _pmshape(self):
+        '''Tuple of the partition matrix's dimension sizes.
+
+    **Examples:**
+    
+    >>> d._pmshape
+    (4, 7)
+    
+    >>> d._pmndim
+    0
+    >>> d._pmshape
+    ()
+
         '''
-
-Tuple of the partition matrix's dimension sizes.
-
-**Examples:**
-
->>> d._pmshape
-(4, 7)
-
->>> d._pmndim
-0
->>> d._pmshape
-()
-
-'''
         return self.partitions.shape
-    #--- End: def
+
 
     @property
     def shape(self):
+        '''Tuple of the data array's dimension sizes.
+    
+    **Examples:**
+    
+    >>> d = cf.Data([[1, 2, 3], [4, 5, 6]])
+    >>> d.shape
+    (2, 3)
+
+    >>> d = cf.Data([[1, 2, 3]])
+    >>> d.shape
+    (1, 3)
+
+    >>> d = cf.Data([[3]])
+    >>> d.shape
+    (1, 1)    
+
+    >>> d = cf.Data(3)
+    >>> d.shape
+    ()
+
         '''
-
-Tuple of the data array's dimension sizes.
-
-**Examples:**
-
->>> d.shape
-(73, 96)
-
->>> d.ndim
-0
->>> d.shape
-()
-
-'''
         try:
             return self._shape
         except:
             raise AttributeError("{!r} object has no attribute 'shape'".format(
                 self.__class__.__name__))
-    #--- End: def
+
 
     @property
     def size(self):
         '''Number of elements in the data array.
 
-**Examples:**
+    **Examples:**
 
->>> d.shape
-(73, 96)
->>> d.size
-7008
+    >>> d = cf.Data([[1, 2, 3], [4, 5, 6]])
+    >>> d.size
+    6
 
->>> d.shape
-(1, 1, 1)
->>> d.size
-1
+    >>> d = cf.Data([[1, 2, 3]])
+    >>> d.size
+    3
 
->>> d.ndim
-0
->>> d.shape
-()
->>> d.size
-1
+    >>> d = cf.Data([[3]])
+    >>> d.size
+    1    
+
+    >>> d = cf.Data([3])
+    >>> d.size
+    1
+
+    >>> d = cf.Data(3)
+    >>> d.size
+    1
 
         '''
         return self._size
-    #--- End: def
+
 
     @property
     def array(self):
@@ -7446,7 +7450,6 @@ Tuple of the data array's dimension sizes.
             partition.Units = _units_None
 
             partition.close()
-        #--- End: for
         
         mask._Units = _units_None
         mask.dtype  = _dtype_bool
@@ -7454,67 +7457,68 @@ Tuple of the data array's dimension sizes.
         mask.hardmask = True
 
         return mask
-    #--- End: def
 
 
     @staticmethod
     def mask_fpe(*arg):
         '''Masking of floating-point errors in the results of arithmetic
-operations.
-
-If masking is allowed then only floating-point errors which would
-otherwise be raised as `FloatingPointError` exceptions are
-masked. Whether `FloatingPointError` exceptions may be raised is
-determined by `cf.Data.seterr`.
-
-If called without an argument then the current behaviour is returned.
-
-Note that if the raising of `FloatingPointError` exceptions has
-suppressed then invalid values in the results of arithmetic operations
-may be subsequently converted to masked values with the `mask_invalid`
-method.
-
-.. seealso:: `cf.Data.seterr`, `mask_invalid`
-
-:Parameters:
-
-    arg: `bool`, optional
-        The new behaviour. True means that `FloatingPointError`
-        exceptions are suppressed and replaced with masked
-        values. False means that `FloatingPointError` exceptions are
-        raised. The default is not to change the current behaviour.
-
-:Returns:
-
-    `bool`
-        The behaviour prior to the change, or the current behaviour if
-        no new value was specified.
-
-**Examples:**
-
->>> d = cf.Data([0., 1])
->>> e = cf.Data([1., 2])
-
->>> old = cf.Data.mask_fpe(False)
->>> old = cf.Data.seterr('raise')
->>> e/d
-FloatingPointError: divide by zero encountered in divide
->>> e**123456
-FloatingPointError: overflow encountered in power
-
->>> old = cf.Data.mask_fpe(True)
->>> old = cf.Data.seterr('raise')
->>> e/d
-<CF Data: [--, 2.0] >
->>> e**123456
-<CF Data: [1.0, --] >
-
->>> old = cf.Data.mask_fpe(True)
->>> old = cf.Data.seterr('ignore')
->>> e/d
-<CF Data: [inf, 2.0] >
->>> e**123456
-<CF Data: [1.0, inf] >
+    operations.
+    
+    If masking is allowed then only floating-point errors which would
+    otherwise be raised as `FloatingPointError` exceptions are
+    masked. Whether `FloatingPointError` exceptions may be raised is
+    determined by `cf.Data.seterr`.
+    
+    If called without an argument then the current behaviour is
+    returned.
+    
+    Note that if the raising of `FloatingPointError` exceptions has
+    suppressed then invalid values in the results of arithmetic
+    operations may be subsequently converted to masked values with the
+    `mask_invalid` method.
+    
+    .. seealso:: `cf.Data.seterr`, `mask_invalid`
+    
+    :Parameters:
+    
+        arg: `bool`, optional
+            The new behaviour. True means that `FloatingPointError`
+            exceptions are suppressed and replaced with masked
+            values. False means that `FloatingPointError` exceptions
+            are raised. The default is not to change the current
+            behaviour.
+    
+    :Returns:
+    
+        `bool`
+            The behaviour prior to the change, or the current
+            behaviour if no new value was specified.
+    
+    **Examples:**
+    
+    >>> d = cf.Data([0., 1])
+    >>> e = cf.Data([1., 2])
+    
+    >>> old = cf.Data.mask_fpe(False)
+    >>> old = cf.Data.seterr('raise')
+    >>> e/d
+    FloatingPointError: divide by zero encountered in divide
+    >>> e**123456
+    FloatingPointError: overflow encountered in power
+    
+    >>> old = cf.Data.mask_fpe(True)
+    >>> old = cf.Data.seterr('raise')
+    >>> e/d
+    <CF Data: [--, 2.0] >
+    >>> e**123456
+    <CF Data: [1.0, --] >
+    
+    >>> old = cf.Data.mask_fpe(True)
+    >>> old = cf.Data.seterr('ignore')
+    >>> e/d
+    <CF Data: [inf, 2.0] >
+    >>> e**123456
+    <CF Data: [1.0, inf] >
 
         '''
         old = _mask_fpe[0]
@@ -7523,7 +7527,7 @@ FloatingPointError: overflow encountered in power
             _mask_fpe[0] = bool(arg[0])
 
         return old
-    #--- End: def
+
 
     @staticmethod
     def seterr(all=None, divide=None, over=None, under=None, invalid=None):
@@ -7697,7 +7701,6 @@ FloatingPointError: overflow encountered in power
         #--- End: if
         
         return old
-    #--- End: def
 
     
     def add_partitions(self, extra_boundaries, pdim):
@@ -7880,22 +7883,22 @@ FloatingPointError: overflow encountered in power
     @classmethod
     def concatenate_data(cls, data_list, axis):
         '''Concatenates a list of Data objects into a single Data object along
-the specified access (see cf.Data.concatenate for details). In the
-case that the list contains only one element, that element is simply
-returned.
-
-:Parameters:
-
-    data_list: `list`
-        The list of data objects to concatenate.
-
-    axis: `int`
-        The axis along which to perform the concatenation.
-
-:Returns:
-
-    `Data`
-        The resulting single `Data` object.
+    the specified access (see cf.Data.concatenate for details). In the
+    case that the list contains only one element, that element is
+    simply returned.
+    
+    :Parameters:
+    
+        data_list: `list`
+            The list of data objects to concatenate.
+    
+        axis: `int`
+            The axis along which to perform the concatenation.
+    
+    :Returns:
+    
+        `Data`
+            The resulting single `Data` object.
 
         '''
         if len(data_list) > 1:
@@ -7907,7 +7910,7 @@ returned.
         else:
             assert len(data_list) == 1
             return data_list[0]
-    #--- End: def
+
     
     @classmethod
     def reconstruct_sectioned_data(cls, sections):
@@ -7981,7 +7984,7 @@ returned.
     :Parameters:
     
         axis: `int`, optional
-            The specified axis over which to locate te maximum
+            The specified axis over which to locate the maximum
             values. By default the maximum over the whole data is
             located.
     
@@ -7989,7 +7992,8 @@ returned.
             If True, then when locating the maximum over the whole
             data, return the location as a tuple of indices for each
             axis. By default an index to the flattened array is
-            returned in this case.
+            returned in this case. Ignored if locating the maxima over
+            a subset of the axes.
     
     :Returns:
     
@@ -8011,6 +8015,19 @@ returned.
     <CF Data(4, 5): [[5, ..., 5]]>
 
         '''
+        if axis is not None:
+            ndim = self._ndim 
+            if -ndim-1 <= axis < 0:
+                axis += ndim + 1
+            elif not 0 <= axis <= ndim:
+                raise ValueError(
+                    "Can't argmax: Invalid axis specification: Expected -{0}<=axis<{0}, got axis={1}".format(
+                        ndim, axis))
+
+            if ndim == 1 and axis == 0:
+                axis=None
+        #--- End: if
+        
         if axis is None:
             config = self.partition_configuration(readonly=True)
 
@@ -8224,9 +8241,9 @@ returned.
         '''
         self.Units = Units(value, self.get_calendar(default=None))
 
-
-    def max(self, axes=None, squeeze=False, mtol=1, inplace=False, i=False,
-            _preserve_partitions=False):
+        
+    def maximum(self, axes=None, squeeze=False, mtol=1, inplace=False,
+                i=False, _preserve_partitions=False):
         '''Collapse axes with their maximum.
 
     Missing data array elements are omitted from the calculation.
@@ -8252,9 +8269,11 @@ returned.
     
     **Examples:**
 
+    TODO
+
         '''
         if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'max', i=True) # pragma: no cover
+            _DEPRECATION_ERROR_KWARGS(self, 'maximum', i=True) # pragma: no cover
             
         return self._collapse(max_f, max_fpartial, max_ffinalise, axes=axes,
                               squeeze=squeeze, mtol=mtol, inplace=inplace,
@@ -8307,8 +8326,9 @@ returned.
                               _preserve_partitions=_preserve_partitions)
 
 
-    def min(self, axes=None, squeeze=False, mtol=1, inplace=False, i=False,
-            _preserve_partitions=False):
+
+    def minimum(self, axes=None, squeeze=False, mtol=1, inplace=False,
+                i=False, _preserve_partitions=False):
         '''Collapse axes with their minimum.
 
     Missing data array elements are omitted from the calculation.
@@ -8330,19 +8350,22 @@ returned.
         `Data`
             The collapsed array.
     
-    .. seealso:: `max`, `mean`, `mid_range`, `sum`, `sd`, `var`
+    .. seealso:: `maximum`, `mean`, `mid_range`, `sum`, `sd`, `var`
      
     **Examples:**
 
+    TODO
+
         '''
         if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'min', i=True) # pragma: no cover
+            _DEPRECATION_ERROR_KWARGS(self, 'minimum', i=True) # pragma: no cover
             
 
         return self._collapse(min_f, min_fpartial, min_ffinalise, axes=axes,
                               squeeze=squeeze, mtol=mtol, inplace=inplace,
                               _preserve_partitions=_preserve_partitions)
 
+    
     def minimum_absolute_value(self, axes=None, squeeze=False, mtol=1,
                                inplace=False,
                                _preserve_partitions=False):
@@ -11058,17 +11081,41 @@ returned.
         return self.func(numpy_round, out=True, inplace=inplace,
                          decimals=decimals)
 
-    def stats(self):
-        '''TODO
+    def stats(self, all=False, minimum=True, mean=True, median=True,
+              maximum=True, range=True, mid_range=True,
+              standard_deviation=True, root_mean_square=True,
+              sample_size=True, minimum_absolute_value=False,
+              maximum_absolute_value=False, mean_absolute_value=False,
+              mean_of_upper_decile=False, sum_of_squares=False,
+              squeeze=True, weights=False):
+        '''TODO1
+
         '''
-        return {'min' : self.min(squeeze=True),
-                'mean': self.mean(squeeze=True),
-                'max' : self.max(squeeze=True),
-                'range': self.range(squeeze=True),
-                'mid_range': self.mid_range(squeeze=True),
-                'standard_deviation': self.sd(squeeze=True),
-                'sample_size': int(self.sample_size()),
-        }
+
+        no_weights = ('minimum', 'maximum', 'range', 'mid_range',
+                      'minimum_absolute_value', 'maximum_absolute_value',
+                      'median')
+        
+        out = {}
+        for stat in ('minimum', 'mean', 'median','maximum', 'range',
+                     'mid_range','standard_deviation',
+                     'root_mean_square', 'minimum_absolute_value',
+                     'maximum_absolute_value', 'mean_absolute_value',
+                     'mean_of_upper_decile', 'sum_of_squares'):
+            if all or locals()[stat]:
+                f = getattr(self, stat)
+                if stat in no_weights:
+                    value = f(squeeze=squeeze)
+                else:
+                    value = f(squeeze=squeeze, weights=weights)
+
+                out[stat] = value
+        #--- End: for
+        
+        if all or sample_size:
+            out['sample_size'] = int(self.sample_size())
+
+        return out
          
 
     def swapaxes(self, axis0, axis1, inplace=False, i=False):
@@ -12629,8 +12676,9 @@ returned.
                               _preserve_partitions=_preserve_partitions)
 
 
-    def sd(self, axes=None, squeeze=False, mtol=1, weights=None,
-           ddof=0, inplace=False, i=False, _preserve_partitions=False):
+    def standard_deviation(self, axes=None, squeeze=False, mtol=1,
+                           weights=None, ddof=0, inplace=False, i=False,
+                           _preserve_partitions=False):
         '''Collapse axes by calculating their standard deviation.
     
     The standard deviation may be adjusted for the number of degrees of
@@ -12776,7 +12824,7 @@ returned.
 
         '''        
         if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'sd', i=True) # pragma: no cover
+            _DEPRECATION_ERROR_KWARGS(self, 'standard_deviation', i=True) # pragma: no cover
 
         return self._collapse(sd_f, sd_fpartial, sd_ffinalise,
                               axes=axes, squeeze=squeeze,
@@ -12887,7 +12935,7 @@ returned.
 
     
     # ----------------------------------------------------------------
-    # Aliases
+    # Alias
     # ----------------------------------------------------------------
     @property
     def dtarray(self):
@@ -12896,7 +12944,38 @@ returned.
         '''
         return self.datetime_array
 
+    
+    def max(self, axes=None, squeeze=False, mtol=1, inplace=False, i=False,
+            _preserve_partitions=False):
+        '''Alias for `maximum`
 
+        '''
+        return self.maximum(axes=axes, squeeze=squeeze, mtol=mtol,
+                            inplace=inplace, i=i,
+                            _preserve_partitions=_preserve_partitions)
+    
+
+    def min(self, axes=None, squeeze=False, mtol=1, inplace=False, i=False,
+            _preserve_partitions=False):
+        '''Alias for `minimum`
+
+        '''
+        return self.minimum(axes=axes, squeeze=squeeze, mtol=mtol,
+                            inplace=inplace, i=i,
+                            _preserve_partitions=_preserve_partitions)
+        
+    
+    def sd(self, axes=None, squeeze=False, mtol=1, weights=None,
+           ddof=0, inplace=False, i=False, _preserve_partitions=False):
+        '''Alias for `standard_deviation`
+
+        '''
+        return self.standard_deviation(axes=axes, squeeze=squeeze,
+                                       weights=weights, mtol=mtol, ddof=ddof,
+                                       inplace=inplace,
+                                       _preserve_partitions=_preserve_partitions)
+    
+                              
     # ----------------------------------------------------------------
     # Deprecated attributes and methods
     # ----------------------------------------------------------------

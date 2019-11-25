@@ -260,18 +260,18 @@ def max_f(a, axis=None, masked=False):
     
     :Parameters:
     
-        a : numpy array_like
+        a: numpy array_like
             Input array
     
-        axis : int, optional
+        axis: `int`, optional
             Axis along which to operate. By default, flattened input
             is used.
     
-        masked : bool
+        masked: `bool`
     
     :Returns:
     
-        out : 2-tuple of numpy arrays
+        out: 2-tuple of numpy arrays
             The sample sizes and the maxima.
 
     '''
@@ -304,7 +304,7 @@ def max_ffinalise(out, sub_samples=None):
 
     :Parameters:
 
-        sub_samples : *optional*
+        sub_samples: *optional*
             Ignored.
 
     '''
@@ -375,18 +375,18 @@ def max_abs_f(a, axis=None, masked=False):
 
     :Parameters:
     
-        a : numpy array_like
+        a: numpy array_like
             Input array
     
-        axis : int, optional
+        axis: `int`, optional
             Axis along which to operate. By default, flattened input
             is used.
     
-        masked : bool
+        masked: bool
     
     :Returns:
     
-        out : 2-tuple of numpy arrays
+        out: 2-tuple of numpy arrays
             The sample sizes and the maxima of the absolute values.
 
     '''
@@ -633,31 +633,29 @@ def root_mean_square_ffinalise(out, sub_samples=None):
 # Mid range: Average of maximum and minimum 
 #---------------------------------------------------------------------
 def mid_range_f(a, axis=None, masked=False):
+    '''Return the minimum and maximum of an array or the minima and maxima
+    along an axis.
+    
+    ``mid_range_f(a, axis=axis)`` is equivalent to ``(numpy.amin(a,
+    axis=axis), numpy.amax(a, axis=axis))``
+    
+    :Parameters:
+    
+        a: numpy array_like
+            Input array
+    
+        axis: `int`, optional
+            Axis along which to operate. By default, flattened input
+            is used.
+    
+        kwargs: ignored
+    
+    :Returns:
+    
+        out: `tuple`
+            The minimum and maximum inside a 2-tuple.
+
     '''
-        
-Return the minimum and maximum of an array or the minima and maxima
-along an axis.
-
-``mid_range_f(a, axis=axis)`` is equivalent to ``(numpy.amin(a,
-axis=axis), numpy.amax(a, axis=axis))``
-
-:Parameters:
-
-    a : numpy array_like
-        Input array
-
-    axis : int, optional
-        Axis along which to operate. By default, flattened input is
-        used.
-
-    kwargs : ignored
-
-:Returns:
-
-    out : tuple
-        The minimum and maximum inside a 2-tuple.
-
-'''
     N,   = sample_size_f(a, axis=axis, masked=masked)
     amin = numpy_amin(a, axis=axis)
     amax = numpy_amax(a, axis=axis)
@@ -669,11 +667,12 @@ axis=axis), numpy.amax(a, axis=axis))``
         amax = numpy_asanyarray(amax)
 
     return asanyarray(N, amin, amax)
-#--- End: def
+
 
 def mid_range_fpartial(out, out1=None, group=False):
+    '''TODO
+
     '''
-'''
     N, amin, amax = out
 
     if out1 is not None:
@@ -682,26 +681,25 @@ def mid_range_fpartial(out, out1=None, group=False):
         N    = psum(N, N1)
         amin = pmin(amin, amin1)
         amax = pmax(amax, amax1)
-    #--- End: if
 
     return asanyarray(N, amin, amax)
-#--- End: def
+
 
 def mid_range_ffinalise(out, sub_samples=None):
+    '''TODO
+
+    :Parameters:
+    
+        out: ordered sequence
+    
+        amin: `numpy.ndarray`
+    
+        amax: `numpy.ndarray`
+    
+        sub_samples: *optional*
+            Ignored.
+    
     '''
-
-:Parameters:
-
-    out : ordered sequence
-
-    amin : numpy.ndarray
-
-    amax : numpy.ndarray
-
-    sub_samples : *optional*
-        Ignored.
-
-'''
     N, amin, amax = out
 
     amax = double_precision(amax)
@@ -714,7 +712,7 @@ def mid_range_ffinalise(out, sub_samples=None):
     amax *= 0.5
 
     return mask_where_too_few_values(1, N, amax)
-#--- End: def
+
 
 #---------------------------------------------------------------------
 # Range: Absolute difference between maximum and minimum 
@@ -723,35 +721,37 @@ range_f        = mid_range_f
 range_fpartial = mid_range_fpartial
 
 def range_ffinalise(out, sub_samples=None):
+    '''Absolute difference between maximum and minimum
+
+    :Parameters:
+    
+        out: ordered sequence
+    
+        sub_samples: optional
+            Ignored.
+
     '''
-Absolute difference between maximum and minimum 
-
-:Parameters:
-
-    out : ordered sequence
-
-    sub_samples : *optional*
-        Ignored.
-
-'''
     N, amin, amax = out
 
     amax = double_precision(amax)
-  
     amax -= amin
       
     return mask_where_too_few_values(1, N, amax)
-#--- End: def
+
 
 #---------------------------------------------------------------------
 # Sample size
 #---------------------------------------------------------------------
 def sample_size_f(a, axis=None, masked=False):
-    '''
+    '''TODO
 
-    axis : int, optional
-        non-negative
-'''
+    :Parameters:
+    
+        axis: `int`, optional
+            non-negative
+
+
+    '''
     if masked:        
         N = numpy_sum(~a.mask, axis=axis, dtype=float)
         if not numpy_ndim(N):
@@ -766,47 +766,47 @@ def sample_size_f(a, axis=None, masked=False):
     #--- End: if
 
     return asanyarray(N)
-#--- End: def
+
 
 def sample_size_fpartial(out, out1=None, group=False):
+    '''TODO
+
+    :Parameters:
+    
+        out: ordered sequence of one numpy array
+    
+    :Returns:
+    
+        out: `numpy.ndarray`
+    
     '''
-
-:Parameters:
-
-    out : ordered sequence of one numpy array
-
-:Returns:
-
-    out : numpy array
-
-'''
     N, = out
     if out1 is not None:
         N1, = out1
         N = psum(N, N1)
 
     return asanyarray(N)
-#--- End: def
+
 
 def sample_size_ffinalise(out, sub_samples=None):
+    '''TODO
+    
+    :Parameters:
+    
+        out: ordered sequence of one numpy array
+    
+        sub_samples: *optional*
+            Ignored.
+    
+    :Returns:
+    
+        out: `tuple`
+            A 2-tuple containing *N* twice.
+    
     '''
-
-:Parameters:
-
-    out : ordered sequence of one numpy array
-
-    sub_samples : *optional*
-        Ignored.
-
-:Returns:
-
-    out : tuple
-        A 2-tuple containing *N* twice.
-
-'''
     N, = out
     return asanyarray(N, N)
-#--- End: def
+
 
 #---------------------------------------------------------------------
 # sum
@@ -874,7 +874,7 @@ def sum_ffinalise(out, sub_samples=None):
 
     :Parameters:
 
-        sub_samples : *optional*
+        sub_samples: *optional*
             Ignored.
     '''
     return mask_where_too_few_values(1, *out)
@@ -915,8 +915,9 @@ sum_of_squares_ffinalise = sum_ffinalise
 #---------------------------------------------------------------------
 def sw_f(a, axis=None, masked=False, weights=None, N=None,
          sum_of_squares=False):
+    '''TODO
+
     '''
-'''
     if N is None:
         N, = sample_size_f(a, axis=axis, masked=masked)
 
@@ -943,7 +944,7 @@ def sw_f(a, axis=None, masked=False, weights=None, N=None,
         sw = N.copy()
 
     return asanyarray(N, sw)
-#--- End: def
+
 
 sw_fpartial  = sum_fpartial
 sw_ffinalise = sum_ffinalise
@@ -951,7 +952,7 @@ sw_ffinalise = sum_ffinalise
 #---------------------------------------------------------------------
 # Sum of squares of weights
 #---------------------------------------------------------------------
-sw2_f = functools_partial(sw_f, sum_of_squares=True)
+sw2_f         = functools_partial(sw_f, sum_of_squares=True)
 sw2_fpartial  = sum_fpartial
 sw2_ffinalise = sum_ffinalise
 
@@ -959,30 +960,31 @@ sw2_ffinalise = sum_ffinalise
 # Variance
 #---------------------------------------------------------------------
 def var_f(a, axis=None, weights=None, masked=False, ddof=0):
+    '''TODO
+
+    ========  ============================================================
+    Variable  Description
+    ========  ============================================================
+    N         Sample size
+    
+    var       Sample variance (ddof=0)
+    
+    avg       Weighted mean
+    
+    V1        Sum of weights
+    
+    V2        Sum of squares of weights
+    
+    ddof      Delta degrees of freedom
+    
+    weighted  Whether or not the sample is weighted
+    ========  ============================================================
+    
+    :Returns:
+
+        out: `tuple`
+    
     '''
-
-========  ============================================================
-Variable  Description
-========  ============================================================
-N         Sample size
-
-var       Sample variance (ddof=0)
-
-avg       Weighted mean
-
-V1        Sum of weights
-
-V2        Sum of squares of weights
-
-ddof      Delta degrees of freedom
-
-weighted  Whether or not the sample is weighted
-========  ============================================================
-
-:Return:
-    out: `tuple`
-
-'''
     # Make sure that a is double precision
     a = double_precision(a)
     
@@ -1037,7 +1039,7 @@ weighted  Whether or not the sample is weighted
     (N, var, avg, V1, V2) = asanyarray(N, var, avg, V1, V2)
 
     return (N, var, avg, V1, V2, ddof, weighted)
-#--- End: def
+
 
 def var_fpartial(out, out1=None, group=False):
     '''Return:
@@ -1110,12 +1112,12 @@ https://en.wikipedia.org/wiki/Pooled_variance#Population-based_statistics
 
         if weighted and ddof == 1:
             V2 = psum(V2, V2b)
-    #--- End: def
+    #--- End: if
 
     (N, var, avg, V1, V2) = asanyarray(N, var, avg, V1, V2)
 
     return (N, var, avg, V1, V2, ddof, weighted)
-#--- End: def
+
 
 def var_ffinalise(out, sub_samples=None):
     '''https://en.wikipedia.org/wiki/Pooled_variance#Population-based_statistics
@@ -1188,10 +1190,10 @@ def sd_ffinalise(out, sub_samples=None):
 
     :Parameters:
     
-        out : tuple
+        out: `tuple`
             A 2-tuple
     
-        sub_samples : *optional*
+        sub_samples: *optional*
             Ignored.
     
     
