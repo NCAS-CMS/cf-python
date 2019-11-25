@@ -251,7 +251,8 @@ levels of detail.
 Minimal detail
 ^^^^^^^^^^^^^^
 
-The built-in `repr` function returns a short, one-line description:
+The built-in `repr` function, invoked on a variable by calling that variable
+alone at the interpreter prompt, returns a short, one-line description:
 
 .. code-block:: python
    :caption: *Inspect the contents of the two field constructs from
@@ -277,10 +278,10 @@ spanned by the data array ("latitude" and "longitude" with sizes 5 and
 Medium detail
 ^^^^^^^^^^^^^
 
-The built-in `str` function returns similar information as the
-one-line output, along with short descriptions of the metadata
-constructs, which include the first and last values of their data
-arrays:
+The built-in `str` function, invoked by a `print` call on a field construct,
+returns similar information as the one-line output, along with short
+descriptions of the metadata constructs, which include the first and last
+values of their data arrays:
 
 .. code-block:: python
   :caption: *Inspect the contents of the two field constructs with
