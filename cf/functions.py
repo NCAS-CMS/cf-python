@@ -2283,8 +2283,9 @@ def _section(o, axes=None, data=False, stop=None, chunks=False,
         return fl
 
     
-def environment(display=True):
-    '''Return the names and versions of cf-python dependencies.
+def environment(display=True, paths=True, string=True):
+    '''Return the names and versions of the cf package and its
+    dependencies.
 
     :Parameters:
     
@@ -2292,6 +2293,9 @@ def environment(display=True):
             If False then return the description of the environment as
             a string. By default the description is printed.
     
+        paths: `bool`, optional
+            If False then do not output the locations of each package.
+
     :Returns:
     
         `None` or `str`
@@ -2319,50 +2323,101 @@ def environment(display=True):
     cfplot: 3.0.0 /home/space/anaconda3/lib/python3.7/site-packages/cfplot/__init__.py
     cf: 3.0.1 /home/space/anaconda3/lib/python3.7/site-packages/cf/__init__.py
 
+    >>> cf.environment(paths=False)
+    Platform: Linux-4.15.0-64-generic-x86_64-with-debian-stretch-sid
+    HDF5 library: 1.10.2
+    netcdf library: 4.6.1
+    udunits2 library: libudunits2.so.0
+    python: 3.7.3
+    netCDF4: 1.4.2
+    cftime: 1.0.3.4
+    numpy: 1.16.2
+    psutil: 5.6.3
+    scipy: 1.2.1
+    matplotlib: 3.1.1
+    ESMF: 7.1.0r
+    cfdm: 1.7.8
+    cfunits: 3.2.2
+    cfplot: 3.0.0
+    cf: 3.0.1
+
     '''
     out = []
     out.append('Platform: ' + str(platform.platform()))
     out.append('HDF5 library: ' + str(netCDF4. __hdf5libversion__))
     out.append('netcdf library: ' + str(netCDF4.__netcdf4libversion__))
     out.append('udunits2 library: ' + str(ctypes.util.find_library('udunits2')))
-    out.append('python: ' + str(platform.python_version() + ' ' + str(_sys_executable)))
-    out.append('netCDF4: ' + str(netCDF4.__version__) + ' ' + str(_os_path_abspath(netCDF4.__file__)))
-    out.append('cftime: ' + str(cftime.__version__) + ' ' + str(_os_path_abspath(cftime.__file__)))
-    out.append('numpy: ' + str(_numpy__version__) + ' ' + str(_os_path_abspath(_numpy__file__)))
-    out.append('psutil: ' + str(psutil.__version__) + ' ' + str(_os_path_abspath(psutil.__file__)))
+    out.append('python: ' + str(platform.python_version()))
+    if paths:
+        out[-1] += ' ' + str(_sys_executable)
+
+    out.append('netCDF4: ' + str(netCDF4.__version__))
+    if paths:
+        out[-1] += ' ' + str(_os_path_abspath(netCDF4.__file__))
+
+    out.append('cftime: ' + str(cftime.__version__))
+    if paths:
+        out[-1] += ' ' + str(_os_path_abspath(cftime.__file__))
+
+    out.append('numpy: ' + str(_numpy__version__))
+    if paths:
+        out[-1] += ' ' + str(_os_path_abspath(_numpy__file__))
+        
+    out.append('psutil: ' + str(psutil.__version__))
+    if paths:
+        out[-1] += ' ' + str(_os_path_abspath(psutil.__file__))
 
     try:
         import scipy
     except:
         out.append('scipy: not available')
     else:
-        out.append('scipy: ' + str(scipy.__version__) + ' ' + str(_os_path_abspath(scipy.__file__)))
+        out.append('scipy: ' + str(scipy.__version__))
+        if paths:
+            out[-1] += ' ' + str(_os_path_abspath(scipy.__file__))
+    #--- End: try
 
     try:
         import matplotlib
     except:
         out.append('matplotlib: not available')
     else:
-        out.append('matplotlib: ' + str(matplotlib.__version__) + ' ' + str(_os_path_abspath(matplotlib.__file__)))
+        out.append('matplotlib: ' + str(matplotlib.__version__))
+        if paths:
+            out[-1] += ' ' + str(_os_path_abspath(matplotlib.__file__))
+    #--- End: try
 
     try:
         import ESMF
     except:
         out.append('ESMF: not available')
     else:
-        out.append('ESMF: ' + str(ESMF.__version__) + ' ' + str(_os_path_abspath(ESMF.__file__)))
-
-    out.append('cfdm: ' + str(cfdm.__version__) + ' ' + str(_os_path_abspath(cfdm.__file__)))
-    out.append('cfunits: ' + str(cfunits.__version__) + ' ' + str(_os_path_abspath(cfunits.__file__)))
+        out.append('ESMF: ' + str(ESMF.__version__))
+        if paths:
+            out[-1] += ' ' + str(_os_path_abspath(ESMF.__file__))
+    #--- End: try
+    
+    out.append('cfdm: ' + str(cfdm.__version__))
+    if paths:
+        out[-1] += ' ' + str(_os_path_abspath(cfdm.__file__))
+            
+    out.append('cfunits: ' + str(cfunits.__version__))
+    if paths:
+        out[-1] += ' ' + str(_os_path_abspath(cfunits.__file__))
 
     try:
         import cfplot
     except ImportError:
         out.append('cfplot: not available')
     else:
-        out.append('cfplot: ' + str(cfplot.__version__) + ' ' + str(_os_path_abspath(cfplot.__file__)))
+        out.append('cfplot: ' + str(cfplot.__version__))
+        if paths:
+            out[-1] += ' ' + str(_os_path_abspath(cfplot.__file__))
+    #--- End: try
             
-    out.append('cf: ' + str(__version__) + ' ' + str(_os_path_abspath(__file__)))
+    out.append('cf: ' + str(__version__))
+    if paths:
+        out[-1] += ' ' + str(_os_path_abspath(__file__))
     
     out = '\n'.join(out)
 

@@ -2,10 +2,11 @@ version 3.0.6
 -------------
 ----
 
-**Not yet released**
+**2019-11-27**
 
 * New method: `cf.Field.uncompress`.
 * New method: `cf.Data.uncompress`.
+* New keyword parameter to `cf.environment`: ``paths``.
 * Can now insert a size 1 data dimension for a new, previously
   non-existent domain axis with `cf.Field.insert_dimension`.
 * Changed the default value of the ``ignore_compression`` parameter to

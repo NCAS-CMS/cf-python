@@ -24,6 +24,7 @@
 * `version 3.0.2 <https://ncas-cms.github.io/cf-python/3.0.2>`_
 * `version 3.0.1 <https://ncas-cms.github.io/cf-python/3.0.0>`_
 * `version 3.0.0 <https://ncas-cms.github.io/cf-python/3.0.0>`_ (*first Python 3 release*)
+..
 * `version 2.3.8 <https://cfpython.bitbucket.io/docs/latest>`_ (*latest Python 2 release*)
 * `version 2.3.0 <http://cfpython.bitbucket.io/docs/2.3.0/index.html>`_
 * `version 2.2.8 <http://cfpython.bitbucket.io/docs/2.2.8/index.html>`_
@@ -38,6 +39,7 @@
   
 * `version 2.0.1     <http://cfpython.bitbucket.io/docs/2.0.1/index.html>`_
 * `version 2.0       <http://cfpython.bitbucket.io/docs/2.0/index.html>`_
+..
 * `version 1.5       <http://cfpython.bitbucket.io/docs/1.5/index.html>`_
 * `version 1.3.2     <http://cfpython.bitbucket.io/docs/1.3.2/index.html>`_
 * `version 1.3.1     <http://cfpython.bitbucket.io/docs/1.3.1/index.html>`_
@@ -55,6 +57,7 @@
 * `version 1.0.3     <http://cfpython.bitbucket.io/docs/1.0.3/index.html>`_
 * `version 1.0.2     <http://cfpython.bitbucket.io/docs/1.0.2/index.html>`_
 * `version 1.0       <http://cfpython.bitbucket.io/docs/1.0/index.html>`_
+..
 * `version 0.9.9     <http://cfpython.bitbucket.io/docs/0.9.9/index.html>`_
 * `version .9.8.3    <http://cfpython.bitbucket.io/docs/0.9.8.3/index.html>`_
 * `version 0.9.8     <http://cfpython.bitbucket.io/docs/0.9.8/index.html>`_

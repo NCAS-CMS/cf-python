@@ -1324,9 +1324,10 @@ Using cf-python library version {1} at {2}'''.format(
             if one_to_one and write_options.get('verbose', False) and f:
                 print('\nOUTPUT FILE:', outfile)
     
-            try:        
+            try:
                 cf.write(f, outfile, **write_options)
             except Exception as error:
                 print("{} ERROR writing {}: {}".format(iam, outfile, error))
                 sys.exit(1)
     #--- End: for
+    

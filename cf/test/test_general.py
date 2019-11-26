@@ -8,14 +8,10 @@ import atexit
 
 import cf
 
-'''
-Tests for the cf package.
-
-'''
 
 tmpfile  = tempfile.mktemp('.nc')
 tmpfile2 = tempfile.mktemp('.nca')
-tmpfiles = [tmpfile, tmpfile2]
+tmpfiles = [tmpfile, tmpfile2, 'delme.nc', 'delme.nca']
 def _remove_tmpfiles():
     '''
     '''

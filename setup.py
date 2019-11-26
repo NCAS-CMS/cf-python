@@ -15,10 +15,12 @@ def find_package_data_files(directory):
                 yield filename.replace('cf/', '', 1)
 
                 
-def find_test_data_files(directory):
+def find_test_files(directory):
     for root, dirs, files in os.walk(directory):        
         for basename in files:
-            if fnmatch.fnmatch(basename, '*.nc') or fnmatch.fnmatch(basename, '*.pp'):
+            if (fnmatch.fnmatch(basename, '*.sh') or
+                fnmatch.fnmatch(basename, '*.nc') or
+                fnmatch.fnmatch(basename, '*.pp')):
                 filename = os.path.join(root, basename)
                 yield filename.replace('cf/', '', 1)
 
@@ -46,7 +48,7 @@ version      = _get_version()
 packages     = ['cf']
 etc_files    = [f for f in find_package_data_files('cf/etc')]
 umread_files = [f for f in find_package_data_files('cf/umread_lib/c-lib')]
-test_files   = [f for f in find_test_data_files('cf/test')]
+test_files   = [f for f in find_test_files('cf/test')]
 
 package_data = etc_files + umread_files + test_files
 
@@ -151,20 +153,20 @@ The `cf` package can:
   (i.e. ragged or gathered arrays), whilst presenting a view of the
   data in its uncompressed form,
 
-* Combine field constructs arithmetically,
+* combine field constructs arithmetically,
 
-* Manipulate field construct data by arithmetical and trigonometrical
+* manipulate field construct data by arithmetical and trigonometrical
   operations,
 
-* Perform statistical collapses on field constructs,
+* perform statistical collapses on field constructs,
 
-* Regrid field constructs,
+* regrid field constructs,
 
-* Apply convolution filters to field constructs,
+* apply convolution filters to field constructs,
 
-* Calculate derivatives of field constructs,
+* calculate derivatives of field constructs,
 
-* Create field constructs to create derived quantities (such as
+* create field constructs to create derived quantities (such as
   vorticity).
 
 

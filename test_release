@@ -21,6 +21,7 @@ cd cf-python-$vn
 python setup.py install --home=~/tmp
 
 export PYTHONPATH=~/tmp/lib/python:$PYTHONPATH
+export PATH=~/tmp/bin:$PATH
 
 cd ~/tmp/lib/python/cf/test
 python run_tests.py
