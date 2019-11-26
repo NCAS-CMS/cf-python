@@ -6747,7 +6747,12 @@ class Field(mixin.PropertiesData,
             six identities:
     
                >>> x.identities()
-               ['time', 'long_name=Time', 'foo=bar', 'standard_name=time', 'ncvar%t', T']
+               ['time',
+                'long_name=Time',
+                'foo=bar',
+                'standard_name=time',
+                'ncvar%t',
+                'T']
     
             A construct key may optionally have the ``'key%'``
             prefix. For example ``'dimensioncoordinate2'`` and
@@ -11582,7 +11587,12 @@ class Field(mixin.PropertiesData,
             six identities:
     
                >>> x.identities()
-               ['time', 'long_name=Time', 'foo=bar', 'standard_name=time', 'ncvar%t', T']
+               ['time',
+                'long_name=Time',
+                'foo=bar',
+                'standard_name=time',
+                'ncvar%t',
+                'T']
     
             A construct key may optionally have the ``'key%'``
             prefix. For example ``'dimensioncoordinate2'`` and
@@ -13014,7 +13024,12 @@ class Field(mixin.PropertiesData,
             six identities:
     
                >>> x.identities()
-               ['time', 'long_name=Time', 'foo=bar', 'standard_name=time', 'ncvar%t', T']
+               ['time',
+                'long_name=Time',
+                'foo=bar',
+                'standard_name=time',
+                'ncvar%t',
+                'T']
     
             A construct key may optionally have the ``'key%'``
             prefix. For example ``'auxiliarycoordinate2'`` and
@@ -13134,7 +13149,12 @@ class Field(mixin.PropertiesData,
             six identities:
     
                >>> x.identities()
-               ['time', 'long_name=Time', 'foo=bar', 'standard_name=time', 'ncvar%t', T']
+               ['time',
+                'long_name=Time',
+                'foo=bar',
+                'standard_name=time',
+                'ncvar%t',
+                'T']
     
             A construct key may optionally have the ``'key%'``
             prefix. For example ``'domainancillary2'`` and
@@ -13241,7 +13261,12 @@ class Field(mixin.PropertiesData,
             six identities:
     
                >>> x.identities()
-               ['time', 'long_name=Time', 'foo=bar', 'standard_name=time', 'ncvar%t', T']
+               ['time', 
+                'long_name=Time', 
+                'foo=bar',
+                'standard_name=time',
+                'ncvar%t',
+                'T']
     
             A construct key may optionally have the ``'key%'``
             prefix. For example ``'cellmeasure2'`` and
@@ -13440,7 +13465,12 @@ class Field(mixin.PropertiesData,
             six identities:
     
                >>> x.identities()
-               ['time', 'long_name=Time', 'foo=bar', 'standard_name=time', 'ncvar%t', T']
+               ['time',
+                'long_name=Time',
+                'foo=bar',
+                'standard_name=time',
+                'ncvar%t',
+                'T']
     
             A construct key may optionally have the ``'key%'``
             prefix. For example ``'auxiliarycoordinate2'`` and
@@ -13649,7 +13679,12 @@ class Field(mixin.PropertiesData,
             six identities:
     
                >>> x.identities()
-               ['time', 'long_name=Time', 'foo=bar', 'standard_name=time', 'ncvar%t', T']
+               ['time',
+                'long_name=Time',
+                'foo=bar',
+                'standard_name=time',
+                'ncvar%t',
+                'T']
     
             A construct key may optionally have the ``'key%'``
             prefix. For example ``'fieldancillary2'`` and
@@ -13758,7 +13793,12 @@ class Field(mixin.PropertiesData,
             six identities:
     
                >>> x.identities()
-               ['time', 'long_name=Time', 'foo=bar', 'standard_name=time', 'ncvar%t', T']
+               ['time', 
+                'long_name=Time', 
+                'foo=bar',
+                'standard_name=time', 
+                'ncvar%t',
+                'T']
     
             A construct key may optionally have the ``'key%'``
             prefix. For example ``'dimensioncoordinate2'`` and
@@ -14792,7 +14832,12 @@ class Field(mixin.PropertiesData,
             six identities:
     
                >>> x.identities()
-               ['time', 'long_name=Time', 'foo=bar', 'standard_name=time', 'ncvar%t', T']
+               ['time',
+                'long_name=Time',
+                'foo=bar',
+                'standard_name=time',
+                'ncvar%t',
+                'T']
     
             A construct key may optionally have the ``'key%'``
             prefix. For example ``'dimensioncoordinate2'`` and

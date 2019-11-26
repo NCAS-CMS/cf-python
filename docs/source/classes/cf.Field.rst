@@ -188,6 +188,8 @@ Data
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.Field.count
+   ~cf.Field.count_masked
    ~cf.Field.fill_value
 	    
 .. autosummary::
@@ -196,8 +198,6 @@ Data
    :template: attribute.rst
 
    ~cf.Field.binary_mask
-   ~cf.Field.count
-   ~cf.Field.count_masked
    ~cf.Field.hardmask
    ~cf.Field.mask
    ~cf.Field.mask_invalid

@@ -1178,7 +1178,7 @@ class PropertiesData(Properties):
 
     Only applicable to data arrays with reference time units.
     
-    .. seealso:: `month`, `day`, `hour`, `minute`, second`
+    .. seealso:: `month`, `day`, `hour`, `minute`, `second`
     
     **Examples:**
     
@@ -1197,7 +1197,7 @@ class PropertiesData(Properties):
 
     Only applicable to data arrays with reference time units.
     
-    .. seealso:: `year`, `day`, `hour`, `minute`, second`
+    .. seealso:: `year`, `day`, `hour`, `minute`, `second`
     
     **Examples:**
     
@@ -1216,7 +1216,7 @@ class PropertiesData(Properties):
 
     Only applicable to data arrays with reference time units.
     
-    .. seealso:: `year`, `month`, `hour`, `minute`, second`
+    .. seealso:: `year`, `month`, `hour`, `minute`, `second`
     
     **Examples:**
     
@@ -1235,7 +1235,7 @@ class PropertiesData(Properties):
     
     Only applicable to data arrays with reference time units.
     
-    .. seealso:: `year`, `month`, `day`, `minute`, second`
+    .. seealso:: `year`, `month`, `day`, `minute`, `second`
     
     **Examples:**
     
@@ -1254,7 +1254,7 @@ class PropertiesData(Properties):
 
     Only applicable to data arrays with reference time units.
     
-    .. seealso:: `year`, `month`, `day`, `hour`, second`
+    .. seealso:: `year`, `month`, `day`, `hour`, `second`
     
     **Examples:**
     
@@ -2082,18 +2082,25 @@ TODO
     def datetime_array(self):
         '''An independent numpy array of date-time objects.
 
-    Only applicable for reference time units.
+    Only applicable for data with reference time units.
     
     If the calendar has not been set then the CF default calendar will
     be used and the units will be updated accordingly.
     
-    The data type of the data array is unchanged.
-    
-    .. seealso:: `array`, `asdatetime`, `asreftime`, `datetime_array`,
-                 `dtvarray`, `varray`
+    .. seealso:: `array`, `varray`
     
     **Examples:**
 
+    >>> f.units
+    'days since 2000-01-01'
+    >>> print(f.array)
+    [ 0 31 60 91]
+    >>> print(f.datetime_array)                 
+    [cftime.DatetimeGregorian(2000-01-01 00:00:00)
+     cftime.DatetimeGregorian(2000-02-01 00:00:00)
+     cftime.DatetimeGregorian(2000-03-01 00:00:00)
+     cftime.DatetimeGregorian(2000-04-01 00:00:00)]
+    
         '''
         data = self.get_data(None)
         if data is None:
