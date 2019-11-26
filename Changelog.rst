@@ -14,7 +14,7 @@ version 3.0.6
   `cellsize` attribute when used on multidimensional coordinates
   (https://github.com/NCAS-CMS/cf-python/issues/15).
 * Fixed bug that sometimes gave an error when the LHS and RHS operands
-  are swapped reversed in field construct arithmetic
+  are swapped in field construct arithmetic
   (https://github.com/NCAS-CMS/cf-python/issues/16).
 
 version 3.0.5

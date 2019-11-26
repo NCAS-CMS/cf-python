@@ -3,6 +3,7 @@ from operator import mul
 
 from numpy import empty  as numpy_empty
 
+from numpy.ma import masked_all as numpy_ma_masked_all
 
 from ..functions import parse_indices, get_subspace
 

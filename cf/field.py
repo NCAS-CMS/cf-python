@@ -10182,8 +10182,7 @@ class Field(mixin.PropertiesData,
     A previously non-existent size 1 axis must be created prior to
     insertion:
 
-    >>> axis = f.set_construct(cf.DomainAxis(1))
-    >>> f.insert_dimension(axis, 1, inplace=True)
+    >>> f.insert_dimension(None, 1, inplace=True)
     >>> print(f)
     Field: specific_humidity (ncvar%q)
     ----------------------------------

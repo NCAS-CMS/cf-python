@@ -1,28 +1,23 @@
-import atexit
 import datetime
 import unittest
 import inspect
+import subprocess
 
 import cf
 
 
-class functionTest(unittest.TestCase):
+class cfaTest(unittest.TestCase):
     def setUp(self):
         self.test_only = ()
 
-    def test_example_field(self):
+    def test_cfa(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        for n in range(5):
-            f = cf.example_field(n)
-            a = f.array
-            d = f.dump(display=False)
-            
-        with self.assertRaises(Exception):
-            _ = cf.example_field(-999)
+        subprocess.run(' '.join(['.', './cfa_test.sh']),
+                       shell=True, check=True)
 
-            
+        
 #--- End: class
 
 if __name__ == '__main__':
