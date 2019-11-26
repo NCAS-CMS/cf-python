@@ -11086,35 +11086,163 @@ False
               standard_deviation=True, root_mean_square=True,
               sample_size=True, minimum_absolute_value=False,
               maximum_absolute_value=False, mean_absolute_value=False,
-              mean_of_upper_decile=False, sum_of_squares=False,
-              squeeze=True, weights=False):
-        '''TODO1
+              mean_of_upper_decile=False, sum=False,
+              sum_of_squares=False, variance=False, weights=False):
+        '''Calculate statistics of the data.
+
+    By default the minimum, mean, median, maximum, range, mid-range,
+    standard deviation, root mean square, and sample size are
+    calculated. But this selection may be editted, and other metrics
+    are available.
+
+    .. seealso:: `minimum`, `mean`, `median`, `maximum`, `range`,
+                 `mid_range`, `standard_deviation`,
+                 `root_mean_square`, `sample_size`,
+                 `minimum_absolute_value`, `maximum_absolute_value`,
+                 `mean_absolute_value`, `mean_of_upper_decile`, `sum`,
+                 `sum_of_squares`, `variance`
 
     :Parameters:
 
-        
+        all: `bool`, optional
+            Calculate all possible statistics, regardless of the value
+            of individual metric parameters.
+                                      
+        minimum: `bool`, optional
+            Calculate the minimum of the values.
+
+        maximum: `bool`, optional
+            Calculate the maximum of the values.
+
+        maximum_absolute_value: `bool`, optional
+            Calculate the maximum of the absolute values.
+
+        minimum_absolute_value: `bool`, optional
+            Calculate the minimum of the absolute values.
+
+        mid_range: `bool`, optional
+            Calculate the average of the maximum and the minimum of
+            the values.
+
+        median: `bool`, optional
+            Calculate the median of the values.     
+
+        range: `bool`, optional
+            Calculate the absolute difference between the maximum and
+            the minimum of the values.
+
+        sum: `bool`, optional
+            Calculate the sum of the values.        
+
+        sum_of_squares: `bool`, optional
+            Calculate the sum of the squares of values.
+
+        sample_size: `bool`, optional
+            Calculate the sample size, i.e. the number of non-missing
+            values.
+
+        mean: `bool`, optional
+            Calculate the weighted or unweighted mean of the values.
+
+        mean_absolute_value: `bool`, optional
+            Calculate the mean of the absolute values.
+
+        mean_of_upper_decile: `bool`, optional
+            Calculate the mean of the upper group of data values
+            defined by the upper tenth of their distribution.
+
+        variance: `bool`, optional
+            Calculate the weighted or unweighted variance of the
+            values, with a given number of degrees of freedom.
+
+        standard_deviation: `bool`, optional
+            Calculate the square root of the weighted or unweighted
+            variance.
+
+        root_mean_square: `bool`, optional
+            Calculate the square root of the weighted or unweighted
+            mean of the squares of the values.
+
+        weights: data-like or dict, optional
+            The weights to apply to the calculations. By default the
+            statistics are unweighted.
+
+            The weights may be contained in any scalar or array-like
+            object (such as a numpy array or `Data` instance) that is
+            broadcastable to the shape of the data. If *weights* is a
+            dictionary then each key is axes of the array (an `int` or
+            `tuple` of `int`) with a corresponding data-like value of
+            weights for those axes. In this case, the implied weights
+            array is the outer product of the dictionary's values.
 
     :Returns:
 
         `dict`
+            The statistics.
+
+    **Examples:**
+    
+    >>> d = cf.Data([[0, 1, 2], [3, -99, 5]], mask=[[0, 0, 0], [0, 1, 0]])
+    >>> print(d.array)
+    [[0  1  2]
+     [3 --  5]]    
+    >>> d.stats()
+    {'minimum': <CF Data(): 0>,
+     'mean': <CF Data(): 2.2>,
+     'median': <CF Data(): 2.0>,
+     'maximum': <CF Data(): 5>,
+     'range': <CF Data(): 5>,
+     'mid_range': <CF Data(): 2.5>,
+     'standard_deviation': <CF Data(): 1.7204650534085253>,
+     'root_mean_square': <CF Data(): 2.792848008753788>,
+     'sample_size': 5}
+    >>> d.stats(all=True)
+    {'minimum': <CF Data(): 0>,
+     'mean': <CF Data(): 2.2>,
+     'median': <CF Data(): 2.0>,
+     'maximum': <CF Data(): 5>,
+     'range': <CF Data(): 5>,
+     'mid_range': <CF Data(): 2.5>,
+     'standard_deviation': <CF Data(): 1.7204650534085253>,
+     'root_mean_square': <CF Data(): 2.792848008753788>,
+     'minimum_absolute_value': <CF Data(): 0>,
+     'maximum_absolute_value': <CF Data(): 5>,
+     'mean_absolute_value': <CF Data(): 2.2>,
+     'mean_of_upper_decile': <CF Data(): 5.0>,
+     'sum': <CF Data(): 11>,
+     'sum_of_squares': <CF Data(): 39>,
+     'variance': <CF Data(): 2.96>,
+     'sample_size': 5}    
+    >>> d.stats(mean_of_upper_decile=True, range=False) 
+    {'minimum': <CF Data(): 0>,
+     'mean': <CF Data(): 2.2>,
+     'median': <CF Data(): 2.0>,
+     'maximum': <CF Data(): 5>,
+     'mid_range': <CF Data(): 2.5>,
+     'standard_deviation': <CF Data(): 1.7204650534085253>,
+     'root_mean_square': <CF Data(): 2.792848008753788>,
+     'mean_of_upper_decile': <CF Data(): 5.0>,
+     'sample_size': 5}
+
         '''
 
         no_weights = ('minimum', 'maximum', 'range', 'mid_range',
-                      'minimum_absolute_value', 'maximum_absolute_value',
-                      'median')
+                      'minimum_absolute_value',
+                      'maximum_absolute_value', 'median', 'sum',
+                      'sum_of_squares')
         
         out = {}
         for stat in ('minimum', 'mean', 'median','maximum', 'range',
                      'mid_range','standard_deviation',
                      'root_mean_square', 'minimum_absolute_value',
                      'maximum_absolute_value', 'mean_absolute_value',
-                     'mean_of_upper_decile', 'sum_of_squares'):
+                     'mean_of_upper_decile', 'sum', 'sum_of_squares', 'variance'):
             if all or locals()[stat]:
                 f = getattr(self, stat)
                 if stat in no_weights:
-                    value = f(squeeze=squeeze)
+                    value = f(squeeze=True)
                 else:
-                    value = f(squeeze=squeeze, weights=weights)
+                    value = f(squeeze=True, weights=weights)
 
                 out[stat] = value
         #--- End: for
@@ -12838,11 +12966,11 @@ False
                               weights=weights, mtol=mtol, ddof=ddof,
                               inplace=inplace,
                               _preserve_partitions=_preserve_partitions)
-                              
 
-    def var(self, axes=None, squeeze=False, weights=None, mtol=1,
-            ddof=0, inplace=False, i=False,
-            _preserve_partitions=False):
+    
+    def variance(self, axes=None, squeeze=False, weights=None, mtol=1,
+                 ddof=0, inplace=False, i=False,
+                 _preserve_partitions=False):
         '''Collapse axes with their weighted variance.
     
     The units of the returned array are the square of the units of the
@@ -12874,7 +13002,7 @@ False
 
         '''
         if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'var', i=True) # pragma: no cover
+            _DEPRECATION_ERROR_KWARGS(self, 'variance', i=True) # pragma: no cover
 
         units = self.Units
         if units:
@@ -12982,7 +13110,20 @@ False
                                        inplace=inplace,
                                        _preserve_partitions=_preserve_partitions)
     
-                              
+                                        
+
+    def var(self, axes=None, squeeze=False, weights=None, mtol=1,
+            ddof=0, inplace=False, i=False,
+            _preserve_partitions=False):
+        '''Alias of `variance`
+
+        '''
+        return self.variance(axes=axes, squeeze=squeeze,
+                             weights=weights, mtol=mtol, ddof=ddof,
+                             inplace=inplace,
+                             _preserve_partitions=_preserve_partitions)
+
+    
     # ----------------------------------------------------------------
     # Deprecated attributes and methods
     # ----------------------------------------------------------------

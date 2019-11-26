@@ -78,6 +78,7 @@ class DataTest(unittest.TestCase):
 #                          'test_Data_ERROR',
                           'test_Data_array',
                           'test_Data_varray',
+                          'test_Data_stats',
                           'test_Data_datetime_array',
 #                          'test_Data_cumsum',
                           'test_Data_dumpd_loadd_dumps',
@@ -121,6 +122,17 @@ class DataTest(unittest.TestCase):
 #        self.test_only = ['test_Data__init__dtype_mask']
 
 
+    def test_Data_stats(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        d = cf.Data([[0, 1, 2], [3, -99, 5]], mask=[[0, 0, 0], [0, 1, 0]])
+
+        self.assertTrue(isinstance(d.stats(), dict))
+        _ = d.stats(all=True)
+        _ = d.stats(mean_of_upper_decile=True, range=False)
+
+        
     def test_Data__init__dtype_mask(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return

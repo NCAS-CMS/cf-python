@@ -1,7 +1,8 @@
 from os       import close
 from operator import mul
 
-import numpy
+from numpy import empty  as numpy_empty
+
 
 from ..functions import parse_indices, get_subspace
 
@@ -15,10 +16,8 @@ class RaggedContiguousSubarray(abstract.CompressedSubarray):
 
     '''
     def __getitem__(self, indices):
-        '''
+        '''x.__getitem__(indices) <==> x[indices]
 
-    x.__getitem__(indices) <==> x[indices]
-    
     Returns a numpy array.
 
         '''
@@ -27,7 +26,7 @@ class RaggedContiguousSubarray(abstract.CompressedSubarray):
         
         # Initialize the full, uncompressed output array with missing
         # data everywhere
-        uarray = numpy.ma.masked_all(self.shape, dtype=array.dtype)
+        uarray = numpy_ma_masked_all(self.shape, dtype=array.dtype)
 
         r_indices = [slice(None)] * array.ndim
         p_indices = [slice(None)] * uarray.ndim        
@@ -37,6 +36,7 @@ class RaggedContiguousSubarray(abstract.CompressedSubarray):
         instance_index = compression['instance_index']
         element_axis   = compression['c_element_axis']
         sample_indices = compression['c_element_indices']
+
         p_indices[instance_axis] = instance_index
         p_indices[element_axis]  = slice(0, sample_indices.stop - sample_indices.start)
         
@@ -62,17 +62,6 @@ class RaggedContiguousSubarray(abstract.CompressedSubarray):
                 print('parse_indices(self.shape, indices) =', indices)
                 
             return get_subspace(uarray, indices)
-
-
-#    def __repr__(self):
-#        '''x.__repr__() <==> repr(x)
-#
-#        '''
-#        array = self.array
-#        shape = str(array.shape)
-#        shape = shape.replace(',)', ')')
-#        
-#        return "<CF {}{}: {}>".format(self.__class__.__name__, shape, str(array))
 
 
 #--- End: class

@@ -117,6 +117,7 @@ Data methods
    ~cf.Data.maximum
    ~cf.Data.maximum_absolute_value
    ~cf.Data.mean
+   ~cf.Data.mean_absolute_value
    ~cf.Data.mean_of_upper_decile
    ~cf.Data.median
    ~cf.Data.mid_range
