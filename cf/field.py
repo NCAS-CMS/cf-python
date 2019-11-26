@@ -808,15 +808,11 @@ class Field(mixin.PropertiesData,
         if not ndim0 or not ndim1:
             # Either or both is scalar
             return True
-        
-        set0 = set(shape0)
-        if len(set0) == 1 and 1 in set0:
-            return True
-        
-        set1 = set(shape1)
-        if len(set1) == 1 and 1 in set1:
-            return True
-        
+
+        for setN in set(shape0), set(shape1):
+            if setN == {1}:
+                return True
+
         if ndim1 > ndim0:
             return False
         

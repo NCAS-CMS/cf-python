@@ -187,7 +187,8 @@ True
             return self.get_property('axis', None) == 'Z'
         
         units = self.Units
-        if (units.ispressure or
+        return (
+            units.ispressure or
             str(self.get_property('positive', 'Z')).lower() in ('up', 'down') or
             self.get_property('axis', None) == 'Z' or
             (units and units.units in ('level', 'layer' 'sigma_level')) or
@@ -202,10 +203,8 @@ True
              'ocean_s_coordinate_g1',
              'ocean_s_coordinate_g2',
              'ocean_sigma_z_coordinate',
-             'ocean_double_sigma_coordinate')):
-            return True
-        else:
-            return False
+             'ocean_double_sigma_coordinate')
+        )
     #--- End: def
 
     # ----------------------------------------------------------------

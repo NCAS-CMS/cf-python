@@ -114,29 +114,25 @@ class Var:
         self.nz = nz
         self.nt = nt
         self.supervar_index = supervar_index
-    
-    def _compare_recs_by_extra_data(self, a, b):
-#        return cmp(a.get_extra_data(),
-#                   b.get_extra_data())
-        x = a.get_extra_data()
-        y = b.get_extra_data()
-        if x == y:
-            return 0
-        elif x > y:
-            return 1
-        else:
-            return -1        
 
-    def _compare_recs_by_orig_order(self, a, b):
-        #        return cmp(self.recs.index(a), self.recs.index(b))
-        x = self.recs.index(a)
-        y = self.recs.index(b)
+    @staticmethod
+    def _compare(x, y):
+        """
+        Method equivalent to the Python 2 'cmp'. Note that (x > y) - (x < y)
+        is equivalent but not as performant since it would not short-circuit.
+        """
         if x == y:
             return 0
         elif x > y:
             return 1
         else:
             return -1
+
+    def _compare_recs_by_extra_data(self, a, b):
+        return _compare(a.get_extra_data(), b.get_extra_data())
+
+    def _compare_recs_by_orig_order(self, a, b):
+        return _compare(self.recs.index(a), self.recs.index(b))
         
     def group_records_by_extra_data(self):
         '''Returns a list of (sub)lists of records where each records within
