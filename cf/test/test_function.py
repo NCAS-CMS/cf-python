@@ -18,7 +18,10 @@ class functionTest(unittest.TestCase):
             a = f.array
             d = f.dump(display=False)
             
+        with self.assertRaises(Exception):
+            _ = cf.example_field(-999)
 
+            
 #--- End: class
 
 if __name__ == '__main__':
