@@ -5897,8 +5897,8 @@ construct properties:
 Header item  Description          Field construct property
 ===========  ===================  ========================
 LBEXP        Experiment identity  runid
-LBTIM        Time indicator       lbproc
-LPPROC       Processing code      lbtim
+LBTIM        Time indicator       lbtim
+LBPROC       Processing code      lbproc
 LBUSER(4)    STASH code           stash_code
 LBUSER(7)    Internal submodel    submodel
 ===========  ===================  ========================
