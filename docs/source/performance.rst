@@ -168,7 +168,7 @@ is equivalent to
 
 >>> h = f[7:2:-2, ...]
 
-and if all of the partitions of field construct``f`` are stored on
+and if all of the partitions of field construct ``f`` are stored on
 disk then in both cases so are all of the partitions of field
 construct ``h`` and no data has been read from disk.
 

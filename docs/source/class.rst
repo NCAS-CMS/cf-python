@@ -93,7 +93,7 @@
    cf.TimeDuration
    cf.Units
 
-**Data compression classses**
+**Data compression classes**
 -----------------------------
 
 Classes that support the creation and storage of compressed arrays.

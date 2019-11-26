@@ -679,7 +679,7 @@ A field construct's identity may be any one of the following
 
 * The value of the `~Field.standard_name` property,
   e.g. ``'air_temperature'``,
-* The value of the `~Field.id` attribute, preceeded by ``'id%='``,
+* The value of the `~Field.id` attribute, preceded by ``'id%='``,
 * The value of any property, preceded by the property name and an
   equals, e.g. ``'long_name=Air Temperature'``, ``'foo=bar'``, etc.,
 * The netCDF variable name, preceded by "ncvar%", e.g. ``'ncvar%tas'``
@@ -1757,7 +1757,7 @@ latitude name'``.
 A construct's identity may be any one of the following
 
 * The value of the `!standard_name` property, e.g. ``'air_temperature'``,
-* The value of the `!id` attribute, preceeded by ``'id%='``,
+* The value of the `!id` attribute, preceded by ``'id%='``,
 * The physical nature of the construct denoted by ``'X'``, ``'Y'``,
   ``'Z'`` or ``'T'``, denoting longitude (or x-projection), latitude
   (or y-projection), vertical and temporal constructs respectively,
@@ -3073,7 +3073,7 @@ from where the conditions are met. The tuple of indices returned by
 the `~Field.indices` may the be used in normal :ref:`assignment by
 index <Assignment-by-index>`.
 
-The `~Field.indices` method akes exactly the same arguments as the
+The `~Field.indices` method takes exactly the same arguments as the
 `~Field.subspace` method of the field construct. See
 :ref:`Subspacing-by-metadata` for details.
 
@@ -3395,8 +3395,8 @@ For convenience, many commonly used conditions can be created with
 `cf.Query` instance constructors.
 
 .. code-block:: python
-   :caption: *A example of a constructor (for a cell contaiing a
-             value) and its equivalent construction from construtor
+   :caption: *An example of a constructor (for a cell containing a
+             value) and its equivalent construction from constructor
              cf.Query instances.*
 
    >>> cf.contains(4)
@@ -3499,7 +3499,7 @@ addition, different values can be assigned to where the conditions
 are, and are not, met
 
 .. code-block:: python
-   :caption: *Set all data elements that are less then 273.15 to
+   :caption: *Set all data elements that are less than 273.15 to
              missing data.*
 
    >>> t = cf.read('file.nc')[1]
@@ -3528,7 +3528,7 @@ are, and are not, met
      [276.4    -- 276.3    -- 276.1    -- 277.0 273.4    --]]]
 
 .. code-block:: python
-   :caption: *Set all data elements that are less then 273.15 to 0,
+   :caption: *Set all data elements that are less than 273.15 to 0,
              and all other elements to 1.*
 
    >>> u = t.where(cf.lt(273.15), x=0, y=1)
@@ -3604,7 +3604,7 @@ There are various methods for creating a field construct in memory:
 ..
 
 * :ref:`Command modification <Command-modification>`: Produce the
-  commands that would create an already exising field construct, and
+  commands that would create an already existing field construct, and
   then modify them.
 
 ..
@@ -4087,7 +4087,7 @@ the desired field constuct. The commands are produced by the
 .. Code Block 3
 
 .. code-block:: python
-   :caption: *Create the commands that would create an exisiting field
+   :caption: *Create the commands that would create an existing field
              construct.*
 	
    >>> q, t = cf.read('file.nc')
@@ -5221,7 +5221,7 @@ Note that when reading :ref:`PP and UM fields files
 is `True` by default, because units are not always available to field
 constructs derived from :ref:`PP-and-UM-fields-files`.
 
-Field constructs that are logically similar but aranged differently
+Field constructs that are logically similar but arranged differently
 are also aggregatable.
 
 .. code-block:: python
@@ -5463,7 +5463,7 @@ data array elements are modified:
    >>> h.data.get_compression_type()
    ''
 
-Perhaps the easist way to create a compressed field construct is to
+Perhaps the easiest way to create a compressed field construct is to
 create the equivalent uncompressed field construct and then compress
 it with its `~Field.compress` method, which also compresses the
 metadata constructs as required.
