@@ -1683,7 +1683,7 @@ class Field(mixin.PropertiesData,
     >>> f._binary_operation(g, '__rdiv__')
 
         '''        
-        verbose = False #True
+        verbose = False
         
         if isinstance(other, Query):
             # --------------------------------------------------------
@@ -1940,7 +1940,7 @@ class Field(mixin.PropertiesData,
 #                                                                field0.get_data_axes())}
                 
         if verbose:
-            print('axis_map=', axis_map, '\n')
+            print('\naxis_map=', axis_map, '\n')
             print(repr(field0))
             print(repr(field1))
 
@@ -2063,15 +2063,17 @@ class Field(mixin.PropertiesData,
 #        for axis1, y in axes_to_replace_from_field1.items():
 #            axis0 = axis_map[axis1]
         new_axes = set(axes_added_from_field1).union(axes_to_replace_from_field1)
-        
+        if verbose:
+            print ('\nnew_axes =', new_axes)
+            
         if new_axes:
             constructs = field1.constructs.filter_by_type('dimension_coordinate',
                                                           'auxiliary_coordinate',
                                                           'cell_measure')        
             constructs = constructs.filter_by_axis('subset', *new_axes)
             for key, c in constructs.items():
-#                axes = [axis_map[axis1] for axis1 in axes_to_replace_from_field1]
-                axes = [axis_map[axis1] for axis1 in new_axes]
+                c_axes = field1.get_data_axes(key)
+                axes = [axis_map[axis1] for axis1 in c_axes]
                 key0 = field0.set_construct(c, axes=axes, copy=False)
                 already_copied[key] = key0
         #--- End: if
