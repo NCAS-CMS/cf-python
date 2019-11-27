@@ -87,23 +87,23 @@ The cf package can:
   convention (i.e. ragged or gathered arrays), whilst presenting a
   view of the data in its uncompressed form,
 
-* Combine field constructs arithmetically,
+* combine field constructs arithmetically,
 
-* Manipulate field construct data by arithmetical and trigonometrical
+* manipulate field construct data by arithmetical and trigonometrical
   operations,
 
-* Perform statistical collapses on field constructs,
+* perform statistical collapses on field constructs,
 
-* Perform histogram, percentile and binning operations on field
+* perform histogram, percentile and binning operations on field
   constructs,
   
-* Regrid field constructs,
+* regrid field constructs,
 
-* Apply convolution filters to field constructs,
+* apply convolution filters to field constructs,
 
-* Calculate derivatives of field constructs,
+* calculate derivatives of field constructs,
 
-* Create field constructs to create derived quantities (such as vorticity).
+* create field constructs to create derived quantities (such as vorticity).
 
 **Visualization**
 -----------------

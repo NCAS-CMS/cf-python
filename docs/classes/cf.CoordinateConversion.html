@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.5</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.6</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -90,7 +90,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.CoordinateConversion">
-<em class="property">class </em><code class="descclassname">cf.</code><code class="descname">CoordinateConversion</code><span class="sig-paren">(</span><em>parameters=None</em>, <em>domain_ancillaries=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.5/cf/coordinateconversion.py#L4"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.CoordinateConversion" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cf.</code><code class="descname">CoordinateConversion</code><span class="sig-paren">(</span><em>parameters=None</em>, <em>domain_ancillaries=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/3.0.6/cf/coordinateconversion.py#L4"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.CoordinateConversion" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.coordinateconversion.CoordinateConversion</span></code></p>
 <p>A coordinate conversion component of a coordinate reference
 construct of the CF data model.</p>
@@ -117,26 +117,27 @@ in a planetary reference frame.</p>
 <dd><p class="first">Set parameters. The dictionary keys are term names, with
 corresponding parameter values. Ignored if the <em>source</em>
 parameter is set.</p>
-<dl class="docutils">
+<p>Parameters may also be set after initialisation with the
+<a class="reference internal" href="../method/cf.CoordinateConversion.set_parameters.html#cf.CoordinateConversion.set_parameters" title="cf.CoordinateConversion.set_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameters</span></code></a> and <a class="reference internal" href="../method/cf.CoordinateConversion.set_parameter.html#cf.CoordinateConversion.set_parameter" title="cf.CoordinateConversion.set_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameter</span></code></a> methods.</p>
+<dl class="last docutils">
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">parameters={'earth_radius':</span> <span class="pre">6371007.}</span></code></p>
 </dd>
 </dl>
-<p class="last">Parameters may also be set after initialisation with the
-<a class="reference internal" href="../method/cf.CoordinateConversion.set_parameters.html#cf.CoordinateConversion.set_parameters" title="cf.CoordinateConversion.set_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameters</span></code></a> and <a class="reference internal" href="../method/cf.CoordinateConversion.set_parameter.html#cf.CoordinateConversion.set_parameter" title="cf.CoordinateConversion.set_parameter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_parameter</span></code></a> methods.</p>
 </dd>
 <dt>domain_ancillaries: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt>
-<dd><p class="first">Set references to domain ancillary constructs. The dictionary
-keys are term names, with corresponding domain ancillary
-construct keys. Ignored if the <em>source</em> parameter is set.</p>
-<dl class="docutils">
+<dd><p class="first">Set references to domain ancillary constructs. The
+dictionary keys are term names, with corresponding domain
+ancillary construct keys. Ignored if the <em>source</em> parameter
+is set.</p>
+<p>Domain ancillaries may also be set after initialisation
+with the <a class="reference internal" href="../method/cf.CoordinateConversion.set_domain_ancillaries.html#cf.CoordinateConversion.set_domain_ancillaries" title="cf.CoordinateConversion.set_domain_ancillaries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_domain_ancillaries</span></code></a> and
+<a class="reference internal" href="../method/cf.CoordinateConversion.set_domain_ancillary.html#cf.CoordinateConversion.set_domain_ancillary" title="cf.CoordinateConversion.set_domain_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_domain_ancillary</span></code></a> methods.</p>
+<dl class="last docutils">
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">domain_ancillaries={'orog':</span> <span class="pre">'domainancillary2'}</span></code></p>
 </dd>
 </dl>
-<p class="last">Domain ancillaries may also be set after initialisation with
-the <a class="reference internal" href="../method/cf.CoordinateConversion.set_domain_ancillaries.html#cf.CoordinateConversion.set_domain_ancillaries" title="cf.CoordinateConversion.set_domain_ancillaries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_domain_ancillaries</span></code></a> and <a class="reference internal" href="../method/cf.CoordinateConversion.set_domain_ancillary.html#cf.CoordinateConversion.set_domain_ancillary" title="cf.CoordinateConversion.set_domain_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_domain_ancillary</span></code></a>
-methods.</p>
 </dd>
 <dt>source: optional</dt>
 <dd><p class="first last">Initialize the parameters and domain ancillary terms from
@@ -278,7 +279,7 @@ initialization. By default arguments are deep copied.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/classes/cf.CoordinateConversion.rst.txt"

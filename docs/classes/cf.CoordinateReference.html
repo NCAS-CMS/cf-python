@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.5</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.6</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -90,7 +90,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.CoordinateReference">
-<em class="property">class </em><code class="descclassname">cf.</code><code class="descname">CoordinateReference</code><span class="sig-paren">(</span><em>coordinates=None</em>, <em>datum=None</em>, <em>coordinate_conversion=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.5/cf/coordinatereference.py#L20"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.CoordinateReference" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cf.</code><code class="descname">CoordinateReference</code><span class="sig-paren">(</span><em>coordinates=None</em>, <em>datum=None</em>, <em>coordinate_conversion=None</em>, <em>source=None</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/3.0.6/cf/coordinatereference.py#L20"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.CoordinateReference" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.coordinatereference.CoordinateReference</span></code></p>
 <p>A coordinate reference construct of the CF data model.</p>
 <p>A coordinate reference construct relates the coordinate values of
@@ -148,7 +148,9 @@ methods.</p>
 <dd><p class="first">Identify the related dimension and auxiliary coordinate
 constructs by their construct identifiers. Ignored if the
 <em>source</em> parameter is set.</p>
-<dl class="docutils">
+<p>The coordinates may also be set after initialisation with
+the <a class="reference internal" href="../method/cf.CoordinateReference.set_coordinates.html#cf.CoordinateReference.set_coordinates" title="cf.CoordinateReference.set_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_coordinates</span></code></a> and <a class="reference internal" href="../method/cf.CoordinateReference.set_coordinate.html#cf.CoordinateReference.set_coordinate" title="cf.CoordinateReference.set_coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_coordinate</span></code></a> methods.</p>
+<dl class="last docutils">
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">coordinates=['dimensioncoordinate2']</span></code></p>
 </dd>
@@ -156,8 +158,6 @@ constructs by their construct identifiers. Ignored if the
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">coordinates=('dimensioncoordinate0',</span> <span class="pre">'dimensioncoordinate1')</span></code></p>
 </dd>
 </dl>
-<p class="last">The coordinates may also be set after initialisation with the
-<a class="reference internal" href="../method/cf.CoordinateReference.set_coordinates.html#cf.CoordinateReference.set_coordinates" title="cf.CoordinateReference.set_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_coordinates</span></code></a> and <a class="reference internal" href="../method/cf.CoordinateReference.set_coordinate.html#cf.CoordinateReference.set_coordinate" title="cf.CoordinateReference.set_coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_coordinate</span></code></a> methods.</p>
 </dd>
 <dt>datum: <a class="reference internal" href="cf.Datum.html#cf.Datum" title="cf.Datum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Datum</span></code></a>, optional</dt>
 <dd><p class="first">Set the datum component of the coordinate reference
@@ -167,13 +167,15 @@ construct. Ignored if the <em>source</em> parameter is set.</p>
 </dd>
 <dt>coordinate_conversion: <a class="reference internal" href="cf.CoordinateConversion.html#cf.CoordinateConversion" title="cf.CoordinateConversion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CoordinateConversion</span></code></a>, optional</dt>
 <dd><p class="first">Set the coordinate conversion component of the coordinate
-reference construct. Ignored if the <em>source</em> parameter is set.</p>
-<p class="last">The coordinate conversion may also be set after initialisation
-with the <a class="reference internal" href="../method/cf.CoordinateReference.set_coordinate_conversion.html#cf.CoordinateReference.set_coordinate_conversion" title="cf.CoordinateReference.set_coordinate_conversion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_coordinate_conversion</span></code></a> method.</p>
+reference construct. Ignored if the <em>source</em> parameter is
+set.</p>
+<p class="last">The coordinate conversion may also be set after
+initialisation with the <a class="reference internal" href="../method/cf.CoordinateReference.set_coordinate_conversion.html#cf.CoordinateReference.set_coordinate_conversion" title="cf.CoordinateReference.set_coordinate_conversion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_coordinate_conversion</span></code></a>
+method.</p>
 </dd>
 <dt>source: optional</dt>
-<dd><p class="first last">Initialize the coordinates, datum and coordinate conversion
-from those of <em>source</em>.</p>
+<dd><p class="first last">Initialize the coordinates, datum and coordinate
+conversion from those of <em>source</em>.</p>
 </dd>
 <dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If False then do not deep copy arguments prior to
@@ -464,7 +466,7 @@ initialization. By default arguments are deep copied.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/classes/cf.CoordinateReference.rst.txt"

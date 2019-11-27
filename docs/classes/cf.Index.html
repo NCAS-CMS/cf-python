@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.5</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.6</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -90,7 +90,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.Index">
-<em class="property">class </em><code class="descclassname">cf.</code><code class="descname">Index</code><span class="sig-paren">(</span><em>properties=None</em>, <em>data=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.5/cf/index.py#L6"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Index" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cf.</code><code class="descname">Index</code><span class="sig-paren">(</span><em>properties=None</em>, <em>data=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/3.0.6/cf/index.py#L6"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Index" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.index.Index</span></code></p>
 <p>An index variable required to uncompress a ragged array.</p>
 <p>A collection of features stored using an indexed ragged array
@@ -134,21 +134,22 @@ different.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
 <dt>properties: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</dt>
-<dd><p class="first">Set descriptive properties. The dictionary keys are property
-names, with corresponding values. Ignored if the <em>source</em>
-parameter is set.</p>
-<dl class="docutils">
+<dd><p class="first">Set descriptive properties. The dictionary keys are
+property names, with corresponding values. Ignored if the
+<em>source</em> parameter is set.</p>
+<p>Properties may also be set after initialisation with the
+<a class="reference internal" href="../method/cf.Index.set_properties.html#cf.Index.set_properties" title="cf.Index.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a> and <a class="reference internal" href="../method/cf.Index.set_property.html#cf.Index.set_property" title="cf.Index.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a> methods.</p>
+<dl class="last docutils">
 <dt><em>Parameter example:</em></dt>
 <dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">properties={'long_name':</span> <span class="pre">'which</span> <span class="pre">station</span> <span class="pre">this</span> <span class="pre">obs</span> <span class="pre">is</span> <span class="pre">for'}</span></code></p>
 </dd>
 </dl>
-<p class="last">Properties may also be set after initialisation with the
-<a class="reference internal" href="../method/cf.Index.set_properties.html#cf.Index.set_properties" title="cf.Index.set_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_properties</span></code></a> and <a class="reference internal" href="../method/cf.Index.set_property.html#cf.Index.set_property" title="cf.Index.set_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_property</span></code></a> methods.</p>
 </dd>
 <dt>data: <a class="reference internal" href="cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>, optional</dt>
-<dd><p class="first">Set the data array. Ignored if the <em>source</em> parameter is set.</p>
-<p class="last">The data array may also be set after initialisation with the
-<a class="reference internal" href="../method/cf.Index.set_data.html#cf.Index.set_data" title="cf.Index.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a> method.</p>
+<dd><p class="first">Set the data array. Ignored if the <em>source</em> parameter is
+set.</p>
+<p class="last">The data array may also be set after initialisation with
+the <a class="reference internal" href="../method/cf.Index.set_data.html#cf.Index.set_data" title="cf.Index.set_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data</span></code></a> method.</p>
 </dd>
 <dt>source: optional</dt>
 <dd><p class="first last">Initialize the properties and data from those of <em>source</em>.</p>
@@ -1131,7 +1132,7 @@ for augmented assignments, modify the construct’s data in-place.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/classes/cf.Index.rst.txt"

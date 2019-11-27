@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.5</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.6</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -91,7 +91,7 @@
 <h1>cf.Constructs.filter_by_ncdim<a class="headerlink" href="#cf-constructs-filter-by-ncdim" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Constructs.filter_by_ncdim">
-<code class="descclassname">Constructs.</code><code class="descname">filter_by_ncdim</code><span class="sig-paren">(</span><em>*ncdims</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.10/cfdm/constructs.py#L1474"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Constructs.filter_by_ncdim" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Constructs.</code><code class="descname">filter_by_ncdim</code><span class="sig-paren">(</span><em>*ncdims</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.11/cfdm/constructs.py#L1484"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Constructs.filter_by_ncdim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Select domain axis constructs by netCDF dimension name.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.0.</span></p>
@@ -115,17 +115,19 @@
 netCDF dimension names.</p>
 <p>A netCDF dimension name is specified by a string
 (e.g. <code class="docutils literal notranslate"><span class="pre">'time'</span></code>); or a compiled regular expression
-(e.g. <code class="docutils literal notranslate"><span class="pre">re.compile('^lat')</span></code>), for which all constructs whose
-netCDF dimension names match (via <a class="reference external" href="https://docs.python.org/3/library/re.html#re.search" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.search</span></code></a>) are selected.</p>
-<p class="last">If no netCDF dimension names are provided then all domain axis
-constructs are selected.</p>
+(e.g. <code class="docutils literal notranslate"><span class="pre">re.compile('^lat')</span></code>), for which all constructs
+whose netCDF dimension names match (via <a class="reference external" href="https://docs.python.org/3/library/re.html#re.search" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.search</span></code></a>) are
+selected.</p>
+<p class="last">If no netCDF dimension names are provided then all domain
+axis constructs are selected.</p>
 </dd>
 </dl>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
 <dt><a class="reference internal" href="../classes/cf.Constructs.html#cf.Constructs" title="cf.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs</span></code></a></dt>
-<dd><p class="first last">The selected domain axis constructs and their construct keys.</p>
+<dd><p class="first last">The selected domain axis constructs and their construct
+keys.</p>
 </dd>
 </dl>
 </td>
@@ -133,12 +135,13 @@ constructs are selected.</p>
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<p>Select the domain axis constructs with netCDF dimension name ‘time’:</p>
+<p>Select the domain axis constructs with netCDF dimension name
+‘time’:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_ncdim</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Select the domain axis constructs with netCDF dimension name ‘time’ or
-‘lat’:</p>
+<p>Select the domain axis constructs with netCDF dimension name
+‘time’ or ‘lat’:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_ncdim</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;lat&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -158,7 +161,7 @@ constructs are selected.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cf.Constructs.filter_by_ncdim.rst.txt"

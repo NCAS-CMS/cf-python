@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.5</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.6</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -91,17 +91,17 @@
 <h1>cf.Constructs.unfilter<a class="headerlink" href="#cf-constructs-unfilter" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Constructs.unfilter">
-<code class="descclassname">Constructs.</code><code class="descname">unfilter</code><span class="sig-paren">(</span><em>depth=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.10/cfdm/constructs.py#L2151"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Constructs.unfilter" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Constructs.</code><code class="descname">unfilter</code><span class="sig-paren">(</span><em>depth=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.11/cfdm/constructs.py#L2169"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Constructs.unfilter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the constructs that existed prior to previous filters.</p>
-<p>By default, the unfiltered constructs are those that existed before
-all previously applied filters.</p>
-<p>If the <em>depth</em> parameter is set to <em>N</em> then the unfiltered constructs
-are those that existed before the <em>N</em>-th most recently applied
-filter.</p>
+<p>By default, the unfiltered constructs are those that existed
+before all previously applied filters.</p>
+<p>If the <em>depth</em> parameter is set to <em>N</em> then the unfiltered
+constructs are those that existed before the <em>N</em>-th most
+recently applied filter.</p>
 <p>A history of the filters that have been applied is returned in a
-<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a> by the <a class="reference internal" href="cf.Constructs.filters_applied.html#cf.Constructs.filters_applied" title="cf.Constructs.filters_applied"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filters_applied</span></code></a> method. The last element of the tuple
-describes the last filter applied. If no filters have been applied
-then the tuple is empty.</p>
+<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a> by the <a class="reference internal" href="cf.Constructs.filters_applied.html#cf.Constructs.filters_applied" title="cf.Constructs.filters_applied"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filters_applied</span></code></a> method. The last element of the
+tuple describes the last filter applied. If no filters have been
+applied then the tuple is empty.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.0.</span></p>
 </div>
@@ -123,17 +123,17 @@ then the tuple is empty.</p>
 <dd><p class="first last">If set to <code class="docutils literal notranslate"><span class="pre">N</span></code> then return the constructs selected by the
 <code class="docutils literal notranslate"><span class="pre">N</span></code>-th most recently applied filter. By default the
 constructs from before all previously applied filters are
-returned. <code class="docutils literal notranslate"><span class="pre">N</span></code> may be larger than the total number of filters
-applied, which results in the default bahaviour.</p>
+returned. <code class="docutils literal notranslate"><span class="pre">N</span></code> may be larger than the total number of
+filters applied, which results in the default bahaviour.</p>
 </dd>
 </dl>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
 <dt><a class="reference internal" href="../classes/cf.Constructs.html#cf.Constructs" title="cf.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs</span></code></a></dt>
-<dd><p class="first last">The constructs, and their construct keys, that existed before
-the last filter was applied. If no filters have been applied
-then all of the constructs are returned.</p>
+<dd><p class="first last">The constructs, and their construct keys, that existed
+before the last filter was applied. If no filters have
+been applied then all of the constructs are returned.</p>
 </dd>
 </dl>
 </td>
@@ -175,7 +175,8 @@ then all of the constructs are returned.</p>
 <span class="go">True</span>
 </pre></div>
 </div>
-<p>If no filters have been applied then the unfiltered constructs are unchanged:</p>
+<p>If no filters have been applied then the unfiltered constructs are
+unchanged:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">filters_applied</span><span class="p">()</span>
 <span class="go">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">unfilter</span><span class="p">()</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
@@ -198,7 +199,7 @@ then all of the constructs are returned.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cf.Constructs.unfilter.rst.txt"

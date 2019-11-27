@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.5</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.6</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -91,13 +91,13 @@
 <h1>cf.RaggedIndexedContiguousArray.get_subspace<a class="headerlink" href="#cf-raggedindexedcontiguousarray-get-subspace" title="Permalink to this headline">¶</a></h1>
 <dl class="classmethod">
 <dt id="cf.RaggedIndexedContiguousArray.get_subspace">
-<em class="property">classmethod </em><code class="descclassname">RaggedIndexedContiguousArray.</code><code class="descname">get_subspace</code><span class="sig-paren">(</span><em>array</em>, <em>indices</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.10/cfdm/data/abstract/array.py#L122"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.RaggedIndexedContiguousArray.get_subspace" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descclassname">RaggedIndexedContiguousArray.</code><code class="descname">get_subspace</code><span class="sig-paren">(</span><em>array</em>, <em>indices</em>, <em>copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.11/cfdm/data/abstract/array.py#L123"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.RaggedIndexedContiguousArray.get_subspace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a subspace, defined by indices, of a numpy array.</p>
-<p>Only certain type of indices are allowed. See the <em>indices</em> parameter
-for details.</p>
-<p>Indexing is similar to numpy indexing. Given the restrictions on the
-type of indices allowed - see the <em>indicies</em> parameter - the only
-difference to numpy indexing is</p>
+<p>Only certain type of indices are allowed. See the <em>indices</em>
+parameter for details.</p>
+<p>Indexing is similar to numpy indexing. Given the restrictions on
+the type of indices allowed - see the <em>indicies</em> parameter - the
+only difference to numpy indexing is</p>
 <blockquote>
 <div><ul class="simple">
 <li>When two or more dimension’s indices are sequences of integers
@@ -118,10 +118,10 @@ then these indices work independently along each dimension
 </dd>
 <dt>indices: </dt>
 <dd><p class="first">The indices that define the subspace.</p>
-<p>Must be either <a class="reference external" href="https://docs.python.org/3/library/constants.html#Ellipsis" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Ellipsis</span></code></a> or a sequence that contains an index
-for each dimension. In the latter case, each dimension’s index
-must either be a <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a> object or a sequence of two or more
-integers.</p>
+<p>Must be either <a class="reference external" href="https://docs.python.org/3/library/constants.html#Ellipsis" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Ellipsis</span></code></a> or a sequence that contains an
+index for each dimension. In the latter case, each
+dimension’s index must either be a <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a> object or a
+sequence of two or more integers.</p>
 <blockquote class="last">
 <div><dl class="docutils">
 <dt><em>Parameter example:</em></dt>
@@ -171,7 +171,7 @@ subspace is independent of the input <em>array</em>.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cf.RaggedIndexedContiguousArray.get_subspace.rst.txt"

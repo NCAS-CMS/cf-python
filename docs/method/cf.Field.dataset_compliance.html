@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.5</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.6</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -91,17 +91,17 @@
 <h1>cf.Field.dataset_compliance<a class="headerlink" href="#cf-field-dataset-compliance" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.dataset_compliance">
-<code class="descclassname">Field.</code><code class="descname">dataset_compliance</code><span class="sig-paren">(</span><em>display=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.10/cfdm/field.py#L1013"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.dataset_compliance" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">dataset_compliance</code><span class="sig-paren">(</span><em>display=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.11/cfdm/field.py#L1515"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.dataset_compliance" title="Permalink to this definition">¶</a></dt>
 <dd><p>A report of problems encountered whilst reading the field construct
 from a dataset.</p>
-<p>If the dataset is partially CF-compliant to the extent that it is not
-possible to unambiguously map an element of the netCDF dataset to an
-element of the CF data model, then a field construct is still returned
-by the <a class="reference internal" href="../function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read</span></code></a> function, but may be incomplete.</p>
+<p>If the dataset is partially CF-compliant to the extent that it is
+not possible to unambiguously map an element of the netCDF dataset
+to an element of the CF data model, then a field construct is
+still returned by the <a class="reference internal" href="../function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read</span></code></a> function, but may be incomplete.</p>
 <p>Such “structural” non-compliance would occur, for example, if the
-“coordinates” attribute of a CF-netCDF data variable refers to another
-variable that does not exist, or refers to a variable that spans a
-netCDF dimension that does not apply to the data variable.</p>
+“coordinates” attribute of a CF-netCDF data variable refers to
+another variable that does not exist, or refers to a variable that
+spans a netCDF dimension that does not apply to the data variable.</p>
 <p>Other types of non-compliance are not checked, such whether or not
 controlled vocabularies have been adhered to.</p>
 <div class="versionadded">
@@ -117,17 +117,17 @@ controlled vocabularies have been adhered to.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
 <dt>display: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If True print the compliance report. By default the report is
-returned as a dictionary.</p>
+<dd><p class="first last">If True print the compliance report. By default the report
+is returned as a dictionary.</p>
 </dd>
 </dl>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
 <dt><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a></dt>
-<dd><p class="first last">The report. If <em>display</em> is True then the report is printed
-and <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is returned. Otherwise the report is returned as a
-dictionary.</p>
+<dd><p class="first last">The report. If <em>display</em> is True then the report is
+printed and <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is returned. Otherwise the report is
+returned as a dictionary.</p>
 </dd>
 </dl>
 </td>
@@ -156,7 +156,7 @@ dictionary.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cf.Field.dataset_compliance.rst.txt"

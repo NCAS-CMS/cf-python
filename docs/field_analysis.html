@@ -30,7 +30,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="index.html">cf 3.0.5</a></b></h3>
+<h3><b><a href="index.html">cf 3.0.6</a></b></h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -1076,7 +1076,7 @@ range.</em></span><a class="headerlink" href="#id44" title="Permalink to this co
 <span id="id10"></span><h2>Binning operations<a class="headerlink" href="#binning-operations" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference internal" href="method/cf.Field.bin.html#cf.Field.bin" title="cf.Field.bin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bin</span></code></a> method of the field construct groups its data into
 bins, where each group is defined by the elements that correspond to
-an <a class="reference internal" href="tutorial.html#histograms"><span class="std std-ref">N-dimensionsal histogram bin of another set of variables</span></a>, and collapses the elements in each group to a single
+an <a class="reference internal" href="tutorial.html#histograms"><span class="std std-ref">N-dimensional histogram bin of another set of variables</span></a>, and collapses the elements in each group to a single
 representative value. The same <a class="reference internal" href="tutorial.html#collapse-methods"><span class="std std-ref">collapse methods</span></a> and <a class="reference internal" href="tutorial.html#collapse-weights"><span class="std std-ref">weighting options</span></a> as
 the <a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">collapse</span></code></a> method are available.</p>
 <p>The result of the binning operation is a field construct whose domain
@@ -1163,7 +1163,7 @@ temperature and pressure values.</em></span><a class="headerlink" href="#id46" t
 <div class="section" id="percentiles">
 <span id="id11"></span><h2>Percentiles<a class="headerlink" href="#percentiles" title="Permalink to this headline">¶</a></h2>
 <p>Percentiles of the data can be computed along any subset of the axes
-with the <a class="reference internal" href="method/cf.Field.percentile.html#cf.Field.percentile" title="cf.Field.percentile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">percentile</span></code></a> method fof the field construct.</p>
+with the <a class="reference internal" href="method/cf.Field.percentile.html#cf.Field.percentile" title="cf.Field.percentile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">percentile</span></code></a> method of the field construct.</p>
 <div class="literal-block-wrapper docutils container" id="id47">
 <div class="code-block-caption"><span class="caption-text"><em>Find the 20th, 40th, 50th, 60th and 80th percentiles.</em></span><a class="headerlink" href="#id47" title="Permalink to this code">¶</a></div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
@@ -1354,7 +1354,7 @@ destination point.</td>
 <a class="reference internal" href="method/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regrids</span></code></a> method is only available for the ‘X’ and ‘Y’ axes
 simultaneously. All other axes are unchanged. The calculation of the
 regridding weights is based on areas and distances on the surface of
-the sphere, rather in <a class="reference internal" href="tutorial.html#cartesian-regridding"><span class="std std-ref">Euclidian space</span></a>.</p>
+the sphere, rather in <a class="reference internal" href="tutorial.html#cartesian-regridding"><span class="std std-ref">Euclidean space</span></a>.</p>
 <p>The following combinations of spherical source and destination domain
 coordinate systems are available to the <a class="reference internal" href="method/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regrids</span></code></a> method:</p>
 <table border="1" class="docutils">
@@ -1725,7 +1725,7 @@ returned whose data is the combination of the original
 field construct’s data and the <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/index.html#module-numpy" title="(in NumPy v1.17)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array or <a class="reference internal" href="classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a>
 instance on the right hand side (RHS).</li>
 <li>If, however, the field construct is on the RHS then a
-<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/index.html#module-numpy" title="(in NumPy v1.17)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array or <a class="reference internal" href="classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> innstance (which ever type is on
+<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/index.html#module-numpy" title="(in NumPy v1.17)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy</span></code></a> array or <a class="reference internal" href="classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instance (which ever type is on
 the LHS) is returned, containing the same data as in the
 first case.</li>
 </ul>
@@ -1859,7 +1859,7 @@ result, which also has no units.</p>
 or <a class="reference internal" href="tutorial.html#relational-operations"><span class="std std-ref">relational</span></a> operation are field
 constructs with insufficient metadata to create a mapping of physically
 compatible dimensions, there are various techniques that allow the
-operation the operation procede.</p>
+operation to proceed.</p>
 <ul class="simple">
 <li><strong>Option 1:</strong> The operation may applied to the field constructs’
 data instead. See below for more details.</li>
@@ -2053,7 +2053,7 @@ options to</p>
 border, and</li>
 <li>Control the placement position of the filter window.</li>
 </ul>
-<p>Note that the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.3.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package has suite of window
+<p>Note that the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.3.3)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package has suite of window
 functions for creating weights for filtering:</p>
 <div class="literal-block-wrapper docutils container" id="id69">
 <div class="code-block-caption"><span class="caption-text"><em>Calculate a 3-point exponential filter of the ‘Y’
@@ -2074,6 +2074,13 @@ filter window extends beyond the array.</em></span><a class="headerlink" href="#
 </pre></div>
 </div>
 </div>
+<p>The magnitude of the integral of the filter (i.e. the sum of the
+weights defined by the <em>weights</em> parameter) affects the convolved
+values. For example, weights of <code class="docutils literal notranslate"><span class="pre">[0.2,</span> <span class="pre">0.2</span> <span class="pre">0.2,</span> <span class="pre">0.2,</span> <span class="pre">0.2]</span></code> will
+produce a 5-point (non-weighted) running mean; and weights of <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">1,</span>
+<span class="pre">1,</span> <span class="pre">1,</span> <span class="pre">1]</span></code> will produce a 5-point running sum. Note that the weights
+returned by functions of the <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.3.3)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> package do not
+necessarily sum to 1.</p>
 </div>
 <div class="section" id="derivatives">
 <h2>Derivatives<a class="headerlink" href="#derivatives" title="Permalink to this headline">¶</a></h2>
@@ -2166,7 +2173,7 @@ derivative wraps around by default.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="_sources/field_analysis.rst.txt"

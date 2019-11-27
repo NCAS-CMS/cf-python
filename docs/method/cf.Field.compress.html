@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.5</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.6</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -91,34 +91,39 @@
 <h1>cf.Field.compress<a class="headerlink" href="#cf-field-compress" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.compress">
-<code class="descclassname">Field.</code><code class="descname">compress</code><span class="sig-paren">(</span><em>method</em>, <em>axes=None</em>, <em>count_properties=None</em>, <em>index_properties=None</em>, <em>list_properties=None</em>, <em>inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.5/cf/field.py#L11153"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.compress" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">compress</code><span class="sig-paren">(</span><em>method</em>, <em>axes=None</em>, <em>count_properties=None</em>, <em>index_properties=None</em>, <em>list_properties=None</em>, <em>inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.11/cfdm/field.py#L485"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.compress" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compress the field construct.</p>
-<p>Compression saves space by identifying and removing unwanted
+<p>Compression can save space by identifying and removing unwanted
 missing data. Such compression techniques store the data more
 efficiently and result in no precision loss.</p>
-<p>The field construct data is compressesed, along with any
-applicable metadata constructs.</p>
+<p>The field construct data is compressed, along with any applicable
+metadata constructs.</p>
 <p>Whether or not the field construct is compressed does not alter
 its functionality nor external appearance.</p>
+<p>A field that is already compressed will returned compressed by the
+chosen method.</p>
 <p>When writing a compressed field construct to a dataset space will
 be saved by the creation of compressed netCDF variables, along
 with the supplementary netCDF variables and attributes that are
 required for the encoding.</p>
 <p>The following type of compression are available (see the <em>method</em>
 parameter):</p>
-<ul class="simple">
+<blockquote>
+<div><ul class="simple">
 <li>Ragged arrays for discrete sampling geometries (DSG). Three
-different types of ragged array representation are supported.</li>
+different types of ragged array representation are
+supported.</li>
 </ul>
 <ul class="simple">
 <li>Compression by gathering.</li>
 </ul>
+</div></blockquote>
 <div class="versionadded">
-<p><span class="versionmodified">New in version 3.0.5.</span></p>
+<p><span class="versionmodified">New in version 1.7.11.</span></p>
 </div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="../function/cf.write.html#cf.write" title="cf.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.write</span></code></a>, <a class="reference internal" href="cf.Field.flatten.html#cf.Field.flatten" title="cf.Field.flatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flatten</span></code></a></p>
+<p class="last"><a class="reference internal" href="cf.Field.uncompress.html#cf.Field.uncompress" title="cf.Field.uncompress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">uncompress</span></code></a></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -172,7 +177,7 @@ ragged array representation or indexed contiguous ragged
 array representation.</p>
 <dl class="last docutils">
 <dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">count_properties={'long_name':</span> <span class="pre">'number</span> <span class="pre">of</span> <span class="pre">obs</span> <span class="pre">for</span> <span class="pre">this</span> <span class="pre">timeseries'}</span></code></p>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">count_properties={'long_name':</span> <span class="pre">'number</span> <span class="pre">of</span> <span class="pre">timeseries'}</span></code></p>
 </dd>
 </dl>
 </dd>
@@ -182,7 +187,7 @@ ragged array representation or indexed contiguous ragged
 array representation.</p>
 <dl class="last docutils">
 <dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">index_properties={'long_name':</span> <span class="pre">'which</span> <span class="pre">station</span> <span class="pre">this</span> <span class="pre">profile</span> <span class="pre">is</span> <span class="pre">for'}</span></code></p>
+<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">index_properties={'long_name':</span> <span class="pre">'station</span> <span class="pre">of</span> <span class="pre">profile'}</span></code></p>
 </dd>
 </dl>
 </dd>
@@ -203,7 +208,7 @@ gathering.</p>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
 <dt><a class="reference internal" href="../classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Field</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></dt>
-<dd><p class="first last">The compressed field construct, or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> of the operation
+<dd><p class="first last">The compressed field construct, or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> if the operation
 was in-place.</p>
 </dd>
 </dl>
@@ -212,54 +217,33 @@ was in-place.</p>
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">example_field</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>                                                                
-<span class="go">Field: precipitation_flux (ncvar%p)</span>
-<span class="go">-----------------------------------</span>
-<span class="go">Data            : precipitation_flux(cf_role=timeseries_id(4), ncdim%timeseries(9)) kg m-2 day-1</span>
-<span class="go">Auxiliary coords: time(cf_role=timeseries_id(4), ncdim%timeseries(9)) = [[1969-12-29 00:00:00, ..., 1970-01-07 00:00:00]]</span>
-<span class="go">                : latitude(cf_role=timeseries_id(4)) = [-9.0, ..., 78.0] degrees_north</span>
-<span class="go">                : longitude(cf_role=timeseries_id(4)) = [-23.0, ..., 178.0] degrees_east</span>
-<span class="go">                : height(cf_role=timeseries_id(4)) = [0.5, ..., 345.0] m</span>
-<span class="go">                : cf_role=timeseries_id(cf_role=timeseries_id(4)) = [b&#39;station1&#39;, ..., b&#39;station4&#39;]</span>
-<span class="go">                : long_name=some kind of station info(cf_role=timeseries_id(4)) = [-10, ..., -7]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get_compression_type</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get_compression_type</span><span class="p">()</span>
 <span class="go">&#39;&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">compress</span><span class="p">(</span><span class="s1">&#39;contiguous&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get_compression_type</span><span class="p">()</span>
-<span class="go">&#39;ragged contiguous&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get_count</span><span class="p">()</span>                     
-<span class="go">&lt;CF Count: (4) &gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get_count</span><span class="p">()</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>                         
-<span class="go">[3 7 5 9]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[3.98  0.0  0.0  --    --   --   --  --  --]</span>
+<span class="go"> [ 0.0  0.0  0.0  3.4  0.0  0.0 4.61  --  --]</span>
+<span class="go"> [0.86  0.8 0.75  0.0 4.56   --   --  --  --]</span>
+<span class="go"> [ 0.0 0.09  0.0 0.91 2.96 1.14 3.86 0.0 0.0]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">compress</span><span class="p">(</span><span class="s1">&#39;contiguous&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cfdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="s1">&#39;compressed_file_contiguous.nc&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">example_field</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-<span class="go">Field: precipitation_flux (ncvar%p)</span>
-<span class="go">-----------------------------------</span>
-<span class="go">Data            : precipitation_flux(cf_role=timeseries_id(3), ncdim%timeseries(26), ncdim%profile_1(4)) kg m-2 day-1</span>
-<span class="go">Auxiliary coords: time(cf_role=timeseries_id(3), ncdim%timeseries(26)) = [[1970-01-04 00:00:00, ..., --]]</span>
-<span class="go">                : latitude(cf_role=timeseries_id(3)) = [-9.0, 2.0, 34.0] degrees_north</span>
-<span class="go">                : longitude(cf_role=timeseries_id(3)) = [-23.0, 0.0, 67.0] degrees_east</span>
-<span class="go">                : height(cf_role=timeseries_id(3)) = [0.5, 12.6, 23.7] m</span>
-<span class="go">                : altitude(cf_role=timeseries_id(3), ncdim%timeseries(26), ncdim%profile_1(4)) = [[[2.07, ..., --]]] km</span>
-<span class="go">                : cf_role=timeseries_id(cf_role=timeseries_id(3)) = [b&#39;station1&#39;, b&#39;station2&#39;, b&#39;station3&#39;]</span>
-<span class="go">                : long_name=some kind of station info(cf_role=timeseries_id(3)) = [-10, -9, -8]</span>
-<span class="go">                : cf_role=profile_id(cf_role=timeseries_id(3), ncdim%timeseries(26)) = [[102, ..., --]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get_compression_type</span><span class="p">()</span>                     
-<span class="go">&#39;&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">compress</span><span class="p">(</span><span class="s1">&#39;indexed_contiguous&#39;</span><span class="p">,</span> 
-<span class="gp">... </span>               <span class="n">count_properties</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="s1">&#39;number of obs for each profile&#39;</span><span class="p">})</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get_compression_type</span><span class="p">()</span>                     
-<span class="go">&#39;ragged indexed contiguous&#39;</span>
-<span class="go">&gt;&gt; g.data.get_count()</span>
-<span class="go">&lt;CF Count: long_name=number of obs for each profile(58) &gt;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get_compression_type</span><span class="p">()</span>
+<span class="go">&#39;ragged contiguous&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get_count</span><span class="p">()</span>                   
+<span class="go">&lt;CF Count: (4) &gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get_count</span><span class="p">()</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[3 7 5 9]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">compress</span><span class="p">(</span><span class="s1">&#39;indexed&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get_index</span><span class="p">()</span>
-<span class="go">&lt;CF Index: (58) &gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get_index</span><span class="p">()</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>                     
-<span class="go">[0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1</span>
-<span class="go"> 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2]</span>
+<span class="go"> &lt;CF Index: (24) &gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get_index</span><span class="p">()</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[0 0 0 1 1 1 1 1 1 1 2 2 2 2 2 3 3 3 3 3 3 3 3 3]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cfdm</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="s1">&#39;compressed_file_indexed.nc&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -278,7 +262,7 @@ was in-place.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cf.Field.compress.rst.txt"

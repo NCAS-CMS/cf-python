@@ -228,6 +228,7 @@ Miscellaneous
    ~cf.Count.concatenate
    ~cf.Count.copy
    ~cf.Count.equals
+   ~cf.Count.uncompress
 
 .. rubric:: Attributes
 	    

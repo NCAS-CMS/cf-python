@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.5</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.6</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -91,17 +91,17 @@
 <h1>cf.DomainAxis.equals<a class="headerlink" href="#cf-domainaxis-equals" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.DomainAxis.equals">
-<code class="descclassname">DomainAxis.</code><code class="descname">equals</code><span class="sig-paren">(</span><em>other</em>, <em>verbose=False</em>, <em>ignore_type=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.10/cfdm/domainaxis.py#L70"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DomainAxis.equals" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">DomainAxis.</code><code class="descname">equals</code><span class="sig-paren">(</span><em>other</em>, <em>verbose=False</em>, <em>ignore_type=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.11/cfdm/domainaxis.py#L70"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DomainAxis.equals" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether two domain axis constructs are the same.</p>
 <p>Equality is strict by default. This means that:</p>
 <ul class="simple">
 <li>the axis sizes must be the same.</li>
 </ul>
 <p>Any type of object may be tested but, in general, equality is only
-possible with another domain axis construct, or a subclass of one. See
-the <em>ignore_type</em> parameter.</p>
-<p>NetCDF elements, such as netCDF variable and dimension names, do not
-constitute part of the CF data model and so are not checked.</p>
+possible with another domain axis construct, or a subclass of
+one. See the <em>ignore_type</em> parameter.</p>
+<p>NetCDF elements, such as netCDF variable and dimension names, do
+not constitute part of the CF data model and so are not checked.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.0.</span></p>
 </div>
@@ -114,13 +114,13 @@ constitute part of the CF data model and so are not checked.</p>
 <dd><p class="first last">The object to compare for equality.</p>
 </dd>
 <dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If True then print information about differences that lead to
-inequality.</p>
+<dd><p class="first last">If True then print information about differences that lead
+to inequality.</p>
 </dd>
 <dt>ignore_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">Any type of object may be tested but, in general, equality is
-only possible with another domain axis construct, or a
-subclass of one. If <em>ignore_type</em> is True then 
+<dd><p class="first last">Any type of object may be tested but, in general, equality
+is only possible with another domain axis construct, or a
+subclass of one. If <em>ignore_type</em> is True then
 <code class="docutils literal notranslate"><span class="pre">DomainAxis(source=other)</span></code> is tested, rather than the
 <code class="docutils literal notranslate"><span class="pre">other</span></code> defined by the <em>other</em> parameter.</p>
 </dd>
@@ -168,7 +168,7 @@ subclass of one. If <em>ignore_type</em> is True then
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cf.DomainAxis.equals.rst.txt"

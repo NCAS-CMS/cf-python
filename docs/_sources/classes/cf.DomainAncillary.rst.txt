@@ -262,6 +262,7 @@ Miscellaneous
    ~cf.DomainAncillary.copy
    ~cf.DomainAncillary.equals
    ~cf.DomainAncillary.inspect
+   ~cf.DomainAncillary.uncompress
    
 Mathematical operations
 -----------------------

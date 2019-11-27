@@ -10,7 +10,7 @@ cf-plot
 -------
 
 The `cf-plot package <http://ajheaps.github.io/cf-plot/>`_ provides
-metadata-aware visualisation for `cf` fields. This is a seperate
+metadata-aware visualisation for `cf` fields. This is a separate
 library and `cf` does not depend on it.
 
 The functionality of `cfplot` includes

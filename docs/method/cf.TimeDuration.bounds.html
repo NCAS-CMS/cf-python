@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.5</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.6</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -91,7 +91,7 @@
 <h1>cf.TimeDuration.bounds<a class="headerlink" href="#cf-timeduration-bounds" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.TimeDuration.bounds">
-<code class="descclassname">TimeDuration.</code><code class="descname">bounds</code><span class="sig-paren">(</span><em>dt</em>, <em>direction=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.5/cf/timeduration.py#L1452"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.TimeDuration.bounds" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">TimeDuration.</code><code class="descname">bounds</code><span class="sig-paren">(</span><em>dt</em>, <em>direction=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/3.0.6/cf/timeduration.py#L1464"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.TimeDuration.bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a time interval containing a date-time.</p>
 <p>The interval spans the time duration and starts and ends at
 date-times consistent with the time duration’s offset.</p>
@@ -120,18 +120,6 @@ details).</p>
 </dd>
 </dl>
 </dd>
-<dt>calendar: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
-<dd><p class="first">Define the CF calendar for the input date-time and output
-time interval. By default the calendar of the input
-date-time is used. If <em>calendar</em> is set, then the calendar
-of the input date-time is overridden.</p>
-<dl class="last docutils">
-<dt><em>Parameter example:</em></dt>
-<dd><p class="first last">To set a calendar without leap years:
-<code class="docutils literal notranslate"><span class="pre">calendar='noleap'</span></code>.</p>
-</dd>
-</dl>
-</dd>
 <dt>direction: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> then the bounds are decreasing. By default the
 bounds are increasing. Note that <code class="docutils literal notranslate"><span class="pre">t.bounds(dt,</span>
@@ -141,7 +129,11 @@ bounds are increasing. Note that <code class="docutils literal notranslate"><spa
 </dl>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">(<code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Datetime</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Datetime</span></code>) TODO</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a></dt>
+<dd><p class="first last">The two bounds.</p>
+</dd>
+</dl>
 </td>
 </tr>
 </tbody>
@@ -150,24 +142,26 @@ bounds are increasing. Note that <code class="docutils literal notranslate"><spa
 <p>TODO</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">M</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">bounds</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">dt</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
-<span class="go">(&lt;CF Datetime: 2000-1-1 00:00:00&gt;, &lt;CF Datetime: 2000-2-1 00:00:00&gt;) TODO</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">bounds</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">dt</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
-<span class="go">(&lt;CF Datetime: 2000-1-1 00:00:00&gt;, &lt;CF Datetime: 2000-2-1 00:00:00&gt;)</span>
+<span class="go">(cftime.DatetimeGregorian(2000-01-01 00:00:00),</span>
+<span class="go"> cftime.DatetimeGregorian(2000-02-01 00:00:00))</span>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">M</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">bounds</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">dt</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
-<span class="go">(&lt;CF Datetime: 2000-03-01 00:00:00&gt;, &lt;CF Datetime: 2000-04-01 00:00:00&gt;)</span>
+<span class="go">(cftime.DatetimeGregorian(2000-03-01 00:00:00),</span>
+<span class="go"> cftime.DatetimeGregorian(2000-04-01 00:00:00))</span>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">M</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">day</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">bounds</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">dt</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
-<span class="go">(&lt;CF Datetime: 2000-02-15 00:00:00&gt;, &lt;CF Datetime: 2000-03-15 00:00:00&gt;)</span>
+<span class="go">(cftime.DatetimeGregorian(2000-02-15 00:00:00),</span>
+<span class="go"> cftime.DatetimeGregorian(2000-03-15 00:00:00))</span>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">M</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">day</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">bounds</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">dt</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">direction</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="go">(&lt;CF Datetime: 2000-03-15 00:00:00&gt;, &lt;CF Datetime: 2000-01-15 00:00:00&gt;)</span>
+<span class="go">(cftime.DatetimeGregorian(2000-03-15 00:00:00),</span>
+<span class="go"> cftime.DatetimeGregorian(2000-01-15 00:00:00))</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -186,7 +180,7 @@ bounds are increasing. Note that <code class="docutils literal notranslate"><spa
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cf.TimeDuration.bounds.rst.txt"

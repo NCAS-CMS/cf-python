@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.5</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.6</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -93,16 +93,25 @@
 <dt id="cf.AuxiliaryCoordinate.datetime_array">
 <code class="descclassname">AuxiliaryCoordinate.</code><code class="descname">datetime_array</code><a class="headerlink" href="#cf.AuxiliaryCoordinate.datetime_array" title="Permalink to this definition">¶</a></dt>
 <dd><p>An independent numpy array of date-time objects.</p>
-<p>Only applicable for reference time units.</p>
+<p>Only applicable for data with reference time units.</p>
 <p>If the calendar has not been set then the CF default calendar will
 be used and the units will be updated accordingly.</p>
-<p>The data type of the data array is unchanged.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="cf.AuxiliaryCoordinate.array.html#cf.AuxiliaryCoordinate.array" title="cf.AuxiliaryCoordinate.array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">asdatetime</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">asreftime</span></code>, <a class="reference internal" href="#cf.AuxiliaryCoordinate.datetime_array" title="cf.AuxiliaryCoordinate.datetime_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime_array</span></code></a>,
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">dtvarray</span></code>, <a class="reference internal" href="cf.AuxiliaryCoordinate.varray.html#cf.AuxiliaryCoordinate.varray" title="cf.AuxiliaryCoordinate.varray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">varray</span></code></a></p>
+<p class="last"><a class="reference internal" href="cf.AuxiliaryCoordinate.array.html#cf.AuxiliaryCoordinate.array" title="cf.AuxiliaryCoordinate.array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code></a>, <a class="reference internal" href="cf.AuxiliaryCoordinate.varray.html#cf.AuxiliaryCoordinate.varray" title="cf.AuxiliaryCoordinate.varray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">varray</span></code></a></p>
 </div>
 <p><strong>Examples:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">units</span>
+<span class="go">&#39;days since 2000-01-01&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[ 0 31 60 91]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">datetime_array</span><span class="p">)</span>                 
+<span class="go">[cftime.DatetimeGregorian(2000-01-01 00:00:00)</span>
+<span class="go"> cftime.DatetimeGregorian(2000-02-01 00:00:00)</span>
+<span class="go"> cftime.DatetimeGregorian(2000-03-01 00:00:00)</span>
+<span class="go"> cftime.DatetimeGregorian(2000-04-01 00:00:00)]</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
@@ -119,7 +128,7 @@ be used and the units will be updated accordingly.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/attribute/cf.AuxiliaryCoordinate.datetime_array.rst.txt"

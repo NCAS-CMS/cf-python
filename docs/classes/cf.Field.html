@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.5</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.6</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -90,36 +90,37 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.Field">
-<em class="property">class </em><code class="descclassname">cf.</code><code class="descname">Field</code><span class="sig-paren">(</span><em>properties=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.5/cf/field.py#L204"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">cf.</code><code class="descname">Field</code><span class="sig-paren">(</span><em>properties=None</em>, <em>source=None</em>, <em>copy=True</em>, <em>_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/3.0.6/cf/field.py#L204"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.field.Field</span></code></p>
 <p>A field construct of the CF data model.</p>
-<p>The field construct is central to the CF data model, and includes all
-the other constructs. A field corresponds to a CF-netCDF data variable
-with all of its metadata. All CF-netCDF elements are mapped to a field
-construct or some element of the CF field construct. The field
-construct contains all the data and metadata which can be extracted
-from the file using the CF conventions.</p>
-<p>The field construct consists of a data array and the definition of its
-domain (that describes the locations of each cell of the data array),
-field ancillary constructs containing metadata defined over the same
-domain, and cell method constructs to describe how the cell values
-represent the variation of the physical quantity within the cells of
-the domain. The domain is defined collectively by the following
-constructs of the CF data model: domain axis, dimension coordinate,
-auxiliary coordinate, cell measure, coordinate reference and domain
-ancillary constructs.</p>
-<p>The field construct also has optional properties to describe aspects
-of the data that are independent of the domain. These correspond to
-some netCDF attributes of variables (e.g. units, long_name and
-standard_name), and some netCDF global file attributes (e.g. history
-and institution).</p>
+<p>The field construct is central to the CF data model, and includes
+all the other constructs. A field corresponds to a CF-netCDF data
+variable with all of its metadata. All CF-netCDF elements are
+mapped to a field construct or some element of the CF field
+construct. The field construct contains all the data and metadata
+which can be extracted from the file using the CF conventions.</p>
+<p>The field construct consists of a data array and the definition of
+its domain (that describes the locations of each cell of the data
+array), field ancillary constructs containing metadata defined
+over the same domain, and cell method constructs to describe how
+the cell values represent the variation of the physical quantity
+within the cells of the domain. The domain is defined collectively
+by the following constructs of the CF data model: domain axis,
+dimension coordinate, auxiliary coordinate, cell measure,
+coordinate reference and domain ancillary constructs.</p>
+<p>The field construct also has optional properties to describe
+aspects of the data that are independent of the domain. These
+correspond to some netCDF attributes of variables (e.g. units,
+long_name and standard_name), and some netCDF global file
+attributes (e.g. history and institution).</p>
 <p><strong>NetCDF interface</strong></p>
 <p>The netCDF variable name of the construct may be accessed with the
 <a class="reference internal" href="../method/cf.Field.nc_set_variable.html#cf.Field.nc_set_variable" title="cf.Field.nc_set_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_variable</span></code></a>, <a class="reference internal" href="../method/cf.Field.nc_get_variable.html#cf.Field.nc_get_variable" title="cf.Field.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a>, <a class="reference internal" href="../method/cf.Field.nc_del_variable.html#cf.Field.nc_del_variable" title="cf.Field.nc_del_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_del_variable</span></code></a> and
 <a class="reference internal" href="../method/cf.Field.nc_has_variable.html#cf.Field.nc_has_variable" title="cf.Field.nc_has_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_has_variable</span></code></a> methods.</p>
-<p>The selection of properties to be written as netCDF global attributes
-may be accessed with the <a class="reference internal" href="../method/cf.Field.nc_global_attributes.html#cf.Field.nc_global_attributes" title="cf.Field.nc_global_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_global_attributes</span></code></a>,
-<a class="reference internal" href="../method/cf.Field.nc_clear_global_attributes.html#cf.Field.nc_clear_global_attributes" title="cf.Field.nc_clear_global_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_global_attributes</span></code></a> and <a class="reference internal" href="../method/cf.Field.nc_set_global_attribute.html#cf.Field.nc_set_global_attribute" title="cf.Field.nc_set_global_attribute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_global_attribute</span></code></a> methods.</p>
+<p>The selection of properties to be written as netCDF global
+attributes may be accessed with the <a class="reference internal" href="../method/cf.Field.nc_global_attributes.html#cf.Field.nc_global_attributes" title="cf.Field.nc_global_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_global_attributes</span></code></a>,
+<a class="reference internal" href="../method/cf.Field.nc_clear_global_attributes.html#cf.Field.nc_clear_global_attributes" title="cf.Field.nc_clear_global_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_clear_global_attributes</span></code></a> and <a class="reference internal" href="../method/cf.Field.nc_set_global_attribute.html#cf.Field.nc_set_global_attribute" title="cf.Field.nc_set_global_attribute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_set_global_attribute</span></code></a>
+methods.</p>
 <p><strong>Initialization</strong></p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -484,6 +485,12 @@ initialization. By default arguments are deep copied.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.Field.count.html#cf.Field.count" title="cf.Field.count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count</span></code></a></td>
+<td>Count the non-masked elements of the data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.Field.count_masked.html#cf.Field.count_masked" title="cf.Field.count_masked"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count_masked</span></code></a></td>
+<td>Count the masked elements of the data.</td>
+</tr>
 <tr class="row-odd"><td><a class="reference internal" href="../method/cf.Field.fill_value.html#cf.Field.fill_value" title="cf.Field.fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fill_value</span></code></a></td>
 <td>Return the data array missing data value.</td>
 </tr>
@@ -497,12 +504,6 @@ initialization. By default arguments are deep copied.</p>
 <tbody valign="top">
 <tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.Field.binary_mask.html#cf.Field.binary_mask" title="cf.Field.binary_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_mask</span></code></a></td>
 <td>A binary (0 and 1) missing data mask of the data array.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../attribute/cf.Field.count.html#cf.Field.count" title="cf.Field.count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count</span></code></a></td>
-<td>Count the non-masked elements of the data.</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../attribute/cf.Field.count_masked.html#cf.Field.count_masked" title="cf.Field.count_masked"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count_masked</span></code></a></td>
-<td>Count the masked elements of the data.</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="../attribute/cf.Field.hardmask.html#cf.Field.hardmask" title="cf.Field.hardmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></a></td>
 <td>Whether the mask is hard (True) or soft (False).</td>
@@ -738,7 +739,10 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-even"><td><a class="reference internal" href="../method/cf.Field.radius.html#cf.Field.radius" title="cf.Field.radius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">radius</span></code></a></td>
 <td>Return the radius used for calculating cell areas in spherical polar coordinates.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../method/cf.Field.concatenate.html#cf.Field.concatenate" title="cf.Field.concatenate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.concatenate</span></code></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="../method/cf.Field.uncompress.html#cf.Field.uncompress" title="cf.Field.uncompress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">uncompress</span></code></a></td>
+<td>Uncompress the construct.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../method/cf.Field.concatenate.html#cf.Field.concatenate" title="cf.Field.concatenate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.concatenate</span></code></a></td>
 <td>Join a sequence of fields together.</td>
 </tr>
 </tbody>
@@ -1549,7 +1553,7 @@ construct’s data in-place.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/classes/cf.Field.rst.txt"

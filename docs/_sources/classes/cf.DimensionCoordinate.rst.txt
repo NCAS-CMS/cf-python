@@ -270,6 +270,7 @@ Miscellaneous
    ~cf.DimensionCoordinate.copy
    ~cf.DimensionCoordinate.equals
    ~cf.DimensionCoordinate.inspect
+   ~cf.DimensionCoordinate.uncompress
    
 Mathematical operations
 -----------------------

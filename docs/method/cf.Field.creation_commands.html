@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.5</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.6</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -91,11 +91,20 @@
 <h1>cf.Field.creation_commands<a class="headerlink" href="#cf-field-creation-commands" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.creation_commands">
-<code class="descclassname">Field.</code><code class="descname">creation_commands</code><span class="sig-paren">(</span><em>representative_data=False</em>, <em>namespace='cf'</em>, <em>indent=0</em>, <em>string=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.5/cf/field.py#L11983"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.creation_commands" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">creation_commands</code><span class="sig-paren">(</span><em>representative_data=False</em>, <em>namespace='cf'</em>, <em>indent=0</em>, <em>string=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/3.0.6/cf/field.py#L11759"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.creation_commands" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the commands that would create the field construct.</p>
+<p><strong>Construct keys</strong></p>
+<p>The <em>key</em> parameter of the output <a class="reference internal" href="cf.Field.set_construct.html#cf.Field.set_construct" title="cf.Field.set_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_construct</span></code></a> commands is
+utilised in order minimise the number of commands needed to
+implement cross-referencing between constructs (e.g. between a
+coordinate reference construct and coordinate constructs). This is
+usually not necessary when building field constructs, as by
+default the <a class="reference internal" href="cf.Field.set_construct.html#cf.Field.set_construct" title="cf.Field.set_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_construct</span></code></a> method returns a unique construct key
+for the construct being set.</p>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="cf.Data.creation_commands.html#cf.Data.creation_commands" title="cf.Data.creation_commands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.creation_commands</span></code></a></p>
+<p class="last"><a class="reference internal" href="cf.Field.set_construct.html#cf.Field.set_construct" title="cf.Field.set_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_construct</span></code></a>, <a class="reference internal" href="cf.Data.creation_commands.html#cf.Data.creation_commands" title="cf.Data.creation_commands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.creation_commands</span></code></a>,
+<a class="reference internal" href="../function/cf.example_field.html#cf.example_field" title="cf.example_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.example_field</span></code></a></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -125,8 +134,8 @@ was imported as <code class="docutils literal notranslate"><span class="pre">imp
 </dl>
 </dd>
 <dt>indent: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt>
-<dd><p class="first last">Indent each line by this many spaces. Ignored if <em>string</em>
-is False.</p>
+<dd><p class="first last">Indent each line by this many spaces. By default no
+indentation is applied. Ignored if <em>string</em> is False.</p>
 </dd>
 <dt>string: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
 <dd><p class="first last">If False then return each command as an element of a
@@ -307,7 +316,7 @@ commands are returned as each element of a <a class="reference external" href="h
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cf.Field.creation_commands.rst.txt"

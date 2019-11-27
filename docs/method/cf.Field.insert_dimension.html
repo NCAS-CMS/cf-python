@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.5</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.6</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -91,7 +91,7 @@
 <h1>cf.Field.insert_dimension<a class="headerlink" href="#cf-field-insert-dimension" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.insert_dimension">
-<code class="descclassname">Field.</code><code class="descname">insert_dimension</code><span class="sig-paren">(</span><em>axis</em>, <em>position=0</em>, <em>inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.5/cf/field.py#L10081"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.insert_dimension" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">insert_dimension</code><span class="sig-paren">(</span><em>axis</em>, <em>position=0</em>, <em>inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/3.0.6/cf/field.py#L10127"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.insert_dimension" title="Permalink to this definition">¶</a></dt>
 <dd><p>Insert a size 1 axis into the data array.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 3.0.0.</span></p>
@@ -107,11 +107,13 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
 <dt>axis:</dt>
-<dd><p class="first last">Select the domain axis to, defined by that which would be
-selected by passing the given axis description to a call
-of the field construct’s <a class="reference internal" href="cf.Field.domain_axis.html#cf.Field.domain_axis" title="cf.Field.domain_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axis</span></code></a> method. For
+<dd><p class="first">Select the domain axis to, generally defined by that which
+would be selected by passing the given axis description to
+a call of the field construct’s <a class="reference internal" href="cf.Field.domain_axis.html#cf.Field.domain_axis" title="cf.Field.domain_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axis</span></code></a> method. For
 example, for a value of <code class="docutils literal notranslate"><span class="pre">'X'</span></code>, the domain axis construct
 returned by <code class="docutils literal notranslate"><span class="pre">f.domain_axis('X'))</span></code> is selected.</p>
+<p class="last">If <em>axis</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> then a new domain axis construct will
+created for the inserted dimension.</p>
 </dd>
 <dt>position: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt>
 <dd><p class="first last">Specify the position that the new axis will have in the
@@ -135,11 +137,37 @@ operation was in-place.</p>
 </tbody>
 </table>
 <p><strong>Examples:</strong></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">insert_dimension</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">insert_dimension</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">insert_dimension</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">insert_dimension</span><span class="p">(</span><span class="s1">&#39;domainaxis2&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">insert_dimension</span><span class="p">(</span><span class="s1">&#39;Z&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">example_field</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="go">Field: specific_humidity (ncvar%q)</span>
+<span class="go">----------------------------------</span>
+<span class="go">Data            : specific_humidity(latitude(5), longitude(8)) 1</span>
+<span class="go">Cell methods    : area: mean</span>
+<span class="go">Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north</span>
+<span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
+<span class="go">                : time(1) = [2019-01-01 00:00:00]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">insert_dimension</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+<span class="go">Field: specific_humidity (ncvar%q)</span>
+<span class="go">----------------------------------</span>
+<span class="go">Data            : specific_humidity(time(1), latitude(5), longitude(8)) 1</span>
+<span class="go">Cell methods    : area: mean</span>
+<span class="go">Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north</span>
+<span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
+<span class="go">                : time(1) = [2019-01-01 00:00:00]</span>
+</pre></div>
+</div>
+<p>A previously non-existent size 1 axis must be created prior to
+insertion:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">insert_dimension</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="go">Field: specific_humidity (ncvar%q)</span>
+<span class="go">----------------------------------</span>
+<span class="go">Data            : specific_humidity(time(1), key%domainaxis3(1), latitude(5), longitude(8)) 1</span>
+<span class="go">Cell methods    : area: mean</span>
+<span class="go">Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north</span>
+<span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
+<span class="go">                : time(1) = [2019-01-01 00:00:00]</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -158,7 +186,7 @@ operation was in-place.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cf.Field.insert_dimension.rst.txt"

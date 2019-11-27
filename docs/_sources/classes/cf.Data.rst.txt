@@ -117,6 +117,7 @@ Data methods
    ~cf.Data.maximum
    ~cf.Data.maximum_absolute_value
    ~cf.Data.mean
+   ~cf.Data.mean_absolute_value
    ~cf.Data.mean_of_upper_decile
    ~cf.Data.median
    ~cf.Data.mid_range
@@ -143,6 +144,7 @@ Data methods
    ~cf.Data.sample_size
    ~cf.Data.save_to_disk
    ~cf.Data.sd
+   ~cf.Data.standard_deviation
    ~cf.Data.second_element
    ~cf.Data.section
    ~cf.Data.set_calendar

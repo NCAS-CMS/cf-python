@@ -1,0 +1,7 @@
+cf.FieldAncillary.uncompress
+============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.FieldAncillary.uncompress

@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.5</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.6</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -89,10 +89,14 @@
 <h1>cf.example_field<a class="headerlink" href="#cf-example-field" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.example_field">
-<code class="descclassname">cf.</code><code class="descname">example_field</code><span class="sig-paren">(</span><em>n</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.5/cf/examplefield.py#L17"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.example_field" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">cf.</code><code class="descname">example_field</code><span class="sig-paren">(</span><em>n</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/3.0.6/cf/examplefield.py#L17"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.example_field" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return an example field construct.</p>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 3.0.5.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="../method/cf.Field.creation_commands.html#cf.Field.creation_commands" title="cf.Field.creation_commands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.creation_commands</span></code></a></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -201,7 +205,7 @@ geometry (DSG) “timeSeriesProfile” features.</td>
 <span class="go">                : air_pressure(1) = [850.0] hPa</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">cf</span><span class="o">.</span><span class="n">example_field</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>          
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">example_field</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>     
 <span class="go">Field: precipitation_flux (ncvar%p)</span>
 <span class="go">-----------------------------------</span>
@@ -245,7 +249,7 @@ geometry (DSG) “timeSeriesProfile” features.</td>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/function/cf.example_field.rst.txt"

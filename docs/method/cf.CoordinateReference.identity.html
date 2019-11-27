@@ -32,7 +32,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.5</a></b></h3>
+<h3><b><a href="../index.html">cf 3.0.6</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -91,18 +91,18 @@
 <h1>cf.CoordinateReference.identity<a class="headerlink" href="#cf-coordinatereference-identity" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.CoordinateReference.identity">
-<code class="descclassname">CoordinateReference.</code><code class="descname">identity</code><span class="sig-paren">(</span><em>default=''</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.10/cfdm/coordinatereference.py#L334"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.CoordinateReference.identity" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">CoordinateReference.</code><code class="descname">identity</code><span class="sig-paren">(</span><em>default=''</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.11/cfdm/coordinatereference.py#L342"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.CoordinateReference.identity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the canonical identity.</p>
 <p>By default the identity is the first found of the following:</p>
-<ol class="arabic simple">
-<li>The “standard_name” coordinate conversion parameter, preceeded by
-<code class="docutils literal notranslate"><span class="pre">'standard_name:'</span></code>.</li>
-<li>The “grid_mapping_name” coordinate conversion parameter, preceeded
-by <code class="docutils literal notranslate"><span class="pre">'grid_mapping_name:'</span></code>.</li>
+<ul class="simple">
+<li>The “standard_name” coordinate conversion parameter, preceeded
+by <code class="docutils literal notranslate"><span class="pre">'standard_name:'</span></code>.</li>
+<li>The “grid_mapping_name” coordinate conversion parameter,
+preceeded by <code class="docutils literal notranslate"><span class="pre">'grid_mapping_name:'</span></code>.</li>
 <li>The netCDF variable name (corresponding to a netCDF grid mapping
 variable), preceeded by <code class="docutils literal notranslate"><span class="pre">'ncvar%'</span></code>.</li>
 <li>The value of the <em>default</em> parameter.</li>
-</ol>
+</ul>
 <div class="versionadded">
 <p><span class="versionmodified">New in version 1.7.0.</span></p>
 </div>
@@ -162,7 +162,7 @@ default parameter.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cf.CoordinateReference.identity.rst.txt"

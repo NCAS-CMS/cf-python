@@ -929,7 +929,7 @@ Binning operations
 
 The `~Field.bin` method of the field construct groups its data into
 bins, where each group is defined by the elements that correspond to
-an :ref:`N-dimensionsal histogram bin of another set of variables
+an :ref:`N-dimensional histogram bin of another set of variables
 <Histograms>`, and collapses the elements in each group to a single
 representative value. The same :ref:`collapse methods
 <Collapse-methods>` and :ref:`weighting options <Collapse-weights>` as
@@ -1021,7 +1021,7 @@ Percentiles
 ^^^^^^^^^^^
 
 Percentiles of the data can be computed along any subset of the axes
-with the `~Field.percentile` method fof the field construct.
+with the `~Field.percentile` method of the field construct.
 
 .. code-block:: python
    :caption: *Find the 20th, 40th, 50th, 60th and 80th percentiles.*
@@ -1204,7 +1204,7 @@ Regridding from and to spherical coordinate systems using the
 `~cf.Field.regrids` method is only available for the 'X' and 'Y' axes
 simultaneously. All other axes are unchanged. The calculation of the
 regridding weights is based on areas and distances on the surface of
-the sphere, rather in :ref:`Euclidian space <Cartesian-regridding>`.
+the sphere, rather in :ref:`Euclidean space <Cartesian-regridding>`.
 
 The following combinations of spherical source and destination domain
 coordinate systems are available to the `~Field.regrids` method:
@@ -1563,7 +1563,7 @@ they have different standard names.
             instance on the right hand side (RHS).
 
 	  * If, however, the field construct is on the RHS then a
-            `numpy` array or `Data` innstance (which ever type is on
+            `numpy` array or `Data` instance (which ever type is on
             the LHS) is returned, containing the same data as in the
             first case.
     
@@ -1707,7 +1707,7 @@ If both operands of an :ref:`arithmetical <Arithmetical-operations>`
 or :ref:`relational <Relational-operations>` operation are field
 constructs with insufficient metadata to create a mapping of physically
 compatible dimensions, there are various techniques that allow the
-operation the operation procede.
+operation to proceed.
 
 * **Option 1:** The operation may applied to the field constructs'
   data instead. See below for more details.
@@ -1909,6 +1909,14 @@ functions for creating weights for filtering:
     [0.12913 0.16595 0.1549  0.19456 0.12526 0.15634 0.06252 0.04153]
     [0.07167 0.12044 0.09161 0.13659 0.09663 0.1235  0.04248 0.02583]
     [--      --      --      --      --      --      --      --     ]]
+
+The magnitude of the integral of the filter (i.e. the sum of the
+weights defined by the *weights* parameter) affects the convolved
+values. For example, weights of ``[0.2, 0.2 0.2, 0.2, 0.2]`` will
+produce a 5-point (non-weighted) running mean; and weights of ``[1, 1,
+1, 1, 1]`` will produce a 5-point running sum. Note that the weights
+returned by functions of the `scipy.signal.windows` package do not
+necessarily sum to 1.
 
 Derivatives
 ^^^^^^^^^^^
