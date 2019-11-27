@@ -25,6 +25,7 @@ except:
     pass
 else:
     raise Exception("This should have failed!")
+
 y = cf.read('$PWD', ignore_read_error=True)
 len(y)
 
@@ -118,8 +119,8 @@ d = cf.Data([1, 2, 3], units='days since 2004-2-28')
 print(d.array)   
 print(d.datetime_array)
 e = cf.Data([1, 2, 3], units='days since 2004-2-28', calendar='360_day')
-print(d.array)   
-print(d.datetime_array)
+print(e.array)   
+print(e.datetime_array)
 date_time = cf.dt(2004, 2, 29)
 date_time
 d = cf.Data(date_time, calendar='gregorian')
@@ -146,6 +147,7 @@ except:
     pass
 else:
     raise Exception("This should have failed!")
+
 q, t = cf.read('file.nc')
 t
 t2 = t.squeeze()
@@ -196,7 +198,7 @@ t[0, [2, 9], [4, 8]] =  cf.Data([[-4, -5]])
 t[0, [4, 7], 0] = [[-10], [-11]]
 print(t.array)
 print(t[0, 0, -1].array)
-t[0, -1, -1] /= -10
+t[0, 0, -1] /= -10
 print(t[0, 0, -1].array)
 t.data[0, 0, -1] = -99
 print(t[0, 0, -1].array)
@@ -214,7 +216,6 @@ u.transpose(inplace=True)
 u.flip(inplace=True)   
 t[...] = u
 t.allclose(t0)
-t[:, :, 1:3] = u[2]
 print(t[:, :, 1:3].array)
 print(u[2].array)	     
 t[:, :, 1:3] = u[2]
@@ -296,7 +297,7 @@ t.construct('latitude', key=True)
 key = t.construct_key('latitude')
 t.get_construct(key)
 t.constructs('latitude').value()
-c = t.constructs.get(key)
+t.constructs.get(key)
 t.constructs[key]
 t.auxiliary_coordinate('latitude')
 t.auxiliary_coordinate('latitude', key=True)
@@ -306,6 +307,7 @@ except:
     pass
 else:
     raise Exception("This should have failed!")
+
 t.construct('measure:volume', False)
 c = t.constructs.filter_by_measure('volume')
 len(c)
@@ -315,6 +317,7 @@ except:
     pass
 else:
     raise Exception("This should have failed!")
+
 c.value(default='No construct')
 try:
     c.value(default=KeyError('My message'))                
@@ -322,6 +325,7 @@ except:
     pass
 else:
     raise Exception("This should have failed!")
+
 d = t.constructs('units=degrees')
 len(d)
 try:
@@ -330,6 +334,7 @@ except:
     pass
 else:
     raise Exception("This should have failed!")
+
 print(d.value(default=None))
 lon = q.construct('longitude')
 lon
@@ -365,6 +370,8 @@ cf.dt(2000, 2, 1) + cm
 cf.Data([1, 2, 3], 'days since 2000-02-01') + cm                       
 cm.interval(cf.dt(2000, 2, 1))                                         
 cm.bounds(cf.dt(2000, 2, 1))
+cf.D()                                                                    
+cf.Y(10, month=12)                                                        
 
 print("\n**Domain**\n")
 
@@ -510,7 +517,7 @@ c == 2
 c != 2
 c.evaluate(3)
 c == cf.Data([1, 2, 3])
-c == numpy.array([1, 2, 3])
+print(c == numpy.array([1, 2, 3]))
 ge3 = cf.Query('ge', 3)
 lt5 = cf.Query('lt', 5)
 c = ge3 & lt5
@@ -818,73 +825,6 @@ cell_measure = cf.CellMeasure(measure='area',
 tas.set_construct(cell_measure)
 
 print(tas)
-
-f = cf.Field()
-
-f.set_properties({'Conventions': 'CF-1.7', 'project': 'research', 'standard_name': 'specific_humidity', 'units': '1'})
-f.nc_set_variable('q')
-f.nc_set_global_attributes({'Conventions': None, 'project': None})
-
-# domain_axis
-c = cf.DomainAxis(size=5)
-c.nc_set_dimension('lat')
-f.set_construct(c, key='domainaxis0')
-
-# domain_axis
-c = cf.DomainAxis(size=8)
-c.nc_set_dimension('lon')
-f.set_construct(c, key='domainaxis1')
-
-# domain_axis
-c = cf.DomainAxis(size=1)
-f.set_construct(c, key='domainaxis2')
-
-# field data
-data = cf.Data([[0.007, 0.034, 0.003, 0.014, 0.018, 0.037, 0.024, 0.029], [0.023, 0.036, 0.045, 0.062, 0.046, 0.073, 0.006, 0.066], [0.11, 0.131, 0.124, 0.146, 0.087, 0.103, 0.057, 0.011], [0.029, 0.059, 0.039, 0.07, 0.058, 0.072, 0.009, 0.017], [0.006, 0.036, 0.019, 0.035, 0.018, 0.037, 0.034, 0.013]], units='1', dtype='f8')
-f.set_data(data, axes=('domainaxis0', 'domainaxis1'))
-
-# dimension_coordinate
-c = cf.DimensionCoordinate()
-c.set_properties({'units': 'degrees_north', 'standard_name': 'latitude'})
-c.nc_set_variable('lat')
-data = cf.Data([-75.0, -45.0, 0.0, 45.0, 75.0], units='degrees_north', dtype='f8')
-c.set_data(data)
-b = cf.Bounds()
-b.set_properties({'units': 'degrees_north'})
-b.nc_set_variable('lat_bnds')
-data = cf.Data([[-90.0, -60.0], [-60.0, -30.0], [-30.0, 30.0], [30.0, 60.0], [60.0, 90.0]], units='degrees_north', dtype='f8')
-b.set_data(data)
-c.set_bounds(b)
-f.set_construct(c, axes=('domainaxis0',), key='dimensioncoordinate0', copy=False)
-
-# dimension_coordinate
-c = cf.DimensionCoordinate()
-c.set_properties({'units': 'degrees_east', 'standard_name': 'longitude'})
-c.nc_set_variable('lon')
-data = cf.Data([22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5], units='degrees_east', dtype='f8')
-c.set_data(data)
-b = cf.Bounds()
-b.set_properties({'units': 'degrees_east'})
-b.nc_set_variable('lon_bnds')
-data = cf.Data([[0.0, 45.0], [45.0, 90.0], [90.0, 135.0], [135.0, 180.0], [180.0, 225.0], [225.0, 270.0], [270.0, 315.0], [315.0, 360.0]], units='degrees_east', dtype='f8')
-b.set_data(data)
-c.set_bounds(b)
-f.set_construct(c, axes=('domainaxis1',), key='dimensioncoordinate1', copy=False)
-
-# dimension_coordinate
-c = cf.DimensionCoordinate()
-c.set_properties({'units': 'days since 2018-12-01', 'standard_name': 'time'})
-c.nc_set_variable('time')
-data = cf.Data([31.0], units='days since 2018-12-01', dtype='f8')
-c.set_data(data)
-f.set_construct(c, axes=('domainaxis2',), key='dimensioncoordinate2', copy=False)
-
-# cell_method
-c = cf.CellMethod()
-c.method = 'mean'
-c.axes = ('area',)
-f.set_construct(c)
-
 q, t = cf.read('file.nc')
 print(q.creation_commands())
 import netCDF4
@@ -1048,7 +988,6 @@ h.data[1, 2] = -9
 print(h.array)
 h.data.get_compression_type()
 
-
 import numpy
 import cf
 
@@ -1074,7 +1013,7 @@ T.set_data(data)
 T.compress('contiguous',
            count_properties={'long_name': 'number of obs for this timeseries'},
            inplace=True)
-		
+
 T
 print(T.array)
 T.data.get_compression_type()
@@ -1161,7 +1100,7 @@ Y = P.set_construct(cf.DomainAxis(3))
 X = P.set_construct(cf.DomainAxis(2))
 
 # Set the data for the field
-P.set_data(cf.Data(array), axes=[T, Y, X])			      
+P.set_data(cf.Data(array), axes=[T, Y, X])	
 
 P
 print(P.data.array)

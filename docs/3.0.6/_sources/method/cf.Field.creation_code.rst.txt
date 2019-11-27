@@ -1,0 +1,7 @@
+cf.Field.creation_code
+======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Field.creation_code

@@ -1,0 +1,7 @@
+cf.CellMeasure.__irshift__
+==========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CellMeasure.__irshift__

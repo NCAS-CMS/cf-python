@@ -4084,8 +4084,6 @@ an already existing field construct, and then modify them to create
 the desired field constuct. The commands are produced by the
 `~Field.creation_commands` method of the existing field construct.
 
-.. Code Block 3
-
 .. code-block:: python
    :caption: *Create the commands that would create an existing field
              construct.*

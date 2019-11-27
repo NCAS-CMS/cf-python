@@ -382,7 +382,7 @@ components, and shows the first and last values of all data arrays:
    Field Ancillary: air_temperature standard_error
        standard_name = 'air_temperature standard_error'
        units = 'K'
-       Data(grid_latitude(10), grid_longitude(9)) = [[0.81, ..., 0.78]] K
+       Data(grid_latitude(10), grid_longitude(9)) = [[0.76, ..., 0.32]] K
    
    Domain Axis: atmosphere_hybrid_height_coordinate(1)
    Domain Axis: grid_latitude(10)
@@ -542,8 +542,7 @@ operations, such as indexing, iteration, and methods like
 `~FieldList.append`.
 
 .. code-block:: python
-   :caption: *List-like operations on field list field list
-             instances.*
+   :caption: *List-like operations on field list instances.*
 
    >>> x = cf.read('file.nc')
    >>> y = cf.read('precipitation_flux.nc')
@@ -4084,8 +4083,6 @@ It is sometimes convenient to produce the commands that would create
 an already existing field construct, and then modify them to create
 the desired field constuct. The commands are produced by the
 `~Field.creation_commands` method of the existing field construct.
-
-.. Code Block 3
 
 .. code-block:: python
    :caption: *Create the commands that would create an existing field

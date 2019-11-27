@@ -1,0 +1,7 @@
+cf.List.__rsub__
+================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.List.__rsub__
