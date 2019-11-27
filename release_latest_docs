@@ -7,50 +7,53 @@ if [[ ! $1 ]] ; then
   exit 1
 fi
 
-rm_doctrees=true
-if [[ $2 ]] ; then 
-  rm_doctrees=$2
-fi
-
-version=$1
-
-# Make zip file
-cd docs/source/sample_files
-zip cf_tutorial_files.zip *.nc *.pp
-cd -
-
-# --------------------------------------------------------------------
-# Make the latest docs    
-# --------------------------------------------------------------------
-cd docs
-if [[ $rm_doctrees = "true" ]] ; then
-   rm -fr .doctrees
-fi
-make html .
-
-cp -pv source/sample_files/cf_tutorial_files.zip source/tutorial.py _downloads
-
-for download_file in cf_tutorial_files.zip tutorial.py
-do		     
-  sed -i "s/\(href=._downloads\).*\($download_file\)/\1\/\2/" tutorial.html 
-done
-
-# --------------------------------------------------------------------
-# Add and commit the latest
-# --------------------------------------------------------------------
-git add \
-    *.html \
-    classes/*.html \
-    function/*.html \
-    method/*.html \
-    attribute/*.html \
-    *.inv \
-    *.js \
-    _sources \
-    _static \
-    _downloads/cf_tutorial_files.zip \
-    _downloads/tutorial.py
-
-git commit -a -m "v$version latest documentation"
+./release_docs $version latest
 
 set +x
+#rm_doctrees=true
+#if [[ $2 ]] ; then 
+#  rm_doctrees=$2
+#fi
+#
+#version=$1
+#
+## Make zip file
+#cd docs/source/sample_files
+#zip cf_tutorial_files.zip *.nc *.pp
+#cd -
+#
+## --------------------------------------------------------------------
+## Make the latest docs    
+## --------------------------------------------------------------------
+#cd docs
+#if [[ $rm_doctrees = "true" ]] ; then
+#   rm -fr .doctrees
+#fi
+#make html .
+#
+#cp -pv source/sample_files/cf_tutorial_files.zip source/tutorial.py _downloads
+#
+#for download_file in cf_tutorial_files.zip tutorial.py
+#do		     
+#  sed -i "s/\(href=._downloads\).*\($download_file\)/\1\/\2/" tutorial.html 
+#done
+#
+## --------------------------------------------------------------------
+## Add and commit the latest
+## --------------------------------------------------------------------
+#git add \
+#    *.html \
+#    classes/*.html \
+#    function/*.html \
+#    method/*.html \
+#    attribute/*.html \
+#    *.inv \
+#    *.js \
+#    _sources \
+#    _static \
+#    _downloads/cf_tutorial_files.zip \
+#    _downloads/tutorial.py
+#
+#git commit -a -m "v$version documentation"
+#
+#set +x

@@ -1,0 +1,61 @@
+#!/bin/bash
+
+set -x
+
+if [[ ! $1 ]] ; then 
+  echo "No version \$1 (e.g. 3.1.0)"
+  exit 1
+fi
+
+version=$1
+
+dir=$PWD/docs/$version
+if [[ $2 ]] ; then
+  if [[ $2 = "latest" ]] ; then 
+    dir=$PWD/docs
+  else
+    echo "\$2 must be latest or not set"
+    exit 2
+  fi
+fi
+
+# Make zip file
+cd docs/source/sample_files
+zip cf_tutorial_files.zip *.nc *.pp
+cd -
+
+# --------------------------------------------------------------------
+# Make the latest docs    
+# --------------------------------------------------------------------
+cd docs
+rm -fr $dir/.doctrees
+
+make html $dir
+
+cp -pv source/sample_files/cf_tutorial_files.zip source/tutorial.py $dir/_downloads
+
+for download_file in cf_tutorial_files.zip tutorial.py
+do		     
+  sed -i "s/\(href=._downloads\).*\($download_file\)/\1\/\2/" $dir/tutorial.html 
+done
+
+# --------------------------------------------------------------------
+# Add and commit the latest
+# --------------------------------------------------------------------
+cd $dir
+git add \
+    *.html \
+    classes/*.html \
+    function/*.html \
+    method/*.html \
+    attribute/*.html \
+    *.inv \
+    *.js \
+    _sources \
+    _static \
+    _downloads/cf_tutorial_files.zip \
+    _downloads/tutorial.py
+
+git commit -a -m "v$version documentation"
+
+set +x

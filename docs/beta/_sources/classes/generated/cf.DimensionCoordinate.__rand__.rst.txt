@@ -1,7 +1,0 @@
-cf.DimensionCoordinate.__rand__
-===============================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.DimensionCoordinate.__rand__

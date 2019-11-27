@@ -26,14 +26,11 @@ cd docs/source
 cd test_tutorial
 python ../tutorial.py
 
-
-* Update the latest documentation using `./release_latest_docs <vn>`
-  (e.g. ./release_latest_docs 3.0.6)
+* Update the latest documentation using `./release_docs <vn> latest`
+  (e.g. ./release_docs 3.0.6 latest)
 
 * Create an archived copy of the documentation using
-  `./release_archive_docs <vn>` (e.g. ./release_archive_docs 3.0.6)
-
-* Update the beta documentation using `./release_beta_docs`
+  `./release_docs <vn>` (e.g. ./release_docs 3.0.6)
 
 * Push recent commits using `git push origin master`
 

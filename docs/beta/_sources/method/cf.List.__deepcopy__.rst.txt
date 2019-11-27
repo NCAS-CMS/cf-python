@@ -1,7 +1,0 @@
-cf.List.__deepcopy__
-====================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.List.__deepcopy__

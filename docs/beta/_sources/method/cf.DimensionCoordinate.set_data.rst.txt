@@ -1,7 +1,0 @@
-cf.DimensionCoordinate.set_data
-===============================
-
-.. currentmodule:: cf
-.. default-role:: obj
-
-.. automethod:: cf.DimensionCoordinate.set_data
