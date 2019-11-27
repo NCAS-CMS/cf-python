@@ -10,6 +10,10 @@ Documentation
 
 http://ncas-cms.github.io/cf-python
 
+### Tutorial / Getting Started
+
+https://ncas-cms.github.io/cf-python/tutorial.html (also contains link to [executable tutorial.py](https://github.com/NCAS-CMS/cf-python/blob/master/docs/_downloads/tutorial.py))
+
 
 Installation
 ============
@@ -78,7 +82,7 @@ The `cf` package can:
 > error messages on the new API usage. However, it is advised
 > that the outputs of older scripts be checked when running
 > with Python 3 versions of the cf library.
-> 
+>
 > For version 2.x documentation, see the [older
 >  releases](https://ncas-cms.github.io/cf-python/releases.html) page.
 
