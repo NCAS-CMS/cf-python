@@ -27,11 +27,14 @@ done
 rm -f $test_file
 cfa --overwrite -d $test_dir  $sample_files/*.[np][cp]
 
+#echo 1
 rm -f $test_file
 cfa -o $test_file $sample_files/test*.[np][cp]
 
+#echo 2
 rm -f $test_file
-cfa -o $test_file $test_dir
+cfa -n -o $test_file $test_dir/file*.[np][cp]
 
+#echo 3
 rm -fr $test_dir $test_file
 

@@ -21,7 +21,7 @@ class cfaTest(unittest.TestCase):
 #--- End: class
 
 if __name__ == '__main__':
-    print('Run date:', datetime.datetime.utcnow())
+    print('Run date:', datetime.datetime.now())
     cf.environment()
     print()
     unittest.main(verbosity=2)
