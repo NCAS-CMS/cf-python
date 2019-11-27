@@ -1,0 +1,7 @@
+cf.FieldAncillary.sum
+=====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.FieldAncillary.sum

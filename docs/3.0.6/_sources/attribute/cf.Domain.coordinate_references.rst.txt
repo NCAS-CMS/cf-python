@@ -1,0 +1,7 @@
+cf.Domain.coordinate_references
+===============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.Domain.coordinate_references

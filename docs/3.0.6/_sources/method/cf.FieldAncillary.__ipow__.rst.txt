@@ -1,0 +1,7 @@
+cf.FieldAncillary.__ipow__
+==========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.FieldAncillary.__ipow__

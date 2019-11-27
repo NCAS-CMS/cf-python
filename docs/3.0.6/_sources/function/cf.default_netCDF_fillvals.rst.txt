@@ -1,0 +1,7 @@
+cf.default_netCDF_fillvals
+==========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autofunction:: cf.default_netCDF_fillvals

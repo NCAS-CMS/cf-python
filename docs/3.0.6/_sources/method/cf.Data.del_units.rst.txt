@@ -1,0 +1,7 @@
+cf.Data.del_units
+=================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Data.del_units

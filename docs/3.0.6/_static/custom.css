@@ -1,0 +1,64 @@
+/*
+ * overrides for alabaster
+ *
+ */
+
+div.sphinxsidebar {
+    width: {{ theme_sidebar_width }};
+    font-size: '13pt';
+    line-height: 1.5;
+}
+
+/* -- body styles ----------------------------------------------------------- */
+
+code.xref {
+    color: #5682ad;
+    text-decoration: none;
+}
+
+
+div.admonition p.admonition-title {
+    font-size: 13pt;
+    font-weight: bold;
+}
+
+/* -- tables ---------------------------------------------------------------- */
+
+table.docutils {
+    border: 0;
+    border-collapse: collapse;
+}
+
+table.docutils td, table.docutils th {
+    padding: 1px 8px 1px 5px;
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
+    border-bottom: 1px solid #aaa;
+}
+
+table.field-list td, table.field-list th {
+    border: 0 !important;
+}
+
+table.footnote td, table.footnote th {
+    border: 0 !important;
+}
+
+th {
+    text-align: left;
+    vertical-align: top;
+    padding-right: 5px;
+    background-color: #5682ad;
+    color: white;
+}
+
+table.citation {
+    border-left: solid 1px gray;
+    margin-left: 1px;
+}
+
+table.citation td {
+    border-bottom: none;
+}
+

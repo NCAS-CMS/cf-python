@@ -1,0 +1,7 @@
+cf.DimensionCoordinate.nc_set_variable
+======================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DimensionCoordinate.nc_set_variable

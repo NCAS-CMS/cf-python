@@ -1,0 +1,7 @@
+cf.AuxiliaryCoordinate.max
+==========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.AuxiliaryCoordinate.max

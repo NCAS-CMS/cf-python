@@ -1,0 +1,7 @@
+cf.DomainAncillary.__setitem__
+==============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DomainAncillary.__setitem__

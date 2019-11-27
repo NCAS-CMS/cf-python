@@ -1,0 +1,7 @@
+cf.Field.binary_mask
+====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.Field.binary_mask

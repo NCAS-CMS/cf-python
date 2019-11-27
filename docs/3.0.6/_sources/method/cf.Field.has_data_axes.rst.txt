@@ -1,0 +1,7 @@
+cf.Field.has_data_axes
+======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Field.has_data_axes

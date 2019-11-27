@@ -1,0 +1,7 @@
+cf.Index.datetime_array
+=======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.Index.datetime_array

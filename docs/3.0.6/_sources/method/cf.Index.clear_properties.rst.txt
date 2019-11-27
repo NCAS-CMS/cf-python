@@ -1,0 +1,7 @@
+cf.Index.clear_properties
+=========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Index.clear_properties

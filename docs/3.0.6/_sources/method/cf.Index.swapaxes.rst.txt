@@ -1,0 +1,7 @@
+cf.Index.swapaxes
+=================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Index.swapaxes

@@ -1,0 +1,7 @@
+cf.Data.del_calendar
+====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Data.del_calendar

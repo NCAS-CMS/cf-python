@@ -1,0 +1,7 @@
+cf.FieldAncillary.max
+=====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.FieldAncillary.max

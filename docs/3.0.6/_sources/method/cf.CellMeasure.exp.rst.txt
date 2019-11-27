@@ -1,0 +1,7 @@
+cf.CellMeasure.exp
+==================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CellMeasure.exp

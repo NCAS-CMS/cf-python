@@ -1,0 +1,7 @@
+cf.Count.hardmask
+=================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.Count.hardmask

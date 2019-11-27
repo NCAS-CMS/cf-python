@@ -1,0 +1,7 @@
+cf.FieldAncillary.concatenate
+=============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.FieldAncillary.concatenate

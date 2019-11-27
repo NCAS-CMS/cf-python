@@ -1,0 +1,7 @@
+cf.TimeDuration.is_day_factor
+=============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.TimeDuration.is_day_factor

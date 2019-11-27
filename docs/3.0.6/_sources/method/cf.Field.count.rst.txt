@@ -1,0 +1,7 @@
+cf.Field.count
+==============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Field.count

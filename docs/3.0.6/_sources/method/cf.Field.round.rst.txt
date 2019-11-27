@@ -1,0 +1,7 @@
+cf.Field.round
+==============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Field.round

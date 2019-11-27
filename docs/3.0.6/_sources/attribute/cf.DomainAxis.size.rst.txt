@@ -1,0 +1,7 @@
+cf.DomainAxis.size
+==================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.DomainAxis.size

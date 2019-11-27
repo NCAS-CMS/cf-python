@@ -1,0 +1,7 @@
+cf.Index.close
+==============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Index.close

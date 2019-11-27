@@ -1,0 +1,7 @@
+cf.RaggedIndexedContiguousArray.array
+=====================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.RaggedIndexedContiguousArray.array

@@ -1,0 +1,7 @@
+cf.CellMethod.within
+====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.CellMethod.within

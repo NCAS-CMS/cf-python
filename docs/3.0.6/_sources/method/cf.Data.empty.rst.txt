@@ -1,0 +1,7 @@
+cf.Data.empty
+=============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Data.empty
