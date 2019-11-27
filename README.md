@@ -10,9 +10,12 @@ Documentation
 
 http://ncas-cms.github.io/cf-python
 
-### Tutorial / Getting Started
+Tutorial
+========
 
-https://ncas-cms.github.io/cf-python/tutorial.html (also contains link to [executable tutorial.py](https://github.com/NCAS-CMS/cf-python/blob/master/docs/_downloads/tutorial.py))
+https://ncas-cms.github.io/cf-python/tutorial.html (which also
+contains a link to the executable file
+[tutorial.py](https://github.com/NCAS-CMS/cf-python/blob/master/docs/_downloads/tutorial.py))
 
 
 Installation
