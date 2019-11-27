@@ -162,7 +162,7 @@ if LooseVersion(cfunits.__version__) < LooseVersion(_minimum_vn):
             _minimum_vn, cfunits.__version__, cfunits.__file__))
 
 # Check the version of cfdm
-_minimum_vn = '1.7.10'
+_minimum_vn = '1.7.11'
 if LooseVersion(cfdm.__version__) < LooseVersion(_minimum_vn):
     raise ValueError(
         "Bad cfdm version: cf requires cfdm version {} or later. Got {} at {}".format(
