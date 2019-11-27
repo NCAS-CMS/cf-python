@@ -1844,7 +1844,7 @@ place.
             # Unroll
             for iaxis, shift in roll.items():
                 self.roll(iaxis, -shift, inplace=True)
-        #--- End: def
+        #--- End: if
         
         if mask:
             indices = tuple(indices)
@@ -1898,7 +1898,6 @@ place.
                 partition._process_partition = True
         #--- End: if
 
-    #--- End: def
 
     def _share_lock_files(self, parallelise):
         if parallelise:
@@ -2048,7 +2047,7 @@ place.
                                     for item in sublist]
         #--- End: if
         return processed_partitions
-    #--- End: def
+
     
     def dumps(self):
         '''Return a JSON string serialization of the data array.
@@ -6284,7 +6283,7 @@ dimensions.
         #--- End: if
         
         return out
-    #--- End: def
+
 
     @classmethod
     def _collapse_finalise(cls, ffinalise, out, sub_samples, masked,

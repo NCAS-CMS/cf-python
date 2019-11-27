@@ -227,7 +227,7 @@ class UMArray(abstract.FileArray):
 
         '''
         _close_um_file(self.filename)
-    #--- End: def
+
    
     def open(self):
         '''Open the file containing the data array.

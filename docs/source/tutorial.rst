@@ -300,17 +300,17 @@ values of their data arrays:
    ---------------------------------
    Data            : air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K
    Cell methods    : grid_latitude(10): grid_longitude(9): mean where land (interval: 0.1 degrees) time(1): maximum
-   Field ancils    : air_temperature standard_error(grid_latitude(10), grid_longitude(9)) = [[0.81, ..., 0.78]] K
-   Dimension coords: time(1) = [2019-01-01 00:00:00]
-                   : atmosphere_hybrid_height_coordinate(1) = [1.5]
+   Field ancils    : air_temperature standard_error(grid_latitude(10), grid_longitude(9)) = [[0.76, ..., 0.32]] K
+   Dimension coords: atmosphere_hybrid_height_coordinate(1) = [1.5]
                    : grid_latitude(10) = [2.2, ..., -1.76] degrees
                    : grid_longitude(9) = [-4.7, ..., -1.18] degrees
+                   : time(1) = [2019-01-01 00:00:00]
    Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
                    : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
-                   : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., 'kappa']
+                   : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., b'kappa']
    Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
-   Coord references: atmosphere_hybrid_height_coordinate
-                   : rotated_latitude_longitude
+   Coord references: grid_mapping_name:rotated_latitude_longitude
+                   : standard_name:atmosphere_hybrid_height_coordinate
    Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
                    : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
                    : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
@@ -382,7 +382,7 @@ components, and shows the first and last values of all data arrays:
    Field Ancillary: air_temperature standard_error
        standard_name = 'air_temperature standard_error'
        units = 'K'
-       Data(grid_latitude(10), grid_longitude(9)) = [[0.81, ..., 0.78]] K
+       Data(grid_latitude(10), grid_longitude(9)) = [[0.76, ..., 0.32]] K
    
    Domain Axis: atmosphere_hybrid_height_coordinate(1)
    Domain Axis: grid_latitude(10)
@@ -542,8 +542,7 @@ operations, such as indexing, iteration, and methods like
 `~FieldList.append`.
 
 .. code-block:: python
-   :caption: *List-like operations on field list field list
-             instances.*
+   :caption: *List-like operations on field list instances.*
 
    >>> x = cf.read('file.nc')
    >>> y = cf.read('precipitation_flux.nc')
@@ -888,14 +887,14 @@ construct also provides attributes for direct access.
    >>> print(t.array)
    [[[262.8 270.5 279.8 269.5 260.9 265.0 263.5 278.9 269.2]
      [272.7 268.4 279.5 278.9 263.8 263.3 274.2 265.7 279.5]
-     [269.7 279.1 273.4 274.2 279.6 270.2 280.0 272.5 263.7]
+     [269.7 279.1 273.4 274.2 279.6 270.2 280.  272.5 263.7]
      [261.7 260.6 270.8 260.3 265.6 279.4 276.9 267.6 260.6]
      [264.2 275.9 262.5 264.9 264.7 270.2 270.4 268.6 275.3]
-     [263.9 263.8 272.1 263.7 272.2 264.2 260.0 263.5 270.2]
+     [263.9 263.8 272.1 263.7 272.2 264.2 260.  263.5 270.2]
      [273.8 273.1 268.5 272.3 264.3 278.7 270.6 273.0 270.6]
      [267.9 273.5 279.8 260.3 261.2 275.3 271.2 260.8 268.9]
-     [270.9 278.7 273.2 261.7 271.6 265.8 273.0 278.5 266.4]
-     [276.4 264.2 276.3 266.1 276.1 268.1 277.0 273.4 269.7]]]
+     [270.9 278.7 273.2 261.7 271.6 265.8 273.  278.5 266.4]
+     [276.4 264.2 276.3 266.1 276.1 268.1 277.  273.4 269.7]]]
    
 .. code-block:: python
    :caption: *Inspect the data type, number of dimensions, dimension

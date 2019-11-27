@@ -176,7 +176,6 @@ class FileArray(Array):
 
         '''
         print(cf_inspect(self)) # pragma: no cover
-    #--- End: def
         
 
     def get_filename(self):
