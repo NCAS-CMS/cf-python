@@ -113,6 +113,10 @@ Documentation
 
 http://ncas-cms.github.io/cf-python
 
+Tutorial
+========
+
+https://ncas-cms.github.io/cf-python/tutorial.html
 
 Installation
 ============
