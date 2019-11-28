@@ -118,7 +118,7 @@ class DataTest(unittest.TestCase):
 #        self.test_only = ['test_Data_ceil', 'test_Data_floor', 'test_Data_trunc', 'test_Data_rint', 'test_Data_round' ]
 #        self.test_only = ['test_Data_year_month_day_hour_minute_second']
 #        self.test_only = ['test_Data_BINARY_AND_UNARY_OPERATORS']
-#        self.test_only = ['test_Data_clip']
+        self.test_only = ['test_Data_clip']
 #        self.test_only = ['test_Data__init__dtype_mask']
 
 

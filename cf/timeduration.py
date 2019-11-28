@@ -298,6 +298,7 @@ class TimeDuration:
             units = self.duration.Units
             if not units.istime:
                 raise ValueError("Bad units: {!r}".format(units))
+        #--- End: if
 
         if not (units.iscalendartime or units.istime):
             raise ValueError(
@@ -1896,4 +1897,3 @@ def s(duration=1, month=1, day=1, hour=0, minute=0, second=0):
     '''
     return TimeDuration(duration, 'seconds', month=month, day=day, 
                         hour=hour, minute=minute, second=second)
-

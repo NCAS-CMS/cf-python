@@ -1,3 +1,13 @@
+version 3.0.7
+-------------
+----
+
+**Not yet released**
+
+* Changed minimum cfunits dependency to version 3.2.3. This fixes a
+  bug that rased an exception for units specified by non-strings
+  (https://github.com/NCAS-CMS/cfunits/issues/1).
+
 version 3.0.6
 -------------
 ----
@@ -17,6 +27,7 @@ version 3.0.6
 * Fixed bug that sometimes gave an error when the LHS and RHS operands
   are swapped in field construct arithmetic
   (https://github.com/NCAS-CMS/cf-python/issues/16).
+* Changed minimum cfdm dependency to version 1.7.11.
 
 version 3.0.5
 -------------
