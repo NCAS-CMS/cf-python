@@ -79,8 +79,8 @@ except ImportError as error1:
 
 __Conventions__  = 'CF-1.7'
 __author__       = 'David Hassell'
-__date__         = '2019-11-27'
-__version__      = '3.0.6'
+__date__         = 'Not yet released'
+__version__      = '3.0.7'
 __cf_version__   = cfdm.core.__cf_version__
 
 from distutils.version import LooseVersion
@@ -155,7 +155,7 @@ if LooseVersion(numpy.__version__) < LooseVersion(_minimum_vn):
             _minimum_vn, numpy.__version__, numpy.__file__))
 
 # Check the version of cfunits
-_minimum_vn = '3.2.2'
+_minimum_vn = '3.2.3'
 if LooseVersion(cfunits.__version__) < LooseVersion(_minimum_vn):
     raise ValueError(
         "Bad cfunits version: cf requires cfunits version {} or later. Got {} at {}".format(
