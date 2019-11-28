@@ -10,9 +10,9 @@ from ...constants import _file_to_fh
 class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
     '''TODO
 
-.. versionadded:: 3.0.0
-    '''
+    .. versionadded:: 3.0.0
 
+    '''
     def _ncdimensions(self, ncvar):
         '''Return a list of the netCDF dimensions corresponding to a netCDF
     variable.

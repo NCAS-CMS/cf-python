@@ -91,13 +91,13 @@
 <h1>cf.CellMeasure.identity<a class="headerlink" href="#cf-cellmeasure-identity" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.CellMeasure.identity">
-<code class="descclassname">CellMeasure.</code><code class="descname">identity</code><span class="sig-paren">(</span><em>default=''</em>, <em>strict=None</em>, <em>relaxed=False</em>, <em>nc_only=False</em>, <em>relaxed_identity=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/3.0.6/cf/cellmeasure.py#L72"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.CellMeasure.identity" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">CellMeasure.</code><code class="descname">identity</code><span class="sig-paren">(</span><em>default=''</em>, <em>strict=None</em>, <em>relaxed=False</em>, <em>nc_only=False</em>, <em>relaxed_identity=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.6/cf/cellmeasure.py#L72"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.CellMeasure.identity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the canonical identity.</p>
 <p>By default the identity is the first found of the following:</p>
 <ul class="simple">
 <li>The <a class="reference internal" href="../attribute/cf.CellMeasure.measure.html#cf.CellMeasure.measure" title="cf.CellMeasure.measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">measure</span></code></a> attribute, preceeded by <code class="docutils literal notranslate"><span class="pre">'measure:'</span></code>.</li>
 <li>The <a class="reference internal" href="../attribute/cf.CellMeasure.standard_name.html#cf.CellMeasure.standard_name" title="cf.CellMeasure.standard_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_name</span></code></a> property.</li>
-<li>The <a class="reference internal" href="../attribute/cf.CellMeasure.id.html#cf.CellMeasure.id" title="cf.CellMeasure.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code></a> attribute, preceeded by <code class="docutils literal notranslate"><span class="pre">'id%'</span></code>.</li>
+<li>The <a class="reference internal" href="cf.CellMeasure.id.html#cf.CellMeasure.id" title="cf.CellMeasure.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code></a> attribute, preceeded by <code class="docutils literal notranslate"><span class="pre">'id%'</span></code>.</li>
 <li>The <a class="reference internal" href="../attribute/cf.CellMeasure.long_name.html#cf.CellMeasure.long_name" title="cf.CellMeasure.long_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">long_name</span></code></a> property, preceeded by <code class="docutils literal notranslate"><span class="pre">'long_name='</span></code>.</li>
 <li>The netCDF variable name, preceeded by <code class="docutils literal notranslate"><span class="pre">'ncvar%'</span></code>.</li>
 <li>The value of the <em>default</em> parameter.</li>
@@ -107,7 +107,7 @@
 </div>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="../attribute/cf.CellMeasure.id.html#cf.CellMeasure.id" title="cf.CellMeasure.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code></a>, <a class="reference internal" href="cf.CellMeasure.identities.html#cf.CellMeasure.identities" title="cf.CellMeasure.identities"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identities</span></code></a>, <a class="reference internal" href="../attribute/cf.CellMeasure.long_name.html#cf.CellMeasure.long_name" title="cf.CellMeasure.long_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">long_name</span></code></a>, <a class="reference internal" href="../attribute/cf.CellMeasure.measure.html#cf.CellMeasure.measure" title="cf.CellMeasure.measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">measure</span></code></a>,
+<p class="last"><a class="reference internal" href="cf.CellMeasure.id.html#cf.CellMeasure.id" title="cf.CellMeasure.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code></a>, <a class="reference internal" href="cf.CellMeasure.identities.html#cf.CellMeasure.identities" title="cf.CellMeasure.identities"><code class="xref py py-obj docutils literal notranslate"><span class="pre">identities</span></code></a>, <a class="reference internal" href="../attribute/cf.CellMeasure.long_name.html#cf.CellMeasure.long_name" title="cf.CellMeasure.long_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">long_name</span></code></a>, <a class="reference internal" href="../attribute/cf.CellMeasure.measure.html#cf.CellMeasure.measure" title="cf.CellMeasure.measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">measure</span></code></a>,
 <a class="reference internal" href="cf.CellMeasure.nc_get_variable.html#cf.CellMeasure.nc_get_variable" title="cf.CellMeasure.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a>, <a class="reference internal" href="../attribute/cf.CellMeasure.standard_name.html#cf.CellMeasure.standard_name" title="cf.CellMeasure.standard_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">standard_name</span></code></a></p>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
@@ -182,7 +182,7 @@ variable name.</p>
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
       <a href="../_sources/method/cf.CellMeasure.identity.rst.txt"

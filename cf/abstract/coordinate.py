@@ -6,7 +6,7 @@ from ..data.data import Data
 class Coordinate(mixin.PropertiesDataBounds):
     '''Mixin class for dimension or auxiliary coordinate constructs.
 
-.. versionadded:: 3.0.0
+    .. versionadded:: 3.0.0
 
     '''
     # ----------------------------------------------------------------
@@ -43,49 +43,50 @@ class Coordinate(mixin.PropertiesDataBounds):
     def T(self):
         '''True if and only if the data are coordinates for a CF 'T' axis.
         
-CF 'T' axis coordinates are defined by having units of reference time.
-
-.. seealso:: `ctype`, `X`, `~cf.Coordinate.Y`, `Z`
-
-**Examples:**
-
->>> c.Units
-<CF Units: seconds since 1992-10-8>
->>> c.T
-True
+    CF 'T' axis coordinates are defined by having units of reference
+    time.
+    
+    .. seealso:: `ctype`, `X`, `~cf.Coordinate.Y`, `Z`
+    
+    **Examples:**
+    
+    >>> c.Units
+    <CF Units: seconds since 1992-10-8>
+    >>> c.T
+    True
 
         '''
         return self.Units.isreftime
-    #--- End: def
+
 
     @property
     def X(self):
         '''True if and only if the data are coordinates for a CF 'X' axis.
         
-CF 'X' axis coordinates are defined by having one or more of the
-following:
-
-  * The `axis` property has the value ``'X'``
-  * Units of longitude
-  * The `standard_name` property is one of ``'longitude'``,
-    ``'projection_x_coordinate'`` or ``'grid_longitude'``
-
-.. seealso:: `ctype`, `T`, `~cf.Coordinate.Y`, `Z`
-
-**Examples:**
-
->>> c.Units
-<CF Units: degreeE>
->>> c.X
-True
- 
->>> c.standard_name
-'longitude'
->>> c.X
-True
-
->>> c.axis == 'X' and c.X
-True
+    CF 'X' axis coordinates are defined by having one or more of the
+    following:
+    
+      * The `axis` property has the value ``'X'``
+      * Units of longitude
+      * The `standard_name` property is one of ``'longitude'``,
+        ``'projection_x_coordinate'`` or ``'grid_longitude'``
+    
+    .. seealso:: `ctype`, `T`, `~cf.Coordinate.Y`, `Z`
+    
+    **Examples:**
+    
+    >>> c.Units
+    <CF Units: degreeE>
+    >>> c.X
+    True
+     
+    >>> c.standard_name
+    'longitude'
+    >>> c.X
+    True
+    
+    >>> c.axis == 'X' and c.X
+    True
 
         '''
 #        data  = self.get_data(None)
@@ -97,33 +98,34 @@ True
                 self.get_property('standard_name', None) in ('longitude',
                                                              'projection_x_coordinate',
                                                              'grid_longitude'))
-    #--- End: def
+
 
     @property
     def Y(self):
         '''True if and only if the data are coordinates for a CF 'Y' axis.
         
-CF 'Y' axis coordinates are defined by having one or more of the
-following:
+    CF 'Y' axis coordinates are defined by having one or more of the
+    following:
+    
+      * The `axis` property has the value ``'Y'``
+      * Units of latitude
+      * The `standard_name` property is one of ``'latitude'``,
+        ``'projection_y_coordinate'`` or ``'grid_latitude'``
+    
+    .. seealso:: `ctype`, `T`, `X`, `Z`
+    
+    **Examples:**
+    
+    >>> c.Units
+    <CF Units: degree_north>
+    >>> c.Y
+    True
+    
+    >>> c.standard_name == 'latitude'
+    >>> c.Y
+    True
 
-  * The `axis` property has the value ``'Y'``
-  * Units of latitude
-  * The `standard_name` property is one of ``'latitude'``,
-    ``'projection_y_coordinate'`` or ``'grid_latitude'``
-
-.. seealso:: `ctype`, `T`, `X`, `Z`
-
-**Examples:**
-
->>> c.Units
-<CF Units: degree_north>
->>> c.Y
-True
-
->>> c.standard_name == 'latitude'
->>> c.Y
-True
-'''              
+        '''              
 #        if self.ndim > 1:
 #            return self.get_property('axis', None) == 'Y'
 
@@ -132,59 +134,58 @@ True
                 self.get_property('standard_name', 'Y') in ('latitude',
                                                             'projection_y_coordinate',
                                                             'grid_latitude'))
-    #--- End: def
 
     @property
     def Z(self):
         '''True if and only if the data are coordinates for a CF 'Z' axis.
 
-CF 'Z' axis coordinates are defined by having one or more of the
-following:
-
-  * The `axis` property has the value ``'Z'``
-  * Units of pressure, level, layer or sigma_level
-  * The `positive` property has the value ``'up'`` or ``'down'``
-    (case insensitive)
-  * The `standard_name` property is one of
-    ``'atmosphere_ln_pressure_coordinate'``,
-    ``'atmosphere_sigma_coordinate'``,
-    ``'atmosphere_hybrid_sigma_pressure_coordinate'``,
-    ``'atmosphere_hybrid_height_coordinate'``,
-    ``'atmosphere_sleve_coordinate``', ``'ocean_sigma_coordinate'``,
-    ``'ocean_s_coordinate'``, ``'ocean_s_coordinate_g1'``,
-    ``'ocean_s_coordinate_g2'``, ``'ocean_sigma_z_coordinate'`` or
-    ``'ocean_double_sigma_coordinate'``
-
-.. seealso:: `ctype`, `T`, `X`, `~cf.Coordinate.Y`
-
-**Examples:**
-
->>> c.Units
-<CF Units: Pa>
->>> c.Z
-True
-
->>> c.Units.equivalent(cf.Units('K')) and c.positive == 'up'
-True
->>> c.Z
-True 
-
->>> c.axis == 'Z' and c.Z
-True
-
->>> c.Units
-<CF Units: sigma_level>
->>> c.Z
-True
-
->>> c.standard_name
-'ocean_sigma_coordinate'
->>> c.Z
-True
+    CF 'Z' axis coordinates are defined by having one or more of the
+    following:
+    
+      * The `axis` property has the value ``'Z'``
+      * Units of pressure, level, layer or sigma_level
+      * The `positive` property has the value ``'up'`` or ``'down'``
+        (case insensitive)
+      * The `standard_name` property is one of
+        ``'atmosphere_ln_pressure_coordinate'``,
+        ``'atmosphere_sigma_coordinate'``,
+        ``'atmosphere_hybrid_sigma_pressure_coordinate'``,
+        ``'atmosphere_hybrid_height_coordinate'``,
+        ``'atmosphere_sleve_coordinate``', ``'ocean_sigma_coordinate'``,
+        ``'ocean_s_coordinate'``, ``'ocean_s_coordinate_g1'``,
+        ``'ocean_s_coordinate_g2'``, ``'ocean_sigma_z_coordinate'`` or
+        ``'ocean_double_sigma_coordinate'``
+    
+    .. seealso:: `ctype`, `T`, `X`, `~cf.Coordinate.Y`
+    
+    **Examples:**
+    
+    >>> c.Units
+    <CF Units: Pa>
+    >>> c.Z
+    True
+    
+    >>> c.Units.equivalent(cf.Units('K')) and c.positive == 'up'
+    True
+    >>> c.Z
+    True 
+    
+    >>> c.axis == 'Z' and c.Z
+    True
+    
+    >>> c.Units
+    <CF Units: sigma_level>
+    >>> c.Z
+    True
+    
+    >>> c.standard_name
+    'ocean_sigma_coordinate'
+    >>> c.Z
+    True
 
         '''   
-        if self.ndim > 1:
-            return self.get_property('axis', None) == 'Z'
+#        if self.ndim > 1:
+#            return self.get_property('axis', None) == 'Z'
         
         units = self.Units
         return (
@@ -205,7 +206,7 @@ True
              'ocean_sigma_z_coordinate',
              'ocean_double_sigma_coordinate')
         )
-    #--- End: def
+
 
     # ----------------------------------------------------------------
     # CF properties
@@ -235,7 +236,6 @@ horizontal coordinates).
 
         '''
         return self.get_property('axis', default=AttributeError())
-    #--- End: def
     @axis.setter
     def axis(self, value): 
         self.set_property('axis', value)    
@@ -369,6 +369,6 @@ horizontal coordinates).
 #        self._period = value
 #
 #        return old
-#    #--- End: def
+
 
 #--- End: class

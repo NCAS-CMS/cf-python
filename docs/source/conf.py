@@ -20,7 +20,7 @@ import cf
 
 import cfdm
 
-cfdm_version = 'v'+cfdm.__version__
+cfdm_version = cfdm.__version__
 
 def _read(fname):
     """Returns content of a file.
@@ -470,12 +470,12 @@ def linkcode_resolve(domain, info):
             # Point to on-line cfdm
             # code. E.g. https://github.com/NCAS-CMS/cfdm/blob/v1.7.8/cfdm/field.py#L619
             fn = re.sub('^.*(cfdm/.*)', '\\1', fn)
-            url = "https://github.com/NCAS-CMS/cfdm/blob/{0}/{1}{2}".format(
+            url = "https://github.com/NCAS-CMS/cfdm/blob/v{0}/{1}{2}".format(
                 cfdm_version, fn, linespec)
         else:
             # Point to on-line cf
             # code. E.g. https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/data/data.py#L4292
-            url = "https://github.com/NCAS-CMS/cf-python/blob/{0}/cf/{1}{2}".format(
+            url = "https://github.com/NCAS-CMS/cf-python/blob/v{0}/cf/{1}{2}".format(
                 link_release, fn, linespec)
             
         print(url)

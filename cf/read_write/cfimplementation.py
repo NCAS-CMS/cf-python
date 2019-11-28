@@ -107,4 +107,4 @@ def implementation():
 
     '''
     return _implementation.copy()
-#--- End: def
+

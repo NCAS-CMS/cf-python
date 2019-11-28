@@ -62,18 +62,16 @@ _no_units = Units()
 
 
 class _HFLCache:
+    '''A cache for coordinate and cell measure hashes, first and last
+    values and first and last cell bounds
+
     '''
-
-A cache for coordinate and cell measure hashes, first and last values
-and first and last cell bounds
-
-'''
     def __init__(self):
         self.hash = {}
         self.fl   = {}
         self.flb  = {}
         self.hash_to_array = {}
-    #--- End: def
+
 
     def inspect(self):
         '''Inspect the object for debugging.
@@ -238,7 +236,6 @@ the field.
             if info:
                 self.message = "no data array"
             return
-        #--- End: if
 
 #        items = f.items
 #        item  = f.item
@@ -391,7 +388,6 @@ the field.
 #axis has no one-dimensional nor scalar coordinates"
 #
 #                return
-#            #--- End: if
 
             # Find the canonical identity for this axis
             identity = None
@@ -551,7 +547,6 @@ the field.
                 self.key_to_identity[key] = identity
             
                 ancs_in_refs.append(key)
-            #--- End: for
         #--- End: for
 
         # Secondly process domain ancillaries which are not being used
@@ -699,7 +694,7 @@ the field.
   
         # Finally, set the object to True
         self._bool = True
-    #--- End: def
+
 
     def __bool__(self):
         '''x.__bool__() <==> bool(x)
@@ -843,20 +838,20 @@ the field.
         _canonical_cell_methods.append(cms)
 
         return cms
-    #--- End: def
+
 
     def cell_measure_has_data_and_units(self, msr):
         '''TODO
 
-:Parameters:
-
-    msr: cf.CellMeasure
-
-:Returns:
-
-    `bool`
-
-'''
+    :Parameters:
+    
+        msr: `cf.CellMeasure`
+    
+    :Returns:
+    
+        `bool`
+    
+    '''
         if not msr.Units:
             if self.info:
                 self.message = "{0!r} cell measure has no units".format(
@@ -870,7 +865,7 @@ the field.
             return
 
         return True
-    #--- End: def
+
 
     def coord_has_identity_and_data(self, coord, axes=None):
         '''TODO
@@ -967,23 +962,23 @@ the field.
                 anc.identity())
             
         return None
-    #--- End: def
+
 
     def coordinate_reference_signatures(self, refs):
         '''TODO
 
-:Parameters:
-
-    refs: sequence of `CoordinateReference`
-
-:Returns:
-
-    `list`
-        A structural signature of each coordinate reference object.
-
-**Examples:**
-
->>> sig = coordinate_reference_signatures(refs)
+    :Parameters:
+    
+        refs: sequence of `CoordinateReference`
+    
+    :Returns:
+    
+        `list`
+            A structural signature of each coordinate reference object.
+    
+    **Examples:**
+    
+    >>> sig = coordinate_reference_signatures(refs)
 
         '''
         signatures = []
@@ -1004,22 +999,22 @@ the field.
         signatures.sort()
 
         return signatures
-    #--- End: def
+
 
     def domain_ancillary_has_identity_and_data(self, anc, identity=None):
         '''TODO
 
-:Parameters:
-
-    anc: cf.DomainAncillary
-
-    identity: *optional*
-
-:Returns:
-
-    `str` or `None`
-        The domain ancillary identity, or None if there is no identity
-        and/or no data.
+    :Parameters:
+    
+        anc: cf.DomainAncillary
+    
+        identity: *optional*
+    
+    :Returns:
+    
+        `str` or `
+            The domain ancillary identity, or None if there is no
+            identity and/or no data.
 
         '''
         if identity is not None:
@@ -1052,7 +1047,7 @@ the field.
         all_domain_anc_identities.add(anc_identity)
 
         return anc_identity
-    #--- End: def
+
 
     def print_info(self, info, signature=True):
         '''TODO
@@ -2460,15 +2455,15 @@ def _group_fields(meta, axis):
 def _sorted_by_first_values(meta, axis):
     '''Sort fields inplace
 
-:Parameters:
-
-    meta: `list` of `_Meta`
-
-    axis: `str`
-
-:Returns:
-
-    `None`
+    :Parameters:
+    
+        meta: `list` of `_Meta`
+    
+        axis: `str`
+    
+    :Returns:
+    
+        `None`
 
     ''' 
     sort_by_axis_ids = itemgetter(axis)
@@ -2478,39 +2473,39 @@ def _sorted_by_first_values(meta, axis):
     #--- End: def
 
     meta.sort(key=_first_values)
-#--- End: def
+
 
 def _ok_coordinate_arrays(meta, axis, overlap, contiguous, info):
     '''Return True iff the aggregating 1-d coordinates of the aggregating
-axis are all aggregatable.
-
-It is assumed that the input metadata objects have already been sorted
-by the canonical first values of their 1-d coordinates.
-
-:Parameters:
-
-    meta: `list` of `_Meta`
-
-    axis: `str`
-        Find the canonical identity of the aggregating axis.
-
-    overlap: `bool`
-        See the `cf.aggregate` function for details.
-
-    contiguous: `bool`
-        See the `cf.aggregate` function for details.
-
-    info: `int`
-        See the `cf.aggregate` function for details.
-
-:Returns:
-
-    `bool`
-
-**Examples:**
-
->>> if not _ok_coordinate_arrays(meta, 'latitude', True, False)
-...     print("Don't aggregate")
+    axis are all aggregatable.
+    
+    It is assumed that the input metadata objects have already been
+    sorted by the canonical first values of their 1-d coordinates.
+    
+    :Parameters:
+    
+        meta: `list` of `_Meta`
+    
+        axis: `str`
+            Find the canonical identity of the aggregating axis.
+    
+        overlap: `bool`
+            See the `cf.aggregate` function for details.
+    
+        contiguous: `bool`
+            See the `cf.aggregate` function for details.
+    
+        info: `int`
+            See the `cf.aggregate` function for details.
+    
+    :Returns:
+    
+        `bool`
+    
+    **Examples:**
+    
+    >>> if not _ok_coordinate_arrays(meta, 'latitude', True, False)
+    ...     print("Don't aggregate")
 
     '''
     m = meta[0]
@@ -2540,7 +2535,6 @@ by the canonical first values of their 1-d coordinates.
                 return False
 
             dim_coord_index0 = dim_coord_index1        
-        #--- End: for
 
         if axis in m.first_bounds:
             # --------------------------------------------------------
@@ -2635,7 +2629,7 @@ by the canonical first values of their 1-d coordinates.
     # any of the fields.
     # ----------------------------------------------------------------
     return True
-#--- End: def
+
 
 def _aggregate_2_fields(m0, m1,
                         rtol=None, atol=None,
@@ -2996,4 +2990,4 @@ def ensemble(f, prop, **kwargs):
         raise ValueError("TODO sd ;oo08 z;kln poih [")
     
     return f
-#--- End: def
+

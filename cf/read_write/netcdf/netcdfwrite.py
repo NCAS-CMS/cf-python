@@ -126,27 +126,27 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
     def _write_dimension_coordinate(self, f, key, coord):
         '''Write a coordinate variable and its bound variable to the file.
     
-This also writes a new netCDF dimension to the file and, if required,
-a new netCDF dimension for the bounds.
-
-:Parameters:
-
-    f: Field construct
-   
-    key: `str`
-
-    coord: Dimension coordinate construct
-
-:Returns:
-
-    out: `str`
-        The netCDF name of the dimension coordinate.
+    This also writes a new netCDF dimension to the file and, if
+    required, a new netCDF dimension for the bounds.
+    
+    :Parameters:
+    
+        f: Field construct
+       
+        key: `str`
+    
+        coord: Dimension coordinate construct
+    
+    :Returns:
+    
+        out: `str`
+            The netCDF name of the dimension coordinate.
 
         '''
         coord = self._change_reference_datetime(coord)
         
         return super()._write_dimension_coordinate(f, key, coord)
-    #--- End: def
+
 
     def _write_scalar_coordinate(self, f, key, coord_1d, axis,
                                  coordinates, extra={}):
@@ -183,52 +183,52 @@ then the input coordinate is not written.
         return super()._write_scalar_coordinate(f, key, coord_1d,
                                                 axis, coordinates,
                                                 extra=extra)
-    #--- End: def
+
     
     def _write_auxiliary_coordinate(self, f, key, coord, coordinates):
         '''Write auxiliary coordinates and bounds to the netCDF file.
     
-If an equal auxiliary coordinate has already been written to the file
-then the input coordinate is not written.
+    If an equal auxiliary coordinate has already been written to the
+    file then the input coordinate is not written.
+        
+    :Parameters:
     
-:Parameters:
-
-    f: Field construct
-   
-    key: `str`
-
-    coord: Coordinate construct
-
-    coordinates: `list`
-
-:Returns:
-
-    coordinates: `list`
-        The list of netCDF auxiliary coordinate names updated in
-        place.
-
-**Examples:**
-
->>> coordinates = _write_auxiliary_coordinate(f, 'aux2', coordinates)
+        f: Field construct
+       
+        key: `str`
+    
+        coord: Coordinate construct
+    
+        coordinates: `list`
+    
+    :Returns:
+    
+        coordinates: `list`
+            The list of netCDF auxiliary coordinate names updated in
+            place.
+    
+    **Examples:**
+    
+    >>> coordinates = _write_auxiliary_coordinate(f, 'aux2', coordinates)
 
         '''
         coord = self._change_reference_datetime(coord)
             
         return super()._write_auxiliary_coordinate(f, key, coord, coordinates)
-    #--- End: def
+
 
     def _change_reference_datetime(self, coord):
         '''TODO
 
-.. versionadded:: 3.0.0
+    .. versionadded:: 3.0.0
+        
+    :Parameters:
+            
+        coord: Coordinate instance
+            
+    :Returns:
     
-:Parameters:
-        
-    coord: Coordinate instance
-        
-:Returns:
-
-        The coordinate construct with changed units.
+            The coordinate construct with changed units.
 
     '''
         reference_datetime = self.write_vars.get('reference_datetime')
@@ -244,28 +244,28 @@ then the input coordinate is not written.
                     coord.reference_datetime, reference_datetime))
         else:
             return coord2
-    #--- End: def
+
 
     def _write_cfa_data(self, ncvar, ncdimensions, data, cfvar):
         '''Write a CFA variable to the netCDF file.
 
-Any CFA private variables required will be autmatically created and
-written to the file.
-
-:Parameters:
-
-    ncvar: `str`
-        The netCDF name for the variable.
-
-    ncdimensions: sequence of `str`
-
-    netcdf_attrs: `dict`
-
-    data: `Data`
-
-:Returns:
-
-    `None`
+    Any CFA private variables required will be autmatically created
+    and written to the file.
+    
+    :Parameters:
+    
+        ncvar: `str`
+            The netCDF name for the variable.
+    
+        ncdimensions: sequence of `str`
+    
+        netcdf_attrs: `dict`
+    
+        data: `Data`
+    
+    :Returns:
+    
+        `None`
 
         '''
         g = self.write_vars
@@ -470,63 +470,63 @@ written to the file.
         # Write the netCDF attributes to the file
         self._write_attributes(parent=None, ncvar=ncvar,
                                extra=netcdf_attrs)
-    #--- End: def
+
 
     def _random_hex_string(self, size=10):
         '''Return a random hexadecimal string with the given number of
-characters.
-
-:Parameters:
-
-    size: `int`, optional
-        The number of characters in the generated string.
-
-:Returns:
-
-    `str`
-        The hexadecimal string.
-
-**Examples:**
-
->>> _random_hex_string()
-'C3eECbBBcf'
->>> _random_hex_string(6)
-'7a4acc'
-
-        '''                        
+    characters.
+    
+    :Parameters:
+    
+        size: `int`, optional
+            The number of characters in the generated string.
+    
+    :Returns:
+    
+        `str`
+            The hexadecimal string.
+    
+    **Examples:**
+    
+    >>> _random_hex_string()
+    'C3eECbBBcf'
+    >>> _random_hex_string(6)
+    '7a4acc'
+    
+            '''                        
         return ''.join(random.choice(hexdigits) for i in range(size))
-    #--- End: def    
+
 
     def _convert_to_builtin_type(self, x):
         '''Convert a non-JSON-encodable object to a JSON-encodable built-in type.
 
-Possible conversions are:
-
-==============  =============  ======================================
-Input object    Output object  numpy data types covered
-==============  =============  ======================================
-numpy.bool_     bool           bool
-numpy.integer   int            int, int8, int16, int32, int64, uint8,
-                               uint16, uint32, uint64
-numpy.floating  float          float, float16, float32, float64
-==============  =============  ======================================
-
-:Parameters:
-
-    x: 
-        
-:Returns: 
-
+    Possible conversions are:
     
-**Examples:**
-
->>> type(_convert_to_netCDF_datatype(numpy.bool_(True)))
-bool
->>> type(_convert_to_netCDF_datatype(numpy.array([1.0])[0]))
-double
->>> type(_convert_to_netCDF_datatype(numpy.array([2])[0]))
-int
-
+    ==============  =============  ======================================
+    Input object    Output object  numpy data types covered
+    ==============  =============  ======================================
+    numpy.bool_     bool           bool
+    numpy.integer   int            int, int8, int16, int32, int64, uint8,
+                                   uint16, uint32, uint64
+    numpy.floating  float          float, float16, float32, float64
+    ==============  =============  ======================================
+    
+    :Parameters:
+    
+        x: 
+            
+    :Returns: 
+    
+        
+    **Examples:**
+    
+    >>> type(_convert_to_netCDF_datatype(numpy.bool_(True)))
+    bool
+    >>> type(_convert_to_netCDF_datatype(numpy.array([1.0])[0]))
+    double
+    >>> type(_convert_to_netCDF_datatype(numpy.array([2])[0]))
+    int
+    
         ''' 
         if isinstance(x, numpy.bool_):
             return bool(x)
@@ -540,6 +540,6 @@ int
         raise TypeError(
             "{!r} object can't be converted to a JSON serializable type: {!r}".format(
                 type(x), x))
-    #--- End: def
+
 
 #--- End: class
