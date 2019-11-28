@@ -4,4 +4,4 @@ cf.FieldAncillary.T
 .. currentmodule:: cf
 .. default-role:: obj
 
-.. automethod:: cf.FieldAncillary.T
+.. autoattribute:: cf.FieldAncillary.T
