@@ -83,7 +83,8 @@ from .functions import (_DEPRECATION_ERROR,
                         _DEPRECATION_ERROR_METHOD,
                         _DEPRECATION_ERROR_ATTRIBUTE,
                         _DEPRECATION_ERROR_DICT,
-                        _DEPRECATION_ERROR_SEQUENCE)
+                        _DEPRECATION_ERROR_SEQUENCE,
+                        _DEPRECATION_ERROR_KWARG_VALUE,)
 
 _debug = False
 
@@ -4860,7 +4861,7 @@ class Field(mixin.PropertiesData,
         return old
 
 
-    def weights(self, weights='auto', scale=None, measure=False,
+    def weights(self, weights=True, scale=None, measure=False,
                 components=False, methods=False, radius='earth',
                 **kwargs):
         '''Return weights for the data array values.
@@ -4886,27 +4887,29 @@ class Field(mixin.PropertiesData,
     :Parameters:
     
         weights: *optional*
-            Specify the weights to be created. There are two distinct
-            methods: **type 1** will always succeed in creating
-            weights for all axes of the field, at the expense of not
-            always being able to control exactly how the weights are
-            created (see the *methods* parameter); **type 2** allows
-            particular types of weights to be defined for particular
-            axes, and an exception will be raised if it is not
-            possible to the create weights.
+            Specify the weights to be created. There are three
+            distinct methods: **type 1** will create weights for all
+            axes of size greater thn 1, raising an exception if this
+            is not possible (this is the default); **type 2** will
+            always succeed in creating weights for all axes of the
+            field, even if some of those weights are null; and **type
+            3** allows particular types of weights to be defined for
+            particular axes, and an exception will be raised if it is
+            not possible to the create weights.
     
-              * **Type 1**: *weights* may be one of:
+            For **types 1** and **2** come at the expense of not
+            always being able to control exactly how the weights are
+            created (see the *methods* parameter)
+
+            * **Type 1**: *weights* may be:
             
               ==========  ============================================
               *weights*   Description
               ==========  ============================================
-              `None`      Equal weights for all axes. This the
-                          default.
-    
-              ``'auto'``  Weights are created for non-overlapping
-                          subsets of the axes by the methods
-                          enumerated in the above notes. Set the
-                          *methods* parameter to find out how the
+              `True`      This is the default. Weights are created for
+                          non-overlapping subsets of the axes by the
+                          methods enumerated in the above notes. Set
+                          the *methods* parameter to find out how the
                           weights were actually created.
     
                           In this case weights components are created
@@ -4927,22 +4930,32 @@ class Field(mixin.PropertiesData,
                           components is returned in a field constructs
                           which is broadcastable to the orginal field
                           construct (see the *components* parameter).
-
+              ==========  ============================================
+    
+            * **Type 2**: *weights* may be one of:
+            
+              ==========  ============================================
+              *weights*   Description
+              ==========  ============================================
+              `None`      Equal weights for all axes.
+              
+              `False`     Equal weights for all axes.
+              
               `Data`      Explicit weights in a `Data` object that
                           must be broadcastable to the field
                           construct's data.
-
+              
               `Field`     Explicit weights from the data of another
                           field construct, which must be broadcastable
                           to this field construct's data.
-
+              
               `dict`      Explicit weights in dictionary of the form
                           that is returned from a call to the
                           `weights` method with ``component=True``
               ==========  ============================================
     
-              * **Type 2**: *weights* may be one, or a sequence, of:
-              
+            * **Type 3**: *weights* may be one, or a sequence, of:
+            
               ============  ==========================================
               *weights*     Description     
               ============  ==========================================
@@ -4966,16 +4979,16 @@ class Field(mixin.PropertiesData,
                             broadcastable to this field construct.
               ============  ==========================================
      
-              If *weights* is a sequence of any combination of the
-              above then the returned field contains the outer product
-              of the weights defined by each element of the
-              sequence. The ordering of the sequence is irrelevant.
+            If *weights* is a sequence of any combination of the
+            above then the returned field contains the outer product
+            of the weights defined by each element of the
+            sequence. The ordering of the sequence is irrelevant.
     
-              *Parameter example:*
-                To create to 2-dimensional weights based on cell
-                areas: ``f.weights('area')``. To create to
-                3-dimensional weights based on cell areas and linear
-                height: ``f.weights(['area', 'Z'])``.
+            *Parameter example:*
+              To create to 2-dimensional weights based on cell
+              areas: ``f.weights('area')``. To create to
+              3-dimensional weights based on cell areas and linear
+              height: ``f.weights(['area', 'Z'])``.
     
         scale: number, optional
             If set to a positive number then scale the weights so that
@@ -5051,21 +5064,21 @@ class Field(mixin.PropertiesData,
     <CF Field: air_temperature(time(12), latitude(145), longitude(192)) K>
     >>> f.weights()
     <CF Field: long_name:weight(time(12), latitude(145), longitude(192)) 86400 s.rad>
-    >>> f.weights('auto', scale=1.0)
+    >>> f.weights(scale=1.0)
     <CF Field: long_name:weight(time(12), latitude(145), longitude(192)) 1>
-    >>> f.weights('auto', components=True)
+    >>> f.weights(components=True)
     {(0,): <CF Data(12): [30.0, ..., 31.0] d>,
      (1,): <CF Data(145): [5.94949998503e-05, ..., 5.94949998503e-05]>,
      (2,): <CF Data(192): [0.0327249234749, ..., 0.0327249234749] radians>}
-    >>> f.weights('auto', components=True, scale=1.0)
+    >>> f.weights(components=True, scale=1.0)
     {(0,): <CF Data(12): [0.967741935483871, ..., 1.0] 1>,
      (1,): <CF Data(145): [0.00272710399807, ..., 0.00272710399807]>,
      (2,): <CF Data(192): [1.0, ..., 1.0]>}
-    >>> f.weights('auto', components=True, scale=2.0)
+    >>> f.weights(components=True, scale=2.0)
     {(0,): <CF Data(12): [1.935483870967742, ..., 2.0] 1>,
      (1,): <CF Data(145): [0.00545420799614, ..., 0.00545420799614]>,
      (2,): <CF Data(192): [2.0, ..., 2.0]>}
-    >>> f.weights('auto', methods=True)
+    >>> f.weights(methods=True)
     {(0,): 'linear time',
      (1,): 'linear sine latitude',
      (2,): 'linear longitude'}
@@ -5476,13 +5489,18 @@ class Field(mixin.PropertiesData,
         # ------------------------------------------------------------
         # Start of main code (weights)
         # ------------------------------------------------------------
+        if isinstance(weights, str) and weights == 'auto':
+            _DEPRECATION_ERROR_KWARG_VALUE(self, 'weights', 'weights',
+                                           'auto', message='Use value True instead.',
+                                           version='3.0.7') # pragma: no cover
+
         if kwargs:
             _DEPRECATION_ERROR_KWARGS(self, 'weights', kwargs) # pragma: no cover
 
         if measure and scale is not None:
             raise ValueError("Can't scale and measure=True")
 
-        if weights is None:
+        if weights is None or weights is False:
             # --------------------------------------------------------
             # All equal weights
             # --------------------------------------------------------
@@ -5503,7 +5521,7 @@ class Field(mixin.PropertiesData,
         # All axes which have weights
         weights_axes = set()
 
-        if isinstance(weights, str) and weights == 'auto':
+        if weights is True: #isinstance(weights, str) and weights == True: # 'auto':
             # --------------------------------------------------------
             # Auto-detect all weights
             # --------------------------------------------------------
@@ -5520,7 +5538,20 @@ class Field(mixin.PropertiesData,
                 axis = self.get_data_axes(dc_key)[0]
                 _linear_weights(self, axis, comp, weights_axes,
                                 auto=True, measure=measure)
- 
+            weights_axes = []
+            for key in comp:
+                weights_axes.extend(key)
+
+            size_N_axes = []
+            for key, c in self.domain_axes.items():
+                if c.get_size(0) > 1:
+                    size_N_axes.append(key)
+            #--- End: for
+
+            missing = set(size_N_axes).difference(weights_axes)
+            if missing:
+                raise ValueError("Can't create weights for {!r} axis.".format(missing.pop()))
+
         elif isinstance(weights, dict):
             # --------------------------------------------------------
             # Dictionary
@@ -7238,6 +7269,18 @@ class Field(mixin.PropertiesData,
 
       >>> b = a.collapse('area: mean', weights='area')
 
+    An alternative technique for specifying weights is to set the
+    *weights* keyword to the output of a call to the `weights` method;
+    or set the *weights* keyword to `True`. The latter case is
+    equivalent to specifying, by their identities, the axes being
+    collapsed, and will raise an exception if weights can't be
+    calculated for all collapse axes of size greater than 1.
+
+    *Example*
+      Alternative syntax for specifying weights:
+ 	          
+      >>> b = a.collapse('area: mean', weights=a.weights('area'))
+      >>> b = a.collapse('area: mean', weights=True)
 
     **Multiple collapses**
     
@@ -7549,15 +7592,21 @@ class Field(mixin.PropertiesData,
               'Z']``.
     
         weights: optional
-            Specify the weights for the collapse. The weights are
-            those that would be returned by this call of the field
-            construct's `~cf.Field.weights` method:
-            ``f.weights(weights, measure=measure, scale=scale,
-            components=True)``. See the *measure* and *scale*
-            parameters and `cf.Field.weights` for details.
+            Specify the weights for the collapse. The weights are, in
+            general, those that would be returned by this call of the
+            field construct's `weights` method: ``f.weights(weights,
+            measure=measure, scale=scale, components=True)``. See the
+            *measure* and *scale* parameters and `cf.Field.weights`
+            for details.
 
             .. note:: By default *weights* is `None`, resulting in
                       unweighted calculations.
+    
+            If *weights* is the boolean `True` then weights are
+            calculated for all of the domain axis constructs that are
+            being collapsed (note that this may give weights for fewer
+            axes compared to those returned by the `weights` method
+            called with ``weights=True``).
     
             *Parameter example:*
               To specify weights based on cell areas use
@@ -8558,15 +8607,15 @@ class Field(mixin.PropertiesData,
                 if method not in _collapse_weighted_methods:
                     g_weights = None
                 else:
-                    if isinstance(weights, (dict, self.__class__, Data)):
-                        if measure:
-                            raise ValueError(
-                                "TODO")
-                        
-                        if scale is not None:
-                            raise ValueError(
-                                "TODO")
-                    elif method == 'integral':
+                    #if isinstance(weights, (dict, self.__class__, Data)):
+                    #    if measure:
+                    #        raise ValueError(
+                    #            "TODO")
+                    #    
+                    #    if scale is not None:
+                    #        raise ValueError(
+                    #            "TODO")
+                    if method == 'integral':
                         if not measure:
                             raise ValueError(
                                 "Must set measure=True for 'integral' collapses.")
@@ -8578,6 +8627,9 @@ class Field(mixin.PropertiesData,
                         scale = 1.0
                     elif measure and scale is not None:
                         raise ValueError("TODO")
+
+                    if weights is True:
+                        weights = tuple(collapse_axes.keys())
                         
                     g_weights = f.weights(weights, components=True,
                                           scale=scale,
@@ -8585,7 +8637,7 @@ class Field(mixin.PropertiesData,
                                           radius=radius)
                     if not g_weights:
                         g_weights = None
-                # --- End: if
+                #--- End: if
                     
                 axis = collapse_axes.key()
                 
@@ -8663,15 +8715,16 @@ class Field(mixin.PropertiesData,
 
             d_kwargs = {}
             if weights is not None:
-                if isinstance(weights, (dict, self.__class__, Data)):
-                    if measure:
-                        raise ValueError(
-                            "TODO")
-                    
-                    if scale is not None:
-                        raise ValueError(
-                            "TODO")
-                elif method == 'integral':
+                #if isinstance(weights, (dict, self.__class__, Data)):
+                #    if measure:
+                #        raise ValueError(
+                #            "TODO")
+                #    
+                #    if scale is not None:
+                #        raise ValueError(
+                #            "TODO")
+
+                if method == 'integral':
                     if not measure:
                         raise ValueError(
                             "Must set measure=True for 'integral' collapses.")
@@ -8684,9 +8737,11 @@ class Field(mixin.PropertiesData,
                 elif measure and scale is not None:
                     raise ValueError("TODO")
 
+                if weights is True:
+                    weights = tuple(collapse_axes.keys())
+
                 d_weights = f.weights(weights, components=True,
-                                      scale=scale,
-                                      measure=measure,
+                                      scale=scale, measure=measure,
                                       radius=radius)
 
                 if d_weights:
@@ -8694,7 +8749,7 @@ class Field(mixin.PropertiesData,
             #--- End: if
 
             if method in _collapse_ddof_methods:
-                d_kwargs['ddof']       = ddof
+                d_kwargs['ddof'] = ddof
 
             # ========================================================
             # Collapse the data array
@@ -11670,7 +11725,7 @@ class Field(mixin.PropertiesData,
 
     :Parameters:
     
-        axis:
+        axis:g
             Select the domain axis over which the cumulative sums are
             to be calculated, defined by that which would be selected
             by passing the given axis description to a call of the
@@ -11700,8 +11755,47 @@ class Field(mixin.PropertiesData,
             dimension, or `None` if the operation was in-place.
 
     **Examples:**
-        
-    >>> g = f.cumsum('T')
+
+    >>> f = cf.example_field(2)
+    >>> print(f)
+    Field: air_potential_temperature (ncvar%air_potential_temperature)
+    ------------------------------------------------------------------
+    Data            : air_potential_temperature(time(36), latitude(5), longitude(8)) K
+    Cell methods    : area: mean
+    Dimension coords: time(36) = [1959-12-16 12:00:00, ..., 1962-11-16 00:00:00]
+                    : latitude(5) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(8) = [22.5, ..., 337.5] degrees_east
+                    : air_pressure(1) = [850.0] hPa
+    >>> print(f.dimension_coordinate('T').bounds[[0, -1]].datetime_array)
+    [[cftime.DatetimeGregorian(1959-12-01 00:00:00)
+      cftime.DatetimeGregorian(1960-01-01 00:00:00)]
+     [cftime.DatetimeGregorian(1962-11-01 00:00:00)
+      cftime.DatetimeGregorian(1962-12-01 00:00:00)]]
+    >>> print(f.array[:, 0, 0])
+    [210.7 305.3 249.4 288.9 231.1 200.  234.4 289.2 204.3 203.6 261.8 256.2
+     212.3 231.7 255.1 213.9 255.8 301.2 213.3 200.1 204.6 203.2 244.6 238.4
+     304.5 269.8 267.9 282.4 215.  288.7 217.3 307.1 299.3 215.9 290.2 239.9]
+
+    >>> g = f.cumsum('T')   
+    >>> print(g)
+    Field: air_potential_temperature (ncvar%air_potential_temperature)
+    ------------------------------------------------------------------
+    Data            : air_potential_temperature(time(36), latitude(5), longitude(8)) K
+    Cell methods    : area: mean time(36): sum
+    Dimension coords: time(36) = [1959-12-16 12:00:00, ..., 1962-11-16 00:00:00]
+                    : latitude(5) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(8) = [22.5, ..., 337.5] degrees_east
+                    : air_pressure(1) = [850.0] hPa    
+    >>>  print(g.dimension_coordinate('T').bounds[[0, -1]].datetime_array) 
+    [[cftime.DatetimeGregorian(1959-12-01 00:00:00)
+      cftime.DatetimeGregorian(1960-01-01 00:00:00)]
+     [cftime.DatetimeGregorian(1959-12-01 00:00:00)
+      cftime.DatetimeGregorian(1962-12-01 00:00:00)]]
+    >>> print(g.array[:, 0, 0])
+    [ 210.7  516.   765.4 1054.3 1285.4 1485.4 1719.8 2009.  2213.3 2416.9
+     2678.7 2934.9 3147.2 3378.9 3634.  3847.9 4103.7 4404.9 4618.2 4818.3
+     5022.9 5226.1 5470.7 5709.1 6013.6 6283.4 6551.3 6833.7 7048.7 7337.4
+     7554.7 7861.8 8161.1 8377.  8667.2 8907.1]
 
     >>> g = f.cumsum('latitude', masked_as_zero=True)
 

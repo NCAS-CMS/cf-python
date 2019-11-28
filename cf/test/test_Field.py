@@ -269,7 +269,7 @@ class FieldTest(unittest.TestCase):
                 y = f.weights(w.data.transpose()[0].squeeze(), components=components, measure=m)
                 y = f.weights(w.data.transpose()[0], components=components, measure=m)
                 y = f.weights(f.data.squeeze(), components=components, measure=m)
-                y = f.weights('auto', components=components, measure=m)
+                y = f.weights(components=components, measure=m)
                 y = f.weights('grid_longitude', components=components, measure=m)
                 y = f.weights(['grid_longitude'], components=components, measure=m)
     #--- End: for

@@ -5731,7 +5731,7 @@ place.
                             "Can't collapse: Incorrect weights shape {!r}".format(
                                 numpy_shape(weight)))
                 #--- End: for
-
+                
                 # Convert weight to a data object, if necessary.
                 weight = type(self).asdata(weight)
 
@@ -5771,7 +5771,18 @@ place.
 
             # Add the weights to kwargs
             kwargs['weights'] = weights
-        #--- End: if
+            
+#            for key, weight in tuple(weights.items()):
+#                key = set(key)
+#                if len(key) > n_collapse_axes and key.issuperset(axes):
+#                    shape = tuple(self.shape[i] for i in axes)
+#                    raise ValueError(
+#                        "Weights {!r} span too many axes. Expected weights shape to broadcast to {}".format(
+#                            weight, shape))
+#
+#                if key.difference(axes):
+#                    raise ValueError('Weights {!r} span a non-collapse axis.'.format(weight))
+        #--- End: for
 
         # If the input data array 'fits' in one chunk of memory, then
         # make sure that it has only one partition

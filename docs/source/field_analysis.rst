@@ -17,8 +17,7 @@ By default all axes with size greater than 1 are collapsed completely
 <Collapse-methods>`.
 
 .. code-block:: python
-   :caption: *Find the minimum of the entire data.The file
-             timeseries.nc is found in the zip file of sample files):*
+   :caption: *Find the minimum of the entire data.*
 
    >>> a = cf.read('timeseries.nc')[0]
    >>> print(a)
@@ -471,7 +470,40 @@ Specifying weighting by horizontal cell area may also use the special
                    : longitude(1) = [180.0] degrees_east
                    : air_pressure(1) = [850.0] hPa
 
-See the `~Field.weights` method for full details on how weights may be specified.
+An alternative technique for specifying weights is to set the
+*weights* keyword to the output of a call to the `~Field.weights`
+method; or set the *weights* keyword to `True`. The latter case is
+equivalent to specifying, by their identities, the axes being
+collapsed, and will raise an exception if weights can't be calculated
+for all collapse axes of size greater than 1.
+		   
+.. code-block:: python
+   :caption: *Alternative syntax for specifying weights.*
+ 	     
+   >>> b = a.collapse('area: mean', weights=a.weights('area'))
+   >>> print(b)
+   Field: air_potential_temperature (ncvar%air_potential_temperature)
+   ------------------------------------------------------------------
+   Data            : air_potential_temperature(time(120), latitude(1), longitude(1)) K
+   Cell methods    : area: mean area: mean
+   Dimension coords: time(120) = [1959-12-16 12:00:00, ..., 1969-11-16 00:00:00]
+                   : latitude(1) = [0.0] degrees_north
+                   : longitude(1) = [180.0] degrees_east
+                   : air_pressure(1) = [850.0] hPa
+   >>> b = a.collapse('area: mean', weights=True)
+   >>> print(b)
+   Field: air_potential_temperature (ncvar%air_potential_temperature)
+   ------------------------------------------------------------------
+   Data            : air_potential_temperature(time(120), latitude(1), longitude(1)) K
+   Cell methods    : area: mean area: mean
+   Dimension coords: time(120) = [1959-12-16 12:00:00, ..., 1969-11-16 00:00:00]
+                   : latitude(1) = [0.0] degrees_north
+                   : longitude(1) = [180.0] degrees_east
+                   : air_pressure(1) = [850.0] hPa
+
+
+See the `~Field.weights` method for full details on how weights may be
+specified.
 
 .. _Multiple-collapses:
 
@@ -1230,15 +1262,12 @@ Spherical source domain         Spherical destination domain
 `Tripolar`_                     `Tripolar`_
 ==============================  ==============================
 
-
 The most convenient usage is for the destination domain to be exist
 in another field construct. In this case, the regridding command is
 very simple:
 
 .. code-block:: python
-   :caption: *TODO. The files air_temperature.nc and
-             precipitation_flux.nc are found in the zip file of
-             sample files.*
+   :caption: *TODO.*
 
    >>> a = cf.read('air_temperature.nc')[0]
    >>> b = cf.read('precipitation_flux.nc')[0]

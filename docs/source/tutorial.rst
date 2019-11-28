@@ -3743,12 +3743,8 @@ be changed after insertion with the `~Field.set_data_axes` method of
 the field construct.
 
 .. Code Block 1
-
 .. code-block:: python
-   :caption: *Create a field construct with properties; data; and
-             domain axis, cell method and dimension coordinate
-             metadata constructs (data arrays have been generated with
-             dummy values using numpy.arange).*
+   :caption: *Create a field construct with properties; data; and domain axis, cell method and dimension coordinate metadata constructs (data arrays have been generated with dummy values using numpy.arange).*
 
    import numpy
    import cf
@@ -4085,7 +4081,7 @@ the desired field constuct. The commands are produced by the
 `~Field.creation_commands` method of the existing field construct.
 
 .. code-block:: python
-   :caption: *Create the commands that would create an existing field
+   :caption: *Produce the commands that would create an existing field
              construct.*
 	
    >>> q, t = cf.read('file.nc')
@@ -5829,11 +5825,12 @@ output by some versions of the `Unified Model
 <https://en.wikipedia.org/wiki/Unified_Model>`_, for example), mapping
 their contents into field constructs. 32-bit and 64-bit PP and UM
 fields files of any endian-ness can be read. In nearly all cases the
-file format is auto-detected from the first 64 bits in the file, but
+file format is auto-detectable from the first 64 bits in the file, but
 for the few occasions when this is not possible [#um]_, the *um*
-keyword of `cf.read` allows the format to be specified, as well as the
-UM version (if the latter is not inferable from the PP or lookup
-header information).
+keyword of `cf.read` allows the format to be specified. The the UM
+version (if not inferable from the PP or lookup header information)
+and the height of the upper bound of the top model level may also be
+set with the *um* keyword.
 
 Note that 2-d "slices" within a single file are always combined, where
 possible, into field constructs with 3-d, 4-d or 5-d data. This is
@@ -5841,7 +5838,7 @@ done prior to the :ref:`field construct aggregation <Aggregation>`
 carried out by the `cf.read` function.
 
 .. code-block:: python
-   :caption: *TODO*
+   :caption: *Read a PP file into field constructs.*
    
    >>> pp = cf.read('umfile.pp')
    >>> pp
@@ -5863,7 +5860,8 @@ PP and UM fields files may read with `cf.read` and subsequently
 written to disk as netCDF files with `cf.write`.
 
 .. code-block:: python
-   :caption: *TODO*
+   :caption: *Write the field constructs from a PP file to a netCDF
+             dataset.*
    
    >>> cf.write(pp, 'umfile1.nc')
 
@@ -5873,7 +5871,8 @@ view of PP and UM fields files as CF field constructs, and also easily
 converts PP and UM fields files to netCDF datasets on disk.
 
 .. code-block:: shell
-   :caption: *TODO*
+   :caption: *Use the 'cfa' shell command to view a PP file and
+             convert it to a netCDF dataset.*
    
    $ cfa umfile.pp
    CF Field: surface_air_pressure(time(3), latitude(73), longitude(96)) Pa
