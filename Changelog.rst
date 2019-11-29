@@ -5,6 +5,8 @@ version 3.0.7
 **Not yet released**
 
 * New keyword parameter to `cf.Field.weights`: ``data``.
+* Changed the default value of the `cf.Field.weights` ``weights``
+  parameter to `True`.
 * Changed minimum cfunits dependency to version 3.2.3. This fixes a
   bug that rased an exception for units specified by non-strings
   (https://github.com/NCAS-CMS/cfunits/issues/1).

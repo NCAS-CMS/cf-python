@@ -20,7 +20,7 @@ The `CF data model <https://doi.org/10.5194/gmd-10-4619-2017>`_
 conventions and shows how they relate to each other, independently of
 the netCDF encoding.
 
-The **field** construct defined by the CF data model, which
+The **field construct** defined by the CF data model, which
 corresponds to a CF-netCDF data variable with all of its metadata, is
 the central construct that includes all of the other constructs. It
 consists of
@@ -39,33 +39,33 @@ consists of
 
 The domain is defined by
 
-- **domain axis** constructs (corresponding to CF-netCDF dimensions or
+- **domain axis constructs** (corresponding to CF-netCDF dimensions or
   scalar coordinate variables),
 
-- **dimension coordinate** constructs (corresponding to CF-netCDF
+- **dimension coordinate constructs** (corresponding to CF-netCDF
   coordinate variables or numeric scalar coordinate variables),
 
-- **auxiliary coordinate** constructs (corresponding to CF-netCDF
+- **auxiliary coordinate constructs** (corresponding to CF-netCDF
   auxiliary coordinate variables and non-numeric scalar coordinate
   variables),
 
-- **coordinate reference** constructs (corresponding to CF-netCDF grid
+- **coordinate reference constructs** (corresponding to CF-netCDF grid
   mapping variables or the formula_terms attribute of a coordinate
   variable),
 
-- **domain ancillary** constructs (corresponding to CF-netCDF
+- **domain ancillary constructs** (corresponding to CF-netCDF
   variables named by the formula_terms attribute of a coordinate
   variable), and
 
-- **cell measure** constructs (corresponding to CF-netCDF cell measure
+- **cell measure constructs** (corresponding to CF-netCDF cell measure
   variables).
   
 The physical nature of individual data values are described by 
 
-- **field ancillary** constructs (corresponding to CF-netCDF ancillary
+- **field ancillary constructs** (corresponding to CF-netCDF ancillary
   variables), and
 
-- **cell method** constructs (corresponding to a CF-netCDF
+- **cell method constructs** (corresponding to a CF-netCDF
   cell_methods attribute of data variable).
 
 

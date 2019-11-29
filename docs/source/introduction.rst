@@ -46,7 +46,7 @@ The cf package implements the :ref:`CF-data-model` [#cfdm]_ for its
 internal data structures and so is able to process any CF-compliant
 dataset. It is not strict about CF-compliance, however, so that
 partially conformant datasets may be ingested from existing datasets
-and written to new datasets.This is so that datasets which are
+and written to new datasets.This is so that datasets that are
 partially conformant may nonetheless be modified in memory.
 
 .. code-block:: python
@@ -112,8 +112,8 @@ The cf package can:
 
 Powerful, flexible, and very simple to produce visualizations of field
 constructs are available with the `cf-plot package
-<http://ajheaps.github.io/cf-plot>`_, that needs to be installed
-separately to cf.
+<http://ajheaps.github.io/cf-plot>`_, that is installed separately to
+cf.
 
 See the `cf-plot gallery
 <http://ajheaps.github.io/cf-plot/gallery.html>`_ for the wide range
