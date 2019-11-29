@@ -4863,7 +4863,7 @@ class Field(mixin.PropertiesData,
 
     def weights(self, weights=True, scale=None, measure=False,
                 components=False, methods=False, radius='earth',
-                **kwargs):
+                data=False, **kwargs):
         '''Return weights for the data array values.
 
     The weights are those used during a statistical collapse of the
@@ -4907,15 +4907,13 @@ class Field(mixin.PropertiesData,
               *weights*   Description
               ==========  ============================================
               `True`      This is the default. Weights are created for
-                          non-overlapping subsets of the axes by the
-                          methods enumerated in the above notes. Set
+                          non-overlapping subsets of the axes. Set
                           the *methods* parameter to find out how the
                           weights were actually created.
     
-                          In this case weights components are created
-                          for all axes of the field by one or more of
-                          the following methods, in order of
-                          preference,
+                          In weights components are created for all
+                          axes of the field by one or more of the
+                          following methods, in order of preference,
                         
                             1. Volume cell measures
                             2. Area cell measures
@@ -5050,12 +5048,17 @@ class Field(mixin.PropertiesData,
             If True, then return a dictionary describing methods used
             to create the weights.
     
+        data: `bool`, optional
+            If True then return the weights in a `Data` instance that
+            is broadcastable to the original data.
+
         kwargs: deprecated at version 3.0.0.
     
     :Returns:
     
-        `Field` or `dict`
-            The weights field or, if *components* is True, orthogonal
+        `Field` or `Data` or `dict`
+            The weights field; or if *data* is True, weights data in
+            broadcastable form; or if *components* is True, orthogonal
             weights in a dictionary.
     
     **Examples:**
@@ -5354,7 +5357,7 @@ class Field(mixin.PropertiesData,
                     if set(t.domain_axes.filter_by_size(gt(1))).intersection(t['undefined_axes']):
                         raise ValueError("345jn456jn TODO")
                 #--- End: if
-    
+
                 w = w.squeeze()
 
                 axis1_to_axis0 = {}
@@ -5498,7 +5501,10 @@ class Field(mixin.PropertiesData,
             _DEPRECATION_ERROR_KWARGS(self, 'weights', kwargs) # pragma: no cover
 
         if measure and scale is not None:
-            raise ValueError("Can't scale and measure=True")
+            raise ValueError("Can't set scale and measure=True")
+
+        if components and data:
+            raise ValueError("Can't set components=True and data=True")
 
         if weights is None or weights is False:
             # --------------------------------------------------------
@@ -5729,6 +5735,25 @@ class Field(mixin.PropertiesData,
             # Scale the weights so that they are <= scale
             # --------------------------------------------------------            
             wdata = _scale(wdata, scale)
+
+        # ------------------------------------------------------------
+        # Reorder the data so that its dimension are in the same
+        # relative order as self
+        # ------------------------------------------------------------
+        transpose = [waxes.index(axis) for axis in self.get_data_axes()
+                     if axis in waxes]
+        wdata = wdata.transpose(transpose)
+        waxes = [waxes[i] for i in transpose]
+        
+        if data:
+            # Insert missing size one dimensions for broadcasting
+            for i, axis in enumerate(self.get_data_axes()):
+                if axis not in waxes:
+                    waxes.insert(i, axis)
+                    wdata.insert_dimension(i, inplace=True)
+            #--- End: for
+            
+            return wdata
             
         field = self.copy()
         field.nc_del_variable(None)
@@ -7271,10 +7296,10 @@ class Field(mixin.PropertiesData,
 
     An alternative technique for specifying weights is to set the
     *weights* keyword to the output of a call to the `weights` method;
-    or set the *weights* keyword to `True`. The latter case is
-    equivalent to specifying, by their identities, the axes being
-    collapsed, and will raise an exception if weights can't be
-    calculated for all collapse axes of size greater than 1.
+    or set the *weights* keyword to `True`. The latter case creates
+    weights for all axes of size greater than 1, and an exception is
+    raised if weights can't be calculated for all axes of size greater
+    than 1.
 
     *Example*
       Alternative syntax for specifying weights:
@@ -7603,10 +7628,7 @@ class Field(mixin.PropertiesData,
                       unweighted calculations.
     
             If *weights* is the boolean `True` then weights are
-            calculated for all of the domain axis constructs that are
-            being collapsed (note that this may give weights for fewer
-            axes compared to those returned by the `weights` method
-            called with ``weights=True``).
+            calculated for all of the domain axis constructs.
     
             *Parameter example:*
               To specify weights based on cell areas use
@@ -8628,8 +8650,8 @@ class Field(mixin.PropertiesData,
                     elif measure and scale is not None:
                         raise ValueError("TODO")
 
-                    if weights is True:
-                        weights = tuple(collapse_axes.keys())
+#                    if weights is True:
+#                        weights = tuple(collapse_axes.keys())
                         
                     g_weights = f.weights(weights, components=True,
                                           scale=scale,
@@ -8737,8 +8759,8 @@ class Field(mixin.PropertiesData,
                 elif measure and scale is not None:
                     raise ValueError("TODO")
 
-                if weights is True:
-                    weights = tuple(collapse_axes.keys())
+#                if weights is True:
+#                    weights = tuple(collapse_axes.keys())
 
                 d_weights = f.weights(weights, components=True,
                                       scale=scale, measure=measure,

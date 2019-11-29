@@ -263,16 +263,28 @@ class FieldTest(unittest.TestCase):
         x = f.weights(w)
         self.assertTrue(x.equals(w, verbose=True))
 
+        self.assertTrue(isinstance(f.weights(), cf.Field))
+        self.assertTrue(isinstance(f.weights(True), cf.Field))
+        self.assertTrue(isinstance(f.weights(data=True), cf.Data))
+        self.assertTrue(isinstance(f.weights(components=True), dict))
+
         for components in (False, True):
             for m in (False, True):
-                y = f.weights(w.data.transpose(), components=components, measure=m)
-                y = f.weights(w.data.transpose()[0].squeeze(), components=components, measure=m)
-                y = f.weights(w.data.transpose()[0], components=components, measure=m)
-                y = f.weights(f.data.squeeze(), components=components, measure=m)
-                y = f.weights(components=components, measure=m)
-                y = f.weights('grid_longitude', components=components, measure=m)
-                y = f.weights(['grid_longitude'], components=components, measure=m)
-    #--- End: for
+                for d in (False, True):
+                    if components:
+                        d = False
+
+                    y = f.weights(w, components=components, measure=m, data=d)
+                    y = f.weights(w.transpose(), components=components, measure=m, data=d)
+                    y = f.weights(w.data, components=components, measure=m, data=d)
+                    y = f.weights(f.data.squeeze(), components=components, measure=m, data=d)
+                    y = f.weights(components=components, measure=m, data=d)
+                    y = f.weights('grid_longitude', components=components, measure=m, data=d)
+                    y = f.weights(['grid_longitude'], components=components, measure=m, data=d)
+        #--- End: for
+
+        with self.assertRaises(Exception):
+            f.weights(components=True, data=True)
             
 
     def test_Field_replace_construct(self):

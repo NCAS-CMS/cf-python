@@ -10043,10 +10043,10 @@ False
     The axes of result will be the combined axes of the two input
     arrays:
     
-    >>> d.outerproduct(e).ndim == d.ndim + e.ndim
-    True
-    >>> d.outerproduct(e).shape == d.shape + e.shape
-    True
+      >>> d.outerproduct(e).ndim == d.ndim + e.ndim
+      True
+      >>> d.outerproduct(e).shape == d.shape + e.shape
+      True
     
     :Parameters:
     
