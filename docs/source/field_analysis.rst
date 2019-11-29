@@ -1181,6 +1181,11 @@ spans the regridding dimensions are also regridded, but :ref:`field
 ancillary constructs <field-ancillaries>` whose data spans the
 regridding dimensions are removed from the regridded field construct.
 
+.. _Regridding methods:
+
+Regridding methods
+^^^^^^^^^^^^^^^^^^
+
 The following regridding methods are available (in this table,
 "source" and "destination" refer to the domain of the field construct
 being regridded, and the domain that it is being regridded to,
