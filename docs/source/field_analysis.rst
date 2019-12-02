@@ -1749,7 +1749,11 @@ operation to proceed.
 * **Option 2:** If the mapping is not possible due to the absence of
   `!standard_name` properties (or `!id` attributes) on metadata
   constructs that are known to correspond, then setting "relaxed
-  identities" with the `cf.RELAXED_IDENTITIES` function may help.
+  identities" with the `cf.RELAXED_IDENTITIES` function may
+  help. Setting relaxed identities to `True` allows the `!long_name`
+  property and netCDF variable name (see the :ref:`netCDF interface
+  <NetCDF-interface>`), to also be considered when identifying
+  constructs.
 
 * **Option 3:** Add more metadata to the field and metadata constructs.
 
@@ -1799,9 +1803,22 @@ Trigonometrical functions
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The field construct and metadata constructs have `~Field.cos`,
-`~Field.sin` and `~Field.tan` methods for applying trigonometrical
+`~Field.sin`, and `~Field.tan` methods for applying trigonometrical
 functions element-wise to the data, preserving the metadata but
 changing the construct's units.
+
+The field construct and metadata constructs the following
+trigonometrical methods:
+
+===============  ========================================================
+Method           Description
+===============  ========================================================
+`~Field.arctan`  Take the trigonometric inverse tangent of the data
+                 element-wise.
+`~Field.cos`     Take the trigonometric tangent of the data element-wise.
+`~Field.sin`     Take the trigonometric tangent of the data element-wise.
+`~Field.tan`     Take the trigonometric tangent of the data element-wise.
+===============  ========================================================
 
 .. code-block:: python
    :caption: *Find the sine of each latitude coordinate value.*

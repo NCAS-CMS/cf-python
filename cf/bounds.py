@@ -128,6 +128,19 @@ class Bounds(mixin.PropertiesData,
             If no identity can be found then return the value of the
             default parameter.
     
+        strict: `bool`, optional 
+            If True then the identity is the first found of only the
+            "standard_name" property or the "id" attribute.
+
+        relaxed: `bool`, optional
+            If True then the identity is the first found of only the
+            "standard_name" property, the "id" attribute, the
+            "long_name" property or the netCDF variable name.
+
+        nc_only: `bool`, optional       
+            If True then only take the identity from the netCDF
+            variable name.
+
     :Returns:
     
             The identity.

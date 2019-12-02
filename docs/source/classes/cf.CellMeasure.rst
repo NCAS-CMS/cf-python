@@ -282,6 +282,7 @@ Mathematical operations
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.CellMeasure.arctan
    ~cf.CellMeasure.cos
    ~cf.CellMeasure.sin
    ~cf.CellMeasure.tan

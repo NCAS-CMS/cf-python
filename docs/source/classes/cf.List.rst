@@ -256,6 +256,7 @@ Mathematical operations
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.List.arctan
    ~cf.List.cos
    ~cf.List.sin
    ~cf.List.tan

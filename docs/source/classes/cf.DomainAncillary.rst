@@ -278,6 +278,7 @@ Mathematical operations
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.DomainAncillary.arctan
    ~cf.DomainAncillary.cos
    ~cf.DomainAncillary.sin
    ~cf.DomainAncillary.tan

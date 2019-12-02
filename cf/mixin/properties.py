@@ -15,7 +15,6 @@ class Properties:
     .. versionadded:: 3.0.0
 
     '''
-
     _special_properties = ()
 
     # ----------------------------------------------------------------
@@ -23,14 +22,18 @@ class Properties:
     # ----------------------------------------------------------------
     @property
     def _ATOL(self):
-        '''TODO
+        '''Return the tolerance on absolute differences between real numbers,
+    as returned by the `cf.ATOL` function.
+
         '''
         return ATOL()
 
     
     @property
     def _RTOL(self):
-        '''TODO
+        '''Return the tolerance on relative differences between real numbers,
+    as returned by the `cf.RTOL` function.
+
         '''
         return RTOL()
 
@@ -40,6 +43,7 @@ class Properties:
     # ----------------------------------------------------------------
     def _matching_values(self, value0, value1, units=False):
         '''TODO
+
         '''
         if value1 is None:            
             return False
@@ -636,27 +640,6 @@ class Properties:
         return super().del_property(prop, default=default)
 
 
-    def match(self, *identities, **kwargs):
-        '''Alias for `match_by_identity`.
-
-        '''
-        if kwargs:                    
-            _DEPRECATION_ERROR_KWARGS(self, 'match', kwargs,
-                                      "Use 'match_by_*' methods instead.") # pragma: no cover
-
-        if identities and isinstance(identities[0], (list, tuple, set)):
-            _DEPRECATION_ERROR(
-                "Use of a {!r} for identities has been deprecated. Use the * operator to unpack the arguments instead.".format(
-                    identities[0].__class__.__name__)) # pragma: no cover
-            
-        for i in identities:
-           if isinstance(i, dict):
-                _DEPRECATION_ERROR_DICT("Use 'match_by_*' methods instead.") # pragma: no cover
-        #--- End: for
-
-        return self.match_by_identity(*identities)
-
-
     def match_by_identity(self, *identities):
         '''Whether or not the construct identity satisfies conditions.
 
@@ -684,7 +667,12 @@ class Properties:
             construct ``x`` has six identities:
     
                >>> x.identities()
-               ['time', 'long_name=Time', 'foo=bar', 'standard_name=time', 'ncvar%t', T']
+               ['time',
+                'long_name=Time',
+                'foo=bar',
+                'standard_name=time',
+                'ncvar%t',
+                'T']
         
     :Returns:
     
@@ -840,7 +828,7 @@ class Properties:
     >>> f.match_by_property(standard_name='longitude', foo='cf.set(['bar', 'not_bar'])
     
     >>> f.match_by_property(long_name=re.compile('^lon'))
-    
+
         '''
         _or = False
         if mode:
@@ -1030,6 +1018,29 @@ class Properties:
         # Still here? Then set a non-special property
         return super().set_property(prop, value, copy=copy)
 
+
+    # ----------------------------------------------------------------
+    # Aliases
+    # ----------------------------------------------------------------
+    def match(self, *identities, **kwargs):
+        '''Alias for `match_by_identity`.
+
+        '''
+        if kwargs:                    
+            _DEPRECATION_ERROR_KWARGS(self, 'match', kwargs,
+                                      "Use 'match_by_*' methods instead.") # pragma: no cover
+
+        if identities and isinstance(identities[0], (list, tuple, set)):
+            _DEPRECATION_ERROR(
+                "Use of a {!r} for identities has been deprecated. Use the * operator to unpack the arguments instead.".format(
+                    identities[0].__class__.__name__)) # pragma: no cover
+            
+        for i in identities:
+           if isinstance(i, dict):
+                _DEPRECATION_ERROR_DICT("Use 'match_by_*' methods instead.") # pragma: no cover
+        #--- End: for
+
+        return self.match_by_identity(*identities)
 
     # ----------------------------------------------------------------
     # Deprecated attributes and methods

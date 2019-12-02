@@ -26,144 +26,10 @@ class PropertiesDataBounds(PropertiesData):
     bounds.
 
     '''
-    # Define the reserved attributes. These are methods which can't be
-    # overwritten, as well as a few attributes.
-    _reserved_attrs = ('_reserved_attrs',
-                       '_insert_data'
-                       'binary_mask',
-                       'chunk',
-                       'clip',
-                       'copy',
-                       'cos',
-                       'dump',
-                       'equals',
-                       'identity',
-                       'match',
-                       'name',
-                       'override_units',
-                       'select',
-                       'sin',
-                       'subspace',
-                       'where',
-                       )
-
-#    def __init__(self, properties=None, data=None, bounds=None,
-#                 geometry=None, interior_ring=None, source=None,
-#                 copy=True, _use_data=True):
-#        '''**Initialization**
-#
-#    :Parameters:
-#    
-#        properties: `dict`, optional
-#            Set descriptive properties. The dictionary keys are
-#            property names, with corresponding values. Ignored if the
-#            *source* parameter is set.
-#    
-#            *Parameter example:*
-#               ``properties={'standard_name': 'longitude'}``
-#            
-#            Properties may also be set after initialisation with the
-#            `set_properties` and `set_property` methods.
-#      
-#        data: `Data`, optional
-#            Set the data array. Ignored if the *source* parameter is
-#            set.
-#            
-#            The data array may also be set after initialisation with
-#            the `set_data` method.
-#      
-#        bounds: `Bounds`, optional
-#            Set the bounds array. Ignored if the *source* parameter is
-#            set.
-#            
-#            The bounds array may also be set after initialisation with
-#            the `set_bounds` method.
-#      
-#        geometry: `str`, optional
-#            Set the geometry type. Ignored if the *source* parameter
-#            is set.
-#            
-#            *Parameter example:*
-#               ``geometry='polygon'``
-#            
-#            The geometry type may also be set after initialisation
-#            with the `set_geometry` method.
-#      
-#        interior_ring: `InteriorRing`, optional
-#            Set the interior ring variable. Ignored if the *source*
-#            parameter is set.
-#            
-#            The interior ring variable may also be set after
-#            initialisation with the `set_interior_ring` method.
-#      
-#        source: optional
-#            Initialize the properties, geometry type, data, bounds and
-#            interior ring from those of *source*.
-#     
-#        copy: `bool`, optional
-#            If False then do not deep copy input parameters prior to
-#            initialization. By default arguments are deep copied.
-#
-#        '''
-#        if _use_data and data is not None and properties:
-#            if not data.Units:
-#                units = properties.get('units')
-#                if units is not None:
-#                    data = data.override_units(Units(units, properties.get('calendar')))
-#        #--- End: if
-#        
-#        super().__init__(properties=properties, data=data,
-#                         bounds=bounds, source=source,
-#                         geometry=geometry,
-#                         interior_ring=interior_ring, copy=copy,
-#                         _use_data=_use_data)
-#
-#        # Initialise properties and data
-#        super().__init__(properties=properties, data=data,
-#                         source=source, copy=copy,
-#                         _use_data=_use_data)
-#
-#        # Get bounds, geometry type and interior ring from source
-#        if source is not None:
-#            try:
-#                bounds = source.get_bounds(None)
-#            except AttributeError:
-#                bounds = None
-#                
-#            try:
-#                geometry = source.get_geometry(None)
-#            except AttributeError:
-#                geometry = None
-#                
-#            try:
-#                interior_ring = source.get_interior_ring(None)
-#            except AttributeError:
-#                interior_ring = None
-#        #--- End: if
-#
-#        # Initialise bounds
-#        if bounds is not None:
-#            if copy or not _use_data:
-#                bounds = bounds.copy(data=_use_data)
-#                
-#            self.set_bounds(bounds, copy=False)
-#
-#        # Initialise the geometry type
-#        if geometry is not None:
-#            self.set_geometry(geometry)
-#            
-#        # Initialise interior ring
-#        if interior_ring is not None:
-#            if copy or not _use_data:
-#                interior_ring = interior_ring.copy(data=_use_data)
-#                
-#            self.set_interior_ring(interior_ring, copy=False)
-
-
     def __getitem__(self, indices):
         '''Return a subspace of the field construct defined by indices.
 
-        x.__getitem__(indices) <==> x[indices]
+    x.__getitem__(indices) <==> x[indices]
 
         '''
         if indices is Ellipsis:
@@ -194,7 +60,6 @@ class PropertiesDataBounds(PropertiesData):
                         "Can't do a cyclic slice on a non-cyclic axis")
 
                 new = new.roll(iaxis, shift)
-            #--- End: for
         else:
             new = self.copy() #data=False)
 
@@ -586,7 +451,29 @@ class PropertiesDataBounds(PropertiesData):
         out.del_bounds(None)
         return out
 
+    
+    def _matching_values(self, value0, value1, units=False):
+        '''TODO
 
+        '''
+        if value1 is None:            
+            return False
+
+        if units and isinstance(value0, str):
+            return Units(value0).equals(Units(value1))
+        
+        if isinstance(value0, Query):
+            return bool(value0.evaluate(value1)) # TODO vectors
+        else:
+            try:
+                return value0.search(value1)
+            except (AttributeError, TypeError):
+                return self._equals(value1, value0)
+        #--- End: if
+
+        return False
+
+    
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
@@ -803,7 +690,7 @@ class PropertiesDataBounds(PropertiesData):
     
     :Returns:
     
-    TODO
+            The construct with masked elements.
     
     **Examples:**
     
@@ -1115,7 +1002,7 @@ dtype('float64')
     
     :Returns:
     
-    TODO
+        TODO
         '''
         variable0 = variables[0]
 
@@ -1225,7 +1112,7 @@ dtype('float64')
     
     **Examples:**
     
-    TODO
+        TODO
 
         '''
         out = super().cyclic(axes, iscyclic)
@@ -1639,28 +1526,7 @@ dtype('float64')
             ''' 
         return
 
-    
-    def _matching_values(self, value0, value1, units=False):
-        '''TODO
-        '''
-        if value1 is None:            
-            return False
 
-        if units and isinstance(value0, str):
-            return Units(value0).equals(Units(value1))
-        
-        if isinstance(value0, Query):
-            return bool(value0.evaluate(value1)) # TODO vectors
-        else:
-            try:
-                return value0.search(value1)
-            except (AttributeError, TypeError):
-                return self._equals(value1, value0)
-        #--- End: if
-
-        return False
-
-    
     def match_by_property(self, *mode, **properties):
         '''Determine whether or not a variable satisfies conditions.
 
@@ -1726,6 +1592,8 @@ dtype('float64')
             Whether or not the variable matches the given criteria.
     
     **Examples:**
+
+        TODO
 
         '''
         # Return all constructs if no identities have been provided
@@ -2174,6 +2042,47 @@ dtype('float64')
         return v
 
 
+    def arctan(self, inplace=False):
+        '''Take the trigonometric inverse tangent of the data element-wise.
+
+    Units are ignored in the calculation. The result is has units of
+    radians.
+    
+    The "standard_name" and "long_name" properties are removed from
+    the result.
+    
+    .. versionadded:: 3.0.7
+
+    .. seealso:: `tan`
+    
+    :Parmaeters:
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+    :Returns:
+    
+        `Data`
+    
+    **Examples:**
+        TODO
+
+        '''
+        v = super().arctan(inplace=inplace)
+        if inplace:
+            v = self
+            
+        if bounds:
+            bounds = v.get_bounds(None)
+            if bounds is not None:
+                bounds.arctan(inplace=True)
+        #--- End: if
+
+        if inplace:
+            v = None            
+        return v
+
+
     def tan(self, bounds=True, inplace=False, i=False):
         '''The trigonometric tangent of the data, element-wise.
 
@@ -2223,8 +2132,7 @@ dtype('float64')
         #--- End: if
 
         if inplace:
-            v = None
-            
+            v = None            
         return v
 
 
@@ -2489,15 +2397,13 @@ dtype('float64')
             default parameter.
     
         strict: `bool`, optional 
-            If True then only take the identity from the
-            "standard_name" property or the "id" attribute, in that
-            order.
+            If True then the identity is the first found of only the
+            "standard_name" property or the "id" attribute.
 
         relaxed: `bool`, optional
-            If True then only take the identity from the
+            If True then the identity is the first found of only the
             "standard_name" property, the "id" attribute, the
-            "long_name" property or netCDF variable name, in that
-            order.
+            "long_name" property or the netCDF variable name.
 
         nc_only: `bool`, optional       
             If True then only take the identity from the netCDF

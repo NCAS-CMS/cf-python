@@ -809,46 +809,46 @@ class PropertiesData(Properties):
         return [(i + ndim if i < 0 else i) for i in axes]
 
     
-    def _parse_match(self, match):
-        '''Called by `match`
-
-    :Parameters:
-    
-        match: 
-            As for the *match* parameter of `match` method.
-    
-    :Returns:
-    
-        `list`
-        '''        
-        if not match:
-            return ()
-
-        if isinstance(match, (str, dict, Query)):
-            match = (match,)
-
-        matches = []
-        for m in match:            
-            if isinstance(m, str):
-                if '=' in m:
-                    # CF property (string-valued)
-                    m = m.split('=')
-                    matches.append({m[0]: '='.join(m[1:])})
-                else:
-                    # Identity (string-valued) or python attribute
-                    # (string-valued) or axis type
-                    matches.append({None: m})
-
-            elif isinstance(m, dict):
-                # Dictionary
-                matches.append(m)
-
-            else:
-                # Identity (not string-valued, e.g. cf.Query).
-                matches.append({None: m})
-        #--- End: for
-
-        return matches
+#    def _parse_match(self, match):
+#        '''Called by `match`
+#
+#    :Parameters:
+#    
+#        match: 
+#            As for the *match* parameter of `match` method.
+#    
+#    :Returns:
+#    
+#        `list`
+#        '''        
+#        if not match:
+#            return ()
+#
+#        if isinstance(match, (str, dict, Query)):
+#            match = (match,)
+#
+#        matches = []
+#        for m in match:            
+#            if isinstance(m, str):
+#                if '=' in m:
+#                    # CF property (string-valued)
+#                    m = m.split('=')
+#                    matches.append({m[0]: '='.join(m[1:])})
+#                else:
+#                    # Identity (string-valued) or python attribute
+#                    # (string-valued) or axis type
+#                    matches.append({None: m})
+#
+#            elif isinstance(m, dict):
+#                # Dictionary
+#                matches.append(m)
+#
+#            else:
+#                # Identity (not string-valued, e.g. cf.Query).
+#                matches.append({None: m})
+#        #--- End: for
+#
+#        return matches
 
 
     def __query_set__(self, values):
@@ -3896,6 +3896,50 @@ TODO
         return v
     
 
+    def arctan(self, inplace=False):
+        '''Take the trigonometric inverse tangent of the data element-wise.
+
+    Units are ignored in the calculation. The result is has units of
+    radians.
+    
+    The "standard_name" and "long_name" properties are removed from
+    the result.
+    
+    .. versionadded:: 3.0.7
+
+    .. seealso:: `tan`
+    
+    :Parmaeters:
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+    :Returns:
+    
+        `Data`
+    
+    **Examples:**
+        TODO
+
+        '''
+        if inplace:
+            v = self
+        else:
+            v = self.copy()
+
+        data = v.get_data(None)
+        if data is not None:
+            data.arctan(inplace=True)
+
+        # Remove misleading properties
+        v.del_property('standard_name', None)
+        v.del_property('long_name', None)        
+
+        if inplace:
+            v = None
+        return v
+
+
     def tan(self, inplace=False, i=False):
         '''The trigonometric tangent of the data, element-wise.
 
@@ -4092,59 +4136,6 @@ TODO
             v = None
         return v
 
-
-#    def uncompress(self, inplace=False):
-#        '''Uncompress the construct.
-#
-#    Compression saves space by identifying and removing unwanted
-#    missing data. Such compression techniques store the data more
-#    efficiently and result in no precision loss.
-#
-#    Whether or not the construct is compressed does not alter its
-#    functionality nor external appearance.
-#
-#    The following type of compression are available:
-#
-#        * Ragged arrays for discrete sampling geometries (DSG). Three
-#          different types of ragged array representation are
-#          supported.
-#        
-#        ..
-#        
-#        * Compression by gathering.
-#
-#    .. versionadded:: 3.0.6
-#    
-#    .. seealso:: `cf.write`, `flatten`
-#
-#    :Parameters:
-#
-#        inplace: `bool`, optional
-#            If True then do the operation in-place and return `None`.
-#    
-#    :Returns:
-#
-#            The uncompressed construct, or `None` if the operation was
-#            in-place.
-#
-#    **Examples:** 
-#
-#    TODO
-#
-#        '''
-#        if inplace:
-#            f = self
-#        else:
-#            f = self.copy()
-#            
-#        data = f.get_data(None)
-#        if data is not None:
-#            data.uncompress(inplace=True)
-#            
-#        if inplace:
-#            f = None
-#        return f    
-
     
     def unique(self):
         '''The unique elements of the data.
@@ -4204,15 +4195,13 @@ TODO
             default parameter.
     
         strict: `bool`, optional 
-            If True then only take the identity from the
-            "standard_name" property or the "id" attribute, in that
-            order.
+            If True then the identity is the first found of only the
+            "standard_name" property or the "id" attribute.
 
         relaxed: `bool`, optional
-            If True then only take the identity from the
+            If True then the identity is the first found of only the
             "standard_name" property, the "id" attribute, the
-            "long_name" property or netCDF variable name, in that
-            order.
+            "long_name" property or the netCDF variable name.
 
         nc_only: `bool`, optional       
             If True then only take the identity from the netCDF
@@ -5068,6 +5057,7 @@ TODO
 
 class Subspace:
     '''TODO
+
     '''
     __slots__ = ('variable',)
 

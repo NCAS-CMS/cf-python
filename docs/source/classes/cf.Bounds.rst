@@ -259,6 +259,7 @@ Mathematical operations
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.Bounds.arctan
    ~cf.Bounds.cos
    ~cf.Bounds.sin
    ~cf.Bounds.tan

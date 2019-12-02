@@ -97,7 +97,7 @@ The cf package can:
 * perform histogram, percentile and binning operations on field
   constructs,
   
-* regrid field constructs, with (mulit-)linear, nearest neighbor,
+* regrid field constructs with (multi-)linear, nearest neighbour,
   higher order patch recovery and first-order conservative methods,
 
 * apply convolution filters to field constructs,

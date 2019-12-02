@@ -699,6 +699,13 @@ A field construct's identity may be any one of the following
     'standard_name=air_temperature',
     'ncvar%ta']
 
+The identity returned by the `~Field.identity` method is, by default,
+the least ambiguous identity (defined in the method documentation),
+but it may be restricted to the `~Field.standard_name` property and
+`~Field.id` attribute; or also the `~Field.long_name` property and
+netCDF variable name (see the :ref:`netCDF interface
+<NetCDF-interface>`). See the *strict* and *relaxed* keywords.
+        
 ----
 
 .. _Metadata-constructs:
@@ -879,7 +886,8 @@ is accessed with the `~Field.data` attribute of the field construct.
 The `cf.Data` instance provides access to the full array of values, as
 well as attributes to describe the array and methods for describing
 any :ref:`data compression <Compression>`. However, the field
-construct also provides attributes for direct access.
+construct (and any other construct that contains data) also provides
+attributes for direct access.
 
 .. code-block:: python
    :caption: *Retrieve a numpy array of the data.*
@@ -975,15 +983,17 @@ more examples.
 Date-time
 ^^^^^^^^^
 
-Data representing date-times may be defined as elapsed times since a
+Data representing date-times is defined as elapsed times since a
 reference date-time in a particular calendar (Gregorian, by
 default). The `~cf.Data.array` attribute of the `cf.Data` instance
-returns the elapsed times, and the `~cf.Data.datetime_array` returns
-the data as an array of date-time objects.
+(and any construct that contains it) returns the elapsed times, and
+the `~cf.Data.datetime_array` (and any construct that contains it)
+returns the data as an array of date-time objects.
 
 .. code-block:: python
-   :caption: *TODO*
-	    
+   :caption: *View date-times aas elapsed time or as date-time
+             objects.*
+	     
    >>> d = cf.Data([1, 2, 3], units='days since 2004-2-28')
    >>> print(d.array)   
    [1 2 3]
@@ -1744,8 +1754,6 @@ easy to perform further filters on their results:
 Construct identities
 ^^^^^^^^^^^^^^^^^^^^
 
-TODO1 : mention relaxed identities
-
 Another method of selection is by metadata construct "identity".
 Construct identities are used to describe constructs when they are
 inspected, and so it is often convenient to copy these identities when
@@ -1813,12 +1821,11 @@ A construct's identity may be any one of the following
    Constructs:
    {'domainancillary1': <CF DomainAncillary: ncvar%b(1) >}
 
-Each construct has an `~Field.identity` method that, by default,
-returns the least ambiguous identity (defined in the documentation of
-a construct's `~Field.identity` method); and an `~Field.identities`
-method that returns a list of all of the identities that would select
-the construct.
-
+The identity returned by the `!identity` method is, by default, the
+least ambiguous identity (defined in the method documentation), but it
+may be restricted in various ways. See the *strict* and *relaxed*
+keywords.
+       
 As a further convenience, selection by construct identity is also
 possible by providing identities to a call of a `cf.Constructs`
 instance itself, and this technique for selecting constructs by

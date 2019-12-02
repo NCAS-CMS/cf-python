@@ -414,6 +414,7 @@ Mathematical operations
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.Field.arctan
    ~cf.Field.cos
    ~cf.Field.sin
    ~cf.Field.tan

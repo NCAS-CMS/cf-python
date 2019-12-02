@@ -81,7 +81,7 @@ class CellMeasure(mixin.PropertiesData,
     * The `long_name` property, preceeded by ``'long_name='``.
     * The netCDF variable name, preceeded by ``'ncvar%'``.
     * The value of the *default* parameter.
-    
+
     .. versionadded:: 3.0.0
     
     .. seealso:: `id`, `identities`, `long_name`, `measure`,
@@ -94,15 +94,15 @@ class CellMeasure(mixin.PropertiesData,
             default parameter.
     
         strict: `bool`, optional 
-            If True then only take the identity from the "measure"
-            arttribute, the "standard_name" property or the "id"
-            attribute, in that order.
+            If True then the identity is the first found of only the
+            "measure" arttribute, "standard_name" property or the "id"
+            attribute.
 
         relaxed: `bool`, optional
-            If True then only take the identity from the "measure"
-            arttribute, the "standard_name" property, the "id"
-            attribute, the "long_name" property or netCDF variable
-            name, in that order.
+            If True then the identity is the first found of only the
+            "measure" arttribute, the "standard_name" property, the
+            "id" attribute, the "long_name" property or the netCDF
+            variable name.
 
         nc_only: `bool`, optional       
             If True then only take the identity from the netCDF

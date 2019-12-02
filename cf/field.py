@@ -12759,13 +12759,13 @@ class Field(mixin.PropertiesData,
     
 
     def squeeze(self, axes=None, inplace=False, i=False, **kwargs):
-        '''Remove size-1 axes from the data array.
+        '''Remove size 1 axes from the data.
 
     By default all size 1 axes are removed, but particular size 1 axes
     may be selected for removal.
     
     Squeezed domain axis constructs are not removed from the metadata
-    contructs, nor from the domain.
+    contructs, nor from the domain of the field construct.
     
     .. seealso:: `domain_axis`, `flatten`, `insert_dimension`, `flip`,
                  `remove_axes`, `transpose`, `unsqueeze`
@@ -12780,7 +12780,7 @@ class Field(mixin.PropertiesData,
             the domain axis construct returned by
             ``f.domain_axis('X'))`` is selected.
 
-            If no axes are provided then all size-1 axes are squeezed.
+            If no axes are provided then all size 1 axes are squeezed.
 
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
@@ -14073,8 +14073,8 @@ class Field(mixin.PropertiesData,
                 default,
                 "Index does not exist for field construct data dimenions")
         else:
-            identity = da_key
-
+            identity = da_key    
+            
         domain_axes = self.domain_axes(identity)
         if len(domain_axes) == 1:
             # identity is a unique domain axis construct identity

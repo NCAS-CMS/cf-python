@@ -164,7 +164,8 @@ The `cf` package can:
 
 * perform statistical collapses on field constructs,
 
-* regrid field constructs,
+* regrid field constructs with (multi-)linear, nearest neighbour,
+  higher order patch recovery and first-order conservative methods,
 
 * apply convolution filters to field constructs,
 

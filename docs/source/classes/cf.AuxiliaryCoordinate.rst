@@ -281,6 +281,7 @@ Mathematical operations
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.AuxiliaryCoordinate.arctan
    ~cf.AuxiliaryCoordinate.cos
    ~cf.AuxiliaryCoordinate.sin
    ~cf.AuxiliaryCoordinate.tan

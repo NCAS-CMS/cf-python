@@ -286,6 +286,7 @@ Mathematical operations
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.DimensionCoordinate.arctan
    ~cf.DimensionCoordinate.cos
    ~cf.DimensionCoordinate.sin
    ~cf.DimensionCoordinate.tan

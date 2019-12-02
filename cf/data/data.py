@@ -2,6 +2,7 @@ from functools   import reduce
 from operator    import itemgetter
 
 import numpy
+from numpy import arctan            as numpy_arctan
 from numpy import array             as numpy_array
 from numpy import asanyarray        as numpy_asanyarray
 from numpy import ceil              as numpy_ceil
@@ -7713,6 +7714,58 @@ False
         return old
 
     
+    def arctan(self, inplace=False):
+        '''Take the trigonometric inverse tangent of the data element-wise.
+
+    Units are ignored in the calculation. The result is has units of
+    radians.
+    
+    .. seealso:: `tan`
+    
+    :Parmaeters:
+    
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+    :Returns:
+    
+        `Data`
+    
+    **Examples:**
+    
+    >>> d.Units
+    <Units: degrees_north>
+    >>> print(d.array)
+    [[-45 0 45 --]]
+    >>> d.tan()
+    >>> d.Units
+    <Units: 1>
+    >>> print(d.array)
+    [[-1.0 0.0 1.0 --]]
+    
+    >>> d.Units
+    <Units: m s-1>
+    >>> print(d.array)
+    [[1 2 3 --]]
+    >>> d.tan()
+    >>> d.Units
+    <Units: 1>
+    >>> print(d.array)
+    [[1.55740772465 -2.18503986326 -0.142546543074 --]]
+
+        '''
+        if inplace:
+            d = self
+        else:
+            d = self.copy()
+
+        d.func(numpy_arctan, units=_units_radians, inplace=True)
+        
+        if inplace:
+            d = None
+        return d
+
+
     def add_partitions(self, extra_boundaries, pdim):
         '''Add partition boundaries.
 
@@ -12112,8 +12165,9 @@ False
 
     Units are accounted for in the calculation. If the units are not
     equivalent to radians (such as Kelvin) then they are treated as if
-    they were radians. For example, the the tangent of 45 degrees_east
-    is 1.0, as is the tangent of 0.78539816 radians.
+    they were radians. For example, the the tangents of 45
+    degrees_east, 0.78539816 radians and 0.78539816 Kelvin are all
+    1.0.
     
     The output units are changed to ``'1'`` (nondimensionsal).
     
