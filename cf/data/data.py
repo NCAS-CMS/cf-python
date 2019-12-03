@@ -7722,7 +7722,7 @@ False
     
     .. seealso:: `tan`
     
-    :Parmaeters:
+    :Parameters:
     
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
@@ -7733,25 +7733,16 @@ False
     
     **Examples:**
     
-    >>> d.Units
-    <Units: degrees_north>
+    >>> d = cf.Data([[0, 1, 2], [3, -99, 5]], mask=[[0, 0, 0], [0, 1, 0]])
     >>> print(d.array)
-    [[-45 0 45 --]]
-    >>> d.tan()
-    >>> d.Units
-    <Units: 1>
-    >>> print(d.array)
-    [[-1.0 0.0 1.0 --]]
-    
-    >>> d.Units
-    <Units: m s-1>
-    >>> print(d.array)
-    [[1 2 3 --]]
-    >>> d.tan()
-    >>> d.Units
-    <Units: 1>
-    >>> print(d.array)
-    [[1.55740772465 -2.18503986326 -0.142546543074 --]]
+    [[0  1 2]
+     [3 -- 5]]
+    >>> e = d.arctan()
+    >>> e
+    <CF Data(2, 3): [[0.0, ..., 1.373400766945016]] radians>
+    >>> print(e.array)
+    [[0.0                0.7853981633974483 1.1071487177940904]
+     [1.2490457723982544                 -- 1.373400766945016 ]]
 
         '''
         if inplace:
@@ -12173,7 +12164,7 @@ False
     
     .. seealso:: `cos`, `sin`
     
-    :Parmaeters:
+    :Parameters:
     
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.

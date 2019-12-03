@@ -6296,6 +6296,9 @@ class Field(mixin.PropertiesData,
             .. note:: By default *weights* is `None`, resulting in
                       unweighted calculations.
     
+            If *weights* is the boolean `True` then weights are
+            calculated for all of the domain axis constructs.
+    
             *Parameter example:*
               To specify weights based on cell areas use
               ``weights='area'``.

@@ -954,6 +954,45 @@ indices to the bins that each value of one of the variables belongs.
     [0.1174 0.1317]
     [0.1317 0.146 ]]
 
+
+.. code-block:: python
+   :caption: *Create a two-dimensional histogram based on specific
+             humidity and temperature bins. The temperature bins in
+             this example are derived from a dummy temperature field
+             construct with the same shape as the specific humidity
+             field construct already in use.*
+
+   >>> g = f.copy()
+   >>> g.standard_name = 'air_temperature'
+   >>> import numpy
+   >>> g[...] = numpy.random.normal(loc=290, scale=10, size=40).reshape(5, 8)
+   >>> g.overide_units('K', inplace=True)
+   >>> print(g)
+   Field: air_temperature (ncvar%q)
+   --------------------------------
+   Data            : air_temperature(latitude(5), longitude(8)) K
+   Cell methods    : area: mean
+   Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                   : longitude(8) = [22.5, ..., 337.5] degrees_east
+                   : time(1) = [2019-01-01 00:00:00]
+   >>> indices_t = g.digitize(5)
+   >>> h = cf.histogram(indices, indices_t)
+   >>> print(h)
+   Field: number_of_observations
+   -----------------------------
+   Data            : number_of_observations(air_temperature(5), specific_humidity(10)) 1
+   Cell methods    : latitude: longitude: point
+   Dimension coords: air_temperature(5) = [281.1054839143287, ..., 313.9741786365939] K
+                   : specific_humidity(10) = [0.01015, ..., 0.13885] 1
+   >>> print(h.array)
+   [[2  1  5  3  2 -- -- -- -- --]
+    [1  1  2 --  1 --  1  1 -- --]
+    [4  4  2  1  1  1 -- --  1  1]
+    [1  1 -- --  1 -- -- --  1 --]
+    [1 -- -- -- -- -- -- -- -- --]]
+   >>> h.sum()
+   <CF Data(): 40 1>
+
 .. _Binning-operations:
 
 Binning operations
@@ -1181,7 +1220,7 @@ spans the regridding dimensions are also regridded, but :ref:`field
 ancillary constructs <field-ancillaries>` whose data spans the
 regridding dimensions are removed from the regridded field construct.
 
-.. _Regridding methods:
+.. _Regridding-methods:
 
 Regridding methods
 ^^^^^^^^^^^^^^^^^^
@@ -1737,14 +1776,32 @@ result, which also has no units.
 Arithmetical and relational operations with insufficient metadata
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If both operands of an :ref:`arithmetical <Arithmetical-operations>`
+When both operands of an :ref:`arithmetical <Arithmetical-operations>`
 or :ref:`relational <Relational-operations>` operation are field
-constructs with insufficient metadata to create a mapping of physically
-compatible dimensions, there are various techniques that allow the
-operation to proceed.
+constructs then the creation of the mapping of physically compatible
+dimensions relies on there being sufficient metadata. By default, the
+mapping relies on their being "strict" identities for the metadata
+constucts with multi-valued data. The strict identity is restricted
+`!standard_name` property (or `!id` attribute), and may be returned by
+the `!identity` method of a construct:
+
+
+.. code-block:: python
+  :caption: *Find the "strict" identity of a construct.*
+
+   >>> y = q.coordinate('Y')
+   >>> y.identity(strict=True)
+   'latitude'
+   >>> del y.standard_name
+   >>> y.identity(strict=True)
+   ''
+
+If there is insufficient metadata to create a mapping of physically
+compatible dimensions, then there are various techniques that allow
+the operation to proceed:
 
 * **Option 1:** The operation may applied to the field constructs'
-  data instead. See below for more details.
+  data instances instead. See below for more details.
 
 * **Option 2:** If the mapping is not possible due to the absence of
   `!standard_name` properties (or `!id` attributes) on metadata
@@ -1761,7 +1818,9 @@ For **Option 1** the resulting data may then be inserted into a copy
 of one of the field constructs, either with the `~cf.Field.set_data`
 method of the field construct, or with :ref:`indexed assignment
 <Assignment-by-index>`. The former technique is faster and more memory
-efficient, but the latter technique allows broadcasting.
+efficient, but the latter technique allows
+broadcasting. Alternatively, for augmented assignments, the field
+construct data may be changed in-place.
 
 Note that it is assumed, and not checked, that the dimensions of both
 `~cf.Data` instance operands are already in the correct order for
@@ -1774,22 +1833,19 @@ physically meaningful broadcasting to occur.
    >>> t.min()
    <CF Data(): 260.0 K>
    >>> u = t.copy()
-   >>> new_data = t.data + t.data
+   >>> new_data = t.data - t.data
    >>> u.set_data(new_data)
    >>> u       
    <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>
    >>> u.min()
-   <CF Data(): 520.0 K>
+   <CF Data(): 0.0 K>
 
 .. code-block:: python
   :caption: *Update the data with indexed assignment*
 
    >>> u[...] = new_data
    >>> u.min()
-   <CF Data(): 520.0 K>
-
-For augmented assignments, the field construct data may be changed
-in-place.
+   <CF Data(): 0.0 K>
    
 .. code-block:: python
   :caption: *An example of augmented assignment involving the data of

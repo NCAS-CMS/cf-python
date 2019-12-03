@@ -257,7 +257,7 @@ def histogram(*digitized):
     Create a one-dimensional histogram based on 10 equally-sized bins
     that exactly span the data range:
 
-    >>> f = cf.Field.example_field_1()
+    >>> f = cf.example_field(0)
     >>> print(f)                                                                         
     Field: specific_humidity (ncvar%q)
     ----------------------------------
@@ -312,6 +312,44 @@ def histogram(*digitized):
      [0.1031 0.1174]
      [0.1174 0.1317]
      [0.1317 0.146 ]]
+
+
+    Create a two-dimensional histogram based on specific humidity and
+    temperature bins. The temperature bins in this example are derived
+    from a dummy temperature field construct with the same shape as
+    the specific humidity field construct already in use:
+
+    >>> g = f.copy()
+    >>> g.standard_name = 'air_temperature'
+    >>> import numpy
+    >>> g[...] = numpy.random.normal(loc=290, scale=10, size=40).reshape(5, 8)
+    >>> g.overide_units('K', inplace=True)
+    >>> print(g)
+    Field: air_temperature (ncvar%q)
+    --------------------------------
+    Data            : air_temperature(latitude(5), longitude(8)) K
+    Cell methods    : area: mean
+    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(8) = [22.5, ..., 337.5] degrees_east
+                    : time(1) = [2019-01-01 00:00:00]
+
+    >>> indices_t = g.digitize(5)
+    >>> h = cf.histogram(indices, indices_t)
+    >>> print(h)
+    Field: number_of_observations
+    -----------------------------
+    Data            : number_of_observations(air_temperature(5), specific_humidity(10)) 1
+    Cell methods    : latitude: longitude: point
+    Dimension coords: air_temperature(5) = [281.1054839143287, ..., 313.9741786365939] K
+                    : specific_humidity(10) = [0.01015, ..., 0.13885] 1
+    >>> print(h.array)
+    [[2  1  5  3  2 -- -- -- -- --]
+     [1  1  2 --  1 --  1  1 -- --]
+     [4  4  2  1  1  1 -- --  1  1]
+     [1  1 -- --  1 -- -- --  1 --]
+     [1 -- -- -- -- -- -- -- -- --]]
+    >>> h.sum()
+    <CF Data(): 40 1>
 
     '''
     if not digitized:

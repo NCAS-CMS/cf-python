@@ -10,7 +10,7 @@ from ..functions import (_DEPRECATION_ERROR_METHOD,
 
 
 class Properties:
-    '''Mixin class for descriptive properties.
+    '''Mixin class for a container of descriptive properties.
 
     .. versionadded:: 3.0.0
 
@@ -25,6 +25,8 @@ class Properties:
         '''Return the tolerance on absolute differences between real numbers,
     as returned by the `cf.ATOL` function.
 
+    This is used by, for example, the `_equals` method.
+
         '''
         return ATOL()
 
@@ -34,6 +36,8 @@ class Properties:
         '''Return the tolerance on relative differences between real numbers,
     as returned by the `cf.RTOL` function.
 
+    This is used by, for example, the `_equals` method.
+
         '''
         return RTOL()
 
@@ -42,7 +46,25 @@ class Properties:
     # Private methods
     # ----------------------------------------------------------------
     def _matching_values(self, value0, value1, units=False):
-        '''TODO
+        '''Whether two values match.
+
+    The definition of "match" depends on the types of *value0* and
+    *value1*. See the code for the details.
+
+    :Parameters:
+
+        value0:
+            The first value to be matched.
+
+        value1:
+            The second value to be matched.
+
+        units: `bool`, optional
+
+    :Returns:
+
+        `bool`
+            Whether or not the two values match.
 
         '''
         if value1 is None:            
@@ -52,7 +74,7 @@ class Properties:
             return bool(value0.evaluate(value1)) # TODO vectors
 
         try:
-            # re.compile object
+            # value0 is a re.compile object
             return bool(value0.search(value1))
         except (AttributeError, TypeError):
             if units and isinstance(value0, str):
@@ -739,11 +761,19 @@ class Properties:
     
     **Examples:**
     
-    >>> f.match_by_ncvar('t')
-    
-    >>> f.match_by_ncvar(re.compile('^t'))
-    
+    >>> f.nc_get_variable()
+    'time'
+    >>> f.match_by_ncvar('time')
+    True
     >>> f.match_by_ncvar('t', 'time')
+    True
+    >>> f.match_by_ncvar('t')
+    False
+    >>> f.match_by_ncvar()
+    True
+    >>> import re
+    >>> f.match_by_ncvar(re.compile('^t'))
+    True
 
         '''
         if not ncvars:
@@ -831,6 +861,8 @@ class Properties:
 
         '''
         _or = False
+
+        # Parse mode
         if mode:
             if len(mode) > 1:
                 raise ValueError("Can provide at most one positional argument")
