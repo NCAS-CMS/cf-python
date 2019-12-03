@@ -261,9 +261,9 @@ def CHUNKSIZE(*args):
     '''
     old = CONSTANTS['CHUNKSIZE']
     if args:
-        upper_chunksize = (FM_THRESHOLD() / ((mpi_size *
-                                              _WORKSPACE_FACTOR_1()) +
-                                             _WORKSPACE_FACTOR_2()))
+        upper_chunksize = ((FREE_MEMORY_FACTOR() * MIN_TOTAL_MEMORY())
+                           / ((mpi_size * _WORKSPACE_FACTOR_1()) +
+                              _WORKSPACE_FACTOR_2()))
         if args[0] is None:
             CONSTANTS['CHUNKSIZE'] = upper_chunksize
         else:
@@ -343,6 +343,11 @@ def SET_PERFORMANCE(chunksize=None, free_memory_factor=None):
 
     return old
 
+def MIN_TOTAL_MEMORY():
+    '''The minumum total memory across nodes.
+    '''
+    return CONSTANTS['MIN_TOTAL_MEMORY']
+#--- End: def
 
 def TOTAL_MEMORY():
     '''TODO
