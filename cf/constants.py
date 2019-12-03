@@ -8,6 +8,9 @@ from numpy.ma import nomask as numpy_ma_nomask
 
 from . import mpi_on
 from . import mpi_size
+if mpi_on:
+    from . import mpi_comm
+#--- End: if
 
 from .units import Units
 
@@ -111,7 +114,13 @@ CONSTANTS = {'RTOL'                  : sys.float_info.epsilon,
 
 CONSTANTS['FM_THRESHOLD'] = CONSTANTS['FREE_MEMORY_FACTOR'] * CONSTANTS['TOTAL_MEMORY']
 
-CONSTANTS['CHUNKSIZE'] = (CONSTANTS['FM_THRESHOLD'] /
+if mpi_on:
+    CONSTANTS['MIN_TOTAL_MEMORY'] = min(mpi_comm.allgather(CONSTANTS['TOTAL_MEMORY']))
+else:
+    CONSTANTS['MIN_TOTAL_MEMORY'] = CONSTANTS['TOTAL_MEMORY']
+#--- End: if
+
+CONSTANTS['CHUNKSIZE'] = ((CONSTANTS['FREE_MEMORY_FACTOR'] * CONSTANTS['MIN_TOTAL_MEMORY']) /
                           (mpi_size * CONSTANTS['WORKSPACE_FACTOR_1'] + CONSTANTS['WORKSPACE_FACTOR_2']))
 
 masked = numpy_ma_masked
