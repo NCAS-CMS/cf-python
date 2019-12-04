@@ -5,11 +5,9 @@ class Units:
     '''Store, combine and compare physical units and convert numeric
     values to different units.
     
-    This is a convenience class that creates a `cfunits.Units`
-    instance (https://ncas-cms.github.io/cfunits). For further
-    details, type
-    
-       >>> help(cf.Units())
+    This is a convenience class that creates a `cfunits.Units`.
+
+    The full documentation is available with ``help(cf.Units())``.
 
     '''
     def __new__(cls, *args, **kwargs):

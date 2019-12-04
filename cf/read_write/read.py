@@ -377,21 +377,21 @@ def read(files, external=None, verbose=False, warnings=False,
     
     **Examples:**
     
-    >>> x = cfdm.read('file.nc')
+    >>> x = cf.read('file.nc')
     
     Read a file and create field constructs from CF-netCDF data
     variables as well as from the netCDF variables that correspond to
     particular types metadata constructs:
     
-    >>> f = cfdm.read('file.nc', extra='domain_ancillary')
-    >>> g = cfdm.read('file.nc', extra=['dimension_coordinate', 
-    ...                                 'auxiliary_coordinate'])
+    >>> f = cf.read('file.nc', extra='domain_ancillary')
+    >>> g = cf.read('file.nc', extra=['dimension_coordinate', 
+    ...                               'auxiliary_coordinate'])
     
     Read a file that contains external variables:
     
-    >>> h = cfdm.read('parent.nc')
-    >>> i = cfdm.read('parent.nc', external='external.nc')
-    >>> j = cfdm.read('parent.nc', external=['external1.nc', 'external2.nc'])
+    >>> h = cf.read('parent.nc')
+    >>> i = cf.read('parent.nc', external='external.nc')
+    >>> j = cf.read('parent.nc', external=['external1.nc', 'external2.nc'])
     
     >>> f = cf.read('file*.nc')
     >>> f

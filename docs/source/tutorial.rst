@@ -503,15 +503,15 @@ files <External-variables-with-cfa>`.
 -----------------
 
 Powerful, flexible, and very simple to produce visualizations of field
-constructs are available with the `cf-plot package
-<http://ajheaps.github.io/cf-plot>`_ (that needs to be installed
-separately to cf).
+constructs are available with the `cfplot` package (that needs to be
+installed separately to cf, see http://ajheaps.github.io/cf-plot for
+details).
 
 .. figure:: images/cfplot_example.png
 
-   *Example output of cf-plot displaying a cf field construct.*
+   *Example output of cfplot displaying a cf field construct.*
 
-See the `cf-plot gallery
+See the `cfplot gallery
 <http://ajheaps.github.io/cf-plot/gallery.html>`_ for the wide range
 of plotting possibilities, with example code. These include, but are
 not limited to:
@@ -1553,10 +1553,11 @@ must be done manually, and the other field construct's `cf.Data` instance
 
 The field construct, and any metadata construct that contains data,
 has units which are described by the `~Field.Units` attribute that
-stores a `cf.Units` object (which is identical to the ``Units`` object
-of the `cfunits package <https://ncas-cms.github.io/cfunits>`_). The
-`~Field.units` property provides the units contained in the `cf.Units`
-instance, and changes in one are reflected in the other.
+stores a `cf.Units` object (which is identical to a `cfunits.Units`
+object of the `cfunits package
+<https://ncas-cms.github.io/cfunits>`_). The `~Field.units` property
+provides the units contained in the `cf.Units` instance, and changes
+in one are reflected in the other.
 
 .. code-block:: python
    :caption: *Inspection and changing of units.*
