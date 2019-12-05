@@ -15,157 +15,160 @@ from .functions  import (_DEPRECATION_ERROR_KWARGS,
 class Query:
     '''Encapsulate a condition.
 
-A condition that may be applied to any object may be stored in a
-`Query` object. A `Query` object encapulates a condition, such as
-"strictly less than 3". When applied to an object, via its `evaluate`
-method or the Python `==` operator, the condition is evaulated in the
-context of that object.
-
-   >>> c = cf.Query('lt', 3)
-   >>> c
-   <CF Query: (lt 3)>
-   >>> c.evaluate(2)
-   True
-   >>> c == 2
-   True
-   >>> c != 2
-   False
-   >>> c.evaluate(3)
-   False
-   >>> c == cf.Data([1, 2, 3])
-   <CF Data(3): [True, True, False]>
-   >>> c == numpy.array([1, 2, 3])
-   array([True, True, False])
-
-The following operators are supported when constructing `Query`
-instances:
-
-=========  ===================================
-Operator   Description                                              
-=========  ===================================
-``'lt'``   A "strictly less than" condition           
-``'le'``   A "less than or equal" condition
-``'gt'``   A "strictly greater than" condition        
-``'ge'``   A "greater than or equal" condition 
-``'eq'``   An "equal" condition                       
-``'ne'``   A "not equal" condition                    
-``'wi'``   A "within a range" condition               
-``'wo'``   A "without a range" condition              
-``'set'``  A "member of set" condition
-=========  ===================================
-
-**Complex conditions**
-
-Multiple conditions may be combined with the Python bitwise "and"
-(`&`) and "or" (`|`) operators to form a new `Query` object.
-
-   >>> ge3 = cf.Query('ge', 3)
-   >>> lt5 = cf.Query('lt', 5)
-   >>> c = ge3 & lt5
-   >>> c 
-   >>> <CF Query: [(ge 3) & (lt 5)]>
-   >>> c == 2
-   False
-   >>> c != 2
-   True
-   >>> c = ge3 | lt5
-   >>> c
-   <CF Query: [(ge 3) | (lt 5)]>
-   >>> c == 2
-   True
-   >>> c &= cf.Query('set', [1, 3, 5])
-   >>> c
-   <CF Query: [[(ge 3) | (lt 5)] & (set [1, 3, 5])]>
-   >>> c == 2
-   False
-   >>> c == 3
-   True
-
-A condition can be applied to an attribute of an object.
-
-   >>> upper_bounds_ge_minus4 = cf.Query('ge', -4, attr='upper_bounds')
-   >>> x
-   <CF DimensionCoordinate: grid_longitude(9) degrees>
-   >>> print(x.bounds.array)
-   [[-4.92 -4.48]
-    [-4.48 -4.04]
-    [-4.04 -3.6 ]
-    [-3.6  -3.16]
-    [-3.16 -2.72]
-    [-2.72 -2.28]
-    [-2.28 -1.84]
-    [-1.84 -1.4 ]
-    [-1.4  -0.96]]
-   >>> print((upper_bounds_ge_minus4 == x).array)
-   [False False  True  True  True  True  True  True  True]
-   >>> upper_bounds_ge_minus4 = cf.Query('ge', -4, attr='upper_bounds')
+    A condition that may be applied to any object may be stored in a
+    `Query` object. A `Query` object encapulates a condition, such as
+    "strictly less than 3". When applied to an object, via its
+    `evaluate` method or the Python `==` operator, the condition is
+    evaulated in the context of that object.
     
-A condition can also be applied to attributes of attributes of an object.
+       >>> c = cf.Query('lt', 3)
+       >>> c
+       <CF Query: (lt 3)>
+       >>> c.evaluate(2)
+       True
+       >>> c == 2
+       True
+       >>> c != 2
+       False
+       >>> c.evaluate(3)
+       False
+       >>> c == cf.Data([1, 2, 3])
+       <CF Data(3): [True, True, False]>
+       >>> c == numpy.array([1, 2, 3])
+       array([True, True, False])
+    
+    The following operators are supported when constructing `Query`
+    instances:
+    
+    =========  ===================================
+    Operator   Description                                              
+    =========  ===================================
+    ``'lt'``   A "strictly less than" condition           
+    ``'le'``   A "less than or equal" condition
+    ``'gt'``   A "strictly greater than" condition        
+    ``'ge'``   A "greater than or equal" condition 
+    ``'eq'``   An "equal" condition                       
+    ``'ne'``   A "not equal" condition                    
+    ``'wi'``   A "within a range" condition               
+    ``'wo'``   A "without a range" condition              
+    ``'set'``  A "member of set" condition
+    =========  ===================================
+    
+    **Complex conditions**
+    
+    Multiple conditions may be combined with the Python bitwise "and"
+    (`&`) and "or" (`|`) operators to form a new `Query` object.
+    
+       >>> ge3 = cf.Query('ge', 3)
+       >>> lt5 = cf.Query('lt', 5)
+       >>> c = ge3 & lt5
+       >>> c 
+       >>> <CF Query: [(ge 3) & (lt 5)]>
+       >>> c == 2
+       False
+       >>> c != 2
+       True
+       >>> c = ge3 | lt5
+       >>> c
+       <CF Query: [(ge 3) | (lt 5)]>
+       >>> c == 2
+       True
+       >>> c &= cf.Query('set', [1, 3, 5])
+       >>> c
+       <CF Query: [[(ge 3) | (lt 5)] & (set [1, 3, 5])]>
+       >>> c == 2
+       False
+       >>> c == 3
+       True
+    
+    A condition can be applied to an attribute of an object.
+    
+       >>> upper_bounds_ge_minus4 = cf.Query('ge', -4, attr='upper_bounds')
+       >>> x
+       <CF DimensionCoordinate: grid_longitude(9) degrees>
+       >>> print(x.bounds.array)
+       [[-4.92 -4.48]
+        [-4.48 -4.04]
+        [-4.04 -3.6 ]
+        [-3.6  -3.16]
+        [-3.16 -2.72]
+        [-2.72 -2.28]
+        [-2.28 -1.84]
+        [-1.84 -1.4 ]
+        [-1.4  -0.96]]
+       >>> print((upper_bounds_ge_minus4 == x).array)
+       [False False  True  True  True  True  True  True  True]
+       >>> upper_bounds_ge_minus4 = cf.Query('ge', -4, attr='upper_bounds')
+        
+    A condition can also be applied to attributes of attributes of an
+    object.
+    
+       >>> t
+       <CF DimensionCoordinate: time(4) >
+       >>> t.lower_bounds.month.array
+       array([12,  3,  6,  9])
+       >>> c = cf.Query('ge', 8, attr='lower_bounds.month')
+       >>> c == t
+       <CF Data(4): [True, ..., True]>
+       >>> (c == t).array
+       array([ True,  False, False, True])
+    
 
-   >>> t
-   <CF DimensionCoordinate: time(4) >
-   >>> t.lower_bounds.month.array
-   array([12,  3,  6,  9])
-   >>> c = cf.Query('ge', 8, attr='lower_bounds.month')
-   >>> c == t
-   <CF Data(4): [True, ..., True]>
-   >>> (c == t).array
-   array([ True,  False, False, True])
-
-**The query interface**
-
-In general, the query operator must be permitted between the value of
-the condition and the operand for which it is being evaulated. For
-example, when the value is an `int`, the query works if the operand is
-also an `int`, but fails if it is a `list`:
-
-   >>> c = cf.Query('lt', 2)
-   >>> c == 1
-   True
-   >>> c == [1, 2, 3]
-   TypeError: '<' not supported between instances of 'list' and 'int'
-
-This behaviour is overridden if the operand has an appropriate "query
-interface" method. When such a method exists, it is used instead of
-the equivalent built-in Python operator.
-
-======================  ==============================================
-Query interface method  Description                                              
-======================  ==============================================
-`__query_lt__`          Called when an ``'lt'`` condition is evaulated
-`__query_le__`          Called when an ``'le'`` condition is evaulated
-`__query_gt__`          Called when a ``'gt'`` condition is evaulated 
-`__query_ge__`          Called when a ``'ge'`` condition is evaulated 
-`__query_eq__`          Called when an ``'eq'`` condition is evaulated
-`__query_ne__`          Called when a ``'ne'`` condition is evaulated 
-`__query_wi__`          Called when a ``'wi'`` condition is evaulated
-`__query_wo__`          Called when a ``'wo'`` condition is evaulated 
-`__query_set__`         Called when a ``'set'`` condition is evaulated
-======================  ==============================================
-
-In all cases the query value is the only, mandatory argument of the
-method.
-
-   >>> class myList(list):
-   ...     pass
-   ...
-   >>> class myList_with_override(list):
-   ...     def __query_lt__(self, value):
-   ...         """Apply the < operator element-wise"""
-   ...         return type(self)([x < value for x in self])
-   ...
-   >>> c == myList([1, 2, 3])
-   TypeError: '<' not supported between instances of 'myList' and 'int'
-   >>> c == myList_with_override([1, 2, 3])
-   [True, False, False]
-
-When the condition is on an attribute, or nested attributes, of the
-operand, the query interface method is looked for on the attribute
-object, rather than the parent object.
-
-If the value has units then the argument passed to query interface
-method is automatically a `Data` object that attaches the units to the
-value.
+    **The query interface**
+    
+    In general, the query operator must be permitted between the value
+    of the condition and the operand for which it is being
+    evaulated. For example, when the value is an `int`, the query
+    works if the operand is also an `int`, but fails if it is a
+    `list`:
+    
+       >>> c = cf.Query('lt', 2)
+       >>> c == 1
+       True
+       >>> c == [1, 2, 3]
+       TypeError: '<' not supported between instances of 'list' and 'int'
+    
+    This behaviour is overridden if the operand has an appropriate
+    "query interface" method. When such a method exists, it is used
+    instead of the equivalent built-in Python operator.
+    
+    ======================  ==============================================
+    Query interface method  Description                                              
+    ======================  ==============================================
+    `__query_lt__`          Called when an ``'lt'`` condition is evaulated
+    `__query_le__`          Called when an ``'le'`` condition is evaulated
+    `__query_gt__`          Called when a ``'gt'`` condition is evaulated 
+    `__query_ge__`          Called when a ``'ge'`` condition is evaulated 
+    `__query_eq__`          Called when an ``'eq'`` condition is evaulated
+    `__query_ne__`          Called when a ``'ne'`` condition is evaulated 
+    `__query_wi__`          Called when a ``'wi'`` condition is evaulated
+    `__query_wo__`          Called when a ``'wo'`` condition is evaulated 
+    `__query_set__`         Called when a ``'set'`` condition is evaulated
+    ======================  ==============================================
+    
+    In all cases the query value is the only, mandatory argument of
+    the method.
+    
+       >>> class myList(list):
+       ...     pass
+       ...
+       >>> class myList_with_override(list):
+       ...     def __query_lt__(self, value):
+       ...         """Apply the < operator element-wise"""
+       ...         return type(self)([x < value for x in self])
+       ...
+       >>> c == myList([1, 2, 3])
+       TypeError: '<' not supported between instances of 'myList' and 'int'
+       >>> c == myList_with_override([1, 2, 3])
+       [True, False, False]
+    
+    When the condition is on an attribute, or nested attributes, of
+    the operand, the query interface method is looked for on the
+    attribute object, rather than the parent object.
+    
+    If the value has units then the argument passed to query interface
+    method is automatically a `Data` object that attaches the units to
+    the value.
 
     '''
     isquery = True
@@ -1134,16 +1137,6 @@ def wo(value0, value1, units=None, attr=None):
             with a ``.``. For example, the "month" attribute of the
             "bounds" attribute is specified as ``'bounds.month'``.
     
-    
-        units: `str` or `Units`, optional
-            The units of *value*. By default, the same units as the
-            operand being tested are assumed, if applicable. If
-            *units* is set and the *value* has units (such as a `Data`
-            object`), then they must be equivalent.
-    
-        attr: `str`, optional
-            Return a query object for a variable's *attr* attribute.
-    
     :Returns: 
     
         `Query`
@@ -1212,7 +1205,7 @@ def set(values, units=None, attr=None, exact=True):
     return Query('set', values, units=units, attr=attr)
 
 
-def contains(value, units=None, attr=None):
+def contains(value, units=None):
     '''A `Query` object for a "cell contains" condition.
 
     .. versionadded:: 3.0.0
@@ -1231,13 +1224,6 @@ def contains(value, units=None, attr=None):
             *units* is specified and the already *value* has units
             (such as a `Data` object`), then they must be equivalent.
     
-        attr: `str`, optional
-            Apply the condition to the attribute, or nested
-            attributes, of the operand, rather than the operand
-            itself. Nested attributes are specified by separating them
-            with a ``.``. For example, the "month" attribute of the
-            "bounds" attribute is specified as ``'bounds.month'``.
-    
     :Returns: 
     
         `Query`
@@ -1245,10 +1231,12 @@ def contains(value, units=None, attr=None):
     
     **Examples:**
     
-    >>>  cf.contains(30, 'degrees_east')
-    <CF Query: (contains <CF Data: 30 degrees_east>)>
+    >>> cf.contains(8)
+    <CF Query: [lower_bounds(le 8) & upper_bounds(ge 8)]>
+    >>> cf.contains(30, 'degrees_east')
+    <CF Query: [lower_bounds(le 30 degrees_east) & upper_bounds(ge 30 degrees_east)]>
     >>>  cf.contains(cf.Data(10, 'km'))
-    <CF Query: (contains <CF Data: 10 km>)>
+    <CF Query: [lower_bounds(le 10 km) & upper_bounds(ge 10 km)]>
     
     >>> c
     <CF DimensionCoordinate: longitude(4) degrees_east>
@@ -1521,13 +1509,6 @@ def cellsize(value, units=None):
             *units* is specified and the already *value* has units
             (such as a `Data` object`), then they must be equivalent.
     
-        attr: `str`, optional
-            Apply the condition to the attribute, or nested
-            attributes, of the operand, rather than the operand
-            itself. Nested attributes are specified by separating them
-            with a ``.``. For example, the "month" attribute of the
-            "bounds" attribute is specified as ``'bounds.month'``.
-    
     :Returns:
     
         `Query`
@@ -1571,13 +1552,6 @@ def cellwi(value0, value1, units=None):
             *units* is specified and the already *value* has units
             (such as a `Data` object`), then they must be equivalent.
     
-        attr: `str`, optional
-            Apply the condition to the attribute, or nested
-            attributes, of the operand, rather than the operand
-            itself. Nested attributes are specified by separating them
-            with a ``.``. For example, the "month" attribute of the
-            "bounds" attribute is specified as ``'bounds.month'``.
-    
     :Returns:
     
         `Query`
@@ -1609,13 +1583,6 @@ def cellwo(value0, value1, units=None):
             operand being tested are assumed, if applicable. If
             *units* is specified and the already *value* has units
             (such as a `Data` object`), then they must be equivalent.
-    
-        attr: `str`, optional
-            Apply the condition to the attribute, or nested
-            attributes, of the operand, rather than the operand
-            itself. Nested attributes are specified by separating them
-            with a ``.``. For example, the "month" attribute of the
-            "bounds" attribute is specified as ``'bounds.month'``.
     
     :Returns:
     
@@ -1650,13 +1617,6 @@ def cellgt(value, units=None):
             *units* is specified and the already *value* has units
             (such as a `Data` object`), then they must be equivalent.
     
-        attr: `str`, optional
-            Apply the condition to the attribute, or nested
-            attributes, of the operand, rather than the operand
-            itself. Nested attributes are specified by separating them
-            with a ``.``. For example, the "month" attribute of the
-            "bounds" attribute is specified as ``'bounds.month'``.
-    
     :Returns:
     
         `Query`
@@ -1689,13 +1649,6 @@ def cellge(value, units=None):
             *units* is specified and the already *value* has units
             (such as a `Data` object`), then they must be equivalent.
     
-        attr: `str`, optional
-            Apply the condition to the attribute, or nested
-            attributes, of the operand, rather than the operand
-            itself. Nested attributes are specified by separating them
-            with a ``.``. For example, the "month" attribute of the
-            "bounds" attribute is specified as ``'bounds.month'``.
-    
     :Returns:
     
         `Query`
@@ -1727,13 +1680,6 @@ def celllt(value, units=None):
             *units* is specified and the already *value* has units
             (such as a `Data` object`), then they must be equivalent.
     
-        attr: `str`, optional
-            Apply the condition to the attribute, or nested
-            attributes, of the operand, rather than the operand
-            itself. Nested attributes are specified by separating them
-            with a ``.``. For example, the "month" attribute of the
-            "bounds" attribute is specified as ``'bounds.month'``.
-    
     :Returns:
     
         `Query`
@@ -1764,13 +1710,6 @@ def cellle(value, units=None):
             operand being tested are assumed, if applicable. If
             *units* is specified and the already *value* has units
             (such as a `Data` object`), then they must be equivalent.
-    
-        attr: `str`, optional
-            Apply the condition to the attribute, or nested
-            attributes, of the operand, rather than the operand
-            itself. Nested attributes are specified by separating them
-            with a ``.``. For example, the "month" attribute of the
-            "bounds" attribute is specified as ``'bounds.month'``.
     
     :Returns:
     

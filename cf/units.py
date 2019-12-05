@@ -5,7 +5,8 @@ class Units:
     '''Store, combine and compare physical units and convert numeric
     values to different units.
     
-    This is a convenience class that creates a `cfunits.Units`.
+    This is a convenience class that creates a `cfunits.Units`
+    instance.
 
     The full documentation is available with ``help(cf.Units())``.
 
