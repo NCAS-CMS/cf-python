@@ -43,8 +43,11 @@ class Coordinate(mixin.PropertiesDataBounds):
     def T(self):
         '''True if and only if the data are coordinates for a CF 'T' axis.
         
-    CF 'T' axis coordinates are defined by having units of reference
-    time.
+    CF 'T' axis coordinates are defined by having one or more of the
+    following:
+    
+      * The `axis` property has the value ``'T'``
+      * Units of latitude
     
     .. seealso:: `ctype`, `X`, `~cf.Coordinate.Y`, `Z`
     
@@ -56,7 +59,7 @@ class Coordinate(mixin.PropertiesDataBounds):
     True
 
         '''
-        return self.Units.isreftime
+        return self.Units.isreftime or self.get_property('axis', None) == 'T'
 
 
     @property
