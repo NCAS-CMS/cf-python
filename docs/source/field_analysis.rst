@@ -565,9 +565,9 @@ groups. Groups can be defined in a variety of ways, including with
 `cf.Query`, `cf.TimeDuration` (see the :ref:`Time-duration` section)
 and `cf.Data` instances.
 
-Not every element of the collapse axis needs to be in group. Elements
-that are not selected by the *group* keyword are excluded from the
-result.
+An element of the collapse axis can not be a member of more than one
+group, and may be a member of no groups. Elements that are not
+selected by the *group* keyword are excluded from the result.
 
 .. code-block:: python
    :caption: *Create annual maxima from a time series, defining a year
