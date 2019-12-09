@@ -5717,7 +5717,11 @@ class Field(mixin.PropertiesData,
             # No component weights have been defined so return an
             # equal weights field
             # --------------------------------------------------------
-            return _scalar_field_of_weights(Data(1.0, '1'))
+            f = _scalar_field_of_weights(Data(1.0, '1'))
+            if data:
+                return f.data
+
+            return f
         
         # ------------------------------------------------------------
         # Still here? Return a weights field which is the outer
@@ -5737,7 +5741,7 @@ class Field(mixin.PropertiesData,
             wdata = _scale(wdata, scale)
 
         # ------------------------------------------------------------
-        # Reorder the data so that its dimension are in the same
+        # Reorder the data so that its dimensions are in the same
         # relative order as self
         # ------------------------------------------------------------
         transpose = [waxes.index(axis) for axis in self.get_data_axes()

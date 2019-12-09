@@ -109,7 +109,7 @@ A :ref:`field list <Field-lists>` is very much like a Python `list`,
 with the addition of extra methods that operate on its field construct
 elements.
 
-The following file type can be read:
+The following file types can be read:
 
 * All formats of netCDF3 and netCDF4 files (including `CFA-netCDF
   <http://www.met.reading.ac.uk/~david/cfa/0.4/index.html>`_ files)
