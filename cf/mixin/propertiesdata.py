@@ -1123,6 +1123,56 @@ class PropertiesData(Properties):
 
 
     @property
+    def xUnits(self):
+        '''The `cf.Units` object containing the units of the data array.
+
+    Stores the units and calendar CF properties in an internally
+    consistent manner. These are mirrored by the `units` and
+    `calendar` CF properties respectively.
+    
+    **Examples:**
+    
+    >>> f.Units
+    <Units: K>
+    
+    >>> f.Units
+    <Units: days since 2014-1-1 calendar=noleap>
+
+        '''
+        data = self.get_data(None)
+        if data is not None:
+            return data.Units
+        
+        try:
+            return self._custom['Units']
+        except KeyError:
+            self._custom['Units'] = _units_None
+            return _units_None
+
+    @xUnits.setter
+    def xUnits(self, value):
+        data = self.get_data(None)
+        if data is not None:
+            data.Units = value
+        else:
+            self._custom['Units'] = value
+
+#        units = getattr(value, 'units', None)
+#        if units is not None:
+#            self.set_property('units', units)
+#    
+#        calendar = getattr(value, 'calendar', None)
+#        if calendar is not None:
+#            self.set_property('calendar', calendar)
+
+    @xUnits.deleter
+    def xUnits(self):
+        raise AttributeError(
+            "Can't delete {} attribute 'Units'. Use the override_units method.".format(
+                self.__class__.__name__))
+
+
+    @property
     def Units(self):
         '''The `cf.Units` object containing the units of the data array.
 

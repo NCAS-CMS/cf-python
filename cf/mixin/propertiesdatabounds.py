@@ -619,6 +619,79 @@ class PropertiesDataBounds(PropertiesData):
             "Can't get lower bounds when there are no bounds nor coordinate data")
 
 
+#    @property
+#    def Units(self):
+#        '''The `cf.Units` object containing the units of the data array.
+#
+#    Stores the units and calendar CF properties in an internally
+#    consistent manner. These are mirrored by the `units` and
+#    `calendar` CF properties respectively.
+#    
+#    **Examples:**
+#    
+#    >>> f.Units
+#    <Units: K>
+#    
+#    >>> f.Units
+#    <Units: days since 2014-1-1 calendar=noleap>
+#
+#        '''
+#        return super().Units
+#    
+#    @Units.setter
+#    def Units(self, value):
+#        PropertiesData.Units.fset(self, value)
+#
+#        # Set the Units on the bounds
+#        bounds = self.get_bounds(None)
+#        if bounds is not None:
+#            bounds.Units = value
+#
+#        # Set the Units on the period
+#        period = self._custom.get('period')
+#        if period is not None:
+#            period = period.copy()
+#            period.Units = value
+#            self._custom['period'] = period
+#
+#        self._custom['direction'] = None
+#        
+#    @Units.deleter
+#    def Units(self):
+#        PropertiesData.Units.fdel(self)
+        
+
+#   @property
+#   def Units(self):
+#       '''The `cf.Units` object containing the units of the data array.
+#
+#   Stores the units and calendar CF properties in an internally
+#   consistent manner. These are mirrored by the `units` and
+#   `calendar` CF properties respectively.
+#   
+#   **Examples:**
+#   
+#   >>> f.Units
+#   <Units: K>
+#   
+#   >>> f.Units
+#   <Units: days since 2014-1-1 calendar=noleap>
+#
+#       '''
+#       return super().Units
+#   
+#   @Units.setter
+#   def Units(self, value):
+#       Units.fset(value)
+#       bounds = self.get_bounds(None)
+#       if bounds is not None:
+#           bounds.Units = value
+#               
+#   @Units.deleter
+#   def Units(self):
+#       Units.fdel(self)
+#
+
     @property
     def upper_bounds(self):
         '''The upper bounds of cells.
