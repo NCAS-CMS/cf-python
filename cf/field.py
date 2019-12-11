@@ -10032,7 +10032,7 @@ class Field(mixin.PropertiesData,
                                 lb, ub = ub, lb
 
                             if group_span + lb != ub:
-                                print('wee', group_span, group_span + lb, ub)
+                                print('SPAN', group_span, group_span + lb, ub)
                                 # The span of this group is not the
                                 # same as group_span, so don't
                                 # collapse it.

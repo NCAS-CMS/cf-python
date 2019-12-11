@@ -2515,12 +2515,12 @@ def _DEPRECATION_ERROR_KWARGS(instance, method, kwargs={}, message='',
 
         
     for key in kwargs.keys():
-        raise DeprecationError("Keyword {2!r} of method '{0}.{1}' has been deprecated at version {} and is no longer available. {3}".format(
+        raise DeprecationError("Keyword {2!r} of method '{0}.{1}' has been deprecated at version {4} and is no longer available. {3}".format(
             instance.__class__.__name__,
             method,
             key,
-            version,
-            message))
+            message,
+            version))
 
     
 def _DEPRECATION_ERROR_KWARG_VALUE(instance, method, kwarg, value,

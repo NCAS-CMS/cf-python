@@ -8,6 +8,8 @@ version 3.0.7
 * Changed the default value of the `cf.Field.weights` ``weights``
   parameter to `True`.
 * New example field (``5``) available from `cf.example_field`.
+* Fixed bug that didn't change the unit of bounds when the units of
+  the coordinates were changed.
 * Changed minimum cfunits dependency to version 3.2.3. This fixes a
   bug that rased an exception for units specified by non-strings
   (https://github.com/NCAS-CMS/cfunits/issues/1).

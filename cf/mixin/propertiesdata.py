@@ -1123,56 +1123,6 @@ class PropertiesData(Properties):
 
 
     @property
-    def xUnits(self):
-        '''The `cf.Units` object containing the units of the data array.
-
-    Stores the units and calendar CF properties in an internally
-    consistent manner. These are mirrored by the `units` and
-    `calendar` CF properties respectively.
-    
-    **Examples:**
-    
-    >>> f.Units
-    <Units: K>
-    
-    >>> f.Units
-    <Units: days since 2014-1-1 calendar=noleap>
-
-        '''
-        data = self.get_data(None)
-        if data is not None:
-            return data.Units
-        
-        try:
-            return self._custom['Units']
-        except KeyError:
-            self._custom['Units'] = _units_None
-            return _units_None
-
-    @xUnits.setter
-    def xUnits(self, value):
-        data = self.get_data(None)
-        if data is not None:
-            data.Units = value
-        else:
-            self._custom['Units'] = value
-
-#        units = getattr(value, 'units', None)
-#        if units is not None:
-#            self.set_property('units', units)
-#    
-#        calendar = getattr(value, 'calendar', None)
-#        if calendar is not None:
-#            self.set_property('calendar', calendar)
-
-    @xUnits.deleter
-    def xUnits(self):
-        raise AttributeError(
-            "Can't delete {} attribute 'Units'. Use the override_units method.".format(
-                self.__class__.__name__))
-
-
-    @property
     def Units(self):
         '''The `cf.Units` object containing the units of the data array.
 
@@ -1206,6 +1156,8 @@ class PropertiesData(Properties):
             data.Units = value
         else:
             self._custom['Units'] = value
+
+        self._custom['direction'] = None
 
 #        units = getattr(value, 'units', None)
 #        if units is not None:
@@ -1611,11 +1563,9 @@ class PropertiesData(Properties):
                 self.__class__.__name__))
 
         return value
-    
     @units.setter
     def units(self, value):
         self.Units = Units(value, getattr(self, 'calendar', None))
-    
     @units.deleter
     def units(self):
         if getattr(self, 'units', None) is None:
@@ -4481,8 +4431,8 @@ TODO
     def override_calendar(self, calendar, inplace=False,  i=False):
         '''Override the calendar of date-time units.
 
-    The new calendar **need not** be equivalent to the original one
-    and the data array elements will not be changed to reflect the new
+    The new calendar need not be equivalent to the original one, and
+    the data array elements will not be changed to reflect the new
     units. Therefore, this method should only be used when it is known
     that the data array values are correct but the calendar has been
     incorrectly encoded.
@@ -4533,7 +4483,8 @@ TODO
                     "Can't override the calender of non-reference-time units: {0!r}".format(
                         self.Units))
                 
-            v.Units = Units(getattr(v.Units, 'units', None), calendar=calendar)
+            PropertiesData.Units.fset(v, Units(getattr(v.Units, 'units', None),
+                                               calendar=calendar))
 
         if inplace:
             v = None
@@ -4543,14 +4494,14 @@ TODO
     def override_units(self, units, inplace=False, i=False):
         '''Override the units.
 
-    The new units **need not** be equivalent to the original ones and
-    the data array elements will not be changed to reflect the new
+    The new units need not be equivalent to the original ones, and the
+    data array elements will not be changed to reflect the new
     units. Therefore, this method should only be used when it is known
     that the data array values are correct but the units have
     incorrectly encoded.
     
-    Not to be confused with setting `units` or `Units` attributes to
-    units which are equivalent to the original units.
+    Not to be confused with setting the `units` or `Units` attributes
+    to units which are equivalent to the original units.
     
     .. seealso:: `calendar`, `override_calendar`, `units`, `Units`
     
@@ -4601,11 +4552,12 @@ TODO
         if data is not None:
             data.override_units(units, inplace=True)
             v._custom['Units'] = units
-            v.Units = units
-        else:
-            v.Units = units
+#            v.Units = units
+#        else:
+#            v.Units = units
 
-
+        PropertiesData.Units.fset(v, units)
+            
         if inplace:
             v = None
         return v

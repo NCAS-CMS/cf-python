@@ -619,78 +619,42 @@ class PropertiesDataBounds(PropertiesData):
             "Can't get lower bounds when there are no bounds nor coordinate data")
 
 
-#    @property
-#    def Units(self):
-#        '''The `cf.Units` object containing the units of the data array.
-#
-#    Stores the units and calendar CF properties in an internally
-#    consistent manner. These are mirrored by the `units` and
-#    `calendar` CF properties respectively.
-#    
-#    **Examples:**
-#    
-#    >>> f.Units
-#    <Units: K>
-#    
-#    >>> f.Units
-#    <Units: days since 2014-1-1 calendar=noleap>
-#
-#        '''
-#        return super().Units
-#    
-#    @Units.setter
-#    def Units(self, value):
-#        PropertiesData.Units.fset(self, value)
-#
-#        # Set the Units on the bounds
-#        bounds = self.get_bounds(None)
-#        if bounds is not None:
-#            bounds.Units = value
-#
-#        # Set the Units on the period
-#        period = self._custom.get('period')
-#        if period is not None:
-#            period = period.copy()
-#            period.Units = value
-#            self._custom['period'] = period
-#
-#        self._custom['direction'] = None
-#        
-#    @Units.deleter
-#    def Units(self):
-#        PropertiesData.Units.fdel(self)
-        
+    @property
+    def Units(self):
+        '''The `cf.Units` object containing the units of the data array.
 
-#   @property
-#   def Units(self):
-#       '''The `cf.Units` object containing the units of the data array.
-#
-#   Stores the units and calendar CF properties in an internally
-#   consistent manner. These are mirrored by the `units` and
-#   `calendar` CF properties respectively.
-#   
-#   **Examples:**
-#   
-#   >>> f.Units
-#   <Units: K>
-#   
-#   >>> f.Units
-#   <Units: days since 2014-1-1 calendar=noleap>
-#
-#       '''
-#       return super().Units
-#   
-#   @Units.setter
-#   def Units(self, value):
-#       Units.fset(value)
-#       bounds = self.get_bounds(None)
-#       if bounds is not None:
-#           bounds.Units = value
-#               
-#   @Units.deleter
-#   def Units(self):
-#       Units.fdel(self)
-#
+    Stores the units and calendar CF properties in an internally
+    consistent manner. These are mirrored by the `units` and
+    `calendar` CF properties respectively.
+    
+    **Examples:**
+    
+    >>> f.Units
+    <Units: K>
+    
+    >>> f.Units
+    <Units: days since 2014-1-1 calendar=noleap>
+
+        '''
+        return super().Units
+    @Units.setter
+    def Units(self, value):
+        PropertiesData.Units.fset(self, value)
+
+        # Set the Units on the bounds
+        bounds = self.get_bounds(None)
+        if bounds is not None:
+            bounds.Units = value
+
+        # Set the Units on the period
+        period = self._custom.get('period')
+        if period is not None:
+            period = period.copy()
+            period.Units = value
+            self._custom['period'] = period
+    @Units.deleter
+    def Units(self):
+        PropertiesData.Units.fdel(self)
 
     @property
     def upper_bounds(self):
@@ -1746,14 +1710,14 @@ dtype('float64')
     def override_units(self, units, inplace=False, i=False):
         '''Override the units.
 
-    The new units **need not** be equivalent to the original ones and
-    the data array elements will not be changed to reflect the new
+    The new units need not be equivalent to the original ones, and the
+    data array elements will not be changed to reflect the new
     units. Therefore, this method should only be used when it is known
     that the data array values are correct but the units have
     incorrectly encoded.
     
-    Not to be confused with setting `units` or `Units` attributes to
-    units which are equivalent to the original units.
+    Not to be confused with setting the `units` or `Units` attribute
+    to units which are equivalent to the original units.
     
     .. seealso:: `calendar`, `override_calendar`, `units`, `Units`
     
@@ -1770,7 +1734,7 @@ dtype('float64')
     
     :Returns:
     
-    TODO
+            TODO
     
     **Examples:**
     
