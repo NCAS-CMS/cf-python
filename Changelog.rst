@@ -5,9 +5,11 @@ version 3.0.7
 **Not yet released**
 
 * New keyword parameter to `cf.Field.weights`: ``data``.
+* New example field (``5``) available from `cf.example_field`.
 * Changed the default value of the `cf.Field.weights` ``weights``
   parameter to `True`.
-* New example field (``5``) available from `cf.example_field`.
+* Changed the default values of the `cf.Field.collapse` ``group_by``
+  and ``coordinate`` parameters to `None`.
 * Fixed bug that didn't change the unit of bounds when the units of
   the coordinates were changed.
 * Changed minimum cfunits dependency to version 3.2.3. This fixes a

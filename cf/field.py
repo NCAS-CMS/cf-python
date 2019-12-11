@@ -7193,10 +7193,10 @@ class Field(mixin.PropertiesData,
                  weights=None, ddof=1, a=None, inplace=False,
                  group=None, regroup=False, within_days=None,
                  within_years=None, over_days=None, over_years=None,
-                 coordinate='mid_range', group_by='coords',
-                 group_span=None, group_contiguous=None,
-                 measure=False, scale=None, radius='earth',
-                 verbose=False, _create_zero_size_cell_bounds=False,
+                 coordinate=None, group_by=None, group_span=None,
+                 group_contiguous=None, measure=False, scale=None,
+                 radius='earth', verbose=False,
+                 _create_zero_size_cell_bounds=False,
                  _update_cell_methods=True, i=False, _debug=False,
                  **kwargs):
         '''Collapse axes of the field.
@@ -7734,26 +7734,36 @@ class Field(mixin.PropertiesData,
             caused by the use of the sample mean (Bessel's
             correction).
     
-        coordinate: `str`, optional
-            Set how the cell coordinate values for collapsed axes are
-            defined. This has no effect on the cell bounds for the
-            collapsed axes, which always represent the extrema of the
-            input coordinates. Valid values are:
+        coordinate: optional 
+            Specify how the new cell coordinate values for collapsed
+            axes are placed. This has no effect on the cell bounds for
+            the collapsed axes, which always represent the extrema of
+            the input coordinates.
+
+            The *coordinate* parameter may be one of:
     
-              ===============  ===========================================
-              *coordinate*     Description
-              ===============  ===========================================        
-              ``'mid_range'``  An output coordinate is the average of the
-                               first and last input coordinate bounds (or
-                               the first and last coordinates if there are
-                               no bounds). This is the default.
+            ===============  =========================================
+            *coordinate*     Description
+            ===============  =========================================
+            `None`           This is the default.
+
+                             If the collapse is a climatological time
+                             collapse over years or over days then
+                             assume a value of ``'min'``, otherwise
+                             assume value of ``'mid_range'``.
+
+            ``'mid_range'``  An output coordinate is the average of the
+                             first and last input coordinate bounds
+                             (or the first and last coordinates if
+                             there are no bounds). This is the
+                             default.
                                
-              ``'min'``        An output coordinate is the minimum of the
-                               input coordinates.
+            ``'min'``        An output coordinate is the minimum of
+                             the input coordinates.
                                
-              ``'max'``        An output coordinate is the maximum of the
-                               input coordinates.
-              ===============  ===========================================
+            ``'max'``        An output coordinate is the maximum of the
+                             input coordinates.
+            ===============  ===========================================
            
         group: optional
             A grouped collapse is one for which an axis is not
@@ -7934,7 +7944,7 @@ class Field(mixin.PropertiesData,
     
             >>> g = f.collapse('time: mean', group=10)
     
-        group_by: `str`, optional
+        group_by: optional
             Specify how coordinates are assigned to the groups defined
             by the *group*, *within_days* or *within_years*
             parameters. Ignored unless one of these parameters is set
@@ -7945,10 +7955,21 @@ class Field(mixin.PropertiesData,
             ============  ============================================
             *group_by*    Description
             ============  ============================================
-            ``'coords'``  This is the default. Each group contains the
-                          axis elements whose coordinate values lie
-                          within the group limits. Every element will
-                          be in a group.
+            `None`        This is the default.
+
+                          If the groups are defined by the *group*
+                          parameter (i.e. collapses other than
+                          climatological time collapses) then assume a
+                          value of ``'coords'``.
+
+                          If the groups are defined by the
+                          *within_days* or *within_years* parameter
+                          (i.e. climatological time collapses) then
+                          assume a value of ``'bounds'``.
+
+            ``'coords'``  Each group contains the axis elements whose
+                          coordinate values lie within the group
+                          limits. Every element will be in a group.
 
             ``'bounds'``  Each group contains the axis elements whose
                           upper and lower coordinate bounds both lie
@@ -7957,7 +7978,7 @@ class Field(mixin.PropertiesData,
                           group limits do not coincide with coordinate
                           bounds or because the group size is
                           sufficiently small.
-            ============  ============================================    
+            ============  ============================================
     
         group_span: optional
             Ignore groups whose span is less than a given value. By
@@ -8072,7 +8093,7 @@ class Field(mixin.PropertiesData,
                             susbsequent group immediately follows the
                             preceeeding one. By default each group
                             contains the consective run of elements
-                            whose coordinate values lie within the
+                            whose coordinate cells lie within the
                             group limits (see the *group_by*
                             parameter).
 
@@ -8133,7 +8154,6 @@ class Field(mixin.PropertiesData,
               (see `cf.gt`, `cf.hour` and `cf.le`).
     
         within_years: optional 
-
             Define the groups for creating CF "within years"
             climatological statistics. Each group contains elements
             whose coordinates span a time interval of up to one
@@ -8159,7 +8179,7 @@ class Field(mixin.PropertiesData,
                             susbsequent group immediately follows the
                             preceeeding one. By default each group
                             contains the consective run of elements
-                            whose coordinate values lie within the
+                            whose coordinate cells lie within the
                             group limits (see the *group_by*
                             parameter).
     
@@ -8219,175 +8239,164 @@ class Field(mixin.PropertiesData,
               cf.month(cf.ge(11))]`` (see `cf.month` and `cf.ge`).
     
         over_days: optional
-
             Define the groups for creating CF "over days"
             climatological statistics.
 
-            By default (or if *over_days* is `None`) a group contains
-            all elements for which the date-time coordinate cell lower
-            bounds teh same time of day but different dates, and for
-            which the date-time coordinate cell upper bounds also have
-            a common time of day but different dates.
+            By default (or if *over_days* is `None`) each group
+            contains all elements for which the time coordinate cell
+            lower bounds have a common time of day but different
+            dates, and for which the time coordinate cell upper bounds
+            also have a common time of day but different dates. The
+            collapsed dime axis will have a size equal to the number
+            of groups that were found.
 
-            For example, an element with corresponding time coordinate
-            bounds [1999-12-31 06:00:00, 1999-12-31 18:00:00] would be
-            in the same group as an element with corresponding time
-            coordinate bounds [2000-01-01 06:00:00, 2000-01-01
-            18:00:00].
-    
-            For example, an element with corresponding coordinate
-            bounds [1999-12-31 00:00:00, 2000-01-01 00:00:00] would be
-            in the same group as an element with corresponding
-            coordinate bounds [2000-01-01 00:00:00, 2000-01-02
-            00:00:00].
+            For example, elements corresponding to the two time
+            coordinate cells
+ 
+              | ``1999-12-31 06:00:00/1999-12-31 18:00:00``
+              | ``2000-01-01 06:00:00/2000-01-01 18:00:00``
+
+            would be together in a group; and elements corresponding
+            to the two time coordinate cells
+
+              | ``1999-12-31 00:00:00/2000-01-01 00:00:00``
+              | ``2000-01-01 00:00:00/2000-01-02 00:00:00``
+
+            would also be together in a different group.
+
+            .. note:: For CF compliance, an "over days" collapse
+                      should be preceeded by a "within days" collapse.
     
             The default groups may be split into smaller groups if the
             *over_days* parameter is one of:
 
-            
-            `TimeDuration`- Split each default group into smaller
+            ==============  ==========================================
+            *over_days*     Description
+            ==============  ==========================================
+            `TimeDuration`  Split each default group into smaller
                             groups which span the given time duration,
-                            which must be at least one day. Multiple
-                            groups are created from each collection of
-                            **matching** elements - the first of which
-                            starts at or before the first coordinate
-                            bound of the first element and spans the
-                            defined group size. Each susbsequent group
-                            immediately follows the preceeeding
-                            one. By default each group contains the
-                            **matching** elements whose coordinate
-                            values lie within the group limits (see
-                            the *group_by* parameter).
+                            which must be at least one day.
     
-              *Parameter example:*
-                To define groups spanning 90 days:
-                ``over_days=cf.D(90)`` or
-                ``over_days=cf.h(2160)``. (see `cf.D` and `cf.h`).
-    
-              *Parameter example:*
+                            * Groups may contain different numbers of
+                              elements.
 
-                To define groups spanning 3 calendar months, starting
-                and ending at 06:00 in the first day of each month:
-                ``over_days=cf.M(3, hour=6)`` (see `cf.M`).
+                            * The start of the first group may be
+                              before the first first axis element,
+                              depending on the offset defined by the
+                              time duration. For example, if
+                              ``group=cf.M(day=15)`` then the first
+                              group will start on the closest 15th of
+                              a month to the first axis element.
     
-              *Note:*
-                * Groups may contain different numbers of elements.
-                * The start of the first group may be before the first
-                  first axis element, depending on the offset defined
-                  by the time duration. For example, if
-                  ``group=cf.M(day=15)`` then the first group will
-                  start on the closest 15th of a month to the first
-                  axis element.
-    
-            * A (sequence of) `Query`, each of which is a condition
-              defining one or more groups. Each query selects elements
-              whose coordinates satisfy its condition and from these
-              elements multiple groups are created - one for each
-              subset of **matching** elements.
-    
-              *Parameter example:*
-                To define groups for January and for June to December,
-                ignoring all other months: ``over_days=[cf.month(1),
-                cf.month(cf.wi(6, 12))]`` (see `cf.month` and
-                `cf.wi`).
-    
-              *Note:*
-                * If a coordinate does not satisfy any of the
-                  conditions then its element will not be in a group.
-                * Groups may contain different numbers of elements.
-                * If an element is selected by two or more queries
-                  then the latest one in the sequence defines which
-                  group it will be in.
-    
-            The collapsed date-time axis will have a size equal to the
-            number of groups that were found.
-    
-            *Note:*       
-              * A *coordinate* parameter value of ``'min'`` is
-                assumed, regardless of its given value.
-               
-              * A *group_by* parameter value of ``'bounds'`` is
-                assumed, regardless of its given value.
-              
-              * An "over days" collapse must be preceded by a "within
-                days" collapse, as described by the CF conventions. If
-                the field already contains sub-daily data, but does
-                not have the "within days" cell methods flag then it
-                may be added, for example, as follows (this example
-                assumes that the appropriate cell method is the most
-                recently applied, which need not be the case; see
-                `cf.CellMethods` for details):
-              
-                >>> f.cell_methods[-1].within = 'days'
-    
-            The *over_days* parameter defines how the elements are
-            partitioned into groups, and may be one of:
-    
-            * `None`. This is the default. Each collection of
-              **matching** elements forms a group.
-    
-            * A `TimeDuration` object defining the group size in terms
-              of a time duration of at least one day. Multiple groups
-              are created from each collection of **matching**
-              elements - the first of which starts at or before the
-              first coordinate bound of the first element and spans
-              the defined group size. Each susbsequent group
-              immediately follows the preceeeding one. By default each
-              group contains the **matching** elements whose
-              coordinate values lie within the group limits (see the
-              *group_by* parameter).
-    
-              *Parameter example:*
-                To define groups spanning 90 days:
-                ``over_days=cf.D(90)`` or
-                ``over_days=cf.h(2160)``. (see `cf.D` and `cf.h`).
-    
-              *Parameter example:*
+            `Query`         Split each default group into smaller
+                            groups whose coordinate cells satisfy the
+                            query condition.
 
-                To define groups spanning 3 calendar months, starting
-                and ending at 06:00 in the first day of each month:
-                ``over_days=cf.M(3, hour=6)`` (see `cf.M`).
+                            If a sequence of `Query` is provided then
+                            groups are defined for each query.
+
+                            * Groups may contain different numbers of
+                              elements.
+ 
+                            * If a coordinate does not satisfy any of
+                              the conditions then its element will not
+                              be in a group.
+
+                            * If an element is selected by two or more
+                              queries then the latest one in the
+                              sequence defines which group it will be
+                              in.
+            ==============  ==========================================
+
+            *Parameter example:*
+              To define groups for January and for June to December,
+              ignoring all other months: ``over_days=[cf.month(1),
+              cf.month(cf.wi(6, 12))]`` (see `cf.month` and `cf.wi`).
     
-              *Note:*
-                * Groups may contain different numbers of elements.
-                * The start of the first group may be before the first
-                  first axis element, depending on the offset defined
-                  by the time duration. For example, if
-                  ``group=cf.M(day=15)`` then the first group will
-                  start on the closest 15th of a month to the first
-                  axis element.
+            *Parameter example:*
+              To define groups spanning 90 days:
+              ``over_days=cf.D(90)`` or ``over_days=cf.h(2160)``. (see
+              `cf.D` and `cf.h`).
     
-            * A (sequence of) `Query`, each of which is a condition
-              defining one or more groups. Each query selects elements
-              whose coordinates satisfy its condition and from these
-              elements multiple groups are created - one for each
-              subset of **matching** elements.
+            *Parameter example:*
+              To define groups that each spann 3 calendar months,
+              starting and ending at 06:00 in the first day of each
+              month: ``over_days=cf.M(3, hour=6)`` (see `cf.M`).
     
-              *Parameter example:*
-                To define groups for January and for June to December,
-                ignoring all other months: ``over_days=[cf.month(1),
-                cf.month(cf.wi(6, 12))]`` (see `cf.month` and
-                `cf.wi`).
+            *Parameter example:*
+              To define groups that each span a calendar month
+              ``over_days=cf.M()`` (see `cf.M`).
     
-              *Note:*
-                * If a coordinate does not satisfy any of the
-                  conditions then its element will not be in a group.
-                * Groups may contain different numbers of elements.
-                * If an element is selected by two or more queries
-                  then the latest one in the sequence defines which
-                  group it will be in.
+            *Parameter example:*
+              To define groups for January and for June to December,
+              ignoring all other months: ``over_days=[cf.month(1),
+              cf.month(cf.wi(6, 12))]`` (see `cf.month` and `cf.wi`).
     
         over_years: optional
-            Independently collapse groups of reference-time axis
-            elements for CF "over years" climatological
-            statistics. Each group contains elements whose coordinates
-            are **matching**, in that their lower bounds have a common
-            sub-annual date but different years, and their upper
-            bounds also have a common sub-annual date but different
-            years. Upon output, the results of the collapses are
-            concatenated so that the output axis has a size equal to
-            the number of groups.
+            Define the groups for creating CF "over yearss"
+            climatological statistics.
+
+            By default (or if *over_years* is `None`) each group
+            contains all elements for which the time coordinate cell
+            lower bounds have a common date of the year but different
+            years, and for which the time coordinate cell upper bounds
+            also have a common date of the year but different
+            years. The collapsed dime axis will have a size equal to
+            the number of groups that were found.
+
+            For example, elements corresponding to the two time
+            coordinate cells
+ 
+              | ``1999-12-01 00:00:00/2000-01-01 00:00:00``
+              | ``2000-12-01 00:00:00/2001-01-01 00:00:00``
+
+            would be together in a group.
+
+            .. note:: For CF compliance, an "over years" collapse
+                      should be preceeded by a "within years" or "over
+                      days" collapse.
     
+            The default groups may be split into smaller groups if the
+            *over_years* parameter is one of:
+
+            ==============  ==========================================
+            *over_years*    Description
+            ==============  ==========================================
+            `TimeDuration`  Split each default group into smaller
+                            groups which span the given time duration,
+                            which must be at least one day.
+    
+                            * Groups may contain different numbers of
+                              elements.
+
+                            * The start of the first group may be
+                              before the first first axis element,
+                              depending on the offset defined by the
+                              time duration. For example, if
+                              ``group=cf.Y(month=12)`` then the first
+                              group will start on the closest 1st
+                              December to the first axis element.
+    
+            `Query`         Split each default group into smaller
+                            groups whose coordinate cells satisfy the
+                            query condition.
+
+                            If a sequence of `Query` is provided then
+                            groups are defined for each query.
+
+                            * Groups may contain different numbers of
+                              elements.
+ 
+                            * If a coordinate does not satisfy any of
+                              the conditions then its element will not
+                              be in a group.
+
+                            * If an element is selected by two or more
+                              queries then the latest one in the
+                              sequence defines which group it will be
+                              in.
+            ==============  ==========================================
+
             *Parameter example:*
               An element with coordinate bounds {1999-06-01 06:00:00,
               1999-09-01 06:00:00} **matches** an element with
@@ -8400,82 +8409,21 @@ class Field(mixin.PropertiesData,
               coordinate bounds {2000-12-01 00:00:00, 2001-12-01
               00:00:00}.
     
-            *Note:*       
-              * A *coordinate* parameter value of ``'min'`` is
-                assumed, regardless of its given value.
-               
-              * A *group_by* parameter value of ``'bounds'`` is
-                assumed, regardless of its given value.
-              
-              * An "over years" collapse must be preceded by a "within
-                years" or an "over days" collapse, as described by the
-                CF conventions. If the field already contains
-                sub-annual data, but does not have the "within years"
-                or "over days" cell methods flag then it may be added,
-                for example, as follows (this example assumes that the
-                appropriate cell method is the most recently applied,
-                which need not be the case; see `cf.CellMethods` for
-                details):
+            *Parameter example:*
+              To define groups spanning 10 calendar years:
+              ``over_years=cf.Y(10)`` or ``over_years=cf.M(120)`` (see
+              `cf.M` and `cf.Y`).
     
-                >>> f.cell_methods[-1].over = 'days'
+            *Parameter example:*
+              To define groups spanning 5 calendar years, starting and
+              ending at 06:00 on 01 December of each year:
+              ``over_years=cf.Y(5, month=12, hour=6)`` (see `cf.Y`).
     
-            The *over_years* parameter defines how the elements are
-            partitioned into groups, and may be one of:
-    
-            * `None`. Each collection of **matching** elements forms a
-              group. This is the default.
-    
-            * A `TimeDuration` object defining the group size in terms
-              of a time interval of at least one calendar
-              year. Multiple groups are created from each collection
-              of **matching** elements - the first of which starts at
-              or before the first coordinate bound of the first
-              element and spans the defined group size. Each
-              susbsequent group immediately follows the preceeeding
-              one. By default each group contains the **matching**
-              elements whose coordinate values lie within the group
-              limits (see the *group_by* parameter).
-    
-              *Parameter example:*
-                To define groups spanning 10 calendar years:
-                ``over_years=cf.Y(10)`` or ``over_years=cf.M(120)``
-                (see `cf.M` and `cf.Y`).
-    
-              *Parameter example:*
-                To define groups spanning 5 calendar years, starting
-                and ending at 06:00 on 01 December of each year:
-                ``over_years=cf.Y(5, month=12, hour=6)`` (see `cf.Y`).
-    
-              *Note:*
-                * Groups may contain different numbers of elements.
-                * The start of the first group may be before the first
-                  first axis element, depending on the offset defined
-                  by the time duration. For example, if
-                  ``group=cf.Y(month=12)`` then the first group will
-                  start on the closest 1st December to the first axis
-                  element.
-    
-            * A (sequence of) `Query`, each of which is a condition
-              defining one or more groups. Each query selects elements
-              whose coordinates satisfy its condition and from these
-              elements multiple groups are created - one for each
-              subset of **matching** elements.
-    
-              *Parameter example:*
-                To define one group spanning 1981 to 1990 and another
-                spanning 2001 to 2005:
-                ``over_years=[cf.year(cf.wi(1981, 1990),
-                cf.year(cf.wi(2001, 2005)]`` (see `cf.year` and
-                `cf.wi`).
-    
-              *Note:*
-                * If a coordinate does not satisfy any of the
-                  conditions then its element will not be in a group.
-                * Groups may contain different numbers of elements.
-                * If an element is selected by two or more queries
-                  then the latest one in the sequence defines which
-                  group it will be in.
-    
+            *Parameter example:*
+              To define one group spanning 1981 to 1990 and another
+              spanning 2001 to 2005: ``over_years=[cf.year(cf.wi(1981,
+              1990), cf.year(cf.wi(2001, 2005)]`` (see `cf.year` and
+              `cf.wi`).
     
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
@@ -8715,6 +8663,24 @@ class Field(mixin.PropertiesData,
                                 over   is not None or
                                 group  is not None)
 
+            # --------------------------------------------------------
+            # Set the group_by parameter
+            # --------------------------------------------------------
+            if group_by is None:
+                if within is None and over is None:
+                    group_by = 'coords'
+                else:
+                    group_by = 'bounds'
+            elif (within is not None or over is not None) and group_by == 'coords':
+                raise valueError(
+                    "Can't collapse: group_by parameter can't be 'coords' for a climatological time collapse.")
+            
+            # --------------------------------------------------------
+            # Set the coordinate parameter
+            # --------------------------------------------------------
+            if coordinate is None and over is None:
+                coordinate = 'mid_range'
+            
             if grouped_collapse:
                 if len(collapse_axes) > 1:
                     raise ValueError(
@@ -8918,8 +8884,6 @@ class Field(mixin.PropertiesData,
 
                     f.del_construct(key)
                     
-#                f.remove_items(role=('m', 'c'), axes=axis)
-    
                 # REMOVE all 2+ dimensional auxiliary coordinates
                 # which span this axis
                 c = f.auxiliary_coordinates.filter_by_naxes(gt(1))
@@ -8928,7 +8892,6 @@ class Field(mixin.PropertiesData,
                         print('    Removing {!r}'.format(value)) # pragma: no cover
                         
                     f.del_construct(key)
-#               f.remove_items(role=('a',), axes=axis, ndim=gt(1))
                     
                 # REMOVE all 1 dimensional auxiliary coordinates which
                 # span this axis and have different values in their
@@ -8938,7 +8901,6 @@ class Field(mixin.PropertiesData,
                 # one-dimensional auxiliary coordinates which span
                 # this axis and have the same values in their data
                 # array and bounds.
-#                for key, aux in f.Items(role='a', axes=set((axis,)), ndim=1).items():
                 for key, aux in f.auxiliary_coordinates.filter_by_axis('exact', axis).items():
                     if verbose:
                         print('key, aux =', key, repr(aux)) # pragma: no cover
@@ -8959,13 +8921,10 @@ class Field(mixin.PropertiesData,
                 #--- End: for
 
                 # Reset the axis size
-#                ncdim = f._Axes[axis].ncdim
-#                f._Axes[axis] = DomainAxis(1, ncdim=ncdim)
                 f.domain_axes[axis].set_size(1)
                 if verbose:
                     print('Changing axis size to 1:', axis) # pragma: no cover
-                
-#                dim = f.Items.get(axis, None)
+
                 dim = f.dimension_coordinates.filter_by_axis('exact', axis).value(None)
                 if dim is None:
                     continue
@@ -9071,7 +9030,7 @@ class Field(mixin.PropertiesData,
             n += 1
 
             return classification, n, lower, upper
-
+        #--- End: def
 
         def _time_interval(classification, n, coord, interval, lower,
                            upper, lower_limit, upper_limit, group_by,
@@ -9351,7 +9310,7 @@ class Field(mixin.PropertiesData,
 
         :Parameters:
         
-            coord: `cf.Coordinate`
+            coord: `DimensionCoordinate`
                 TODO
 
             group_by: `str`
@@ -9359,11 +9318,13 @@ class Field(mixin.PropertiesData,
         
             time_interval: `bool`
                 If True then then return a tuple of date-time
-                objects, rather than a tuple of `Data` objects.
+                objects. If False return a tuple of `Data` objects.
         
         :Returns:
         
-            4-`tuple` of date-time objects
+            `tuple`
+                A tuple of 4 `Data` object or, if *time_interval* is
+                True, a tuple of 4 date-time objects.
 
             '''
             bounds = coord.get_bounds(None)
@@ -9618,8 +9579,8 @@ class Field(mixin.PropertiesData,
                 
                 if group_span is True:
                     raise ValueError(
-"Can't collapse: Can't set group_span=True when group={!r}".format(group))
-            #--- End: if
+                        "Can't collapse: Can't set group_span=True when group={!r}".format(
+                            group))
         #--- End: if
                   
         if classification is None:
@@ -9636,18 +9597,11 @@ class Field(mixin.PropertiesData,
                     raise ValueError(
                         "Reference-time dimension coordinate bounds are required for an 'over days' collapse")
 
-#                cell_methods = getattr(self, 'cell_methods', None)
-#                cell_methods = self.cell_methods
-#                if not cell_methods or 'days' not in cell_methods.within:
-#                    raise ValueError(
-#"Can't collapse: An 'over days' collapse must come after a 'within days' collapse")
-
                 cell_methods = self.cell_methods.ordered()
                 w = [cm.get_qualifier('within', None) for cm in cell_methods.values()]
                 if 'days' not in w:
                     raise ValueError(
                         "An 'over days' collapse must come after a 'within days' cell method")
-
 
                 # Parse the over_days parameter
                 if isinstance(over_days, Query):
@@ -9664,7 +9618,7 @@ class Field(mixin.PropertiesData,
                 classification.fill(-1)
                 
                 if isinstance(over_days, TimeDuration):
-                    lower, upper, lower_limit, upper_limit = _tyu(coord, group_by, True)
+                    _, _, lower_limit, upper_limit = _tyu(coord, 'bounds', True)
 
                 bounds = coord.bounds
                 lower_bounds = coord.lower_bounds.datetime_array
@@ -9712,7 +9666,7 @@ class Field(mixin.PropertiesData,
                                                                 upper=upper,
                                                                 lower_limit=lower_limit,
                                                                 upper_limit=upper_limit,
-                                                                group_by='bounds', #group_by,
+                                                                group_by='bounds',
                                                                 extra_condition=HMS)
                     else:
                         # --------------------------------------------
@@ -9767,7 +9721,7 @@ class Field(mixin.PropertiesData,
                 classification.fill(-1)
                 
                 if isinstance(over_years, TimeDuration):
-                    _, _, lower_limit, upper_limit = _tyu(coord, group_by, True)
+                    _, _, lower_limit, upper_limit = _tyu(coord, 'bounds', True)
 
                 lower_bounds = coord.lower_bounds.datetime_array
                 upper_bounds = coord.upper_bounds.datetime_array
@@ -9820,7 +9774,7 @@ class Field(mixin.PropertiesData,
                                                                 upper=upper,
                                                                 lower_limit=lower_limit,
                                                                 upper_limit=upper_limit,
-                                                                group_by=group_by,
+                                                                group_by='bounds',
                                                                 extra_condition=mdHMS)
                     else:
                         # --------------------------------------------
@@ -9864,7 +9818,7 @@ class Field(mixin.PropertiesData,
                     # ------------------------------------------------
                     # E.g. within_days=cf.h(6)
                     # ------------------------------------------------ 
-                    lower, upper, lower_limit, upper_limit = _tyu(coord, group_by, True)
+                    lower, upper, lower_limit, upper_limit = _tyu(coord, 'bounds', True)
                         
                     classification, n = _time_interval(classification, 0,
                                                        coord=coord,
@@ -9925,7 +9879,7 @@ class Field(mixin.PropertiesData,
                     # ------------------------------------------------
                     # E.g. within_years=cf.M()
                     # ------------------------------------------------
-                    lower, upper, lower_limit, upper_limit = _tyu(coord, group_by, True)
+                    lower, upper, lower_limit, upper_limit = _tyu(coord, 'bounds', True)
                         
                     classification, n = _time_interval(classification, 0,
                                                        coord=coord,
@@ -9968,7 +9922,7 @@ class Field(mixin.PropertiesData,
                 raise ValueError(
                     "Can't collapse: Bad 'within' syntax: {!r}".format(within))
         #--- End: if
-        print (classification) 
+
         if classification is not None:
             #---------------------------------------------------------
             # Collapse each group
@@ -9989,15 +9943,15 @@ class Field(mixin.PropertiesData,
 #                if group_span is not None:
 #                    if over == 'days':
 #                        t = pc.dimension_coordinate('T').copy()
-#                        t.Units = Units('days since '+str(t.reference_datetime))
-#                        print(t.bounds.Units)
-#                        if len(index) != int(t.bounds.range()):
-#                            print ('bon', len(index), int(t.bounds.range().ceil()))
+#                        t.units = 'days since ' + str(t.reference_datetime)
+#                        print(t.bounds.Units, u, len(index), int(t.bounds.range().ceil()))
+#                        if over_days != int(t.bounds.range().ceil()):
 #                            classification[index] = ignore_n
 #                            ignore_n -= 1                            
 #                            continue
-#                #--- End: if
-                
+#
+##--- End: if
+#                
                 # ----------------------------------------------------
                 # Ignore groups that don't meet the specified criteria
                 # ----------------------------------------------------
@@ -10032,7 +9986,6 @@ class Field(mixin.PropertiesData,
                                 lb, ub = ub, lb
 
                             if group_span + lb != ub:
-                                print('SPAN', group_span, group_span + lb, ub)
                                 # The span of this group is not the
                                 # same as group_span, so don't
                                 # collapse it.
@@ -10069,7 +10022,6 @@ class Field(mixin.PropertiesData,
                                       _update_cell_methods=False))
             #--- End: for
 
-            print(classification)
             if regroup:
                 # return the numpy array
                 return classification
@@ -10831,19 +10783,6 @@ class Field(mixin.PropertiesData,
                 constructs = [g.constructs[key] for key in keys]
                 if _debug:
                     print('    transposed N-d constructs: {!r}'.format(constructs)) # pragma: no cover
-
-#                print ('value=', repr(value))
-#                for value, construct in zip(points, constructs):
-#                    print (repr(construct))
-#                    construct.inspect()
-#                    print(construct.data.dumpd())
-#                    try:
-#                        print(construct.bounds.data.dumpd())
-#                    except:
-#                        pass
-#                    _ = (value == construct).data
-##
-
                 
                 item_matches = [(value == construct).data
                                 for value, construct in zip(points, constructs)]
