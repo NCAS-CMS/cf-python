@@ -16113,15 +16113,19 @@ class Field(mixin.PropertiesData,
     The regridding method must be specified. First-order conservative
     interpolation conserves the global area integral of the field, but
     may not give approximations to the values as good as bilinear
-    interpolation. Bilinear interpolation is available. The latter
-    method is particular useful for cases when the latitude and
-    longitude coordinate cell boundaries are not known nor
-    inferrable. Higher order patch recovery is available as an
-    alternative to bilinear interpolation. This typically results in
-    better approximations to values and derivatives compared to the
-    latter, but the weight matrix can be larger than the bilinear
-    matrix, which can be an issue when regridding close to the memory
-    limit on a machine. Nearest neighbour interpolation is also
+    interpolation. Second-order conservative interpolation also takes
+    into account the gradient across the source cells, so in general
+    gives a smoother, more accurate representation of the source field
+    especially when going from a courser to a finer grid. Bilinear
+    interpolation is available. The latter method is particular useful
+    for cases when the latitude and longitude coordinate cell
+    boundaries are not known nor inferrable. Higher order patch
+    recovery is available as an alternative to bilinear
+    interpolation. This typically results in better approximations to
+    values and derivatives compared to the latter, but the weight
+    matrix can be larger than the bilinear matrix, which can be an
+    issue when regridding close to the memory limit on a
+    machine. Nearest neighbour interpolation is also
     available. Nearest source to destination is particularly useful
     for regridding integer fields such as land use.
     
@@ -16168,7 +16172,8 @@ class Field(mixin.PropertiesData,
     
     The interpolation is carried by out using the `ESMF` package - a
     Python interface to the Earth System Modeling Framework (ESMF)
-    regridding utility.
+    regridding utility. For more information see:
+    https://www.earthsystemcog.org/projects/esmf/regridding
     
 
     **Logging**
@@ -16239,6 +16244,11 @@ class Field(mixin.PropertiesData,
     
               ``'conservative_1st'``  First-order conservative regridding
               or ``'conservative'``   will be used (requires both of the
+                                      fields to have contiguous, non-
+                                      overlapping bounds).
+
+              ``'conservative_2nd'``  Second-order conservative regridding
+                                      will be used (requires both of the
                                       fields to have contiguous, non-
                                       overlapping bounds).
     
@@ -16707,7 +16717,11 @@ class Field(mixin.PropertiesData,
     The regridding method must be specified. First-order conservative
     interpolation conserves the global spatial integral of the field,
     but may not give approximations to the values as good as
-    (multi)linear interpolation. (Multi)linear interpolation is
+    (multi)linear interpolation. Second-order conservative
+    interpolation also takes into account the gradient across the
+    source cells, so in general gives a smoother, more accurate
+    representation of the source field especially when going from a
+    courser to a finer grid. (Multi)linear interpolation is
     available. The latter method is particular useful for cases when
     the latitude and longitude coordinate cell boundaries are not
     known nor inferrable. Higher order patch recovery is available as
@@ -16720,7 +16734,6 @@ class Field(mixin.PropertiesData,
     source to destination is particularly useful for regridding
     integer fields such as land use.
     
-
     **Metadata**
     
     The field construct's domain must have axes matching those
@@ -16751,7 +16764,8 @@ class Field(mixin.PropertiesData,
     
     The interpolation is carried by out using the `ESMF` package - a
     Python interface to the Earth System Modeling Framework (ESMF)
-    regridding utility.
+    regridding utility. For more information see:
+    https://www.earthsystemcog.org/projects/esmf/regridding
     
 
     **Logging**
@@ -16790,6 +16804,11 @@ class Field(mixin.PropertiesData,
     
               ``'conservative_1st'``  First-order conservative regridding
               or ``'conservative'``   will be used (requires both of the
+                                      fields to have contiguous, non-
+                                      overlapping bounds).
+    
+              ``'conservative_2nd'``  Second-order conservative regridding
+                                      will be used (requires both of the
                                       fields to have contiguous, non-
                                       overlapping bounds).
     

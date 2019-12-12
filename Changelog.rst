@@ -15,6 +15,9 @@ version 3.0.7
 * Changed minimum cfunits dependency to version 3.2.3. This fixes a
   bug that rased an exception for units specified by non-strings
   (https://github.com/NCAS-CMS/cfunits/issues/1).
+* Changed minimum ESMF dependency to 8.0.0. This fixes an issue
+  with second-order conservative regridding, which is now fully
+  documented and available.
 
 version 3.0.6
 -------------

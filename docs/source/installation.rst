@@ -227,7 +227,7 @@ environments in which these features are not required.
 .. rubric:: Regridding
 
 * `ESMF <https://www.earthsystemcog.org/projects/esmpy/>`_, version
-  7.1.0r or newer. This is easily installed via conda with
+  8.0.0 or newer. This is easily installed via conda with
 
   .. code:: bash
 
