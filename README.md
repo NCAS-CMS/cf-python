@@ -13,9 +13,7 @@ http://ncas-cms.github.io/cf-python
 Tutorial
 ========
 
-https://ncas-cms.github.io/cf-python/tutorial.html (which also
-contains a link to the executable file
-[tutorial.py](https://github.com/NCAS-CMS/cf-python/blob/master/docs/_downloads/tutorial.py))
+https://ncas-cms.github.io/cf-python/tutorial.html
 
 Installation
 ============
