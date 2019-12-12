@@ -7251,7 +7251,78 @@ class Field(mixin.PropertiesData,
     
     **Collapse methods**
     
-    See the *methods* parameter  for details.
+    The following collapse methods are available (see
+    https://ncas-cms.github.io/cf-python/tutorial.html#collapse-methods
+    for precise definitions):
+
+    ============================  ============================
+    Method                        Description                   
+    ============================  ============================
+    ``'maximum'``                 The maximum of the values.  
+                              
+    ``'minimum'``                 The minimum of the values.  
+    
+    ``'maximum_absolute_value'``  The maximi  of the absolute 
+                                  values.
+                  
+    ``'minimum_absolute_value'``  The minimum of the absolute 
+                                  values.
+    
+    ``'mid_range'``               The average of the maximum  
+                                  and the minimum of the
+                                  values.
+                                  
+    ``'median'``                  The median of the values.   
+
+    ``'range'``                   The absolute difference     
+                                  between the maximum and the
+                                  minimum of the values.
+                                  
+    ``'sum'``                     The sum of the values.      
+                                                                  
+    ``'sum_of_squares'``          The sum of the squares of   
+                                  values.
+                                  
+    ``'sample_size'``             The sample size, i.e. the   
+                                  number of non-missing
+                                  values.
+
+    ``'sum_of_weights'``          The sum of weights, as      
+                                  would be used for other
+                                  calculations.
+                                  
+    ``'sum_of_weights2'``         The sum of squares of       
+                                  weights, as would be used
+                                  for other calculations.
+                                  
+    ``'mean'``                    The weighted or unweighted  
+                                  mean of the values.
+                                  
+    ``'mean_absolute_value'``     The mean of the absolute    
+                                  values.
+
+    ``'mean_of_upper_decile'``    The mean of the upper group 
+                                  of data values defined by
+                                  the upper tenth of their
+                                  distribution.
+
+    ``'variance'``                The weighted or unweighted  
+                                  variance of the values, with
+                                  a given number of degrees of
+                                  freedom.
+                                      
+    ``'standard_deviation'``      The weighted or unweighted
+                                  standard deviation of the
+                                  values, with a given number
+                                  of degrees of freedom.
+                          
+    ``'root_mean_square'``        The square root of the      
+                                  weighted or unweighted mean
+                                  of the squares of the
+                                  values.
+                                  
+    ``'integral'``                The integral of values.     
+    ============================  ============================
 
 
     **Data type and missing data**
@@ -7538,9 +7609,10 @@ class Field(mixin.PropertiesData,
                                           a given number of degrees of
                                           freedom.
                                               
-            ``'standard_deviation'``      The square root of the        May be
-                                          weighted or unweighted
-                                          variance.
+            ``'standard_deviation'``      The weighted or unweighted    May be
+                                          standard deviation of the
+                                          values, with a given number
+                                          of degrees of freedom.
                                           
             ``'root_mean_square'``        The square root of the        May be
                                           weighted or unweighted mean
@@ -7735,10 +7807,10 @@ class Field(mixin.PropertiesData,
             correction).
     
         coordinate: optional 
-            Specify how the new cell coordinate values for collapsed
-            axes are placed. This has no effect on the cell bounds for
-            the collapsed axes, which always represent the extrema of
-            the input coordinates.
+            Specify how the cell coordinate values for collapsed axes
+            are placed. This has no effect on the cell bounds for the
+            collapsed axes, which always represent the extrema of the
+            input coordinates.
 
             The *coordinate* parameter may be one of:
     
@@ -7752,7 +7824,7 @@ class Field(mixin.PropertiesData,
                              assume a value of ``'min'``, otherwise
                              assume value of ``'mid_range'``.
 
-            ``'mid_range'``  An output coordinate is the average of the
+            ``'mid_range'``  An output coordinate is the average of
                              first and last input coordinate bounds
                              (or the first and last coordinates if
                              there are no bounds). This is the
@@ -7761,25 +7833,26 @@ class Field(mixin.PropertiesData,
             ``'min'``        An output coordinate is the minimum of
                              the input coordinates.
                                
-            ``'max'``        An output coordinate is the maximum of the
-                             input coordinates.
-            ===============  ===========================================
+            ``'max'``        An output coordinate is the maximum of
+                             the input coordinates.
+            ===============  =========================================
            
         group: optional
             A grouped collapse is one for which an axis is not
-            collapsed completely to size 1. Instead the collapse axis
+            collapsed completely to size 1. Instead, the collapse axis
             is partitioned into groups and each group is collapsed to
-            size 1. The resulting axis will generally have more than
-            one element.
+            size 1, independently of the other groups. The results of
+            the collapses are concatenated so that the output axis has
+            a size equal to the number of groups.
 
-            The *group* parameter defines how the elements are
+            The *group* parameter defines how the axis elements are
             partitioned into groups, and may be one of:
     
             ===============  =========================================
             *group*          Description
             ===============  =========================================
-            `Data`           Define the group size in terms of ranges
-                             of coordinate values. The first group
+            `Data`           Define groups by coordinate values that
+                             span the given range. The first group
                              starts at the first coordinate bound of
                              the first axis element (or its coordinate
                              if there are no bounds) and spans the
@@ -7789,7 +7862,7 @@ class Field(mixin.PropertiesData,
                              consective run of elements whose
                              coordinate values lie within the group
                              limits (see the *group_by* parameter).
-                             
+
                              * By default each element will be in
                                exactly one group (see the *group_by*,
                                *group_span* and *group_contiguous*
@@ -7801,17 +7874,18 @@ class Field(mixin.PropertiesData,
                              * If no units are specified then the
                                units of the coordinates are assumed.
                              
-            `TimeDuration`   Define the group size in terms of a time
-                             interval. The first group starts at or
-                             before the first coordinate bound of the
-                             first axis element (or its coordinate if
-                             there are no bounds) and spans the
-                             defined group size. Each susbsequent
-                             group immediately follows the preceeeding
-                             one. By default each group contains the
-                             consective run of elements whose
-                             coordinate values lie within the group
-                             limits (see the *group_by* parameter).
+            `TimeDuration`   Define groups by a time interval spanned
+                             by the coordinates. The first group
+                             starts at or before the first coordinate
+                             bound of the first axis element (or its
+                             coordinate if there are no bounds) and
+                             spans the defined group size. Each
+                             susbsequent group immediately follows the
+                             preceeeding one. By default each group
+                             contains the consective run of elements
+                             whose coordinate values lie within the
+                             group limits (see the *group_by*
+                             parameter).
                              
                              * By default each element will be in
                                exactly one group (see the *group_by*,
@@ -8071,9 +8145,9 @@ class Field(mixin.PropertiesData,
             Independently collapse groups of reference-time axis
             elements for CF "within days" climatological
             statistics. Each group contains elements whose coordinates
-            span a time interval of up to one day. Upon output, the
-            results of the collapses are concatenated so that the
-            output axis has a size equal to the number of groups.
+            span a time interval of up to one day. The results of the
+            collapses are concatenated so that the output axis has a
+            size equal to the number of groups.
     
             .. note:: For CF compliance, a "within days" collapse
                       should be followed by an "over days" collapse.
@@ -8157,9 +8231,9 @@ class Field(mixin.PropertiesData,
             Define the groups for creating CF "within years"
             climatological statistics. Each group contains elements
             whose coordinates span a time interval of up to one
-            calendar year. Upon output, the results of the collapses
-            are concatenated so that the output axis has a size equal
-            to the number of groups.
+            calendar year. The results of the collapses are
+            concatenated so that the output axis has a size equal to
+            the number of groups.
     
             .. note:: For CF compliance, a "within years" collapse
                       should be followed by an "over years" collapse.

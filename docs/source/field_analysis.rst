@@ -366,9 +366,10 @@ Method                        Description                   Weighted
                               a given number of degrees of
                               freedom.
                                   
-``'standard_deviation'``      The square root of the        May be
-                              weighted or unweighted
-                              variance.
+``'standard_deviation'``      The weighted or unweighted    May be
+                              standard deviation of the
+			      values with a given number
+			      of degrees of freedom.
                               
 ``'root_mean_square'``        The square root of the        May be
                               weighted or unweighted mean
