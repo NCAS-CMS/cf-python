@@ -1244,7 +1244,7 @@ Trilinear                 Three dimensional variant of linear
                           interpolation (only available to
                           `Cartesian-regridding`_).
 			  
-First order conservative  Preserve the integral of the data across
+First order conservative  Preserve the are integral of the data across
                           the interpolation from source to
                           destination. It uses the proportion of the
                           area of the overlapping source and
