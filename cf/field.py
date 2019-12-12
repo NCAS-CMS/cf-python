@@ -8004,14 +8004,19 @@ class Field(mixin.PropertiesData,
               ``group=numpy.array([0, -1, 4, 4, 4, -1, -2, 0])``.
 
         regroup: `bool`, optional
-            For grouped collapses, return a `numpy.array` of integers
-            which identifies the groups defined by the *group*
-            parameter. The array is interpreted as for a `numpy.array`
-            value of the *group* parameter, and thus may subsequently
-            be used by *group* parameter in a separate collapse. For
-            example:
+            If True then, for grouped collapses, do not collapse the
+            field construct, but instead return a `numpy.array` of
+            integers which identifies the groups defined by the
+            *group* parameter. Each group contains the elements which
+            correspond to a common non-negative integer value in the
+            numpy array. Elements corresponding to negative integers
+            are not in any group. The array may subsequently be used
+            as the value of the *group* parameter in a separate
+            collapse.
+
+            For example:
     
-            >>> groups = f.collapse('time: mean', group=10, regroup=True)
+            >>> groups = f.collapse('time: mean', group=10, regroup=True)x
             >>> g = f.collapse('time: mean', group=groups)
     
             is equivalent to:
@@ -8057,7 +8062,8 @@ class Field(mixin.PropertiesData,
         group_span: optional
             Ignore groups whose span is less than a given value. By
             default all groups are collapsed, regardless of their
-            size. Groups are defined by the *group*, *within_days* or
+            size. The *group_span* parameter is only considered for
+            groups defined by the *group*, *within_days* or
             *within_years* parameters.
     
             In general, the span of a group is the absolute difference
@@ -8113,19 +8119,21 @@ class Field(mixin.PropertiesData,
               `cf.seasons` and `cf.M`).
         
         group_contiguous: `int`, optional
-            Only applicable to grouped collapses (i.e. the *group*,
-            *within_days* or *within_years* parameter is being
-            used). If set to 1 or 2 then ignore groups whose cells are
-            not contiguous along the collapse axis. By default,
-            *group_contiguous* is 0, meaning that non-contiguous
-            groups are allowed.
+            Ignore groups that whose coordinates are not contiguous,
+            or whose cell bounds overlap. If set to 1 or 2 then ignore
+            groups whose cells are not contiguous along the collapse
+            axis. The *group_contiguous* parameter is only considered
+            for groups defined by the *group*, *within_days* or
+            *within_years* parameters.
 
             The *group_contiguous* parameter may be one of:
     
             ===================  =====================================
             *group_contiguous*   Description
             ===================  =====================================
-            ``0``                Allow non-contiguous groups.
+            ``0``                This is the default.
+
+                                 Allow non-contiguous groups.
     
             ``1``                Ignore non-contiguous groups, as well
                                  as contiguous groups containing
