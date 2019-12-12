@@ -1,4 +1,4 @@
-CF Python
+cf-python
 =========
 
 The Python cf package is an Earth science data analysis library that
