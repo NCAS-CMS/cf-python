@@ -1,4 +1,4 @@
-version 3.0.7
+version 3.1.0
 -------------
 ----
 
@@ -6,6 +6,7 @@ version 3.0.7
 
 * New keyword parameter to `cf.Field.weights`: ``data``.
 * New example field (``5``) available from `cf.example_field`.
+* New regridding option: second order conservative.
 * Changed the default value of the `cf.Field.weights` ``weights``
   parameter to `True`.
 * Changed the default values of the `cf.Field.collapse` ``group_by``

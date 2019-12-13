@@ -653,10 +653,11 @@ selected by the *group* keyword are excluded from the result.
                    : longitude(2) = [90.0, 270.0] degrees_east
                    : air_pressure(1) = [850.0] hPa
 
-Groups can be further described with the *group_span* (to ignore
-groups whose actual span is less than a given value) and
-*group_contiguous* (to ignore non-contiguous groups, or any contiguous
-group containing overlapping cells) keywords of `~Field.collapse`.
+Groups can be further described with the *group_span* (to include
+groups whose actual span is not equal to a given value) and the
+*group_contiguous* (to include non-contiguous groups, or any
+contiguous group containing overlapping cells) keywords of
+`~Field.collapse`.
 
 
 .. _Climatological-statistics:

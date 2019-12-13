@@ -7450,10 +7450,11 @@ class Field(mixin.PropertiesData,
 	     
       >>> b = a.collapse('X: mean', group=cf.Data(180, 'degrees'))
     
-    Groups can be further described with the *group_span* (to ignore
-    groups whose actual span is less than a given value) and
-    *group_contiguous* (to ignore non-contiguous groups, or any
-    contiguous group containing overlapping cells).
+    Groups can be further described with the *group_span* parameter
+    (to include groups whose actual span is not equal to a given
+    value) and the *group_contiguous* parameter (to include
+    non-contiguous groups, or any contiguous group containing
+    overlapping cells).
        
 
     **Climatological statistics**
@@ -8060,42 +8061,65 @@ class Field(mixin.PropertiesData,
             ============  ============================================
     
         group_span: optional
-            Ignore groups whose span is less than a given value. By
-            default all groups are collapsed, regardless of their
-            size. The *group_span* parameter is only considered for
-            groups defined by the *group*, *within_days* or
-            *within_years* parameters.
-    
+            Specify how to treat groups that may not span the desired
+            range. For example, when creating 3-month seasonal means,
+            the *group_span* parameter can be used to ignore groups
+            which only contain 1 or 2 months of data.
+
+            By default, *group_span* is `None`. This means that only
+            groups whose span equals the size specified by the
+            definition of the groups are collapsed; unless the groups
+            have been defined by one or more `Query` objects, in which
+            case then the default behviour is collapse all groups,
+            regardless of their size. In effect, the *group_span*
+            parameter defaults to `True` unless the groups have been
+            defined by one or more `Query` objects, in which case
+            *group_span* defaults to `False`.
+
+            .. note:: Prior to version 3.1.0, the default value of
+                      *group_span* was effectively `False`.
+
             In general, the span of a group is the absolute difference
             between the lower bound of its first element and the upper
             bound of its last element. The only exception to this
-            occurs if *group_span* is an integer, in which case the
-            span of a group is the number of elements in the group.
+            occurs if *group_span* is (by default or by explicit
+            setting) an integer, in which case the span of a group is
+            the number of elements in the group. See also the
+            *group_contiguous* parameter for how to deal with groups
+            that have gaps in their coverage.
     
-            *Note:*
-              * To also ensure that elements within a group are
-                contiguous, use the *group_contiguous* parameter.
+            The *group_span* parameter is only applied to groups
+            defined by the *group*, *within_days* or *within_years*
+            parameters, and is otherwise ignored.
     
             The *group_span* parameter may be one of:
     
             ==============  ==========================================
             *group_span*    Description
             ==============  ==========================================
-            `True`          Ignore groups whose span is less than the
-                            size defined by the *group*
-                            parameter. Only applicable if the *group*
-                            parameter is set to a `Data`,
-                            `TimeDuration` or `int` object. If the
-                            *group* parameter is a (sequence of)
-                            `Query` then one of the other options is
-                            required.
-    
-            `Data`          Ignore groups whose span is less than the
-                            given size. If no units are specified then
-                            the units of the coordinates are assumed.
+            `None`          This is the default. Apply a value of
+                            `True` or `False` depending on how the
+                            groups have been defined.
+
+            `True`          Ignore groups whose span is not equal to
+                            the size specified by the definition of
+                            the groups. Only applicable if the groups
+                            are defined by a `Data`, `TimeDuration` or
+                            `int` object, and this is the default in
+                            this case.
+
+            `False`         Collapse all groups, regardless of their
+                            size. This is the default if the groups
+                            are defined by one ot more `Query`
+                            objects.
+
+            `Data`          Ignore groups whose span is not equal to
+                            the given size. If no units are specified
+                            then the units of the coordinates are
+                            assumed.
                 
-            `TimeDuration`  Ignore groups whose span is less than the
-                            given time duration.
+            `TimeDuration`  Ignore groups whose span is not equals to
+                            the given time duration.
     
             `int`           Ignore groups that contain fewer than the
                             given number of elements
@@ -9567,7 +9591,7 @@ class Field(mixin.PropertiesData,
                     n += 1
                 #--- End: while
 
-                if group_span is True:
+                if group_span is True or group_span is None:
                     # Use the group definition as the group span
                     group_span = group
                     
@@ -9593,7 +9617,7 @@ class Field(mixin.PropertiesData,
                                                    upper_limit=upper_limit,
                                                    group_by=group_by)
 
-                if group_span is True:
+                if group_span is True or group_span is None:
                     # Use the group definition as the group span
                     group_span = group
                 
@@ -9634,7 +9658,7 @@ class Field(mixin.PropertiesData,
                                                    upper_limit=upper_limit,
                                                    group_by=group_by)
 
-                if group_span is True:
+                if group_span is True or group_span is None:
                     # Use the group definition as the group span
                     group_span = group
 
@@ -9658,8 +9682,10 @@ class Field(mixin.PropertiesData,
                                                parameter='group')
                 
                 classification = _discern_runs(classification)
-                
-                if group_span is True:
+
+                if group_span is None:
+                    group_span = False
+                elif group_span is True:
                     raise ValueError(
                         "Can't collapse: Can't set group_span=True when group={!r}".format(
                             group))
@@ -9911,7 +9937,7 @@ class Field(mixin.PropertiesData,
                                                        upper_limit=upper_limit,
                                                        group_by=group_by)
                     
-                    if group_span is True:
+                    if group_span is True or group_span is None:
                         # Use the within_days definition as the group
                         # span
                         group_span = within_days
@@ -9929,7 +9955,9 @@ class Field(mixin.PropertiesData,
 
                     classification = _discern_runs_within(classification, coord)
      
-                    if group_span is True:
+                    if group_span is None:
+                        group_span = False
+                    elif group_span is True:
                         raise ValueError(
                             "Can't collapse: Can't set group_span=True when within_days={!r}".format(
                                 within_days))
@@ -9972,7 +10000,7 @@ class Field(mixin.PropertiesData,
                                                        upper_limit=upper_limit,
                                                        group_by=group_by)
 
-                    if group_span is True:
+                    if group_span is True or group_span is None:
                         # Use the within_years definition as the group
                         # span
                         group_span = within_years
@@ -9991,7 +10019,9 @@ class Field(mixin.PropertiesData,
 
                     classification = _discern_runs_within(classification, coord)
 
-                    if group_span is True:
+                    if group_span is None:
+                        group_span = False
+                    elif group_span is True:
                         raise ValueError(
                             "Can't collapse: Can't set group_span=True when within_years={!r}".format(
                                 within_years))
@@ -10033,57 +10063,55 @@ class Field(mixin.PropertiesData,
 #                            continue
 #
 ##--- End: if
-#                
+
                 # ----------------------------------------------------
                 # Ignore groups that don't meet the specified criteria
                 # ----------------------------------------------------
-#                if within is None and over is None:
-                if over is None:
-                    if group_span is not None:
-                        if isinstance(group_span, int):
-                            if pc.domain_axes[axis].get_size() != group_span:
-                                classification[index] = ignore_n
-                                ignore_n -= 1
-                                continue
-                        else:
-                            coord = pc.coordinates.filter_by_axis('exact', axis).value(None)
-                            if coord is None:
-                                raise ValueError(
-                                    "Can't collapse: Need unambiguous 1-d coordinates when group_span={!r}".format(
-                                        group_span))
+                if over is None and group_span is not False:
+                    if isinstance(group_span, int):
+                        if pc.domain_axes[axis].get_size() != group_span:
+                            classification[index] = ignore_n
+                            ignore_n -= 1
+                            continue
+                    else:
+                        coord = pc.coordinates.filter_by_axis('exact', axis).value(None)
+                        if coord is None:
+                            raise ValueError(
+                                "Can't collapse: Need unambiguous 1-d coordinates when group_span={!r}".format(
+                                    group_span))
 
-                            bounds = coord.get_bounds(None)
-                            if bounds is None:
-                                raise ValueError(
-                                    "Can't collapse: Need unambiguous 1-d coordinate bounds when group_span={!r}".format(
-                                        group_span))
+                        bounds = coord.get_bounds(None)
+                        if bounds is None:
+                            raise ValueError(
+                                "Can't collapse: Need unambiguous 1-d coordinate bounds when group_span={!r}".format(
+                                    group_span))
 
-                            lb = bounds[ 0, 0].get_data()
-                            ub = bounds[-1, 1].get_data()
-                            if coord.T:
-                                lb = lb.datetime_array.item()
-                                ub = ub.datetime_array.item()
-                            
-                            if not coord.increasing:
-                                lb, ub = ub, lb
+                        lb = bounds[ 0, 0].get_data()
+                        ub = bounds[-1, 1].get_data()
+                        if coord.T:
+                            lb = lb.datetime_array.item()
+                            ub = ub.datetime_array.item()
+                        
+                        if not coord.increasing:
+                            lb, ub = ub, lb
 
-                            if group_span + lb != ub:
-                                # The span of this group is not the
-                                # same as group_span, so don't
-                                # collapse it.
-                                classification[index] = ignore_n
-                                ignore_n -= 1
-                                continue
-                    #--- End: if
-            
-                    if group_contiguous:
-                        overlap = (group_contiguous == 2)
-                        if not coord.bounds.contiguous(overlap=overlap):
-                            # This group is not contiguous, so don't
+                        if group_span + lb != ub:
+                            # The span of this group is not the
+                            # same as group_span, so don't
                             # collapse it.
                             classification[index] = ignore_n
-                            ignore_n -= 1                            
+                            ignore_n -= 1
                             continue
+                #--- End: if
+        
+                if group_contiguous:
+                    overlap = (group_contiguous == 2)
+                    if not coord.bounds.contiguous(overlap=overlap):
+                        # This group is not contiguous, so don't
+                        # collapse it.
+                        classification[index] = ignore_n
+                        ignore_n -= 1                            
+                        continue
                 #--- End: if
 
                 if regroup:
@@ -10114,7 +10142,7 @@ class Field(mixin.PropertiesData,
         # Still here?
         if not fl:
             c = 'contiguous ' if group_contiguous else ''
-            s = ' spanning {}'.format(group_span) if group_span is not None else ''
+            s = ' spanning {}'.format(group_span) if group_span is not False else ''
             if within is not None:
                s = ' within {}{}'.format(within, s)
                
