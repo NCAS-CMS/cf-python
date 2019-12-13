@@ -6,11 +6,15 @@ version 3.1.0
 
 * New keyword parameter to `cf.Field.weights`: ``data``.
 * New example field (``5``) available from `cf.example_field`.
-* New regridding option: second order conservative.
-* Changed the default value of the `cf.Field.weights` ``weights``
-  parameter to `True`.
+* New regridding option: ``'conservative_2nd'``.
+* Changed the default value of the `cf.Field.collapse` ``group_span``
+  parameter to `True` and default value of the ``group_contiguous``
+  parameter to ``1``
+  (https://github.com/NCAS-CMS/cf-python/issues/28).
 * Changed the default values of the `cf.Field.collapse` ``group_by``
   and ``coordinate`` parameters to `None`.
+* Changed the default value of the `cf.Field.weights` ``weights``
+  parameter to `True`.
 * Fixed bug that didn't change the unit of bounds when the units of
   the coordinates were changed.
 * Changed minimum cfunits dependency to version 3.2.3. This fixes a
@@ -160,7 +164,6 @@ version 3.0.0 (*first Python 3 version*)
   the new API usage. However, it is advised that the outputs of older
   scripts be checked when running with Python 3 versions of the cf
   library.
-
 * Deprecated ``cfdump`` (its functionality is now included in
   ``cfa``).
   

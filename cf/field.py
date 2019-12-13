@@ -7194,7 +7194,7 @@ class Field(mixin.PropertiesData,
                  group=None, regroup=False, within_days=None,
                  within_years=None, over_days=None, over_years=None,
                  coordinate=None, group_by=None, group_span=None,
-                 group_contiguous=None, measure=False, scale=None,
+                 group_contiguous=1, measure=False, scale=None,
                  radius='earth', verbose=False,
                  _create_zero_size_cell_bounds=False,
                  _update_cell_methods=True, i=False, _debug=False,
@@ -8062,19 +8062,25 @@ class Field(mixin.PropertiesData,
     
         group_span: optional
             Specify how to treat groups that may not span the desired
-            range. For example, when creating 3-month seasonal means,
-            the *group_span* parameter can be used to ignore groups
-            which only contain 1 or 2 months of data.
+            range. For example, when creating 3-month means, the
+            *group_span* parameter can be used to allow groups which
+            only contain 1 or 2 months of data.
 
             By default, *group_span* is `None`. This means that only
             groups whose span equals the size specified by the
             definition of the groups are collapsed; unless the groups
             have been defined by one or more `Query` objects, in which
-            case then the default behviour is collapse all groups,
-            regardless of their size. In effect, the *group_span*
-            parameter defaults to `True` unless the groups have been
-            defined by one or more `Query` objects, in which case
-            *group_span* defaults to `False`.
+            case then the default behaviour is to collapse all groups,
+            regardless of their size.
+
+            In effect, the *group_span* parameter defaults to `True`
+            unless the groups have been defined by one or more `Query`
+            objects, in which case *group_span* defaults to `False`.
+
+            The different behaviour when the groups have been defined
+            by one or more `Query` objects is necessary because a
+            `Query` object can only define the composition of a group,
+            and not its size (see the parameter examples below).
 
             .. note:: Prior to version 3.1.0, the default value of
                       *group_span* was effectively `False`.
@@ -8143,24 +8149,37 @@ class Field(mixin.PropertiesData,
               `cf.seasons` and `cf.M`).
         
         group_contiguous: `int`, optional
-            Ignore groups that whose coordinates are not contiguous,
-            or whose cell bounds overlap. If set to 1 or 2 then ignore
-            groups whose cells are not contiguous along the collapse
-            axis. The *group_contiguous* parameter is only considered
-            for groups defined by the *group*, *within_days* or
-            *within_years* parameters.
+            Specify how to treat groups whose elements are not
+            contiguous ro have overlapping cells. For example, when
+            creating a December to February means, the
+            *group_contiguous* parameter can be used to allow groups
+            which have no data for January.
+
+            By default, *group_contiguous* is ``1``, meaning that a
+            group is considered to be contiguous unless it has
+            coordinates with bounds that do not coincide for adjacent
+            cells. Groups with coordinate bounds that overlap may be
+            considered contiguous if *group_contiguous* is set to
+            ``2``.
+
+            .. note:: Prior to version 3.1.0, the default value of
+                      *group_contiguous* was ``0``.
+
+            The *group_contiguous* parameter is only applied to groups
+            defined by the *group*, *within_days* or *within_years*
+            parameters, and is otherwise ignored.
 
             The *group_contiguous* parameter may be one of:
     
             ===================  =====================================
             *group_contiguous*   Description
             ===================  =====================================
-            ``0``                This is the default.
-
-                                 Allow non-contiguous groups.
+            ``0``                Allow non-contiguous groups, and
+                                 those containing overlapping cells.
     
-            ``1``                Ignore non-contiguous groups, as well
-                                 as contiguous groups containing
+            ``1``                This is the default. Ignore
+                                 non-contiguous groups, as well as
+                                 contiguous groups containing
                                  overlapping cells.
     
             ``2``                Ignore non-contiguous groups,
@@ -8169,9 +8188,8 @@ class Field(mixin.PropertiesData,
             ===================  =====================================
     
             *Parameter example:*
-              To ignore non-contiguous groups, as well as any
-              contiguous group containing overlapping cells:
-              ``group_contiguous=1``.
+              To allow non-contiguous groups, and those containing
+              overlapping cells: ``group_contiguous=0``.
     
         within_days: optional
             Independently collapse groups of reference-time axis
@@ -8664,7 +8682,6 @@ class Field(mixin.PropertiesData,
         if group is not None and len(all_axes) > 1:
             raise ValueError(
                 "Can't use the 'group' parameter for multiple collapses")
-
         # ------------------------------------------------------------
         #
         # ------------------------------------------------------------
@@ -8852,6 +8869,7 @@ class Field(mixin.PropertiesData,
                                         squeeze=squeeze,
                                         coordinate=coordinate,
                                         group_by=group_by,
+                                        axis_in=axes_in[0],
                                         verbose=verbose)
 
                 if regroup:
@@ -8872,13 +8890,13 @@ class Field(mixin.PropertiesData,
                 raise ValueError(
                     "Can't return an array of groups for a non-grouped collapse")
 
-            if group_contiguous:
-                raise ValueError(
-                    "Can't collapse: Can only set group_contiguous for grouped, 'within days' or 'within years' collapses.")
-            
-            if group_span is not None:
-                raise ValueError(
-                    "Can't collapse: Can only set group_span for grouped, 'within days' or 'within years' collapses.")
+#            if group_contiguous:
+#                raise ValueError(
+#                    "Can't collapse: Can only set group_contiguous for grouped, 'within days' or 'within years' collapses.")
+#            
+#            if group_span is not None:
+#                raise ValueError(
+#                    "Can't collapse: Can only set group_span for grouped, 'within days' or 'within years' collapses.")
             
 #            method = _collapse_methods.get(method, None)
 #            if method is None:
@@ -9085,7 +9103,7 @@ class Field(mixin.PropertiesData,
                           mtol=None, ddof=None, regroup=None,
                           coordinate=None, measure=False,
                           weights=None, squeeze=None, group_by=None,
-                          verbose=False):
+                          axis_in=None, verbose=False):
         '''TODO
         
     :Parameters:
@@ -9526,6 +9544,7 @@ class Field(mixin.PropertiesData,
         if verbose:
             print('    Grouped collapse:')                               # pragma: no cover
             print('        method            =', repr(method)          ) # pragma: no cover
+            print('        axis_in           =', repr(axis_in)         ) # pragma: no cover
             print('        axis              =', repr(axis)            ) # pragma: no cover
             print('        over              =', repr(over)            ) # pragma: no cover
             print('        over_days         =', repr(over_days)       ) # pragma: no cover
@@ -10067,51 +10086,54 @@ class Field(mixin.PropertiesData,
                 # ----------------------------------------------------
                 # Ignore groups that don't meet the specified criteria
                 # ----------------------------------------------------
-                if over is None and group_span is not False:
-                    if isinstance(group_span, int):
-                        if pc.domain_axes[axis].get_size() != group_span:
-                            classification[index] = ignore_n
-                            ignore_n -= 1
-                            continue
-                    else:
-                        coord = pc.coordinates.filter_by_axis('exact', axis).value(None)
-                        if coord is None:
-                            raise ValueError(
-                                "Can't collapse: Need unambiguous 1-d coordinates when group_span={!r}".format(
-                                    group_span))
+                if over is None:
+#                    coord = pc.coordinates.filter_by_axis('exact', axis).value(None)
+                    coord = pc.coordinate(axis_in, default=None)
 
-                        bounds = coord.get_bounds(None)
-                        if bounds is None:
-                            raise ValueError(
-                                "Can't collapse: Need unambiguous 1-d coordinate bounds when group_span={!r}".format(
-                                    group_span))
-
-                        lb = bounds[ 0, 0].get_data()
-                        ub = bounds[-1, 1].get_data()
-                        if coord.T:
-                            lb = lb.datetime_array.item()
-                            ub = ub.datetime_array.item()
-                        
-                        if not coord.increasing:
-                            lb, ub = ub, lb
-
-                        if group_span + lb != ub:
-                            # The span of this group is not the
-                            # same as group_span, so don't
+                    if group_span is not False:
+                        if isinstance(group_span, int):
+                            if pc.domain_axes[axis].get_size() != group_span:
+                                classification[index] = ignore_n
+                                ignore_n -= 1
+                                continue
+                        else:
+#                            coord = pc.coordinates.filter_by_axis('exact', axis).value(None)
+                            if coord is None:
+                                raise ValueError(
+                                    "Can't collapse: Need unambiguous 1-d coordinates when group_span={!r}".format(
+                                        group_span))
+    
+                            bounds = coord.get_bounds(None)
+                            if bounds is None:
+                                raise ValueError(
+                                    "Can't collapse: Need unambiguous 1-d coordinate bounds when group_span={!r}".format(
+                                        group_span))
+    
+                            lb = bounds[ 0, 0].get_data()
+                            ub = bounds[-1, 1].get_data()
+                            if coord.T:
+                                lb = lb.datetime_array.item()
+                                ub = ub.datetime_array.item()
+                            
+                            if not coord.increasing:
+                                lb, ub = ub, lb
+    
+                            if group_span + lb != ub:
+                                # The span of this group is not the
+                                # same as group_span, so don't
+                                # collapse it.
+                                classification[index] = ignore_n
+                                ignore_n -= 1
+                                continue
+                    #--- End: if
+        
+                    if group_contiguous and coord is not None and coord.has_bounds():
+                        if not coord.bounds.contiguous(overlap=(group_contiguous == 2)):
+                            # This group is not contiguous, so don't
                             # collapse it.
                             classification[index] = ignore_n
-                            ignore_n -= 1
+                            ignore_n -= 1                            
                             continue
-                #--- End: if
-        
-                if group_contiguous:
-                    overlap = (group_contiguous == 2)
-                    if not coord.bounds.contiguous(overlap=overlap):
-                        # This group is not contiguous, so don't
-                        # collapse it.
-                        classification[index] = ignore_n
-                        ignore_n -= 1                            
-                        continue
                 #--- End: if
 
                 if regroup:

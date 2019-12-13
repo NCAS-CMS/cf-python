@@ -218,24 +218,24 @@ class Coordinate(mixin.PropertiesDataBounds):
     def axis(self):
         '''The axis CF property.
 
-The `axis` property may be used to specify the type of coordinates. It
-may take one of the values `'X'`, `'Y'`, `'Z'` or `'T'` which stand
-for a longitude, latitude, vertical, or time axis respectively. A
-value of `'X'`, `'Y'` or `'Z'` may also also used to identify generic
-spatial coordinates (the values `'X'` and `'Y'` being used to identify
-horizontal coordinates).
-
-**Examples:**
-
->>> c.axis = 'Y'
->>> c.axis
-'Y'
->>> del c.axis
-
->>> c.set_property('axis', 'T')
->>> c.get_property('axis')
-'T'
->>> c.del_property('axis')
+    The `axis` property may be used to specify the type of
+    coordinates. It may take one of the values `'X'`, `'Y'`, `'Z'` or
+    `'T'` which stand for a longitude, latitude, vertical, or time
+    axis respectively. A value of `'X'`, `'Y'` or `'Z'` may also also
+    used to identify generic spatial coordinates (the values `'X'` and
+    `'Y'` being used to identify horizontal coordinates).
+    
+    **Examples:**
+    
+    >>> c.axis = 'Y'
+    >>> c.axis
+    'Y'
+    >>> del c.axis
+    
+    >>> c.set_property('axis', 'T')
+    >>> c.get_property('axis')
+    'T'
+    >>> c.del_property('axis')
 
         '''
         return self.get_property('axis', default=AttributeError())
