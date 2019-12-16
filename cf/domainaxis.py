@@ -36,42 +36,60 @@ class DomainAxis(cfdm.DomainAxis):
 
         '''
         return hash((self.__class__.__name__,
-                     self.get_size(),
+                     self.get_size(None),
                      self.nc_get_dimension()))
 
     
     def __eq__(self, other):
-        '''TODO
+        '''The rich comparison operator ``==``
+
+    x.__eq__(y) <==> x.size==y
+
         '''
         return self.get_size() == int(other)
 
 
     def __ne__(self, other):
-        '''TODO
+        '''The rich comparison operator ``!=``
+
+    x.__ne__(y) <==> x.size!=y
+
         '''
         return self.get_size() != int(other)
 
 
     def __gt__(self, other):
-        '''TODO
+        '''The rich comparison operator ``>``
+
+    x.__gt__(y) <==> x.size>y
+
         '''
         return self.get_size() > int(other)
 
 
     def __ge__(self, other):
-        '''TODO
+        '''The rich comparison operator ``>=``
+
+    x.__ge__(y) <==> x.size>=y
+
         '''
         return self.get_size() >= int(other)
 
 
     def __lt__(self, other):
-        '''TODO
+        '''The rich comparison operator ``<``
+
+    x.__lt__(y) <==> x.size<y
+
         '''
         return self.get_size() < int(other)
 
 
     def __le__(self, other):
-        '''TODO
+        '''The rich comparison operator ``<=``
+
+    x.__le__(y) <==> x.size<=y
+
         '''
         return self.get_size() <= int(other)
 
@@ -122,13 +140,27 @@ class DomainAxis(cfdm.DomainAxis):
 
     @property
     def size(self):
-        '''TODO
+        '''The domain axis size.
+
+    .. seealso:: `del_size`, `get_size`, `has_size`, `set_size`
+
+    **Examples:**
+    
+    >>> d.size = 96
+    >>> d.size
+    96
+    >>> del d.size
+    >>> hasattr(d, 'size')
+    False
+
         '''
         return self.get_size(default=AttributeError())
     @size.setter
-    def size(self, value): self.set_size(value)
+    def size(self, value):
+        self.set_size(value)
     @size.deleter
-    def size(self):        self.del_size(default=AttributeError())
+    def size(self):
+        self.del_size(default=AttributeError())
 
 
     def inspect(self):

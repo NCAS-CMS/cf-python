@@ -4,17 +4,33 @@ version 3.1.0
 
 **Not yet released**
 
-* New keyword parameter to `cf.Field.weights`: ``data``.
-* New example field (``5``) available from `cf.example_field`.
-* New regridding option: ``'conservative_2nd'``.
+* Changed the API to `cf.Field.match_by_construct` and
+  `cf.FieldList.select_by_construct`.
+* Changed the default value of the `cf.Field.collapse` ``group_span``
+  parameter to `True` and default value of the ``group_contiguous``
+  parameter to ``1``
+  (https://github.com/NCAS-CMS/cf-python/issues/28).
 * Changed the default value of the `cf.Field.collapse` ``group_span``
   parameter to `True` and default value of the ``group_contiguous``
   parameter to ``1``
   (https://github.com/NCAS-CMS/cf-python/issues/28).
 * Changed the default values of the `cf.Field.collapse` ``group_by``
   and ``coordinate`` parameters to `None`.
-* Changed the default value of the `cf.Field.weights` ``weights``
-  parameter to `True`.
+* New methods: `cf.Field.match_by_coordinate`,
+  `cf.Field.match_by_dimension_corodinate`,
+  `cf.Field.match_by_auxiliary_coordinate`,
+  `cf.Field.match_by_field_ancillary`,
+  `cf.Field.match_by_domain_ancillary`,
+  `cf.Field.match_by_cell_method`.
+* New methods: `cf.FieldList.select_by_coordinate`,
+  `cf.FieldList.select_by_dimension_corodinate`,
+  `cf.FieldList.select_by_auxiliary_coordinate`,
+  `cf.FieldList.select_by_field_ancillary`,
+  `cf.FieldList.select_by_domain_ancillary`,
+  `cf.FieldList.select_by_cell_method`.
+* New keyword parameter to `cf.Field.weights`: ``data``.
+* New example field (``5``) available from `cf.example_field`.
+* New regridding option: ``'conservative_2nd'``.
 * Fixed bug that didn't change the unit of bounds when the units of
   the coordinates were changed.
 * Changed minimum cfunits dependency to version 3.2.3. This fixes a
