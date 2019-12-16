@@ -8150,17 +8150,19 @@ class Field(mixin.PropertiesData,
         
         group_contiguous: `int`, optional
             Specify how to treat groups whose elements are not
-            contiguous ro have overlapping cells. For example, when
+            contiguous or have overlapping cells. For example, when
             creating a December to February means, the
             *group_contiguous* parameter can be used to allow groups
             which have no data for January.
 
-            By default, *group_contiguous* is ``1``, meaning that a
-            group is considered to be contiguous unless it has
+            A group is considered to be contiguous unless it has
             coordinates with bounds that do not coincide for adjacent
-            cells. Groups with coordinate bounds that overlap may be
-            considered contiguous if *group_contiguous* is set to
-            ``2``.
+            cells. The definition may be expanded to include groups
+            whose coordinate bounds that overlap.
+
+            By default *group_contiguous* is ``1``, meaning that
+            non-contiguous groups, and those whose coordinate bounds
+            overlap, are not collapsed
 
             .. note:: Prior to version 3.1.0, the default value of
                       *group_contiguous* was ``0``.
@@ -8192,12 +8194,13 @@ class Field(mixin.PropertiesData,
               overlapping cells: ``group_contiguous=0``.
     
         within_days: optional
-            Independently collapse groups of reference-time axis
-            elements for CF "within days" climatological
-            statistics. Each group contains elements whose coordinates
-            span a time interval of up to one day. The results of the
-            collapses are concatenated so that the output axis has a
-            size equal to the number of groups.
+            Define the groups for creating CF "within days"
+            climatological statistics.
+
+            Each group contains elements whose coordinates span a time
+            interval of up to one day. The results of the collapses
+            are concatenated so that the output axis has a size equal
+            to the number of groups.
     
             .. note:: For CF compliance, a "within days" collapse
                       should be followed by an "over days" collapse.
@@ -8279,11 +8282,12 @@ class Field(mixin.PropertiesData,
     
         within_years: optional 
             Define the groups for creating CF "within years"
-            climatological statistics. Each group contains elements
-            whose coordinates span a time interval of up to one
-            calendar year. The results of the collapses are
-            concatenated so that the output axis has a size equal to
-            the number of groups.
+            climatological statistics.
+
+            Each group contains elements whose coordinates span a time
+            interval of up to one calendar year. The results of the
+            collapses are concatenated so that the output axis has a
+            size equal to the number of groups.
     
             .. note:: For CF compliance, a "within years" collapse
                       should be followed by an "over years" collapse.
@@ -8457,7 +8461,7 @@ class Field(mixin.PropertiesData,
               cf.month(cf.wi(6, 12))]`` (see `cf.month` and `cf.wi`).
     
         over_years: optional
-            Define the groups for creating CF "over yearss"
+            Define the groups for creating CF "over years"
             climatological statistics.
 
             By default (or if *over_years* is `None`) each group
