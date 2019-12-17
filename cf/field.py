@@ -24,6 +24,7 @@ from numpy import finfo       as numpy_finfo
 from numpy import isnan       as numpy_isnan
 from numpy import nan         as numpy_nan
 from numpy import ndarray     as numpy_ndarray
+from numpy import ndim        as numpy_ndim
 from numpy import prod        as numpy_prod
 from numpy import reshape     as numpy_reshape
 from numpy import shape       as numpy_shape
@@ -2207,13 +2208,13 @@ class Field(mixin.PropertiesData,
 
                 
     def _constructs_by_identity(self, *identities, OR=False,
-                                construct_types=()):
-        '''TODO
+                                constructs=None):
+        '''Whether or not coordinate metadata constructs satisfy conditions on
+    thier identities.
         
     .. versionadded:: 3.1.0
-    
+
         '''
-        constructs = self.constructs.filter_by_type(*construct_types)
         if not constructs:
             return constructs
 
@@ -2233,19 +2234,18 @@ class Field(mixin.PropertiesData,
 
     def _constructs_by_identity_and_value(self, *identities,
                                           value=None, OR=False,
-                                          construct_types=()):
-        '''Whether or not coordinate metadata constructs satisfy conditions.
+                                          constructs=None):
+        '''Whether or not coordinate metadata constructs satisfy conditions on
+    thier identities and/or values.
 
     .. versionadded:: 3.1.0
     
-    .. seealso: `match`, `match_by_property`, `match_by_rank`,
-                `match_by_identity`, `match_by_ncvar`,
-                `match_by_units`
+    .. seealso: `_constructs_by_identity`
     
     :Parameters:
     
         identities: optional
-            Select dimension or auxiliary corodinate constructs that
+            Select dimension or auxiliary coordinate constructs that
             have any of the given identities or construct keys.
 
             A construct identity is specified by a string
@@ -2288,8 +2288,8 @@ class Field(mixin.PropertiesData,
               ``'dimensioncoordinate2', 'ncvar%lat'``
 
         value: optional
-            Select the coordinate constructs whose data equals *value*
-            for any elements.
+            Select the constructs whose data equals *value* for any
+            elements.
     
             *Parameter example:*
               To test for coordinate values of 180: ``value=180``
@@ -2316,7 +2316,7 @@ class Field(mixin.PropertiesData,
 
         '''
         constructs = self._constructs_by_identity(*identities, OR=OR,
-                                                  construct_types=construct_types)
+                                                  constructs=constructs)
         if not constructs:
             return constructs
         
@@ -11456,17 +11456,24 @@ class Field(mixin.PropertiesData,
         return mask
 
 
-    def match_by_construct(self, *identities, OR=False, **constructs):
+    def match_by_construct(self, *identities, method_axes=None,
+                           OR=False, **constructs):
         '''Whether or not metadata constructs satisfy conditions.
 
     .. note:: The API changed at version 3.1.0
 
     .. versionadded:: 3.0.0
     
-    .. seealso: `match`, `match_by_property`, `match_by_rank`,
-                `match_by_identity`, `match_by_ncvar`,
-                `match_by_units`, `match_by_coordinate`
-    
+    .. seealso:: `match`, `match_by_property`, `match_by_rank`,
+                 `match_by_identity`, `match_by_ncvar`,
+                 `match_by_units`, `match_by_cell_method`,
+                 `match_by_coordinate`,
+                 `match_by_dimension_coordinate`,
+                 `match_by_auxiliary_coordinate`,
+                 `match_by_domain_ancillary`,
+                 `match_by_field_ancillary`, `match_by_cell_measure`,
+                 `match_by_coordinate_reference`
+            
     :Parameters:
     
         identities: optional
@@ -11516,7 +11523,7 @@ class Field(mixin.PropertiesData,
               ``'domainancillary2', 'ncvar%areacello'``
 
         OR: `bool`, optional
-            If True then return `True` if at least one metadata
+        If True then return `True` if at least one metadata
             construct matches at least one of the given criteria. By
             default `True` is only returned if at least one metadata
             construct matches all if the criteria.
@@ -11525,9 +11532,9 @@ class Field(mixin.PropertiesData,
             Use the *OR* parameter instead.
     
         constructs: deprecated at version 3.1.0
-            Use methods `match_by_cell_method`, `match_by_coordinate`,
-            'match_by_dimension_coordinate',
-            'match_by_auxiliary_coordinate',
+            Use one of the methods `match_by_cell_method`,
+            `match_by_coordinate`, `match_by_dimension_coordinate`,
+            `match_by_auxiliary_coordinate`,
             `match_by_domain_ancillary`, `match_by_field_ancillary`,
             `match_by_cell_measure` instead.
         
@@ -11555,52 +11562,56 @@ class Field(mixin.PropertiesData,
                                           version='3.1.0') # pragma: no cover
         #--- End: if
         
-        if not identities:
+        if not identities and not method_axes:
             return True
-               
-        constructs = self._constructs_by_identity(*identities, OR=OR)
+
+        # Parse method_axes
+        if not method_axes:
+            method_axes = ()
+        elif not numpy_ndim(method_axes):
+            method_axes = (method_axes,)
+
+        if method_axes:
+            if not identities:
+                raise ValueError("TODO 123kjnsdf76b")
+            
+            method_axes = set(self.domain_axis(axis, key=True, default=axis)
+                              for axis in method_axes)
+            
+        constructs = self.constructs
         
-        return bool(constructs)
-#        
-#        _or = False
-#        if mode:
-#            if len(mode) > 1:
-#                raise ValueError("match_by_construct: Can provide at most one positional argument")
-#            
-#            x = mode[0]
-#            if x == 'or':
-#                _or = True
-#            elif x != 'and':
-#                raise ValueError(
-#                    "match_by_construct: Positional argument, if provided, must one of 'or', 'and'")
-#        #--- End: if
-#
-#        if not constructs:
-#            return True
-#
-#        ok = True
-#        for identity, condition in constructs.items():
-#            c = self.constructs(identity)
-#            if condition is None:
-#                ok = bool(c)
-#            elif len(c) != 1:
-#                ok = False
-#            else:                    
-#                ok = (condition == c.value())
-#                try:
-#                    ok = ok.any()
-#                except AttributeError:
-#                    pass
-#            #--- End: if
-#                
-#            if _or:
-#                if ok:
-#                    break
-#            elif not ok:
-#                break
-#        #--- End: for
-#
-#        return ok
+        if not constructs:
+            return False
+
+        n = 0
+        
+        for identity in identities:
+            filtered = constructs(identity)
+            if filtered:
+                # Check for cell methods
+                if set(filtered.construct_types().values()) == {'cell_method'}:
+                    cell_method = tuple(self.cell_methods.ordered().values())[-1]
+                    if not cell_method.match(identity):
+                        if not OR:
+                            return False
+                        
+                        n -= 1
+                    elif method_axes and method_axes != set(cell_method.get_axes(())):
+                        if not OR:
+                            return False
+                            
+                        n -= 1                        
+                #--- End: if
+                
+                n += 1
+            elif not OR:
+                return False
+        #--- End: for
+            
+        if OR:
+            return bool(n)
+
+        return True
     
 
     def match_by_cell_method(self, *identities, axes=None, interval=None, OR=False):
@@ -11608,10 +11619,15 @@ class Field(mixin.PropertiesData,
 
     .. versionadded:: 3.0.0
     
-    .. seealso: `match`, `match_by_property`, `match_by_rank`,
-                `match_by_identity`, `match_by_ncvar`,
-                `match_by_units`
-    
+    .. seealso:: `match`, `match_by_property`, `match_by_rank`,
+                 `match_by_identity`, `match_by_ncvar`,
+                 `match_by_units`, `match_by_coordinate`,
+                 `match_by_dimension_coordinate`,
+                 `match_by_auxiliary_coordinate`,
+                 `match_by_domain_ancillary`,
+                 `match_by_field_ancillary`, `match_by_cell_measure`,
+                 `match_by_coordinate_reference`, `match_by_construct`
+
     :Parameters:
     
         identities: optional
@@ -11632,8 +11648,7 @@ class Field(mixin.PropertiesData,
     
                >>> x.identities()
                ['method:mean',
-                'over:sea',
-               ]
+                'over:sea']
     
             A construct key may optionally have the ``'key%'``
             prefix. For example ``'cellmethod2'`` and
@@ -11667,7 +11682,7 @@ class Field(mixin.PropertiesData,
 
         # Select by identity
         constructs = self._constructs_by_identity(*identities, OR=OR,
-                                                  construct_types=('cell_method',))
+                                                  constructs=self.cell_methods)
         if not constructs:
             return False
         
@@ -11716,14 +11731,19 @@ class Field(mixin.PropertiesData,
 
     .. versionadded:: 3.1.0
     
-    .. seealso: `match`, `match_by_property`, `match_by_rank`,
-                `match_by_identity`, `match_by_ncvar`,
-                `match_by_units`
-    
+    .. seealso:: `match`, `match_by_property`, `match_by_rank`,
+                 `match_by_identity`, `match_by_ncvar`,
+                 `match_by_units`, `match_by_cell_method`,
+                 `match_by_dimension_coordinate`,
+                 `match_by_auxiliary_coordinate`,
+                 `match_by_domain_ancillary`,
+                 `match_by_field_ancillary`, `match_by_cell_measure`,
+                 `match_by_coordinate_reference`, `match_by_construct`
+            
     :Parameters:
     
         identities: optional
-            Select dimension or auxiliary corodinate constructs that
+            Select dimension or auxiliary coordinate constructs that
             have any of the given identities or construct keys.
 
             A construct identity is specified by a string
@@ -11776,6 +11796,10 @@ class Field(mixin.PropertiesData,
               To test for coordinate values of less than 0:
               ``value=cf.lt(0)``    
 
+            *Parameter example:*
+              To test for values of 10, 20, or 30: ``value=cf.set([10,
+              20, 30])``
+
         OR: `bool`, optional
             If True then return `True` if at least one metadata
             construct matches at least one of the given criteria. By
@@ -11797,10 +11821,493 @@ class Field(mixin.PropertiesData,
             return True
         
         constructs = self._constructs_by_identity_and_value(
+            *identities, value=value, OR=OR, constructs=self.coordinates)
+
+        return bool(constructs)
+            
+
+    def match_by_coordinate_reference(self, *identities, OR=False):
+        '''Whether or not coordinate reference constructs satisfy conditions.
+
+    .. versionadded:: 3.1.0
+    
+    .. seealso:: `match`, `match_by_property`, `match_by_rank`,
+                 `match_by_identity`, `match_by_ncvar`,
+                 `match_by_units`, `match_by_cell_method`,
+                 `match_by_coordinate`,
+                 `match_by_dimension_coordinate`,
+                 `match_by_auxiliary_coordinate`,
+                 `match_by_domain_ancillary`,
+                 `match_by_field_ancillary`, `match_by_cell_measure`,
+                 `match_by_construct`
+            
+    :Parameters:
+    
+        identities: optional
+            Select coordinate reference constructs that have any of
+            the given identities or construct keys.
+
+            A construct identity is specified by a string
+            (e.g. ``'grid_mapping_name:rotated_latitude_longitude'``);
+            or a compiled regular expression
+            (e.g. ``re.compile('^rotated_latitude_longitude')``) that
+            selects the relevant constructs whose identities match via
+            `re.search`.
+    
+            Each construct has a number of identities, and is selected
+            if any of them match any of those provided. A construct's
+            identities are those returned by its `!identities`
+            method. In the following example, the construct ``x`` has
+            one identity:
+    
+               >>> x.identities()
+               ['standard_name:atmosphere_hybrid_height_coordinate']
+    
+            A construct key may optionally have the ``'key%'``
+            prefix. For example ``'coordinatereference0'`` and
+            ``'key%coordinatereference0'`` are both acceptable keys.
+    
+            Note that in the output of a `print` call or `!dump`
+            method, a construct is always described by one of its
+            identities, and so this description may always be used as
+            an *identity* argument.
+    
+            *Parameter example:*
+              ``'standard_name:atmosphere_hybrid_height_coordinate'``
+    
+            *Parameter example:*
+              ``'coordinatereference'``
+
+        OR: `bool`, optional
+            If True then return `True` if at least one metadata
+            construct matches at least one of the given criteria. By
+            default `True` is only returned if at least one metadata
+            construct matches all if the criteria.
+
+    :Returns:
+    
+        `bool`
+            Whether or not the field construct contains the specfied
+            coordinate reference metadata constructs.
+    
+    **Examples:**
+    
+        TODO
+
+        '''
+        if not identities:
+            return True
+
+        constructs = self._constructs_by_identity(*identities, OR=OR,
+                                                  constructs=self.coordinate_references)
+
+        return bool(constructs)
+            
+
+    def match_by_auxiliary_coordinate(self, *identities, value=None,
+                                      OR=False):
+        '''Whether or not auxiliary coordinate constructs satisfy conditions.
+
+    .. versionadded:: 3.1.0
+    
+    .. seealso:: `match`, `match_by_property`, `match_by_rank`,
+                 `match_by_identity`, `match_by_ncvar`,
+                 `match_by_units`, `match_by_cell_method`,
+                 `match_by_coordinate`,
+                 `match_by_dimension_coordinate`,
+                 `match_by_domain_ancillary`,
+                 `match_by_field_ancillary`, `match_by_cell_measure`,
+                 `match_by_coordinate_reference`, `match_by_construct`
+            
+    :Parameters:
+    
+        identities: optional
+            Select auxiliary coordinate constructs that have any of
+            the given identities or construct keys.
+
+            A construct identity is specified by a string
+            (e.g. ``'latitude'``, ``'long_name=time'``,
+            ``'ncvar%lat'``, etc.); or a compiled regular expression
+            (e.g. ``re.compile('^atmosphere')``) that selects the
+            relevant constructs whose identities match via
+            `re.search`.
+    
+            Each construct has a number of identities, and is selected
+            if any of them match any of those provided. A construct's
+            identities are those returned by its `!identities`
+            method. In the following example, the construct ``x`` has
+            six identities:
+    
+               >>> x.identities()
+               ['time',
+                'long_name=Time',
+                'foo=bar',
+                'standard_name=time',
+                'ncvar%t',
+                'T']
+    
+            A construct key may optionally have the ``'key%'``
+            prefix. For example ``'auxiliarycoordinate2'`` and
+            ``'key%auxiliarycoordinate2'`` are both acceptable keys.
+    
+            Note that in the output of a `print` call or `!dump`
+            method, a construct is always described by one of its
+            identities, and so this description may always be used as
+            an *identity* argument.
+    
+            *Parameter example:*
+              ``'latitude'``
+    
+            *Parameter example:*
+              ``'long_name=Longitude'``
+    
+            *Parameter example:*
+              ``'auxiliarycoordinate2', 'ncvar%lat'``
+
+        value: optional
+            Select the auxiliary coordinate constructs whose data
+            equals *value* for any elements.
+    
+            *Parameter example:*
+              To test for coordinate values of 180: ``value=180``
+    
+            *Parameter example:*
+              To test for coordinate values of less than 0:
+              ``value=cf.lt(0)``    
+
+            *Parameter example:*
+              To test for values of 10, 20, or 30: ``value=cf.set([10,
+              20, 30])``
+
+        OR: `bool`, optional
+            If True then return `True` if at least one metadata
+            construct matches at least one of the given criteria. By
+            default `True` is only returned if at least one metadata
+            construct matches all if the criteria.
+
+    :Returns:
+    
+        `bool`
+            Whether or not the field construct contains the specfied
+            auxiliary coordinate constructs.
+    
+    **Examples:**
+    
+        TODO
+
+        '''
+        if not identities and value is None:
+            return True
+        
+        constructs = self._constructs_by_identity_and_value(
             *identities,
             value=value, OR=OR,
-            construct_types=('dimension_coordinate',
-                             'auxiliary_coordinate'))
+            constructs=self.auxiliary_coordinates)
+
+        return bool(constructs)
+            
+
+    def match_by_dimension_coordinate(self, *identities, value=None,
+                                      OR=False):
+        '''Whether or not dimension coordinate constructs satisfy conditions.
+
+    .. versionadded:: 3.1.0
+    
+    .. seealso:: `match`, `match_by_property`, `match_by_rank`,
+                 `match_by_identity`, `match_by_ncvar`,
+                 `match_by_units`, `match_by_cell_method`,
+                 `match_by_coordinate`,
+                 `match_by_auxiliary_coordinate`,
+                 `match_by_domain_ancillary`,
+                 `match_by_field_ancillary`, `match_by_cell_measure`,
+                 `match_by_coordinate_reference`, `match_by_construct`
+            
+    :Parameters:
+    
+        identities: optional
+            Select dimension coordinate constructs that have any of
+            the given identities or construct keys.
+
+            A construct identity is specified by a string
+            (e.g. ``'latitude'``, ``'long_name=time'``,
+            ``'ncvar%lat'``, etc.); or a compiled regular expression
+            (e.g. ``re.compile('^atmosphere')``) that selects the
+            relevant constructs whose identities match via
+            `re.search`.
+    
+            Each construct has a number of identities, and is selected
+            if any of them match any of those provided. A construct's
+            identities are those returned by its `!identities`
+            method. In the following example, the construct ``x`` has
+            six identities:
+    
+               >>> x.identities()
+               ['time',
+                'long_name=Time',
+                'foo=bar',
+                'standard_name=time',
+                'ncvar%t',
+                'T']
+    
+            A construct key may optionally have the ``'key%'``
+            prefix. For example ``'dimensioncoordinate2'`` and
+            ``'key%dimensioncoordinate2'`` are both acceptable keys.
+    
+            Note that in the output of a `print` call or `!dump`
+            method, a construct is always described by one of its
+            identities, and so this description may always be used as
+            an *identity* argument.
+    
+            *Parameter example:*
+              ``'latitude'``
+    
+            *Parameter example:*
+              ``'long_name=Longitude'``
+    
+            *Parameter example:*
+              ``'dimensioncoordinate2', 'ncvar%lat'``
+
+        value: optional
+            Select the dimension coordinate constructs whose data
+            equals *value* for any elements.
+    
+            *Parameter example:*
+              To test for coordinate values of 180: ``value=180``
+    
+            *Parameter example:*
+              To test for coordinate values of less than 0:
+              ``value=cf.lt(0)``    
+
+            *Parameter example:*
+              To test for values of 10, 20, or 30: ``value=cf.set([10,
+              20, 30])``
+
+        OR: `bool`, optional
+            If True then return `True` if at least one metadata
+            construct matches at least one of the given criteria. By
+            default `True` is only returned if at least one metadata
+            construct matches all if the criteria.
+
+    :Returns:
+    
+        `bool`
+            Whether or not the field construct contains the specfied
+            dimension coordinate constructs.
+    
+    **Examples:**
+    
+        TODO
+
+        '''
+        if not identities and value is None:
+            return True
+        
+        constructs = self._constructs_by_identity_and_value(
+            *identities, value=value, OR=OR,
+            constructs=self.dimension_coordinates)
+
+        return bool(constructs)
+            
+
+    def match_by_domain_ancillary(self, *identities, value=None,
+                                  OR=False):
+        '''Whether or not domain ancillary constructs satisfy conditions.
+
+    .. versionadded:: 3.1.0
+        
+    .. seealso:: `match`, `match_by_property`, `match_by_rank`,
+                 `match_by_identity`, `match_by_ncvar`,
+                 `match_by_units`, `match_by_cell_method`,
+                 `match_by_coordinate`,
+                 `match_by_dimension_coordinate`,
+                 `match_by_auxiliary_coordinate`,
+                 `match_by_field_ancillary`, `match_by_cell_measure`,
+                 `match_by_coordinate_reference`, `match_by_construct`
+            
+
+    :Parameters:
+    
+        identities: optional
+            Select domain ancillary constructs that have any of the
+            given identities or construct keys.
+
+            A construct identity is specified by a string
+            (e.g. ``'altitude'``, ``'long_name=Orography'``,
+            ``'ncvar%orog'``, etc.); or a compiled regular expression
+            (e.g. ``re.compile('^atmosphere')``) that selects the
+            relevant constructs whose identities match via
+            `re.search`.
+    
+            Each construct has a number of identities, and is selected
+            if any of them match any of those provided. A construct's
+            identities are those returned by its `!identities`
+            method. In the following example, the construct ``x`` has
+            five identities:
+    
+               >>> x.identities()
+               ['altitude',
+                'long_name=Orography',
+                'foo=bar',
+                'standard_name=altitude',
+                'ncvar%orog']
+               
+    
+            A construct key may optionally have the ``'key%'``
+            prefix. For example ``'domainancillary2'`` and
+            ``'key%domainancillary2'`` are both acceptable keys.
+    
+            Note that in the output of a `print` call or `!dump`
+            method, a construct is always described by one of its
+            identities, and so this description may always be used as
+            an *identity* argument.
+    
+            *Parameter example:*
+              ``'altitude'``
+    
+            *Parameter example:*
+              ``'long_name=Orography'``
+    
+            *Parameter example:*
+              ``'domainancillary2', 'ncvar%orog'``
+
+        value: optional
+            Select the domain ancillary constructs whose data equals
+            *value* for any elements.
+    
+            *Parameter example:*
+              To test for values of 180: ``value=180``
+    
+            *Parameter example:*
+              To test for values of less than 0: ``value=cf.lt(0)``
+
+            *Parameter example:*
+              To test for values of 10, 20, or 30: ``value=cf.set([10,
+              20, 30])``
+
+        OR: `bool`, optional
+            If True then return `True` if at least one metadata
+            construct matches at least one of the given criteria. By
+            default `True` is only returned if at least one metadata
+            construct matches all if the criteria.
+
+    :Returns:
+    
+        `bool`
+            Whether or not the field construct contains the specfied
+            domain ancillary constructs.
+    
+    **Examples:**
+    
+        TODO
+
+        '''
+        if not identities and value is None:
+            return True
+        
+        constructs = self._constructs_by_identity_and_value(
+            *identities, value=value, OR=OR,
+            constructs=self.domain_ancillaries)
+
+        return bool(constructs)
+            
+
+    def match_by_field_ancillary(self, *identities, value=None,
+                                 OR=False):
+        '''Whether or not field ancillary constructs satisfy conditions.
+
+    .. versionadded:: 3.1.0
+    
+    .. seealso:: `match`, `match_by_property`, `match_by_rank`,
+                 `match_by_identity`, `match_by_ncvar`,
+                 `match_by_units`, `match_by_cell_method`,
+                 `match_by_coordinate`,
+                 `match_by_dimension_coordinate`,
+                 `match_by_auxiliary_coordinate`,
+                 `match_by_domain_ancillary`, `match_by_cell_measure`,
+                 `match_by_coordinate_reference`, `match_by_construct`
+
+    :Parameters:
+    
+        identities: optional
+            Select field ancillary constructs that have any of the
+            given identities or construct keys.
+
+            A construct identity is specified by a string
+            (e.g. ``'specific_humidity standard_error'``,
+            ``'long_name=Orography'``, ``'ncvar%q_error_limit'``,
+            etc.); or a compiled regular expression
+            (e.g. ``re.compile('^atmosphere')``) that selects the
+            relevant constructs whose identities match via
+            `re.search`.
+    
+            Each construct has a number of identities, and is selected
+            if any of them match any of those provided. A construct's
+            identities are those returned by its `!identities`
+            method. In the following example, the construct ``x`` has
+            five identities:
+    
+               >>> x.identities()
+               ['specific_humidity standard_error',
+                'long_name=Orography',
+                'foo=bar',
+                'standard_name=specific_humidity standard_error',
+                'ncvar%q_error_limit']
+    
+            A construct key may optionally have the ``'key%'``
+            prefix. For example ``'fieldancillary2'`` and
+            ``'key%fieldancillary2'`` are both acceptable keys.
+    
+            Note that in the output of a `print` call or `!dump`
+            method, a construct is always described by one of its
+            identities, and so this description may always be used as
+            an *identity* argument.
+    
+            *Parameter example:*
+              ``'specific_humidity standard_error'``
+    
+            *Parameter example:*
+              ``'long_name=Longitude'``
+    
+            *Parameter example:*
+              ``'fieldancillary2', 'ncvar%q_error_limit'``
+
+        value: optional
+            Select the field ancillary constructs whose data equals
+            *value* for any elements.
+    
+            *Parameter example:*
+              To test for values of 180: ``value=180``
+    
+            *Parameter example:*
+              To test for values of less than 0: ``value=cf.lt(0)``
+
+            *Parameter example:*
+              To test for values of 10, 20, or 30: ``value=cf.set([10,
+              20, 30])``
+
+        OR: `bool`, optional
+            If True then return `True` if at least one metadata
+            construct matches at least one of the given criteria. By
+            default `True` is only returned if at least one metadata
+            construct matches all if the criteria.
+
+    :Returns:
+    
+        `bool`
+            Whether or not the field construct contains the specfied
+            field ancillary constructs.
+    
+    **Examples:**
+    
+        TODO
+
+        '''
+        if not identities and value is None:
+            return True
+        
+        constructs = self._constructs_by_identity_and_value(
+            *identities, value=value, OR=OR,
+            constructs=self.field_ancillary)
 
         return bool(constructs)
             
@@ -11810,10 +12317,16 @@ class Field(mixin.PropertiesData,
 
     .. versionadded:: 3.1.0
     
-    .. seealso: `match`, `match_by_property`, `match_by_rank`,
-                `match_by_identity`, `match_by_ncvar`,
-                `match_by_units`
-    
+    .. seealso:: `match`, `match_by_property`, `match_by_rank`,
+                 `match_by_identity`, `match_by_ncvar`,
+                 `match_by_units`, `match_by_cell_method`,
+                 `match_by_coordinate`,
+                 `match_by_dimension_coordinate`,
+                 `match_by_auxiliary_coordinate`,
+                 `match_by_domain_ancillary`,
+                 `match_by_field_ancillary`,
+                 `match_by_coordinate_reference`, `match_by_construct`
+            
     :Parameters:
     
         identities: optional
@@ -11835,8 +12348,7 @@ class Field(mixin.PropertiesData,
     
                >>> x.identities()
                ['measure:area',
-                'long_name=Area',
-               ]
+                'long_name=Area']
     
             A construct key may optionally have the ``'key%'``
             prefix. For example ``cellmeasure2'`` and
@@ -11851,8 +12363,8 @@ class Field(mixin.PropertiesData,
               TODO
 
         value: optional
-            Select the coordinate constructs whose data equals *value*
-            for any elements.
+            Select the cell measure constructs whose data equals
+            *value* for any elements.
     
             *Parameter example:*
               To test for coordinate values of 50000: ``value=50000``
@@ -11860,6 +12372,10 @@ class Field(mixin.PropertiesData,
             *Parameter example:*
               To test for coordinate values of less than 160000:
               ``value=cf.lt(160000)``    
+
+            *Parameter example:*
+              To test for values of 10000, 20000, or 30000:
+              ``value=cf.set([10000, 20000, 30000])``
 
         OR: `bool`, optional
             If True then return `True` if at least one metadata
@@ -11882,23 +12398,28 @@ class Field(mixin.PropertiesData,
             return True
         
         constructs = self._constructs_by_identity_and_value(
-            *identities,
-            value=value, OR=OR,
-            construct_types=('cell_measure',))
+            *identities, value=value, OR=OR,
+            constructs=self.cell_measures)
 
         return bool(constructs)
             
 
     def match_by_rank(self, *ranks):
+
         '''Whether or not the number of domain axis constructs satisfy
     conditions.
     
     .. versionadded:: 3.0.0
     
-    .. seealso: `match`, `match_by_property`, `match_by_construct`,
-                `match_by_identity`, `match_by_ncvar`,
-                `match_by_units`
-    
+    .. seealso:: `match`, `match_by_property`, `match_by_identity`,
+                 `match_by_ncvar`, `match_by_units`,
+                 `match_by_cell_method`, `match_by_coordinate`,
+                 `match_by_dimension_coordinate`,
+                 `match_by_auxiliary_coordinate`,
+                 `match_by_domain_ancillary`,
+                 `match_by_field_ancillary`, `match_by_cell_measure`,
+                 `match_by_coordinate_reference`, `match_by_construct`
+            
     :Parameters:
     
         ranks: optional
@@ -13725,8 +14246,8 @@ class Field(mixin.PropertiesData,
         return f
 
 
-    def auxiliary_coordinate(self, identity, default=ValueError(),
-                             key=False):
+    def auxiliary_coordinate(self, identity=None,
+                             default=ValueError(), key=False):
         '''Return an auxiliary coordinate construct, or its key.
 
     .. versionadded:: 3.0.0
@@ -13738,9 +14259,13 @@ class Field(mixin.PropertiesData,
     
     :Parameters:
     
-        identity:
+        identity: optional
             Select the auxiliary coordinate construct by one of:
     
+              * `None`. This is the default, which selects the
+                auxiliary coordinate construct when there is only one
+                of them.
+
               * The identity or key of an auxiliary coordinate
                 construct.
     
@@ -13826,11 +14351,14 @@ class Field(mixin.PropertiesData,
     TODO
 
         '''
-        c = self.auxiliary_coordinates(identity)
-        if not c:
-            da_key = self.domain_axis(identity, key=True, default=None)
-            if da_key is not None:
-                c = self.auxiliary_coordinates.filter_by_axis('exact', da_key)
+        c = self.auxiliary_coordinates
+
+        if identity is not None:
+            c = c(identity)
+            if not c:
+                da_key = self.domain_axis(identity, key=True, default=None)
+                if da_key is not None:
+                    c = self.auxiliary_coordinates.filter_by_axis('exact', da_key)
         #-- End: if
         
         if key:
@@ -13839,20 +14367,23 @@ class Field(mixin.PropertiesData,
         return c.value(default=default)
 
 
-    def construct(self, identity, default=ValueError(), key=False):
+    def construct(self, identity=None, default=ValueError(), key=False):
         '''Select a metadata construct by its identity.
 
     TODO
         '''
-        c = self.constructs.filter_by_identity(identity)
-        
+        c = self.constructs
+
+        if identity is not None:
+            c = c(identity)
+            
         if key:
             return c.key(default=default)
 
         return c.value(default=default)
 
 
-    def domain_ancillary(self, identity, default=ValueError(),
+    def domain_ancillary(self, identity=None, default=ValueError(),
                          key=False):
         '''Return a domain ancillary construct, or its key.
 
@@ -13865,9 +14396,12 @@ class Field(mixin.PropertiesData,
 
     :Parameters:
     
-        identity:
+        identity: optional
             Select the domain ancillary construct by one of:
     
+              * `None`. This is the default, which selects the domain
+                ancillary construct when there is only one of them.
+
               * The identity or key of a domain ancillary construct.
     
               * The identity or key of a domain axis construct that is
@@ -13952,11 +14486,14 @@ class Field(mixin.PropertiesData,
     TODO
 
         '''
-        c = self.domain_ancillaries(identity)
-        if not c:
-            da_key = self.domain_axis(identity, key=True, default=None)
-            if da_key is not None:
-                c = self.domain_ancillaries.filter_by_axis('exact', da_key)
+        c = self.domain_ancillaries
+
+        if identity is not None:
+            c = c(identity)
+            if not c:
+                da_key = self.domain_axis(identity, key=True, default=None)
+                if da_key is not None:
+                    c = self.domain_ancillaries.filter_by_axis('exact', da_key)
         #-- End: if
         
         if key:
@@ -13965,7 +14502,7 @@ class Field(mixin.PropertiesData,
         return c.value(default=default)
 
 
-    def cell_measure(self, identity, default=ValueError(), key=False):
+    def cell_measure(self, identity=None, default=ValueError(), key=False):
         '''Select a cell measure construct by its identity.
 
     .. versionadded:: 3.0.0
@@ -13977,9 +14514,12 @@ class Field(mixin.PropertiesData,
 
     :Parameters:
     
-        identity:
+        identity: optional
             Select the cell measure construct by:
     
+              * `None`. This is the default, which selects the cell
+                 measure construct when there is only one of them.
+
               * The identity or key of a cell measure construct.
     
               * The identity or key of a domain axis construct that is
@@ -14060,11 +14600,14 @@ class Field(mixin.PropertiesData,
     TODO
 
         '''
-        c = self.cell_measures(identity)
-        if not c:
-            da_key = self.domain_axis(identity, key=True, default=None)
-            if da_key is not None:
-                c = self.cell_measures.filter_by_axis('exact', da_key)
+        c = self.cell_measures
+        
+        if identity is not None:
+            c = c(identity)
+            if not c:
+                da_key = self.domain_axis(identity, key=True, default=None)
+                if da_key is not None:
+                    c = self.cell_measures.filter_by_axis('exact', da_key)
         #-- End: if
         
         if key:
@@ -14073,7 +14616,7 @@ class Field(mixin.PropertiesData,
         return c.value(default=default)
 
 
-    def cell_method(self, identity, default=ValueError(), key=False):
+    def cell_method(self, identity=None, default=ValueError(), key=False):
         '''Select a cell method construct by its identity.
 
     .. versionadadded:: 3.0.0
@@ -14085,9 +14628,12 @@ class Field(mixin.PropertiesData,
 
     :Parameters:
     
-        identity:
+        identity: optional
             Select the cell method construct by:
     
+              * `None`. This is the default, which selects the cell
+                method construct when there is only one of them.
+
               * The identity or key of a cell method construct.
     
               * The identity or key of a domain axis construct that a
@@ -14108,10 +14654,11 @@ class Field(mixin.PropertiesData,
             if any of them match any of those provided. A construct's
             identities are those returned by its `!identities`
             method. In the following example, the construct ``c`` has
-            one identity:
+            two identities:
     
                >>> c.identities()
-               ['method:minimum']
+               ['method:minimum',
+                'over:sea']
     
             A construct key may optionally have the ``'key%'``
             prefix. For example ``'cellmethod2'`` and
@@ -14153,24 +14700,28 @@ class Field(mixin.PropertiesData,
     TODO
 
         '''
-        c = self.cell_methods(identity)
-        if not c:
-            da_key = self.domain_axis(identity, key=True, default=None)
-            cm_keys = [key for key, cm in self.cell_methods.items()
-                       if cm.get_axes(None) == (da_key,)]
-            if cm_keys:
-                c = self.cell_methods(*cm_keys)
-            else:
-                c = self.cell_methods(None)
+        c = self.cell_methods
+
+        if identity is not None:
+            c = c(identity)
+            if not c:
+                da_key = self.domain_axis(identity, key=True, default=None)
+                cm_keys = [key for key, cm in self.cell_methods.items()
+                           if cm.get_axes(None) == (da_key,)]
+                if cm_keys:
+                    c = self.cell_methods(*cm_keys)
+                else:
+                    c = self.cell_methods(None)
         #-- End: if
         
         if key:
             return c.key(default=default)
-
+        print(c)
         return c.value(default=default)
 
 
-    def coordinate(self, identity, default=ValueError(), key=False):
+    def coordinate(self, identity=None, default=ValueError(),
+                   key=False):
         '''Return a dimension coordinate construct, or its key.
 
     .. versionadded:: 3.0.0
@@ -14180,9 +14731,12 @@ class Field(mixin.PropertiesData,
     
     :Parameters:
     
-        identity:
+        identity: optional
             Select the dimension coordinate construct by one of:
     
+              * `None`. This is the default, which selects the
+                coordinate construct when there is only one of them.
+
               * The identity or key of a dimension coordinate
                 construct.
     
@@ -14265,11 +14819,14 @@ class Field(mixin.PropertiesData,
     TODO
 
         '''
-        c = self.coordinates(identity)
-        if not c:
-            da_key = self.domain_axis(identity, key=True, default=None)
-            if da_key is not None:
-                c = self.coordinates.filter_by_axis('exact', da_key)
+        c = self.coordinates
+
+        if identity is not None:
+            c = c(identity)
+            if not c:
+                da_key = self.domain_axis(identity, key=True, default=None)
+                if da_key is not None:
+                    c = self.coordinates.filter_by_axis('exact', da_key)
         #-- End: if
         
         if key:
@@ -14278,8 +14835,8 @@ class Field(mixin.PropertiesData,
         return c.value(default=default)
 
 
-    def coordinate_reference(self, identity, default=ValueError(),
-                             key=False):
+    def coordinate_reference(self, identity=None,
+                             default=ValueError(), key=False):
         '''Return a coordinate reference construct, or its key.
 
     .. versionadded:: 3.0.0
@@ -14291,9 +14848,13 @@ class Field(mixin.PropertiesData,
 
     :Parameters:
     
-        identity:
+        identity: optional
             Select the coordinate reference construct by one of:
     
+              * `None`. This is the default, which selects the
+                coordinate reference construct when there is only one
+                of them.
+
               * The identity or key of a coordinate reference
                 construct.
     
@@ -14367,13 +14928,14 @@ class Field(mixin.PropertiesData,
     TODO
 
         '''
-        coordinate_references = self.coordinate_references
-        c = coordinate_references.filter_by_identity(identity)
+        c = self.coordinate_references
 
-        for cr_key, cr in coordinate_references.items():            
-            if cr.match(identity):
-                c._set_construct(cr, key=cr_key, copy=False)
-        #--- End: for
+        if identity is not None:
+            c = c.filter_by_identity(identity)            
+            for cr_key, cr in self.coordinate_references.items():            
+                if cr.match(identity):
+                    c._set_construct(cr, key=cr_key, copy=False)
+        #--- End: if
                 
         if key:
             return c.key(default=default)
@@ -14381,7 +14943,7 @@ class Field(mixin.PropertiesData,
         return c.value(default=default)
 
 
-    def field_ancillary(self, identity, default=ValueError(),
+    def field_ancillary(self, identity=None, default=ValueError(),
                         key=False):
         '''Return a field ancillary construct, or its key.
 
@@ -14394,9 +14956,12 @@ class Field(mixin.PropertiesData,
 
     :Parameters:
     
-        identity:
+        identity: optional
             Select the field ancillary construct by one of:
     
+              * `None`. This is the default, which selects the field
+                ancillary construct when there is only one of them.
+
               * The identity or key of an field ancillary construct.
     
               * The identity or key of a domain axis construct that is
@@ -14482,11 +15047,14 @@ class Field(mixin.PropertiesData,
     TODO
 
         '''
-        c = self.field_ancillaries(identity)
-        if not c:
-            da_key = self.domain_axis(identity, key=True, default=None)
-            if da_key is not None:
-                c = self.field_ancillaries.filter_by_axis('exact', da_key)
+        c = self.field_ancillaries
+
+        if identity is not None:        
+            c = c(identity)
+            if not c:
+                da_key = self.domain_axis(identity, key=True, default=None)
+                if da_key is not None:
+                    c = self.field_ancillaries.filter_by_axis('exact', da_key)
         #-- End: if
         
         if key:
@@ -14495,7 +15063,7 @@ class Field(mixin.PropertiesData,
         return c.value(default=default)
 
 
-    def dimension_coordinate(self, identity, key=False,
+    def dimension_coordinate(self, identity=None, key=False,
                              default=ValueError()):
         '''Return a dimension coordinate construct, or its key.
 
@@ -14508,9 +15076,13 @@ class Field(mixin.PropertiesData,
 
     :Parameters:
     
-        identity:
+        identity: optional
             Select the dimension coordinate construct by one of:
     
+              * `None`. This is the default, which selects the
+                dimension coordinate construct when there is only one
+                of them.
+
               * The identity or key of a dimension coordinate
                 construct.
     
@@ -14592,11 +15164,14 @@ class Field(mixin.PropertiesData,
     TODO
 
         '''
-        c = self.dimension_coordinates(identity)
-        if not c:
-            da_key = self.domain_axis(identity, key=True, default=None)
-            if da_key is not None:
-                c = self.dimension_coordinates.filter_by_axis('exact', da_key)
+        c = self.dimension_coordinates
+
+        if identity is not None:
+            c = c(identity)
+            if not c:
+                da_key = self.domain_axis(identity, key=True, default=None)
+                if da_key is not None:
+                    c = self.dimension_coordinates.filter_by_axis('exact', da_key)
         #-- End: if
         
         if key:

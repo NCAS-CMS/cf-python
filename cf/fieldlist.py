@@ -757,7 +757,7 @@ class FieldList(list):
             Use the *OR* parameter instead.
     
         constructs: deprecated at version 3.1.0
-            Use one of the a methods `select_by_cell_method`,
+            Use one of the methods `select_by_cell_method`,
             `select_by_coordinate`, `select_by_auxiliary_coordinate`,
             `select_by_dimension_coordinate`,
             `select_by_domain_ancillary`, `select_by_field_ancillary`,

@@ -16,18 +16,27 @@ version 3.1.0
   (https://github.com/NCAS-CMS/cf-python/issues/28).
 * Changed the default values of the `cf.Field.collapse` ``group_by``
   and ``coordinate`` parameters to `None`.
+* Changed the default value of the ``identity`` parameter to `None`
+  for `cf.Field.coordinate`, `cf.Field.dimension_coordinate`,
+  `cf.Field.auxiliary_coordinate`, `cf.Field.field_ancillary`,
+  `cf.Field.domain_ancillary`, `cf.Field.cell_method`,
+  `cf.Field.cell_measure`, `cf.Field.coordinate_reference`,
+  `cf.Field.domain_axis`.
 * New methods: `cf.Field.match_by_coordinate`,
-  `cf.Field.match_by_dimension_corodinate`,
+  `cf.Field.match_by_dimension_coordinate`,
   `cf.Field.match_by_auxiliary_coordinate`,
   `cf.Field.match_by_field_ancillary`,
   `cf.Field.match_by_domain_ancillary`,
-  `cf.Field.match_by_cell_method`.
+  `cf.Field.match_by_cell_method`, `cf.Field.match_by_cell_measure`,
+  `cf.Field.match_by_coordinate_reference`.
 * New methods: `cf.FieldList.select_by_coordinate`,
-  `cf.FieldList.select_by_dimension_corodinate`,
+  `cf.FieldList.select_by_dimension_coordinate`,
   `cf.FieldList.select_by_auxiliary_coordinate`,
   `cf.FieldList.select_by_field_ancillary`,
   `cf.FieldList.select_by_domain_ancillary`,
-  `cf.FieldList.select_by_cell_method`.
+  `cf.FieldList.select_by_cell_method`
+  `cf.FieldList.select_by_cell_measure`,
+  `cf.FieldList.select_by_coordinate_reference`.
 * New keyword parameter to `cf.Field.weights`: ``data``.
 * New example field (``5``) available from `cf.example_field`.
 * New regridding option: ``'conservative_2nd'``.

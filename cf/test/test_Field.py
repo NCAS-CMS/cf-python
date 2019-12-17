@@ -1523,17 +1523,29 @@ class FieldTest(unittest.TestCase):
         self.assertFalse(g.match_by_naxes(3))
         self.assertFalse(g.match_by_naxes(99, 88))
 
-        # match_by_construct
-        for mode in ([], ['and']):        
-            for constructs in ({},
-                               {'grid_longitude': None},
-                               {'grid_longitude': 20.0},
-                               {'grid_latitude': 9.0, 'Z': 1.5},
-                               {'grid_longitude': cf.wi(21, 30)},
-            ):
-                self.assertTrue(f.match_by_construct(*mode, **constructs),
-                                'Failed with mode={}, constructs={}'.format(
-                                    mode, constructs))
+#        # match_by_construct
+#        for OR in (True, False):        
+#            for constructs in ([],
+#                               ['grid_longitude'],
+#                               ['grid_longitude'],
+#                               ['grid_latitude', 'Z'],
+#                               ['grid_longitude'],
+#            ):
+#                self.assertTrue(f.match_by_construct(*constructs, OR=OR),
+#                                'Failed with mode={}, constructs={}'.format(
+#                                    mode, constructs))
+#
+#        # match_by_construct
+#        for OR in (True, False):        
+#            for constructs in ({},
+#                               {'grid_longitude': None},
+#                               {'grid_longitude': 20.0},
+#                               {'grid_latitude': 9.0, 'Z': 1.5},
+#                               {'grid_longitude': cf.wi(21, 30)},
+#            ):
+#                self.assertTrue(f.match_by_construct(**constructs, OR=OR),
+#                                'Failed with mode={}, constructs={}'.format(
+#                                    mode, constructs))
 
         self.assertTrue(f.match_by_construct('or', Y=8888, Z=1.5))
         self.assertFalse(f.match_by_construct(Y=8888, Z=1.5))

@@ -488,11 +488,11 @@ class CoordinateReference(cfdm.CoordinateReference):
 
         x = self.coordinate_conversion.get_parameter('grid_mapping_name', None)
         if x is not None:
-            self_identities.append(x)
+            self_identities.insert(0, x)
         
         x = self.coordinate_conversion.get_parameter('standard_name', None)
         if x is not None:
-            self_identities.append(x)
+            self_identities.insert(0, x)
  
         ok = False
         for value0 in identities:          
