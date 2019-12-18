@@ -506,11 +506,11 @@ class Properties:
     def get_property(self, prop, default=ValueError()):
         '''Get a CF property.
         
+    .. versionadded:: 3.0.0
+
     .. seealso:: `clear_properties`, `del_property`, `has_property`,
                  `properties`, `set_property`
     
-    .. versionadded:: 3.0.0
-
     :Parameters:
     
         prop: `str`
@@ -562,10 +562,10 @@ class Properties:
     def has_property(self, prop):
         '''Whether a property has been set.
 
+    .. versionadded:: 3.0.0
+    
     .. seealso:: `clear_properties`, `del_property`, `get_property`,
                  `properties`, `set_property`
-    
-    .. versionadded:: 3.0.0
     
     :Parameters:
     
@@ -608,10 +608,10 @@ class Properties:
     def del_property(self, prop, default=ValueError()):
         '''Remove a property.
 
+    .. versionadded:: 3.0.0
+    
     .. seealso:: `clear_properties`, `get_property`, `has_property`,
                  `properties`, `set_property`
-    
-    .. versionadded:: 3.0.0
     
     :Parameters:
     
@@ -665,9 +665,9 @@ class Properties:
     def match_by_identity(self, *identities):
         '''Whether or not the construct identity satisfies conditions.
 
-    .. seealso:: `match`, `match_by_property`, `match_by_ncvar`
-    
     .. versionadded:: 3.0.0
+    
+    .. seealso:: `match`, `match_by_property`, `match_by_ncvar`
     
     :Parameters:
     
@@ -733,11 +733,11 @@ class Properties:
 
 
     def match_by_ncvar(self, *ncvars):
-        '''Whether or not the construct has a netCDF variable name.
+        '''Whether or not the netCDF variable name satisfies conditions.
 
-    .. seealso:: `match`, `match_by_identity`, `match_by_property`
-    
     .. versionadded:: 3.0.0
+    
+    .. seealso:: `match`, `match_by_identity`, `match_by_property`
     
     :Parameters:
     
@@ -800,10 +800,10 @@ class Properties:
     def match_by_property(self, *mode, **properties):
         '''Whether or not properties satisfy conditions.
 
-    .. seealso:: `match`, `match_by_identity`, `match_by_ncvar`
-
     .. versionadded:: 3.0.0
     
+    .. seealso:: `match`, `match_by_identity`, `match_by_ncvar`
+
     :Parameters:
     
         mode: optional
@@ -948,9 +948,9 @@ class Properties:
     def set_properties(self, properties, copy=True):
         '''Set properties.
 
-    .. seealso:: `clear_properties`, `properties`, `set_property`
-    
     .. versionadded:: 3.0.0
+    
+    .. seealso:: `clear_properties`, `properties`, `set_property`
     
     :Parameters:
     
@@ -1002,11 +1002,11 @@ class Properties:
     def set_property(self, prop, value, copy=True):
         '''Set a property.
 
+    .. versionadded:: 3.0.0
+
     .. seealso:: `clear_properties`, `del_property`, `get_property`,
                  `has_property`, `properties`
     
-    .. versionadded:: 3.0.0
-
     :Parameters:
 
         prop: `str`

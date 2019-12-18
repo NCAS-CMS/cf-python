@@ -11326,7 +11326,7 @@ class Field(mixin.PropertiesData,
 
 
     def match_by_construct(self, *identities, OR=False, **constructs):
-        '''Whether or not metadata constructs satisfy conditions.
+        '''Whether or not there are particular metadata constructs.
 
     .. note:: The API changed at version 3.1.0
 
@@ -11339,8 +11339,8 @@ class Field(mixin.PropertiesData,
     :Parameters:
     
         identities: optional
-            Select constructs that have any of the given identities or
-            construct keys.
+            Identify the metadata constructs that have any of the
+            given identities or construct keys.
 
             A construct identity is specified by a string
             (e.g. ``'latitude'``, ``'long_name=time'``,
@@ -11372,6 +11372,21 @@ class Field(mixin.PropertiesData,
             identities, and so this description may always be used as
             an *identity* argument.
     
+            If a cell method construct identity is given (such as
+            ``'method:mean'``) then it will only be compared with the
+            most recently applied cell method operation.
+
+            Alternatively, one or more cell method constucts may be
+            identified in a single string with a CF-netCDF cell
+            methods-like syntax for describing both the collapse
+            dimensions, the collapse method, and any cell method
+            construct qualifiers. If N cell methods are described in
+            this way then they will collectively identify the N most
+            recently applied cell method operations. For example,
+            ``'T: maximum within years T: mean over years'`` will be
+            compared with the most two most recently applied cell
+            method operations.
+    
             *Parameter example:*
               ``'measure:area'``
     
@@ -11385,7 +11400,7 @@ class Field(mixin.PropertiesData,
               ``'domainancillary2', 'ncvar%areacello'``
 
         OR: `bool`, optional
-            If True then `True` is returned if at least one metadata
+            If True then return `True` if at least one metadata
             construct matches at least one of the criteria given by
             the *identities* arguments. By default `True` is only
             returned if the field constructs matches each of the given
@@ -11412,13 +11427,26 @@ class Field(mixin.PropertiesData,
                 if value is None:
                     message = "Since its value is None, use {!r} as a positional argument instead".format(value)
                 else:                    
-                    message="Since its value is not None, use one of the methods 'match_by_cell_method', 'match_by_coordinate', 'match_by_dimension_coordinate', 'match_by_auxiliary_coordinate', 'match_by_domain_ancillary', 'match_by_field_ancillary', 'match_by_cell_measure' instead."
+                    message = "Evaluating criteria on data values is not longer possible with this method."
 
                 _DEPRECATION_ERROR_KWARGS(self, 'match_by_construct',
                                           kwargs={key: value},
                                           message=message,
                                           version='3.1.0') # pragma: no cover
         #--- End: if
+
+        if identities:
+            if identities[0] == 'or':
+                _DEPRECATION_ERROR_ARG(self, 'match_by_construct',
+                                       'or', message="Use 'OR=True' instead.",
+                                       version='3.1.0') # pragma: no cover
+
+            if identities[0] == 'and':
+                _DEPRECATION_ERROR_ARG(self, 'match_by_construct',
+                                       'and', message="Use 'OR=False' instead.",
+                                       version='3.1.0') # pragma: no cover
+        #--- End: if
+
         
         if not identities:
             return True
@@ -11504,8 +11532,7 @@ class Field(mixin.PropertiesData,
 
 
     def match_by_rank(self, *ranks):
-
-        '''Whether or not the number of domain axis constructs satisfy
+        '''Whether or not the number of domain axis constructs satisfies
     conditions.
     
     .. versionadded:: 3.0.0

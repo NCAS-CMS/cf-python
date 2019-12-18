@@ -214,6 +214,7 @@ class FieldList(list):
         '''
         return not self.equals(other)
 
+    
     # ???
     __len__     = list.__len__
     __setitem__ = list.__setitem__    
@@ -224,8 +225,7 @@ class FieldList(list):
     reverse     = list.reverse
     sort        = list.sort
 
-
-
+    
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
@@ -279,7 +279,7 @@ class FieldList(list):
     Each field in the field list is compared with the field's
     `~cf.Field.equals` method, as opposed to the ``==`` operator.
     
-    It is an error if there is no such field.
+    An exception is raised if there is no such field.
     
     .. seealso:: `list.index`
     
@@ -691,19 +691,22 @@ class FieldList(list):
 
 
     def select_by_construct(self, *identities, OR=False, **constructs):
-        '''Select field constructs by their metadata constructs.
+        '''Select field constructs by metadata constructs.
 
     .. note:: The API changed at version 3.1.0
 
     .. versionadded:: 3.0.0
     
-    .. seealso: TODO
+    .. seealso: `select`, `__call__`, `select_by_units`,
+                `select_by_naxes`, `select_by_rank`,
+                `select_by_property`, `cf.Field.match_by_identity`
     
     :Parameters:
     
         identities: optional
-            Select constructs that have any of the given identities or
-            construct keys.
+ 
+            Identify the metadata constructs that have any of the
+            given identities or construct keys.
 
             A construct identity is specified by a string
             (e.g. ``'latitude'``, ``'long_name=time'``,
@@ -735,6 +738,21 @@ class FieldList(list):
             identities, and so this description may always be used as
             an *identity* argument.
     
+            If a cell method construct identity is given (such as
+            ``'method:mean'``) then it will only be compared with the
+            most recently applied cell method operation.
+
+            Alternatively, one or more cell method constucts may be
+            identified in a single string with a CF-netCDF cell
+            methods-like syntax for describing both the collapse
+            dimensions, the collapse method, and any cell method
+            construct qualifiers. If N cell methods are described in
+            this way then they will collectively identify the N most
+            recently applied cell method operations. For example,
+            ``'T: maximum within years T: mean over years'`` will be
+            compared with the most two most recently applied cell
+            method operations.
+    
             *Parameter example:*
               ``'measure:area'``
     
@@ -748,7 +766,11 @@ class FieldList(list):
               ``'domainancillary2', 'ncvar%areacello'``
 
         OR: `bool`, optional
-            TODO
+            If True then select the field constructs for which at
+            least one metadata construct matches at least one of the
+            criteria given by the *identities* arguments. By default
+            only the field constructs that match each of the given
+            criteria are selected.
 
         mode: deprecated at version 3.1.0
             Use the *OR* parameter instead.
@@ -764,18 +786,30 @@ class FieldList(list):
     
         TODO
 
-        '''
+        '''        
         if constructs:
             for key, value in constructs.items():
                 if value is None:
                     message = "Since its value is None, use {!r} as a positional argument instead".format(value)
                 else:                    
-                    message="Since its value is not None, use one of the methods 'select_by_cell_method', 'select_by_coordinate',  'select_by_dimension_coordinate',  'select_by_auxiliary_coordinate', 'select_by_domain_ancillary', 'select_by_field_ancillary', 'select_by_cell_measure' instead."
+                    message = "Evaluating criteria on data values is not longer possible with this method."
 
-                _DEPRECATION_ERROR_KWARGS(self, 'match_by_construct',
+                _DEPRECATION_ERROR_KWARGS(self, 'select_by_construct',
                                           kwargs={key: value},
                                           message=message,
                                           version='3.1.0') # pragma: no cover
+        #--- End: if
+
+        if identities:
+            if identities[0] == 'or':
+                _DEPRECATION_ERROR_ARG(self, 'select_by_construct',
+                                       'or', message="Use 'OR=True' instead.",
+                                       version='3.1.0') # pragma: no cover
+                
+            if identities[0] == 'and':
+                _DEPRECATION_ERROR_ARG(self, 'select_by_construct',
+                                       'and', message="Use 'OR=False' instead.",
+                                       version='3.1.0') # pragma: no cover
         #--- End: if
 
         return type(self)(f for f in self
@@ -890,7 +924,44 @@ class FieldList(list):
 
     
     def select_by_rank(self, *ranks):
-        '''TODO'''
+        '''Select field constructs by the number of domain axis constructs.    
+
+    .. versionadded:: 3.0.0
+    
+    .. seealso: `select`, `__call__`, `select_by_units`,
+                `select_by_naxes`, `select_by_construct`,
+                `select_by_property`, `cf.Field.match_by_identity`
+ 
+    :Parameters:
+    
+        ranks: optional
+            Define conditions on the number of domain axis constructs.
+    
+            A condition is one of:
+    
+              * `int`
+              * a `Query` object
+    
+            The condition is satisfied if the number of domain axis
+            constructs equals the condition value.
+    
+            *Parameter example:*
+              To see if the field construct has 4 domain axis
+              constructs: ``4``
+    
+            *Parameter example:*
+              To see if the field construct has at least 3 domain axis
+              constructs: ``cf.ge(3)``
+    
+    :Returns:
+    
+        `bool`
+            The matching field constructs.
+    
+    **Examples:**
+    
+        TODO
+        '''
         
         return type(self)(f for f in self if f.match_by_rank(*ranks))
 
