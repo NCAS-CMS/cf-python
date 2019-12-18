@@ -1523,42 +1523,29 @@ class FieldTest(unittest.TestCase):
         self.assertFalse(g.match_by_naxes(3))
         self.assertFalse(g.match_by_naxes(99, 88))
 
-#        # match_by_construct
-#        for OR in (True, False):        
-#            for constructs in ([],
-#                               ['grid_longitude'],
-#                               ['grid_longitude'],
-#                               ['grid_latitude', 'Z'],
-#                               ['grid_longitude'],
-#            ):
-#                self.assertTrue(f.match_by_construct(*constructs, OR=OR),
-#                                'Failed with mode={}, constructs={}'.format(
-#                                    mode, constructs))
-#
-#        # match_by_construct
-#        for OR in (True, False):        
-#            for constructs in ({},
-#                               {'grid_longitude': None},
-#                               {'grid_longitude': 20.0},
-#                               {'grid_latitude': 9.0, 'Z': 1.5},
-#                               {'grid_longitude': cf.wi(21, 30)},
-#            ):
-#                self.assertTrue(f.match_by_construct(**constructs, OR=OR),
-#                                'Failed with mode={}, constructs={}'.format(
-#                                    mode, constructs))
+        # Match by construct
+        for OR in (True, False):
+            self.assertTrue(f.match_by_construct(OR=OR))
+            self.assertTrue(f.match_by_construct('X', OR=OR))
+            self.assertTrue(f.match_by_construct('latitude', OR=OR))
+            self.assertTrue(f.match_by_construct('X', 'latitude', OR=OR))
+            self.assertTrue(f.match_by_construct('X', 'Y', OR=OR))
+            self.assertTrue(f.match_by_construct('X', 'Y', 'latitude', OR=OR))
+            self.assertTrue(f.match_by_construct('grid_latitude: max', OR=OR))
+            self.assertTrue(f.match_by_construct('grid_longitude: mean grid_latitude: max', OR=OR))
+            self.assertTrue(f.match_by_construct('X', 'method:max', OR=OR))
+            self.assertTrue(f.match_by_construct('X', 'grid_latitude: max', OR=OR))
+        
+            
+        self.assertFalse(f.match_by_construct('qwerty'))
+        self.assertFalse(f.match_by_construct('qwerty', OR=True))
+        self.assertFalse(f.match_by_construct('X', 'qwerty'))
+        self.assertFalse(f.match_by_construct('time: mean'))
 
-        self.assertTrue(f.match_by_construct('or', Y=8888, Z=1.5))
-        self.assertFalse(f.match_by_construct(Y=8888, Z=1.5))
-        self.assertFalse(f.match_by_construct(T=89))
-        self.assertFalse(f.match_by_construct('or', T=None, qwerty=None))
-        self.assertFalse(f.match_by_construct('and', T=None, qwerty=None))
-        self.assertTrue(f.match_by_construct('or', T=None, grid_latitude=None))
-
-        with self.assertRaises(ValueError):
-            f.match_by_construct('qwerty', T=None, X=None)
-        with self.assertRaises(ValueError):
-            f.match_by_construct('or', 'and', X=None)
-
+        self.assertTrue(f.match_by_construct('X', 'qwerty', OR=True))
+        self.assertTrue(f.match_by_construct('X', 'qwerty', 'method:max', 'over:years', OR=True))
+        self.assertTrue(f.match_by_construct('X', 'qwerty', 'grid_latitude: max', 'over:years', OR=True))
+        
 
     def test_Field_period(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

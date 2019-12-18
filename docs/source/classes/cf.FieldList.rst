@@ -19,7 +19,8 @@ Selecting
    :nosignatures:
    :toctree: ../method/
    :template: method.rst
-  
+
+   ~cf.FieldList.select_by_construct    
    ~cf.FieldList.select_by_identity
    ~cf.FieldList.select_by_naxes
    ~cf.FieldList.select_by_ncvar
@@ -29,14 +30,7 @@ Selecting
    ~cf.FieldList.select
    ~cf.FieldList.select_field
    ~cf.FieldList.__call__
-   ~cf.FieldList.select_by_coordinate
-   ~cf.FieldList.select_by_auxiliary_coordinate
-   ~cf.FieldList.select_by_dimension_coordinate
-   ~cf.FieldList.select_by_cell_measure
-   ~cf.FieldList.select_by_domain_ancillary
-   ~cf.FieldList.select_by_field_ancillary
-   ~cf.FieldList.select_by_cell_method
-   ~cf.FieldList.select_by_construct    
+   
 Comparison
 ----------
 

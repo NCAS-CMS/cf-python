@@ -53,13 +53,6 @@ Selection
    ~cf.Field.match_by_property
    ~cf.Field.match_by_rank
    ~cf.Field.match_by_units
-   ~cf.Field.match_by_coordinate
-   ~cf.Field.match_by_auxiliary_coordinate
-   ~cf.Field.match_by_dimension_coordinate
-   ~cf.Field.match_by_cell_measure
-   ~cf.Field.match_by_domain_ancillary
-   ~cf.Field.match_by_field_ancillary
-   ~cf.Field.match_by_cell_method
    ~cf.Field.match_by_construct
  
 .. _Field-Properties:
