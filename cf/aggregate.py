@@ -6,9 +6,7 @@ from collections import namedtuple
 from operator    import itemgetter
 
 from .auxiliarycoordinate import AuxiliaryCoordinate
-#from .coordinatereference import CoordinateReference
 from .domainaxis          import DomainAxis
-#from .field               import Field
 from .fieldlist           import FieldList
 from .query               import gt
 from .functions           import (flat, RTOL, ATOL,
@@ -17,7 +15,7 @@ from .functions           import (flat, RTOL, ATOL,
 from .functions           import inspect as cf_inspect
 from .units               import Units
 
-from .data.data      import Data
+from .data.data import Data
 
 
 _dtype_float = numpy_dtype(float)
@@ -96,8 +94,8 @@ class _HFLCache:
 class _Meta:
     '''A summary of a field.
 
-This object contains everything you need to know in order to aggregate
-the field.
+    This object contains everything you need to know in order to
+    aggregate the field.
 
     '''
     #
@@ -140,7 +138,7 @@ the field.
                  dimension=(),
                  relaxed_identities=False,
                  ncvar_identities=False,
-                 field_long_name_identities=False,
+                 field_identity=None,
     ):
         '''**initialization**
 
@@ -185,12 +183,12 @@ the field.
 
         strict_identities = not (relaxed_identities or
                                  ncvar_identities or
-                                 field_long_name_identities)
+                                 field_identity is not None)
 
-        self.relaxed_identities         = relaxed_identities
-        self.strict_identities          = strict_identities
-        self.field_long_name_identities = field_long_name_identities
-        self.ncvar_identities           = ncvar_identities
+        self.relaxed_identities = relaxed_identities
+        self.strict_identities  = strict_identities
+        self.field_identity     = field_identity
+        self.ncvar_identities   = ncvar_identities
 
         # Initialize the flag which indicates whether or not this
         # field has already been aggregated
@@ -215,8 +213,8 @@ the field.
                                    relaxed=relaxed_identities,
                                    nc_only=ncvar_identities)
 
-        if field_long_name_identities:
-            self.identity = f.get_property('long_name', None)
+        if field_identity:
+            self.identity = f.get_property(field_identity, None)
         
         # ------------------------------------------------------------
         #
@@ -237,9 +235,6 @@ the field.
                 self.message = "no data array"
             return
 
-#        items = f.items
-#        item  = f.item
- 
         constructs = f.constructs
         construct  = f.construct
  
@@ -287,18 +282,16 @@ the field.
 
         self.axis = {}
 
-
         # ------------------------------------------------------------
         # Coordinate references (formula_terms and grid mappings)
         # ------------------------------------------------------------
-#        refs = f.refs()
         refs = f.coordinate_references
         if not refs:
             self.coordrefs = ()
         else:
             self.coordrefs = list(refs.values())
 
-        for axis in f.domain_axes: #f.axes():
+        for axis in f.domain_axes:
     
             # List some information about each 1-d coordinate which
             # spans this axis. The order of elements is arbitrary, as
@@ -341,7 +334,6 @@ the field.
             # Find the 1-d auxiliary coordinates which span this axis
             aux_coords = {}
             for aux in tuple(aux_1d): #.keys():
-#                if axis in f.item_axes(aux): #dimensions[aux]:
                 if axis in f.get_data_axes(aux):
                     aux_coords[aux] = aux_1d.pop(aux)
             #--- End: for
@@ -446,11 +438,9 @@ the field.
         # N-d auxiliary coordinates
         # ------------------------------------------------------------
         self.nd_aux = {}
-#        for key, nd_aux_coord in items(role='a', ndim=gt(1)).items():
         for key, nd_aux_coord in f.auxiliary_coordinates.filter_by_naxes(gt(1)).items():
            
             # Find axes' canonical identities
-#            axes = [self.axis_to_id[axis] for axis in f.item_axes(key)]
             axes = [self.axis_to_id[axis] for axis in f.get_data_axes(key)]
             axes = tuple(sorted(axes))
 
@@ -517,11 +507,8 @@ the field.
 
         # Firstly process domain ancillaries which are used in
         # coordinate references
-#        for ref in f.refs().values():
         for ref in f.coordinate_references.values():
-#            for term, identifier in ref.ancillaries.items():
             for term, identifier in ref.coordinate_conversion.domain_ancillaries().items():
-#                key = item(identifier, role=('c',), exact=True, key=True)
                 key = f.domain_ancillaries(identifier).key(None)
                 if key is None:
                     continue
@@ -551,7 +538,6 @@ the field.
 
         # Secondly process domain ancillaries which are not being used
         # in coordinate references
-#        for key, anc in items(role='c').items():
         for key, anc in f.domain_ancillaries.items():
             if key in ancs_in_refs:
                 continue
@@ -582,7 +568,6 @@ the field.
         # ------------------------------------------------------------
         self.msr = {}
         info_msr = {}
-#        for key, msr in items(role='m').items():
         for key, msr in f.cell_measures.items():
             
             if not self.cell_measure_has_data_and_units(msr):
@@ -595,7 +580,6 @@ the field.
                                          relaxed_units=relaxed_units)
             
             # Find axes' canonical identities
-#            axes = [self.axis_to_id[axis] for axis in f.item_axes(key)]
             axes = [self.axis_to_id[axis] for axis in f.get_data_axes(key)]
             axes = tuple(sorted(axes))
             
@@ -754,7 +738,7 @@ the field.
         identity: `str`
     
         relaxed_units: `bool` 
-            See the `cf.aggregate` for details.
+            See the `aggregate` function for details.
     
     :Returns:
     
@@ -791,15 +775,15 @@ the field.
     def canonical_cell_methods(self, rtol=None, atol=None):
         '''Updates the `_canonical_cell_methods` attribute.
 
-:Parameters:
-
-    atol: `float`
-
-    rtol: `float`
-
-:Returns:
-
-    `CellMethods` or `None`
+    :Parameters:
+    
+        atol: `float`
+    
+        rtol: `float`
+    
+    :Returns:
+    
+        `CellMethods` or `None`
 
         '''
         _canonical_cell_methods = self._canonical_cell_methods
@@ -845,7 +829,7 @@ the field.
 
     :Parameters:
     
-        msr: `cf.CellMeasure`
+        msr: `CellMeasure`
     
     :Returns:
     
@@ -889,7 +873,7 @@ the field.
                                   relaxed=self.relaxed_identities,
                                   nc_only=self.ncvar_identities,
                                   default=None)
-#        print (repr(coord), repr(identity))
+
 #        if self.relaxed_identities and identity is not None:
 #            identity = identity.replace('long_name=', '', 1)
 #            identity = identity.replace('ncvar%', '', 1)
@@ -926,17 +910,17 @@ the field.
     def field_ancillary_has_identity_and_data(self, anc):
         '''TODO
 
-:Parameters:
+    :Parameters:
+    
+        coord: `FieldAncillary`
+    
+    :Returns:
+    
+        `str` or `None`
+            The coordinate construct's identity, or `None` if there is
+            no identity and/or no data.
 
-    coord: cf.FieldAncillary
-
-:Returns:
-
-    `str` or `None`
-        The coordinate construct's identity, or None if there is no
-        identity and/or no data.
-
-'''
+        '''
         identity = anc.identity(strict=self.strict_identities,
                                 relaxed=self.relaxed_identities,
                                 nc_only=self.ncvar_identities)
@@ -1302,6 +1286,7 @@ def aggregate(fields,
               rtol=None,
               no_overlap=False,
               shared_nc_domain=False,
+              field_identity=None,
               ):
     '''Aggregate field constructs into as few field constructs as
     possible.
@@ -1319,12 +1304,17 @@ def aggregate(fields,
     aggregatable, the aggregation rules rely on field constructs (and
     their metadata constructs where applicable) being identified by
     standard name properties. However, it is sometimes the case that
-    standard names are not available. In such cases the "id" attribute
+    standard names are not available. In such cases the `id` attribute
     (which is not a CF property) may be set on any construct, which
     will be treated like a standard name if one doesn't
-    exist. Alternatively the *relaxed_identities* parameter allows
-    long name properties or netCDF variable names to be used when
-    standard names are missing.
+    exist.
+
+    Alternatively the *relaxed_identities* parameter allows long name
+    properties or netCDF variable names to be used when standard names
+    are missing; the *field_identity* parameter forces the field
+    construct identities to be taken from a particular property; and
+    the *ncvar_identities* parameter forces field and metadata
+    constructs to be identified by their netCDF file variable names.
     
     **Units**
     
@@ -1379,6 +1369,17 @@ def aggregate(fields,
             If True and there is no standard name property nor "id"
             attribute, then allow field and metadata constructs to be
             identifiable by long name properties or netCDF variable names.
+    
+        field_identity: `str`, optional
+            Specify a property with which to identify field constructs
+            instead of any other method. How metadata constructs are
+            identified is not affected by this parameter. See the
+            *relaxed_identies* and *ncvar_identities* parameters. 
+    
+            *Parameter example:*
+              Force field constructs to be identified by the values of
+              their long_name properties:
+              ``field_identity='long_name'``
     
         ncvar_identities: `bool`, optional
             If True then force field and metadata constructs to be
@@ -1595,7 +1596,6 @@ def aggregate(fields,
     # ================================================================
     signatures = {}
     for f in flat(fields):
-#        print (repr(f))
         # ------------------------------------------------------------
         # Create the metadata summary, including the structural
         # signature
@@ -1612,6 +1612,7 @@ def aggregate(fields,
                      dimension=dimension,
                      relaxed_identities=relaxed_identities,
                      ncvar_identities=ncvar_identities,
+                     field_identity=field_identity,
                      respect_valid=respect_valid)
 
         if not meta:
@@ -1633,7 +1634,6 @@ def aggregate(fields,
             #--- End: if
 
             continue
-        #--- End: if
 
         # ------------------------------------------------------------
         # This field has a structural signature, so append it to the
@@ -1666,7 +1666,6 @@ def aggregate(fields,
 #                        print (w2)
 #                        print (hash(w1))
 #                        print (hash(w2))
-#    print ('DCH', 'done')
 
     for signature in signatures: #sorted(signatures):
         meta = signatures[signature]
@@ -2635,8 +2634,7 @@ def _aggregate_2_fields(m0, m1,
                         rtol=None, atol=None,
                         info=0,    
                         concatenate=True,
-                        copy=True,
-):
+                        copy=True):
     '''TODO
 
     :Parameters:
@@ -2659,12 +2657,8 @@ def _aggregate_2_fields(m0, m1,
         out: `_Meta` or `bool`
 
     ''' 
-#    if copy and not m0.aggregated_field:
-#        m0.field = m0.field.copy()
-
     a_identity = m0.a_identity
     
-    # Still here?
     field0 = m0.field
     field1 = m1.field
     if copy:

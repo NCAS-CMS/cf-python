@@ -19,6 +19,8 @@ version 3.1.0
   `cf.Field.cell_measure`, `cf.Field.coordinate_reference`,
   `cf.Field.domain_axis`.
 * New keyword parameter to `cf.Field.weights`: ``data``.
+* New keyword parameter to `cf.aggregate`: ``field_identity``
+  (https://github.com/NCAS-CMS/cf-python/issues/29).
 * New example field (``5``) available from `cf.example_field`.
 * New regridding option: ``'conservative_2nd'``.
 * Fixed bug that didn't change the unit of bounds when the units of
