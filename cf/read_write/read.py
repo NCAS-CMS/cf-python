@@ -558,15 +558,15 @@ def read(files, external=None, verbose=False, warnings=False,
     if len(field_list) > 1:
         field_list.sort(key=lambda f: f.nc_get_variable(''))
         
-#    # ----------------------------------------------------------------
-#    # Add standard names to UM fields
-#    # ----------------------------------------------------------------
-#    for f in field_list:
-#        standard_name = getattr(f, '_standard_name', None)
-#        if standard_name is not None:
-#            f.standard_name = standard_name
-#            del f._standard_name
-#    #--- End: for
+    # ----------------------------------------------------------------
+    # Add standard names to UM/PP fields (post aggregation)
+    # ----------------------------------------------------------------
+    for f in field_list:
+        standard_name = f._custom.get('standard_name', None)
+        if standard_name is not None:
+            f.set_property('standard_name', standard_name)
+            del f._custom['standard_name']
+    #--- End: for
 
     # ----------------------------------------------------------------
     # Squeeze size one dimensions from the data arrays. Do one of:
@@ -711,7 +711,7 @@ def _read_a_file(filename, aggregate=True, aggregate_options=None,
         
     elif ftype == 'UM' and extra_read_vars['fmt'] in (None, 'UM'):
         fields = UM.read(filename, um_version=umversion,
-                         verbose=verbose, set_standard_name=True,
+                         verbose=verbose, set_standard_name=False,
                          height_at_top_of_model=height_at_top_of_model,
                          fmt=fmt, word_size=word_size, endian=endian,
                          chunk=chunk)

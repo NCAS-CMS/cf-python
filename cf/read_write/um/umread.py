@@ -58,10 +58,10 @@ _cached_model_level_number_coordinate = {}
 _pi_over_180 = numpy_pi/180.0
 
 # PP missing data indicator
-_pp_rmdi =  -1.0e+30 
+_pp_rmdi = -1.0e+30 
 
 # Reference surface pressure in Pascals
-_pstar =  1.0e5
+_pstar = 1.0e5
 
 # --------------------------------------------------------------------
 # Characters used in decoding LBEXP into a runid
@@ -78,20 +78,20 @@ _n_characters = len(_characters)
 #_number_regex = '([-+]?\d*\.?\d+(e[-+]?\d+)?)'
             
 _Units = {
-    None                 : Units(),
-    ''                   : Units(''),
-    '1'                  : Units('1'),
-    'Pa'                 : Units('Pa'),
-    'm'                  : Units('m'),
-    'hPa'                : Units('hPa'),
-    'K'                  : Units('K'),
-    'degrees'            : Units('degrees'),
-    'degrees_east'       : Units('degrees_east'),
-    'degrees_north'      : Units('degrees_north'),
-    'days'               : Units('days'),
-    'gregorian 1752-9-13': Units('days since 1752-9-13', 'gregorian'),
-    '365_day 1752-9-13'  : Units('days since 1752-9-13', '365_day'),
-    '360_day 0-1-1'      : Units('days since 0-1-1', '360_day'),
+    None                  : Units(),
+    ''                    : Units(''),
+    '1'                   : Units('1'),
+    'Pa'                  : Units('Pa'),
+    'm'                   : Units('m'),
+    'hPa'                 : Units('hPa'),
+    'K'                   : Units('K'),
+    'degrees'             : Units('degrees'),
+    'degrees_east'        : Units('degrees_east'),
+    'degrees_north'       : Units('degrees_north'),
+    'days'                : Units('days'),
+    'gregorian 1752-09-13': Units('days since 1752-09-13', 'gregorian'),
+    '365_day 1752-09-13'  : Units('days since 1752-09-13', '365_day'),
+    '360_day 0-1-1'       : Units('days since 0-1-1', '360_day'),
 }
 
 # --------------------------------------------------------------------
@@ -193,7 +193,7 @@ _axiscode_to_units = {
 }
 
 # --------------------------------------------------------------------
-# Map PP axis codes to cf.Units objects
+# Map PP axis codes to Units objects
 # --------------------------------------------------------------------
 _axiscode_to_Units = {
     0  : _Units['1'],             # Sigma (or eta, for hybrid coordinate data)
@@ -334,10 +334,11 @@ _rotated_latitude_longitude_lbcodes = set((101, 102, 111))
 
 _axis = {'area': None}
 
-class UMField:
-    '''
 
-'''
+class UMField:
+    '''TODO
+    
+    '''
     def __init__(self, var, fmt, byte_ordering, word_size, um_version,
                  set_standard_name, height_at_top_of_model, verbose,
                  implementation=None, **kwargs):
@@ -353,7 +354,6 @@ class UMField:
         word_size: `int`
             Word size in bytes (4 or 8).
     
-    
         fmt: `str`
             ``'PP'` or ``'FF'``
     
@@ -365,7 +365,8 @@ class UMField:
         height_at_top_of_model: `float`
     
         kwargs: *optional*
-            Keyword arguments specifying CF properties for the UM field.
+            Keyword arguments providing extra CF properties for each
+            return field constuct.
 
         '''
         self._bool = False
@@ -576,9 +577,11 @@ class UMField:
         stash_records = stash2standard_name.get((submodel, stash), None)
     
         um_Units     = None
-        long_name    = None
         um_condition = None
-    
+
+        long_name     = None
+        standard_name = None
+        
         if stash_records:
             um_version = self.um_version
             for (long_name, 
@@ -599,11 +602,13 @@ class UMField:
                         continue
     
                 # Still here? Then we have our standard_name, etc.
-                if standard_name:
-                    if set_standard_name:
-                        cf_properties['standard_name'] = standard_name
-                    else:
-                        attributes['_standard_name'] = standard_name
+#                if standard_name:
+#                    if set_standard_name:
+#                        cf_properties['standard_name'] = standard_name
+#                    else:
+#                        attributes['_standard_name'] = standard_name
+                if standard_name and set_standard_name:
+                    cf_properties['standard_name'] = standard_name
                     
                 cf_properties['long_name'] = long_name.rstrip()
     
@@ -616,7 +621,6 @@ class UMField:
                 self.cf_info  = cf_info
                 
                 break
-            #--- End: for
         #--- End: if
     
         if stash:
@@ -820,6 +824,11 @@ class UMField:
 
             self.implementation.set_properties(field, cf_properties, copy=False)
 
+            field.id = identity
+
+            if standard_name and not set_standard_name:
+                field._custom['standard_name'] = standard_name
+            
             self.implementation.nc_set_variable(field, identity)
             
             # ------------------------------------------------------------
@@ -1027,7 +1036,7 @@ class UMField:
         #ac = AuxiliaryCoordinate()
         ac = self.implementation.initialise_AuxiliaryCoordinate()
         ac = self.coord_data(ac, array, bounds, units=_Units['m'])
-        ac.id        = 'atmosphere_hybrid_height_coordinate_ak'
+        ac.id        = 'UM_atmosphere_hybrid_height_coordinate_ak'
         ac.long_name = 'atmosphere_hybrid_height_coordinate_ak'
 #        field.insert_aux(ac, axes=[zdim], copy=False)
         self.implementation.set_auxiliary_coordinate(self.field, ac,
@@ -1123,23 +1132,24 @@ class UMField:
 
         self.implementation.set_dimension_coordinate(self.field, dc,
                                                      axes=[_axis['z']],
-                                                     copy=False)        
-
+                                                     copy=False)
 
         ac = self.implementation.initialise_AuxiliaryCoordinate()
         ac = self.coord_data(ac, ak_array, ak_bounds, units=_Units['Pa'])
-        ac.id        = 'atmosphere_hybrid_sigma_pressure_coordinate_ak'
+        ac.id        = 'UM_atmosphere_hybrid_sigma_pressure_coordinate_ak'
         ac.long_name = 'atmosphere_hybrid_sigma_pressure_coordinate_ak'
 
         self.implementation.set_auxiliary_coordinate(self.field, ac,
-                                                     axes=[_axis['z']], copy=False)        
+                                                     axes=[_axis['z']],
+                                                     copy=False)
 
 
         ac = self.implementation.initialise_AuxiliaryCoordinate()
         ac = self.coord_data(ac, bk_array, bk_bounds, units=_Units['1'])
 
         self.implementation.set_auxiliary_coordinate(self.field, ac,
-                                                     axes=[_axis['z']], copy=False)        
+                                                     axes=[_axis['z']],
+                                                     copy=False)
 
         ac.id        = 'UM_atmosphere_hybrid_sigma_pressure_coordinate_bk'
         ac.long_name = 'atmosphere_hybrid_sigma_pressure_coordinate_bk'
@@ -1153,6 +1163,7 @@ class UMField:
     :Returns:
 
         `list`
+
         '''
         cell_methods = []
         
@@ -1220,13 +1231,16 @@ class UMField:
 
   
     def coord_axis(self, c, axiscode):
+        '''TODO
+
+        '''
         axis = _coord_axis.setdefault(axiscode, None)
         if axis is not None:
             c.axis = axis
 
         return c
-    #--- End: def
 
+    
     def coord_data(self, c, array=None, bounds=None, units=None,
                    fill_value=None, climatology=False):
         '''Set the data array of a coordinate construct.
@@ -1279,7 +1293,7 @@ class UMField:
     
     :Returns:
     
-        out: Coordinate construct
+        Coordinate construct
 
         '''
         standard_name = _coord_standard_name.setdefault(axiscode, None)
@@ -1323,6 +1337,7 @@ class UMField:
 
     def ctime(self, rec):
         '''TODO
+
         '''
         reftime = self.refUnits
         LBVTIME = tuple(self.header_vtime(rec))
@@ -1356,7 +1371,7 @@ class UMField:
     
     :Returns:
     
-        out: `list` 
+        `list` 
     
     **Examples:**
     
@@ -1377,7 +1392,7 @@ class UMField:
     
     :Returns:
     
-        out: `list` 
+        `list` 
     
     **Examples:**
     
@@ -1398,7 +1413,7 @@ class UMField:
     
     :Returns:
     
-        out: `list`
+        `list`
     
     **Examples:**
     
@@ -1419,7 +1434,7 @@ class UMField:
     
     :Returns:
     
-        out: `list` 
+        `list` 
     
     **Examples:**
     
@@ -1443,7 +1458,7 @@ class UMField:
     
     :Returns:
     
-        out: `list` 
+        `list` 
     
     **Examples:**
     
@@ -1650,7 +1665,7 @@ class UMField:
     
     :Returns:
     
-        out: `str`
+        `str`
            A string derived from LBEXP. If LBEXP is a negative integer
            then that number is returned as a string.
     
@@ -1729,7 +1744,7 @@ class UMField:
 
     :Returns:
 
-        out: `list`
+        `list`
 
     '''
         out2 = []
@@ -1766,9 +1781,9 @@ class UMField:
 
     :Parameters:
     
-        yc: `cf.DimensionCoordinate`
+        yc: `DimensionCoordinate`
     
-        xc: `cf.DimensionCoordinate`
+        xc: `DimensionCoordinate`
     
     :Returns:
     
@@ -1917,7 +1932,7 @@ class UMField:
     
     :Returns:
     
-        out: `numpy.dtype`
+        `numpy.dtype`
 
         '''
         # Find the data type
@@ -1957,6 +1972,7 @@ class UMField:
 
     def pseudolevel_coordinate(self, LBUSER5):
         '''TODO
+
         '''
         if self.nz == 1:            
             array = numpy_array((LBUSER5,), dtype=self.int_hdr_dtype)
@@ -1987,6 +2003,7 @@ class UMField:
 
     def radiation_wavelength_coordinate(self, rwl, rwl_units):
         '''TODO
+
         '''
         array  = numpy_array((rwl,), dtype=float)
         bounds = numpy_array(((0.0, rwl)), dtype=float)
@@ -2013,6 +2030,7 @@ class UMField:
 
     def reference_time_Units(self):
         '''TODO
+
         '''
         time_units = 'days since {}-1-1'.format(self.int_hdr[lbyr])
         calendar = self.calendar
@@ -2220,6 +2238,7 @@ class UMField:
 
     def time_coordinate_from_extra_data(self, axiscode, axis):
         '''TODO
+
         '''     
         extra = self.extra
         array = extra[axis]
@@ -2229,9 +2248,9 @@ class UMField:
         if calendar == '360_day':
             units = _Units['360_day 0-1-1']
         elif calendar == 'gregorian':
-            units = _Units['gregorian 1752-9-13']
+            units = _Units['gregorian 1752-09-13']
         elif calendar == '365_day':
-            units = _Units['365_day 1752-9-13']
+            units = _Units['365_day 1752-09-13']
         else:
             units = None
                 
@@ -2281,7 +2300,7 @@ class UMField:
    
     :Returns:
    
-        out: `float`
+        `float`
 
         '''
         reftime  = self.refUnits
@@ -2532,15 +2551,15 @@ class UMField:
 
     def z_coordinate(self, axiscode):
         '''Create a Z dimension coordinate from BLEV
-
-:Parameters:
-
-    axiscode: `int`
-
-:Returns:
-
-    out: `cf.DimensionCoordinate`
-
+    
+    :Parameters:
+    
+        axiscode: `int`
+    
+    :Returns:
+    
+        `DimensionCoordinate`
+    
         '''
         if self.verbose:
             print('Creating Z coordinates and bounds from BLEV, BRLEV and BRSVD1:') # pragma: no cover
@@ -2592,8 +2611,9 @@ class UMField:
     #--- End: def
     
     def z_reference_coordinate(self, axiscode):        
+        '''TODO
+
         '''
-'''
         if self.verbose:
             print('Creating Z reference coordinates from BRLEV') # pragma: no cover
 
@@ -2788,6 +2808,7 @@ stash2standard_name = load_stash2standard_name()
 
 class UMRead(cfdm.read_write.IORead):
     '''TODO
+
     '''
     def read(self, filename, um_version=405, 
              aggregate=True, endian=None, word_size=None,
@@ -2795,40 +2816,39 @@ class UMRead(cfdm.read_write.IORead):
              fmt=None, chunk=True, verbose=False):    
         '''Read fields from a PP file or UM fields file.
  
-       
-The file may be big or little endian, 32 or 64 bit
-
-:Parameters:
-
-    filename: `file` or `str`
-        A string giving the file name, or an open file object, from
-        which to read fields.
-
-    um_version: number, optional
-        The Unified Model (UM) version to be used when decoding the PP
-        header. Valid versions are, for example, ``402`` (v4.2),
-        ``606.3`` (v6.6.3) and ``1001`` (v10.1). The default version
-        is ``405`` (v4.5). The version is ignored if it can be
-        inferred from the PP headers, which will generally be the case
-        for files created at versions 5.3 and later. Note that the PP
-        header can not encode tertiary version elements (such as the
-        ``3`` in ``606.3``), so it may be necessary to provide a UM
-        version in such cases.
+    The file may be big or little endian, 32 or 64 bit
     
-    verbose: `bool`, optional
-
-    set_standard_name: `bool`, optional
-
-:Returns:
-
-    `list`
-        The fields in the file.
-
-**Examples:**
-
->>> f = read('file.pp')
->>> f = read('*/file[0-9].pp', um_version=708)
+    :Parameters:
+    
+        filename: `file` or `str`
+            A string giving the file name, or an open file object,
+            from which to read fields.
+    
+        um_version: number, optional
+            The Unified Model (UM) version to be used when decoding
+            the PP header. Valid versions are, for example, ``402``
+            (v4.2), ``606.3`` (v6.6.3) and ``1001`` (v10.1). The
+            default version is ``405`` (v4.5). The version is ignored
+            if it can be inferred from the PP headers, which will
+            generally be the case for files created at versions 5.3
+            and later. Note that the PP header can not encode tertiary
+            version elements (such as the ``3`` in ``606.3``), so it
+            may be necessary to provide a UM version in such cases.
         
+        verbose: `bool`, optional
+    
+        set_standard_name: `bool`, optional
+    
+    :Returns:
+    
+        `list`
+            The fields in the file.
+    
+    **Examples:**
+    
+    >>> f = read('file.pp')
+    >>> f = read('*/file[0-9].pp', um_version=708)
+
         '''
         if endian:
             byte_ordering = endian+'_endian'
@@ -2840,7 +2860,7 @@ The file may be big or little endian, 32 or 64 bit
                           'word_size'    : word_size,
                           'fmt'          : fmt}
 
-        history = 'Converted from UM by cf-python v{}'.format(__version__)
+        history = 'Converted from UM/PP by cf-python v{}'.format(__version__)
         
         if endian:
             byte_ordering = endian+'_endian'
@@ -2848,7 +2868,7 @@ The file may be big or little endian, 32 or 64 bit
             byte_ordering = None
             
         f = self.file_open(filename)
-        
+
         um = [UMField(var, f.format, f.byte_ordering, f.word_size,
                       um_version, set_standard_name, history=history,
                       height_at_top_of_model=height_at_top_of_model,
@@ -2857,33 +2877,33 @@ The file may be big or little endian, 32 or 64 bit
               for var in f.vars]
 
         return [field for x in um for field in x.fields if field]
-    #--- End: def
+
 
     def is_um_file(self, filename):
         '''Return True if a file is a PP file or UM fields file.
 
-Note that the file type is determined by inspecting the file's
-contents and any file suffix is not not considered.
+    Note that the file type is determined by inspecting the file's
+    contents and any file suffix is not not considered.
 
-:Parameters:
-
-    filename: `str`
-        The file.
-
-:Returns:
-
-    `bool`
-
-**Examples:**
-
->>> r.is_um_file('myfile.pp')
-True
->>> r.is_um_file('myfile.nc')
-False
->>> r.is_um_file('myfile.pdf')
-False
->>> r.is_um_file('myfile.txt')
-False
+    :Parameters:
+    
+        filename: `str`
+            The file.
+    
+    :Returns:
+    
+        `bool`
+    
+    **Examples:**
+    
+    >>> r.is_um_file('myfile.pp')
+    True
+    >>> r.is_um_file('myfile.nc')
+    False
+    >>> r.is_um_file('myfile.pdf')
+    False
+    >>> r.is_um_file('myfile.txt')
+    False
 
         ''' 
         try:
@@ -2897,28 +2917,29 @@ False
             pass
     
         return True
-    #--- End: def
+
 
     def file_close(self):
         '''Close the file that has been read.
 
-:Returns:
+    :Returns:
+    
+        `None`
 
-    `None`
         '''
         _close_um_file(self.read_vars['filename'])
-    #--- End: def
+
         
     def file_open(self, filename):
         '''Open the file for reading.
 
-:Paramters:
-
-    filename: `str`
-        The file to be read.
-
-:Returns:
-
+    :Paramters:
+    
+        filename: `str`
+            The file to be read.
+    
+    :Returns:
+    
         '''
         g = self.read_vars
 
@@ -2926,9 +2947,10 @@ False
                              byte_ordering=g['byte_ordering'],
                              word_size=g['word_size'],
                              fmt=g['fmt'])
-   #--- End: def
+
 
 #--- End: class
+
 '''
 Problems:
 
