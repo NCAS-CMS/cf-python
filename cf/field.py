@@ -8081,7 +8081,8 @@ class Field(mixin.PropertiesData,
             The different behaviour when the groups have been defined
             by one or more `Query` objects is necessary because a
             `Query` object can only define the composition of a group,
-            and not its size (see the parameter examples below).
+            and not its size (see the parameter examples below for how
+            to specify a group span in this case).
 
             .. note:: Prior to version 3.1.0, the default value of
                       *group_span* was effectively `False`.

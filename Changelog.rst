@@ -10,10 +10,6 @@ version 3.1.0
   parameter to `True` and default value of the ``group_contiguous``
   parameter to ``1``
   (https://github.com/NCAS-CMS/cf-python/issues/28).
-* Changed the default value of the `cf.Field.collapse` ``group_span``
-  parameter to `True` and default value of the ``group_contiguous``
-  parameter to ``1``
-  (https://github.com/NCAS-CMS/cf-python/issues/28).
 * Changed the default values of the `cf.Field.collapse` ``group_by``
   and ``coordinate`` parameters to `None`.
 * Changed the default value of the ``identity`` parameter to `None`
