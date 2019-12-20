@@ -83,6 +83,16 @@ class aggregateTest(unittest.TestCase):
             x = cf.read(['file.nc', 'file2.nc'], aggregate={'relaxed_identities': True})
             self.assertTrue(len(x) == 2)
 
+            del t.standard_name
+            del c.standard_name
+            x = cf.aggregate([c, t])
+            self.assertTrue(len(x) == 2)
+            
+            t.long_name = 'qwerty'
+            c.long_name = 'qwerty'
+            x = cf.aggregate([c, t], field_identity='long_name')
+            self.assertTrue(len(x) == 1)
+
         cf.CHUNKSIZE(self.original_chunksize)
 
 
