@@ -23,7 +23,7 @@ version 3.1.0
   (https://github.com/NCAS-CMS/cf-python/issues/29).
 * New example field (``5``) available from `cf.example_field`.
 * New regridding option: ``'conservative_2nd'``.
-* Fixed bug that didn't change the unit of bounds when the units of
+* Fixed bug that didn't change the units of bounds when the units of
   the coordinates were changed.
 * Changed minimum cfunits dependency to version 3.2.3. This fixes a
   bug that rased an exception for units specified by non-strings
