@@ -210,7 +210,7 @@ class SubspaceField(mixin.Subspace):
                             missing data may still be inserted at
                             unselected locations.
 
-        ``'envelope'``  The returned subspace is the smallest that
+            ``'envelope'``  The returned subspace is the smallest that
                             contains all of the selected
                             indices. Missing data is inserted at
                             unselected locations within the envelope.
@@ -218,9 +218,15 @@ class SubspaceField(mixin.Subspace):
             ``'full'``      The returned subspace has the same domain
                             as the original field construct. Missing
                             data is inserted at unselected locations.
+
+            ``'test'``      May be used on its own or in addition to
+                            one of the other positional arguments. Do
+                            not create a subspace, but return `True`
+                            or `False` depending on whether or not it
+                            is possible to create specified subspace.
             ==============  ==========================================
     
-        keyword parameters: *optional*
+        Keyword parameters: *optional*
             A keyword name is an identity of a metadata construct, and
             the keyword value provides a condition for inferring
             indices that apply to the dimension (or dimensions)
@@ -230,9 +236,12 @@ class SubspaceField(mixin.Subspace):
 
     :Returns:
     
-        `Field`
+        `Field` or `bool`
             An independent field construct containing the subspace of
-            the original field.
+            the original field. If the ``'test'`` positional argumnt
+            has been set then reeturn `True` or `False` depending on
+            whether or not it is possible to create specified
+            subspace.
     
     **Examples:**
     
@@ -257,10 +266,30 @@ class SubspaceField(mixin.Subspace):
         '''
         field = self.variable
 
+        test = False
+        if 'test' in args:
+            args = list(args)
+            args.remove('test')
+            test = True
+
         if not args and not kwargs:
+            if test:
+                return True
+            
             return field.copy()    
 
-        return field[field.indices(*args, **kwargs)]
+        try:
+            indices = field.indices(*args, **kwargs)
+        except ValueError as error:
+            if test:
+                return False
+            
+            raise ValueError(error)
+        else:
+            if test:
+                return True
+        
+            return field[indices]
 
     
 #--- End: class

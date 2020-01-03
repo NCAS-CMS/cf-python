@@ -10861,7 +10861,7 @@ class Field(mixin.PropertiesData,
                     item_match = (value == item)
                     
                     if not item_match.any():                        
-                        raise IndexError(
+                        raise ValueError(
                             "No {!r} axis indices found from: {}".format(identity, value))
                 
                     index = numpy_asanyarray(item_match)
@@ -10982,7 +10982,7 @@ class Field(mixin.PropertiesData,
                                 constructs[0].ndim))
                     
                     if n_items != 2:
-                        raise IndexError(
+                        raise ValueError(
                             "Can't index for cell from {}-d coordinate objects".format(
                                 n_axes))
 
