@@ -16103,6 +16103,13 @@ class Field(mixin.PropertiesData,
             ``'full'``      The returned subspace has the same domain
                             as the original field construct. Missing
                             data is inserted at unselected locations.
+
+            ``'test'``      May be used on its own or in addition to
+                            one of the other positional arguments. Do
+                            not create a subspace, but return `True`
+                            or `False` depending on whether or not it
+                            is possible to create specified the
+                            subspace.
             ==============  ==========================================
     
         keyword parameters: *optional*
@@ -16115,9 +16122,12 @@ class Field(mixin.PropertiesData,
 
     :Returns:
     
-        `Field`
+        `Field` or `bool`
             An independent field construct containing the subspace of
-            the original field.
+            the original field. If the ``'test'`` positional argumnt
+            has been set then return `True` or `False` depending on
+            whether or not it is possible to create specified
+            subspace.
     
     **Examples:**
     

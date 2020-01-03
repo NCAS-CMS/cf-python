@@ -223,7 +223,8 @@ class SubspaceField(mixin.Subspace):
                             one of the other positional arguments. Do
                             not create a subspace, but return `True`
                             or `False` depending on whether or not it
-                            is possible to create specified subspace.
+                            is possible to create the specified
+                            subspace.
             ==============  ==========================================
     
         Keyword parameters: *optional*
@@ -239,7 +240,7 @@ class SubspaceField(mixin.Subspace):
         `Field` or `bool`
             An independent field construct containing the subspace of
             the original field. If the ``'test'`` positional argumnt
-            has been set then reeturn `True` or `False` depending on
+            has been set then return `True` or `False` depending on
             whether or not it is possible to create specified
             subspace.
     

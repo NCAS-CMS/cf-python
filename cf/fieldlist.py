@@ -699,7 +699,8 @@ class FieldList(list):
     
     .. seealso: `select`, `__call__`, `select_by_units`,
                 `select_by_naxes`, `select_by_rank`,
-                `select_by_property`, `cf.Field.match_by_identity`
+                `select_by_property`, `cf.Field.match_by_identity`,
+                `cf.Field.subspace`
     
     :Parameters:
     
