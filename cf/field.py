@@ -11326,7 +11326,8 @@ class Field(mixin.PropertiesData,
         return mask
 
 
-    def match_by_construct(self, *identities, OR=False, **constructs):
+    def match_by_construct(self, *identities, OR=False,
+                           **data_criteria):
         '''Whether or not there are particular metadata constructs.
 
     .. note:: The API changed at version 3.1.0
@@ -11423,18 +11424,18 @@ class Field(mixin.PropertiesData,
         TODO
 
         '''        
-        if constructs:
-            for key, value in constructs.items():
-                if value is None:
-                    message = "Since its value is None, use {!r} as a positional argument instead".format(value)
-                else:                    
-                    message = "Evaluating criteria on data values is not longer possible with this method."
-
-                _DEPRECATION_ERROR_KWARGS(self, 'match_by_construct',
-                                          kwargs={key: value},
-                                          message=message,
-                                          version='3.1.0') # pragma: no cover
-        #--- End: if
+#        if constructs:
+#            for key, value in constructs.items():
+#                if value is None:
+#                    message = "Since its value is None, use {!r} as a positional argument instead".format(value)
+#                else:                    
+#                    message = "Evaluating criteria on data values is not longer possible with this method."
+#
+#                _DEPRECATION_ERROR_KWARGS(self, 'match_by_construct',
+#                                          kwargs={key: value},
+#                                          message=message,
+#                                          version='3.1.0') # pragma: no cover
+#        #--- End: if
 
         if identities:
             if identities[0] == 'or':
@@ -11525,7 +11526,15 @@ class Field(mixin.PropertiesData,
 
                 n += 1
         #--- End: for
-            
+
+        if data_criteria:
+            for identity, value in data_criteria.items():
+                if self.subspace('test', identity=value):
+                    n += 1
+                elif not OR:
+                    return False
+        #--- End: if
+                
         if OR:
             return bool(n)
 
