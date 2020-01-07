@@ -11401,6 +11401,9 @@ class Field(mixin.PropertiesData,
             *Parameter example:*
               ``'domainancillary2', 'ncvar%areacello'``
 
+        data_criteria: optional
+            TODO
+        
         OR: `bool`, optional
             If True then return `True` if at least one metadata
             construct matches at least one of the criteria given by
@@ -11450,7 +11453,7 @@ class Field(mixin.PropertiesData,
         #--- End: if
 
         
-        if not identities:
+        if not identities and not data_criteria:
             return True
             
         constructs = self.constructs
@@ -11529,7 +11532,7 @@ class Field(mixin.PropertiesData,
 
         if data_criteria:
             for identity, value in data_criteria.items():
-                if self.subspace('test', identity=value):
+                if self.subspace('test', **{identity: value}):
                     n += 1
                 elif not OR:
                     return False
