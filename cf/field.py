@@ -11327,7 +11327,7 @@ class Field(mixin.PropertiesData,
 
 
     def match_by_construct(self, *identities, OR=False,
-                           **data_criteria):
+                           **conditions):
         '''Whether or not there are particular metadata constructs.
 
     .. note:: The API changed at version 3.1.0
@@ -11401,15 +11401,39 @@ class Field(mixin.PropertiesData,
             *Parameter example:*
               ``'domainancillary2', 'ncvar%areacello'``
 
-        data_criteria: optional
-            TODO
-        
+        conditions: optional
+            Identify the metadata constructs that have any of the
+            given identities or construct keys, and whose data satisfy
+            conditions.
+
+            A construct identity or construct key (as defined by the
+            *identities* parameter) is given as a keyword name and a
+            condition on its data is given as the keyword value.
+
+            The condition is satisfied if any of its data values
+            equals the value provided.
+
+            *Parameter example:*
+              ``longitude=180.0``
+    
+            *Parameter example:*
+              ``time=cf.dt('1959-12-16')``
+    
+            *Parameter example:*
+              ``latitude=cf.ge(0)``
+    
+            *Parameter example:*
+              ``latitude=cf.ge(0), air_pressure=500``
+           
+            *Parameter example:*
+              ``**{'latitude': cf.ge(0), 'long_name=soil_level': 4}``
+           
         OR: `bool`, optional
             If True then return `True` if at least one metadata
             construct matches at least one of the criteria given by
-            the *identities* arguments. By default `True` is only
-            returned if the field constructs matches each of the given
-            criteria.
+            the *identities* or *conditions* arguments. By default
+            `True` is only returned if the field constructs matches
+            each of the given criteria.
 
         mode: deprecated at version 3.1.0
             Use the *OR* parameter instead.
@@ -11453,7 +11477,7 @@ class Field(mixin.PropertiesData,
         #--- End: if
 
         
-        if not identities and not data_criteria:
+        if not identities and not conditions:
             return True
             
         constructs = self.constructs
@@ -11477,7 +11501,7 @@ class Field(mixin.PropertiesData,
                             for axis in cm.get_axes(())]
                     if axes:
                         cm.set_axes(axes)
-            #--- End: try
+            #--- End: if
 
             if not cms:
                 filtered = constructs(identity)
@@ -11530,8 +11554,8 @@ class Field(mixin.PropertiesData,
                 n += 1
         #--- End: for
 
-        if data_criteria:
-            for identity, value in data_criteria.items():
+        if conditions:
+            for identity, value in conditions.items():
                 if self.subspace('test', **{identity: value}):
                     n += 1
                 elif not OR:

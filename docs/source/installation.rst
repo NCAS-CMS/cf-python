@@ -190,7 +190,7 @@ Required
 
 * `cfdm <https://pypi.org/project/cfdm/>`_, version 1.7.11 or newer.
   
-* `cfunits <https://pypi.org/project/cfunits/>`_, version 3.2.3 or newer.
+* `cfunits <https://pypi.org/project/cfunits/>`_, version 3.2.4 or newer.
   
 * `psutil <https://pypi.org/project/psutil/>`_, version 0.6.0 or newer.
 
@@ -222,7 +222,7 @@ Optional
 
 Some further dependencies that enable further functionality are
 optional. This to facilitate cf-python being installed in restricted
-environments in which these features are not required.
+environments for which these features are not required.
 
 .. rubric:: Regridding
 

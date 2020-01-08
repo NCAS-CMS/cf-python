@@ -25,7 +25,7 @@ version 3.1.0
 * New regridding option: ``'conservative_2nd'``.
 * Fixed bug that didn't change the units of bounds when the units of
   the coordinates were changed.
-* Changed minimum cfunits dependency to version 3.2.3. This fixes a
+* Changed minimum cfunits dependency to version 3.2.4. This fixes a
   bug that rased an exception for units specified by non-strings
   (https://github.com/NCAS-CMS/cfunits/issues/1).
 * Changed minimum ESMF dependency to 8.0.0. This fixes an issue

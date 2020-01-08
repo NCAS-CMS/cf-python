@@ -690,7 +690,7 @@ class FieldList(list):
         return True	    
 
 
-    def select_by_construct(self, *identities, OR=False, **constructs):
+    def select_by_construct(self, *identities, OR=False, **conditions):
         '''Select field constructs by metadata constructs.
 
     .. note:: The API changed at version 3.1.0
@@ -705,7 +705,6 @@ class FieldList(list):
     :Parameters:
     
         identities: optional
- 
             Identify the metadata constructs that have any of the
             given identities or construct keys.
 
@@ -766,12 +765,39 @@ class FieldList(list):
             *Parameter example:*
               ``'domainancillary2', 'ncvar%areacello'``
 
+        conditions: optional
+            Identify the metadata constructs that have any of the
+            given identities or construct keys, and whose data satisfy
+            conditions.
+
+            A construct identity or construct key (as defined by the
+            *identities* parameter) is given as a keyword name and a
+            condition on its data is given as the keyword value.
+
+            The condition is satisfied if any of its data values
+            equals the value provided.
+
+            *Parameter example:*
+              ``longitude=180.0``
+    
+            *Parameter example:*
+              ``time=cf.dt('1959-12-16')``
+    
+            *Parameter example:*
+              ``latitude=cf.ge(0)``
+    
+            *Parameter example:*
+              ``latitude=cf.ge(0), air_pressure=500``
+           
+            *Parameter example:*
+              ``**{'latitude': cf.ge(0), 'long_name=soil_level': 4}``
+           
         OR: `bool`, optional
-            If True then select the field constructs for which at
-            least one metadata construct matches at least one of the
-            criteria given by the *identities* arguments. By default
-            only the field constructs that match each of the given
-            criteria are selected.
+            If True then return `True` if at least one metadata
+            construct matches at least one of the criteria given by
+            the *identities* or *conditions* arguments. By default
+            `True` is only returned if the field constructs matches
+            each of the given criteria.
 
         mode: deprecated at version 3.1.0
             Use the *OR* parameter instead.
@@ -788,18 +814,18 @@ class FieldList(list):
         TODO
 
         '''        
-        if constructs:
-            for key, value in constructs.items():
-                if value is None:
-                    message = "Since its value is None, use {!r} as a positional argument instead".format(value)
-                else:                    
-                    message = "Evaluating criteria on data values is not longer possible with this method."
-
-                _DEPRECATION_ERROR_KWARGS(self, 'select_by_construct',
-                                          kwargs={key: value},
-                                          message=message,
-                                          version='3.1.0') # pragma: no cover
-        #--- End: if
+#        if constructs:
+#            for key, value in constructs.items():
+#                if value is None:
+#                    message = "Since its value is None, use {!r} as a positional argument instead".format(value)
+#                else:                    
+#                    message = "Evaluating criteria on data values is not longer possible with this method."
+#
+#                _DEPRECATION_ERROR_KWARGS(self, 'select_by_construct',
+#                                          kwargs={key: value},
+#                                          message=message,
+#                                          version='3.1.0') # pragma: no cover
+#        #--- End: if
 
         if identities:
             if identities[0] == 'or':
@@ -814,7 +840,7 @@ class FieldList(list):
         #--- End: if
 
         return type(self)(f for f in self
-                          if f.match_by_construct(*identities, OR=OR))
+                          if f.match_by_construct(*identities, OR=OR, **conditions))
 
 
     def select_by_identity(self, *identities):

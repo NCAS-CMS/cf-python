@@ -1372,9 +1372,9 @@ def aggregate(fields,
     
         field_identity: `str`, optional
             Specify a property with which to identify field constructs
-            instead of any other method. How metadata constructs are
-            identified is not affected by this parameter. See the
-            *relaxed_identies* and *ncvar_identities* parameters. 
+            instead of any other technique. How metadata constructs
+            are identified is not affected by this parameter. See the
+            *relaxed_identites* and *ncvar_identities* parameters.
     
             *Parameter example:*
               Force field constructs to be identified by the values of
@@ -2984,4 +2984,3 @@ def ensemble(f, prop, **kwargs):
         raise ValueError("TODO sd ;oo08 z;kln poih [")
     
     return f
-

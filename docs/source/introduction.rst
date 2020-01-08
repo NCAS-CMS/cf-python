@@ -36,7 +36,7 @@ is built on a complete implementation of the :ref:`CF-data-model`.
 	  Scripts written for version 2.x but running under version
           3.x should either work as expected, or provide informative
           error messages on the new API usage. However, it is advised
-          that the outputs of older scripts be checked when running
+          that the outputs of older scripts are checked when running
           with Python 3 versions of the cf library.
 
 	  For version 2.x documentation, see the :ref:`older releases

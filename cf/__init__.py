@@ -155,7 +155,7 @@ if LooseVersion(numpy.__version__) < LooseVersion(_minimum_vn):
             _minimum_vn, numpy.__version__, numpy.__file__))
 
 # Check the version of cfunits
-_minimum_vn = '3.2.3'
+_minimum_vn = '3.2.4'
 if LooseVersion(cfunits.__version__) < LooseVersion(_minimum_vn):
     raise ValueError(
         "Bad cfunits version: cf requires cfunits version {} or later. Got {} at {}".format(
