@@ -972,6 +972,58 @@ class PropertiesData(Properties):
 #        raise ValueError(
 #            "ERROR: Can't get {0} when there is no data array".format(method))        
 
+    @staticmethod
+    def _delete_misleading_props(v):
+        '''Remove identities that are misleading in context.'''
+        v.del_property('standard_name', None)
+        v.del_property('long_name', None)
+
+
+    def _process_data_operation(
+            self, oper_name, inplace, i, *oper_args, **oper_kwargs):
+        '''Pre-define an operation that can be applied to the data array.
+
+        * 'oper_name' should be the string name for the desired operation
+          as it is defined (its method name) under the Data class, e.g.
+          'sin' to apply 'Data.sin'
+        * any positional or keyword arguments required in the operation
+          call should be passed through via *oper_args and **oper_kwargs.
+        '''
+        if i:
+            _DEPRECATION_ERROR_KWARGS(self, oper_name, i=True) # pragma: no cover
+
+        if inplace:
+            v = self
+        else:
+            v = self.copy()
+
+        data = v.get_data(None)
+        if data is not None:
+            getattr(data, oper_name)(*oper_args, inplace=True, **oper_kwargs)
+        return v
+
+
+    def _apply_data_oper_with_props_deletion(
+            self, oper_name, *oper_args, inplace=False, i=False,
+            **oper_kwargs):
+        '''Define a data array operation and delete some properties.'''
+        v = self._process_data_operation(
+                oper_name, inplace, i, *oper_args, **oper_kwargs)
+        self._delete_misleading_props(v)
+        if inplace:
+            v = None
+        return v
+
+
+    def _apply_data_oper_without_props_deletion(
+            self, oper_name, *oper_args, inplace=False, i=False,
+            **oper_kwargs):
+        '''Define a data array operation (without editing any properties).'''
+        v = self._process_data_operation(
+                oper_name, inplace, i, *oper_args, **oper_kwargs)
+        if inplace:
+            v = None
+        return v
 
     # ----------------------------------------------------------------
     # Attributes
@@ -1913,18 +1965,8 @@ g
     (1, 2, 3)
 
         '''
-        if inplace:
-            v = self
-        else:
-            v = self.copy()
-            
-        data = v.get_data(None)
-        if data is not None:
-            data.swapaxes(axis0, axis1, inplace=True)
-
-        if inplace:            
-            v = None
-        return v
+        return self._apply_data_oper_with_props_deletion(
+            'swapaxes', axis0, axis1, inplace=inplace)
 
     
     def var(self):
@@ -2442,21 +2484,8 @@ TODO
     [-1. -1. -1. -1.  0.  1.  2.  2.  2.]
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'ceil', i=True) # pragma: no cover
-
-        if inplace:
-            v = self
-        else:
-            v = self.copy()
-
-        data = v.get_data(None)
-        if data is not None:
-            data.ceil(inplace=True)
-
-        if inplace:
-            v = None
-        return v
+        return self._apply_data_oper_with_props_deletion(
+            'ceil', inplace=inplace, i=i)
     
 
     def chunk(self, chunksize=None):
@@ -2517,21 +2546,8 @@ TODO
     >>> g = f.clip(-90, 90, 'degrees_north')
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'clip', i=True) # pragma: no cover
-
-        if inplace:
-            v = self
-        else:
-            v = self.copy()
-
-        data = v.get_data(None)
-        if data is not None:
-            data.clip(a_min, a_max, units=units, inplace=True)
-
-        if inplace:
-            v = None
-        return v
+        return self._apply_data_oper_with_props_deletion(
+            'clip', a_min, a_max, inplace=inplace, i=i, units=units)
     
 
     def close(self):
@@ -2586,7 +2602,7 @@ TODO
         return out
     
     
-    def cos(self, bounds=True, inplace=False, i=False):
+    def cos(self, inplace=False, i=False):
         '''Take the trigonometric cosine of the data, element-wise.
 
     Units are accounted for in the calculation, so that the the cosine
@@ -2637,25 +2653,8 @@ TODO
     [[0.540302305868 -0.416146836547 -0.9899924966 --]]
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'cos', i=True) # pragma: no cover
-
-        if inplace:
-            v = self
-        else:
-            v = self.copy()
-
-        data = v.get_data(None)
-        if data is not None:
-            data.cos(inplace=True)
-
-        # Remove misleading identities
-        v.del_property('standard_name', None)
-        v.del_property('long_name', None)
-        
-        if inplace:
-            v = None
-        return v
+        return self._apply_data_oper_with_props_deletion(
+            'cos', inplace=inplace, i=i)
     
 
     def count(self):
@@ -3259,18 +3258,8 @@ TODO
     (4, 2, 3)
 
         '''
-        if inplace:
-            v = self
-        else:
-            v = self.copy()
-
-        data = v.get_data(None)
-        if data is not None:
-            data.flatten(axes, inplace=True)
-
-        if inplace:
-            v = None
-        return v
+        return self._apply_data_oper_without_props_deletion(
+            'flatten', axes, inplace=inplace)
 
         
     def floor(self, inplace=False, i=False):
@@ -3307,21 +3296,8 @@ TODO
     [-2. -2. -2. -1.  0.  1.  1.  1.  1.]
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'floor', i=True) # pragma: no cover
-            
-        if inplace:
-            v = self
-        else:
-            v = self.copy()
-
-        data = v.get_data(None)
-        if data is not None:
-            data.floor(inplace=True)
-
-        if inplace:
-            v = None
-        return v
+        return self._apply_data_oper_with_props_deletion(
+            'floor', inplace=inplace, i=i)
     
 
     def match_by_naxes(self, *naxes):
@@ -3747,21 +3723,8 @@ TODO
     True
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'flip', i=True) # pragma: no cover
-            
-        if inplace:
-            v = self
-        else:
-            v = self.copy()
-
-        data = v.get_data(None)
-        if data is not None:
-            data.flip(axes, inplace=True)
-
-        if inplace:
-            v = None            
-        return v
+        return self._apply_data_oper_without_props_deletion(
+            'flip', axes, inplace=inplace, i=i)
     
 
     def exp(self, inplace=False, i=False):
@@ -3803,25 +3766,8 @@ TODO
     ValueError: Can't take exponential of dimensional quantities: <Units: kg m-1 s-2>
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'exp', i=True) # pragma: no cover
-            
-        if inplace:
-            v = self
-        else:
-            v = self.copy()
-
-        data = v.get_data(None)
-        if data is not None:
-            data.exp(inplace=True)
-
-        # Remove misleading identities
-        v.del_property('standard_name', None)
-        v.del_property('long_name', None)       
-
-        if inplace:
-            v = None
-        return v
+        return self._apply_data_oper_with_props_deletion(
+            'exp', inplace=inplace, i=i)
     
 
     def sin(self, inplace=False, i=False):
@@ -3875,25 +3821,8 @@ TODO
     [[0.841470984808 0.909297426826 0.14112000806 --]]
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'sin', i=True) # pragma: no cover
-            
-        if inplace:
-            v = self
-        else:
-            v = self.copy()
-
-        data = v.get_data(None)
-        if data is not None:
-            data.sin(inplace=True)
-
-        # Remove misleading identities
-        v.del_property('standard_name', None)
-        v.del_property('long_name', None)
-        
-        if inplace:
-            v = None
-        return v
+        return self._apply_data_oper_with_props_deletion(
+            'sin', inplace=inplace, i=i)
     
 
     def arctan(self, inplace=False):
@@ -3931,22 +3860,8 @@ TODO
      [1.2490457723982544                 -- 1.373400766945016 ]]
 
         '''
-        if inplace:
-            v = self
-        else:
-            v = self.copy()
-
-        data = v.get_data(None)
-        if data is not None:
-            data.arctan(inplace=True)
-
-        # Remove misleading properties
-        v.del_property('standard_name', None)
-        v.del_property('long_name', None)        
-
-        if inplace:
-            v = None
-        return v
+        return self._apply_data_oper_with_props_deletion(
+            'arctan', inplace=inplace)
 
 
     def tan(self, inplace=False, i=False):
@@ -4001,25 +3916,8 @@ TODO
     [[1.55740772465 -2.18503986326 -0.142546543074 --]]
 
         '''     
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'tan', i=True) # pragma: no cover
-            
-        if inplace:
-            v = self
-        else:
-            v = self.copy()
-
-        data = v.get_data(None)
-        if data is not None:
-            data.tan(inplace=True)
-
-        # Remove misleading identities
-        v.del_property('standard_name', None)
-        v.del_property('long_name', None)        
-
-        if inplace:
-            v = None
-        return v
+        return self._apply_data_oper_with_props_deletion(
+            'tan', inplace=inplace, i=i)
 
 
     def log(self, base=None, inplace=False, i=False):
@@ -4073,25 +3971,8 @@ TODO
     ValueError: Can't take the logarithm to the base 2.718281828459045 of <Units: >
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'log', i=True) # pragma: no cover
-            
-        if inplace:
-            v = self
-        else:
-            v = self.copy()
-
-        data = v.get_data(None)
-        if data is not None:
-            data.log(base, inplace=True)
-
-        # Remove misleading identities
-        v.del_property('standard_name', None)
-        v.del_property('long_name', None)
-        
-        if inplace:
-            v = None
-        return v
+        return self._apply_data_oper_with_props_deletion(
+            'log', base, inplace=inplace, i=i)
     
 
     def trunc(self, inplace=False, i=False):
@@ -4129,21 +4010,8 @@ TODO
     [-1. -1. -1. -1.  0.  1.  1.  1.  1.]
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'trunc', i=True) # pragma: no cover
-
-        if inplace:
-            v = self
-        else:
-            v = self.copy()
-            
-        data = v.get_data(None)
-        if data is not None:
-            data.trunc(inplace=True)
-
-        if inplace:
-            v = None
-        return v
+        return self._apply_data_oper_without_props_deletion(
+            'trunc', inplace=inplace, i=i)
 
     
     def unique(self):
@@ -4594,21 +4462,8 @@ TODO
     [-2. -2. -1. -1.  0.  1.  1.  2.  2.]
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'rint', i=True) # pragma: no cover
-            
-        if inplace:
-            v = self
-        else:
-            v = self.copy()
-
-        data = v.get_data(None)
-        if data is not None:
-            data.rint(inplace=True)
-            
-        if inplace:
-            v = None
-        return v
+        return self._apply_data_oper_without_props_deletion(
+            'rint', inplace=inplace, i=i)
 
 
     def round(self, decimals=0, inplace=False, i=False):
@@ -4655,21 +4510,9 @@ TODO
     [-0., -0., -0., -0.,  0.,  0.,  0.,  0.,  0.]
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'round', i=True) # pragma: no cover
-            
-        if inplace:
-            v = self
-        else:
-            v = self.copy()
-
-        data = v.get_data(None)
-        if data is not None:
-            data.round(decimals=decimals, inplace=True)
-
-        if inplace:
-            v = self
-        return v
+        return self._apply_data_oper_without_props_deletion(
+            'round', inplace=inplace, i=i,
+            decimals=decimals)
 
 
     def roll(self, iaxis, shift, inplace=False, i=False):
@@ -4698,21 +4541,8 @@ TODO
     TODO
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'roll', i=True) # pragma: no cover
-
-        if inplace:
-            v = self
-        else:
-            v = self.copy()
-
-        data = v.get_data(None)
-        if data is not None:
-            data.roll(iaxis, shift, inplace=True)
-
-        if inplace:
-            v = None
-        return v
+        return self._apply_data_oper_without_props_deletion(
+            'roll',  iaxis, shift, inplace=inplace, i=i)
 
 
     def set_data(self, data, copy=True):
