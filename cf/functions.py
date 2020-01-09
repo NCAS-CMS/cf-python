@@ -778,13 +778,13 @@ def close_files(file_format=None):
     '''
     if file_format is not None:
         if file_format in _file_to_fh:
-            for fh in _file_to_fh[file_format].itervalues():
+            for fh in _file_to_fh[file_format].values():
                 fh.close()
         
             _file_to_fh[file_format].clear()
     else:
-        for file_format, value in _file_to_fh.iteritems():
-            for fh in value.itervalues():
+        for file_format, value in _file_to_fh.items():
+            for fh in value.values():
                 fh.close()
         
             _file_to_fh[file_format].clear()
@@ -835,15 +835,15 @@ def close_one_file(file_format=None):
     '''
     if file_format is not None:
         if file_format in _file_to_fh and _file_to_fh[file_format]:
-            filename, fh = next(_file_to_fh[file_format].iteritems())
+            filename, fh = next(_file_to_fh[file_format].items())
             fh.close()
             del _file_to_fh[file_format][filename]
     else:    
-        for values in _file_to_fh.itervalues():
+        for values in _file_to_fh.values():
             if not values:
                 continue
         
-            filename, fh = next(values.iteritems())
+            filename, fh = next(values.items())
             fh.close()
             del values[filename]
 
@@ -891,7 +891,7 @@ def open_files(file_format=None):
             return {}
     else:   
         out = {}
-        for file_format, values in _file_to_fh.iteritems():
+        for file_format, values in _file_to_fh.items():
             out[file_format] = values.copy()
             
         return out
