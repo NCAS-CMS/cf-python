@@ -268,7 +268,7 @@ def CHUNKSIZE(*args):
             CONSTANTS['CHUNKSIZE'] = upper_chunksize
         else:
             chunksize = float(args[0])
-            if chunksize > upper_chunksize:
+            if chunksize > upper_chunksize and mpi_size > 1:
                 raise ValueError(
                     'Specified chunk size is too large for given free memory factor')
             elif chunksize <= 0:
