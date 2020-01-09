@@ -3007,7 +3007,7 @@ TODO
                        set(self_special).symmetric_difference(other_special)))
             return False
 
-        for attr, x in self_special.iteritems():
+        for attr, x in self_special.items():
             y = other_special[attr]
 
             result = cf_equivalent(x, y, rtol=rtol, atol=atol,
