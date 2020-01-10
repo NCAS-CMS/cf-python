@@ -134,7 +134,7 @@ class Coordinate(mixin.PropertiesDataBounds):
 
         return (self.Units.islatitude or 
                 self.get_property('axis', None) == 'Y' or 
-                self.get_property('standard_name', 'Y') in ('latitude',
+                self.get_property('standard_name', None) in ('latitude',
                                                             'projection_y_coordinate',
                                                             'grid_latitude'))
 
