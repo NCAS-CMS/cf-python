@@ -835,7 +835,7 @@ def close_one_file(file_format=None):
     '''
     if file_format is not None:
         if file_format in _file_to_fh and _file_to_fh[file_format]:
-            filename, fh = next(_file_to_fh[file_format].items())
+            filename, fh = next(iter(_file_to_fh[file_format].items()))
             fh.close()
             del _file_to_fh[file_format][filename]
     else:    
@@ -843,7 +843,7 @@ def close_one_file(file_format=None):
             if not values:
                 continue
         
-            filename, fh = next(values.items())
+            filename, fh = next(iter(values.items()))
             fh.close()
             del values[filename]
 
