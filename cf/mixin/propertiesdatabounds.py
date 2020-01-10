@@ -474,6 +474,37 @@ class PropertiesDataBounds(PropertiesData):
         return False
 
     
+    def _apply_data_operation(
+            self, oper_name, *oper_args, bounds=True, inplace=False,
+            i=False, **oper_kwargs):
+        '''Define an operation that can be applied to the data array.
+
+        * 'oper_name' should be the string name for the desired operation
+          as it is defined (its method name) under the Data class, e.g.
+          'sin' to apply 'Data.sin'
+        * any positional or keyword arguments required in the operation
+          call should be passed through via *oper_args and **oper_kwargs.
+        '''
+        if i:
+            _DEPRECATION_ERROR_KWARGS(self, oper_name, i=True) # pragma: no cover
+ 
+        v = getattr(super(), oper_name)(*oper_args, inplace=inplace,
+                                        **oper_kwargs)
+        if inplace:
+            v = self
+
+        if bounds:
+            bounds = v.get_bounds(None)
+            if bounds is not None:
+                getattr(bounds, oper_name)(*oper_args, inplace=True,
+                                           **oper_kwargs)
+        #--- End: if
+
+        if inplace:
+            v = None
+        return v
+
+
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
@@ -759,17 +790,9 @@ class PropertiesDataBounds(PropertiesData):
     [1.  -- ]
 
         '''
-        v = super().mask_invalid(inplace=inplace, i=i)
-        if inplace:
-            v = self
-
-        bounds = v.get_bounds(None)
-        if bounds is not None:
-            bounds.mask_invalid(inplace=True)
-
-        if inplace:
-            v = None
-        return v
+        # Set bounds to True to bypass 'if bounds' check in call:
+        return self._apply_data_operation(
+            'mask_invalid', bounds=True, inplace=inplace, i=i)
 
 
     # ----------------------------------------------------------------
@@ -894,22 +917,8 @@ dtype('float64')
     [-1. -1. -1. -1.  0.  1.  2.  2.  2.]
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'ceil', i=True) # pragma: no cover
-
-        v = super().ceil(inplace=inplace)
-        if inplace:
-            v = self
-            
-        if bounds:
-            bounds = v.get_bounds(None)
-            if bounds is not None:
-                bounds.ceil(inplace=True)
-        #--- End: if
-
-        if inplace:
-            v = None
-        return v
+        return self._apply_data_operation(
+            'ceil', bounds=bounds, inplace=inplace, i=i)
 
 
     def chunk(self, chunksize=None):
@@ -985,22 +994,9 @@ dtype('float64')
     >>> g = f.clip(-90, 90, 'degrees_north')
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'clip', i=True) # pragma: no cover
-
-        v = super().clip(a_min, a_max, units=units, inplace=inplace)
-        if inplace:
-            v = self
-            
-        if bounds:
-            bounds = v.get_bounds(None)
-            if bounds is not None:
-                bounds.clip(a_min, a_max, units=units, inplace=True)
-        #--- End: if
-
-        if inplace:
-            v = None
-        return v
+        return self._apply_data_operation(
+            'clip', a_min, a_max, bounds=bounds, inplace=inplace, i=i,
+            units=units)
 
     
     def close(self):
@@ -1110,22 +1106,8 @@ dtype('float64')
     [[0.540302305868 -0.416146836547 -0.9899924966 --]]
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'cos', i=True) # pragma: no cover
-
-        v = super().cos(inplace=inplace)
-        if inplace:
-            v = self
-
-        if bounds:
-            bounds = v.get_bounds(None)
-            if bounds is not None:
-                bounds.cos(inplace=True)
-        #--- End: if
-        
-        if inplace:
-            v = None
-        return v
+        return self._apply_data_operation(
+            'cos', bounds=bounds, inplace=inplace, i=i)
 
 
     def cyclic(self, axes=None, iscyclic=True):
@@ -1404,26 +1386,9 @@ dtype('float64')
     <Units: days since 2000-1-1>
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'convert_reference_time', i=True) # pragma: no cover
-
-        v = super().convert_reference_time(units=units,
-                                           calendar_months=calendar_months,
-                                           calendar_years=calendar_years,
-                                           inplace=inplace)
-        if inplace:
-            v = self
-
-        bounds = v.get_bounds(None)
-        if bounds is not None:
-            bounds.convert_reference_time(units=units,
-                                          calendar_months=calendar_months,
-                                          calendar_years=calendar_years,
-                                          inplace=True)
-
-        if inplace:
-            v = None
-        return v
+        return self._apply_data_operation(
+            'convert_reference_time', inplace=inplace, i=i, units=units,
+            calendar_months=calendar_months, calendar_years=calendar_years)
 
     
     def flatten(self, axes=None, inplace=False):
@@ -1476,6 +1441,9 @@ dtype('float64')
     (4, 2, 3)
 
         '''
+        # Note the 'axes' argument can change mid-method meaning it is not
+        # possible to consolidate this method using a call to
+        # _apply_data_operations, despite having mostly the same logic.
         v = super().flatten(axes, inplace=inplace)
         if inplace:
             v = self
@@ -1527,22 +1495,8 @@ dtype('float64')
     [-2. -2. -2. -1.  0.  1.  1.  1.  1.]
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'floor', i=True) # pragma: no cover
-
-        v = super().floor(inplace=inplace)
-        if inplace:
-            v = self
-            
-        if bounds:
-            bounds = v.get_bounds(None)
-            if bounds is not None:
-                bounds.floor(inplace=True)
-        #--- End: if
-        
-        if inplace:
-            v = None
-        return v
+        return self._apply_data_operation(
+            'floor', bounds=bounds, inplace=inplace, i=i)
 
 
     def direction(self):
@@ -1691,20 +1645,8 @@ dtype('float64')
     >>> g = f.override_calendar('noleap')
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'override_calendar', i=True) # pragma: no cover
-
-        v = super().override_calendar(calendar, inplace=inplace)
-        if inplace:
-            v = self
-
-        bounds = v.get_bounds(None)
-        if bounds is not None:
-            bounds.override_calendar(calendar, inplace=True)
-
-        if inplace:
-            v = None
-        return v
+        return self._apply_data_operation(
+            'override_calendar', calendar, inplace=inplace, i=i)
 
 
     def override_units(self, units, inplace=False, i=False):
@@ -1753,21 +1695,9 @@ dtype('float64')
     >>> f.datum(0)
     100000.0
 
-        '''        
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'override_units', i=True) # pragma: no cover
-
-        v = super().override_units(units, inplace=inplace)
-        if inplace:
-            v = self
-
-        bounds = v.get_bounds(None)
-        if bounds is not None:
-            bounds.override_units(units, inplace=True)
-
-        if inplace:
-            v = None
-        return v
+        '''
+        return self._apply_data_operation(
+            'override_units', units, inplace=inplace, i=i)
 
 
     def files(self):
@@ -1914,22 +1844,8 @@ dtype('float64')
     ValueError: Can't take exponential of dimensional quantities: <Units: kg m-1 s-2>
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'exp', i=True) # pragma: no cover
-         
-        v = super().exp(inplace=inplace)
-        if inplace:
-            v = self
-    
-        if bounds:
-            bounds = v.get_bounds(None)
-            if bounds is not None:
-                bounds.exp(inplace=True)
-        #--- End: if
-
-        if inplace:
-            v = None
-        return v
+        return self._apply_data_operation(
+            'exp', bounds=bounds, inplace=inplace, i=i)
 
 
     def set_bounds(self, bounds, copy=True):
@@ -2061,22 +1977,8 @@ dtype('float64')
     [[0.841470984808 0.909297426826 0.14112000806 --]]
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'sin', i=True) # pragma: no cover
-
-        v = super().sin(inplace=inplace)
-        if inplace:
-            v = self
-        
-        if bounds:
-            bounds = v.get_bounds(None)
-            if bounds is not None:
-                bounds.sin(inplace=True)
-        #--- End: if
-
-        if inplace:
-            v = None            
-        return v
+        return self._apply_data_operation(
+            'sin', bounds=bounds, inplace=inplace, i=i)
 
 
     def arctan(self, inplace=False):
@@ -2115,19 +2017,7 @@ dtype('float64')
 
 
         '''
-        v = super().arctan(inplace=inplace)
-        if inplace:
-            v = self
-            
-        if bounds:
-            bounds = v.get_bounds(None)
-            if bounds is not None:
-                bounds.arctan(inplace=True)
-        #--- End: if
-
-        if inplace:
-            v = None            
-        return v
+        return self._apply_data_operation('arctan', inplace=inplace)
 
 
     def tan(self, bounds=True, inplace=False, i=False):
@@ -2165,22 +2055,7 @@ dtype('float64')
     TODO
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'tan', i=True) # pragma: no cover  
-
-        v = super().tan(inplace=inplace)
-        if inplace:
-            v = self
-            
-        if bounds:
-            bounds = v.get_bounds(None)
-            if bounds is not None:
-                bounds.tan(inplace=True)
-        #--- End: if
-
-        if inplace:
-            v = None            
-        return v
+        return self._apply_data_operation('tan', inplace=inplace, i=i)
 
 
     def log(self, base=None, bounds=True, inplace=False, i=False):
@@ -2237,22 +2112,8 @@ dtype('float64')
     ValueError: Can't take the logarithm to the base 2.718281828459045 of <Units: >
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'tan', i=True) # pragma: no cover
-
-        v = super().log(base=base, inplace=inplace)
-        if inplace:
-            v = self
-    
-        if bounds:
-            bounds = v.get_bounds(None)
-            if bounds is not None:
-                bounds.log(base=base, inplace=True)
-        #--- End: if
-
-        if inplace:
-            v = None    
-        return v
+        return self._apply_data_operation(
+            'log', bounds=bounds, inplace=inplace, i=i)
 
 
     def squeeze(self, axes=None, inplace=False, i=False):
@@ -2336,22 +2197,8 @@ dtype('float64')
     [-1. -1. -1. -1.  0.  1.  1.  1.  1.]
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'trunc', i=True) # pragma: no cover
-
-        v = super().trunc(inplace=inplace)
-        if inplace:
-            v = self
-
-        if bounds:
-            bounds = v.get_bounds(None)
-            if bounds is not None:
-                bounds.trunc(inplace=True)
-        #--- End: if
-        
-        if inplace:
-            v = None
-        return v
+        return self._apply_data_operation(
+            'trunc', bounds=bounds, inplace=inplace, i=i)
 
     
     def identities(self):
@@ -2567,22 +2414,8 @@ dtype('float64')
     [-2. -2. -1. -1.  0.  1.  1.  2.  2.]
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'rint', i=True) # pragma: no cover
-            
-        v = super().rint(inplace=inplace)
-        if inplace:
-            v = self
-            
-        if bounds:
-            bounds = v.get_bounds(None)
-            if bounds is not None:
-                bounds.rint(inplace=True)
-        #--- End: if
-
-        if inplace:
-            v = None            
-        return v
+        return self._apply_data_operation(
+            'rint', bounds=bounds, inplace=inplace, i=i)
 
 
     def round(self, decimals=0, bounds=True, inplace=False, i=False):
@@ -2635,23 +2468,9 @@ dtype('float64')
     [-0., -0., -0., -0.,  0.,  0.,  0.,  0.,  0.]
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'round', i=True)  # pragma: no cover
-
-        v = super().round(decimals=decimals, inplace=inplace)
-        if inplace:
-            v = self
-
-        # Roll the bounds, if there are any
-        if bounds:
-            bounds = v.get_bounds(None)
-            if bounds is not None:
-                bounds.round(decimals=decimals, inplace=True)
-        #--- End: if
-        
-        if inplace:
-            v = None
-        return v
+        return self._apply_data_operation(
+            'round', bounds=bounds, inplace=inplace, i=i,
+            decimals=decimals)
 
 
     def roll(self, iaxis, shift, inplace=False, i=False):
@@ -2679,22 +2498,8 @@ dtype('float64')
     TODO
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'roll', i=True) # pragma: no cover
-
-        v = super().roll(iaxis, shift, inplace=inplace)
-        if inplace:
-            v = self
-            
-        # Roll the bounds, if there are any
-        bounds = v.get_bounds(None)
-        if bounds is not None:
-            iaxis = self._parse_axes([iaxis])[0]
-            bounds.roll(iaxis, shift, inplace=True)
-
-        if inplace:
-            v = None
-        return v
+        return self._apply_data_operation(
+            'roll', iaxis, shift, inplace=inplace, i=i)
 
 
     # ----------------------------------------------------------------
