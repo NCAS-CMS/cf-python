@@ -96,6 +96,9 @@ from ..functions import (_DEPRECATION_ERROR_KWARGS,
 
 from ..functions import inspect as cf_inspect
 from ..functions import _section
+from ..decorators import (_inplace_enabled,
+                          _inplace_enabled_define_and_cleanup,
+                          _deprecation_error_kwargs)
 
 from .abstract           import (Array,
                                  CompressedArray)
@@ -2378,7 +2381,7 @@ place.
                                mtol=mtol, inplace=inplace,
                                _preserve_partitions=_preserve_partitions)
     
-    
+    @_inplace_enabled
     def mean_of_upper_decile(self, axes=None, include_decile=True,
                              squeeze=False, weights=None, mtol=1,
                              inplace=False,
@@ -2386,11 +2389,8 @@ place.
         '''TODO
 
         '''
-        if inplace:
-            d = self
-        else:
-            d = self.copy()
-            
+        d = _inplace_enabled_define_and_cleanup(self)
+
         p90 = d.percentile(90, axes=axes, squeeze=False, mtol=mtol,
                            inplace=False,
                            _preserve_partitions=_preserve_partitions)
@@ -2411,9 +2411,7 @@ place.
         d.mean(axes=axes, squeeze=squeeze, weights=weights,
                inplace=True,
                _preserve_partitions=_preserve_partitions)
-        
-        if inplace:
-            d = None        
+
         return d
 
     
@@ -3051,7 +3049,7 @@ place.
             self._auxiliary_mask = None
 
 
-
+    @_deprecation_error_kwargs
     def ceil(self, inplace=False, i=False):
         '''The ceiling of the data, element-wise.
 
@@ -3084,9 +3082,6 @@ place.
     [-1. -1. -1. -1.  0.  1.  2.  2.  2.]
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'ceil', i=True) # pragma: no cover
-            
         return self.func(numpy_ceil, out=True, inplace=inplace)
 
 
@@ -3437,6 +3432,7 @@ place.
 #        #--- End: for
 
 
+    @_inplace_enabled
     def _asdatetime(self, inplace=False):
         '''Change the internal representation of data array elements from
     numeric reference times to datatime-like objects.
@@ -3470,11 +3466,7 @@ place.
     >>> d._asdatetime()
 
         '''
-        if inplace:
-            d = self
-        else:
-            d = self.copy()
-
+        d = _inplace_enabled_define_and_cleanup(self)
         units = self.Units
         
         if not units.isreftime:
@@ -3499,8 +3491,6 @@ place.
         
         d._dtype = array.dtype
 
-        if inplace:
-            d = None            
         return d
 
 
@@ -3510,6 +3500,7 @@ place.
         return self.dtype.kind == 'O' and self.Units.isreftime
 
 
+    @_inplace_enabled
     def _asreftime(self, inplace=False):
         '''Change the internal representation of data array elements from
     datatime-like objects to numeric reference times.
@@ -3539,11 +3530,7 @@ place.
     >>> d._asreftime()
 
         '''
-        if inplace:
-            d = self
-        else:
-            d = self.copy()
-
+        d = _inplace_enabled_define_and_cleanup(self)
         units = d.Units
 
         if not d._isdatetime():
@@ -3569,8 +3556,6 @@ place.
         
         d._dtype = array.dtype
 
-        if inplace:
-            d = None        
         return d
 
 
@@ -5590,6 +5575,8 @@ place.
         self.partitions.change_axis_names(axis_map)
 
 
+    @_deprecation_error_kwargs
+    @_inplace_enabled
     def _collapse(self, func, fpartial, ffinalise, axes=None,
                   squeeze=False, weights=None, mtol=1, units=None,
                   inplace=False, i=False, _preserve_partitions=False,
@@ -5635,15 +5622,8 @@ place.
     
         `Data`
 
-        '''     
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, '_collapse', i=True) # pragma: no cover
-
-        if inplace:
-            d = self
-        else:
-            d = self.copy()
-
+        '''
+        d = _inplace_enabled_define_and_cleanup(self)
         ndim       = d._ndim
         self_axes  = d._axes
         self_shape = d._shape        
@@ -5952,15 +5932,10 @@ place.
         #--- End: if
         
         # ------------------------------------------------------------
-        # Update d in place
+        # Update d in place and return
         # ------------------------------------------------------------
         d.__dict__ = new.__dict__
-       
-        # ------------------------------------------------------------
-        # Return
-        # ------------------------------------------------------------        
-        if inplace:
-            d = None
+
         return d
 
 
@@ -7713,7 +7688,7 @@ False
         
         return old
 
-    
+    @_inplace_enabled
     def arctan(self, inplace=False):
         '''Take the trigonometric inverse tangent of the data element-wise.
 
@@ -7745,15 +7720,10 @@ False
      [1.2490457723982544                 -- 1.373400766945016 ]]
 
         '''
-        if inplace:
-            d = self
-        else:
-            d = self.copy()
+        d = _inplace_enabled_define_and_cleanup(self)
 
         d.func(numpy_arctan, units=_units_radians, inplace=True)
-        
-        if inplace:
-            d = None
+
         return d
 
 
@@ -8295,7 +8265,8 @@ False
         '''
         self.Units = Units(value, self.get_calendar(default=None))
 
-        
+
+    @_deprecation_error_kwargs
     def maximum(self, axes=None, squeeze=False, mtol=1, inplace=False,
                 i=False, _preserve_partitions=False):
         '''Collapse axes with their maximum.
@@ -8326,9 +8297,6 @@ False
     TODO
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'maximum', i=True) # pragma: no cover
-            
         return self._collapse(max_f, max_fpartial, max_ffinalise, axes=axes,
                               squeeze=squeeze, mtol=mtol, inplace=inplace,
                               _preserve_partitions=_preserve_partitions)
@@ -8380,7 +8348,7 @@ False
                               _preserve_partitions=_preserve_partitions)
 
 
-
+    @_deprecation_error_kwargs
     def minimum(self, axes=None, squeeze=False, mtol=1, inplace=False,
                 i=False, _preserve_partitions=False):
         '''Collapse axes with their minimum.
@@ -8411,10 +8379,6 @@ False
     TODO
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'minimum', i=True) # pragma: no cover
-            
-
         return self._collapse(min_f, min_fpartial, min_ffinalise, axes=axes,
                               squeeze=squeeze, mtol=mtol, inplace=inplace,
                               _preserve_partitions=_preserve_partitions)
@@ -8466,6 +8430,7 @@ False
                               _preserve_partitions=_preserve_partitions)
 
 
+    @_deprecation_error_kwargs
     def mean(self, axes=None, squeeze=False, mtol=1, weights=None,
              inplace=False, i=False, _preserve_partitions=False):
         '''Collapse axes with their mean.
@@ -8624,9 +8589,6 @@ False
     [9.666666666666666 10.666666666666666 -- 12.666666666666666]
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'mean', i=True) # pragma: no cover
-            
         return self._collapse(mean_f, mean_fpartial, mean_ffinalise,
                               axes=axes, squeeze=squeeze,
                               weights=weights, mtol=mtol,
@@ -8838,6 +8800,8 @@ False
         return binary_mask
 
 
+    @_deprecation_error_kwargs
+    @_inplace_enabled
     def clip(self, a_min, a_max, units=None, inplace=False, i=False):
         '''Clip (limit) the values in the data array in place.
 
@@ -8880,13 +8844,7 @@ False
     >>> g = f.clip(-90, 90, 'degrees_north')
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'clip', i=True) # pragma: no cover
-
-        if inplace:
-            d = self
-        else:
-            d = self.copy()
+        d = _inplace_enabled_define_and_cleanup(self)
 
         if units is not None:
             # Convert the limits to the same units as the data array
@@ -8905,8 +8863,6 @@ False
             array.clip(a_min, a_max, out=array)
             partition.close()
 
-        if inplace:
-            d = None                
         return d
 
 
@@ -8990,7 +8946,8 @@ False
         for partition in self.partitions.matrix.flat:
             partition.file_close()
    
-
+    @_deprecation_error_kwargs
+    @_inplace_enabled
     def cos(self, inplace=False, i=False):
         '''Take the trigonometric cosine of the data array in place.
 
@@ -9036,21 +8993,13 @@ False
     [[0.540302305868 -0.416146836547 -0.9899924966 --]]
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'cos', i=True) # pragma: no cover
-        
-        if inplace:
-            d = self
-        else:
-            d = self.copy()
+        d = _inplace_enabled_define_and_cleanup(self)
 
         if d.Units.equivalent(_units_radians):           
             d.Units = _units_radians
 
         out = d.func(numpy_cos, units=_units_1, inplace=True)
 
-        if not inplace:
-            out = d
         return out
 
 
@@ -9380,6 +9329,7 @@ False
         return self._YMDhms('second')
 
 
+    @_inplace_enabled
     def uncompress(self, inplace=False):
         '''Uncompress the underlying data.
     
@@ -9410,10 +9360,7 @@ False
     ''
 
         '''
-        if inplace:
-            d = self
-        else:
-            d = self.copy()
+        d = _inplace_enabled_define_and_cleanup(self)
 
         if not d.get_compression_type():            
             if inplace:
@@ -9429,8 +9376,6 @@ False
 
         d._del_Array(None)
             
-        if inplace:
-            d = None
         return d
 
 
@@ -9658,6 +9603,8 @@ False
         return True
 
 
+    @_deprecation_error_kwargs
+    @_inplace_enabled
     def exp(self, inplace=False, i=False):
         '''Take the exponential of the data array.
 
@@ -9678,30 +9625,23 @@ False
     TODO
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'exp', i=True) # pragma: no cover
-        
+        d = _inplace_enabled_define_and_cleanup(self)
+
         units = self.Units
         if units and not units.isdimensionless:
             raise ValueError(
                 "Can't take exponential of dimensional quantities: {!r}".format(
                     units))
 
-        if inplace:
-            d = self
-        else:
-            d = self.copy()
-
         if d.Units:
             d.Units = _units_1 
 
         d.func(numpy_exp, inplace=True)
 
-        if inplace:
-            d = None
         return d
 
 
+    @_inplace_enabled
     def insert_dimension(self, position=0, inplace=False):
         '''Expand the shape of the data array in place.
 
@@ -9729,6 +9669,8 @@ False
     TODO
 
         '''
+        d = _inplace_enabled_define_and_cleanup(self)
+
         # Parse position
         ndim = self._ndim 
         if -ndim-1 <= position < 0:
@@ -9736,11 +9678,6 @@ False
         elif not 0 <= position <= ndim:
             raise ValueError(
                 "Can't insert dimension: Invalid position (%d)" % position)
-            
-        if inplace:
-            d = self
-        else:
-            d = self.copy()
 
         # Expand _axes
         axis = d._new_axis_identifier()
@@ -9776,8 +9713,6 @@ False
                 mask.insert_dimension(position, inplace=True)
         #--- End: if
 
-        if inplace:
-            d = None
         return d
 
 
@@ -9807,6 +9742,7 @@ False
         return out
 
 
+    @_inplace_enabled
     def filled(self, fill_value=None, inplace=False):
         '''TODO
 
@@ -9825,10 +9761,7 @@ False
     TODO
 
         '''
-        if inplace:
-            d = self
-        else:
-            d = self.copy()
+        d = _inplace_enabled_define_and_cleanup(self)
 
         if fill_value is None:
             fill_value = d.get_fill_value(None)
@@ -9848,8 +9781,6 @@ False
 
         d.hardmask = hardmask
 
-        if inplace:
-            d = None
         return d
 
                 
@@ -10051,7 +9982,8 @@ False
                   
         return out
     
-        
+
+    @_deprecation_error_kwargs
     def floor(self, inplace=False, i=False):
         '''Return the floor of the data array.
 
@@ -10075,12 +10007,10 @@ False
     [-2. -2. -2. -1.  0.  1.  1.  1.  1.]
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'floor', i=True) # pragma: no cover
-            
         return self.func(numpy_floor, out=True, inplace=inplace)
 
-    
+
+    @_deprecation_error_kwargs
     def outerproduct(self, e, inplace=False, i=False):
         '''Compute the outer product with another data array.
 
@@ -10133,9 +10063,6 @@ False
       [18 21 24 27]]]
 
         '''    
-        if i:
-             _DEPRECATION_ERROR_KWARGS(self, 'outerproduct', i=True) # pragma: no cover
-
         e_ndim = numpy_ndim(e)
         if e_ndim:            
             if inplace:
@@ -10157,6 +10084,8 @@ False
         return d
 
 
+    @_deprecation_error_kwargs
+    @_inplace_enabled
     def change_calendar(self, calendar, inplace=False, i=False):
         '''Change the calendar of the data array elements.
 
@@ -10170,28 +10099,22 @@ False
     units. Resetting `d.Units` will
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'change_calendar', i=True) # pragma: no cover
+        d = _inplace_enabled_define_and_cleanup(self)
 
         if not self.Units.isreftime:
             raise ValueError(
                 "Can't change calendar of non-reference time units: {!r}".format(
                     self.Units))
 
-        if inplace:
-            d = self
-        else:
-            d = self.copy()
-
         d._asdatetime(inplace=True)
         d.override_units(Units(self.Units.units, calendar), inplace=True)
         d._asreftime(inplace=True)
 
-        if inplace:
-            d = None
         return d
 
 
+    @_deprecation_error_kwargs
+    @_inplace_enabled
     def override_units(self, units, inplace=False, i=False):
         '''Override the data array units.
 
@@ -10231,14 +10154,7 @@ False
     1012.0
 
         '''
-        if i:
-            DEPRECATION_ERROR_KWARGS(self, 'override_units', i=True) # pragma: no cover
-            
-        if inplace:
-            d = self
-        else:
-            d = self.copy()
-
+        d = _inplace_enabled_define_and_cleanup(self)
         units = Units(units)
 
         config = self.partition_configuration(readonly=False)
@@ -10259,11 +10175,11 @@ False
 
         d._Units = units
 
-        if inplace:
-            d = None
         return d
 
 
+    @_deprecation_error_kwargs
+    @_inplace_enabled
     def override_calendar(self, calendar, inplace=False, i=False):
         '''Override the calendar of the data array elements.
 
@@ -10293,18 +10209,12 @@ False
     TODO
 
         '''
-        if i:
-            DEPRECATION_ERROR_KWARGS(self, 'override_calendar', i=True) # pragma: no cover
-            
+        d = _inplace_enabled_define_and_cleanup(self)
+
         if not self.Units.isreftime:
             raise ValueError(
                 "Can't override the calender of non-reference-time units: {0!r}".format(
                     self.Units))
-
-        if inplace:
-            d = self
-        else:
-            d = self.copy()
 
         for partition in d.partitions.matrix.flat:            
             partition.Units = Units(partition.Units._units, calendar)
@@ -10312,8 +10222,6 @@ False
 
         d._Units = Units(d.Units._units, calendar)
 
-        if inplace:
-            d = None
         return d
 
 
@@ -10585,6 +10493,8 @@ False
         return cf_masked
 
 
+    @_deprecation_error_kwargs
+    @_inplace_enabled
     def mask_invalid(self, inplace=False, i=False):
         '''Mask the array where invalid values occur (NaN or inf).
 
@@ -10641,13 +10551,7 @@ False
     <CF Data: [1.0, --] >
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'mask_invalid', i=True) # pragma: no cover
-            
-        if inplace:
-            d = self
-        else:
-            d = self.copy()
+        d = _inplace_enabled_define_and_cleanup(self)
 
         config = d.partition_configuration(readonly=False)
                                            
@@ -10664,8 +10568,6 @@ False
             
             partition.close()
 
-        if inplace:
-            d = None
         return d
 
 
@@ -10706,6 +10608,7 @@ False
         return cls(array, units=units, chunk=chunk)
 
 
+    @_deprecation_error_kwargs
     def mid_range(self, axes=None, squeeze=False, mtol=1,
                   inplace=False, _preserve_partitions=False, i=False):
         '''Collapse axes with the unweighted average of their maximum and
@@ -10737,9 +10640,6 @@ False
         TODO
 
         '''  
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'mid_range', i=True) # pragma: no cover
-            
         return self._collapse(mid_range_f, mid_range_fpartial,
                               mid_range_ffinalise, axes=axes,
                               squeeze=squeeze, mtol=mtol,
@@ -10747,6 +10647,8 @@ False
                               _preserve_partitions=_preserve_partitions)
 
 
+    @_deprecation_error_kwargs
+    @_inplace_enabled
     def flip(self, axes=None, inplace=False, i=False):
         '''Reverse the direction of axes of the data array.
 
@@ -10782,14 +10684,8 @@ False
     True
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'flip', i=True) # pragma: no cover
-            
-        if inplace:
-            d = self
-        else:
-            d = self.copy()
-            
+        d = _inplace_enabled_define_and_cleanup(self)
+
         if axes is not None and not axes and axes != 0:
             # Null flip
             if inplace:
@@ -10844,8 +10740,6 @@ False
                 mask.flip(iaxes, inplace=True)
         #--- End: if
 
-        if inplace:
-            d = None
         return d
 
     
@@ -10974,6 +10868,7 @@ False
             return self == y
 
 
+    @_deprecation_error_kwargs
     def rint(self, inplace=False, i=False):
         '''Round the data to the nearest integer, element-wise.
 
@@ -11002,9 +10897,6 @@ False
     [-2. -2. -1. -1.  0.  1.  1.  2.  2.]
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'rint', i=True) # pragma: no cover
-
         return self.func(numpy_rint, out=True, inplace=inplace)
 
 
@@ -11083,7 +10975,8 @@ False
                               mtol=mtol, inplace=inplace,
                               _preserve_partitions=_preserve_partitions)
 
-    
+
+    @_deprecation_error_kwargs
     def round(self, decimals=0, inplace=False, i=False):
         '''Evenly round elements of the data array to the given number of
     decimals.
@@ -11129,9 +11022,6 @@ False
     [-0., -0., -0., -0.,  0.,  0.,  0.,  0.,  0.]
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'round', i=True) # pragma: no cover
-
         return self.func(numpy_round, out=True, inplace=inplace,
                          decimals=decimals)
 
@@ -11307,6 +11197,8 @@ False
         return out
          
 
+    @_deprecation_error_kwargs
+    @_inplace_enabled
     def swapaxes(self, axis0, axis1, inplace=False, i=False):
         '''Interchange two axes of an array.
 
@@ -11345,13 +11237,7 @@ False
     <CF Data(1, 2, 3): [[[1, ..., 6]]]>
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'swapaxes', i=True) # pragma: no cover
-
-        if inplace:
-            d = self
-        else:
-            d = self.copy()
+        d = _inplace_enabled_define_and_cleanup(self)
 
         axis0 = d._parse_axes((axis0,))[0]
         axis1 = d._parse_axes((axis1,))[0]
@@ -11367,8 +11253,6 @@ False
                 mask.swapaxes(axis0, axis1, inplace=True)
         #--- End: if
 
-        if inplace:
-            d = None            
         return d
 
 
@@ -11465,6 +11349,8 @@ False
         return CHUNKSIZE() >= self._size*(itemsize+1) <= FREE_MEMORY() - FM_THRESHOLD()
 
 
+    @_deprecation_error_kwargs
+    @_inplace_enabled
     def where(self, condition, x=None, y=None, inplace=False, i=False,
               _debug=False):
         '''Assign to data elements depending on a condition.
@@ -11643,13 +11529,7 @@ False
             return data1
         #--- End: def
 
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'where', i=True) # pragma: no cover
-
-        if inplace:
-            d = self
-        else:
-            d = self.copy()
+        d = _inplace_enabled_define_and_cleanup(self)
 
         if _debug:
             print('    data.shape =', d.shape) # pragma: no cover
@@ -11885,11 +11765,11 @@ False
             partition.close()
         #--- End: for
 
-        if inplace:
-            d = None
         return d
 
 
+    @_deprecation_error_kwargs
+    @_inplace_enabled
     def sin(self, inplace=False, i=False):
         '''Take the trigonometric sine of the data array in place.
 
@@ -11935,24 +11815,18 @@ False
     [[0.841470984808 0.909297426826 0.14112000806 --]]
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'sin', i=True) # pragma: no cover
-            
-        if inplace:
-            d = self
-        else:
-            d = self.copy()
+        d = _inplace_enabled_define_and_cleanup(self)
 
         if d.Units.equivalent(_units_radians):           
             d.Units = _units_radians
 
         out = d.func(numpy_sin, units=_units_1, inplace=True)
 
-        if not inplace:
-            out = d
         return out
 
 
+    @_deprecation_error_kwargs
+    @_inplace_enabled
     def log(self, base=None, inplace=False, i=False):
         '''TODO
 
@@ -11971,14 +11845,8 @@ False
         `Data`
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'log', i=True) # pragma: no cover
-            
-        if inplace:
-            d = self
-        else:
-            d = self.copy()
-        
+        d = _inplace_enabled_define_and_cleanup(self)
+
         if base is None:
             d.func(numpy_log, units=d.Units.log(numpy_e), inplace=True)
         elif base == 10:
@@ -11988,12 +11856,12 @@ False
         else:
             d.func(numpy_log, units=d.Units.log(base), inplace=True)
             d /= numpy_log(base)
-            
-        if inplace:
-            d = None
+
         return d
 
 
+    @_deprecation_error_kwargs
+    @_inplace_enabled
     def squeeze(self, axes=None, inplace=False, i=False):
         '''Remove size 1 axes from the data array.
 
@@ -12051,13 +11919,7 @@ False
     (2, 3, 4, 5, 6)
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'squeeze', i=True) # pragma: no cover
-            
-        if inplace:
-            d = self
-        else:
-            d = self.copy()
+        d = _inplace_enabled_define_and_cleanup(self)
 
         ndim = d._ndim
         if not ndim:
@@ -12145,12 +12007,12 @@ False
             for mask in d._auxiliary_mask:
                 mask.squeeze(axes, inplace=True)
         #--- End: if
-        
-        if inplace:
-            d = None
+
         return d
 
 
+    @_deprecation_error_kwargs
+    @_inplace_enabled
     def tan(self, inplace=False, i=False):
         '''Take the trigonometric tangent of the data array element-wise.
 
@@ -12199,21 +12061,13 @@ False
     [[1.55740772465 -2.18503986326 -0.142546543074 --]]
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'tan', i=True) # pragma: no cover
-            
-        if inplace:
-            d = self
-        else:
-            d = self.copy()
+        d = _inplace_enabled_define_and_cleanup(self)
 
         if d.Units.equivalent(_units_radians):           
             d.Units = _units_radians
 
         out = d.func(numpy_tan, units=_units_1, inplace=True)
-        
-        if not inplace:
-            out = d
+
         return out
 
 
@@ -12247,6 +12101,8 @@ False
         return self.array.tolist()
 
 
+    @_deprecation_error_kwargs
+    @_inplace_enabled
     def transpose(self, axes=None, inplace=False, i=False):
         '''Permute the axes of the data array.
 
@@ -12285,13 +12141,7 @@ False
     (19, 73, 96)
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'transpose', i=True) # pragma: no cover
-
-        if inplace:
-            d = self
-        else:
-            d = self.copy()
+        d = _inplace_enabled_define_and_cleanup(self)
 
         ndim = d._ndim    
         
@@ -12336,11 +12186,10 @@ False
             for mask in d._auxiliary_mask:
                 mask.transpose(iaxes, inplace=True)
 
-        if inplace:
-            d = None            
         return d
 
 
+    @_deprecation_error_kwargs
     def trunc(self, inplace=False, i=False):
         '''Return the truncated values of the data array.
 
@@ -12372,9 +12221,6 @@ False
     [-1. -1. -1. -1.  0.  1.  1.  1.  1.]
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'trunc', i=True) # pragma: no cover
-            
         return self.func(numpy_trunc, out=True, inplace=inplace)
 
 
@@ -12479,7 +12325,8 @@ False
                         calendar=calendar, chunk=chunk)
 
 
-
+    @_deprecation_error_kwargs
+    @_inplace_enabled
     def func(self, f, units=None, out=False, inplace=False, i=False,
              **kwargs):
         '''Apply an element-wise array operation to the data array.
@@ -12523,13 +12370,7 @@ False
      [0.0  -1.0]]
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'func', i=True) # pragma: no cover
-
-        if inplace:
-            d = self
-        else:
-            d = self.copy()
+        d = _inplace_enabled_define_and_cleanup(self)
 
         config = d.partition_configuration(readonly=False)
             
@@ -12559,12 +12400,11 @@ False
 
         if units is not None:
             d._Units = units
-            
-        if inplace:
-            d = None
+
         return d
 
 
+    @_deprecation_error_kwargs
     def range(self, axes=None, squeeze=False, mtol=1, inplace=False,
               _preserve_partitions=False, i=False):
         '''Collapse axes with the absolute difference between their maximum
@@ -12594,9 +12434,6 @@ False
         TODO
 
         '''   
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'range', i=True) # pragma: no cover
-            
         return self._collapse(range_f, range_fpartial,
                               range_ffinalise, axes=axes,
                               squeeze=squeeze, weights=None,
@@ -12604,6 +12441,7 @@ False
                               _preserve_partitions=_preserve_partitions)
 
 
+    @_deprecation_error_kwargs
     def roll(self, axis, shift, inplace=False, i=False):
         '''A lot like `numpy.roll`
 
@@ -12620,9 +12458,6 @@ False
         `Data`
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'roll', i=True) # pragma: no cover
-            
         if not shift:
             # Null roll            
             if inplace:
@@ -12668,6 +12503,7 @@ False
         return d
 
 
+    @_deprecation_error_kwargs
     def sum(self, axes=None, squeeze=False, mtol=1, weights=None,
             inplace=False, i=False, _preserve_partitions=False):
         '''Collapse axes with their sum.
@@ -12700,9 +12536,6 @@ False
         TODO
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'sum', i=True) # pragma: no cover
-
         return self._collapse(sum_f, sum_fpartial, sum_ffinalise,
                               axes=axes, squeeze=squeeze,
                               weights=weights, mtol=mtol,
@@ -12757,6 +12590,7 @@ False
                               _preserve_partitions=_preserve_partitions)
 
 
+    @_deprecation_error_kwargs
     def sum_of_weights(self, axes=None, squeeze=False, mtol=1,
                        weights=None, inplace=False, i=False,
                        _preserve_partitions=False):
@@ -12787,9 +12621,6 @@ False
     **Examples:**
 
         '''   
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'sum_of_weights', i=True) # pragma: no cover
-
         if weights is None:
             units = Units()
         else:
@@ -12811,6 +12642,7 @@ False
                               _preserve_partitions=_preserve_partitions)
 
 
+    @_deprecation_error_kwargs
     def sum_of_weights2(self, axes=None, squeeze=False, mtol=1,
                         weights=None, inplace=False, i=False,
                         _preserve_partitions=False):
@@ -12841,10 +12673,6 @@ False
     **Examples:**
 
         '''        
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'sum_of_weights2', i=True) # pragma: no cover
-
-
         if weights is None:
             units = Units()
         else:
@@ -12866,6 +12694,7 @@ False
                               _preserve_partitions=_preserve_partitions)
 
 
+    @_deprecation_error_kwargs
     def standard_deviation(self, axes=None, squeeze=False, mtol=1,
                            weights=None, ddof=0, inplace=False, i=False,
                            _preserve_partitions=False):
@@ -13013,16 +12842,14 @@ False
     <CF Data: 1.02887985207 >
 
         '''        
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'standard_deviation', i=True) # pragma: no cover
-
         return self._collapse(sd_f, sd_fpartial, sd_ffinalise,
                               axes=axes, squeeze=squeeze,
                               weights=weights, mtol=mtol, ddof=ddof,
                               inplace=inplace,
                               _preserve_partitions=_preserve_partitions)
 
-    
+
+    @_deprecation_error_kwargs
     def variance(self, axes=None, squeeze=False, weights=None, mtol=1,
                  ddof=0, inplace=False, i=False,
                  _preserve_partitions=False):
@@ -13056,9 +12883,6 @@ False
     **Examples:**
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'variance', i=True) # pragma: no cover
-
         units = self.Units
         if units:
             units = units**2
