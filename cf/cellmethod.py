@@ -601,12 +601,15 @@ class CellMethod(cfdm.CellMethod):
     # ----------------------------------------------------------------    
     # Deprecated attributes and methods
     # ----------------------------------------------------------------    
-    def write(self, axis_map={}):
+    def write(self, axis_map=None):
         '''Return a string of the cell method.
 
     Deprecated at version 3.0.0. Use 'str(cell_method)' instead.
 
         '''
+        # Unsafe to set mutable '{}' as default in the func signature.
+        if axis_map is None:  # distinguish from falsy '{}'
+            axis_map = {}
         _DEPRECATED_ERROR_METHOD(
             self, 'write', "Use 'str(cell_method)' instead.") # Pragma: no cover
 

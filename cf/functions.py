@@ -2472,9 +2472,13 @@ def _DEPRECATION_ERROR_ARG(instance, method, arg, message='', version='3.0.0'):
             version))
 
 
-def _DEPRECATION_ERROR_FUNCTION_KWARGS(func, kwargs={}, message='',
+def _DEPRECATION_ERROR_FUNCTION_KWARGS(func, kwargs=None, message='',
                                        exact=False, traceback=False,
                                        version='3.0.0'):
+    # Unsafe to set mutable '{}' as default in the func signature.
+    if kwargs is None:  # distinguish from falsy '{}'
+        kwargs = {}
+
     if exact:
         kwargs={'exact': None}
         message = "Use 're.compile' objects instead."
@@ -2491,10 +2495,14 @@ def _DEPRECATION_ERROR_FUNCTION_KWARGS(func, kwargs={}, message='',
             version))
 
     
-def _DEPRECATION_ERROR_KWARGS(instance, method, kwargs={}, message='',
+def _DEPRECATION_ERROR_KWARGS(instance, method, kwargs=None, message='',
                               i=False, traceback=False, axes=False,
                               exact=False, relaxed_identity=False,
                               version='3.0.0'):
+    # Unsafe to set mutable '{}' as default in the func signature.
+    if kwargs is None:  # distinguish from falsy '{}'
+        kwargs = {}
+
     if relaxed_identity:
         kwargs={'relaxed_identity': None}
         message = "Use keywords 'strict' or 'relaxed' instead."
@@ -2607,4 +2615,3 @@ def set_equals(x, y, rtol=None, atol=None, ignore_fill_value=False,
 
     '''
     _DEPRECATION_ERROR_FUNCTION('cf.set_equals') # pragma: no cover
-    

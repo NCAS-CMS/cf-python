@@ -149,7 +149,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
 
     def _write_scalar_coordinate(self, f, key, coord_1d, axis,
-                                 coordinates, extra={}):
+                                 coordinates, extra=None):
         '''Write a scalar coordinate and its bounds to the netCDF file.
     
 It is assumed that the input coordinate is has size 1, but this is not
@@ -178,6 +178,9 @@ then the input coordinate is not written.
         The updated list of netCDF auxiliary coordinate names.
 
         '''
+        # Unsafe to set mutable '{}' as default in the func signature.
+        if extra is None:  # distinguish from falsy '{}'
+            extra = {}
         coord_1d = self._change_reference_datetime(coord_1d)
         
         return super()._write_scalar_coordinate(f, key, coord_1d,
