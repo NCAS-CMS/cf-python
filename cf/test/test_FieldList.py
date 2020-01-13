@@ -16,7 +16,7 @@ class FieldTest(unittest.TestCase):
                                       'test_file2.nc')
         self.f = cf.read(self.filename)
 
-        self.test_only = []
+        self.test_only = ['test_FieldList_select_by_construct']
 
     def test_FieldList(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -371,6 +371,106 @@ class FieldTest(unittest.TestCase):
 
         self.assertTrue(len(f.select_by_units('long_name=qwery:asd')) == 0)
 
+        
+    def test_FieldList_select_by_construct(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = cf.read([self.filename, self.filename2])
+
+        # select_by_construct
+        print()
+        print(f[0])
+        print(f[1])
+
+        g = f.select_by_construct()
+        self.assertTrue(len(g) == 2)
+        
+        g = f.select_by_construct('latitude')
+        self.assertTrue(len(g) == 2)
+        
+        g = f.select_by_construct('latitude', 'longitude')
+        self.assertTrue(len(g) == 2)
+        
+        g = f.select_by_construct('latitude', 'time')
+        self.assertTrue(len(g) == 1)
+        
+        g = f.select_by_construct('latitude', 'time', OR=False)
+        self.assertTrue(len(g) == 1)
+        
+        g = f.select_by_construct('latitude', 'time', OR=True)
+        self.assertTrue(len(g) == 2)
+
+        g = f.select_by_construct(longitude=cf.gt(0))
+        self.assertTrue(len(g) == 2)
+
+        g = f.select_by_construct(longitude=cf.gt(0), time=cf.le(cf.dt('2008-12-01')))
+        self.assertTrue(len(g) == 1)
+
+        g = f.select_by_construct(longitude=cf.gt(0), time=cf.le(cf.dt('2008-12-01')), OR=True)
+        self.assertTrue(len(g) == 2)
+
+        g = f.select_by_construct('longitude', longitude=cf.gt(0), time=cf.le(cf.dt('2008-12-01')), OR=True)
+        self.assertTrue(len(g) == 2)
+
+        g = f.select_by_construct('latitude', longitude=cf.gt(0), time=cf.le(cf.dt('2008-12-01')), OR=True)
+        self.assertTrue(len(g) == 2)
+
+        g = f.select_by_construct('time', longitude=cf.gt(0), time=cf.le(cf.dt('2008-12-01')), OR=True)
+        self.assertTrue(len(g) == 2)
+
+        g = f.select_by_construct('time', longitude=cf.gt(0), time=cf.le(cf.dt('2008-12-01')), OR=False)
+        self.assertTrue(len(g) == 1)
+
+        g = f.select_by_construct('time', longitude=cf.gt(0), time=cf.le(cf.dt('2008-12-01')), OR=False)
+        self.assertTrue(len(g) == 1)
+
+        g = f.select_by_construct('qwerty')
+        self.assertTrue(len(g) == 0)
+        
+        g = f.select_by_construct('latitude')
+        self.assertTrue(len(g) == 2)
+        
+        g = f.select_by_construct('latitude', 'longitude')
+        self.assertTrue(len(g) == 2)
+        
+        g = f.select_by_construct('latitude', 'time')
+        self.assertTrue(len(g) == 1)
+        
+        g = f.select_by_construct('latitude', 'time', OR=False)
+        self.assertTrue(len(g) == 1)
+        
+        g = f.select_by_construct('latitude', 'time', OR=True)
+        self.assertTrue(len(g) == 2)
+
+        g = f.select_by_construct(longitude=cf.gt(0))
+        self.assertTrue(len(g) == 2)
+
+        g = f.select_by_construct(longitude=cf.gt(0), time=cf.le(cf.dt('2008-12-01')))
+        self.assertTrue(len(g) == 1)
+
+        g = f.select_by_construct(longitude=cf.gt(0), time=cf.le(cf.dt('2008-12-01')), OR=True)
+        self.assertTrue(len(g) == 2)
+
+        g = f.select_by_construct('longitude', longitude=cf.gt(0), time=cf.le(cf.dt('2008-12-01')), OR=True)
+        self.assertTrue(len(g) == 2)
+
+        g = f.select_by_construct('latitude', longitude=cf.gt(0), time=cf.le(cf.dt('2008-12-01')), OR=True)
+        self.assertTrue(len(g) == 2)
+
+        g = f.select_by_construct('time', longitude=cf.gt(0), time=cf.le(cf.dt('2008-12-01')), OR=True)
+        self.assertTrue(len(g) == 2)
+
+        g = f.select_by_construct('time', longitude=cf.gt(0), time=cf.le(cf.dt('2008-12-01')), OR=False)
+        self.assertTrue(len(g) == 1)
+
+        g = f.select_by_construct('time', longitude=cf.gt(0), time=cf.le(cf.dt('2008-12-01')), OR=False)
+        self.assertTrue(len(g) == 1)
+
+
+
+
+        
     def test_FieldList_select_field(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
