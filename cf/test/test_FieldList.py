@@ -428,23 +428,17 @@ class FieldTest(unittest.TestCase):
         g = f.select_by_construct('qwerty')
         self.assertTrue(len(g) == 0)
         
-        g = f.select_by_construct('latitude')
+        g = f.select_by_construct('qwerty', 'latitude')
+        self.assertTrue(len(g) == 0)
+        
+        g = f.select_by_construct('qwerty', 'latitude', OR=True)
         self.assertTrue(len(g) == 2)
         
-        g = f.select_by_construct('latitude', 'longitude')
-        self.assertTrue(len(g) == 2)
-        
-        g = f.select_by_construct('latitude', 'time')
+        g = f.select_by_construct('qwerty', 'time', 'longitude')
         self.assertTrue(len(g) == 1)
-        
-        g = f.select_by_construct('latitude', 'time', OR=False)
-        self.assertTrue(len(g) == 1)
-        
-        g = f.select_by_construct('latitude', 'time', OR=True)
-        self.assertTrue(len(g) == 2)
 
-        g = f.select_by_construct(longitude=cf.gt(0))
-        self.assertTrue(len(g) == 2)
+        g = f.select_by_construct(longitude=cf.gt(70))
+        self.assertTrue(len(g) == 1)
 
         g = f.select_by_construct(longitude=cf.gt(0), time=cf.le(cf.dt('2008-12-01')))
         self.assertTrue(len(g) == 1)
