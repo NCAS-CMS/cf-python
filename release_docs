@@ -13,8 +13,11 @@ dir=$PWD/docs/$version
 if [[ $2 ]] ; then
   if [[ $2 = "latest" ]] ; then 
     dir=$PWD/docs
+  elif [[ $2 = "dev" ]] ; then
+    # For testing: creates separate dir and does not (git) commit
+    dir=$PWD/docs/dev
   else
-    echo "\$2 must be latest or not set"
+    echo "\$2 must be 'latest', 'dev' or not set"
     exit 2
   fi
 fi
@@ -35,27 +38,35 @@ make html $dir
 cp -pv source/sample_files/cf_tutorial_files.zip source/tutorial.py $dir/_downloads
 
 for download_file in cf_tutorial_files.zip tutorial.py
-do		     
-  sed -i "s/\(href=._downloads\).*\($download_file\)/\1\/\2/" $dir/tutorial.html 
+do
+  # Remove the hash string component added by GitHub to the link
+  # where the resources are hosted (GH changes it to something like
+  # '_downloads/4cd32e1c6bdf28fb61e15ffab2a8d84e/download_file')
+  sed -i "s/\(href=._downloads\).*\($download_file\)/\1\/\2/" \
+    $dir/tutorial.html \
+    $dir/analysis.html
+    # all pages referencing these resources must be added to this list
 done
 
 # --------------------------------------------------------------------
 # Add and commit the latest
 # --------------------------------------------------------------------
-cd $dir
-git add \
-    *.html \
-    classes/*.html \
-    function/*.html \
-    method/*.html \
-    attribute/*.html \
-    *.inv \
-    *.js \
-    _sources \
-    _static \
-    _downloads/cf_tutorial_files.zip \
-    _downloads/tutorial.py
+if [[ $2 = "latest" ]] ; then
+  cd $dir
+  git add \
+	  *.html \
+	  classes/*.html \
+	  function/*.html \
+	  method/*.html \
+	  attribute/*.html \
+	  *.inv \
+	  *.js \
+	  _sources \
+	  _static \
+	  _downloads/cf_tutorial_files.zip \
+	  _downloads/tutorial.py
 
-git commit -a -m "v$version documentation"
+  git commit -a -m "v$version documentation"
+fi
 
 set +x
