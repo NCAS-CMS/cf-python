@@ -89,7 +89,7 @@ from .functions import (_DEPRECATION_ERROR,
 
 from .decorators import (_inplace_enabled,
                          _inplace_enabled_define_and_cleanup,
-                         _deprecation_error_kwargs)
+                         _deprecation_error_i_kwarg)
 
 _debug = False
 
@@ -7189,7 +7189,7 @@ class Field(mixin.PropertiesData,
         return self.set_construct(ref, key=key, copy=False)
 
 
-    @_deprecation_error_kwargs
+    @_deprecation_error_i_kwarg
     def collapse(self, method, axes=None, squeeze=False, mtol=1,
                  weights=None, ddof=1, a=None, inplace=False,
                  group=None, regroup=False, within_days=None,
@@ -11619,7 +11619,7 @@ class Field(mixin.PropertiesData,
         return False
 
 
-    @_deprecation_error_kwargs
+    @_deprecation_error_i_kwarg
     @_inplace_enabled
     def convolution_filter(self, weights, axis=None, mode=None,
                            cval=None, origin=0, update_bounds=True,
@@ -12562,7 +12562,7 @@ class Field(mixin.PropertiesData,
         return out
         
 
-    @_deprecation_error_kwargs
+    @_deprecation_error_i_kwarg
     def flip(self, axes=None, inplace=False, i=False, **kwargs):
         '''Flip (reverse the direction of) axes of the field.
 
@@ -12640,7 +12640,7 @@ class Field(mixin.PropertiesData,
         return f
 
 
-    @_deprecation_error_kwargs
+    @_deprecation_error_i_kwarg
     @_inplace_enabled
     def anchor(self, axis, value, inplace=False, dry_run=False,
                i=False, **kwargs):
@@ -13045,7 +13045,7 @@ class Field(mixin.PropertiesData,
         return self.domain_axes.filter_by_key(*out)
     
 
-    @_deprecation_error_kwargs
+    @_deprecation_error_i_kwarg
     def squeeze(self, axes=None, inplace=False, i=False, **kwargs):
         '''Remove size 1 axes from the data.
 
@@ -13179,7 +13179,7 @@ class Field(mixin.PropertiesData,
         return f
 
 
-    @_deprecation_error_kwargs
+    @_deprecation_error_i_kwarg
     def transpose(self, axes=None, constructs=False, inplace=False,
                   items=True, i=False, **kwargs):
         '''Permute the axes of the data array.
@@ -13318,7 +13318,7 @@ class Field(mixin.PropertiesData,
 #        return f    
     
 
-    @_deprecation_error_kwargs
+    @_deprecation_error_i_kwarg
     @_inplace_enabled
     def unsqueeze(self, inplace=False, i=False, axes=None, **kwargs):
         '''Insert size 1 axes into the data array.
@@ -15604,7 +15604,7 @@ class Field(mixin.PropertiesData,
         return f
 
 
-    @_deprecation_error_kwargs
+    @_deprecation_error_i_kwarg
     @_inplace_enabled
     def roll(self, axis, shift, inplace=False, i=False, **kwargs):
         '''Roll the field along a cyclic axis.
@@ -15686,7 +15686,7 @@ class Field(mixin.PropertiesData,
         return f
 
 
-    @_deprecation_error_kwargs
+    @_deprecation_error_i_kwarg
     def where(self, condition, x=None, y=None, inplace=False,
               construct=None, i=False, _debug=False, item=None,
               **item_options):
@@ -16296,7 +16296,7 @@ class Field(mixin.PropertiesData,
         '''
         return FieldList(_section(self, axes, data=False, stop=stop, **kwargs))
 
-    @_deprecation_error_kwargs
+    @_deprecation_error_i_kwarg
     @_inplace_enabled
     def regrids(self, dst, method, src_cyclic=None, dst_cyclic=None,
                 use_src_mask=True, use_dst_mask=False,
@@ -16889,7 +16889,7 @@ class Field(mixin.PropertiesData,
         return f
 
 
-    @_deprecation_error_kwargs
+    @_deprecation_error_i_kwarg
     @_inplace_enabled
     def regridc(self, dst, axes, method, use_src_mask=True,
                 use_dst_mask=False, fracfield=False, axis_order=None,
@@ -17394,7 +17394,7 @@ class Field(mixin.PropertiesData,
         return f
 
 
-    @_deprecation_error_kwargs
+    @_deprecation_error_i_kwarg
     @_inplace_enabled
     def derivative(self, axis, wrap=None, one_sided_at_boundary=False,
                    inplace=False, i=False, cyclic=None):

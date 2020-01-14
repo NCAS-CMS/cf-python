@@ -17,7 +17,7 @@ from .functions import (_DEPRECATION_ERROR_KWARGS,
                         _DEPRECATION_ERROR_ATTRIBUTE,
                         )
 
-from .decorators import _deprecation_error_kwargs
+from .decorators import _deprecation_error_i_kwarg
 
 
 class DimensionCoordinate(abstract.Coordinate,
@@ -653,7 +653,7 @@ class DimensionCoordinate(abstract.Coordinate,
         return bounds            
 
 
-    @_deprecation_error_kwargs
+    @_deprecation_error_i_kwarg
     def flip(self, axes=None, inplace=False, i=False):
         '''TODO
         '''
@@ -856,7 +856,7 @@ class DimensionCoordinate(abstract.Coordinate,
         return True
     
 
-    @_deprecation_error_kwargs
+    @_deprecation_error_i_kwarg
     def roll(self, axis, shift, inplace=False, i=False):
         '''TODO
         '''

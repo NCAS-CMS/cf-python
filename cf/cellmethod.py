@@ -12,7 +12,7 @@ from .functions import (_DEPRECATION_ERROR_KWARGS,
 
 from .decorators import (_inplace_enabled,
                          _inplace_enabled_define_and_cleanup,
-                         _deprecation_error_kwargs)
+                         _deprecation_error_i_kwarg)
 
 
 _collapse_cell_methods = {
@@ -450,7 +450,7 @@ class CellMethod(cfdm.CellMethod):
         self.del_axes(default=AttributeError())
 
 
-    @_deprecation_error_kwargs
+    @_deprecation_error_i_kwarg
     @_inplace_enabled
     def expand_intervals(self, inplace=False, i=False):
         '''TODO
@@ -465,7 +465,7 @@ class CellMethod(cfdm.CellMethod):
         return c
 
 
-    @_deprecation_error_kwargs
+    @_deprecation_error_i_kwarg
     @_inplace_enabled
     def change_axes(self, axis_map, inplace=False, i=False):
         '''TODO

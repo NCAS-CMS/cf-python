@@ -16,7 +16,7 @@ from .functions import (_DEPRECATION_ERROR_METHOD,
 
 from .decorators import (_inplace_enabled,
                          _inplace_enabled_define_and_cleanup,
-                         _deprecation_error_kwargs)
+                         _deprecation_error_i_kwarg)
 
 
 _units = {}
@@ -521,7 +521,7 @@ class CoordinateReference(cfdm.CoordinateReference):
         return self.match_by_identity(*identities)
 
 
-    @_deprecation_error_kwargs
+    @_deprecation_error_i_kwarg
     @_inplace_enabled
     def change_identifiers(self, identity_map, coordinate=True,
                            ancillary=True, strict=False,
