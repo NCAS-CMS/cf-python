@@ -3,7 +3,7 @@ from functools import wraps
 
 # Identifier for 'inplace_enabled' to use as internal '_custom' dictionary key,
 # or directly as a (temporary) attribute name if '_custom' is not provided:
-INPLACE_ENABLED_PLACEHOLDER = '_is_inplace'
+INPLACE_ENABLED_PLACEHOLDER = '_to_assign'
 
 
 def _inplace_enabled(operation_method):

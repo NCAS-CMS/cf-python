@@ -21,6 +21,10 @@ from ..functions import (_DEPRECATION_ERROR_KWARGS,
                          _DEPRECATION_ERROR_METHOD,
                         )
 
+from ..decorators import (_inplace_enabled,
+                          _inplace_enabled_define_and_cleanup,
+                          _deprecation_error_i_kwarg)
+
 
 _units_None = Units()
 
@@ -973,57 +977,47 @@ class PropertiesData(Properties):
 #            "ERROR: Can't get {0} when there is no data array".format(method))        
 
     @staticmethod
-    def _delete_misleading_props(v):
-        '''Remove identities that are misleading in context.'''
-        v.del_property('standard_name', None)
-        v.del_property('long_name', None)
+    def _apply_data_oper(
+            v, oper_name, *oper_args, delete_props=False, **oper_kwargs):
+        '''Define a data array operation and delete some properties.
 
+    :Parameters:
 
-    def _process_data_operation(
-            self, oper_name, inplace, i, *oper_args, **oper_kwargs):
-        '''Pre-define an operation that can be applied to the data array.
+        v: the data array to apply the operations to (possibly in-place)
 
-        * 'oper_name' should be the string name for the desired operation
-          as it is defined (its method name) under the Data class, e.g.
-          'sin' to apply 'Data.sin'
-        * any positional or keyword arguments required in the operation
-          call should be passed through via *oper_args and **oper_kwargs.
+        oper_name: the string name for the desired operation, as it is
+            defined (its method name) under the Data class, e.g.
+            `sin` to apply `Data.sin`.
+
+            Note: there is no (easy) way to determine the name of a
+            function/method within itself, without e.g. inspecting the stack
+            (see rejected PEP 3130), so even though functions are named
+            identically to those call in Data (e.g. both `sin`) the same
+            name must be typed and passed into this method in each case.
+
+            TODO: is there a way to prevent/bypass the above?
+
+        oper_args, oper_kwargs: all of the arguments for `oper_name`.
+
+        delete_props: whether or not to delete name properties.
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, oper_name, i=True) # pragma: no cover
-
-        if inplace:
-            v = self
-        else:
-            v = self.copy()
+        # For explicitness on a per-method basis, apply inplace decorator
+        # to individual methods calling this function, rather than decorating
+        # only this function and devolving the logic for inplace operations.
+        if not oper_kwargs.get('inplace'):
+            # Default for getattr below (preventing duplicate inplace kwarg)
+            oper_kwargs['inplace'] = True
 
         data = v.get_data(None)
         if data is not None:
-            getattr(data, oper_name)(*oper_args, inplace=True, **oper_kwargs)
+            getattr(data, oper_name)(*oper_args, **oper_kwargs)
+
+        if delete_props:
+            v.del_property('standard_name', None)
+            v.del_property('long_name', None)
+
         return v
 
-
-    def _apply_data_oper_with_props_deletion(
-            self, oper_name, *oper_args, inplace=False, i=False,
-            **oper_kwargs):
-        '''Define a data array operation and delete some properties.'''
-        v = self._process_data_operation(
-                oper_name, inplace, i, *oper_args, **oper_kwargs)
-        self._delete_misleading_props(v)
-        if inplace:
-            v = None
-        return v
-
-
-    def _apply_data_oper_without_props_deletion(
-            self, oper_name, *oper_args, inplace=False, i=False,
-            **oper_kwargs):
-        '''Define a data array operation (without editing any properties).'''
-        v = self._process_data_operation(
-                oper_name, inplace, i, *oper_args, **oper_kwargs)
-        if inplace:
-            v = None
-        return v
 
     # ----------------------------------------------------------------
     # Attributes
@@ -1631,6 +1625,8 @@ class PropertiesData(Properties):
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def mask_invalid(self, inplace=False, i=False):
         '''Mask the array where invalid values occur.
 
@@ -1694,20 +1690,12 @@ class PropertiesData(Properties):
     [1.  -- ]
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'mask_invalid', i=True) # pragma: no cover
-            
-        if inplace:
-            v = self
-        else:
-            v = self.copy()
+        v = _inplace_enabled_define_and_cleanup(self)
 
         data = v.get_data(None)
         if data is not None:
             data.mask_invalid(inplace=True)
 
-        if inplace:
-            v = None
         return v
     
     
@@ -1931,6 +1919,8 @@ g
             "ERROR: Can't get the sum when there is no data array")       
     
 
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def swapaxes(self, axis0, axis1, inplace=False):
         '''Interchange two axes of an array.
 
@@ -1965,8 +1955,9 @@ g
     (1, 2, 3)
 
         '''
-        return self._apply_data_oper_with_props_deletion(
-            'swapaxes', axis0, axis1, inplace=inplace)
+        return self._apply_data_oper(
+            _inplace_enabled_define_and_cleanup(self), 'swapaxes',
+            axis0, axis1, inplace=inplace, delete_props=True)
 
     
     def var(self):
@@ -2450,6 +2441,8 @@ TODO
         return data.isscalar
     
 
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def ceil(self, inplace=False, i=False):
         '''The ceiling of the data, element-wise.
 
@@ -2484,8 +2477,9 @@ TODO
     [-1. -1. -1. -1.  0.  1.  2.  2.  2.]
 
         '''
-        return self._apply_data_oper_with_props_deletion(
-            'ceil', inplace=inplace, i=i)
+        return self._apply_data_oper(
+            _inplace_enabled_define_and_cleanup(self), 'ceil',
+            inplace=inplace, i=i, delete_props=True)
     
 
     def chunk(self, chunksize=None):
@@ -2505,6 +2499,8 @@ TODO
             data.chunk(chunksize)
     
 
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def clip(self, a_min, a_max, units=None, inplace=False, i=False):
         '''Limit the values in the data.
 
@@ -2546,8 +2542,9 @@ TODO
     >>> g = f.clip(-90, 90, 'degrees_north')
 
         '''
-        return self._apply_data_oper_with_props_deletion(
-            'clip', a_min, a_max, inplace=inplace, i=i, units=units)
+        return self._apply_data_oper(
+            _inplace_enabled_define_and_cleanup(self), 'clip', a_min, a_max,
+            inplace=inplace, i=i, units=units, delete_props=True)
     
 
     def close(self):
@@ -2602,6 +2599,8 @@ TODO
         return out
     
     
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def cos(self, inplace=False, i=False):
         '''Take the trigonometric cosine of the data, element-wise.
 
@@ -2653,8 +2652,9 @@ TODO
     [[0.540302305868 -0.416146836547 -0.9899924966 --]]
 
         '''
-        return self._apply_data_oper_with_props_deletion(
-            'cos', inplace=inplace, i=i)
+        return self._apply_data_oper(
+            _inplace_enabled_define_and_cleanup(self), 'cos',
+            inplace=inplace, i=i, delete_props=True)
     
 
     def count(self):
@@ -3031,6 +3031,8 @@ TODO
         return True
     
 
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def convert_reference_time(self, units=None,
                                calendar_months=False,
                                calendar_years=False, inplace=False,
@@ -3150,19 +3152,12 @@ TODO
                 return t.interval(reftime, end=True)[0]
         #--- End: def
 
-        if i:
-            _DEPRECATION_ERROR_KWARGS(
-                self, 'convert_reference_time', i=True) # pragma: no cover
-            
         if not self.Units.isreftime:
             raise ValueError(
                 "{} must have reference time units, not {!r}".format(
                     self.__class__.__name__, self.Units))
 
-        if inplace:
-            v = self
-        else:
-            v = self.copy()
+        v = _inplace_enabled_define_and_cleanup(self)
 
         units0 = self.Units
         
@@ -3202,12 +3197,11 @@ TODO
                 otypes=[object])(v),
             units=units))
 
-        if inplace:
-            v = None
-
         return v    
 
 
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def flatten(self, axes=None, inplace=False):
         '''Flatten axes of the data
 
@@ -3258,10 +3252,13 @@ TODO
     (4, 2, 3)
 
         '''
-        return self._apply_data_oper_without_props_deletion(
-            'flatten', axes, inplace=inplace)
+        return self._apply_data_oper(
+            _inplace_enabled_define_and_cleanup(self), 'flatten', axes,
+            inplace=inplace)
 
-        
+
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def floor(self, inplace=False, i=False):
         '''Floor the data array, element-wise.
 
@@ -3296,8 +3293,9 @@ TODO
     [-2. -2. -2. -1.  0.  1.  1.  1.  1.]
 
         '''
-        return self._apply_data_oper_with_props_deletion(
-            'floor', inplace=inplace, i=i)
+        return self._apply_data_oper(
+            _inplace_enabled_define_and_cleanup(self), 'floor',
+            inplace=inplace, i=i, delete_props=True)
     
 
     def match_by_naxes(self, *naxes):
@@ -3686,6 +3684,8 @@ TODO
         return fillval
     
 
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def flip(self, axes=None, inplace=False, i=False):
         '''Flip (reverse the direction of) data dimensions.
 
@@ -3723,10 +3723,13 @@ TODO
     True
 
         '''
-        return self._apply_data_oper_without_props_deletion(
-            'flip', axes, inplace=inplace, i=i)
+        return self._apply_data_oper(
+            _inplace_enabled_define_and_cleanup(self), 'flip', axes,
+            inplace=inplace, i=i)
     
 
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def exp(self, inplace=False, i=False):
         '''The exponential of the data, element-wise.
 
@@ -3766,10 +3769,13 @@ TODO
     ValueError: Can't take exponential of dimensional quantities: <Units: kg m-1 s-2>
 
         '''
-        return self._apply_data_oper_with_props_deletion(
-            'exp', inplace=inplace, i=i)
+        return self._apply_data_oper(
+            _inplace_enabled_define_and_cleanup(self), 'exp',
+            inplace=inplace, i=i, delete_props=True)
     
 
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def sin(self, inplace=False, i=False):
         '''The trigonometric sine of the data, element-wise.
 
@@ -3821,10 +3827,13 @@ TODO
     [[0.841470984808 0.909297426826 0.14112000806 --]]
 
         '''
-        return self._apply_data_oper_with_props_deletion(
-            'sin', inplace=inplace, i=i)
+        return self._apply_data_oper(
+            _inplace_enabled_define_and_cleanup(self), 'sin',
+            inplace=inplace, i=i, delete_props=True)
     
 
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def arctan(self, inplace=False):
         '''Take the trigonometric inverse tangent of the data element-wise.
 
@@ -3860,10 +3869,13 @@ TODO
      [1.2490457723982544                 -- 1.373400766945016 ]]
 
         '''
-        return self._apply_data_oper_with_props_deletion(
-            'arctan', inplace=inplace)
+        return self._apply_data_oper(
+            _inplace_enabled_define_and_cleanup(self), 'arctan',
+            inplace=inplace, delete_props=True)
 
 
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def tan(self, inplace=False, i=False):
         '''The trigonometric tangent of the data, element-wise.
 
@@ -3916,10 +3928,13 @@ TODO
     [[1.55740772465 -2.18503986326 -0.142546543074 --]]
 
         '''     
-        return self._apply_data_oper_with_props_deletion(
-            'tan', inplace=inplace, i=i)
+        return self._apply_data_oper(
+            _inplace_enabled_define_and_cleanup(self), 'tan',
+            inplace=inplace, i=i, delete_props=True)
 
 
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def log(self, base=None, inplace=False, i=False):
         '''The logarithm of the data array.
 
@@ -3971,10 +3986,13 @@ TODO
     ValueError: Can't take the logarithm to the base 2.718281828459045 of <Units: >
 
         '''
-        return self._apply_data_oper_with_props_deletion(
-            'log', base, inplace=inplace, i=i)
+        return self._apply_data_oper(
+            _inplace_enabled_define_and_cleanup(self), 'log', base,
+            inplace=inplace, i=i, delete_props=True)
     
 
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def trunc(self, inplace=False, i=False):
         '''Truncate the data, element-wise.
 
@@ -4010,8 +4028,9 @@ TODO
     [-1. -1. -1. -1.  0.  1.  1.  1.  1.]
 
         '''
-        return self._apply_data_oper_without_props_deletion(
-            'trunc', inplace=inplace, i=i)
+        return self._apply_data_oper(
+            _inplace_enabled_define_and_cleanup(self), 'trunc',
+            inplace=inplace, i=i)
 
     
     def unique(self):
@@ -4296,6 +4315,8 @@ TODO
         return super().get_data(default=default, _units=False)
 
 
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def override_calendar(self, calendar, inplace=False,  i=False):
         '''Override the calendar of date-time units.
 
@@ -4333,13 +4354,7 @@ TODO
     >>> g = f.override_calendar('noleap')
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'override_calendar', i=True) # pragma: no cover
-
-        if inplace:
-            v = self
-        else:
-            v = self.copy()
+        v = _inplace_enabled_define_and_cleanup(self)
 
         data = v.get_data(None)
         if data is not None:
@@ -4354,11 +4369,11 @@ TODO
             PropertiesData.Units.fset(v, Units(getattr(v.Units, 'units', None),
                                                calendar=calendar))
 
-        if inplace:
-            v = None
         return v
 
 
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def override_units(self, units, inplace=False, i=False):
         '''Override the units.
 
@@ -4405,14 +4420,8 @@ TODO
     >>> f.datum(0)
     100000.0
 
-        '''        
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'override_units', i=True) # pragma: no cover
-
-        if inplace:
-            v = self
-        else:
-            v = self.copy()
+        '''
+        v = _inplace_enabled_define_and_cleanup(self)
 
         units = Units(units)
         
@@ -4425,12 +4434,12 @@ TODO
 #            v.Units = units
 
         PropertiesData.Units.fset(v, units)
-            
-        if inplace:
-            v = None
+
         return v
 
 
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def rint(self, inplace=False, i=False):
         '''Round the data to the nearest integer, element-wise.
 
@@ -4462,10 +4471,13 @@ TODO
     [-2. -2. -1. -1.  0.  1.  1.  2.  2.]
 
         '''
-        return self._apply_data_oper_without_props_deletion(
-            'rint', inplace=inplace, i=i)
+        return self._apply_data_oper(
+            _inplace_enabled_define_and_cleanup(self), 'rint',
+            inplace=inplace, i=i)
 
 
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def round(self, decimals=0, inplace=False, i=False):
         '''Round the data to the given number of decimals.
 
@@ -4510,11 +4522,13 @@ TODO
     [-0., -0., -0., -0.,  0.,  0.,  0.,  0.,  0.]
 
         '''
-        return self._apply_data_oper_without_props_deletion(
-            'round', inplace=inplace, i=i,
-            decimals=decimals)
+        return self._apply_data_oper(
+            _inplace_enabled_define_and_cleanup(self), 'round',
+            inplace=inplace, i=i, decimals=decimals)
 
 
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def roll(self, iaxis, shift, inplace=False, i=False):
         '''Roll the data along an axis.
 
@@ -4541,8 +4555,9 @@ TODO
     TODO
 
         '''
-        return self._apply_data_oper_without_props_deletion(
-            'roll',  iaxis, shift, inplace=inplace, i=i)
+        return self._apply_data_oper(
+            _inplace_enabled_define_and_cleanup(self), 'roll',  iaxis,
+            shift, inplace=inplace, i=i)
 
 
     def set_data(self, data, copy=True):
@@ -4602,6 +4617,8 @@ TODO
         self._set_component('data', data, copy=False)
 
 
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def where(self, condition, x=None, y=None, inplace=False, i=False,
               _debug=False):
         '''Set data array elements depending on a condition.
@@ -4621,13 +4638,7 @@ TODO
         TODO
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'where', i=True) # pragma: no cover
-
-        if inplace:
-            v = self
-        else:
-            v = self.copy()
+        v = _inplace_enabled_define_and_cleanup(self)
 
         data = v.get_data(None)
         if data is None:
@@ -4672,8 +4683,6 @@ TODO
             
         data.where(condition, x, y, inplace=True, _debug=_debug)
 
-        if inplace:
-            v = None
         return v
 
     

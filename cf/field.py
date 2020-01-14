@@ -16836,9 +16836,14 @@ class Field(mixin.PropertiesData,
         # Construct new data from regridded sdst_dictections
         new_data = Data.reconstruct_sectioned_data(sections)
         
-        # Construct new field
-        f = _inplace_enabled_define_and_cleanup(self)
-        
+        # Construct new field.
+        # Note: cannot call `_inplace_enabled_define_and_cleanup(self)` to apply this
+        # if-else logic (it deletes the decorator attribute so can only be used once)
+        if inplace:
+            f = self
+        else:
+            f = self.copy()
+
         # Update ancillary variables of new field
         #f._conform_ancillary_variables(src_axis_keys, keep_size_1=False)
 
