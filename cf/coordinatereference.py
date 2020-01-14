@@ -14,6 +14,11 @@ from .functions import (_DEPRECATION_ERROR_METHOD,
                         _DEPRECATION_ERROR_ATTRIBUTE,
                         )
 
+from .decorators import (_inplace_enabled,
+                         _inplace_enabled_define_and_cleanup,
+                         _deprecation_error_kwargs)
+
+
 _units = {}
 
 
@@ -516,6 +521,8 @@ class CoordinateReference(cfdm.CoordinateReference):
         return self.match_by_identity(*identities)
 
 
+    @_deprecation_error_kwargs
+    @_inplace_enabled
     def change_identifiers(self, identity_map, coordinate=True,
                            ancillary=True, strict=False,
                            inplace=False, i=False):
@@ -554,14 +561,7 @@ class CoordinateReference(cfdm.CoordinateReference):
     {'dim1', 'aux0'}
 
         '''
-     
-        if i:
-            _DEPRECATION_ERROR_KWRAGS(self, 'change_identifiers', i=True) # pragma: no cover
-
-        if inplace:
-            r = self
-        else:
-            r = self.copy()
+        r = _inplace_enabled_define_and_cleanup(self)
 
         if not identity_map and not strict:
             if inplace:
@@ -588,9 +588,7 @@ class CoordinateReference(cfdm.CoordinateReference):
         #--- End: if
 
         r.del_coordinate(None, None)
-        
-        if inplace:
-            r = None            
+
         return r
 
 
