@@ -693,6 +693,14 @@ class FieldList(list):
     def select_by_construct(self, *identities, OR=False, **conditions):
         '''Select field constructs by metadata constructs.
 
+    To find the inverse of the selection, use a list comprehension
+    with the `~cf.Field.match_by_construct` method of the field
+    constucts. For example, to select all field constructs that do
+    *not* have a "latitude" metadata construct:
+            
+       >>> gl = cf.FieldList(f for f in fl
+       ...                   if not f.match_by_constructs('latitude'))
+    
     .. note:: The API changed at version 3.1.0
 
     .. versionadded:: 3.0.0
