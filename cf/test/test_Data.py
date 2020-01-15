@@ -82,7 +82,6 @@ class DataTest(unittest.TestCase):
 #                          'test_Data_datetime_array',
 ##                          'test_Data_cumsum',
 #                          'test_Data_dumpd_loadd_dumps',
-##                          'test_Data_sin_cos_tan',
 #                          'test_Data_root_mean_square',
 #                          'test_Data_mean_mean_absolute_value',
 #                          'test_Data_squeeze_insert_dimension',
@@ -2446,11 +2445,12 @@ class DataTest(unittest.TestCase):
             _ = d.exp()        
 
     
-    def test_Data_sin_cos_tan(self):
+    def test_Data_trigonometric_hyperbolic(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        for method in ('sin', 'cos', 'tan'):                             
+        for method in ('sin', 'cos', 'tan', 'sinh', 'cosh', 'tanh',
+                       'arctan', 'arcsinh'):
             for x in (1, -1):
                 a = 0.9 * x * self.ma
                 c = getattr(numpy.ma, method)(a)                
@@ -2462,12 +2462,19 @@ class DataTest(unittest.TestCase):
                         self.assertTrue(getattr(d, method)(inplace=True) is None)
                         self.assertTrue(d.equals(e, verbose=True), "{}".format(method, ))   
                         self.assertTrue(d.shape == c.shape)
-                        self.assertTrue((d.array == c).all(), "{}, {}, {}".format(method, units, d.array-c))
+                        self.assertTrue(
+                            (d.array == c).all(),
+                             "{}, {}, {}".format(method, units, d.array-c)
+                        )
+                        self.assertTrue(
+                            (d.mask.array == c.mask).all(),
+                             "{}, {}, {}".format(method, units, d.array-c)
+                        )
         #--- End: for
         
         cf.CHUNKSIZE(self.original_chunksize)
-
         
+
 #--- End: class
 
 

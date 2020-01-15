@@ -2,11 +2,13 @@ from functools   import reduce
 from operator    import itemgetter
 
 import numpy
+from numpy import arcsinh           as numpy_arcsinh
 from numpy import arctan            as numpy_arctan
 from numpy import array             as numpy_array
 from numpy import asanyarray        as numpy_asanyarray
 from numpy import ceil              as numpy_ceil
 from numpy import cos               as numpy_cos
+from numpy import cosh              as numpy_cosh
 from numpy import cumsum            as numpy_cumsum
 from numpy import digitize          as numpy_digitize
 from numpy import dtype             as numpy_dtype
@@ -38,8 +40,10 @@ from numpy import round             as numpy_round
 from numpy import seterr            as numpy_seterr
 from numpy import shape             as numpy_shape
 from numpy import sin               as numpy_sin
+from numpy import sinh              as numpy_sinh
 from numpy import size              as numpy_size
 from numpy import tan               as numpy_tan
+from numpy import tanh              as numpy_tanh
 from numpy import tile              as numpy_tile
 from numpy import trunc             as numpy_trunc
 from numpy import unique            as numpy_unique
@@ -7693,7 +7697,9 @@ False
         '''Take the trigonometric inverse tangent of the data element-wise.
 
     Units are ignored in the calculation. The result has units of radians.
-    
+
+    .. versionadded:: 3.0.7
+
     .. seealso:: `tan`
     
     :Parameters:
@@ -7722,6 +7728,46 @@ False
         d = _inplace_enabled_define_and_cleanup(self)
 
         d.func(numpy_arctan, units=_units_radians, inplace=True)
+
+        return d
+
+
+    @_inplace_enabled
+    def arcsinh(self, inplace=False):
+        '''Take the inverse hyperbolic sine of the data element-wise.
+
+    Units are ignored in the calculation. The result has units of radians.
+
+    .. versionadded:: 3.1.0
+
+    .. seealso:: `sinh`
+
+    :Parameters:
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+
+    :Returns:
+
+        `Data` or `None`
+
+    **Examples:**
+
+    >>> d = cf.Data([[0, 1, 2], [3, -99, 5]], mask=[[0, 0, 0], [0, 1, 0]])
+    >>> print(d.array)
+    [[0  1 2]
+     [3 -- 5]]
+    >>> e = d.arcsinh()
+    >>> e
+    <CF Data(2, 3): [[0.0, ..., 2.3124383412727525]] radians>
+    >>> print(e.array)
+    [[0.0 0.881373587019543 1.4436354751788103]
+     [1.8184464592320668 -- 2.3124383412727525]]
+
+        '''
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        d.func(numpy_arcsinh, units=_units_radians, inplace=True)
 
         return d
 
@@ -11778,7 +11824,9 @@ False
     is 1.0, as is the sine of 1.57079632 radians.
     
     The output units are changed to '1' (nondimensional).
-    
+
+    .. seealso:: `cos`, `tan`
+
     :Parameters:
     
         inplace: `bool`, optional
@@ -11820,6 +11868,182 @@ False
             d.Units = _units_radians
 
         out = d.func(numpy_sin, units=_units_1, inplace=True)
+
+        return d
+
+
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
+    def sinh(self, inplace=False):
+        '''Take the hyperbolic sine of the data array in place.
+
+    Units are accounted for in the calculation. If the units are not
+    equivalent to radians (such as Kelvin) then they are treated as if
+    they were radians. For example, the the hyperbolic sine of 90
+    degrees_north is 2.30129890, as is the hyperbolic sine of
+    1.57079632 radians.
+
+    The output units are changed to '1' (nondimensional).
+
+    .. versionadded:: 3.1.0
+
+    .. seealso:: `arcsinh`, `cosh`, `tanh`
+
+    :Parameters:
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+
+    :Returns:
+
+        `Data` or `None`
+
+    **Examples:**
+
+    >>> d.Units
+    <Units: degrees_north>
+    >>> print(d.array)
+    [[-90 0 90 --]]
+    >>> d.sinh(inplace=True)
+    >>> d.Units
+    <Units: 1>
+    >>> print(d.array)
+    [[-2.3012989023072947 0.0 2.3012989023072947 --]]
+
+    >>> d.Units
+    <Units: m s-1>
+    >>> print(d.array)
+    [[1 2 3 --]]
+    >>> d.sinh(inplace=True)
+    >>> d.Units
+    <Units: 1>
+    >>> print(d.array)
+    [[1.1752011936438014 3.626860407847019 10.017874927409903 --]]
+
+        '''
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        if d.Units.equivalent(_units_radians):
+            d.Units = _units_radians
+
+        out = d.func(numpy_sinh, units=_units_1, inplace=True)
+
+        return d
+
+
+    @_inplace_enabled
+    def cosh(self, inplace=False):
+        '''Take the hyperbolic cosine of the data array in place.
+
+    Units are accounted for in the calculation. If the units are not
+    equivalent to radians (such as Kelvin) then they are treated as if
+    they were radians. For example, the the hyperbolic cosine of 0
+    degrees_east is 1.0, as is the hyperbolic cosine of 1.57079632 radians.
+
+    The output units are changed to '1' (nondimensional).
+
+    .. versionadded:: 3.1.0
+
+    .. seealso:: `sinh`, `tanh`
+
+    :Parameters:
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+
+    :Returns:
+
+        `Data` or `None`
+
+    **Examples:**
+
+    >>> d.Units
+    <Units: degrees_north>
+    >>> print(d.array)
+    [[-90 0 90 --]]
+    >>> e = d.cosh()
+    >>> e.Units
+    <Units: 1>
+    >>> print(e.array)
+    [[2.5091784786580567 1.0 2.5091784786580567 --]]
+
+    >>> d.Units
+    <Units: m s-1>
+    >>> print(d.array)
+    [[1 2 3 --]]
+    >>> d.cosh(inplace=True)
+    >>> d.Units
+    <Units: 1>
+    >>> print(d.array)
+    [[1.5430806348152437 3.7621956910836314 10.067661995777765 --]]
+
+        '''
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        if d.Units.equivalent(_units_radians):
+            d.Units = _units_radians
+
+        out = d.func(numpy_cosh, units=_units_1, inplace=True)
+
+        return d
+
+
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
+    def tanh(self, inplace=False):
+        '''Take the hyperbolic tangent of the data array.
+
+    Units are accounted for in the calculation. If the units are not
+    equivalent to radians (such as Kelvin) then they are treated as if
+    they were radians. For example, the the hyperbolic tangent of 90
+    degrees_east is 0.91715234, as is the hyperbolic tangent of
+    1.57079632 radians.
+
+    The output units are changed to '1' (nondimensional).
+
+    .. versionadded:: 3.1.0
+
+    .. seealso:: `sinh`, `cosh`
+
+
+    :Parameters:
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+
+    :Returns:
+
+        `Data` or `None`
+
+    **Examples:**
+
+    >>> d.Units
+    <Units: degrees_north>
+    >>> print(d.array)
+    [[-90 0 90 --]]
+    >>> e = d.tanh()
+    >>> e.Units
+    <Units: 1>
+    >>> print(e.array)
+    [[-0.9171523356672744 0.0 0.9171523356672744 --]]
+
+    >>> d.Units
+    <Units: m s-1>
+    >>> print(d.array)
+    [[1 2 3 --]]
+    >>> d.tanh(inplace=True)
+    >>> d.Units
+    <Units: 1>
+    >>> print(d.array)
+    [[0.7615941559557649 0.9640275800758169 0.9950547536867305 --]]
+
+        '''
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        if d.Units.equivalent(_units_radians):
+            d.Units = _units_radians
+
+        out = d.func(numpy_tanh, units=_units_1, inplace=True)
 
         return d
 
