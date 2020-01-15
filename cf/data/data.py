@@ -7692,8 +7692,7 @@ False
     def arctan(self, inplace=False):
         '''Take the trigonometric inverse tangent of the data element-wise.
 
-    Units are ignored in the calculation. The result is has units of
-    radians.
+    Units are ignored in the calculation. The result has units of radians.
     
     .. seealso:: `tan`
     
@@ -7704,7 +7703,7 @@ False
     
     :Returns:
     
-        `Data`
+        `Data` or `None`
     
     **Examples:**
     
@@ -8954,9 +8953,9 @@ False
     Units are accounted for in the calculation. If the units are not
     equivalent to radians (such as Kelvin) then they are treated as if
     they were radians. For example, the the cosine of 90 degrees_east
-    is 0.0, as is the sine of 1.57079632 kg m-2.
+    is 0.0, as is the cosine of 1.57079632 kg m-2.
     
-    The output units are changed to '1' (nondimensionsal).
+    The output units are changed to '1' (nondimensional).
     
     :Parameters:
     
@@ -8968,7 +8967,7 @@ False
          
     :Returns:
     
-        `Data` o `None`
+        `Data` or `None`
     
     **Examples:**
     
@@ -11775,10 +11774,10 @@ False
 
     Units are accounted for in the calculation. If the units are not
     equivalent to radians (such as Kelvin) then they are treated as if
-    they were radians. For example, the the cosine of 90 degrees_east
+    they were radians. For example, the the sine of 90 degrees_east
     is 1.0, as is the sine of 1.57079632 radians.
     
-    The outpu units are changed to '1' (nondimensionsal).
+    The output units are changed to '1' (nondimensional).
     
     :Parameters:
     
@@ -11790,7 +11789,7 @@ False
     
     :Returns:
     
-        `Data`
+        `Data` or `None`
     
     **Examples:**
     
@@ -12022,7 +12021,7 @@ False
     degrees_east, 0.78539816 radians and 0.78539816 Kelvin are all
     1.0.
     
-    The output units are changed to ``'1'`` (nondimensionsal).
+    The output units are changed to '1' (nondimensional).
     
     .. seealso:: `cos`, `sin`
     
@@ -12036,7 +12035,7 @@ False
     
     :Returns:
     
-        `Data`
+        `Data` or `None`
     
     **Examples:**
     
