@@ -9000,7 +9000,7 @@ False
 
         out = d.func(numpy_cos, units=_units_1, inplace=True)
 
-        return out
+        return d
 
 
     def _var(self, partition, config):
@@ -11822,7 +11822,7 @@ False
 
         out = d.func(numpy_sin, units=_units_1, inplace=True)
 
-        return out
+        return d
 
 
     @_deprecation_error_i_kwarg
@@ -12068,7 +12068,7 @@ False
 
         out = d.func(numpy_tan, units=_units_1, inplace=True)
 
-        return out
+        return d
 
 
     def tolist(self):
