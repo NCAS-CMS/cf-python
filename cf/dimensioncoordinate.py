@@ -17,6 +17,8 @@ from .functions import (_DEPRECATION_ERROR_KWARGS,
                         _DEPRECATION_ERROR_ATTRIBUTE,
                         )
 
+from .decorators import _deprecation_error_i_kwarg
+
 
 class DimensionCoordinate(abstract.Coordinate,
                           mixin.PropertiesDataBounds,                          
@@ -651,12 +653,10 @@ class DimensionCoordinate(abstract.Coordinate,
         return bounds            
 
 
+    @_deprecation_error_i_kwarg
     def flip(self, axes=None, inplace=False, i=False):
         '''TODO
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'flip', i=True) # pragma: no cover
-
         d = super().flip(axes=axes, inplace=inplace)
         if inplace:
             d = self
@@ -856,12 +856,10 @@ class DimensionCoordinate(abstract.Coordinate,
         return True
     
 
+    @_deprecation_error_i_kwarg
     def roll(self, axis, shift, inplace=False, i=False):
         '''TODO
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'roll', i=True) # pragma: no cover
-
         if self.size <= 1:
             if inplace:
                 return

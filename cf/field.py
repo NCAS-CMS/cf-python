@@ -87,6 +87,10 @@ from .functions import (_DEPRECATION_ERROR,
                         _DEPRECATION_ERROR_SEQUENCE,
                         _DEPRECATION_ERROR_KWARG_VALUE,)
 
+from .decorators import (_inplace_enabled,
+                         _inplace_enabled_define_and_cleanup,
+                         _deprecation_error_i_kwarg)
+
 _debug = False
 
 # --------------------------------------------------------------------
@@ -5791,6 +5795,7 @@ class Field(mixin.PropertiesData,
         return field
 
 
+    @_inplace_enabled
     def digitize(self, bins, upper=False, open_ends=False,
                  closed_ends=None, return_bins=False, inplace=False):
         '''Return the indices of the bins to which each value belongs.
@@ -6078,10 +6083,7 @@ class Field(mixin.PropertiesData,
      'bin_units': '0.001 1'}
 
         '''
-        if inplace:
-            f = self
-        else:
-            f = self.copy()
+        f = _inplace_enabled_define_and_cleanup(self)
 
         new_data, bins = self.data.digitize(bins, upper=upper,
                                             open_ends=open_ends,
@@ -6131,9 +6133,6 @@ class Field(mixin.PropertiesData,
         calendar = getattr(bin_units, 'calendar', None)
         if calendar is not None:
             f.set_property('bin_calendar', calendar)
-            
-        if inplace:
-            f = None
 
         if return_bins:
             return f, bins
@@ -7189,7 +7188,8 @@ class Field(mixin.PropertiesData,
 
         return self.set_construct(ref, key=key, copy=False)
 
-    
+
+    @_deprecation_error_i_kwarg
     def collapse(self, method, axes=None, squeeze=False, mtol=1,
                  weights=None, ddof=1, a=None, inplace=False,
                  group=None, regroup=False, within_days=None,
@@ -8576,9 +8576,6 @@ class Field(mixin.PropertiesData,
     https://ncas-cms.github.io/cf-python/tutorial.html#statistical-collapses
 
         '''        
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'collapse', i=True) # pragma: no cover
-
         if _debug:
             _DEPRECATION_ERROR_KWARGS(self, 'collapse', {'_debug': _debug},
                                       "Use keyword 'verbose' instead.") # pragma: no cover
@@ -10399,6 +10396,7 @@ class Field(mixin.PropertiesData,
         return out
 
 
+    @_inplace_enabled
     def insert_dimension(self, axis, position=0, inplace=False):
         '''Insert a size 1 axis into the data array.
 
@@ -10468,10 +10466,7 @@ class Field(mixin.PropertiesData,
                     : time(1) = [2019-01-01 00:00:00]
 
         '''
-        if inplace:
-            f = self
-        else:
-            f = self.copy()
+        f = _inplace_enabled_define_and_cleanup(self)
 
         if axis is None:
             axis = f.set_construct(self._DomainAxis(1))                
@@ -10483,8 +10478,6 @@ class Field(mixin.PropertiesData,
         super(Field, f).insert_dimension(axis=axis, position=position,
                                          inplace=True)
 
-        if inplace:
-            f = None
         return f
 
 
@@ -11625,7 +11618,9 @@ class Field(mixin.PropertiesData,
 
         return False
 
-    
+
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def convolution_filter(self, weights, axis=None, mode=None,
                            cval=None, origin=0, update_bounds=True,
                            inplace=False, i=False, _bounds=True):
@@ -11832,9 +11827,6 @@ class Field(mixin.PropertiesData,
      cftime.DatetimeGregorian(1960-03-01 00:00:00)]
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'convolution_filter', i=True) # pragma: no cover
-
         if isinstance(weights, str):
             _DEPRECATION_ERROR("A string-valued 'weights' parameter  has been deprecated at version 3.0.0 and is no longer available. Provide a sequence of numerical weights instead. scipy.signal.windows may be used to generate particular window functions.") # pragma: no cover
 
@@ -11891,10 +11883,7 @@ class Field(mixin.PropertiesData,
         new_data = Data.reconstruct_sectioned_data(sections)
 
         # Construct new field
-        if inplace:
-            f = self
-        else:
-            f = self.copy()
+        f = _inplace_enabled_define_and_cleanup(self)
 
         # Insert filtered data into new field
         f.set_data(new_data, axes=self.get_data_axes(), copy=False)
@@ -11923,8 +11912,6 @@ class Field(mixin.PropertiesData,
                 
             coord.set_bounds(Bounds(data=Data(new_bounds, units=coord.Units)))
 
-        if inplace:
-            f = None
         return f
 
 
@@ -12042,6 +12029,7 @@ class Field(mixin.PropertiesData,
         return f
 
 
+    @_inplace_enabled
     def cumsum(self, axis, masked_as_zero=False, coordinate=None,
                inplace=False):
         '''Return the field cumulatively summed along the given axis.
@@ -12146,10 +12134,7 @@ class Field(mixin.PropertiesData,
         new_data = self.data.cumsum(axis_index, masked_as_zero=masked_as_zero)
         
         # Construct new field
-        if inplace:
-            f = self
-        else:
-            f = self.copy()
+        f = _inplace_enabled_define_and_cleanup(self)
 
         # Insert new data into field
         f.set_data(new_data, set_axes=False, copy=False)
@@ -12176,8 +12161,6 @@ class Field(mixin.PropertiesData,
             cell_method = CellMethod(axes=[axis_key], method='sum')
             f.set_construct(cell_method, copy=False)
 
-        if inplace:
-            f = None
         return f
     
 
@@ -12578,7 +12561,8 @@ class Field(mixin.PropertiesData,
 
         return out
         
-    
+
+    @_deprecation_error_i_kwarg
     def flip(self, axes=None, inplace=False, i=False, **kwargs):
         '''Flip (reverse the direction of) axes of the field.
 
@@ -12620,9 +12604,6 @@ class Field(mixin.PropertiesData,
     >>> f.flip(['dim2'], inplace=True)
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'flip', i=True) # pragma: no cover
-            
         if kwargs:
             _DEPRECATION_ERROR_KWARGS(self, 'flip', kwargs) # pragma: no cover
 
@@ -12659,6 +12640,8 @@ class Field(mixin.PropertiesData,
         return f
 
 
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def anchor(self, axis, value, inplace=False, dry_run=False,
                i=False, **kwargs):
         '''Roll a cyclic axis so that the given value lies in the first
@@ -12773,19 +12756,16 @@ class Field(mixin.PropertiesData,
     <CF Data(8): [10001.25, ..., 10358.4375] degrees_east>
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'anchor', i=True) # pragma: no cover
-
         if kwargs:
             _DEPRECATION_ERROR_KWARGS(self, 'anchor', kwargs) # pragma: no cover
 
         axis = self.domain_axis(axis, key=True)
 
-        if inplace or dry_run:
+        if dry_run:
             f = self
         else:
-            f = self.copy()
-        
+            f = _inplace_enabled_define_and_cleanup(self)
+
         dim = f.dimension_coordinates.filter_by_axis('and', axis).value(default=None)
         if dim is None:
             raise ValueError(
@@ -12855,8 +12835,6 @@ class Field(mixin.PropertiesData,
                 bounds += np
         #--- End: if
 
-        if inplace:
-            f = None
         return f
 
 
@@ -13067,6 +13045,7 @@ class Field(mixin.PropertiesData,
         return self.domain_axes.filter_by_key(*out)
     
 
+    @_deprecation_error_i_kwarg
     def squeeze(self, axes=None, inplace=False, i=False, **kwargs):
         '''Remove size 1 axes from the data.
 
@@ -13114,9 +13093,6 @@ class Field(mixin.PropertiesData,
     >>> f.squeeze(['dim2'], inplace=True)
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'squeeze', i=True) # pragma: no cover
-             
         if kwargs:
             _DEPRECATION_ERROR_KWARGS(self, 'squeeze', kwargs) # pragma: no cover
 
@@ -13202,7 +13178,8 @@ class Field(mixin.PropertiesData,
 
         return f
 
-    
+
+    @_deprecation_error_i_kwarg
     def transpose(self, axes=None, constructs=False, inplace=False,
                   items=True, i=False, **kwargs):
         '''Permute the axes of the data array.
@@ -13263,9 +13240,6 @@ class Field(mixin.PropertiesData,
     >>> f.transpose(['time', -2, 'dim2'], inplace=True)
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'transpose', i=True) # pragma: no cover
-             
         if not items:
             _DEPRECATION_ERROR_KWARGS(self, 'transpose', {'items': items},
                                       "Use keyword 'constructs' instead.") # pragma: no cover
@@ -13343,7 +13317,9 @@ class Field(mixin.PropertiesData,
 #            f = None
 #        return f    
     
-                
+
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def unsqueeze(self, inplace=False, i=False, axes=None, **kwargs):
         '''Insert size 1 axes into the data array.
 
@@ -13379,9 +13355,6 @@ class Field(mixin.PropertiesData,
     >>> f.unsqueeze(['dim2'], inplace=True)
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'unsqueeze', i=True) # pragma: no cover
-
         if kwargs:
             _DEPRECATION_ERROR_KWARGS(self, 'unsqueeze', kwargs) # pragma: no cover
 
@@ -13390,17 +13363,12 @@ class Field(mixin.PropertiesData,
                 self, 'unsqueeze', {'axes': axes},
                 "All size one domain axes missing from the data are inserted. Use method 'insert_dimension' to insert an individual size one domain axis.") # pragma: no cover
 
-        if inplace:
-            f = self
-        else:
-            f = self.copy()
+        f = _inplace_enabled_define_and_cleanup(self)
 
         size_1_axes = self.domain_axes.filter_by_size(1)
         for axis in set(size_1_axes).difference(self.get_data_axes()):
             f.insert_dimension(axis, position=0, inplace=True)
 
-        if inplace:
-            f = None
         return f
 
 
@@ -15385,6 +15353,7 @@ class Field(mixin.PropertiesData,
         return c
     
 
+    @_inplace_enabled
     def flatten(self, axes=None, return_axis=False, inplace=False):
         '''Flatten axes of the field.
 
@@ -15520,11 +15489,7 @@ class Field(mixin.PropertiesData,
      None)
 
         '''
-        
-        if inplace:
-            f = self
-        else:
-            f = self.copy()
+        f = _inplace_enabled_define_and_cleanup(self)
 
         data_axes = self.get_data_axes()
 
@@ -15638,14 +15603,14 @@ class Field(mixin.PropertiesData,
         for key in axes:
             f.del_construct(key)
 
-        if inplace:
-            f = None
         if return_axis:
             return f, new_axis
         
         return f
 
 
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def roll(self, axis, shift, inplace=False, i=False, **kwargs):
         '''Roll the field along a cyclic axis.
 
@@ -15692,17 +15657,10 @@ class Field(mixin.PropertiesData,
     >>> f.roll('X', -3)
 
         '''          
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'roll', i=True) # pragma: no cover
-
         axis = self.domain_axis(axis, key=True,
                                 default=ValueError(
                                     "Can't roll: Bad axis specification: {!r}".format(axis)))
-            
-        if inplace:
-            f = self
-        else:
-            f = self.copy()
+        f = _inplace_enabled_define_and_cleanup(self)
         
         if self.domain_axes[axis].get_size() <= 1:
             if inplace:
@@ -15730,11 +15688,10 @@ class Field(mixin.PropertiesData,
                 construct.roll(axes.index(axis), shift, inplace=True)
         #--- End: for
 
-        if inplace:
-            f = None
         return f
 
 
+    @_deprecation_error_i_kwarg
     def where(self, condition, x=None, y=None, inplace=False,
               construct=None, i=False, _debug=False, item=None,
               **item_options):
@@ -15976,9 +15933,6 @@ class Field(mixin.PropertiesData,
     >>> g = f.where(condition, f.collapse('longitude: mean'))
 
         '''
-        if i:            
-            _DEPRECATION_ERROR_KWARGS(self, 'where', i=True) # pragma: no cover
-
         if item is not None:
             _DEPRECATION_ERROR_KWARGS(self, 'where', {'item': item},
                                       "Use keyword 'construct' instead.") # pragma: no cover
@@ -16347,7 +16301,8 @@ class Field(mixin.PropertiesData,
         '''
         return FieldList(_section(self, axes, data=False, stop=stop, **kwargs))
 
-
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def regrids(self, dst, method, src_cyclic=None, dst_cyclic=None,
                 use_src_mask=True, use_dst_mask=False,
                 fracfield=False, src_axes=None, dst_axes=None,
@@ -16650,17 +16605,11 @@ class Field(mixin.PropertiesData,
     >>> h = f.regrids(g, 'nearest_dtos', axis_order='ZT')
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'regrids', i=True) # pragma: no cover
-
         # Initialise ESMPy for regridding if found
         manager = Regrid.initialize()
 
-        if inplace:
-            f = self
-        else:
-            f = self.copy()
-            
+        f = _inplace_enabled_define_and_cleanup(self)
+
         # If dst is a dictionary set flag
         dst_dict = not isinstance(dst, f.__class__)
 #        if isinstance(dst, f.__class__):
@@ -16892,12 +16841,14 @@ class Field(mixin.PropertiesData,
         # Construct new data from regridded sdst_dictections
         new_data = Data.reconstruct_sectioned_data(sections)
         
-        # Construct new field
+        # Construct new field.
+        # Note: cannot call `_inplace_enabled_define_and_cleanup(self)` to apply this
+        # if-else logic (it deletes the decorator attribute so can only be used once)
         if inplace:
             f = self
         else:
             f = self.copy()
-        
+
         # Update ancillary variables of new field
         #f._conform_ancillary_variables(src_axis_keys, keep_size_1=False)
 
@@ -16945,11 +16896,11 @@ class Field(mixin.PropertiesData,
 
         f.autocyclic()
 
-        if inplace:
-            f = None
         return f
 
 
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def regridc(self, dst, axes, method, use_src_mask=True,
                 use_dst_mask=False, fracfield=False, axis_order=None,
                 ignore_degenerate=True, inplace=False, i=False,
@@ -17167,16 +17118,10 @@ class Field(mixin.PropertiesData,
     >>> h = f.regridc(g, axes=('X','Y'), use_dst_mask=True, method='bilinear')
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'regridc', i=True) # pragma: no cover
-
         # Initialise ESMPy for regridding if found
         manager = Regrid.initialize()
-        
-        if inplace:
-            f = self
-        else:
-            f = self.copy()
+
+        f = _inplace_enabled_define_and_cleanup(self)
 
         # If dst is a dictionary set flag
         dst_dict = not isinstance(dst, f.__class__)
@@ -17456,11 +17401,11 @@ class Field(mixin.PropertiesData,
         dstgrid.destroy()
         srcgrid.destroy()
 
-        if inplace:
-            f = None
         return f
 
-    
+
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def derivative(self, axis, wrap=None, one_sided_at_boundary=False,
                    inplace=False, i=False, cyclic=None):
         '''Return the derivative along the specified axis.
@@ -17507,9 +17452,6 @@ class Field(mixin.PropertiesData,
     TODO
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'derivative', i=True) # pragma: no cover
-
         if cyclic:
             _DEPRECATION_ERROR_KWARGS(self, 'derivative', {'cyclic': cyclic},
                                       "Use the 'wrap' keyword instead") # pragma: no cover
@@ -17543,11 +17485,8 @@ class Field(mixin.PropertiesData,
         else:
             mode = 'constant'
 
-        if inplace:
-            f = self
-        else:
-            f = self.copy()
-            
+        f = _inplace_enabled_define_and_cleanup(self)
+
         # Find the finite difference of the field
         f.convolution_filter([1, 0, -1], axis=axis, mode=mode,
                              update_bounds=False, inplace=True,
@@ -17577,8 +17516,6 @@ class Field(mixin.PropertiesData,
         elif long_name is not None:
             f.long_name = 'derivative of {}'.format(long_name)
 
-        if inplace:
-            f = None
         return f
 
 

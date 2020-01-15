@@ -13,7 +13,11 @@ from operator import mul
 
 from .partition import Partition
 
-from ..functions import _DEPRECATION_WARNING_METHOD, _DEPRECATION_ERROR_METHOD
+from ..functions import (_DEPRECATION_WARNING_METHOD,
+                         _DEPRECATION_ERROR_METHOD)
+
+from ..decorators import (_inplace_enabled,
+                          _inplace_enabled_define_and_cleanup)
 
 
 _empty_matrix = numpy_empty((), dtype=object)
@@ -517,6 +521,7 @@ Attribute   Description
 
 
     # 0
+    @_inplace_enabled
     def insert_dimension(self, axis, inplace=False):
         '''Insert a new size 1 axis in place.
 
@@ -543,17 +548,11 @@ Attribute   Description
     (1, 2, 3)
 
         '''
-        if inplace:
-            p = self
-        else:
-            p = self.copy()
+        p = _inplace_enabled_define_and_cleanup(self)
 
         p.matrix = numpy_expand_dims(p.matrix, 0)
-
         p.axes  = [axis] + p.axes
 
-        if inplace:
-            p = None
         return p
 
 
@@ -623,6 +622,7 @@ Attribute   Description
 
 
     # 0
+    @_inplace_enabled
     def swapaxes(self, axis0, axis1, inplace=False):
         '''Swap the positions of two axes.
 
@@ -652,19 +652,13 @@ Attribute   Description
     (2, 5, 3, 4)
 
         '''
-        if inplace:
-            p = self
-        else:
-            p = self.copy()
+        p = _inplace_enabled_define_and_cleanup(self)
 
         if axis0 != axis1:
             iaxes = list(range(p.matrix.ndim))
             iaxes[axis1], iaxes[axis0] = iaxes[axis0], iaxes[axis1]
             p.transpose(iaxes, inplace=True)
 
-        if inplace:
-            p = None
-            
         return p
 
 
@@ -746,7 +740,8 @@ Attribute   Description
         #--- End: for
 
 
-    # 0    
+    # 0
+    @_inplace_enabled
     def squeeze(self, inplace=False):
         '''Remove all size 1 axes.
 
@@ -775,11 +770,8 @@ Attribute   Description
     >>> pm.shape
     ()
 
-        '''     
-        if inplace:
-            p = self
-        else:
-            p = self.copy()
+        '''
+        p = _inplace_enabled_define_and_cleanup(self)
 
         matrix = p.matrix
         shape  = matrix.shape
@@ -790,12 +782,10 @@ Attribute   Description
             axes = p.axes
             p.axes = [axis for axis, size in zip(axes, shape) if size > 1]
 
-        if inplace:
-            p = None
-            
         return p
 
 
+    @_inplace_enabled
     def transpose(self, axes, inplace=False):
         '''Permute the partition dimensions of the partition matrix in place.
 
@@ -819,10 +809,7 @@ Attribute   Description
     >>> pm.transpose((2, 0, 1))
 
         '''
-        if inplace:
-            p = self
-        else:
-            p = self.copy()
+        p = _inplace_enabled_define_and_cleanup(self)
 
         matrix = p.matrix
         if list(axes) != list(range(matrix.ndim)):
@@ -830,9 +817,6 @@ Attribute   Description
             p_axes = p.axes
             p.axes = [p_axes[i] for i in axes]
 
-        if inplace:
-            p = None
-            
         return p
 
 
