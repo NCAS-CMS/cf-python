@@ -25,6 +25,8 @@ version 3.1.0
 * New regridding option: ``'conservative_2nd'``.
 * Fixed bug that didn't change the units of bounds when the units of
   the coordinates were changed.
+* Fixed bug in `cf.Field.domain_axis` that caused an error when no
+  unique domain axis construct could be identified.
 * Changed minimum cfunits dependency to version 3.2.4. This fixes a
   bug that rased an exception for units specified by non-strings
   (https://github.com/NCAS-CMS/cfunits/issues/1).

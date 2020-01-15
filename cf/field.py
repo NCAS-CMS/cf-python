@@ -14444,7 +14444,12 @@ class Field(mixin.PropertiesData,
             da_key = domain_axes.key()
         else:
             # identity is not a unique domain axis construct identity
-            da_key = self.domain_axis_key(identity, default=default)
+            da_key = self.domain_axis_key(identity, default=None)
+
+        if da_key is None:
+             return self._default(
+                 default,
+                 "No unique domain axis construct is identiable from {!r}".format(identity))
             
         if key:
             return da_key
