@@ -152,8 +152,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                                  coordinates, extra=None):
         '''Write a scalar coordinate and its bounds to the netCDF file.
     
-It is assumed that the input coordinate is has size 1, but this is not
-checked.
+It is assumed that the input coordinate has size 1, but this is not checked.
     
 If an equal scalar coordinate has already been written to the file
 then the input coordinate is not written.

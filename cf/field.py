@@ -3201,7 +3201,7 @@ class Field(mixin.PropertiesData,
             are also checked. Only used for cartesian regridding when
             regridding only 1 (only 1!) dimension of a n>2 dimensional
             field. In this case we need to provided the coordinates of
-            the the dimensions that aren't being regridded (that are
+            the dimensions that aren't being regridded (that are
             the same in both src and dst grids) so that we can create
             a sensible ESMF grid object.
             
@@ -12211,7 +12211,7 @@ class Field(mixin.PropertiesData,
 
         string: `bool`, optional
             If False then return each command as an element of a
-            `list`. By default the the commands are concatenated into
+            `list`. By default the commands are concatenated into
             a string, with a new line inserted between each command.
 
     :Returns:

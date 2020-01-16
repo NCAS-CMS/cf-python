@@ -2294,7 +2294,7 @@ class UMField:
     def vtime(self, rec):
         '''TODO
 
-    :Parmaeters:
+    :Parameters:
    
         rec: `umfile.Rec`
    

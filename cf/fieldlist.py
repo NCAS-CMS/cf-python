@@ -468,7 +468,7 @@ class FieldList(list):
         '''Whether two field lists are the same.
 
     Equality requires the two field lists to have the same length and
-    for the the field construct elements to be equal pair-wise, using
+    for the field construct elements to be equal pair-wise, using
     their `~cf.Field.equals` methods.
     
     Any type of object may be tested but, in general, equality is only

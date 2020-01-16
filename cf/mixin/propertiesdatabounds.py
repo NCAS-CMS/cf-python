@@ -315,7 +315,7 @@ class PropertiesDataBounds(PropertiesData):
     broadcasting rules.
     
     If the construct has bounds then they are operated on with the
-    same data as the the construct's data.
+    same data as the construct's data.
     
     It is intended to be called by the binary arithmetic and comparison
     methods, such as `!__sub__` and `!__lt__`.
@@ -1057,12 +1057,12 @@ dtype('float64')
     def cos(self, bounds=True, inplace=False,  i=False):
         '''Take the trigonometric cosine of the data, element-wise.
 
-    Units are accounted for in the calculation, so that the the cosine
+    Units are accounted for in the calculation, so that the cosine
     of 90 degrees_east is 0.0, as is the cosine of 1.57079632
     radians. If the units are not equivalent to radians (such as
     Kelvin) then they are treated as if they were radians.
     
-    The output units are '1' (nondimensionsal).
+    The output units are '1' (nondimensional).
     
     .. seealso:: `sin`, `tan`
     
@@ -1330,7 +1330,7 @@ dtype('float64')
     
         units: `Units`, optional
             The reference time units to convert to. By default the
-            units days since the original reference time in the the
+            units days since the original reference time in the
             original calendar.
     
             *Parameter example:*
@@ -1780,7 +1780,7 @@ dtype('float64')
             #
             # As per section 7.1 in the CF conventions: i) if the
             # variable is 0 or 1 dimensional then flip all dimensions
-            # (including the the trailing size 2 dimension); ii) if
+            # (including the trailing size 2 dimension); ii) if
             # the variable has 2 or more dimensions then do not flip
             # the trailing dimension.
             # --------------------------------------------------------
@@ -1928,12 +1928,12 @@ dtype('float64')
     def sin(self, bounds=True, inplace=False, i=False):
         '''The trigonometric sine of the data, element-wise.
 
-    Units are accounted for in the calculation. For example, the the
+    Units are accounted for in the calculation. For example, the
     sine of 90 degrees_east is 1.0, as is the sine of 1.57079632
     radians. If the units are not equivalent to radians (such as
     Kelvin) then they are treated as if they were radians.
     
-    The Units are changed to '1' (nondimensionsal).
+    The Units are changed to '1' (nondimensional).
     
     .. seealso:: `cos`, `tan`
     
@@ -1984,8 +1984,7 @@ dtype('float64')
     def arctan(self, inplace=False):
         '''Take the trigonometric inverse tangent of the data element-wise.
 
-    Units are ignored in the calculation. The result is has units of
-    radians.
+    Units are ignored in the calculation. The result has units of radians.
     
     The "standard_name" and "long_name" properties are removed from
     the result.
@@ -1994,14 +1993,14 @@ dtype('float64')
 
     .. seealso:: `tan`
     
-    :Parmaeters:
+    :Parameters:
     
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
     
     :Returns:
     
-        `Data`
+        `Data` or `None`
     
     **Examples:**
         
@@ -2023,13 +2022,13 @@ dtype('float64')
     def tan(self, bounds=True, inplace=False, i=False):
         '''The trigonometric tangent of the data, element-wise.
 
-    Units are accounted for in the calculation, so that the the
-    tangent of 180 degrees_east is 0.0, as is the sine of
+    Units are accounted for in the calculation, so that the
+    tangent of 180 degrees_east is 0.0, as is the tangent of
     3.141592653589793 radians. If the units are not equivalent to
     radians (such as Kelvin) then they are treated as if they were
     radians.
     
-    The Units are changed to '1' (nondimensionsal).
+    The Units are changed to '1' (nondimensional).
     
     .. seealso:: `cos`, `sin`
     

@@ -3458,7 +3458,7 @@ place.
     
     :Returns:
     
-        `Data`
+        `Data` or `None`
             TODO
     
     **Examples:**
@@ -3523,7 +3523,7 @@ place.
     
     :Returns:
     
-        `Data`
+        `Data` or `None`
     
     **Examples:**
     
@@ -3573,7 +3573,7 @@ place.
     
     :Returns:
     
-        `Data`, `Data`, `Units`
+        `Data` or `None`, `Data` or `None`, `Units`
     
     **Examples:**
     
@@ -4403,7 +4403,7 @@ place.
 
         string: `bool`, optional
             If False then return each command as an element of a
-            `list`. By default the the commands are concatenated into
+            `list`. By default the commands are concatenated into
             a string, with a new line inserted between each command.
 
     :Returns:
@@ -5620,7 +5620,7 @@ place.
     
     :Returns:
     
-        `Data`
+        `Data` or `None`
 
         '''
         d = _inplace_enabled_define_and_cleanup(self)
@@ -8288,7 +8288,7 @@ False
          
     :Returns:
     
-        `Data`
+        `Data` or `None`
             The collapsed array.
     
     **Examples:**
@@ -8368,7 +8368,7 @@ False
          
     :Returns:
     
-        `Data`
+        `Data` or `None`
             The collapsed array.
     
     .. seealso:: `maximum`, `mean`, `mid_range`, `sum`, `sd`, `var`
@@ -8486,7 +8486,7 @@ False
          
     :Returns:
     
-        `Data`
+        `Data` or `None`
             The collapsed array.
     
     .. seealso:: `max`, `min`, `mid_range`, `range`, `sum`, `sd`, `var`
@@ -8952,7 +8952,7 @@ False
 
     Units are accounted for in the calculation. If the units are not
     equivalent to radians (such as Kelvin) then they are treated as if
-    they were radians. For example, the the cosine of 90 degrees_east
+    they were radians. For example, the cosine of 90 degrees_east
     is 0.0, as is the cosine of 1.57079632 kg m-2.
     
     The output units are changed to '1' (nondimensional).
@@ -9617,7 +9617,7 @@ False
     
     :Returns:
     
-        `Data`
+        `Data` or `None`
     
     **Examples:**
     
@@ -9996,7 +9996,7 @@ False
 
     :Returns:
     
-        `Data`
+        `Data` or `None`
     
     **Examples:**
     
@@ -10034,7 +10034,7 @@ False
     
     :Returns:
     
-        `Data`
+        `Data` or `None`
     
     **Examples:**
     
@@ -10136,7 +10136,7 @@ False
     
     :Returns:
     
-        `Data`
+        `Data` or `None`
     
     **Examples:**
     
@@ -10201,7 +10201,7 @@ False
     
     :Returns:
     
-        `Data`
+        `Data` or `None`
     
     **Examples:**
 
@@ -10522,7 +10522,7 @@ False
     
     :Returns:
     
-        `Data`
+        `Data` or `None`
     
     **Examples:**
     
@@ -10631,7 +10631,7 @@ False
     
     :Returns:
     
-        `Data`
+        `Data` or `None`
             The collapsed array.
     
     **Examples:**
@@ -10669,7 +10669,7 @@ False
     
     :Returns:
     
-        `Data`
+        `Data` or `None`
     
     **Examples:**
     
@@ -10958,7 +10958,7 @@ False
          
     :Returns:
     
-        `Data`
+        `Data` or `None`
             The collapsed array.
     
     .. seealso:: `max`, `min`, `mid_range`, `range`, `sum`, `sd`, `var`
@@ -11007,7 +11007,7 @@ False
     
     :Returns:
     
-        `Data`
+        `Data` or `None`
     
     **Examples:**
     
@@ -11218,7 +11218,7 @@ False
     
     :Returns:
     
-        `Data`
+        `Data` or `None`
             The data with swapped axis positions.
 
     **Examples:**
@@ -11774,7 +11774,7 @@ False
 
     Units are accounted for in the calculation. If the units are not
     equivalent to radians (such as Kelvin) then they are treated as if
-    they were radians. For example, the the sine of 90 degrees_east
+    they were radians. For example, the sine of 90 degrees_east
     is 1.0, as is the sine of 1.57079632 radians.
     
     The output units are changed to '1' (nondimensional).
@@ -11841,7 +11841,7 @@ False
     
     :Returns:
     
-        `Data`
+        `Data` or `None`
 
         '''
         d = _inplace_enabled_define_and_cleanup(self)
@@ -11888,7 +11888,7 @@ False
     
     :Returns:
     
-        `Data`
+        `Data` or `None`
             The squeezed data array.
     
     **Examples:**
@@ -12017,7 +12017,7 @@ False
 
     Units are accounted for in the calculation. If the units are not
     equivalent to radians (such as Kelvin) then they are treated as if
-    they were radians. For example, the the tangents of 45
+    they were radians. For example, the tangents of 45
     degrees_east, 0.78539816 radians and 0.78539816 Kelvin are all
     1.0.
     
@@ -12210,7 +12210,7 @@ False
     
     :Returns:
     
-        `Data`
+        `Data` or `None`
     
     **Examples:**
     
@@ -12425,7 +12425,7 @@ False
          
     :Returns:
     
-        `Data`
+        `Data` or `None`
             The collapsed array.
     
     **Examples:**
@@ -12454,7 +12454,7 @@ False
     
     :Returns:
     
-        `Data`
+        `Data` or `None`
 
         '''
         if not shift:
@@ -12527,7 +12527,7 @@ False
          
     :Returns:
     
-        `Data`
+        `Data` or `None`
             The collapsed array.
     
     **Examples:**
@@ -12614,7 +12614,7 @@ False
          
     :Returns:
     
-        `Data`
+        `Data` or `None`
             The collapsed array.
     
     **Examples:**
@@ -12666,7 +12666,7 @@ False
          
     :Returns:
     
-        `Data`
+        `Data` or `None`
             The collapsed array.
     
     **Examples:**
@@ -12819,7 +12819,7 @@ False
          
     :Returns:
     
-        `Data`
+        `Data` or `None`
     
     **Examples:**
     
@@ -12876,7 +12876,7 @@ False
          
     :Returns:
     
-        `Data`
+        `Data` or `None`
             The collapsed array.
     
     **Examples:**

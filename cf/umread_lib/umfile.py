@@ -24,7 +24,7 @@ class File:
     type; otherwise, the file type is autodetected and any of them
     that are set are ignored.
     
-    :Parmaeters:
+    :Parameters:
     
         byte_ordering: 'little_endian' or 'big_endian'
     
