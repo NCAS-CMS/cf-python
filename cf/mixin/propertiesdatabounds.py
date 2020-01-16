@@ -831,25 +831,25 @@ dtype('float64')
 >>> type(f.dtype)
 <type 'numpy.dtype'>
 
->>> print f.array
+>>> print(f.array)
 [0.5 1.5 2.5]
 >>> import numpy
 >>> f.dtype = numpy.dtype(int)
->>> print f.array
+>>> print(f.array)
 [0 1 2]
 >>> f.dtype = bool
->>> print f.array
+>>> print(f.array)
 [False  True  True]
 >>> f.dtype = 'float64'
->>> print f.array
+>>> print(f.array)
 [ 0.  1.  1.]
 
->>> print f.array
+>>> print(f.array)
 [0.5 1.5 2.5]
 >>> f.dtype = int
 >>> f.dtype = bool
 >>> f.dtype = float
->>> print f.array
+>>> print(f.array)
 [ 0.5  1.5  2.5]
 
         '''
@@ -1511,7 +1511,7 @@ dtype('float64')
             
     **Examples:**
     
-    >>> print c.direction()
+    >>> print(c.direction())
     None
     
             ''' 
@@ -1968,7 +1968,7 @@ dtype('float64')
     
     >>> f.Units
     <Units: m s-1>
-    >>> print f.array
+    >>> print(f.array)
     [[1 2 3 --]]
     >>> f.sin()
     >>> f.Units

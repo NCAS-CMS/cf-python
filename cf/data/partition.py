@@ -953,7 +953,7 @@ class Partition:
 #        if hasattr(self, '_original'):
 #            del self._original
 
-#        print hasattr(self, 'config'),
+#        print(hasattr(self, 'config')),
         try:
             del self.config
         except AttributeError:
@@ -1289,7 +1289,7 @@ class Partition:
 #>>> type(p.flat())
 #<generator object flat at 0x519a0a0>
 #>>> for q in p.flat():
-#...     print q is p
+#...     print(q is p)
 #True
 #
 #'''
@@ -1315,7 +1315,7 @@ class Partition:
 #>>> p.shape
 #[2, 1, 3]
 #>>> for index in p.ndindex():
-#...     print index
+#...     print(index)
 #...
 #(0, 0, 0)
 #(0, 0, 1)
@@ -1327,7 +1327,7 @@ class Partition:
 #>>> p.shape
 #[]
 #>>> for index in p.ndindex():
-#...     print index
+#...     print(index)
 #...
 #()
 #
@@ -1367,7 +1367,7 @@ class Partition:
     >>> p.location
     [(3, 5), (0, 1), (0, 3)]
     >>> for index in p.master_ndindex():
-    ...     print index
+    ...     print(index)
     ...
     (3, 0, 0)
     (3, 0, 1)
@@ -1419,7 +1419,7 @@ class Partition:
         # >>> a[slice(3, 8, 2)]          
         # [6, 4, 2]
         # >>> a.reverse()
-        # >>> print a
+        # >>> print(a)
         # >>> a = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         # >>> a[slice(6, 0, -2)]    
         # [6, 4, 2]

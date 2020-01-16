@@ -2070,7 +2070,7 @@ class Field(mixin.PropertiesData,
 #            axis0 = axis_map[axis1]
         new_axes = set(axes_added_from_field1).union(axes_to_replace_from_field1)
         if verbose:
-            print ('\nnew_axes =', new_axes)
+            print('\nnew_axes =', new_axes)
             
         if new_axes:
             constructs = field1.constructs.filter_by_type('dimension_coordinate',
@@ -12962,7 +12962,7 @@ class Field(mixin.PropertiesData,
             if verbose: print(0)
             if dim.get_property('standard_name', None) not in ('longitude', 'grid_longitude'):
                 self.cyclic(key, iscyclic=False)
-                if verbose: print (1)
+                if verbose: print(1)
                 return False
         #--- End: if
         

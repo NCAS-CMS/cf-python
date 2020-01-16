@@ -316,7 +316,7 @@ if __name__ == '__main__':
             print("type %s, num words: %s" % rec.get_type_and_num_words())
             # if recno == 1:
             #     rec._extra_data['y'] += .01
-            #     print "massaged_extra_data: %s" % rec.get_extra_data()
+            #     print("massaged_extra_data: %s" % rec.get_extra_data())
             print("-----------------------")
             
         print("all records", var.recs)

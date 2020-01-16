@@ -275,7 +275,7 @@ class CoordinateReference(cfdm.CoordinateReference):
     
     >>> cf.CoordinateReference.default_value('ptop')
     0.0
-    >>> print cf.CoordinateReference.default_value('north_pole_grid_latitude')
+    >>> print(cf.CoordinateReference.default_value('north_pole_grid_latitude'))
     0.0
 
         '''

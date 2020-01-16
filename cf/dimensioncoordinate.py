@@ -825,20 +825,20 @@ class DimensionCoordinate(abstract.Coordinate,
 
         '''
         if not self.Units.islongitude:
-            if verbose: print (0)
+            if verbose: print(0)
             if self.get_property('standard_name', None) not in ('longitude', 'grid_longitude'):
-                if verbose: print (1)
+                if verbose: print(1)
                 return False
         #--- End: if
         
         bounds = self.get_bounds(None)
         if bounds is None:
-            if verbose: print (2)
+            if verbose: print(2)
             return False
 
         bounds_data = bounds.get_data(None)
         if bounds_data is None:
-            if verbose: print (3)
+            if verbose: print(3)
             return False
 
         bounds = bounds_data.array
@@ -848,7 +848,7 @@ class DimensionCoordinate(abstract.Coordinate,
         period.Units = bounds_data.Units
 
         if abs(bounds[-1, -1] - bounds[0, 0]) != period.array:
-            if verbose: print (4)
+            if verbose: print(4)
             return False
 
         self.period(period)

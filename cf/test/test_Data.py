@@ -603,7 +603,7 @@ class DataTest(unittest.TestCase):
                     self.assertTrue((d.array == a).all() in (True, numpy.ma.masked), message)
                     self.assertTrue((d.mask.array == numpy.ma.getmaskarray(a)).all(), message)
                 #--- End: for
-#                print 'hardmask =',hardmask,', pmshape =', d._pmshape
+#                print('hardmask =',hardmask,', pmshape =', d._pmshape)
             #--- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
@@ -1095,7 +1095,7 @@ class DataTest(unittest.TestCase):
                 self.assertTrue(d.min(_preserve_partitions=pp) == 2)
                 self.assertTrue(d.min(_preserve_partitions=pp).datum() == 2)
                 self.assertTrue(d.min(_preserve_partitions=pp) == cf.Data(0.002, 'km'))
-#            print 'pmshape =', d._pmshape
+#            print('pmshape =', d._pmshape)
 
         cf.CHUNKSIZE(self.original_chunksize)
 

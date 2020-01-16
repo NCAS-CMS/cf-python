@@ -1298,7 +1298,7 @@ place.
     
     >>> d = cf.Data([1, 2, 3], 'metres')
     >>> for e in d:
-    ...    print repr(e)
+    ...    print(repr(e))
     ...
     1
     2
@@ -1306,14 +1306,14 @@ place.
     
     >>> d = cf.Data([[1, 2], [4, 5]], 'metres')
     >>> for e in d:
-    ...    print repr(e)
+    ...    print(repr(e))
     ...
     <CF Data: [1, 2] metres>
     <CF Data: [4, 5] metres>
     
     >>> d = cf.Data(34, 'metres')
     >>> for e in d:
-    ...     print repr(e)
+    ...     print(repr(e))
     ..
     TypeError: iteration over a 0-d Data
 
@@ -4231,7 +4231,7 @@ place.
     
         config = data0.partition_configuration(readonly=not inplace)
 
-#        print 'config[readonly] =', config['readonly']
+#        print('config[readonly] =', config['readonly'])
         
         #        if calendar_arithmetic:
 #            pda_args['func']   = rt2dt
@@ -4283,7 +4283,7 @@ place.
                     array0 = ~_numpy_isclose(array0, array1, rtol=rtol, atol=atol)
                 else:
 #                    print(method)
-#                    print (repr(array0))
+#                    print(repr(array0))
 #                    print(repr(array1))
 #                    print()
                     array0 = getattr(array0, method)(array1)
@@ -4536,7 +4536,7 @@ place.
 #
 #        for partition in new.partitions.matrix.flat:
 #            array = partition.dataarray(**pda_args)                     
-#            print array, new.Units, type(value0), value1
+#            print(array, new.Units, type(value0), value1)
 #            partition.subarray = (array >= value0) & (array <= value1)
 #            partition.close()
 #        #--- End: for
@@ -6711,20 +6711,20 @@ dimensions.
     >>> d = cf.Data([0.5, 1.5, 2.5])
     >>> import numpy
     >>> d.dtype = numpy.dtype(int)
-    >>> print d.array
+    >>> print(d.array)
     [0 1 2]
     >>> d.dtype = bool
-    >>> print d.array
+    >>> print(d.array)
     [False  True  True]
     >>> d.dtype = 'float64'
-    >>> print d.array
+    >>> print(d.array)
     [ 0.  1.  1.]
     
     >>> d = cf.Data([0.5, 1.5, 2.5])
     >>> d.dtype = int
     >>> d.dtype = bool
     >>> d.dtype = float
-    >>> print d.array
+    >>> print(d.array)
     [ 0.5  1.5  2.5]
 
         '''
@@ -6809,7 +6809,7 @@ False
     **Examples:**
     
     >>> d = cf.Data([[1, 2, 3], [4, 5, 6]])
-    >>> print d.ismasked
+    >>> print(d.ismasked)
     False
     >>> d[0, ...] = cf.masked
     >>> d.ismasked
@@ -6900,7 +6900,7 @@ False
     >>> d.nbytes
     24
     >>> d[0] = cf.masked
-    >>> print d.array
+    >>> print(d.array)
     [[-- 1.5 2.0]]
     >>> d.nbytes
     24
@@ -7872,17 +7872,17 @@ False
     >>> d.any()
     False
     >>> d[0, 0] = cf.masked
-    >>> print d.array
+    >>> print(d.array)
     [[-- 0 0]]
     >>> d.any()
     False
     >>> d[0, 1] = 3
-    >>> print d.array
+    >>> print(d.array)
     [[0 3 0]]
     >>> d.any()
     True
     
-    >>> print d.array
+    >>> print(d.array)
     [[-- -- --]]
     >>> d.any()
     False
@@ -8494,7 +8494,7 @@ False
     **Examples:**
     
     >>> d = cf.Data([[1, 2, 4], [1, 4, 9]], 'm')
-    >>> print d.array
+    >>> print(d.array)
     [[1 2 4]
      [1 4 9]]
     
@@ -8506,9 +8506,9 @@ False
     <CF Data: 3.5 m>
     >>> d.mean(axes=[1, 0])
     <CF Data: 3.5 m>
-    >>> print d.mean(axes=0).array
+    >>> print(d.mean(axes=0).array)
     [ 1.   3.   6.5]
-    >>> print d.mean(axes=1).array
+    >>> print(d.mean(axes=1).array)
     [ 2.33333333  4.66666667]
     >>> d.mean(axes=1, squeeze=True)
     [[ 2.33333333]
@@ -8517,7 +8517,7 @@ False
     >>> y = cf.Data([1, 3])
     >>> x = cf.Data([1, 2, 1])
     >>> w = cf.insert_dimension(y, 1) * x
-    >>> print w.array
+    >>> print(w.array)
     [[1 2 1]
      [3 6 3]]
     
@@ -8549,7 +8549,7 @@ False
     <CF Data: [2.33333333333, 4.66666666667] m>
     
     >>> e = cf.Data(numpy.arange(24).reshape(3, 2, 4))
-    >>> print e.array
+    >>> print(e.array)
     [[[ 0  1  2  3]
       [ 4  5  6  7]]
      [[ 8  9 10 11]
@@ -8564,15 +8564,15 @@ False
     <CF Data: [[[9.5, 13.5]]] >
     >>> f.shape
     (1, 2, 1)
-    >>> print e.mean(axes=[0, 1]).array
+    >>> print(e.mean(axes=[0, 1]).array)
     [ 10.  11.  12.  13.]
-    >>> print e.mean(axes=[0, 1], weights={(1, 0): w}).array
+    >>> print(e.mean(axes=[0, 1], weights={(1, 0): w}).array)
     [ 11.  12.  13.  14.]
     
     >>> e[0, 0] = cf.masked
     >>> e[-1, -1] = cf.masked
     >>> e[..., 2] = cf.masked
-    >>> print e.array
+    >>> print(e.array)
     [[[-- -- -- --]
       [4 5 -- 7]]
      [[8 9 -- 11]
@@ -8582,9 +8582,9 @@ False
     
     >>> e.mean()
     <CF Data: 11.3333333333 >
-    >>> print e.mean(axes=[0, 1]).array
+    >>> print(e.mean(axes=[0, 1]).array)
     [10.0 11.0 -- 13.0]
-    >>> print e.mean(axes=[0, 1], weights={(1, 0): w}).array
+    >>> print(e.mean(axes=[0, 1], weights={(1, 0): w}).array)
     [9.666666666666666 10.666666666666666 -- 12.666666666666666]
 
         '''
@@ -8762,10 +8762,10 @@ False
     
     **Examples:**
     
-    >>> print d.mask.array
+    >>> print(d.mask.array)
     [[ True False  True False]]
     >>> b = d.binary_mask.array
-    >>> print b
+    >>> print(b)
     [[0 1 0 1]]
 
         '''
@@ -8983,7 +8983,7 @@ False
     
     >>> d.Units
     <Units: m s-1>
-    >>> print(d.array()
+    >>> print(d.array)
     [[1 2 3 --]]
     >>> d.cos()
     >>> d.Units
@@ -9428,7 +9428,7 @@ False
         display: `bool`, optional
             If False then return the description as a string. By
             default the description is printed, i.e. ``d.dump()`` is
-            equivalent to ``print d.dump(display=False)``.
+            equivalent to ``print(d.dump(display=False))``.
     
         prefix: `str`, optional
            Set the common prefix of component names. By default the
@@ -9799,16 +9799,16 @@ False
     
     **Examples:**
     
-    >>> print d.array
+    >>> print(d.array)
     [[1 -- 3]]
     >>> for x in d.flat():
-    ...     print x
+    ...     print(x)
     ...
     1
     3
     
     >>> for x in d.flat(ignore_masked=False):
-    ...     print x
+    ...     print(x)
     ...
     1
     --
@@ -10000,9 +10000,9 @@ False
     
     **Examples:**
     
-    >>> print d.array
+    >>> print(d.array)
     [-1.9 -1.5 -1.1 -1.   0.   1.   1.1  1.5  1.9]
-    >>> print d.floor().array
+    >>> print(d.floor().array)
     [-2. -2. -2. -1.  0.  1.  1.  1.  1.]
 
         '''
@@ -10042,7 +10042,7 @@ False
     >>> o = d.outerproduct([4, 5, 6, 7])
     >>> o
     <CF Data: [[4, ..., 21]] m>
-    >>> print o.array
+    >>> print(o.array)
     [[ 4  5  6  7]
      [ 8 10 12 14]
      [12 15 18 21]]
@@ -10051,9 +10051,9 @@ False
     >>> o = d.outerproduct(e)
     >>> o
     <CF Data: [[[4, ..., 27]]] m.s-1>
-    >>> print d.shape, e.shape, o.shape
+    >>> print(d.shape, e.shape, o.shape)
     (3,) (2, 4) (3, 2, 4)
-    >>> print o.array
+    >>> print(o.array)
     [[[ 4  5  6  7]
       [ 6  7  8  9]]
      [[ 8 10 12 14]
@@ -10423,7 +10423,7 @@ False
     
     >>> d = cf.Data([[4, 5, 6], [1, 2, 3]], 'metre')
     >>> d[0, 1] = cf.masked
-    >>> print d
+    >>> print(d)
     [[4 -- 6]
      [1 2 3]]
     >>> d.datum(0)
@@ -10824,21 +10824,21 @@ False
     
     >>> d = cf.Data([1000, 2500], 'metre')
     >>> e = cf.Data([1, 2.5], 'km')
-    >>> print d.isclose(e).array
+    >>> print(d.isclose(e).array)
     [ True  True]
     
     >>> d = cf.Data(['ab', 'cdef'])
-    >>> print d.isclose([[['ab', 'cdef']]]).array
+    >>> print(d.isclose([[['ab', 'cdef']]]).array)
     [[[ True  True]]]
     
     >>> d = cf.Data([[1000, 2500], [1000, 2500]], 'metre')
     >>> e = cf.Data([1, 2.5], 'km')
-    >>> print d.isclose(e).array
+    >>> print(d.isclose(e).array)
     [[ True  True]
      [ True  True]]
     
     >>> d = cf.Data([1, 1, 1], 's')
-    >>> print d.isclose(1).array
+    >>> print(d.isclose(1).array)
     [ True  True  True]
 
         '''     
@@ -11011,13 +11011,13 @@ False
     
     **Examples:**
     
-    >>> print d.array
+    >>> print(d.array)
     [-1.81, -1.41, -1.01, -0.91,  0.09,  1.09,  1.19,  1.59,  1.99])
-    >>> print d.round().array
+    >>> print(d.round().array)
     [-2., -1., -1., -1.,  0.,  1.,  1.,  2.,  2.]
-    >>> print d.round(1).array
+    >>> print(d.round(1).array)
     [-1.8, -1.4, -1. , -0.9,  0.1,  1.1,  1.2,  1.6,  2. ]
-    >>> print d.round(-1).array
+    >>> print(d.round(-1).array)
     [-0., -0., -0., -0.,  0.,  0.,  0.,  0.,  0.]
 
         '''
@@ -11274,10 +11274,10 @@ False
 #
 #**Examples:**
 #
-#>>> print d.save_to_disk()
+#>>> print(d.save_to_disk())
 #True
 #
-#>>> print d.save_to_disk(8)
+#>>> print(d.save_to_disk(8))
 #False
 #
 #'''
@@ -11311,7 +11311,7 @@ False
     
     **Examples:**
     
-    >>> print d.fits_in_memory(8)
+    >>> print(d.fits_in_memory(8))
     False
 
         '''
@@ -11337,7 +11337,7 @@ False
     
     **Examples:**
     
-    >>> print d.fits_one_chunk_in_memory(8)
+    >>> print(d.fits_one_chunk_in_memory(8))
     False
 
         '''
@@ -11795,22 +11795,22 @@ False
     
     >>> d.Units
     <Units: degrees_north>
-    >>> print d.array
+    >>> print(d.array)
     [[-90 0 90 --]]
     >>> d.sin()
     >>> d.Units
     <Units: 1>
-    >>> print d.array
+    >>> print(d.array)
     [[-1.0 0.0 1.0 --]]
     
     >>> d.Units
     <Units: m s-1>
-    >>> print d.array
+    >>> print(d.array)
     [[1 2 3 --]]
     >>> d.sin()
     >>> d.Units
     <Units: 1>
-    >>> print d.array
+    >>> print(d.array)
     [[0.841470984808 0.909297426826 0.14112000806 --]]
 
         '''
@@ -12214,9 +12214,9 @@ False
     
     **Examples:**
     
-    >>> print d.array
+    >>> print(d.array)
     [-1.9 -1.5 -1.1 -1.   0.   1.   1.1  1.5  1.9]
-    >>> print d.trunc().array
+    >>> print(d.trunc().array)
     [-1. -1. -1. -1.  0.  1.  1.  1.  1.]
 
         '''

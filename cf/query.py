@@ -1240,14 +1240,14 @@ def contains(value, units=None):
     
     >>> c
     <CF DimensionCoordinate: longitude(4) degrees_east>
-    >>> print c.bounds.array
+    >>> print(c.bounds.array)
     [[  0   90]
      [ 90  180]
      [180  270]
      [270  360]]
-    >>> print (cf.contains(100) == c).array
+    >>> print((cf.contains(100) == c).array)
     [False True False False]
-    >>> print (cf.contains(9999) == c).array
+    >>> print((cf.contains(9999) == c).array)
     [False False False False]
 
     '''

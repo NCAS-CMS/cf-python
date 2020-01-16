@@ -233,7 +233,7 @@ class CellMethod(cfdm.CellMethod):
     >>> c
     >>> c
     <CF CellMethod: time: minimum>
-    >>> print c.within
+    >>> print(c.within)
     None
     >>> c.within = 'years'
     >>> c
@@ -262,7 +262,7 @@ class CellMethod(cfdm.CellMethod):
     >>> c
     >>> c
     <CF CellMethod: time: minimum>
-    >>> print c.where
+    >>> print(c.where)
     None
     >>> c.where = 'land'
     >>> c
@@ -291,7 +291,7 @@ class CellMethod(cfdm.CellMethod):
     >>> c
     >>> c
     <CF CellMethod: time: minimum>
-    >>> print c.over
+    >>> print(c.over)
     None
     >>> c.over = 'years'
     >>> c

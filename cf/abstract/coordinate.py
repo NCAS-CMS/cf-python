@@ -307,11 +307,11 @@ class Coordinate(mixin.PropertiesDataBounds):
 #
 #**Examples:**
 #
-#>>> print c.period()
+#>>> print(c.period())
 #None
 #>>> c.Units
 #<CF Units: degrees_east>
-#>>> print c.period(360)
+#>>> print(c.period(360))
 #None
 #>>> c.period()
 #<CF Data: 360.0 'degrees_east'>
@@ -322,9 +322,9 @@ class Coordinate(mixin.PropertiesDataBounds):
 #<CF Data: 6.28318530718 radians>
 #>>> c.period(None)
 #<CF Data: 6.28318530718 radians>
-#>>> print c.period()
+#>>> print(c.period())
 #None
-#>>> print c.period(-360)
+#>>> print(c.period(-360))
 #None
 #>>> c.period()
 #<CF Data: 360.0 degrees_east>
