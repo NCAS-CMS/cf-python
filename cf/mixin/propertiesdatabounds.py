@@ -2000,7 +2000,8 @@ dtype('float64')
     
     :Returns:
     
-        `Data` or `None`
+            The construct with the trigonometric inverse tangent of data
+            values. If the operation was in-place then `None` is returned.
     
     **Examples:**
     
@@ -2038,8 +2039,9 @@ dtype('float64')
             If True then do the operation in-place and return `None`.
 
     :Returns:
-
-        `Data` or `None`
+    
+            The construct with the inverse hyperbolic sine of data values.
+            If the operation was in-place then `None` is returned.
 
     **Examples:**
 
@@ -2084,8 +2086,9 @@ dtype('float64')
             If True then do the operation in-place and return `None`.
 
     :Returns:
-
-        `Data` or `None`
+    
+            The construct with the hyperbolic tangent of data values. If the
+            operation was in-place then `None` is returned.
 
     **Examples:**
 
@@ -2138,8 +2141,9 @@ dtype('float64')
             If True then do the operation in-place and return `None`.
 
     :Returns:
-
-        `Data` or `None`
+    
+            The construct with the hyperbolic sine of data values. If the
+            operation was in-place then `None` is returned.
 
     **Examples:**
 
@@ -2190,12 +2194,10 @@ dtype('float64')
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
 
-        i: deprecated at version 3.0.0
-            Use *inplace* parameter instead.
-
     :Returns:
-
-        `Data` or `None`
+    
+            The construct with the hyperbolic cosine of data values. If the
+            operation was in-place then `None` is returned.
 
     **Examples:**
 

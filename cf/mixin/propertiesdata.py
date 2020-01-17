@@ -3853,7 +3853,8 @@ TODO
     
     :Returns:
     
-        `Data` or `None`
+            The construct with the trigonometric inverse tangent of data
+            values. If the operation was in-place then `None` is returned.
     
     **Examples:**
         
@@ -3893,8 +3894,9 @@ TODO
             If True then do the operation in-place and return `None`.
 
     :Returns:
-
-        `Data` or `None`
+    
+            The construct with the inverse hyperbolic sine of data values.
+            If the operation was in-place then `None` is returned.
 
     **Examples:**
 
@@ -4001,8 +4003,9 @@ TODO
             If True then do the operation in-place and return `None`.
 
     :Returns:
-
-        `Data` or `None`
+    
+            The construct with the hyperbolic tangent of data values. If the
+            operation was in-place then `None` is returned.
 
     **Examples:**
 
@@ -4058,8 +4061,9 @@ TODO
             If True then do the operation in-place and return `None`.
 
     :Returns:
-
-        `Data` or `None`
+    
+            The construct with the hyperbolic sine of data values. If the
+            operation was in-place then `None` is returned.
 
     **Examples:**
 
@@ -4114,8 +4118,9 @@ TODO
             If True then do the operation in-place and return `None`.
 
     :Returns:
-
-        `Data` or `None`
+    
+            The construct with the hyperbolic cosine of data values. If the
+            operation was in-place then `None` is returned.
 
     **Examples:**
 
