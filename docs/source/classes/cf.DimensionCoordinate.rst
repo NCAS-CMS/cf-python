@@ -279,17 +279,21 @@ Mathematical operations
 
 .. rubric:: Methods
 
-.. rubric:: *Trigonometrical functions*
+.. rubric:: *Trigonometrical and hyperbolic functions*
 
 .. autosummary::
    :nosignatures:
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.DimensionCoordinate.arcsinh
    ~cf.DimensionCoordinate.arctan
    ~cf.DimensionCoordinate.cos
+   ~cf.DimensionCoordinate.cosh
    ~cf.DimensionCoordinate.sin
+   ~cf.DimensionCoordinate.sinh
    ~cf.DimensionCoordinate.tan
+   ~cf.DimensionCoordinate.tanh
 
 .. rubric:: *Rounding and truncation*
 

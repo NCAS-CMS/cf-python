@@ -407,17 +407,22 @@ Mathematical operations
 
 .. http://docs.scipy.org/doc/numpy/reference/routines.math.html
 
-.. rubric:: Trigonometrical functions
+.. rubric:: Trigonometrical and hyperbolic functions
 
 .. autosummary::
    :nosignatures:
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.Field.arcsinh
    ~cf.Field.arctan
    ~cf.Field.cos
+   ~cf.Field.cosh
    ~cf.Field.sin
+   ~cf.Field.sinh
    ~cf.Field.tan
+   ~cf.Field.tanh
+
 
 .. rubric:: Rounding and truncation
 

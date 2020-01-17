@@ -252,17 +252,21 @@ Mathematical operations
 
 .. rubric:: Methods
 
-.. rubric:: *Trigonometrical functions*
+.. rubric:: *Trigonometrical and hyperbolic functions*
 
 .. autosummary::
    :nosignatures:
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.Bounds.arcsinh
    ~cf.Bounds.arctan
    ~cf.Bounds.cos
+   ~cf.Bounds.cosh
    ~cf.Bounds.sin
+   ~cf.Bounds.sinh
    ~cf.Bounds.tan
+   ~cf.Bounds.tanh
 
 .. rubric:: *Rounding and truncation*
 

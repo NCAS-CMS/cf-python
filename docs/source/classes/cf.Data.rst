@@ -51,6 +51,7 @@ Data methods
    ~cf.Data.all
    ~cf.Data.allclose
    ~cf.Data.any
+   ~cf.Data.arcsinh
    ~cf.Data.arctan
    ~cf.Data.argmax
    ~cf.Data.asdata
@@ -63,6 +64,7 @@ Data methods
    ~cf.Data.concatenate_data
    ~cf.Data.copy
    ~cf.Data.cos
+   ~cf.Data.cosh
    ~cf.Data.count
    ~cf.Data.count_masked
    ~cf.Data.creation_commands
@@ -153,6 +155,7 @@ Data methods
    ~cf.Data.set_units
    ~cf.Data.seterr
    ~cf.Data.sin
+   ~cf.Data.sinh
    ~cf.Data.source
    ~cf.Data.squeeze
    ~cf.Data.standard_deviation      
@@ -163,6 +166,7 @@ Data methods
    ~cf.Data.sum_of_weights2
    ~cf.Data.swapaxes
    ~cf.Data.tan
+   ~cf.Data.tanh
    ~cf.Data.to_disk
    ~cf.Data.to_memory
    ~cf.Data.tolist
