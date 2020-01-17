@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>Change log &#8212; Documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -31,7 +29,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="index.html">cf 3.0.6</a></b></h3>
+<h3><b><a href="index.html">cf 3.1.0</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -65,8 +63,6 @@
     <form class="search" action="search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -82,14 +78,46 @@
   <div class="section" id="change-log">
 <h1><strong>Change log</strong><a class="headerlink" href="#change-log" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<div class="section" id="version-3-0-7">
-<h2>version 3.0.7<a class="headerlink" href="#version-3-0-7" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="version-3-1-0">
+<h2>version 3.1.0<a class="headerlink" href="#version-3-1-0" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
-<p><strong>Not yet released</strong></p>
+<p><strong>2020-01-17</strong></p>
 <ul class="simple">
-<li>Changed minimum cfunits dependency to version 3.2.3. This fixes a
+<li><p>Changed the API to <a class="reference internal" href="method/cf.Field.match_by_construct.html#cf.Field.match_by_construct" title="cf.Field.match_by_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.match_by_construct</span></code></a> and
+<a class="reference internal" href="method/cf.FieldList.select_by_construct.html#cf.FieldList.select_by_construct" title="cf.FieldList.select_by_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.FieldList.select_by_construct</span></code></a>.</p></li>
+<li><p>Changed the default value of the <a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.collapse</span></code></a> <code class="docutils literal notranslate"><span class="pre">group_span</span></code>
+parameter to <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a> and default value of the <code class="docutils literal notranslate"><span class="pre">group_contiguous</span></code>
+parameter to <code class="docutils literal notranslate"><span class="pre">1</span></code>
+(<a class="reference external" href="https://github.com/NCAS-CMS/cf-python/issues/28">https://github.com/NCAS-CMS/cf-python/issues/28</a>).</p></li>
+<li><p>Changed the default values of the <a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.collapse</span></code></a> <code class="docutils literal notranslate"><span class="pre">group_by</span></code>
+and <code class="docutils literal notranslate"><span class="pre">coordinate</span></code> parameters to <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p></li>
+<li><p>Changed the default value of the <code class="docutils literal notranslate"><span class="pre">identity</span></code> parameter to <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>
+for <a class="reference internal" href="method/cf.Field.coordinate.html#cf.Field.coordinate" title="cf.Field.coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.coordinate</span></code></a>, <a class="reference internal" href="method/cf.Field.dimension_coordinate.html#cf.Field.dimension_coordinate" title="cf.Field.dimension_coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.dimension_coordinate</span></code></a>,
+<a class="reference internal" href="method/cf.Field.auxiliary_coordinate.html#cf.Field.auxiliary_coordinate" title="cf.Field.auxiliary_coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.auxiliary_coordinate</span></code></a>, <a class="reference internal" href="method/cf.Field.field_ancillary.html#cf.Field.field_ancillary" title="cf.Field.field_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.field_ancillary</span></code></a>,
+<a class="reference internal" href="method/cf.Field.domain_ancillary.html#cf.Field.domain_ancillary" title="cf.Field.domain_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.domain_ancillary</span></code></a>, <a class="reference internal" href="method/cf.Field.cell_method.html#cf.Field.cell_method" title="cf.Field.cell_method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.cell_method</span></code></a>,
+<a class="reference internal" href="method/cf.Field.cell_measure.html#cf.Field.cell_measure" title="cf.Field.cell_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.cell_measure</span></code></a>, <a class="reference internal" href="method/cf.Field.coordinate_reference.html#cf.Field.coordinate_reference" title="cf.Field.coordinate_reference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.coordinate_reference</span></code></a>,
+<a class="reference internal" href="method/cf.Field.domain_axis.html#cf.Field.domain_axis" title="cf.Field.domain_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.domain_axis</span></code></a>.</p></li>
+<li><p>New keyword parameter to <a class="reference internal" href="method/cf.Field.weights.html#cf.Field.weights" title="cf.Field.weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.weights</span></code></a>: <code class="docutils literal notranslate"><span class="pre">data</span></code>.</p></li>
+<li><p>New keyword parameter to <a class="reference internal" href="function/cf.aggregate.html#cf.aggregate" title="cf.aggregate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.aggregate</span></code></a>: <code class="docutils literal notranslate"><span class="pre">field_identity</span></code>
+(<a class="reference external" href="https://github.com/NCAS-CMS/cf-python/issues/29">https://github.com/NCAS-CMS/cf-python/issues/29</a>).</p></li>
+<li><p>New example field (<code class="docutils literal notranslate"><span class="pre">5</span></code>) available from <a class="reference internal" href="function/cf.example_field.html#cf.example_field" title="cf.example_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.example_field</span></code></a>.</p></li>
+<li><p>New regridding option: <code class="docutils literal notranslate"><span class="pre">'conservative_2nd'</span></code>.</p></li>
+<li><p>Fixed bug that didn’t change the units of bounds when the units of
+the coordinates were changed.</p></li>
+<li><p>Fixed bug in <a class="reference internal" href="method/cf.Field.domain_axis.html#cf.Field.domain_axis" title="cf.Field.domain_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.domain_axis</span></code></a> that caused an error when no
+unique domain axis construct could be identified.</p></li>
+<li><p>Changed minimum cfunits dependency to version 3.2.4. This fixes a
 bug that rased an exception for units specified by non-strings
-(<a class="reference external" href="https://github.com/NCAS-CMS/cfunits/issues/1">https://github.com/NCAS-CMS/cfunits/issues/1</a>).</li>
+(<a class="reference external" href="https://github.com/NCAS-CMS/cfunits/issues/1">https://github.com/NCAS-CMS/cfunits/issues/1</a>).</p></li>
+<li><p>Changed minimum ESMF dependency to 8.0.0. This fixes an issue
+with second-order conservative regridding, which is now fully
+documented and available.</p></li>
+<li><p>Converted all remaining instances of Python 2 print statements in the
+documentation API reference examples to Python 3.</p></li>
+<li><p>Corrected aspects of the API documentation for trigonometric functions.</p></li>
+<li><p>Fixed bug whereby <a class="reference internal" href="method/cf.Data.arctan.html#cf.Data.arctan" title="cf.Data.arctan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.arctan</span></code></a> would not process bounds.</p></li>
+<li><p>New methods for hyperbolic operations: <a class="reference internal" href="method/cf.Data.sinh.html#cf.Data.sinh" title="cf.Data.sinh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.sinh</span></code></a>, <a class="reference internal" href="method/cf.Data.cosh.html#cf.Data.cosh" title="cf.Data.cosh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.cosh</span></code></a>,
+<a class="reference internal" href="method/cf.Data.tanh.html#cf.Data.tanh" title="cf.Data.tanh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.tanh</span></code></a>, <a class="reference internal" href="method/cf.Data.arcsinh.html#cf.Data.arcsinh" title="cf.Data.arcsinh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.arcsinh</span></code></a>.</p></li>
 </ul>
 </div>
 <div class="section" id="version-3-0-6">
@@ -97,20 +125,20 @@ bug that rased an exception for units specified by non-strings
 <hr class="docutils" />
 <p><strong>2019-11-27</strong></p>
 <ul class="simple">
-<li>New method: <a class="reference internal" href="method/cf.Field.uncompress.html#cf.Field.uncompress" title="cf.Field.uncompress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.uncompress</span></code></a>.</li>
-<li>New method: <a class="reference internal" href="method/cf.Data.uncompress.html#cf.Data.uncompress" title="cf.Data.uncompress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.uncompress</span></code></a>.</li>
-<li>New keyword parameter to <a class="reference internal" href="function/cf.environment.html#cf.environment" title="cf.environment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.environment</span></code></a>: <code class="docutils literal notranslate"><span class="pre">paths</span></code>.</li>
-<li>Can now insert a size 1 data dimension for a new, previously
-non-existent domain axis with <a class="reference internal" href="method/cf.Field.insert_dimension.html#cf.Field.insert_dimension" title="cf.Field.insert_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.insert_dimension</span></code></a>.</li>
-<li>Changed the default value of the <code class="docutils literal notranslate"><span class="pre">ignore_compression</span></code> parameter to
-<a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>.</li>
-<li>Fixed bug that sometimes gave incorrect cell sizes from the
+<li><p>New method: <a class="reference internal" href="method/cf.Field.uncompress.html#cf.Field.uncompress" title="cf.Field.uncompress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.uncompress</span></code></a>.</p></li>
+<li><p>New method: <a class="reference internal" href="method/cf.Data.uncompress.html#cf.Data.uncompress" title="cf.Data.uncompress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.uncompress</span></code></a>.</p></li>
+<li><p>New keyword parameter to <a class="reference internal" href="function/cf.environment.html#cf.environment" title="cf.environment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.environment</span></code></a>: <code class="docutils literal notranslate"><span class="pre">paths</span></code>.</p></li>
+<li><p>Can now insert a size 1 data dimension for a new, previously
+non-existent domain axis with <a class="reference internal" href="method/cf.Field.insert_dimension.html#cf.Field.insert_dimension" title="cf.Field.insert_dimension"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.insert_dimension</span></code></a>.</p></li>
+<li><p>Changed the default value of the <code class="docutils literal notranslate"><span class="pre">ignore_compression</span></code> parameter to
+<a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>.</p></li>
+<li><p>Fixed bug that sometimes gave incorrect cell sizes from the
 <a class="reference internal" href="function/cf.cellsize.html#cf.cellsize" title="cf.cellsize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cellsize</span></code></a> attribute when used on multidimensional coordinates
-(<a class="reference external" href="https://github.com/NCAS-CMS/cf-python/issues/15">https://github.com/NCAS-CMS/cf-python/issues/15</a>).</li>
-<li>Fixed bug that sometimes gave an error when the LHS and RHS operands
+(<a class="reference external" href="https://github.com/NCAS-CMS/cf-python/issues/15">https://github.com/NCAS-CMS/cf-python/issues/15</a>).</p></li>
+<li><p>Fixed bug that sometimes gave an error when the LHS and RHS operands
 are swapped in field construct arithmetic
-(<a class="reference external" href="https://github.com/NCAS-CMS/cf-python/issues/16">https://github.com/NCAS-CMS/cf-python/issues/16</a>).</li>
-<li>Changed minimum cfdm dependency to version 1.7.11.</li>
+(<a class="reference external" href="https://github.com/NCAS-CMS/cf-python/issues/16">https://github.com/NCAS-CMS/cf-python/issues/16</a>).</p></li>
+<li><p>Changed minimum cfdm dependency to version 1.7.11.</p></li>
 </ul>
 </div>
 <div class="section" id="version-3-0-5">
@@ -118,22 +146,22 @@ are swapped in field construct arithmetic
 <hr class="docutils" />
 <p><strong>2019-11-14</strong></p>
 <ul class="simple">
-<li>New method: <a class="reference internal" href="method/cf.Field.compress.html#cf.Field.compress" title="cf.Field.compress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.compress</span></code></a>.</li>
-<li>New function: <a class="reference internal" href="function/cf.example_field.html#cf.example_field" title="cf.example_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.example_field</span></code></a></li>
-<li>New keyword parameter to <a class="reference internal" href="classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a>: <code class="docutils literal notranslate"><span class="pre">mask</span></code>.</li>
-<li>Deprecated method: <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.example_field</span></code></li>
-<li>Fixed bug that didn’t allow <a class="reference internal" href="method/cf.Field.cell_area.html#cf.Field.cell_area" title="cf.Field.cell_area"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.cell_area</span></code></a> to work with
+<li><p>New method: <a class="reference internal" href="method/cf.Field.compress.html#cf.Field.compress" title="cf.Field.compress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.compress</span></code></a>.</p></li>
+<li><p>New function: <a class="reference internal" href="function/cf.example_field.html#cf.example_field" title="cf.example_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.example_field</span></code></a></p></li>
+<li><p>New keyword parameter to <a class="reference internal" href="classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a>: <code class="docutils literal notranslate"><span class="pre">mask</span></code>.</p></li>
+<li><p>Deprecated method: <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.example_field</span></code></p></li>
+<li><p>Fixed bug that didn’t allow <a class="reference internal" href="method/cf.Field.cell_area.html#cf.Field.cell_area" title="cf.Field.cell_area"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.cell_area</span></code></a> to work with
 dimension coordinates with units equivalent to metres
-(<a class="reference external" href="https://github.com/NCAS-CMS/cf-python/issues/12">https://github.com/NCAS-CMS/cf-python/issues/12</a>)</li>
-<li>Fixed bug that omitted bounds having their units changed by
+(<a class="reference external" href="https://github.com/NCAS-CMS/cf-python/issues/12">https://github.com/NCAS-CMS/cf-python/issues/12</a>)</p></li>
+<li><p>Fixed bug that omitted bounds having their units changed by
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">override_units</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">override</span> <span class="pre">calendar</span></code>
-(<a class="reference external" href="https://github.com/NCAS-CMS/cf-python/issues/13">https://github.com/NCAS-CMS/cf-python/issues/13</a>).</li>
-<li>Removed specific user shebang from <code class="docutils literal notranslate"><span class="pre">cfa</span></code> script
-(<a class="reference external" href="https://github.com/NCAS-CMS/cf-python/pull/14">https://github.com/NCAS-CMS/cf-python/pull/14</a>).</li>
-<li>Changed minimum cfdm dependency to version 1.7.10. This fixes a bug
+(<a class="reference external" href="https://github.com/NCAS-CMS/cf-python/issues/13">https://github.com/NCAS-CMS/cf-python/issues/13</a>).</p></li>
+<li><p>Removed specific user shebang from <code class="docutils literal notranslate"><span class="pre">cfa</span></code> script
+(<a class="reference external" href="https://github.com/NCAS-CMS/cf-python/pull/14">https://github.com/NCAS-CMS/cf-python/pull/14</a>).</p></li>
+<li><p>Changed minimum cfdm dependency to version 1.7.10. This fixes a bug
 that didn’t allow CDL files to start with comments or blank lines
-(<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/5">https://github.com/NCAS-CMS/cfdm/issues/5</a>).</li>
-<li>Changed minimum cftime dependency to version 1.0.4.2</li>
+(<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/5">https://github.com/NCAS-CMS/cfdm/issues/5</a>).</p></li>
+<li><p>Changed minimum cftime dependency to version 1.0.4.2</p></li>
 </ul>
 </div>
 <div class="section" id="version-3-0-4">
@@ -141,21 +169,21 @@ that didn’t allow CDL files to start with comments or blank lines
 <hr class="docutils" />
 <p><strong>2019-11-08</strong></p>
 <ul class="simple">
-<li>New methods: <a class="reference internal" href="method/cf.Field.percentile.html#cf.Field.percentile" title="cf.Field.percentile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.percentile</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.example_field</span></code>,
-<a class="reference internal" href="method/cf.Field.creation_commands.html#cf.Field.creation_commands" title="cf.Field.creation_commands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.creation_commands</span></code></a>.</li>
-<li>New field construct collapse methods: <code class="docutils literal notranslate"><span class="pre">median</span></code>,
-<code class="docutils literal notranslate"><span class="pre">mean_of_upper_decile</span></code>.</li>
-<li>New method: <a class="reference internal" href="method/cf.FieldList.select_field.html#cf.FieldList.select_field" title="cf.FieldList.select_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.FieldList.select_field</span></code></a>.</li>
-<li>New methods: <a class="reference internal" href="method/cf.Data.median.html#cf.Data.median" title="cf.Data.median"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.median</span></code></a>, <a class="reference internal" href="method/cf.Data.mean_of_upper_decile.html#cf.Data.mean_of_upper_decile" title="cf.Data.mean_of_upper_decile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.mean_of_upper_decile</span></code></a>,
-<a class="reference internal" href="method/cf.Data.percentile.html#cf.Data.percentile" title="cf.Data.percentile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.percentile</span></code></a>, <a class="reference internal" href="method/cf.Data.filled.html#cf.Data.filled" title="cf.Data.filled"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.filled</span></code></a>, <a class="reference internal" href="method/cf.Data.creation_commands.html#cf.Data.creation_commands" title="cf.Data.creation_commands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.creation_commands</span></code></a>.</li>
-<li>New keyword parameter to <a class="reference internal" href="classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a>: <code class="docutils literal notranslate"><span class="pre">dtype</span></code>.</li>
-<li>Changed default <code class="docutils literal notranslate"><span class="pre">ddof</span></code> <em>back</em> to 1 in <a class="reference internal" href="method/cf.Data.var.html#cf.Data.var" title="cf.Data.var"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.var</span></code></a> and
+<li><p>New methods: <a class="reference internal" href="method/cf.Field.percentile.html#cf.Field.percentile" title="cf.Field.percentile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.percentile</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.example_field</span></code>,
+<a class="reference internal" href="method/cf.Field.creation_commands.html#cf.Field.creation_commands" title="cf.Field.creation_commands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.creation_commands</span></code></a>.</p></li>
+<li><p>New field construct collapse methods: <code class="docutils literal notranslate"><span class="pre">median</span></code>,
+<code class="docutils literal notranslate"><span class="pre">mean_of_upper_decile</span></code>.</p></li>
+<li><p>New method: <a class="reference internal" href="method/cf.FieldList.select_field.html#cf.FieldList.select_field" title="cf.FieldList.select_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.FieldList.select_field</span></code></a>.</p></li>
+<li><p>New methods: <a class="reference internal" href="method/cf.Data.median.html#cf.Data.median" title="cf.Data.median"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.median</span></code></a>, <a class="reference internal" href="method/cf.Data.mean_of_upper_decile.html#cf.Data.mean_of_upper_decile" title="cf.Data.mean_of_upper_decile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.mean_of_upper_decile</span></code></a>,
+<a class="reference internal" href="method/cf.Data.percentile.html#cf.Data.percentile" title="cf.Data.percentile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.percentile</span></code></a>, <a class="reference internal" href="method/cf.Data.filled.html#cf.Data.filled" title="cf.Data.filled"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.filled</span></code></a>, <a class="reference internal" href="method/cf.Data.creation_commands.html#cf.Data.creation_commands" title="cf.Data.creation_commands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.creation_commands</span></code></a>.</p></li>
+<li><p>New keyword parameter to <a class="reference internal" href="classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a>: <code class="docutils literal notranslate"><span class="pre">dtype</span></code>.</p></li>
+<li><p>Changed default <code class="docutils literal notranslate"><span class="pre">ddof</span></code> <em>back</em> to 1 in <a class="reference internal" href="method/cf.Data.var.html#cf.Data.var" title="cf.Data.var"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.var</span></code></a> and
 <a class="reference internal" href="method/cf.Data.sd.html#cf.Data.sd" title="cf.Data.sd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.sd</span></code></a> (see version 3.0.3 and
-<a class="reference external" href="https://github.com/NCAS-CMS/cf-python/issues/8">https://github.com/NCAS-CMS/cf-python/issues/8</a>)</li>
-<li>Fixed bug that sometimes caused an exception to be raised when
+<a class="reference external" href="https://github.com/NCAS-CMS/cf-python/issues/8">https://github.com/NCAS-CMS/cf-python/issues/8</a>)</p></li>
+<li><p>Fixed bug that sometimes caused an exception to be raised when
 metadata constructs were selected by a property value that
-legitimately contained a colon.</li>
-<li>Changed minimum cfdm dependency to version 1.7.9.</li>
+legitimately contained a colon.</p></li>
+<li><p>Changed minimum cfdm dependency to version 1.7.9.</p></li>
 </ul>
 </div>
 <div class="section" id="version-3-0-3">
@@ -163,11 +191,11 @@ legitimately contained a colon.</li>
 <hr class="docutils" />
 <p><strong>2019-11-01</strong></p>
 <ul class="simple">
-<li>Fixed bug (introduced at v3.0.2) that caused <code class="docutils literal notranslate"><span class="pre">mean_absolute_value</span></code>
+<li><p>Fixed bug (introduced at v3.0.2) that caused <code class="docutils literal notranslate"><span class="pre">mean_absolute_value</span></code>
 collapses by <a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.collapse</span></code></a> to be not weighted when they should
-be (<a class="reference external" href="https://github.com/NCAS-CMS/cf-python/issues/9">https://github.com/NCAS-CMS/cf-python/issues/9</a>)</li>
-<li>Changed default <code class="docutils literal notranslate"><span class="pre">ddof</span></code> from 0 to 1 in <a class="reference internal" href="method/cf.Data.var.html#cf.Data.var" title="cf.Data.var"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.var</span></code></a> and
-<a class="reference internal" href="method/cf.Data.sd.html#cf.Data.sd" title="cf.Data.sd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.sd</span></code></a> (<a class="reference external" href="https://github.com/NCAS-CMS/cf-python/issues/8">https://github.com/NCAS-CMS/cf-python/issues/8</a>)</li>
+be (<a class="reference external" href="https://github.com/NCAS-CMS/cf-python/issues/9">https://github.com/NCAS-CMS/cf-python/issues/9</a>)</p></li>
+<li><p>Changed default <code class="docutils literal notranslate"><span class="pre">ddof</span></code> from 0 to 1 in <a class="reference internal" href="method/cf.Data.var.html#cf.Data.var" title="cf.Data.var"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.var</span></code></a> and
+<a class="reference internal" href="method/cf.Data.sd.html#cf.Data.sd" title="cf.Data.sd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.sd</span></code></a> (<a class="reference external" href="https://github.com/NCAS-CMS/cf-python/issues/8">https://github.com/NCAS-CMS/cf-python/issues/8</a>)</p></li>
 </ul>
 </div>
 <div class="section" id="version-3-0-2">
@@ -175,40 +203,40 @@ be (<a class="reference external" href="https://github.com/NCAS-CMS/cf-python/is
 <hr class="docutils" />
 <p><strong>2019-10-31</strong></p>
 <ul class="simple">
-<li>Now reads CDL files (<a class="reference external" href="https://github.com/NCAS-CMS/cf-python/issues/1">https://github.com/NCAS-CMS/cf-python/issues/1</a>)</li>
-<li>New methods: <a class="reference internal" href="method/cf.Field.cumsum.html#cf.Field.cumsum" title="cf.Field.cumsum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.cumsum</span></code></a>, <a class="reference internal" href="method/cf.Field.digitize.html#cf.Field.digitize" title="cf.Field.digitize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.digitize</span></code></a>, <a class="reference internal" href="method/cf.Field.bin.html#cf.Field.bin" title="cf.Field.bin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.bin</span></code></a>,
-<a class="reference internal" href="method/cf.Field.swapaxes.html#cf.Field.swapaxes" title="cf.Field.swapaxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.swapaxes</span></code></a>, <a class="reference internal" href="method/cf.Field.flatten.html#cf.Field.flatten" title="cf.Field.flatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.flatten</span></code></a>, <a class="reference internal" href="method/cf.Field.radius.html#cf.Field.radius" title="cf.Field.radius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.radius</span></code></a>.</li>
-<li>New function: <a class="reference internal" href="function/cf.histogram.html#cf.histogram" title="cf.histogram"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.histogram</span></code></a>.</li>
-<li>New field construct collapse methods: <code class="docutils literal notranslate"><span class="pre">integral</span></code>,
+<li><p>Now reads CDL files (<a class="reference external" href="https://github.com/NCAS-CMS/cf-python/issues/1">https://github.com/NCAS-CMS/cf-python/issues/1</a>)</p></li>
+<li><p>New methods: <a class="reference internal" href="method/cf.Field.cumsum.html#cf.Field.cumsum" title="cf.Field.cumsum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.cumsum</span></code></a>, <a class="reference internal" href="method/cf.Field.digitize.html#cf.Field.digitize" title="cf.Field.digitize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.digitize</span></code></a>, <a class="reference internal" href="method/cf.Field.bin.html#cf.Field.bin" title="cf.Field.bin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.bin</span></code></a>,
+<a class="reference internal" href="method/cf.Field.swapaxes.html#cf.Field.swapaxes" title="cf.Field.swapaxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.swapaxes</span></code></a>, <a class="reference internal" href="method/cf.Field.flatten.html#cf.Field.flatten" title="cf.Field.flatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.flatten</span></code></a>, <a class="reference internal" href="method/cf.Field.radius.html#cf.Field.radius" title="cf.Field.radius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.radius</span></code></a>.</p></li>
+<li><p>New function: <a class="reference internal" href="function/cf.histogram.html#cf.histogram" title="cf.histogram"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.histogram</span></code></a>.</p></li>
+<li><p>New field construct collapse methods: <code class="docutils literal notranslate"><span class="pre">integral</span></code>,
 <code class="docutils literal notranslate"><span class="pre">mean_absolute_value</span></code>, <code class="docutils literal notranslate"><span class="pre">maximum_absolute_value</span></code>,
 <code class="docutils literal notranslate"><span class="pre">minimum_absolute_value</span></code>, <code class="docutils literal notranslate"><span class="pre">sum_of_squares</span></code>,
-<code class="docutils literal notranslate"><span class="pre">root_mean_square</span></code>.</li>
-<li>New keyword parameters to <a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.collapse</span></code></a> and
-<a class="reference internal" href="method/cf.Field.weights.html#cf.Field.weights" title="cf.Field.weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.weights</span></code></a>: <code class="docutils literal notranslate"><span class="pre">measure</span></code>, <code class="docutils literal notranslate"><span class="pre">scale</span></code>, <code class="docutils literal notranslate"><span class="pre">radius</span></code></li>
-<li>New methods: <a class="reference internal" href="method/cf.Data.cumsum.html#cf.Data.cumsum" title="cf.Data.cumsum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.cumsum</span></code></a>, <a class="reference internal" href="method/cf.Data.digitize.html#cf.Data.digitize" title="cf.Data.digitize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.digitize</span></code></a>,
+<code class="docutils literal notranslate"><span class="pre">root_mean_square</span></code>.</p></li>
+<li><p>New keyword parameters to <a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.collapse</span></code></a> and
+<a class="reference internal" href="method/cf.Field.weights.html#cf.Field.weights" title="cf.Field.weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.weights</span></code></a>: <code class="docutils literal notranslate"><span class="pre">measure</span></code>, <code class="docutils literal notranslate"><span class="pre">scale</span></code>, <code class="docutils literal notranslate"><span class="pre">radius</span></code></p></li>
+<li><p>New methods: <a class="reference internal" href="method/cf.Data.cumsum.html#cf.Data.cumsum" title="cf.Data.cumsum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.cumsum</span></code></a>, <a class="reference internal" href="method/cf.Data.digitize.html#cf.Data.digitize" title="cf.Data.digitize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.digitize</span></code></a>,
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.masked_all</span></code>, <a class="reference internal" href="method/cf.Data.mean_absolute_value.html#cf.Data.mean_absolute_value" title="cf.Data.mean_absolute_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.mean_absolute_value</span></code></a>,
 <a class="reference internal" href="method/cf.Data.maximum_absolute_value.html#cf.Data.maximum_absolute_value" title="cf.Data.maximum_absolute_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.maximum_absolute_value</span></code></a>, <a class="reference internal" href="method/cf.Data.minimum_absolute_value.html#cf.Data.minimum_absolute_value" title="cf.Data.minimum_absolute_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.minimum_absolute_value</span></code></a>,
 <a class="reference internal" href="method/cf.Data.sum_of_squares.html#cf.Data.sum_of_squares" title="cf.Data.sum_of_squares"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.sum_of_squares</span></code></a>, <a class="reference internal" href="method/cf.Data.root_mean_square.html#cf.Data.root_mean_square" title="cf.Data.root_mean_square"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.root_mean_square</span></code></a>,
-<a class="reference internal" href="method/cf.Data.flatten.html#cf.Data.flatten" title="cf.Data.flatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.flatten</span></code></a>.</li>
-<li>Renamed <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.default_fillvals</span></code> to <a class="reference internal" href="function/cf.default_netCDF_fillvals.html#cf.default_netCDF_fillvals" title="cf.default_netCDF_fillvals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.default_netCDF_fillvals</span></code></a>.</li>
-<li>Changed minimum cfdm dependency to version 1.7.8. This fixes a bug
+<a class="reference internal" href="method/cf.Data.flatten.html#cf.Data.flatten" title="cf.Data.flatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.flatten</span></code></a>.</p></li>
+<li><p>Renamed <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.default_fillvals</span></code> to <a class="reference internal" href="function/cf.default_netCDF_fillvals.html#cf.default_netCDF_fillvals" title="cf.default_netCDF_fillvals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.default_netCDF_fillvals</span></code></a>.</p></li>
+<li><p>Changed minimum cfdm dependency to version 1.7.8. This fixes a bug
 that sometimes occurs when writing to disk and the _FillValue and
-data have different data types.</li>
-<li>Changed minimum cfunits dependency to version 3.2.2.</li>
-<li>Changed minimum cftime dependency to version 1.0.4.2.</li>
-<li>Fixed occasional failure to delete all temporary directories at
-exit.</li>
-<li>Fixed bug in <a class="reference internal" href="method/cf.Data.func.html#cf.Data.func" title="cf.Data.func"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.func</span></code></a> when overriding units. Affects all
+data have different data types.</p></li>
+<li><p>Changed minimum cfunits dependency to version 3.2.2.</p></li>
+<li><p>Changed minimum cftime dependency to version 1.0.4.2.</p></li>
+<li><p>Fixed occasional failure to delete all temporary directories at
+exit.</p></li>
+<li><p>Fixed bug in <a class="reference internal" href="method/cf.Data.func.html#cf.Data.func" title="cf.Data.func"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.func</span></code></a> when overriding units. Affects all
 methods that call <a class="reference internal" href="method/cf.Data.func.html#cf.Data.func" title="cf.Data.func"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.func</span></code></a>, such as <a class="reference internal" href="method/cf.Data.tan.html#cf.Data.tan" title="cf.Data.tan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.tan</span></code></a> and
-<a class="reference internal" href="method/cf.Field.tan.html#cf.Field.tan" title="cf.Field.tan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.tan</span></code></a>.</li>
-<li>Fixed “relaxed units” behaviour in <a class="reference internal" href="function/cf.aggregate.html#cf.aggregate" title="cf.aggregate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.aggregate</span></code></a> and field
-construct arithmetic.</li>
-<li>Fixed bug that led to incorrect persistent entries in output of
-<a class="reference internal" href="method/cf.Field.properties.html#cf.Field.properties" title="cf.Field.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.properties</span></code></a>.</li>
-<li>Fixed bug in <a class="reference internal" href="method/cf.Data.squeeze.html#cf.Data.squeeze" title="cf.Data.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.squeeze</span></code></a> that sometimes created
-inconsistencies with the cyclic dimensions.</li>
-<li>Fixed bug in <a class="reference internal" href="attribute/cf.Field.mask.html#cf.Field.mask" title="cf.Field.mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.mask</span></code></a> that assigned incorrect units to the
-result.</li>
+<a class="reference internal" href="method/cf.Field.tan.html#cf.Field.tan" title="cf.Field.tan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.tan</span></code></a>.</p></li>
+<li><p>Fixed “relaxed units” behaviour in <a class="reference internal" href="function/cf.aggregate.html#cf.aggregate" title="cf.aggregate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.aggregate</span></code></a> and field
+construct arithmetic.</p></li>
+<li><p>Fixed bug that led to incorrect persistent entries in output of
+<a class="reference internal" href="method/cf.Field.properties.html#cf.Field.properties" title="cf.Field.properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.properties</span></code></a>.</p></li>
+<li><p>Fixed bug in <a class="reference internal" href="method/cf.Data.squeeze.html#cf.Data.squeeze" title="cf.Data.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.squeeze</span></code></a> that sometimes created
+inconsistencies with the cyclic dimensions.</p></li>
+<li><p>Fixed bug in <a class="reference internal" href="attribute/cf.Field.mask.html#cf.Field.mask" title="cf.Field.mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.mask</span></code></a> that assigned incorrect units to the
+result.</p></li>
 </ul>
 </div>
 <div class="section" id="version-3-0-1">
@@ -216,7 +244,7 @@ result.</li>
 <hr class="docutils" />
 <p><strong>2019-10-01</strong></p>
 <ul class="simple">
-<li>Updated description in <code class="docutils literal notranslate"><span class="pre">setup.py</span></code></li>
+<li><p>Updated description in <code class="docutils literal notranslate"><span class="pre">setup.py</span></code></p></li>
 </ul>
 </div>
 <div class="section" id="version-3-0-0-first-python-3-version">
@@ -224,16 +252,15 @@ result.</li>
 <hr class="docutils" />
 <p><strong>2019-10-01</strong></p>
 <ul>
-<li><p class="first">Complete refactor for Python 3, including some API changes.</p>
+<li><p>Complete refactor for Python 3, including some API changes.</p>
 <p>Scripts written for version 2.x but running under version 3.x should
 either work as expected, or provide informative error messages on
 the new API usage. However, it is advised that the outputs of older
 scripts be checked when running with Python 3 versions of the cf
 library.</p>
 </li>
-<li><p class="first">Deprecated <code class="docutils literal notranslate"><span class="pre">cfdump</span></code> (its functionality is now included in
-<code class="docutils literal notranslate"><span class="pre">cfa</span></code>).</p>
-</li>
+<li><p>Deprecated <code class="docutils literal notranslate"><span class="pre">cfdump</span></code> (its functionality is now included in
+<code class="docutils literal notranslate"><span class="pre">cfa</span></code>).</p></li>
 </ul>
 </div>
 <div class="section" id="version-2-3-8-latest-python-2-version">
@@ -241,14 +268,14 @@ library.</p>
 <hr class="docutils" />
 <p><strong>2019-10-07</strong></p>
 <ul class="simple">
-<li>In <a class="reference internal" href="function/cf.write.html#cf.write" title="cf.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.write</span></code></a>, can set <code class="docutils literal notranslate"><span class="pre">single=False</span></code> to mean <code class="docutils literal notranslate"><span class="pre">double=True</span></code>, and
-vice versa.</li>
-<li>Fixed bug in <a class="reference internal" href="function/cf.aggregate.html#cf.aggregate" title="cf.aggregate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.aggregate</span></code></a> - removed overly strict test on
-dimension coordinate bounds.</li>
-<li>Fixed bug in <a class="reference internal" href="function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a> that set the climatology attribute to True
-when there are no bounds.</li>
-<li>Fixed bug in <a class="reference internal" href="function/cf.write.html#cf.write" title="cf.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.write</span></code></a> when writing missing values (set_fill was
-off, now on)</li>
+<li><p>In <a class="reference internal" href="function/cf.write.html#cf.write" title="cf.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.write</span></code></a>, can set <code class="docutils literal notranslate"><span class="pre">single=False</span></code> to mean <code class="docutils literal notranslate"><span class="pre">double=True</span></code>, and
+vice versa.</p></li>
+<li><p>Fixed bug in <a class="reference internal" href="function/cf.aggregate.html#cf.aggregate" title="cf.aggregate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.aggregate</span></code></a> - removed overly strict test on
+dimension coordinate bounds.</p></li>
+<li><p>Fixed bug in <a class="reference internal" href="function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a> that set the climatology attribute to True
+when there are no bounds.</p></li>
+<li><p>Fixed bug in <a class="reference internal" href="function/cf.write.html#cf.write" title="cf.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.write</span></code></a> when writing missing values (set_fill was
+off, now on)</p></li>
 </ul>
 </div>
 <div class="section" id="version-2-3-5">
@@ -256,9 +283,9 @@ off, now on)</li>
 <hr class="docutils" />
 <p><strong>2019-04-04</strong></p>
 <ul class="simple">
-<li>Changed calculation of chunksize in parallel case to avoid potential
+<li><p>Changed calculation of chunksize in parallel case to avoid potential
 problems and introduced a new method <a class="reference internal" href="function/cf.SET_PERFORMANCE.html#cf.SET_PERFORMANCE" title="cf.SET_PERFORMANCE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.SET_PERFORMANCE</span></code></a> to tune
-the chunksize and the fraction of memory to keep free.</li>
+the chunksize and the fraction of memory to keep free.</p></li>
 </ul>
 </div>
 <div class="section" id="version-2-3-4">
@@ -266,7 +293,7 @@ the chunksize and the fraction of memory to keep free.</li>
 <hr class="docutils" />
 <p><strong>2019-03-27</strong></p>
 <ul class="simple">
-<li>Fix bug in creating a during cell method during a field collapse.</li>
+<li><p>Fix bug in creating a during cell method during a field collapse.</p></li>
 </ul>
 </div>
 <div class="section" id="version-2-3-3">
@@ -274,11 +301,11 @@ the chunksize and the fraction of memory to keep free.</li>
 <hr class="docutils" />
 <p><strong>2019-03-05</strong></p>
 <ul class="simple">
-<li>Allow failure to compile to go through with a warning, rather than
+<li><p>Allow failure to compile to go through with a warning, rather than
 failing to install. if this happens, reading a PP/UM file will
-result in “Exception: Can’t determine format of file test2.pp”</li>
-<li>Fixed bug in <a class="reference internal" href="method/cf.Field.convolution_filter.html#cf.Field.convolution_filter" title="cf.Field.convolution_filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.convolution_filter</span></code></a> giving false error over
-units.</li>
+result in “Exception: Can’t determine format of file test2.pp”</p></li>
+<li><p>Fixed bug in <a class="reference internal" href="method/cf.Field.convolution_filter.html#cf.Field.convolution_filter" title="cf.Field.convolution_filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.convolution_filter</span></code></a> giving false error over
+units.</p></li>
 </ul>
 </div>
 <div class="section" id="version-2-3-2">
@@ -286,9 +313,9 @@ units.</li>
 <hr class="docutils" />
 <p><strong>2018-12-10</strong></p>
 <ul class="simple">
-<li><a class="reference internal" href="method/cf.Field.regridc.html#cf.Field.regridc" title="cf.Field.regridc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.regridc</span></code></a> now compares the units of the source and
+<li><p><a class="reference internal" href="method/cf.Field.regridc.html#cf.Field.regridc" title="cf.Field.regridc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.regridc</span></code></a> now compares the units of the source and
 destination grids and converts between them if possible or raises an
-error if they are not equivalent.</li>
+error if they are not equivalent.</p></li>
 </ul>
 </div>
 <div class="section" id="version-2-3-1">
@@ -296,10 +323,10 @@ error if they are not equivalent.</li>
 <hr class="docutils" />
 <p><strong>2018-11-07</strong></p>
 <ul class="simple">
-<li>Fixed bug in <a class="reference internal" href="method/cf.Field.regridc.html#cf.Field.regridc" title="cf.Field.regridc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.regridc</span></code></a> that caused it to fail when
-regridding a multidimensional field along only one dimension.</li>
-<li>Fixed bug which in which the default logarithm is base 10, rather
-than base e</li>
+<li><p>Fixed bug in <a class="reference internal" href="method/cf.Field.regridc.html#cf.Field.regridc" title="cf.Field.regridc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.regridc</span></code></a> that caused it to fail when
+regridding a multidimensional field along only one dimension.</p></li>
+<li><p>Fixed bug which in which the default logarithm is base 10, rather
+than base e</p></li>
 </ul>
 </div>
 <div class="section" id="version-2-3-0">
@@ -307,10 +334,10 @@ than base e</li>
 <hr class="docutils" />
 <p><strong>2018-10-22</strong></p>
 <ul class="simple">
-<li>The collapse method can now be parallelised by running any cf-python
+<li><p>The collapse method can now be parallelised by running any cf-python
 script with mpirun if mpi4py is installed. This is an experimental
 feature and is not recommended for operational use. None of the
-parallel code is executed when a script is run in serial.</li>
+parallel code is executed when a script is run in serial.</p></li>
 </ul>
 </div>
 <div class="section" id="version-2-2-8">
@@ -318,7 +345,7 @@ parallel code is executed when a script is run in serial.</li>
 <hr class="docutils" />
 <p><strong>2018-08-28</strong></p>
 <ul class="simple">
-<li>Bug fix: better handle subspacing by multiple multidimensional items</li>
+<li><p>Bug fix: better handle subspacing by multiple multidimensional items</p></li>
 </ul>
 </div>
 <div class="section" id="version-2-2-7">
@@ -326,9 +353,9 @@ parallel code is executed when a script is run in serial.</li>
 <hr class="docutils" />
 <p><strong>2018-07-25</strong></p>
 <ul class="simple">
-<li>Bug fix: correctly set units of bounds when the <a class="reference internal" href="classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> object
+<li><p>Bug fix: correctly set units of bounds when the <a class="reference internal" href="classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> object
 inserted with insert_bounds has units of ‘’. In this case the bounds
-of the parent coordinate are now inherited.</li>
+of the parent coordinate are now inherited.</p></li>
 </ul>
 </div>
 <div class="section" id="version-2-2-6">
@@ -336,10 +363,10 @@ of the parent coordinate are now inherited.</li>
 <hr class="docutils" />
 <p><strong>2018-07-24</strong></p>
 <ul class="simple">
-<li>Improved error messages</li>
-<li>Changed behaviour when printing reference times with a calendar of
+<li><p>Improved error messages</p></li>
+<li><p>Changed behaviour when printing reference times with a calendar of
 <code class="docutils literal notranslate"><span class="pre">'none'</span></code> - no longer attempts a to create a date-time
-representation</li>
+representation</p></li>
 </ul>
 </div>
 <div class="section" id="version-2-2-5">
@@ -347,8 +374,8 @@ representation</li>
 <hr class="docutils" />
 <p><strong>2018-7-02</strong></p>
 <ul class="simple">
-<li>Fixed bug with HDF chunk sizes that prevented the writing of large
-files</li>
+<li><p>Fixed bug with HDF chunk sizes that prevented the writing of large
+files</p></li>
 </ul>
 </div>
 <div class="section" id="version-2-2-4">
@@ -356,8 +383,8 @@ files</li>
 <hr class="docutils" />
 <p><strong>2018-06-29</strong></p>
 <ul class="simple">
-<li>Interim fix for with HDF chunk sizes that prevented the writing of
-large files</li>
+<li><p>Interim fix for with HDF chunk sizes that prevented the writing of
+large files</p></li>
 </ul>
 </div>
 <div class="section" id="version-2-2-3">
@@ -365,8 +392,8 @@ large files</li>
 <hr class="docutils" />
 <p><strong>2018-06-21</strong></p>
 <ul class="simple">
-<li>During writing, disallow the creation of netCDF variable names that
-contain characters other than letters, digits, and underscores.</li>
+<li><p>During writing, disallow the creation of netCDF variable names that
+contain characters other than letters, digits, and underscores.</p></li>
 </ul>
 </div>
 <div class="section" id="id1">
@@ -374,8 +401,8 @@ contain characters other than letters, digits, and underscores.</li>
 <hr class="docutils" />
 <p><strong>2018-06-21</strong></p>
 <ul class="simple">
-<li>During writing, disallow the creation of netCDF variable names that
-contain characters other than letters, digits, and underscores.</li>
+<li><p>During writing, disallow the creation of netCDF variable names that
+contain characters other than letters, digits, and underscores.</p></li>
 </ul>
 </div>
 <div class="section" id="version-2-2-2">
@@ -383,8 +410,8 @@ contain characters other than letters, digits, and underscores.</li>
 <hr class="docutils" />
 <p><strong>2018-06-06</strong></p>
 <ul class="simple">
-<li>Fix for removing duplicated netCDF dimensions when writing data on
-(e.g.) tripolar grids.</li>
+<li><p>Fix for removing duplicated netCDF dimensions when writing data on
+(e.g.) tripolar grids.</p></li>
 </ul>
 </div>
 <div class="section" id="version-2-2-1">
@@ -392,7 +419,7 @@ contain characters other than letters, digits, and underscores.</li>
 <hr class="docutils" />
 <p><strong>2018-06-05</strong></p>
 <ul class="simple">
-<li>Fix for calculating are weights from projection coordinates</li>
+<li><p>Fix for calculating are weights from projection coordinates</p></li>
 </ul>
 </div>
 <div class="section" id="version-2-2-0">
@@ -400,7 +427,7 @@ contain characters other than letters, digits, and underscores.</li>
 <hr class="docutils" />
 <p><strong>2018-06-04</strong></p>
 <ul class="simple">
-<li>Updated for <code class="xref py py-obj docutils literal notranslate"><span class="pre">netCDF4</span></code> v1.4 <a class="reference external" href="https://unidata.github.io/cftime/api.html#module-cftime" title="(in cftime)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cftime</span></code></a> API changes</li>
+<li><p>Updated for <code class="xref py py-obj docutils literal notranslate"><span class="pre">netCDF4</span></code> v1.4 <a class="reference external" href="https://unidata.github.io/cftime/api.html#module-cftime" title="(in cftime)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cftime</span></code></a> API changes</p></li>
 </ul>
 </div>
 <div class="section" id="version-2-1-9">
@@ -408,7 +435,7 @@ contain characters other than letters, digits, and underscores.</li>
 <hr class="docutils" />
 <p><strong>2018-05-31</strong></p>
 <ul class="simple">
-<li>Allowed invalid units through. Can test with <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Units.isvalid</span></code>.</li>
+<li><p>Allowed invalid units through. Can test with <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Units.isvalid</span></code>.</p></li>
 </ul>
 </div>
 <div class="section" id="version-2-1-8">
@@ -416,7 +443,7 @@ contain characters other than letters, digits, and underscores.</li>
 <hr class="docutils" />
 <p><strong>2018-03-08</strong></p>
 <ul class="simple">
-<li>Fixed bug when weights parameter is a string in <a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.collapse</span></code></a></li>
+<li><p>Fixed bug when weights parameter is a string in <a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.collapse</span></code></a></p></li>
 </ul>
 </div>
 <div class="section" id="version-2-1-7">
@@ -424,8 +451,8 @@ contain characters other than letters, digits, and underscores.</li>
 <hr class="docutils" />
 <p><strong>2018-02-13</strong></p>
 <ul class="simple">
-<li>Fixed bug in <a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.collapse</span></code></a> when doing climatological time
-collapse with only one period per year/day</li>
+<li><p>Fixed bug in <a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.collapse</span></code></a> when doing climatological time
+collapse with only one period per year/day</p></li>
 </ul>
 </div>
 <div class="section" id="version-2-1-6">
@@ -433,7 +460,7 @@ collapse with only one period per year/day</li>
 <hr class="docutils" />
 <p><strong>2018-02-09</strong></p>
 <ul class="simple">
-<li>Fixed bug in Variable.mask</li>
+<li><p>Fixed bug in Variable.mask</p></li>
 </ul>
 </div>
 <div class="section" id="version-2-1-4">
@@ -441,11 +468,11 @@ collapse with only one period per year/day</li>
 <hr class="docutils" />
 <p><strong>2018-02-09</strong></p>
 <ul class="simple">
-<li>Added override_calendar method to coordinates and domain ancillaries
-that changes the calendar of the bounds, too.</li>
-<li>Fixed bug in <a class="reference internal" href="method/cf.Data.where.html#cf.Data.where" title="cf.Data.where"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.where</span></code></a> when the condition is a <a class="reference internal" href="classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Query</span></code></a>
-object.</li>
-<li>Fixed bug in <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Variable.mask</span></code></li>
+<li><p>Added override_calendar method to coordinates and domain ancillaries
+that changes the calendar of the bounds, too.</p></li>
+<li><p>Fixed bug in <a class="reference internal" href="method/cf.Data.where.html#cf.Data.where" title="cf.Data.where"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.where</span></code></a> when the condition is a <a class="reference internal" href="classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Query</span></code></a>
+object.</p></li>
+<li><p>Fixed bug in <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Variable.mask</span></code></p></li>
 </ul>
 </div>
 <div class="section" id="version-2-1-3">
@@ -453,7 +480,7 @@ object.</li>
 <hr class="docutils" />
 <p><strong>2018-02-07</strong></p>
 <ul class="simple">
-<li>Allowed <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/index.html#module-scipy" title="(in SciPy v1.3.3)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy</span></code></a> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">matplotlib</span></code> imports to be optional</li>
+<li><p>Allowed <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/index.html#module-scipy" title="(in SciPy v1.4.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy</span></code></a> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">matplotlib</span></code> imports to be optional</p></li>
 </ul>
 </div>
 <div class="section" id="version-2-1-2">
@@ -461,8 +488,8 @@ object.</li>
 <hr class="docutils" />
 <p><strong>2017-11-28</strong></p>
 <ul class="simple">
-<li>Added <code class="docutils literal notranslate"><span class="pre">group_span</span></code> and <code class="docutils literal notranslate"><span class="pre">contiguous_group</span></code> options to
-<a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.collapse</span></code></a></li>
+<li><p>Added <code class="docutils literal notranslate"><span class="pre">group_span</span></code> and <code class="docutils literal notranslate"><span class="pre">contiguous_group</span></code> options to
+<a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.collapse</span></code></a></p></li>
 </ul>
 </div>
 <div class="section" id="version-2-1-1">
@@ -470,13 +497,13 @@ object.</li>
 <hr class="docutils" />
 <p><strong>2017-11-10</strong></p>
 <ul class="simple">
-<li>Disallowed raising offset units to a power (e.g. taking the square
-of data in units of K &#64; 273.15).</li>
-<li>Removed len() of <a class="reference internal" href="classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a> (previously always, and misleadingly,
-returned 1)</li>
-<li>Fixed setting of cell methods after climatological time collapses</li>
-<li>Added printing of ncvar in <a class="reference internal" href="method/cf.Field.__str__.html#cf.Field.__str__" title="cf.Field.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.__str__</span></code></a> and <a class="reference internal" href="method/cf.Field.dump.html#cf.Field.dump" title="cf.Field.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.dump</span></code></a></li>
-<li>Added user stash table option to <code class="docutils literal notranslate"><span class="pre">cfa</span></code> script</li>
+<li><p>Disallowed raising offset units to a power (e.g. taking the square
+of data in units of K &#64; 273.15).</p></li>
+<li><p>Removed len() of <a class="reference internal" href="classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a> (previously always, and misleadingly,
+returned 1)</p></li>
+<li><p>Fixed setting of cell methods after climatological time collapses</p></li>
+<li><p>Added printing of ncvar in <a class="reference internal" href="method/cf.Field.__str__.html#cf.Field.__str__" title="cf.Field.__str__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.__str__</span></code></a> and <a class="reference internal" href="method/cf.Field.dump.html#cf.Field.dump" title="cf.Field.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.dump</span></code></a></p></li>
+<li><p>Added user stash table option to <code class="docutils literal notranslate"><span class="pre">cfa</span></code> script</p></li>
 </ul>
 </div>
 <div class="section" id="version-2-1">
@@ -484,7 +511,7 @@ returned 1)</li>
 <hr class="docutils" />
 <p><strong>2017-10-30</strong></p>
 <ul class="simple">
-<li>Misc. bug fixes</li>
+<li><p>Misc. bug fixes</p></li>
 </ul>
 </div>
 <div class="section" id="version-2-0-6">
@@ -492,9 +519,9 @@ returned 1)</li>
 <hr class="docutils" />
 <p><strong>2017-09-28</strong></p>
 <ul class="simple">
-<li>Removed error when <a class="reference internal" href="function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a> finds no fields - an empty field list
-is now returned</li>
-<li>New method <a class="reference internal" href="method/cf.Field.count.html#cf.Field.count" title="cf.Field.count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.count</span></code></a></li>
+<li><p>Removed error when <a class="reference internal" href="function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a> finds no fields - an empty field list
+is now returned</p></li>
+<li><p>New method <a class="reference internal" href="method/cf.Field.count.html#cf.Field.count" title="cf.Field.count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.count</span></code></a></p></li>
 </ul>
 </div>
 <div class="section" id="version-2-0-5">
@@ -502,8 +529,8 @@ is now returned</li>
 <hr class="docutils" />
 <p><strong>2017-09-19</strong></p>
 <ul class="simple">
-<li>Bug fix when creating wrap-around subspaces from cyclic fields</li>
-<li>Fix (partial?) for memory leak when reading UM PP and fields files</li>
+<li><p>Bug fix when creating wrap-around subspaces from cyclic fields</p></li>
+<li><p>Fix (partial?) for memory leak when reading UM PP and fields files</p></li>
 </ul>
 </div>
 <div class="section" id="version-2-0-4">
@@ -511,12 +538,12 @@ is now returned</li>
 <hr class="docutils" />
 <p><strong>2017-09-15</strong></p>
 <ul class="simple">
-<li>submodel property for PP files</li>
-<li>API change for <a class="reference internal" href="method/cf.Field.axis.html#cf.Field.axis" title="cf.Field.axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.axis</span></code></a>: now returns a <a class="reference internal" href="classes/cf.DomainAxis.html#cf.DomainAxis" title="cf.DomainAxis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.DomainAxis</span></code></a> object
-by default</li>
-<li>Bug fix in <a class="reference internal" href="method/cf.Field.where.html#cf.Field.where" title="cf.Field.where"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.where</span></code></a></li>
-<li>Bug fix when initializing a field with the source parameter</li>
-<li>Changed default output format to NETCDF4 (from NETCDF3_CLASSIC)</li>
+<li><p>submodel property for PP files</p></li>
+<li><p>API change for <a class="reference internal" href="method/cf.Field.axis.html#cf.Field.axis" title="cf.Field.axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.axis</span></code></a>: now returns a <a class="reference internal" href="classes/cf.DomainAxis.html#cf.DomainAxis" title="cf.DomainAxis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.DomainAxis</span></code></a> object
+by default</p></li>
+<li><p>Bug fix in <a class="reference internal" href="method/cf.Field.where.html#cf.Field.where" title="cf.Field.where"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.where</span></code></a></p></li>
+<li><p>Bug fix when initializing a field with the source parameter</p></li>
+<li><p>Changed default output format to NETCDF4 (from NETCDF3_CLASSIC)</p></li>
 </ul>
 </div>
 <div class="section" id="version-2-0-1-post1">
@@ -524,7 +551,7 @@ by default</li>
 <hr class="docutils" />
 <p><strong>2017-07-12</strong></p>
 <ul class="simple">
-<li>Bug fix for reading DSG ragged arrays</li>
+<li><p>Bug fix for reading DSG ragged arrays</p></li>
 </ul>
 </div>
 <div class="section" id="version-2-0-1">
@@ -532,7 +559,7 @@ by default</li>
 <hr class="docutils" />
 <p><strong>2017-07-11</strong></p>
 <ul class="simple">
-<li>Updated <a class="reference internal" href="classes/cf.FieldList.html#cf.FieldList" title="cf.FieldList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.FieldList</span></code></a> behaviour (with reduced methods)</li>
+<li><p>Updated <a class="reference internal" href="classes/cf.FieldList.html#cf.FieldList" title="cf.FieldList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.FieldList</span></code></a> behaviour (with reduced methods)</p></li>
 </ul>
 </div>
 <div class="section" id="version-2-0">
@@ -540,8 +567,8 @@ by default</li>
 <hr class="docutils" />
 <p><strong>2017-07-07</strong></p>
 <ul class="simple">
-<li>First release with full CF data model and full CF-1.6 compliance
-(including DSG)</li>
+<li><p>First release with full CF data model and full CF-1.6 compliance
+(including DSG)</p></li>
 </ul>
 </div>
 <div class="section" id="version-1-5-4-post4">
@@ -549,7 +576,7 @@ by default</li>
 <hr class="docutils" />
 <p><strong>2017-07-07</strong></p>
 <ul class="simple">
-<li>Bug fixes to <a class="reference internal" href="method/cf.Field.regridc.html#cf.Field.regridc" title="cf.Field.regridc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.regridc</span></code></a></li>
+<li><p>Bug fixes to <a class="reference internal" href="method/cf.Field.regridc.html#cf.Field.regridc" title="cf.Field.regridc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.regridc</span></code></a></p></li>
 </ul>
 </div>
 <div class="section" id="version-1-5-4-post1">
@@ -557,7 +584,7 @@ by default</li>
 <hr class="docutils" />
 <p><strong>2017-06-13</strong></p>
 <ul class="simple">
-<li>removed errant scikit import</li>
+<li><p>removed errant scikit import</p></li>
 </ul>
 </div>
 <div class="section" id="version-1-5-4">
@@ -565,7 +592,7 @@ by default</li>
 <hr class="docutils" />
 <p><strong>2017-06-09</strong></p>
 <ul class="simple">
-<li>Tripolar regridding</li>
+<li><p>Tripolar regridding</p></li>
 </ul>
 </div>
 <div class="section" id="version-1-5-3">
@@ -573,8 +600,8 @@ by default</li>
 <hr class="docutils" />
 <p><strong>2017-05-10</strong></p>
 <ul class="simple">
-<li>Updated STASH code to standard_name table (with thanks to Jeff Cole)</li>
-<li>Fixed bug when comparing masked arrays for equality</li>
+<li><p>Updated STASH code to standard_name table (with thanks to Jeff Cole)</p></li>
+<li><p>Fixed bug when comparing masked arrays for equality</p></li>
 </ul>
 </div>
 <div class="section" id="version-1-5-2">
@@ -582,8 +609,8 @@ by default</li>
 <hr class="docutils" />
 <p><strong>2017-03-17</strong></p>
 <ul class="simple">
-<li>Fixed bug when accessing PP file whose format/endian/word-size has
-been specified</li>
+<li><p>Fixed bug when accessing PP file whose format/endian/word-size has
+been specified</p></li>
 </ul>
 </div>
 <div class="section" id="version-1-5-1">
@@ -591,7 +618,7 @@ been specified</li>
 <hr class="docutils" />
 <p><strong>2017-03-14</strong></p>
 <ul class="simple">
-<li>Can specify ‘pp’ or ‘PP’ in um option to <a class="reference internal" href="function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a></li>
+<li><p>Can specify ‘pp’ or ‘PP’ in um option to <a class="reference internal" href="function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a></p></li>
 </ul>
 </div>
 <div class="section" id="version-1-5">
@@ -599,9 +626,9 @@ been specified</li>
 <hr class="docutils" />
 <p><strong>2017-02-24</strong></p>
 <ul class="simple">
-<li>Changed weights in calculation of variance to reliability weights
+<li><p>Changed weights in calculation of variance to reliability weights
 (from frequency weights). This not only scientifically better, but
-faster, too.</li>
+faster, too.</p></li>
 </ul>
 </div>
 <div class="section" id="version-1-4">
@@ -609,11 +636,11 @@ faster, too.</li>
 <hr class="docutils" />
 <p><strong>2017-02-22</strong></p>
 <ul class="simple">
-<li>Rounded datetime to time-since conversions to the nearest
-microsecond, to reflect the accuracy of netCDF4.netcdftime</li>
-<li>Removed import tests from setup.py</li>
-<li>New option –um to <code class="docutils literal notranslate"><span class="pre">cfa</span></code>, <code class="docutils literal notranslate"><span class="pre">cfdump</span></code></li>
-<li>New parameter um to <a class="reference internal" href="function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a></li>
+<li><p>Rounded datetime to time-since conversions to the nearest
+microsecond, to reflect the accuracy of netCDF4.netcdftime</p></li>
+<li><p>Removed import tests from setup.py</p></li>
+<li><p>New option –um to <code class="docutils literal notranslate"><span class="pre">cfa</span></code>, <code class="docutils literal notranslate"><span class="pre">cfdump</span></code></p></li>
+<li><p>New parameter um to <a class="reference internal" href="function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a></p></li>
 </ul>
 </div>
 <div class="section" id="version-1-3-3">
@@ -621,10 +648,10 @@ microsecond, to reflect the accuracy of netCDF4.netcdftime</li>
 <hr class="docutils" />
 <p><strong>2017-01-31</strong></p>
 <ul class="simple">
-<li>Rounded datetime to time-since conversions to the nearest
-microsecond, to reflect the accuracy of netCDF4.netcdftime</li>
-<li>Fix for netCDF4.__version__ &gt; 1.2.4 do to with datetime.calendar
-<em>handle with care</em></li>
+<li><p>Rounded datetime to time-since conversions to the nearest
+microsecond, to reflect the accuracy of netCDF4.netcdftime</p></li>
+<li><p>Fix for netCDF4.__version__ &gt; 1.2.4 do to with datetime.calendar
+<em>handle with care</em></p></li>
 </ul>
 </div>
 <div class="section" id="version-1-3-2">
@@ -632,16 +659,16 @@ microsecond, to reflect the accuracy of netCDF4.netcdftime</li>
 <hr class="docutils" />
 <p><strong>2016-09-21</strong></p>
 <ul class="simple">
-<li>Added –build-id to LDFLAGS in umread Makefile, for sake of RPM
+<li><p>Added –build-id to LDFLAGS in umread Makefile, for sake of RPM
 builds (otherwise fails when building debuginfo RPM). Pull request
-#16, thanks to Klaus Zimmerman.</li>
-<li>Improved test handling. Pull request #21, thanks to Klaus
-Zimmerman.</li>
-<li>Removed udunits2 database. This removes the modified version of the
+#16, thanks to Klaus Zimmerman.</p></li>
+<li><p>Improved test handling. Pull request #21, thanks to Klaus
+Zimmerman.</p></li>
+<li><p>Removed udunits2 database. This removes the modified version of the
 udunits2 database in order to avoid redundancies, possible version
 incompatibilities, and license questions. The modifications are
 instead carried out programmatically in units.py. Pull request #20,
-thanks to Klaus Zimmerman.</li>
+thanks to Klaus Zimmerman.</p></li>
 </ul>
 </div>
 <div class="section" id="version-1-3-1">
@@ -649,8 +676,8 @@ thanks to Klaus Zimmerman.</li>
 <hr class="docutils" />
 <p><strong>2016-09-09</strong></p>
 <ul class="simple">
-<li>New method: <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.unlimited</span></code>, and new ‘unlimited’ parameter to
-<a class="reference internal" href="function/cf.write.html#cf.write" title="cf.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.write</span></code></a> and <code class="docutils literal notranslate"><span class="pre">cfa</span></code></li>
+<li><p>New method: <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.unlimited</span></code>, and new ‘unlimited’ parameter to
+<a class="reference internal" href="function/cf.write.html#cf.write" title="cf.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.write</span></code></a> and <code class="docutils literal notranslate"><span class="pre">cfa</span></code></p></li>
 </ul>
 </div>
 <div class="section" id="version-1-3">
@@ -658,9 +685,9 @@ thanks to Klaus Zimmerman.</li>
 <hr class="docutils" />
 <p><strong>2016-09-05</strong></p>
 <ul class="simple">
-<li>Removed asreftime, asdatetime and dtvarray methods</li>
-<li>New method: <code class="xref py py-obj docutils literal notranslate"><span class="pre">convert_reference_time</span></code> for converting reference time
-data values to have new units.</li>
+<li><p>Removed asreftime, asdatetime and dtvarray methods</p></li>
+<li><p>New method: <code class="xref py py-obj docutils literal notranslate"><span class="pre">convert_reference_time</span></code> for converting reference time
+data values to have new units.</p></li>
 </ul>
 </div>
 <div class="section" id="version-1-2-3">
@@ -668,7 +695,7 @@ data values to have new units.</li>
 <hr class="docutils" />
 <p><strong>2016-08-23</strong></p>
 <ul class="simple">
-<li>Fixed bug in <a class="reference internal" href="method/cf.Data.equals.html#cf.Data.equals" title="cf.Data.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.equals</span></code></a></li>
+<li><p>Fixed bug in <a class="reference internal" href="method/cf.Data.equals.html#cf.Data.equals" title="cf.Data.equals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.equals</span></code></a></p></li>
 </ul>
 </div>
 <div class="section" id="version-1-2-2">
@@ -676,11 +703,11 @@ data values to have new units.</li>
 <hr class="docutils" />
 <p><strong>2016-08-22</strong></p>
 <ul class="simple">
-<li>Fixed bug in binary operations to do with the setting of
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">Partition.part</span></code></li>
-<li>Added <a class="reference internal" href="classes/cf.TimeDuration.html#cf.TimeDuration" title="cf.TimeDuration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.TimeDuration</span></code></a> functionality to get_bounds cellsizes
+<li><p>Fixed bug in binary operations to do with the setting of
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">Partition.part</span></code></p></li>
+<li><p>Added <a class="reference internal" href="classes/cf.TimeDuration.html#cf.TimeDuration" title="cf.TimeDuration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.TimeDuration</span></code></a> functionality to get_bounds cellsizes
 parameter. Also new parameter flt (“fraction less than”) to position
-the coordinate within the cell.</li>
+the coordinate within the cell.</p></li>
 </ul>
 </div>
 <div class="section" id="version-1-2">
@@ -688,7 +715,7 @@ the coordinate within the cell.</li>
 <hr class="docutils" />
 <p><strong>2016-07-05</strong></p>
 <ul class="simple">
-<li>Added HDF_chunks methods</li>
+<li><p>Added HDF_chunks methods</p></li>
 </ul>
 </div>
 <div class="section" id="version-1-1-11">
@@ -696,9 +723,9 @@ the coordinate within the cell.</li>
 <hr class="docutils" />
 <p><strong>2016-07-01</strong></p>
 <ul class="simple">
-<li>Added cellsize option to <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Coordinate.get_bounds</span></code>, and fixed bugs.</li>
-<li>Added variable_attributes option to <a class="reference internal" href="function/cf.write.html#cf.write" title="cf.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.write</span></code></a></li>
-<li>Added <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.ENVIRONMENT</span></code> method</li>
+<li><p>Added cellsize option to <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Coordinate.get_bounds</span></code>, and fixed bugs.</p></li>
+<li><p>Added variable_attributes option to <a class="reference internal" href="function/cf.write.html#cf.write" title="cf.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.write</span></code></a></p></li>
+<li><p>Added <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.ENVIRONMENT</span></code> method</p></li>
 </ul>
 </div>
 <div class="section" id="version-1-1-10">
@@ -706,9 +733,9 @@ the coordinate within the cell.</li>
 <hr class="docutils" />
 <p><strong>2016-06-23</strong></p>
 <ul class="simple">
-<li>Added reference_datetime option to cf.write</li>
-<li>Fixed bug in <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.um.read.read</span></code> which incorrectly ordered vertical
-coordinates</li>
+<li><p>Added reference_datetime option to cf.write</p></li>
+<li><p>Fixed bug in <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.um.read.read</span></code> which incorrectly ordered vertical
+coordinates</p></li>
 </ul>
 </div>
 <div class="section" id="version-1-1-9">
@@ -716,17 +743,17 @@ coordinates</li>
 <hr class="docutils" />
 <p><strong>2016-06-17</strong></p>
 <ul class="simple">
-<li>New methods <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Variable.files</span></code> and <a class="reference internal" href="method/cf.Data.files.html#cf.Data.files" title="cf.Data.files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.files</span></code></a>,
+<li><p>New methods <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Variable.files</span></code> and <a class="reference internal" href="method/cf.Data.files.html#cf.Data.files" title="cf.Data.files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.files</span></code></a>,
 <a class="reference internal" href="method/cf.Field.files.html#cf.Field.files" title="cf.Field.files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.files</span></code></a> which report which files are referenced by the data
-array.</li>
-<li>Fix to stop partitions return <code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.bool_</span></code> instead of
-<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></li>
-<li>Fix to determining cyclicity of regridded fields.</li>
-<li>Functionality to recursively read directories in <a class="reference internal" href="function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a>, <code class="docutils literal notranslate"><span class="pre">cfa</span></code>
-and <code class="docutils literal notranslate"><span class="pre">cfump</span></code></li>
-<li>Print warning but carry on when ESMF import fails</li>
-<li>Fixed bug in <a class="reference internal" href="method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.subspace</span></code></a> when accessing axes derived from UM
-format files</li>
+array.</p></li>
+<li><p>Fix to stop partitions return <code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.bool_</span></code> instead of
+<a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p></li>
+<li><p>Fix to determining cyclicity of regridded fields.</p></li>
+<li><p>Functionality to recursively read directories in <a class="reference internal" href="function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a>, <code class="docutils literal notranslate"><span class="pre">cfa</span></code>
+and <code class="docutils literal notranslate"><span class="pre">cfump</span></code></p></li>
+<li><p>Print warning but carry on when ESMF import fails</p></li>
+<li><p>Fixed bug in <a class="reference internal" href="method/cf.Field.subspace.html#cf.Field.subspace" title="cf.Field.subspace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.subspace</span></code></a> when accessing axes derived from UM
+format files</p></li>
 </ul>
 </div>
 <div class="section" id="version-1-1-8">
@@ -734,12 +761,12 @@ format files</li>
 <hr class="docutils" />
 <p><strong>2016-05-18</strong></p>
 <ul class="simple">
-<li>Slightly changed the compression API to <a class="reference internal" href="function/cf.write.html#cf.write" title="cf.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.write</span></code></a></li>
-<li>Added compression support to the <code class="docutils literal notranslate"><span class="pre">cfa</span></code> command line script</li>
-<li>Added functionality to change data type on writing to <a class="reference internal" href="function/cf.write.html#cf.write" title="cf.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.write</span></code></a> and
+<li><p>Slightly changed the compression API to <a class="reference internal" href="function/cf.write.html#cf.write" title="cf.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.write</span></code></a></p></li>
+<li><p>Added compression support to the <code class="docutils literal notranslate"><span class="pre">cfa</span></code> command line script</p></li>
+<li><p>Added functionality to change data type on writing to <a class="reference internal" href="function/cf.write.html#cf.write" title="cf.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.write</span></code></a> and
 <code class="docutils literal notranslate"><span class="pre">cfa</span></code> - both in general and for with extra convenience for the
-common case of double to single (and vice versa).</li>
-<li>Removed annoying debug print statements from <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.um.read.read</span></code></li>
+common case of double to single (and vice versa).</p></li>
+<li><p>Removed annoying debug print statements from <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.um.read.read</span></code></p></li>
 </ul>
 </div>
 <div class="section" id="version-1-1-7">
@@ -747,10 +774,10 @@ common case of double to single (and vice versa).</li>
 <hr class="docutils" />
 <p><strong>2016-05-04</strong></p>
 <ul class="simple">
-<li>Added fix for change in numpy behaviour (<code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.number</span></code> types do not
-support assignment)</li>
-<li>Added capability to load in a user STASH to standard name table:
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.um.read.load_stash2standard_name</span></code></li>
+<li><p>Added fix for change in numpy behaviour (<code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.number</span></code> types do not
+support assignment)</p></li>
+<li><p>Added capability to load in a user STASH to standard name table:
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.um.read.load_stash2standard_name</span></code></p></li>
 </ul>
 </div>
 <div class="section" id="version-1-1-6">
@@ -758,10 +785,10 @@ support assignment)</li>
 <hr class="docutils" />
 <p><strong>2016-04-27</strong></p>
 <ul class="simple">
-<li>Added –reference_datetime option to <code class="docutils literal notranslate"><span class="pre">cfa</span></code></li>
-<li>Bug fix to <a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.collapse</span></code></a> when providing <a class="reference internal" href="classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Query</span></code></a> objects via
-the group parameter</li>
-<li>Added auto regridding method, which is now the default</li>
+<li><p>Added –reference_datetime option to <code class="docutils literal notranslate"><span class="pre">cfa</span></code></p></li>
+<li><p>Bug fix to <a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.collapse</span></code></a> when providing <a class="reference internal" href="classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Query</span></code></a> objects via
+the group parameter</p></li>
+<li><p>Added auto regridding method, which is now the default</p></li>
 </ul>
 </div>
 <div class="section" id="version-1-1-5">
@@ -769,13 +796,13 @@ the group parameter</li>
 <hr class="docutils" />
 <p><strong>2016-03-03</strong></p>
 <ul class="simple">
-<li>Bug fix in <a class="reference internal" href="method/cf.Field.where.html#cf.Field.where" title="cf.Field.where"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.where</span></code></a> when using <a class="reference internal" href="constant.html#cf.cf.masked" title="cf.cf.masked"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.masked</span></code></a></li>
-<li>conda installation (with thanks to Andy Heaps)</li>
-<li>Bug fix for type casting in <a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.collapse</span></code></a></li>
-<li>Display long_name if it exists and there is no standard_name</li>
-<li>Fix for compiling the UM C code on certain OSs (with thanks to Simon Wilson)</li>
-<li>Fixed incorrect assignment of cyclicity in <a class="reference internal" href="method/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.regrids</span></code></a></li>
-<li>Nearest neighbour regridding in <a class="reference internal" href="method/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.regrids</span></code></a></li>
+<li><p>Bug fix in <a class="reference internal" href="method/cf.Field.where.html#cf.Field.where" title="cf.Field.where"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.where</span></code></a> when using <a class="reference internal" href="constant.html#cf.cf.masked" title="cf.cf.masked"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.masked</span></code></a></p></li>
+<li><p>conda installation (with thanks to Andy Heaps)</p></li>
+<li><p>Bug fix for type casting in <a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.collapse</span></code></a></p></li>
+<li><p>Display long_name if it exists and there is no standard_name</p></li>
+<li><p>Fix for compiling the UM C code on certain OSs (with thanks to Simon Wilson)</p></li>
+<li><p>Fixed incorrect assignment of cyclicity in <a class="reference internal" href="method/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.regrids</span></code></a></p></li>
+<li><p>Nearest neighbour regridding in <a class="reference internal" href="method/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.regrids</span></code></a></p></li>
 </ul>
 </div>
 <div class="section" id="version-1-1-4">
@@ -783,15 +810,15 @@ the group parameter</li>
 <hr class="docutils" />
 <p><strong>2016-02-09</strong></p>
 <ul class="simple">
-<li>Bug fix to <a class="reference internal" href="method/cf.Field.autocyclic.html#cf.Field.autocyclic" title="cf.Field.autocyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.autocyclic</span></code></a></li>
-<li>Bug fix to <a class="reference internal" href="method/cf.Field.clip.html#cf.Field.clip" title="cf.Field.clip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.clip</span></code></a> - now works when limit units are supplied</li>
-<li>New methods: <a class="reference internal" href="method/cf.Data.round.html#cf.Data.round" title="cf.Data.round"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.round</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.Round</span></code></li>
-<li>Added <code class="docutils literal notranslate"><span class="pre">lbtim</span></code> as a <a class="reference internal" href="classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a> property when reading UM files</li>
-<li>Fixed coordinate creation for UM atmosphere_hybrid_height_coordinate</li>
-<li>Bug fix to handling of cyclic fields by <a class="reference internal" href="method/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.regrids</span></code></a></li>
-<li>Added nearest neighbour field regridding</li>
-<li>Changed keyword ignore_dst_mask in <a class="reference internal" href="method/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.regrids</span></code></a> to
-use_dst_mask, which is false by default</li>
+<li><p>Bug fix to <a class="reference internal" href="method/cf.Field.autocyclic.html#cf.Field.autocyclic" title="cf.Field.autocyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.autocyclic</span></code></a></p></li>
+<li><p>Bug fix to <a class="reference internal" href="method/cf.Field.clip.html#cf.Field.clip" title="cf.Field.clip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.clip</span></code></a> - now works when limit units are supplied</p></li>
+<li><p>New methods: <a class="reference internal" href="method/cf.Data.round.html#cf.Data.round" title="cf.Data.round"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.round</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.Round</span></code></p></li>
+<li><p>Added <code class="docutils literal notranslate"><span class="pre">lbtim</span></code> as a <a class="reference internal" href="classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a> property when reading UM files</p></li>
+<li><p>Fixed coordinate creation for UM atmosphere_hybrid_height_coordinate</p></li>
+<li><p>Bug fix to handling of cyclic fields by <a class="reference internal" href="method/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.regrids</span></code></a></p></li>
+<li><p>Added nearest neighbour field regridding</p></li>
+<li><p>Changed keyword ignore_dst_mask in <a class="reference internal" href="method/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.regrids</span></code></a> to
+use_dst_mask, which is false by default</p></li>
 </ul>
 </div>
 <div class="section" id="version-1-1-3">
@@ -799,9 +826,9 @@ use_dst_mask, which is false by default</li>
 <hr class="docutils" />
 <p><strong>2015-12-10</strong></p>
 <ul class="simple">
-<li>Bug fixes to <a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.collapse</span></code></a> when the “group” parameter is used</li>
-<li>Correct setting of cyclic axes on regridded fields</li>
-<li>Updates to STASH_to_CF.txt table: 3209, 3210</li>
+<li><p>Bug fixes to <a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.collapse</span></code></a> when the “group” parameter is used</p></li>
+<li><p>Correct setting of cyclic axes on regridded fields</p></li>
+<li><p>Updates to STASH_to_CF.txt table: 3209, 3210</p></li>
 </ul>
 </div>
 <div class="section" id="version-1-1-2">
@@ -809,11 +836,11 @@ use_dst_mask, which is false by default</li>
 <hr class="docutils" />
 <p><strong>2015-12-01</strong></p>
 <ul class="simple">
-<li>Updates to STASH_to_CF.txt table</li>
-<li>Fixed bug in decoding UM version in <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.um.read.read</span></code></li>
-<li>Fixed bug in <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.units.Utime.num2date</span></code></li>
-<li>Fixed go-slow behaviour for silly BZX, BDX in PP and fields file
-lookup headers</li>
+<li><p>Updates to STASH_to_CF.txt table</p></li>
+<li><p>Fixed bug in decoding UM version in <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.um.read.read</span></code></p></li>
+<li><p>Fixed bug in <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.units.Utime.num2date</span></code></p></li>
+<li><p>Fixed go-slow behaviour for silly BZX, BDX in PP and fields file
+lookup headers</p></li>
 </ul>
 </div>
 <div class="section" id="version-1-1-1">
@@ -821,7 +848,7 @@ lookup headers</li>
 <hr class="docutils" />
 <p><strong>2015-11-05</strong></p>
 <ul class="simple">
-<li>Fixed bug in decoding UM version in <a class="reference internal" href="function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a></li>
+<li><p>Fixed bug in decoding UM version in <a class="reference internal" href="function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a></p></li>
 </ul>
 </div>
 <div class="section" id="version-1-1">
@@ -829,24 +856,24 @@ lookup headers</li>
 <hr class="docutils" />
 <p><strong>2015-10-28</strong></p>
 <ul class="simple">
-<li>Fixed bug in <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Units.conform</span></code></li>
-<li>Changed <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.__init__</span></code> so that it works with just a data object</li>
-<li>Added <a class="reference internal" href="method/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.regrids</span></code></a> for lat-lon regridding using ESMF library</li>
-<li>Removed support for netCDF4-python versions &lt; 1.1.1</li>
-<li>Fixed bug which made certain types of coordinate bounds
-non-contiguous after transpose</li>
-<li>Fixed bug with i=True in <a class="reference internal" href="method/cf.Field.where.html#cf.Field.where" title="cf.Field.where"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.where</span></code></a> and in
-<a class="reference internal" href="method/cf.Field.mask_invalid.html#cf.Field.mask_invalid" title="cf.Field.mask_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.mask_invalid</span></code></a></li>
-<li>cyclic methods now return a set, rather than a list</li>
-<li>Fixed bug in _write_attributes which might have slowed down some
-writes to netCDF files.</li>
-<li>Reduced annoying redirection in the documentation</li>
-<li>Added <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.field</span></code> method and added top_level keyword to
-<a class="reference internal" href="function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a></li>
-<li>Fixed bug in calculation of standard deviation and variance (the bug
-caused occasional crashes - no incorrect results were calculated)</li>
-<li>In items method (and friends), removed strict_axes keyword and added
-axes_all, axes_superset and axes_subset keywords</li>
+<li><p>Fixed bug in <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Units.conform</span></code></p></li>
+<li><p>Changed <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.__init__</span></code> so that it works with just a data object</p></li>
+<li><p>Added <a class="reference internal" href="method/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.regrids</span></code></a> for lat-lon regridding using ESMF library</p></li>
+<li><p>Removed support for netCDF4-python versions &lt; 1.1.1</p></li>
+<li><p>Fixed bug which made certain types of coordinate bounds
+non-contiguous after transpose</p></li>
+<li><p>Fixed bug with i=True in <a class="reference internal" href="method/cf.Field.where.html#cf.Field.where" title="cf.Field.where"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.where</span></code></a> and in
+<a class="reference internal" href="method/cf.Field.mask_invalid.html#cf.Field.mask_invalid" title="cf.Field.mask_invalid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.mask_invalid</span></code></a></p></li>
+<li><p>cyclic methods now return a set, rather than a list</p></li>
+<li><p>Fixed bug in _write_attributes which might have slowed down some
+writes to netCDF files.</p></li>
+<li><p>Reduced annoying redirection in the documentation</p></li>
+<li><p>Added <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.field</span></code> method and added top_level keyword to
+<a class="reference internal" href="function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a></p></li>
+<li><p>Fixed bug in calculation of standard deviation and variance (the bug
+caused occasional crashes - no incorrect results were calculated)</p></li>
+<li><p>In items method (and friends), removed strict_axes keyword and added
+axes_all, axes_superset and axes_subset keywords</p></li>
 </ul>
 </div>
 <div class="section" id="version-1-0-3">
@@ -854,14 +881,14 @@ axes_all, axes_superset and axes_subset keywords</li>
 <hr class="docutils" />
 <p><strong>2015-06-23</strong></p>
 <ul class="simple">
-<li>Added default keyword to fill_value() and fixed bugs when doing
-delattr on _fillValue and missing_value properties.</li>
+<li><p>Added default keyword to fill_value() and fixed bugs when doing
+delattr on _fillValue and missing_value properties.</p></li>
 </ul>
 </div>
 <div class="section" id="version-1-0-2-05-june-2015">
 <h2>version 1.0.2 - 05 June 2015<a class="headerlink" href="#version-1-0-2-05-june-2015" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>PyPI release</li>
+<li><p>PyPI release</p></li>
 </ul>
 </div>
 <div class="section" id="version-1-0-1">
@@ -869,7 +896,7 @@ delattr on _fillValue and missing_value properties.</li>
 <hr class="docutils" />
 <p><strong>2015-06-01</strong></p>
 <ul class="simple">
-<li>Fixed bug in when using the select keyword to <a class="reference internal" href="function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a></li>
+<li><p>Fixed bug in when using the select keyword to <a class="reference internal" href="function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a></p></li>
 </ul>
 </div>
 <div class="section" id="version-1-0">
@@ -877,18 +904,18 @@ delattr on _fillValue and missing_value properties.</li>
 <hr class="docutils" />
 <p><strong>2015-05-27</strong></p>
 <ul class="simple">
-<li>Mac OS support</li>
-<li>Limited Nd functionality to <a class="reference internal" href="method/cf.Field.indices.html#cf.Field.indices" title="cf.Field.indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.indices</span></code></a></li>
-<li>Correct treatment of add_offset and scale_factor</li>
-<li>Replaced -a with -x in <code class="docutils literal notranslate"><span class="pre">cfa</span></code> and <code class="docutils literal notranslate"><span class="pre">cfdump</span></code> scripts</li>
-<li>added ncvar_identities parameter to <a class="reference internal" href="function/cf.aggregate.html#cf.aggregate" title="cf.aggregate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.aggregate</span></code></a></li>
-<li>Performance improvements to field subspacing</li>
-<li>Documentation</li>
-<li>Improved API to match, select, items, axes, etc.</li>
-<li>Reads UM fields files</li>
-<li>Optimised reading PP and UM fields files</li>
-<li><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.collapse</span></code> replaced by <a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.collapse</span></code></a></li>
-<li><a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.collapse</span></code></a> includes CF climatological time statistics</li>
+<li><p>Mac OS support</p></li>
+<li><p>Limited Nd functionality to <a class="reference internal" href="method/cf.Field.indices.html#cf.Field.indices" title="cf.Field.indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.indices</span></code></a></p></li>
+<li><p>Correct treatment of add_offset and scale_factor</p></li>
+<li><p>Replaced -a with -x in <code class="docutils literal notranslate"><span class="pre">cfa</span></code> and <code class="docutils literal notranslate"><span class="pre">cfdump</span></code> scripts</p></li>
+<li><p>added ncvar_identities parameter to <a class="reference internal" href="function/cf.aggregate.html#cf.aggregate" title="cf.aggregate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.aggregate</span></code></a></p></li>
+<li><p>Performance improvements to field subspacing</p></li>
+<li><p>Documentation</p></li>
+<li><p>Improved API to match, select, items, axes, etc.</p></li>
+<li><p>Reads UM fields files</p></li>
+<li><p>Optimised reading PP and UM fields files</p></li>
+<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.collapse</span></code> replaced by <a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.collapse</span></code></a></p></li>
+<li><p><a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.collapse</span></code></a> includes CF climatological time statistics</p></li>
 </ul>
 </div>
 <div class="section" id="version-0-9-9-1">
@@ -896,8 +923,8 @@ delattr on _fillValue and missing_value properties.</li>
 <hr class="docutils" />
 <p><strong>2015-01-09</strong></p>
 <ul class="simple">
-<li>Fixed bug for changes to netCDF4-python library versions &gt;= 1.1.2</li>
-<li>Miscellaneous bug fixes</li>
+<li><p>Fixed bug for changes to netCDF4-python library versions &gt;= 1.1.2</p></li>
+<li><p>Miscellaneous bug fixes</p></li>
 </ul>
 </div>
 <div class="section" id="version-0-9-9">
@@ -905,17 +932,17 @@ delattr on _fillValue and missing_value properties.</li>
 <hr class="docutils" />
 <p><strong>2015-01-05</strong></p>
 <ul class="simple">
-<li>Added netCDF4 compression options to <a class="reference internal" href="function/cf.write.html#cf.write" title="cf.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.write</span></code></a>.</li>
-<li>Added <code class="xref py py-obj docutils literal notranslate"><span class="pre">__mod__</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">__imod__</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">__rmod__</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">ceil</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">floor</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">trunc</span></code>,
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">rint</span></code> methods to <a class="reference internal" href="classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Variable</span></code></li>
-<li>Added ceil, floor, trunc, rint to <a class="reference internal" href="classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Variable</span></code></li>
-<li>Fixed bug in which array <a class="reference internal" href="attribute/cf.Data.array.html#cf.Data.array" title="cf.Data.array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.array</span></code></a> sometimes behaved like
-<a class="reference internal" href="attribute/cf.Data.varray.html#cf.Data.varray" title="cf.Data.varray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.varray</span></code></a></li>
-<li>Fixed bug in <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.netcdf.read.read</span></code> which affected reading fields
-with formula_terms.</li>
-<li>Refactored the test suite to use the unittest package</li>
-<li>Cyclic axes functionality</li>
-<li>Documentation updates</li>
+<li><p>Added netCDF4 compression options to <a class="reference internal" href="function/cf.write.html#cf.write" title="cf.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.write</span></code></a>.</p></li>
+<li><p>Added <code class="xref py py-obj docutils literal notranslate"><span class="pre">__mod__</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">__imod__</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">__rmod__</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">ceil</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">floor</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">trunc</span></code>,
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">rint</span></code> methods to <a class="reference internal" href="classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Variable</span></code></p></li>
+<li><p>Added ceil, floor, trunc, rint to <a class="reference internal" href="classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Variable</span></code></p></li>
+<li><p>Fixed bug in which array <a class="reference internal" href="attribute/cf.Data.array.html#cf.Data.array" title="cf.Data.array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.array</span></code></a> sometimes behaved like
+<a class="reference internal" href="attribute/cf.Data.varray.html#cf.Data.varray" title="cf.Data.varray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.varray</span></code></a></p></li>
+<li><p>Fixed bug in <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.netcdf.read.read</span></code> which affected reading fields
+with formula_terms.</p></li>
+<li><p>Refactored the test suite to use the unittest package</p></li>
+<li><p>Cyclic axes functionality</p></li>
+<li><p>Documentation updates</p></li>
 </ul>
 </div>
 <div class="section" id="version-0-9-8-3">
@@ -923,12 +950,12 @@ with formula_terms.</li>
 <hr class="docutils" />
 <p><strong>2014-07-14</strong></p>
 <ul class="simple">
-<li>Implemented multiple grid_mappings (CF trac ticket #70)</li>
-<li>Improved functionality and speed of field aggregation and <code class="docutils literal notranslate"><span class="pre">cfa</span></code>
-and <code class="docutils literal notranslate"><span class="pre">cfdump</span></code> command line utilities.</li>
-<li>Collapse methods on <a class="reference internal" href="classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> object (min, max, mean, var, sd,
-sum, range, mid_range).</li>
-<li>Improved match/select functionality</li>
+<li><p>Implemented multiple grid_mappings (CF trac ticket #70)</p></li>
+<li><p>Improved functionality and speed of field aggregation and <code class="docutils literal notranslate"><span class="pre">cfa</span></code>
+and <code class="docutils literal notranslate"><span class="pre">cfdump</span></code> command line utilities.</p></li>
+<li><p>Collapse methods on <a class="reference internal" href="classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> object (min, max, mean, var, sd,
+sum, range, mid_range).</p></li>
+<li><p>Improved match/select functionality</p></li>
 </ul>
 </div>
 <div class="section" id="version-0-9-8-2">
@@ -936,9 +963,9 @@ sum, range, mid_range).</li>
 <hr class="docutils" />
 <p><strong>2014-03-13</strong></p>
 <ul class="simple">
-<li>Copes with PP fields with 365_day calendars</li>
-<li>Revamped CFA files in line with the evolving standard. CFA files
-from PP data created with a previous version will no longer work.</li>
+<li><p>Copes with PP fields with 365_day calendars</p></li>
+<li><p>Revamped CFA files in line with the evolving standard. CFA files
+from PP data created with a previous version will no longer work.</p></li>
 </ul>
 </div>
 <div class="section" id="version-0-9-8">
@@ -946,18 +973,18 @@ from PP data created with a previous version will no longer work.</li>
 <hr class="docutils" />
 <p><strong>2013-12-06</strong></p>
 <ul class="simple">
-<li>Improved API.</li>
-<li>Plenty of speed and memory optimizations.</li>
-<li>A proper treatment of datetimes.</li>
-<li>WGDOS-packed PP fields are now unpacked on demand.</li>
-<li>Fixed bug in functions.py for numpy v1.7. Fixed bug when deleting
-the ‘id’ attribute.</li>
-<li>Assign a standard name to aggregated PP fields after aggregation
+<li><p>Improved API.</p></li>
+<li><p>Plenty of speed and memory optimizations.</p></li>
+<li><p>A proper treatment of datetimes.</p></li>
+<li><p>WGDOS-packed PP fields are now unpacked on demand.</p></li>
+<li><p>Fixed bug in functions.py for numpy v1.7. Fixed bug when deleting
+the ‘id’ attribute.</p></li>
+<li><p>Assign a standard name to aggregated PP fields after aggregation
 rather than before (because some stash codes are too similar,
-e.g. 407 and 408).</li>
-<li>New subclasses of <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Coordinate</span></code>: <a class="reference internal" href="classes/cf.DimensionCoordinate.html#cf.DimensionCoordinate" title="cf.DimensionCoordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.DimensionCoordinate</span></code></a> and
-<a class="reference internal" href="classes/cf.AuxiliaryCoordinate.html#cf.AuxiliaryCoordinate" title="cf.AuxiliaryCoordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.AuxiliaryCoordinate</span></code></a>.</li>
-<li>A <a class="reference internal" href="classes/cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Units</span></code></a> object is now immutable.</li>
+e.g. 407 and 408).</p></li>
+<li><p>New subclasses of <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Coordinate</span></code>: <a class="reference internal" href="classes/cf.DimensionCoordinate.html#cf.DimensionCoordinate" title="cf.DimensionCoordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.DimensionCoordinate</span></code></a> and
+<a class="reference internal" href="classes/cf.AuxiliaryCoordinate.html#cf.AuxiliaryCoordinate" title="cf.AuxiliaryCoordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.AuxiliaryCoordinate</span></code></a>.</p></li>
+<li><p>A <a class="reference internal" href="classes/cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Units</span></code></a> object is now immutable.</p></li>
 </ul>
 </div>
 <div class="section" id="version-0-9-7-1">
@@ -965,11 +992,11 @@ e.g. 407 and 408).</li>
 <hr class="docutils" />
 <p><strong>2013-04-26</strong></p>
 <ul class="simple">
-<li>Fixed endian bug in CFA-netCDF files referring to PP files</li>
-<li>Changed default output format to NETCDF3_CLASSIC and trap error when
+<li><p>Fixed endian bug in CFA-netCDF files referring to PP files</p></li>
+<li><p>Changed default output format to NETCDF3_CLASSIC and trap error when
 when writing unsigned integer types and the 64-bit integer type to
-file formats other than NETCDF4.</li>
-<li>Changed unhelpful history created when aggregating</li>
+file formats other than NETCDF4.</p></li>
+<li><p>Changed unhelpful history created when aggregating</p></li>
 </ul>
 </div>
 <div class="section" id="version-0-9-7">
@@ -977,15 +1004,15 @@ file formats other than NETCDF4.</li>
 <hr class="docutils" />
 <p><strong>2013-04-24</strong></p>
 <ul class="simple">
-<li>Read and write CFA-netCDF files</li>
-<li><a class="reference internal" href="classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a> creation interface</li>
-<li>New command line utilities: <code class="docutils literal notranslate"><span class="pre">cfa</span></code>, <code class="docutils literal notranslate"><span class="pre">cfdump</span></code></li>
-<li>Redesigned repr, str and dump() output (which is shared with <code class="docutils literal notranslate"><span class="pre">cfa</span></code>
-and <code class="docutils literal notranslate"><span class="pre">cfdump</span></code>)</li>
-<li>Removed superseded (by <code class="docutils literal notranslate"><span class="pre">cfa</span></code>) command line utilities <code class="docutils literal notranslate"><span class="pre">pp2cf</span></code>,
-<code class="docutils literal notranslate"><span class="pre">cf2cf</span></code></li>
-<li>Renamed the ‘subset’ method to ‘select’</li>
-<li>Now needs netCDF4-python 0.9.7 or later (and numpy 1.6 or later)</li>
+<li><p>Read and write CFA-netCDF files</p></li>
+<li><p><a class="reference internal" href="classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a> creation interface</p></li>
+<li><p>New command line utilities: <code class="docutils literal notranslate"><span class="pre">cfa</span></code>, <code class="docutils literal notranslate"><span class="pre">cfdump</span></code></p></li>
+<li><p>Redesigned repr, str and dump() output (which is shared with <code class="docutils literal notranslate"><span class="pre">cfa</span></code>
+and <code class="docutils literal notranslate"><span class="pre">cfdump</span></code>)</p></li>
+<li><p>Removed superseded (by <code class="docutils literal notranslate"><span class="pre">cfa</span></code>) command line utilities <code class="docutils literal notranslate"><span class="pre">pp2cf</span></code>,
+<code class="docutils literal notranslate"><span class="pre">cf2cf</span></code></p></li>
+<li><p>Renamed the ‘subset’ method to ‘select’</p></li>
+<li><p>Now needs netCDF4-python 0.9.7 or later (and numpy 1.6 or later)</p></li>
 </ul>
 </div>
 <div class="section" id="version-0-9-6-2">
@@ -993,8 +1020,8 @@ and <code class="docutils literal notranslate"><span class="pre">cfdump</span></
 <hr class="docutils" />
 <p><strong>2013-03-27</strong></p>
 <ul class="simple">
-<li>Fixed bug in <code class="docutils literal notranslate"><span class="pre">cf/pp.py</span></code> which caused the creation of incorrect
-latitude coordinate arrays.</li>
+<li><p>Fixed bug in <code class="docutils literal notranslate"><span class="pre">cf/pp.py</span></code> which caused the creation of incorrect
+latitude coordinate arrays.</p></li>
 </ul>
 </div>
 <div class="section" id="version-0-9-6-1">
@@ -1002,8 +1029,8 @@ latitude coordinate arrays.</li>
 <hr class="docutils" />
 <p><strong>2013-02-20</strong></p>
 <ul class="simple">
-<li>Fixed bug in <code class="docutils literal notranslate"><span class="pre">cf/netcdf.py</span></code> which caused a failure when a file
-with badly formatted units was encountered.</li>
+<li><p>Fixed bug in <code class="docutils literal notranslate"><span class="pre">cf/netcdf.py</span></code> which caused a failure when a file
+with badly formatted units was encountered.</p></li>
 </ul>
 </div>
 <div class="section" id="version-0-9-6">
@@ -1011,16 +1038,16 @@ with badly formatted units was encountered.</li>
 <hr class="docutils" />
 <p><strong>2012-11-27</strong></p>
 <ul class="simple">
-<li>Assignment to a field’s data array with metadata-aware broadcasting,
+<li><p>Assignment to a field’s data array with metadata-aware broadcasting,
 assigning to subspaces, assignment where data meets conditions,
-assignment to unmasked elements, etc. (setitem method)</li>
-<li>Proper treatment of the missing data mask, including metadata-aware
-assignment (setmask method)</li>
-<li>Proper treatment of ancillary data.</li>
-<li>Ancillary data and transforms are subspaced with their parent field.</li>
-<li>Much faster aggregation algorithm (with thanks to Jonathan
+assignment to unmasked elements, etc. (setitem method)</p></li>
+<li><p>Proper treatment of the missing data mask, including metadata-aware
+assignment (setmask method)</p></li>
+<li><p>Proper treatment of ancillary data.</p></li>
+<li><p>Ancillary data and transforms are subspaced with their parent field.</p></li>
+<li><p>Much faster aggregation algorithm (with thanks to Jonathan
 Gregory). Also aggregates fields transforms, ancillary variables and
-flags.</li>
+flags.</p></li>
 </ul>
 </div>
 <div class="section" id="version-0-9-5">
@@ -1028,17 +1055,17 @@ flags.</li>
 <hr class="docutils" />
 <p><strong>2012-10-01</strong></p>
 <ul class="simple">
-<li>Restructured documentation and package code files.</li>
-<li>Large Amounts of Massive Arrays (LAMA) functionality.</li>
-<li>Metadata-aware field manipulation and combination with
-metadata-aware broadcasting.</li>
-<li>Better treatment of cell measures.</li>
-<li>Slightly faster aggregation algorithm (a much improved one is in
-development).</li>
-<li>API changes for clarity.</li>
-<li>Bug fixes.</li>
-<li>Added ‘TEMPDIR’ to the <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.CONSTANTS</span></code> dictionary</li>
-<li>This is a snapshot of the trunk at revision r195.</li>
+<li><p>Restructured documentation and package code files.</p></li>
+<li><p>Large Amounts of Massive Arrays (LAMA) functionality.</p></li>
+<li><p>Metadata-aware field manipulation and combination with
+metadata-aware broadcasting.</p></li>
+<li><p>Better treatment of cell measures.</p></li>
+<li><p>Slightly faster aggregation algorithm (a much improved one is in
+development).</p></li>
+<li><p>API changes for clarity.</p></li>
+<li><p>Bug fixes.</p></li>
+<li><p>Added ‘TEMPDIR’ to the <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.CONSTANTS</span></code> dictionary</p></li>
+<li><p>This is a snapshot of the trunk at revision r195.</p></li>
 </ul>
 </div>
 <div class="section" id="version-0-9-5-dev">
@@ -1046,10 +1073,10 @@ development).</li>
 <hr class="docutils" />
 <p><strong>2012-09-19</strong></p>
 <ul class="simple">
-<li>Loads of exciting improvements - mainly LAMA functionality,
-metadata-aware field manipulation and documentation.</li>
-<li>This is a snapshot of the trunk at revision r185. A proper vn0.9.5
-release is imminent.</li>
+<li><p>Loads of exciting improvements - mainly LAMA functionality,
+metadata-aware field manipulation and documentation.</p></li>
+<li><p>This is a snapshot of the trunk at revision r185. A proper vn0.9.5
+release is imminent.</p></li>
 </ul>
 </div>
 <div class="section" id="version-0-9-4-2">
@@ -1057,7 +1084,7 @@ release is imminent.</li>
 <hr class="docutils" />
 <p><strong>2012-04-17</strong></p>
 <ul class="simple">
-<li>General bug fixes and code restructure</li>
+<li><p>General bug fixes and code restructure</p></li>
 </ul>
 </div>
 <div class="section" id="version-0-9-4">
@@ -1065,9 +1092,9 @@ release is imminent.</li>
 <hr class="docutils" />
 <p><strong>2012-03-15</strong></p>
 <ul class="simple">
-<li>A proper treatment of units using the Udunits C library and the
-extra time functionality provided by the netCDF4 package.</li>
-<li>A command line script to do CF-netCDF to CF-netCDF via cf-python.</li>
+<li><p>A proper treatment of units using the Udunits C library and the
+extra time functionality provided by the netCDF4 package.</p></li>
+<li><p>A command line script to do CF-netCDF to CF-netCDF via cf-python.</p></li>
 </ul>
 </div>
 <div class="section" id="version-0-9-3-3">
@@ -1075,19 +1102,19 @@ extra time functionality provided by the netCDF4 package.</li>
 <hr class="docutils" />
 <p><strong>2018-02-08</strong></p>
 <ul class="simple">
-<li>Objects renamed in line with the CF data model: <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Space</span></code> becomes
-<a class="reference internal" href="classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Grid</span></code> becomes <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Space</span></code>.</li>
-<li>Field aggregation using the CF aggregation rules is available when
+<li><p>Objects renamed in line with the CF data model: <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Space</span></code> becomes
+<a class="reference internal" href="classes/cf.Field.html#cf.Field" title="cf.Field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field</span></code></a> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Grid</span></code> becomes <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Space</span></code>.</p></li>
+<li><p>Field aggregation using the CF aggregation rules is available when
 reading fields from disk and on fields in memory. The data of a
 field resulting from aggregation are stored as a collection of the
 data from the component fields and so, as before, may be file
-pointers, arrays in memory or a mixture of these two forms.</li>
-<li>Units, missing data flags, dimension order, dimension direction and
+pointers, arrays in memory or a mixture of these two forms.</p></li>
+<li><p>Units, missing data flags, dimension order, dimension direction and
 packing flags may all be different between data components and are
-conformed at the time of data access.</li>
-<li>Files in UK Met Office PP format may now be read into CF fields.</li>
-<li>A command line script for PP to CF-netCDF file conversion is
-provided.</li>
+conformed at the time of data access.</p></li>
+<li><p>Files in UK Met Office PP format may now be read into CF fields.</p></li>
+<li><p>A command line script for PP to CF-netCDF file conversion is
+provided.</p></li>
 </ul>
 </div>
 <div class="section" id="version-0-9-3">
@@ -1095,14 +1122,14 @@ provided.</li>
 <hr class="docutils" />
 <p><strong>2012-01-05</strong></p>
 <ul class="simple">
-<li>A more consistent treatment of spaces and lists of spaces
-(<code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Space</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.SpaceList</span></code> objects respectively).</li>
-<li>A corrected treatment of scalar or 1-d, size 1 dimensions in the
-space and its grid.</li>
-<li>Data stored in <a class="reference internal" href="classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> objects which contain metadata need to
+<li><p>A more consistent treatment of spaces and lists of spaces
+(<code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Space</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.SpaceList</span></code> objects respectively).</p></li>
+<li><p>A corrected treatment of scalar or 1-d, size 1 dimensions in the
+space and its grid.</p></li>
+<li><p>Data stored in <a class="reference internal" href="classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data</span></code></a> objects which contain metadata need to
 correctly interpret and manipulate the data. This will be
 particularly useful when data arrays spanning many files/arrays is
-implemented.</li>
+implemented.</p></li>
 </ul>
 </div>
 <div class="section" id="version-0-9-2">
@@ -1110,12 +1137,12 @@ implemented.</li>
 <hr class="docutils" />
 <p><strong>2011-08-26</strong></p>
 <ul class="simple">
-<li>Created a <code class="docutils literal notranslate"><span class="pre">setup.py</span></code> script for easier installation (with thanks
-to Jeff Whitaker).</li>
-<li>Added support for reading OPeNDAP-hosted datasets given by URLs.</li>
-<li>Restructured the documentation.</li>
-<li>Created a test directory with scripts and sample output.</li>
-<li>No longer fails for unknown calendar types (such as <code class="docutils literal notranslate"><span class="pre">'360d'</span></code>).</li>
+<li><p>Created a <code class="docutils literal notranslate"><span class="pre">setup.py</span></code> script for easier installation (with thanks
+to Jeff Whitaker).</p></li>
+<li><p>Added support for reading OPeNDAP-hosted datasets given by URLs.</p></li>
+<li><p>Restructured the documentation.</p></li>
+<li><p>Created a test directory with scripts and sample output.</p></li>
+<li><p>No longer fails for unknown calendar types (such as <code class="docutils literal notranslate"><span class="pre">'360d'</span></code>).</p></li>
 </ul>
 </div>
 <div class="section" id="version-0-9-1">
@@ -1123,7 +1150,7 @@ to Jeff Whitaker).</li>
 <hr class="docutils" />
 <p><strong>2011-08-06</strong></p>
 <ul class="simple">
-<li>First release.</li>
+<li><p>First release.</p></li>
 </ul>
 </div>
 </div>
@@ -1136,10 +1163,10 @@ to Jeff Whitaker).</li>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2019, David Hassell.
+      &copy;2020, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.0.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

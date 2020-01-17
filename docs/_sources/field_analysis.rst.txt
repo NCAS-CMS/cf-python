@@ -17,8 +17,7 @@ By default all axes with size greater than 1 are collapsed completely
 <Collapse-methods>`.
 
 .. code-block:: python
-   :caption: *Find the minimum of the entire data.The file
-             timeseries.nc is found in the zip file of sample files):*
+   :caption: *Find the minimum of the entire data.*
 
    >>> a = cf.read('timeseries.nc')[0]
    >>> print(a)
@@ -367,9 +366,10 @@ Method                        Description                   Weighted
                               a given number of degrees of
                               freedom.
                                   
-``'standard_deviation'``      The square root of the        May be
-                              weighted or unweighted
-                              variance.
+``'standard_deviation'``      The weighted or unweighted    May be
+                              standard deviation of the
+			      values with a given number
+			      of degrees of freedom.
                               
 ``'root_mean_square'``        The square root of the        May be
                               weighted or unweighted mean
@@ -471,7 +471,40 @@ Specifying weighting by horizontal cell area may also use the special
                    : longitude(1) = [180.0] degrees_east
                    : air_pressure(1) = [850.0] hPa
 
-See the `~Field.weights` method for full details on how weights may be specified.
+An alternative technique for specifying weights is to set the
+*weights* keyword to the output of a call to the `~Field.weights`
+method; or set the *weights* keyword to `True`. The latter case is
+equivalent to specifying, by their identities, the axes being
+collapsed, and will raise an exception if weights can't be calculated
+for all collapse axes of size greater than 1.
+		   
+.. code-block:: python
+   :caption: *Alternative syntax for specifying weights.*
+ 	     
+   >>> b = a.collapse('area: mean', weights=a.weights('area'))
+   >>> print(b)
+   Field: air_potential_temperature (ncvar%air_potential_temperature)
+   ------------------------------------------------------------------
+   Data            : air_potential_temperature(time(120), latitude(1), longitude(1)) K
+   Cell methods    : area: mean area: mean
+   Dimension coords: time(120) = [1959-12-16 12:00:00, ..., 1969-11-16 00:00:00]
+                   : latitude(1) = [0.0] degrees_north
+                   : longitude(1) = [180.0] degrees_east
+                   : air_pressure(1) = [850.0] hPa
+   >>> b = a.collapse('area: mean', weights=True)
+   >>> print(b)
+   Field: air_potential_temperature (ncvar%air_potential_temperature)
+   ------------------------------------------------------------------
+   Data            : air_potential_temperature(time(120), latitude(1), longitude(1)) K
+   Cell methods    : area: mean area: mean
+   Dimension coords: time(120) = [1959-12-16 12:00:00, ..., 1969-11-16 00:00:00]
+                   : latitude(1) = [0.0] degrees_north
+                   : longitude(1) = [180.0] degrees_east
+                   : air_pressure(1) = [850.0] hPa
+
+
+See the `~Field.weights` method for full details on how weights may be
+specified.
 
 .. _Multiple-collapses:
 
@@ -533,9 +566,9 @@ groups. Groups can be defined in a variety of ways, including with
 `cf.Query`, `cf.TimeDuration` (see the :ref:`Time-duration` section)
 and `cf.Data` instances.
 
-Not every element of the collapse axis needs to be in group. Elements
-that are not selected by the *group* keyword are excluded from the
-result.
+An element of the collapse axis can not be a member of more than one
+group, and may be a member of no groups. Elements that are not
+selected by the *group* keyword are excluded from the result.
 
 .. code-block:: python
    :caption: *Create annual maxima from a time series, defining a year
@@ -620,10 +653,11 @@ result.
                    : longitude(2) = [90.0, 270.0] degrees_east
                    : air_pressure(1) = [850.0] hPa
 
-Groups can be further described with the *group_span* (to ignore
-groups whose actual span is less than a given value) and
-*group_contiguous* (to ignore non-contiguous groups, or any contiguous
-group containing overlapping cells) keywords of `~Field.collapse`.
+Groups can be further described with the *group_span* (to include
+groups whose actual span is not equal to a given value) and the
+*group_contiguous* (to include non-contiguous groups, or any
+contiguous group containing overlapping cells) keywords of
+`~Field.collapse`.
 
 
 .. _Climatological-statistics:
@@ -922,6 +956,45 @@ indices to the bins that each value of one of the variables belongs.
     [0.1174 0.1317]
     [0.1317 0.146 ]]
 
+
+.. code-block:: python
+   :caption: *Create a two-dimensional histogram based on specific
+             humidity and temperature bins. The temperature bins in
+             this example are derived from a dummy temperature field
+             construct with the same shape as the specific humidity
+             field construct already in use.*
+
+   >>> g = q.copy()
+   >>> g.standard_name = 'air_temperature'
+   >>> import numpy
+   >>> g[...] = numpy.random.normal(loc=290, scale=10, size=40).reshape(5, 8)
+   >>> g.override_units('K', inplace=True)
+   >>> print(g)
+   Field: air_temperature (ncvar%q)
+   --------------------------------
+   Data            : air_temperature(latitude(5), longitude(8)) K
+   Cell methods    : area: mean
+   Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                   : longitude(8) = [22.5, ..., 337.5] degrees_east
+                   : time(1) = [2019-01-01 00:00:00]
+   >>> indices_t = g.digitize(5)
+   >>> h = cf.histogram(indices, indices_t)
+   >>> print(h)
+   Field: number_of_observations
+   -----------------------------
+   Data            : number_of_observations(air_temperature(5), specific_humidity(10)) 1
+   Cell methods    : latitude: longitude: point
+   Dimension coords: air_temperature(5) = [281.1054839143287, ..., 313.9741786365939] K
+                   : specific_humidity(10) = [0.01015, ..., 0.13885] 1
+   >>> print(h.array)
+   [[2  1  5  3  2 -- -- -- -- --]
+    [1  1  2 --  1 --  1  1 -- --]
+    [4  4  2  1  1  1 -- --  1  1]
+    [1  1 -- --  1 -- -- --  1 --]
+    [1 -- -- -- -- -- -- -- -- --]]
+   >>> h.sum()
+   <CF Data(): 40 1>
+
 .. _Binning-operations:
 
 Binning operations
@@ -1149,6 +1222,11 @@ spans the regridding dimensions are also regridded, but :ref:`field
 ancillary constructs <field-ancillaries>` whose data spans the
 regridding dimensions are removed from the regridded field construct.
 
+.. _Regridding-methods:
+
+Regridding methods
+^^^^^^^^^^^^^^^^^^
+
 The following regridding methods are available (in this table,
 "source" and "destination" refer to the domain of the field construct
 being regridded, and the domain that it is being regridded to,
@@ -1167,7 +1245,7 @@ Trilinear                 Three dimensional variant of linear
                           interpolation (only available to
                           `Cartesian-regridding`_).
 			  
-First order conservative  Preserve the integral of the data across
+First order conservative  Preserve the are integral of the data across
                           the interpolation from source to
                           destination. It uses the proportion of the
                           area of the overlapping source and
@@ -1230,15 +1308,12 @@ Spherical source domain         Spherical destination domain
 `Tripolar`_                     `Tripolar`_
 ==============================  ==============================
 
-
 The most convenient usage is for the destination domain to be exist
 in another field construct. In this case, the regridding command is
 very simple:
 
 .. code-block:: python
-   :caption: *TODO. The files air_temperature.nc and
-             precipitation_flux.nc are found in the zip file of
-             sample files.*
+   :caption: *TODO.*
 
    >>> a = cf.read('air_temperature.nc')[0]
    >>> b = cf.read('precipitation_flux.nc')[0]
@@ -1703,19 +1778,41 @@ result, which also has no units.
 Arithmetical and relational operations with insufficient metadata
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If both operands of an :ref:`arithmetical <Arithmetical-operations>`
+When both operands of an :ref:`arithmetical <Arithmetical-operations>`
 or :ref:`relational <Relational-operations>` operation are field
-constructs with insufficient metadata to create a mapping of physically
-compatible dimensions, there are various techniques that allow the
-operation to proceed.
+constructs then the creation of the mapping of physically compatible
+dimensions relies on there being sufficient metadata. By default, the
+mapping relies on their being "strict" identities for the metadata
+constucts with multi-valued data. The strict identity is restricted
+`!standard_name` property (or `!id` attribute), and may be returned by
+the `!identity` method of a construct:
+
+
+.. code-block:: python
+  :caption: *Find the "strict" identity of a construct.*
+
+   >>> y = q.coordinate('Y')
+   >>> y.identity(strict=True)
+   'latitude'
+   >>> del y.standard_name
+   >>> y.identity(strict=True)
+   ''
+
+If there is insufficient metadata to create a mapping of physically
+compatible dimensions, then there are various techniques that allow
+the operation to proceed:
 
 * **Option 1:** The operation may applied to the field constructs'
-  data instead. See below for more details.
+  data instances instead. See below for more details.
 
 * **Option 2:** If the mapping is not possible due to the absence of
   `!standard_name` properties (or `!id` attributes) on metadata
   constructs that are known to correspond, then setting "relaxed
-  identities" with the `cf.RELAXED_IDENTITIES` function may help.
+  identities" with the `cf.RELAXED_IDENTITIES` function may
+  help. Setting relaxed identities to `True` allows the `!long_name`
+  property and netCDF variable name (see the :ref:`netCDF interface
+  <NetCDF-interface>`), to also be considered when identifying
+  constructs.
 
 * **Option 3:** Add more metadata to the field and metadata constructs.
 
@@ -1723,7 +1820,9 @@ For **Option 1** the resulting data may then be inserted into a copy
 of one of the field constructs, either with the `~cf.Field.set_data`
 method of the field construct, or with :ref:`indexed assignment
 <Assignment-by-index>`. The former technique is faster and more memory
-efficient, but the latter technique allows broadcasting.
+efficient, but the latter technique allows
+broadcasting. Alternatively, for augmented assignments, the field
+construct data may be changed in-place.
 
 Note that it is assumed, and not checked, that the dimensions of both
 `~cf.Data` instance operands are already in the correct order for
@@ -1736,22 +1835,19 @@ physically meaningful broadcasting to occur.
    >>> t.min()
    <CF Data(): 260.0 K>
    >>> u = t.copy()
-   >>> new_data = t.data + t.data
+   >>> new_data = t.data - t.data
    >>> u.set_data(new_data)
    >>> u       
    <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>
    >>> u.min()
-   <CF Data(): 520.0 K>
+   <CF Data(): 0.0 K>
 
 .. code-block:: python
   :caption: *Update the data with indexed assignment*
 
    >>> u[...] = new_data
    >>> u.min()
-   <CF Data(): 520.0 K>
-
-For augmented assignments, the field construct data may be changed
-in-place.
+   <CF Data(): 0.0 K>
    
 .. code-block:: python
   :caption: *An example of augmented assignment involving the data of
@@ -1765,9 +1861,22 @@ Trigonometrical functions
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The field construct and metadata constructs have `~Field.cos`,
-`~Field.sin` and `~Field.tan` methods for applying trigonometrical
+`~Field.sin`, and `~Field.tan` methods for applying trigonometrical
 functions element-wise to the data, preserving the metadata but
 changing the construct's units.
+
+The field construct and metadata constructs the following
+trigonometrical methods:
+
+===============  ========================================================
+Method           Description
+===============  ========================================================
+`~Field.arctan`  Take the trigonometric inverse tangent of the data
+                 element-wise.
+`~Field.cos`     Take the trigonometric tangent of the data element-wise.
+`~Field.sin`     Take the trigonometric tangent of the data element-wise.
+`~Field.tan`     Take the trigonometric tangent of the data element-wise.
+===============  ========================================================
 
 .. code-block:: python
    :caption: *Find the sine of each latitude coordinate value.*

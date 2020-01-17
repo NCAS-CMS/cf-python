@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>cf.Field.coordinate_reference &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -32,7 +30,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.6</a></b></h3>
+<h3><b><a href="../index.html">cf 3.1.0</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -73,8 +71,6 @@
     <form class="search" action="../search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -91,29 +87,29 @@
 <h1>cf.Field.coordinate_reference<a class="headerlink" href="#cf-field-coordinate-reference" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.coordinate_reference">
-<code class="descclassname">Field.</code><code class="descname">coordinate_reference</code><span class="sig-paren">(</span><em>identity</em>, <em>default=ValueError()</em>, <em>key=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.6/cf/field.py#L13535"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.coordinate_reference" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">coordinate_reference</code><span class="sig-paren">(</span><em>identity=None</em>, <em>default=ValueError()</em>, <em>key=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.1.0/cf/field.py#L13964"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.coordinate_reference" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a coordinate reference construct, or its key.</p>
 <div class="versionadded">
-<p><span class="versionmodified">New in version 3.0.0.</span></p>
+<p><span class="versionmodified added">New in version 3.0.0.</span></p>
 </div>
 <div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="cf.Field.construct.html#cf.Field.construct" title="cf.Field.construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct</span></code></a>, <a class="reference internal" href="cf.Field.auxiliary_coordinate.html#cf.Field.auxiliary_coordinate" title="cf.Field.auxiliary_coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">auxiliary_coordinate</span></code></a>, <a class="reference internal" href="cf.Field.cell_measure.html#cf.Field.cell_measure" title="cf.Field.cell_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cell_measure</span></code></a>,
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="cf.Field.construct.html#cf.Field.construct" title="cf.Field.construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct</span></code></a>, <a class="reference internal" href="cf.Field.auxiliary_coordinate.html#cf.Field.auxiliary_coordinate" title="cf.Field.auxiliary_coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">auxiliary_coordinate</span></code></a>, <a class="reference internal" href="cf.Field.cell_measure.html#cf.Field.cell_measure" title="cf.Field.cell_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cell_measure</span></code></a>,
 <a class="reference internal" href="cf.Field.cell_method.html#cf.Field.cell_method" title="cf.Field.cell_method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cell_method</span></code></a>, <a class="reference internal" href="cf.Field.coordinate.html#cf.Field.coordinate" title="cf.Field.coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinate</span></code></a>, <a class="reference internal" href="../attribute/cf.Field.coordinate_references.html#cf.Field.coordinate_references" title="cf.Field.coordinate_references"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinate_references</span></code></a>,
 <a class="reference internal" href="cf.Field.dimension_coordinate.html#cf.Field.dimension_coordinate" title="cf.Field.dimension_coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dimension_coordinate</span></code></a>, <a class="reference internal" href="cf.Field.domain_ancillary.html#cf.Field.domain_ancillary" title="cf.Field.domain_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_ancillary</span></code></a>,
 <a class="reference internal" href="cf.Field.domain_axis.html#cf.Field.domain_axis" title="cf.Field.domain_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axis</span></code></a>, <a class="reference internal" href="cf.Field.field_ancillary.html#cf.Field.field_ancillary" title="cf.Field.field_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">field_ancillary</span></code></a></p>
 </div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>identity:</dt>
-<dd><p class="first">Select the coordinate reference construct by one of:</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt>identity: optional</dt><dd><p>Select the coordinate reference construct by one of:</p>
 <blockquote>
 <div><ul class="simple">
-<li>The identity or key of a coordinate reference
-construct.</li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>. This is the default, which selects the
+coordinate reference construct when there is only one
+of them.</p></li>
+<li><p>The identity or key of a coordinate reference
+construct.</p></li>
 </ul>
 </div></blockquote>
 <p>A construct identity is specified by a string
@@ -145,48 +141,37 @@ prefix. For example <code class="docutils literal notranslate"><span class="pre"
 method, a construct is always described by one of its
 identities, and so this description may always be used as
 an <em>identity</em> argument.</p>
-<dl class="last docutils">
-<dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">identity='standard_name:atmosphere_hybrid_height_coordinate'</span></code></p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">identity='standard_name:atmosphere_hybrid_height_coordinate'</span></code></p>
 </dd>
-<dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">identity='grid_mapping_name:rotated_latitude_longitude'</span></code></p>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">identity='grid_mapping_name:rotated_latitude_longitude'</span></code></p>
 </dd>
-<dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">identity='transverse_mercator'</span></code></p>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">identity='transverse_mercator'</span></code></p>
 </dd>
-<dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">identity='coordinatereference1'</span></code></p>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">identity='coordinatereference1'</span></code></p>
 </dd>
-<dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">identity='key%coordinatereference1'</span></code></p>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">identity='key%coordinatereference1'</span></code></p>
 </dd>
-<dt><em>Parameter example:</em></dt>
-<dd><p class="first last"><code class="docutils literal notranslate"><span class="pre">identity='ncvar%lat_lon'</span></code></p>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">identity='ncvar%lat_lon'</span></code></p>
 </dd>
 </dl>
 </dd>
-<dt>key: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If True then return the selected construct key. By
+<dt>key: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then return the selected construct key. By
 default the construct itself is returned.</p>
 </dd>
-<dt>default: optional</dt>
-<dd><p class="first last">Return the value of the <em>default</em> parameter if a construct
+<dt>default: optional</dt><dd><p>Return the value of the <em>default</em> parameter if a construct
 can not be found. If set to an <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code></a> instance then
 it will be raised instead.</p>
 </dd>
 </dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><a class="reference internal" href="../classes/cf.CoordinateReference.html#cf.CoordinateReference" title="cf.CoordinateReference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CoordinateReference</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt>
-<dd><p class="first last">The selected coordinate reference construct, or its key.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference internal" href="../classes/cf.CoordinateReference.html#cf.CoordinateReference" title="cf.CoordinateReference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CoordinateReference</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The selected coordinate reference construct, or its key.</p>
 </dd>
 </dl>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <p><strong>Examples:</strong></p>
 <p>TODO</p>
 </dd></dl>
@@ -201,10 +186,10 @@ it will be raised instead.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2019, David Hassell.
+      &copy;2020, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.0.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

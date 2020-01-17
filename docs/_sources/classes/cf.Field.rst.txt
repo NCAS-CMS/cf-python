@@ -47,13 +47,13 @@ Selection
    :toctree: ../method/
    :template: method.rst
 
-   ~cf.Field.match_by_construct
    ~cf.Field.match_by_identity
    ~cf.Field.match_by_naxes
    ~cf.Field.match_by_ncvar
    ~cf.Field.match_by_property
    ~cf.Field.match_by_rank
    ~cf.Field.match_by_units
+   ~cf.Field.match_by_construct
  
 .. _Field-Properties:
 
@@ -407,16 +407,22 @@ Mathematical operations
 
 .. http://docs.scipy.org/doc/numpy/reference/routines.math.html
 
-.. rubric:: Trigonometrical functions
+.. rubric:: Trigonometrical and hyperbolic functions
 
 .. autosummary::
    :nosignatures:
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.Field.arcsinh
+   ~cf.Field.arctan
    ~cf.Field.cos
+   ~cf.Field.cosh
    ~cf.Field.sin
+   ~cf.Field.sinh
    ~cf.Field.tan
+   ~cf.Field.tanh
+
 
 .. rubric:: Rounding and truncation
 

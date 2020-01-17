@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>cf.Field.creation_commands &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -32,7 +30,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.6</a></b></h3>
+<h3><b><a href="../index.html">cf 3.1.0</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -73,8 +71,6 @@
     <form class="search" action="../search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -91,7 +87,7 @@
 <h1>cf.Field.creation_commands<a class="headerlink" href="#cf-field-creation-commands" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.creation_commands">
-<code class="descclassname">Field.</code><code class="descname">creation_commands</code><span class="sig-paren">(</span><em>representative_data=False</em>, <em>namespace='cf'</em>, <em>indent=0</em>, <em>string=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.6/cf/field.py#L11759"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.creation_commands" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">creation_commands</code><span class="sig-paren">(</span><em>representative_data=False</em>, <em>namespace='cf'</em>, <em>indent=0</em>, <em>string=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.1.0/cf/field.py#L12167"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.creation_commands" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the commands that would create the field construct.</p>
 <p><strong>Construct keys</strong></p>
 <p>The <em>key</em> parameter of the output <a class="reference internal" href="cf.Field.set_construct.html#cf.Field.set_construct" title="cf.Field.set_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_construct</span></code></a> commands is
@@ -102,60 +98,49 @@ usually not necessary when building field constructs, as by
 default the <a class="reference internal" href="cf.Field.set_construct.html#cf.Field.set_construct" title="cf.Field.set_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_construct</span></code></a> method returns a unique construct key
 for the construct being set.</p>
 <div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="cf.Field.set_construct.html#cf.Field.set_construct" title="cf.Field.set_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_construct</span></code></a>, <a class="reference internal" href="cf.Data.creation_commands.html#cf.Data.creation_commands" title="cf.Data.creation_commands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.creation_commands</span></code></a>,
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="cf.Field.set_construct.html#cf.Field.set_construct" title="cf.Field.set_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_construct</span></code></a>, <a class="reference internal" href="cf.Data.creation_commands.html#cf.Data.creation_commands" title="cf.Data.creation_commands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.creation_commands</span></code></a>,
 <a class="reference internal" href="../function/cf.example_field.html#cf.example_field" title="cf.example_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.example_field</span></code></a></p>
 </div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>representative_data: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">Return one-line representations of <a class="reference internal" href="../classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instances, which
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt>representative_data: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Return one-line representations of <a class="reference internal" href="../classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> instances, which
 are not executable code but prevent the data being
 converted in its entirety to a string representation.</p>
 </dd>
-<dt>namespace: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt>
-<dd><p class="first">The namespace containing classes of the <code class="docutils literal notranslate"><span class="pre">cf</span></code>
+<dt>namespace: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The namespace containing classes of the <code class="docutils literal notranslate"><span class="pre">cf</span></code>
 package. This is prefixed to the class name in commands
 that instantiate instances of <code class="docutils literal notranslate"><span class="pre">cf</span></code> objects. By default,
 <em>namespace</em> is <code class="docutils literal notranslate"><span class="pre">'cf'</span></code>, i.e. it is assumed that <code class="docutils literal notranslate"><span class="pre">cf</span></code>
 was imported as <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">cf</span></code>.</p>
-<dl class="last docutils">
-<dt><em>Parameter example:</em></dt>
-<dd><p class="first last">If <code class="docutils literal notranslate"><span class="pre">cf</span></code> was imported as <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">cf</span> <span class="pre">as</span> <span class="pre">cfp</span></code> then set
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p>If <code class="docutils literal notranslate"><span class="pre">cf</span></code> was imported as <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">cf</span> <span class="pre">as</span> <span class="pre">cfp</span></code> then set
 <code class="docutils literal notranslate"><span class="pre">namespace='cfp'</span></code></p>
 </dd>
-<dt><em>Parameter example:</em></dt>
-<dd><p class="first last">If <code class="docutils literal notranslate"><span class="pre">cf</span></code> was imported as <code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">cf</span> <span class="pre">import</span> <span class="pre">*</span></code> then set
+<dt><em>Parameter example:</em></dt><dd><p>If <code class="docutils literal notranslate"><span class="pre">cf</span></code> was imported as <code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">cf</span> <span class="pre">import</span> <span class="pre">*</span></code> then set
 <code class="docutils literal notranslate"><span class="pre">namespace=''</span></code></p>
 </dd>
 </dl>
 </dd>
-<dt>indent: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt>
-<dd><p class="first last">Indent each line by this many spaces. By default no
+<dt>indent: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>Indent each line by this many spaces. By default no
 indentation is applied. Ignored if <em>string</em> is False.</p>
 </dd>
-<dt>string: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If False then return each command as an element of a
-<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>. By default the the commands are concatenated into
+<dt>string: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then return each command as an element of a
+<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>. By default the commands are concatenated into
 a string, with a new line inserted between each command.</p>
 </dd>
 </dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a></dt>
-<dd><p class="first last">The commands in a string, with a new line inserted between
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a></dt><dd><p>The commands in a string, with a new line inserted between
 each command. If <em>string</em> is False then the separate
 commands are returned as each element of a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>.</p>
 </dd>
 </dl>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <p><strong>Examples:</strong></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">example_field</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
@@ -312,10 +297,10 @@ commands are returned as each element of a <a class="reference external" href="h
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2019, David Hassell.
+      &copy;2020, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.0.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

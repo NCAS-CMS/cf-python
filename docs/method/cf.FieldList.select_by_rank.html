@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>cf.FieldList.select_by_rank &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -32,7 +30,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.6</a></b></h3>
+<h3><b><a href="../index.html">cf 3.1.0</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -73,8 +71,6 @@
     <form class="search" action="../search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -91,8 +87,46 @@
 <h1>cf.FieldList.select_by_rank<a class="headerlink" href="#cf-fieldlist-select-by-rank" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.FieldList.select_by_rank">
-<code class="descclassname">FieldList.</code><code class="descname">select_by_rank</code><span class="sig-paren">(</span><em>*ranks</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.6/cf/fieldlist.py#L807"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.FieldList.select_by_rank" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO</p>
+<code class="descclassname">FieldList.</code><code class="descname">select_by_rank</code><span class="sig-paren">(</span><em>*ranks</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.1.0/cf/fieldlist.py#L961"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.FieldList.select_by_rank" title="Permalink to this definition">¶</a></dt>
+<dd><p>Select field constructs by the number of domain axis constructs.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.0.0.</span></p>
+</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt>ranks: optional</dt><dd><p>Define conditions on the number of domain axis constructs.</p>
+<p>A condition is one of:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a></p></li>
+<li><p>a <a class="reference internal" href="../classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object</p></li>
+</ul>
+</div></blockquote>
+<p>The condition is satisfied if the number of domain axis
+constructs equals the condition value.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p>To see if the field construct has 4 domain axis
+constructs: <code class="docutils literal notranslate"><span class="pre">4</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p>To see if the field construct has at least 3 domain axis
+constructs: <code class="docutils literal notranslate"><span class="pre">cf.ge(3)</span></code></p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>The matching field constructs.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples:</strong></p>
+<blockquote>
+<div><p>TODO</p>
+</div></blockquote>
 </dd></dl>
 
 </div>
@@ -105,10 +139,10 @@
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2019, David Hassell.
+      &copy;2020, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.0.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

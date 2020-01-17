@@ -188,9 +188,9 @@ Required
 * `cftime <https://pypi.org/project/cftime/>`_, version 1.0.4.2 or
   newer (note that this package is installed with netCDF4).
 
-* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.7.10 or newer.
+* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.7.11 or newer.
   
-* `cfunits <https://pypi.org/project/cfunits/>`_, version 3.2.2 or newer.
+* `cfunits <https://pypi.org/project/cfunits/>`_, version 3.2.4 or newer.
   
 * `psutil <https://pypi.org/project/psutil/>`_, version 0.6.0 or newer.
 
@@ -222,12 +222,12 @@ Optional
 
 Some further dependencies that enable further functionality are
 optional. This to facilitate cf-python being installed in restricted
-environments in which these features are not required.
+environments for which these features are not required.
 
 .. rubric:: Regridding
 
 * `ESMF <https://www.earthsystemcog.org/projects/esmpy/>`_, version
-  7.1.0r or newer. This is easily installed via conda with
+  8.0.0 or newer. This is easily installed via conda with
 
   .. code:: bash
 

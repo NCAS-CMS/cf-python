@@ -667,7 +667,7 @@ dimY.set_bounds(bounds)
 Q.set_construct(dimT)
 Q.set_construct(dimY)
 Q.set_construct(dimX)
-
+   
 Q.dump()
 
 import numpy
@@ -823,6 +823,7 @@ cell_measure = cf.CellMeasure(measure='area',
                  data=cf.Data(numpy.arange(90.).reshape(9, 10)))
 
 tas.set_construct(cell_measure)
+
 
 print(tas)
 q, t = cf.read('file.nc')
@@ -1014,6 +1015,7 @@ T.compress('contiguous',
            count_properties={'long_name': 'number of obs for this timeseries'},
            inplace=True)
 
+			
 T
 print(T.array)
 T.data.get_compression_type()
@@ -1100,7 +1102,7 @@ Y = P.set_construct(cf.DomainAxis(3))
 X = P.set_construct(cf.DomainAxis(2))
 
 # Set the data for the field
-P.set_data(cf.Data(array), axes=[T, Y, X])	
+P.set_data(cf.Data(array), axes=[T, Y, X])			      
 
 P
 print(P.data.array)
@@ -1154,6 +1156,10 @@ b = a.collapse('T: Y: mean', weights='Y')
 print(b)
 print (b.array)
 b = a.collapse('area: mean', weights='area')
+print(b)
+b = a.collapse('area: mean', weights=a.weights('area'))
+print(b)
+b = a.collapse('area: mean', weights=True)
 print(b)
 b = a.collapse('area: mean', weights='area').collapse('T: maximum')
 print(b)
@@ -1214,6 +1220,17 @@ h = cf.histogram(indices)
 print(h) 
 print(h.array)
 print(h.coordinate('specific_humidity').bounds.array)
+g = q.copy()
+g.standard_name = 'air_temperature'
+import numpy
+g[...] = numpy.random.normal(loc=290, scale=10, size=40).reshape(5, 8)
+g.override_units('K', inplace=True)
+print(g)
+indices_t = g.digitize(5)
+h = cf.histogram(indices, indices_t)
+print(h)
+print(h.array)
+h.sum()
 q, t = cf.read('file.nc')     
 print(q.array)
 indices = q.digitize(5)                                             
@@ -1324,9 +1341,13 @@ print((q >= q[0]).array)
 q.identities()
 r = q > q.mean()
 r.identities()
+y = q.coordinate('Y')
+y.identity(strict=True)
+del y.standard_name
+y.identity(strict=True)
 t.min()
 u = t.copy()
-new_data = t.data + t.data
+new_data = t.data - t.data
 u.set_data(new_data)
 u       
 u.min()

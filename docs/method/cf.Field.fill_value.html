@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>cf.Field.fill_value &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -32,7 +30,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.6</a></b></h3>
+<h3><b><a href="../index.html">cf 3.1.0</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -73,8 +71,6 @@
     <form class="search" action="../search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -91,7 +87,7 @@
 <h1>cf.Field.fill_value<a class="headerlink" href="#cf-field-fill-value" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.fill_value">
-<code class="descclassname">Field.</code><code class="descname">fill_value</code><span class="sig-paren">(</span><em>default=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.6/cf/mixin/propertiesdata.py#L3633"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.fill_value" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Field.</code><code class="descname">fill_value</code><span class="sig-paren">(</span><em>default=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.1.0/cf/mixin/propertiesdata.py#L3607"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.fill_value" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the data array missing data value.</p>
 <p>This is the value of the <a class="reference internal" href="../attribute/cf.Field.missing_value.html#cf.Field.missing_value" title="cf.Field.missing_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">missing_value</span></code></a> CF property, or if that
 is not set, the value of the <a class="reference internal" href="../attribute/cf.Field._FillValue.html#cf.Field._FillValue" title="cf.Field._FillValue"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_FillValue</span></code></a> CF property, else if
@@ -99,46 +95,40 @@ that is not set, <code class="docutils literal notranslate"><span class="pre">No
 missing data value for the array’s data type is assumed if a
 missing data value is required.</p>
 <div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="../function/cf.default_netCDF_fillvals.html#cf.default_netCDF_fillvals" title="cf.default_netCDF_fillvals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.default_netCDF_fillvals</span></code></a>, <a class="reference internal" href="../attribute/cf.Field._FillValue.html#cf.Field._FillValue" title="cf.Field._FillValue"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_FillValue</span></code></a>,
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="../function/cf.default_netCDF_fillvals.html#cf.default_netCDF_fillvals" title="cf.default_netCDF_fillvals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.default_netCDF_fillvals</span></code></a>, <a class="reference internal" href="../attribute/cf.Field._FillValue.html#cf.Field._FillValue" title="cf.Field._FillValue"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_FillValue</span></code></a>,
 <a class="reference internal" href="../attribute/cf.Field.missing_value.html#cf.Field.missing_value" title="cf.Field.missing_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">missing_value</span></code></a></p>
 </div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>default: optional</dt>
-<dd><p class="first">If the missing value is unset then return this value. By
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt>default: optional</dt><dd><p>If the missing value is unset then return this value. By
 default, <em>default</em> is <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>. If <em>default</em> is the special
 value <code class="docutils literal notranslate"><span class="pre">'netCDF'</span></code> then return the netCDF default value
 appropriate to the data array’s data type is used. These
 may be found with the <a class="reference internal" href="../function/cf.default_netCDF_fillvals.html#cf.default_netCDF_fillvals" title="cf.default_netCDF_fillvals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.default_netCDF_fillvals</span></code></a>
 function. For example:</p>
-<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">default_netCDF_fillvals</span><span class="p">()</span>
-<span class="go">{&#39;S1&#39;: &#39; &#39;,</span>
-<span class="go"> &#39;i1&#39;: -127,</span>
-<span class="go"> &#39;u1&#39;: 255,</span>
-<span class="go"> &#39;i2&#39;: -32767,</span>
-<span class="go"> &#39;u2&#39;: 65535,</span>
-<span class="go"> &#39;i4&#39;: -2147483647,</span>
-<span class="go"> &#39;u4&#39;: 4294967295,</span>
-<span class="go"> &#39;i8&#39;: -9223372036854775806,</span>
-<span class="go"> &#39;u8&#39;: 18446744073709551614,</span>
-<span class="go"> &#39;f4&#39;: 9.969209968386869e+36,</span>
-<span class="go"> &#39;f8&#39;: 9.969209968386869e+36}</span>
-</pre></div>
-</div>
+<pre class="literal-block">&gt;&gt;&gt; cf.default_netCDF_fillvals()
+{'S1': '',
+ 'i1': -127,
+ 'u1': 255,
+ 'i2': -32767,
+ 'u2': 65535,
+ 'i4': -2147483647,
+ 'u4': 4294967295,
+ 'i8': -9223372036854775806,
+ 'u8': 18446744073709551614,
+ 'f4': 9.969209968386869e+36,
+ 'f8': 9.969209968386869e+36}
+</pre>
 </dd>
 </dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The missing deata value or, if one has not been set, the
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The missing deata value or, if one has not been set, the
 value specified by <em>default</em></p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <p><strong>Examples:</strong></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">fill_value</span><span class="p">()</span>
 <span class="go">None</span>
@@ -175,10 +165,10 @@ value specified by <em>default</em></p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2019, David Hassell.
+      &copy;2020, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.0.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

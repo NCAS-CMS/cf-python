@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>cf.DomainAncillary.del_bounds &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -32,7 +30,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.6</a></b></h3>
+<h3><b><a href="../index.html">cf 3.1.0</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -73,8 +71,6 @@
     <form class="search" action="../search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -91,33 +87,28 @@
 <h1>cf.DomainAncillary.del_bounds<a class="headerlink" href="#cf-domainancillary-del-bounds" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.DomainAncillary.del_bounds">
-<code class="descclassname">DomainAncillary.</code><code class="descname">del_bounds</code><span class="sig-paren">(</span><em>default=ValueError()</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.11/cfdm/core/abstract/propertiesdatabounds.py#L192"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DomainAncillary.del_bounds" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">DomainAncillary.</code><code class="descname">del_bounds</code><span class="sig-paren">(</span><em>default=ValueError()</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.1.0/cf/../../anaconda3/envs/cf-env/lib/python3.8/site-packages/cfdm/core/abstract/propertiesdatabounds.py#L192"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DomainAncillary.del_bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove the bounds.</p>
 <div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.0.</span></p>
+<p><span class="versionmodified added">New in version 1.7.0.</span></p>
 </div>
 <div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="cf.DomainAncillary.del_data.html#cf.DomainAncillary.del_data" title="cf.DomainAncillary.del_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></a>, <a class="reference internal" href="cf.DomainAncillary.get_bounds.html#cf.DomainAncillary.get_bounds" title="cf.DomainAncillary.get_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_bounds</span></code></a>, <a class="reference internal" href="cf.DomainAncillary.has_bounds.html#cf.DomainAncillary.has_bounds" title="cf.DomainAncillary.has_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_bounds</span></code></a>, <a class="reference internal" href="cf.DomainAncillary.set_bounds.html#cf.DomainAncillary.set_bounds" title="cf.DomainAncillary.set_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_bounds</span></code></a></p>
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="cf.DomainAncillary.del_data.html#cf.DomainAncillary.del_data" title="cf.DomainAncillary.del_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_data</span></code></a>, <a class="reference internal" href="cf.DomainAncillary.get_bounds.html#cf.DomainAncillary.get_bounds" title="cf.DomainAncillary.get_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_bounds</span></code></a>, <a class="reference internal" href="cf.DomainAncillary.has_bounds.html#cf.DomainAncillary.has_bounds" title="cf.DomainAncillary.has_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_bounds</span></code></a>, <a class="reference internal" href="cf.DomainAncillary.set_bounds.html#cf.DomainAncillary.set_bounds" title="cf.DomainAncillary.set_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_bounds</span></code></a></p>
 </div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>default: optional</dt>
-<dd><p class="first last">Return the value of the <em>default</em> parameter if bounds have
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>default: optional</dt><dd><p>Return the value of the <em>default</em> parameter if bounds have
 not been set. If set to an <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code></a> instance then it
 will be raised instead.</p>
 </dd>
 </dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The removed bounds.</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The removed bounds.</p>
+</dd>
+</dl>
 <p><strong>Examples:</strong></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">cfdm</span><span class="o">.</span><span class="n">Bounds</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">cfdm</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))</span>
@@ -149,10 +140,10 @@ will be raised instead.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2019, David Hassell.
+      &copy;2020, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.0.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

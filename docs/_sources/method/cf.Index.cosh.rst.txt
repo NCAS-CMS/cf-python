@@ -1,0 +1,7 @@
+cf.Index.cosh
+=============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Index.cosh

@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>cf.Constructs.inverse_filter &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -32,7 +30,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.6</a></b></h3>
+<h3><b><a href="../index.html">cf 3.1.0</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -73,8 +71,6 @@
     <form class="search" action="../search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -91,7 +87,7 @@
 <h1>cf.Constructs.inverse_filter<a class="headerlink" href="#cf-constructs-inverse-filter" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Constructs.inverse_filter">
-<code class="descclassname">Constructs.</code><code class="descname">inverse_filter</code><span class="sig-paren">(</span><em>depth=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.7.11/cfdm/constructs.py#L2020"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Constructs.inverse_filter" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">Constructs.</code><code class="descname">inverse_filter</code><span class="sig-paren">(</span><em>depth=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.1.0/cf/../../anaconda3/envs/cf-env/lib/python3.8/site-packages/cfdm/constructs.py#L2020"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Constructs.inverse_filter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the inverse of previous filters.</p>
 <p>By default, the inverse comprises all of the constructs that were
 <em>not</em> selected by all previously applied filters. If no filters
@@ -105,24 +101,21 @@ applied filter.</p>
 tuple describes the last filter applied. If no filters have been
 applied then the tuple is empty.</p>
 <div class="versionadded">
-<p><span class="versionmodified">New in version 1.7.0.</span></p>
+<p><span class="versionmodified added">New in version 1.7.0.</span></p>
 </div>
 <div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="cf.Constructs.filter_by_axis.html#cf.Constructs.filter_by_axis" title="cf.Constructs.filter_by_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_axis</span></code></a>, <a class="reference internal" href="cf.Constructs.filter_by_data.html#cf.Constructs.filter_by_data" title="cf.Constructs.filter_by_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_data</span></code></a>, <a class="reference internal" href="cf.Constructs.filter_by_key.html#cf.Constructs.filter_by_key" title="cf.Constructs.filter_by_key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_key</span></code></a>,
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="cf.Constructs.filter_by_axis.html#cf.Constructs.filter_by_axis" title="cf.Constructs.filter_by_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_axis</span></code></a>, <a class="reference internal" href="cf.Constructs.filter_by_data.html#cf.Constructs.filter_by_data" title="cf.Constructs.filter_by_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_data</span></code></a>, <a class="reference internal" href="cf.Constructs.filter_by_key.html#cf.Constructs.filter_by_key" title="cf.Constructs.filter_by_key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_key</span></code></a>,
 <a class="reference internal" href="cf.Constructs.filter_by_measure.html#cf.Constructs.filter_by_measure" title="cf.Constructs.filter_by_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_measure</span></code></a>, <a class="reference internal" href="cf.Constructs.filter_by_method.html#cf.Constructs.filter_by_method" title="cf.Constructs.filter_by_method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_method</span></code></a>,
 <a class="reference internal" href="cf.Constructs.filter_by_naxes.html#cf.Constructs.filter_by_naxes" title="cf.Constructs.filter_by_naxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_naxes</span></code></a>, <a class="reference internal" href="cf.Constructs.filter_by_identity.html#cf.Constructs.filter_by_identity" title="cf.Constructs.filter_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_identity</span></code></a>,
 <a class="reference internal" href="cf.Constructs.filter_by_ncdim.html#cf.Constructs.filter_by_ncdim" title="cf.Constructs.filter_by_ncdim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_ncdim</span></code></a>, <a class="reference internal" href="cf.Constructs.filter_by_ncvar.html#cf.Constructs.filter_by_ncvar" title="cf.Constructs.filter_by_ncvar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_ncvar</span></code></a>,
 <a class="reference internal" href="cf.Constructs.filter_by_property.html#cf.Constructs.filter_by_property" title="cf.Constructs.filter_by_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_property</span></code></a>, <a class="reference internal" href="cf.Constructs.filter_by_type.html#cf.Constructs.filter_by_type" title="cf.Constructs.filter_by_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_type</span></code></a>,
 <a class="reference internal" href="cf.Constructs.filters_applied.html#cf.Constructs.filters_applied" title="cf.Constructs.filters_applied"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filters_applied</span></code></a>, <a class="reference internal" href="cf.Constructs.unfilter.html#cf.Constructs.unfilter" title="cf.Constructs.unfilter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unfilter</span></code></a></p>
 </div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>depth: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt>
-<dd><p class="first last">If set to <code class="docutils literal notranslate"><span class="pre">N</span></code> then the inverse is relative to the
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>depth: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>If set to <code class="docutils literal notranslate"><span class="pre">N</span></code> then the inverse is relative to the
 constructs selected by the <code class="docutils literal notranslate"><span class="pre">N</span></code>-th most recently applied
 filter. By default the inverse is relative to the
 constructs selected by all previously applied
@@ -130,20 +123,17 @@ filters. <code class="docutils literal notranslate"><span class="pre">N</span></
 filters applied, which results in the default bahaviour.</p>
 </dd>
 </dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><a class="reference internal" href="../classes/cf.Constructs.html#cf.Constructs" title="cf.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs</span></code></a></dt>
-<dd><p class="first last">The constructs, and their construct keys, that were not
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference internal" href="../classes/cf.Constructs.html#cf.Constructs" title="cf.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs</span></code></a></dt><dd><p>The constructs, and their construct keys, that were not
 selected by the last filter applied. If no filtering has
 been applied, or the last filter was an inverse filter,
 then an empty <a class="reference internal" href="../classes/cf.Constructs.html#cf.Constructs" title="cf.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs</span></code></a> instance is returned.</p>
 </dd>
 </dl>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <p><strong>Examples:</strong></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
 <span class="go">Constructs:</span>
@@ -206,10 +196,10 @@ then an empty <a class="reference internal" href="../classes/cf.Constructs.html#
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2019, David Hassell.
+      &copy;2020, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.0.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

@@ -1,0 +1,7 @@
+cf.CellMeasure.sinh
+===================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CellMeasure.sinh

@@ -26,7 +26,7 @@ script (:download:`download <../source/tutorial.py>`, 36kB).
 	  Scripts written for version 2.x but running under version
           3.x should either work as expected, or provide informative
           error messages on the new API usage. However, it is advised
-          that the outputs of older scripts be checked when running
+          that the outputs of older scripts are checked when running
           with Python 3 versions of the cf library.
 
 	  For version 2.x documentation, see the :ref:`older releases
@@ -109,7 +109,7 @@ A :ref:`field list <Field-lists>` is very much like a Python `list`,
 with the addition of extra methods that operate on its field construct
 elements.
 
-The following file type can be read:
+The following file types can be read:
 
 * All formats of netCDF3 and netCDF4 files (including `CFA-netCDF
   <http://www.met.reading.ac.uk/~david/cfa/0.4/index.html>`_ files)
@@ -503,15 +503,15 @@ files <External-variables-with-cfa>`.
 -----------------
 
 Powerful, flexible, and very simple to produce visualizations of field
-constructs are available with the `cf-plot package
-<http://ajheaps.github.io/cf-plot>`_ (that needs to be installed
-separately to cf).
+constructs are available with the `cfplot` package (that needs to be
+installed separately to cf, see http://ajheaps.github.io/cf-plot for
+details).
 
 .. figure:: images/cfplot_example.png
 
-   *Example output of cf-plot displaying a cf field construct.*
+   *Example output of cfplot displaying a cf field construct.*
 
-See the `cf-plot gallery
+See the `cfplot gallery
 <http://ajheaps.github.io/cf-plot/gallery.html>`_ for the wide range
 of plotting possibilities, with example code. These include, but are
 not limited to:
@@ -699,6 +699,13 @@ A field construct's identity may be any one of the following
     'standard_name=air_temperature',
     'ncvar%ta']
 
+The identity returned by the `~Field.identity` method is, by default,
+the least ambiguous identity (defined in the method documentation),
+but it may be restricted to the `~Field.standard_name` property and
+`~Field.id` attribute; or also the `~Field.long_name` property and
+netCDF variable name (see the :ref:`netCDF interface
+<NetCDF-interface>`). See the *strict* and *relaxed* keywords.
+        
 ----
 
 .. _Metadata-constructs:
@@ -879,7 +886,8 @@ is accessed with the `~Field.data` attribute of the field construct.
 The `cf.Data` instance provides access to the full array of values, as
 well as attributes to describe the array and methods for describing
 any :ref:`data compression <Compression>`. However, the field
-construct also provides attributes for direct access.
+construct (and any other construct that contains data) also provides
+attributes for direct access.
 
 .. code-block:: python
    :caption: *Retrieve a numpy array of the data.*
@@ -975,15 +983,17 @@ more examples.
 Date-time
 ^^^^^^^^^
 
-Data representing date-times may be defined as elapsed times since a
+Data representing date-times is defined as elapsed times since a
 reference date-time in a particular calendar (Gregorian, by
 default). The `~cf.Data.array` attribute of the `cf.Data` instance
-returns the elapsed times, and the `~cf.Data.datetime_array` returns
-the data as an array of date-time objects.
+(and any construct that contains it) returns the elapsed times, and
+the `~cf.Data.datetime_array` (and any construct that contains it)
+returns the data as an array of date-time objects.
 
 .. code-block:: python
-   :caption: *TODO*
-	    
+   :caption: *View date-times aas elapsed time or as date-time
+             objects.*
+	     
    >>> d = cf.Data([1, 2, 3], units='days since 2004-2-28')
    >>> print(d.array)   
    [1 2 3]
@@ -1543,10 +1553,11 @@ must be done manually, and the other field construct's `cf.Data` instance
 
 The field construct, and any metadata construct that contains data,
 has units which are described by the `~Field.Units` attribute that
-stores a `cf.Units` object (which is identical to the ``Units`` object
-of the `cfunits package <https://ncas-cms.github.io/cfunits>`_). The
-`~Field.units` property provides the units contained in the `cf.Units`
-instance, and changes in one are reflected in the other.
+stores a `cf.Units` object (which is identical to a `cfunits.Units`
+object of the `cfunits package
+<https://ncas-cms.github.io/cfunits>`_). The `~Field.units` property
+provides the units contained in the `cf.Units` instance, and changes
+in one are reflected in the other.
 
 .. code-block:: python
    :caption: *Inspection and changing of units.*
@@ -1744,8 +1755,6 @@ easy to perform further filters on their results:
 Construct identities
 ^^^^^^^^^^^^^^^^^^^^
 
-TODO1 : mention relaxed identities
-
 Another method of selection is by metadata construct "identity".
 Construct identities are used to describe constructs when they are
 inspected, and so it is often convenient to copy these identities when
@@ -1813,12 +1822,11 @@ A construct's identity may be any one of the following
    Constructs:
    {'domainancillary1': <CF DomainAncillary: ncvar%b(1) >}
 
-Each construct has an `~Field.identity` method that, by default,
-returns the least ambiguous identity (defined in the documentation of
-a construct's `~Field.identity` method); and an `~Field.identities`
-method that returns a list of all of the identities that would select
-the construct.
-
+The identity returned by the `!identity` method is, by default, the
+least ambiguous identity (defined in the method documentation), but it
+may be restricted in various ways. See the *strict* and *relaxed*
+keywords.
+       
 As a further convenience, selection by construct identity is also
 possible by providing identities to a call of a `cf.Constructs`
 instance itself, and this technique for selecting constructs by
@@ -3743,12 +3751,8 @@ be changed after insertion with the `~Field.set_data_axes` method of
 the field construct.
 
 .. Code Block 1
-
 .. code-block:: python
-   :caption: *Create a field construct with properties; data; and
-             domain axis, cell method and dimension coordinate
-             metadata constructs (data arrays have been generated with
-             dummy values using numpy.arange).*
+   :caption: *Create a field construct with properties; data; and domain axis, cell method and dimension coordinate metadata constructs (data arrays have been generated with dummy values using numpy.arange).*
 
    import numpy
    import cf
@@ -4085,7 +4089,7 @@ the desired field constuct. The commands are produced by the
 `~Field.creation_commands` method of the existing field construct.
 
 .. code-block:: python
-   :caption: *Create the commands that would create an existing field
+   :caption: *Produce the commands that would create an existing field
              construct.*
 	
    >>> q, t = cf.read('file.nc')
@@ -5829,11 +5833,12 @@ output by some versions of the `Unified Model
 <https://en.wikipedia.org/wiki/Unified_Model>`_, for example), mapping
 their contents into field constructs. 32-bit and 64-bit PP and UM
 fields files of any endian-ness can be read. In nearly all cases the
-file format is auto-detected from the first 64 bits in the file, but
+file format is auto-detectable from the first 64 bits in the file, but
 for the few occasions when this is not possible [#um]_, the *um*
-keyword of `cf.read` allows the format to be specified, as well as the
-UM version (if the latter is not inferable from the PP or lookup
-header information).
+keyword of `cf.read` allows the format to be specified. The the UM
+version (if not inferable from the PP or lookup header information)
+and the height of the upper bound of the top model level may also be
+set with the *um* keyword.
 
 Note that 2-d "slices" within a single file are always combined, where
 possible, into field constructs with 3-d, 4-d or 5-d data. This is
@@ -5841,7 +5846,7 @@ done prior to the :ref:`field construct aggregation <Aggregation>`
 carried out by the `cf.read` function.
 
 .. code-block:: python
-   :caption: *TODO*
+   :caption: *Read a PP file into field constructs.*
    
    >>> pp = cf.read('umfile.pp')
    >>> pp
@@ -5863,7 +5868,8 @@ PP and UM fields files may read with `cf.read` and subsequently
 written to disk as netCDF files with `cf.write`.
 
 .. code-block:: python
-   :caption: *TODO*
+   :caption: *Write the field constructs from a PP file to a netCDF
+             dataset.*
    
    >>> cf.write(pp, 'umfile1.nc')
 
@@ -5873,7 +5879,8 @@ view of PP and UM fields files as CF field constructs, and also easily
 converts PP and UM fields files to netCDF datasets on disk.
 
 .. code-block:: shell
-   :caption: *TODO*
+   :caption: *Use the 'cfa' shell command to view a PP file and
+             convert it to a netCDF dataset.*
    
    $ cfa umfile.pp
    CF Field: surface_air_pressure(time(3), latitude(73), longitude(96)) Pa

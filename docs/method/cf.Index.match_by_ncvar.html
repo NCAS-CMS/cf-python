@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>cf.Index.match_by_ncvar &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -32,7 +30,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.6</a></b></h3>
+<h3><b><a href="../index.html">cf 3.1.0</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -73,8 +71,6 @@
     <form class="search" action="../search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -91,51 +87,51 @@
 <h1>cf.Index.match_by_ncvar<a class="headerlink" href="#cf-index-match-by-ncvar" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Index.match_by_ncvar">
-<code class="descclassname">Index.</code><code class="descname">match_by_ncvar</code><span class="sig-paren">(</span><em>*ncvars</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.6/cf/mixin/properties.py#L725"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Index.match_by_ncvar" title="Permalink to this definition">¶</a></dt>
-<dd><p>Whether or not the construct has a netCDF variable name.</p>
-<div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="cf.Index.match.html#cf.Index.match" title="cf.Index.match"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match</span></code></a>, <a class="reference internal" href="cf.Index.match_by_identity.html#cf.Index.match_by_identity" title="cf.Index.match_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_identity</span></code></a>, <a class="reference internal" href="cf.Index.match_by_property.html#cf.Index.match_by_property" title="cf.Index.match_by_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_property</span></code></a></p>
-</div>
+<code class="descclassname">Index.</code><code class="descname">match_by_ncvar</code><span class="sig-paren">(</span><em>*ncvars</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.1.0/cf/mixin/properties.py#L735"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Index.match_by_ncvar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether or not the netCDF variable name satisfies conditions.</p>
 <div class="versionadded">
-<p><span class="versionmodified">New in version 3.0.0.</span></p>
+<p><span class="versionmodified added">New in version 3.0.0.</span></p>
 </div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>ncvars: optional</dt>
-<dd><p class="first">Define one or more conditions on the netCDF variable name.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="cf.Index.match.html#cf.Index.match" title="cf.Index.match"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match</span></code></a>, <a class="reference internal" href="cf.Index.match_by_identity.html#cf.Index.match_by_identity" title="cf.Index.match_by_identity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_identity</span></code></a>, <a class="reference internal" href="cf.Index.match_by_property.html#cf.Index.match_by_property" title="cf.Index.match_by_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">match_by_property</span></code></a></p>
+</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt>ncvars: optional</dt><dd><p>Define one or more conditions on the netCDF variable name.</p>
 <p>A netCDF variable name is specified by a string
 (e.g. <code class="docutils literal notranslate"><span class="pre">'lat'</span></code>), etc.); a <a class="reference internal" href="../classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object
 (e.g. <code class="docutils literal notranslate"><span class="pre">cf.eq('lon')</span></code>); or a compiled regular expression
 (e.g. <code class="docutils literal notranslate"><span class="pre">re.compile('^t')</span></code>) that is compared with the
 construct’s netCDF variable name via <a class="reference external" href="https://docs.python.org/3/library/re.html#re.search" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.search</span></code></a>.</p>
-<p class="last">The condition is satisfied if the netCDF variable name, as
+<p>The condition is satisfied if the netCDF variable name, as
 returned by the <a class="reference internal" href="cf.Index.nc_get_variable.html#cf.Index.nc_get_variable" title="cf.Index.nc_get_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nc_get_variable</span></code></a> method, exists and
 equals the condition value.</p>
 </dd>
 </dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt>
-<dd><p class="first last">Whether or not at least one of the conditions are met.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>Whether or not at least one of the conditions are met.</p>
 </dd>
 </dl>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <p><strong>Examples:</strong></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">match_by_ncvar</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">match_by_ncvar</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;^t&#39;</span><span class="p">))</span>
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">match_by_ncvar</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">nc_get_variable</span><span class="p">()</span>
+<span class="go">&#39;time&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">match_by_ncvar</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">match_by_ncvar</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">match_by_ncvar</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">)</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">match_by_ncvar</span><span class="p">()</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">re</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">match_by_ncvar</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;^t&#39;</span><span class="p">))</span>
+<span class="go">True</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -150,10 +146,10 @@ equals the condition value.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2019, David Hassell.
+      &copy;2020, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.0.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

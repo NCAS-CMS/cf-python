@@ -1,11 +1,9 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
     <title>cf.AuxiliaryCoordinate.tan &#8212; Documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -19,8 +17,8 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cf.AuxiliaryCoordinate.ceil" href="cf.AuxiliaryCoordinate.ceil.html" />
-    <link rel="prev" title="cf.AuxiliaryCoordinate.sin" href="cf.AuxiliaryCoordinate.sin.html" />
+    <link rel="next" title="cf.AuxiliaryCoordinate.tanh" href="cf.AuxiliaryCoordinate.tanh.html" />
+    <link rel="prev" title="cf.AuxiliaryCoordinate.sinh" href="cf.AuxiliaryCoordinate.sinh.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -32,7 +30,7 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.0.6</a></b></h3>
+<h3><b><a href="../index.html">cf 3.1.0</a></b></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -52,8 +50,8 @@
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
   <li><a href="../classes/cf.AuxiliaryCoordinate.html">cf.AuxiliaryCoordinate</a><ul>
-      <li>Previous: <a href="cf.AuxiliaryCoordinate.sin.html" title="previous chapter">cf.AuxiliaryCoordinate.sin</a></li>
-      <li>Next: <a href="cf.AuxiliaryCoordinate.ceil.html" title="next chapter">cf.AuxiliaryCoordinate.ceil</a></li>
+      <li>Previous: <a href="cf.AuxiliaryCoordinate.sinh.html" title="previous chapter">cf.AuxiliaryCoordinate.sinh</a></li>
+      <li>Next: <a href="cf.AuxiliaryCoordinate.tanh.html" title="next chapter">cf.AuxiliaryCoordinate.tanh</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -73,8 +71,6 @@
     <form class="search" action="../search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -91,44 +87,56 @@
 <h1>cf.AuxiliaryCoordinate.tan<a class="headerlink" href="#cf-auxiliarycoordinate-tan" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.AuxiliaryCoordinate.tan">
-<code class="descclassname">AuxiliaryCoordinate.</code><code class="descname">tan</code><span class="sig-paren">(</span><em>bounds=True</em>, <em>inplace=False</em>, <em>i=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.0.6/cf/mixin/propertiesdatabounds.py#L2177"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.AuxiliaryCoordinate.tan" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">AuxiliaryCoordinate.</code><code class="descname">tan</code><span class="sig-paren">(</span><em>bounds=True</em>, <em>inplace=False</em>, <em>i=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.1.0/cf/mixin/propertiesdatabounds.py#L2229"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.AuxiliaryCoordinate.tan" title="Permalink to this definition">¶</a></dt>
 <dd><p>The trigonometric tangent of the data, element-wise.</p>
-<p>Units are accounted for in the calculation, so that the the
-tangent of 180 degrees_east is 0.0, as is the sine of
+<p>Units are accounted for in the calculation, so that the
+tangent of 180 degrees_east is 0.0, as is the tangent of
 3.141592653589793 radians. If the units are not equivalent to
 radians (such as Kelvin) then they are treated as if they were
 radians.</p>
-<p>The Units are changed to ‘1’ (nondimensionsal).</p>
+<p>The Units are changed to ‘1’ (nondimensional).</p>
 <div class="admonition seealso">
-<p class="first admonition-title">See also</p>
-<p class="last"><a class="reference internal" href="cf.AuxiliaryCoordinate.cos.html#cf.AuxiliaryCoordinate.cos" title="cf.AuxiliaryCoordinate.cos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cos</span></code></a>, <a class="reference internal" href="cf.AuxiliaryCoordinate.sin.html#cf.AuxiliaryCoordinate.sin" title="cf.AuxiliaryCoordinate.sin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sin</span></code></a></p>
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="cf.AuxiliaryCoordinate.arctan.html#cf.AuxiliaryCoordinate.arctan" title="cf.AuxiliaryCoordinate.arctan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arctan</span></code></a>, <a class="reference internal" href="cf.AuxiliaryCoordinate.cos.html#cf.AuxiliaryCoordinate.cos" title="cf.AuxiliaryCoordinate.cos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cos</span></code></a>, <a class="reference internal" href="cf.AuxiliaryCoordinate.sin.html#cf.AuxiliaryCoordinate.sin" title="cf.AuxiliaryCoordinate.sin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sin</span></code></a></p>
 </div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt>bounds: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If False then do not alter any bounds. By default any
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>bounds: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then do not alter any bounds. By default any
 bounds are also altered.</p>
 </dd>
-<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt>
-<dd><p class="first last">If True then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
-</dd>
-<dt>i: deprecated at version 3.0.0</dt>
-<dd><p class="first last">Use <em>inplace</em> parameter instead.</p>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
 </dd>
 </dl>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The construct with the tangent of data values. If the
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The construct with the tangent of data values. If the
 operation was in-place then <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> is returned.</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <p><strong>Examples:</strong></p>
-<p>TODO</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">Units</span>
+<span class="go">&lt;Units: degrees_north&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[-45 0 45 --]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">Units</span>
+<span class="go">&lt;Units: 1&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[-1.0 0.0 1.0 --]]</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">Units</span>
+<span class="go">&lt;Units: m s-1&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[1 2 3 --]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">e</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">tan</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">e</span><span class="o">.</span><span class="n">Units</span>
+<span class="go">&lt;Units: 1&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[1.55740772465 -2.18503986326 -0.142546543074 --]]</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
@@ -141,10 +149,10 @@ operation was in-place then <a class="reference external" href="https://docs.pyt
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2019, David Hassell.
+      &copy;2020, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.0.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
