@@ -33,6 +33,12 @@ version 3.1.0
 * Changed minimum ESMF dependency to 8.0.0. This fixes an issue
   with second-order conservative regridding, which is now fully
   documented and available.
+* Converted all remaining instances of Python 2 print statements in the
+  documentation API reference examples to Python 3.
+* Corrected aspects of the API documentation for trigonometric functions.
+* Fixed bug whereby `cf.Data.arctan` would not process bounds.
+* New methods for hyperbolic operations: `cf.Data.sinh`, `cf.Data.cosh`,
+  `cf.Data.tanh`, `cf.Data.arcsinh`.
 
 version 3.0.6
 -------------
