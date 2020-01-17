@@ -2,7 +2,7 @@ version 3.1.0
 -------------
 ----
 
-**Not yet released**
+**2020-01-17**
 
 * Changed the API to `cf.Field.match_by_construct` and
   `cf.FieldList.select_by_construct`.

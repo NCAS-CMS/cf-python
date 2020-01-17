@@ -60,17 +60,17 @@ The `cf` package can:
 * read, write, and create data that have been compressed by convention
   (i.e. ragged or gathered arrays), whilst presenting a view of the
   data in its uncompressed form,
-* Combine field constructs arithmetically,
-* Manipulate field construct data by arithmetical and trigonometrical
+* combine field constructs arithmetically,
+* manipulate field construct data by arithmetical and trigonometrical
   operations,
-* Perform statistical collapses on field constructs,
-* Perform histogram, percentile and binning operations on field
+* perform statistical collapses on field constructs,
+* perform histogram, percentile and binning operations on field
   constructs,
-* Regrid field constructs with (multi-)linear, nearest neighbour,
+* regrid field constructs with (multi-)linear, nearest neighbour,
   higher order patch recovery and first-order conservative methods,
-* Apply convolution filters to field constructs,
-* Calculate derivatives of field constructs,
-* Create field constructs to create derived quantities (such as
+* apply convolution filters to field constructs,
+* calculate derivatives of field constructs,
+* create field constructs to create derived quantities (such as
   vorticity).
 
 > **This version of cf is for Python 3 only** and there are

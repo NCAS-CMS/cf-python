@@ -10,9 +10,10 @@
 
 * Create a link to the new documentation in docs/source/releases.rst
 
-* Make sure that the Data tests are not commented out
-  (cf/test/test_Data.py)
-  
+* Make sure that all the Data tests will run by setting `self.test_only = []`
+  in cf/test/test_Data.py (check that none of the individual tests are
+  un-commented so as to override this in the commented listing beneath).
+
 * Create a source tarball: `python setup.py sdist`
 
 * Test the tarball release using `test_release <vn>`
@@ -26,6 +27,12 @@ cd docs/source
 cd test_tutorial
 python ../tutorial.py
 
+* Build a development copy of the documentation using
+  `./release_docs <vn> dev` (e.g. ./release_docs 3.0.7 dev) to check API
+  pages for any new methods are present & correct, & that the overall
+  formatting has not been adversely affected for comprehension by any updates
+  in the latest Sphinx or theme etc. (Do not manually commit the dev build.)
+
 * Create an archived copy of the documentation using
   `./release_docs <vn>` (e.g. ./release_docs 3.0.7)
 
@@ -37,4 +44,3 @@ python ../tutorial.py
 * Tag the release using `./tag <vn>` (e.g. ./tag 3.0.6)
 
 * Upload the source tarball to PyPi
-

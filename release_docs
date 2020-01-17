@@ -15,6 +15,7 @@ if [[ $2 ]] ; then
     dir=$PWD/docs
   elif [[ $2 = "dev" ]] ; then
     # For testing: creates separate dir and does not (git) commit
+    mkdir -p $PWD/docs/dev/_downloads
     dir=$PWD/docs/dev
   else
     echo "\$2 must be 'latest', 'dev' or not set"
