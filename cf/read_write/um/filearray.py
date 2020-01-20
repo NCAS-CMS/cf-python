@@ -23,7 +23,7 @@ _filename_to_file = _file_to_fh.setdefault('UM', {})
 
 class UMFileArray(FileArray):
     '''A sub-array stored in a PP or UM fields file.
-    
+
 **Initialization**
 
 :Parameters:
@@ -79,7 +79,7 @@ x.__getitem__(indices) <==> x[indices]
 
 Returns a numpy array.
 
-''' 
+'''
         f = self.open()
 
         rec = Rec.from_file_and_offsets(f,
@@ -93,8 +93,8 @@ Returns a numpy array.
         array = rec.get_data().reshape(int_hdr.item(17,), int_hdr.item(18,))
 
         if indices is not Ellipsis:
-            indices = parse_indices(array.shape, indices)               
-            array = get_subspace(array, indices)                
+            indices = parse_indices(array.shape, indices)
+            array = get_subspace(array, indices)
 
         LBUSER2 = int_hdr.item(38,)
 
@@ -114,12 +114,12 @@ Returns a numpy array.
             if integer_array:
                 # The fill_value must be of the same type as the data
                 # values
-                fill_value = int(fill_value)       
+                fill_value = int(fill_value)
 
             # Mask any missing values
             mask = (array == fill_value)
             if mask.any():
-                array = numpy_ma_masked_where(mask, array, copy=False)    
+                array = numpy_ma_masked_where(mask, array, copy=False)
         #--- End: if
 
         # ------------------------------------------------------------
@@ -149,7 +149,7 @@ Returns a numpy array.
 
 x.__str__() <==> str(x)
 
-'''      
+'''
         return "%s%s in %s" % (self.header_offset, self.shape, self.file)
     #--- End: def
 
@@ -178,7 +178,7 @@ If the file is not open then no action is taken.
 '''
         _close_um_file(self.file)
     #--- End: def
-   
+
     def open(self):
         '''
 
@@ -192,7 +192,7 @@ Open the file containing the data array.
 
 >>> f.open()
 
-'''    
+'''
         return _open_um_file(self.file,
                              fmt=getattr(self, 'fmt', None),
                              word_size=getattr(self, 'word_size', None),

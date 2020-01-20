@@ -35,20 +35,20 @@ def relative_vorticity(u, v, wrap=None, one_sided_at_boundary=False,
     conditions may be cyclic in longitude. The non-cyclic boundaries
     may either be filled with missing values or calculated with
     off-centre finite differences.
-    
+
     Reference: H.B. Bluestein, Synoptic-Dynamic Meteorology in
     Midlatitudes, 1992, Oxford Univ. Press p113-114
-    
+
     :Parameters:
-    
+
         u: `Field`
             A field containing the x-wind. Must be on the same grid as
             the y-wind.
-    
+
         v: `Field`
             A field containing the y-wind. Must be on the same grid as
             the x-wind.
-    
+
         radius: optional
             The radius of the sphere when the winds are on a spherical
             polar coordinate domain. May be any numeric scalar object
@@ -57,24 +57,24 @@ def relative_vorticity(u, v, wrap=None, one_sided_at_boundary=False,
             value of 6371229.0 metres, representing the Earth's
             radius. If units are not specified then units of metres
             are assumed.
-    
-            *Parameter example:*         
+
+            *Parameter example:*
               Five equivalent ways to set a radius of 6371200 metres:
               ``radius=6371200``, ``radius=numpy.array(6371200)``,
               ``radius=cf.Data(6371200)``, ``radius=cf.Data(6371200,
               'm')``, ``radius=cf.Data(6371.2, 'km')``.
-    
+
         wrap: `bool`, optional
             Whether the longitude is cyclic or not. By default this is
             autodetected.
-    
+
         one_sided_at_boundary: `bool`, optional
             If True then if the field is not cyclic off-centre finite
             differences are calculated at the boundaries, otherwise
             missing values are used at the boundaries.
-    
+
     :Returns:
-    
+
         `Field`
             The relative vorticity calculated with centred finite
             differences.
@@ -83,7 +83,7 @@ def relative_vorticity(u, v, wrap=None, one_sided_at_boundary=False,
     if cyclic:
         _DEPRECATION_ERROR_FUNCTION_KWARGS('relative_vorticity', {'cyclic': cyclic},
                                            "Use the 'wrap' keyword instead") # pragma: no cover
-        
+
     # Get the standard names of u and v
     u_std_name = u.get_property('standard_name', None)
     v_std_name = v.get_property('standard_name', None)
@@ -91,7 +91,7 @@ def relative_vorticity(u, v, wrap=None, one_sided_at_boundary=False,
     # Copy u and v
     u = u.copy()
     v = v.copy()
-    
+
     # Get the X and Y coordinates
     (u_x_key, u_y_key), (u_x, u_y) = u._regrid_get_cartesian_coords('u', ('X', 'Y'))
     (v_x_key, v_y_key), (v_x, v_y) = v._regrid_get_cartesian_coords('v', ('X', 'Y'))
@@ -151,7 +151,7 @@ def relative_vorticity(u, v, wrap=None, one_sided_at_boundary=False,
         radius.dtype = float
         if radius.size != 1:
             raise ValueError("Multiple radii: radius={!r}".format(radius))
-        
+
         if not radius.Units:
             radius.override_units(Units('metres'), inplace=True)
         elif not radius.Units.equivalent(Units('metres')):
@@ -183,8 +183,8 @@ def relative_vorticity(u, v, wrap=None, one_sided_at_boundary=False,
     else:
         rv.del_property('standard_name', None)
 
-    rv.del_property('long_name', None)        
-    
+    rv.del_property('long_name', None)
+
     return rv
 
 
@@ -198,7 +198,7 @@ def histogram(*digitized):
     indices to the bins that each value of one of the variables
     belongs. There is no upper limit to the number of dimensions of
     the histogram.
-        
+
     The output histogram bins are defined by the exterior product of
     the one-dimensional bins of each digitized field construct. For
     example, if only one digitized field construct is provided then
@@ -249,7 +249,7 @@ def histogram(*digitized):
 
     :Returns:
 
-        `Field`            
+        `Field`
             The field construct containing the histogram.
 
     **Examples:**
@@ -258,15 +258,15 @@ def histogram(*digitized):
     that exactly span the data range:
 
     >>> f = cf.example_field(0)
-    >>> print(f)                                                                         
+    >>> print(f)
     Field: specific_humidity (ncvar%q)
     ----------------------------------
     Data            : specific_humidity(latitude(5), longitude(8)) 1
     Cell methods    : area: mean
     Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
                     : longitude(8) = [22.5, ..., 337.5] degrees_east
-                    : time(1) = [2019-01-01 00:00:00]       
-    >>> print(f.array)                                                                                            
+                    : time(1) = [2019-01-01 00:00:00]
+    >>> print(f.array)
     [[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]
      [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
      [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
@@ -299,7 +299,7 @@ def histogram(*digitized):
     Data            : number_of_observations(specific_humidity(10)) 1
     Cell methods    : latitude: longitude: point
     Dimension coords: specific_humidity(10) = [0.01015, ..., 0.13885] 1
-    >>> print(h.array)      
+    >>> print(h.array)
     [9 7 9 4 5 1 1 1 2 1]
     >>> print(h.coordinate('specific_humidity').bounds.array)
     [[0.003  0.0173]
@@ -355,8 +355,8 @@ def histogram(*digitized):
     if not digitized:
         raise ValueError(
             "Must provide at least one 'digitized' field construct")
-    
-    f = digitized[0].copy()    
+
+    f = digitized[0].copy()
     f.clear_properties()
-    
+
     return f.bin('sample_size', digitized=digitized)

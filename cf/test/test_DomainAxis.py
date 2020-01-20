@@ -1,6 +1,6 @@
 import datetime
 import os
-import time 
+import time
 import unittest
 
 import cf
@@ -9,11 +9,11 @@ class DomainAxisTest(unittest.TestCase):
     def test_DomainAxis__repr__str(self):
         x = cf.DomainAxis(size=56)
         x.nc_set_dimension('tas')
-        
+
         _ = repr(x)
         _ = str(x)
 
-    
+
     def test_DomainAxis(self):
         x = cf.DomainAxis(size=111)
         x.nc_set_dimension('tas')
@@ -32,22 +32,22 @@ class DomainAxisTest(unittest.TestCase):
         self.assertTrue(x.size == 56)
         y = x + 1
         self.assertTrue(y.size == 57)
-        y = x - 1        
+        y = x - 1
         self.assertTrue(y.size == 55)
         y = 1 + x
         self.assertTrue(y.size == 57)
 
         self.assertTrue(int(x) == 56)
-        
+
         self.assertTrue(x >  1)
         self.assertTrue(x >= 1)
         self.assertTrue(x <  100)
         self.assertTrue(x <= 100)
         self.assertTrue(x != 100)
 
-        _ = hash(x)        
+        _ = hash(x)
 
-    
+
 #--- End: class
 
 if __name__ == '__main__':

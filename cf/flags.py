@@ -17,17 +17,17 @@ class Flags:
     '''
     def __init__(self, **kwargs):
         '''**Initialization**
-    
+
     :Parameters:
-    
+
         flag_values : optional
             The flag_values CF property. Sets the `flag_values`
             attribute.
-    
+
         flag_meanings : optional
             The flag_meanings CF property. Sets the `flag_meanings`
             attribute.
-    
+
         flag_masks : optional
             The flag_masks CF property. Sets the `flag_masks`
             attribute.
@@ -40,14 +40,14 @@ class Flags:
 
     def __eq__(self, other):
         '''x.__eq__(y) <==> x==y <==> x.equals(y)
-        
+
         '''
         return self.equals(other)
 
 
     def __ne__(self, other):
         '''x.__ne__(y) <==> x!=y <==> not x.equals(y)
-        
+
         '''
         return not self.equals(other)
 
@@ -70,7 +70,7 @@ class Flags:
         '''
         self.sort()
 
-        x = [tuple(getattr(self, attr, ())) 
+        x = [tuple(getattr(self, attr, ()))
              for attr in ('_flag_meanings', '_flag_values', '_flag_masks')]
 
         return hash(tuple(x))
@@ -97,9 +97,9 @@ class Flags:
 
     Stored as a 1-d numpy array but may be set as any array-like
     object.
-    
+
     **Examples:*
-    
+
     >>> f.flag_values = ['a', 'b', 'c']
     >>> f.flag_values
     array(['a', 'b', 'c'], dtype='|S1')
@@ -138,11 +138,11 @@ class Flags:
     @property
     def flag_masks(self):
         '''The flag_masks CF attribute.
-    
+
     Stored as a 1-d numpy array but may be set as array-like object.
-    
+
     **Examples:*
-    
+
     >>> f.flag_masks = numpy.array([1, 2, 4], dtype='int8')
     >>> f.flag_masks
     array([1, 2, 4], dtype=int8)
@@ -179,9 +179,9 @@ class Flags:
 
     Stored as a 1-d numpy string array but may be set as a space
     delimited string or any array-like object.
-    
+
     **Examples:*
-    
+
     >>> f.flag_meanings = 'low medium      high'
     >>> f.flag_meanings
     array(['low', 'medium', 'high'],
@@ -246,13 +246,13 @@ class Flags:
         '''Return a deep copy.
 
     Equivalent to ``copy.deepcopy(f)``
-    
+
     :Returns:
-    
+
             The deep copy.
-    
+
     **Examples:*
-    
+
     >>> f.copy()
 
         '''
@@ -263,14 +263,14 @@ class Flags:
         '''Return a string containing a full description of the instance.
 
     :Parameters:
-     
+
         display : bool, optional
             If False then return the description as a string. By
             default the description is printed, i.e. ``f.dump()`` is
             equivalent to ``print(f.dump(display=False))``.
-    
+
     :Returns:
-    
+
         `None` or `str`
             A string containing the description.
 
@@ -285,9 +285,9 @@ class Flags:
             if value is not None:
                 string.append('%s%s = %s' % (indent1, attr[1:], list(value)))
         #--- End: for
-                
+
         string = '\n'.join(string)
-        
+
         if display:
             print(string)
         else:
@@ -300,39 +300,39 @@ class Flags:
         '''True if two groups of flags are logically equal, False otherwise.
 
     Note that both instances are sorted in place prior to the comparison.
-    
+
     :Parameters:
-    
-        other: 
+
+        other:
             The object to compare for equality.
-    
+
         atol: float, optional
             The absolute tolerance for all numerical comparisons, By
             default the value returned by the `ATOL` function is used.
-    
+
         rtol: float, optional
             The relative tolerance for all numerical comparisons, By
             default the value returned by the `RTOL` function is used.
-    
+
         ignore_fill_value: bool, optional
             If True then data arrays with different fill values are
             considered equal. By default they are considered unequal.
-    
+
         traceback: deprecated at version 3.0.0.
             Use *verbose* instead.
-    
+
     :Returns:
-    
+
         `bool`
             Whether or not the two instances are equal.
-     
+
     **Examples:*
-    
+
     >>> f
     <CF Flags: flag_values=[1 0 2], flag_masks=[2 0 2], flag_meanings=['medium' 'low' 'high']>
     >>> g
     <CF Flags: flag_values=[2 0 1], flag_masks=[2 0 2], flag_meanings=['high' 'low' 'medium']>
-    >>> f.equals(g) 
+    >>> f.equals(g)
     True
     >>> f
     <CF Flags: flag_values=[0 1 2], flag_masks=[0 2 2], flag_meanings=['low' 'medium' 'high']>
@@ -342,7 +342,7 @@ class Flags:
         '''
         if traceback:
             _DEPRECATION_ERROR_KWARGS(self, 'equals', traceback=True) # pragma: no cover
-      
+
         # Check that each instance is the same type
         if self.__class__ != other.__class__:
             if verbose:
@@ -358,7 +358,7 @@ class Flags:
         if rtol is None:
             rtol = RTOL()
         if atol is None:
-            atol = ATOL()        
+            atol = ATOL()
 
         for attr in ('_flag_meanings', '_flag_values', '_flag_masks'):
             if hasattr(self, attr):
@@ -371,7 +371,7 @@ class Flags:
                 x = getattr(self, attr)
                 y = getattr(other, attr)
 
-                if (x.shape != y.shape or 
+                if (x.shape != y.shape or
                     not equals(x, y, rtol=rtol, atol=atol,
                                ignore_fill_value=ignore_fill_value,
                                verbose=verbose)):
@@ -380,7 +380,7 @@ class Flags:
                               (self.__class__.__name__, attr[1:], x, y)) # pragma: no cover
                     return False
 
-            elif hasattr(other, attr): 
+            elif hasattr(other, attr):
                 if verbose:
                     print("%s: Different attributes: %s" %
                           (self.__class__.__name__, attr[1:])) # pragma: no cover
@@ -392,11 +392,11 @@ class Flags:
 
     def inspect(self):
         '''Inspect the object for debugging.
-    
+
     .. seealso:: `cf.inspect`
-    
-    :Returns: 
-    
+
+    :Returns:
+
         `None`
 
         '''
@@ -405,17 +405,17 @@ class Flags:
 
     def sort(self):
         '''Sort the flags in place.
-    
+
     By default sort by flag values. If flag values are not present
     then sort by flag meanings. If flag meanings are not present then
     sort by flag_masks.
-    
+
     :Returns:
-    
+
         `None`
-    
+
     **Examples:*
-    
+
     >>> f
     <CF Flags: flag_values=[2 0 1], flag_masks=[2 0 2], flag_meanings=['high' 'low' 'medium']>
     >>> f.sort()

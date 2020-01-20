@@ -1,6 +1,6 @@
 import datetime
 import os
-import time 
+import time
 import unittest
 
 import numpy
@@ -27,14 +27,14 @@ class DimensionCoordinateTest(unittest.TestCase):
     def test_DimensionCoordinate__repr__str__dump(self):
         f = cf.read(self.filename)[0]
         x = f.dimension_coordinates('X').value()
-        
+
         _ = repr(x)
         _ = str(x)
         _ = x.dump(display=False)
 
         self.assertTrue(x.isdimension)
 
-           
+
     def test_DimensionCoordinate_convert_reference_time(self):
         d = cf.DimensionCoordinate()
         d.set_data(cf.Data([1, 2, 3], 'months since 2004-1-1', calendar='gregorian'))
@@ -42,7 +42,7 @@ class DimensionCoordinateTest(unittest.TestCase):
 
         e = d.copy()
         self.assertTrue(e.convert_reference_time(calendar_months=True, inplace=True) is None)
-                                
+
         f = d.convert_reference_time(calendar_months=True)
 
         for x in (e, f):
@@ -53,12 +53,12 @@ class DimensionCoordinateTest(unittest.TestCase):
 
         self.assertTrue((d.array == [1., 2, 3]).all())
 
-        
+
         d = cf.DimensionCoordinate()
         d.set_data(cf.Data([1, 2, 3], 'months since 2004-1-1', calendar='360_day'))
         e = d.copy()
         self.assertTrue(e.convert_reference_time(calendar_months=True, inplace=True) is None)
-                                
+
         f = d.convert_reference_time(calendar_months=True)
 
         for x in (e, f):
@@ -69,12 +69,12 @@ class DimensionCoordinateTest(unittest.TestCase):
 
         self.assertTrue((d.array == [1., 2, 3]).all())
 
-                      
+
         d = cf.DimensionCoordinate()
         d.set_data(cf.Data([1, 2, 3], 'months since 2004-1-1', calendar='noleap'))
         e = d.copy()
         self.assertTrue(e.convert_reference_time(calendar_months=True, inplace=True) is None)
-                                
+
         f = d.convert_reference_time(calendar_months=True)
 
         for x in (e, f):
@@ -85,7 +85,7 @@ class DimensionCoordinateTest(unittest.TestCase):
 
         self.assertTrue((d.array == [1., 2, 3]).all())
 
-                        
+
     def test_DimensionCoordinate_roll(self):
         f = cf.read(self.filename)[0]
         x = f.dimension_coordinates('X').value()
@@ -98,7 +98,7 @@ class DimensionCoordinateTest(unittest.TestCase):
         _ = x.roll(-1, 3)
         with self.assertRaises(Exception):
             _ = x.roll(2, 3)
-        
+
         a = x[0]
         _ = a.roll(0, 3)
         self.assertTrue(a.roll(0, 3, inplace=True) is None)
@@ -108,15 +108,15 @@ class DimensionCoordinateTest(unittest.TestCase):
         self.assertTrue(x.roll(0, 0, inplace=True) is None)
 
         _ = x._centre(360)
-        _ = x.flip()._centre(360) 
+        _ = x.flip()._centre(360)
 
-                
+
     def test_DimensionCoordinate_cellsize(self):
         d = self.dim.copy()
 
         c = d.cellsize
         self.assertTrue(numpy.allclose(c.array, 0.2))
-        
+
         self.assertTrue(d.Units.equals(cf.Units('degrees_north')))
         self.assertTrue(d.bounds.Units.equals(cf.Units('degrees_north')))
 
@@ -131,7 +131,7 @@ class DimensionCoordinateTest(unittest.TestCase):
         c = d.cellsize
         self.assertTrue(numpy.allclose(c.array, 0))
 
-                
+
     def test_DimensionCoordinate_override_units(self):
         d = self.dim.copy()
 
@@ -145,7 +145,7 @@ class DimensionCoordinateTest(unittest.TestCase):
         c = d.cellsize
         self.assertTrue(c.Units.equals(cf.Units('km')))
 
-                
+
     def test_DimensionCoordinate_override_calendar(self):
         d = self.dim.copy()
 
@@ -164,21 +164,21 @@ class DimensionCoordinateTest(unittest.TestCase):
         self.assertTrue(d.Units.equals(cf.Units('days since 2000-01-01', calendar='365_day')))
         self.assertTrue(d.bounds.Units.equals(cf.Units('days since 2000-01-01', calendar='365_day')))
 
-                
+
     def test_DimensionCoordinate_bounds(self):
         f = cf.read(self.filename)[0]
         x = f.dimension_coordinates('X').value()
-        
+
         _ = x.upper_bounds
         _ = x.lower_bounds
 
         self.assertTrue(x.increasing)
-        
+
         y = x.flip()
         self.assertTrue(y.decreasing)
         self.assertTrue(y.upper_bounds.equals(x.upper_bounds[::-1]))
         self.assertTrue(y.lower_bounds.equals(x.lower_bounds[::-1]))
-        
+
         c = x.cellsize
         c = y.cellsize
 
@@ -186,11 +186,11 @@ class DimensionCoordinateTest(unittest.TestCase):
 
         b = y.create_bounds()
 
-        
+
     def test_DimensionCoordinate_properties(self):
         f = cf.read(self.filename)[0]
         x = f.dimension_coordinates('X').value()
-        
+
         x.positive = 'up'
         self.assertTrue(x.positive == 'up')
         del x.positive
@@ -202,95 +202,95 @@ class DimensionCoordinateTest(unittest.TestCase):
         x.axis = 'T'
         self.assertTrue(x.ndim == 1)
 
-    
+
     def test_DimensionCoordinate_insert_dimension(self):
         f = cf.read(self.filename)[0]
         x = f.dimension_coordinates('X').value()
-        
+
         self.assertTrue(x.shape == (9,))
         self.assertTrue(x.bounds.shape == (9, 2))
-        
+
         y = x.insert_dimension(0)
         self.assertTrue(y.shape == (1, 9))
         self.assertTrue(y.bounds.shape == (1, 9, 2), y.bounds.shape)
-        
+
         x.insert_dimension(-1, inplace=True)
         self.assertTrue(x.shape == (9, 1))
-        self.assertTrue(x.bounds.shape == (9, 1, 2), x.bounds.shape)            
+        self.assertTrue(x.bounds.shape == (9, 1, 2), x.bounds.shape)
 
-        
+
     def test_DimensionCoordinate_binary_operation(self):
         f = cf.read(self.filename)[0]
         x = f.dimension_coordinates('X').value()
-        
+
         d = x.array
         b = x.bounds.array
         d2= numpy.expand_dims(d, -1)
-        
+
         # --------------------------------------------------------
         # Out-of-place addition
         # --------------------------------------------------------
         c = x + 2
         self.assertTrue((c.array == d + 2).all())
         self.assertTrue((c.bounds.array == b + 2).all())
-        
+
         c = x + x
         self.assertTrue((c.array == d + d).all())
         self.assertTrue((c.bounds.array == b + d2).all())
-        
+
         c = x + 2
         self.assertTrue((c.array == d + 2).all())
         self.assertTrue((c.bounds.array == b + 2).all())
-        
+
         self.assertTrue((x.array == d).all())
         self.assertTrue((x.bounds.array == b).all())
-        
+
         # --------------------------------------------------------
         # In-place addition
         # --------------------------------------------------------
         x += 2
         self.assertTrue((x.array == d + 2).all())
         self.assertTrue((x.bounds.array == b + 2).all())
-        
+
         x += x
         self.assertTrue((x.array == (d+2) * 2).all())
         self.assertTrue((x.bounds.array == b+2 + d2+2).all())
-        
+
         x += 2
         self.assertTrue((x.array == (d+2)*2 + 2).all())
         self.assertTrue((x.bounds.array == b+2 + d2+2 + 2).all())
-        
+
         # --------------------------------------------------------
         # Out-of-place addition (no bounds)
         # --------------------------------------------------------
         f = cf.read(self.filename)[0]
         x = f.dimension_coordinates('X').value()
         x.del_bounds()
-        
+
         self.assertFalse(x.has_bounds())
-        
+
         d = x.array
-        
+
         c = x + 2
         self.assertTrue((c.array == d + 2).all())
-        
+
         c = x + x
         self.assertTrue((c.array == d + d).all())
-        
+
         c = x + 2
         self.assertTrue((c.array == d + 2).all())
-        
+
         self.assertTrue((x.array == d).all())
-        
+
         # --------------------------------------------------------
         # In-place addition (no bounds)
         # --------------------------------------------------------
         x += 2
         self.assertTrue((x.array == d + 2).all())
-        
+
         x += x
         self.assertTrue((x.array == (d+2) * 2).all())
-        
+
         x += 2
         self.assertTrue((x.array == (d+2)*2 + 2).all())
 

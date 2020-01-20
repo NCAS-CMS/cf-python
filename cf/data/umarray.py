@@ -13,7 +13,7 @@ from . import abstract
 class UMArray(abstract.FileArray):
     '''A sub-array stored in a PP or UM fields file.
 
-    '''    
+    '''
     def __init__(self, filename=None, dtype=None, ndim=None,
                  shape=None, size=None, header_offset=None,
                  data_offset=None, disk_length=None, fmt=None,
@@ -21,48 +21,48 @@ class UMArray(abstract.FileArray):
         '''**Initialization**
 
     :Parameters:
-    
+
         filename: `str`
             The file name in normalized, absolute form.
-    
+
         dtype: `numpy.dtype`
             The data type of the data array on disk.
-    
+
         ndim: `int`
             The number of dimensions in the unpacked data array.
-    
+
         shape: `tuple`
             The shape of the unpacked data array.
-    
+
         size: `int`
             The number of elements in the unpacked data array.
-    
+
         header_offset: `int`
             The start position in the file of the header.
-    
+
         data_offset: `int`
             The start position in the file of the data array.
-    
+
         disk_length: `int`
             The number of words on disk for the data array, usually
             LBLREC-LBEXT. If set to 0 then `!size` is used.
-    
+
         fmt: `str`, optional
-    
+
         word_size: `int`, optional
-    
+
         byte_ordering: `str`, optional
-    
+
     **Examples:**
-    
+
     >>> a = UMFileArray(file='file.pp', header_offset=3156, data_offset=3420,
     ...                 dtype=numpy.dtype('float32'), shape=(30, 24),
     ...                 size=720, ndim=2, disk_length=0)
-    
+
     >>> a = UMFileArray(file='packed_file.pp', header_offset=3156, data_offset=3420,
     ...                 dtype=numpy.dtype('float32'), shape=(30, 24),
     ...                 size=720, ndim=2, disk_length=423)
-    
+
     '''
         super().__init__(filename=filename, dtype=dtype, ndim=ndim,
                          shape=shape, size=size,
@@ -75,15 +75,15 @@ class UMArray(abstract.FileArray):
         # By default, do not close the UM file after data array access
         self._close = False
 
-    
+
     def __getitem__(self, indices):
         '''Implement indexing
 
     x.__getitem__(indices) <==> x[indices]
-        
+
     Returns a numpy array.
 
-        ''' 
+        '''
         f = self.open()
 
         rec = Rec.from_file_and_offsets(f,
@@ -97,8 +97,8 @@ class UMArray(abstract.FileArray):
         array = rec.get_data().reshape(int_hdr.item(17,), int_hdr.item(18,))
 
         if indices is not Ellipsis:
-            indices = parse_indices(array.shape, indices)               
-            array = get_subspace(array, indices)                
+            indices = parse_indices(array.shape, indices)
+            array = get_subspace(array, indices)
 
         LBUSER2 = int_hdr.item(38,)
 
@@ -118,12 +118,12 @@ class UMArray(abstract.FileArray):
             if integer_array:
                 # The fill_value must be of the same type as the data
                 # values
-                fill_value = int(fill_value)       
+                fill_value = int(fill_value)
 
             # Mask any missing values
             mask = (array == fill_value)
             if mask.any():
-                array = numpy.ma.masked_where(mask, array, copy=False)    
+                array = numpy.ma.masked_where(mask, array, copy=False)
         #--- End: if
 
         # ------------------------------------------------------------
@@ -151,7 +151,7 @@ class UMArray(abstract.FileArray):
     def __str__(self):
         '''x.__str__() <==> str(x)
 
-        '''      
+        '''
         return "%s%s in %s" % (self.header_offset, self.shape, self.filename)
 
 
@@ -216,31 +216,31 @@ class UMArray(abstract.FileArray):
         '''Close the file containing the data array.
 
     If the file is not open then no action is taken.
-    
+
     :Returns:
-    
+
         `None`
-    
+
     **Examples:**
-    
+
     >>> f.close()
 
         '''
         _close_um_file(self.filename)
 
-   
+
     def open(self):
         '''Open the file containing the data array.
 
     :Returns:
-    
+
         `umfile_lib.File`
-    
+
     **Examples:**
-    
+
     >>> f.open()
 
-        '''    
+        '''
         return _open_um_file(self.filename,
                              fmt=self.fmt,
                              word_size=self.word_size,

@@ -17,7 +17,7 @@ class cfaTest(unittest.TestCase):
         subprocess.run(' '.join(['.', './cfa_test.sh']),
                        shell=True, check=True)
 
-        
+
 #--- End: class
 
 if __name__ == '__main__':

@@ -17,7 +17,7 @@ class SubspaceField(mixin.Subspace):
     same properties as the original field construct.
 
     **Subspacing by metadata**
-    
+
     Subspacing by metadata, signified by the use of round brackets,
     selects metadata constructs and specifies conditions on their
     data. Indices for subspacing are then automatically inferred from
@@ -69,12 +69,12 @@ class SubspaceField(mixin.Subspace):
       a `slice` that spans the edges of the data (such as ``-2:3`` or
       ``3:-2:-1``) is assumed to "wrap" around, rather then producing
       a null result.
-  
+
     .. seealso:: `cf.Field.indices`, `cf.Field.squeeze`,
                  `cf.Field.where`
-    
+
     :Parameters:
-        
+
         positional arguments: *optional*
             There are three modes of operation, each of which provides
             a different type of subspace:
@@ -89,17 +89,17 @@ class SubspaceField(mixin.Subspace):
                             being used to define the indices then some
                             missing data may still be inserted at
                             unselected locations.
-            
+
             ``'envelope'``  The returned subspace is the smallest that
                             contains all of the selected
                             indices. Missing data is inserted at
                             unselected locations within the envelope.
-            
+
             ``'full'``      The returned subspace has the same domain
                             as the original field construct. Missing
                             data is inserted at unselected locations.
             ==============  ==========================================
-    
+
         keyword parameters: *optional*
             A keyword name is an identity of a metadata construct, and
             the keyword value provides a condition for inferring
@@ -109,13 +109,13 @@ class SubspaceField(mixin.Subspace):
             construct's data satisfies the condition.
 
     :Returns:
-    
+
         `Field`
             An independent field construct containing the subspace of
             the original field.
-    
+
     **Examples:**
-    
+
     See the on-line documention for further worked examples:
     https://ncas-cms.github.io/cf-python/tutorial.html#subspacing-by-metadata
 
@@ -133,7 +133,7 @@ class SubspaceField(mixin.Subspace):
     >>> g = f.subspace('envelope', X=[1, 2, 4, 6])
     >>> g = f.subspace('full', X=[1, 2, 4, 6])
     >>> g = f.subspace(latitude=cf.wi(51, 53))
-    
+
     >>> g = f.subspace[::-1, 0]
     >>> g = f.subspace[:, :, 1]
     >>> g = f.subspace[:, 0]
@@ -146,7 +146,7 @@ class SubspaceField(mixin.Subspace):
     >>> g = f.subspace[..., [True, False, True, True, False]]
 
     '''
-        
+
     __slots__ = []
 
     def __call__(self, *args, **kwargs):
@@ -192,9 +192,9 @@ class SubspaceField(mixin.Subspace):
 
     .. seealso:: `cf.Field.indices`, `cf.Field.squeeze`,
                  `cf.Field.where`
-    
+
     :Parameters:
-        
+
         positional arguments: *optional*
             There are three modes of operation, each of which provides
             a different type of subspace:
@@ -214,7 +214,7 @@ class SubspaceField(mixin.Subspace):
                             contains all of the selected
                             indices. Missing data is inserted at
                             unselected locations within the envelope.
-            
+
             ``'full'``      The returned subspace has the same domain
                             as the original field construct. Missing
                             data is inserted at unselected locations.
@@ -226,7 +226,7 @@ class SubspaceField(mixin.Subspace):
                             is possible to create the specified
                             subspace.
             ==============  ==========================================
-    
+
         Keyword parameters: *optional*
             A keyword name is an identity of a metadata construct, and
             the keyword value provides a condition for inferring
@@ -236,16 +236,16 @@ class SubspaceField(mixin.Subspace):
             construct's data satisfies the condition.
 
     :Returns:
-    
+
         `Field` or `bool`
             An independent field construct containing the subspace of
             the original field. If the ``'test'`` positional argumnt
             has been set then return `True` or `False` depending on
             whether or not it is possible to create specified
             subspace.
-    
+
     **Examples:**
-    
+
     See the on-line documention for further worked examples:
     https://ncas-cms.github.io/cf-python/tutorial.html#subspacing-by-metadata
 
@@ -276,21 +276,21 @@ class SubspaceField(mixin.Subspace):
         if not args and not kwargs:
             if test:
                 return True
-            
-            return field.copy()    
+
+            return field.copy()
 
         try:
             indices = field.indices(*args, **kwargs)
         except ValueError as error:
             if test:
                 return False
-            
+
             raise ValueError(error)
         else:
             if test:
                 return True
-        
+
             return field[indices]
 
-    
+
 #--- End: class

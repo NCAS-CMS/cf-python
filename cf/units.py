@@ -4,7 +4,7 @@ from  cfunits import Units as cfUnits
 class Units:
     '''Store, combine and compare physical units and convert numeric
     values to different units.
-    
+
     This is a convenience class that creates a `cfunits.Units`
     instance.
 
@@ -19,5 +19,5 @@ class Units:
     def conform(*args, **kwargs):
         return cfUnits.conform(*args, **kwargs)
 
-    
+
 #--- End: class

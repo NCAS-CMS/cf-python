@@ -15,7 +15,7 @@ class CellMeasure(mixin.PropertiesData,
     when the size or shape of the cells cannot be deduced from the
     dimension or auxiliary coordinate constructs without special
     knowledge that a generic application cannot be expected to have.
-    
+
     The cell measure construct consists of a numeric array of the
     metric data which spans a subset of the domain axis constructs,
     and properties to describe the data. The cell measure construct
@@ -26,9 +26,9 @@ class CellMeasure(mixin.PropertiesData,
     which are not spanned by the array, along which the values are
     implicitly propagated. CF-netCDF cell measure variables correspond
     to cell measure constructs.
-    
+
     **NetCDF interface**
-    
+
     The netCDF variable name of the construct may be accessed with the
     `nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
     `nc_has_variable` methods.
@@ -44,7 +44,7 @@ class CellMeasure(mixin.PropertiesData,
 
 
     @property
-    def ismeasure(self): 
+    def ismeasure(self):
         '''Always True.
 
     .. seealso:: `isauxiliary`, `isdimension`
@@ -53,7 +53,7 @@ class CellMeasure(mixin.PropertiesData,
 
     >>> c.ismeasure
     True
-        
+
         '''
         return True
 
@@ -68,13 +68,13 @@ class CellMeasure(mixin.PropertiesData,
     @measure.deleter
     def measure(self):        self.del_measure(default=AttributeError())
 
-    
+
     def identity(self, default='', strict=None, relaxed=False,
-                 nc_only=False, relaxed_identity=None): 
+                 nc_only=False, relaxed_identity=None):
         '''Return the canonical identity.
 
     By default the identity is the first found of the following:
-    
+
     * The `measure` attribute, preceeded by ``'measure:'``.
     * The `standard_name` property.
     * The `id` attribute, preceeded by ``'id%'``.
@@ -83,17 +83,17 @@ class CellMeasure(mixin.PropertiesData,
     * The value of the *default* parameter.
 
     .. versionadded:: 3.0.0
-    
+
     .. seealso:: `id`, `identities`, `long_name`, `measure`,
                  `nc_get_variable`, `standard_name`
-    
+
     :Parameters:
-    
+
         default: optional
             If no identity can be found then return the value of the
             default parameter.
-    
-        strict: `bool`, optional 
+
+        strict: `bool`, optional
             If True then the identity is the first found of only the
             "measure" arttribute, "standard_name" property or the "id"
             attribute.
@@ -104,56 +104,56 @@ class CellMeasure(mixin.PropertiesData,
             "id" attribute, the "long_name" property or the netCDF
             variable name.
 
-        nc_only: `bool`, optional       
+        nc_only: `bool`, optional
             If True then only take the identity from the netCDF
             variable name.
 
     :Returns:
-    
+
             The identity.
-    
+
     **Examples:**
 
-    >>> c.measure 
-    'area'    
+    >>> c.measure
+    'area'
     >>> c.properties()
-    {'long_name': 'cell_area', 
+    {'long_name': 'cell_area',
      'foo': 'bar'}
     >>> c.nc_get_variable()
-    'areacello'    
+    'areacello'
     >>> c.identity()
     'measure:area'
-    >>> del c.measure    
+    >>> del c.measure
     >>> c.identity()
-    'long_name=cell_area'   
-    >>> del c.long_name    
+    'long_name=cell_area'
+    >>> del c.long_name
     >>> c.identity()
     'ncvar%areacello'
     >>> c.nc_del_variable()
-    'areacello'    
+    'areacello'
     >>> c.identity()
-    ''    
+    ''
     >>> c.identity('no identity')
     'no identity'
 
-        ''' 
+        '''
         if relaxed_identity:
             _DEPRECATION_ERROR_KWARGS(self, 'identity',
                                       relaxed_identity=True) # pragma: no cover
-            
+
         if nc_only:
             if strict:
                 raise ValueError("'strict' and 'nc_only' parameters cannot both be True")
-            
+
             if relaxed:
                 raise ValueError("'relaxed' and 'nc_only' parameters cannot both be True")
-            
+
             n = self.nc_get_variable(None)
             if n is not None:
                 return 'ncvar%{0}'.format(n)
-            
+
             return default
-            
+
         n = self.get_measure(default=None)
         if n is not None:
             return 'measure:{0}'.format(n)
@@ -166,7 +166,7 @@ class CellMeasure(mixin.PropertiesData,
         if n is not None:
             return 'id%{0}'.format(n)
 
-        if relaxed: 
+        if relaxed:
             n = self.get_property('long_name', None)
             if n is not None:
                 return 'long_name={0}'.format(n)
@@ -174,12 +174,12 @@ class CellMeasure(mixin.PropertiesData,
             n = self.nc_get_variable(None)
             if n is not None:
                 return 'ncvar%{0}'.format(n)
-        
+
             return default
 
         if strict:
             return default
-        
+
         for prop in  ('long_name',):
             n = self.get_property(prop, None)
             if n is not None:
@@ -189,7 +189,7 @@ class CellMeasure(mixin.PropertiesData,
         n = self.nc_get_variable(None)
         if n is not None:
             return 'ncvar%{0}'.format(n)
-        
+
         return default
 
 

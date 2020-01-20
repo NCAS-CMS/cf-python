@@ -41,7 +41,7 @@ class PropertiesData(Properties):
     _special_properties = ('units',
                            'calendar')
 
-    
+
     def __array__(self, *dtype):
         '''Returns a numpy array representation of the data.
 
@@ -62,7 +62,7 @@ class PropertiesData(Properties):
         data = self.get_data(None)
         if data is None:
             return False
-        
+
         return value in data
 
 
@@ -91,7 +91,7 @@ class PropertiesData(Properties):
 
         raise ValueError("{} has no data".format(self.__class__.__name__))
 
-    
+
     def __setitem__(self, indices, value):
         '''Called to implement assignment to x[indices]
 
@@ -101,10 +101,10 @@ class PropertiesData(Properties):
         data = self.get_data(None)
         if data is None:
             raise ValueError("Can't set elements when there is no data")
-        
-        if isinstance(value, self.__class__):        
+
+        if isinstance(value, self.__class__):
             value = value.data
-        
+
         data[indices] = value
 
 
@@ -113,7 +113,7 @@ class PropertiesData(Properties):
 
     x.__add__(y) <==> x+y
 
-        '''        
+        '''
         return self._binary_operation(y, '__add__')
 
 
@@ -158,7 +158,7 @@ class PropertiesData(Properties):
 
     x.__rsub__(y) <==> y-x
 
-        '''    
+        '''
         return self._binary_operation(y, '__rsub__')
 
 
@@ -185,7 +185,7 @@ class PropertiesData(Properties):
 
     x.__rmul__(y) <==> y*x
 
-        '''       
+        '''
         return self._binary_operation(y, '__rmul__')
 
 
@@ -206,7 +206,7 @@ class PropertiesData(Properties):
         '''
         return self._binary_operation(y, '__idiv__')
 
-    
+
     def __rdiv__(self, y):
         '''The binary arithmetic operation ``/`` with reflected operands
 
@@ -221,7 +221,7 @@ class PropertiesData(Properties):
 
     x.__floordiv__(y) <==> x//y
 
-        '''     
+        '''
         return self._binary_operation(y, '__floordiv__')
 
 
@@ -267,7 +267,7 @@ class PropertiesData(Properties):
 
     x.__rtruediv__(y) <==> y/x
 
-        '''    
+        '''
         return self._binary_operation(y, '__rtruediv__')
 
 
@@ -276,7 +276,7 @@ class PropertiesData(Properties):
 
     x.__pow__(y) <==> x**y
 
-        '''  
+        '''
         if modulo is not None:
             raise NotImplementedError("3-argument power not supported for %r" %
                                       self.__class__.__name__)
@@ -289,7 +289,7 @@ class PropertiesData(Properties):
 
     x.__ipow__(y) <==> x**=y
 
-        '''     
+        '''
         if modulo is not None:
             raise NotImplementedError("3-argument power not supported for %r" %
                                       self.__class__.__name__)
@@ -303,7 +303,7 @@ class PropertiesData(Properties):
 
     x.__rpow__(y) <==> y**x
 
-        '''       
+        '''
         if modulo is not None:
             raise NotImplementedError("3-argument power not supported for %r" %
                                       self.__class__.__name__)
@@ -328,7 +328,7 @@ class PropertiesData(Properties):
     x.__imod__(y) <==> x %= y
 
     .. versionadded:: 1.0
-        
+
         '''
         return self._binary_operation(y, '__imod__')
 
@@ -361,7 +361,7 @@ class PropertiesData(Properties):
         '''
         return self._binary_operation(y, '__ne__')
 
-    
+
     def __ge__(self, y):
         '''The rich comparison operator ``>=``
 
@@ -397,7 +397,7 @@ class PropertiesData(Properties):
         '''
         return self._binary_operation(y, '__lt__')
 
-    
+
     def __and__(self, y):
         '''The binary bitwise operation ``&``
 
@@ -510,7 +510,7 @@ class PropertiesData(Properties):
         '''The binary bitwise operation ``>>``
 
     x.__lshift__(y) <==> x>>y
-        
+
         '''
         return self._binary_operation(y, '__rshift__')
 
@@ -538,7 +538,7 @@ class PropertiesData(Properties):
 
     x.__abs__() <==> abs(x)
 
-        '''       
+        '''
         return self._unary_operation('__abs__')
 
 
@@ -577,23 +577,23 @@ class PropertiesData(Properties):
 
     The operations act on the constructs data with the numpy
     broadcasting rules.
-    
+
     It is intended to be called by the binary arithmetic and
     comparison methods, such as `!__sub__` and `!__lt__`.
-    
+
     :Parameters:
-    
+
         operation: `str`
             The binary arithmetic or comparison method name (such as
             ``'__imul__'`` or ``'__ge__'``).
-    
+
     :Returns:
-    
+
             A new construct, or the same construct if the operation
             was in-place.
-    
+
     **Examples:**
-    
+
     >>> w = u._binary_operation(u, '__add__')
     >>> w = u._binary_operation(v, '__lt__')
     >>> u._binary_operation(2, '__imul__')
@@ -602,7 +602,7 @@ class PropertiesData(Properties):
         '''
         data = self.get_data(None)
         if data is None:
-            raise ValueError( 
+            raise ValueError(
                 "Can't apply {} to a {} object with no data: {!r}".format(
                     method, self.__class__.__name__, self))
 
@@ -618,10 +618,10 @@ class PropertiesData(Properties):
         except AttributeError:
             other_sn = None
             other_ln = None
-            
+
         if isinstance(y, self.__class__):
             y = y.data
-        
+
         if not inplace:
             new = self.copy() #data=False) TODO
             new_data = data._binary_operation(y, method)
@@ -633,7 +633,7 @@ class PropertiesData(Properties):
         if method in _relational_methods:
             # Booleans have no units
             new.override_units(Units(), inplace=True)
-            
+
         # ------------------------------------------------------------
         # Remove misleading identities
         # ------------------------------------------------------------
@@ -649,7 +649,7 @@ class PropertiesData(Properties):
                     new.set_property('long_name', other_ln)
         elif ln is None and other_ln is not None:
             new.set_property('long_name', other_ln)
-        
+
         new_units = new.Units
         if (method in _relational_methods or
             not units.equivalent(new_units) and
@@ -673,10 +673,10 @@ class PropertiesData(Properties):
 #        except AttributeError:
 #            other_sn = None
 #            other_ln = None
-#            
+#
 #        if isinstance(y, self.__class__):
 #            y = y.data
-#        
+#
 #        if not inplace:
 #            new = self.copy() #data=False) TODO
 #            new_data = data._binary_operation(y, method)
@@ -698,13 +698,13 @@ class PropertiesData(Properties):
 #                    new.set_property('long_name', other_ln)
 #        elif ln is None and other_ln is not None:
 #            new.set_property('long_name', other_ln)
-#        
+#
 #        new_units = new.Units
 #        if (not units.equivalent(new_units) and
 #            not (units.isreftime and new_units.isreftime)):
 #            new.del_property('standard_name', None)
-#            new.del_property('long_name', None)   
-        
+#            new.del_property('long_name', None)
+
 #    def _change_axis_names(self, dim_name_map):
 #        '''Change the axis names of the Data object.
 #
@@ -729,7 +729,7 @@ class PropertiesData(Properties):
     def _conform_for_assignment(self, other):
         '''TODO
 
-        '''    
+        '''
         return other
 
 
@@ -742,21 +742,21 @@ class PropertiesData(Properties):
     differences) and ``rtol`` (the tolerance on relative differences) are
     positive, typically very small numbers. See the *atol* and *rtol*
     parameters.
-    
+
     :Parameters:
-    
+
         transpose: `dict`, optional
-    
+
         atol: `float`, optional
             The tolerance on absolute differences between real
             numbers. The default value is set by the `ATOL` function.
-    
+
         rtol: `float`, optional
             The tolerance on relative differences between real
             numbers. The default value is set by the `RTOL` function.
-    
+
     :Returns:
-    
+
         `bool`
             Whether or not the two variables have equivalent data arrays.
 
@@ -777,8 +777,8 @@ class PropertiesData(Properties):
             if verbose:
                 print("{}: Data have different shapes: {}, {}".format(
                     self.__class__.__name__, data0.shape, data1.shape))
-            return False              
- 
+            return False
+
         if not data0.Units.equivalent(data1.Units):
             if verbose:
                 print("{}: Data have non-equivalent units: {!r}, {!r}".format(
@@ -786,10 +786,10 @@ class PropertiesData(Properties):
             return  False
 
 #        if atol is None:
-#            atol = ATOL()        
+#            atol = ATOL()
 #        if rtol is None:
 #            rtol = RTOL()
-            
+
         if not data0.allclose(data1, rtol=rtol, atol=atol):
             if verbose:
                 print("{}: Data have non-equivalent values: {!r}, {!r}".format(
@@ -808,23 +808,23 @@ class PropertiesData(Properties):
 
         if isinstance(axes, int):
             axes = (axes,)
-        
+
         ndim = self.ndim
         return [(i + ndim if i < 0 else i) for i in axes]
 
-    
+
 #    def _parse_match(self, match):
 #        '''Called by `match`
 #
 #    :Parameters:
-#    
-#        match: 
+#
+#        match:
 #            As for the *match* parameter of `match` method.
-#    
+#
 #    :Returns:
-#    
+#
 #        `list`
-#        '''        
+#        '''
 #        if not match:
 #            return ()
 #
@@ -832,7 +832,7 @@ class PropertiesData(Properties):
 #            match = (match,)
 #
 #        matches = []
-#        for m in match:            
+#        for m in match:
 #            if isinstance(m, str):
 #                if '=' in m:
 #                    # CF property (string-valued)
@@ -904,27 +904,27 @@ class PropertiesData(Properties):
         '''Implement unary arithmetic operations on the data array.
 
     :Parameters:
-    
+
         method: `str`
             The unary arithmetic method name (such as "__abs__").
-    
+
     :Returns:
-    
+
             TODO
-    
+
     **Examples:**
-    
+
     >>> print(v.array)
     [1 2 -3 -4 -5]
-    
+
     >>> w = v._unary_operation('__abs__')
     >>> print(w.array)
     [1 2 3 4 5]
-    
+
     >>> w = v.__abs__()
     >>> print(w.array)
     [1 2 3 4 5]
-    
+
     >>> w = abs(v)
     >>> print(w.array)
     [1 2 3 4 5]
@@ -936,10 +936,10 @@ class PropertiesData(Properties):
                 method, self.__class__.__name__))
 
         new = self.copy()
-        
+
         new_data = data._unary_operation(method)
         new.set_data(new_data, copy=False)
-        
+
         return new
 
 
@@ -949,17 +949,17 @@ class PropertiesData(Properties):
         data = self.get_data(None)
         if data is None:
             raise ValueError(
-                "ERROR: Can't get {}s when there is no data array".format(attr))        
-                
+                "ERROR: Can't get {}s when there is no data array".format(attr))
+
         out = self.copy() # data=False)
 
         out.set_data(getattr(data, attr), copy=False)
-        
+
         out.del_property('standard_name', None)
         out.set_property('long_name', attr)
 
         out.override_units(Units(), inplace=True)
-        
+
         return out
 
 
@@ -974,7 +974,7 @@ class PropertiesData(Properties):
 #        #--- End: if
 #
 #        raise ValueError(
-#            "ERROR: Can't get {0} when there is no data array".format(method))        
+#            "ERROR: Can't get {0} when there is no data array".format(method))
 
     @staticmethod
     def _apply_data_oper(
@@ -1025,18 +1025,18 @@ class PropertiesData(Properties):
     @property
     def T(self):
         '''`True` if and only if the data are coordinates for a CF 'T' axis.
-        
+
     CF 'T' axis coordinates are defined by having units of reference
     time
-    
+
     .. seealso:: `X`, `Y`, `Z`
-    
+
     **Examples:**
-    
+
     >>> c.T
     False
 
-        '''              
+        '''
         return False
 
 
@@ -1045,13 +1045,13 @@ class PropertiesData(Properties):
         '''Always False.
 
     .. seealso:: `T`, `Y`, `Z`
-    
+
     **Examples:**
-    
+
     >>> print(f.X)
     False
 
-        '''              
+        '''
         return False
 
 
@@ -1060,13 +1060,13 @@ class PropertiesData(Properties):
         '''Always False.
 
     .. seealso:: `T`, `X`, `Z`
-    
+
     **Examples:**
-    
+
     >>> print(f.Y)
     False
 
-        '''              
+        '''
         return False
 
 
@@ -1075,13 +1075,13 @@ class PropertiesData(Properties):
         '''Always False.
 
     .. seealso:: `T`, `X`, `Y`
-    
+
     **Examples:**
-    
+
     >>> print(f.Z)
     False
 
-        '''              
+        '''
         return False
 
 
@@ -1092,9 +1092,9 @@ class PropertiesData(Properties):
     The binary mask's data array comprises dimensionless 32-bit
     integers and has 0 where the data array has missing data and 1
     otherwise.
-    
+
     **Examples:**
-    
+
     >>> print(f.mask.array)
     [[ True  False  True False]]
     >>> b = f.binary_mask()
@@ -1107,19 +1107,19 @@ class PropertiesData(Properties):
         out.set_data(self.data.binary_mask(), copy=False)
         return out
 
-    
+
     @property
     def data(self):
         '''The `Data` object containing the data array.
 
     * ``f.data = x`` is equivalent to ``f.set_data(x, copy=False)``
-    
+
     * ``x = f.data`` is equivalent to ``x = f.get_data()``
-    
+
     * ``del f.data`` is equivalent to ``f.del_data()``
-    
+
     * ``hasattr(f, 'data')`` is equivalent to ``f.has_data()``
-    
+
     .. seealso:: `del_data`, `get_data`, `has_data`, `set_data`
 
         '''
@@ -1175,12 +1175,12 @@ class PropertiesData(Properties):
     Stores the units and calendar CF properties in an internally
     consistent manner. These are mirrored by the `units` and
     `calendar` CF properties respectively.
-    
+
     **Examples:**
-    
+
     >>> f.Units
     <Units: K>
-    
+
     >>> f.Units
     <Units: days since 2014-1-1 calendar=noleap>
 
@@ -1188,7 +1188,7 @@ class PropertiesData(Properties):
         data = self.get_data(None)
         if data is not None:
             return data.Units
-        
+
         try:
             return self._custom['Units']
         except KeyError:
@@ -1208,7 +1208,7 @@ class PropertiesData(Properties):
 #        units = getattr(value, 'units', None)
 #        if units is not None:
 #            self.set_property('units', units)
-#    
+#
 #        calendar = getattr(value, 'calendar', None)
 #        if calendar is not None:
 #            self.set_property('calendar', calendar)
@@ -1225,30 +1225,30 @@ class PropertiesData(Properties):
         '''The year of each date-time data array element.
 
     Only applicable to data arrays with reference time units.
-    
+
     .. seealso:: `month`, `day`, `hour`, `minute`, `second`
-    
+
     **Examples:**
-    
+
     >>> print(f.datetime_array)
     [0450-11-15 00:00:00  0450-12-16 12:30:00  0451-01-16 12:00:45]
     >>> print(f.year.array)
     [450  450  451]
 
-        ''' 
+        '''
         return self._YMDhms('year')
 
-    
+
     @property
     def month(self):
         '''The month of each date-time data array element.
 
     Only applicable to data arrays with reference time units.
-    
+
     .. seealso:: `year`, `day`, `hour`, `minute`, `second`
-    
+
     **Examples:**
-    
+
     >>> print(f.datetime_array)
     [0450-11-15 00:00:00  0450-12-16 12:30:00  0451-01-16 12:00:45]
     >>> print(f.month.array)
@@ -1263,11 +1263,11 @@ class PropertiesData(Properties):
         '''The day of each date-time data array element.
 
     Only applicable to data arrays with reference time units.
-    
+
     .. seealso:: `year`, `month`, `hour`, `minute`, `second`
-    
+
     **Examples:**
-    
+
     >>> print(f.datetime_array)
     [0450-11-15 00:00:00  0450-12-16 12:30:00  0451-01-16 12:00:45]
     >>> print(f.day.array)
@@ -1280,13 +1280,13 @@ class PropertiesData(Properties):
     @property
     def hour(self):
         '''The hour of each date-time data array element.
-    
+
     Only applicable to data arrays with reference time units.
-    
+
     .. seealso:: `year`, `month`, `day`, `minute`, `second`
-    
+
     **Examples:**
-    
+
     >>> print(f.datetime_array)
     [0450-11-15 00:00:00  0450-12-16 12:30:00  0451-01-16 12:00:45]
     >>> print(f.hour.array)
@@ -1295,17 +1295,17 @@ class PropertiesData(Properties):
         '''
         return self._YMDhms('hour')
 
-    
+
     @property
     def minute(self):
         '''The minute of each date-time data array element.
 
     Only applicable to data arrays with reference time units.
-    
+
     .. seealso:: `year`, `month`, `day`, `hour`, `second`
-    
+
     **Examples:**
-    
+
     >>> print(f.datetime_array)
     [0450-11-15 00:00:00  0450-12-16 12:30:00  0451-01-16 12:00:45]
     >>> print(f.minute.array)
@@ -1320,11 +1320,11 @@ class PropertiesData(Properties):
         '''The second of each date-time data array element.
 
     Only applicable to data arrays with reference time units.
-    
+
     .. seealso:: `year`, `month`, `day`, `hour`, `minute`
-    
+
     **Examples:**
-    
+
     >>> print(f.datetime_array)
     [0450-11-15 00:00:00  0450-12-16 12:30:00  0451-01-16 12:00:45]
     >>> print(f.second.array)
@@ -1339,11 +1339,11 @@ class PropertiesData(Properties):
         '''The mask of the data array.
 
     Values of True indicate masked elements.
-    
+
     .. seealso:: `binary_mask`
-    
+
     **Examples:**
-    
+
     >>> f.shape
     (12, 73, 96)
     >>> m = f.mask
@@ -1366,7 +1366,7 @@ class PropertiesData(Properties):
         out.set_data(self.data.mask, copy=False)
 
         out.override_units(Units(), inplace=True)
-        
+
         out.clear_properties()
         out.set_property('long_name', 'mask')
 
@@ -1374,7 +1374,7 @@ class PropertiesData(Properties):
 
         return out
 
-    
+
     # ----------------------------------------------------------------
     # CF properties
     # ----------------------------------------------------------------
@@ -1387,14 +1387,14 @@ class PropertiesData(Properties):
     `add_offset` properties are present, the offset is subtracted
     before the data are scaled. See
     http://cfconventions.org/latest.html for details.
-    
+
     **Examples:**
-    
+
     >>> f.add_offset = -4.0
     >>> f.add_offset
     -4.0
     >>> del f.add_offset
-    
+
     >>> f.set_property('add_offset', 10.5)
     >>> f.get_property('add_offset')
     10.5
@@ -1424,14 +1424,14 @@ class PropertiesData(Properties):
 
     The calendar used for encoding time data. See
     http://cfconventions.org/latest.html for details.
-    
+
     **Examples:**
-    
+
     >>> f.calendar = 'noleap'
     >>> f.calendar
     'noleap'
     >>> del f.calendar
-    
+
     >>> f.set_property('calendar', 'proleptic_gregorian')
     >>> f.get_property('calendar')
     'proleptic_gregorian'
@@ -1460,28 +1460,28 @@ class PropertiesData(Properties):
             raise AttributeError(
                 "Can't delete non-existent {} CF property 'calendar'".format(
                     self.__class__.__name__))
-        
+
         self.Units = Units(getattr(self, 'units', None))
-    
+
     @property
     def _FillValue(self):
         '''The _FillValue CF property.
 
     A value used to represent missing or undefined data.
-    
+
     Note that this property is primarily for writing data to disk and
     is independent of the missing data mask. It may, however, get used
     when unmasking data array elements. See
     http://cfconventions.org/latest.html for details.
-    
+
     The recommended way of retrieving the missing data value is with
     the `fill_value` method.
-    
+
     .. seealso:: `fill_value`, `missing_value`,
                  `cf.default_netCDF_fillvals`
-    
+
     **Examples:**
-    
+
     >>> f._FillValue = -1.0e30
     >>> f._FillValue
     -1e+30
@@ -1512,29 +1512,29 @@ class PropertiesData(Properties):
     A value used to represent missing or undefined data (deprecated by
     the netCDF user guide). See http://cfconventions.org/latest.html
     for details.
-    
+
     Note that this attribute is used primarily for writing data to
     disk and is independent of the missing data mask. It may, however,
     be used when unmasking data array elements.
-    
+
     The recommended way of retrieving the missing data value is with
     the `fill_value` method.
-    
+
     .. seealso:: `_FillValue`, `fill_value`,
                  `cf.default_netCDF_fillvals`
-    
+
     **Examples:**
-    
+
     >>> f.missing_value = 1.0e30
     >>> f.missing_value
     1e+30
     >>> del f.missing_value
-        
+
     >>> f.set_property('missing_value', -1.0e30)
     >>> f.get_property('missing_value')
-    -1e+30              
+    -1e+30
     >>> f.del_property('missing_value')
-    -1e30               
+    -1e30
     >>> f.del_property('missing_value', None)
     None
 
@@ -1556,14 +1556,14 @@ class PropertiesData(Properties):
     being written to a file. If both `scale_factor` and `add_offset`
     properties are present, the offset is subtracted before the data
     are scaled. See http://cfconventions.org/latest.html for details.
-    
+
     **Examples:**
-    
+
     >>> f.scale_factor = 10.0
     >>> f.scale_factor
     10.0
     >>> del f.scale_factor
-    
+
     >>> f.set_property('scale_factor', 10.0)
     >>> f.get_property('scale_factor')
     10.0
@@ -1571,7 +1571,7 @@ class PropertiesData(Properties):
     10
     >>> f.has_property('scale_factor')
     False
-        
+
         '''
         return self.get_property('scale_factor', default=AttributeError())
     @scale_factor.setter
@@ -1579,7 +1579,7 @@ class PropertiesData(Properties):
     @scale_factor.deleter
     def scale_factor(self):        self.del_property('scale_factor', default=AttributeError())
 
-    
+
     @property
     def units(self):
         '''The units CF property.
@@ -1588,14 +1588,14 @@ class PropertiesData(Properties):
     string that can be recognized by UNIDATA's Udunits package
     (http://www.unidata.ucar.edu/software/udunits). See
     http://cfconventions.org/latest.html for details.
-    
+
     **Examples:**
-    
+
     >>> f.units = 'K'
     >>> f.units
     'K'
     >>> del f.units
-    
+
     >>> f.set_property('units', 'm.s-1')
     >>> f.get_property('units')
     'm.s-1'
@@ -1618,9 +1618,9 @@ class PropertiesData(Properties):
             raise AttributeError(
                 "Can't delete non-existent {} CF property 'units'".format(
                     self.__class__.__name__))
-        
+
         self.Units = Units(None, getattr(self, 'calendar', None))
-    
+
 
     # ----------------------------------------------------------------
     # Methods
@@ -1631,42 +1631,42 @@ class PropertiesData(Properties):
         '''Mask the array where invalid values occur.
 
     Note that:
-    
+
     * Invalid values are Nan or inf
-    
+
     * Invalid values in the results of arithmetic operations only
       occur if the raising of `FloatingPointError` exceptions has been
       suppressed by `cf.data.seterr`.
-    
+
     * If the raising of `FloatingPointError` exceptions has been
       allowed then invalid values in the results of arithmetic
       operations it is possible for them to be automatically converted
       to masked values, depending on the setting of
       `cf.data.mask_fpe`. In this case, such automatic conversion
       might be faster than calling `mask_invalid`.
-    
+
     .. seealso:: `cf.data.mask_fpe`, `cf.data.seterr`
-    
+
     :Parameters:
-    
-    
+
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
-    
+
     :Returns:
-    
+
         TODO
-    
+
     **Examples:**
-    
+
     >>> print(f.array)
     [ 0.  1.]
     >>> print(g.array)
     [ 1.  2.]
-    
+
     >>> old = cf.data.seterr('ignore')
     >>> h = g/f
     >>> print(h.array)
@@ -1674,14 +1674,14 @@ class PropertiesData(Properties):
     >>> h.mask_invalid(inplace=True)
     >>> print(h.array)
     [--  2.]
-    
+
     >>> h = g**12345
     >>> print(h.array)
     [ 1.  inf]
     >>> h.mask_invalid(inplace=True)
     >>> print(h.array)
     [1.  --]
-    
+
     >>> old = cf.data.seterr('raise')
     >>> old = cf.data.mask_fpe(True)
     >>> print((g/f).array)
@@ -1697,21 +1697,21 @@ class PropertiesData(Properties):
             data.mask_invalid(inplace=True)
 
         return v
-    
-    
+
+
     def max(self):
         '''The maximum of the data array.
 g
     .. seealso:: `mean`, `mid_range`, `min`, `range`, `sample_size`,
                  `sd`, `sum`, `var`
-    
-    :Returns: 
-    
-        `Data`    
+
+    :Returns:
+
+        `Data`
             The maximum of the data array.
-    
+
     **Examples:**
-    
+
     >>> f.data
     <CF Data(12, 64, 128): [[[236.512756, ..., 256.93371]]] K>
     >>> f.max()
@@ -1721,24 +1721,24 @@ g
         data = self.get_data(None)
         if data is not None:
             return data.max(squeeze=True)
-          
+
         raise ValueError(
-            "ERROR: Can't get the maximum when there is no data array")       
-    
+            "ERROR: Can't get the maximum when there is no data array")
+
 
     def mean(self):
         '''The unweighted mean the data array.
 
     .. seealso:: `max`, `mid_range`, `min`, `range`, `sample_size`, `sd`,
                  `sum`, `var`
-    
-    :Returns: 
-    
+
+    :Returns:
+
         `Data`
             The unweighted mean the data array.
-    
+
     **Examples:**
-    
+
     >>> f.data
     <CF Data(12, 73, 96): [[[236.512756348, ..., 256.93371582]]] K>
     >>> f.mean()
@@ -1748,26 +1748,26 @@ g
         data = self.get_data(None)
         if data is not None:
             return data.mean(squeeze=True)
-          
+
         raise ValueError(
-            "ERROR: Can't get the mean when there is no data array")       
-    
+            "ERROR: Can't get the mean when there is no data array")
+
 
     def mid_range(self):
         '''The unweighted average of the maximum and minimum of the data
     array.
-    
+
     .. seealso:: `max`, `mean`, `min`, `range`, `sample_size`, `sd`,
                  `sum`, `var`
-    
-    :Returns: 
-    
+
+    :Returns:
+
         `Data`
             The unweighted average of the maximum and minimum of the
             data array.
-    
+
     **Examples:**
-    
+
     >>> f.data
     <CF Data(12, 73, 96): [[[236.512756348, ..., 256.93371582]]] K>
     >>> f.mid_range()
@@ -1777,24 +1777,24 @@ g
         data = self.get_data(None)
         if data is not None:
             return data.mid_range(squeeze=True)
-          
+
         raise ValueError(
-            "ERROR: Can't get the mid-range when there is no data array")       
-    
+            "ERROR: Can't get the mid-range when there is no data array")
+
 
     def min(self):
         '''The minimum of the data array.
 
     .. seealso:: `max`, `mean`, `mid_range`, `range`, `sample_size`,
                  `sd`, `sum`, `var`
-    
-    :Returns: 
-    
+
+    :Returns:
+
         `Data`
             The minimum of the data array.
-    
+
     **Examples:**
-    
+
     >>> f.data
     <CF Data(12, 73, 96): [[[236.512756348, ..., 256.93371582]]] K>
     >>> f.min()
@@ -1804,26 +1804,26 @@ g
         data = self.get_data(None)
         if data is not None:
             return data.min(squeeze=True)
-          
+
         raise ValueError(
-            "ERROR: Can't get the minimum when there is no data array")       
-    
+            "ERROR: Can't get the minimum when there is no data array")
+
 
     def range(self):
         '''The absolute difference between the maximum and minimum of the data
     array.
-    
+
     .. seealso:: `max`, `mean`, `mid_range`, `min`, `sample_size`,
                  `sd`, `sum`, `var`
-    
-    :Returns: 
-    
+
+    :Returns:
+
         `Data`
             The absolute difference between the maximum and minimum of
             the data array.
-    
+
     **Examples:**
-    
+
     >>> f.data
     <CF Data(12, 73, 96): [[[236.512756348, ..., 256.93371582]]] K>
     >>> f.range()
@@ -1833,9 +1833,9 @@ g
         data = self.get_data(None)
         if data is not None:
             return data.range(squeeze=True)
-          
+
         raise ValueError(
-            "ERROR: Can't get the range when there is no data array")       
+            "ERROR: Can't get the range when there is no data array")
 
 
     def sample_size(self):
@@ -1843,14 +1843,14 @@ g
 
     .. seealso:: `count`, `max`, `mean`, `mid_range`, `min`, `range`,
                  `sd`, `sum`, `var`
-    
-    :Returns: 
-    
+
+    :Returns:
+
         `Data`
             The number of non-missing data elements in the data array.
-    
+
     **Examples:**
-    
+
     >>> f.data
     <CF Data(12, 73, 96): [[[236.512756348, ..., 256.93371582]]] K>
     >>> f.sample_size()
@@ -1860,24 +1860,24 @@ g
         data = self.get_data(None)
         if data is not None:
             return data.sample_size(squeeze=True)
-          
+
         raise ValueError(
             "ERROR: Can't get the sample size when there is no data array")
-    
+
 
     def sd(self):
         '''The unweighted sample standard deviation of the data array.
 
     .. seealso:: `max`, `mean`, `mid_range`, `min`, `range`,
                  `sample_size`, `sum`, `var`
-    
-    :Returns: 
-    
+
+    :Returns:
+
         `Data`
             The unweighted standard deviation of the data array.
-    
+
     **Examples:**
-    
+
     >>> f.data
     <CF Data(12, 73, 96): [[[236.512756348, ..., 256.93371582]]] K>
     >>> f.sd()
@@ -1887,24 +1887,24 @@ g
         data = self.get_data(None)
         if data is not None:
             return data.sd(squeeze=True, ddof=0)
-          
+
         raise ValueError(
             "ERROR: Can't get the standard deviation when there is no data array")
-    
+
 
     def sum(self):
        	'''The sum of the data array.
 
     .. seealso:: `max`, `mean`, `mid_range`, `min`, `range`,
                  `sample_size`, `sd`, `var`
-    
-    :Returns: 
-    
+
+    :Returns:
+
         `Data`
             The sum of the data array.
-    
+
     **Examples:**
-    
+
     >>> f.data
     <CF Data(12, 73, 96): [[[236.512756348, ..., 256.93371582]]] K>
     >>> f.sum()
@@ -1914,10 +1914,10 @@ g
         data = self.get_data(None)
         if data is not None:
             return data.sum(squeeze=True)
-          
+
         raise ValueError(
-            "ERROR: Can't get the sum when there is no data array")       
-    
+            "ERROR: Can't get the sum when there is no data array")
+
 
     @_deprecation_error_i_kwarg
     @_inplace_enabled
@@ -1926,23 +1926,23 @@ g
 
     .. seealso:: `flatten`, `flip`, `insert_dimension`, `squeeze`,
                  `transpose`
-    
+
     :Parameters:
-    
+
         axis0, axis1: `int`, `int`
             Select the axes to swap. Each axis is identified by its
             original integer position.
-    
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
     :Returns:
-    
+
             The construct with data with swapped axis positions. If
             the operation was in-place then `None` is returned.
 
     **Examples:**
-    
+
     >>> f.shape
     (1, 2, 3)
     >>> f.swapaxes(1, 0).shape
@@ -1959,20 +1959,20 @@ g
             _inplace_enabled_define_and_cleanup(self), 'swapaxes',
             axis0, axis1, inplace=inplace, delete_props=True)
 
-    
+
     def var(self):
         '''The unweighted sample variance of the data array.
-        
+
     .. seealso:: `max`, `mean`, `mid_range`, `min`, `range`,
                  `sample_size`, `sd`, `sum`
-    
-    :Returns: 
-    
+
+    :Returns:
+
         `Data`
             The unweighted variance of the data array.
-    
+
     **Examples:**
-    
+
     >>> f.data
     <CF Data(12, 73, 96): [[[236.512756348, ..., 256.93371582]]] K>
     >>> f.var()
@@ -1983,9 +1983,9 @@ g
         if data is None:
             raise ValueError(
                 "ERROR: Can't get the variance when there is no data array")
-                
-        return data.var(squeeze=True, ddof=0)          
-    
+
+        return data.var(squeeze=True, ddof=0)
+
 
     @property
     def subspace(self):
@@ -1993,53 +1993,53 @@ g
 
     This attribute may be indexed to select a subspace from dimension
     index values.
-    
+
     **Subspacing by indexing**
-    
+
     Subspacing by dimension indices uses an extended Python slicing
     syntax, which is similar numpy array indexing. There are two
     extensions to the numpy indexing functionality:
-    
+
 TODO
 
 
     * Size 1 dimensions are never removed.
-    
+
       An integer index i takes the i-th element but does not reduce
       the rank of the output array by one.
-    
+
     * When advanced indexing is used on more than one dimension, the
       advanced indices work independently.
-    
+
       When more than one dimension's slice is a 1-d boolean array or
       1-d sequence of integers, then these indices work independently
       along each dimension (similar to the way vector subscripts work
       in Fortran), rather than by their elements.
-    
+
     **Examples:**
 
         '''
         return Subspace(self)
-    
+
 
     @property
     def shape(self):
         '''A tuple of the data array's dimension sizes.
 
     .. seealso:: `data`, `hasdata`, `ndim`, `size`
-    
+
     **Examples:**
-    
+
     >>> f.shape
     (73, 96)
     >>> f.ndim
     2
-    
+
     >>> f.ndim
     0
     >>> f.shape
     ()
-    
+
     >>> f.hasdata
     True
     >>> len(f.shape) == f.dnim
@@ -2049,23 +2049,23 @@ TODO
 
         '''
         return self.data.shape
-    
+
 
     @property
     def ndim(self):
         '''The number of dimensions in the data array.
 
     .. seealso:: `data`, `hasdata`, `isscalar`, `shape`
-    
+
     **Examples:**
-    
+
     >>> f.hasdata
     True
     >>> f.shape
     (73, 96)
     >>> f.ndim
     2
-    
+
     >>> f.shape
     ()
     >>> f.ndim
@@ -2073,35 +2073,35 @@ TODO
 
         '''
         return self.data.ndim
-    
+
 
     @property
     def size(self):
         '''The number of elements in the data array.
 
     .. seealso:: `data`, `hasdata`, `ndim`, `shape`
-    
+
     **Examples:**
-    
+
     >>> f.shape
     (73, 96)
     >>> f.size
     7008
-    
+
     >>> f.shape
     ()
     >>> f.ndim
     0
     >>> f.size
     1
-    
+
     >>> f.shape
     (1, 1, 1)
     >>> f.ndim
     3
     >>> f.size
     1
-    
+
     >>> f.hasdata
     True
     >>> f.size == reduce(lambda x, y: x*y, f.shape, 1)
@@ -2109,39 +2109,39 @@ TODO
 
         '''
         return self.data.size
-    
+
 
     @property
     def datetime_array(self):
         '''An independent numpy array of date-time objects.
 
     Only applicable for data with reference time units.
-    
+
     If the calendar has not been set then the CF default calendar will
     be used and the units will be updated accordingly.
-    
+
     .. seealso:: `array`, `varray`
-    
+
     **Examples:**
 
     >>> f.units
     'days since 2000-01-01'
     >>> print(f.array)
     [ 0 31 60 91]
-    >>> print(f.datetime_array)                 
+    >>> print(f.datetime_array)
     [cftime.DatetimeGregorian(2000-01-01 00:00:00)
      cftime.DatetimeGregorian(2000-02-01 00:00:00)
      cftime.DatetimeGregorian(2000-03-01 00:00:00)
      cftime.DatetimeGregorian(2000-04-01 00:00:00)]
-    
+
         '''
         data = self.get_data(None)
         if data is None:
             raise AttributeError(
                 "{} has no data array".format(self.__class__.__name__))
-        
+
         return data.datetime_array
-    
+
 
     @property
     def dtype(self):
@@ -2154,7 +2154,7 @@ TODO
     master data array's data type will be 'float64'; or if the
     sub-arrays have data types 'int64' and 'int32' then the master
     data array's data type will be 'int64'.
-    
+
     Setting the data type to a `numpy.dtype` object, or any object
     convertible to a `numpy.dtype` object, will cause the master data
     array elements to be recast to the specified type at the time that
@@ -2162,20 +2162,20 @@ TODO
     change the master data array elements, so, for example,
     reinstating the original data type prior to data access results in
     no loss of information.
-    
+
     Deleting the data type forces the default behaviour. Note that if
     the data type of any sub-arrays has changed after `dtype` has been
     set (which could occur if the data array is accessed) then the
     reinstated default data type may be different to the data type
     prior to `dtype` being set.
-    
+
     **Examples:**
-    
+
     >>> f.dtype
     dtype('float64')
     >>> type(f.dtype)
     <type 'numpy.dtype'>
-    
+
     >>> print(f.array)
     [0.5 1.5 2.5]
     >>> import numpy
@@ -2188,7 +2188,7 @@ TODO
     >>> f.dtype = 'float64'
     >>> print(f.array)
     [ 0.  1.  1.]
-    
+
     >>> print(f.array)
     [0.5 1.5 2.5]
     >>> f.dtype = int
@@ -2202,22 +2202,22 @@ TODO
         if data is None:
             raise AttributeError("{} doesn't have attribute 'dtype'".format(
                 self.__class__.__name__))
-        
+
         return data.dtype
-    
+
     @dtype.setter
     def dtype(self, value):
 # DCH - allow dtype to be set before data c.f.  Units
         data = self.get_data(None)
         if data is not None:
             data.dtype = value
-    
+
     @dtype.deleter
     def dtype(self):
         data = self.get_data(None)
         if data is not None:
             del data.dtype
-    
+
 
     @property
     def hardmask(self):
@@ -2226,16 +2226,16 @@ TODO
     When the mask is hard, masked elements of the data array can not
     be unmasked by assignment, but unmasked elements may be still be
     masked.
-    
+
     When the mask is soft, masked entries of the data array may be
     unmasked by assignment and unmasked entries may be masked.
-    
+
     By default, the mask is hard.
-    
+
     .. seealso:: `where`, `subspace`, `__setitem__`
-    
+
     **Examples:**
-    
+
     >>> f.hardmask = False
     >>> f.hardmask
     False
@@ -2245,35 +2245,35 @@ TODO
         if data is None:
             raise AttributeError(
                 "{} doesn't have attribute 'hardmask'".format(self.__class__.__name__))
-        
+
         return data.hardmask
-    
-    
+
+
     @hardmask.setter
     def hardmask(self, value):
         data = self.get_data(None)
         if data is None:
             raise AttributeError(
                 "{} doesn't have attribute 'hardmask'".format(self.__class__.__name__))
-                    
+
         data.hardmask = value
-    
+
     @hardmask.deleter
     def hardmask(self):
         raise AttributeError(
             "Won't delete {} attribute 'hardmask'".format(self.__class__.__name__))
-    
+
 
     @property
     def array(self):
         '''A numpy array deep copy of the data array.
 
     Changing the returned numpy array does not change the data array.
-    
+
     .. seealso:: `data`, `datetime_array`, `varray`
-    
+
     **Examples:**
-    
+
     >>> f.data
     <CF Data(5): [0, ... 4] kg m-1 s-2>
     >>> a = f.array
@@ -2295,18 +2295,18 @@ TODO
             raise AttributeError("{} has no data array".format(self.__class__.__name__))
 
         return data.array
-    
+
 
     @property
     def varray(self):
         '''A numpy array view of the data array.
 
     Changing the elements of the returned view changes the data array.
-    
+
     .. seealso:: `array`, `data`, `datetime_array`
-    
+
     **Examples:**
-    
+
     >>> f.data
     <CF Data(5): [0, ... 4] kg m-1 s-2>
     >>> a = f.array
@@ -2328,106 +2328,106 @@ TODO
             raise AttributeError("{} has no data array".format(self.__class__.__name__))
 
         return data.varray
-    
+
 
     @property
-    def isauxiliary(self): 
+    def isauxiliary(self):
         '''True if the variable is an auxiliary coordinate object.
 
     .. seealso:: `isdimension`, `isdomainancillary`,
                  `isfieldancillary`, `ismeasure`
-    
-    **Examples:** 
-    
+
+    **Examples:**
+
     >>> f.isauxiliary
     False
 
         '''
         return False
-    
+
 
     @property
-    def isdimension(self): 
+    def isdimension(self):
         '''True if the variable is a dimension coordinate object.
 
     .. seealso:: `isauxiliary`, `isdomainancillary`,
                  `isfieldancillary`, `ismeasure`
-    
-    **Examples:** 
-    
+
+    **Examples:**
+
     >>> f.isdimension
     False
 
         '''
         return False
-    
+
 
     @property
-    def isdomainancillary(self): 
+    def isdomainancillary(self):
         '''True if the variable is a domain ancillary object.
 
     .. seealso:: `isauxiliary`, `isdimension`, `isfieldancillary`,
                  `ismeasure`
-    
-    **Examples:** 
-    
+
+    **Examples:**
+
     >>> f.isdomainancillary
     False
 
         '''
         return False
-    
+
 
     @property
-    def isfieldancillary(self): 
+    def isfieldancillary(self):
         '''True if the variable is a field ancillary object.
 
     .. seealso:: `isauxiliary`, `isdimension`, `isdomainancillary`,
                  `ismeasure`
-    
-    **Examples:** 
-    
+
+    **Examples:**
+
     >>> f.isfieldancillary
     False
 
         '''
         return False
-    
+
 
     @property
-    def ismeasure(self): 
+    def ismeasure(self):
         '''True if the variable is a cell measure object.
 
     .. seealso:: `isauxiliary`, `isdimension`, `isdomainancillary`,
                  `isfieldancillary`
-    
-    **Examples:** 
-    
+
+    **Examples:**
+
     >>> f.ismeasure
     False
 
         '''
         return False
-    
+
 
     @property
     def isscalar(self):
         '''True if the data array is scalar.
 
     .. seealso:: `has_data`, `ndim`
-    
+
     **Examples:**
-    
+
     >>> f.ndim
     0
     >>> f.isscalar
     True
-    
+
     >>> f.ndim >= 1
     True
     >>> f.isscalar
     False
-    
+
     >>> f.hasdata
     False
     >>> f.isscalar
@@ -2439,7 +2439,7 @@ TODO
             return False
 
         return data.isscalar
-    
+
 
     @_deprecation_error_i_kwarg
     @_inplace_enabled
@@ -2448,26 +2448,26 @@ TODO
 
     The ceiling of ``x`` is the smallest integer ``n``, such that
     ``n>=x``.
-    
+
     .. versionadded:: 1.0
-    
+
     .. seealso:: `floor`, `rint`, `trunc`
-    
+
     :Parameters:
-    
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
-    
+
     :Returns:
-    
+
             The construct with ceilinged of data. If the operation was
             in-place then `None` is returned.
-    
+
     **Examples:**
-    
+
     >>> print(f.array)
     [-1.9 -1.5 -1.1 -1.   0.   1.   1.1  1.5  1.9]
     >>> print(f.ceil().array)
@@ -2480,24 +2480,24 @@ TODO
         return self._apply_data_oper(
             _inplace_enabled_define_and_cleanup(self), 'ceil',
             inplace=inplace, i=i, delete_props=True)
-    
+
 
     def chunk(self, chunksize=None):
         '''Partition the data array.
 
     :Parameters:
-    
+
         chunksize: `int`
-    
+
     :Returns:
-     
+
         `None`
 
         '''
         data = self.get_data(None)
         if data is not None:
             data.chunk(chunksize)
-    
+
 
     @_deprecation_error_i_kwarg
     @_inplace_enabled
@@ -2508,36 +2508,36 @@ TODO
     interval edges. For example, if an interval of ``[0, 1]`` is
     specified, values smaller than 0 become 0, and values larger than
     1 become 1.
-    
+
     :Parameters:
-     
+
         a_min:
             Minimum value. If `None`, clipping is not performed on
             lower interval edge. Not more than one of `a_min` and
             `a_max` may be `None`.
-    
+
         a_max:
             Maximum value. If `None`, clipping is not performed on
             upper interval edge. Not more than one of `a_min` and
             `a_max` may be `None`.
-    
+
         units: `str` or `Units`
             Specify the units of *a_min* and *a_max*. By default the
             same units as the data are assumed.
-    
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
-    
-    :Returns: 
-    
+
+    :Returns:
+
             The construct with clipped data. If the operation was
             in-place then `None` is returned.
-    
+
     **Examples:**
-    
+
     >>> g = f.clip(-90, 90)
     >>> g = f.clip(-90, 90, 'degrees_north')
 
@@ -2545,42 +2545,42 @@ TODO
         return self._apply_data_oper(
             _inplace_enabled_define_and_cleanup(self), 'clip', a_min, a_max,
             inplace=inplace, i=i, units=units, delete_props=True)
-    
+
 
     def close(self):
         '''Close all files referenced by the construct.
 
     Note that a closed file will be automatically reopened if its
     contents are subsequently required.
-    
+
     .. seealso:: `files`
-    
+
     :Returns:
-    
+
         `None`
-    
+
     **Examples:**
-    
+
     >>> f.close()
 
         '''
         data = self.get_data(None)
         if data is not None:
             data.close()
-    
+
 
     @classmethod
     def concatenate(cls, variables, axis=0, _preserve=True):
         '''Join a sequence of variables together.
 
     :Parameters:
-    
+
         variables: sequence of constructs.
-    
+
         axis: `int`, optional
-    
+
     :Returns:
-    
+
     TODO
 
         '''
@@ -2590,15 +2590,15 @@ TODO
             return variable0.copy()
 
         out = variable0.copy() #data=False)
-        
+
         data = Data.concatenate([v.get_data() for v in variables],
                                 axis=axis,
                                 _preserve=_preserve)
         out.set_data(data, copy=False)
-        
+
         return out
-    
-    
+
+
     @_deprecation_error_i_kwarg
     @_inplace_enabled
     def cos(self, inplace=False, i=False):
@@ -2608,29 +2608,29 @@ TODO
     of 90 degrees_east is 0.0, as is the cosine of 1.57079632
     radians. If the units are not equivalent to radians (such as
     Kelvin) then they are treated as if they were radians.
-    
+
     The output units are '1' (nondimensional).
 
     The "standard_name" and "long_name" properties are removed from
     the result.
-    
+
     .. seealso:: `sin`, `tan`
-    
+
     :Parameters:
-    
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
-    
+
     :Returns:
-    
+
             The construct with the cosine of data values. If the
             operation was in-place then `None` is returned.
-    
+
     **Examples:**
-    
+
     >>> f.Units
     <Units: degrees_east>
     >>> print(f.array)
@@ -2640,7 +2640,7 @@ TODO
     <Units: 1>
     >>> print(f.array)
     [[0.0 1.0 0.0 --]]
-    
+
     >>> f.Units
     <Units: m s-1>
     >>> print(f.array)
@@ -2655,18 +2655,18 @@ TODO
         return self._apply_data_oper(
             _inplace_enabled_define_and_cleanup(self), 'cos',
             inplace=inplace, i=i, delete_props=True)
-    
+
 
     def count(self):
         '''Count the non-masked elements of the data.
 
     :Returns:
-    
+
         `int`
             The number of non-masked elements.
-    
+
     **Examples:**
-    
+
     >>> n = f.count()
 
         '''
@@ -2674,52 +2674,52 @@ TODO
         if data is None:
             raise AttributeError(
                 "Can't count when there are data")
-            
+
         return data.count()
-    
+
 
     def count_masked(self):
         '''Count the masked elements of the data.
 
     :Returns:
-    
+
         `int`
             The number of masked elements.
-    
+
     **Examples:**
-    
+
     >>> n = f.count_masked()
-        
+
         '''
         data = self.get_data(None)
         if data is None:
             raise AttributeError(
                 "Can't count masked when there are data")
-            
+
         return data.count_masked()
-    
+
 
     def cyclic(self, axes=None, iscyclic=True):
         '''Set the cyclicity of an axis.
 
     .. seealso:: `iscyclic`
-    
+
     :Parameters:
-    
+
         axes: (sequence of) `int`
             The axes to be set. Each axis is identified by its integer
             position. By default no axes are set.
-            
+
         iscyclic: `bool`, optional
             If False then the axis is set to be non-cyclic. By default
             the axis is set to be cyclic.
-    
+
     :Returns:
-    
+
         `!set`
-    
+
     **Examples:**
-    
+
     >>> f.cyclic()
     set()
     >>> f.cyclic(1)
@@ -2731,19 +2731,19 @@ TODO
         data = self.get_data(None)
         if data is None:
             return set()
-       
+
         return data.cyclic(axes, iscyclic)
-    
-            
+
+
     def datum(self, *index):
         '''Return an element of the data array as a standard Python scalar.
 
     The first and last elements are always returned with
     ``f.datum(0)`` and ``f.datum(-1)`` respectively, even if the data
     array is a scalar array or has two or more dimensions.
-    
+
     :Parameters:
-    
+
         index: optional
             Specify which element to return. When no positional
             arguments are provided, the method only works for data
@@ -2751,76 +2751,76 @@ TODO
             and the single element is returned. If positional
             arguments are given then they must be one of the
             following:
-    
+
               * An integer. This argument is interpreted as a flat
                 index into the array, specifying which element to copy
                 and return.
-             
+
                 *Parameter example:*
                   If the data aray shape is ``(2, 3, 6)`` then:
                     * ``f.datum(0)``  is equivalent to ``f.datum(0, 0, 0)``.
                     * ``f.datum(-1)`` is equivalent to ``f.datum(1, 2, 5)``.
                     * ``f.datum(16)`` is equivalent to ``f.datum(0, 2, 4)``.
-    
+
                 If *index* is ``0`` or ``-1`` then the first or last
                 data array element respecitively will be returned,
                 even if the data array is a scalar array or has two or
                 more dimensions.  ..
-             
+
               * Two or more integers. These arguments are interpreted
                 as a multidimensionsal index to the array. There must
                 be the same number of integers as data array
                 dimensions.  ..
-             
+
               * A tuple of integers. This argument is interpreted as a
                 multidimensionsal index to the array. There must be
                 the same number of integers as data array dimensions.
-             
-                *Example:*    
+
+                *Example:*
                   ``f.datum((0, 2, 4))`` is equivalent to ``f.datum(0,
                   2, 4)``; and ``f.datum(())`` is equivalent to
                   ``f.datum()``.
-    
+
     :Returns:
-    
+
             A copy of the specified element of the array as a suitable
             Python scalar.
-    
+
     **Examples:**
-    
+
     >>> print(f.array)
     2
     >>> f.datum()
     2
     >>> 2 == f.datum(0) == f.datum(-1) == f.datum(())
     True
-    
+
     >>> print(f.array)
     [[2]]
     >>> 2 == f.datum() == f.datum(0) == f.datum(-1)
     True
     >>> 2 == f.datum(0, 0) == f.datum((-1, -1)) == f.datum(-1, 0)
     True
-    
+
     >>> print(f.array)
     [[4 -- 6]
      [1 2 3]]
     >>> f.datum(0)
-    4     
+    4
     >>> f.datum(-1)
-    3     
+    3
     >>> f.datum(1)
     masked
     >>> f.datum(4)
-    2     
+    2
     >>> f.datum(-2)
-    2     
+    2
     >>> f.datum(0, 0)
-    4     
+    4
     >>> f.datum(-2, -1)
-    6     
+    6
     >>> f.datum(1, 2)
-    3     
+    3
     >>> f.datum((0, 2))
     6
 
@@ -2829,9 +2829,9 @@ TODO
         if data is None:
             raise ValueError(
                 "ERROR: Can't return an element when there is no data array")
-        
+
         return data.datum(*index)
-    
+
 
     def equals(self, other, rtol=None, atol=None, verbose=False,
                ignore_data_type=False, ignore_fill_value=False,
@@ -2840,70 +2840,70 @@ TODO
         '''Whether two instances are the same.
 
     Equality is strict by default. This means that:
-    
+
     * the same descriptive properties must be present, with the same
       values and data types, and vector-valued properties must also
       have same the size and be element-wise equal (see the
       *ignore_properties* and *ignore_data_type* parameters), and
-    
+
     ..
-    
+
     * if there are data arrays then they must have same shape and data
       type, the same missing data mask, and be element-wise equal (see
       the *ignore_data_type* parameter).
-    
+
     Two real numbers ``x`` and ``y`` are considered equal if
     ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
     differences) and ``rtol`` (the tolerance on relative differences)
     are positive, typically very small numbers. See the *atol* and
     *rtol* parameters.
-    
+
     If data arrays are compressed then the compression type and the
     underlying compressed arrays must be the same, as well as the
     arrays in their uncompressed forms. See the *ignore_compression*
     parameter.
-    
+
     Any type of object may be tested but, in general, equality is only
     possible with another object of the same type, or a subclass of
     one. See the *ignore_type* parameter.
-    
+
     NetCDF elements, such as netCDF variable and dimension names, do
     not constitute part of the CF data model and so are not checked.
-    
+
     .. versionadded:: 1.7.0
-    
+
     :Parameters:
-    
-        other: 
+
+        other:
             The object to compare for equality.
-    
+
         atol: float, optional
             The tolerance on absolute differences between real
             numbers. The default value is set by the `cf.ATOL`
             function.
-            
+
         rtol: float, optional
             The tolerance on relative differences between real
             numbers. The default value is set by the `cf.RTOL`
             function.
-    
+
         ignore_fill_value: `bool`, optional
             If True then the "_FillValue" and "missing_value"
             properties are omitted from the comparison.
-    
+
         verbose: `bool`, optional
             If True then print information about differences that lead
             to inequality.
-    
+
         ignore_properties: sequence of `str`, optional
             The names of properties to omit from the comparison.
-    
+
         ignore_data_type: `bool`, optional
             If True then ignore the data types in all numerical
             comparisons. By default different numerical data types
             imply inequality, regardless of whether the elements are
             within the tolerance for equality.
-    
+
         ignore_compression: `bool`, optional
             If True then any compression applied to the underlying
             arrays is ignored and only the uncompressed arrays are
@@ -2911,20 +2911,20 @@ TODO
             if appliciable, the underlying compressed arrays must be
             the same, as well as the arrays in their uncompressed
             forms.
-    
+
         ignore_type: `bool`, optional
             Any type of object may be tested but, in general, equality
             is only possible with another object of the same type, or
             a subclass of one. If *ignore_type* is True then equality
             is possible for any object with a compatible API.
-    
-    :Returns: 
-      
+
+    :Returns:
+
         `bool`
             Whether the two instances are equal.
-    
+
     **Examples:**
-    
+
     >>> f.equals(f)
     True
     >>> f.equals(f.copy())
@@ -2944,7 +2944,7 @@ TODO
                     return False
         except AttributeError:
             pass
-        
+
         ignore_properties = tuple(ignore_properties) + self._special_properties
 
         return super().equals(other, rtol=rtol, atol=atol,
@@ -2953,7 +2953,7 @@ TODO
                               ignore_properties=ignore_properties,
                               ignore_type=ignore_type)
 
-    
+
     def equivalent(self, other, rtol=None, atol=None, traceback=False):
         '''True if two constructs are equal, False otherwise.
 
@@ -2962,21 +2962,21 @@ TODO
     differences) and ``rtol`` (the tolerance on relative differences)
     are positive, typically very small numbers. See the *atol* and
     *rtol* parameters.
-    
+
     :Parameters:
-    
-        other: 
+
+        other:
             The object to compare for equality.
-    
+
         atol: `float`, optional
             The tolerance on absolute differences between real
             numbers. The default value is set by the `ATOL` function.
-    
+
         rtol: `float`, optional
             The tolerance on relative differences between real
             numbers. The default value is set by the `RTOL` function.
 
-        '''     
+        '''
         if self is other:
             return True
 
@@ -2987,14 +2987,14 @@ TODO
                 self.__class__.__name__,
                 other.__class__.__name__))
             return False
-       
+
         identity0 = self.identity()
         identity1 = other.identity()
 
         if identity0 is None or identity1 is None or identity0 != identity1:
             # add traceback
             return False
-                  
+
         # ------------------------------------------------------------
         # Check the special attributes
         # ------------------------------------------------------------
@@ -3012,7 +3012,7 @@ TODO
 
             result = cf_equivalent(x, y, rtol=rtol, atol=atol,
                                    traceback=traceback)
-               
+
             if not result:
                 if traceback:
                     print("{}: Different {} attributes: {!r}, {!r}".format(
@@ -3027,9 +3027,9 @@ TODO
                                      traceback=traceback):
             # add traceback
             return False
-            
+
         return True
-    
+
 
     @_deprecation_error_i_kwarg
     @_inplace_enabled
@@ -3041,7 +3041,7 @@ TODO
 
     Conversion is done by decoding the reference times to date-time
     objects and then re-encoding them for the new units.
-    
+
     Any conversions are possible, but this method is primarily for
     conversions which require a change in the date-times originally
     encoded. For example, use this method to reinterpret data values
@@ -3050,7 +3050,7 @@ TODO
     when units of "calendar months" were intended but encoded as
     "months", which have special definition. See the note and examples
     below for more details.
-    
+
     For conversions which do not require a change in the date-times
     implied by the data values, this method will be considerably
     slower than a simple reassignment of the units. For example, if
@@ -3058,7 +3058,7 @@ TODO
     cf.Units('days since 1901-1-1')`` will give the same result and be
     considerably faster than ``c.convert_reference_time(cf.Units('days
     since 1901-1-1'))``.
-    
+
     .. note:: It is recommended that the units "year" and "month" be
               used with caution, as explained in the following excerpt
               from the CF conventions: "The Udunits package defines a
@@ -3070,46 +3070,46 @@ TODO
               365.25 days, and a Gregorian_year is 365.2425 days. For
               similar reasons the unit ``month``, which is defined to
               be exactly year/12, should also be used with caution.
-    
+
     :Parameters:
-    
+
         units: `Units`, optional
             The reference time units to convert to. By default the
             units days since the original reference time in the
             original calendar.
-    
+
             *Parameter example:*
               If the original units are ``'months since 2000-1-1'`` in
               the Gregorian calendar then the default units to convert
               to are ``'days since 2000-1-1'`` in the Gregorian
               calendar.
-    
-        calendar_months: `bool`, optional 
+
+        calendar_months: `bool`, optional
             If True then treat units of ``'months'`` as if they were
             calendar months (in whichever calendar is originally
             specified), rather than a 12th of the interval between 2
             successive passages of the sun through vernal equinox
             (i.e. 365.242198781/12 days).
-    
+
         calendar_years: `bool`, optional
             If True then treat units of ``'years'`` as if they were
             calendar years (in whichever calendar is originally
             specified), rather than the interval between 2 successive
             passages of the sun through vernal equinox
             (i.e. 365.242198781 days).
-    
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
-    
-    :Returns: 
-     
+
+    :Returns:
+
             The construct with converted reference time data values.
-    
+
     **Examples:**
-    
+
     >>> print(f.array)
     [1  2  3  4]
     >>> f.Units
@@ -3160,7 +3160,7 @@ TODO
         v = _inplace_enabled_define_and_cleanup(self)
 
         units0 = self.Units
-        
+
         if units is None:
             # By default, set the target units to "days since
             # <reference time of self.Units>,
@@ -3170,7 +3170,7 @@ TODO
         elif not getattr(units, 'isreftime', False):
             raise ValueError(
                 "New units must be reference time units, not {0!r}".format(units))
-           
+
         if units0._units_since_reftime in _month_units:
             if calendar_months:
                 units0 = Units('calendar_'+units0.units, calendar=units0._calendar)
@@ -3185,10 +3185,10 @@ TODO
                 units0 = Units('days since '+units0.units.split(' since ')[1],
                                 calendar=units0._calendar)
                 v.Units = units0
-        
+
 
         # Not LAMAed!
-        v.set_data(Data(            
+        v.set_data(Data(
             numpy_vectorize(
                 functools_partial(_convert_reftime_units,
                                   units=units0._units_since_reftime,
@@ -3197,7 +3197,7 @@ TODO
                 otypes=[object])(v),
             units=units))
 
-        return v    
+        return v
 
 
     @_deprecation_error_i_kwarg
@@ -3218,22 +3218,22 @@ TODO
     .. seealso:: `insert_dimension`, `flip`, `swapaxes`, `transpose`
 
     :Parameters:
-   
+
         axes: (sequence of) int or str, optional
             Select the axes.  By default all axes are flattened. The
             *axes* argument may be one, or a sequence, of:
-    
+
               * An internal axis identifier. Selects this axis.
             ..
-    
+
               * An integer. Selects the axis coresponding to the given
                 position in the list of axes of the data array.
-    
+
             No axes are flattened if *axes* is an empty sequence.
-    
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
     :Returns:
 
             The construct with flattened data, or `None` if the
@@ -3264,26 +3264,26 @@ TODO
 
     The floor of ``x`` is the largest integer ``n``, such that
     ``n<=x``.
-    
+
     .. versionadded:: 1.0
-    
+
     .. seealso:: `ceil`, `rint`, `trunc`
-    
+
     :Parameters:
-    
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
-    
+
     :Returns:
-            
+
             The construct with floored data. If the operation was
             in-place then `None` is returned.
-    
+
     **Examples:**
-    
+
     >>> print(f.array)
     [-1.9 -1.5 -1.1 -1.   0.   1.   1.1  1.5  1.9]
     >>> print(f.floor().array)
@@ -3296,32 +3296,32 @@ TODO
         return self._apply_data_oper(
             _inplace_enabled_define_and_cleanup(self), 'floor',
             inplace=inplace, i=i, delete_props=True)
-    
+
 
     def match_by_naxes(self, *naxes):
         '''Whether or not the data has a given dimensionality.
 
     .. versionadded:: 3.0.0
-    
+
     .. seealso:: `match`, `match_by_identity`, `match_by_property`,
                  `match_by_units`
-    
+
     :Parameters:
-    
+
         naxes: optional
             Dimensionalities to be compared.
-    
+
             A dimensionality given by an `int` or a `Query` object.
-    
+
             If no numbers are provided then there is always a match.
-         
+
     :Returns:
-    
+
         `bool`
             Whether or not there is a match.
-    
+
     **Examples:**
-    
+
     >>> f.ndim
     3
     >>> f.match_by_naxes(3)
@@ -3342,8 +3342,8 @@ TODO
         data = self.get_data(None)
         if data is None:
             return False
-        
-        self_ndim = data.ndim        
+
+        self_ndim = data.ndim
         for ndim in naxes:
             ok = (ndim == self_ndim)
             if ok:
@@ -3351,28 +3351,28 @@ TODO
         #--- End: for
 
         return False
-    
+
 
     def match_by_units(self, *units, exact=True):
         '''Whether or not the construct has given units.
 
     .. versionadded:: 3.0.0
-    
+
     .. seealso:: `match`, `match_by_identity`, `match_by_property`,
                  `match_by_naxes`
-    
+
     :Parameters:
-        
+
         units: optional
             Units to be compared.
-    
+
             Units are specified by a string or compiled regular
             expression (e.g. ``'km'``, ``'m s-1'``,
             ``re.compile('^kilo')``, etc.) or a `Units` object
             (e.g. ``Units('km')``, ``Units('m s-1')``, etc.).
-                    
+
             If no units are provided then there is always a match.
-         
+
         exact: `bool`, optional
             If False then a match occurs if the construct's units
             are equivalent to any of those given by *units*. For
@@ -3381,14 +3381,14 @@ TODO
             exactly one of those given by *units*. Note that the
             format of the units is not important, i.e. 'm' is exactly
             the same as 'metres' for this purpose.
-    
+
     :Returns:
-    
+
         `bool`
             Whether or not there is a match.
-    
+
     **Examples:**
-    
+
     >>> f.units
     'metres'
     >>> f.match_by_units('metres')
@@ -3415,16 +3415,16 @@ TODO
             return True
 
         self_units = self.Units
-        
+
         ok = False
         for value0 in units:
             try:
-                # re.compile object                
+                # re.compile object
                 ok = value0.search(self_units.units)
             except (AttributeError, TypeError):
                 if exact:
                     ok = Units(value0).equals(self_units)
-                else:            
+                else:
                     ok = Units(value0).equivalent(self_units)
             #--- End: if
 
@@ -3433,7 +3433,7 @@ TODO
         #--- End: for
 
         return ok
-    
+
 
     # ----------------------------------------------------------------
     # Methods
@@ -3443,21 +3443,21 @@ TODO
 
     Performs a logical "and" over the data array and returns the
     result. Masked values are considered as True during computation.
-    
+
     .. seealso:: `allclose`, `any`
-    
+
     :Returns:
-    
+
         `bool`
             Whether ot not all data elements evaluate to True.
-    
+
     **Examples:**
-    
+
     >>> print(f.array)
     [[0  3  0]]
     >>> f.all()
     False
-    
+
     >>> print(f.array)
     [[1  3  --]]
     >>> f.all()
@@ -3469,45 +3469,45 @@ TODO
             return data.all()
 
         return False
-    
+
 
     def allclose(self, y, atol=None, rtol=None):
         '''Test whether all data are element-wise equal to other,
     broadcastable data.
-    
+
     Two real numbers ``x`` and ``y`` are considered equal if
     ``|x-y|<=atol+rtol|y|``, where ``atol`` (the tolerance on absolute
     differences) and ``rtol`` (the tolerance on relative differences)
     are positive, typically very small numbers. See the *atol* and
     *rtol* parameters.
-    
+
     .. seealso:: `all`, `any`, `isclose`
-    
+
     :Parameters:
-    
+
         y:
             The object to be compared with the data array. *y* must be
             broadcastable to the data array and if *y* has units then
             they must be compatible. May be any object that can be
             converted to a `Data` object (which includes numpy array
             and `Data` objects).
-    
+
         atol: `float`, optional
             The tolerance on absolute differences between real
             numbers. The default value is set by the `ATOL` function.
-    
+
         rtol: `float`, optional
             The tolerance on relative differences between real
             numbers. The default value is set by the `RTOL` function.
-    
+
     :Returns:
-    
-        `bool` 
+
+        `bool`
             Returns `True` if the data are equal within the given
             tolerance; `False` otherwise.
-    
+
     **Examples:**
-            
+
     >>> x = f.allclose(g)
 
         '''
@@ -3531,35 +3531,35 @@ TODO
                 if y_data is None:
                     y_data = y
         #--- End: if
-        
+
         return data.allclose(y_data, rtol=rtol, atol=atol)
-    
+
 
     def any(self):
         '''Test whether any data elements evaluate to True.
 
     Performs a logical "or" over the data array and returns the
     result. Masked values are considered as False during computation.
-    
+
     .. seealso:: `all`, `allclose`
-    
+
     :Returns:
-    
+
         `bool`
             Whether ot not any data elements evaluate to `True`.
-    
+
     **Examples:**
-    
+
     >>> print(f.array)
     [[0  0  0]]
     >>> f.any()
     False
-    
+
     >>> print(f.array)
     [[--  0  0]]
     >>> f.any()
     False
-    
+
     >>> print(f.array)
     [[--  3  0]]
     >>> f.any()
@@ -3577,14 +3577,14 @@ TODO
         '''Return the names of any files containing parts of the data array.
 
     .. seealso:: `close`
-    
+
     :Returns:
-    
+
         `!set`
             The file names in normalized, absolute form.
-    
+
     **Examples:**
-    
+
     >>> f = cf.read_field('../file[123].nc')
     >>> f.files()
     {'/data/user/file1.nc',
@@ -3602,7 +3602,7 @@ TODO
             out = data.files()
 
         return out
-    
+
 
     def fill_value(self, default=None):
         '''Return the data array missing data value.
@@ -3612,12 +3612,12 @@ TODO
     that is not set, ``None``. In the last case the default `numpy`
     missing data value for the array's data type is assumed if a
     missing data value is required.
-    
+
     .. seealso:: `cf.default_netCDF_fillvals`, `_FillValue`,
                  `missing_value`
 
     :Parameters:
-    
+
         default: optional
             If the missing value is unset then return this value. By
             default, *default* is `None`. If *default* is the special
@@ -3625,7 +3625,7 @@ TODO
             appropriate to the data array's data type is used. These
             may be found with the `cf.default_netCDF_fillvals`
             function. For example:
-    
+
             >>> cf.default_netCDF_fillvals()
             {'S1': '\x00',
              'i1': -127,
@@ -3640,12 +3640,12 @@ TODO
              'f8': 9.969209968386869e+36}
 
     :Returns:
-    
+
             The missing deata value or, if one has not been set, the
             value specified by *default*
-    
+
     **Examples:**
-    
+
     >>> f.fill_value()
     None
     >>> f._FillValue = -1e30
@@ -3678,11 +3678,11 @@ TODO
                 d = self.dtype
                 fillval = default_netCDF_fillvals()[d.kind + str(d.itemsize)]
             else:
-                fillval = default 
+                fillval = default
         #--- End: if
 
         return fillval
-    
+
 
     @_deprecation_error_i_kwarg
     @_inplace_enabled
@@ -3691,33 +3691,33 @@ TODO
 
     .. seealso:: `flatten`, `insert_dimension`, `squeeze`,
                  `transpose`, `unsqueeze`
-    
+
     :Parameters:
-    
+
         axes: optional
            Select the domain axes to flip. One, or a sequence, of:
-    
+
               * The position of the dimension in the data.
-    
+
             If no axes are specified then all axes are flipped.
-    
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
         i: deprecated at version 3.0.0
             Use the *inplace* parameter instead.
-    
+
     :Returns:
-    
+
             The construct with flipped axes, or `None` if the
             operation was in-place.
-    
+
     **Examples:**
-    
+
     >>> f.flip()
     >>> f.flip(1)
     >>> f.flip([0, 1])
-    
+
     >>> g = f[::-1, :, ::-1]
     >>> f.flip([2, 0]).equals(g)
     True
@@ -3726,7 +3726,7 @@ TODO
         return self._apply_data_oper(
             _inplace_enabled_define_and_cleanup(self), 'flip', axes,
             inplace=inplace, i=i)
-    
+
 
     @_deprecation_error_i_kwarg
     @_inplace_enabled
@@ -3737,42 +3737,42 @@ TODO
     the result.
 
     .. seealso:: `log`
-    
+
     :Parameters:
-    
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
-    
+
     :Returns:
-    
+
             The construct with the exponential of data values. If the
             operation was in-place then `None` is returned.
-    
+
     **Examples:**
-    
+
     >>> f.data
     <CF Data(1, 2): [[1, 2]]>
-    >>> f.exp().data            
+    >>> f.exp().data
     <CF Data(1, 2): [[2.71828182846, 7.38905609893]]>
-    
+
     >>> f.data
     <CF Data(1, 2): [[1, 2]] 2>
-    >>> f.exp().data            
+    >>> f.exp().data
     <CF Data(1, 2): [[7.38905609893, 54.5981500331]]>
-    
+
     >>> f.data
     <CF Data(1, 2): [[1, 2]] kg m-1 s-2>
-    >>> f.exp()          
+    >>> f.exp()
     ValueError: Can't take exponential of dimensional quantities: <Units: kg m-1 s-2>
 
         '''
         return self._apply_data_oper(
             _inplace_enabled_define_and_cleanup(self), 'exp',
             inplace=inplace, i=i, delete_props=True)
-    
+
 
     @_deprecation_error_i_kwarg
     @_inplace_enabled
@@ -3783,29 +3783,29 @@ TODO
     sine of 90 degrees_east is 1.0, as is the sine of 1.57079632
     radians. If the units are not equivalent to radians (such as
     Kelvin) then they are treated as if they were radians.
-    
+
     The Units are changed to '1' (nondimensional).
 
     The "standard_name" and "long_name" properties are removed from
     the result.
-    
+
     .. seealso:: `cos`, `tan`
-    
+
     :Parameters:
-    
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
-    
+
     :Returns:
-    
+
             The construct with the sine of data values. If the
             operation was in-place then `None` is returned.
-    
+
     **Examples:**
-    
+
     >>> f.Units
     <Units: degrees_north>
     >>> print(f.array)
@@ -3815,7 +3815,7 @@ TODO
     <Units: 1>
     >>> print(f.array)
     [[-1.0 0.0 1.0 --]]
-    
+
     >>> f.Units
     <Units: m s-1>
     >>> print(f.array)
@@ -3830,7 +3830,7 @@ TODO
         return self._apply_data_oper(
             _inplace_enabled_define_and_cleanup(self), 'sin',
             inplace=inplace, i=i, delete_props=True)
-    
+
 
     @_deprecation_error_i_kwarg
     @_inplace_enabled
@@ -3838,26 +3838,26 @@ TODO
         '''Take the trigonometric inverse tangent of the data element-wise.
 
     Units are ignored in the calculation. The result has units of radians.
-    
+
     The "standard_name" and "long_name" properties are removed from
     the result.
-    
+
     .. versionadded:: 3.0.7
 
     .. seealso:: `tan`
-    
+
     :Parameters:
-    
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
     :Returns:
-    
+
             The construct with the trigonometric inverse tangent of data
             values. If the operation was in-place then `None` is returned.
-    
+
     **Examples:**
-        
+
     >>> print(f.array)
     [[0  1 2]
      [3 -- 5]]
@@ -3894,7 +3894,7 @@ TODO
             If True then do the operation in-place and return `None`.
 
     :Returns:
-    
+
             The construct with the inverse hyperbolic sine of data values.
             If the operation was in-place then `None` is returned.
 
@@ -3927,29 +3927,29 @@ TODO
     3.141592653589793 radians. If the units are not equivalent to
     radians (such as Kelvin) then they are treated as if they were
     radians.
-    
+
     The Units are changed to '1' (nondimensional).
 
     The "standard_name" and "long_name" properties are removed from
     the result.
-    
+
     .. seealso:: `arctan`, `cos`, `sin`
-    
+
     :Parameters:
-    
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
-    
+
     :Returns:
-    
+
             The construct with the tangent of data values. If the
             operation was in-place then `None` is returned.
-    
+
     **Examples:**
-    
+
     >>> f.Units
     <Units: degrees_north>
     >>> print(f.array)
@@ -3959,7 +3959,7 @@ TODO
     <Units: 1>
     >>> print(f.array)
     [[-1.0 0.0 1.0 --]]
-    
+
     >>> f.Units
     <Units: m s-1>
     >>> print(f.array)
@@ -3970,7 +3970,7 @@ TODO
     >>> print(e.array)
     [[1.55740772465 -2.18503986326 -0.142546543074 --]]
 
-        '''     
+        '''
         return self._apply_data_oper(
             _inplace_enabled_define_and_cleanup(self), 'tan',
             inplace=inplace, i=i, delete_props=True)
@@ -4003,7 +4003,7 @@ TODO
             If True then do the operation in-place and return `None`.
 
     :Returns:
-    
+
             The construct with the hyperbolic tangent of data values. If the
             operation was in-place then `None` is returned.
 
@@ -4061,7 +4061,7 @@ TODO
             If True then do the operation in-place and return `None`.
 
     :Returns:
-    
+
             The construct with the hyperbolic sine of data values. If the
             operation was in-place then `None` is returned.
 
@@ -4118,7 +4118,7 @@ TODO
             If True then do the operation in-place and return `None`.
 
     :Returns:
-    
+
             The construct with the hyperbolic cosine of data values. If the
             operation was in-place then `None` is returned.
 
@@ -4160,42 +4160,42 @@ TODO
 
     The "standard_name" and "long_name" properties are removed from
     the result.
-    
+
     .. seealso:: `exp`
-    
+
     :Parameters:
-    
+
         base: number, optional
             The base of the logiarthm. By default a natural logiarithm
-            is taken.    
-    
+            is taken.
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
-    
+
     :Returns:
-    
+
             The construct with the logarithm of data values.
-    
+
     **Examples:**
-    
+
     >>> f.data
     <CF Data(1, 2): [[1, 2]]>
     >>> f.log().data
     <CF Data(1, 2): [[0.0, 0.69314718056]] ln(re 1)>
-    
+
     >>> f.data
     <CF Data(1, 2): [[1, 2]] 2>
     >>> f.log().data
     <CF Data(1, 2): [[0.0, 0.69314718056]] ln(re 2 1)>
-    
+
     >>> f.data
     <CF Data(1, 2): [[1, 2]] kg s-1 m-2>
     >>> f.log().data
     <CF Data(1, 2): [[0.0, 0.69314718056]] ln(re 1 m-2.kg.s-1)>
-    
+
     >>> f.log(inplace=True)
     >>> f.Units
     <Units: >
@@ -4206,7 +4206,7 @@ TODO
         return self._apply_data_oper(
             _inplace_enabled_define_and_cleanup(self), 'log', base,
             inplace=inplace, i=i, delete_props=True)
-    
+
 
     @_deprecation_error_i_kwarg
     @_inplace_enabled
@@ -4216,26 +4216,26 @@ TODO
     The truncated value of the scalar ``x``, is the nearest integer
     ``i`` which is closer to zero than ``x`` is. I.e. the fractional
     part of the signed number ``x`` is discarded.
-    
+
     .. versionadded:: 1.0
-    
+
     .. seealso:: `ceil`, `floor`, `rint`
-    
+
     :Parameters:
-    
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
-    
+
     :Returns:
-    
+
             The construct with truncated data. If the operation was
             in-place then `None` is returned.
-    
+
     **Examples:**
-    
+
     >>> print(f.array)
     [-1.9 -1.5 -1.1 -1.   0.   1.   1.1  1.5  1.9]
     >>> print(f.trunc().array)
@@ -4249,18 +4249,18 @@ TODO
             _inplace_enabled_define_and_cleanup(self), 'trunc',
             inplace=inplace, i=i)
 
-    
+
     def unique(self):
         '''The unique elements of the data.
 
     :Returns:
-    
+
         `Data`
             The unique data array values in a one dimensional `Data`
             object.
-    
+
     **Examples:**
-    
+
     >>> print(f.array)
     [[4 2 1]
      [1 2 3]]
@@ -4287,7 +4287,7 @@ TODO
         '''Return the canonical identity.
 
     By default the identity is the first found of the following:
-    
+
     * The "standard_name" property.
     * The "id" attribute, preceeded by ``'id%'``.
     * The "cf_role" property, preceeded by ``'cf_role='``.
@@ -4296,18 +4296,18 @@ TODO
     * The netCDF variable name, preceeded by ``'ncvar%'``.
     * The coordinate type (``'X'``, ``'Y'``, ``'Z'`` or ``'T'``).
     * The value of the *default* parameter.
-    
+
     .. versionadded:: 3.0.0
-    
+
     .. seealso:: `id`, `identities`
-    
+
     :Parameters:
-    
+
         default: optional
             If no identity can be found then return the value of the
             default parameter.
-    
-        strict: `bool`, optional 
+
+        strict: `bool`, optional
             If True then the identity is the first found of only the
             "standard_name" property or the "id" attribute.
 
@@ -4316,16 +4316,16 @@ TODO
             "standard_name" property, the "id" attribute, the
             "long_name" property or the netCDF variable name.
 
-        nc_only: `bool`, optional       
+        nc_only: `bool`, optional
             If True then only take the identity from the netCDF
             variable name.
 
     :Returns:
-    
+
             The identity.
-    
+
     **Examples:**
-    
+
     >>> f.properties()
     {'foo': 'bar',
      'long_name': 'Air Temperature',
@@ -4360,16 +4360,16 @@ TODO
         if nc_only:
             if strict:
                 raise ValueError("'strict' and 'nc_only' parameters cannot both be True")
-            
+
             if relaxed:
                 raise ValueError("'relaxed' and 'nc_only' parameters cannot both be True")
-            
+
             n = self.nc_get_variable(None)
             if n is not None:
                 return 'ncvar%{0}'.format(n)
-            
+
             return default
-            
+
         n = self.get_property('standard_name', None)
         if n is not None:
             return '{0}'.format(n)
@@ -4378,7 +4378,7 @@ TODO
         if n is not None:
             return 'id%{0}'.format(n)
 
-        if relaxed: 
+        if relaxed:
             n = self.get_property('long_name', None)
             if n is not None:
                 return 'long_name={0}'.format(n)
@@ -4386,12 +4386,12 @@ TODO
             n = self.nc_get_variable(None)
             if n is not None:
                 return 'ncvar%{0}'.format(n)
-        
+
             return default
 
         if strict:
             return default
-        
+
         for prop in  ('cf_role', 'axis', 'long_name'):
             n = self.get_property(prop, None)
             if n is not None:
@@ -4401,7 +4401,7 @@ TODO
         n = self.nc_get_variable(None)
         if n is not None:
             return 'ncvar%{0}'.format(n)
-        
+
         for ctype in ('X', 'Y', 'Z', 'T'):
             if getattr(self, ctype, False):
                 return ctype
@@ -4414,7 +4414,7 @@ TODO
         '''Return all possible identities.
 
     The identities comprise:
-    
+
     * The "standard_name" property.
     * The "id" attribute, preceeded by ``'id%'``.
     * The "cf_role" property, preceeded by ``'cf_role='``.
@@ -4424,18 +4424,18 @@ TODO
       the property name and an ``'='``.
     * The coordinate type (``'X'``, ``'Y'``, ``'Z'`` or ``'T'``).
     * The netCDF variable name, preceeded by ``'ncvar%'``.
-    
+
     .. versionadded:: 3.0.0
-    
+
     .. seealso:: `id`, `identity`
-    
+
     :Returns:
-    
+
         `list`
             The identities.
-    
+
     **Examples:**
-    
+
     >>> f.properties()
     {'foo': 'bar',
      'long_name': 'Air Temperature',
@@ -4470,7 +4470,7 @@ TODO
             if getattr(self, ctype, False):
                 out.append(ctype)
         #--- End: for
-        
+
         return out
 
 
@@ -4478,9 +4478,9 @@ TODO
         '''Inspect the object for debugging.
 
     .. seealso:: `cf.inspect`
-    
-    :Returns: 
-    
+
+    :Returns:
+
         `None`
 
         '''
@@ -4492,27 +4492,27 @@ TODO
 
     Note that a `Data` instance is returned. Use its `array` attribute
     to return the data as an independent `numpy` array.
-    
+
     The units, calendar and fill value properties are, if set,
     inserted into the data.
-    
+
     .. versionadded:: 1.7.0
-    
+
     .. seealso:: `array`, `data`, `del_data`, `has_data`, `set_data`
-    
+
     :Parameters:
-    
+
         default: optional
             Return the value of the *default* parameter if data have
             not been set. If set to an `Exception` instance then it
             will be raised instead.
-    
+
     :Returns:
-    
+
             The data.
-    
+
     **Examples:**
-    
+
     >>> d = cf.Data(range(10))
     >>> f.set_data(d)
     >>> f.has_data()
@@ -4542,32 +4542,32 @@ TODO
     units. Therefore, this method should only be used when it is known
     that the data array values are correct but the calendar has been
     incorrectly encoded.
-    
+
     Not to be confused with setting the `calendar` or `Units`
     attributes to a calendar which is equivalent to the original
     calendar
-    
+
     .. seealso:: `calendar`, `override_units`, `units`, `Units`
-    
+
     :Parameters:
-    
+
         calendar: `str`
             The new calendar.
-    
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
-    
+
     :Returns:
-    
+
     TODO
-    
+
     **Examples:**
-    
+
     TODO
-    
+
     >>> g = f.override_calendar('noleap')
 
         '''
@@ -4582,7 +4582,7 @@ TODO
                 raise ValueError(
                     "Can't override the calender of non-reference-time units: {0!r}".format(
                         self.Units))
-                
+
             PropertiesData.Units.fset(v, Units(getattr(v.Units, 'units', None),
                                                calendar=calendar))
 
@@ -4599,29 +4599,29 @@ TODO
     units. Therefore, this method should only be used when it is known
     that the data array values are correct but the units have
     incorrectly encoded.
-    
+
     Not to be confused with setting the `units` or `Units` attributes
     to units which are equivalent to the original units.
-    
+
     .. seealso:: `calendar`, `override_calendar`, `units`, `Units`
-    
+
     :Parameters:
-    
+
         units: `str` or `Units`
             The new units for the data array.
-    
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
-    
+
     :Returns:
-    
+
     TODO
-    
+
     **Examples:**
-    
+
     >>> f.Units
     <Units: hPa>
     >>> f.datum(0)
@@ -4641,7 +4641,7 @@ TODO
         v = _inplace_enabled_define_and_cleanup(self)
 
         units = Units(units)
-        
+
         data = v.get_data(None)
         if data is not None:
             data.override_units(units, inplace=True)
@@ -4661,24 +4661,24 @@ TODO
         '''Round the data to the nearest integer, element-wise.
 
     .. versionadded:: 1.0
-    
+
     .. seealso:: `ceil`, `floor`, `trunc`
-    
+
     :Parameters:
-    
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
-    
+
     :Returns:
-            
+
             The construct with rounded data. If the operation was
             in-place then `None` is returned.
-    
+
     **Examples:**
-    
+
     >>> print(f.array)
     [-1.9 -1.5 -1.1 -1.   0.   1.   1.1  1.5  1.9]
     >>> print(f.rint().array)
@@ -4704,31 +4704,31 @@ TODO
     inexact representation of decimal fractions in the IEEE floating
     point standard and errors introduced when scaling by powers of
     ten.
-     
+
     .. versionadded:: 1.1.4
-    
+
     .. seealso:: `ceil`, `floor`, `rint`, `trunc`
-    
+
     :Parameters:
-    	
+
         decimals: `int`, optional
             Number of decimal places to round to (0 by default). If
             decimals is negative, it specifies the number of positions
             to the left of the decimal point.
-    
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
-    
+
     :Returns:
-    
+
             The construct with rounded data. If the operation was
             in-place then `None` is returned.
-    
+
     **Examples:**
-    
+
     >>> print(f.array)
     [-1.81, -1.41, -1.01, -0.91,  0.09,  1.09,  1.19,  1.59,  1.99])
     >>> print(f.round().array)
@@ -4751,24 +4751,24 @@ TODO
 
     .. seealso:: `flatten`, `insert_dimension`, `flip`, `squeeze`,
                  `transpose`
-    
+
     :Parameters:
-    
+
         iaxis: `int`
             TODO
-    
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
-    
+
     :Returns:
-    
+
         TODO
-    
+
     **Examples:**
-    
+
     TODO
 
         '''
@@ -4782,26 +4782,26 @@ TODO
 
     The units, calendar and fill value of the incoming `Data` instance
     are removed prior to insertion.
-    
+
     .. versionadded:: 3.0.0
-    
+
     .. seealso:: `data`, `del_data`, `get_data`, `has_data`
-    
+
     :Parameters:
-    
+
         data: `Data`
             The data to be inserted.
-    
+
         copy: `bool`, optional
             If False then do not copy the data prior to insertion. By
             default the data are copied.
-    
+
     :Returns:
-    
+
         `None`
-    
+
     **Examples:**
-    
+
     >>> d = Data(range(10))
     >>> f.set_data(d)
     >>> f.has_data()
@@ -4830,7 +4830,7 @@ TODO
 
         if copy:
             data = data.copy()
-   
+
         self._set_component('data', data, copy=False)
 
 
@@ -4841,13 +4841,13 @@ TODO
         '''Set data array elements depending on a condition.
 
     .. seealso:: `cf.masked`, `hardmask`, `subspace`
-    
+
     :Parameters:
-    
+
         TODO
 
     :Returns:
-    
+
         TODO
 
     **Examples:**
@@ -4873,7 +4873,7 @@ TODO
                         condition.__class__.__name__))
 
             condition = condition_data
-            
+
         try:
             x_data = x.get_data(None)
         except AttributeError:
@@ -4885,7 +4885,7 @@ TODO
                         x.__class__.__name__))
 
             x = x_data
-            
+
         try:
             y_data = y.get_data(None)
         except AttributeError:
@@ -4897,12 +4897,12 @@ TODO
                         y.__class__.__name__))
 
             y = y_data
-            
+
         data.where(condition, x, y, inplace=True, _debug=_debug)
 
         return v
 
-    
+
     # ----------------------------------------------------------------
     # Aliases
     # ----------------------------------------------------------------
@@ -4913,7 +4913,7 @@ TODO
         '''
         return self.datetime_array
 
-    
+
     # ----------------------------------------------------------------
     # Deprecated attributes and methods
     # ----------------------------------------------------------------
@@ -4925,12 +4925,12 @@ TODO
 
         '''
         _DEPRECATION_ERROR_ATTRIBUTE(self, 'attributes')
-    
+
 
     @property
     def Data(self):
         '''The `Data` object containing the data array.
-        
+
         Deprecated at version 3.0.0. Use 'data' attribute or
         'get_data' method instead.
 
@@ -4959,7 +4959,7 @@ TODO
         '''
         _DEPRECATION_ERROR_ATTRIBUTE(self, 'dtvarray') # pragma: no cover
 
-        
+
     @property
     def hasbounds(self):
         '''`True` if there are cell bounds.
@@ -4967,9 +4967,9 @@ TODO
     Deprecated at version 3.0.0. Use 'has_bounds' method instead.
 
     If present, cell bounds are stored in the `!bounds` attribute.
-    
+
     **Examples:**
-    
+
     >>> if c.hasbounds:
     ...     b = c.bounds
 
@@ -4982,27 +4982,27 @@ TODO
         '''True if there is a data array.
 
     Deprecated at version 3.0.0. Use 'has_data' method instead.
-    
+
     If present, the data array is stored in the `data` attribute.
-    
+
     .. seealso:: `data`, `hasbounds`
-    
+
     **Examples:**
-    
+
     >>> if f.hasdata:
     ...     print(f.data)
 
         '''
         _DEPRECATION_ERROR_ATTRIBUTE(self, 'hasdata', "Use 'has_data' method instead")
 
-        
+
     @property
     def unsafe_array(self):
         '''A numpy array of the data.
 
         Deprecated at version 3.0.0. Use 'array' attribute instead.
 
-        '''      
+        '''
         _DEPRECATION_ERROR_ATTRIBUTE(
             self, 'unsafe_array',
             "Use 'array' attribute instead.") # pragma: no cover
@@ -5011,24 +5011,24 @@ TODO
     def asdatetime(self, i=False):
         '''Convert the internal representation of data array elements to
     date-time objects.
-    
+
     Only applicable to construct with reference time units.
-    
+
     If the calendar has not been set then the CF default calendar will be
     used and the units will be updated accordingly.
-    
+
     .. seealso:: `asreftime`
-    
+
     :Parameters:
-    
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
-    
+
     **Examples:**
-    
+
     >>> t.asdatetime().dtype
     dtype('float64')
     >>> t.asdatetime().dtype
@@ -5037,28 +5037,28 @@ TODO
         '''
         _DEPRECATION_ERROR_METHOD(self, 'asdatetime') # pragma: no cover
 
-        
+
     def asreftime(self, i=False):
         '''Convert the internal representation of data array elements
     to numeric reference times.
-    
+
     Only applicable to constructs with reference time units.
-    
+
     If the calendar has not been set then the CF default calendar will be
     used and the units will be updated accordingly.
-    
+
     .. seealso:: `asdatetime`
-    
+
     :Parameters:
-    
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
-        
+
     **Examples:**
-    
+
     >>> t.asdatetime().dtype
     dtype('O')
     >>> t.asreftime().dtype
@@ -5066,7 +5066,7 @@ TODO
 
         '''
         _DEPRECATION_ERROR_METHOD(self, 'asreftime') # pragma: no cover
-    
+
 
     def expand_dims(self, position=0, i=False):
         '''Insert a size 1 axis into the data array.

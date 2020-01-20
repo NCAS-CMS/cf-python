@@ -18,16 +18,16 @@ class Coordinate(mixin.PropertiesDataBounds):
 
     One of ``'T'``, ``'X'``, ``'Y'`` or ``'Z'`` if the coordinate
     construct is for the respective CF axis type, otherwise `None`.
-    
+
     .. seealso:: `T`, `X`, `~cf.Coordinate.Y`, `Z`
-    
+
     **Examples:**
-    
+
     >>> c.X
     True
     >>> c.ctype
     'X'
-    
+
     >>> c.T
     True
     >>> c.ctype
@@ -38,21 +38,21 @@ class Coordinate(mixin.PropertiesDataBounds):
             if getattr(self, t):
                 return t
 
-    
+
     @property
     def T(self):
         '''True if and only if the data are coordinates for a CF 'T' axis.
-        
+
     CF 'T' axis coordinates are defined by having one or more of the
     following:
-    
+
       * The `axis` property has the value ``'T'``
       * Units of latitude
-    
+
     .. seealso:: `ctype`, `X`, `~cf.Coordinate.Y`, `Z`
-    
+
     **Examples:**
-    
+
     >>> c.Units
     <CF Units: seconds since 1992-10-8>
     >>> c.T
@@ -65,29 +65,29 @@ class Coordinate(mixin.PropertiesDataBounds):
     @property
     def X(self):
         '''True if and only if the data are coordinates for a CF 'X' axis.
-        
+
     CF 'X' axis coordinates are defined by having one or more of the
     following:
-    
+
       * The `axis` property has the value ``'X'``
       * Units of longitude
       * The `standard_name` property is one of ``'longitude'``,
         ``'projection_x_coordinate'`` or ``'grid_longitude'``
-    
+
     .. seealso:: `ctype`, `T`, `~cf.Coordinate.Y`, `Z`
-    
+
     **Examples:**
-    
+
     >>> c.Units
     <CF Units: degreeE>
     >>> c.X
     True
-     
+
     >>> c.standard_name
     'longitude'
     >>> c.X
     True
-    
+
     >>> c.axis == 'X' and c.X
     True
 
@@ -95,7 +95,7 @@ class Coordinate(mixin.PropertiesDataBounds):
 #        data  = self.get_data(None)
 #        if data is not None and data.ndim > 1:
 #            return self.get_property('axis', None) == 'X'
-            
+
         return (self.Units.islongitude or
                 self.get_property('axis', None) == 'X' or
                 self.get_property('standard_name', None) in ('longitude',
@@ -106,34 +106,34 @@ class Coordinate(mixin.PropertiesDataBounds):
     @property
     def Y(self):
         '''True if and only if the data are coordinates for a CF 'Y' axis.
-        
+
     CF 'Y' axis coordinates are defined by having one or more of the
     following:
-    
+
       * The `axis` property has the value ``'Y'``
       * Units of latitude
       * The `standard_name` property is one of ``'latitude'``,
         ``'projection_y_coordinate'`` or ``'grid_latitude'``
-    
+
     .. seealso:: `ctype`, `T`, `X`, `Z`
-    
+
     **Examples:**
-    
+
     >>> c.Units
     <CF Units: degree_north>
     >>> c.Y
     True
-    
+
     >>> c.standard_name == 'latitude'
     >>> c.Y
     True
 
-        '''              
+        '''
 #        if self.ndim > 1:
 #            return self.get_property('axis', None) == 'Y'
 
-        return (self.Units.islatitude or 
-                self.get_property('axis', None) == 'Y' or 
+        return (self.Units.islatitude or
+                self.get_property('axis', None) == 'Y' or
                 self.get_property('standard_name', None) in ('latitude',
                                                             'projection_y_coordinate',
                                                             'grid_latitude'))
@@ -144,7 +144,7 @@ class Coordinate(mixin.PropertiesDataBounds):
 
     CF 'Z' axis coordinates are defined by having one or more of the
     following:
-    
+
       * The `axis` property has the value ``'Z'``
       * Units of pressure, level, layer or sigma_level
       * The `positive` property has the value ``'up'`` or ``'down'``
@@ -158,38 +158,38 @@ class Coordinate(mixin.PropertiesDataBounds):
         ``'ocean_s_coordinate'``, ``'ocean_s_coordinate_g1'``,
         ``'ocean_s_coordinate_g2'``, ``'ocean_sigma_z_coordinate'`` or
         ``'ocean_double_sigma_coordinate'``
-    
+
     .. seealso:: `ctype`, `T`, `X`, `~cf.Coordinate.Y`
-    
+
     **Examples:**
-    
+
     >>> c.Units
     <CF Units: Pa>
     >>> c.Z
     True
-    
+
     >>> c.Units.equivalent(cf.Units('K')) and c.positive == 'up'
     True
     >>> c.Z
-    True 
-    
+    True
+
     >>> c.axis == 'Z' and c.Z
     True
-    
+
     >>> c.Units
     <CF Units: sigma_level>
     >>> c.Z
     True
-    
+
     >>> c.standard_name
     'ocean_sigma_coordinate'
     >>> c.Z
     True
 
-        '''   
+        '''
 #        if self.ndim > 1:
 #            return self.get_property('axis', None) == 'Z'
-        
+
         units = self.Units
         return (
             units.ispressure or
@@ -224,14 +224,14 @@ class Coordinate(mixin.PropertiesDataBounds):
     axis respectively. A value of `'X'`, `'Y'` or `'Z'` may also also
     used to identify generic spatial coordinates (the values `'X'` and
     `'Y'` being used to identify horizontal coordinates).
-    
+
     **Examples:**
-    
+
     >>> c.axis = 'Y'
     >>> c.axis
     'Y'
     >>> del c.axis
-    
+
     >>> c.set_property('axis', 'T')
     >>> c.get_property('axis')
     'T'
@@ -240,10 +240,10 @@ class Coordinate(mixin.PropertiesDataBounds):
         '''
         return self.get_property('axis', default=AttributeError())
     @axis.setter
-    def axis(self, value): 
-        self.set_property('axis', value)    
+    def axis(self, value):
+        self.set_property('axis', value)
     @axis.deleter
-    def axis(self):       
+    def axis(self):
         self.del_property('axis')
 
     @property
@@ -256,32 +256,32 @@ class Coordinate(mixin.PropertiesDataBounds):
     is useful for applications displaying the data. The `positive`
     attribute may have the value ``'up'`` or ``'down'`` (case
     insensitive).
-    
+
     For example, if ocean depth coordinates encode the depth of the
     surface as 0 and the depth of 1000 meters as 1000 then the
     `postive` property will have the value `'down'`.
-          
+
     **Examples:**
-    
+
     >>> c.positive = 'up'
     >>> c.positive
     'up'
     >>> del c.positive
-    
+
     >>> c.set_property('positive', 'down')
     >>> c.get_property('positive')
-    'down' 
+    'down'
     >>> c.del_property('positive')
 
         '''
         return self.get_property('positive', default=AttributeError())
     @positive.setter
     def positive(self, value):
-        self.set_property('positive', value)  
+        self.set_property('positive', value)
         self._direction = None
     @positive.deleter
     def positive(self):
-        self.del_property('positive')       
+        self.del_property('positive')
         self._direction = None
 
 
@@ -329,7 +329,7 @@ class Coordinate(mixin.PropertiesDataBounds):
 #>>> c.period()
 #<CF Data: 360.0 degrees_east>
 #
-#        '''     
+#        '''
 #        old = self._period
 #        if old is not None:
 #            old = old.copy()
@@ -355,7 +355,7 @@ class Coordinate(mixin.PropertiesDataBounds):
 #
 #            value = abs(value)
 #            value.dtype = float
-#            
+#
 #            if self.isdimension:
 #                # Faster than `range`
 #                array = self.array

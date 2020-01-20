@@ -5,4 +5,4 @@ class CompressedArray(Array):
     '''TODO
 
     '''
- 
+

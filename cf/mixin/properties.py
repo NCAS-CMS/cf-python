@@ -30,7 +30,7 @@ class Properties:
         '''
         return ATOL()
 
-    
+
     @property
     def _RTOL(self):
         '''Return the tolerance on relative differences between real numbers,
@@ -41,7 +41,7 @@ class Properties:
         '''
         return RTOL()
 
-    
+
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
@@ -67,7 +67,7 @@ class Properties:
             Whether or not the two values match.
 
         '''
-        if value1 is None:            
+        if value1 is None:
             return False
 
         if isinstance(value0, Query):
@@ -78,11 +78,11 @@ class Properties:
             return bool(value0.search(value1))
         except (AttributeError, TypeError):
             if units and isinstance(value0, str):
-                return Units(value0).equals(Units(value1))        
-            
+                return Units(value0).equals(Units(value1))
+
             return self._equals(value1, value0)
 
-    
+
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
@@ -120,7 +120,7 @@ class Properties:
             raise AttributeError("{} doesn't have attribute 'id'".format(
                 self.__class__.__name__))
 
-        
+
     # ----------------------------------------------------------------
     # CF properties
     # ----------------------------------------------------------------
@@ -130,14 +130,14 @@ class Properties:
 
     The calendar used for encoding time data. See
     http://cfconventions.org/latest.html for details.
-    
+
     **Examples:**
-    
+
     >>> f.calendar = 'noleap'
     >>> f.calendar
     'noleap'
     >>> del f.calendar
-    
+
     >>> f.set_property('calendar', 'proleptic_gregorian')
     >>> f.has_property('calendar')
     True
@@ -153,21 +153,21 @@ class Properties:
     @calendar.deleter
     def calendar(self):        self.del_property('calendar', default=AttributeError())
 
-    
+
     @property
     def comment(self):
         '''The comment CF property.
 
     Miscellaneous information about the data or methods used to
     produce it. See http://cfconventions.org/latest.html for details.
-    
+
     **Examples:**
-    
+
     >>> f.comment = 'This simulation was done on an HP-35 calculator'
     >>> f.comment
     'This simulation was done on an HP-35 calculator'
     >>> del f.comment
-    
+
     >>> f.set_property('comment', 'a comment')
     >>> f.has_property('comment')
     True
@@ -190,14 +190,14 @@ class Properties:
 
     A list of the applications that have modified the original
     data. See http://cfconventions.org/latest.html for details.
-    
+
     **Examples:**
-    
+
     >>> f.history = 'created on 2012/10/01'
     >>> f.history
     'created on 2012/10/01'
     >>> del f.history
-    
+
     >>> f.set_property('history', 'created on 2012/10/01')
     >>> f.has_property('history')
     True
@@ -214,7 +214,7 @@ class Properties:
     def history(self):
         self.del_property('history', default=AttributeError())
 
-    
+
     @property
     def leap_month(self):
         '''The leap_month CF property.
@@ -222,14 +222,14 @@ class Properties:
     Specifies which month is lengthened by a day in leap years for a
     user defined calendar. See http://cfconventions.org/latest.html
     for details.
-    
+
     **Examples:**
-    
+
     >>> f.leap_month = 2
     >>> f.leap_month
     2
     >>> del f.leap_month
-    
+
     >>> f.set_property('leap_month', 11)
     >>> f.has_property('leap_month')
     True
@@ -255,19 +255,19 @@ class Properties:
     is assumed that all years that differ from this year by a multiple
     of four are also leap years. See
     http://cfconventions.org/latest.html for details.
-    
+
     **Examples:**
-    
+
     >>> f.leap_year = 1984
     >>> f.leap_year
     1984
     >>> del f.leap_year
-    
+
     >>> f.set_property('leap_year', 1984)
     >>> f.has_property('leap_year')
     True
     >>> f.get_property('leap_year')
-    1984        
+    1984
     >>> f.del_property('leap_year')
 
         '''
@@ -279,7 +279,7 @@ class Properties:
     def leap_year(self):
         self.del_property('leap_year', default=AttributeError())
 
-    
+
     @property
     def long_name(self):
         '''The long_name CF property.
@@ -287,14 +287,14 @@ class Properties:
     A descriptive name that indicates a nature of the data. This name
     is not standardized. See http://cfconventions.org/latest.html for
     details.
-    
+
     **Examples:**
-    
+
     >>> f.long_name = 'zonal_wind'
     >>> f.long_name
     'zonal_wind'
     >>> del f.long_name
-    
+
     >>> f.set_property('long_name', 'surface air temperature')
     >>> f.has_property('long_name')
     True
@@ -319,16 +319,16 @@ class Properties:
     Specifies the length of each month in a non-leap year for a user
     defined calendar. See http://cfconventions.org/latest.html for
     details.
-    
+
     Stored as a tuple but may be set as any array-like object.
-    
+
     **Examples:**
-    
+
     >>> f.month_lengths = numpy.array([34, 31, 32, 30, 29, 27, 28, 28, 28, 32, 32, 34])
     >>> f.month_lengths
     (34, 31, 32, 30, 29, 27, 28, 28, 28, 32, 32, 34)
     >>> del f.month_lengths
-    
+
     >>> f.set_property('month_lengths', [34, 31, 32, 30, 29, 27, 28, 28, 28, 32, 32, 34])
     >>> f.has_property('month_lengths')
     True
@@ -344,7 +344,7 @@ class Properties:
     @month_lengths.deleter
     def month_lengths(self):        self.del_property('month_lengths', default=AttributeError())
 
-    
+
     @property
     def standard_name(self):
         '''The standard_name CF property.
@@ -353,14 +353,14 @@ class Properties:
     standard name table
     (http://cfconventions.org/standard-names.html). See
     http://cfconventions.org/latest.html for details.
-    
+
     **Examples:**
-    
+
     >>> f.standard_name = 'time'
     >>> f.standard_name
     'time'
     >>> del f.standard_name
-    
+
     >>> f.set_property('standard_name', 'time')
     >>> f.has_property('standard_name')
     True
@@ -376,7 +376,7 @@ class Properties:
     @standard_name.deleter
     def standard_name(self):        self.del_property('standard_name', default=AttributeError())
 
-    
+
     @property
     def units(self):
         '''The units CF property.
@@ -385,14 +385,14 @@ class Properties:
     string that can be recognized by UNIDATA's Udunits package
     (http://www.unidata.ucar.edu/software/udunits). See
     http://cfconventions.org/latest.html for details.
-    
+
     **Examples:**
-    
+
     >>> f.units = 'K'
     >>> f.units
     'K'
     >>> del f.units
-    
+
     >>> f.set_property('units', 'm.s-1')
     >>> f.has_property('units')
     True
@@ -408,21 +408,21 @@ class Properties:
     @units.deleter
     def units(self):        self.del_property('units', default=AttributeError())
 
-    
+
     @property
     def valid_max(self):
         '''The valid_max CF property.
 
     The largest valid value of the data. See
     http://cfconventions.org/latest.html for details.
-    
+
     **Examples:**
-    
+
     >>> f.valid_max = 100.0
     >>> f.valid_max
     100.0
     >>> del f.valid_max
-    
+
     >>> f.set_property('valid_max', 100.0)
     >>> f.has_property('valid_max')
     True
@@ -438,21 +438,21 @@ class Properties:
     @valid_max.deleter
     def valid_max(self):        self.del_property('valid_max', default=AttributeError())
 
-    
+
     @property
     def valid_min(self):
-        '''The valid_min CF property.	
+        '''The valid_min CF property.
 
     The smallest valid value of the data. See
     http://cfconventions.org/latest.html for details.
-    
+
     **Examples:**
-    
+
     >>> f.valid_min = 8.0
     >>> f.valid_min
     8.0
     >>> del f.valid_min
-    
+
     >>> f.set_property('valid_min', 8.0)
     >>> f.has_property('valid_min')
     True
@@ -468,23 +468,23 @@ class Properties:
     @valid_min.deleter
     def valid_min(self):        self.del_property('valid_min', default=AttributeError())
 
-    
+
     @property
     def valid_range(self):
         '''The valid_range CF property.
 
     The smallest and largest valid values the data. See
     http://cfconventions.org/latest.html for details.
-    
+
     Stored as a tuple but may be set as any array-like object.
-    
+
     **Examples:**
-    
+
     >>> f.valid_range = numpy.array([100., 400.])
     >>> f.valid_range
     (100.0, 400.0)
     >>> del f.valid_range
-    
+
     >>> f.set_property('valid_range', [100.0, 400.0])
     >>> f.has_property('valid_range')
     True
@@ -505,33 +505,33 @@ class Properties:
     # ----------------------------------------------------------------
     def get_property(self, prop, default=ValueError()):
         '''Get a CF property.
-        
+
     .. versionadded:: 3.0.0
 
     .. seealso:: `clear_properties`, `del_property`, `has_property`,
                  `properties`, `set_property`
-    
+
     :Parameters:
-    
+
         prop: `str`
             The name of the CF property.
-    
+
             *Parameter example:*
               ``prop='long_name'``
-    
+
         default: optional
             Return the value of the *default* parameter if the
             property does not exist. If set to an `Exception` instance
             then it will be raised instead.
 
     :Returns:
-    
+
             The value of the named property or the default value, if
             set.
 
     **Examples:**
-    
-    
+
+
     >>> f.set_property('project', 'CMIP7')
     >>> f.has_property('project')
     True
@@ -546,7 +546,7 @@ class Properties:
     >>> print(f.get_property('project', None))
     None
 
-        '''        
+        '''
         # Get a special property
         if prop in self._special_properties:
             try:
@@ -554,7 +554,7 @@ class Properties:
             except AttributeError as err:
                 return self._default(default, err)
         #--- End: if
-        
+
         # Still here? Then get a non-special property
         return super().get_property(prop, default=default)
 
@@ -563,25 +563,25 @@ class Properties:
         '''Whether a property has been set.
 
     .. versionadded:: 3.0.0
-    
+
     .. seealso:: `clear_properties`, `del_property`, `get_property`,
                  `properties`, `set_property`
-    
+
     :Parameters:
-    
+
         prop: `str`
             The name of the property.
-    
+
             *Parameter example:*
                ``prop='long_name'``
-    
+
     :Returns:
-    
+
          `bool`
             `True` if the property has been set, otherwise `False`.
-    
+
     **Examples:**
-    
+
     >>> f.set_property('project', 'CMIP7')
     >>> f.has_property('project')
     True
@@ -600,7 +600,7 @@ class Properties:
         # Get a special property
         if prop in self._special_properties:
             return hasattr(self, prop)
-        
+
         # Still here? Then get a non-special property
         return super().has_property(prop)
 
@@ -609,29 +609,29 @@ class Properties:
         '''Remove a property.
 
     .. versionadded:: 3.0.0
-    
+
     .. seealso:: `clear_properties`, `get_property`, `has_property`,
                  `properties`, `set_property`
-    
+
     :Parameters:
-    
+
         prop: `str`
             The name of the property.
-    
+
             *Parameter example:*
                ``prop='long_name'``
-    
+
         default: optional
             Return the value of the *default* parameter if the
             property does not exist. If set to an `Exception` instance
             then it will be raised instead.
 
     :Returns:
-    
+
             The removed property.
-    
+
     **Examples:**
-    
+
     >>> f.set_property('project', 'CMIP7')
     >>> f.has_property('project')
     True
@@ -666,11 +666,11 @@ class Properties:
         '''Whether or not the construct identity satisfies conditions.
 
     .. versionadded:: 3.0.0
-    
+
     .. seealso:: `match`, `match_by_property`, `match_by_ncvar`
-    
+
     :Parameters:
-    
+
         identities: optional
             Define one or more conditions on the identities.
 
@@ -680,14 +680,14 @@ class Properties:
             a compiled regular expression
             (e.g. ``re.compile('^atmosphere')``) that is compared with
             the construct's identities via `re.search`.
-               
+
             A construct has a number of identities, and the condition
             is satisfied if any of the construct's identities, as
             returned by the `identities` method, equals the condition
             value. A construct's identities are those returned by its
             `!identities` method. In the following example, the
             construct ``x`` has six identities:
-    
+
                >>> x.identities()
                ['time',
                 'long_name=Time',
@@ -695,20 +695,20 @@ class Properties:
                 'standard_name=time',
                 'ncvar%t',
                 'T']
-        
+
     :Returns:
-    
+
         `bool`
             Whether or not at least one of the conditions are met.
-    
+
     **Examples:**
-    
+
     >>> f.match_by_identity('time')
-    
+
     >>> f.match_by_identity(re.compile('^air'))
-    
+
     >>> f.match_by_identity('air_pressure', 'air_temperature')
-    
+
     >>> f.match_by_identity('ncvar%t')
 
         '''
@@ -718,7 +718,7 @@ class Properties:
         self_identities = self.identities()
 
         ok = False
-        for value0 in identities:          
+        for value0 in identities:
             for value1 in self_identities:
                 ok = self._matching_values(value0, value1)
                 if ok:
@@ -736,14 +736,14 @@ class Properties:
         '''Whether or not the netCDF variable name satisfies conditions.
 
     .. versionadded:: 3.0.0
-    
+
     .. seealso:: `match`, `match_by_identity`, `match_by_property`
-    
+
     :Parameters:
-    
+
         ncvars: optional
             Define one or more conditions on the netCDF variable name.
-    
+
             A netCDF variable name is specified by a string
             (e.g. ``'lat'``), etc.); a `Query` object
             (e.g. ``cf.eq('lon')``); or a compiled regular expression
@@ -753,14 +753,14 @@ class Properties:
             The condition is satisfied if the netCDF variable name, as
             returned by the `nc_get_variable` method, exists and
             equals the condition value.
-    
+
     :Returns:
-    
+
         `bool`
             Whether or not at least one of the conditions are met.
-    
+
     **Examples:**
-    
+
     >>> f.nc_get_variable()
     'time'
     >>> f.match_by_ncvar('time')
@@ -783,12 +783,12 @@ class Properties:
             ncvar = self.nc_get_variable(None)
         except AttributeError:
             ncvar = None
-            
+
         if ncvar is None:
             return False
 
         ok = False
-        for value0 in ncvars:          
+        for value0 in ncvars:
             ok = self._matching_values(value0, ncvar)
             if ok:
                 break
@@ -801,27 +801,27 @@ class Properties:
         '''Whether or not properties satisfy conditions.
 
     .. versionadded:: 3.0.0
-    
+
     .. seealso:: `match`, `match_by_identity`, `match_by_ncvar`
 
     :Parameters:
-    
+
         mode: optional
             Define the behaviour when multiple conditions are
             provided.
-    
+
             By default (or if the *mode* parameter is ``'and'``) the
             match is `True` if the field construct satisfies all of
             the given conditions, but if the *mode* parameter is
             ``'or'`` then the match is `True` when at least one of the
             conditions is satisfied.
-    
+
         properties: optional
             Define conditions on properties.
-    
+
             Properties are identified by the name of a keyword
             parameter.
-    
+
             The keyword parameter value defines a condition to be
             applied to the property, and is either a string
             (e.g. ``'latitude'``); a `Query` object
@@ -833,30 +833,30 @@ class Properties:
             existence and is satisfied if the property exists,
             regardless of its value. Otherwise the condition is
             satisfied if the property equals the value.
-    
+
             *Parameter example:*
               To see if there is a 'standard_name' property of 'time':
               ``standard_name='time'``.
-    
+
             *Parameter example:*
               To see if there is a 'valid_min' property of that is
               less than -999: ``valid_min=cf.lt('-999)``.
-    
+
             *Parameter example:*
               To see if there is a 'long_name' property with any
               value: ``long_name=None``.
-    
+
     :Returns:
-    
+
         `bool`
             Whether or not the conditions are met.
-    
+
     **Examples:**
-    
+
     >>> f.match_by_property(standard_name='longitude')
-    
+
     >>> f.match_by_property(standard_name='longitude', foo='cf.set(['bar', 'not_bar'])
-    
+
     >>> f.match_by_property(long_name=re.compile('^lon'))
 
         '''
@@ -866,7 +866,7 @@ class Properties:
         if mode:
             if len(mode) > 1:
                 raise ValueError("Can provide at most one positional argument")
-            
+
             x = mode[0]
             if x == 'or':
                 _or = True
@@ -878,7 +878,7 @@ class Properties:
         if not properties:
             return True
 
-        self_properties = self.properties()        
+        self_properties = self.properties()
 
         ok = True
         for name, value0 in properties.items():
@@ -906,12 +906,12 @@ class Properties:
                  `set_properties`
 
     :Returns:
-    
+
         `dict`
             The properties.
-    
+
     **Examples:**
-    
+
     >>> f.properties()
     {}
     >>> f.set_properties({'standard_name': 'air_pressure', 'long_name': 'Air Pressure'})
@@ -943,34 +943,34 @@ class Properties:
         #--- End: for
 
         return out
-    
+
 
     def set_properties(self, properties, copy=True):
         '''Set properties.
 
     .. versionadded:: 3.0.0
-    
+
     .. seealso:: `clear_properties`, `properties`, `set_property`
-    
+
     :Parameters:
-    
-        properties: `dict` 
+
+        properties: `dict`
             Store the properties from the dictionary supplied.
-    
+
             *Parameter example:*
               ``properties={'standard_name': 'altitude', 'foo': 'bar'}``
-    
+
         copy: `bool`, optional
             If `False` then any property values provided by the
             *properties* parameter are not copied before insertion. By
             default they are deep copied.
-    
+
     :Returns:
-    
+
         `None`
-    
+
     **Examples:**
-    
+
     >>> f.properties()
     {}
     >>> f.set_properties({'standard_name': 'air_pressure', 'long_name': 'Air Pressure'})
@@ -989,7 +989,7 @@ class Properties:
      'long_name': 'Air Pressure'}
     >>> f.properties()
     {}
-    
+
         '''
         super().set_properties(properties, copy=copy)
 
@@ -998,7 +998,7 @@ class Properties:
             if value is not None:
                 setattr(self, prop, value)
 
-                
+
     def set_property(self, prop, value, copy=True):
         '''Set a property.
 
@@ -1006,24 +1006,24 @@ class Properties:
 
     .. seealso:: `clear_properties`, `del_property`, `get_property`,
                  `has_property`, `properties`
-    
+
     :Parameters:
 
         prop: `str`
             The name of the property to be set.
-    
+
         value:
             The value for the property.
-    
+
         copy: `bool`, optional
             If `True` then set a deep copy of *value*.
-    
+
     :Returns:
-    
+
          `None`
 
     **Examples:**
-    
+
     >>> f.set_property('project', 'CMIP7')
     >>> f.has_property('project')
     True
@@ -1038,15 +1038,15 @@ class Properties:
     >>> print(f.get_property('project', None))
     None
 
-        '''        
+        '''
         # Get a special property
         if prop in self._special_properties:
             if copy:
                 value = deepcopy(value)
-            
+
             setattr(self, prop, value)
             return
-        
+
         # Still here? Then set a non-special property
         return super().set_property(prop, value, copy=copy)
 
@@ -1058,7 +1058,7 @@ class Properties:
         '''Alias for `match_by_identity`.
 
         '''
-        if kwargs:                    
+        if kwargs:
             _DEPRECATION_ERROR_KWARGS(self, 'match', kwargs,
                                       "Use 'match_by_*' methods instead.") # pragma: no cover
 
@@ -1066,7 +1066,7 @@ class Properties:
             _DEPRECATION_ERROR(
                 "Use of a {!r} for identities has been deprecated. Use the * operator to unpack the arguments instead.".format(
                     identities[0].__class__.__name__)) # pragma: no cover
-            
+
         for i in identities:
            if isinstance(i, dict):
                 _DEPRECATION_ERROR_DICT("Use 'match_by_*' methods instead.") # pragma: no cover
@@ -1084,7 +1084,7 @@ class Properties:
 
         '''
         _DEPRECATION_ERROR_METHOD(self, 'setprop',
-                                  "Use method 'set_property' instead") # pragma: no cover   
+                                  "Use method 'set_property' instead") # pragma: no cover
 
 
     def delprop(self, prop):
@@ -1094,9 +1094,9 @@ class Properties:
 
         '''
         _DEPRECATION_ERROR_METHOD(self, 'delprop',
-                                  "Use method 'del_property' instead") # pragma: no cover   
+                                  "Use method 'del_property' instead") # pragma: no cover
 
-        
+
     def hasprop(self, prop):
         '''Whether a property has been set.
 
@@ -1104,7 +1104,7 @@ class Properties:
 
         '''
         _DEPRECATION_ERROR_METHOD(self, 'hasprop',
-                                  "Use method 'has_property' instead") # pragma: no cover     
+                                  "Use method 'has_property' instead") # pragma: no cover
 
 
     def getprop(self, prop):
@@ -1114,7 +1114,7 @@ class Properties:
 
         '''
         _DEPRECATION_ERROR_METHOD(self, 'getprop',
-                                  "Use method 'get_property' instead") # pragma: no cover     
+                                  "Use method 'get_property' instead") # pragma: no cover
 
 
 #--- End: class

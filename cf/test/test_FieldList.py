@@ -80,7 +80,7 @@ class FieldTest(unittest.TestCase):
             return
 
         f = cf.read(self.filename)
-        
+
         self.assertTrue(len(cf.FieldList()) == 0)
         self.assertTrue(len(f) == 1)
         f.append(f[0].copy())
@@ -97,17 +97,17 @@ class FieldTest(unittest.TestCase):
         f = f * 4
         self.assertTrue(len(f) == 0)
         self.assertTrue(isinstance(f, cf.FieldList))
-        
+
         f = cf.FieldList()
         f *= 4
         self.assertTrue(len(f) == 0)
         self.assertTrue(isinstance(f, cf.FieldList))
-        
+
         f = cf.read(self.filename)
         f = f * 4
         self.assertTrue(len(f) == 4)
         self.assertTrue(isinstance(f, cf.FieldList))
-        
+
         f = cf.read(self.filename)
         f *= 4
         self.assertTrue(len(f) == 4)
@@ -146,7 +146,7 @@ class FieldTest(unittest.TestCase):
         f.append(f[0].copy())
         self.assertTrue(len(f) == 2)
         self.assertTrue(isinstance(f, cf.FieldList))
-                
+
         f.append(f[0].copy())
         self.assertTrue(len(f) == 3)
 
@@ -160,7 +160,7 @@ class FieldTest(unittest.TestCase):
         f.extend(f.copy())
         self.assertTrue(len(f) == 2)
         self.assertTrue(isinstance(f, cf.FieldList))
-                
+
         f.extend(f.copy())
         self.assertTrue(len(f) == 4)
 
@@ -186,7 +186,7 @@ class FieldTest(unittest.TestCase):
         _ = f[0:1]
         _ = f[1:2]
         _ = f[:1]
-        _ = f[1:]        
+        _ = f[1:]
 
 
     def test_FieldList_count(self):
@@ -201,7 +201,7 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(f.count(f[0]) == 7)
 
         f[3] = f[0] * 99
-        f[5] = f[0] * 99 
+        f[5] = f[0] * 99
         self.assertTrue(f.count(f[0]) == 5)
         self.assertTrue(f.count(f[3]) == 2)
 
@@ -214,7 +214,7 @@ class FieldTest(unittest.TestCase):
         g = f.copy()
         self.assertTrue(f.equals(f, verbose=True))
         self.assertTrue(f.equals(g, verbose=True))
-        
+
         f += g.copy()
         self.assertTrue(f.equals(f, verbose=True))
         self.assertTrue(len(f) == 2)
@@ -226,7 +226,7 @@ class FieldTest(unittest.TestCase):
         f.extend(h)
         self.assertTrue(f.equals(f, verbose=True))
         self.assertTrue(f.equals(f.copy(), verbose=True))
-        
+
         g = f.copy()[::-1]
         self.assertFalse(f.equals(g))
         self.assertTrue(f.equals(g, unordered=True, verbose=True))
@@ -241,7 +241,7 @@ class FieldTest(unittest.TestCase):
 
         h *= 3
         self.assertFalse(f.equals(h))
-        self.assertFalse(f.equals(h, unordered=True))       
+        self.assertFalse(f.equals(h, unordered=True))
 
 
     def test_FieldList_insert_pop_remove(self):
@@ -251,7 +251,7 @@ class FieldTest(unittest.TestCase):
         # Insert
         f = cf.read(self.filename)
         g = f[0].copy()
-                
+
         f.insert(0, g.copy())
         self.assertTrue(len(f) == 2)
         self.assertTrue(isinstance(f, cf.FieldList))
@@ -282,21 +282,21 @@ class FieldTest(unittest.TestCase):
         f = cf.read(self.filename)
         g = f[0].copy()
         g = g + 10
-                
+
         f.append(g)
         self.assertTrue(len(f) == 2)
-        
+
         f.remove(g)
         self.assertTrue(len(f) == 1)
         self.assertTrue(isinstance(f, cf.FieldList))
 
         with self.assertRaises(Exception):
             f.remove(f[0]*-99)
-            
+
         f.remove(f[0].copy())
         self.assertTrue(len(f) == 0)
         self.assertTrue(isinstance(f, cf.FieldList))
-            
+
 
     def test_FieldList_reverse(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -373,7 +373,7 @@ class FieldTest(unittest.TestCase):
 
         self.assertTrue(len(f.select_by_units('long_name=qwery:asd')) == 0)
 
-        
+
     def test_FieldList_select_by_construct(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -382,19 +382,19 @@ class FieldTest(unittest.TestCase):
 
         g = f.select_by_construct()
         self.assertTrue(len(g) == 2)
-        
+
         g = f.select_by_construct('latitude')
         self.assertTrue(len(g) == 2)
-        
+
         g = f.select_by_construct('latitude', 'longitude')
         self.assertTrue(len(g) == 2)
-        
+
         g = f.select_by_construct('latitude', 'time')
         self.assertTrue(len(g) == 1)
-        
+
         g = f.select_by_construct('latitude', 'time', OR=False)
         self.assertTrue(len(g) == 1)
-        
+
         g = f.select_by_construct('latitude', 'time', OR=True)
         self.assertTrue(len(g) == 2)
 
@@ -424,13 +424,13 @@ class FieldTest(unittest.TestCase):
 
         g = f.select_by_construct('qwerty')
         self.assertTrue(len(g) == 0)
-        
+
         g = f.select_by_construct('qwerty', 'latitude')
         self.assertTrue(len(g) == 0)
-        
+
         g = f.select_by_construct('qwerty', 'latitude', OR=True)
         self.assertTrue(len(g) == 2)
-        
+
         g = f.select_by_construct('qwerty', 'time', 'longitude')
         self.assertTrue(len(g) == 0)
 
@@ -443,27 +443,27 @@ class FieldTest(unittest.TestCase):
         g = f.select_by_construct(longitude=cf.gt(0), time=cf.le(cf.dt('1999-12-01')))
         self.assertTrue(len(g) == 0)
 
-        
+
     def test_FieldList_select_field(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
         f = cf.read(self.filename)
 
-        with self.assertRaises(Exception):            
+        with self.assertRaises(Exception):
             _ = f.select_field('not this one')
-            
+
         self.assertTrue(f.select_field('not this one', None) is None)
-        
+
         g = f.select_field('eastward_wind')
         self.assertTrue(isinstance(g, cf.Field))
 
         g = f.select_field(re.compile('^eastw'))
         self.assertTrue(isinstance(g, cf.Field))
 
-        with self.assertRaises(Exception):            
+        with self.assertRaises(Exception):
             g = f.select_field(re.compile('^QWERTY'))
-            
+
 
     def test_FieldList_concatenate(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -472,7 +472,7 @@ class FieldTest(unittest.TestCase):
         f = cf.read(self.filename2)[0]
 
         g = cf.FieldList([f[0], f[1:456], f[456:]])
-        
+
         h = g.concatenate(axis=0)
         self.assertTrue(f.equals(h, verbose=True))
 

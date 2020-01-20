@@ -101,7 +101,7 @@ if importlib.util.find_spec('mpi4py'):
     mpi_comm = MPI.COMM_WORLD
     mpi_size = mpi_comm.Get_size()
     mpi_rank = mpi_comm.Get_rank()
-    
+
     if mpi_size > 1:
         mpi_on = True
         if mpi_rank == 0:

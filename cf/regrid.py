@@ -19,30 +19,30 @@ class Regrid:
     regridding through ESMPY and the associated utility methods.
 
     '''
-    
+
     def __init__(self, srcfield, dstfield, srcfracfield, dstfracfield,
                  method='conservative_1st', ignore_degenerate=False):
         '''Creates a handle for regridding fields from a source grid to a
     destination grid that can then be used by the run_regridding method.
-    
+
     :Parameters:
-    
+
         srcfield: ESMF.Field
             The source field with an associated grid to be used for
             regridding.
-    
+
         dstfield: ESMF.Field
             The destination field with an associated grid to be used
             for regridding.
-    
+
         srcfracfield: ESMF.Field
             A field to hold the fraction of the source field that
             contributes to conservative regridding.
-    
+
         dstfracfield: ESMF.Field
             A field to hold the fraction of the source field that
             contributes to conservative regridding.
-    
+
         method: `str`ing, optional
             By default the regridding method is set to
             'conservative_1st'. In this case or if it is set to
@@ -55,7 +55,7 @@ class Regrid:
             to destination interpolation is used. If it is set to
             'nearest_dtos' then nearest destination to source
             interpolation is used.
-    
+
         ignore_degenerate: `bool`, optional
             Whether to check for degenerate points.
 
@@ -77,8 +77,8 @@ class Regrid:
             raise ValueError('Regrid method not recognised.')
 
         # Initialise the regridder. This also creates the
-        # weights needed for the regridding.                    
-        self.regridSrc2Dst = ESMF.Regrid(srcfield, dstfield, 
+        # weights needed for the regridding.
+        self.regridSrc2Dst = ESMF.Regrid(srcfield, dstfield,
                                          regrid_method=regrid_method,
                                          src_mask_values=numpy_array([0],
                                                                 dtype='int32'),
@@ -89,30 +89,30 @@ class Regrid:
                                          unmapped_action=ESMF.UnmappedAction.IGNORE,
                                          ignore_degenerate=ignore_degenerate)
 
-    
+
     def destroy(self):
         '''Free the memory associated with the ESMF.Regrid instance.
 
         '''
         self.regridSrc2Dst.destroy()
 
-    
+
     @staticmethod
     def initialize():
         '''Check whether ESMF has been found. If not raise an import
     error. Initialise the ESMPy manager. Whether logging is enabled or
     not is determined by cf.REGRID_LOGGING. If it is then logging
     takes place after every call to ESMPy.
-    
+
     :Returns:
-    
+
         manager: ESMF.Manager
             A singleton instance of the ESMPy manager.
 
         '''
         if not _found_ESMF:
             raise ImportError('The ESMF package is needed to support regridding.')
-        
+
         manager = ESMF.Manager(debug=REGRID_LOGGING())
 
         return manager
@@ -124,48 +124,48 @@ class Regrid:
         '''Create an ESMPy grid given a sequence of coordinates for use as a
     source or destination grid in regridding. Optionally the grid may
     have an associated mask.
-    
+
     :Parameters:
-    
+
         coords: sequence
             The coordinates if not Cartesian it is assume that the
             first is longitude and the second is latitude.
-    
+
         use_bounds: `bool`
             Whether to populate the grid corners with information from
             the bounds or not.
-    
+
         mask: `numpy.ndarray`, optional
 
             An optional numpy array of booleans containing the grid
             points to mask.  Where the elements of mask are True the
             output grid is masked.
-    
+
         cartesian: `bool`, optional
             Whether to create a Cartesian grid or a spherical one,
             False by default.
-    
+
         cyclic: `bool`, optional
             Whether or not the longitude (if present) is cyclic. If
             None the a check for cyclicity is made from the
             bounds. None by default.
-            
+
         coords_2D: `bool`, optional
             Whether the coordinates are 2D or not. Presently only
             works for spherical coordinates. False by default.
-    
+
         coord_order: sequence, optional
             Two tuples one indicating the order of the x and y axes
             for 2D longitude, one for 2D latitude.
-    
+
     :Returns:
-    
+
         out: `ESMF.Grid`
             The resulting ESMPy grid for use as a source or destination
             grid in regridding.
 
         '''
-        
+
         if not cartesian:
             lon = coords[0]
             lat = coords[1]
@@ -187,7 +187,7 @@ class Regrid:
                     # Get the bounds
                     x_bounds = lon.get_bounds()
                     y_bounds = lat.get_bounds().clip(-90, 90, 'degrees').array
-                    
+
                     # If cyclic not set already, check for cyclicity
                     if cyclic is None:
                         cyclic = abs(x_bounds.datum(-1)
@@ -203,19 +203,19 @@ class Regrid:
                     m = x_bounds.shape[1]
                     x_bounds = x_bounds.array
                     y_bounds = y_bounds.array
-                    
+
                     tmp_x = numpy_empty((n + 1, m + 1))
                     tmp_x[:n,:m] = x_bounds[:,:,0]
                     tmp_x[:n,m] = x_bounds[:,-1,1]
                     tmp_x[n,:m] = x_bounds[-1,:,3]
                     tmp_x[n,m] = x_bounds[-1,-1,2]
-        
+
                     tmp_y = numpy_empty((n + 1, m + 1))
                     tmp_y[:n,:m] = y_bounds[:,:,0]
                     tmp_y[:n,m] = y_bounds[:,-1,1]
                     tmp_y[n,:m] = y_bounds[-1,:,3]
                     tmp_y[n,m] = y_bounds[-1,-1,2]
-        
+
                     x_bounds = tmp_x
                     y_bounds = tmp_y
 
@@ -225,13 +225,13 @@ class Regrid:
                     if cyclic is None:
                         try:
                             x_bounds = lon.get_bounds()
-                            cyclic = abs(x_bounds.datum(-1) 
+                            cyclic = abs(x_bounds.datum(-1)
                                          - x_bounds.datum(0)) == Data(360,
                                                                       'degrees')
                         except ValueError:
                             pass
             #--- End: if
-                
+
             # Create empty grid
             max_index = numpy_array(shape, dtype='int32')
             if use_bounds:
@@ -244,7 +244,7 @@ class Regrid:
                                  staggerloc=staggerLocs)
             else:
                 grid = ESMF.Grid(max_index, staggerloc=staggerLocs)
-        
+
             # Populate grid centres
             x, y = 0, 1
             gridXCentre = grid.get_coords(x, staggerloc=ESMF.StaggerLoc.CENTER)
@@ -255,7 +255,7 @@ class Regrid:
             else:
                 gridXCentre[...] = lon.transpose(x_order).array
                 gridYCentre[...] = lat.transpose(y_order).array
-            
+
             # Populate grid corners if there are bounds
             if use_bounds:
                 gridCorner = grid.coords[ESMF.StaggerLoc.CORNER]
@@ -290,7 +290,7 @@ class Regrid:
             if ndim < 1 or ndim > 3:
                 raise ValueError('Cartesian grid must have between 1 and 3 ' +
                                  'dimensions.')
-            
+
             # For 1D conservative regridding add an extra dimension of size 1
             if ndim == 1:
                 if not use_bounds:
@@ -304,11 +304,11 @@ class Regrid:
                 if mask is not None:
                     mask = mask[None,:]
                 ndim = 2
-            
+
             shape = list()
             for coord in coords:
                 shape.append(coord.size)
-            
+
             # Initialise the grid
             max_index = numpy_array(shape, dtype='int32')
             if use_bounds:
@@ -326,7 +326,7 @@ class Regrid:
             #--- End: if
             grid = ESMF.Grid(max_index, coord_sys=ESMF.CoordSys.CART,
                              staggerloc=staggerLocs)
-            
+
             # Populate the grid centres
             for d in range(0, ndim):
                 if ndim < 3:
@@ -338,7 +338,7 @@ class Regrid:
                 gridCentre[...] = coords[d].array.reshape(
                     [shape[d] if x == d else 1 for x in range(0, ndim)])
             #--- End: for
-            
+
             # Populate grid corners
             if use_bounds:
                 if ndim < 3:
@@ -353,7 +353,7 @@ class Regrid:
                         boundsD = coords[d].create_bounds()
 
                     boundsD = boundsD.array
-                    
+
                     if shape[d] > 1:
                         tmp = numpy_empty(shape[d] + 1)
                         tmp[0:-1] = boundsD[:, 0]
@@ -365,13 +365,13 @@ class Regrid:
                          for x in range(0, ndim)])
             #--- End: if
         #--- End: if
-        
+
         # Add the mask if appropriate
         if mask is not None:
             gmask = grid.add_item(ESMF.GridItem.MASK)
             gmask[...] = 1
             gmask[mask] = 0
-        
+
         return grid
 
 
@@ -379,17 +379,17 @@ class Regrid:
     def create_field(grid, name):
         '''Create an ESMPy field for use as a source or destination field in
     regridding given an ESMPy grid and a name.
-    
+
     :Parameters:
-    
+
         grid: ESMF.Grid
             The ESMPy grid to use in creating the field.
-    
+
         name: `str`
             The name to give the field.
-    
+
     :Returns:
-    
+
         out: `ESMF.Field`
             The resulting ESMPy field for use as a source or
             destination field in regridding.
@@ -397,7 +397,7 @@ class Regrid:
         '''
         field = ESMF.Field(grid, name)
         return field
-    
+
     def run_regridding(self, srcfield, dstfield):
         '''
 
@@ -406,24 +406,24 @@ class Regrid:
                                       zero_region=ESMF.Region.SELECT)
         return dstfield
 
-    
+
     @staticmethod
     def concatenate_data(data_list, axis):
         '''Concatenates a list of Data objects into a single Data object along
     the specified access (see cf.Data.concatenate for details). In the
     case that the list contains only one element, that element is
     simply returned.
-    
+
     :Parameters:
-    
+
         data_list: `list`
             The list of data objects to concatenate.
-    
+
         axis: `int`
             The axis along which to perform the concatenation.
-    
+
     :Returns:
-    
+
         out: `Data`
             The resulting single Data object.
 
@@ -437,22 +437,22 @@ class Regrid:
             assert len(data_list) == 1
             return data_list[0]
 
-        
+
     @staticmethod
     def reconstruct_sectioned_data(sections):
         '''Expects a dictionary of Data objects with ordering information as
     keys, as output by the section method when called with a Data
     object. Returns a reconstructed cf.Data object with the sections
     in the original order.
-    
+
     :Parameters:
-    
+
         sections: `dict`
             The dictionary or Data objects with ordering information
             as keys.
-    
+
     :Returns:
-    
+
         out: `Data`
             The resulting reconstructed Data object.
 
@@ -468,7 +468,7 @@ class Regrid:
                     data_list = []
                     for k in keys:
                         data_list.append(sections[k])
-                        
+
                     return Regrid.concatenate_data(data_list, i)
 
             else:
@@ -486,53 +486,53 @@ class Regrid:
                             new_key = k[:i]
                             data_list = [sections[k]]
                      #--- End: for
-                     
+
                     new_sections[new_key] = Regrid.concatenate_data(data_list, i)
                     sections = new_sections
         #--- End: for
 
-        
+
     @staticmethod
-    def compute_mass_grid(valuefield, areafield, dofrac=False, fracfield=None, 
+    def compute_mass_grid(valuefield, areafield, dofrac=False, fracfield=None,
                       uninitval=422397696.):
         '''Compute the mass of a data field.
 
     :Parameters:
-    
-        
+
+
         valuefield: ESMF.Field
             This contains data values of a field built on the cells of
             a grid.
-    
+
         areafield: ESMF.Field
             This contains the areas associated with the grid cells.
-    
+
         fracfield: ESMF.Field
             This contains the fractions of each cell which contributed
             to a regridding operation involving 'valuefield.
-    
+
         dofrac: `bool`
             This gives the option to not use the 'fracfield'.
-    
+
         uninitval: `float`
             The value uninitialised cells take.
-    
+
     :Returns:
-    
+
         mass: `float`
             The mass of the data field is computed.
 
         '''
         mass = 0.0
         areafield.get_area()
-        
+
         ind = numpy_where(valuefield.data != uninitval)
-        
+
         if dofrac:
             mass = numpy_sum(areafield.data[ind] * valuefield.data[ind] * fracfield.data[ind])
         else:
             mass = numpy_sum(areafield.data[ind] * valuefield.data[ind])
-        
+
         return mass
 
 

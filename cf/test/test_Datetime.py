@@ -1,6 +1,6 @@
 import datetime
 import os
-import time 
+import time
 import unittest
 
 import numpy
@@ -10,7 +10,7 @@ import cf
 from cf import Units
 
 class DatetimeTest(unittest.TestCase):
-    def test_Datetime(self):  
+    def test_Datetime(self):
 #        d = cf.Datetime(2003)
 #        d = cf.Datetime(2003, 2)
 #        d = cf.Datetime(2003, 2, 30)
@@ -18,7 +18,7 @@ class DatetimeTest(unittest.TestCase):
 #        d = cf.Datetime(2003, 2, 30, 0, 0, 0)
 #        d = cf.Datetime(2003, 4, 5, 12, 30, 15)
 #        d = cf.Datetime(year=2003, month=4, day=5, hour=12, minute=30, second=15)
-        
+
         d = cf.dt(2003)
         d = cf.dt(2003, 2)
         d = cf.dt(2003, 2, 30, calendar='360_day')
@@ -27,7 +27,7 @@ class DatetimeTest(unittest.TestCase):
         d = cf.dt(2003, 4, 5, 12, 30, 15)
         d = cf.dt(2003, month=4, day=5, hour=12, minute=30, second=15)
 
-#        self.assertTrue((d.year, d.month, d.day, d.hour, d.minute, d.second) == 
+#        self.assertTrue((d.year, d.month, d.day, d.hour, d.minute, d.second) ==
 #                        (2003, 4, 5, 12, 30, 15))
 #        self.assertTrue(d.timetuple() == (2003, 4, 5, 12, 30, 15, -1, 1, -1))
 #        self.assertTrue( d == d)
@@ -77,16 +77,16 @@ class DatetimeTest(unittest.TestCase):
 #        self.assertTrue( e != d)
 
 
-#    def test_Datetime_utcnow(self):  
+#    def test_Datetime_utcnow(self):
 #        d = cf.Datetime.utcnow()
 
 #
-#    def test_Datetime_copy(self):  
+#    def test_Datetime_copy(self):
 #        d = cf.Datetime.utcnow()
 #        self.assertTrue(d.equals(d.copy()))
 
 #
-#    def test_Datetime_equals(self):  
+#    def test_Datetime_equals(self):
 #        d = datetime.datetime.utcnow()
 #        e = cf.dt(d)
 #        d = cf.dt(d)
@@ -96,7 +96,7 @@ class DatetimeTest(unittest.TestCase):
 #        self.assertTrue(e.equals(d))
 
 
-#    def test_Datetime_replace(self):  
+#    def test_Datetime_replace(self):
 #        d = cf.Datetime(1999, 4, 5, 12, 30, 15, 987654, calendar='360_day')
 #        e = d.replace(1787)
 #        self.assertTrue(e.equals(cf.Datetime(1787, 4, 5, 12, 30, 15, 987654, calendar='360_day')))
@@ -106,18 +106,18 @@ class DatetimeTest(unittest.TestCase):
 
     def test_Datetime_rt2dt(self):
         self.assertTrue(
-            cf.cfdatetime.rt2dt(1, Units('days since 2004-2-28')) == 
+            cf.cfdatetime.rt2dt(1, Units('days since 2004-2-28')) ==
             numpy.array(cf.dt(2004, 2, 29, calendar='standard'), dtype='O'))
 #        numpy.array(datetime.datetime(2004, 2, 29)))
         self.assertTrue(
-            (cf.cfdatetime.rt2dt([1, 3], Units('days since 2004-2-28')) == 
+            (cf.cfdatetime.rt2dt([1, 3], Units('days since 2004-2-28')) ==
              numpy.array([datetime.datetime(2004, 2, 29), datetime.datetime(2004, 3, 2)])).all())
         a = numpy.array([cf.dt(2004, 2, 29, calendar=None), cf.dt(2004, 3, 2, calendar='gregorian')], dtype='O')
         b = cf.cfdatetime.rt2dt([1, 3], Units('days since 2004-2-28'))
         self.assertTrue((a == b).all())
 
 
-    def test_Datetime_dt2rt(self):     
+    def test_Datetime_dt2rt(self):
         units = Units('days since 2004-2-28')
         self.assertTrue(
             cf.cfdatetime.dt2rt(datetime.datetime(2004, 2, 29), None, units) ==
@@ -129,10 +129,10 @@ class DatetimeTest(unittest.TestCase):
         self.assertTrue((cf.cfdatetime.dt2rt([cf.dt(2004, 2, 29), cf.dt(2004, 3, 1)], None, units) == numpy.array([1., 3.])).all())
         units = Units('seconds since 2004-2-28')
         self.assertTrue(
-            cf.cfdatetime.dt2rt(datetime.datetime(2004, 2, 29), None, units) == 
-            numpy.array(86400.0)) 
+            cf.cfdatetime.dt2rt(datetime.datetime(2004, 2, 29), None, units) ==
+            numpy.array(86400.0))
 
-        
+
     def test_Datetime_Data(self):
         d = cf.Data([1, 2, 3], 'days since 2004-02-28')
         self.assertTrue((d < cf.dt(2005, 2, 28)).all())

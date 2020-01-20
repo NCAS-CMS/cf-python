@@ -23,7 +23,7 @@ _codes =  {
 
 class ExtraData(dict):
     """
-    Extends dictionary class with a comparison method between extra 
+    Extends dictionary class with a comparison method between extra
     data for different records.
     """
 
@@ -43,7 +43,7 @@ class ExtraData(dict):
         delta = abs(b * tolerance)
         if a < b - delta: return -1
         if a > b + delta: return 1
-        return 0    
+        return 0
 
     def _cmp_float_arrays(self, avals, bvals):
         n = len(avals)
@@ -82,7 +82,7 @@ class ExtraData(dict):
             if c != 0:
                 return c
         return 0
-        
+
 
 class ExtraDataUnpacker:
 
@@ -100,7 +100,7 @@ class ExtraDataUnpacker:
 
     def next_words(self, n):
         """
-        return next n words as raw data string, and pop them off the 
+        return next n words as raw data string, and pop them off the
         front of the string
         """
         pos = n * self.ws

@@ -20,7 +20,7 @@ def _remove_tmpfiles():
         except OSError:
             pass
 
-        
+
 atexit.register(_remove_tmpfiles)
 
 class ppTest(unittest.TestCase):
@@ -34,7 +34,7 @@ class ppTest(unittest.TestCase):
         text_file = open(self.new_table, 'w')
         text_file.write('1!24!SURFACE TEMPERATURE AFTER TIMESTEP  !Pa!!!NEW_NAME!!')
         text_file.close()
-        
+
         self.chunk_sizes = (17, 34, 300, 100000)[::-1]
         self.original_chunksize = cf.CHUNKSIZE()
         self.test_only = ()
@@ -64,11 +64,11 @@ class ppTest(unittest.TestCase):
                         'Bad unpacking of WGDOS packed data')
         self.assertTrue(f.max() < 310.45,
                         'Bad unpacking of WGDOS packed data')
-        
+
         array = f.array
-    
-        for chunksize in self.chunk_sizes:   
-            cf.CHUNKSIZE(chunksize) 
+
+        for chunksize in self.chunk_sizes:
+            cf.CHUNKSIZE(chunksize)
 
             f = cf.read(self.ppfilename)[0]
 
@@ -88,7 +88,7 @@ class ppTest(unittest.TestCase):
 
 #                f.dump()
 #                g.dump()
-                
+
                 self.assertTrue(f.equals(g, verbose=True),
                                 'Bad writing/reading. format='+fmt)
 

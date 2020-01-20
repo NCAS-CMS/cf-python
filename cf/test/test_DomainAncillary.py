@@ -1,6 +1,6 @@
 import datetime
 import os
-import time 
+import time
 import unittest
 
 import numpy
@@ -14,9 +14,9 @@ class DomainAncillaryTest(unittest.TestCase):
 
         _ = repr(f)
         _ = str(f)
-        _ = f.dump(display=False)        
+        _ = f.dump(display=False)
 
-    
+
 #--- End: class
 
 if __name__ == '__main__':

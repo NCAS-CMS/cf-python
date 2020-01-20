@@ -20,23 +20,23 @@ def _open_netcdf_file(filename, mode, fmt='NETCDF4'): #set_auto_mask=True):
 
     If the file is already open then the existing netCDF4.Dataset
     object will be returned.
-    
+
     :Parameters:
-    
+
         filename: `str`
             The netCDF file to be opened.
-    
+
     #    set_auto_mask: `bool`, optional
     #        Turn on or off automatic conversion of variable data to and
     #        from masked arrays.
-    
+
     :Returns:
-    
+
         `netCDF4.Dataset`
             A netCDF4.Dataset instance for the netCDF file.
-    
+
     **Examples:**
-    
+
     >>> nc1 = _open_netcdf_file('file.nc')
     >>> nc1
     <netCDF4.Dataset at 0x1a7dad0>
@@ -54,12 +54,12 @@ def _open_netcdf_file(filename, mode, fmt='NETCDF4'): #set_auto_mask=True):
 
     if mode in ('a', 'r+'):
         if not isfile(filename):
-            nc = netCDF4_Dataset(filename, 'w', format=fmt) 
+            nc = netCDF4_Dataset(filename, 'w', format=fmt)
             nc.close()
         elif filename in _file_to_Dataset:
             _close_netcdf_file(filename)
 
-    try:        
+    try:
         nc = netCDF4_Dataset(filename, mode, format=fmt)
     except RuntimeError as runtime_error:
         raise RuntimeError("{0}: {1}".format(runtime_error, filename))
@@ -73,18 +73,18 @@ def _open_netcdf_file(filename, mode, fmt='NETCDF4'): #set_auto_mask=True):
 
 def _close_netcdf_file(filename):
     '''Close a netCDF file
-    
+
     does nothing if the file is already closed.
-    
+
     :Parameters:
-    
+
         filename: `str`
             The netCDF file to be closed.
-    
+
     :Returns:
-    
+
         `None`
-    
+
     **Examples:**
 
     '''
@@ -97,20 +97,20 @@ def _open_um_file(filename, aggregate=True, fmt=None, word_size=None,
                   byte_ordering=None):
     '''Open a UM fields file or PP file and read it into a `umfile.File`
     object.
-    
+
     If there is already a `umfile.File` object for the file then it is
     returned with an open file descriptor.
-    
+
     :Parameters:
-    
+
         filename: `str`
             The file to be opened.
-    
+
     :Returns:
-    
+
         `umfile.File`
             The opened file with an open file descriptor.
-    
+
     **Examples:**
 
     '''
@@ -156,16 +156,16 @@ def _close_um_file(filename):
     '''Close a PP or UM fields file.
 
     Does nothing if the file is already closed.
-    
+
     :Parameters:
-    
+
         filename : str
             The file to be closed.
-    
+
     :Returns:
-    
+
         None
-    
+
     **Examples:**
 
     '''

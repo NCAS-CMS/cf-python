@@ -66,7 +66,7 @@ class Datetime(cftime.datetime):
              'Datetime',
              "Use function 'cf.dt' to create date-time objects instead.") # pragma: no cover
 
-        
+
 #--- End: class
 
 def elements(x):
@@ -81,7 +81,7 @@ def dt(arg, month=1, day=1, hour=0, minute=0, second=0,
     .. seealso:: `cf.dt_vector`
 
     :Parameters:
-    
+
         arg:
             A multi-purpose argument that is one of:
 
@@ -96,21 +96,21 @@ def dt(arg, month=1, day=1, hour=0, minute=0, second=0,
               as `Datetime360Day`). A new date-time object is returned
               for the given date-time.
 
-    
+
         calendar: `str`, optional
             The calendar for the date-time. By default the Gregorian
             calendar is used.
 
             *Parameter example:*
               ``calendar='360_day'``
-        
+
     :Returns:
 
         (sublcass of) `cftime.datetime`
             The new date-time object.
-    
+
     **Examples:**
-    
+
     >>> d = cf.dt(2003)
     >>> d
     cftime.DatetimeGregorian(2003-01-01 00:00:00)
@@ -135,13 +135,13 @@ def dt(arg, month=1, day=1, hour=0, minute=0, second=0,
     '''
     if isinstance(arg, str):
         (year, month, day, hour, minute, second, microsecond) = st2elements(arg)
-    
+
     elif isinstance(arg, cftime.datetime):
         (year, month, day, hour, minute, second) = arg.timetuple()[:6]
         microsecond = arg.microsecond
         if calendar == '':
             calendar = arg.calendar
-    
+
     elif isinstance(arg, datetime.datetime):
         (year, month, day, hour, minute, second) = arg.timetuple()[:6]
         microsecond = arg.microsecond
@@ -150,26 +150,26 @@ def dt(arg, month=1, day=1, hour=0, minute=0, second=0,
 
     else:
         year = arg
-        
+
     for calendars, datetime_cls in _datetime_object.items():
         if calendar in calendars:
             return datetime_cls(year, month, day, hour, minute,
                                 second, microsecond)
     #--- End: for
-    
+
     raise ValueError(
         "Can't create date-time object with unknown calendar {!r}".format(
             calendar))
 
-    
+
 def dt_vector(arg, month=1, day=1, hour=0, minute=0, second=0,
               microsecond=0, calendar=None):
     '''Return a scalar or 1-d array of date-time objects.
 
     .. seealso:: `cf.dt`
-    
+
     :Parameters:
-    
+
         arg:
             A multi-purpose argument that is one of:
 
@@ -186,44 +186,44 @@ def dt_vector(arg, month=1, day=1, hour=0, minute=0, second=0,
               hours minutes, seconds and microseconds respectively. If
               fewer thaan 7 trailing dimensions are provided then teh
               default value for the missing components are used
-    
+
         calendar: `str`, optional
             The calendar for the date-times. By default the Gregorian
             calendar is used.
 
             *Parameter example:*
               ``calendar='360_day'``
-        
+
     :Returns:
 
         `numpy.ndarray`
             The scalar or 1-d array of date-time objects.
-    
+
     **Examples:**
 
     TODO
 
     '''
     arg             = numpy.array(arg)
-    month           = numpy.array(month)           
-    day             = numpy.array(day)             
-    hour            = numpy.array(hour)            
-    minute          = numpy.array(minute)          
-    second          = numpy.array(second)          
-    microsecond     = numpy.array(microsecond)     
+    month           = numpy.array(month)
+    day             = numpy.array(day)
+    hour            = numpy.array(hour)
+    minute          = numpy.array(minute)
+    second          = numpy.array(second)
+    microsecond     = numpy.array(microsecond)
 
     ndim = max(map(numpy.ndim, (month, day, hour, minute, second,
                                 microsecond)))
 
     if ndim > 1:
         raise ValueError('TODO')
-    
+
     if arg.ndim > 2:
         raise ValueError('TODO')
-        
+
     sizes = set(map(numpy.size, (arg, month, day, hour, minute,
-                                 second, microsecond)))            
- 
+                                 second, microsecond)))
+
     if len(sizes) == 1 and 1 in sizes:
         # All arguments are scalars or size 1
         out = dt(arg.item(), month.item(), day.item(), hour.item(),
@@ -233,58 +233,58 @@ def dt_vector(arg, month=1, day=1, hour=0, minute=0, second=0,
             out = [out]
 
         return numpy.array(out)
-    
+
     if arg.ndim == 2 and arg.shape[1] > 7:
         raise ValueError('TODO (890)')
 
     if arg.ndim == 1:
         if arg.dtype.kind in 'UOS':
             out = [dt(a, calendar=calendar) for a in arg]
-            
+
         else:
             if len(sizes) > 2:
                 raise ValueError('TODO (891)')
-            
+
             if len(sizes) == 2 and 1 not in sizes:
                 raise ValueError('TODO (892)')
-            
-            _ = numpy.empty((max(sizes), 7), dtype=int)                
+
+            _ = numpy.empty((max(sizes), 7), dtype=int)
             _[:, 0] = arg
-            _[:, 1] = month           
-            _[:, 2] = day             
-            _[:, 3] = hour            
-            _[:, 4] = minute          
-            _[:, 5] = second          
-            _[:, 6] = microsecond                
+            _[:, 1] = month
+            _[:, 2] = day
+            _[:, 3] = hour
+            _[:, 4] = minute
+            _[:, 5] = second
+            _[:, 6] = microsecond
             arg = _
 
             out = [dt(*args, calendar=calendar) for args in arg]
     #--- End: if
-    
+
     return numpy.array(out)
-     
+
 
 def st2dt(array, units_in=None, dummy0=None, dummy1=None):
     '''The returned array is always independent.
 
     :Parameters:
-    
+
         array: numpy array-like
-    
+
         units_in: `Units`, optional
-    
+
         dummy0: optional
             Ignored.
-    
+
         dummy1: optional
             Ignored.
-    
+
     :Returns:
-    
+
         `numpy.ndarray`
             An array of `cf.Datetime` or `datetime.datetime` objects
             with the same shape as *array*.
-    
+
     **Examples:**
 
     '''
@@ -317,7 +317,7 @@ def st2dt(array, units_in=None, dummy0=None, dummy1=None):
 #
 #    if utc_offset:
 #        raise ValueError("Can't specify a time offset from UTC")
-#            
+#
 #    return datetime(year, month, day, hour, minute, second)
 #
 #
@@ -328,11 +328,11 @@ def st2datetime(date_string, calendar=None):
     '''Parse an ISO 8601 date-time string into a `cftime` object.
 
     :Parameters:
-    
+
         date_string: `str`
-    
+
     :Returns:
-    
+
         subclass of `cftime.datetime`
 
     '''
@@ -346,7 +346,7 @@ def st2datetime(date_string, calendar=None):
         microsecond = 0
     else:
         year, month, day, hour, minute, second, microsecond, utc_offset = _
-        
+
     if utc_offset:
         raise ValueError("Can't specify a time offset from UTC")
 
@@ -358,11 +358,11 @@ def st2elements(date_string):
     '''Parse an ISO 8601 date-time string into a `cftime` object.
 
     :Parameters:
-    
+
         date_string: `str`
-    
+
     :Returns:
-    
+
         `tuple`
 
     '''
@@ -376,7 +376,7 @@ def st2elements(date_string):
         microsecond = 0
     else:
         year, month, day, hour, minute, second, microsecond, utc_offset = _
-        
+
     if utc_offset:
         raise ValueError("Can't specify a time offset from UTC")
 
@@ -389,21 +389,21 @@ def rt2dt(array, units_in, units_out=None, dummy1=None):
     '''Convert reference times  to date-time objects
 
     The returned array is always independent.
-    
+
     :Parameters:
-    
+
         array: numpy array-like
-    
+
         units_in: `Units`
-    
+
         units_out: *optional*
             Ignored.
-    
+
         dummy1:
             Ignored.
-    
+
     :Returns:
-    
+
         `numpy.ndarray`
             An array of `cf.Datetime` objects with the same shape as
             *array*.
@@ -460,37 +460,37 @@ def dt2rt(array, units_in, units_out, dummy1=None):
     '''Round to the nearest millisecond. This is only necessary whilst
     netCDF4 time functions have an accuracy of no better than 1
     millisecond (which is still the case at version 1.2.2).
-        
+
     The returned array is always independent.
-    
+
     :Parameters:
-    
+
         array: numpy array-like of date-time objects
-    
+
         units_in:
             Ignored.
-    
+
         units_out: `Units`
-    
+
         dummy1:
             Ignored.
-    
+
     :Returns:
-    
+
         `numpy.ndarray`
             An array of numbers with the same shape as *array*.
 
     '''
     ndim = numpy_ndim(array)
-    
+
     if not ndim and isinstance(array, numpy_ndarray):
         # This necessary because date2num gets upset if you pass
         # it a scalar numpy array
         array = array.item()
 
 #    calendar = getattr(units_out, 'calendar', '')
-#    if calendar 
-    
+#    if calendar
+
  #   array = cftime.date2num(array, units=units_out.units,
  #                           calendar=getattr(units_out, 'calendar', 'standard'))
 
@@ -509,7 +509,7 @@ def dt2rt(array, units_in, units_out, dummy1=None):
 
     day = units in cftime.day_units
     if day:
-        array *= 86400.0        
+        array *= 86400.0
     else:
         sec = units in cftime.sec_units
         if not sec:
@@ -554,7 +554,7 @@ def dt2rt(array, units_in, units_out, dummy1=None):
 
     if not ndim:
         array = numpy_asanyarray(array)
-        
+
     return array
 
 
@@ -562,18 +562,18 @@ def st2rt(array, units_in, units_out, dummy1=None):
     '''The returned array is always independent.
 
     :Parameters:
-    
+
         array: numpy array-like of ISO 8601 date-time strings
-    
+
         units_in: `Units` or `None`
-    
+
         units_out: `Units`
-    
+
         dummy1:
             Ignored.
-    
+
     :Returns:
-    
+
         `numpy.ndarray`
             An array of floats with the same shape as *array*.
 
@@ -581,14 +581,14 @@ def st2rt(array, units_in, units_out, dummy1=None):
     array = st2dt(array, units_in)
 
     ndim = numpy_ndim(array)
-    
+
     if not ndim and isinstance(array, numpy_ndarray):
         # This necessary because date2num gets upset if you pass
         # it a scalar numpy array
         array = array.item()
 
     array = units_out._utime.date2num(array)
-    
+
     if not ndim:
         array = numpy_array(array)
 

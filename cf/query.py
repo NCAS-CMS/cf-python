@@ -20,7 +20,7 @@ class Query:
     "strictly less than 3". When applied to an object, via its
     `evaluate` method or the Python `==` operator, the condition is
     evaulated in the context of that object.
-    
+
        >>> c = cf.Query('lt', 3)
        >>> c
        <CF Query: (lt 3)>
@@ -36,33 +36,33 @@ class Query:
        <CF Data(3): [True, True, False]>
        >>> c == numpy.array([1, 2, 3])
        array([True, True, False])
-    
+
     The following operators are supported when constructing `Query`
     instances:
-    
+
     =========  ===================================
-    Operator   Description                                              
+    Operator   Description
     =========  ===================================
-    ``'lt'``   A "strictly less than" condition           
+    ``'lt'``   A "strictly less than" condition
     ``'le'``   A "less than or equal" condition
-    ``'gt'``   A "strictly greater than" condition        
-    ``'ge'``   A "greater than or equal" condition 
-    ``'eq'``   An "equal" condition                       
-    ``'ne'``   A "not equal" condition                    
-    ``'wi'``   A "within a range" condition               
-    ``'wo'``   A "without a range" condition              
+    ``'gt'``   A "strictly greater than" condition
+    ``'ge'``   A "greater than or equal" condition
+    ``'eq'``   An "equal" condition
+    ``'ne'``   A "not equal" condition
+    ``'wi'``   A "within a range" condition
+    ``'wo'``   A "without a range" condition
     ``'set'``  A "member of set" condition
     =========  ===================================
-    
+
     **Complex conditions**
-    
+
     Multiple conditions may be combined with the Python bitwise "and"
     (`&`) and "or" (`|`) operators to form a new `Query` object.
-    
+
        >>> ge3 = cf.Query('ge', 3)
        >>> lt5 = cf.Query('lt', 5)
        >>> c = ge3 & lt5
-       >>> c 
+       >>> c
        >>> <CF Query: [(ge 3) & (lt 5)]>
        >>> c == 2
        False
@@ -80,9 +80,9 @@ class Query:
        False
        >>> c == 3
        True
-    
+
     A condition can be applied to an attribute of an object.
-    
+
        >>> upper_bounds_ge_minus4 = cf.Query('ge', -4, attr='upper_bounds')
        >>> x
        <CF DimensionCoordinate: grid_longitude(9) degrees>
@@ -99,10 +99,10 @@ class Query:
        >>> print((upper_bounds_ge_minus4 == x).array)
        [False False  True  True  True  True  True  True  True]
        >>> upper_bounds_ge_minus4 = cf.Query('ge', -4, attr='upper_bounds')
-        
+
     A condition can also be applied to attributes of attributes of an
     object.
-    
+
        >>> t
        <CF DimensionCoordinate: time(4) >
        >>> t.lower_bounds.month.array
@@ -112,43 +112,43 @@ class Query:
        <CF Data(4): [True, ..., True]>
        >>> (c == t).array
        array([ True,  False, False, True])
-    
+
 
     **The query interface**
-    
+
     In general, the query operator must be permitted between the value
     of the condition and the operand for which it is being
     evaulated. For example, when the value is an `int`, the query
     works if the operand is also an `int`, but fails if it is a
     `list`:
-    
+
        >>> c = cf.Query('lt', 2)
        >>> c == 1
        True
        >>> c == [1, 2, 3]
        TypeError: '<' not supported between instances of 'list' and 'int'
-    
+
     This behaviour is overridden if the operand has an appropriate
     "query interface" method. When such a method exists, it is used
     instead of the equivalent built-in Python operator.
-    
+
     ======================  ==============================================
-    Query interface method  Description                                              
+    Query interface method  Description
     ======================  ==============================================
     `__query_lt__`          Called when an ``'lt'`` condition is evaulated
     `__query_le__`          Called when an ``'le'`` condition is evaulated
-    `__query_gt__`          Called when a ``'gt'`` condition is evaulated 
-    `__query_ge__`          Called when a ``'ge'`` condition is evaulated 
+    `__query_gt__`          Called when a ``'gt'`` condition is evaulated
+    `__query_ge__`          Called when a ``'ge'`` condition is evaulated
     `__query_eq__`          Called when an ``'eq'`` condition is evaulated
-    `__query_ne__`          Called when a ``'ne'`` condition is evaulated 
+    `__query_ne__`          Called when a ``'ne'`` condition is evaulated
     `__query_wi__`          Called when a ``'wi'`` condition is evaulated
-    `__query_wo__`          Called when a ``'wo'`` condition is evaulated 
+    `__query_wo__`          Called when a ``'wo'`` condition is evaulated
     `__query_set__`         Called when a ``'set'`` condition is evaulated
     ======================  ==============================================
-    
+
     In all cases the query value is the only, mandatory argument of
     the method.
-    
+
        >>> class myList(list):
        ...     pass
        ...
@@ -161,11 +161,11 @@ class Query:
        TypeError: '<' not supported between instances of 'myList' and 'int'
        >>> c == myList_with_override([1, 2, 3])
        [True, False, False]
-    
+
     When the condition is on an attribute, or nested attributes, of
     the operand, the query interface method is looked for on the
     attribute object, rather than the parent object.
-    
+
     If the value has units then the argument passed to query interface
     method is automatically a `Data` object that attaches the units to
     the value.
@@ -177,19 +177,19 @@ class Query:
         '''**Initialization**
 
     :Parameters:
-    
+
         operator: `str`
             The query operator.
-    
+
         value:
             The value of the condition.
-    
+
         units: `str` or `Units`, optional
             The units of *value*. By default, the same units as the
             operand being tested are assumed, if applicable. If
             *units* is specified and the already *value* has units
             (such as a `Data` object`), then they must be equivalent.
-    
+
         attr: `str`, optional
             Apply the condition to the attribute, or nested
             attributes, of the operand, rather than the operand
@@ -197,14 +197,14 @@ class Query:
             with a ``.``. For example, the "month" attribute of the
             "bounds" attribute is specified as ``'bounds.month'``. See
             also the `addattr` method.
-    
+
         exact: deprecated at version 3.0.0.
             Use `re.compile` objects in *value* instead.
 
         '''
         if not exact:
             _DEPRECATION_ERROR_KWARGS(self, '__init__', exact=True) # pragma: no cover
-       
+
         if units is not None:
             value_units = getattr(value, 'Units', None)
             if value_units is None:
@@ -255,7 +255,7 @@ class Query:
         '''
         # Note that it is important to use the == operator
         return self._evaluate(x, ()) == False
-    
+
 
     def __and__(self, other):
         '''The binary bitwise operation ``&``
@@ -265,14 +265,14 @@ class Query:
         '''
         Q = type(self)
         new = Q.__new__(Q)
-        
+
         new._operator         = None
         new._compound         = (self, other)
         new._bitwise_operator = operator_and
         new._attr             = ()
 
         new._NotImplemented_RHS_Data_op = True
-       
+
         return new
 
 
@@ -281,7 +281,7 @@ class Query:
 
     x.__iand__(y) <==> x&=y
 
-        '''        
+        '''
         return self & other
 
 
@@ -290,10 +290,10 @@ class Query:
 
     x.__or__(y) <==> x|y
 
-        '''                
+        '''
         Q = type(self)
         new = Q.__new__(Q)
-        
+
         new._operator         = None
         new._compound         = (self, other)
         new._bitwise_operator = operator_or
@@ -309,8 +309,8 @@ class Query:
 
     x.__ior__(y) <==> x|=y
 
-        '''    
-        return self | other            
+        '''
+        return self | other
 
 
     def __repr__(self):
@@ -331,7 +331,7 @@ class Query:
         attr = '.'.join(self._attr)
 
         if not self._compound:
-            out = '{}({} {})'.format(attr, self._operator, self._value) 
+            out = '{}({} {})'.format(attr, self._operator, self._value)
         else:
             bitwise_operator = repr(self._bitwise_operator)
             if 'and_' in bitwise_operator:
@@ -351,7 +351,7 @@ class Query:
         '''TODO
 
     **Examples:**
-    
+
     >>> q = cf.Query('ge', 4)
     >>> print(q.attr)
     None
@@ -371,9 +371,9 @@ class Query:
         '''TODO
 
     Compound conditions return `None`.
-    
+
     **Examples:**
-    
+
     >>> q = cf.Query('ge', 4)
     >>> q.operator
     'ge'
@@ -390,9 +390,9 @@ class Query:
         '''TODO
 
     An exception is raised for compound conditions.
-    
+
     **Examples:**
-    
+
     >>> q = cf.Query('ge', 4)
     >>> q.value
     4
@@ -410,30 +410,30 @@ class Query:
     def addattr(self, attr):
         '''Return a `Query` object with a new left hand side operand attribute
     to be used during evaluation. TODO
-    
+
     If another attribute has previously been specified, then the new
     attribute is considered to be an attribute of the existing
     attribute.
-    
+
     :Parameters:
-    
+
         attr: `str`
             The attribute name.
-    
+
     :Returns:
-    
+
         `Query`
             The new query object.
-    
+
     **Examples:**
-    
+
     >>> q = cf.eq(2001)
     >>> q
     <CF Query: (eq 2001)>
     >>> q = q.addattr('year')
     >>> q
     <CF Query: year(eq 2001)>
-    
+
     >>> q = cf.lt(2)
     >>> q = q.addattr('A')
     >>> q = q.addattr('B')
@@ -459,13 +459,13 @@ class Query:
         '''Return a deep copy.
 
     ``q.copy()`` is equivalent to ``copy.deepcopy(q)``.
-    
+
     :Returns:
-    
+
             The deep copy.
-    
+
     **Examples:**
-    
+
     >>> r = q.copy()
 
         '''
@@ -476,7 +476,7 @@ class Query:
         '''Return a string containing a full description of the instance.
 
     :Parameters:
-    
+
         display: `bool`, optional
 
             If `False` then return the description as a string. By
@@ -489,9 +489,9 @@ class Query:
             is printed and `None` is returned. Otherwise the
             description is returned as a string.
 
-        '''      
+        '''
         string = str(self)
-       
+
         if display:
             print(string)
         else:
@@ -504,7 +504,7 @@ class Query:
         '''
         if traceback:
             _DEPRECATION_ERROR_KWARGS(self, 'equals', traceback=True) # pragma: no cover
-      
+
         if self._compound:
             if not other._compound:
                 if verbose:
@@ -516,7 +516,7 @@ class Query:
                     print("{}: Different compound operators: {!r}, {!r}".format(
                         self.__class__.__name__, self._bitwise_operator, other._bitwise_operator)) # pragma: no cover
                 return False
-                
+
             if not self._compound[0].equals(other._compound[0]):
                 if not self._compound[0].equals(other._compound[1]):
                     if verbose:
@@ -529,13 +529,13 @@ class Query:
             elif not self._compound[1].equals(other._compound[1]):
                 if verbose:
                     print("{}: Different compound components".format(self.__class__.__name__)) # pragma: no cover
-                return False        
-   
+                return False
+
         elif other._compound:
             if verbose:
                 print("{}: Different compound components".format(self.__class__.__name__)) # pragma: no cover
             return False
-                
+
         for attr in ('_NotImplemented_RHS_Data_op',
                      '_attr',
                      '_value',
@@ -557,23 +557,23 @@ class Query:
     Note that for the query object ``q`` and any object, ``x``,
     ``x==q`` is equivalent to ``q.evaluate(x)`` and ``x!=q`` is
     equivalent to ``q.evaluate(x)==False``.
-    
+
     :Parameters:
-    
-        x: 
+
+        x:
             The object for the left hand side operand of the query.
-    
+
     :Returns:
-    
+
             The result of the query. The nature of the result is
             dependent on the object type of *x*.
-        
+
     **Examples:**
-    
+
     >>> q = cf.Query('lt', 5.5)
     >>> q.evaluate(6)
     False
-    
+
     >>> q = cf.Query('wi', (1,2))
     >>> array = numpy.arange(4)
     >>> array
@@ -595,13 +595,13 @@ class Query:
         x:
             See `evaluate`.
 
-        parent_attr: `tuple`       
+        parent_attr: `tuple`
 
     :Returns:
 
         See `evaluate`.
-    
-        '''        
+
+        '''
         compound = self._compound
         attr     = parent_attr + self._attr
 
@@ -619,7 +619,7 @@ class Query:
         # ------------------------------------------------------------
         for a in attr:
             x = getattr(x, a)
-            
+
         operator = self._operator
         value    = self._value
 
@@ -631,8 +631,8 @@ class Query:
             except TypeError:
                 raise ValueError(
                         "Can't perform regular expression search on a non-string: {!r}".format(x))
-        #--- End: if           
-        
+        #--- End: if
+
         if operator == 'ne':
             try:
                 return not bool(value.search(x))
@@ -642,29 +642,29 @@ class Query:
                 raise ValueError(
                         "Can't perform regular expression search on a non-string: {!r}".format(x))
         #--- End: if
-        
-        if operator == 'lt':  
+
+        if operator == 'lt':
             _lt = getattr(x, '__query_lt__', None)
             if _lt is not None:
                 return _lt(value)
 
             return x < value
-        
+
         if operator == 'le':
             _le = getattr(x, '__query_le__', None)
             if _le is not None:
                 return _le(value)
 
             return x <= value
-        
-        if operator == 'gt':            
+
+        if operator == 'gt':
             _gt = getattr(x, '__query_gt__', None)
             if _gt is not None:
                 return _gt(value)
 
             return x > value
-        
-        if operator == 'ge':            
+
+        if operator == 'ge':
             _ge = getattr(x, '__query_ge_', None)
             if _ge is not None:
                 return _ge(value)
@@ -675,14 +675,14 @@ class Query:
             _wi = getattr(x, '__query_wi__', None)
             if _wi is not None:
                 return _wi(value)
-            
+
             return (x >= value[0]) & (x <= value[1])
 
         if operator == 'wo':
             _wo = getattr(x, '__query_wo__', None)
             if _wo is not None:
                 return _wo(value)
-            
+
             return (x < value[0]) | (x > value[1])
 
 #        if operator == 'contains':
@@ -691,8 +691,8 @@ class Query:
 #                return _contain(value)
 #            else:
 #                return x == value
-#        #--- End: if           
-        
+#        #--- End: if
+
         if operator == 'set':
             if isinstance(x, str):
                 for v in value:
@@ -703,9 +703,9 @@ class Query:
                         if x == v:
                             return True
                 #--- End: for
-                
+
                 return False
-            else:               
+            else:
                 _set = getattr(x, '__query_set__', None)
                 if _set is not None:
                     return _set(value)
@@ -715,18 +715,18 @@ class Query:
                 out = (x == v)
                 for v in i:
                     out |= (x == v)
-                
+
                 return out
-        #--- End: if    
+        #--- End: if
 
 
     def inspect(self):
         '''Inspect the object for debugging.
 
     .. seealso:: `cf.inspect`
-    
-    :Returns: 
-    
+
+    :Returns:
+
         `None`
 
         '''
@@ -752,7 +752,7 @@ class Query:
         '''
         _DEPRECATION_ERROR_FUNCTION(self, 'equivalent')
 
-        
+
 #--- End: class
 
 
@@ -764,50 +764,50 @@ def lt(value, units=None, attr=None):
 
     .. seealso:: `cf.contains`, `cf.eq`, `cf.ge`, `cf.gt`, `cf.ne`,
                  `cf.le`, `cf.set`, `cf.wi`, `cf.wo`
-    
+
     :Parameters:
-    
+
         value:
             The query condition's value.
-    
+
         units: `str` or `Units`, optional
             The units of *value*. By default, the same units as the
             operand being tested are assumed, if applicable. If
             *units* is specified and the already *value* has units
             (such as a `Data` object`), then they must be equivalent.
-    
+
         attr: `str`, optional
             Apply the condition to the attribute, or nested
             attributes, of the operand, rather than the operand
             itself. Nested attributes are specified by separating them
             with a ``.``. For example, the "month" attribute of the
             "bounds" attribute is specified as ``'bounds.month'``.
-    
-    :Returns: 
-    
+
+    :Returns:
+
         `Query`
             The query object.
-    
+
     **Examples:**
-    
+
     >>> c = cf.lt(5)
     >>> c == 2
     True
     >>> c == cf.Data(2, 'metres')
     <CF Data(): True>
-        
+
     >>> c = cf.lt(5, 'metres')
     >>> c == 2
     True
     >>> c == cf.Data(50, 'centimetres')
     <CF Data(): True>
-        
+
     >>> c = cf.lt(cf.Data(5, 'metres'))
     >>> c == 2
     True
     >>> c == cf.Data(50, 'centimetres')
     <CF Data(): True>
-    
+
     >>> import numpy
     >>> c = cf.lt(numpy.array([2, 5]), attr='shape')
     >>> c
@@ -818,38 +818,38 @@ def lt(value, units=None, attr=None):
     '''
     return Query('lt', value, units=units, attr=attr)
 
-    
+
 def le(value, units=None, attr=None):
     '''A `Query` object for a "less than or equal" condition.
 
     .. seealso:: `cf.contains`, `cf.eq`, `cf.ge`, `cf.gt`, `cf.ne`,
                  `cf.lt`, `cf.set`, `cf.wi`, `cf.wo`
-    
+
     :Parameters:
-    
+
         value:
             The query condition's value.
-    
+
         units: `str` or `Units`, optional
             The units of *value*. By default, the same units as the
             operand being tested are assumed, if applicable. If
             *units* is specified and the already *value* has units
             (such as a `Data` object`), then they must be equivalent.
-    
+
         attr: `str`, optional
             Apply the condition to the attribute, or nested
             attributes, of the operand, rather than the operand
             itself. Nested attributes are specified by separating them
             with a ``.``. For example, the "month" attribute of the
             "bounds" attribute is specified as ``'bounds.month'``.
-    
-    :Returns: 
-    
+
+    :Returns:
+
         `Query`
             The query object.
-    
+
     **Examples:**
-    
+
     >>> q = cf.le(5)
     >>> q
     <CF Query: x le 5>
@@ -861,24 +861,24 @@ def le(value, units=None, attr=None):
     '''
     return Query('le', value, units=units, attr=attr)
 
-    
+
 def gt(value, units=None, attr=None):
     '''A `Query` object for a "strictly greater than" condition.
 
     .. seealso:: `cf.contains`, `cf.eq`, `cf.ge`, `cf.ne`, `cf.le`,
                  `cf.lt`, `cf.set`, `cf.wi`, `cf.wo`
-    
+
     :Parameters:
-    
+
         value:
             The query condition's value.
-    
+
         units: `str` or `Units`, optional
             The units of *value*. By default, the same units as the
             operand being tested are assumed, if applicable. If
             *units* is specified and the already *value* has units
             (such as a `Data` object`), then they must be equivalent.
-    
+
         attr: `str`, optional
 
             Apply the condition to the attribute, or nested
@@ -886,14 +886,14 @@ def gt(value, units=None, attr=None):
             itself. Nested attributes are specified by separating them
             with a ``.``. For example, the "month" attribute of the
             "bounds" attribute is specified as ``'bounds.month'``.
-    
-    :Returns: 
-    
+
+    :Returns:
+
         `Query`
             The query object.
-    
+
     **Examples:**
-    
+
     >>> q = cf.gt(5)
     >>> q
     <CF Query: x gt 5>
@@ -905,38 +905,38 @@ def gt(value, units=None, attr=None):
     '''
     return Query('gt', value, units=units, attr=attr)
 
-    
+
 def ge(value, units=None, attr=None):
     '''A `Query` object for a "greater than or equal" condition.
 
     .. seealso:: `cf.contains`, `cf.eq`, `cf.gt`, `cf.ne`, `cf.le`,
                  `cf.lt`, `cf.set`, `cf.wi`, `cf.wo`
-    
+
     :Parameters:
-    
+
         value:
             The query condition's value.
-    
+
         units: `str` or `Units`, optional
             The units of *value*. By default, the same units as the
             operand being tested are assumed, if applicable. If
             *units* is specified and the already *value* has units
             (such as a `Data` object`), then they must be equivalent.
-    
+
         attr: `str`, optional
             Apply the condition to the attribute, or nested
             attributes, of the operand, rather than the operand
             itself. Nested attributes are specified by separating them
             with a ``.``. For example, the "month" attribute of the
             "bounds" attribute is specified as ``'bounds.month'``.
-    
+
     :Returns:
-    
+
         `Query`
             The query object.
-    
+
     **Examples:**
-    
+
     >>> q = cf.ge(5)
     >>> q
     <CF Query: x ge 5>
@@ -944,12 +944,12 @@ def ge(value, units=None, attr=None):
     True
     >>> q.evaluate(4)
     False
-    
+
     >>> cf.ge(10, 'm')
     <CF Query: (ge <CF Data: 10 m>)>
     >>> cf.ge(100, units=Units('kg'))
     <CF Query: (ge <CF Data: 100 kg>)>
-    
+
     >>> cf.ge(2, attr='month')
     <CF Query: month(ge 2)>
 
@@ -962,36 +962,36 @@ def eq(value, units=None, attr=None, exact=True):
 
     .. seealso:: `cf.contains`, `cf.ge`, `cf.gt`, `cf.ne`, `cf.le`,
                  `cf.lt`, `cf.set`, `cf.wi`, `cf.wo`
-    
+
     :Parameters:
-    
+
         value:
             The query condition's value.
-    
+
         units: `str` or `Units`, optional
 
             The units of *value*. By default, the same units as the
             operand being tested are assumed, if applicable. If
             *units* is specified and the already *value* has units
             (such as a `Data` object`), then they must be equivalent.
-    
+
         attr: `str`, optional
             Apply the condition to the attribute, or nested
             attributes, of the operand, rather than the operand
             itself. Nested attributes are specified by separating them
             with a ``.``. For example, the "month" attribute of the
             "bounds" attribute is specified as ``'bounds.month'``.
-    
+
         exact: deprecated at version 3.0.0.
             Use `re.compile` objects in *value* instead.
-    
+
     :Returns:
-    
+
         `Query`
             The query object.
-     
+
     **Examples:**
-    
+
     >>> q = cf.eq(5)
     >>> q
     <CF Query: x eq 5>
@@ -999,11 +999,11 @@ def eq(value, units=None, attr=None, exact=True):
     True
     >>> q == 4
     False
-    
+
     >>> q = cf.eq('air', exact=False)
     >>> q == 'air_temperature'
     True
-    
+
     >>> q = cf.eq('.*temp', exact=False)
     >>> q == 'air_temperature'
     True
@@ -1011,44 +1011,44 @@ def eq(value, units=None, attr=None, exact=True):
     '''
     if not exact:
         _DEPRECATION_ERROR_FUNCTION_KWARGS('eq', exact=True) # pragma: no cover
-        
+
     return Query('eq', value, units=units, attr=attr)
 
-    
+
 def ne(value, units=None, attr=None, exact=True):
     '''A `Query` object for a "not equal" condition.
 
     .. seealso:: `cf.contains`, `cf.eq`, `cf.ge`, `cf.gt`, `cf.le`,
                  `cf.lt`, `cf.set`, `cf.wi`, `cf.wo`
-    
+
     :Parameters:
-    
+
         value:
             The query condition's value.
-    
+
         units: `str` or `Units`, optional
             The units of *value*. By default, the same units as the
             operand being tested are assumed, if applicable. If
             *units* is specified and the already *value* has units
             (such as a `Data` object`), then they must be equivalent.
-    
+
         attr: `str`, optional
             Apply the condition to the attribute, or nested
             attributes, of the operand, rather than the operand
             itself. Nested attributes are specified by separating them
             with a ``.``. For example, the "month" attribute of the
             "bounds" attribute is specified as ``'bounds.month'``.
-    
+
         exact: deprecated at version 3.0.0.
             Use `re.compile` objects in *value* instead.
-    
-    :Returns: 
-    
+
+    :Returns:
+
         `Query`
             The query object.
-    
+
     **Examples:**
-    
+
     >>> q = cf.ne(5)
     >>> q
     <CF Query: x ne 5>
@@ -1060,44 +1060,44 @@ def ne(value, units=None, attr=None, exact=True):
     '''
     if not exact:
         _DEPRECATION_ERROR_FUNCTION_KWARGS('ne', exact=True) # pragma: no cover
-        
+
     return Query('ne', value, units=units, attr=attr)
 
-    
+
 def wi(value0, value1, units=None, attr=None):
     '''A `Query` object for a "within a range" condition.
 
     .. seealso:: `cf.contains`, `cf.eq`, `cf.ge`, `cf.gt`, `cf.ne`,
                  `cf.le`, `cf.lt`, `cf.set`, `cf.wo`
-    
+
     :Parameters:
-    
+
         value0:
              The lower bound of the range.
-    
+
         value1:
              The upper bound of the range.
-    
+
         units: `str` or `Units`, optional
             The units of *value*. By default, the same units as the
             operand being tested are assumed, if applicable. If
             *units* is specified and the already *value* has units
             (such as a `Data` object`), then they must be equivalent.
-    
+
         attr: `str`, optional
             Apply the condition to the attribute, or nested
             attributes, of the operand, rather than the operand
             itself. Nested attributes are specified by separating them
             with a ``.``. For example, the "month" attribute of the
             "bounds" attribute is specified as ``'bounds.month'``.
-    
-    :Returns: 
-    
+
+    :Returns:
+
         `Query`
             The query object.
-    
+
     **Examples:**
-    
+
     >>> q = cf.wi(5, 7)
     >>> q
     <CF Query: wi (5, 7)>
@@ -1115,35 +1115,35 @@ def wo(value0, value1, units=None, attr=None):
 
     .. seealso:: `cf.contains`, `cf.eq`, `cf.ge`, `cf.gt`, `cf.ne`,
                  `cf.le`, `cf.lt`, `cf.set`, `cf.wi`
-    
+
     :Parameters:
-    
+
         value0:
              The lower bound of the range.
-    
+
         value1:
              The upper bound of the range.
-    
+
         units: `str` or `Units`, optional
             The units of *value*. By default, the same units as the
             operand being tested are assumed, if applicable. If
             *units* is specified and the already *value* has units
             (such as a `Data` object`), then they must be equivalent.
-    
+
         attr: `str`, optional
             Apply the condition to the attribute, or nested
             attributes, of the operand, rather than the operand
             itself. Nested attributes are specified by separating them
             with a ``.``. For example, the "month" attribute of the
             "bounds" attribute is specified as ``'bounds.month'``.
-    
-    :Returns: 
-    
+
+    :Returns:
+
         `Query`
             The query object.
-    
+
     **Examples:**
-    
+
     >>> q = cf.wo(5)
     >>> q
     <CF Query: x wo (5, 7)>
@@ -1161,35 +1161,35 @@ def set(values, units=None, attr=None, exact=True):
 
     .. seealso:: `cf.contains`, `cf.eq`, `cf.ge`, `cf.gt`, `cf.ne`,
                  `cf.le`, `cf.lt`, `cf.wi`, `cf.wo`
-    
+
     :Parameters:
-    
+
         value: sequence
             The query condition's value.
-    
+
         units: `str` or `Units`, optional
             The units of *value*. By default, the same units as the
             operand being tested are assumed, if applicable. If
             *units* is specified and the already *value* has units
             (such as a `Data` object`), then they must be equivalent.
-    
+
         attr: `str`, optional
             Apply the condition to the attribute, or nested
             attributes, of the operand, rather than the operand
             itself. Nested attributes are specified by separating them
             with a ``.``. For example, the "month" attribute of the
             "bounds" attribute is specified as ``'bounds.month'``.
-    
+
         exact: deprecated at version 3.0.0.
             Use `re.compile` objects in *value* instead.
-    
-    :Returns: 
-    
+
+    :Returns:
+
         `Query`
             The query object.
-    
+
     **Examples:**
-    
+
     >>> c = cf.set([3, 5])
     >>> c == 4
     False
@@ -1209,35 +1209,35 @@ def contains(value, units=None):
     '''A `Query` object for a "cell contains" condition.
 
     .. versionadded:: 3.0.0
-    
+
     .. seealso:: `cf.cellsize`, `cf.cellge`, `cf.cellgt`, `cf.cellne`,
                  `cf.cellle`, `cf.celllt`, `cf.cellwi`, `cf.cellwo`
-    
+
     :Parameters:
-    
+
         value:
             The query condition's value.
-    
+
         units: `str` or `Units`, optional
             The units of *value*. By default, the same units as the
             operand being tested are assumed, if applicable. If
             *units* is specified and the already *value* has units
             (such as a `Data` object`), then they must be equivalent.
-    
-    :Returns: 
-    
+
+    :Returns:
+
         `Query`
             The query object.
-    
+
     **Examples:**
-    
+
     >>> cf.contains(8)
     <CF Query: [lower_bounds(le 8) & upper_bounds(ge 8)]>
     >>> cf.contains(30, 'degrees_east')
     <CF Query: [lower_bounds(le 30 degrees_east) & upper_bounds(ge 30 degrees_east)]>
     >>>  cf.contains(cf.Data(10, 'km'))
     <CF Query: [lower_bounds(le 10 km) & upper_bounds(ge 10 km)]>
-    
+
     >>> c
     <CF DimensionCoordinate: longitude(4) degrees_east>
     >>> print(c.bounds.array)
@@ -1261,19 +1261,19 @@ def year(value):
     .. seealso:: `cf.year`, `cf.month`, `cf.day`, `cf.hour`,
                  `cf.minute`, `cf.second`, `cf.seasons`, `cf.djf`,
                  `cf.mam`, `cf.jja`, `cf.son`
-    
+
     :Parameter:
-    
+
         value:
             The query condition's value.
-    
+
     :Returns:
-    
+
         `Query`
             The query object.
-    
+
     **Examples:**
-    
+
     >>> d = cf.dt(2002, 6, 16)
     >>> d == cf.year(2002)
     True
@@ -1297,19 +1297,19 @@ def month(value):
     .. seealso:: `cf.year`, `cf.day`, `cf.hour`, `cf.minute`,
                  `cf.second`, `cf.seasons`, `cf.djf`, `cf.mam`,
                  `cf.jja`, `cf.son`
-    
+
     :Parameter:
-    
+
         value:
             The query condition's value.
-    
+
     :Returns:
-    
+
         `Query`
             The query object.
-    
+
     **Examples:**
-    
+
     >>> d = cf.dt(2002, 6, 16)
     >>> d == cf.month(6)
     True
@@ -1333,19 +1333,19 @@ def day(value):
     .. seealso:: `cf.year`, `cf.month`, `cf.hour`, `cf.minute`,
                  `cf.second`, `cf.seasons`, `cf.djf`, `cf.mam`,
                  `cf.jja`, `cf.son`
-    
+
     :Parameter:
-    
+
         value:
             The query condition's value.
-    
+
     :Returns:
-    
+
         `Query`
             The query object.
-    
+
     **Examples:**
-    
+
     >>> d = cf.dt(2002, 6, 16)
     >>> d == cf.day(16)
     True
@@ -1369,40 +1369,40 @@ def hour(value):
     .. seealso:: `cf.year`, `cf.month`, `cf.day`, `cf.minute`,
                  `cf.second`, `cf.seasons`, `cf.djf`, `cf.mam`, `cf.jja`,
                  `cf.son`
-    
+
     :Parameter:
-    
+
         value:
             The query condition's value.
-    
+
     :Returns:
-    
+
         `Query`
             The query object.
-    
+
     In this context, any object which has a `!hour` attribute is
     considered to be a date-time variable.
-    
+
     If *value* is a `Query` object then ``cf.hour(value)`` is
     equivalent to ``value.addattr('hour')``. Otherwise
     ``cf.hour(value)`` is equivalent to ``cf.eq(value, attr='hour')``.
-    
+
     .. seealso:: `cf.year`, `cf.month`, `cf.day`, `cf.minute`,
                  `cf.second`
-    
+
     :Parameters:
-    
-        value:   
+
+        value:
            Either the value that the hour is to be compared with, or a
            `Query` object for testing the hour.
-    
+
     :Returns:
-    
+
         `Query`
             The query object.
-    
+
     **Examples:**
-    
+
     >>> d = cf.dt(2002, 6, 16, 18)
     >>> d == cf.hour(18)
     True
@@ -1426,19 +1426,19 @@ def minute(value):
     .. seealso:: `cf.year`, `cf.month`, `cf.day`, `cf.hour`,
                  `cf.second`, `cf.seasons`, `cf.djf`, `cf.mam`,
                  `cf.jja`, `cf.son`
-    
+
     :Parameter:
-    
+
         value:
             The query condition's value.
-    
+
     :Returns:
-    
+
         `Query`
             The query object.
-    
+
     **Examples:**
-    
+
     >>> d = cf.dt(2002, 6, 16, 18, 30, 0)
     >>> d == cf.minute(30)
     True
@@ -1462,19 +1462,19 @@ def second(value):
     .. seealso:: `cf.year`, `cf.month`, `cf.day`, `cf.hour`,
                  `cf.minute`, `cf.seasons`, `cf.djf`, `cf.mam`,
                  `cf.jja`, `cf.son`
-    
+
     :Parameter:
-    
+
         value:
             The query condition's value.
-    
+
     :Returns:
-    
+
         `Query`
             The query object.
-    
+
     **Examples:**
-    
+
     >>> d = cf.dt(2002, 6, 16, 18, 30, 0)
     >>> d == cf.second(0)
     True
@@ -1497,34 +1497,34 @@ def cellsize(value, units=None):
 
     .. seealso:: `cf.contains`, `cf.cellge`, `cf.cellgt`, `cf.cellne`,
                  `cf.cellle`, `cf.celllt`, `cf.cellwi`, `cf.cellwo`
-    
+
     :Parameters:
-    
+
         value:
             The query condition's value.
-    
+
         units: `str` or `Units`, optional
             The units of *value*. By default, the same units as the
             operand being tested are assumed, if applicable. If
             *units* is specified and the already *value* has units
             (such as a `Data` object`), then they must be equivalent.
-    
+
     :Returns:
-    
+
         `Query`
             The query object.
-    
+
     **Examples:**
-    
+
     >>> cf.cellsize(cf.lt(5, 'km'))
     <CF Query: cellsize(lt <CF Data: 5 km>)>
-    >>> cf.cellsize(5) 
+    >>> cf.cellsize(5)
     <CF Query: cellsize(eq 5)>
     >>> cf.cellsize(cf.Data(5, 'km'))
     <CF Query: cellsize(eq <CF Data: 5 km>)>
-    >>> cf.cellsize(cf.Data(5, 'km'))  
+    >>> cf.cellsize(cf.Data(5, 'km'))
     <CF Query: cellsize(eq <CF Data: 5 km>)>
-    >>> cf.cellsize(5, units='km')   
+    >>> cf.cellsize(5, units='km')
     <CF Query: cellsize(eq <CF Data: 5 km>)>
 
     '''
@@ -1540,28 +1540,28 @@ def cellwi(value0, value1, units=None):
     .. seealso:: `cf.cellsize`, `cf.contains`, `cf.cellge`,
                  `cf.cellgt`, `cf.cellne`, `cf.cellle`, `cf.celllt`,
                  `cf.cellwo`
-    
+
     :Parameters:
-    
+
         value:
             The query condition's value.
-    
+
         units: `str` or `Units`, optional
             The units of *value*. By default, the same units as the
             operand being tested are assumed, if applicable. If
             *units* is specified and the already *value* has units
             (such as a `Data` object`), then they must be equivalent.
-    
+
     :Returns:
-    
+
         `Query`
             The query object.
-    
+
     **Examples:**
-    
+
     TODO
 
-    ''' 
+    '''
     return (Query('ge', value0, units=units, attr='lower_bounds') &
             Query('le', value1, units=units, attr='upper_bounds'))
 
@@ -1572,28 +1572,28 @@ def cellwo(value0, value1, units=None):
     .. seealso:: `cf.cellsize`, `cf.contains`, `cf.cellge`,
                  `cf.cellgt`, `cf.cellne`, `cf.cellle`, `cf.celllt`,
                  `cf.cellwi`
-    
+
     :Parameters:
-    
+
         value:
             The query condition's value.
-    
+
         units: `str` or `Units`, optional
             The units of *value*. By default, the same units as the
             operand being tested are assumed, if applicable. If
             *units* is specified and the already *value* has units
             (such as a `Data` object`), then they must be equivalent.
-    
+
     :Returns:
-    
+
         `Query`
             The query object.
-    
+
     **Examples:**
-    
+
     TODO
 
-    ''' 
+    '''
     return (Query('lt', value0, units=units, attr='lower_bounds') &
             Query('gt', value1, units=units, attr='upper_bounds'))
 
@@ -1601,64 +1601,64 @@ def cellwo(value0, value1, units=None):
 def cellgt(value, units=None):
     '''A `Query` object for a "cell bounds strictly greater than"
     condition.
-    
+
     .. seealso:: `cf.cellsize`, `cf.contains`, `cf.cellge`
                  `cf.cellne`, `cf.cellle`, `cf.celllt`, `cf.cellwi`,
                  `cf.cellwo`
-    
+
     :Parameters:
-    
+
         value:
             The query condition's value.
-    
+
         units: `str` or `Units`, optional
             The units of *value*. By default, the same units as the
             operand being tested are assumed, if applicable. If
             *units* is specified and the already *value* has units
             (such as a `Data` object`), then they must be equivalent.
-    
+
     :Returns:
-    
+
         `Query`
             The query object.
-    
+
     **Examples:**
-    
+
     TODO
 
-    ''' 
+    '''
     return Query('gt', value, units=units, attr='lower_bounds')
 
 
 def cellge(value, units=None):
     '''A `Query` object for a "cell bounds greater than or equal"
     condition.
-    
+
     .. seealso:: `cf.cellsize`, `cf.contains`, `cf.cellgt`,
                  `cf.cellne`, `cf.cellle`, `cf.celllt`, `cf.cellwi`,
                  `cf.cellwo`
-    
+
     :Parameters:
-    
+
         value:
             The query condition's value.
-    
+
         units: `str` or `Units`, optional
             The units of *value*. By default, the same units as the
             operand being tested are assumed, if applicable. If
             *units* is specified and the already *value* has units
             (such as a `Data` object`), then they must be equivalent.
-    
+
     :Returns:
-    
+
         `Query`
             The query object.
-    
+
     **Examples:**
-    
+
     TODO
 
-    ''' 
+    '''
     return Query('ge', value, units=units, attr='lower_bounds')
 
 
@@ -1668,28 +1668,28 @@ def celllt(value, units=None):
     .. seealso:: `cf.cellsize`, `cf.contains`, `cf.cellge`,
                  `cf.cellgt`, `cf.cellne`, `cf.cellle`, `cf.cellwi`,
                  `cf.cellwo`
-    
+
     :Parameters:
-    
+
         value:
             The query condition's value.
-    
+
         units: `str` or `Units`, optional
             The units of *value*. By default, the same units as the
             operand being tested are assumed, if applicable. If
             *units* is specified and the already *value* has units
             (such as a `Data` object`), then they must be equivalent.
-    
+
     :Returns:
-    
+
         `Query`
             The query object.
-    
+
     **Examples:**
-    
+
     TODO
 
-    ''' 
+    '''
     return Query('lt', value, units=units, attr='upper_bounds')
 
 
@@ -1699,48 +1699,48 @@ def cellle(value, units=None):
     .. seealso:: `cf.cellsize`, `cf.contains`, `cf.cellge`,
                  `cf.cellgt`, `cf.cellne`, `cf.celllt`, `cf.cellwi`,
                  `cf.cellwo`
-    
+
     :Parameters:
-    
+
         value:
             The query condition's value.
-    
+
         units: `str` or `Units`, optional
             The units of *value*. By default, the same units as the
             operand being tested are assumed, if applicable. If
             *units* is specified and the already *value* has units
             (such as a `Data` object`), then they must be equivalent.
-    
+
     :Returns:
-    
+
         `Query`
             The query object.
-    
+
     **Examples:**
-    
+
     TODO
 
-    ''' 
+    '''
     return Query('le', value, units=units, attr='upper_bounds')
 
 
 def jja():
     '''A `Query` object for a "month of year in June, July or August"
     condition.
-    
+
     .. versionadded:: 1.0
-    
+
     .. seealso:: `cf.year`, `cf.month`, `cf.day`, `cf.hour`,
                  `cf.minute`, `cf.second`, `cf.seasons`, `cf.djf`,
                  `cf.mam`, `cf.son`
-    
+
     :Returns:
-    
+
         `Query`
             The query object.
-    
+
     **Examples:**
-    
+
     >>> f
     <CF Field: air_temperature(time(365), latitude(64), longitude(128)) K>
     >>> f.subspace(time=cf.jja())
@@ -1753,20 +1753,20 @@ def jja():
 def son():
     '''A `Query` object for a "month of year in September, October,
     November" condition.
-    
+
     .. versionadded:: 1.0
-    
+
     .. seealso:: `cf.year`, `cf.month`, `cf.day`, `cf.hour`,
                  `cf.minute`, `cf.second`, `cf.seasons`, `cf.djf`,
                  `cf.mam`, `cf.jja`
-    
+
     :Returns:
-    
+
         `Query`
             The query object.
-    
+
     **Examples:**
-    
+
     >>> f
     <CF Field: air_temperature(time(365), latitude(64), longitude(128)) K>
     >>> f.subspace(time=cf.son())
@@ -1779,20 +1779,20 @@ def son():
 def djf():
     '''A `Query` object for a "month of year in December, January,
     February" condition.
-    
+
     .. versionadded:: 1.0
-    
+
     .. seealso:: `cf.year`, `cf.month`, `cf.day`, `cf.hour`,
                  `cf.minute`, `cf.second`, `cf.seasons`, `cf.mam`,
                  `cf.jja`, `cf.son`
-    
+
     :Returns:
-    
+
         `Query`
             The query object.
-    
+
     **Examples:**
-    
+
     >>> f
     <CF Field: air_temperature(time(365), latitude(64), longitude(128)) K>
     >>> f.subspace(time=cf.djf())
@@ -1806,20 +1806,20 @@ def djf():
 def mam():
     '''A `Query` object for a "month of year in March, April, May"
     condition.
-    
+
     .. versionadded:: 1.0
-    
+
     .. seealso:: `cf.year`, `cf.month`, `cf.day`, `cf.hour`,
                  `cf.minute`, `cf.second`, `cf.seasons`, `cf.djf`,
                  `cf.jja`, `cf.son`
-    
+
     :Returns:
-    
+
         `Query`
             The query object.
-    
+
     **Examples:**
-    
+
     >>> f
     <CF Field: air_temperature(time(365), latitude(64), longitude(128)) K>
     >>> f.subspace(time=cf.mam())
@@ -1835,60 +1835,60 @@ def seasons(n=4, start=12):
 
     Note that any date-time that lies within a particular season will
     satisfy that query.
-    
+
     .. versionadded:: 1.0
-    
+
     .. seealso:: `cf.year`, `cf.month`, `cf.day`, `cf.hour`, `cf.minute`,
                  `cf.second`, `cf.djf`, `cf.mam`, `cf.jja`, `cf.son`
-    
+
     TODO
 
     .. seealso:: `cf.mam`, `cf.jja`, `cf.son`, `cf.djf`
-    
+
     :Parameters:
-    
+
         n: `int`, optional
             The number of seasons in the year. By default there are
             four seasons.
-    
+
         start: `int`, optional
             The start month of the first season of the year. By
             default this is 12 (December).
-    
+
     :Returns:
-    
+
         `list` of `Query`
             The query objects.
-    
+
     **Examples:**
-    
+
     >>> cf.seasons()
     [<CF Query: month[(ge 12) | (le 2)]>,
      <CF Query: month(wi (3, 5))>,
      <CF Query: month(wi (6, 8))>,
      <CF Query: month(wi (9, 11))>]
-    
+
     >>> cf.seasons(4, 1)
     [<CF Query: month(wi (1, 3))>,
      <CF Query: month(wi (4, 6))>,
      <CF Query: month(wi (7, 9))>,
      <CF Query: month(wi (10, 12))>]
-    
+
     >>> cf.seasons(3, 6)
     [<CF Query: month(wi (6, 9))>,
      <CF Query: month[(ge 10) | (le 1)]>,
      <CF Query: month(wi (2, 5))>]
-    
+
     >>> cf.seasons(3)
     [<CF Query: month[(ge 12) | (le 3)]>,
      <CF Query: month(wi (4, 7))>,
      <CF Query: month(wi (8, 11))>]
-    
+
     >>> cf.seasons(3, 6)
     [<CF Query: month(wi (6, 9))>,
      <CF Query: month[(ge 10) | (le 1)]>,
      <CF Query: month(wi (2, 5))>]
-    
+
     >>> cf.seasons(12)
     [<CF Query: month(eq 12)>,
      <CF Query: month(eq 1)>,
@@ -1902,7 +1902,7 @@ def seasons(n=4, start=12):
      <CF Query: month(eq 9)>,
      <CF Query: month(eq 10)>,
      <CF Query: month(eq 11)>]
-    
+
     >>> cf.seasons(1, 4)
     [<CF Query: month[(ge 4) | (le 3)]>]
 
@@ -1929,15 +1929,15 @@ def seasons(n=4, start=12):
         elif m1 == -1:
             m1 = 11
 
-        if m0 < m1: 
+        if m0 < m1:
             q = Query('wi', (m0, m1))
-        elif m0 > m1: 
+        elif m0 > m1:
             q = Query('ge', m0) | Query('le', m1)
         else:
             q = Query('eq', m0)
 
         out.append(q.addattr('month'))
-    
+
         m0 = m1 + 1
         if m0 > 12:
             m0 = 1
@@ -1960,7 +1960,7 @@ def dtge(*args, **kwargs):
     _DEPRECATION_ERROR_FUNCTION(
         'dtge', "Use 'cf.ge' with a datetime object value instead.") # pragma: no cover
 
-    
+
 def dtgt(*args, **kwargs):
     '''Deprecated at version 3.0.0. Use 'cf.gt' with a datetime object
     value instead.

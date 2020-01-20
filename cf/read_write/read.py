@@ -33,7 +33,7 @@ def read(files, external=None, verbose=False, warnings=False,
     '''Read field constructs from netCDF, CDL, PP or UM fields files.
 
     NetCDF files may be on disk or on an OPeNDAP server.
-    
+
     Any amount of files of any combination of file types may be read.
 
     **NetCDF unlimited dimensions**
@@ -45,7 +45,7 @@ def read(files, external=None, verbose=False, warnings=False,
     construct.
 
     **CF-compliance**
-    
+
     If the dataset is partially CF-compliant to the extent that it is
     not possible to unambiguously map an element of the netCDF dataset
     to an element of the CF data model, then a field construct is
@@ -99,7 +99,7 @@ def read(files, external=None, verbose=False, warnings=False,
     files.
 
     **Performance**
-    
+
     Descriptive properties are always read into memory, but lazy
     loading is employed for all data arrays, which means that no data
     is read into memory until the data is required for inspection or
@@ -110,26 +110,26 @@ def read(files, external=None, verbose=False, warnings=False,
     .. seealso:: `cf.aggregate`, `cf.load_stash2standard_name`,
                  `cf.write`, `cf.Field.convert`,
                  `cf.Field.dataset_compliance`
-    
+
     :Parameters:
-    
+
         files: (arbitrarily nested sequence of) `str`
             A string or arbitrarily nested sequence of strings giving
             the file names, directory names, or OPenDAP URLs from
             which to read field constructs. Various type of expansion
             are applied to the names:
-            
+
             ====================  ======================================
             Expansion             Description
             ====================  ======================================
             Tilde                 An initial component of ``~`` or
                                   ``~user`` is replaced by that *user*'s
                                   home directory.
-             
+
             Environment variable  Substrings of the form ``$name`` or
                                   ``${name}`` are replaced by the value
                                   of environment variable *name*.
-    
+
             Pathname              A string containing UNIX file name
                                   metacharacters as understood by the
                                   Python `glob` module is replaced by
@@ -137,24 +137,24 @@ def read(files, external=None, verbose=False, warnings=False,
                                   type of expansion is ignored for
                                   OPenDAP URLs.
             ====================  ======================================
-        
+
             Where more than one type of expansion is used in the same
             string, they are applied in the order given in the above
             table.
-    
+
             *Parameter example:*
               The file ``file.nc`` in the user's home directory could
               be described by any of the following:
               ``'$HOME/file.nc'``, ``'${HOME}/file.nc'``,
               ``'~/file.nc'``, ``'~/tmp/../file.nc'``.
-    
+
             When a directory is specified, all files in that directory
             are read. Sub-directories are not read unless the
             *recursive* parameter is True. If any directories contain
             files that are not valid datasets then an exception will
             be raised, unless the *ignore_read_error* parameter is
             True.
-    
+
          external: (sequence of) `str`, optional
             Read external variables (i.e. variables which are named by
             attributes, but are not present, in the parent file given
@@ -163,28 +163,28 @@ def read(files, external=None, verbose=False, warnings=False,
             global "external_variables" attribute. Multiple external
             files may be provided, which are searched in random order
             for the required external variables.
-           
+
             If an external variable is not found in any external
             files, or is found in multiple external files, then the
             relevant metadata construct is still created, but without
             any metadata or data. In this case the construct's
             `!is_external` method will return `True`.
-    
+
             *Parameter example:*
               ``external='cell_measure.nc'``
-    
+
             *Parameter example:*
               ``external=['cell_measure.nc']``
-    
+
             *Parameter example:*
               ``external=('cell_measure_A.nc', 'cell_measure_O.nc')``
-    
+
         extra: (sequence of) `str`, optional
             Create extra, independent field constructs from netCDF
             variables that correspond to particular types metadata
             constructs. The *extra* parameter may be one, or a
             sequence, of:
-    
+
             ==========================  ===============================
             *extra*                     Metadata constructs
             ==========================  ===============================
@@ -194,17 +194,17 @@ def read(files, external=None, verbose=False, warnings=False,
             ``'auxiliary_coordinate'``  Auxiliary coordinate constructs
             ``'cell_measure'``          Cell measure constructs
             ==========================  ===============================
-    
+
             *Parameter example:*
               To create field constructs from auxiliary coordinate
               constructs: ``extra='auxiliary_coordinate'`` or
               ``extra=['auxiliary_coordinate']``.
-    
+
             *Parameter example:*
               To create field constructs from domain ancillary and
               cell measure constructs: ``extra=['domain_ancillary',
               'cell_measure']``.
-    
+
             An extra field construct created via the *extra* parameter
             will have a domain limited to that which can be inferred
             from the corresponding netCDF variable, but without the
@@ -214,30 +214,30 @@ def read(files, external=None, verbose=False, warnings=False,
             parent field construct's domain as possible by using the
             `~cf.Field.convert` method of a returned field construct,
             instead of setting the *extra* parameter.
-    
+
         verbose: `bool`, optional
             If True then print a description of how the contents of
             the netCDF file were parsed and mapped to CF data model
             constructs.
-    
+
         warnings: `bool`, optional
             If True then print warnings when an output field construct
             is incomplete due to structural non-compliance of the
             dataset. By default such warnings are not displayed.
-            
+
         ignore_read_error: `bool`, optional
             If True then ignore any file which raises an IOError
             whilst being read, as would be the case for an empty file,
             unknown file format, etc. By default the IOError is
             raised.
-        
+
         fmt: `str`, optional
             Only read files of the given format, ignoring all other
             files. Valid formats are ``'NETCDF'`` for CF-netCDF files,
             ``'CFA'`` for CFA-netCDF files, ``'UM'`` for PP or UM
             fields files, and ``'CDL'`` for CDL text files. By default
             files of any of these formats are read.
-    
+
         aggregate: `bool` or `dict`, optional
             If True (the default) or a dictionary (possibly empty)
             then aggregate the field constructs read in from all input
@@ -245,44 +245,44 @@ def read(files, external=None, verbose=False, warnings=False,
             all of the field constructs found the input files to the
             `cf.aggregate`, and returning the output of this function
             call.
-    
+
             If *aggregate* is a dictionary then it is used to
             configure the aggregation process passing its contents as
             keyword arguments to the `cf.aggregate` function.
-    
+
             If *aggregate* is False then the field constructs are not
             aggregated.
-    
+
         squeeze: `bool`, optional
             If True then remove size 1 axes from each field construct's
             data array.
-    
+
         unsqueeze: `bool`, optional
             If True then insert size 1 axes from each field
             construct's domain into its data array.
-    
+
         select, select_options: optional TODO
             Only return field constructs which satisfy the given
             conditions on their property values. Only field constructs
             which, prior to any aggregation, satisfy
             ``f.match(description=select, **select_options) == True``
             are returned. See `cf.Field.match` for details.
-    
+
         recursive: `bool`, optional
             If True then recursively read sub-directories of any
             directories specified with the *files* parameter.
-    
+
         followlinks: `bool`, optional
             If True, and *recursive* is True, then also search for
             files in sub-directories which resolve to symbolic
             links. By default directories which resolve to symbolic
             links are ignored. Ignored of *recursive* is False. Files
             which are symbolic links are always followed.
-    
+
             Note that setting ``recursive=True, followlinks=True`` can
             lead to infinite recursion if a symbolic link points to a
             parent directory of itself.
-    
+
         um: `dict`, optional
             For Met Office (UK) PP files and Met Office (UK) fields
             files only, provide extra decoding instructions. This
@@ -291,19 +291,19 @@ def read(files, external=None, verbose=False, warnings=False,
             inferrable from the file's contents, but if not then each
             key/value pair in the dictionary sets a decoding option as
             follows:
-    
+
             ============================  =====================================
             Key                           Value
             ============================  =====================================
-            ``'fmt'``                     The file format (``'PP'`` or  
+            ``'fmt'``                     The file format (``'PP'`` or
                                           ``'FF'``)
-                                    
-            ``'word_size'``               The word size in bytes (``4`` or 
+
+            ``'word_size'``               The word size in bytes (``4`` or
                                           ``8``)
-                                    
+
             ``'endian'``                  The byte order (``'big'`` or
                                           ``'little'``)
-                                    
+
             ``'version'``                 The UM version to be used
                                           when decoding the
                                           header. Valid versions
@@ -343,74 +343,74 @@ def read(files, external=None, verbose=False, warnings=False,
 
             If format is specified as ``'PP'`` then the word size and
             byte order default to ``4`` and ``'big'`` respectively.
-    
+
             *Parameter example:*
               To specify that the input files are 32-bit, big-endian
               PP files: ``um={'fmt': 'PP'}``
-    
+
             *Parameter example:*
               To specify that the input files are 32-bit,
               little-endian PP files from version 5.1 of the UM:
               ``um={'fmt': 'PP', 'endian': 'little', 'version': 5.1}``
-    
+
             .. versionadded:: 1.5
-    
+
         umversion: deprecated at version 3.0.0
             Use the *um* parameter instead.
-    
+
         height_at_top_of_model: deprecated at version 3.0.0
             Use the *um* parameter instead.
-    
+
         field: deprecated at version 3.0.0
             Use the *extra* parameter instead.
-    
+
         follow_symlinks: deprecated at version 3.0.0
             Use the *followlinks* parameter instead.
-    
+
         select_options: deprecated at version 3.0.0
-    
+
     :Returns:
-        
+
         `FieldList`
             The field constructs found in the input file(s). The list
             may be empty.
-    
+
     **Examples:**
-    
+
     >>> x = cf.read('file.nc')
-    
+
     Read a file and create field constructs from CF-netCDF data
     variables as well as from the netCDF variables that correspond to
     particular types metadata constructs:
-    
+
     >>> f = cf.read('file.nc', extra='domain_ancillary')
-    >>> g = cf.read('file.nc', extra=['dimension_coordinate', 
+    >>> g = cf.read('file.nc', extra=['dimension_coordinate',
     ...                               'auxiliary_coordinate'])
-    
+
     Read a file that contains external variables:
-    
+
     >>> h = cf.read('parent.nc')
     >>> i = cf.read('parent.nc', external='external.nc')
     >>> j = cf.read('parent.nc', external=['external1.nc', 'external2.nc'])
-    
+
     >>> f = cf.read('file*.nc')
     >>> f
     [<CF Field: pmsl(30, 24)>,
      <CF Field: z-squared(17, 30, 24)>,
      <CF Field: temperature(17, 30, 24)>,
      <CF Field: temperature_wind(17, 29, 24)>]
-    
+
     >>> cf.read('file*.nc')[0:2]
     [<CF Field: pmsl(30, 24)>,
      <CF Field: z-squared(17, 30, 24)>]
-    
+
     >>> cf.read('file*.nc')[-1]
     <CF Field: temperature_wind(17, 29, 24)>
-    
+
     >>> cf.read('file*.nc', select='units=K')
     [<CF Field: temperature(17, 30, 24)>,
      <CF Field: temperature_wind(17, 29, 24)>]
-    
+
     >>> cf.read('file*.nc', select='ncvar%ta')
     <CF Field: temperature(17, 30, 24)>
 
@@ -422,7 +422,7 @@ def read(files, external=None, verbose=False, warnings=False,
     if select_options:
         _DEPRECATION_ERROR_FUNCTION_KWARGS('cf.read',
                                            {'select_options': select_options}) # pragma: no cover
-        
+
     if follow_symlinks:
         _DEPRECATION_ERROR_FUNCTION_KWARGS('cf.read',
                                            {'follow_symlinks': follow_symlinks},
@@ -436,7 +436,7 @@ def read(files, external=None, verbose=False, warnings=False,
     # Parse select
     if isinstance(select, str):
         select = (select,)
-        
+
     if squeeze and unsqueeze:
         raise ValueError("squeeze and unsqueeze can not both be True")
 
@@ -455,7 +455,7 @@ def read(files, external=None, verbose=False, warnings=False,
         aggregate_options = {}
 
     aggregate_options['copy'] = False
-    
+
     # Parse the extra parameter
     if extra is None:
         extra = ()
@@ -478,28 +478,28 @@ def read(files, external=None, verbose=False, warnings=False,
         else:
             # Glob files on disk
             files2 = glob(file_glob)
-            
+
             if not files2 and not ignore_read_error:
                 open(file_glob, 'rb')
-                
+
             files3 = []
             for x in files2:
                 if isdir(x):
                     # Walk through directories, possibly recursively
                     for path, subdirs, filenames in os.walk(x, followlinks=followlinks):
                         files3.extend(os.path.join(path, f) for f in filenames)
-                        if not recursive:                            
+                        if not recursive:
                             break
                 else:
                     files3.append(x)
             #--- End: for
-            
+
             files2 = files3
 
         for filename in files2:
             if verbose:
                 print('File: {0}'.format(filename)) # pragma: no cover
-                
+
             # --------------------------------------------------------
             # Read the file into fields
             # --------------------------------------------------------
@@ -512,7 +512,7 @@ def read(files, external=None, verbose=False, warnings=False,
                                   extra=extra,
                                   height_at_top_of_model=height_at_top_of_model,
                                   chunk=chunk)
-            
+
             # --------------------------------------------------------
             # Select matching fields
             # --------------------------------------------------------
@@ -524,15 +524,15 @@ def read(files, external=None, verbose=False, warnings=False,
             # files
             # --------------------------------------------------------
             field_list.extend(fields)
-   
+
             field_counter = len(field_list)
             file_counter += 1
-        #--- End: for            
-    #--- End: for     
+        #--- End: for
+    #--- End: for
 
     # Print some informative messages
     if verbose:
-        print("Read {0} field{1} from {2} file{3}".format( 
+        print("Read {0} field{1} from {2} file{3}".format(
             field_counter, _plural(field_counter),
             file_counter , _plural(file_counter))) # pragma: no cover
 
@@ -548,7 +548,7 @@ def read(files, external=None, verbose=False, warnings=False,
         if verbose:
             n = len(field_list) # pragma: no cover
             print('{0} input field{1} aggregated into {2} field{3}'.format(
-                org_len, _plural(org_len), 
+                org_len, _plural(org_len),
                 n, _plural(n))) # pragma: no cover
     #--- End: if
 
@@ -557,7 +557,7 @@ def read(files, external=None, verbose=False, warnings=False,
     # ----------------------------------------------------------------
     if len(field_list) > 1:
         field_list.sort(key=lambda f: f.nc_get_variable(''))
-        
+
     # ----------------------------------------------------------------
     # Add standard names to UM/PP fields (post aggregation)
     # ----------------------------------------------------------------
@@ -570,7 +570,7 @@ def read(files, external=None, verbose=False, warnings=False,
 
     # ----------------------------------------------------------------
     # Squeeze size one dimensions from the data arrays. Do one of:
-    # 
+    #
     # 1) Squeeze the fields, i.e. remove all size one dimensions from
     #    all field data arrays
     #
@@ -581,12 +581,12 @@ def read(files, external=None, verbose=False, warnings=False,
     # ----------------------------------------------------------------
     if squeeze:
         for f in field_list:
-            f.squeeze(inplace=True) 
+            f.squeeze(inplace=True)
     elif unsqueeze:
         for f in field_list:
             f.unsqueeze(inplace=True)
     #--- End: if
-    
+
     if nfields is not None and len(field_list) != nfields:
         raise ValueError(
             "{} field{} requested but {} fields found in file{}".format(
@@ -610,26 +610,26 @@ def _read_a_file(filename, aggregate=True, aggregate_options=None,
     '''Read the contents of a single file into a field list.
 
     :Parameters:
-    
+
         filename: `str`
             The file name.
-    
+
         aggregate_options: `dict`, optional
             The keys and values of this dictionary may be passed as
             keyword parameters to an external call of the aggregate
             function.
-    
+
         ignore_read_error: `bool`, optional
             If True then return an empty field list if reading the
             file produces an IOError, as would be the case for an
             empty file, unknown file format, etc. By default the
             IOError is raised.
-        
+
         verbose: `bool`, optional
             If True then print information to stdout.
-        
+
     :Returns:
-    
+
         `FieldList`
             The fields in the file.
 
@@ -644,7 +644,7 @@ def _read_a_file(filename, aggregate=True, aggregate_options=None,
     umversion              = 405
 
     if um:
-        ftype = 'UM' 
+        ftype = 'UM'
         fmt                    = um.get('fmt')
         word_size              = um.get('word_size')
         endian                 = um.get('endian')
@@ -664,15 +664,15 @@ def _read_a_file(filename, aggregate=True, aggregate_options=None,
             umversion = float(str(umversion).replace('.', '0', 1))
     else:
         try:
-            ftype = file_type(filename)        
+            ftype = file_type(filename)
         except Exception as error:
             if not ignore_read_error:
                 raise Exception(error)
 
             if verbose:
                 print('WARNING: {}'.format(error)) # pragma: no cover
-                
-            return FieldList()            
+
+            return FieldList()
     #--- End: if
 
     extra_read_vars = {'chunk'            : chunk,
@@ -680,7 +680,7 @@ def _read_a_file(filename, aggregate=True, aggregate_options=None,
                        'ignore_read_error': ignore_read_error,
                        'cfa'              : False,
     }
-    
+
     # ----------------------------------------------------------------
     # Still here? Read the file into fields.
     # ----------------------------------------------------------------
@@ -696,19 +696,19 @@ def _read_a_file(filename, aggregate=True, aggregate_options=None,
                 if verbose:
                     print("WARNING: Can't determine format of file {} generated from CDL file {}".format(
                         filename, cdl_filename)) # pragma: no cover
-                    
+
                 return FieldList()
             else:
                 raise IOError(
                     "Can't determine format of file {} generated from CDL file {}".format(
-                        filename, cdl_filename))            
+                        filename, cdl_filename))
     #--- End: if
-    
+
     if ftype == 'netCDF' and extra_read_vars['fmt'] in (None, 'NETCDF', 'CFA'):
         fields = netcdf.read(filename, external=external, extra=extra,
                              verbose=verbose, warnings=warnings,
                              extra_read_vars=extra_read_vars)
-        
+
     elif ftype == 'UM' and extra_read_vars['fmt'] in (None, 'UM'):
         fields = UM.read(filename, um_version=umversion,
                          verbose=verbose, set_standard_name=False,
@@ -730,7 +730,7 @@ def _read_a_file(filename, aggregate=True, aggregate_options=None,
     # ----------------------------------------------------------------
     for f in fields:
         f.autocyclic()
-    
+
     # ----------------------------------------------------------------
     # Return the fields
     # ----------------------------------------------------------------
@@ -741,18 +741,18 @@ def file_type(filename):
     '''TODO
 
     :Parameters:
-    
+
         filename: `str`
             The file name.
-    
+
     :Returns:
-    
+
         `str`
             The format type of the file. One of ``'netCDF'``, ``'UM'``
             or ``'CDL'``.
-    
+
     **Examples:**
-    
+
     >>> file_type(filename)
     'netCDF'
 
@@ -762,7 +762,7 @@ def file_type(filename):
     # ----------------------------------------------------------------
     if netcdf.is_netcdf_file(filename):
         return 'netCDF'
-  
+
     # ----------------------------------------------------------------
     # PP or FF
     # ----------------------------------------------------------------
@@ -774,6 +774,6 @@ def file_type(filename):
     # ----------------------------------------------------------------
     if netcdf.is_cdl_file(filename):
         return 'CDL'
-  
+
     # Still here?
     raise IOError("Can't determine format of file {}".format(filename))

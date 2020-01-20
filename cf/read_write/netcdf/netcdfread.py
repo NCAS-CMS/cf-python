@@ -16,27 +16,27 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
     def _ncdimensions(self, ncvar):
         '''Return a list of the netCDF dimensions corresponding to a netCDF
     variable.
-    
+
     If the variable has been compressed then the *implied
     uncompressed* dimensions are returned.
-        
+
     For a CFA variable, the netCDF dimensions are taken from the
     'cfa_dimensions' netCDF attribute.
-    
+
     .. versionadded:: 3.0.0
-    
+
     :Parameters:
-    
+
         ncvar: `str`
             The netCDF variable name.
-    
+
     :Returns:
-    
+
         `list`
             The netCDF dimension names spanned by the netCDF variable.
-    
+
     **Examples:**
-    
+
     >>> n._ncdimensions('humidity')
     ['time', 'lat', 'lon']
 
@@ -44,9 +44,9 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         g = self.read_vars
 
         cfa = (g['cfa'] and
-               ncvar not in g['external_variables'] and 
+               ncvar not in g['external_variables'] and
                g['variable_attributes'][ncvar].get('cf_role') == 'cfa_variable')
-        
+
         if not cfa:
             return super()._ncdimensions(ncvar)
 
@@ -55,32 +55,32 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         return list(map(str, ncdimensions))
 
-    
+
     def _get_domain_axes(self, ncvar, allow_external=False):
         '''Return the domain axis identifiers that correspond to a netCDF
     variable's netCDF dimensions.
-    
+
     For a CFA variable, the netCDF dimensions are taken from the
     'cfa_dimensions' netCDF attribute.
-    
+
     :Parameter:
-    
+
         ncvar: `str`
             The netCDF variable name.
-    
+
         allow_external: `bool`
             If `True` and *ncvar* is an external variable then return an
             empty list.
-    
+
     :Returns:
-    
+
         `list`
-    
+
     **Examples:**
-    
+
     >>> r._get_domain_axes('areacello')
     ['domainaxis0', 'domainaxis1']
-    
+
     >>> r._get_domain_axes('areacello', allow_external=True)
     []
 
@@ -88,9 +88,9 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         g = self.read_vars
 
         cfa = (g['cfa'] and
-               ncvar not in g['external_variables'] and 
+               ncvar not in g['external_variables'] and
                g['variable_attributes'][ncvar].get('cf_role') == 'cfa_variable')
-        
+
         if not cfa:
             return super()._get_domain_axes(ncvar=ncvar,
                                             allow_external=allow_external)
@@ -126,7 +126,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                                         unpacked_dtype=unpacked_dtype,
                                         uncompress_override=uncompress_override,
                                         parent_ncvar=parent_ncvar)
-            
+
         # ------------------------------------------------------------
         # Still here? Then create data for a CFA netCDF variable
         # ------------------------------------------------------------
@@ -139,17 +139,17 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                     error))
 
         variable = g['variables'][ncvar]
-        
+
         cfa_data['file']       = g['filename']
-        cfa_data['Units']      = construct.Units      
+        cfa_data['Units']      = construct.Units
         cfa_data['fill_value'] = construct.fill_value()
         cfa_data['_pmshape']   = cfa_data.pop('pmshape', ())
         cfa_data['_pmaxes']    = cfa_data.pop('pmdimensions', ())
-        
+
         base = cfa_data.get('base', None)
         if base is not None:
             cfa_data['base'] = pathjoin(dirname(g['filename']), base)
-            
+
         ncdimensions = construct.get_property('cfa_dimensions', '').split()
         dtype = variable.dtype
         if dtype.kind == 'S' and ncdimensions: # UNICODE???? TODO
@@ -159,7 +159,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 ncdimensions.pop()
                 dtype = numpy_dtype('S{0}'.format(strlen))
         #--- End: if
-        
+
         cfa_data['dtype'] = dtype
         cfa_data['_axes'] = ncdimensions
 #        cfa_data['shape'] = [len(nc.dimensions[ncdim])
@@ -228,11 +228,11 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 #        print ('out =', repr(out))
         return out
 
-    
+
     def _create_Data(self, array=None, units=None, calendar=None,
                      ncvar=None, loadd=None, **kwargs):
         '''TODO
-        
+
     .. versionadded:: 3.0.0
 
         '''
@@ -240,26 +240,26 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             compressed = array.get_compression_type() # TODO
         except AttributeError:
             compressed = False
-            
+
         if not compressed:
             # Do not chunk compressed data (for now ...)
             chunk = False
         else:
             chunk = self.read_vars.get('chunk', True)
-            
+
         return super()._create_Data(array=array, units=units,
                                     calendar=calendar, ncvar=ncvar,
                                     loadd=loadd, **kwargs)
 
-    
+
     def _customize_read_vars(self):
         '''TODO
 
     .. versionadded:: 3.0.0
 
         '''
-        super()._customize_read_vars()        
-        
+        super()._customize_read_vars()
+
         g = self.read_vars
 
         # ------------------------------------------------------------
@@ -270,22 +270,22 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         # ------------------------------------------------------------
         # Do not create fields from CFA private variables
         # ------------------------------------------------------------
-        if g['cfa']: 
+        if g['cfa']:
             for ncvar in g['variables']:
                 if g['variable_attributes'][ncvar].get('cf_role', None) == 'cfa_private':
-                    g['do_not_create_field'].add(ncvar)                
+                    g['do_not_create_field'].add(ncvar)
 
-    
+
     def file_open(self, filename):
         '''Open the netCDf file for reading.
 
     :Paramters:
-    
+
         filename: `str`
             The netCDF file to be read.
-    
+
     :Returns:
-    
+
         out: `netCDF4.Dataset`
             A `netCDF4.Dataset` object for the file.
 
