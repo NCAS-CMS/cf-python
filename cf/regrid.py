@@ -61,33 +61,26 @@ class Regrid:
 
         '''
         # create a handle to the regridding method
-        if method in ('conservative', 'conservative_1st'):
-            regrid_method = ESMF.RegridMethod.CONSERVE
-        elif method == 'conservative_2nd':
-            regrid_method = ESMF.RegridMethod.CONSERVE_2ND
-        elif method == 'bilinear':
-            regrid_method = ESMF.RegridMethod.BILINEAR
-        elif method == 'patch':
-            regrid_method = ESMF.RegridMethod.PATCH
-        elif method == 'nearest_stod':
-            regrid_method = ESMF.RegridMethod.NEAREST_STOD
-        elif method == 'nearest_dtos':
-            regrid_method = ESMF.RegridMethod.NEAREST_DTOS
-        else:
-            raise ValueError('Regrid method not recognised.')
-
+        regrid_method_map = {
+            'bilinear': ESMF.RegridMethod.BILINEAR,
+            'conservative': ESMF.RegridMethod.CONSERVE,
+            'conservative_1st': ESMF.RegridMethod.CONSERVE,
+            'conservative_2nd': ESMF.RegridMethod.CONSERVE_2ND,
+            'nearest_dtos': ESMF.RegridMethod.NEAREST_DTOS,
+            'nearest_stod': ESMF.RegridMethod.NEAREST_STOD,
+            'patch': ESMF.RegridMethod.PATCH,
+        }
+        regrid_method = regrid_method_map.get(
+            method, ValueError('Regrid method not recognised.'))
         # Initialise the regridder. This also creates the
         # weights needed for the regridding.
-        self.regridSrc2Dst = ESMF.Regrid(srcfield, dstfield,
-                                         regrid_method=regrid_method,
-                                         src_mask_values=numpy_array([0],
-                                                                dtype='int32'),
-                                         dst_mask_values=numpy_array([0],
-                                                                dtype='int32'),
-                                         src_frac_field=srcfracfield,
-                                         dst_frac_field=dstfracfield,
-                                         unmapped_action=ESMF.UnmappedAction.IGNORE,
-                                         ignore_degenerate=ignore_degenerate)
+        self.regridSrc2Dst = ESMF.Regrid(
+            srcfield, dstfield, regrid_method=regrid_method,
+            src_mask_values=numpy_array([0], dtype='int32'),
+            dst_mask_values=numpy_array([0], dtype='int32'),
+            src_frac_field=srcfracfield, dst_frac_field=dstfracfield,
+            unmapped_action=ESMF.UnmappedAction.IGNORE,
+            ignore_degenerate=ignore_degenerate)
 
 
     def destroy(self):
