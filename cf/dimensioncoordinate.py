@@ -17,7 +17,9 @@ from .functions import (_DEPRECATION_ERROR_KWARGS,
                         _DEPRECATION_ERROR_ATTRIBUTE,
                         )
 
-from .decorators import _deprecation_error_i_kwarg
+from .decorators import (_inplace_enabled,
+                         _inplace_enabled_define_and_cleanup,
+                         _deprecation_error_i_kwarg)
 
 
 class DimensionCoordinate(abstract.Coordinate,
@@ -654,19 +656,17 @@ class DimensionCoordinate(abstract.Coordinate,
 
 
     @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def flip(self, axes=None, inplace=False, i=False):
         '''TODO
         '''
-        d = super().flip(axes=axes, inplace=inplace)
-        if inplace:
-            d = self
+        d = _inplace_enabled_define_and_cleanup(self)
+        super(d.__class__, d).flip(axes=axes, inplace=True)
 
         direction = d._custom.get('direction')
         if direction is not None:
             d._custom['direction'] = not direction
 
-        if inplace:
-            d = None
         return d
 
 
@@ -857,6 +857,7 @@ class DimensionCoordinate(abstract.Coordinate,
 
 
     @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def roll(self, axis, shift, inplace=False, i=False):
         '''TODO
         '''
@@ -889,9 +890,8 @@ class DimensionCoordinate(abstract.Coordinate,
         if axis not in [0, -1]:
             raise ValueError("Can't roll axis {} when there is only one axis".format(axis))
 
-        c = super().roll(axis, shift, inplace=inplace)
-        if inplace:
-            c = self
+        c = _inplace_enabled_define_and_cleanup(self)
+        super(c.__class__, c).roll(axis, shift, inplace=True)
 
         c.dtype = numpy_result_type(c.dtype, period.dtype)
 
@@ -925,8 +925,6 @@ class DimensionCoordinate(abstract.Coordinate,
 
         c._custom['direction'] = direction
 
-        if inplace:
-            c = None
         return c
 
 

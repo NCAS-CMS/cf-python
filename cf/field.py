@@ -10475,7 +10475,7 @@ class Field(mixin.PropertiesData,
                 "Can't identify a unique axis to insert"))
 
         # Expand the dims in the field construct's data array
-        super(Field, f).insert_dimension(axis=axis, position=position,
+        super(f.__class__, f).insert_dimension(axis=axis, position=position,
                                          inplace=True)
 
         return f
@@ -12563,6 +12563,7 @@ class Field(mixin.PropertiesData,
 
 
     @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def flip(self, axes=None, inplace=False, i=False, **kwargs):
         '''Flip (reverse the direction of) axes of the field.
 
@@ -12622,9 +12623,8 @@ class Field(mixin.PropertiesData,
                      axes.intersection(self.get_data_axes())]
 
         # Flip the requested axes in the field's data array
-        f = super().flip(iaxes, inplace=inplace)
-        if f is None:
-            f = self
+        f = _inplace_enabled_define_and_cleanup(self)
+        super(f.__class__, f).flip(iaxes, inplace=True)
 
         # Flip any constructs which span the flipped axes
         for key, construct in f.constructs.filter_by_data().items():
@@ -12635,8 +12635,6 @@ class Field(mixin.PropertiesData,
                 construct.flip(iaxes, inplace=True)
         #--- End: for
 
-        if inplace:
-            f = None
         return f
 
 
@@ -13114,6 +13112,7 @@ class Field(mixin.PropertiesData,
         return super().squeeze(iaxes, inplace=inplace)
 
 
+    @_inplace_enabled
     def swapaxes(self, axis0, axis1, inplace=False, i=False):
         '''Interchange two axes of the data.
 
@@ -13167,9 +13166,8 @@ class Field(mixin.PropertiesData,
         axis0 = data_axes.index(da_key0)
         axis1 = data_axes.index(da_key1)
 
-        f = super().swapaxes(axis0, axis1, inplace=inplace)
-        if inplace:
-            f = self
+        f = _inplace_enabled_define_and_cleanup(self)
+        super(f.__class__, f).swapaxes(axis0, axis1, inplace=True)
 
         if data_axes is not None:
             data_axes = list(data_axes)
@@ -13266,6 +13264,7 @@ class Field(mixin.PropertiesData,
                                  inplace=inplace)
 
 
+#    @_inplace_enabled
 #    def uncompress(self, inplace=False):
 #        '''Uncompress the construct.
 #
@@ -13306,15 +13305,12 @@ class Field(mixin.PropertiesData,
 #    TODO
 #
 #        '''
-#        f = super().uncompress(inplace=inplace)
-#        if inplace:
-#            f = self
+#        f = _inplace_enabled_define_and_cleanup(self)
+#        super(Field, f).uncompress(inplace=True)
 #
 #        for c in f.constructs.filter_by_data().values():
 #            c.uncompress(inplace=True)
 #
-#        if inplace:
-#            f = None
 #        return f
 
 
@@ -15534,7 +15530,7 @@ class Field(mixin.PropertiesData,
         new_data_axes.insert(iaxes[0], new_axis)
 
         # Flatten the field's data
-        super(Field, f).flatten(iaxes, inplace=True)
+        super(f.__class__, f).flatten(iaxes, inplace=True)
 
         # Set the new data axes
         f.set_data_axes(new_data_axes)
@@ -15680,7 +15676,7 @@ class Field(mixin.PropertiesData,
                 f = None
             return f
 
-        super(Field, f).roll(iaxis, shift, inplace=True)
+        super(f.__class__, f).roll(iaxis, shift, inplace=True)
 
         for key, construct in f.constructs.filter_by_data().items():
             axes = f.get_data_axes(key, default=())

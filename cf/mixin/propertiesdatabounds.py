@@ -8,6 +8,11 @@ from ..functions    import inspect    as cf_inspect
 from ..functions    import (_DEPRECATION_ERROR_KWARGS,
                             _DEPRECATION_ERROR_METHOD,
                             _DEPRECATION_ERROR_ATTRIBUTE)
+
+from ..decorators import (_inplace_enabled,
+                          _inplace_enabled_define_and_cleanup,
+                          _deprecation_error_i_kwarg)
+
 from ..query        import Query
 from ..units        import Units
 
@@ -474,36 +479,44 @@ class PropertiesDataBounds(PropertiesData):
         return False
 
 
-    def _apply_data_operation(
-            self, oper_name, *oper_args, bounds=True, inplace=False,
-            i=False, **oper_kwargs):
+    def _apply_superclass_data_oper(
+            self, v, oper_name, *oper_args, bounds=True, **oper_kwargs):
         '''Define an operation that can be applied to the data array.
 
-        * 'oper_name' should be the string name for the desired operation
-          as it is defined (its method name) under the Data class, e.g.
-          'sin' to apply 'Data.sin'
-        * any positional or keyword arguments required in the operation
-          call should be passed through via *oper_args and **oper_kwargs.
-        '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, oper_name, i=True) # pragma: no cover
+    :Parameters:
 
-        v = getattr(super(), oper_name)(*oper_args, inplace=inplace,
-                                        **oper_kwargs)
-        if inplace:
+        v: the data array to apply the operations to (possibly in-place)
+
+        oper_name: the string name for the desired operation, as it is
+            defined (its method name) under the PropertiesData class, e.g.
+            `sin` to apply PropertiesData.sin`.
+
+            Note: there is no (easy) way to determine the name of a
+            function/method within itself, without e.g. inspecting the stack
+            (see rejected PEP 3130), so even though functions are named
+            identically to those called  (e.g. both `sin`) the same
+            name must be typed and passed into this method in each case.
+
+            TODO: is there a way to prevent/bypass the above?
+
+        oper_args, oper_kwargs: all of the arguments for `oper_name`.
+
+        bounds: whether or not there are cell bounds (to consider).
+
+        '''
+        v = getattr(super(), oper_name)(*oper_args, **oper_kwargs)
+        if v is None:  # from inplace operation in superclass method
             v = self
 
+        # Now okay to mutate oper_kwargs as no longer needed in original form
+        oper_kwargs.pop('inplace', None)
         if bounds:
             bounds = v.get_bounds(None)
             if bounds is not None:
                 getattr(bounds, oper_name)(*oper_args, inplace=True,
                                            **oper_kwargs)
-        #--- End: if
 
-        if inplace:
-            v = None
         return v
-
 
     # ----------------------------------------------------------------
     # Attributes
@@ -728,6 +741,8 @@ class PropertiesDataBounds(PropertiesData):
             "Can't get upper bounds when there are no bounds nor coordinate data")
 
 
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def mask_invalid(self, inplace=False, i=False):
         '''Mask the array where invalid values occur.
 
@@ -791,9 +806,9 @@ class PropertiesDataBounds(PropertiesData):
 
         '''
         # Set bounds to True to bypass 'if bounds' check in call:
-        return self._apply_data_operation(
-            'mask_invalid', bounds=True, inplace=inplace, i=i)
-
+        return self._apply_superclass_data_oper(
+            _inplace_enabled_define_and_cleanup(self), 'mask_invalid',
+            bounds=True, inplace=inplace, i=i)
 
     # ----------------------------------------------------------------
     # Attribute
@@ -879,6 +894,8 @@ dtype('float64')
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def ceil(self, bounds=True, inplace=False, i=False):
         '''The ceiling of the data, element-wise.
 
@@ -917,8 +934,9 @@ dtype('float64')
     [-1. -1. -1. -1.  0.  1.  2.  2.  2.]
 
         '''
-        return self._apply_data_operation(
-            'ceil', bounds=bounds, inplace=inplace, i=i)
+        return self._apply_superclass_data_oper(
+            _inplace_enabled_define_and_cleanup(self), 'ceil',
+            bounds=bounds, inplace=inplace, i=i)
 
 
     def chunk(self, chunksize=None):
@@ -948,6 +966,8 @@ dtype('float64')
             bounds.chunk(chunksize)
 
 
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def clip(self, a_min, a_max, units=None, bounds=True,
              inplace=False, i=False):
         '''Limit the values in the data.
@@ -994,9 +1014,9 @@ dtype('float64')
     >>> g = f.clip(-90, 90, 'degrees_north')
 
         '''
-        return self._apply_data_operation(
-            'clip', a_min, a_max, bounds=bounds, inplace=inplace, i=i,
-            units=units)
+        return self._apply_superclass_data_oper(
+            _inplace_enabled_define_and_cleanup(self), 'clip', a_min, a_max,
+            bounds=bounds, inplace=inplace, i=i, units=units)
 
 
     def close(self):
@@ -1054,6 +1074,8 @@ dtype('float64')
         return out
 
 
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def cos(self, bounds=True, inplace=False,  i=False):
         '''Take the trigonometric cosine of the data, element-wise.
 
@@ -1106,8 +1128,8 @@ dtype('float64')
     [[0.540302305868 -0.416146836547 -0.9899924966 --]]
 
         '''
-        return self._apply_data_operation(
-            'cos', bounds=bounds, inplace=inplace, i=i)
+        return self._apply_superclass_data_oper(
+            _inplace_enabled_define_and_cleanup(self), 'cos', bounds=bounds)
 
 
     def cyclic(self, axes=None, iscyclic=True):
@@ -1288,6 +1310,8 @@ dtype('float64')
 #        return False
 
 
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def convert_reference_time(self, units=None,
                                calendar_months=False,
                                calendar_years=False, inplace=False,
@@ -1386,11 +1410,13 @@ dtype('float64')
     <Units: days since 2000-1-1>
 
         '''
-        return self._apply_data_operation(
+        return self._apply_superclass_data_oper(
+            _inplace_enabled_define_and_cleanup(self),
             'convert_reference_time', inplace=inplace, i=i, units=units,
             calendar_months=calendar_months, calendar_years=calendar_years)
 
 
+    @_inplace_enabled
     def flatten(self, axes=None, inplace=False):
         '''Flatten axes of the data
 
@@ -1442,21 +1468,19 @@ dtype('float64')
         '''
         # Note the 'axes' argument can change mid-method meaning it is not
         # possible to consolidate this method using a call to
-        # _apply_data_operations, despite having mostly the same logic.
-        v = super().flatten(axes, inplace=inplace)
-        if inplace:
-            v = self
+        # _apply_superclass_data_operations, despite mostly the same logic.
+        v = _inplace_enabled_define_and_cleanup(self)
+        super(PropertiesDataBounds, v).flatten(axes, inplace=True)
 
         bounds = v.get_bounds(None)
         if bounds is not None:
             axes = self._parse_axes(axes)
             bounds.flatten(axes, inplace=True)
 
-        if inplace:
-            v = None
         return v
 
-
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def floor(self, bounds=True, inplace=False, i=False):
         '''Floor the data array, element-wise.
 
@@ -1494,8 +1518,9 @@ dtype('float64')
     [-2. -2. -2. -1.  0.  1.  1.  1.  1.]
 
         '''
-        return self._apply_data_operation(
-            'floor', bounds=bounds, inplace=inplace, i=i)
+        return self._apply_superclass_data_oper(
+            _inplace_enabled_define_and_cleanup(self), 'floor',
+            bounds=bounds, inplace=inplace, i=i)
 
 
     def direction(self):
@@ -1607,6 +1632,8 @@ dtype('float64')
         return ok
 
 
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def override_calendar(self, calendar, inplace=False,  i=False):
         '''Override the calendar of date-time units.
 
@@ -1644,10 +1671,13 @@ dtype('float64')
     >>> g = f.override_calendar('noleap')
 
         '''
-        return self._apply_data_operation(
-            'override_calendar', calendar, inplace=inplace, i=i)
+        return self._apply_superclass_data_oper(
+            _inplace_enabled_define_and_cleanup(self), 'override_calendar',
+            calendar, inplace=inplace, i=i)
 
 
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def override_units(self, units, inplace=False, i=False):
         '''Override the units.
 
@@ -1695,8 +1725,9 @@ dtype('float64')
     100000.0
 
         '''
-        return self._apply_data_operation(
-            'override_units', units, inplace=inplace, i=i)
+        return self._apply_superclass_data_oper(
+            _inplace_enabled_define_and_cleanup(self), 'override_units',
+            units, inplace=inplace, i=i)
 
 
     def files(self):
@@ -1729,6 +1760,8 @@ dtype('float64')
         return out
 
 
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def flip(self, axes=None, inplace=False, i=False):
         '''Flip (reverse the direction of) data dimensions.
 
@@ -1765,12 +1798,8 @@ dtype('float64')
     True
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'flip', i=True) # pragma: no cover
-
-        v = super().flip(axes=axes, inplace=inplace)
-        if inplace:
-            v = self
+        v = _inplace_enabled_define_and_cleanup(self)
+        super(PropertiesDataBounds, v).flip(axes=axes, inplace=True)
 
         bounds = v.get_bounds(None)
         if bounds is not None:
@@ -1798,11 +1827,11 @@ dtype('float64')
 
             bounds.flip(axes, inplace=True)
 
-        if inplace:
-            v = None
         return v
 
 
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def exp(self, bounds=True, inplace=False, i=False):
         '''The exponential of the data, element-wise.
 
@@ -1843,8 +1872,9 @@ dtype('float64')
     ValueError: Can't take exponential of dimensional quantities: <Units: kg m-1 s-2>
 
         '''
-        return self._apply_data_operation(
-            'exp', bounds=bounds, inplace=inplace, i=i)
+        return self._apply_superclass_data_oper(
+            _inplace_enabled_define_and_cleanup(self), 'exp', bounds=bounds,
+            inplace=inplace, i=i)
 
 
     def set_bounds(self, bounds, copy=True):
@@ -1924,6 +1954,8 @@ dtype('float64')
         super().set_bounds(bounds, copy=False)
 
 
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def sin(self, bounds=True, inplace=False, i=False):
         '''The trigonometric sine of the data, element-wise.
 
@@ -1976,10 +2008,13 @@ dtype('float64')
     [[0.841470984808 0.909297426826 0.14112000806 --]]
 
         '''
-        return self._apply_data_operation(
-            'sin', bounds=bounds, inplace=inplace, i=i)
+        return self._apply_superclass_data_oper(
+            _inplace_enabled_define_and_cleanup(self), 'sin', bounds=bounds,
+            inplace=inplace, i=i)
 
 
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def arctan(self, bounds=True, inplace=False):
         '''Take the trigonometric inverse tangent of the data element-wise.
 
@@ -2016,10 +2051,12 @@ dtype('float64')
      [1.2490457723982544                 -- 1.373400766945016 ]]
 
         '''
-        return self._apply_data_operation(
-            'arctan', bounds=bounds, inplace=inplace)
+        return self._apply_superclass_data_oper(
+            _inplace_enabled_define_and_cleanup(self), 'arctan',
+            inplace=inplace)
 
 
+    @_inplace_enabled
     def arcsinh(self, bounds=True, inplace=False):
         '''Take the inverse hyperbolic sine of the data element-wise.
 
@@ -2056,10 +2093,12 @@ dtype('float64')
      [1.8184464592320668 -- 2.3124383412727525]]
 
         '''
-        return self._apply_data_operation(
-            'arcsinh', bounds=bounds, inplace=inplace)
+        return self._apply_superclass_data_oper(
+            _inplace_enabled_define_and_cleanup(self), 'arcsinh',
+            bounds=bounds, inplace=inplace)
 
 
+    @_inplace_enabled
     def tanh(self, bounds=True, inplace=False):
         '''Take the hyperbolic tangent of the data array.
 
@@ -2112,10 +2151,12 @@ dtype('float64')
     [[0.7615941559557649 0.9640275800758169 0.9950547536867305 --]]
 
         '''
-        return self._apply_data_operation(
-            'tanh', bounds=bounds, inplace=inplace)
+        return self._apply_superclass_data_oper(
+            _inplace_enabled_define_and_cleanup(self), 'tanh',
+            bounds=bounds, inplace=inplace)
 
 
+    @_inplace_enabled
     def sinh(self, bounds=True, inplace=False):
         '''Take the hyperbolic sine of the data array in place.
 
@@ -2167,10 +2208,12 @@ dtype('float64')
     [[1.1752011936438014 3.626860407847019 10.017874927409903 --]]
 
         '''
-        return self._apply_data_operation(
-            'sinh', bounds=bounds, inplace=inplace)
+        return self._apply_superclass_data_oper(
+            _inplace_enabled_define_and_cleanup(self), 'sinh',
+            bounds=bounds, inplace=inplace)
 
 
+    @_inplace_enabled
     def cosh(self, bounds=True, inplace=False):
         '''Take the hyperbolic cosine of the data array in place.
 
@@ -2221,10 +2264,13 @@ dtype('float64')
     [[1.5430806348152437 3.7621956910836314 10.067661995777765 --]]
 
         '''
-        return self._apply_data_operation(
-            'cosh', bounds=bounds, inplace=inplace)
+        return self._apply_superclass_data_oper(
+            _inplace_enabled_define_and_cleanup(self), 'cosh',
+            bounds=bounds, inplace=inplace)
 
 
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def tan(self, bounds=True, inplace=False, i=False):
         '''The trigonometric tangent of the data, element-wise.
 
@@ -2275,10 +2321,13 @@ dtype('float64')
     [[1.55740772465 -2.18503986326 -0.142546543074 --]]
 
         '''
-        return self._apply_data_operation(
-            'tan', bounds=bounds, inplace=inplace, i=i)
+        return self._apply_superclass_data_oper(
+            _inplace_enabled_define_and_cleanup(self), 'tan',
+            inplace=inplace, i=i)
 
 
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def log(self, base=None, bounds=True, inplace=False, i=False):
         '''The logarithm of the data array.
 
@@ -2333,8 +2382,10 @@ dtype('float64')
     ValueError: Can't take the logarithm to the base 2.718281828459045 of <Units: >
 
         '''
-        return self._apply_data_operation(
-            'log', bounds=bounds, inplace=inplace, i=i)
+        # TODO: 'base' kwarg not used? why?
+        return self._apply_superclass_data_oper(
+            _inplace_enabled_define_and_cleanup(self), 'log', bounds=bounds,
+            inplace=inplace, i=i)
 
 
     def squeeze(self, axes=None, inplace=False, i=False):
@@ -2379,6 +2430,8 @@ dtype('float64')
         return super().squeeze(axes=axes, inplace=inplace)
 
 
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def trunc(self, bounds=True, inplace=False, i=False):
         '''Truncate the data, element-wise.
 
@@ -2418,8 +2471,9 @@ dtype('float64')
     [-1. -1. -1. -1.  0.  1.  1.  1.  1.]
 
         '''
-        return self._apply_data_operation(
-            'trunc', bounds=bounds, inplace=inplace, i=i)
+        return self._apply_superclass_data_oper(
+            _inplace_enabled_define_and_cleanup(self), 'trunc',
+            bounds=bounds, inplace=inplace, i=i)
 
 
     def identities(self):
@@ -2600,6 +2654,8 @@ dtype('float64')
         print(cf_inspect(self)) # pragma: no cover
 
 
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def rint(self, bounds=True, inplace=False, i=False):
         '''Round the data to the nearest integer, element-wise.
 
@@ -2635,10 +2691,13 @@ dtype('float64')
     [-2. -2. -1. -1.  0.  1.  1.  2.  2.]
 
         '''
-        return self._apply_data_operation(
-            'rint', bounds=bounds, inplace=inplace, i=i)
+        return self._apply_superclass_data_oper(
+            _inplace_enabled_define_and_cleanup(self), 'rint', bounds=bounds,
+            inplace=inplace, i=i)
 
 
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def round(self, decimals=0, bounds=True, inplace=False, i=False):
         '''Round the data to the given number of decimals.
 
@@ -2689,11 +2748,13 @@ dtype('float64')
     [-0., -0., -0., -0.,  0.,  0.,  0.,  0.,  0.]
 
         '''
-        return self._apply_data_operation(
-            'round', bounds=bounds, inplace=inplace, i=i,
-            decimals=decimals)
+        return self._apply_superclass_data_oper(
+            _inplace_enabled_define_and_cleanup(self), 'round',
+            bounds=bounds, inplace=inplace, i=i, decimals=decimals)
 
 
+    @_deprecation_error_i_kwarg
+    @_inplace_enabled
     def roll(self, iaxis, shift, inplace=False, i=False):
         '''Roll the data along an axis.
 
@@ -2719,8 +2780,9 @@ dtype('float64')
     TODO
 
         '''
-        return self._apply_data_operation(
-            'roll', iaxis, shift, inplace=inplace, i=i)
+        return self._apply_superclass_data_oper(
+            _inplace_enabled_define_and_cleanup(self), 'roll', iaxis,
+            shift, inplace=inplace, i=i)
 
 
     # ----------------------------------------------------------------

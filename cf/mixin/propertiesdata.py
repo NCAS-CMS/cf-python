@@ -1002,8 +1002,8 @@ class PropertiesData(Properties):
         delete_props: whether or not to delete name properties.
         '''
         # For explicitness on a per-method basis, apply inplace decorator
-        # to individual methods calling this function, rather than decorating
-        # only this function and devolving the logic for inplace operations.
+        # to individual methods calling this method, rather than decorating
+        # only this and devolving the logic for inplace operations.
         if not oper_kwargs.get('inplace'):
             # Default for getattr below (preventing duplicate inplace kwarg)
             oper_kwargs['inplace'] = True
