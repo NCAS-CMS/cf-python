@@ -20,7 +20,7 @@ len(y)
 z = cf.read(['file.nc', 'precipitation_flux.nc'])
 len(z)
 try:
-    y = cf.read('$PWD')                                    
+    y = cf.read('$PWD')
 except:
     pass
 else:
@@ -49,8 +49,8 @@ print("\n**Field lists**\n")
 x = cf.read('file.nc')
 y = cf.read('precipitation_flux.nc')
 x
-y                                       
-y.extend(x)                                       
+y
+y.extend(x)
 y
 y[2]
 y[::-1]
@@ -116,20 +116,20 @@ t.has_data()
 t.set_data(data)
 t.data
 d = cf.Data([1, 2, 3], units='days since 2004-2-28')
-print(d.array)   
+print(d.array)
 print(d.datetime_array)
 e = cf.Data([1, 2, 3], units='days since 2004-2-28', calendar='360_day')
-print(e.array)   
+print(e.array)
 print(e.datetime_array)
 date_time = cf.dt(2004, 2, 29)
 date_time
 d = cf.Data(date_time, calendar='gregorian')
-print(d.array)   
+print(d.array)
 d.datetime_array
 date_times  = cf.dt_vector(['2004-02-29', '2004-02-30', '2004-03-01'], calendar='360_day')
 print (date_times)
 e = cf.Data(date_times)
-print(e.array)   
+print(e.array)
 print(e.datetime_array)
 d = cf.Data(['2004-02-29', '2004-02-30', '2004-03-01'], calendar='360_day')
 d.Units
@@ -142,7 +142,7 @@ f = cf.Data(['2004-02-29', '2004-03-01', '2004-03-02'])
 print(f.array)
 f.Units
 try:
-    print(f.datetime_array)                                
+    print(f.datetime_array)
 except:
     pass
 else:
@@ -160,7 +160,7 @@ t4 = t.transpose(['X', 'Z', 'Y'], constructs=True)
 print(q)
 print(q.mask)
 print(q.mask.array)
-q[[0, 4], :] = cf.masked            
+q[[0, 4], :] = cf.masked
 print(q.mask.array)
 q.mask.all()
 q.mask.any()
@@ -181,7 +181,7 @@ t[..., [True, False, True, True, False, False, True, False, False]]
 q
 q.cyclic()
 q.constructs.domain_axis_identity('domainaxis1')
-print(q[:, -2:3])                                           
+print(q[:, -2:3])
 print(q[:, 3:-2:-1])
 t.data[0, [2, 3, 9], [4, 8]]
 
@@ -210,14 +210,14 @@ t.hardmask = False
 t[0, 4, -2] = 99
 print(t[0, 4, -2].array)
 q, t = cf.read('file.nc')
-t0 = t.copy()	     
+t0 = t.copy()
 u = t.squeeze(0)
 u.transpose(inplace=True)
-u.flip(inplace=True)   
+u.flip(inplace=True)
 t[...] = u
 t.allclose(t0)
 print(t[:, :, 1:3].array)
-print(u[2].array)	     
+print(u[2].array)
 t[:, :, 1:3] = u[2]
 print(t[:, :, 1:3].array)
 
@@ -302,7 +302,7 @@ t.constructs[key]
 t.auxiliary_coordinate('latitude')
 t.auxiliary_coordinate('latitude', key=True)
 try:
-    t.construct('measure:volume')                          
+    t.construct('measure:volume')
 except:
     pass
 else:
@@ -312,7 +312,7 @@ t.construct('measure:volume', False)
 c = t.constructs.filter_by_measure('volume')
 len(c)
 try:
-    c.value()                                              
+    c.value()
 except:
     pass
 else:
@@ -320,7 +320,7 @@ else:
 
 c.value(default='No construct')
 try:
-    c.value(default=KeyError('My message'))                
+    c.value(default=KeyError('My message'))
 except:
     pass
 else:
@@ -329,7 +329,7 @@ else:
 d = t.constructs('units=degrees')
 len(d)
 try:
-    d.value()                                              
+    d.value()
 except:
     pass
 else:
@@ -364,14 +364,14 @@ time.get_property('units')
 time.get_property('calendar', default='standard')
 print(time.array)
 print(time.datetime_array)
-cm = cf.TimeDuration(1, 'calendar_month', day=16, hour=12)              
+cm = cf.TimeDuration(1, 'calendar_month', day=16, hour=12)
 cm
-cf.dt(2000, 2, 1) + cm                                                  
-cf.Data([1, 2, 3], 'days since 2000-02-01') + cm                       
-cm.interval(cf.dt(2000, 2, 1))                                         
+cf.dt(2000, 2, 1) + cm
+cf.Data([1, 2, 3], 'days since 2000-02-01') + cm
+cm.interval(cf.dt(2000, 2, 1))
 cm.bounds(cf.dt(2000, 2, 1))
-cf.D()                                                                    
-cf.Y(10, month=12)                                                        
+cf.D()
+cf.Y(10, month=12)
 
 print("\n**Domain**\n")
 
@@ -437,7 +437,7 @@ qr = q.roll('X', shift=-3)
 print(qr.array[0])
 print(q.dimension_coordinate('X').array)
 print(qr.dimension_coordinate('X').array)
-print(q.anchor('X', -150))                         
+print(q.anchor('X', -150))
 print(q.anchor('X', -750))
 
 print("\n**Subspacing by metadata**\n")
@@ -455,9 +455,9 @@ print(q.subspace(X=[1, 2, 4], Y=slice(None, None, -1)))
 print(q.subspace(X=cf.wi(-100, 200)))
 print (q.subspace(X=slice(-2, 4)))
 a = cf.read('timeseries.nc')[0]
-print (a)     
+print (a)
 print(a.coordinate('T').array[0:9])
-print(a.coordinate('T').datetime_array[0:9])    
+print(a.coordinate('T').datetime_array[0:9])
 print(a.subspace(T=410.5))
 print(a.subspace(T=cf.dt('1960-04-16')))
 print(a.subspace(T=cf.wi(cf.dt('1962-11-01'), cf.dt('1967-03-17 07:30'))))
@@ -478,7 +478,7 @@ print(t2.array)
 q, t = cf.read('file.nc')
 print(t)
 indices = t.indices(grid_longitude=cf.wi(-4, -2))
-indices           
+indices
 t[indices] = -11
 print(t.array)
 t[t.indices(latitude=cf.wi(51, 53))] = -99
@@ -521,7 +521,7 @@ print(c == numpy.array([1, 2, 3]))
 ge3 = cf.Query('ge', 3)
 lt5 = cf.Query('lt', 5)
 c = ge3 & lt5
-c 
+c
 c == 2
 c != 2
 c = ge3 | lt5
@@ -605,7 +605,7 @@ import cf
 Q = cf.Field(properties={'project': 'research',
                            'standard_name': 'specific_humidity',
                            'units': '1'})
-     		      
+
 # Create the domain axis constructs
 domain_axisT = cf.DomainAxis(1)
 domain_axisY = cf.DomainAxis(5)
@@ -667,7 +667,7 @@ dimY.set_bounds(bounds)
 Q.set_construct(dimT)
 Q.set_construct(dimY)
 Q.set_construct(dimX)
-   
+
 Q.dump()
 
 import numpy
@@ -755,8 +755,8 @@ auxiliary_coordinate_name = cf.AuxiliaryCoordinate(
                        properties={'long_name': 'Grid latitude name'},
                        data=cf.Data(array))
 
-aux_LAT  = tas.set_construct(auxiliary_coordinate_lat) 
-aux_LON  = tas.set_construct(auxiliary_coordinate_lon) 
+aux_LAT  = tas.set_construct(auxiliary_coordinate_lat)
+aux_LON  = tas.set_construct(auxiliary_coordinate_lon)
 aux_NAME = tas.set_construct(auxiliary_coordinate_name)
 
 # Create and set domain ancillary constructs
@@ -841,7 +841,7 @@ data_disk.equals(data_memory)
 key = tas.construct_key('surface_altitude')
 orog = tas.convert(key)
 print(orog)
-orog1 = tas.convert(key, full_domain=False) 
+orog1 = tas.convert(key, full_domain=False)
 print(orog1)
 cf.write(tas, 'tas.nc')
 f = cf.read('tas.nc')
@@ -916,7 +916,7 @@ f_file.nc_global_attributes()
 f_file.properties()
 f_file.nc_global_attributes()
 f_file.set_property('Conventions', 'UGRID1.0')
-cf.write(f, 'f_file.nc', Conventions='UGRID1.0')   
+cf.write(f, 'f_file.nc', Conventions='UGRID1.0')
 print(q)
 key = q.construct_key('time')
 axes = q.get_data_axes(key)
@@ -968,7 +968,7 @@ a_parts[1].transpose(inplace=True)
 a_parts[1].units = 'degreesC'
 a_parts
 z = cf.aggregate(a_parts)
-z   
+z
 x.equals(z)
 
 print("\n**Compression**\n")
@@ -996,7 +996,7 @@ import cf
 data = cf.Data([[280.0,   -99,   -99,   -99],
                 [281.0, 279.0, 278.0, 279.5]])
 data.where(cf.eq(-99), cf.masked, inplace=True)
-	     
+
 # Create the field construct
 T = cf.Field()
 T.set_properties({'standard_name': 'air_temperature',
@@ -1010,12 +1010,12 @@ Y = T.set_construct(cf.DomainAxis(2))
 # Set the data for the field
 T.set_data(data)
 
-# Compress the data 
+# Compress the data
 T.compress('contiguous',
            count_properties={'long_name': 'number of obs for this timeseries'},
            inplace=True)
 
-			
+
 T
 print(T.array)
 T.data.get_compression_type()
@@ -1071,7 +1071,7 @@ p.data.get_compression_type()
 p.data[1] = -9
 p.data.get_compression_type()
 
-import numpy	  
+import numpy
 import cf
 
 # Define the gathered values
@@ -1102,14 +1102,14 @@ Y = P.set_construct(cf.DomainAxis(3))
 X = P.set_construct(cf.DomainAxis(2))
 
 # Set the data for the field
-P.set_data(cf.Data(array), axes=[T, Y, X])			      
+P.set_data(cf.Data(array), axes=[T, Y, X])
 
 P
 print(P.data.array)
 P.data.get_compression_type()
 print(P.data.compressed_array)
 list_variable = P.data.get_list()
-list_variable 
+list_variable
 print(list_variable.array)
 cf.write(P, 'P_gathered.nc')
 
@@ -1119,14 +1119,14 @@ pp = cf.read('umfile.pp')
 pp
 print(pp[0])
 cf.write(pp, 'umfile1.nc')
-type(cf.read_write.um.umread.stash2standard_name)                       
-cf.read_write.um.umread.stash2standard_name[(1, 4)]                    
+type(cf.read_write.um.umread.stash2standard_name)
+cf.read_write.um.umread.stash2standard_name[(1, 4)]
 cf.read_write.um.umread.stash2standard_name[(1, 2)]
-cf.read_write.um.umread.stash2standard_name[(1, 7)]                    
+cf.read_write.um.umread.stash2standard_name[(1, 7)]
 (1, 999) in cf.read_write.um.umread.stash2standard_name
-with open('new_STASH.txt', 'w') as new:  
-     new.write('1!999!My STASH code!1!!!ultraviolet_index!!') 
- 
+with open('new_STASH.txt', 'w') as new:
+     new.write('1!999!My STASH code!1!!!ultraviolet_index!!')
+
 _ = cf.load_stash2standard_name('new_STASH.txt', merge=True)
 cf.read_write.um.umread.stash2standard_name[(1, 999)]
 
@@ -1210,14 +1210,14 @@ b = a.cumsum('T')
 print(b)
 print(a.coordinate('T').bounds[-1].dtarray)
 print(b.coordinate('T').bounds[-1].dtarray)
-q, t = cf.read('file.nc')     
+q, t = cf.read('file.nc')
 print(q.array)
 indices, bins = q.digitize(10, return_bins=True)
 print(indices)
 print(indices.array)
 print(bins.array)
-h = cf.histogram(indices)                             
-print(h) 
+h = cf.histogram(indices)
+print(h)
 print(h.array)
 print(h.coordinate('specific_humidity').bounds.array)
 g = q.copy()
@@ -1231,19 +1231,19 @@ h = cf.histogram(indices, indices_t)
 print(h)
 print(h.array)
 h.sum()
-q, t = cf.read('file.nc')     
+q, t = cf.read('file.nc')
 print(q.array)
-indices = q.digitize(5)                                             
-b = q.bin('range', digitized=indices)                             
-print(b)                                    
+indices = q.digitize(5)
+b = q.bin('range', digitized=indices)
+print(b)
 print(b.array)
 print(b.coordinate('specific_humidity').bounds.array)
 p, t = cf.read('file2.nc')
 print(t)
-print(p)      
+print(p)
 t_indices = t.digitize(4)
 p_indices = p.digitize(6)
-b = q.bin('mean', digitized=[t_indices, p_indices], weights='area')  
+b = q.bin('mean', digitized=[t_indices, p_indices], weights='area')
 print(b)
 print(b.array)
 q, t = cf.read('file.nc')
@@ -1286,7 +1286,7 @@ time.set_data(cf.Data(numpy.arange(0.5, 60, 1),
 time
 c = a.regridc({'T': time}, axes='T', method='bilinear')
 try:
-    c = a.regridc({'T': time}, axes='T', method='conservative')  
+    c = a.regridc({'T': time}, axes='T', method='conservative')
 except:
     pass
 else:
@@ -1304,25 +1304,25 @@ print(z_ln_p.array)
 _ = v.replace_construct('Z', z_ln_p)
 new_z_p = cf.DimensionCoordinate(data=cf.Data([800, 705, 632, 510, 320.], 'hPa'))
 new_z_ln_p = new_z_p.log()
-new_v = v.regridc({'Z': new_z_ln_p}, axes='Z', method='bilinear') 
+new_v = v.regridc({'Z': new_z_ln_p}, axes='Z', method='bilinear')
 new_v.replace_construct('Z', new_z_p)
 print(new_v)
 
 print("\n**Mathematical operations**\n")
 
 q, t = cf.read('file.nc')
-t.data.stats()   
+t.data.stats()
 x = t + t
 x
 x.min()
 (t - 2).min()
 (2 + t).min()
 (t * list(range(9))).min()
-(t + cf.Data(numpy.arange(20, 29), '0.1 K')).min()          
+(t + cf.Data(numpy.arange(20, 29), '0.1 K')).min()
 u = t.copy()
 u.transpose(inplace=True)
 u.Units -= 273.15
-u[0]                         
+u[0]
 t + u[0]
 t.identities()
 u = t * cf.Data(10, 'ms-1')
@@ -1330,14 +1330,14 @@ u.identities()
 a = numpy.array(1000)
 type(t * a)
 q, t = cf.read('file.nc')
-print(q.array)  
+print(q.array)
 print(-q.array)
 print(abs(-q).array)
 q, t = cf.read('file.nc')
-print(q.array)         
-print((q == q).array)                                   
+print(q.array)
+print((q == q).array)
 print((q < 0.05).array)
-print((q >= q[0]).array) 
+print((q >= q[0]).array)
 q.identities()
 r = q > q.mean()
 r.identities()
@@ -1349,7 +1349,7 @@ t.min()
 u = t.copy()
 new_data = t.data - t.data
 u.set_data(new_data)
-u       
+u
 u.min()
 u[...] = new_data
 u.min()
@@ -1363,10 +1363,10 @@ sin_lat.data
 q
 q.log()
 q.exp()
-t   
+t
 t.log(base=10)
 try:
-    t.exp()                                                
+    t.exp()
 except:
     pass
 else:

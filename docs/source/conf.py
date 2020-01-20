@@ -55,7 +55,7 @@ def _get_year():
     '''
     return str(datetime.datetime.now().year)
 
-    
+
 # If extensions (or modules to document with autodoc) are in another
 # directory, add these directories to sys.path here. If the directory
 # is relative to the documentation root, use os.path.abspath to make
@@ -253,17 +253,17 @@ html_theme_options = {
 
     'seealso_bg'     : 'transparent',
     'seealso_border' : 'transparent',
-    
+
 #    'table_border': '#FFFFFF', #'#000000',
     'shadow'      : 'false',
 
-    
+
     'show_powered_by' : 'true',
     'font_size'       : '13pt',
     'code_font_size'  : '10pt',
     "font_family"     : 'Arial',
     'head_font_family': 'Arial',
-    
+
 #    'sidebartextcolor': '#777777',
 #    'sidebarbgcolor'  : '#F2F2F2',
 #    'sidebartextcolor': '#777777',
@@ -415,7 +415,7 @@ from os.path import relpath, dirname
 link_release = re.search('(\d+\.\d+\.\d+)', release).groups()[0]
 
 def linkcode_resolve(domain, info):
-    
+
     #=================================================================
     # Must delete all .doctrees directories in build for changes to be
     # picked up. E.g.:
@@ -429,42 +429,42 @@ def linkcode_resolve(domain, info):
         return None
     if not info['module']:
         return None
-    
+
     modname = info['module']
     fullname = info['fullname']
-    
+
     submod = sys.modules.get(modname, None)
     if submod is None:
         return None
-    
+
     obj = submod
     for part in fullname.split('.'):
         try:
             obj = getattr(obj, part)
         except:
             return None
-    
+
     try:
         fn = inspect.getsourcefile(obj)
     except:
         fn = None
     if not fn:
         return None
-    
+
     try:
         source, lineno = inspect.findsource(obj)
         nlines = len(inspect.getsourcelines(obj)[0])
     except:
         lineno = None
-    
+
     fn = relpath(fn, start=dirname(cf.__file__))
-    
+
     if lineno:
         linespec = "#L{0}".format(lineno+1)
         # Can add range when jump-to feature is enable in bitbucket
     else:
         linespec = ""
-    
+
     # ----------------------------------------------------------------
     # NOTE: You need to touch the .rst files to get the change in
     # ----------------------------------------------------------------
@@ -480,11 +480,11 @@ def linkcode_resolve(domain, info):
             # code. E.g. https://github.com/NCAS-CMS/cf-python/blob/v3.0.1/cf/data/data.py#L4292
             url = "https://github.com/NCAS-CMS/cf-python/blob/v{0}/cf/{1}{2}".format(
                 link_release, fn, linespec)
-            
+
         print(url)
         return url
     else:
-        # Point to local source code relative to this directory. 
+        # Point to local source code relative to this directory.
         return "../../../cf/{0}{1}".format(fn, linespec)
 
-                     
+
