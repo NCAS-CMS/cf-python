@@ -9,18 +9,18 @@ fi
 
 version=$1
 
-dir=$PWD/docs/$version
-if [[ $2 ]] ; then
-  if [[ $2 = "latest" ]] ; then 
-    dir=$PWD/docs
-  elif [[ $2 = "dev" ]] ; then
-    # For testing: creates separate dir and does not (git) commit
-    mkdir -p $PWD/docs/dev/_downloads
-    dir=$PWD/docs/dev
-  else
-    echo "\$2 must be 'latest', 'dev' or not set"
-    exit 2
-  fi
+if [[ $2 = "latest" ]] ; then 
+  dir=$PWD/docs
+elif [[ $2 = "dev" ]] ; then
+  # For testing: creates separate dir and does not (git) commit
+  mkdir -p $PWD/docs/dev/_downloads
+  dir=$PWD/docs/dev
+elif [[ $2 = "archive" ]] ; then
+  # For testing: creates separate dir and does not (git) commit
+  dir=$PWD/docs/$version
+else
+  echo "\$2 must be 'latest', 'dev' or 'archive'"
+  exit 2
 fi
 
 # Make zip file
@@ -52,7 +52,8 @@ done
 # --------------------------------------------------------------------
 # Add and commit the latest
 # --------------------------------------------------------------------
-if [[ $2 = "latest" ]] ; then
+if [[ $2 = "latest" ]] || [[ $2 = "archive" ]] ; then
+    echo "d2=$2"
   cd $dir
   git add \
 	  *.html \

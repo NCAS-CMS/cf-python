@@ -1,0 +1,7 @@
+cf.Constructs.__contains__
+==========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Constructs.__contains__

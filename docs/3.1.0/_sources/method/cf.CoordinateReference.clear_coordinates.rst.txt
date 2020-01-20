@@ -1,0 +1,7 @@
+cf.CoordinateReference.clear_coordinates
+========================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CoordinateReference.clear_coordinates

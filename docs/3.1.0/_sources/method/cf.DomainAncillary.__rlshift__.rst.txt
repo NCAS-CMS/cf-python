@@ -1,0 +1,7 @@
+cf.DomainAncillary.__rlshift__
+==============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DomainAncillary.__rlshift__

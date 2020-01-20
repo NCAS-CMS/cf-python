@@ -1,0 +1,7 @@
+cf.CoordinateConversion.__bool__
+================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CoordinateConversion.__bool__

@@ -1,0 +1,7 @@
+cf.CellMeasure.arctan
+=====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CellMeasure.arctan

@@ -1,0 +1,7 @@
+cf.AuxiliaryCoordinate.mean
+===========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.AuxiliaryCoordinate.mean

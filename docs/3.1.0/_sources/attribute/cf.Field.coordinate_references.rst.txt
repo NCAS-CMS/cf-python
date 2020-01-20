@@ -1,0 +1,7 @@
+cf.Field.coordinate_references
+==============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.Field.coordinate_references

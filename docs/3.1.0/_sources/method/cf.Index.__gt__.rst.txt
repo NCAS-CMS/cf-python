@@ -1,0 +1,7 @@
+cf.Index.__gt__
+===============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Index.__gt__

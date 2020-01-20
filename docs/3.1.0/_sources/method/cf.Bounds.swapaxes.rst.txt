@@ -1,0 +1,7 @@
+cf.Bounds.swapaxes
+==================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.swapaxes

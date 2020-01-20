@@ -1,0 +1,7 @@
+cf.Constructs.equals
+====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Constructs.equals

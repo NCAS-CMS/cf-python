@@ -1,0 +1,7 @@
+cf.DomainAncillary.match
+========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DomainAncillary.match

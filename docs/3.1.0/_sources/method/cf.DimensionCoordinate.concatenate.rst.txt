@@ -1,0 +1,7 @@
+cf.DimensionCoordinate.concatenate
+==================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DimensionCoordinate.concatenate

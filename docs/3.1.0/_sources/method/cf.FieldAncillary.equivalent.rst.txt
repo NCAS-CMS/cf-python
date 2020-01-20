@@ -1,0 +1,7 @@
+cf.FieldAncillary.equivalent
+============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.FieldAncillary.equivalent

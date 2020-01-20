@@ -1,0 +1,7 @@
+cf.DimensionCoordinate.__xor__
+==============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DimensionCoordinate.__xor__

@@ -1,0 +1,7 @@
+cf.Constructs.__iter__
+======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Constructs.__iter__

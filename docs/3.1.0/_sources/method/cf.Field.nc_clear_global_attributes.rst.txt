@@ -1,0 +1,7 @@
+cf.Field.nc_clear_global_attributes
+===================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Field.nc_clear_global_attributes

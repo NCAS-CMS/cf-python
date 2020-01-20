@@ -1,0 +1,7 @@
+cf.Constructs.replace
+=====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Constructs.replace

@@ -1,0 +1,7 @@
+cf.Constructs.domain_axis_identity
+==================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Constructs.domain_axis_identity

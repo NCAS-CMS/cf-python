@@ -1,0 +1,7 @@
+cf.FieldAncillary.rint
+======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.FieldAncillary.rint

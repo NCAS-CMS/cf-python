@@ -1,0 +1,7 @@
+cf.List.reference_datetime
+==========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.List.reference_datetime

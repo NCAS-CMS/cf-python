@@ -1,0 +1,7 @@
+cf.AuxiliaryCoordinate.__irshift__
+==================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.AuxiliaryCoordinate.__irshift__

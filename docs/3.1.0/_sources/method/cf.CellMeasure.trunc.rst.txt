@@ -1,0 +1,7 @@
+cf.CellMeasure.trunc
+====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CellMeasure.trunc

@@ -1,0 +1,7 @@
+cf.AuxiliaryCoordinate.__getitem__
+==================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.AuxiliaryCoordinate.__getitem__

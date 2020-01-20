@@ -1,0 +1,7 @@
+cf.Field.dimension_coordinate
+=============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Field.dimension_coordinate

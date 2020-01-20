@@ -1,0 +1,7 @@
+cf.CellMethod.equals
+====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CellMethod.equals

@@ -1,0 +1,7 @@
+cf.Index.__neg__
+================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Index.__neg__

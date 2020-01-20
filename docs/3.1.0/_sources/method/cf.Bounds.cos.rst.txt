@@ -1,0 +1,7 @@
+cf.Bounds.cos
+=============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.cos

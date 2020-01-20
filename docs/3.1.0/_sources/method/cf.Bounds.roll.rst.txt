@@ -1,0 +1,7 @@
+cf.Bounds.roll
+==============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.roll
