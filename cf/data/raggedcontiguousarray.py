@@ -11,10 +11,10 @@ class RaggedContiguousArray(abstract.CompressedArray,
     combines all features along a single dimension (the "sample
     dimension") such that each feature in the collection occupies a
     contiguous block.
-    
+
     The information needed to uncompress the data is stored in a
     "count variable" that gives the size of each block.
-    
+
     .. versionadded:: 3.0.0
 
     '''

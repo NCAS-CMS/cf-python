@@ -13,12 +13,12 @@ class CompressedSubarray(abc.ABC):
         '''**Initialization**
 
     :Parameters:
-    
-        array: 
-    
+
+        array:
+
         shape: `tuple`
             The shape of the uncompressed array
-    
+
         compression: `dict`
 
         '''
@@ -31,13 +31,13 @@ class CompressedSubarray(abc.ABC):
         # DO NOT CHANGE IN PLACE
         self.shape = tuple(shape)
 
-        # DO NOT CHANGE IN PLACE            
+        # DO NOT CHANGE IN PLACE
         self.ndim = len(shape)
 
         # DO NOT CHANGE IN PLACE
         self.size = reduce(mul, shape, 1)
 
-    
+
     @abc.abstractmethod
     def __getitem__(self, indices):
         '''x.__getitem__(indices) <==> x[indices]
@@ -55,7 +55,7 @@ class CompressedSubarray(abc.ABC):
         array = self.array
         shape = str(array.shape)
         shape = shape.replace(',)', ')')
-        
+
         return "<CF {}{}: {}>".format(self.__class__.__name__, shape, str(array))
 
 
@@ -63,7 +63,7 @@ class CompressedSubarray(abc.ABC):
     def dtype(self):
         return self.array.dtype
 
-    @property    
+    @property
     def file(self):
         '''The file on disk which contains the compressed array, or `None` of
     the array is in memory.
@@ -73,7 +73,7 @@ class CompressedSubarray(abc.ABC):
     >>> self.file
     '/home/foo/bar.nc'
 
-        '''        
+        '''
         return getattr(self.array, 'file', None)
 
 
@@ -81,14 +81,14 @@ class CompressedSubarray(abc.ABC):
         '''Close all referenced open files.
 
     :Returns:
-    
+
         `None`
-    
+
     **Examples:**
-    
+
     >>> f.close()
 
-        '''     
+        '''
         if self.on_disk():
             self.array.close()
 
@@ -107,20 +107,20 @@ class CompressedSubarray(abc.ABC):
         '''Inspect the object for debugging.
 
     .. seealso:: `cf.inspect`
-    
-    :Returns: 
-    
+
+    :Returns:
+
         `None`
 
         '''
         print(cf_inspect(self))
-        
+
     def on_disk(self):
         '''True if and only if the compressed array is on disk as opposed to
     in memory.
-    
+
     **Examples:**
-    
+
     >>> a.on_disk()
     True
 
@@ -134,6 +134,6 @@ class CompressedSubarray(abc.ABC):
         '''
         return getrefcount(self.array) <= 2
 
-    
+
 #--- End: class
 

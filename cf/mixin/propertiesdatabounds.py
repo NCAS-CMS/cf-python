@@ -46,7 +46,7 @@ class PropertiesDataBounds(PropertiesData):
         else:
             auxiliary_mask = None
             indices2       = indices
-          
+
         indices, roll = parse_indices(self.shape, indices2, cyclic=True)
 
         if roll:
@@ -81,7 +81,7 @@ class PropertiesDataBounds(PropertiesData):
 
         # Subspace the bounds, if there are any
         bounds = self.get_bounds(None)
-        if bounds is not None:                
+        if bounds is not None:
             bounds_data = bounds.get_data(None)
             if bounds_data is not None:
                 findices = list(findices)
@@ -97,7 +97,7 @@ class PropertiesDataBounds(PropertiesData):
                         # This 1-d variable has been reversed so
                         # reverse its bounds (as per 7.1 of the
                         # conventions)
-                        findices.append(slice(None, None, -1))                    
+                        findices.append(slice(None, None, -1))
                 #--- End: if
 
                 if auxiliary_mask:
@@ -134,7 +134,7 @@ class PropertiesDataBounds(PropertiesData):
         '''
         return self._binary_operation(y, '__ne__', False)
 
-    
+
     def __ge__(self, y):
         '''The rich comparison operator ``>=``
 
@@ -170,7 +170,7 @@ class PropertiesDataBounds(PropertiesData):
         '''
         return self._binary_operation(y, '__lt__', False)
 
-    
+
     def __and__(self, other):
         '''The binary bitwise operation ``&``
 
@@ -286,7 +286,7 @@ class PropertiesDataBounds(PropertiesData):
         '''
         return self._binary_operation(y, '__rshift__', False)
 
-    
+
     def __irshift__(self, y):
         '''The augmented bitwise assignment ``>>=``
 
@@ -313,27 +313,27 @@ class PropertiesDataBounds(PropertiesData):
 
     The operations act on the construct's data array with the numpy
     broadcasting rules.
-    
+
     If the construct has bounds then they are operated on with the
     same data as the construct's data.
-    
+
     It is intended to be called by the binary arithmetic and comparison
     methods, such as `!__sub__` and `!__lt__`.
-    
+
     :Parameters:
-    
+
         other:
-    
+
         method: `str`
             The binary arithmetic or comparison method name (such as
             ``'__imul__'`` or ``'__ge__'``).
-    
+
         bounds: `bool`, optional
             If False then ignore the bounds and remove them from the
             result. By default the bounds are operated on as well.
-    
+
     :Returns:
-    
+
             A new construct, or the same construct if the operation
             was in-place.
 
@@ -341,10 +341,10 @@ class PropertiesDataBounds(PropertiesData):
         inplace = method[2] == 'i'
 
         has_bounds = bounds and self.has_bounds()
-        
+
         if has_bounds and inplace and other is self:
             other = other.copy()
-        
+
         new = super()._binary_operation(other, method)
 
         if has_bounds:
@@ -355,14 +355,14 @@ class PropertiesDataBounds(PropertiesData):
 
 #            if other_has_bounds:
 #                new_bounds = self.bounds._binary_operation(other.bounds, method)
-#            else:                
+#            else:
             if numpy_size(other) > 1:
                 try:
                     other = other.insert_dimension(-1)
                 except AttributeError:
                     other = numpy_expand_dims(other, -1)
             #-- End: if
-                
+
             new_bounds = self.bounds._binary_operation(other, method)
 
             if not inplace:
@@ -371,7 +371,7 @@ class PropertiesDataBounds(PropertiesData):
 
         if not bounds and new.has_bounds():
             new.del_bounds()
-            
+
         if inplace:
             return self
         else:
@@ -387,26 +387,26 @@ class PropertiesDataBounds(PropertiesData):
     differences) and ``rtol`` (the tolerance on relative differences) are
     positive, typically very small numbers. See the *atol* and *rtol*
     parameters.
-    
+
     :Parameters:
-    
+
         atol: `float`, optional
             The tolerance on absolute differences between real
             numbers. The default value is set by the `ATOL` function.
-    
+
         rtol: `float`, optional
             The tolerance on relative differences between real
             numbers. The default value is set by the `RTOL` function.
-    
+
     :Returns:
-    
+
         `bool`
-    
+
         '''
         self_bounds = self.get_bounds(None)
         other_bounds = other.get_bounds(None)
         hasbounds = self_bounds is not None
-        
+
         if hasbounds != (other_bounds is not None):
             # add traceback
             if verbose:
@@ -416,12 +416,12 @@ class PropertiesDataBounds(PropertiesData):
         try:
             direction0 = self.direction()
             direction1 = other.direction()
-            if (direction0 != direction1 and 
+            if (direction0 != direction1 and
                 direction0 is not None and direction1 is not None):
                 other = other.flip()
         except AttributeError:
             pass
-        
+
         # Compare the data arrays
         if not super()._equivalent_data(
                 other, rtol=rtol, atol=atol, verbose=verbose):
@@ -451,17 +451,17 @@ class PropertiesDataBounds(PropertiesData):
         out.del_bounds(None)
         return out
 
-    
+
     def _matching_values(self, value0, value1, units=False):
         '''TODO
 
         '''
-        if value1 is None:            
+        if value1 is None:
             return False
 
         if units and isinstance(value0, str):
             return Units(value0).equals(Units(value1))
-        
+
         if isinstance(value0, Query):
             return bool(value0.evaluate(value1)) # TODO vectors
         else:
@@ -473,7 +473,7 @@ class PropertiesDataBounds(PropertiesData):
 
         return False
 
-    
+
     def _apply_data_operation(
             self, oper_name, *oper_args, bounds=True, inplace=False,
             i=False, **oper_kwargs):
@@ -487,7 +487,7 @@ class PropertiesDataBounds(PropertiesData):
         '''
         if i:
             _DEPRECATION_ERROR_KWARGS(self, oper_name, i=True) # pragma: no cover
- 
+
         v = getattr(super(), oper_name)(*oper_args, inplace=inplace,
                                         **oper_kwargs)
         if inplace:
@@ -517,7 +517,7 @@ class PropertiesDataBounds(PropertiesData):
     .. versionadded:: 2.0
 
     **Examples:**
-    
+
     >>> print(c.bounds.array)
     [[-90. -87.]
      [-87. -80.]
@@ -537,9 +537,9 @@ class PropertiesDataBounds(PropertiesData):
                 raise ValueError(
                     "Can only calculate cell sizes from bounds when there are exactly two bounds per cell. Got {}".format(
                         data.shape[-1]))
-            
+
             out = abs(data[..., 1] - data[..., 0])
-            out.squeeze(-1, inplace=True)                
+            out.squeeze(-1, inplace=True)
             return out
         else:
             data = self.get_data(None)
@@ -550,15 +550,15 @@ class PropertiesDataBounds(PropertiesData):
         raise AttributeError(
             "Can't get cell sizes when there are no bounds nor coordinate data")
 
-    
+
     @property
     def dtype(self):
         '''Numpy data-type of the data array.
 
-    .. versionadded:: 2.0 
-    
+    .. versionadded:: 2.0
+
     **Examples:**
-    
+
     >>> c.dtype
     dtype('float64')
     >>> import numpy
@@ -587,11 +587,11 @@ class PropertiesDataBounds(PropertiesData):
 
 
     @property
-    def isperiodic(self): 
+    def isperiodic(self):
         '''
 
-    .. versionadded:: 2.0 
-    
+    .. versionadded:: 2.0
+
     >>> print(c.period())
     None
     >>> c.isperiodic
@@ -604,7 +604,7 @@ class PropertiesDataBounds(PropertiesData):
     <CF Data(): 360 degrees_east>
     >>> c.isperiodic
     False
-    
+
     '''
         return self._custom.get('period', None) is not None
 
@@ -615,13 +615,13 @@ class PropertiesDataBounds(PropertiesData):
 
     If there are no cell bounds then the coordinates are used as the
     lower bounds.
-    
-    .. versionadded:: 2.0 
-    
+
+    .. versionadded:: 2.0
+
     .. seealso:: `upper_bounds`
-    
+
     **Examples:**
-    
+
     >>> print(c.array)
     [4  2  0]
     >>> print(c.bounds.array)
@@ -636,7 +636,7 @@ class PropertiesDataBounds(PropertiesData):
 
         '''
         data = self.get_bounds_data(None)
-        if data is not None:            
+        if data is not None:
             out = data.min(-1)
             out.squeeze(-1, inplace=True)
             return out
@@ -645,7 +645,7 @@ class PropertiesDataBounds(PropertiesData):
             if data is not None:
                 return data.copy()
         #--- End: if
-                
+
         raise AttributeError(
             "Can't get lower bounds when there are no bounds nor coordinate data")
 
@@ -657,12 +657,12 @@ class PropertiesDataBounds(PropertiesData):
     Stores the units and calendar CF properties in an internally
     consistent manner. These are mirrored by the `units` and
     `calendar` CF properties respectively.
-    
+
     **Examples:**
-    
+
     >>> f.Units
     <Units: K>
-    
+
     >>> f.Units
     <Units: days since 2014-1-1 calendar=noleap>
 
@@ -693,13 +693,13 @@ class PropertiesDataBounds(PropertiesData):
 
     If there are no cell bounds then the coordinates are used as the
     upper bounds.
-    
-    .. versionadded:: 2.0 
-    
+
+    .. versionadded:: 2.0
+
     .. seealso:: `lower_bounds`
-    
+
     **Examples:**
-    
+
     >>> print(c.array)
     [4  2  0]
     >>> print(c.bounds.array)
@@ -714,7 +714,7 @@ class PropertiesDataBounds(PropertiesData):
 
         '''
         data = self.get_bounds_data(None)
-        if data is not None:            
+        if data is not None:
             out = data.max(-1)
             out.squeeze(-1, inplace=True)
             return out
@@ -723,7 +723,7 @@ class PropertiesDataBounds(PropertiesData):
             if data is not None:
                 return data.copy()
         #--- End: if
-        
+
         raise AttributeError(
             "Can't get upper bounds when there are no bounds nor coordinate data")
 
@@ -732,41 +732,41 @@ class PropertiesDataBounds(PropertiesData):
         '''Mask the array where invalid values occur.
 
     Note that:
-    
+
     * Invalid values are Nan or inf
-    
+
     * Invalid values in the results of arithmetic operations only
       occur if the raising of `FloatingPointError` exceptions has been
       suppressed by `cf.Data.seterr`.
-    
+
     * If the raising of `FloatingPointError` exceptions has been
       allowed then invalid values in the results of arithmetic
       operations it is possible for them to be automatically converted
       to masked values, depending on the setting of
       `cf.Data.mask_fpe`. In this case, such automatic conversion
       might be faster than calling `mask_invalid`.
-    
+
     .. seealso:: `cf.Data.mask_fpe`, `cf.Data.seterr`
-    
+
     :Parameters:
-    
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
-    
+
     :Returns:
-    
+
             The construct with masked elements.
-    
+
     **Examples:**
-    
+
     >>> print(f.array)
     [ 0.  1.]
     >>> print(g.array)
     [ 1.  2.]
-    
+
     >>> old = cf.data.seterr('ignore')
     >>> h = g/f
     >>> print(h.array)
@@ -774,14 +774,14 @@ class PropertiesDataBounds(PropertiesData):
     >>> h.mask_invalid(inplace=True)
     >>> print(h.array)
     [--  2.]
-    
+
     >>> h = g**12345
     >>> print(h.array)
     [ 1.  inf]
     >>> h.mask_invalid(inplace=True)
     >>> print(h.array)
     [1.  --]
-    
+
     >>> old = cf.data.seterr('raise')
     >>> old = cf.data.mask_fpe(True)
     >>> print((g/f).array)
@@ -859,7 +859,7 @@ dtype('float64')
             bounds = self.get_bounds(None)
             if bounds is not None:
                 return bounds.dtype
-            
+
             raise AttributeError(error)
 
     @dtype.setter
@@ -884,30 +884,30 @@ dtype('float64')
 
     The ceiling of ``x`` is the smallest integer ``n``, such that
      ``n >= x``.
-    
+
     .. versionadded:: 1.0
-    
+
     .. seealso:: `floor`, `rint`, `trunc`
-    
+
     :Parameters:
-    
+
         bounds: `bool`, optional
             If False then do not alter any bounds. By default any
             bounds are also altered.
-    
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
-    
+
     :Returns:
-    
+
             The construct with ceilinged of data. If the operation was
             in-place then `None` is returned.
-    
+
     **Examples:**
-    
+
     >>> print(f.array)
     [-1.9 -1.5 -1.1 -1.   0.   1.   1.1  1.5  1.9]
     >>> print(f.ceil().array)
@@ -925,18 +925,18 @@ dtype('float64')
         '''Partition the data array.
 
     :Parameters:
-    
+
         chunksize: `int`, optional
             Set the new chunksize, in bytes.
-    
+
     :Returns:
-    
+
         `None`
-    
+
     **Examples:**
-    
+
     >>> c.chunksize()
-    
+
     >>> c.chunksize(1e8)
 
         '''
@@ -947,7 +947,7 @@ dtype('float64')
         if bounds is not None:
             bounds.chunk(chunksize)
 
-            
+
     def clip(self, a_min, a_max, units=None, bounds=True,
              inplace=False, i=False):
         '''Limit the values in the data.
@@ -956,40 +956,40 @@ dtype('float64')
     interval edges. For example, if an interval of ``[0, 1]`` is
     specified, values smaller than 0 become 0, and values larger than
     1 become 1.
-    
+
     :Parameters:
-     
+
         a_min:
             Minimum value. If `None`, clipping is not performed on
             lower interval edge. Not more than one of `a_min` and
             `a_max` may be `None`.
-    
+
         a_max:
             Maximum value. If `None`, clipping is not performed on
             upper interval edge. Not more than one of `a_min` and
             `a_max` may be `None`.
-    
+
         units: `str` or `Units`
             Specify the units of *a_min* and *a_max*. By default the
             same units as the data are assumed.
-    
+
         bounds: `bool`, optional
             If False then do not alter any bounds. By default any bounds
             are also altered.
-    
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
-    
-    :Returns: 
-    
+
+    :Returns:
+
             The construct with clipped data. If the operation was
             in-place then `None` is returned.
-    
+
     **Examples:**
-    
+
     >>> g = f.clip(-90, 90)
     >>> g = f.clip(-90, 90, 'degrees_north')
 
@@ -998,21 +998,21 @@ dtype('float64')
             'clip', a_min, a_max, bounds=bounds, inplace=inplace, i=i,
             units=units)
 
-    
+
     def close(self):
         '''Close all files referenced by the construct.
 
     Note that a closed file will be automatically re-opened if its
     contents are subsequently required.
-    
+
     .. seealso:: `files`
-    
+
     :Returns:
-    
+
         `None`
-    
+
     **Examples:**
-    
+
     >> c.close()
 
         '''
@@ -1026,22 +1026,22 @@ dtype('float64')
     @classmethod
     def concatenate(cls, variables, axis=0, _preserve=True):
         '''Join a sequence of variables together.
-    
+
     :Parameters:
-    
+
         variables: sequence of constructs
-    
+
         axis: `int`, optional
-    
+
     :Returns:
-    
+
         TODO
         '''
         variable0 = variables[0]
 
         if len(variables) == 1:
             return variable0.copy()
-        
+
         out = super().concatenate(variables, axis=axis, _preserve=_preserve)
 
         bounds = variable0.get_bounds(None)
@@ -1063,28 +1063,28 @@ dtype('float64')
     Kelvin) then they are treated as if they were radians.
 
     The output units are '1' (nondimensional).
-    
+
     .. seealso:: `sin`, `tan`
-    
+
     :Parameters:
-    
+
         bounds: `bool`, optional
             If False then do not alter any bounds. By default any
             bounds are also altered.
-    
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
-    
+
     :Returns:
-    
+
             The construct with the cosine of data values. If the
             operation was in-place then `None` is returned.
-    
+
     **Examples:**
-    
+
     >>> f.Units
     <Units: degrees_east>
     >>> print(f.array)
@@ -1094,7 +1094,7 @@ dtype('float64')
     <Units: 1>
     >>> print(f.array)
     [[0.0 1.0 0.0 --]]
-    
+
     >>> f.Units
     <Units: m s-1>
     >>> print(f.array)
@@ -1114,23 +1114,23 @@ dtype('float64')
         '''Set the cyclicity of axes of the data array.
 
     .. seealso:: `iscyclic`
-    
+
     :Parameters:
-    
+
         axes: (sequence of) `int`
             The axes to be set. Each axis is identified by its integer
             position. By default no axes are set.
-            
+
         iscyclic: `bool`, optional
             If False then the axis is set to be non-cyclic. By default
             the axis is set to be cyclic.
-    
+
     :Returns:
-    
+
         `set`
-    
+
     **Examples:**
-    
+
         TODO
 
         '''
@@ -1143,10 +1143,10 @@ dtype('float64')
         if bounds is not None:
             axes = self._parse_axes(axes)
             bounds.cyclic(axes, iscyclic)
-        
+
         return out
 
-            
+
     def equivalent(self, other, rtol=None, atol=None, traceback=False):
         '''True if two constructs are equal, False otherwise.
 
@@ -1155,22 +1155,22 @@ dtype('float64')
     differences) and ``rtol`` (the tolerance on relative differences)
     are positive, typically very small numbers. See the *atol* and
     *rtol* parameters.
-    
+
     :Parameters:
-    
-        other: 
+
+        other:
             The object to compare for equality.
-    
-    
+
+
         atol: `float`, optional
             The tolerance on absolute differences between real
             numbers. The default value is set by the `ATOL` function.
-    
+
         rtol: `float`, optional
             The tolerance on relative differences between real
             numbers. The default value is set by the `RTOL` function.
 
-        '''     
+        '''
         if self is other:
             return True
 
@@ -1181,14 +1181,14 @@ dtype('float64')
                 self.__class__.__name__,
                 other.__class__.__name__))
             return False
-       
+
         identity0 = self.identity()
         identity1 = other.identity()
 
         if identity0 is None or identity1 is None or identity0 != identity1:
             # add traceback
             return False
-                  
+
         # ------------------------------------------------------------
         # Check the special attributes
         # ------------------------------------------------------------
@@ -1206,7 +1206,7 @@ dtype('float64')
 
             result = cf_equivalent(x, y, rtol=rtol, atol=atol,
                                    traceback=traceback)
-               
+
             if not result:
                 if traceback:
                     print("{}: Different {} attributes: {!r}, {!r}".format(
@@ -1221,51 +1221,51 @@ dtype('float64')
                                      traceback=traceback):
             # add traceback
             return False
-            
+
         return True
-    
+
 
     def contiguous(self, overlap=True):
         '''Return True if a construct has contiguous cells.
 
     A construct is contiguous if its cell boundaries match up, or
     overlap, with the boundaries of adjacent cells.
-    
+
     In general, it is only possible for a zero, 1 or 2 dimensional
     construct with bounds to be contiguous. A size 1 construct with
     any number of dimensions is always contiguous.
-    
+
     An exception occurs if the construct is multdimensional and has
     more than one element.
-    
-    .. versionadded:: 2.0 
-    
+
+    .. versionadded:: 2.0
+
     :Parameters:
-    
-        overlap : bool, optional    
+
+        overlap : bool, optional
             If False then overlapping cell boundaries are not
             considered contiguous. By default cell boundaries are
             considered contiguous.
-    
+
     :Returns:
-    
+
         `bool`
             Whether or not the construct's cells are contiguous.
-    
+
     **Examples:**
-    
+
     >>> c.has_bounds()
     False
     >>> c.contiguous()
     False
-    
+
     >>> print(c.bounds[:, 0])
     [  0.5   1.5   2.5   3.5 ]
     >>> print(c.bounds[:, 1])
     [  1.5   2.5   3.5   4.5 ]
     >>> c.contiuous()
     True
-    
+
     >>> print(c.bounds[:, 0])
     [  0.5   1.5   2.5   3.5 ]
     >>> print(c.bounds[:, 1])
@@ -1296,7 +1296,7 @@ dtype('float64')
 
     Conversion is done by decoding the reference times to date-time
     objects and then re-encoding them for the new units.
-    
+
     Any conversions are possible, but this method is primarily for
     conversions which require a change in the date-times originally
     encoded. For example, use this method to reinterpret data values
@@ -1305,7 +1305,7 @@ dtype('float64')
     when units of "calendar months" were intended but encoded as
     "months", which have special definition. See the note and examples
     below for more details.
-    
+
     For conversions which do not require a change in the date-times
     implied by the data values, this method will be considerably
     slower than a simple reassignment of the units. For example, if
@@ -1313,7 +1313,7 @@ dtype('float64')
     cf.Units('days since 1901-1-1')`` will give the same result and be
     considerably faster than ``c.convert_reference_time(cf.Units('days
     since 1901-1-1'))``.
-    
+
     .. note:: It is recommended that the units "year" and "month" be
               used with caution, as explained in the following excerpt
               from the CF conventions: "The Udunits package defines a
@@ -1325,46 +1325,46 @@ dtype('float64')
               365.25 days, and a Gregorian_year is 365.2425 days. For
               similar reasons the unit ``month``, which is defined to
               be exactly year/12, should also be used with caution.
-    
+
     :Parameters:
-    
+
         units: `Units`, optional
             The reference time units to convert to. By default the
             units days since the original reference time in the
             original calendar.
-    
+
             *Parameter example:*
               If the original units are ``'months since 2000-1-1'`` in
               the Gregorian calendar then the default units to convert
               to are ``'days since 2000-1-1'`` in the Gregorian
               calendar.
-    
+
         calendar_months: `bool`, optional
             If True then treat units of ``'months'`` as if they were
             calendar months (in whichever calendar is originally
             specified), rather than a 12th of the interval between 2
             successive passages of the sun through vernal equinox
             (i.e. 365.242198781/12 days).
-    
+
         calendar_years: `bool`, optional
             If True then treat units of ``'years'`` as if they were
             calendar years (in whichever calendar is originally
             specified), rather than the interval between 2 successive
             passages of the sun through vernal equinox
             (i.e. 365.242198781 days).
-    
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
-    
-    :Returns: 
-    
+
+    :Returns:
+
             The construct with converted reference time data values.
-    
+
     **Examples:**
-    
+
     >>> print(f.array)
     [1  2  3  4]
     >>> f.Units
@@ -1390,7 +1390,7 @@ dtype('float64')
             'convert_reference_time', inplace=inplace, i=i, units=units,
             calendar_months=calendar_months, calendar_years=calendar_years)
 
-    
+
     def flatten(self, axes=None, inplace=False):
         '''Flatten axes of the data
 
@@ -1407,22 +1407,22 @@ dtype('float64')
     .. seealso:: `insert_dimension`, `flip`, `swapaxes`, `transpose`
 
     :Parameters:
-   
+
         axes: (sequence of) int or str, optional
             Select the axes.  By default all axes are flattened. The
             *axes* argument may be one, or a sequence, of:
-    
+
               * An internal axis identifier. Selects this axis.
             ..
-    
+
               * An integer. Selects the axis coresponding to the given
                 position in the list of axes of the data array.
-    
+
             No axes are flattened if *axes* is an empty sequence.
-    
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
     :Returns:
 
             The construct with flattened data, or `None` if the
@@ -1447,12 +1447,12 @@ dtype('float64')
         v = super().flatten(axes, inplace=inplace)
         if inplace:
             v = self
-            
+
         bounds = v.get_bounds(None)
         if bounds is not None:
             axes = self._parse_axes(axes)
             bounds.flatten(axes, inplace=True)
-        
+
         if inplace:
             v = None
         return v
@@ -1462,30 +1462,30 @@ dtype('float64')
         '''Floor the data array, element-wise.
 
     The floor of ``x`` is the largest integer ``n``, such that ``n <= x``.
-    
+
     .. versionadded:: 1.0
-    
+
     .. seealso:: `ceil`, `rint`, `trunc`
-    
+
     :Parameters:
-    
+
         bounds: `bool`, optional
             If False then do not alter any bounds. By default any
             bounds are also altered.
-    
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
-    
+
     :Returns:
-            
+
             The construct with floored data. If the operation was
             in-place then `None` is returned.
-    
+
     **Examples:**
-    
+
     >>> print(f.array)
     [-1.9 -1.5 -1.1 -1.   0.   1.   1.1  1.5  1.9]
     >>> print(f.floor().array)
@@ -1502,19 +1502,19 @@ dtype('float64')
     def direction(self):
         '''Return None, indicating that it is not specified whether the
     values are increasing or decreasing.
-    
-    .. versionadded:: 2.0 
-    
+
+    .. versionadded:: 2.0
+
     :Returns:
-    
+
         None
-            
+
     **Examples:**
-    
+
     >>> print(c.direction())
     None
-    
-            ''' 
+
+            '''
         return
 
 
@@ -1523,14 +1523,14 @@ dtype('float64')
 
     Conditions may be specified on the variable's attributes and CF
     properties.
-    
+
     :Parameters:
-     
+
     :Returns:
-    
+
         out: `bool`
             Whether or not the variable matches the given criteria.
-    
+
     **Examples:**
 
     TODO
@@ -1540,7 +1540,7 @@ dtype('float64')
         if mode:
             if len(mode) > 1:
                 raise ValueError("Can provide at most one positional argument")
-            
+
             x = mode[0]
             if x == 'or':
                 _or = True
@@ -1552,13 +1552,13 @@ dtype('float64')
         if not properties:
             return True
 
-        self_properties = self.properties()        
+        self_properties = self.properties()
 
         ok = True
         for name, value0 in properties.items():
             value1 = self_property.get(name)
             ok = self._matching_values(value0, value1, units=(name=='units'))
-            
+
             if _or:
                 if ok:
                     break
@@ -1574,14 +1574,14 @@ dtype('float64')
 
     Conditions may be specified on the variable's attributes and CF
     properties.
-    
+
     :Parameters:
-    
+
     :Returns:
-    
+
         `bool`
             Whether or not the variable matches the given criteria.
-    
+
     **Examples:**
 
         TODO
@@ -1592,9 +1592,9 @@ dtype('float64')
             return True
 
         identities = self.identities()
-        
+
         ok = False
-        for value0 in identities:          
+        for value0 in identities:
             for value1 in self_identities:
                 ok = self._matching_values(value0, value1)
                 if ok:
@@ -1616,32 +1616,32 @@ dtype('float64')
     units. Therefore, this method should only be used when it is known
     that the data array values are correct but the calendar has been
     incorrectly encoded.
-    
+
     Not to be confused with setting the `calendar` or `Units`
     attributes to a calendar which is equivalent to the original
     calendar
-    
+
     .. seealso:: `calendar`, `override_units`, `units`, `Units`
-    
+
     :Parameters:
-    
+
         calendar: `str`
             The new calendar.
-    
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
-    
+
     :Returns:
-    
+
     TODO
-    
+
     **Examples:**
-    
+
     TODO
-    
+
     >>> g = f.override_calendar('noleap')
 
         '''
@@ -1657,29 +1657,29 @@ dtype('float64')
     units. Therefore, this method should only be used when it is known
     that the data array values are correct but the units have
     incorrectly encoded.
-    
+
     Not to be confused with setting the `units` or `Units` attribute
     to units which are equivalent to the original units.
-    
+
     .. seealso:: `calendar`, `override_calendar`, `units`, `Units`
-    
+
     :Parameters:
-    
+
         units: `str` or `Units`
             The new units for the data array.
-    
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
-    
+
     :Returns:
-    
+
             TODO
-    
+
     **Examples:**
-    
+
     >>> f.Units
     <Units: hPa>
     >>> f.datum(0)
@@ -1704,14 +1704,14 @@ dtype('float64')
         '''Return the names of any files containing parts of the data array.
 
     .. seealso:: `close`
-    
+
     :Returns:
-    
+
         `set`
             The file names in normalized, absolute form.
-    
+
     **Examples:**
-    
+
     >>> c.files()
     {'/data/user/file1.nc',
      '/data/user/file2.nc',
@@ -1734,33 +1734,33 @@ dtype('float64')
         '''Flip (reverse the direction of) data dimensions.
 
     .. seealso:: `insert_dimension`, `squeeze`, `transpose`, `unsqueeze`
-    
+
     :Parameters:
-    
+
         axes: optional
            Select the domain axes to flip. One, or a sequence, of:
-    
+
               * The position of the dimension in the data.
-    
+
             If no axes are specified then all axes are flipped.
-    
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
         i: deprecated at version 3.0.0
             Use the *inplace* parameter instead.
-    
+
     :Returns:
-    
+
             The construct with flipped axes, or `None` if the operation
             was in-place.
-    
+
     **Examples:**
-    
+
     >>> f.flip()
     >>> f.flip(1)
     >>> f.flip([0, 1])
-    
+
     >>> g = f[::-1, :, ::-1]
     >>> f.flip([2, 0]).equals(g)
     True
@@ -1800,7 +1800,7 @@ dtype('float64')
             bounds.flip(axes, inplace=True)
 
         if inplace:
-            v = None            
+            v = None
         return v
 
 
@@ -1808,39 +1808,39 @@ dtype('float64')
         '''The exponential of the data, element-wise.
 
     .. seealso:: `log`
-    
+
     :Parameters:
-    
+
         bounds: `bool`, optional
             If False then do not alter any bounds. By default any
             bounds are also altered.
-    
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
-    
+
     :Returns:
-    
+
             The construct with the exponential of data values. If the
             operation was in-place then `None` is returned.
-    
+
     **Examples:**
-    
+
     >>> f.data
     <CF Data(1, 2): [[1, 2]]>
-    >>> f.exp().data            
+    >>> f.exp().data
     <CF Data(1, 2): [[2.71828182846, 7.38905609893]]>
-    
+
     >>> f.data
     <CF Data(1, 2): [[1, 2]] 2>
-    >>> f.exp().data            
+    >>> f.exp().data
     <CF Data(1, 2): [[7.38905609893, 54.5981500331]]>
-    
+
     >>> f.data
     <CF Data(1, 2): [[1, 2]] kg m-1 s-2>
-    >>> f.exp()          
+    >>> f.exp()
     ValueError: Can't take exponential of dimensional quantities: <Units: kg m-1 s-2>
 
         '''
@@ -1852,24 +1852,24 @@ dtype('float64')
         '''Set the bounds.
 
     .. versionadded:: 3.0.0
-    
+
     .. seealso: `del_bounds`, `get_bounds`, `has_bounds`, `set_data`
-    
+
     :Parameters:
-    
+
         bounds: `Bounds`
             The bounds to be inserted.
-    
+
         copy: `bool`, optional
             If False then do not copy the bounds prior to
             insertion. By default the bounds are copied.
-    
+
     :Returns:
-    
+
         `None`
-    
+
     **Examples:**
-    
+
     >>> import numpy
     >>> b = cfdm.Bounds(data=cfdm.Data(numpy.arange(10).reshape(5, 2)))
     >>> c.set_bounds(b)
@@ -1895,7 +1895,7 @@ dtype('float64')
             raise ValueError(
                 "Can't set bounds: Incorrect shape: {0})".format(bounds.shape))
 
-        if copy:            
+        if copy:
             bounds = bounds.copy()
 
         # Check units
@@ -1906,12 +1906,12 @@ dtype('float64')
             raise ValueError(
                 "Can't set bounds: Bounds units of {!r} are not equivalent to {!r}".format(
                     bounds.Units, self.Units))
-        
+
             bounds.Units = self_units
-            
-        if not units:        
+
+        if not units:
            bounds.override_units(self_units, inplace=True)
-        
+
         # Copy selected properties to the bounds
         #for prop in ('standard_name', 'axis', 'positive',
         #             'leap_months', 'leap_years', 'month_lengths'):
@@ -1919,9 +1919,9 @@ dtype('float64')
         #    if value is not None:
         #        bounds.set_property(prop, value)
 
-        
+
         self._custom['direction'] = None
-        
+
         super().set_bounds(bounds, copy=False)
 
 
@@ -1932,30 +1932,30 @@ dtype('float64')
     sine of 90 degrees_east is 1.0, as is the sine of 1.57079632
     radians. If the units are not equivalent to radians (such as
     Kelvin) then they are treated as if they were radians.
-    
+
     The Units are changed to '1' (nondimensional).
-    
+
     .. seealso:: `cos`, `tan`
-    
+
     :Parameters:
-    
+
         bounds: `bool`, optional
             If False then do not alter any bounds. By default any
             bounds are also altered.
-    
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
-    
+
     :Returns:
-    
+
             The construct with the sine of data values. If the
             operation was in-place then `None` is returned.
-    
+
     **Examples:**
-    
+
     >>> f.Units
     <Units: degrees_north>
     >>> print(f.array)
@@ -1965,7 +1965,7 @@ dtype('float64')
     <Units: 1>
     >>> print(f.array)
     [[-1.0 0.0 1.0 --]]
-    
+
     >>> f.Units
     <Units: m s-1>
     >>> print(f.array)
@@ -1992,19 +1992,19 @@ dtype('float64')
     .. versionadded:: 3.0.7
 
     .. seealso:: `tan`
-    
+
     :Parameters:
-    
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
     :Returns:
-    
+
             The construct with the trigonometric inverse tangent of data
             values. If the operation was in-place then `None` is returned.
-    
+
     **Examples:**
-    
+
     >>> d = cf.Data([[0, 1, 2], [3, -99, 5]], mask=[[0, 0, 0], [0, 1, 0]])
     >>> print(d.array)
     [[0  1 2]
@@ -2039,7 +2039,7 @@ dtype('float64')
             If True then do the operation in-place and return `None`.
 
     :Returns:
-    
+
             The construct with the inverse hyperbolic sine of data values.
             If the operation was in-place then `None` is returned.
 
@@ -2086,7 +2086,7 @@ dtype('float64')
             If True then do the operation in-place and return `None`.
 
     :Returns:
-    
+
             The construct with the hyperbolic tangent of data values. If the
             operation was in-place then `None` is returned.
 
@@ -2141,7 +2141,7 @@ dtype('float64')
             If True then do the operation in-place and return `None`.
 
     :Returns:
-    
+
             The construct with the hyperbolic sine of data values. If the
             operation was in-place then `None` is returned.
 
@@ -2195,7 +2195,7 @@ dtype('float64')
             If True then do the operation in-place and return `None`.
 
     :Returns:
-    
+
             The construct with the hyperbolic cosine of data values. If the
             operation was in-place then `None` is returned.
 
@@ -2234,25 +2234,25 @@ dtype('float64')
     3.141592653589793 radians. If the units are not equivalent to
     radians (such as Kelvin) then they are treated as if they were
     radians.
-    
+
     The Units are changed to '1' (nondimensional).
-    
+
     .. seealso:: `arctan`, `cos`, `sin`
-    
+
     :Parameters:
-    
+
         bounds: `bool`, optional
             If False then do not alter any bounds. By default any
             bounds are also altered.
-    
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
     :Returns:
-            
+
             The construct with the tangent of data values. If the
             operation was in-place then `None` is returned.
-    
+
     **Examples:**
 
     >>> f.Units
@@ -2264,7 +2264,7 @@ dtype('float64')
     <Units: 1>
     >>> print(f.array)
     [[-1.0 0.0 1.0 --]]
-    
+
     >>> f.Units
     <Units: m s-1>
     >>> print(f.array)
@@ -2285,49 +2285,49 @@ dtype('float64')
 
     By default the natural logarithm is taken, but any base may be
     specified.
-    
+
     .. seealso:: `exp`
-    
+
     :Parameters:
-    
+
         base: number, optional
             The base of the logiarthm. By default a natural logiarithm
             is taken.
-    
+
         bounds: `bool`, optional
             If False then do not alter any bounds. By default any
             bounds are also altered.
-    
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
-    
+
     :Returns:
-    
+
             The construct with the logarithm of data values. If the
             operation was in-place then `None` is returned.
-    
+
     **Examples:**
-    
+
     >>> f.data
     <CF Data(1, 2): [[1, 2]]>
     >>> f.log().data
     <CF Data: [[0.0, 0.69314718056]] ln(re 1)>
-    
+
     >>> f.data
     <CF Data(1, 2): [[1, 2]] 2>
     >>> f.log().data
     <CF Data(1, 2): [[0.0, 0.69314718056]] ln(re 2 1)>
-    
+
     >>> f.data
     <CF Data(1, 2): [[1, 2]] kg s-1 m-2>
     >>> f.log().data
     <CF Data(1, 2): [[0.0, 0.69314718056]] ln(re 1 m-2.kg.s-1)>
-    
+
     >>> f.log(inplace=True)
-    
+
     >>> f.Units
     <Units: >
     >>> f.log()
@@ -2342,35 +2342,35 @@ dtype('float64')
         '''Remove size 1 dimensions from the data array
 
     .. seealso:: `insert_dimension`, `flip`, `transpose`
-    
+
     :Parameters:
-    
+
         axes: (sequence of) `int`, optional
             The size 1 axes to remove. By default, all size 1 axes are
             removed. Size 1 axes for removal are identified by their
             integer positions in the data array.
-        
-    
+
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
-    
+
     :Returns:
-    
+
             The construct with squeezed data. If the operation was
             in-place then `None` is returned.
-    
+
     **Examples:**
-    
-    
+
+
     TODO
-    
+
     >>> f.squeeze()
-    
+
     >>> f.squeeze(1)
-    
+
     >>> f.squeeze([2, -1])
 
         '''
@@ -2378,7 +2378,7 @@ dtype('float64')
             _DEPRECATION_ERROR_KWARGS(self, 'squeeze', i=True) # pragma: no cover
 
         return super().squeeze(axes=axes, inplace=inplace)
-    
+
 
     def trunc(self, bounds=True, inplace=False, i=False):
         '''Truncate the data, element-wise.
@@ -2386,30 +2386,30 @@ dtype('float64')
     The truncated value of the scalar ``x``, is the nearest integer
     ``i`` which is closer to zero than ``x`` is. I.e. the fractional
     part of the signed number ``x`` is discarded.
-    
+
     .. versionadded:: 1.0
-    
+
     .. seealso:: `ceil`, `floor`, `rint`
-    
+
     :Parameters:
-    
+
         bounds: `bool`, optional
             If False then do not alter any bounds. By default any
             bounds are also altered.
-    
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
-    
+
     :Returns:
-    
+
             The construct with truncated data. If the operation was
             in-place then `None` is returned.
-    
+
     **Examples:**
-    
+
     >>> print(f.array)
     [-1.9 -1.5 -1.1 -1.   0.   1.   1.1  1.5  1.9]
     >>> print(f.trunc().array)
@@ -2422,12 +2422,12 @@ dtype('float64')
         return self._apply_data_operation(
             'trunc', bounds=bounds, inplace=inplace, i=i)
 
-    
+
     def identities(self):
         '''Return all possible identities.
 
     The identities comprise:
-    
+
     * The "standard_name" property.
     * The "id" attribute, preceeded by ``'id%'``.
     * The "cf_role" property, preceeded by ``'cf_role='``.
@@ -2437,21 +2437,21 @@ dtype('float64')
       the property name and an ``'='``.
     * The coordinate type (``'X'``, ``'Y'``, ``'Z'`` or ``'T'``).
     * The netCDF variable name, preceeded by ``'ncvar%'``.
-    
+
     The identities of the bounds, if present, are included (with the
     exception of the bounds netCDF variable name).
 
     .. versionadded:: 3.0.0
-    
+
     .. seealso:: `id`, `identity`
-    
+
     :Returns:
-    
+
         `list`
             The identities.
-    
+
     **Examples:**
-    
+
     >>> f.properties()
     {'foo': 'bar',
      'long_name': 'Air Temperature',
@@ -2464,7 +2464,7 @@ dtype('float64')
      'foo=bar',
      'standard_name=air_temperature',
      'ncvar%tas']
-    
+
     >>> f.properties()
     {}
     >>> f.bounds.properties()
@@ -2475,7 +2475,7 @@ dtype('float64')
 
         '''
         identities = super().identities()
-        
+
         bounds = self.get_bounds(None)
         if bounds is not None:
             identities.extend([i for i in bounds.identities()
@@ -2490,7 +2490,7 @@ dtype('float64')
         '''Return the canonical identity.
 
     By default the identity is the first found of the following:
-    
+
     * The "standard_name" property.
     * The "id" attribute, preceeded by ``'id%'``.
     * The "cf_role" property, preceeded by ``'cf_role='``.
@@ -2503,16 +2503,16 @@ dtype('float64')
     If no identity can be found on the construct then the identity is
     taken from the bounds, if present (with the exception of the
     bounds netCDF variable name).
-    
+
     .. seealso:: `id`, `identities`
-    
+
     :Parameters:
-    
+
         default: optional
             If no identity can be found then return the value of the
             default parameter.
-    
-        strict: `bool`, optional 
+
+        strict: `bool`, optional
             If True then the identity is the first found of only the
             "standard_name" property or the "id" attribute.
 
@@ -2521,16 +2521,16 @@ dtype('float64')
             "standard_name" property, the "id" attribute, the
             "long_name" property or the netCDF variable name.
 
-        nc_only: `bool`, optional       
+        nc_only: `bool`, optional
             If True then only take the identity from the netCDF
             variable name.
 
     :Returns:
-    
+
             The identity.
-    
+
     **Examples:**
-    
+
     >>> f.properties()
     {'foo': 'bar',
      'long_name': 'Air Temperature',
@@ -2556,7 +2556,7 @@ dtype('float64')
     ''
     >>> f.identity(default='no identity')
     'no identity'
-    
+
     >>> f.properties()
     {}
     >>> f.bounds.properties()
@@ -2569,7 +2569,7 @@ dtype('float64')
         if relaxed_identity:
             _DEPRECATAION_ERROR_KWARGS(
                 self, 'identity', relaxed_identity=True) # pragma: no cover
-            
+
         identity = super().identity(default=None, strict=strict,
                                     relaxed=relaxed, nc_only=nc_only)
 
@@ -2584,7 +2584,7 @@ dtype('float64')
             if out is not None and not out.startswith('ncvar%'):
                 return out
         #--- End: if
-                
+
         return default
 
 
@@ -2593,7 +2593,7 @@ dtype('float64')
 
     .. seealso:: `cf.inspect`
 
-    :Returns: 
+    :Returns:
 
         `None`
 
@@ -2605,28 +2605,28 @@ dtype('float64')
         '''Round the data to the nearest integer, element-wise.
 
     .. versionadded:: 1.0
-    
+
     .. seealso:: `ceil`, `floor`, `trunc`
-    
+
     :Parameters:
-    
+
         bounds: `bool`, optional
             If False then do not alter any bounds. By default any
             bounds are also altered.
-    
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
-    
+
     :Returns:
-            
+
             The construct with rounded data. If the operation was
             in-place then `None` is returned.
-    
+
     **Examples:**
-    
+
     >>> print(f.array)
     [-1.9 -1.5 -1.1 -1.   0.   1.   1.1  1.5  1.9]
     >>> print(f.rint().array)
@@ -2644,42 +2644,42 @@ dtype('float64')
         '''Round the data to the given number of decimals.
 
     Data elements are evenly rounded to the given number of decimals.
-    
+
     .. note:: Values exactly halfway between rounded decimal values
               are rounded to the nearest even value. Thus 1.5 and 2.5
               round to 2.0, -0.5 and 0.5 round to 0.0, etc. Results
               may also be surprising due to the inexact representation
               of decimal fractions in the IEEE floating point standard
               and errors introduced when scaling by powers of ten.
-     
+
     .. versionadded:: 1.1.4
-    
+
     .. seealso:: `ceil`, `floor`, `rint`, `trunc`
-    
+
     :Parameters:
-    	
+
         decimals: `int`, optional
             Number of decimal places to round to (0 by default). If
             decimals is negative, it specifies the number of positions
             to the left of the decimal point.
-    
+
         bounds: `bool`, optional
             If False then do not alter any bounds. By default any
             bounds are also altered.
-    
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
-    
+
     :Returns:
-    
+
             The construct with rounded data. If the operation was
             in-place then `None` is returned.
-    
+
     **Examples:**
-    
+
     >>> print(f.array)
     [-1.81, -1.41, -1.01, -0.91,  0.09,  1.09,  1.19,  1.59,  1.99])
     >>> print(f.round().array)
@@ -2699,24 +2699,24 @@ dtype('float64')
         '''Roll the data along an axis.
 
     .. seealso:: `insert_dimension`, `flip`, `squeeze`, `transpose`
-    
+
     :Parameters:
-    
+
         iaxis: `int`
             TODO
-            
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
         i: deprecated at version 3.0.0
             Use *inplace* parmaeter instead.
-    
+
     :Returns:
-    
+
     TODO
-    
+
     **Examples:**
-    
+
     TODO
 
         '''
@@ -2730,13 +2730,13 @@ dtype('float64')
     @property
     def hasbounds(self):
         '''Deprecated at version 3.0.0. Use method 'has_bounds' instead.
-        
+
         '''
         _DEPRECATION_ERROR_ATTRIBUTE(
             self, 'hasbounds',
             "Use method 'has_bounds' instead.") # pragma: no cover
 
-        
+
     def expand_dims(self, position=0, i=False):
         '''Insert a size 1 axis into the data array.
 
@@ -2748,5 +2748,5 @@ dtype('float64')
             self, 'expand_dims',
             "Use method 'insert_dimension' instead.") # pragma: no cover
 
-        
+
 #--- End: class

@@ -22,28 +22,28 @@ class RaggedIndexedSubarray(abstract.CompressedSubarray):
         '''
         # The compressed array
         array = self.array
-        
+
         # Initialize the full, uncompressed output array with missing
         # data everywhere
         uarray = numpy.ma.masked_all(self.shape, dtype=array.dtype)
 
         r_indices = [slice(None)] * array.ndim
-        p_indices = [slice(None)] * uarray.ndim        
-        
+        p_indices = [slice(None)] * uarray.ndim
+
         compression = self.compression
 
         instance_axis  = compression['instance_axis']
         instance_index = compression['instance_index']
         element_axis   = compression['i_element_axis']
         sample_indices = compression['i_element_indices']
-        
+
         p_indices[instance_axis] = instance_index
         p_indices[element_axis]  = slice(0, len(sample_indices))
-        
+
         uarray[tuple(p_indices)] = array[sample_indices]
-        
+
         if _debug:
-            print('instance_axis    =', instance_axis ) 
+            print('instance_axis    =', instance_axis )
             print('instance_index   =', instance_index)
             print('element_axis     =', element_axis  )
             print('sample_indices   =', sample_indices)
@@ -60,7 +60,7 @@ class RaggedIndexedSubarray(abstract.CompressedSubarray):
             indices = parse_indices(self.shape, indices)
             if _debug:
                 print('parse_indices(self.shape, indices) =', indices)
-                
+
             return get_subspace(uarray, indices)
 
 

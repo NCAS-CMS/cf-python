@@ -8,10 +8,10 @@ if __name__ == '__main__':
     import os
     import cf
     from re import sub as re_sub
-    
+
     def print_help(version, date):
         import subprocess
-        
+
         manpage = '''\
 .TH "CFA" "1" "{0}" "{1}" "cfa"
 .
@@ -106,13 +106,13 @@ If no output file options have been set (see the
 .ft B
 OUTPUT FILES
 .ft P
-section), or the 
+section), or the
 .ft B
 \-v
 .ft P
 option is set, then text descriptions of the CF field constructs
 contained in the input files are displayed on standard out. Short,
-medium-length, and complete descriptions are available via the  
+medium-length, and complete descriptions are available via the
 .ft B
 \-v
 .ft P
@@ -193,7 +193,7 @@ which is essentially a subset of the metadata of the field, including
 some coordinate metadata and other domain information, but which
 contains no data values. The structural signature accounts for the
 following standard CF properties:
-  
+
 .RS
 add_offset, calendar, cell_methods, _FillValue, flag_masks,
 flag_meanings, flag_values, missing_value, scale_factor,
@@ -368,7 +368,7 @@ integers. By default, input data types are preserved.
 Read external variables from the given external file. Multiple
 external files may be provided by specifying more than one
 .ft B
-\-e 
+\-e
 .ft P
 option.
 .
@@ -816,7 +816,7 @@ option. Note, however, that only netCDF4 formats support multiple
 unlimited dimensions. For example, to set the time and Z dimensions to
 be unlimited you could use
 .ft B
-\-\-unlimited=time \-\-unlimited=Z 
+\-\-unlimited=time \-\-unlimited=Z
 .ft P
 
 An example of defining an axis by an arbitrary CF property could be
@@ -893,7 +893,7 @@ Written by David Hassell
                              universal_newlines=True)
         p.communicate(input=manpage)
 
-        
+
     def _check_overwrite(outfile, files, overwrite):
         '''
         '''
@@ -903,26 +903,26 @@ Written by David Hassell
         if not overwrite:
             print("{} ERROR: Can't overwrite output file {} unless --overwrite is set".format(
                 iam, outfile))
-            sys.exit(2) 
-             
+            sys.exit(2)
+
         if not os.access(outfile, os.W_OK):
             print("{} ERROR: Can't overwrite output file {} without permission".format(iam, outfile))
-            sys.exit(2) 
-    
+            sys.exit(2)
+
         if set((outfile,)).intersection(files):
             print("{} ERROR: Can't overwrite input file {}".format(iam, outfile))
-            sys.exit(2) 
-                
+            sys.exit(2)
+
         # Remove the pre-existing output file
         os.remove(outfile)
-        
+
 
     iam   = os.path.basename(sys.argv[0])
     usage = "USAGE: {0} [-1] [-D] [-d dir] [-e file] [-f format] [-h] [-i] [-n] [-o file] [-s property] [-u] [-v mode] [-x] [OPTIONS] INPUTS".format(
         iam)
 
     short_help = '''\
-{0} 
+{0}
   [-1]                   View all input files as a single dataset
   [-D]                   Write to the same directories as its input files
   [-d dir]               Directory for output files
@@ -932,7 +932,7 @@ Written by David Hassell
   [-i]                   Configure field aggregation
   [-n]                   Do not aggregate fields
   [-o file]              Output all fields to a single file
-  [-s property]          Output only fields with this property  
+  [-s property]          Output only fields with this property
   [-u]                   Configure field aggregation
   [-v mode]              Display a summary of each field (do not write to disk)
   [-x]                   Do not output unaggregatable fields
@@ -952,7 +952,7 @@ Written by David Hassell
   [--least_sig_digit=N]  Truncate output data arrays
   [--no_shuffle]         Turn off the HDF5 shuffle filter
   [--fletcher32]         Turn on the Fletcher32 HDF5 checksum algorithm
-  [--info=N]             Display information about field aggregation 
+  [--info=N]             Display information about field aggregation
   [--axis=property]      Configure field aggregation
   [--equal=property]     Configure field aggregation
   [--ignore=property]    Configure field aggregation
@@ -969,7 +969,7 @@ Written by David Hassell
 
 Using cf-python library version {1} at {2}'''.format(
     usage, cf.__version__, os.path.dirname(os.path.abspath(cf.__file__)))
- 
+
     # --------------------------------------------------------------------
     # Parse command line options
     # --------------------------------------------------------------------
@@ -993,7 +993,7 @@ Using cf-python library version {1} at {2}'''.format(
                                          'format=',
                                          'help',
                                          'ignore=',
-                                         'ignore_read_error', 
+                                         'ignore_read_error',
                                          'info=',
                                          'least_sig_digit=',
                                          'ncvar_identities',
@@ -1025,11 +1025,11 @@ Using cf-python library version {1} at {2}'''.format(
         # print help information and exit:
         print("{} ERROR: {}".format(iam, str(err)))
         sys.exit(2)
-    
+
     if not (infiles or opts):
         print(short_help)
         sys.exit(0)
- 
+
     # Defaults
     fmt                = 'NETCDF4'
     one_to_one         = True
@@ -1061,12 +1061,12 @@ Using cf-python library version {1} at {2}'''.format(
             outfile = arg
             one_to_one = False
         elif option in ('-f', '--format'):
-            fmt = arg              
+            fmt = arg
         elif option in ('-D', '--Directory'):
             Directory = True
             directory_output = True
         elif option in ('-d', '--directory'):
-            directory = arg           
+            directory = arg
             directory_output = True
         elif option == '--axis':
             axes.append(arg)
@@ -1097,7 +1097,7 @@ Using cf-python library version {1} at {2}'''.format(
         elif option in ('-i', '--relaxed_identities'):
             aggregate_options['relaxed_identities'] = True
         elif option in ('-u', '--relaxed_units'):
-            aggregate_options['relaxed_units'] = True 
+            aggregate_options['relaxed_units'] = True
         elif option == '--respect_valid':
             aggregate_options['respect_valid'] = True
         elif option == '--ncvar_identities':
@@ -1170,7 +1170,7 @@ Using cf-python library version {1} at {2}'''.format(
     if one and view is None:
         print("{} ERROR: Can only set the -1 option if the -v option is also set.".format(iam))
         sys.exit(2)
-    
+
     if promote:
         read_options['promote'] = promote
 
@@ -1179,7 +1179,7 @@ Using cf-python library version {1} at {2}'''.format(
     else:
         aggregate_options['info']    = info
         aggregate_options['exclude'] = exclude
-        
+
         if axes:
             aggregate_options['dimension'] = axes
 
@@ -1226,7 +1226,7 @@ Using cf-python library version {1} at {2}'''.format(
     if fmt == 'CFA':
         print("{} ERROR: '-f CFA' has been replaced by '-f CFA3' or '-f CFA4' for netCDF3 classic and netCDF4 CFA output formats respectively".format(
             iam))
-        sys.exit(2) 
+        sys.exit(2)
 
     if not infiles:
         print("{} ERROR: Must provide at least one input file".format(iam))
@@ -1234,15 +1234,15 @@ Using cf-python library version {1} at {2}'''.format(
 
     if sum([outfile is not None, directory is not None, Directory is not None]) > 1:
         print("{} ERROR: Can only set one of the -o, -d and -D options".format(iam))
-        sys.exit(2) 
-    
+        sys.exit(2)
+
     if directory is not None:
         # Check that the directory is ok and replace it with its
         # absolute, normalised path.
         if (not os.path.isdir(directory) or
             not os.access(directory, os.W_OK)):
             print("{} ERROR: Can't write to output directory {}".format(iam, directory))
-            sys.exit(2) 
+            sys.exit(2)
 
         directory = cf.abspath(directory)
 
@@ -1252,7 +1252,7 @@ Using cf-python library version {1} at {2}'''.format(
     follow_symlinks = read_options.get('follow_symlinks', False)
     if follow_symlinks and not recursive:
         print("{} ERROR: Can't set --follow_symlinks without setting --recursive".format(iam))
-        sys.exit(2) 
+        sys.exit(2)
 
     infiles2 = []
     for x in (cf.abspath(f) for f in infiles):
@@ -1262,7 +1262,7 @@ Using cf-python library version {1} at {2}'''.format(
             # Walk through directories
             for path, subdirs, filenames in os.walk(x, followlinks=follow_symlinks):
                 infiles2.extend([os.path.join(path, f) for f in filenames])
-                if not recursive:                            
+                if not recursive:
                     break
     #--- End: for
     infiles = infiles2
@@ -1291,7 +1291,7 @@ Using cf-python library version {1} at {2}'''.format(
 
             if directory is not None:
                 outfile = cf.pathjoin(directory, os.path.basename(outfile))
-        
+
             _check_overwrite(outfile, files, overwrite)
 
             files.add(outfile)
@@ -1299,7 +1299,7 @@ Using cf-python library version {1} at {2}'''.format(
         # ------------------------------------------------------------
         # Read
         # ------------------------------------------------------------
-        try:        
+        try:
             f = cf.read(infile, **read_options)
         except Exception as error:
             print("{} ERROR reading {}: {}".format(iam, infile, error))
@@ -1309,7 +1309,7 @@ Using cf-python library version {1} at {2}'''.format(
             # --------------------------------------------------------
             # View
             # --------------------------------------------------------
-            for g in f:            
+            for g in f:
                 if view == 's':
                     # Omit the angled brackets from the repr output
                     print(repr(g)[1:-1])
@@ -1317,17 +1317,17 @@ Using cf-python library version {1} at {2}'''.format(
                     print(g)
                 elif view == 'c':
                     g.dump()
-        else:        
+        else:
             # --------------------------------------------------------
             # Write
-            # -------------------------------------------------------- 
+            # --------------------------------------------------------
             if one_to_one and write_options.get('verbose', False) and f:
                 print('\nOUTPUT FILE:', outfile)
-    
+
             try:
                 cf.write(f, outfile, **write_options)
             except Exception as error:
                 print("{} ERROR writing {}: {}".format(iam, outfile, error))
                 sys.exit(1)
     #--- End: for
-    
+

@@ -14,9 +14,9 @@ def find_package_data_files(directory):
                 filename = os.path.join(root, basename)
                 yield filename.replace('cf/', '', 1)
 
-                
+
 def find_test_files(directory):
-    for root, dirs, files in os.walk(directory):        
+    for root, dirs, files in os.walk(directory):
         for basename in files:
             if (fnmatch.fnmatch(basename, '*.sh') or
                 fnmatch.fnmatch(basename, '*.nc') or
@@ -34,7 +34,7 @@ def _read(fname):
     with open(fpath, 'r') as file_:
         return file_.read()
 
-    
+
 def _get_version():
     '''Returns library version by inspecting __init__.py file.
 
@@ -70,7 +70,7 @@ class build_umread(build):
 
 #        rc = subprocess.call(cmd)
 
-        def compile():            
+        def compile():
             print('*' * 80)
             print('Running:', ' '.join(cmd), '\n')
 
@@ -79,7 +79,7 @@ class build_umread(build):
             except Exception as error:
                 print(error)
                 rc = 40
-            
+
             print('\n', '-' * 80)
             if not rc:
                 print('SUCCESSFULLY built UM read C library')
@@ -95,7 +95,7 @@ class build_umread(build):
             print("cf build successful")
             print()
 
-            
+
         self.execute(compile, [], 'compiling umread')
 #--- End: class
 
@@ -222,8 +222,8 @@ setup(name = "cf-python",
       keywords     = ['cf', 'netcdf', 'UM', 'data', 'science',
                       'oceanography', 'meteorology', 'climate'],
       classifiers  = ["Development Status :: 5 - Production/Stable",
-                      "Intended Audience :: Science/Research", 
-                      "License :: OSI Approved :: MIT License", 
+                      "Intended Audience :: Science/Research",
+                      "License :: OSI Approved :: MIT License",
                       "Topic :: Scientific/Engineering :: Mathematics",
                       "Topic :: Scientific/Engineering :: Physics",
                       "Topic :: Scientific/Engineering :: Atmospheric Science",
@@ -254,7 +254,7 @@ setup(name = "cf-python",
 #                          'matplotlib>=3.0.0',
 #                          'mpi4py>=3.0.0',
 #                          'ESMF>=7.1',
-#                          'udunits2==2.2.25',                          
+#                          'udunits2==2.2.25',
                       ],
       cmdclass     = {'build': build_umread}, #https://docs.python.org/2/distutils/apiref.html
   )

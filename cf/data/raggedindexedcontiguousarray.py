@@ -13,12 +13,12 @@ class RaggedIndexedContiguousArray(abstract.CompressedArray,
     dimension") such that a contiguous ragged array representation is
     used for each profile and the indexed ragged array representation
     to organise the profiles into timeseries.
-    
+
     The information needed to uncompress the data is stored in a
     "count variable" that gives the size of each profile; and in a
     "index variable" that specifies the feature that each profile
     belongs to.
-    
+
     .. versionadded:: 3.0.0
 
     '''

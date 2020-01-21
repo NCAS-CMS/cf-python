@@ -18,55 +18,55 @@ class CoordinateReferenceTest(unittest.TestCase):
         domain_ancillaries={'a'   : 'auxiliarycoordinate0',
                             'b'   : 'auxiliarycoordinate1',
                             'orog': 'domainancillary0'})
-    
+
     vcr = cf.CoordinateReference(
         coordinates=('coord1',),
         datum=datum,
         coordinate_conversion=vconversion)
-    
+
     # Create a horizontal grid mapping coordinate reference
     hconversion=cf.CoordinateConversion(
         parameters={'grid_mapping_name': 'rotated_latitude_longitude',
                     'grid_north_pole_latitude': 38.0,
                     'grid_north_pole_longitude': 190.0})
-    
+
     hcr = cf.CoordinateReference(
         coordinate_conversion=hconversion,
         datum=datum,
         coordinates=['x', 'y', 'lat', 'lon']
     )
-    
+
     def test_CoordinateReference__repr__str__dump(self):
         f = cf.read(self.filename)[0]
 
         coordinate_conversion=cf.CoordinateConversion(
             parameters={'standard_name': 'atmosphere_hybrid_height_coordinate'},
             domain_ancillaries={'a': 'aux0', 'b': 'aux1', 'orog': 'orog'})
-                    
+
         datum=cf.Datum(parameters={'earth_radius': 23423423423.34})
-                    
+
         # Create a vertical grid mapping coordinate reference
         t = cf.CoordinateReference(
             coordinates=('coord1',),
             coordinate_conversion=coordinate_conversion,
             datum=datum)
-        
+
         _ = repr(t)
         _ = str(t)
         _ = t.dump(display=False)
 
         self.assertFalse(t.has_bounds())
-        
+
         _ = repr(datum)
         _ = str(datum)
 
         _ = repr(coordinate_conversion)
         _ = str(coordinate_conversion)
 
-    
+
     def test_CoordinateReference_equals(self):
         f = cf.read(self.filename)[0]
-        
+
         # Create a vertical grid mapping coordinate reference
         t = cf.CoordinateReference(
             coordinates=('coord1',),
@@ -76,7 +76,7 @@ class CoordinateReferenceTest(unittest.TestCase):
         )
         self.assertTrue(t.equals(t, verbose=True))
         self.assertTrue(t.equals(t.copy(), verbose=True))
-        
+
         # Create a horizontal grid mapping coordinate reference
         t = cf.CoordinateReference(
             coordinates=['coord1', 'fred', 'coord3'],
@@ -84,7 +84,7 @@ class CoordinateReferenceTest(unittest.TestCase):
                 parameters={'grid_mapping_name': 'rotated_latitude_longitude',
                             'grid_north_pole_latitude': 38.0,
                             'grid_north_pole_longitude': 190.0})
-        )            
+        )
         self.assertTrue(t.equals(t, verbose=True))
         self.assertTrue(t.equals(t.copy(), verbose=True))
 
@@ -93,7 +93,7 @@ class CoordinateReferenceTest(unittest.TestCase):
             parameters={'grid_mapping_name': 'rotated_latitude_longitude',
                         'grid_north_pole_latitude': 38.0,
                         'grid_north_pole_longitude': 190.0})
-        
+
         t = cf.CoordinateReference(
             coordinate_conversion=conversion,
             datum=datum,
@@ -151,19 +151,19 @@ class CoordinateReferenceTest(unittest.TestCase):
         self.assertTrue(cr.canonical_units('qwerty') is None)
         self.assertTrue(cr.canonical_units('earth_radius') == cf.Units('m'))
 
-    
+
     def test_CoordinateReference_match(self):
         self.assertTrue(self.vcr.match())
         self.assertTrue(self.vcr.match('standard_name:atmosphere_hybrid_height_coordinate'))
         self.assertTrue(self.vcr.match('atmosphere_hybrid_height_coordinate'))
         self.assertTrue(self.vcr.match('atmosphere_hybrid_height_coordinate', 'qwerty'))
-        
+
         self.assertTrue(self.hcr.match())
         self.assertTrue(self.hcr.match('grid_mapping_name:rotated_latitude_longitude'))
         self.assertTrue(self.hcr.match('rotated_latitude_longitude'))
         self.assertTrue(self.hcr.match('grid_mapping_name:rotated_latitude_longitude', 'qwerty'))
 
-    
+
     def test_CoordinateReference_get__getitem__(self):
         self.assertTrue(self.vcr['earth_radius'] == self.datum.get_parameter('earth_radius'))
         self.assertTrue(self.vcr['standard_name'] == self.vconversion.get_parameter('standard_name'))
@@ -185,7 +185,7 @@ class CoordinateReferenceTest(unittest.TestCase):
         with self.assertRaises(Exception):
             _ = self.hcr['qwerty']
 
-    
+
 #--- End: class
 
 if __name__ == '__main__':
@@ -194,4 +194,4 @@ if __name__ == '__main__':
     print()
     unittest.main(verbosity=2)
 
-  
+

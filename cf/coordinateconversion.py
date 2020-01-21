@@ -4,7 +4,7 @@ import cfdm
 class CoordinateConversion(cfdm.CoordinateConversion):
     '''A coordinate conversion component of a coordinate reference
     construct of the CF data model.
-    
+
     A coordinate conversion formula converting coordinate values taken
     from the dimension or auxiliary coordinate constructs to a
     different coordinate system. A term of the conversion formula can
@@ -15,7 +15,7 @@ class CoordinateConversion(cfdm.CoordinateConversion):
     spatially varying orography data). A coordinate reference
     construct relates the coordinate values of the field to locations
     in a planetary reference frame.
-    
+
     .. versionadded:: 3.0.0
 
     '''
@@ -27,5 +27,5 @@ class CoordinateConversion(cfdm.CoordinateConversion):
         '''
         return super().__repr__().replace('<', '<CF ', 1)
 
-    
+
 #--- End: class

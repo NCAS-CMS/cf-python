@@ -19,7 +19,7 @@ class AuxiliaryCoordinate(abstract.Coordinate,
     construct simultaneously. CF-netCDF auxiliary coordinate variables
     and non-numeric scalar coordinate variables correspond to
     auxiliary coordinate constructs.
-    
+
     The auxiliary coordinate construct consists of a data array of the
     coordinate values which spans a subset of the domain axis
     constructs, an optional array of cell bounds recording the extents
@@ -32,9 +32,9 @@ class AuxiliaryCoordinate(abstract.Coordinate,
     domain. Note that, for climatological time axes, the bounds are
     interpreted in a special way indicated by the cell method
     constructs.
-    
+
     **NetCDF interface**
-    
+
     The netCDF variable name of the construct may be accessed with the
     `nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
     `nc_has_variable` methods.
@@ -55,15 +55,15 @@ class AuxiliaryCoordinate(abstract.Coordinate,
 
     .. seealso::`isdimension`, `isdomainancillary`,
                 `isfieldancillary`, `ismeasure`
-    
+
     **Examples:**
-    
+
     >>> c.isauxiliary
     True
 
         '''
         return True
 
-    
+
 #--- End: class
 

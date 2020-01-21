@@ -24,7 +24,7 @@ _collapse_cell_methods = {
     'sd'             : 'standard_deviation',
     'sum'            : 'sum',
     'var'            : 'variance',
-    'sample_size'    : None, 
+    'sample_size'    : None,
     'sum_of_weights' : None,
     'sum_of_weights2': None,
     }
@@ -37,7 +37,7 @@ class CellMethod(cfdm.CellMethod):
     the field construct represent the variation of the physical
     quantity within its cells, i.e. the structure of the data at a
     higher resolution.
-    
+
     A single cell method construct consists of a set of axes, a
     "method" property which describes how a value of the field
     construct's data array describes the variation of the quantity
@@ -56,22 +56,22 @@ class CellMethod(cfdm.CellMethod):
         '''
         return super().__repr__().replace('<', '<CF ', 1)
 
-    
+
     @classmethod
     def create(cls, cell_methods_string=None):
-        '''Parse a CF-like cell_methods string.   
-    
+        '''Parse a CF-like cell_methods string.
+
     :Parameters:
-    
+
         cell_methods_string: `str`
             A CF cell_methods string.
-    
+
     :Returns:
-    
+
         `list`
-    
+
     **Examples:**
-    
+
     TODO
 
         '''
@@ -81,13 +81,13 @@ class CellMethod(cfdm.CellMethod):
 
         if not cell_methods_string:
             return out
-        
+
         # ------------------------------------------------------------
         # Split the cell_methods string into a list of strings ready
         # for parsing. For example:
         #
         #   'lat: mean (interval: 1 hour)'
-        # 
+        #
         # would be split up into:
         #
         #   ['lat:', 'mean', '(', 'interval:', '1', 'hour', ')']
@@ -119,7 +119,7 @@ class CellMethod(cfdm.CellMethod):
 
             # Method
             cm.set_method(cell_methods.pop(0))
-            
+
             if not cell_methods:
                 out.append(cm)
                 break
@@ -132,7 +132,7 @@ class CellMethod(cfdm.CellMethod):
                 if not cell_methods:
                     break
             #--- End: while
-            if not cell_methods: 
+            if not cell_methods:
                 out.append(cm)
                 break
 
@@ -143,7 +143,7 @@ class CellMethod(cfdm.CellMethod):
 
                 if not (re.search('^(interval|comment):$', cell_methods[0])):
                     cell_methods.insert(0, 'comment:')
-                           
+
                 while not re.search('^\)$', cell_methods[0]):
                     term = cell_methods.pop(0)[:-1]
 
@@ -178,13 +178,13 @@ class CellMethod(cfdm.CellMethod):
                             comment.append(cell_methods.pop(0))
                         #--- End: while
                         cm.set_qualifier('comment', ' '.join(comment))
-                #--- End: while 
+                #--- End: while
 
                 if cell_methods[0].endswith(')'):
                     cell_methods.pop(0)
             #--- End: if
 
-            n_intervals = len(intervals)          
+            n_intervals = len(intervals)
             if n_intervals > 1 and n_intervals != len(axes):
                 raise ValueError("{} (doesn't match axes): {!r}".format(incorrect_interval, interval))
 
@@ -223,13 +223,13 @@ class CellMethod(cfdm.CellMethod):
     @property
     def within(self):
         '''The cell method's within qualifier.
-    
+
     These describe how climatological statistics have been derived.
-    
+
     .. seealso:: `over`
-    
+
     **Examples:**
-    
+
     >>> c
     >>> c
     <CF CellMethod: time: minimum>
@@ -254,11 +254,11 @@ class CellMethod(cfdm.CellMethod):
         '''The cell method's where qualifier.
 
     These describe how climatological statistics have been derived.
-    
+
     .. seealso:: `over`
-    
+
     **Examples:**
-    
+
     >>> c
     >>> c
     <CF CellMethod: time: minimum>
@@ -283,11 +283,11 @@ class CellMethod(cfdm.CellMethod):
         '''The cell method's over qualifier.
 
     These describe how climatological statistics have been derived.
-    
+
     .. seealso:: `within`
-    
+
     **Examples:**
-    
+
     >>> c
     >>> c
     <CF CellMethod: time: minimum>
@@ -323,9 +323,9 @@ class CellMethod(cfdm.CellMethod):
         '''The cell method's method qualifier.
 
     Describes how the cell values have been determined or derived.
-    
+
     **Examples:**
-    
+
     >>> c
     <CF CellMethod: time: minimum>
     >>> c.method
@@ -350,7 +350,7 @@ class CellMethod(cfdm.CellMethod):
         '''The cell method's interval qualifier(s).
 
     **Examples:**
-    
+
     >>> c
     <CF CellMethod: time: minimum>
     >>> c.intervals
@@ -365,10 +365,10 @@ class CellMethod(cfdm.CellMethod):
     <CF CellMethod: time: minimum (interval: 7.5 minutes)>
     >>> c.intervals
     (<CF Data: 7.5 minutes>,)
-    >>> del c.intervals        
+    >>> del c.intervals
     >>> c
     <CF CellMethods: time: minimum>
-    
+
     >>> c
     <CF CellMethod: lat: lon: mean>
     >>> c.intervals = ['0.2 degree_N', cf.Data(0.1 'degree_E')]
@@ -384,7 +384,7 @@ class CellMethod(cfdm.CellMethod):
             raise ValueError(
                 "intervals attribute must be a tuple or list, not {0!r}".format(
                     value.__class__.__name__))
-        
+
         # Parse the intervals
         values = []
         for interval in value:
@@ -401,7 +401,7 @@ class CellMethod(cfdm.CellMethod):
                     units = ' '.join(i)
                 else:
                     units = None
-                    
+
                 try:
                     d = Data(x, units)
                 except:
@@ -414,11 +414,11 @@ class CellMethod(cfdm.CellMethod):
                     raise ValueError(
                         "Unparseable interval: {0!r}".format(interval))
             #--- End: if
-            
+
             if d.size != 1:
                 raise ValueError(
                     "Unparseable interval: {0!r}".format(interval))
-                
+
             if d.ndim > 1:
                 d.squeeze(inplace=True)
 
@@ -431,7 +431,7 @@ class CellMethod(cfdm.CellMethod):
     def intervals(self):
         self.del_qualifier('interval', default=AttributeError())
 
-        
+
     @property
     def axes(self):
         '''TODO
@@ -443,7 +443,7 @@ class CellMethod(cfdm.CellMethod):
             raise ValueError(
                 "axes attribute must be a tuple or list, not {0}".format(
                     value.__class__.__name__))
-        
+
         self.set_axes(tuple(value))
     @axes.deleter
     def axes(self):
@@ -454,7 +454,7 @@ class CellMethod(cfdm.CellMethod):
     @_inplace_enabled
     def expand_intervals(self, inplace=False, i=False):
         '''TODO
-        
+
         '''
         c = _inplace_enabled_define_and_cleanup(self)
         n_axes = len(c.get_axes(()))
@@ -471,9 +471,9 @@ class CellMethod(cfdm.CellMethod):
         '''TODO
 
     :Parameters:
-    
+
         axis_map: `dict`
-    
+
         inplace: `bool`
 
         '''
@@ -493,33 +493,33 @@ class CellMethod(cfdm.CellMethod):
 
     The `axes` and `intervals` attributes are ignored in the
     comparison.
-    
+
     :Parameters:
-    
-        other: 
+
+        other:
             The object to compare for equality.
-    
+
         atol: `float`, optional
             The absolute tolerance for all numerical comparisons, By
             default the value returned by the `ATOL` function is used.
-    
+
         rtol: `float`, optional
             The relative tolerance for all numerical comparisons, By
             default the value returned by the `RTOL` function is used.
-    
-    :Returns: 
-    
+
+    :Returns:
+
         `bool`
             Whether or not the two instances are equivalent.
-    
+
     **Examples:**
-    
+
     TODO
 
         '''
         if traceback:
             _DEPRECATION_ERROR_KWARGS(self, 'equivalent', traceback=True) # pragma: no cover
-            
+
         if self is other:
             return True
 
@@ -532,13 +532,13 @@ class CellMethod(cfdm.CellMethod):
 
         axes0 = self.get_axes(())
         axes1 = other.get_axes(())
-            
+
         if len(axes0) != len(axes1) or set(axes0) != set(axes1):
             if verbose:
                 print("{}: Nonequivalent axes: {!r}, {!r}".format(
                     self.__class__.__name__, axes0, axes1)) # pragma: no cover
             return False
-            
+
 #        other1 = other.copy()
         argsort = [axes1.index(axis0) for axis0 in axes0]
         other1 = other.sorted(indices=argsort)
@@ -562,7 +562,7 @@ class CellMethod(cfdm.CellMethod):
                         other1.get_qualifier('interval', ()))) # pragma: no cover
                 return False
 
-        intervals0 = self1.get_qualifier('interval', ())                   
+        intervals0 = self1.get_qualifier('interval', ())
         if intervals0:
             for data0, data1 in zip(intervals0, other1.get_qualifier('interval', ())):
                 if not data0.allclose(data1, rtol=rtol, atol=atol):
@@ -580,18 +580,18 @@ class CellMethod(cfdm.CellMethod):
         '''Inspect the attributes.
 
     .. seealso:: `cf.inspect`
-    
-    :Returns: 
-    
+
+    :Returns:
+
         `None`
 
         '''
         print(cf_inspect(self))
 
 
-    # ----------------------------------------------------------------    
+    # ----------------------------------------------------------------
     # Deprecated attributes and methods
-    # ----------------------------------------------------------------    
+    # ----------------------------------------------------------------
     def write(self, axis_map=None):
         '''Return a string of the cell method.
 
@@ -612,5 +612,5 @@ class CellMethod(cfdm.CellMethod):
         _DEPRECATION_ERROR_METHOD(
             self, 'remove_axes', "Use method 'del_axes' instead.") # pragma: no cover
 
-        
+
 #--- End: class

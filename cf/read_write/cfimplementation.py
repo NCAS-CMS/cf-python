@@ -24,7 +24,7 @@ from ..data import (Data,
                     NetCDFArray,
                     RaggedContiguousArray,
                     RaggedIndexedArray,
-                    RaggedIndexedContiguousArray, 
+                    RaggedIndexedContiguousArray,
                     )
 
 class CFImplementation(cfdm.CFDMImplementation):
@@ -37,7 +37,7 @@ class CFImplementation(cfdm.CFDMImplementation):
 
 _implementation = CFImplementation(
     cf_version = CF(),
-    
+
     AuxiliaryCoordinate = AuxiliaryCoordinate,
     CellMeasure         = CellMeasure,
     CellMethod          = CellMethod,
@@ -47,16 +47,16 @@ _implementation = CFImplementation(
     DomainAxis          = DomainAxis,
     Field               = Field,
     FieldAncillary      = FieldAncillary,
-    
+
     Bounds = Bounds,
-    
+
     CoordinateConversion = CoordinateConversion,
     Datum                = Datum,
 
     List          = List,
     Index         = Index,
     Count         = Count,
-    
+
     Data                         = Data,
     GatheredArray                = GatheredArray,
     NetCDFArray                  = NetCDFArray,

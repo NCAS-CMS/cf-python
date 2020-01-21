@@ -26,10 +26,10 @@ class RegridTest(unittest.TestCase):
                              'regrid_file7.nc')
     filename10 = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                              'regrid_file8.nc')
-    
+
     chunk_sizes = (300, 10000, 100000)[::-1]
     original_chunksize = cf.CHUNKSIZE()
-    
+
     test_only = []
 #    test_only = ('NOTHING!!!!!',)
 #    test_only = ('test_Field_regrids',)
@@ -67,11 +67,11 @@ class RegridTest(unittest.TestCase):
             r = f1.regrids(dst, method='conservative', dst_cyclic=True)
             self.assertTrue(f3.equals(r, verbose=True),
                             'destination = global dict, CHUNKSIZE = %s' % chunksize)
-            
+
             f4 = cf.read(self.filename4)[0]
             f5 = cf.read(self.filename5)[0]
 
-            r = f1.regrids(f5, 'bilinear')                        
+            r = f1.regrids(f5, 'bilinear')
             self.assertTrue(f4.equals(r, verbose=True),
                             'destination = regional Field, CHUNKSIZE = %s' % chunksize)
 
@@ -84,15 +84,15 @@ class RegridTest(unittest.TestCase):
         f6 = cf.read(self.filename6)[0]
         with self.assertRaises(Exception):
             f1.regridc(f6, axes='T', method='bilinear')
-        
+
         cf.ATOL(original_atol)
 
-    
+
     @unittest.skipUnless(cf._found_ESMF, "Requires esmf package.")
     def test_Field_regridc(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
-        
+
         original_atol = cf.ATOL(1e-12)
 
         for chunksize in self.chunk_sizes:
@@ -123,7 +123,7 @@ class RegridTest(unittest.TestCase):
 
         cf.ATOL(original_atol)
 
-    
+
 #--- End: class
 
 if __name__ == "__main__":

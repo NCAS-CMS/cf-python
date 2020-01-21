@@ -11,13 +11,13 @@ import cf
 class QueryTest(unittest.TestCase):
     filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                             'test_file.nc')
-    
+
     def test_Query_contains(self):
         f = cf.read(self.filename)[0]
         c = f.dim('X')
-        self.assertTrue(((cf.contains(21.1)==c).array == 
+        self.assertTrue(((cf.contains(21.1)==c).array ==
                          numpy.array([0,1,0,0,0,0,0,0,0], bool)).all())
-        self.assertTrue(((cf.contains(999)==c).array == 
+        self.assertTrue(((cf.contains(999)==c).array ==
                          numpy.array([0,0,0,0,0,0,0,0,0], bool)).all())
 
 
@@ -29,7 +29,7 @@ class QueryTest(unittest.TestCase):
         s = q | r
         t = cf.Query('gt', 12, attr='bounds')
         u = s & t
-        
+
         _ = repr(q)
         _ = repr(s)
         _ = repr(t)
@@ -39,7 +39,7 @@ class QueryTest(unittest.TestCase):
         _ = str(t)
         _ = str(u)
         _ = u.dump(display=False)
-        
+
         _ = u.attr
         _ = u.operator
         _ = q.attr
@@ -50,13 +50,13 @@ class QueryTest(unittest.TestCase):
 
         self.assertTrue(u.equals(u.copy(), verbose=True))
         self.assertFalse(u.equals(t, verbose=False))
-        
+
         _ = copy.deepcopy(u)
-        
+
         c = f.dimension_coordinate('X')
-        self.assertTrue(((cf.contains(21.1)==c).array == 
+        self.assertTrue(((cf.contains(21.1)==c).array ==
                          numpy.array([0,1,0,0,0,0,0,0,0], bool)).all())
-        self.assertTrue(((cf.contains(999)==c).array == 
+        self.assertTrue(((cf.contains(999)==c).array ==
                          numpy.array([0,0,0,0,0,0,0,0,0], bool)).all())
 
         cf.Query('gt', cf.Data(12, 'm'), attr='bounds')
@@ -74,21 +74,21 @@ class QueryTest(unittest.TestCase):
         _ = cf.cellgt(3)
         _ = cf.cellwi(1, 2)
         _ = cf.cellwo(1, 2)
-            
+
 
     def test_Query_datetime1(self):
         d = cf.Data([[1., 5.], [6, 2]], 'days since 2000-12-29 21:00:00', calendar='standard')
-        
+
         message = 'Diff ='+str( (d-cf.Data(cf.dt('2001-01-03 21:00:00', calendar='standard'))).array)
-        
+
         self.assertTrue((d==cf.eq(cf.dt('2001-01-03 21:00:00'))).equals(cf.Data([[False, True], [False, False]]), verbose=True), message)
         self.assertTrue((d==cf.ne(cf.dt('2001-01-03 21:00:00'))).equals(cf.Data([[True, False], [True, True]])), message)
         self.assertTrue((d==cf.ge(cf.dt('2001-01-03 21:00:00'))).equals(cf.Data([[False, True], [True, False]])), message)
         self.assertTrue((d==cf.gt(cf.dt('2001-01-03 21:00:00'))).equals(cf.Data([[False, False], [True, False]])), message)
         self.assertTrue((d==cf.le(cf.dt('2001-01-03 21:00:00'))).equals(cf.Data([[True, True], [False, True]])), message)
-        self.assertTrue((d==cf.lt(cf.dt('2001-01-03 21:00:00'))).equals(cf.Data([[True, False], [False, True]])), message) 
-        self.assertTrue((d==cf.wi(cf.dt('2000-12-31 21:00:00'), cf.dt('2001-01-03 21:00:00'))).equals(cf.Data([[False, True], [False, True]])), message) 
-        self.assertTrue((d==cf.wo(cf.dt('2000-12-31 21:00:00'), cf.dt('2001-01-03 21:00:00'))).equals(cf.Data([[True, False], [True, False]])), message) 
+        self.assertTrue((d==cf.lt(cf.dt('2001-01-03 21:00:00'))).equals(cf.Data([[True, False], [False, True]])), message)
+        self.assertTrue((d==cf.wi(cf.dt('2000-12-31 21:00:00'), cf.dt('2001-01-03 21:00:00'))).equals(cf.Data([[False, True], [False, True]])), message)
+        self.assertTrue((d==cf.wo(cf.dt('2000-12-31 21:00:00'), cf.dt('2001-01-03 21:00:00'))).equals(cf.Data([[True, False], [True, False]])), message)
         self.assertTrue((d==cf.set([cf.dt('2000-12-31 21:00:00'), cf.dt('2001-01-03 21:00:00')])).equals(cf.Data([[False, True], [False, True]])), message)
 
         _ = cf.seasons()
@@ -103,7 +103,7 @@ class QueryTest(unittest.TestCase):
         _ = cf.jja()
         _ = cf.son()
 
-        
+
     def test_Query_year_month_day_hour_minute_second(self):
         d = cf.Data([[1., 5.], [6, 2]], 'days since 2000-12-29 21:57:57', calendar='gregorian')
 
@@ -115,9 +115,9 @@ class QueryTest(unittest.TestCase):
         d = cf.Data([[1., 5], [6, 2]], 'minutes since 2000-12-29 21:57:57')
         self.assertTrue((d==cf.minute(2)).equals(cf.Data([[False, True], [False, False]])))
         d = cf.Data([[1., 5], [6, 2]], 'seconds since 2000-12-29 21:57:57')
-        self.assertTrue((d==cf.second(2)).equals(cf.Data([[False, True], [False, False]]))) 
-        
-        d = cf.Data([[1., 5.], [6, 2]], 'days since 2000-12-29 21:57:57')   
+        self.assertTrue((d==cf.second(2)).equals(cf.Data([[False, True], [False, False]])))
+
+        d = cf.Data([[1., 5.], [6, 2]], 'days since 2000-12-29 21:57:57')
         self.assertTrue((d==cf.year(cf.ne(-1))).equals(cf.Data([[True, True], [True, True]])))
         self.assertTrue((d==cf.month(cf.ne(-1))).equals(cf.Data([[True, True], [True, True]])))
         self.assertTrue((d==cf.day(cf.ne(-1))).equals(cf.Data([[True, True], [True, True]])))
@@ -126,58 +126,58 @@ class QueryTest(unittest.TestCase):
         d = cf.Data([[1., 5], [6, 2]], 'minutes since 2000-12-29 21:57:57')
         self.assertTrue((d==cf.minute(cf.ne(-1))).equals(cf.Data([[True, True], [True, True]])))
         d = cf.Data([[1., 5], [6, 2]], 'seconds since 2000-12-29 21:57:57')
-        self.assertTrue((d==cf.second(cf.ne(-1))).equals(cf.Data([[True, True], [True, True]]))) 
+        self.assertTrue((d==cf.second(cf.ne(-1))).equals(cf.Data([[True, True], [True, True]])))
 
 
     def test_Query_dteq_dtne_dtge_dtgt_dtle_dtlt(self):
         d = cf.Data([[1., 5.], [6, 2]], 'days since 2000-12-29 21:00:00')
-        
+
         message = 'Diff ='+str((d-cf.Data(cf.dt('2001-01-03 21:00:00', calendar='standard'))).array)
-        
+
         self.assertTrue((d==cf.eq(cf.dt('2001-01-03 21:00:00'))).equals(cf.Data([[False, True], [False, False]])), message)
         self.assertTrue((d==cf.ne(cf.dt('2001-01-03 21:00:00'))).equals(cf.Data([[True, False], [True, True]])), message)
         self.assertTrue((d==cf.ge(cf.dt('2001-01-03 21:00:00'))).equals(cf.Data([[False, True], [True, False]])), message)
         self.assertTrue((d==cf.gt(cf.dt('2001-01-03 21:00:00'))).equals(cf.Data([[False, False], [True, False]])), message)
         self.assertTrue((d==cf.le(cf.dt('2001-01-03 21:00:00'))).equals(cf.Data([[True, True], [False, True]])), message)
-        self.assertTrue((d==cf.lt(cf.dt('2001-01-03 21:00:00'))).equals(cf.Data([[True, False], [False, True]])), message) 
-        
+        self.assertTrue((d==cf.lt(cf.dt('2001-01-03 21:00:00'))).equals(cf.Data([[True, False], [False, True]])), message)
+
         self.assertTrue((d==cf.eq(cf.dt(2001, 1, 3, 21, 0, 0))).equals(cf.Data([[False, True], [False, False]])), message)
         self.assertTrue((d==cf.ne(cf.dt(2001, 1, 3, 21, 0, 0))).equals(cf.Data([[True, False], [True, True]])), message)
         self.assertTrue((d==cf.ge(cf.dt(2001, 1, 3, 21, 0, 0))).equals(cf.Data([[False, True], [True, False]])), message)
         self.assertTrue((d==cf.gt(cf.dt(2001, 1, 3, 21, 0, 0))).equals(cf.Data([[False, False], [True, False]])), message)
         self.assertTrue((d==cf.le(cf.dt(2001, 1, 3, 21, 0, 0))).equals(cf.Data([[True, True], [False, True]])), message)
-        self.assertTrue((d==cf.lt(cf.dt(2001, 1, 3, 21, 0, 0))).equals(cf.Data([[True, False], [False, True]])), message) 
-        
+        self.assertTrue((d==cf.lt(cf.dt(2001, 1, 3, 21, 0, 0))).equals(cf.Data([[True, False], [False, True]])), message)
+
         d = cf.dt(2002, 6, 16)
         self.assertFalse(cf.eq(cf.dt(1990, 1, 1)) == d)
         self.assertTrue(cf.eq(cf.dt(2002, 6, 16)) == d)
         self.assertFalse(cf.eq(cf.dt('2100-1-1')) == d)
         self.assertFalse(cf.eq(cf.dt('2001-1-1')) & cf.eq(cf.dt(2010, 12, 31)) == d)
-        
+
         d = cf.dt(2002, 6, 16)
         self.assertTrue(cf.ge(cf.dt(1990, 1, 1)) == d)
         self.assertTrue(cf.ge(cf.dt(2002, 6, 16)) == d)
         self.assertFalse(cf.ge(cf.dt('2100-1-1')) == d)
         self.assertFalse(cf.ge(cf.dt('2001-1-1')) & cf.ge(cf.dt(2010, 12, 31)) == d)
-        
+
         d = cf.dt(2002, 6, 16)
         self.assertTrue(cf.gt(cf.dt(1990, 1, 1)) == d)
         self.assertFalse(cf.gt(cf.dt(2002, 6, 16)) == d)
         self.assertFalse(cf.gt(cf.dt('2100-1-1')) == d)
         self.assertTrue(cf.gt(cf.dt('2001-1-1')) & cf.le(cf.dt(2010, 12, 31)) == d)
-        
+
         d = cf.dt(2002, 6, 16)
         self.assertTrue(cf.ne(cf.dt(1990, 1, 1)) == d)
         self.assertFalse(cf.ne(cf.dt(2002, 6, 16)) == d)
         self.assertTrue(cf.ne(cf.dt('2100-1-1')) == d)
         self.assertTrue(cf.ne(cf.dt('2001-1-1')) & cf.ne(cf.dt(2010, 12, 31)) == d)
-        
+
         d = cf.dt(2002, 6, 16)
         self.assertFalse(cf.le(cf.dt(1990, 1, 1)) == d)
         self.assertTrue(cf.le(cf.dt(2002, 6, 16)) == d)
         self.assertTrue(cf.le(cf.dt('2100-1-1')) == d)
         self.assertFalse(cf.le(cf.dt('2001-1-1')) & cf.le(cf.dt(2010, 12, 31)) == d)
-        
+
         d = cf.dt(2002, 6, 16)
         self.assertFalse(cf.lt(cf.dt(1990, 1, 1)) == d)
         self.assertFalse(cf.lt(cf.dt(2002, 6, 16)) == d)
@@ -251,7 +251,7 @@ class QueryTest(unittest.TestCase):
         self.assertFalse(e == 5)
 
 
-        x = 'qwerty'        
+        x = 'qwerty'
         self.assertTrue(x == cf.eq('qwerty'))
         self.assertTrue(x == cf.eq(re.compile('^qwerty$')))
         self.assertTrue(x == cf.eq(re.compile('qwe')))
@@ -262,7 +262,7 @@ class QueryTest(unittest.TestCase):
         self.assertTrue(x == cf.eq(re.compile('^.*rty$')))
         self.assertTrue(x == cf.eq(re.compile('rty$')))
 
-        self.assertTrue(x != cf.eq('QWERTY'))  
+        self.assertTrue(x != cf.eq('QWERTY'))
         self.assertTrue(x != cf.eq(re.compile('QWERTY'  )))
         self.assertTrue(x != cf.eq(re.compile('^QWERTY$')))
         self.assertTrue(x != cf.eq(re.compile('QWE'     )))

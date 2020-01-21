@@ -25,21 +25,21 @@ class FilledArray(abstract.Array):
         '''**Initialization**
 
     :Parameters:
-    
+
         dtype : numpy.dtype
             The numpy data type of the data array.
-    
+
         ndim : int
             Number of dimensions in the data array.
-    
+
         shape : tuple
             The data array's dimension sizes.
-    
+
         size : int
             Number of elements in the data array.
-    
+
         fill_value : scalar, optional
-    
+
 #        masked_all: `bool`
 
         '''
@@ -58,7 +58,7 @@ class FilledArray(abstract.Array):
         else:
             array_shape = []
             for index in parse_indices(self.shape, indices):
-                if isinstance(index, slice):                
+                if isinstance(index, slice):
                     step = index.step
                     if step == 1:
                         array_shape.append(index.stop - index.start)
@@ -68,11 +68,11 @@ class FilledArray(abstract.Array):
                             array_shape.append(index.start + 1)
                         else:
                             array_shape.append(index.start - index.stop)
-                    else:                    
+                    else:
                         stop = index.stop
                         if stop is None:
                             stop = -1
-                           
+
                         a, b = divmod(stop - index.start, step)
                         if b:
                             a += 1
@@ -89,16 +89,16 @@ class FilledArray(abstract.Array):
         else:
             return numpy_empty(array_shape, dtype=self.dtype)
 
-        
+
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
     @property
     def dtype(self):
         '''Data-type of the data elements.
-         
+
     **Examples:**
-    
+
     >>> a.dtype
     dtype('float64')
     >>> print(type(a.dtype))
@@ -107,27 +107,27 @@ class FilledArray(abstract.Array):
         '''
         return self._get_component('dtype')
 
-    
+
     @property
     def ndim(self):
         '''Number of array dimensions
-        
+
     **Examples:**
-    
+
     >>> a.shape
     (73, 96)
     >>> a.ndim
     2
     >>> a.size
     7008
-    
+
     >>> a.shape
     (1, 1, 1)
     >>> a.ndim
     3
     >>> a.size
     1
-    
+
     >>> a.shape
     ()
     >>> a.ndim
@@ -137,27 +137,27 @@ class FilledArray(abstract.Array):
         '''
         return self._get_component('ndim')
 
-    
+
     @property
     def shape(self):
         '''Tuple of array dimension sizes.
 
     **Examples:**
-    
+
     >>> a.shape
     (73, 96)
     >>> a.ndim
     2
     >>> a.size
     7008
-    
+
     >>> a.shape
     (1, 1, 1)
     >>> a.ndim
     3
     >>> a.size
     1
-    
+
     >>> a.shape
     ()
     >>> a.ndim
@@ -167,27 +167,27 @@ class FilledArray(abstract.Array):
         '''
         return self._get_component('shape')
 
-    
+
     @property
-    def size(self):        
+    def size(self):
         '''Number of elements in the array.
 
     **Examples:**
-    
+
     >>> a.shape
     (73, 96)
     >>> a.size
     7008
     >>> a.ndim
     2
-    
+
     >>> a.shape
     (1, 1, 1)
     >>> a.ndim
     3
     >>> a.size
     1
-    
+
     >>> a.shape
     ()
     >>> a.ndim
@@ -199,12 +199,12 @@ class FilledArray(abstract.Array):
         return self._get_component('size')
 
 
-    def fill_value(self):        
+    def fill_value(self):
         '''TODO        '''
         return self._get_component('fill_value')
 
 
-#    def masked_all(self):        
+#    def masked_all(self):
 #        '''TODO        '''
 #        return self._get_component('masked_all')
 
@@ -215,11 +215,11 @@ class FilledArray(abstract.Array):
         '''
         return self[...]
 
-    
+
     def reshape(self, newshape):
         '''TODO
         '''
-        new = self.copy()        
+        new = self.copy()
         new.shape = newshape
         new.ndim  = len(newshape)
         return new

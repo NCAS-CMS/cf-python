@@ -17,7 +17,7 @@ from numpy import __version__       as _numpy__version__
 from numpy import all               as _numpy_all
 from numpy import allclose          as _x_numpy_allclose
 from numpy import array             as _numpy_array
-from numpy import ascontiguousarray as _numpy_ascontiguousarray 
+from numpy import ascontiguousarray as _numpy_ascontiguousarray
 from numpy import integer           as _numpy_integer
 from numpy import isclose           as _x_numpy_isclose
 from numpy import ndim              as _numpy_ndim
@@ -44,7 +44,7 @@ from os.path     import expanduser   as _os_path_expanduser
 from os.path     import expandvars   as _os_path_expandvars
 from os.path     import dirname      as _os_path_dirname
 from os.path     import join         as _os_path_join
-from os.path     import relpath      as _os_path_relpath 
+from os.path     import relpath      as _os_path_relpath
 from psutil      import virtual_memory, Process
 from sys         import executable as _sys_executable
 import urllib.parse
@@ -80,14 +80,14 @@ if _linux:
 
     This amount includes any memory which is still allocated but is no
     longer required.
-    
+
     :Returns:
-    
+
         `float`
             The amount of available physical memory in bytes.
-    
+
     **Examples:**
-    
+
     >>> _free_memory()
     96496240.0
 
@@ -102,7 +102,7 @@ if _linux:
         # ----------------------------------------------------------------
         free_KiB = 0.0
         n=0
-        
+
         # with open('/proc/meminfo', 'r', 1) as _meminfo_file:
 
         # Seeking the beginning of the file /proc/meminfo regenerates
@@ -121,7 +121,7 @@ if _linux:
 
         return free_bytes
 
-    
+
 else:
     # ----------------------------------------------------------------
     # NOT GNU/LINUX
@@ -130,31 +130,31 @@ else:
         '''The amount of available physical memory.
 
     :Returns:
-    
+
         `float`
             The amount of available physical memory in bytes.
-    
+
     **Examples:**
-    
+
     >>> _free_memory()
     96496240.0
 
         '''
         return float(virtual_memory().available)
 
-    
+
 #--- End: if
 
 def FREE_MEMORY():
     '''The available physical memory.
 
     :Returns:
-    
+
         `float`
             The amount of free memory in bytes.
-    
+
     **Examples:**
-    
+
     >>> import numpy
     >>> print('Free memory =', cf.FREE_MEMORY()/2**30, 'GiB')
     Free memory = 88.2728042603 GiB
@@ -174,7 +174,7 @@ def _WORKSPACE_FACTOR_1():
     to the chunksize given the free memory factor.
 
     :Returns:
-    
+
         `float`
             workspace factor 1
 
@@ -187,7 +187,7 @@ def _WORKSPACE_FACTOR_2():
     to the chunksize given the free memory factor.
 
     :Returns:
-    
+
         `float`
             workspace factor 2
 
@@ -204,12 +204,12 @@ def FREE_MEMORY_FACTOR(*args):
     the existing free memory factor is returned.
 
     :Parameters:
-    
+
         free_memory_factor: `float`
             The fraction of memory kept free as a temporary workspace.
-    
+
     :Returns:
-    
+
         `float`
              The previous value of the free memory factor.
 
@@ -244,17 +244,17 @@ def CHUNKSIZE(*args):
     returned.
 
     The upper limit to the chunksize is given by:
-    
+
     upper_chunksize = ((free_memory_factor * TOTAL_MEMORY()) / ((mpi_size
                        * _WORKSPACE_FACTOR_1()) + _WORKSPACE_FACTOR_2()))
-    
+
     :Parameters:
-    
+
         chunksize: `float`, optional
             The chunksize in bytes.
-    
+
     :Returns:
-    
+
         `float`
             The previous value of the chunksize in bytes.
 
@@ -284,12 +284,12 @@ def FM_THRESHOLD():
     '''The amount of memory which is kept free as a temporary work space.
 
     :Returns:
-    
+
         `float`
             The amount of memory in bytes.
-    
+
     **Examples:**
-    
+
     >>> cf.FM_THRESHOLD()
     10000000000.0
 
@@ -313,17 +313,17 @@ def SET_PERFORMANCE(chunksize=None, free_memory_factor=None):
     values of the parameters are returned in a tuple.
 
     :Parameters:
-    
+
         chunksize: `float`, optional
             The size in bytes of a chunk used by LAMA to partition the
             data array.
-    
+
         free_memory_factor: `float`, optional
             The fraction of memory to keep free as a temporary
             workspace.
-    
+
     :Returns:
-    
+
         `tuple`
             A tuple of the previous chunksize and free_memory_factor.
 
@@ -362,7 +362,7 @@ def TEMPDIR(*arg):
     does not exist.
 
     :Parameters:
-    
+
         arg: `str`, optional
             The new directory for temporary files. Tilde expansion (an
             initial component of ``~`` or ``~user`` is replaced by
@@ -370,17 +370,17 @@ def TEMPDIR(*arg):
             expansion (substrings of the form ``$name`` or ``${name}``
             are replaced by the value of environment variable *name*)
             are applied to the new directory name.
-    
+
             The default is to not change the directory.
-    
+
     :Returns:
-    
+
         `str`
             The directory prior to the change, or the current
             directory if no new value was specified.
-    
+
     **Examples:**
-    
+
     >>> cf.TEMPDIR()
     '/tmp'
     >>> old = cf.TEMPDIR('/home/me/tmp')
@@ -411,27 +411,27 @@ def OF_FRACTION(*arg):
 
     The amount is expressed as a fraction of the maximum possible
     number of concurrently open files.
-    
+
     Note that closed files will be automatically reopened if
     subsequently needed by a variable to access its data array.
-    
+
     .. seealso:: `cf.close_files`, `cf.close_one_file`,
                  `cf.open_files`, `cf.open_files_threshold_exceeded`
-    
+
     :Parameters:
-    
+
         arg: `float`, optional
             The new fraction (between 0.0 and 1.0). The default is to
             not change the current behaviour.
-    
+
     :Returns:
-    
+
         `float`
             The value prior to the change, or the current value if no
             new value was specified.
-    
+
     **Examples:**
-    
+
     >>> cf.OF_FRACTION()
     0.5
     >>> old = cf.OF_FRACTION(0.33)
@@ -439,10 +439,10 @@ def OF_FRACTION(*arg):
     0.33
     >>> cf.OF_FRACTION()
     0.5
-    
+
     The fraction may be translated to an actual number of files as
     follows:
-    
+
     >>> old = cf.OF_FRACTION(0.75)
     >>> import resource
     >>> max_open_files = resource.getrlimit(resource.RLIMIT_NOFILE)[0]
@@ -462,22 +462,22 @@ def REGRID_LOGGING(*arg):
     '''Whether or not to enable ESMPy logging.
 
     If it is logging is performed after every call to ESMPy.
-    
+
     :Parameters:
-    
+
         arg: `bool`, optional
             The new value (either True to enable logging or False to
             disable it).  The default is to not change the current
             behaviour.
-    
+
     :Returns:
-    
+
         `bool`
             The value prior to the change, or the current value if no
             new value was specified.
-    
+
     **Examples:**
-    
+
     >>> cf.REGRID_LOGGING()
     False
     >>> cf.REGRID_LOGGING(True)
@@ -489,7 +489,7 @@ def REGRID_LOGGING(*arg):
     old = CONSTANTS['REGRID_LOGGING']
     if arg:
         CONSTANTS['REGRID_LOGGING'] = bool(arg[0])
-    
+
     return old
 
 
@@ -499,32 +499,32 @@ def COLLAPSE_PARALLEL_MODE(*arg):
 
     0.  This attempts to maximise parallelism, possibly at the expense
         of extra communication. This is the default mode.
-    
+
     1.  This minimises communication, possibly at the expense of the
         degree of parallelism. If collapse is running slower than you
         would expect, you can try changing to mode 1 to see if this
         improves performance. This is only likely to work if the
         output of collapse will be a sizeable array, not a single
         point.
-    
+
     2.  This is here for debugging purposes, but we would expect this
         to maximise communication possibly at the expense of
         parallelism. The use of this mode is, therefore, not
         recommended.
-    
+
     :Parameters:
-    
+
         arg: `int`, optional
             The new value (0, 1 or 2).
-    
+
     :Returns:
-    
+
         `int`
             The value prior to the change, or the current value if no
             new value was specified.
-    
+
     **Examples:**
-    
+
     >>> cf.COLLAPSE_PARALLEL_MODE()
     0
     >>> cf.COLLAPSE_PARALLEL_MODE(1)
@@ -553,17 +553,17 @@ def RELAXED_IDENTITIES(*arg):
     aggregation.
 
     :Parameters:
-    
+
         arg: `bool`, optional
-          
+
     :Returns:
-    
+
         `bool`
             The value prior to the change, or the current value if no
             new value was specified.
-    
+
     **Examples:**
-    
+
     >>> org = cf.RELAXED_IDENTITIES()
     >>> org
     False
@@ -580,7 +580,7 @@ def RELAXED_IDENTITIES(*arg):
     old = CONSTANTS['RELAXED_IDENTITIES']
     if arg:
         CONSTANTS['RELAXED_IDENTITIES'] = bool(arg[0])
-    
+
     return old
 
 
@@ -588,17 +588,17 @@ def RELAXED_IDENTITIES(*arg):
 #    '''TODO
 #
 #    :Parameters:
-#    
+#
 #        arg: `bool`, optional
-#          
+#
 #    :Returns:
-#    
+#
 #        `bool`
 #            The value prior to the change, or the current value if no
 #            new value was specified.
-#    
+#
 #    **Examples:**
-#    
+#
 #    >>> org = cf.IGNORE_IDENTITIES()
 #    >>> print(org)
 #    False
@@ -615,7 +615,7 @@ def RELAXED_IDENTITIES(*arg):
 #    old = CONSTANTS['IGNORE_IDENTITIES']
 #    if arg:
 #        CONSTANTS['IGNORE_IDENTITIES'] = bool(arg[0])
-#    
+#
 #    return old
 
 
@@ -626,25 +626,25 @@ def dump(x, **kwargs):
     output, so that ``cf.dump(f)`` is equivalent to ``print
     f.dump()``. Otherwise ``cf.dump(x)`` is equivalent to
     ``print(x)``.
-    
+
     :Parameters:
-    
+
         x:
             The object to print.
-    
+
         kwargs : *optional*
             As for the input variable's `!dump` method, if it has one.
-    
+
     :Returns:
-    
+
         None
-    
+
     **Examples:**
-    
+
     >>> x = 3.14159
     >>> cf.dump(x)
     3.14159
-    
+
     >>> f
     <CF Field: rainfall_rate(latitude(10), longitude(20)) kg m2 s-1>
     >>> cf.dump(f)
@@ -675,21 +675,21 @@ if _linux:
     The threshold is defined as a fraction of the maximum possible number
     of concurrently open files (an operating system dependent amount). The
     fraction is retrieved and set with the `OF_FRACTION` function.
-    
+
     .. seealso:: `cf.close_files`, `cf.close_one_file`,
                  `cf.open_files`
-    
+
     :Returns:
-    
+
         `bool`
             Whether or not the number of open files exceeds the
             threshold.
-    
+
     **Examples:**
-    
+
     In this example, the number of open files is 75% of the maximum
     possible number of concurrently open files:
-    
+
     >>> cf.OF_FRACTION()
     0.5
     >>> cf.open_files_threshold_exceeded()
@@ -701,11 +701,11 @@ if _linux:
         '''
         return len(listdir(_fd_dir)) > _max_number_of_open_files * OF_FRACTION()
 
-    
+
 else:
     # ----------------------------------------------------------------
     # NOT GNU/LINUX
-    # ---------------------------------------------------------------- 
+    # ----------------------------------------------------------------
     _process = Process(getpid())
 
     def open_files_threshold_exceeded():
@@ -715,21 +715,21 @@ else:
     The threshold is defined as a fraction of the maximum possible number
     of concurrently open files (an operating system dependent amount). The
     fraction is retrieved and set with the `OF_FRACTION` function.
-    
+
     .. seealso:: `cf.close_files`, `cf.close_one_file`,
                  `cf.open_files`
-    
+
     :Returns:
-    
+
         `bool`
             Whether or not the number of open files exceeds the
             threshold.
-    
+
     **Examples:**
-    
+
     In this example, the number of open files is 75% of the maximum
     possible number of concurrently open files:
-    
+
     >>> cf.OF_FRACTION()
     0.5
     >>> cf.open_files_threshold_exceeded()
@@ -741,7 +741,7 @@ else:
         '''
         return len(_process.open_files()) > _max_number_of_open_files * OF_FRACTION()
 
-    
+
 #---End: if
 
 def close_files(file_format=None):
@@ -749,28 +749,28 @@ def close_files(file_format=None):
 
     By default all such files are closed, but this may be restricted
     to files of a particular format.
-    
+
     Note that closed files will be automatically reopened if
     subsequently needed by a variable to access the sub-array.
-    
+
     If there are no appropriate open files then no action is taken.
-    
+
     .. seealso:: `cf.close_one_file`, `cf.open_files`,
                  `cf.open_files_threshold_exceeded`
-    
+
     :Parameters:
-    
+
         file_format: `str`, optional
             Only close files of the given format. Recognised formats
             are ``'netCDF'`` and ``'PP'``. By default files of any
             format are closed.
-    
+
     :Returns:
-    
+
         None
-    
+
     **Examples:**
-    
+
     >>> cf.close_files()
     >>> cf.close_files('netCDF')
     >>> cf.close_files('PP')
@@ -780,49 +780,49 @@ def close_files(file_format=None):
         if file_format in _file_to_fh:
             for fh in _file_to_fh[file_format].values():
                 fh.close()
-        
+
             _file_to_fh[file_format].clear()
     else:
         for file_format, value in _file_to_fh.items():
             for fh in value.values():
                 fh.close()
-        
+
             _file_to_fh[file_format].clear()
     #--- End: if
 
-    
+
 def close_one_file(file_format=None):
     '''Close an arbitrary open file containing a sub-array of a data
     array.
-    
+
     By default a file of arbitrary format is closed, but the choice
     may be restricted to files of a particular format.
-    
+
     Note that the closed file will be automatically reopened if
     subsequently needed by a variable to access the sub-array.
-    
+
     If there are no appropriate open files then no action is taken.
-    
+
     .. seealso:: `cf.close_files`, `cf.open_files`,
                  `cf.open_files_threshold_exceeded`
-    
+
     :Parameters:
-    
+
         file_format: `str`, optional
             Only close a file of the given format. Recognised formats
             are ``'netCDF'`` and ``'PP'``. By default a file of any
             format is closed.
-    
+
     :Returns:
-    
+
         `None`
-    
+
     **Examples:**
-    
+
     >>> cf.close_one_file()
     >>> cf.close_one_file('netCDF')
     >>> cf.close_one_file('PP')
-    
+
     >>> cf.open_files()
     {'netCDF': {'file1.nc': <netCDF4.Dataset at 0x181bcd0>,
                 'file2.nc': <netCDF4.Dataset at 0x1e42350>,
@@ -838,11 +838,11 @@ def close_one_file(file_format=None):
             filename, fh = next(iter(_file_to_fh[file_format].items()))
             fh.close()
             del _file_to_fh[file_format][filename]
-    else:    
+    else:
         for values in _file_to_fh.values():
             if not values:
                 continue
-        
+
             filename, fh = next(iter(values.items()))
             fh.close()
             del values[filename]
@@ -853,19 +853,19 @@ def open_files(file_format=None):
 
     By default all such files are returned, but the selection may be
     restricted to files of a particular format.
-    
+
     .. seealso:: `cf.close_files`, `cf.close_one_file`,
                  `cf.open_files_threshold_exceeded`
-    
+
     :Parameters:
-    
+
         file_format: `str`, optional
             Only return files of the given format. Recognised formats
             are ``'netCDF'`` and ``'PP'``. By default all files are
             returned.
-    
+
     :Returns:
-    
+
         `dict`
             If *file_format* is set then return a dictionary of file
             names of the specified format and their open file
@@ -873,9 +873,9 @@ def open_files(file_format=None):
             dictionary for which each key is a file format whose value
             is the dictionary that would have been returned if the
             *file_format* parameter was set.
-    
+
     **Examples:**
-    
+
     >>> cf.open_files()
     {'netCDF': {'file1.nc': <netCDF4.Dataset at 0x187b6d0>}}
     >>> cf.open_files('netCDF')
@@ -883,17 +883,17 @@ def open_files(file_format=None):
     >>> cf.open_files('PP')
     {}
 
-    '''  
+    '''
     if file_format is not None:
         if file_format in _file_to_fh:
             return _file_to_fh[file_format].copy()
         else:
             return {}
-    else:   
+    else:
         out = {}
         for file_format, values in _file_to_fh.items():
             out[file_format] = values.copy()
-            
+
         return out
 
 
@@ -903,16 +903,16 @@ def ufunc(name, x, *args, **kwargs):
     unchanged to the variable's *name* method.
 
     :Parameters:
-    
+
         name: `str`
-    
+
         x:
             The input variable.
-    
+
         args, kwargs:
-    
+
     :Returns:
-    
+
             A new variable with size 1 axes inserted into the data
             array.
 
@@ -930,27 +930,27 @@ def _numpy_allclose(a, b, rtol=None, atol=None):
     relative difference (``rtol * abs(b)``) and the absolute difference
     ``atol`` are added together to compare against the absolute difference
     between ``a`` and ``b``.
-    
+
     :Parameters:
-    
+
         a, b : array_like
             Input arrays to compare.
-    
+
         atol : float, optional
             The absolute tolerance for all numerical comparisons, By
             default the value returned by the `ATOL` function is used.
-    
+
         rtol : float, optional
             The relative tolerance for all numerical comparisons, By
             default the value returned by the `RTOL` function is used.
-    
+
     :Returns:
-    
+
         `bool`
             Returns True if the arrays are equal, otherwise False.
-    
+
     **Examples:**
-    
+
     >>> cf._numpy_allclose([1, 2], [1, 2])
     True
     >>> cf._numpy_allclose(numpy.array([1, 2]), numpy.array([1, 2]))
@@ -959,7 +959,7 @@ def _numpy_allclose(a, b, rtol=None, atol=None):
     False
     >>> cf._numpy_allclose([1, 2], [1, 4])
     False
-    
+
     >>> a = numpy.ma.array([1])
     >>> b = numpy.ma.array([2])
     >>> a[0] = numpy.ma.masked
@@ -970,12 +970,12 @@ def _numpy_allclose(a, b, rtol=None, atol=None):
     '''
 
     # THIS IS WHERE SOME NUMPY FUTURE WARNINGS ARE COMING FROM
-    
+
     a_is_masked = _numpy_ma_isMA(a)
     b_is_masked = _numpy_ma_isMA(b)
-    
+
     if not (a_is_masked or b_is_masked):
-        try:            
+        try:
             return _x_numpy_allclose(a, b, rtol=rtol, atol=atol)
         except (IndexError, NotImplementedError, TypeError):
             return _numpy_all(a == b)
@@ -1004,25 +1004,25 @@ def _numpy_isclose(a, b, rtol=None, atol=None):
     relative difference (``rtol * abs(b)``) and the absolute difference
     ``atol`` are added together to compare against the absolute difference
     between ``a`` and ``b``.
-    
+
     :Parameters:
-    
+
         a, b: array_like
             Input arrays to compare.
-    
+
         atol: `float`, optional
             The absolute tolerance for all numerical comparisons, By
             default the value returned by the `ATOL` function is used.
-    
+
         rtol: `float`, optional
             The relative tolerance for all numerical comparisons, By
             default the value returned by the `RTOL` function is used.
-    
+
     :Returns:
-    
+
         `numpy.ndarray`
 
-    '''      
+    '''
     try:
         return _x_numpy_isclose(a, b, rtol=rtol, atol=atol)
     except (IndexError, NotImplementedError, TypeError):
@@ -1034,17 +1034,17 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
     '''TODO
 
     :Parameters:
-    
+
         shape: sequence of `ints`
-    
+
         indices: `tuple` (not a `list`!)
-    
+
     :Returns:
-    
+
         `list` [, `dict`]
 
     **Examples:**
-    
+
     >>> cf.parse_indices((5, 8), ([1, 2, 4, 6],))
     [array([1, 2, 4, 6]), slice(0, 8, 1)]
     >>> cf.parse_indices((5, 8), ([2, 4, 6],))
@@ -1056,7 +1056,7 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
     flip               = []
     compressed_indices = []
     mask_indices       = []
-    
+
     if not isinstance(indices, tuple):
         indices = (indices,)
 
@@ -1066,7 +1066,7 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
             mask_indices = indices[1]
             indices = indices[2:]
     #--- End: if
-    
+
     # Initialize the list of parsed indices as the input indices with any
     # Ellipsis objects expanded
     length = len(indices)
@@ -1076,7 +1076,7 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
         if index is Ellipsis:
             m = n-length+1
             parsed_indices.extend([slice(None)] * m)
-            n -= m            
+            n -= m
         else:
             parsed_indices.append(index)
             n -= 1
@@ -1096,13 +1096,13 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
         ## If data is scalar then allow it to be indexed with an
         ## equivalent to [0]
         #if (len_parsed_indices == 1 and
-        #    parsed_indices[0] in (0, 
+        #    parsed_indices[0] in (0,
         #                          -1,
-        #                          slice(0, 1), 
-        #                          slice(-1, None, -1),  
+        #                          slice(0, 1),
+        #                          slice(-1, None, -1),
         #                          slice(None, None, None))):
         #    parsed_indices = []
-        #else:            
+        #else:
         raise IndexError("Scalar array can only be indexed with () or Ellipsis")
 
     #--- End: if
@@ -1134,7 +1134,7 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
                     # -4:-10:1  => -4:1:1
                     # -4:-9:1   => -4:1:1
                     # -4:-7:1   => -4:3:1
-                    # -4:-4:1   => -4:6:1 
+                    # -4:-4:1   => -4:6:1
                     # -10:-10:1 => -10:0:1
                     stop += size
             elif step < 0:
@@ -1150,8 +1150,8 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
                     # 3:6:-1 => 3:-4:-1
                     # 3:9:-1 => 3:-1:-1
                     stop -= size
-            #--- End: if            
-                        
+            #--- End: if
+
             if step > 0 and -size <= start < 0 and 0 <= stop <= size+start:
                 # [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
                 # -1:0:1  => [9]
@@ -1196,12 +1196,12 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
                 if step < 0 and stop < 0:
                     stop = None
                 index = slice(start, stop, step)
-         
+
         elif isinstance(index, (int, _numpy_integer)):
             # --------------------------------------------------------
             # Index is an integer
-            # --------------------------------------------------------            
-            if index < 0: 
+            # --------------------------------------------------------
+            if index < 0:
                 index += size
 
             index = slice(index, index+1, 1)
@@ -1232,11 +1232,11 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
                 is_slice = True
             else:
                 len_index = len(index)
-                if len_index == 1:                
+                if len_index == 1:
                     index = index[0]
                     if index < 0:
                         index += size
-                    
+
                     index = slice(index, index+1, 1)
                     is_slice = True
                 elif len_index:
@@ -1244,7 +1244,7 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
                         # Convert to non-negative integer numpy array
                         index = _numpy_array(index)
                         index = _numpy_where(index < 0, index+size, index)
-    
+
                     steps = index[1:] - index[:-1]
                     step = steps[0]
                     if step and not (steps - step).any():
@@ -1253,10 +1253,10 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
                             start, stop = index[0], index[-1]+1
                         elif step < 0:
                             start, stop = index[0], index[-1]-1
-                            
+
                         if stop < 0:
                             stop = None
-                                
+
                         index = slice(start, stop, step)
                         is_slice = True
                     else:
@@ -1265,7 +1265,7 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
                             not step):
                             raise ValueError(
                                 "Bad index (not strictly monotonic): {}".format(index))
-                            
+
                         if reverse and step < 0:
                             # The array is strictly monotoniticall
                             # decreasing, so reverse it so that it's
@@ -1288,18 +1288,18 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
                                 stop = index[-1] - 1
                                 if stop < 0:
                                     stop = None
-                                    
+
                             index = slice(index[0], stop, step)
                             is_slice = True
                 else:
                     raise IndexError(
                         "Invalid indices {} for array with shape {}".format(
-                            parsed_indices, shape))                
+                            parsed_indices, shape))
             #--- End: if
         #--- End: if
-        
+
         if is_slice:
-            if reverse and index.step < 0:              
+            if reverse and index.step < 0:
                 # If the slice step is negative, then transform
                 # the original slice to a new slice with a
                 # positive step such that the result of the new
@@ -1323,10 +1323,10 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
                 div_step = div*step
                 start   -= div_step
                 stop     = start + div_step + 1
-                
+
                 index = slice(start, stop, step)
-                flip.append(i)         
-            #--- End: if      
+                flip.append(i)
+            #--- End: if
 
             # If step is greater than one then make sure that
             # index.stop isn't bigger than it needs to be
@@ -1335,17 +1335,17 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
                 div, mod = divmod(stop-start-1, step)
                 stop     = start + div*step + 1
                 index    = slice(start, stop, step)
-            #--- End: if      
+            #--- End: if
 
-            # 
-            if envelope: 
+            #
+            if envelope:
                 # Create an envelope slice for a parsed
-                # index of a numpy array of integers                        
+                # index of a numpy array of integers
                 compressed_indices.append(index)
                 index = slice(start, stop, (1 if reverse else _numpy_sign(step)))
         #--- End: if
-                    
-        parsed_indices[i] = index    
+
+        parsed_indices[i] = index
     #--- End: for
 
     if not (cyclic or reverse or envelope or mask):
@@ -1374,23 +1374,23 @@ def get_subspace(array, indices):
     Subset the input numpy array with the given indices. Indexing is
     similar to that of a numpy array. The differences to numpy array
     indexing are:
-    
+
     1. An integer index i takes the i-th element but does not reduce
        the rank of the output array by one.
-    
+
     2. When more than one dimension's slice is a 1-d boolean array or
        1-d sequence of integers then these indices work independently
        along each dimension (similar to the way vector subscripts work
        in Fortran).
-    
+
     indices must contain an index for each dimension of the input array.
 
     :Parameters:
-    
+
         array: `numpy.ndarray`
-    
+
         indices: `list`
-    
+
     '''
     gg = [i for i, x in enumerate(indices) if not isinstance(x, slice)]
     len_gg = len(gg)
@@ -1444,51 +1444,51 @@ def equivalent(x, y, rtol=None, atol=None, traceback=False):
     If the first argument, *x*, has an `!equivalent` method then it is
     used, and in this case ``equivalent(x, y)`` is the same as
     ``x.equivalent(y)``.
-    
+
     :Parameters:
-    
+
         x, y :
             The objects to compare for equivalence.
-    
+
         atol : float, optional
             The absolute tolerance for all numerical comparisons, By
             default the value returned by the `ATOL` function is used.
-    
+
         rtol : float, optional
             The relative tolerance for all numerical comparisons, By
             default the value returned by the `RTOL` function is used.
-    
+
         traceback : bool, optional
             If True then print a traceback highlighting where the two
             objects differ.
-    
-    :Returns: 
-    
+
+    :Returns:
+
         `bool`
             Whether or not the two objects are equivalent.
-    
+
     **Examples:**
-    
+
     >>> f
     <CF Field: rainfall_rate(latitude(10), longitude(20)) kg m2 s-1>
     >>> cf.equivalent(f, f)
     True
-    
+
     >>> cf.equivalent(1.0, 1.0)
     True
     >>> cf.equivalent(1.0, 33)
     False
-    
+
     >>> cf.equivalent('a', 'a')
     True
     >>> cf.equivalent('a', 'b')
     False
-    
+
     >>> cf.equivalent(cf.Data(1000, units='m'), cf.Data(1, units='km'))
     True
-    
+
     For a field, ``f``:
-    
+
     >>> cf.equivalent(f, f.transpose())
     True
 
@@ -1517,29 +1517,29 @@ def load_stash2standard_name(table=None, delimiter='!', merge=True):
     '''Load a STASH to standard name conversion table.
 
     This used when reading PP and UM fields files.
-    
+
     :Parameters:
-    
+
         table: `str`, optional
             Use the conversion table at this file location. By default
             the table will be looked for at
             ``os.path.join(os.path.dirname(cf.__file__),'etc/STASH_to_CF.txt')``
-    
+
         delimiter: `str`, optional
             The delimiter of the table columns. By default, ``!`` is
             taken as the delimiter.
-    
+
         merge: `bool`, optional
             If *table* is None then *merge* is taken as False,
             regardless of its given value.
-    
+
     :Returns:
-    
+
         `dict`
             The new STASH to standard name conversion table.
-    
+
     **Examples:**
-    
+
     >>> cf.load_stash2standard_name()
     >>> cf.load_stash2standard_name('my_table.txt')
     >>> cf.load_stash2standard_name('my_table2.txt', ',')
@@ -1547,19 +1547,19 @@ def load_stash2standard_name(table=None, delimiter='!', merge=True):
     >>> cf.load_stash2standard_name('my_table4.txt', merge=False)
 
     '''
-    # 0  Model           
-    # 1  STASH code      
-    # 2  STASH name      
-    # 3  units           
+    # 0  Model
+    # 1  STASH code
+    # 2  STASH name
+    # 3  units
     # 4  valid from UM vn
     # 5  valid to   UM vn
-    # 6  standard_name   
-    # 7  CF extra info   
+    # 6  standard_name
+    # 7  CF extra info
     # 8  PP extra info
 
     # Number matching regular expression
     number_regex = '([-+]?\d*\.?\d+(e[-+]?\d+)?)'
-            
+
     if table is None:
         # Use default conversion table
         merge = False
@@ -1586,10 +1586,10 @@ def load_stash2standard_name(table=None, delimiter='!', merge=True):
     # Convert to a dictionary which is keyed by (submodel, STASHcode)
     # tuples
     (model, stash, name,
-     units, 
+     units,
      valid_from, valid_to,
      standard_name, cf, pp) = list(range(9))
-        
+
     stash2sn = {}
     for x in raw_list:
         key = (int(x[model]), int(x[stash]))
@@ -1597,11 +1597,11 @@ def load_stash2standard_name(table=None, delimiter='!', merge=True):
         if not x[units]:
             x[units] = None
 
-        try:            
+        try:
             cf_info = {}
             if x[cf]:
                 for d in x[7].split():
-                    if d.startswith('height='): 
+                    if d.startswith('height='):
                         cf_info['height'] = re.split(number_regex, d,
                                                      re.IGNORECASE)[1:4:2]
                         if cf_info['height'] == '':
@@ -1613,12 +1613,12 @@ def load_stash2standard_name(table=None, delimiter='!', merge=True):
                         if cf_info['below'] == '':
                             cf_info['below'][1] = '1'
 
-                    if d.startswith('where_'):         
+                    if d.startswith('where_'):
                         cf_info['where'] = d.replace('where_', 'where ', 1)
-                    if d.startswith('over_'):         
+                    if d.startswith('over_'):
                         cf_info['over'] = d.replace('over_', 'over ', 1)
 
-            x[cf] = cf_info                    
+            x[cf] = cf_info
         except IndexError:
             pass
 
@@ -1654,56 +1654,56 @@ def flat(x):
     '''Return an iterator over an arbitrarily nested sequence.
 
     :Parameters:
-    
+
         x: scalar or arbitrarily nested sequence
             The arbitrarily nested sequence to be flattened. Note that
             a If *x* is a string or a scalar then this is equivalent
             to passing a single element sequence containing *x*.
-    
+
     :Returns:
-    
+
         generator
             An iterator over flattened sequence.
-    
+
     **Examples:**
-    
+
     >>> cf.flat([1, [2, [3, 4]]])
     <generator object flat at 0x3649cd0>
-    
+
     >>> list(cf.flat([1, (2, [3, 4])]))
     [1, 2, 3, 4]
-    
+
     >>> import numpy
     >>> list(cf.flat((1, [2, numpy.array([[3, 4], [5, 6]])]))
     [1, 2, 3, 4, 5, 6]
-    
+
     >>> for a in cf.flat([1, [2, [3, 4]]]):
     ...     print(a, end=' ')
     ...
     1 2 3 4
-    
+
     >>> for a in cf.flat(['a', ['bc', ['def', 'ghij']]]):
     ...     print(a, end=' ')
     ...
     a bc def ghij
-    
+
     >>> for a in cf.flat(2004):
     ...     print(a)
     ...
     2004
-    
+
     >>> for a in cf.flat('abcdefghij'):
     ...     print(a, end=' ')
     ...
     abcdefghij
-    
+
     >>> f
     <CF Field: eastward_wind(air_pressure(5), latitude(110), longitude(106)) m s-1>
     >>> for a in cf.flat(f):
     ...     print(repr(a))
     ...
     <CF Field: eastward_wind(air_pressure(5), latitude(110), longitude(106)) m s-1>
-    
+
     >>> for a in cf.flat([f, [f, [f, f]]]):
     ...     print(repr(a))
     ...
@@ -1711,7 +1711,7 @@ def flat(x):
     <CF Field: eastward_wind(air_pressure(5), latitude(110), longitude(106)) m s-1>
     <CF Field: eastward_wind(air_pressure(5), latitude(110), longitude(106)) m s-1>
     <CF Field: eastward_wind(air_pressure(5), latitude(110), longitude(106)) m s-1>
-    
+
     >>> fl = cf.FieldList(cf.flat([f, [f, [f, f]]])
     >>> fl
     [<CF Field: eastward_wind(air_pressure(5), latitude(110), longitude(106)) m s-1>,
@@ -1730,28 +1730,28 @@ def flat(x):
         else:
             yield a
     #--- End: for
-    
+
 
 def abspath(filename):
     '''Return a normalized absolute version of a file name.
-    
+
     If a string containing URL is provided then it is returned
     unchanged.
 
     .. seealso:: `cf.dirname`, `cf.pathjoin`, `cf.relpath`
-    
+
     :Parameters:
-    
+
         filename: `str`
             The name of the file.
-    
+
     :Returns:
-    
+
         `str`
             The normalized absolutized version of *filename*.
-     
+
     **Examples:**
-    
+
     >>> import os
     >>> os.getcwd()
     '/data/archive'
@@ -1762,7 +1762,7 @@ def abspath(filename):
     >>> cf.abspath('http://data/archive/file.nc')
     'http://data/archive/file.nc'
 
-    ''' 
+    '''
     u = urllib.parse.urlparse(filename)
     if u.scheme != '':
         return filename
@@ -1775,27 +1775,27 @@ def relpath(filename, start=None):
 
     The filepath is relative either from the current directory or from
     an optional start point.
-    
+
     If a string containing URL is provided then it is returned unchanged.
-    
+
     .. seealso:: `cf.abspath`, `cf.dirname`, `cf.pathjoin`
-    
+
     :Parameters:
-    
+
         filename: `str`
             The name of the file.
-    
+
         start: `str`, optional
             The start point for the relative path. By default the
             current directoty is used.
-    
+
     :Returns:
-    
+
         `str`
             The relative path.
-    
+
     **Examples:**
-    
+
     >>> cf.relpath('/data/archive/file.nc')
     '../file.nc'
     >>> cf.relpath('/data/archive///file.nc', start='/data')
@@ -1819,21 +1819,21 @@ def dirname(filename):
 
     If a string containing URL is provided then everything up to, but
     not including, the last slash (/) is returned.
-    
+
     .. seealso:: `cf.abspath`, `cf.pathjoin`, `cf.relpath`
-    
+
     :Parameters:
-    
+
         filename: `str`
             The name of the file.
-    
+
     :Returns:
-    
+
         `str`
             The directory name.
-    
+
     **Examples:**
-    
+
     >>> cf.dirname('/data/archive/file.nc')
     '/data/archive'
     >>> cf.dirname('..//file.nc')
@@ -1853,24 +1853,24 @@ def pathjoin(path1, path2):
     '''Join two file path components intelligently.
 
     If either of the paths is a URL then a URL will be returned
-    
+
     .. seealso:: `cf.abspath`, `cf.dirname`, `cf.relpath`
-    
+
     :Parameters:
-    
+
         path1: `str`
             The first component of the path.
-    
+
         path2: `str`
             The second component of the path.
-    
+
     :Returns:
-    
+
         `str`
             The joined paths.
-    
+
     **Examples:**
-    
+
     >>> cf.pathjoin('/data/archive', '../archive/file.nc')
     '/data/archive/../archive/file.nc'
     >>> cf.pathjoin('/data/archive', '../archive/file.nc')
@@ -1895,22 +1895,22 @@ def hash_array(array):
     array. If the array is a masked array then the hash value is
     independent of the fill value and of data array values underlying
     any masked elements.
-    
+
     The hash value is not guaranteed to be portable across versions of
     Python, numpy and cf.
-    
+
     :Parameters:
-    
+
         array: `numpy.ndarray`
             The numpy array to be hashed. May be a masked array.
-    
+
     :Returns:
-    
+
         `int`
             The hash value.
-    
+
     **Examples:**
-    
+
     >>> print(array)
     [[0 1 2 3]]
     >>> cf.hash_array(array)
@@ -1938,16 +1938,16 @@ def hash_array(array):
 
     '''
     h = hashlib_md5()
-    
+
     h_update = h.update
-    
+
     h_update(marshal_dumps(array.dtype.name))
     h_update(marshal_dumps(array.shape))
 
-    if _numpy_ma_isMA(array):        
+    if _numpy_ma_isMA(array):
         if _numpy_ma_is_masked(array):
             mask = array.mask
-            if not mask.flags.c_contiguous:               
+            if not mask.flags.c_contiguous:
                 mask = _numpy_ascontiguousarray(mask)
 
             h_update(mask)
@@ -1958,10 +1958,10 @@ def hash_array(array):
             array = array.data
     #--- End: if
 
-    if not array.flags.c_contiguous:               
+    if not array.flags.c_contiguous:
 #        array = array.copy()
         array = _numpy_ascontiguousarray(array)
-        
+
     h_update(array)
 
     return hash(h.digest())
@@ -1970,85 +1970,85 @@ def hash_array(array):
 def inspect(self):
     '''Inspect the attributes of an object.
 
-    :Returns: 
-    
+    :Returns:
+
         `None`
-    
+
     '''
     name = repr(self)
     out = [name, ''.ljust(len(name), '-')]
-    
+
     if hasattr(self, '__dict__'):
         for key, value in sorted(self.__dict__.items()):
             out.append('{}: {!r}'.format(key, value))
-        
+
     print('\n'.join(out))
 
 
 def broadcast_array(array, shape):
     '''Broadcast an array to a given shape.
-    
+
     It is assumed that ``numpy.ndim(array) <= len(shape)`` and that
     the array is broadcastable to the shape by the normal numpy
     broadcasting rules, but neither of these things is checked.
-        
+
     For example, ``a[...] = broadcast_array(a, b.shape)`` is
     equivalent to ``a[...] = b``.
-        
+
     :Parameters:
-      
+
         a: numpy array-like
-        
+
         shape: `tuple`
-        
+
     :Returns:
-    
+
         `numpy.ndarray`
-        
+
     **Examples:**
-    
-    
+
+
     >>> a = numpy.arange(8).reshape(2, 4)
     [[0 1 2 3]
      [4 5 6 7]]
-    
+
     >>> print(cf.broadcast_array(a, (3, 2, 4)))
     [[[0 1 2 3]
       [4 5 6 0]]
-    
+
      [[0 1 2 3]
       [4 5 6 0]]
-    
+
      [[0 1 2 3]
       [4 5 6 0]]]
-    
+
     >>> a = numpy.arange(8).reshape(2, 1, 4)
     [[[0 1 2 3]]
-    
+
      [[4 5 6 7]]]
-    
+
     >>> print(cf.broadcast_array(a, (2, 3, 4)))
     [[[0 1 2 3]
       [0 1 2 3]
       [0 1 2 3]]
-    
+
      [[4 5 6 7]
       [4 5 6 7]
       [4 5 6 7]]]
-    
+
     >>> a = numpy.ma.arange(8).reshape(2, 4)
     >>> a[1, 3] = numpy.ma.masked
     >>> print(a)
     [[0 1 2 3]
      [4 5 6 --]]
-    
+
     >>> cf.broadcast_array(a, (3, 2, 4))
     [[[0 1 2 3]
       [4 5 6 --]]
-    
+
      [[0 1 2 3]
       [4 5 6 --]]
-    
+
      [[0 1 2 3]
       [4 5 6 --]]]
 
@@ -2060,40 +2060,40 @@ def broadcast_array(array, shape):
     tile = [(m if n == 1 else 1)
             for n, m in zip(a_shape[::-1], shape[::-1])]
     tile = shape[0:len(shape)-len(a_shape)] + tuple(tile[::-1])
-    
+
     return _numpy_tile(array, tile)
 
 
 def allclose(x, y, rtol=None, atol=None):
     '''Returns True if two broadcastable arrays have equal values to
     within numerical tolerance, False otherwise.
-    
+
     The tolerance values are positive, typically very small
     numbers. The relative difference (``rtol * abs(b)``) and the
     absolute difference ``atol`` are added together to compare against
     the absolute difference between ``a`` and ``b``.
-    
+
     :Parameters:
-    
+
         x, y: array_like
             Input arrays to compare.
-    
+
         atol: `float`, optional
             The absolute tolerance for all numerical comparisons, By
             default the value returned by the `ATOL` function is used.
-    
+
         rtol: `float`, optional
             The relative tolerance for all numerical comparisons, By
             default the value returned by the `RTOL` function is used.
-    
+
     :Returns:
-    
+
         `bool`
             Returns True if the arrays are equal, otherwise False.
-    
+
     **Examples:**
 
-    '''    
+    '''
     if rtol is None:
         rtol = RTOL()
     if atol is None:
@@ -2125,12 +2125,12 @@ def _section(o, axes=None, data=False, stop=None, chunks=False,
     placeholder making it possible to reconstruct the original data
     object. The corresponding values are the resulting sections of
     type `Data`.
-    
+
     :Parameters:
-    
+
         o: `Field` or `Data`
             The `Field` or `Data` object to be sectioned.
-    
+
         axes: optional
             In the case of a Field this is a query for the m axes that
             define the sections of the Field as accepted by the Field
@@ -2142,48 +2142,48 @@ def _section(o, axes=None, data=False, stop=None, chunks=False,
             a list of the m indices of the m axes that define the
             sections of the Data object. If axes is None (the default)
             all axes are selected.
-        
+
             Note: the axes specified by the *axes* parameter are the
             one which are to be kept whole. All other axes are
             sectioned
-    
+
         data: `bool`, optional
             If True this indicates that a data object has been passed,
             if False it indicates that a field object has been
             passed. By default it is False.
-    
+
         stop: `int`, optional
             Stop after taking this number of sections and return. If
             stop is None all sections are taken.
-        
+
         chunks: `bool`, optional
             If True return sections that are of the maximum possible
             size that will fit in one chunk of memory instead of
             sectioning into slices of size 1 along the dimensions that
             are being sectioned.
-        
+
         min_step: `int`, optional
             The minimum step size when making chunks. By default this
             is 1. Can be set higher to avoid size 1 dimensions, which
             are problematic for bilinear regridding.
-    
+
     :Returns:
-    
+
         `list` or `dict`
             The list of m dimensional sections of the Field or the
             dictionary of m dimensional sections of the Data object.
-    
+
     **Examples:**
-    
+
     Section a field into 2D longitude/time slices, checking the units:
-    
+
     >>> _section(f, {None: 'longitude', units: 'radians'},
     ...             {None: 'time',
     ...              'units': 'days since 2006-01-01 00:00:00'})
-    
+
     Section a field into 2D longitude/latitude slices, requiring exact
     names:
-    
+
     >>> _section(f, ['latitude', 'longitude'], exact=True)
 
     '''
@@ -2192,7 +2192,7 @@ def _section(o, axes=None, data=False, stop=None, chunks=False,
         if isinstance(axes, int):
             axes = (axes,)
 
-        if not axes:            
+        if not axes:
             axis_indices = range(o.ndim)
         else:
             axis_indices = axes
@@ -2206,13 +2206,13 @@ def _section(o, axes=None, data=False, stop=None, chunks=False,
                 pass
         #--- End: for
     #--- End: if
-    
+
     # find the size of each dimension
     sizes = o.shape
-    
+
     if chunks:
         steps = list(sizes)
-        
+
         # Define the factor which, when multiplied by the size of the
         # data array, determines how many chunks are in the data array.
         #
@@ -2232,22 +2232,22 @@ def _section(o, axes=None, data=False, stop=None, chunks=False,
             if int(math_ceil(float(axis_size)/min_step)) <= n_chunks:
                 n_chunks = int(math_ceil(n_chunks/float(axis_size)*min_step))
                 steps[index] = min_step
-                
+
             else:
-                steps[index] = int(axis_size/n_chunks)                
+                steps[index] = int(axis_size/n_chunks)
                 break
         #--- End: for
     else:
         steps = [size if i in axis_indices else 1 for i, size in enumerate(sizes)]
-    
+
     # Use recursion to slice out each section
     if data:
         d = dict()
     else:
         fl = []
-    
+
     indices = [slice(None)] * len(sizes)
-    
+
     nl_vars = {'count': 0}
     def loop_over_index(current_index):
         # Expects an index to loop over in the list indices. If this is less
@@ -2258,7 +2258,7 @@ def _section(o, axes=None, data=False, stop=None, chunks=False,
         # the routine is called recursively with the next index. If the count
         # of the number of slices taken is greater than or equal to stop
         # it returns before taking any more slices.
-        
+
         if current_index < 0:
             if data:
                 d[tuple([x.start for x in indices])] = o[tuple(indices)]
@@ -2267,49 +2267,49 @@ def _section(o, axes=None, data=False, stop=None, chunks=False,
 
             nl_vars['count'] += 1
             return
-        
+
         if current_index in axis_indices:
             loop_over_index(current_index - 1)
             return
-        
+
         for i in range(0, sizes[current_index], steps[current_index]):
             if stop is not None and nl_vars['count'] >= stop:
                 return
             indices[current_index] = slice(i, i + steps[current_index])
             loop_over_index(current_index - 1)
 
-            
+
     current_index = len(sizes) - 1
     loop_over_index(current_index)
-    
+
     if data:
         return d
     else:
         return fl
 
-    
+
 def environment(display=True, paths=True, string=True):
     '''Return the names and versions of the cf package and its
     dependencies.
 
     :Parameters:
-    
+
         display: `bool`, optional
             If False then return the description of the environment as
             a string. By default the description is printed.
-    
+
         paths: `bool`, optional
             If False then do not output the locations of each package.
 
     :Returns:
-    
+
         `None` or `str`
             If *display* is True then the description of the
             environment is printed and `None` is returned. Otherwise
             the description is returned as a string.
-    
+
     **Examples:**
-    
+
     >>> cf.environment()
     Platform: Linux-4.15.0-64-generic-x86_64-with-debian-stretch-sid
     HDF5 library: 1.10.2
@@ -2367,7 +2367,7 @@ def environment(display=True, paths=True, string=True):
     out.append('numpy: ' + str(_numpy__version__))
     if paths:
         out[-1] += ' ' + str(_os_path_abspath(_numpy__file__))
-        
+
     out.append('psutil: ' + str(psutil.__version__))
     if paths:
         out[-1] += ' ' + str(_os_path_abspath(psutil.__file__))
@@ -2401,11 +2401,11 @@ def environment(display=True, paths=True, string=True):
         if paths:
             out[-1] += ' ' + str(_os_path_abspath(ESMF.__file__))
     #--- End: try
-    
+
     out.append('cfdm: ' + str(cfdm.__version__))
     if paths:
         out[-1] += ' ' + str(_os_path_abspath(cfdm.__file__))
-            
+
     out.append('cfunits: ' + str(cfunits.__version__))
     if paths:
         out[-1] += ' ' + str(_os_path_abspath(cfunits.__file__))
@@ -2419,11 +2419,11 @@ def environment(display=True, paths=True, string=True):
         if paths:
             out[-1] += ' ' + str(_os_path_abspath(cfplot.__file__))
     #--- End: try
-            
+
     out.append('cf: ' + str(__version__))
     if paths:
         out[-1] += ' ' + str(_os_path_abspath(__file__))
-    
+
     out = '\n'.join(out)
 
     if display:
@@ -2442,7 +2442,7 @@ def default_netCDF_fillvals():
 
     **Examples:**
 
-    >>> cf.default_netCDF_fillvals() 
+    >>> cf.default_netCDF_fillvals()
     {'S1': '\x00',
      'i1': -127,
      'u1': 255,
@@ -2463,7 +2463,7 @@ def _DEPRECATION_ERROR(message='', version='3.0.0'):
     raise DeprecationError("{}".format(message))
 
 
-def _DEPRECATION_ERROR_ARG(instance, method, arg, message='', version='3.0.0'):  
+def _DEPRECATION_ERROR_ARG(instance, method, arg, message='', version='3.0.0'):
     raise DeprecationError("Argument {2!r} of method '{0}.{1}' has been deprecated at version {4} and is no longer available. {3}".format(
             instance.__class__.__name__,
             method,
@@ -2482,19 +2482,19 @@ def _DEPRECATION_ERROR_FUNCTION_KWARGS(func, kwargs=None, message='',
     if exact:
         kwargs={'exact': None}
         message = "Use 're.compile' objects instead."
-        
+
     if traceback:
         kwargs={'traceback': None}
         message = "Use keyword 'verbose' instead."
-        
+
     for key in kwargs.keys():
         raise DeprecationError("Keyword {1!r} of function '{0}' has been deprecated at version {3} and is no longer available. {2}".format(
-            func,           
+            func,
             key,
             message,
             version))
 
-    
+
 def _DEPRECATION_ERROR_KWARGS(instance, method, kwargs=None, message='',
                               i=False, traceback=False, axes=False,
                               exact=False, relaxed_identity=False,
@@ -2506,24 +2506,24 @@ def _DEPRECATION_ERROR_KWARGS(instance, method, kwargs=None, message='',
     if relaxed_identity:
         kwargs={'relaxed_identity': None}
         message = "Use keywords 'strict' or 'relaxed' instead."
-        
+
     if i:
         kwargs={'i': None}
         message = "Use keyword 'inplace' instead. Note that when inplace=True, None is returned."
-        
+
     if axes:
         kwargs={'axes': None}
         message = "Use keyword 'axis' instead."
-        
+
     if traceback:
         kwargs={'traceback': None}
         message = "Use keyword 'verbose' instead."
-        
+
     if exact:
         kwargs={'exact': None}
         message = "Use 're.compile' objects instead."
 
-        
+
     for key in kwargs.keys():
         raise DeprecationError("Keyword {2!r} of method '{0}.{1}' has been deprecated at version {4} and is no longer available. {3}".format(
             instance.__class__.__name__,
@@ -2532,7 +2532,7 @@ def _DEPRECATION_ERROR_KWARGS(instance, method, kwargs=None, message='',
             message,
             version))
 
-    
+
 def _DEPRECATION_ERROR_KWARG_VALUE(instance, method, kwarg, value,
                                    message='', version='3.0.0'):
     raise DeprecationError("Value {!r} of keyword {!r} of method '{}.{}' has been deprecated at version {} and is no longer available. {}".format(
@@ -2574,7 +2574,7 @@ def _DEPRECATION_ERROR_CLASS(cls, message='', version='3.0.0'):
         message))
 
 
-def _DEPRECATION_WARNING_METHOD(instance, method, message='', new=None, version='3.0.0'):    
+def _DEPRECATION_WARNING_METHOD(instance, method, message='', new=None, version='3.0.0'):
     warnings.warn(
         "{} method {!r} has been deprecated at version {} and will be removed in a future version. {}".format(
             instance.__class__.__name__, method, version, message),

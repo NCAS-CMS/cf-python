@@ -17,7 +17,7 @@ class MathTest(unittest.TestCase):
     chunk_sizes = (300, 10000, 100000)[::-1]
 #    chunk_sizes = (100000,)
     original_chunksize = cf.CHUNKSIZE()
-    
+
     test_only = []
 #    test_only = ('NOTHING!!!!!',)
 #    test_only = ('test_Field_convolution_filter')
@@ -29,7 +29,7 @@ class MathTest(unittest.TestCase):
 #        return
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
-            
+
 #        weights = numpy.ones(5)/5.0
         weights = [0.1, 0.15, 0.5, 0.15, 0.1]
 
@@ -37,7 +37,7 @@ class MathTest(unittest.TestCase):
             cf.CHUNKSIZE(chunksize)
 
             f = cf.read(self.filename1)[0]
-            
+
             # Test user weights in different modes
             for mode in ('reflect', 'constant', 'nearest', 'mirror', 'wrap'):
                 g = f.convolution_filter(weights, axis=-1, mode=mode, cval=0.0)
@@ -101,7 +101,7 @@ class MathTest(unittest.TestCase):
 
         cf.CHUNKSIZE(self.original_chunksize)
 
-    
+
     def test_relative_vorticity_distance(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -133,11 +133,11 @@ class MathTest(unittest.TestCase):
 
             v = cf.Field()
             v.set_construct(cf.DomainAxis(size=dim_x.data.size))
-            v.set_construct(cf.DomainAxis(size=dim_y.data.size))         
+            v.set_construct(cf.DomainAxis(size=dim_y.data.size))
             v.set_construct(dim_x, axes=[X])
             v.set_construct(dim_y, axes=[Y])
             v.set_data(cf.Data(data_2d, 'm/s'), axes=('X', 'Y'))
-            
+
             rv = cf.relative_vorticity(u, v, one_sided_at_boundary=True)
             self.assertTrue((rv.array == 0.0).all())
         #--- End: for
@@ -190,7 +190,7 @@ class MathTest(unittest.TestCase):
             u.set_construct(dim_y)
             u.set_data(cf.Data(u_2d, 'm/s'), axes=('X', 'Y'))
             u.cyclic('X', period=360.0)
-            
+
 
             v = cf.Field()
             v.set_construct(cf.DomainAxis(size=lon_1d.size))
@@ -199,7 +199,7 @@ class MathTest(unittest.TestCase):
             v.set_construct(dim_y)
             v.set_data(cf.Data(v_2d, 'm/s'), axes=('X', 'Y'))
             v.cyclic('X', period=360.0)
-                        
+
             rv = cf.relative_vorticity(u, v, wrap=True)
             self.assertTrue(numpy.allclose(rv.array, rv_array))
 

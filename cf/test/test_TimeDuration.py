@@ -1,7 +1,7 @@
 import copy
 import datetime
 import os
-import time 
+import time
 import unittest
 
 import numpy
@@ -9,7 +9,7 @@ import numpy
 import cf
 
 class TimeDurationTest(unittest.TestCase):
-    def test_TimeDuration(self):        
+    def test_TimeDuration(self):
         self.assertTrue(cf.TimeDuration(2, 'calendar_years') > cf.TimeDuration(1, 'calendar_years'))
         self.assertTrue(cf.TimeDuration(2, 'calendar_years') < cf.TimeDuration(25, 'calendar_months'))
         self.assertTrue(cf.TimeDuration(2, 'hours') <= cf.TimeDuration(1, 'days'))
@@ -23,7 +23,7 @@ class TimeDurationTest(unittest.TestCase):
         self.assertTrue(cf.TimeDuration(2, 'days') != 30.5)
         self.assertTrue(cf.TimeDuration(2, 'calendar_years') > numpy.array(1.5))
         self.assertTrue(cf.TimeDuration(2, 'calendar_months') < numpy.array([[12]]))
-        
+
         self.assertFalse(cf.TimeDuration(2, 'calendar_years') <= cf.TimeDuration(1, 'calendar_years'))
         self.assertFalse(cf.TimeDuration(2, 'calendar_years') >= cf.TimeDuration(25, 'calendar_months'))
         self.assertFalse(cf.TimeDuration(2, 'hours') > cf.TimeDuration(1, 'days'))
@@ -39,7 +39,7 @@ class TimeDurationTest(unittest.TestCase):
         self.assertFalse(cf.TimeDuration(2, 'days') == 30.5)
         self.assertFalse(cf.TimeDuration(2, 'calendar_years') <= numpy.array(1.5))
         self.assertFalse(cf.TimeDuration(2, 'calendar_months') >= numpy.array([[12]]))
-        
+
         self.assertTrue(cf.TimeDuration(64, 'calendar_years') + 2 == cf.Y(66))
         self.assertTrue(cf.TimeDuration(64, 'calendar_years') - 2.5 == cf.Y(61.5))
         self.assertTrue(cf.M(23) + cf.TimeDuration(64, 'calendar_years') == cf.M(791))
@@ -80,7 +80,7 @@ class TimeDurationTest(unittest.TestCase):
         t %= 3
         self.assertTrue(t == cf.h(2.0))
 
-        t = cf.TimeDuration(24.5, 'hours')                
+        t = cf.TimeDuration(24.5, 'hours')
         self.assertTrue(-t == -24.5)
         self.assertTrue(int(t) == 24)
         self.assertTrue(t/0.5 == 49)
@@ -100,7 +100,7 @@ class TimeDurationTest(unittest.TestCase):
         self.assertTrue(cf.TimeDuration(12, 'hours').is_day_factor())
         self.assertFalse(cf.TimeDuration(13, 'hours').is_day_factor())
         self.assertFalse(cf.TimeDuration(2, 'days').is_day_factor())
-        
+
         self.assertTrue(cf.TimeDuration(cf.Data(2, 'days')) == 2)
         self.assertTrue(cf.TimeDuration(cf.Data(48, 'hours')) == 48)
         self.assertTrue(cf.TimeDuration(cf.Data(48, 'hours'), units='days') == 2)
@@ -108,10 +108,10 @@ class TimeDurationTest(unittest.TestCase):
 
         self.assertTrue(t.equals(t, verbose=True))
         self.assertTrue(t.equals(t.copy(), verbose=True))
-        
+
         self.assertTrue(t.equivalent(t, verbose=True))
         self.assertTrue(t.equivalent(t.copy(), verbose=True))
-        
+
         with self.assertRaises(Exception):
             t = cf.TimeDuration(48, 'm')
         with self.assertRaises(Exception):
@@ -121,7 +121,7 @@ class TimeDurationTest(unittest.TestCase):
 
         t = t.copy()
         t = copy.deepcopy(t)
-        
+
         _ = repr(t)
         _ = str(t)
 
@@ -129,22 +129,22 @@ class TimeDurationTest(unittest.TestCase):
         t %= 2
 
 
-    def test_TimeDuration_interval(self):        
+    def test_TimeDuration_interval(self):
         self.assertTrue(cf.M().interval(cf.dt(1999, 12)) ==
                         (cf.dt('1999-12-01 00:00:00', calendar=None), cf.dt('2000-01-01 00:00:00', calendar=None)))
 
-        self.assertTrue(cf.Y(2).interval(cf.dt(2000, 2), end=True) == 
+        self.assertTrue(cf.Y(2).interval(cf.dt(2000, 2), end=True) ==
                         (cf.dt('1998-02-01 00:00:00', calendar=None), cf.dt('2000-02-01 00:00:00', calendar=None)))
 
         self.assertTrue(cf.D(30).interval(cf.dt(1983, 12, 1, 6)) ==
                         (cf.dt('1983-12-01 06:00:00', calendar=None), cf.dt('1983-12-31 06:00:00', calendar=None)))
 
-        self.assertTrue(cf.D(30).interval(cf.dt(1983, 12, 1, 6), end=True) == 
+        self.assertTrue(cf.D(30).interval(cf.dt(1983, 12, 1, 6), end=True) ==
                         (cf.dt('1983-11-01 06:00:00', calendar=None), cf.dt('1983-12-01 06:00:00', calendar=None)))
 
         self.assertTrue(cf.D(0).interval(cf.dt(1984, 2, 3)) ==
                         (cf.dt('1984-02-03 00:00:00', calendar=None), cf.dt('1984-02-03 00:00:00', calendar=None)))
-        
+
         self.assertTrue(cf.D(5, hour=6).interval(cf.dt(2004, 3, 2), end=True) ==
                         (cf.dt('2004-02-26 00:00:00', calendar=None), cf.dt('2004-03-02 00:00:00', calendar=None)))
 
@@ -161,7 +161,7 @@ class TimeDurationTest(unittest.TestCase):
                         (cf.dt('1981-10-26 22:24:00', calendar=None), cf.dt('1984-02-03 00:00:00', calendar=None)))
 
 
-    def test_TimeDuration_iso(self):        
+    def test_TimeDuration_iso(self):
         self.assertTrue(cf.Y(19).iso == 'P19Y')
         self.assertTrue(cf.M(9).iso == 'P9M')
         self.assertTrue(cf.D(34).iso == 'P34D')
@@ -170,7 +170,7 @@ class TimeDurationTest(unittest.TestCase):
         self.assertTrue(cf.s(1989).iso == 'PT1989S')
 
 
-    def test_TimeDuration_bounds(self):        
+    def test_TimeDuration_bounds(self):
         for direction in (True, False):
             for x, y in zip(
                     [cf.Y().bounds(cf.dt(1984, 1, 1), direction=direction),
@@ -213,7 +213,7 @@ class TimeDurationTest(unittest.TestCase):
                 if direction is False:
                     y = y[::-1]
                 self.assertTrue(x==y, "{}!={}".format(x, y))
-                
+
             for x, y in zip(
                     [cf.D().bounds(cf.dt(1984, 1, 1), direction=direction),
                      cf.D().bounds(cf.dt(1984, 12, 3), direction=direction),
@@ -282,7 +282,7 @@ class TimeDurationTest(unittest.TestCase):
         self.assertTrue(cf.TimeDuration.days_in_month(2000, 2, calendar='366_day') == 29)
         self.assertTrue(cf.TimeDuration.days_in_month(2004, 2, calendar='366_day') == 29)
 
-        
+
 #--- End: class
 
 if __name__ == '__main__':

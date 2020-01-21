@@ -1,6 +1,6 @@
 import datetime
 import os
-import time 
+import time
 import unittest
 
 import numpy
@@ -11,11 +11,11 @@ class CellMeasureTest(unittest.TestCase):
     def setUp(self):
         self.filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                      'test_file.nc')
-        
+
     def test_CellMeasure__repr__str__dump(self):
         f = cf.read(self.filename)[0]
         x = f.cell_measures('measure:area').value()
-        
+
         _ = repr(x)
         _ = str(x)
         _ = x.dump(display=False)
@@ -33,7 +33,7 @@ class CellMeasureTest(unittest.TestCase):
         x.measure = 'qwerty'
         self.assertTrue(x.measure == 'qwerty')
 
-        
+
     def test_CellMeasure_identity(self):
         f = cf.read(self.filename)[0]
         x = f.cell_measures('measure:area').value()
@@ -44,7 +44,7 @@ class CellMeasureTest(unittest.TestCase):
         x.nc_del_variable()
         self.assertTrue(x.identity() == '')
 
-        
+
 #--- End: class
 
 if __name__ == "__main__":

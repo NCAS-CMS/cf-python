@@ -21,11 +21,11 @@ def _remove_tmpfiles():
         except OSError:
             pass
 
-        
+
 atexit.register(_remove_tmpfiles)
 
 
-class generalTest(unittest.TestCase):   
+class generalTest(unittest.TestCase):
     def setUp(self):
         filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                 'test_file.nc')
@@ -34,7 +34,7 @@ class generalTest(unittest.TestCase):
     def test_GENERAL(self):
         # Save original chunksize
         original_chunksize = cf.CHUNKSIZE()
-        
+
         cf.CHUNKSIZE(60)
 
         g = self.f.squeeze()
@@ -43,7 +43,7 @@ class generalTest(unittest.TestCase):
         c = cf.set([0,3,4,5])
 
         a = (f == c)
-        
+
         # +, -, *, /, **
         h = g.copy()
         h **= 2
@@ -80,25 +80,25 @@ class generalTest(unittest.TestCase):
         a = g.array
         a = g.item('latitude').array
         a = g.item('longitude').array
-        
+
         # Subspace the field
         g[..., 2:5].array
         g[9::-4, ...].array
         h = g[(slice(None, None, -1),) * g.ndim]
         h = h[(slice(None, None, -1),) * h.ndim]
         self.assertTrue(g.equals(h, verbose=True))
-        
+
         # Indices for a subspace defined by coordinates
         f.indices()
         f.indices(grid_latitude=cf.lt(5), grid_longitude=27)
         f.indices(grid_latitude=cf.lt(5), grid_longitude=27, atmosphere_hybrid_height_coordinate=1.5)
-        
+
         # Subspace the field
         g.subspace(grid_latitude=cf.lt(5), grid_longitude=27, atmosphere_hybrid_height_coordinate=1.5)
-        
+
         # Create list of fields
         fl = cf.FieldList([g, g, g, g])
-        
+
         # Write a list of fields to disk
         cf.write((f, fl), tmpfile)
         cf.write(fl, tmpfile)
@@ -110,13 +110,13 @@ class generalTest(unittest.TestCase):
                 del f.history
             except AttributeError:
                 pass
-        
+
         # Access the last field in the list
         x = fl[-1]
-        
+
         # Access the data of the last field in the list
         x = fl[-1].array
-        
+
         # Modify the last field in the list
         fl[-1] *= -1
         x = fl[-1].array
@@ -124,11 +124,11 @@ class generalTest(unittest.TestCase):
         # Changing units
         fl[-1].units = 'mm.s-1'
         x = fl[-1].array
-        
+
         # Combine fields not in place
         g = fl[-1] - fl[-1]
         x = g.array
-        
+
         # Combine field with a size 1 Data object
         g += cf.Data([[[[[1.5]]]]], 'cm.s-1')
         x = g.array
@@ -140,7 +140,7 @@ class generalTest(unittest.TestCase):
         g.data.to_memory(1)
         g.where(g.mask, 2)
         g.data.to_memory(1)
-        
+
         g[slice(None, None, 2), slice(1, None, 2)] = cf.masked
         g.data.to_memory(1)
         g.where(g.mask, [[-1]])
@@ -152,11 +152,11 @@ class generalTest(unittest.TestCase):
         h.where(True, -1)
         h[0, 2] = 2
         h.transpose([1, 0], inplace=True)
-        
+
         h.flip([1, 0], inplace=True)
-        
+
         g[slice(None, 3), slice(None, 4)] = h
-        
+
         h = g[:3, :4]
         h[...] = -1
         h[0, 2] = 2
@@ -179,21 +179,21 @@ class generalTest(unittest.TestCase):
 
         # Move Data partitions to disk
         f.data.to_disk()
-        
+
         cf.CHUNKSIZE(original_chunksize)
-        
+
         f.transpose(inplace=True)
         f.flip(inplace=True)
-        
+
         cf.write(f, 'delme.nc')
         f = cf.read('delme.nc')[0]
         cf.write(f, 'delme.nca', fmt='CFA4')
         g = cf.read('delme.nca')[0]
-        
+
         b = f[:,0:6,:]
         c = f[:,6:,:]
         d = cf.aggregate([b, c], info=1)[0]
-        
+
         # Remove temporary files
         cf.data.partition._remove_temporary_files()
 
@@ -207,4 +207,4 @@ if __name__ == "__main__":
     cf.environment()
     print()
     unittest.main(verbosity=2)
-    
+

@@ -2,7 +2,7 @@ from __future__ import print_function
 import datetime
 import os
 import tempfile
-import time 
+import time
 import unittest
 
 import numpy
@@ -16,10 +16,10 @@ import cf
 #        '''
 #        '''
 #        nc = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
-#        
+#
 #        nc.createDimension('grid_latitude', 10)
 #        nc.createDimension('grid_longitude', 9)
-#        
+#
 #        nc.Conventions = 'CF-1.7'
 #        if parent:
 #            nc.external_variables = 'areacella'
@@ -30,26 +30,26 @@ import cf
 #                                              varname='grid_latitude')
 #            grid_latitude.setncatts({'units': 'degrees', 'standard_name': 'grid_latitude'})
 #            grid_latitude[...] = range(10)
-#            
+#
 #            grid_longitude = nc.createVariable(dimensions=('grid_longitude',),
 #                                               datatype='f8',
 #                                               varname='grid_longitude')
 #            grid_longitude.setncatts({'units': 'degrees', 'standard_name': 'grid_longitude'})
 #            grid_longitude[...] = range(9)
-#            
+#
 #            latitude = nc.createVariable(dimensions=('grid_latitude', 'grid_longitude'),
 #                                         datatype='i4',
 #                                         varname='latitude')
 #            latitude.setncatts({'units': 'degree_N', 'standard_name': 'latitude'})
-#            
+#
 #            latitude[...] = numpy.arange(90).reshape(10, 9)
-#            
+#
 #            longitude = nc.createVariable(dimensions=('grid_longitude', 'grid_latitude'),
 #                                          datatype='i4',
 #                                          varname='longitude')
 #            longitude.setncatts({'units': 'degreeE', 'standard_name': 'longitude'})
 #            longitude[...] = numpy.arange(90).reshape(9, 10)
-#            
+#
 #            eastward_wind = nc.createVariable(dimensions=('grid_latitude', 'grid_longitude'),
 #                                              datatype='f8',
 #                                              varname=u'eastward_wind')
@@ -60,25 +60,25 @@ import cf
 #            eastward_wind.units = 'm s-1'
 #            eastward_wind[...] = numpy.arange(90).reshape(10, 9) - 45.5
 #
-#        if external or combined:                
+#        if external or combined:
 #            areacella = nc.createVariable(dimensions=('grid_longitude', 'grid_latitude'),
 #                                          datatype='f8',
 #                                          varname='areacella')
 #            areacella.setncatts({'units': 'm2', 'standard_name': 'cell_area'})
 #            areacella[...] = numpy.arange(90).reshape(9, 10) + 100000.5
-#            
+#
 #        nc.close()
 #    #--- End: def
 #
 #    parent_file = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-#                               'parent.nc')        
+#                               'parent.nc')
 #    external_file = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-#                                 'external.nc')            
+#                                 'external.nc')
 #    combined_file = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-#                                 'combined.nc')        
+#                                 'combined.nc')
 #    external_missing_file = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-#                                         'external_missing.nc')            
-#    
+#                                         'external_missing.nc')
+#
 #    _pp(parent_file          , parent=True)
 #    _pp(external_file        , external=True)
 #    _pp(combined_file        , combined=True)
@@ -103,15 +103,15 @@ class ExternalVariableTest(unittest.TestCase):
                                                   'combined.nc')
         self.external_missing_file = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                                   'external_missing.nc')
-        
+
         self.test_only = []
 
         (fd, self.tempfilename) = tempfile.mkstemp(suffix='.nc', prefix='cf_', dir='.')
-        os.close(fd)        
+        os.close(fd)
         (fd, self.tempfilename_parent) = tempfile.mkstemp(suffix='.nc', prefix='cf_parent_', dir='.')
-        os.close(fd)        
+        os.close(fd)
         (fd, self.tempfilename_external) = tempfile.mkstemp(suffix='.nc', prefix='cf_external_', dir='.')
-        os.close(fd)        
+        os.close(fd)
 
 
     def tearDown(self):
@@ -141,7 +141,7 @@ class ExternalVariableTest(unittest.TestCase):
         self.assertTrue(cell_measure.nc_get_variable() == 'areacella')
         self.assertTrue(cell_measure.properties() == {})
         self.assertFalse(cell_measure.has_data())
-        
+
         # External file contains only the cell measure variable
         f = cf.read(self.parent_file, external=[self.external_file],
                       verbose=False)
@@ -169,7 +169,7 @@ class ExternalVariableTest(unittest.TestCase):
             _ = repr(i)
             _ = str(i)
             _ = i.dump(display=False)
-        
+
         self.assertTrue(len(f) == 1)
         self.assertTrue(len(c) == 1)
 
@@ -185,21 +185,21 @@ class ExternalVariableTest(unittest.TestCase):
             _ = repr(i)
             _ = str(i)
             _ = i.dump(display=False)
-            
+
         self.assertTrue(len(f) == 1)
         self.assertTrue(len(c) == 1)
 
         for i in range(len(f)):
             self.assertTrue(c[i].equals(f[i], verbose=True))
 
-   
+
     def test_EXTERNAL_WRITE(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
         parent   = cf.read(self.parent_file)
         combined = cf.read(self.combined_file)
-        
+
         # External file contains only the cell measure variable
         f = cf.read(self.parent_file, external=self.external_file)
 
@@ -224,7 +224,7 @@ class ExternalVariableTest(unittest.TestCase):
         cf.write(g, self.tempfilename_parent,
                  external=self.tempfilename_external,
                  verbose=False)
-        
+
         h = cf.read(self.tempfilename_parent, verbose=False)
 
         self.assertTrue(len(h) == len(parent))
@@ -240,7 +240,7 @@ class ExternalVariableTest(unittest.TestCase):
         for i in range(len(h)):
             self.assertTrue(external[i].equals(h[i], verbose=True))
 
-    
+
 #--- End: class
 
 

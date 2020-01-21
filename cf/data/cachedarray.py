@@ -29,24 +29,24 @@ class CachedArray(abstract.FileArray):
         '''**Initialization**
 
     :Parameters:
-    
+
         array: numpy array
-            The array to be stored on disk in a temporary file.        
-    
+            The array to be stored on disk in a temporary file.
+
     **Examples:**
-    
+
     >>> f = CachedArray(numpy.array([1, 2, 3, 4, 5]))
     >>> f = CachedArray(numpy.ma.array([1, 2, 3, 4, 5]))
 
         '''
         super().__init__()
-        
+
         # ------------------------------------------------------------
         # Use mkstemp because we want to be responsible for deleting
         # the temporary file when done with it.
         # ------------------------------------------------------------
         _partition_dir = mkdtemp(prefix='cf_cachedarray_', dir=CONSTANTS['TEMPDIR'])
-        fd, _partition_file = mkstemp(prefix='cf_cachedarray_', suffix='.npy', 
+        fd, _partition_file = mkstemp(prefix='cf_cachedarray_', suffix='.npy',
                                       dir=_partition_dir)
         close(fd)
 
@@ -86,7 +86,7 @@ class CachedArray(abstract.FileArray):
         '''x.__getitem__(indices) <==> x[indices]
 
     Returns a numpy array.
-        
+
         '''
         array = numpy_load(self._partition_file)
 
@@ -103,7 +103,7 @@ class CachedArray(abstract.FileArray):
         # Return the numpy array
         return array
 
-    
+
     def __str__(self):
         '''x.__str__() <==> str(x)
 

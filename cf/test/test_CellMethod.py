@@ -33,7 +33,7 @@ class CellMethodTest(unittest.TestCase):
                'time: standard_deviation (interval: 30.0 year)',
                'lat: lon: standard_deviation (interval: 10 km)',
                'lat: lon: standard_deviation (interval: 10 km interval: 10 km)',
-               'lat: lon: standard_deviation (interval: 0.1 degree_N interval: 0.2 degree_E)', 
+               'lat: lon: standard_deviation (interval: 0.1 degree_N interval: 0.2 degree_E)',
                'lat: lon: standard_deviation (interval: 0.123 degree_N interval: 0.234 degree_E)',
                'time: variance (interval: 1 hr comment: sampled instantaneously)',
                'area: mean where land',
@@ -73,7 +73,7 @@ class CellMethodTest(unittest.TestCase):
 
         for s in self.strings:
             cms = cf.CellMethod.create(s)
-            for cm in cms:                
+            for cm in cms:
                 self.assertTrue(cm.equals(cm.copy(), verbose=True))
 
 
@@ -83,7 +83,7 @@ class CellMethodTest(unittest.TestCase):
 
         for s in self.strings:
             cms = cf.CellMethod.create(s)
-            for cm in cms:          
+            for cm in cms:
                 self.assertTrue(cm.equivalent(cm.copy(), verbose=True))
         #--- End: for
 
@@ -96,9 +96,9 @@ class CellMethodTest(unittest.TestCase):
                 ['lat: lon: mean (interval: 10 km interval: 10 km)',
                  'lat: lon: mean (interval: 10 km interval: 10 km)'],
                 ['lat: lon: mean (interval: 20 km interval: 10 km)',
-                 'lat: lon: mean (interval: 20 km interval: 10 km)'],  
+                 'lat: lon: mean (interval: 20 km interval: 10 km)'],
                 ['lat: lon: mean (interval: 20 km interval: 10 km)',
-                 'lat: lon: mean (interval: 20000 m interval: 10000 m)'],  
+                 'lat: lon: mean (interval: 20000 m interval: 10000 m)'],
 
                 ['lat: lon: mean (interval: 10 km)',
                  'lon: lat: mean (interval: 10 km)'],
@@ -107,9 +107,9 @@ class CellMethodTest(unittest.TestCase):
                 ['lat: lon: mean (interval: 10 km interval: 10 km)',
                  'lon: lat: mean (interval: 10 km interval: 10 km)'],
                 ['lat: lon: mean (interval: 20 km interval: 10 km)',
-                 'lon: lat: mean (interval: 10 km interval: 20 km)'],  
+                 'lon: lat: mean (interval: 10 km interval: 20 km)'],
                 ['lat: lon: mean (interval: 20 km interval: 10 km)',
-                 'lon: lat: mean (interval: 10000 m interval: 20000 m)'],  
+                 'lon: lat: mean (interval: 10000 m interval: 20000 m)'],
         ):
             cms0 = cf.CellMethod.create(s0)
             cms1 = cf.CellMethod.create(s1)

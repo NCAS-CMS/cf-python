@@ -45,7 +45,7 @@ is returned with an open file descriptor.
         # Close a random data array file to make way for this one
         close_one_file()
 
-    try:  
+    try:
         f = File(filename,
                  byte_ordering=byte_ordering,
                  word_size=word_size,
