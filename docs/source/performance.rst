@@ -256,14 +256,18 @@ yet recommended for operational use.
 Installing mpi4py with conda
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-To install mpi4py with conda type::
+To install mpi4py with conda type:
 
-  $ conda install mpi4py
+.. code-block:: console
+
+   $ conda install mpi4py
 
 This also installs the mpich implementation of MPI. To install MPI3
-rather than MPI2 type::
+rather than MPI2 type:
 
-  $ conda install -c conda-forge mpi4py
+.. code-block:: console
+
+   $ conda install -c conda-forge mpi4py
 
 It is planned to use MPI3 features in future versions of cf-python.
 

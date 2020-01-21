@@ -98,7 +98,7 @@ class Flags:
     Stored as a 1-d numpy array but may be set as any array-like
     object.
 
-    **Examples:*
+    **Examples:**
 
     >>> f.flag_values = ['a', 'b', 'c']
     >>> f.flag_values
@@ -141,7 +141,7 @@ class Flags:
 
     Stored as a 1-d numpy array but may be set as array-like object.
 
-    **Examples:*
+    **Examples:**
 
     >>> f.flag_masks = numpy.array([1, 2, 4], dtype='int8')
     >>> f.flag_masks
@@ -180,7 +180,7 @@ class Flags:
     Stored as a 1-d numpy string array but may be set as a space
     delimited string or any array-like object.
 
-    **Examples:*
+    **Examples:**
 
     >>> f.flag_meanings = 'low medium      high'
     >>> f.flag_meanings
@@ -251,7 +251,7 @@ class Flags:
 
             The deep copy.
 
-    **Examples:*
+    **Examples:**
 
     >>> f.copy()
 
@@ -326,7 +326,7 @@ class Flags:
         `bool`
             Whether or not the two instances are equal.
 
-    **Examples:*
+    **Examples:**
 
     >>> f
     <CF Flags: flag_values=[1 0 2], flag_masks=[2 0 2], flag_meanings=['medium' 'low' 'high']>
@@ -414,7 +414,7 @@ class Flags:
 
         `None`
 
-    **Examples:*
+    **Examples:**
 
     >>> f
     <CF Flags: flag_values=[2 0 1], flag_masks=[2 0 2], flag_meanings=['high' 'low' 'medium']>

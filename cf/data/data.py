@@ -4382,7 +4382,7 @@ place.
     def creation_commands(self, name='data', namespace='cf', string=True):
         '''Return the commands that would create the data object.
 
-    .. versionaddedd:: 3.0.4
+    .. versionadded:: 3.0.4
 
     :Parameters:
 
@@ -9070,7 +9070,7 @@ False
 
     :Returns:
 
-        ``int`
+        ``int``
 
     **Examples:**
 
@@ -9888,7 +9888,7 @@ False
     example, the array ``[[1, 2], [3, 4]]`` would be flattened across
     both dimensions to ``[1 2 3 4]``.
 
-    .. versionaddedd:: 3.0.2
+    .. versionadded:: 3.0.2
 
     .. seealso:: `insert_dimension`, `flip`, `swapaxes`, `transpose`
 
@@ -9899,7 +9899,6 @@ False
             *axes* argument may be one, or a sequence, of:
 
               * An internal axis identifier. Selects this axis.
-            ..
 
               * An integer. Selects the axis coresponding to the given
                 position in the list of axes of the data array.
@@ -10432,12 +10431,10 @@ False
               If *index* is ``0`` or ``-1`` then the first or last data
               array element respecitively will be returned, even if the
               data array is a scalar array.
-            ..
 
             * Two or more integers. These arguments are interpreted as a
               multidimensionsal index to the array. There must be the
               same number of integers as data array dimensions.
-            ..
 
             * A tuple of integers. This argument is interpreted as a
               multidimensionsal index to the array. There must be the

@@ -12178,7 +12178,7 @@ class Field(mixin.PropertiesData,
     default the `set_construct` method returns a unique construct key
     for the construct being set.
 
-    .. versionaddedd:: 3.0.4
+    .. versionadded:: 3.0.4
 
     .. seealso:: `set_construct`, `cf.Data.creation_commands`,
                  `cf.example_field`
@@ -13745,7 +13745,7 @@ class Field(mixin.PropertiesData,
     def cell_method(self, identity=None, default=ValueError(), key=False):
         '''Select a cell method construct by its identity.
 
-    .. versionadadded:: 3.0.0
+    .. versionadded:: 3.0.0
 
     .. seealso:: `construct`, `auxiliary_coordinate`, `cell_measure`,
                  `cell_methods`, `coordinate`, `coordinate_reference`,
@@ -14271,7 +14271,7 @@ class Field(mixin.PropertiesData,
             *Parameter example:*
               ``identity='ncdim%y'``
 
-        key: `bool, optional
+        key: `bool`, optional
             If True then return the selected construct key. By default
             the construct itself is returned.
 
@@ -14375,7 +14375,7 @@ class Field(mixin.PropertiesData,
             *Parameter example:*
               ``identity=2``
 
-        key: `bool, optional
+        key: `bool`, optional
             If True then return the selected construct key. By
             default the construct itself is returned.
 
@@ -14675,7 +14675,7 @@ class Field(mixin.PropertiesData,
     construct (since only one dimension coordinate construct can be
     associated with a given domain axis construct).
 
-    .. vesionadded:: 3.0.0
+    .. versionadded:: 3.0.0
 
     .. seealso:: `constructs`, `creation_commands`, `del_construct`,
                  `get_construct`, `set_coordinate_reference`,
@@ -16421,7 +16421,7 @@ class Field(mixin.PropertiesData,
 
     .. versionadded:: 1.0.4
 
-    .. sealso:: `regridc`
+    .. seealso:: `regridc`
 
     :Parameters:
 
@@ -16974,7 +16974,7 @@ class Field(mixin.PropertiesData,
     `cf.REGRID_LOGGING`. If it is logging takes place after every
     call. By default logging is disabled.
 
-    .. sealso:: `regrids`
+    .. seealso:: `regrids`
 
     :Parameters:
 
@@ -17086,7 +17086,7 @@ class Field(mixin.PropertiesData,
 
     :Returns:
 
-        `Field` or `None
+        `Field` or `None`
             The regridded field construct, or `None` if the operation
             was in-place.
 

@@ -1701,7 +1701,7 @@ class PropertiesData(Properties):
 
     def max(self):
         '''The maximum of the data array.
-g
+
     .. seealso:: `mean`, `mid_range`, `min`, `range`, `sample_size`,
                  `sd`, `sum`, `var`
 
@@ -2000,8 +2000,7 @@ g
     syntax, which is similar numpy array indexing. There are two
     extensions to the numpy indexing functionality:
 
-TODO
-
+    TODO
 
     * Size 1 dimensions are never removed.
 
@@ -2017,6 +2016,8 @@ TODO
       in Fortran), rather than by their elements.
 
     **Examples:**
+
+    TODO
 
         '''
         return Subspace(self)
@@ -3213,7 +3214,7 @@ TODO
     example, the array ``[[1, 2], [3, 4]]`` would be flattened across
     both dimensions to ``[1 2 3 4]``.
 
-    .. versionaddedd:: 3.0.2
+    .. versionadded:: 3.0.2
 
     .. seealso:: `insert_dimension`, `flip`, `swapaxes`, `transpose`
 
@@ -3224,7 +3225,6 @@ TODO
             *axes* argument may be one, or a sequence, of:
 
               * An internal axis identifier. Selects this axis.
-            ..
 
               * An integer. Selects the axis coresponding to the given
                 position in the list of axes of the data array.

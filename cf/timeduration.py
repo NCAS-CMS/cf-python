@@ -109,7 +109,7 @@ class TimeDuration:
     **Comparison operations**
 
     Comparison operations are defined for `cf.TimeDuration` objects,
-    ``cf.Data` objects, `numpy` arrays and numbers:
+    `cf.Data` objects, `numpy` arrays and numbers:
 
     >>> cf.TimeDuration(2, 'calendar_years') > cf.TimeDuration(1, 'calendar_years')
     True
@@ -149,7 +149,7 @@ class TimeDuration:
 
     Arithmetic operations are defined for `cf.TimeDuration` objects,
     date-time-like objects (such as `cf.Datetime`,
-    `datetime.datetime`, etc.), ``cf.Data` objects, `numpy` arrays and
+    `datetime.datetime`, etc.), `cf.Data` objects, `numpy` arrays and
     numbers:
 
     >>> cf.TimeDuration(64, 'days') + cf.TimeDuration(28, 'days')
