@@ -1232,46 +1232,58 @@ The following regridding methods are available (in this table,
 being regridded, and the domain that it is being regridded to,
 respectively):
 
-========================  ==============================================
-Method                    Notes
-========================  ==============================================
-Linear                    One dimensional linear interpolation (only
-                          available to `Cartesian regridding`_).
+=========================  ==============================================
+Method                     Notes
+=========================  ==============================================
+Linear                     One dimensional linear interpolation (only
+                           available to `Cartesian regridding`_).
 			  
-Bilinear                  Two dimensional variant of linear
-                          interpolation.
+Bilinear                   Two dimensional variant of linear
+                           interpolation.
 			  
-Trilinear                 Three dimensional variant of linear
-                          interpolation (only available to
-                          `Cartesian-regridding`_).
+Trilinear                  Three dimensional variant of linear
+                           interpolation (only available to
+                           `Cartesian-regridding`_).
 			  
-First order conservative  Preserve the are integral of the data across
-                          the interpolation from source to
-                          destination. It uses the proportion of the
-                          area of the overlapping source and
-                          destination cells to determine appropriate
-                          weights. In particular, the weight of a
-                          source cell is the ratio of the area of
-                          intersection of the source and destination
-                          cells to the area of the whole destination
-                          cell.
-			  
-Patch                     A second degree polynomial regridding method,
-                          which uses a least squares algorithm to
-                          calculate the polynomial. This method gives
-                          better derivatives in the resulting
-                          destination data than the bilinear method.
+First-order conservative   Preserve the area integral of the data across
+                           the interpolation from source to
+                           destination. It uses the proportion of the
+                           area of the overlapping source and
+                           destination cells to determine appropriate
+                           weights. In particular, the weight of a
+                           source cell is the ratio of the area of
+                           intersection of the source and destination
+                           cells to the area of the whole destination
+                           cell. It does not account for the field gradient
+                           across the source cell, unlike the second-order
+                           conservative method (see below).
 
-Nearest neighbour         Nearest neighbour interpolation that is useful
-                          for extrapolation of categorical data. Either
-                          each destination point is mapped to the
-                          closest source; or each source point is mapped
-                          to the closest destination point. In the
-                          latter case, a given destination point may
-                          receive input from multiple source points, but
-                          no source point will map to more than one
-                          destination point.
-========================  ==============================================
+Second-order conservative  As with first-order (see above), preserves the
+                           area integral of the field between source and
+                           destination using a weighted sum with weights
+                           based on the proportionate area of intersection.
+                           But unlike first-order, the second-order method
+                           incorporates further terms to take into
+                           consideration the gradient of the field across
+                           the source cell, thereby typically producing a
+                           smoother result of higher accuracy.
+
+Patch                      A second degree polynomial regridding method,
+                           which uses a least squares algorithm to
+                           calculate the polynomial. This method gives
+                           better derivatives in the resulting
+                           destination data than the bilinear method.
+
+Nearest neighbour          Nearest neighbour interpolation that is useful
+                           for extrapolation of categorical data. Either
+                           each destination point is mapped to the
+                           closest source; or each source point is mapped
+                           to the closest destination point. In the
+                           latter case, a given destination point may
+                           receive input from multiple source points, but
+                           no source point will map to more than one
+                           destination point.
+=========================  ==============================================
 
 .. _Spherical-regridding:
 

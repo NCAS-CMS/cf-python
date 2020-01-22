@@ -43,7 +43,7 @@ class Regrid:
             A field to hold the fraction of the source field that
             contributes to conservative regridding.
 
-        method: `str`ing, optional
+        method: `str`, optional
             By default the regridding method is set to
             'conservative_1st'. In this case or if it is set to
             'conservative' first-order conservative regridding is

@@ -66,8 +66,8 @@ The `cf` package can:
 * perform statistical collapses on field constructs,
 * perform histogram, percentile and binning operations on field
   constructs,
-* regrid field constructs with (multi-)linear, nearest neighbour,
-  higher order patch recovery and first-order conservative methods,
+* regrid field constructs with (multi-)linear, nearest neighbour, first-
+  and second-order conservative and higher order patch recovery methods,
 * apply convolution filters to field constructs,
 * calculate derivatives of field constructs,
 * create field constructs to create derived quantities (such as

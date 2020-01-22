@@ -99,6 +99,7 @@ _debug = False
 _units_radians = Units('radians')
 _units_metres  = Units('m')
 
+
 # --------------------------------------------------------------------
 # Map each allowed input collapse method name to its corresponding
 # Data method. Input collapse methods not in this sictionary are
@@ -170,41 +171,59 @@ _collapse_cell_methods = {
 # elements. Data methods not in this dictionary are assumed to have a
 # minimum number of elements equal to 1.
 # --------------------------------------------------------------------
-_collapse_min_size = {'sd' : 2,
-                      'var': 2,
-                      }
+_collapse_min_size = {
+    'sd' : 2,
+    'var': 2,
+}
 
 # --------------------------------------------------------------------
 # These Data methods may be weighted
 # --------------------------------------------------------------------
-_collapse_weighted_methods = set(('mean',
-                                  'mean_absolute_value',
-                                  'mean_of_upper_decile',
-                                  'avg',
-                                  'average',
-                                  'sd',
-                                  'standard_deviation',
-                                  'var',
-                                  'variance',
-#                                  'sum_of_weights',
-#                                  'sum_of_weights2',
-                                  'integral',
-                                  'root_mean_square',
-                                  ))
+_collapse_weighted_methods = set((
+    'mean',
+    'mean_absolute_value',
+    'mean_of_upper_decile',
+    'avg',
+    'average',
+    'sd',
+    'standard_deviation',
+    'var',
+    'variance',
+    # 'sum_of_weights',
+    # 'sum_of_weights2',
+      'integral',
+    'root_mean_square',
+))
 
 # --------------------------------------------------------------------
 # These Data methods may specify a number of degrees of freedom
 # --------------------------------------------------------------------
-_collapse_ddof_methods = set(('sd',
-                              'var',
-                              ))
+_collapse_ddof_methods = set((
+    'sd',
+    'var',
+))
 
 _earth_radius = Data(6371229.0, 'm')
 
-_relational_methods = ('__eq__', '__ne__', '__lt__', '__le__', '__gt__', '__ge__')
+_relational_methods = (
+    '__eq__',
+    '__ne__',
+    '__lt__',
+    '__le__',
+    '__gt__',
+    '__ge__'
+)
 
+conservative_regridding_methods = (
+    'conservative',
+    'conservative_1st',
+    'conservative_2nd'
+)
 
-_xxx = namedtuple('data_dimension', ['size', 'axis', 'key', 'coord', 'coord_type', 'scalar'])
+_xxx = namedtuple(
+    'data_dimension',
+    ['size', 'axis', 'key', 'coord', 'coord_type', 'scalar']
+)
 
 
 class Field(mixin.PropertiesData,
@@ -3231,7 +3250,7 @@ class Field(mixin.PropertiesData,
 #                        break
 #                #--- End: for
 #            #--- End: if
-        if method in ('conservative', 'conservative_1st', 'conservative_2nd'):
+        if method in conservative_regridding_methods:
             for coord in src_coords:
                 if not coord.has_bounds() or not coord.contiguous(overlap=False):
                     raise ValueError('Source coordinates must have' +
@@ -3273,8 +3292,7 @@ class Field(mixin.PropertiesData,
         if method is None:
             raise ValueError("Can't regrid: Must select a regridding method")
 
-        if method not in ('conservative_2nd', 'conservative_1st', 'conservative',
-                          'patch', 'bilinear', 'nearest_stod', 'nearest_dtos'):
+        if method not in conservative_regridding_methods + ('patch', 'bilinear', 'nearest_stod', 'nearest_dtos'):
             raise ValueError("Can't regrid: Invalid method: {!r}".format(method))
 
 
@@ -3494,7 +3512,7 @@ class Field(mixin.PropertiesData,
             regridding this must be taken into account.
 
         '''
-        if method in ('conservative', 'conservative_1st', 'conservative_2nd'):
+        if method in conservative_regridding_methods:
             frac = dstfracfield.data[...].copy()
             if fracfield:
                 regridded_data = frac
@@ -3659,7 +3677,7 @@ class Field(mixin.PropertiesData,
         `bool`
 
         '''
-        return method in ('conservative', 'conservative_1st', 'conservative_2nd')
+        return method in conservative_regridding_methods
 
 
     def _regrid_update_coordinates(self, dst, dst_dict, dst_coords,
@@ -16316,7 +16334,7 @@ class Field(mixin.PropertiesData,
     interpolation. Second-order conservative interpolation also takes
     into account the gradient across the source cells, so in general
     gives a smoother, more accurate representation of the source field
-    especially when going from a courser to a finer grid. Bilinear
+    especially when going from a coarser to a finer grid. Bilinear
     interpolation is available. The latter method is particular useful
     for cases when the latitude and longitude coordinate cell
     boundaries are not known nor inferrable. Higher order patch
@@ -16807,7 +16825,7 @@ class Field(mixin.PropertiesData,
 
             # Compute field mass if requested for conservative regridding
             if (_compute_field_mass is not None and method in
-                ('conservative', 'conservative_1st', 'conservative_2nd')):
+                conservative_regridding_methods):
                 # Update the _compute_field_mass dictionary in-place,
                 # thereby making the field mass available after
                 # returning
@@ -16917,7 +16935,7 @@ class Field(mixin.PropertiesData,
     interpolation also takes into account the gradient across the
     source cells, so in general gives a smoother, more accurate
     representation of the source field especially when going from a
-    courser to a finer grid. (Multi)linear interpolation is
+    coarser to a finer grid. (Multi)linear interpolation is
     available. The latter method is particular useful for cases when
     the latitude and longitude coordinate cell boundaries are not
     known nor inferrable. Higher order patch recovery is available as
@@ -17230,8 +17248,8 @@ class Field(mixin.PropertiesData,
 
         # Deal with case of 1D nonconservative regridding
         nonconservative1D = False
-        if (method not in ('conservative', 'conservative_1st', 'conservative_2nd')
-            and n_axes == 1 and coords_ext == []):
+        if (method not in conservative_regridding_methods and n_axes == 1
+            and coords_ext == []):
             # Method is not conservative, regridding is to be done along
             # one dimension and that dimension has not been padded out with
             # an extra one.
@@ -17326,7 +17344,7 @@ class Field(mixin.PropertiesData,
 
                 # Compute field mass if requested for conservative regridding
                 if (_compute_field_mass is not None and method in
-                    ('conservative', 'conservative_1st', 'conservative_2nd')):
+                    conservative_regridding_methods):
                     f._regrid_compute_field_mass(_compute_field_mass,
                                                  k, srcgrid,
                                                  srcfield,
