@@ -1,27 +1,54 @@
 import datetime
 import os
+from random import randrange, shuffle
 import unittest
 
 import cf
 
+
+def randomise_test_order(*_args):
+    '''Return a random choice from -1, 0 or 1.
+
+    When set as the test loader method for standard (merge)sort comparison
+    to order all methods in a test case (see 'sortTestMethodsUsing'), ensures
+    they run in a random order, meaning implicit reliance on setup or state,
+    i.e. test dependencies, become evident over repeated runs.
+    '''
+    return randrange(-1, 2)
+
+
 # Build the test suite from the tests found in the test files.
+test_loader = unittest.TestLoader
+# Randomise the order to run the test methods within each test case (module),
+# i.e. within each test_<TestCase>, e.g. for all in test_AuxiliaryCoordinate:
+test_loader.sortTestMethodsUsing = randomise_test_order
+
 testsuite_setup_0 = unittest.TestSuite()
-testsuite_setup_0.addTests(unittest.TestLoader().discover('.', pattern='create_test_files.py'))
+testsuite_setup_0.addTests(
+    test_loader().discover('.', pattern='create_test_files.py')
+)
 
 # Build the test suite from the tests found in the test files.
 testsuite_setup_1 = unittest.TestSuite()
-testsuite_setup_1.addTests(unittest.TestLoader().discover('.', pattern='setup_create_field.py'))
+testsuite_setup_1.addTests(
+    test_loader().discover('.', pattern='setup_create_field.py')
+)
 
 testsuite = unittest.TestSuite()
-testsuite.addTests(unittest.TestLoader().discover('.', pattern='test_*.py'))
+all_test_cases = test_loader().discover('.', pattern='test_*.py')
+# Randomise the order to run the test cases (modules, i.e. test_<TestCase>)
+# TODO: change to a in-built unittest way to specify the above (can't find one
+# after much searching, but want to avoid mutating weakly-private attribute).
+shuffle(all_test_cases._tests)
+testsuite.addTests(all_test_cases)
 
-# Run the test suite.
+# Run the test suite's first set-up stage.
 def run_test_suite_setup_0(verbosity=2):
     runner = unittest.TextTestRunner(verbosity=verbosity)
     runner.run(testsuite_setup_0)
 
 
-# Run the test suite.
+# Run the test suite's second set-up stage.
 def run_test_suite_setup_1(verbosity=2):
     runner = unittest.TextTestRunner(verbosity=verbosity)
     runner.run(testsuite_setup_1)
