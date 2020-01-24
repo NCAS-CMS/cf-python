@@ -239,41 +239,27 @@ html_theme = 'alabaster' #'default' #'haiku' #'default'
 # https://github.com/bitprophet/alabaster/blob/master/alabaster/theme.conf
 
 html_theme_options = {
-#    "page_width"      : "auto",
-    "show_related"    : 'true',
-#    "show_relbars"    : 'true',
-    "sidebar_collapse": 'false',
-#    "link"            : '#ED1010', #'#5682AD', # light blue
-#    "link_hover"      : '#46DD6c',
-#    "sidebar_search_button" :  '#ED1010',
-
-    'fixed_sidebar': 'true',
-#    'sidebar_width': '15%',
-    'page_width': '85%',
-
-    'seealso_bg'     : 'transparent',
-    'seealso_border' : 'transparent',
-
-#    'table_border': '#FFFFFF', #'#000000',
-    'shadow'      : 'false',
-
-
+    'show_related'    : 'true',
+    'sidebar_collapse': 'false',
+    'fixed_sidebar'   : 'true',
+    'page_width'      : '85%',
+    'seealso_bg'      : 'transparent',
+    'seealso_border'  : 'transparent',
+    'shadow'          : 'false',
     'show_powered_by' : 'true',
     'font_size'       : '13pt',
     'code_font_size'  : '10pt',
-    "font_family"     : 'Arial',
+    'font_family'     : 'Arial',
     'head_font_family': 'Arial',
-
-#    'sidebartextcolor': '#777777',
-#    'sidebarbgcolor'  : '#F2F2F2',
-#    'sidebartextcolor': '#777777',
-#    'sidebarlinkcolor': '#003469',
-#    'relbarbgcolor'   : '#5682AD',
-#    'relbartextcolor' : '#ffffff',
-#    'relbarlinkcolor' : '#ffffff',
-#    'headbgcolor'     : '#FFFFFF',
-#    'headtextcolor'   : '#000000',
-                      }
+    'link_hover': '#6b0000',
+    'github_button': 'true',
+    'github_type': 'star',
+    'github_repo': 'cf-python',
+    'github_user': 'NCAS-CMS',
+    'pre_bg': '#ecf2f9',
+    'code_bg': '#ecf2f9',
+    'description': 'A CF-compliant earth science data analysis library',
+}
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
@@ -308,7 +294,8 @@ html_use_smartypants = True
 
 # Custom sidebar templates, maps document names to template names.
 #html_sidebars = {'**': ['my_con.html', 'globaltoc.html', 'sourcelink.html']}
-html_sidebars = { '**': ['globaltoc.html',
+html_sidebars = { '**': ['about.html',
+                         'globaltoc.html',
                          'relations.html',
                          'sourcelink.html',
                          'searchbox.html']
