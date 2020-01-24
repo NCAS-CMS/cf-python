@@ -283,7 +283,7 @@ Running a cf-python script in parallel
 To use a cf-python script in parallel, pass the python invocation of
 the script to ``mpirun``
 
-.. code-block:: shell
+.. code-block:: console
    :caption: *Run my_script.py in parallel with 3 processors.*
 	     
    $ mpirun -n 3 python my_script.py

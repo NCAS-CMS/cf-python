@@ -472,7 +472,7 @@ The description for every field constructs found in datasets also be
 generated from the command line, with minimal, medium or full detail,
 by using the ``cfa`` tool, for example:
 
-.. code-block:: shell
+.. code-block:: console
    :caption: *Use cfa on the command line to inspect the field
              constructs contained in one or more datasets. The "-1"
              option treats all input files collectively as a single CF
@@ -4322,7 +4322,7 @@ them. :ref:`Aggregation <Aggregation>` may be carried out within
 files, or within and between files, or not used; and :ref:`external
 variables <External-variables>` may be incorporated.
 
-.. code-block:: shell
+.. code-block:: console
    :caption: *Use cfa to create new, single dataset that combines the
              field constructs from two files.*
 
@@ -4669,7 +4669,7 @@ field constructs, to a new netCDF file on disk:
 
 The new dataset is structured as follows:
 
-.. code-block:: shell
+.. code-block:: console
    :caption: *Inspect the new dataset with the ncdump command line
              tool.*
 
@@ -4930,7 +4930,7 @@ The new dataset is structured as follows (note, relative to file
 ``q_file.nc``, the existence of the "time" dimension and the lack of a
 "coordinates" attribute on the, now three-dimensional, data variable):
    
-.. code-block:: shell
+.. code-block:: console
    :caption: *Inspect the new dataset with the ncdump command line
              tool.*
 
@@ -4982,7 +4982,7 @@ the external file names to the `cf.read` function.
 This is illustrated with the files ``parent.nc`` (found in the zip
 file of sample files):
 
-.. code-block:: shell
+.. code-block:: console
    :caption: *Inspect the parent dataset with the ncdump command line
              tool.*
    
@@ -5010,7 +5010,7 @@ file of sample files):
 
 and ``external.nc`` (found in the zip file of sample files):
 
-.. code-block:: shell
+.. code-block:: console
    :caption: *Inspect the external dataset with the ncdump command
              line tool.*
 
@@ -5128,7 +5128,7 @@ External files with cfa
 One or more external files may also be included with the :ref:`cfa
 command line tool <File-inspection-with-cfa>`.
 
-.. code-block:: shell
+.. code-block:: console
    :caption: *Use cfa to describe the parent file without resolving
              the external variable reference.*
  	     
@@ -5140,7 +5140,7 @@ command line tool <File-inspection-with-cfa>`.
                    : longitude(9) = [0.0, ..., 8.0] degrees_east
    Cell measures   : measure:area (external variable: ncvar%areacella)
 
-.. code-block:: shell
+.. code-block:: console
    :caption: *Providing an external file with the "-e" option allows
              the reference to be resolved.*
 	     
@@ -5353,7 +5353,7 @@ instance.
 The contiguous case is is illustrated with the file ``contiguous.nc``
 (found in the zip file of sample files):
 
-.. code-block:: shell
+.. code-block:: console
    :caption: *Inspect the compressed dataset with the ncdump command
              line tool.*
    
@@ -5525,7 +5525,7 @@ a netCDF file:
 
 The content of the new file is:
   
-.. code-block:: shell
+.. code-block:: console
    :caption: *Inspect the new compressed dataset with the ncdump
              command line tool.*   
 
@@ -5613,7 +5613,7 @@ method of the `cf.Data` instance.
 This is illustrated with the file ``gathered.nc`` (found in the zip
 file of sample files):
 
-.. code-block:: shell
+.. code-block:: console
    :caption: *Inspect the compressed dataset with the ncdump command
              line tool.*
       
@@ -5792,7 +5792,7 @@ The new field construct can now be inspected and written a netCDF file:
 
 The content of the new file is:
    
-.. code-block:: shell
+.. code-block:: console
    :caption: *Inspect new the compressed dataset with the ncdump
              command line tool.*
    
@@ -5878,7 +5878,7 @@ fields files in exactly the same way as netCDF files. This provides a
 view of PP and UM fields files as CF field constructs, and also easily
 converts PP and UM fields files to netCDF datasets on disk.
 
-.. code-block:: shell
+.. code-block:: console
    :caption: *Use the 'cfa' shell command to view a PP file and
              convert it to a netCDF dataset.*
    
