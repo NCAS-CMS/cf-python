@@ -8,12 +8,15 @@
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -30,7 +33,28 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.1.0</a></b></h3>
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.1.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -66,10 +90,10 @@
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
     </form>
     </div>
@@ -85,13 +109,13 @@
             
   <div class="section" id="cf-data-seterr">
 <h1>cf.Data.seterr<a class="headerlink" href="#cf-data-seterr" title="Permalink to this headline">¶</a></h1>
-<dl class="staticmethod">
+<dl class="method">
 <dt id="cf.Data.seterr">
-<em class="property">static </em><code class="descclassname">Data.</code><code class="descname">seterr</code><span class="sig-paren">(</span><em>all=None</em>, <em>divide=None</em>, <em>over=None</em>, <em>under=None</em>, <em>invalid=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.1.0/cf/data/data.py#L7522"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.seterr" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-prename descclassname">Data.</code><code class="sig-name descname">seterr</code><span class="sig-paren">(</span><em class="sig-param">all=None</em>, <em class="sig-param">divide=None</em>, <em class="sig-param">over=None</em>, <em class="sig-param">under=None</em>, <em class="sig-param">invalid=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.1.0/cf/data/data.py#L7522"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.seterr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set how floating-point errors in the results of arithmetic operations
 are handled.</p>
 <p>The options for handling floating-point errors are:</p>
-<table class="docutils align-center">
+<table class="docutils align-default">
 <colgroup>
 <col style="width: 18%" />
 <col style="width: 82%" />
@@ -117,7 +141,7 @@ data array.</p></td>
 </tbody>
 </table>
 <p>The different types of floating-point errors are:</p>
-<table class="docutils align-center">
+<table class="docutils align-default">
 <colgroup>
 <col style="width: 25%" />
 <col style="width: 49%" />
@@ -193,7 +217,7 @@ behaviour if no new values are specified.</p>
 <p><strong>Examples:</strong></p>
 <p>Set treatment for all types of floating-point errors to
 <code class="docutils literal notranslate"><span class="pre">'raise'</span></code> and then reset to the previous behaviours:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="o">.</span><span class="n">seterr</span><span class="p">()</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="o">.</span><span class="n">seterr</span><span class="p">()</span>
 <span class="go">{&#39;divide&#39;: &#39;warn&#39;, &#39;invalid&#39;: &#39;warn&#39;, &#39;over&#39;: &#39;warn&#39;, &#39;under&#39;: &#39;ignore&#39;}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">old</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="s1">&#39;raise&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="o">**</span><span class="n">old</span><span class="p">)</span>
@@ -205,25 +229,25 @@ behaviour if no new values are specified.</p>
 <p>Set the treatment of division by zero to <code class="docutils literal notranslate"><span class="pre">'ignore'</span></code> and overflow
 to <code class="docutils literal notranslate"><span class="pre">'warn'</span></code> without changing the treatment of underflow and
 invalid operation:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">over</span><span class="o">=</span><span class="s1">&#39;warn&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">over</span><span class="o">=</span><span class="s1">&#39;warn&#39;</span><span class="p">)</span>
 <span class="go">{&#39;divide&#39;: &#39;warn&#39;, &#39;invalid&#39;: &#39;warn&#39;, &#39;over&#39;: &#39;warn&#39;, &#39;under&#39;: &#39;ignore&#39;}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="o">.</span><span class="n">seterr</span><span class="p">()</span>
 <span class="go">{&#39;divide&#39;: &#39;ignore&#39;, &#39;invalid&#39;: &#39;warn&#39;, &#39;over&#39;: &#39;ignore&#39;, &#39;under&#39;: &#39;ignore&#39;}</span>
 </pre></div>
 </div>
 <p>Some examples with data arrays:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">e</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">old</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">old</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">e</span><span class="o">/</span><span class="n">d</span>
 <span class="go">&lt;CF Data: [inf, 2.0] &gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">e</span><span class="o">**</span><span class="mi">12345</span>
 <span class="go">&lt;CF Data: [1.0, inf] &gt;</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s1">&#39;warn&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s1">&#39;warn&#39;</span><span class="p">)</span>
 <span class="go">{&#39;divide&#39;: &#39;ignore&#39;, &#39;invalid&#39;: &#39;ignore&#39;, &#39;over&#39;: &#39;ignore&#39;, &#39;under&#39;: &#39;ignore&#39;}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">e</span><span class="o">/</span><span class="n">d</span>
 <span class="go">RuntimeWarning: divide by zero encountered in divide</span>
@@ -232,7 +256,7 @@ invalid operation:</p>
 <span class="go">&lt;CF Data: [1.0, inf] &gt;</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">old</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="o">.</span><span class="n">mask_fpe</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">old</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="o">.</span><span class="n">mask_fpe</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="n">over</span><span class="o">=</span><span class="s1">&#39;raise&#39;</span><span class="p">)</span>
 <span class="go">{&#39;divide&#39;: &#39;warn&#39;, &#39;invalid&#39;: &#39;ignore&#39;, &#39;over&#39;: &#39;ignore&#39;, &#39;under&#39;: &#39;ignore&#39;}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">e</span><span class="o">/</span><span class="n">d</span>
@@ -242,7 +266,7 @@ invalid operation:</p>
 <span class="go">FloatingPointError: overflow encountered in power</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="o">.</span><span class="n">mask_fpe</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="o">.</span><span class="n">mask_fpe</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
 <span class="go">False</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
 <span class="go">{&#39;divide&#39;: &#39;warn&#39;, &#39;invalid&#39;: &#39;ignore&#39;, &#39;over&#39;: &#39;raise&#39;, &#39;under&#39;: &#39;ignore&#39;}</span>
@@ -267,7 +291,7 @@ invalid operation:</p>
       &copy;2020, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.0.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

@@ -8,12 +8,15 @@
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/clipboard.min.js"></script>
     <script type="text/javascript" src="_static/copybutton.js"></script>
+    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -30,7 +33,28 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="index.html">cf 3.1.0</a></b></h3>
+
+
+
+<h1 class="logo"><a href="index.html">cf 3.1.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -60,10 +84,10 @@
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
     </form>
     </div>
@@ -121,13 +145,13 @@ later. (Versions 2.x of cf work only for Python 2.7.)</p>
 run, for example:</p>
 <div class="literal-block-wrapper docutils container" id="id14">
 <div class="code-block-caption"><span class="caption-text"><em>Install as root, with any missing dependencies.</em></span><a class="headerlink" href="#id14" title="Permalink to this code">¶</a></div>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip install cf-python
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> pip install cf-python
 </pre></div>
 </div>
 </div>
 <div class="literal-block-wrapper docutils container" id="id15">
 <div class="code-block-caption"><span class="caption-text"><em>Install as a user, with any missing dependencies.</em></span><a class="headerlink" href="#id15" title="Permalink to this code">¶</a></div>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip install cf-python --user
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> pip install cf-python --user
 </pre></div>
 </div>
 </div>
@@ -135,7 +159,7 @@ run, for example:</p>
 <div class="literal-block-wrapper docutils container" id="id16">
 <div class="code-block-caption"><span class="caption-text"><em>Install as root without installing any of the
 dependencies.</em></span><a class="headerlink" href="#id16" title="Permalink to this code">¶</a></div>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip install cf-python --no-deps
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> pip install cf-python --no-deps
 </pre></div>
 </div>
 </div>
@@ -154,8 +178,8 @@ its <a class="reference internal" href="#required"><span class="std std-ref">req
 dependencies, and the <a class="reference external" href="http://ajheaps.github.io/cf-plot">cf-plot visualisation package</a>, run</p>
 <div class="literal-block-wrapper docutils container" id="id17">
 <div class="code-block-caption"><span class="caption-text"><em>Install with conda.</em></span><a class="headerlink" href="#id17" title="Permalink to this code">¶</a></div>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>conda install -c ncas -c conda-forge cf-python cf-plot <span class="nv">udunits2</span><span class="o">==</span><span class="m">2</span>.2.25
-conda install -c conda-forge mpich esmpy
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> conda install -c ncas -c conda-forge cf-python cf-plot <span class="nv">udunits2</span><span class="o">==</span><span class="m">2</span>.2.25
+<span class="gp">$</span> conda install -c conda-forge mpich esmpy
 </pre></div>
 </div>
 </div>
@@ -174,8 +198,8 @@ properly, although the defaults are usually sufficient.</p>
 <li><p>Download the cf-python package from <a class="reference external" href="https://pypi.org/project/cf-python">https://pypi.org/project/cf-python</a></p></li>
 <li><p>Unpack the library (replacing <code class="docutils literal notranslate"><span class="pre">&lt;version&gt;</span></code> with the version that
 you want to install, e.g. <code class="docutils literal notranslate"><span class="pre">3.0.0</span></code>):</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>tar zxvf cf-python-&lt;version&gt;.tar.gz
-<span class="nb">cd</span> cf-python-&lt;version&gt;
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> tar zxvf cf-python-&lt;version&gt;.tar.gz
+<span class="gp">$</span> <span class="nb">cd</span> cf-python-&lt;version&gt;
 </pre></div>
 </div>
 </li>
@@ -184,18 +208,18 @@ you want to install, e.g. <code class="docutils literal notranslate"><span class
 <blockquote>
 <div><ul>
 <li><p>To install the cf-python package to a central location:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python setup.py install
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> python setup.py install
 </pre></div>
 </div>
 </li>
 <li><p>To install the cf-python package locally to the user in the default
 location:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python setup.py install --user
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> python setup.py install --user
 </pre></div>
 </div>
 </li>
 <li><p>To install the cf-python package in the &lt;directory&gt; of your choice:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python setup.py install --home<span class="o">=</span>&lt;directory&gt;
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> python setup.py install --home<span class="o">=</span>&lt;directory&gt;
 </pre></div>
 </div>
 </li>
@@ -260,7 +284,7 @@ environments for which these features are not required.</p>
 <ul>
 <li><p><a class="reference external" href="https://www.earthsystemcog.org/projects/esmpy/">ESMF</a>, version
 8.0.0 or newer. This is easily installed via conda with</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda install -c conda-forge mpich esmpy
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> conda install -c conda-forge mpich esmpy
 </pre></div>
 </div>
 <p>or may be installed from source.</p>
@@ -286,7 +310,7 @@ or newer.</p></li>
 <div class="section" id="tests">
 <span id="id12"></span><h2><a class="toc-backref" href="#id27"><strong>Tests</strong></a><a class="headerlink" href="#tests" title="Permalink to this headline">¶</a></h2>
 <p>Tests are run from within the <code class="docutils literal notranslate"><span class="pre">cf/test</span></code> directory:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python run_tests.py
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> python run_tests.py
 </pre></div>
 </div>
 <hr class="docutils" />
@@ -309,7 +333,7 @@ or newer.</p></li>
       &copy;2020, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.0.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

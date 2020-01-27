@@ -8,12 +8,15 @@
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/clipboard.min.js"></script>
     <script type="text/javascript" src="_static/copybutton.js"></script>
+    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -28,7 +31,28 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="index.html">cf 3.1.0</a></b></h3>
+
+
+
+<h1 class="logo"><a href="index.html">cf 3.1.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -56,10 +80,10 @@
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
     </form>
     </div>
@@ -189,7 +213,7 @@ reference system.</p>
 <p>The following collapse methods are available, over any subset of the
 domain axes. The “Cell method” column in the table gives the method of
 the new cell method construct (if one is created).</p>
-<table class="docutils align-center">
+<table class="docutils align-default">
 <colgroup>
 <col style="width: 30%" />
 <col style="width: 43%" />
@@ -411,7 +435,7 @@ construct.</p>
 weighted must be identified with the <em>weights</em> keyword. A collapse by
 a particular method is either never weighted, or may be weighted, or
 is always weighted, as described in the following table:</p>
-<table class="docutils align-center">
+<table class="docutils align-default">
 <colgroup>
 <col style="width: 44%" />
 <col style="width: 44%" />
@@ -817,7 +841,7 @@ day in May from a 1961-1990 climatology).</p>
 being created, all of which are grouped collapses. Each collapse
 method needs to indicate its climatological nature with one of the
 following qualifiers,</p>
-<table class="docutils align-center">
+<table class="docutils align-default">
 <colgroup>
 <col style="width: 41%" />
 <col style="width: 59%" />
@@ -1362,7 +1386,7 @@ regridding dimensions are removed from the regridded field construct.</p>
 “source” and “destination” refer to the domain of the field construct
 being regridded, and the domain that it is being regridded to,
 respectively):</p>
-<table class="docutils align-center">
+<table class="docutils align-default">
 <colgroup>
 <col style="width: 34%" />
 <col style="width: 66%" />
@@ -1386,8 +1410,8 @@ interpolation.</p></td>
 interpolation (only available to
 <a class="reference internal" href="#cartesian-regridding">Cartesian-regridding</a>).</p></td>
 </tr>
-<tr class="row-odd"><td><p>First order conservative</p></td>
-<td><p>Preserve the are integral of the data across
+<tr class="row-odd"><td><p>First-order conservative</p></td>
+<td><p>Preserve the area integral of the data across
 the interpolation from source to
 destination. It uses the proportion of the
 area of the overlapping source and
@@ -1396,16 +1420,29 @@ weights. In particular, the weight of a
 source cell is the ratio of the area of
 intersection of the source and destination
 cells to the area of the whole destination
-cell.</p></td>
+cell. It does not account for the field gradient
+across the source cell, unlike the second-order
+conservative method (see below).</p></td>
 </tr>
-<tr class="row-even"><td><p>Patch</p></td>
+<tr class="row-even"><td><p>Second-order conservative</p></td>
+<td><p>As with first-order (see above), preserves the
+area integral of the field between source and
+destination using a weighted sum with weights
+based on the proportionate area of intersection.
+But unlike first-order, the second-order method
+incorporates further terms to take into
+consideration the gradient of the field across
+the source cell, thereby typically producing a
+smoother result of higher accuracy.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Patch</p></td>
 <td><p>A second degree polynomial regridding method,
 which uses a least squares algorithm to
 calculate the polynomial. This method gives
 better derivatives in the resulting
 destination data than the bilinear method.</p></td>
 </tr>
-<tr class="row-odd"><td><p>Nearest neighbour</p></td>
+<tr class="row-even"><td><p>Nearest neighbour</p></td>
 <td><p>Nearest neighbour interpolation that is useful
 for extrapolation of categorical data. Either
 each destination point is mapped to the
@@ -1428,7 +1465,7 @@ regridding weights is based on areas and distances on the surface of
 the sphere, rather in <a class="reference internal" href="tutorial.html#cartesian-regridding"><span class="std std-ref">Euclidean space</span></a>.</p>
 <p>The following combinations of spherical source and destination domain
 coordinate systems are available to the <a class="reference internal" href="method/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regrids</span></code></a> method:</p>
-<table class="docutils align-center">
+<table class="docutils align-default">
 <colgroup>
 <col style="width: 50%" />
 <col style="width: 50%" />
@@ -1722,40 +1759,40 @@ during operations, and if one operand has no units then the units of
 the other are assumed.</p>
 <div class="literal-block-wrapper docutils container" id="id59">
 <div class="code-block-caption"><span class="caption-text"><em>TODO</em></span><a class="headerlink" href="#id59" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span> <span class="o">&gt;&gt;&gt;</span> <span class="n">q</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="n">t</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">stats</span><span class="p">()</span>
- <span class="p">{</span><span class="s1">&#39;min&#39;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">CF</span> <span class="n">Data</span><span class="p">():</span> <span class="mf">260.0</span> <span class="n">K</span><span class="o">&gt;</span><span class="p">,</span>
-  <span class="s1">&#39;mean&#39;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">CF</span> <span class="n">Data</span><span class="p">():</span> <span class="mf">269.9244444444445</span> <span class="n">K</span><span class="o">&gt;</span><span class="p">,</span>
-  <span class="s1">&#39;max&#39;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">CF</span> <span class="n">Data</span><span class="p">():</span> <span class="mf">280.0</span> <span class="n">K</span><span class="o">&gt;</span><span class="p">,</span>
-  <span class="s1">&#39;range&#39;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">CF</span> <span class="n">Data</span><span class="p">():</span> <span class="mf">20.0</span> <span class="n">K</span><span class="o">&gt;</span><span class="p">,</span>
-  <span class="s1">&#39;mid_range&#39;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">CF</span> <span class="n">Data</span><span class="p">():</span> <span class="mf">270.0</span> <span class="n">K</span><span class="o">&gt;</span><span class="p">,</span>
-  <span class="s1">&#39;standard_deviation&#39;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">CF</span> <span class="n">Data</span><span class="p">():</span> <span class="mf">5.942452002538104</span> <span class="n">K</span><span class="o">&gt;</span><span class="p">,</span>
-  <span class="s1">&#39;sample_size&#39;</span><span class="p">:</span> <span class="mi">90</span><span class="p">}</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">t</span> <span class="o">+</span> <span class="n">t</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="n">x</span>
- <span class="o">&lt;</span><span class="n">CF</span> <span class="n">Field</span><span class="p">:</span> <span class="n">air_temperature</span><span class="p">(</span><span class="n">atmosphere_hybrid_height_coordinate</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">grid_latitude</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">grid_longitude</span><span class="p">(</span><span class="mi">9</span><span class="p">))</span> <span class="n">K</span><span class="o">&gt;</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
- <span class="o">&lt;</span><span class="n">CF</span> <span class="n">Data</span><span class="p">():</span> <span class="mf">520.0</span> <span class="n">K</span><span class="o">&gt;</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="p">(</span><span class="n">t</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
- <span class="o">&lt;</span><span class="n">CF</span> <span class="n">Data</span><span class="p">():</span> <span class="mf">258.0</span> <span class="n">K</span><span class="o">&gt;</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="p">(</span><span class="mi">2</span> <span class="o">+</span> <span class="n">t</span><span class="p">)</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
- <span class="o">&lt;</span><span class="n">CF</span> <span class="n">Data</span><span class="p">():</span> <span class="mf">262.0</span> <span class="n">K</span><span class="o">&gt;</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="p">(</span><span class="n">t</span> <span class="o">*</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">9</span><span class="p">)))</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
- <span class="o">&lt;</span><span class="n">CF</span> <span class="n">Data</span><span class="p">():</span> <span class="mf">0.0</span> <span class="n">K</span><span class="o">&gt;</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="p">(</span><span class="n">t</span> <span class="o">+</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">29</span><span class="p">),</span> <span class="s1">&#39;0.1 K&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
- <span class="o">&lt;</span><span class="n">CF</span> <span class="n">Data</span><span class="p">():</span> <span class="mf">262.6</span> <span class="n">K</span><span class="o">&gt;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">stats</span><span class="p">()</span>
+<span class="go">{&#39;min&#39;: &lt;CF Data(): 260.0 K&gt;,</span>
+<span class="go"> &#39;mean&#39;: &lt;CF Data(): 269.9244444444445 K&gt;,</span>
+<span class="go"> &#39;max&#39;: &lt;CF Data(): 280.0 K&gt;,</span>
+<span class="go"> &#39;range&#39;: &lt;CF Data(): 20.0 K&gt;,</span>
+<span class="go"> &#39;mid_range&#39;: &lt;CF Data(): 270.0 K&gt;,</span>
+<span class="go"> &#39;standard_deviation&#39;: &lt;CF Data(): 5.942452002538104 K&gt;,</span>
+<span class="go"> &#39;sample_size&#39;: 90}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">t</span> <span class="o">+</span> <span class="n">t</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
+<span class="go">&lt;CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+<span class="go">&lt;CF Data(): 520.0 K&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">t</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+<span class="go">&lt;CF Data(): 258.0 K&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="mi">2</span> <span class="o">+</span> <span class="n">t</span><span class="p">)</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+<span class="go">&lt;CF Data(): 262.0 K&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">t</span> <span class="o">*</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">9</span><span class="p">)))</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+<span class="go">&lt;CF Data(): 0.0 K&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">t</span> <span class="o">+</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">29</span><span class="p">),</span> <span class="s1">&#39;0.1 K&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+<span class="go">&lt;CF Data(): 262.6 K&gt;</span>
 </pre></div>
 </div>
 </div>
 <div class="literal-block-wrapper docutils container" id="id60">
 <div class="code-block-caption"><span class="caption-text"><em>TODO</em></span><a class="headerlink" href="#id60" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span> <span class="o">&gt;&gt;&gt;</span> <span class="n">u</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Units</span> <span class="o">-=</span> <span class="mf">273.15</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
- <span class="o">&lt;</span><span class="n">CF</span> <span class="n">Field</span><span class="p">:</span> <span class="n">air_temperature</span><span class="p">(</span><span class="n">grid_longitude</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">grid_latitude</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">atmosphere_hybrid_height_coordinate</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="n">K</span> <span class="o">@</span> <span class="mf">273.15</span><span class="o">&gt;</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="n">t</span> <span class="o">+</span> <span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
- <span class="o">&lt;</span><span class="n">CF</span> <span class="n">Field</span><span class="p">:</span> <span class="n">air_temperature</span><span class="p">(</span><span class="n">atmosphere_hybrid_height_coordinate</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">grid_latitude</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">grid_longitude</span><span class="p">(</span><span class="mi">9</span><span class="p">))</span> <span class="n">K</span><span class="o">&gt;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">Units</span> <span class="o">-=</span> <span class="mf">273.15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="go">&lt;CF Field: air_temperature(grid_longitude(1), grid_latitude(10), atmosphere_hybrid_height_coordinate(1)) K @ 273.15&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">+</span> <span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="go">&lt;CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K&gt;</span>
 </pre></div>
 </div>
 </div>
@@ -1765,19 +1802,19 @@ the case if the units of the result differ from bother operands, or if
 they have different standard names.</p>
 <div class="literal-block-wrapper docutils container" id="id61">
 <div class="code-block-caption"><span class="caption-text"><em>TODO</em></span><a class="headerlink" href="#id61" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span> <span class="o">&gt;&gt;&gt;</span> <span class="n">t</span><span class="o">.</span><span class="n">identities</span><span class="p">()</span>
- <span class="p">[</span><span class="s1">&#39;air_temperature&#39;</span><span class="p">,</span>
-  <span class="s1">&#39;Conventions=CF-1.7&#39;</span><span class="p">,</span>
-  <span class="s1">&#39;project=research&#39;</span><span class="p">,</span>
-  <span class="s1">&#39;units=K&#39;</span><span class="p">,</span>
-  <span class="s1">&#39;standard_name=air_temperature&#39;</span><span class="p">,</span>
-  <span class="s1">&#39;ncvar%ta&#39;</span><span class="p">]</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="n">u</span> <span class="o">=</span> <span class="n">t</span> <span class="o">*</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;ms-1&#39;</span><span class="p">)</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">identities</span><span class="p">()</span>
- <span class="p">[</span><span class="s1">&#39;Conventions=CF-1.7&#39;</span><span class="p">,</span>
-  <span class="s1">&#39;project=research&#39;</span><span class="p">,</span>
-  <span class="s1">&#39;units=1000 s-1.K&#39;</span><span class="p">,</span>
-  <span class="s1">&#39;ncvar%ta&#39;</span><span class="p">]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">identities</span><span class="p">()</span>
+<span class="go">[&#39;air_temperature&#39;,</span>
+<span class="go"> &#39;Conventions=CF-1.7&#39;,</span>
+<span class="go"> &#39;project=research&#39;,</span>
+<span class="go"> &#39;units=K&#39;,</span>
+<span class="go"> &#39;standard_name=air_temperature&#39;,</span>
+<span class="go"> &#39;ncvar%ta&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="n">t</span> <span class="o">*</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;ms-1&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">identities</span><span class="p">()</span>
+<span class="go">[&#39;Conventions=CF-1.7&#39;,</span>
+<span class="go"> &#39;project=research&#39;,</span>
+<span class="go"> &#39;units=1000 s-1.K&#39;,</span>
+<span class="go"> &#39;ncvar%ta&#39;]</span>
 </pre></div>
 </div>
 </div>
@@ -1830,25 +1867,25 @@ returning a new field construct with modified data values. See the
 <a class="reference internal" href="classes/cf.Field.html#field-unary-arithmetic"><span class="std std-ref">comprehensive list of available unary operations</span></a>.</p>
 <div class="literal-block-wrapper docutils container" id="id63">
 <div class="code-block-caption"><span class="caption-text"><em>TODO</em></span><a class="headerlink" href="#id63" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span> <span class="o">&gt;&gt;&gt;</span> <span class="n">q</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
- <span class="p">[[</span><span class="mf">0.007</span> <span class="mf">0.034</span> <span class="mf">0.003</span> <span class="mf">0.014</span> <span class="mf">0.018</span> <span class="mf">0.037</span> <span class="mf">0.024</span> <span class="mf">0.029</span><span class="p">]</span>
-  <span class="p">[</span><span class="mf">0.023</span> <span class="mf">0.036</span> <span class="mf">0.045</span> <span class="mf">0.062</span> <span class="mf">0.046</span> <span class="mf">0.073</span> <span class="mf">0.006</span> <span class="mf">0.066</span><span class="p">]</span>
-  <span class="p">[</span><span class="mf">0.11</span>  <span class="mf">0.131</span> <span class="mf">0.124</span> <span class="mf">0.146</span> <span class="mf">0.087</span> <span class="mf">0.103</span> <span class="mf">0.057</span> <span class="mf">0.011</span><span class="p">]</span>
-  <span class="p">[</span><span class="mf">0.029</span> <span class="mf">0.059</span> <span class="mf">0.039</span> <span class="mf">0.07</span>  <span class="mf">0.058</span> <span class="mf">0.072</span> <span class="mf">0.009</span> <span class="mf">0.017</span><span class="p">]</span>
-  <span class="p">[</span><span class="mf">0.006</span> <span class="mf">0.036</span> <span class="mf">0.019</span> <span class="mf">0.035</span> <span class="mf">0.018</span> <span class="mf">0.037</span> <span class="mf">0.034</span> <span class="mf">0.013</span><span class="p">]]</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="o">-</span><span class="n">q</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
- <span class="p">[[</span><span class="o">-</span><span class="mf">0.007</span> <span class="o">-</span><span class="mf">0.034</span> <span class="o">-</span><span class="mf">0.003</span> <span class="o">-</span><span class="mf">0.014</span> <span class="o">-</span><span class="mf">0.018</span> <span class="o">-</span><span class="mf">0.037</span> <span class="o">-</span><span class="mf">0.024</span> <span class="o">-</span><span class="mf">0.029</span><span class="p">]</span>
-  <span class="p">[</span><span class="o">-</span><span class="mf">0.023</span> <span class="o">-</span><span class="mf">0.036</span> <span class="o">-</span><span class="mf">0.045</span> <span class="o">-</span><span class="mf">0.062</span> <span class="o">-</span><span class="mf">0.046</span> <span class="o">-</span><span class="mf">0.073</span> <span class="o">-</span><span class="mf">0.006</span> <span class="o">-</span><span class="mf">0.066</span><span class="p">]</span>
-  <span class="p">[</span><span class="o">-</span><span class="mf">0.11</span>  <span class="o">-</span><span class="mf">0.131</span> <span class="o">-</span><span class="mf">0.124</span> <span class="o">-</span><span class="mf">0.146</span> <span class="o">-</span><span class="mf">0.087</span> <span class="o">-</span><span class="mf">0.103</span> <span class="o">-</span><span class="mf">0.057</span> <span class="o">-</span><span class="mf">0.011</span><span class="p">]</span>
-  <span class="p">[</span><span class="o">-</span><span class="mf">0.029</span> <span class="o">-</span><span class="mf">0.059</span> <span class="o">-</span><span class="mf">0.039</span> <span class="o">-</span><span class="mf">0.07</span>  <span class="o">-</span><span class="mf">0.058</span> <span class="o">-</span><span class="mf">0.072</span> <span class="o">-</span><span class="mf">0.009</span> <span class="o">-</span><span class="mf">0.017</span><span class="p">]</span>
-  <span class="p">[</span><span class="o">-</span><span class="mf">0.006</span> <span class="o">-</span><span class="mf">0.036</span> <span class="o">-</span><span class="mf">0.019</span> <span class="o">-</span><span class="mf">0.035</span> <span class="o">-</span><span class="mf">0.018</span> <span class="o">-</span><span class="mf">0.037</span> <span class="o">-</span><span class="mf">0.034</span> <span class="o">-</span><span class="mf">0.013</span><span class="p">]]</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="o">-</span><span class="n">q</span><span class="p">)</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
- <span class="p">[[</span><span class="mf">0.007</span> <span class="mf">0.034</span> <span class="mf">0.003</span> <span class="mf">0.014</span> <span class="mf">0.018</span> <span class="mf">0.037</span> <span class="mf">0.024</span> <span class="mf">0.029</span><span class="p">]</span>
-  <span class="p">[</span><span class="mf">0.023</span> <span class="mf">0.036</span> <span class="mf">0.045</span> <span class="mf">0.062</span> <span class="mf">0.046</span> <span class="mf">0.073</span> <span class="mf">0.006</span> <span class="mf">0.066</span><span class="p">]</span>
-  <span class="p">[</span><span class="mf">0.11</span>  <span class="mf">0.131</span> <span class="mf">0.124</span> <span class="mf">0.146</span> <span class="mf">0.087</span> <span class="mf">0.103</span> <span class="mf">0.057</span> <span class="mf">0.011</span><span class="p">]</span>
-  <span class="p">[</span><span class="mf">0.029</span> <span class="mf">0.059</span> <span class="mf">0.039</span> <span class="mf">0.07</span>  <span class="mf">0.058</span> <span class="mf">0.072</span> <span class="mf">0.009</span> <span class="mf">0.017</span><span class="p">]</span>
-  <span class="p">[</span><span class="mf">0.006</span> <span class="mf">0.036</span> <span class="mf">0.019</span> <span class="mf">0.035</span> <span class="mf">0.018</span> <span class="mf">0.037</span> <span class="mf">0.034</span> <span class="mf">0.013</span><span class="p">]]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]</span>
+<span class="go"> [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]</span>
+<span class="go"> [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]</span>
+<span class="go"> [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]</span>
+<span class="go"> [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="o">-</span><span class="n">q</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[-0.007 -0.034 -0.003 -0.014 -0.018 -0.037 -0.024 -0.029]</span>
+<span class="go"> [-0.023 -0.036 -0.045 -0.062 -0.046 -0.073 -0.006 -0.066]</span>
+<span class="go"> [-0.11  -0.131 -0.124 -0.146 -0.087 -0.103 -0.057 -0.011]</span>
+<span class="go"> [-0.029 -0.059 -0.039 -0.07  -0.058 -0.072 -0.009 -0.017]</span>
+<span class="go"> [-0.006 -0.036 -0.019 -0.035 -0.018 -0.037 -0.034 -0.013]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="o">-</span><span class="n">q</span><span class="p">)</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]</span>
+<span class="go"> [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]</span>
+<span class="go"> [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]</span>
+<span class="go"> [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]</span>
+<span class="go"> [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]</span>
 </pre></div>
 </div>
 </div>
@@ -1873,31 +1910,31 @@ during operations, and if one operand has no units then the units of
 the other are assumed.</p>
 <div class="literal-block-wrapper docutils container" id="id64">
 <div class="code-block-caption"><span class="caption-text"><em>TODO</em></span><a class="headerlink" href="#id64" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span> <span class="o">&gt;&gt;&gt;</span> <span class="n">q</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
- <span class="p">[[</span><span class="mf">0.007</span> <span class="mf">0.034</span> <span class="mf">0.003</span> <span class="mf">0.014</span> <span class="mf">0.018</span> <span class="mf">0.037</span> <span class="mf">0.024</span> <span class="mf">0.029</span><span class="p">]</span>
-  <span class="p">[</span><span class="mf">0.023</span> <span class="mf">0.036</span> <span class="mf">0.045</span> <span class="mf">0.062</span> <span class="mf">0.046</span> <span class="mf">0.073</span> <span class="mf">0.006</span> <span class="mf">0.066</span><span class="p">]</span>
-  <span class="p">[</span><span class="mf">0.11</span>  <span class="mf">0.131</span> <span class="mf">0.124</span> <span class="mf">0.146</span> <span class="mf">0.087</span> <span class="mf">0.103</span> <span class="mf">0.057</span> <span class="mf">0.011</span><span class="p">]</span>
-  <span class="p">[</span><span class="mf">0.029</span> <span class="mf">0.059</span> <span class="mf">0.039</span> <span class="mf">0.07</span>  <span class="mf">0.058</span> <span class="mf">0.072</span> <span class="mf">0.009</span> <span class="mf">0.017</span><span class="p">]</span>
-  <span class="p">[</span><span class="mf">0.006</span> <span class="mf">0.036</span> <span class="mf">0.019</span> <span class="mf">0.035</span> <span class="mf">0.018</span> <span class="mf">0.037</span> <span class="mf">0.034</span> <span class="mf">0.013</span><span class="p">]]</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">((</span><span class="n">q</span> <span class="o">==</span> <span class="n">q</span><span class="p">)</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
- <span class="p">[[</span> <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span><span class="p">]</span>
-  <span class="p">[</span> <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span><span class="p">]</span>
-  <span class="p">[</span> <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span><span class="p">]</span>
-  <span class="p">[</span> <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span><span class="p">]</span>
-  <span class="p">[</span> <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span><span class="p">]]</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">((</span><span class="n">q</span> <span class="o">&lt;</span> <span class="mf">0.05</span><span class="p">)</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
- <span class="p">[[</span> <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span><span class="p">]</span>
-  <span class="p">[</span> <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span> <span class="kc">False</span>  <span class="kc">True</span> <span class="kc">False</span>  <span class="kc">True</span> <span class="kc">False</span><span class="p">]</span>
-  <span class="p">[</span><span class="kc">False</span> <span class="kc">False</span> <span class="kc">False</span> <span class="kc">False</span> <span class="kc">False</span> <span class="kc">False</span> <span class="kc">False</span>  <span class="kc">True</span><span class="p">]</span>
-  <span class="p">[</span> <span class="kc">True</span> <span class="kc">False</span>  <span class="kc">True</span> <span class="kc">False</span> <span class="kc">False</span> <span class="kc">False</span>  <span class="kc">True</span>  <span class="kc">True</span><span class="p">]</span>
-  <span class="p">[</span> <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span><span class="p">]]</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">((</span><span class="n">q</span> <span class="o">&gt;=</span> <span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
- <span class="p">[[</span> <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span><span class="p">]</span>
-  <span class="p">[</span> <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span> <span class="kc">False</span>  <span class="kc">True</span><span class="p">]</span>
-  <span class="p">[</span> <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span> <span class="kc">False</span><span class="p">]</span>
-  <span class="p">[</span> <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span> <span class="kc">False</span> <span class="kc">False</span><span class="p">]</span>
-  <span class="p">[</span><span class="kc">False</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span> <span class="kc">False</span><span class="p">]]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]</span>
+<span class="go"> [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]</span>
+<span class="go"> [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]</span>
+<span class="go"> [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]</span>
+<span class="go"> [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">((</span><span class="n">q</span> <span class="o">==</span> <span class="n">q</span><span class="p">)</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[ True  True  True  True  True  True  True  True]</span>
+<span class="go"> [ True  True  True  True  True  True  True  True]</span>
+<span class="go"> [ True  True  True  True  True  True  True  True]</span>
+<span class="go"> [ True  True  True  True  True  True  True  True]</span>
+<span class="go"> [ True  True  True  True  True  True  True  True]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">((</span><span class="n">q</span> <span class="o">&lt;</span> <span class="mf">0.05</span><span class="p">)</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[ True  True  True  True  True  True  True  True]</span>
+<span class="go"> [ True  True  True False  True False  True False]</span>
+<span class="go"> [False False False False False False False  True]</span>
+<span class="go"> [ True False  True False False False  True  True]</span>
+<span class="go"> [ True  True  True  True  True  True  True  True]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">((</span><span class="n">q</span> <span class="o">&gt;=</span> <span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[ True  True  True  True  True  True  True  True]</span>
+<span class="go"> [ True  True  True  True  True  True False  True]</span>
+<span class="go"> [ True  True  True  True  True  True  True False]</span>
+<span class="go"> [ True  True  True  True  True  True False False]</span>
+<span class="go"> [False  True  True  True  True  True  True False]]</span>
 </pre></div>
 </div>
 </div>
@@ -1905,19 +1942,19 @@ the other are assumed.</p>
 result, which also has no units.</p>
 <div class="literal-block-wrapper docutils container" id="id65">
 <div class="code-block-caption"><span class="caption-text"><em>TODO</em></span><a class="headerlink" href="#id65" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span> <span class="o">&gt;&gt;&gt;</span> <span class="n">q</span><span class="o">.</span><span class="n">identities</span><span class="p">()</span>
- <span class="p">[</span><span class="s1">&#39;specific_humidity&#39;</span><span class="p">,</span>
-  <span class="s1">&#39;Conventions=CF-1.7&#39;</span><span class="p">,</span>
-  <span class="s1">&#39;project=research&#39;</span><span class="p">,</span>
-  <span class="s1">&#39;units=1&#39;</span><span class="p">,</span>
-  <span class="s1">&#39;standard_name=specific_humidity&#39;</span><span class="p">,</span>
-  <span class="s1">&#39;ncvar%q&#39;</span><span class="p">]</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="n">r</span> <span class="o">=</span> <span class="n">q</span> <span class="o">&gt;</span> <span class="n">q</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="n">r</span><span class="o">.</span><span class="n">identities</span><span class="p">()</span>
- <span class="p">[</span><span class="s1">&#39;Conventions=CF-1.7&#39;</span><span class="p">,</span>
-  <span class="s1">&#39;project=research&#39;</span><span class="p">,</span>
-  <span class="s1">&#39;units=&#39;</span><span class="p">,</span>
-  <span class="s1">&#39;ncvar%q&#39;</span><span class="p">]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">identities</span><span class="p">()</span>
+<span class="go">[&#39;specific_humidity&#39;,</span>
+<span class="go"> &#39;Conventions=CF-1.7&#39;,</span>
+<span class="go"> &#39;project=research&#39;,</span>
+<span class="go"> &#39;units=1&#39;,</span>
+<span class="go"> &#39;standard_name=specific_humidity&#39;,</span>
+<span class="go"> &#39;ncvar%q&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">q</span> <span class="o">&gt;</span> <span class="n">q</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">identities</span><span class="p">()</span>
+<span class="go">[&#39;Conventions=CF-1.7&#39;,</span>
+<span class="go"> &#39;project=research&#39;,</span>
+<span class="go"> &#39;units=&#39;,</span>
+<span class="go"> &#39;ncvar%q&#39;]</span>
 </pre></div>
 </div>
 </div>
@@ -1934,12 +1971,12 @@ constucts with multi-valued data. The strict identity is restricted
 the <code class="xref py py-obj docutils literal notranslate"><span class="pre">identity</span></code> method of a construct:</p>
 <div class="literal-block-wrapper docutils container" id="id66">
 <div class="code-block-caption"><span class="caption-text"><em>Find the “strict” identity of a construct.</em></span><a class="headerlink" href="#id66" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span> <span class="o">&gt;&gt;&gt;</span> <span class="n">y</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">)</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="n">y</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
- <span class="s1">&#39;latitude&#39;</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="k">del</span> <span class="n">y</span><span class="o">.</span><span class="n">standard_name</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="n">y</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
- <span class="s1">&#39;&#39;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">&#39;latitude&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">y</span><span class="o">.</span><span class="n">standard_name</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">&#39;&#39;</span>
 </pre></div>
 </div>
 </div>
@@ -1993,9 +2030,9 @@ resulting data into the new field construct.</em></span><a class="headerlink" hr
 <div class="literal-block-wrapper docutils container" id="id69">
 <div class="code-block-caption"><span class="caption-text"><em>An example of augmented assignment involving the data of
 two field constructs.</em></span><a class="headerlink" href="#id69" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span> <span class="o">&gt;&gt;&gt;</span> <span class="n">t</span><span class="o">.</span><span class="n">data</span> <span class="o">-=</span> <span class="n">t</span><span class="o">.</span><span class="n">data</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="n">t</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
- <span class="o">&lt;</span><span class="n">CF</span> <span class="n">Data</span><span class="p">():</span> <span class="mf">0.0</span> <span class="n">K</span><span class="o">&gt;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">data</span> <span class="o">-=</span> <span class="n">t</span><span class="o">.</span><span class="n">data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+<span class="go">&lt;CF Data(): 0.0 K&gt;</span>
 </pre></div>
 </div>
 </div>
@@ -2008,7 +2045,7 @@ functions element-wise to the data, preserving the metadata but
 changing the construct’s units.</p>
 <p>The field construct and metadata constructs the following
 trigonometrical methods:</p>
-<table class="docutils align-center">
+<table class="docutils align-default">
 <colgroup>
 <col style="width: 21%" />
 <col style="width: 79%" />
@@ -2079,7 +2116,7 @@ result.</p>
 <h2>Rounding and truncation<a class="headerlink" href="#rounding-and-truncation" title="Permalink to this headline">¶</a></h2>
 <p>The field construct and metadata constructs the following methods to
 round and truncate their data:</p>
-<table class="docutils align-center">
+<table class="docutils align-default">
 <colgroup>
 <col style="width: 21%" />
 <col style="width: 79%" />
@@ -2289,7 +2326,7 @@ derivative wraps around by default.</p>
       &copy;2020, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.0.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

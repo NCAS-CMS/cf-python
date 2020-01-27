@@ -162,6 +162,19 @@ div.sphinxsidebar hr {
     width: 50%;
 }
 
+div.sphinxsidebar .badge {
+    border-bottom: none;
+}
+
+div.sphinxsidebar .badge:hover {
+    border-bottom: none;
+}
+
+/* To address an issue with donation coming after search */
+div.sphinxsidebar h3.donation {
+    margin-top: 10px;
+}
+
 /* -- body styles ----------------------------------------------------------- */
 
 a {
@@ -170,7 +183,7 @@ a {
 }
 
 a:hover {
-    color: #6D4100;
+    color: #6b0000;
     text-decoration: underline;
 }
 
@@ -310,7 +323,7 @@ p.admonition-title:after {
 }
 
 pre, tt, code {
-    font-family: 'Consolas', 'Menlo', 'Deja Vu Sans Mono', 'Bitstream Vera Sans Mono', monospace;
+    font-family: 'Consolas', 'Menlo', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', monospace;
     font-size: 10pt;
 }
 
@@ -422,7 +435,7 @@ ul, ol {
 }
 
 pre {
-    background: #EEE;
+    background: #ecf2f9;
     padding: 7px 30px;
     margin: 15px 0px;
     line-height: 1.3em;
@@ -438,7 +451,7 @@ dl pre, blockquote pre, li pre {
 }
 
 tt, code {
-    background-color: #ecf0f3;
+    background-color: #ecf2f9;
     color: #222;
     /* padding: 1px 2px; */
 }
@@ -459,7 +472,7 @@ a.image-reference, a.image-reference:hover {
 }
 
 a.reference:hover {
-    border-bottom: 1px solid #6D4100;
+    border-bottom: 1px solid #6b0000;
 }
 
 a.footnote-reference {
@@ -470,7 +483,7 @@ a.footnote-reference {
 }
 
 a.footnote-reference:hover {
-    border-bottom: 1px solid #6D4100;
+    border-bottom: 1px solid #6b0000;
 }
 
 a:hover tt, a:hover code {

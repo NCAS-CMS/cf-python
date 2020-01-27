@@ -11,7 +11,7 @@ be found in the zip file ``cf_tutorial_files.zip``
 (:download:`download <../source/sample_files/cf_tutorial_files.zip>`,
 164kB):
 		    
-.. code-block:: shell
+.. code-block:: console
    :caption: *Unpack the sample datasets.*
 		
    $ unzip -q cf_tutorial_files.zip

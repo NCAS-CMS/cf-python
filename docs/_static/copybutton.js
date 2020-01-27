@@ -1,56 +1,112 @@
-$(document).ready(function() {
-    /* Add a [>>>] button on the top-right corner of code samples to hide
-     * the >>> and ... prompts and the output and thus make the code
-     * copyable. */
-    var div = $('.highlight-python .highlight,' +
-                '.highlight-python3 .highlight')
-    var pre = div.find('pre');
+// Localization support
+const messages = {
+  'en': {
+    'copy': 'Copy',
+    'copy_to_clipboard': 'Copy to clipboard',
+    'copy_success': 'Copied!',
+    'copy_failure': 'Failed to copy',
+  },
+  'es' : {
+    'copy': 'Copiar',
+    'copy_to_clipboard': 'Copiar al portapapeles',
+    'copy_success': '¡Copiado!',
+    'copy_failure': 'Error al copiar',
+  },
+  'de' : {
+    'copy': 'Kopieren',
+    'copy_to_clipboard': 'In die Zwischenablage kopieren',
+    'copy_success': 'Kopiert!',
+    'copy_failure': 'Fehler beim Kopieren',
+  }
+}
 
-    // get the styles from the current theme
-    pre.parent().parent().css('position', 'relative');
-    var hide_text = 'Hide the prompts and output';
-    var show_text = 'Show the prompts and output';
-    var border_width = pre.css('border-top-width');
-    var border_style = pre.css('border-top-style');
-    var border_color = pre.css('border-top-color');
-    var button_styles = {
-        'cursor':'pointer', 'position': 'absolute', 'top': '0', 'right': '0',
-        'border-color': border_color, 'border-style': border_style,
-        'border-width': border_width, 'color': border_color, 'text-size': '75%',
-        'font-family': 'monospace', 'padding-left': '0.2em', 'padding-right': '0.2em'
+let locale = 'en'
+if( document.documentElement.lang !== undefined
+    && messages[document.documentElement.lang] !== undefined ) {
+  locale = document.documentElement.lang
+}
+
+/**
+ * Set up copy/paste for code blocks
+ */
+
+const runWhenDOMLoaded = cb => {
+  if (document.readyState != 'loading') {
+    cb()
+  } else if (document.addEventListener) {
+    document.addEventListener('DOMContentLoaded', cb)
+  } else {
+    document.attachEvent('onreadystatechange', function() {
+      if (document.readyState == 'complete') cb()
+    })
+  }
+}
+
+const codeCellId = index => `codecell${index}`
+
+// Clears selected text since ClipboardJS will select the text when copying
+const clearSelection = () => {
+  if (window.getSelection) {
+    window.getSelection().removeAllRanges()
+  } else if (document.selection) {
+    document.selection.empty()
+  }
+}
+
+// Changes tooltip text for two seconds, then changes it back
+const temporarilyChangeTooltip = (el, newText) => {
+  const oldText = el.getAttribute('data-tooltip')
+  el.setAttribute('data-tooltip', newText)
+  setTimeout(() => el.setAttribute('data-tooltip', oldText), 2000)
+}
+
+// Callback when a copy button is clicked. Will be passed the node that was clicked
+// should then grab the text and replace pieces of text that shouldn't be used in output
+var copyTargetText = (trigger) => {
+  var target = document.querySelector(trigger.attributes['data-clipboard-target'].value);
+  var textContent = target.textContent.split('\n');
+  textContent.forEach((line, index) => {
+    if (line.startsWith(copybuttonSkipText)) {
+      textContent[index] = line.slice(copybuttonSkipText.length)
     }
+  });
+  return textContent.join('\n')
+}
 
-    // create and add the button to all the code blocks that contain >>>
-    div.each(function(index) {
-        var jthis = $(this);
-        if (jthis.find('.gp').length > 0) {
-            var button = $('<span class="copybutton">&gt;&gt;&gt;</span>');
-            button.css(button_styles)
-            button.attr('title', hide_text);
-            jthis.prepend(button);
-        }
-        // tracebacks (.gt) contain bare text elements that need to be
-        // wrapped in a span to work with .nextUntil() (see later)
-        jthis.find('pre:has(.gt)').contents().filter(function() {
-            return ((this.nodeType == 3) && (this.data.trim().length > 0));
-        }).wrap('<span>');
-    });
+const addCopyButtonToCodeCells = () => {
+  // If ClipboardJS hasn't loaded, wait a bit and try again. This
+  // happens because we load ClipboardJS asynchronously.
+  if (window.ClipboardJS === undefined) {
+    setTimeout(addCopyButtonToCodeCells, 250)
+    return
+  }
 
-    // define the behavior of the button when it's clicked
-    $('.copybutton').toggle(
-        function() {
-            var button = $(this);
-            button.parent().find('.go, .gp, .gt').hide();
-            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'hidden');
-            button.css('text-decoration', 'line-through');
-            button.attr('title', show_text);
-        },
-        function() {
-            var button = $(this);
-            button.parent().find('.go, .gp, .gt').show();
-            button.next('pre').find('.gt').nextUntil('.gp, .go').css('visibility', 'visible');
-            button.css('text-decoration', 'none');
-            button.attr('title', hide_text);
-        });
-});
+  // Add copybuttons to all of our code cells
+  const codeCells = document.querySelectorAll('div.highlight pre')
+  codeCells.forEach((codeCell, index) => {
+    const id = codeCellId(index)
+    codeCell.setAttribute('id', id)
+    const pre_bg = getComputedStyle(codeCell).backgroundColor;
 
+    const clipboardButton = id =>
+    `<a class="copybtn o-tooltip--left" style="background-color: ${pre_bg}" data-tooltip="${messages[locale]['copy']}" data-clipboard-target="#${id}">
+      <img src="${DOCUMENTATION_OPTIONS.URL_ROOT}_static/copy-button.svg" alt="${messages[locale]['copy_to_clipboard']}">
+    </a>`
+    codeCell.insertAdjacentHTML('afterend', clipboardButton(id))
+  })
+
+  // Initialize with a callback so we can modify the text before copy
+  const clipboard = new ClipboardJS('.copybtn', {text: copyTargetText})
+
+  // Update UI with error/success messages
+  clipboard.on('success', event => {
+    clearSelection()
+    temporarilyChangeTooltip(event.trigger, messages[locale]['copy_success'])
+  })
+
+  clipboard.on('error', event => {
+    temporarilyChangeTooltip(event.trigger, messages[locale]['copy_failure'])
+  })
+}
+
+runWhenDOMLoaded(addCopyButtonToCodeCells)

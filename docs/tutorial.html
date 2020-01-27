@@ -8,12 +8,15 @@
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/clipboard.min.js"></script>
     <script type="text/javascript" src="_static/copybutton.js"></script>
+    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -30,7 +33,28 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="index.html">cf 3.1.0</a></b></h3>
+
+
+
+<h1 class="logo"><a href="index.html">cf 3.1.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -60,10 +84,10 @@
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
     </form>
     </div>
@@ -300,21 +324,21 @@ be found in the zip file <code class="docutils literal notranslate"><span class=
 164kB):</p>
 <div class="literal-block-wrapper docutils container" id="id102">
 <div class="code-block-caption"><span class="caption-text"><em>Unpack the sample datasets.</em></span><a class="headerlink" href="#id102" title="Permalink to this code">¶</a></div>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ unzip -q cf_tutorial_files.zip
-$ ls -1
-air_temperature.nc
-cf_tutorial_files.zip
-contiguous.nc
-external.nc
-file2.nc
-file.nc
-gathered.nc
-parent.nc
-precipitation_flux.nc
-timeseries.nc
-umfile.pp
-vertical.nc
-wind_components.nc
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> unzip -q cf_tutorial_files.zip
+<span class="gp">$</span> ls -1
+<span class="go">air_temperature.nc</span>
+<span class="go">cf_tutorial_files.zip</span>
+<span class="go">contiguous.nc</span>
+<span class="go">external.nc</span>
+<span class="go">file2.nc</span>
+<span class="go">file.nc</span>
+<span class="go">gathered.nc</span>
+<span class="go">parent.nc</span>
+<span class="go">precipitation_flux.nc</span>
+<span class="go">timeseries.nc</span>
+<span class="go">umfile.pp</span>
+<span class="go">vertical.nc</span>
+<span class="go">wind_components.nc</span>
 </pre></div>
 </div>
 </div>
@@ -531,33 +555,33 @@ values of their data arrays:</p>
 <div class="literal-block-wrapper docutils container" id="id110">
 <div class="code-block-caption"><span class="caption-text"><em>Inspect the contents of the two field constructs with
 medium detail.</em></span><a class="headerlink" href="#id110" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span> <span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
- <span class="n">Field</span><span class="p">:</span> <span class="n">specific_humidity</span> <span class="p">(</span><span class="n">ncvar</span><span class="o">%</span><span class="n">q</span><span class="p">)</span>
- <span class="o">----------------------------------</span>
- <span class="n">Data</span>            <span class="p">:</span> <span class="n">specific_humidity</span><span class="p">(</span><span class="n">latitude</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">longitude</span><span class="p">(</span><span class="mi">8</span><span class="p">))</span> <span class="mi">1</span>
- <span class="n">Cell</span> <span class="n">methods</span>    <span class="p">:</span> <span class="n">area</span><span class="p">:</span> <span class="n">mean</span>
- <span class="n">Dimension</span> <span class="n">coords</span><span class="p">:</span> <span class="n">latitude</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">75.0</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="mf">75.0</span><span class="p">]</span> <span class="n">degrees_north</span>
-                 <span class="p">:</span> <span class="n">longitude</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="mf">22.5</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="mf">337.5</span><span class="p">]</span> <span class="n">degrees_east</span>
-                 <span class="p">:</span> <span class="n">time</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2019</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">]</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
- <span class="n">Field</span><span class="p">:</span> <span class="n">air_temperature</span> <span class="p">(</span><span class="n">ncvar</span><span class="o">%</span><span class="n">ta</span><span class="p">)</span>
- <span class="o">---------------------------------</span>
- <span class="n">Data</span>            <span class="p">:</span> <span class="n">air_temperature</span><span class="p">(</span><span class="n">atmosphere_hybrid_height_coordinate</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">grid_latitude</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">grid_longitude</span><span class="p">(</span><span class="mi">9</span><span class="p">))</span> <span class="n">K</span>
- <span class="n">Cell</span> <span class="n">methods</span>    <span class="p">:</span> <span class="n">grid_latitude</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span> <span class="n">grid_longitude</span><span class="p">(</span><span class="mi">9</span><span class="p">):</span> <span class="n">mean</span> <span class="n">where</span> <span class="n">land</span> <span class="p">(</span><span class="n">interval</span><span class="p">:</span> <span class="mf">0.1</span> <span class="n">degrees</span><span class="p">)</span> <span class="n">time</span><span class="p">(</span><span class="mi">1</span><span class="p">):</span> <span class="n">maximum</span>
- <span class="n">Field</span> <span class="n">ancils</span>    <span class="p">:</span> <span class="n">air_temperature</span> <span class="n">standard_error</span><span class="p">(</span><span class="n">grid_latitude</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">grid_longitude</span><span class="p">(</span><span class="mi">9</span><span class="p">))</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.76</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="mf">0.32</span><span class="p">]]</span> <span class="n">K</span>
- <span class="n">Dimension</span> <span class="n">coords</span><span class="p">:</span> <span class="n">atmosphere_hybrid_height_coordinate</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.5</span><span class="p">]</span>
-                 <span class="p">:</span> <span class="n">grid_latitude</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="mf">2.2</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.76</span><span class="p">]</span> <span class="n">degrees</span>
-                 <span class="p">:</span> <span class="n">grid_longitude</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">4.7</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.18</span><span class="p">]</span> <span class="n">degrees</span>
-                 <span class="p">:</span> <span class="n">time</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2019</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">]</span>
- <span class="n">Auxiliary</span> <span class="n">coords</span><span class="p">:</span> <span class="n">latitude</span><span class="p">(</span><span class="n">grid_latitude</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">grid_longitude</span><span class="p">(</span><span class="mi">9</span><span class="p">))</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">53.941</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="mf">50.225</span><span class="p">]]</span> <span class="n">degrees_N</span>
-                 <span class="p">:</span> <span class="n">longitude</span><span class="p">(</span><span class="n">grid_longitude</span><span class="p">(</span><span class="mi">9</span><span class="p">),</span> <span class="n">grid_latitude</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">2.004</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="mf">8.156</span><span class="p">]]</span> <span class="n">degrees_E</span>
-                 <span class="p">:</span> <span class="n">long_name</span><span class="o">=</span><span class="n">Grid</span> <span class="n">latitude</span> <span class="n">name</span><span class="p">(</span><span class="n">grid_latitude</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span> <span class="o">=</span> <span class="p">[</span><span class="o">--</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;kappa&#39;</span><span class="p">]</span>
- <span class="n">Cell</span> <span class="n">measures</span>   <span class="p">:</span> <span class="n">measure</span><span class="p">:</span><span class="n">area</span><span class="p">(</span><span class="n">grid_longitude</span><span class="p">(</span><span class="mi">9</span><span class="p">),</span> <span class="n">grid_latitude</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">2391.9657</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="mf">2392.6009</span><span class="p">]]</span> <span class="n">km2</span>
- <span class="n">Coord</span> <span class="n">references</span><span class="p">:</span> <span class="n">grid_mapping_name</span><span class="p">:</span><span class="n">rotated_latitude_longitude</span>
-                 <span class="p">:</span> <span class="n">standard_name</span><span class="p">:</span><span class="n">atmosphere_hybrid_height_coordinate</span>
- <span class="n">Domain</span> <span class="n">ancils</span>   <span class="p">:</span> <span class="n">ncvar</span><span class="o">%</span><span class="n">a</span><span class="p">(</span><span class="n">atmosphere_hybrid_height_coordinate</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="o">=</span> <span class="p">[</span><span class="mf">10.0</span><span class="p">]</span> <span class="n">m</span>
-                 <span class="p">:</span> <span class="n">ncvar</span><span class="o">%</span><span class="n">b</span><span class="p">(</span><span class="n">atmosphere_hybrid_height_coordinate</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="o">=</span> <span class="p">[</span><span class="mf">20.0</span><span class="p">]</span>
-                 <span class="p">:</span> <span class="n">surface_altitude</span><span class="p">(</span><span class="n">grid_latitude</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">grid_longitude</span><span class="p">(</span><span class="mi">9</span><span class="p">))</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="mf">270.0</span><span class="p">]]</span> <span class="n">m</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+<span class="go">Field: specific_humidity (ncvar%q)</span>
+<span class="go">----------------------------------</span>
+<span class="go">Data            : specific_humidity(latitude(5), longitude(8)) 1</span>
+<span class="go">Cell methods    : area: mean</span>
+<span class="go">Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north</span>
+<span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
+<span class="go">                : time(1) = [2019-01-01 00:00:00]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="go">Field: air_temperature (ncvar%ta)</span>
+<span class="go">---------------------------------</span>
+<span class="go">Data            : air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K</span>
+<span class="go">Cell methods    : grid_latitude(10): grid_longitude(9): mean where land (interval: 0.1 degrees) time(1): maximum</span>
+<span class="go">Field ancils    : air_temperature standard_error(grid_latitude(10), grid_longitude(9)) = [[0.76, ..., 0.32]] K</span>
+<span class="go">Dimension coords: atmosphere_hybrid_height_coordinate(1) = [1.5]</span>
+<span class="go">                : grid_latitude(10) = [2.2, ..., -1.76] degrees</span>
+<span class="go">                : grid_longitude(9) = [-4.7, ..., -1.18] degrees</span>
+<span class="go">                : time(1) = [2019-01-01 00:00:00]</span>
+<span class="go">Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N</span>
+<span class="go">                : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E</span>
+<span class="go">                : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., b&#39;kappa&#39;]</span>
+<span class="go">Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2</span>
+<span class="go">Coord references: grid_mapping_name:rotated_latitude_longitude</span>
+<span class="go">                : standard_name:atmosphere_hybrid_height_coordinate</span>
+<span class="go">Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m</span>
+<span class="go">                : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]</span>
+<span class="go">                : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m</span>
 </pre></div>
 </div>
 </div>
@@ -572,137 +596,137 @@ components, and shows the first and last values of all data arrays:</p>
 <div class="literal-block-wrapper docutils container" id="id111">
 <div class="code-block-caption"><span class="caption-text"><em>Inspect the contents of the two field constructs with
 full detail.</em></span><a class="headerlink" href="#id111" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span> <span class="o">&gt;&gt;&gt;</span> <span class="n">q</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span>
- <span class="o">----------------------------------</span>
- <span class="n">Field</span><span class="p">:</span> <span class="n">specific_humidity</span> <span class="p">(</span><span class="n">ncvar</span><span class="o">%</span><span class="n">q</span><span class="p">)</span>
- <span class="o">----------------------------------</span>
- <span class="n">Conventions</span> <span class="o">=</span> <span class="s1">&#39;CF-1.7&#39;</span>
- <span class="n">project</span> <span class="o">=</span> <span class="s1">&#39;research&#39;</span>
- <span class="n">standard_name</span> <span class="o">=</span> <span class="s1">&#39;specific_humidity&#39;</span>
- <span class="n">units</span> <span class="o">=</span> <span class="s1">&#39;1&#39;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span>
+<span class="go">----------------------------------</span>
+<span class="go">Field: specific_humidity (ncvar%q)</span>
+<span class="go">----------------------------------</span>
+<span class="go">Conventions = &#39;CF-1.7&#39;</span>
+<span class="go">project = &#39;research&#39;</span>
+<span class="go">standard_name = &#39;specific_humidity&#39;</span>
+<span class="go">units = &#39;1&#39;</span>
 
- <span class="n">Data</span><span class="p">(</span><span class="n">latitude</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">longitude</span><span class="p">(</span><span class="mi">8</span><span class="p">))</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.003</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="mf">0.032</span><span class="p">]]</span> <span class="mi">1</span>
+<span class="go">Data(latitude(5), longitude(8)) = [[0.003, ..., 0.032]] 1</span>
 
- <span class="n">Cell</span> <span class="n">Method</span><span class="p">:</span> <span class="n">area</span><span class="p">:</span> <span class="n">mean</span>
+<span class="go">Cell Method: area: mean</span>
 
- <span class="n">Domain</span> <span class="n">Axis</span><span class="p">:</span> <span class="n">latitude</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
- <span class="n">Domain</span> <span class="n">Axis</span><span class="p">:</span> <span class="n">longitude</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
- <span class="n">Domain</span> <span class="n">Axis</span><span class="p">:</span> <span class="n">time</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">Domain Axis: latitude(5)</span>
+<span class="go">Domain Axis: longitude(8)</span>
+<span class="go">Domain Axis: time(1)</span>
 
- <span class="n">Dimension</span> <span class="n">coordinate</span><span class="p">:</span> <span class="n">latitude</span>
-     <span class="n">standard_name</span> <span class="o">=</span> <span class="s1">&#39;latitude&#39;</span>
-     <span class="n">units</span> <span class="o">=</span> <span class="s1">&#39;degrees_north&#39;</span>
-     <span class="n">Data</span><span class="p">(</span><span class="n">latitude</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">75.0</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="mf">75.0</span><span class="p">]</span> <span class="n">degrees_north</span>
-     <span class="n">Bounds</span><span class="p">:</span><span class="n">Data</span><span class="p">(</span><span class="n">latitude</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">90.0</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">]]</span>
+<span class="go">Dimension coordinate: latitude</span>
+<span class="go">    standard_name = &#39;latitude&#39;</span>
+<span class="go">    units = &#39;degrees_north&#39;</span>
+<span class="go">    Data(latitude(5)) = [-75.0, ..., 75.0] degrees_north</span>
+<span class="go">    Bounds:Data(latitude(5), 2) = [[-90.0, ..., 90.0]]</span>
 
- <span class="n">Dimension</span> <span class="n">coordinate</span><span class="p">:</span> <span class="n">longitude</span>
-     <span class="n">standard_name</span> <span class="o">=</span> <span class="s1">&#39;longitude&#39;</span>
-     <span class="n">units</span> <span class="o">=</span> <span class="s1">&#39;degrees_east&#39;</span>
-     <span class="n">Data</span><span class="p">(</span><span class="n">longitude</span><span class="p">(</span><span class="mi">8</span><span class="p">))</span> <span class="o">=</span> <span class="p">[</span><span class="mf">22.5</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="mf">337.5</span><span class="p">]</span> <span class="n">degrees_east</span>
-     <span class="n">Bounds</span><span class="p">:</span><span class="n">Data</span><span class="p">(</span><span class="n">longitude</span><span class="p">(</span><span class="mi">8</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="mf">360.0</span><span class="p">]]</span>
+<span class="go">Dimension coordinate: longitude</span>
+<span class="go">    standard_name = &#39;longitude&#39;</span>
+<span class="go">    units = &#39;degrees_east&#39;</span>
+<span class="go">    Data(longitude(8)) = [22.5, ..., 337.5] degrees_east</span>
+<span class="go">    Bounds:Data(longitude(8), 2) = [[0.0, ..., 360.0]]</span>
 
- <span class="n">Dimension</span> <span class="n">coordinate</span><span class="p">:</span> <span class="n">time</span>
-     <span class="n">standard_name</span> <span class="o">=</span> <span class="s1">&#39;time&#39;</span>
-     <span class="n">units</span> <span class="o">=</span> <span class="s1">&#39;days since 2018-12-01&#39;</span>
-     <span class="n">Data</span><span class="p">(</span><span class="n">time</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2019</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">]</span>
+<span class="go">Dimension coordinate: time</span>
+<span class="go">    standard_name = &#39;time&#39;</span>
+<span class="go">    units = &#39;days since 2018-12-01&#39;</span>
+<span class="go">    Data(time(1)) = [2019-01-01 00:00:00]</span>
 
- <span class="o">&gt;&gt;&gt;</span> <span class="n">t</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span>
- <span class="o">---------------------------------</span>
- <span class="n">Field</span><span class="p">:</span> <span class="n">air_temperature</span> <span class="p">(</span><span class="n">ncvar</span><span class="o">%</span><span class="n">ta</span><span class="p">)</span>
- <span class="o">---------------------------------</span>
- <span class="n">Conventions</span> <span class="o">=</span> <span class="s1">&#39;CF-1.7&#39;</span>
- <span class="n">project</span> <span class="o">=</span> <span class="s1">&#39;research&#39;</span>
- <span class="n">standard_name</span> <span class="o">=</span> <span class="s1">&#39;air_temperature&#39;</span>
- <span class="n">units</span> <span class="o">=</span> <span class="s1">&#39;K&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">dump</span><span class="p">()</span>
+<span class="go">---------------------------------</span>
+<span class="go">Field: air_temperature (ncvar%ta)</span>
+<span class="go">---------------------------------</span>
+<span class="go">Conventions = &#39;CF-1.7&#39;</span>
+<span class="go">project = &#39;research&#39;</span>
+<span class="go">standard_name = &#39;air_temperature&#39;</span>
+<span class="go">units = &#39;K&#39;</span>
 
- <span class="n">Data</span><span class="p">(</span><span class="n">atmosphere_hybrid_height_coordinate</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">grid_latitude</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">grid_longitude</span><span class="p">(</span><span class="mi">9</span><span class="p">))</span> <span class="o">=</span> <span class="p">[[[</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="mf">89.0</span><span class="p">]]]</span> <span class="n">K</span>
+<span class="go">Data(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) = [[[0.0, ..., 89.0]]] K</span>
 
- <span class="n">Cell</span> <span class="n">Method</span><span class="p">:</span> <span class="n">grid_latitude</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span> <span class="n">grid_longitude</span><span class="p">(</span><span class="mi">9</span><span class="p">):</span> <span class="n">mean</span> <span class="n">where</span> <span class="n">land</span> <span class="p">(</span><span class="n">interval</span><span class="p">:</span> <span class="mf">0.1</span> <span class="n">degrees</span><span class="p">)</span>
- <span class="n">Cell</span> <span class="n">Method</span><span class="p">:</span> <span class="n">time</span><span class="p">(</span><span class="mi">1</span><span class="p">):</span> <span class="n">maximum</span>
+<span class="go">Cell Method: grid_latitude(10): grid_longitude(9): mean where land (interval: 0.1 degrees)</span>
+<span class="go">Cell Method: time(1): maximum</span>
 
- <span class="n">Field</span> <span class="n">Ancillary</span><span class="p">:</span> <span class="n">air_temperature</span> <span class="n">standard_error</span>
-     <span class="n">standard_name</span> <span class="o">=</span> <span class="s1">&#39;air_temperature standard_error&#39;</span>
-     <span class="n">units</span> <span class="o">=</span> <span class="s1">&#39;K&#39;</span>
-     <span class="n">Data</span><span class="p">(</span><span class="n">grid_latitude</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">grid_longitude</span><span class="p">(</span><span class="mi">9</span><span class="p">))</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.76</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="mf">0.32</span><span class="p">]]</span> <span class="n">K</span>
+<span class="go">Field Ancillary: air_temperature standard_error</span>
+<span class="go">    standard_name = &#39;air_temperature standard_error&#39;</span>
+<span class="go">    units = &#39;K&#39;</span>
+<span class="go">    Data(grid_latitude(10), grid_longitude(9)) = [[0.76, ..., 0.32]] K</span>
 
- <span class="n">Domain</span> <span class="n">Axis</span><span class="p">:</span> <span class="n">atmosphere_hybrid_height_coordinate</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
- <span class="n">Domain</span> <span class="n">Axis</span><span class="p">:</span> <span class="n">grid_latitude</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
- <span class="n">Domain</span> <span class="n">Axis</span><span class="p">:</span> <span class="n">grid_longitude</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span>
- <span class="n">Domain</span> <span class="n">Axis</span><span class="p">:</span> <span class="n">time</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">Domain Axis: atmosphere_hybrid_height_coordinate(1)</span>
+<span class="go">Domain Axis: grid_latitude(10)</span>
+<span class="go">Domain Axis: grid_longitude(9)</span>
+<span class="go">Domain Axis: time(1)</span>
 
- <span class="n">Dimension</span> <span class="n">coordinate</span><span class="p">:</span> <span class="n">atmosphere_hybrid_height_coordinate</span>
-     <span class="n">computed_standard_name</span> <span class="o">=</span> <span class="s1">&#39;altitude&#39;</span>
-     <span class="n">standard_name</span> <span class="o">=</span> <span class="s1">&#39;atmosphere_hybrid_height_coordinate&#39;</span>
-     <span class="n">Data</span><span class="p">(</span><span class="n">atmosphere_hybrid_height_coordinate</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.5</span><span class="p">]</span>
-     <span class="n">Bounds</span><span class="p">:</span><span class="n">Data</span><span class="p">(</span><span class="n">atmosphere_hybrid_height_coordinate</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]]</span>
+<span class="go">Dimension coordinate: atmosphere_hybrid_height_coordinate</span>
+<span class="go">    computed_standard_name = &#39;altitude&#39;</span>
+<span class="go">    standard_name = &#39;atmosphere_hybrid_height_coordinate&#39;</span>
+<span class="go">    Data(atmosphere_hybrid_height_coordinate(1)) = [1.5]</span>
+<span class="go">    Bounds:Data(atmosphere_hybrid_height_coordinate(1), 2) = [[1.0, 2.0]]</span>
 
- <span class="n">Dimension</span> <span class="n">coordinate</span><span class="p">:</span> <span class="n">grid_latitude</span>
-     <span class="n">standard_name</span> <span class="o">=</span> <span class="s1">&#39;grid_latitude&#39;</span>
-     <span class="n">units</span> <span class="o">=</span> <span class="s1">&#39;degrees&#39;</span>
-     <span class="n">Data</span><span class="p">(</span><span class="n">grid_latitude</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span> <span class="o">=</span> <span class="p">[</span><span class="mf">2.2</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.76</span><span class="p">]</span> <span class="n">degrees</span>
-     <span class="n">Bounds</span><span class="p">:</span><span class="n">Data</span><span class="p">(</span><span class="n">grid_latitude</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">2.42</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.98</span><span class="p">]]</span>
+<span class="go">Dimension coordinate: grid_latitude</span>
+<span class="go">    standard_name = &#39;grid_latitude&#39;</span>
+<span class="go">    units = &#39;degrees&#39;</span>
+<span class="go">    Data(grid_latitude(10)) = [2.2, ..., -1.76] degrees</span>
+<span class="go">    Bounds:Data(grid_latitude(10), 2) = [[2.42, ..., -1.98]]</span>
 
- <span class="n">Dimension</span> <span class="n">coordinate</span><span class="p">:</span> <span class="n">grid_longitude</span>
-     <span class="n">standard_name</span> <span class="o">=</span> <span class="s1">&#39;grid_longitude&#39;</span>
-     <span class="n">units</span> <span class="o">=</span> <span class="s1">&#39;degrees&#39;</span>
-     <span class="n">Data</span><span class="p">(</span><span class="n">grid_longitude</span><span class="p">(</span><span class="mi">9</span><span class="p">))</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">4.7</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.18</span><span class="p">]</span> <span class="n">degrees</span>
-     <span class="n">Bounds</span><span class="p">:</span><span class="n">Data</span><span class="p">(</span><span class="n">grid_longitude</span><span class="p">(</span><span class="mi">9</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-</span><span class="mf">4.92</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.96</span><span class="p">]]</span>
+<span class="go">Dimension coordinate: grid_longitude</span>
+<span class="go">    standard_name = &#39;grid_longitude&#39;</span>
+<span class="go">    units = &#39;degrees&#39;</span>
+<span class="go">    Data(grid_longitude(9)) = [-4.7, ..., -1.18] degrees</span>
+<span class="go">    Bounds:Data(grid_longitude(9), 2) = [[-4.92, ..., -0.96]]</span>
 
- <span class="n">Dimension</span> <span class="n">coordinate</span><span class="p">:</span> <span class="n">time</span>
-     <span class="n">standard_name</span> <span class="o">=</span> <span class="s1">&#39;time&#39;</span>
-     <span class="n">units</span> <span class="o">=</span> <span class="s1">&#39;days since 2018-12-01&#39;</span>
-     <span class="n">Data</span><span class="p">(</span><span class="n">time</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2019</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">]</span>
+<span class="go">Dimension coordinate: time</span>
+<span class="go">    standard_name = &#39;time&#39;</span>
+<span class="go">    units = &#39;days since 2018-12-01&#39;</span>
+<span class="go">    Data(time(1)) = [2019-01-01 00:00:00]</span>
 
- <span class="n">Auxiliary</span> <span class="n">coordinate</span><span class="p">:</span> <span class="n">latitude</span>
-     <span class="n">standard_name</span> <span class="o">=</span> <span class="s1">&#39;latitude&#39;</span>
-     <span class="n">units</span> <span class="o">=</span> <span class="s1">&#39;degrees_N&#39;</span>
-     <span class="n">Data</span><span class="p">(</span><span class="n">grid_latitude</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">grid_longitude</span><span class="p">(</span><span class="mi">9</span><span class="p">))</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">53.941</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="mf">50.225</span><span class="p">]]</span> <span class="n">degrees_N</span>
+<span class="go">Auxiliary coordinate: latitude</span>
+<span class="go">    standard_name = &#39;latitude&#39;</span>
+<span class="go">    units = &#39;degrees_N&#39;</span>
+<span class="go">    Data(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N</span>
 
- <span class="n">Auxiliary</span> <span class="n">coordinate</span><span class="p">:</span> <span class="n">longitude</span>
-     <span class="n">standard_name</span> <span class="o">=</span> <span class="s1">&#39;longitude&#39;</span>
-     <span class="n">units</span> <span class="o">=</span> <span class="s1">&#39;degrees_E&#39;</span>
-     <span class="n">Data</span><span class="p">(</span><span class="n">grid_longitude</span><span class="p">(</span><span class="mi">9</span><span class="p">),</span> <span class="n">grid_latitude</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">2.004</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="mf">8.156</span><span class="p">]]</span> <span class="n">degrees_E</span>
+<span class="go">Auxiliary coordinate: longitude</span>
+<span class="go">    standard_name = &#39;longitude&#39;</span>
+<span class="go">    units = &#39;degrees_E&#39;</span>
+<span class="go">    Data(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E</span>
 
- <span class="n">Auxiliary</span> <span class="n">coordinate</span><span class="p">:</span> <span class="n">long_name</span><span class="o">=</span><span class="n">Grid</span> <span class="n">latitude</span> <span class="n">name</span>
-     <span class="n">long_name</span> <span class="o">=</span> <span class="s1">&#39;Grid latitude name&#39;</span>
-     <span class="n">Data</span><span class="p">(</span><span class="n">grid_latitude</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span> <span class="o">=</span> <span class="p">[</span><span class="o">--</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="s1">&#39;kappa&#39;</span><span class="p">]</span>
+<span class="go">Auxiliary coordinate: long_name=Grid latitude name</span>
+<span class="go">    long_name = &#39;Grid latitude name&#39;</span>
+<span class="go">    Data(grid_latitude(10)) = [--, ..., &#39;kappa&#39;]</span>
 
- <span class="n">Domain</span> <span class="n">ancillary</span><span class="p">:</span> <span class="n">ncvar</span><span class="o">%</span><span class="n">a</span>
-     <span class="n">units</span> <span class="o">=</span> <span class="s1">&#39;m&#39;</span>
-     <span class="n">Data</span><span class="p">(</span><span class="n">atmosphere_hybrid_height_coordinate</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="o">=</span> <span class="p">[</span><span class="mf">10.0</span><span class="p">]</span> <span class="n">m</span>
-     <span class="n">Bounds</span><span class="p">:</span><span class="n">Data</span><span class="p">(</span><span class="n">atmosphere_hybrid_height_coordinate</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">]]</span>
+<span class="go">Domain ancillary: ncvar%a</span>
+<span class="go">    units = &#39;m&#39;</span>
+<span class="go">    Data(atmosphere_hybrid_height_coordinate(1)) = [10.0] m</span>
+<span class="go">    Bounds:Data(atmosphere_hybrid_height_coordinate(1), 2) = [[5.0, 15.0]]</span>
 
- <span class="n">Domain</span> <span class="n">ancillary</span><span class="p">:</span> <span class="n">ncvar</span><span class="o">%</span><span class="n">b</span>
-     <span class="n">Data</span><span class="p">(</span><span class="n">atmosphere_hybrid_height_coordinate</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="o">=</span> <span class="p">[</span><span class="mf">20.0</span><span class="p">]</span>
-     <span class="n">Bounds</span><span class="p">:</span><span class="n">Data</span><span class="p">(</span><span class="n">atmosphere_hybrid_height_coordinate</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">14.0</span><span class="p">,</span> <span class="mf">26.0</span><span class="p">]]</span>
+<span class="go">Domain ancillary: ncvar%b</span>
+<span class="go">    Data(atmosphere_hybrid_height_coordinate(1)) = [20.0]</span>
+<span class="go">    Bounds:Data(atmosphere_hybrid_height_coordinate(1), 2) = [[14.0, 26.0]]</span>
 
- <span class="n">Domain</span> <span class="n">ancillary</span><span class="p">:</span> <span class="n">surface_altitude</span>
-     <span class="n">standard_name</span> <span class="o">=</span> <span class="s1">&#39;surface_altitude&#39;</span>
-     <span class="n">units</span> <span class="o">=</span> <span class="s1">&#39;m&#39;</span>
-     <span class="n">Data</span><span class="p">(</span><span class="n">grid_latitude</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">grid_longitude</span><span class="p">(</span><span class="mi">9</span><span class="p">))</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="mf">270.0</span><span class="p">]]</span> <span class="n">m</span>
+<span class="go">Domain ancillary: surface_altitude</span>
+<span class="go">    standard_name = &#39;surface_altitude&#39;</span>
+<span class="go">    units = &#39;m&#39;</span>
+<span class="go">    Data(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m</span>
 
- <span class="n">Coordinate</span> <span class="n">reference</span><span class="p">:</span> <span class="n">atmosphere_hybrid_height_coordinate</span>
-     <span class="n">Coordinate</span> <span class="n">conversion</span><span class="p">:</span><span class="n">computed_standard_name</span> <span class="o">=</span> <span class="n">altitude</span>
-     <span class="n">Coordinate</span> <span class="n">conversion</span><span class="p">:</span><span class="n">standard_name</span> <span class="o">=</span> <span class="n">atmosphere_hybrid_height_coordinate</span>
-     <span class="n">Coordinate</span> <span class="n">conversion</span><span class="p">:</span><span class="n">a</span> <span class="o">=</span> <span class="n">Domain</span> <span class="n">Ancillary</span><span class="p">:</span> <span class="n">ncvar</span><span class="o">%</span><span class="n">a</span>
-     <span class="n">Coordinate</span> <span class="n">conversion</span><span class="p">:</span><span class="n">b</span> <span class="o">=</span> <span class="n">Domain</span> <span class="n">Ancillary</span><span class="p">:</span> <span class="n">ncvar</span><span class="o">%</span><span class="n">b</span>
-     <span class="n">Coordinate</span> <span class="n">conversion</span><span class="p">:</span><span class="n">orog</span> <span class="o">=</span> <span class="n">Domain</span> <span class="n">Ancillary</span><span class="p">:</span> <span class="n">surface_altitude</span>
-     <span class="n">Datum</span><span class="p">:</span><span class="n">earth_radius</span> <span class="o">=</span> <span class="mi">6371007</span>
-     <span class="n">Dimension</span> <span class="n">Coordinate</span><span class="p">:</span> <span class="n">atmosphere_hybrid_height_coordinate</span>
+<span class="go">Coordinate reference: atmosphere_hybrid_height_coordinate</span>
+<span class="go">    Coordinate conversion:computed_standard_name = altitude</span>
+<span class="go">    Coordinate conversion:standard_name = atmosphere_hybrid_height_coordinate</span>
+<span class="go">    Coordinate conversion:a = Domain Ancillary: ncvar%a</span>
+<span class="go">    Coordinate conversion:b = Domain Ancillary: ncvar%b</span>
+<span class="go">    Coordinate conversion:orog = Domain Ancillary: surface_altitude</span>
+<span class="go">    Datum:earth_radius = 6371007</span>
+<span class="go">    Dimension Coordinate: atmosphere_hybrid_height_coordinate</span>
 
- <span class="n">Coordinate</span> <span class="n">reference</span><span class="p">:</span> <span class="n">rotated_latitude_longitude</span>
-     <span class="n">Coordinate</span> <span class="n">conversion</span><span class="p">:</span><span class="n">grid_mapping_name</span> <span class="o">=</span> <span class="n">rotated_latitude_longitude</span>
-     <span class="n">Coordinate</span> <span class="n">conversion</span><span class="p">:</span><span class="n">grid_north_pole_latitude</span> <span class="o">=</span> <span class="mf">38.0</span>
-     <span class="n">Coordinate</span> <span class="n">conversion</span><span class="p">:</span><span class="n">grid_north_pole_longitude</span> <span class="o">=</span> <span class="mf">190.0</span>
-     <span class="n">Datum</span><span class="p">:</span><span class="n">earth_radius</span> <span class="o">=</span> <span class="mi">6371007</span>
-     <span class="n">Dimension</span> <span class="n">Coordinate</span><span class="p">:</span> <span class="n">grid_longitude</span>
-     <span class="n">Dimension</span> <span class="n">Coordinate</span><span class="p">:</span> <span class="n">grid_latitude</span>
-     <span class="n">Auxiliary</span> <span class="n">Coordinate</span><span class="p">:</span> <span class="n">longitude</span>
-     <span class="n">Auxiliary</span> <span class="n">Coordinate</span><span class="p">:</span> <span class="n">latitude</span>
+<span class="go">Coordinate reference: rotated_latitude_longitude</span>
+<span class="go">    Coordinate conversion:grid_mapping_name = rotated_latitude_longitude</span>
+<span class="go">    Coordinate conversion:grid_north_pole_latitude = 38.0</span>
+<span class="go">    Coordinate conversion:grid_north_pole_longitude = 190.0</span>
+<span class="go">    Datum:earth_radius = 6371007</span>
+<span class="go">    Dimension Coordinate: grid_longitude</span>
+<span class="go">    Dimension Coordinate: grid_latitude</span>
+<span class="go">    Auxiliary Coordinate: longitude</span>
+<span class="go">    Auxiliary Coordinate: latitude</span>
 
- <span class="n">Cell</span> <span class="n">measure</span><span class="p">:</span> <span class="n">measure</span><span class="p">:</span><span class="n">area</span>
-     <span class="n">units</span> <span class="o">=</span> <span class="s1">&#39;km2&#39;</span>
-     <span class="n">Data</span><span class="p">(</span><span class="n">grid_longitude</span><span class="p">(</span><span class="mi">9</span><span class="p">),</span> <span class="n">grid_latitude</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">2391.9657</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="mf">2392.6009</span><span class="p">]]</span> <span class="n">km2</span>
+<span class="go">Cell measure: measure:area</span>
+<span class="go">    units = &#39;km2&#39;</span>
+<span class="go">    Data(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2</span>
 </pre></div>
 </div>
 </div>
@@ -718,19 +742,19 @@ constructs contained in one or more datasets. The “-1”
 option treats all input files collectively as a single CF
 dataset, so that aggregation is attempted within and
 between the input files.</em></span><a class="headerlink" href="#id112" title="Permalink to this code">¶</a></div>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ cfa file.nc
-CF Field: air_temperature<span class="o">(</span>atmosphere_hybrid_height_coordinate<span class="o">(</span><span class="m">1</span><span class="o">)</span>, grid_latitude<span class="o">(</span><span class="m">10</span><span class="o">)</span>, grid_longitude<span class="o">(</span><span class="m">9</span><span class="o">))</span> K
-CF Field: specific_humidity<span class="o">(</span>latitude<span class="o">(</span><span class="m">5</span><span class="o">)</span>, longitude<span class="o">(</span><span class="m">8</span><span class="o">))</span> <span class="m">1</span>
-$ cfa -1 *.nc
-CF Field: specific_humidity<span class="o">(</span><span class="nv">cf_role</span><span class="o">=</span>timeseries_id<span class="o">(</span><span class="m">4</span><span class="o">)</span>, ncdim%timeseries<span class="o">(</span><span class="m">9</span><span class="o">))</span>
-CF Field: cell_area<span class="o">(</span>ncdim%longitude<span class="o">(</span><span class="m">9</span><span class="o">)</span>, ncdim%latitude<span class="o">(</span><span class="m">10</span><span class="o">))</span> m2
-CF Field: eastward_wind<span class="o">(</span>latitude<span class="o">(</span><span class="m">10</span><span class="o">)</span>, longitude<span class="o">(</span><span class="m">9</span><span class="o">))</span> m s-1
-CF Field: specific_humidity<span class="o">(</span>latitude<span class="o">(</span><span class="m">5</span><span class="o">)</span>, longitude<span class="o">(</span><span class="m">8</span><span class="o">))</span> <span class="m">1</span>
-CF Field: air_potential_temperature<span class="o">(</span>time<span class="o">(</span><span class="m">120</span><span class="o">)</span>, latitude<span class="o">(</span><span class="m">5</span><span class="o">)</span>, longitude<span class="o">(</span><span class="m">8</span><span class="o">))</span> K
-CF Field: precipitation_flux<span class="o">(</span>time<span class="o">(</span><span class="m">1</span><span class="o">)</span>, latitude<span class="o">(</span><span class="m">64</span><span class="o">)</span>, longitude<span class="o">(</span><span class="m">128</span><span class="o">))</span> kg m-2 day-1
-CF Field: precipitation_flux<span class="o">(</span>time<span class="o">(</span><span class="m">2</span><span class="o">)</span>, latitude<span class="o">(</span><span class="m">4</span><span class="o">)</span>, longitude<span class="o">(</span><span class="m">5</span><span class="o">))</span> kg m2 s-1
-CF Field: air_temperature<span class="o">(</span>time<span class="o">(</span><span class="m">2</span><span class="o">)</span>, latitude<span class="o">(</span><span class="m">73</span><span class="o">)</span>, longitude<span class="o">(</span><span class="m">96</span><span class="o">))</span> K
-CF Field: air_temperature<span class="o">(</span>atmosphere_hybrid_height_coordinate<span class="o">(</span><span class="m">1</span><span class="o">)</span>, grid_latitude<span class="o">(</span><span class="m">10</span><span class="o">)</span>, grid_longitude<span class="o">(</span><span class="m">9</span><span class="o">))</span> K
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> cfa file.nc
+<span class="go">CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K</span>
+<span class="go">CF Field: specific_humidity(latitude(5), longitude(8)) 1</span>
+<span class="gp">$</span> cfa -1 *.nc
+<span class="go">CF Field: specific_humidity(cf_role=timeseries_id(4), ncdim%timeseries(9))</span>
+<span class="go">CF Field: cell_area(ncdim%longitude(9), ncdim%latitude(10)) m2</span>
+<span class="go">CF Field: eastward_wind(latitude(10), longitude(9)) m s-1</span>
+<span class="go">CF Field: specific_humidity(latitude(5), longitude(8)) 1</span>
+<span class="go">CF Field: air_potential_temperature(time(120), latitude(5), longitude(8)) K</span>
+<span class="go">CF Field: precipitation_flux(time(1), latitude(64), longitude(128)) kg m-2 day-1</span>
+<span class="go">CF Field: precipitation_flux(time(2), latitude(4), longitude(5)) kg m2 s-1</span>
+<span class="go">CF Field: air_temperature(time(2), latitude(73), longitude(96)) K</span>
+<span class="go">CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K</span>
 </pre></div>
 </div>
 </div>
@@ -746,7 +770,7 @@ files</span></a>.</p>
 constructs are available with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfplot</span></code> package (that needs to be
 installed separately to cf, see <a class="reference external" href="http://ajheaps.github.io/cf-plot">http://ajheaps.github.io/cf-plot</a> for
 details).</p>
-<div class="figure align-center" id="id113">
+<div class="figure align-default" id="id113">
 <img alt="_images/cfplot_example.png" src="_images/cfplot_example.png" />
 <p class="caption"><span class="caption-text"><em>Example output of cfplot displaying a cf field construct.</em></span><a class="headerlink" href="#id113" title="Permalink to this image">¶</a></p>
 </div>
@@ -979,7 +1003,7 @@ a corresponding cf class:</p>
 </table>
 <p>Metadata constructs of a particular type can be retrieved with the
 following attributes of the field construct:</p>
-<table class="docutils align-center">
+<table class="docutils align-default">
 <colgroup>
 <col style="width: 59%" />
 <col style="width: 41%" />
@@ -1318,7 +1342,7 @@ required.</em></span><a class="headerlink" href="#id130" title="Permalink to thi
 <p>The dimensions of a field construct’s data may be reordered, have size
 one dimensions removed and have new new size one dimensions included
 by using the following field construct methods:</p>
-<table class="docutils align-center">
+<table class="docutils align-default">
 <colgroup>
 <col style="width: 37%" />
 <col style="width: 63%" />
@@ -1498,25 +1522,25 @@ rather then producing a null result.</p></li>
 <div class="code-block-caption"><span class="caption-text"><em>Create a new field construct whose domain spans the first
 longitude of the original, and with a reversed latitude
 axis.</em></span><a class="headerlink" href="#id137" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span> <span class="o">&gt;&gt;&gt;</span> <span class="n">q</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
- <span class="n">Field</span><span class="p">:</span> <span class="n">specific_humidity</span> <span class="p">(</span><span class="n">ncvar</span><span class="o">%</span><span class="n">q</span><span class="p">)</span>
- <span class="o">----------------------------------</span>
- <span class="n">Data</span>            <span class="p">:</span> <span class="n">specific_humidity</span><span class="p">(</span><span class="n">latitude</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">longitude</span><span class="p">(</span><span class="mi">8</span><span class="p">))</span> <span class="mi">1</span>
- <span class="n">Cell</span> <span class="n">methods</span>    <span class="p">:</span> <span class="n">area</span><span class="p">:</span> <span class="n">mean</span>
- <span class="n">Dimension</span> <span class="n">coords</span><span class="p">:</span> <span class="n">time</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2019</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">]</span>
-                 <span class="p">:</span> <span class="n">latitude</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">75.0</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="mf">75.0</span><span class="p">]</span> <span class="n">degrees_north</span>
-                 <span class="p">:</span> <span class="n">longitude</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="mf">22.5</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="mf">337.5</span><span class="p">]</span> <span class="n">degrees_east</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+<span class="go">Field: specific_humidity (ncvar%q)</span>
+<span class="go">----------------------------------</span>
+<span class="go">Data            : specific_humidity(latitude(5), longitude(8)) 1</span>
+<span class="go">Cell methods    : area: mean</span>
+<span class="go">Dimension coords: time(1) = [2019-01-01 00:00:00]</span>
+<span class="go">                : latitude(5) = [-75.0, ..., 75.0] degrees_north</span>
+<span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
 
- <span class="o">&gt;&gt;&gt;</span> <span class="n">new</span> <span class="o">=</span> <span class="n">q</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">new</span><span class="p">)</span>
- <span class="n">Field</span><span class="p">:</span> <span class="n">specific_humidity</span> <span class="p">(</span><span class="n">ncvar</span><span class="o">%</span><span class="n">q</span><span class="p">)</span>
- <span class="o">----------------------------------</span>
- <span class="n">Data</span>            <span class="p">:</span> <span class="n">specific_humidity</span><span class="p">(</span><span class="n">latitude</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">longitude</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="mi">1</span>
- <span class="n">Cell</span> <span class="n">methods</span>    <span class="p">:</span> <span class="n">area</span><span class="p">:</span> <span class="n">mean</span>
- <span class="n">Dimension</span> <span class="n">coords</span><span class="p">:</span> <span class="n">time</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2019</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">]</span>
-                 <span class="p">:</span> <span class="n">latitude</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="mf">75.0</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="o">-</span><span class="mf">75.0</span><span class="p">]</span> <span class="n">degrees_north</span>
-                 <span class="p">:</span> <span class="n">longitude</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="mf">22.5</span><span class="p">]</span> <span class="n">degrees_east</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">new</span> <span class="o">=</span> <span class="n">q</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">new</span><span class="p">)</span>
+<span class="go">Field: specific_humidity (ncvar%q)</span>
+<span class="go">----------------------------------</span>
+<span class="go">Data            : specific_humidity(latitude(5), longitude(1)) 1</span>
+<span class="go">Cell methods    : area: mean</span>
+<span class="go">Dimension coords: time(1) = [2019-01-01 00:00:00]</span>
+<span class="go">                : latitude(5) = [75.0, ..., -75.0] degrees_north</span>
+<span class="go">                : longitude(1) = [22.5] degrees_east</span>
 </pre></div>
 </div>
 </div>
@@ -1863,7 +1887,7 @@ via the Units instance.</em></span><a class="headerlink" href="#id152" title="Pe
 <span id="id28"></span><h2><a class="toc-backref" href="#id369"><strong>Filtering metadata constructs</strong></a><a class="headerlink" href="#filtering-metadata-constructs" title="Permalink to this headline">¶</a></h2>
 <p>A <a class="reference internal" href="classes/cf.Constructs.html#cf.Constructs" title="cf.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Constructs</span></code></a> instance has filtering methods for selecting
 constructs that meet various criteria:</p>
-<table class="docutils align-center">
+<table class="docutils align-default">
 <colgroup>
 <col style="width: 30%" />
 <col style="width: 70%" />
@@ -2223,7 +2247,7 @@ key and indexing</em></span><a class="headerlink" href="#id169" title="Permalink
 </div>
 <p>In addition, an individual metadata construct of a particular type can
 be retrieved with the following methods of the field construct:</p>
-<table class="docutils align-center">
+<table class="docutils align-default">
 <colgroup>
 <col style="width: 59%" />
 <col style="width: 41%" />
@@ -2492,7 +2516,7 @@ the offset.</em></span><a class="headerlink" href="#id180" title="Permalink to t
 <span id="id36"></span><h3><a class="toc-backref" href="#id376">Time duration constructors</a><a class="headerlink" href="#time-duration-constructors" title="Permalink to this headline">¶</a></h3>
 <p>For convenience, <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.TtimeDuration</span></code> instances can be created with the
 following constructors:</p>
-<table class="docutils align-center">
+<table class="docutils align-default">
 <colgroup>
 <col style="width: 16%" />
 <col style="width: 84%" />
@@ -3390,7 +3414,7 @@ by field construct units.</em></span><a class="headerlink" href="#id210" title="
 </div>
 <p>A field list has methods for selecting field constructs that meet
 various criteria:</p>
-<table class="docutils align-center">
+<table class="docutils align-default">
 <colgroup>
 <col style="width: 30%" />
 <col style="width: 70%" />
@@ -3469,7 +3493,7 @@ instance directly, or with the ‘select’ method.</em></span><a class="headerl
 <span id="id52"></span><h3><a class="toc-backref" href="#id395">Testing criteria on a field construct</a><a class="headerlink" href="#testing-criteria-on-a-field-construct" title="Permalink to this headline">¶</a></h3>
 <p>A field construct has methods for ascertaining whether or not it meets
 various criteria:</p>
-<table class="docutils align-center">
+<table class="docutils align-default">
 <colgroup>
 <col style="width: 27%" />
 <col style="width: 73%" />
@@ -3585,7 +3609,7 @@ the context of that object.</p>
 </div>
 <p>The following operators are supported when constructing <a class="reference internal" href="classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Query</span></code></a>
 instances:</p>
-<table class="docutils align-center">
+<table class="docutils align-default">
 <colgroup>
 <col style="width: 13%" />
 <col style="width: 87%" />
@@ -3697,7 +3721,7 @@ cf.Query instances.</em></span><a class="headerlink" href="#id218" title="Permal
 </div>
 </div>
 <p>The following <a class="reference internal" href="classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Query</span></code></a> constructors are available:</p>
-<table class="docutils align-center">
+<table class="docutils align-default">
 <colgroup>
 <col style="width: 16%" />
 <col style="width: 84%" />
@@ -3742,7 +3766,7 @@ cf.Query instances.</em></span><a class="headerlink" href="#id218" title="Permal
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
-<table class="docutils align-center">
+<table class="docutils align-default">
 <colgroup>
 <col style="width: 14%" />
 <col style="width: 86%" />
@@ -3793,7 +3817,7 @@ cf.Query instances.</em></span><a class="headerlink" href="#id218" title="Permal
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
-<table class="docutils align-center">
+<table class="docutils align-default">
 <colgroup>
 <col style="width: 15%" />
 <col style="width: 85%" />
@@ -4646,16 +4670,16 @@ variables</span></a> may be incorporated.</p>
 <div class="literal-block-wrapper docutils container" id="id239">
 <div class="code-block-caption"><span class="caption-text"><em>Use cfa to create new, single dataset that combines the
 field constructs from two files.</em></span><a class="headerlink" href="#id239" title="Permalink to this code">¶</a></div>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ cfa file.nc
-CF Field: specific_humidity<span class="o">(</span>latitude<span class="o">(</span><span class="m">5</span><span class="o">)</span>, longitude<span class="o">(</span><span class="m">8</span><span class="o">))</span> <span class="m">1</span>
-CF Field: air_temperature<span class="o">(</span>atmosphere_hybrid_height_coordinate<span class="o">(</span><span class="m">1</span><span class="o">)</span>, grid_latitude<span class="o">(</span><span class="m">10</span><span class="o">)</span>, grid_longitude<span class="o">(</span><span class="m">9</span><span class="o">))</span> K
-$ cfa air_temperature.nc
-CF Field: air_temperature<span class="o">(</span>time<span class="o">(</span><span class="m">2</span><span class="o">)</span>, latitude<span class="o">(</span><span class="m">73</span><span class="o">)</span>, longitude<span class="o">(</span><span class="m">96</span><span class="o">))</span> K
-$ cfa -o new_dataset.nc file.nc air_temperature.nc
-$ cfa  new_dataset.nc
-CF Field: specific_humidity<span class="o">(</span>latitude<span class="o">(</span><span class="m">5</span><span class="o">)</span>, longitude<span class="o">(</span><span class="m">8</span><span class="o">))</span> <span class="m">1</span>
-CF Field: air_temperature<span class="o">(</span>atmosphere_hybrid_height_coordinate<span class="o">(</span><span class="m">1</span><span class="o">)</span>, grid_latitude<span class="o">(</span><span class="m">10</span><span class="o">)</span>, grid_longitude<span class="o">(</span><span class="m">9</span><span class="o">))</span> K
-CF Field: air_temperature<span class="o">(</span>time<span class="o">(</span><span class="m">2</span><span class="o">)</span>, latitude<span class="o">(</span><span class="m">73</span><span class="o">)</span>, longitude<span class="o">(</span><span class="m">96</span><span class="o">))</span> K
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> cfa file.nc
+<span class="go">CF Field: specific_humidity(latitude(5), longitude(8)) 1</span>
+<span class="go">CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K</span>
+<span class="gp">$</span> cfa air_temperature.nc
+<span class="go">CF Field: air_temperature(time(2), latitude(73), longitude(96)) K</span>
+<span class="gp">$</span> cfa -o new_dataset.nc file.nc air_temperature.nc
+<span class="gp">$</span> cfa  new_dataset.nc
+<span class="go">CF Field: specific_humidity(latitude(5), longitude(8)) 1</span>
+<span class="go">CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K</span>
+<span class="go">CF Field: air_temperature(time(2), latitude(73), longitude(96)) K</span>
 </pre></div>
 </div>
 </div>
@@ -4839,7 +4863,7 @@ names.</em></span><a class="headerlink" href="#id246" title="Permalink to this c
 </div>
 <p>Each construct has methods to access the netCDF elements which it
 requires. For example, the field construct has the following methods:</p>
-<table class="docutils align-center">
+<table class="docutils align-default">
 <colgroup>
 <col style="width: 50%" />
 <col style="width: 50%" />
@@ -4898,7 +4922,7 @@ metadata constructs.</em></span><a class="headerlink" href="#id247" title="Perma
 </div>
 </div>
 <p>The complete collection of netCDF interface methods is:</p>
-<table class="docutils align-center">
+<table class="docutils align-default">
 <colgroup>
 <col style="width: 28%" />
 <col style="width: 40%" />
@@ -5033,36 +5057,36 @@ field constructs, to a new netCDF file on disk:</p>
 <div class="literal-block-wrapper docutils container" id="id249">
 <div class="code-block-caption"><span class="caption-text"><em>Inspect the new dataset with the ncdump command line
 tool.</em></span><a class="headerlink" href="#id249" title="Permalink to this code">¶</a></div>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ ncdump -h q_file.nc
-netcdf q_file <span class="o">{</span>
-dimensions:
-     <span class="nv">lat</span> <span class="o">=</span> <span class="m">5</span> <span class="p">;</span>
-     <span class="nv">bounds2</span> <span class="o">=</span> <span class="m">2</span> <span class="p">;</span>
-     <span class="nv">lon</span> <span class="o">=</span> <span class="m">8</span> <span class="p">;</span>
-variables:
-     double lat_bnds<span class="o">(</span>lat, bounds2<span class="o">)</span> <span class="p">;</span>
-     double lat<span class="o">(</span>lat<span class="o">)</span> <span class="p">;</span>
-             lat:units <span class="o">=</span> <span class="s2">&quot;degrees_north&quot;</span> <span class="p">;</span>
-             lat:standard_name <span class="o">=</span> <span class="s2">&quot;latitude&quot;</span> <span class="p">;</span>
-             lat:bounds <span class="o">=</span> <span class="s2">&quot;lat_bnds&quot;</span> <span class="p">;</span>
-     double lon_bnds<span class="o">(</span>lon, bounds2<span class="o">)</span> <span class="p">;</span>
-     double lon<span class="o">(</span>lon<span class="o">)</span> <span class="p">;</span>
-             lon:units <span class="o">=</span> <span class="s2">&quot;degrees_east&quot;</span> <span class="p">;</span>
-             lon:standard_name <span class="o">=</span> <span class="s2">&quot;longitude&quot;</span> <span class="p">;</span>
-             lon:bounds <span class="o">=</span> <span class="s2">&quot;lon_bnds&quot;</span> <span class="p">;</span>
-     double <span class="nb">time</span> <span class="p">;</span>
-             time:units <span class="o">=</span> <span class="s2">&quot;days since 2018-12-01&quot;</span> <span class="p">;</span>
-             time:standard_name <span class="o">=</span> <span class="s2">&quot;time&quot;</span> <span class="p">;</span>
-     double humidity<span class="o">(</span>lat, lon<span class="o">)</span> <span class="p">;</span>
-             humidity:standard_name <span class="o">=</span> <span class="s2">&quot;specific_humidity&quot;</span> <span class="p">;</span>
-             humidity:cell_methods <span class="o">=</span> <span class="s2">&quot;area: mean&quot;</span> <span class="p">;</span>
-             humidity:units <span class="o">=</span> <span class="s2">&quot;1&quot;</span> <span class="p">;</span>
-             humidity:coordinates <span class="o">=</span> <span class="s2">&quot;time&quot;</span> <span class="p">;</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> ncdump -h q_file.nc
+<span class="go">netcdf q_file {</span>
+<span class="go">dimensions:</span>
+<span class="go">     lat = 5 ;</span>
+<span class="go">     bounds2 = 2 ;</span>
+<span class="go">     lon = 8 ;</span>
+<span class="go">variables:</span>
+<span class="go">     double lat_bnds(lat, bounds2) ;</span>
+<span class="go">     double lat(lat) ;</span>
+<span class="go">             lat:units = &quot;degrees_north&quot; ;</span>
+<span class="go">             lat:standard_name = &quot;latitude&quot; ;</span>
+<span class="go">             lat:bounds = &quot;lat_bnds&quot; ;</span>
+<span class="go">     double lon_bnds(lon, bounds2) ;</span>
+<span class="go">     double lon(lon) ;</span>
+<span class="go">             lon:units = &quot;degrees_east&quot; ;</span>
+<span class="go">             lon:standard_name = &quot;longitude&quot; ;</span>
+<span class="go">             lon:bounds = &quot;lon_bnds&quot; ;</span>
+<span class="go">     double time ;</span>
+<span class="go">             time:units = &quot;days since 2018-12-01&quot; ;</span>
+<span class="go">             time:standard_name = &quot;time&quot; ;</span>
+<span class="go">     double humidity(lat, lon) ;</span>
+<span class="go">             humidity:standard_name = &quot;specific_humidity&quot; ;</span>
+<span class="go">             humidity:cell_methods = &quot;area: mean&quot; ;</span>
+<span class="go">             humidity:units = &quot;1&quot; ;</span>
+<span class="go">             humidity:coordinates = &quot;time&quot; ;</span>
 
-// global attributes:
-             :Conventions <span class="o">=</span> <span class="s2">&quot;CF-1.7&quot;</span> <span class="p">;</span>
-             :project <span class="o">=</span> <span class="s2">&quot;research&quot;</span> <span class="p">;</span>
-<span class="o">}</span>
+<span class="go">// global attributes:</span>
+<span class="go">             :Conventions = &quot;CF-1.7&quot; ;</span>
+<span class="go">             :project = &quot;research&quot; ;</span>
+<span class="go">}</span>
 </pre></div>
 </div>
 </div>
@@ -5274,36 +5298,36 @@ data.</em></span><a class="headerlink" href="#id257" title="Permalink to this co
 <div class="literal-block-wrapper docutils container" id="id258">
 <div class="code-block-caption"><span class="caption-text"><em>Inspect the new dataset with the ncdump command line
 tool.</em></span><a class="headerlink" href="#id258" title="Permalink to this code">¶</a></div>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ ncdump -h q2_file.nc
-netcdf q2_file <span class="o">{</span>
-dimensions:
-     <span class="nv">lat</span> <span class="o">=</span> <span class="m">5</span> <span class="p">;</span>
-     <span class="nv">bounds2</span> <span class="o">=</span> <span class="m">2</span> <span class="p">;</span>
-     <span class="nv">lon</span> <span class="o">=</span> <span class="m">8</span> <span class="p">;</span>
-     <span class="nb">time</span> <span class="o">=</span> <span class="m">1</span> <span class="p">;</span>
-variables:
-     double lat_bnds<span class="o">(</span>lat, bounds2<span class="o">)</span> <span class="p">;</span>
-     double lat<span class="o">(</span>lat<span class="o">)</span> <span class="p">;</span>
-             lat:units <span class="o">=</span> <span class="s2">&quot;degrees_north&quot;</span> <span class="p">;</span>
-             lat:standard_name <span class="o">=</span> <span class="s2">&quot;latitude&quot;</span> <span class="p">;</span>
-             lat:bounds <span class="o">=</span> <span class="s2">&quot;lat_bnds&quot;</span> <span class="p">;</span>
-     double lon_bnds<span class="o">(</span>lon, bounds2<span class="o">)</span> <span class="p">;</span>
-     double lon<span class="o">(</span>lon<span class="o">)</span> <span class="p">;</span>
-             lon:units <span class="o">=</span> <span class="s2">&quot;degrees_east&quot;</span> <span class="p">;</span>
-             lon:standard_name <span class="o">=</span> <span class="s2">&quot;longitude&quot;</span> <span class="p">;</span>
-             lon:bounds <span class="o">=</span> <span class="s2">&quot;lon_bnds&quot;</span> <span class="p">;</span>
-     double time<span class="o">(</span><span class="nb">time</span><span class="o">)</span> <span class="p">;</span>
-             time:units <span class="o">=</span> <span class="s2">&quot;days since 2018-12-01&quot;</span> <span class="p">;</span>
-             time:standard_name <span class="o">=</span> <span class="s2">&quot;time&quot;</span> <span class="p">;</span>
-     double humidity<span class="o">(</span>time, lat, lon<span class="o">)</span> <span class="p">;</span>
-             humidity:units <span class="o">=</span> <span class="s2">&quot;1&quot;</span> <span class="p">;</span>
-             humidity:standard_name <span class="o">=</span> <span class="s2">&quot;specific_humidity&quot;</span> <span class="p">;</span>
-             humidity:cell_methods <span class="o">=</span> <span class="s2">&quot;area: mean&quot;</span> <span class="p">;</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> ncdump -h q2_file.nc
+<span class="go">netcdf q2_file {</span>
+<span class="go">dimensions:</span>
+<span class="go">     lat = 5 ;</span>
+<span class="go">     bounds2 = 2 ;</span>
+<span class="go">     lon = 8 ;</span>
+<span class="go">     time = 1 ;</span>
+<span class="go">variables:</span>
+<span class="go">     double lat_bnds(lat, bounds2) ;</span>
+<span class="go">     double lat(lat) ;</span>
+<span class="go">             lat:units = &quot;degrees_north&quot; ;</span>
+<span class="go">             lat:standard_name = &quot;latitude&quot; ;</span>
+<span class="go">             lat:bounds = &quot;lat_bnds&quot; ;</span>
+<span class="go">     double lon_bnds(lon, bounds2) ;</span>
+<span class="go">     double lon(lon) ;</span>
+<span class="go">             lon:units = &quot;degrees_east&quot; ;</span>
+<span class="go">             lon:standard_name = &quot;longitude&quot; ;</span>
+<span class="go">             lon:bounds = &quot;lon_bnds&quot; ;</span>
+<span class="go">     double time(time) ;</span>
+<span class="go">             time:units = &quot;days since 2018-12-01&quot; ;</span>
+<span class="go">             time:standard_name = &quot;time&quot; ;</span>
+<span class="go">     double humidity(time, lat, lon) ;</span>
+<span class="go">             humidity:units = &quot;1&quot; ;</span>
+<span class="go">             humidity:standard_name = &quot;specific_humidity&quot; ;</span>
+<span class="go">             humidity:cell_methods = &quot;area: mean&quot; ;</span>
 
-// global attributes:
-             :Conventions <span class="o">=</span> <span class="s2">&quot;CF-1.7&quot;</span> <span class="p">;</span>
-             :project <span class="o">=</span> <span class="s2">&quot;research&quot;</span> <span class="p">;</span>
-<span class="o">}</span>
+<span class="go">// global attributes:</span>
+<span class="go">             :Conventions = &quot;CF-1.7&quot; ;</span>
+<span class="go">             :project = &quot;research&quot; ;</span>
+<span class="go">}</span>
 </pre></div>
 </div>
 </div>
@@ -5323,27 +5347,27 @@ file of sample files):</p>
 <div class="literal-block-wrapper docutils container" id="id259">
 <div class="code-block-caption"><span class="caption-text"><em>Inspect the parent dataset with the ncdump command line
 tool.</em></span><a class="headerlink" href="#id259" title="Permalink to this code">¶</a></div>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ ncdump -h parent.nc
-netcdf parent <span class="o">{</span>
-dimensions:
-     <span class="nv">latitude</span> <span class="o">=</span> <span class="m">10</span> <span class="p">;</span>
-     <span class="nv">longitude</span> <span class="o">=</span> <span class="m">9</span> <span class="p">;</span>
-variables:
-     double latitude<span class="o">(</span>latitude<span class="o">)</span> <span class="p">;</span>
-             latitude:units <span class="o">=</span> <span class="s2">&quot;degrees_north&quot;</span> <span class="p">;</span>
-             latitude:standard_name <span class="o">=</span> <span class="s2">&quot;latitude&quot;</span> <span class="p">;</span>
-     double longitude<span class="o">(</span>longitude<span class="o">)</span> <span class="p">;</span>
-             longitude:units <span class="o">=</span> <span class="s2">&quot;degrees_east&quot;</span> <span class="p">;</span>
-             longitude:standard_name <span class="o">=</span> <span class="s2">&quot;longitude&quot;</span> <span class="p">;</span>
-     double eastward_wind<span class="o">(</span>latitude, longitude<span class="o">)</span> <span class="p">;</span>
-             eastward_wind:units <span class="o">=</span> <span class="s2">&quot;m s-1&quot;</span> <span class="p">;</span>
-             eastward_wind:standard_name <span class="o">=</span> <span class="s2">&quot;eastward_wind&quot;</span> <span class="p">;</span>
-             eastward_wind:cell_measures <span class="o">=</span> <span class="s2">&quot;area: areacella&quot;</span> <span class="p">;</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> ncdump -h parent.nc
+<span class="go">netcdf parent {</span>
+<span class="go">dimensions:</span>
+<span class="go">     latitude = 10 ;</span>
+<span class="go">     longitude = 9 ;</span>
+<span class="go">variables:</span>
+<span class="go">     double latitude(latitude) ;</span>
+<span class="go">             latitude:units = &quot;degrees_north&quot; ;</span>
+<span class="go">             latitude:standard_name = &quot;latitude&quot; ;</span>
+<span class="go">     double longitude(longitude) ;</span>
+<span class="go">             longitude:units = &quot;degrees_east&quot; ;</span>
+<span class="go">             longitude:standard_name = &quot;longitude&quot; ;</span>
+<span class="go">     double eastward_wind(latitude, longitude) ;</span>
+<span class="go">             eastward_wind:units = &quot;m s-1&quot; ;</span>
+<span class="go">             eastward_wind:standard_name = &quot;eastward_wind&quot; ;</span>
+<span class="go">             eastward_wind:cell_measures = &quot;area: areacella&quot; ;</span>
 
-// global attributes:
-             :Conventions <span class="o">=</span> <span class="s2">&quot;CF-1.7&quot;</span> <span class="p">;</span>
-             :external_variables <span class="o">=</span> <span class="s2">&quot;areacella&quot;</span> <span class="p">;</span>
-<span class="o">}</span>
+<span class="go">// global attributes:</span>
+<span class="go">             :Conventions = &quot;CF-1.7&quot; ;</span>
+<span class="go">             :external_variables = &quot;areacella&quot; ;</span>
+<span class="go">}</span>
 </pre></div>
 </div>
 </div>
@@ -5351,19 +5375,19 @@ variables:
 <div class="literal-block-wrapper docutils container" id="id260">
 <div class="code-block-caption"><span class="caption-text"><em>Inspect the external dataset with the ncdump command
 line tool.</em></span><a class="headerlink" href="#id260" title="Permalink to this code">¶</a></div>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ ncdump -h external.nc
-netcdf external <span class="o">{</span>
-dimensions:
-     <span class="nv">latitude</span> <span class="o">=</span> <span class="m">10</span> <span class="p">;</span>
-     <span class="nv">longitude</span> <span class="o">=</span> <span class="m">9</span> <span class="p">;</span>
-variables:
-     double areacella<span class="o">(</span>longitude, latitude<span class="o">)</span> <span class="p">;</span>
-             areacella:units <span class="o">=</span> <span class="s2">&quot;m2&quot;</span> <span class="p">;</span>
-             areacella:standard_name <span class="o">=</span> <span class="s2">&quot;cell_area&quot;</span> <span class="p">;</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> ncdump -h external.nc
+<span class="go">netcdf external {</span>
+<span class="go">dimensions:</span>
+<span class="go">     latitude = 10 ;</span>
+<span class="go">     longitude = 9 ;</span>
+<span class="go">variables:</span>
+<span class="go">     double areacella(longitude, latitude) ;</span>
+<span class="go">             areacella:units = &quot;m2&quot; ;</span>
+<span class="go">             areacella:standard_name = &quot;cell_area&quot; ;</span>
 
-// global attributes:
-             :Conventions <span class="o">=</span> <span class="s2">&quot;CF-1.7&quot;</span> <span class="p">;</span>
-<span class="o">}</span>
+<span class="go">// global attributes:</span>
+<span class="go">             :Conventions = &quot;CF-1.7&quot; ;</span>
+<span class="go">}</span>
 </pre></div>
 </div>
 </div>
@@ -5464,26 +5488,26 @@ command line tool</span></a>.</p>
 <div class="literal-block-wrapper docutils container" id="id265">
 <div class="code-block-caption"><span class="caption-text"><em>Use cfa to describe the parent file without resolving
 the external variable reference.</em></span><a class="headerlink" href="#id265" title="Permalink to this code">¶</a></div>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ cfa parent.nc
-Field: eastward_wind <span class="o">(</span>ncvar%eastward_wind<span class="o">)</span>
-------------------------------------------
-Data            : eastward_wind<span class="o">(</span>latitude<span class="o">(</span><span class="m">10</span><span class="o">)</span>, longitude<span class="o">(</span><span class="m">9</span><span class="o">))</span> m s-1
-Dimension coords: latitude<span class="o">(</span><span class="m">10</span><span class="o">)</span> <span class="o">=</span> <span class="o">[</span><span class="m">0</span>.0, ..., <span class="m">9</span>.0<span class="o">]</span> degrees_north
-                : longitude<span class="o">(</span><span class="m">9</span><span class="o">)</span> <span class="o">=</span> <span class="o">[</span><span class="m">0</span>.0, ..., <span class="m">8</span>.0<span class="o">]</span> degrees_east
-Cell measures   : measure:area <span class="o">(</span>external variable: ncvar%areacella<span class="o">)</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> cfa parent.nc
+<span class="go">Field: eastward_wind (ncvar%eastward_wind)</span>
+<span class="go">------------------------------------------</span>
+<span class="go">Data            : eastward_wind(latitude(10), longitude(9)) m s-1</span>
+<span class="go">Dimension coords: latitude(10) = [0.0, ..., 9.0] degrees_north</span>
+<span class="go">                : longitude(9) = [0.0, ..., 8.0] degrees_east</span>
+<span class="go">Cell measures   : measure:area (external variable: ncvar%areacella)</span>
 </pre></div>
 </div>
 </div>
 <div class="literal-block-wrapper docutils container" id="id266">
 <div class="code-block-caption"><span class="caption-text"><em>Providing an external file with the “-e” option allows
 the reference to be resolved.</em></span><a class="headerlink" href="#id266" title="Permalink to this code">¶</a></div>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ cfa -e external.nc parent.nc
-Field: eastward_wind <span class="o">(</span>ncvar%eastward_wind<span class="o">)</span>
-------------------------------------------
-Data            : eastward_wind<span class="o">(</span>latitude<span class="o">(</span><span class="m">10</span><span class="o">)</span>, longitude<span class="o">(</span><span class="m">9</span><span class="o">))</span> m s-1
-Dimension coords: latitude<span class="o">(</span><span class="m">10</span><span class="o">)</span> <span class="o">=</span> <span class="o">[</span><span class="m">0</span>.0, ..., <span class="m">9</span>.0<span class="o">]</span> degrees_north
-                : longitude<span class="o">(</span><span class="m">9</span><span class="o">)</span> <span class="o">=</span> <span class="o">[</span><span class="m">0</span>.0, ..., <span class="m">8</span>.0<span class="o">]</span> degrees_east
-Cell measures   : measure:area<span class="o">(</span>longitude<span class="o">(</span><span class="m">9</span><span class="o">)</span>, latitude<span class="o">(</span><span class="m">10</span><span class="o">))</span> <span class="o">=</span> <span class="o">[[</span><span class="m">100000</span>.5, ..., <span class="m">100089</span>.5<span class="o">]]</span> m2
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> cfa -e external.nc parent.nc
+<span class="go">Field: eastward_wind (ncvar%eastward_wind)</span>
+<span class="go">------------------------------------------</span>
+<span class="go">Data            : eastward_wind(latitude(10), longitude(9)) m s-1</span>
+<span class="go">Dimension coords: latitude(10) = [0.0, ..., 9.0] degrees_north</span>
+<span class="go">                : longitude(9) = [0.0, ..., 8.0] degrees_east</span>
+<span class="go">Cell measures   : measure:area(longitude(9), latitude(10)) = [[100000.5, ..., 100089.5]] m2</span>
 </pre></div>
 </div>
 </div>
@@ -5661,41 +5685,41 @@ instance.</p>
 <div class="literal-block-wrapper docutils container" id="id269">
 <div class="code-block-caption"><span class="caption-text"><em>Inspect the compressed dataset with the ncdump command
 line tool.</em></span><a class="headerlink" href="#id269" title="Permalink to this code">¶</a></div>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ ncdump -h contiguous.nc
-dimensions:
-     <span class="nv">station</span> <span class="o">=</span> <span class="m">4</span> <span class="p">;</span>
-     <span class="nv">obs</span> <span class="o">=</span> <span class="m">24</span> <span class="p">;</span>
-     <span class="nv">strlen8</span> <span class="o">=</span> <span class="m">8</span> <span class="p">;</span>
-variables:
-     int row_size<span class="o">(</span>station<span class="o">)</span> <span class="p">;</span>
-             row_size:long_name <span class="o">=</span> <span class="s2">&quot;number of observations for this station&quot;</span> <span class="p">;</span>
-             row_size:sample_dimension <span class="o">=</span> <span class="s2">&quot;obs&quot;</span> <span class="p">;</span>
-     double time<span class="o">(</span>obs<span class="o">)</span> <span class="p">;</span>
-             time:units <span class="o">=</span> <span class="s2">&quot;days since 1970-01-01 00:00:00&quot;</span> <span class="p">;</span>
-             time:standard_name <span class="o">=</span> <span class="s2">&quot;time&quot;</span> <span class="p">;</span>
-     double lat<span class="o">(</span>station<span class="o">)</span> <span class="p">;</span>
-             lat:units <span class="o">=</span> <span class="s2">&quot;degrees_north&quot;</span> <span class="p">;</span>
-             lat:standard_name <span class="o">=</span> <span class="s2">&quot;latitude&quot;</span> <span class="p">;</span>
-     double lon<span class="o">(</span>station<span class="o">)</span> <span class="p">;</span>
-             lon:units <span class="o">=</span> <span class="s2">&quot;degrees_east&quot;</span> <span class="p">;</span>
-             lon:standard_name <span class="o">=</span> <span class="s2">&quot;longitude&quot;</span> <span class="p">;</span>
-     double alt<span class="o">(</span>station<span class="o">)</span> <span class="p">;</span>
-             alt:units <span class="o">=</span> <span class="s2">&quot;m&quot;</span> <span class="p">;</span>
-             alt:positive <span class="o">=</span> <span class="s2">&quot;up&quot;</span> <span class="p">;</span>
-             alt:standard_name <span class="o">=</span> <span class="s2">&quot;height&quot;</span> <span class="p">;</span>
-             alt:axis <span class="o">=</span> <span class="s2">&quot;Z&quot;</span> <span class="p">;</span>
-     char station_name<span class="o">(</span>station, strlen8<span class="o">)</span> <span class="p">;</span>
-             station_name:long_name <span class="o">=</span> <span class="s2">&quot;station name&quot;</span> <span class="p">;</span>
-             station_name:cf_role <span class="o">=</span> <span class="s2">&quot;timeseries_id&quot;</span> <span class="p">;</span>
-     double humidity<span class="o">(</span>obs<span class="o">)</span> <span class="p">;</span>
-             humidity:standard_name <span class="o">=</span> <span class="s2">&quot;specific_humidity&quot;</span> <span class="p">;</span>
-             humidity:coordinates <span class="o">=</span> <span class="s2">&quot;time lat lon alt station_name&quot;</span> <span class="p">;</span>
-             humidity:_FillValue <span class="o">=</span> -999.9 <span class="p">;</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> ncdump -h contiguous.nc
+<span class="go">dimensions:</span>
+<span class="go">     station = 4 ;</span>
+<span class="go">     obs = 24 ;</span>
+<span class="go">     strlen8 = 8 ;</span>
+<span class="go">variables:</span>
+<span class="go">     int row_size(station) ;</span>
+<span class="go">             row_size:long_name = &quot;number of observations for this station&quot; ;</span>
+<span class="go">             row_size:sample_dimension = &quot;obs&quot; ;</span>
+<span class="go">     double time(obs) ;</span>
+<span class="go">             time:units = &quot;days since 1970-01-01 00:00:00&quot; ;</span>
+<span class="go">             time:standard_name = &quot;time&quot; ;</span>
+<span class="go">     double lat(station) ;</span>
+<span class="go">             lat:units = &quot;degrees_north&quot; ;</span>
+<span class="go">             lat:standard_name = &quot;latitude&quot; ;</span>
+<span class="go">     double lon(station) ;</span>
+<span class="go">             lon:units = &quot;degrees_east&quot; ;</span>
+<span class="go">             lon:standard_name = &quot;longitude&quot; ;</span>
+<span class="go">     double alt(station) ;</span>
+<span class="go">             alt:units = &quot;m&quot; ;</span>
+<span class="go">             alt:positive = &quot;up&quot; ;</span>
+<span class="go">             alt:standard_name = &quot;height&quot; ;</span>
+<span class="go">             alt:axis = &quot;Z&quot; ;</span>
+<span class="go">     char station_name(station, strlen8) ;</span>
+<span class="go">             station_name:long_name = &quot;station name&quot; ;</span>
+<span class="go">             station_name:cf_role = &quot;timeseries_id&quot; ;</span>
+<span class="go">     double humidity(obs) ;</span>
+<span class="go">             humidity:standard_name = &quot;specific_humidity&quot; ;</span>
+<span class="go">             humidity:coordinates = &quot;time lat lon alt station_name&quot; ;</span>
+<span class="go">             humidity:_FillValue = -999.9 ;</span>
 
-// global attributes:
-             :Conventions <span class="o">=</span> <span class="s2">&quot;CF-1.7&quot;</span> <span class="p">;</span>
-             :featureType <span class="o">=</span> <span class="s2">&quot;timeSeries&quot;</span> <span class="p">;</span>
-<span class="o">}</span>
+<span class="go">// global attributes:</span>
+<span class="go">             :Conventions = &quot;CF-1.7&quot; ;</span>
+<span class="go">             :featureType = &quot;timeSeries&quot; ;</span>
+<span class="go">}</span>
 </pre></div>
 </div>
 </div>
@@ -5832,28 +5856,28 @@ a netCDF file:</p>
 <div class="literal-block-wrapper docutils container" id="id276">
 <div class="code-block-caption"><span class="caption-text"><em>Inspect the new compressed dataset with the ncdump
 command line tool.</em></span><a class="headerlink" href="#id276" title="Permalink to this code">¶</a></div>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ ncdump T_contiguous.nc
-netcdf T_contiguous <span class="o">{</span>
-dimensions:
-     <span class="nv">dim</span> <span class="o">=</span> <span class="m">2</span> <span class="p">;</span>
-     <span class="nv">element</span> <span class="o">=</span> <span class="m">5</span> <span class="p">;</span>
-variables:
-     int64 count<span class="o">(</span>dim<span class="o">)</span> <span class="p">;</span>
-             count:long_name <span class="o">=</span> <span class="s2">&quot;number of obs for this timeseries&quot;</span> <span class="p">;</span>
-             count:sample_dimension <span class="o">=</span> <span class="s2">&quot;element&quot;</span> <span class="p">;</span>
-     float air_temperature<span class="o">(</span>element<span class="o">)</span> <span class="p">;</span>
-             air_temperature:units <span class="o">=</span> <span class="s2">&quot;K&quot;</span> <span class="p">;</span>
-             air_temperature:standard_name <span class="o">=</span> <span class="s2">&quot;air_temperature&quot;</span> <span class="p">;</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> ncdump T_contiguous.nc
+<span class="go">netcdf T_contiguous {</span>
+<span class="go">dimensions:</span>
+<span class="go">     dim = 2 ;</span>
+<span class="go">     element = 5 ;</span>
+<span class="go">variables:</span>
+<span class="go">     int64 count(dim) ;</span>
+<span class="go">             count:long_name = &quot;number of obs for this timeseries&quot; ;</span>
+<span class="go">             count:sample_dimension = &quot;element&quot; ;</span>
+<span class="go">     float air_temperature(element) ;</span>
+<span class="go">             air_temperature:units = &quot;K&quot; ;</span>
+<span class="go">             air_temperature:standard_name = &quot;air_temperature&quot; ;</span>
 
-// global attributes:
-             :Conventions <span class="o">=</span> <span class="s2">&quot;CF-1.7&quot;</span> <span class="p">;</span>
-             :featureType <span class="o">=</span> <span class="s2">&quot;timeSeries&quot;</span> <span class="p">;</span>
-data:
+<span class="go">// global attributes:</span>
+<span class="go">             :Conventions = &quot;CF-1.7&quot; ;</span>
+<span class="go">             :featureType = &quot;timeSeries&quot; ;</span>
+<span class="go">data:</span>
 
- <span class="nv">count</span> <span class="o">=</span> <span class="m">1</span>, <span class="m">4</span> <span class="p">;</span>
+<span class="go"> count = 1, 4 ;</span>
 
- <span class="nv">air_temperature</span> <span class="o">=</span> <span class="m">280</span>, <span class="m">281</span>, <span class="m">279</span>, <span class="m">278</span>, <span class="m">279</span>.5 <span class="p">;</span>
-<span class="o">}</span>
+<span class="go"> air_temperature = 280, 281, 279, 278, 279.5 ;</span>
+<span class="go">}</span>
 </pre></div>
 </div>
 </div>
@@ -5914,32 +5938,32 @@ file of sample files):</p>
 <div class="literal-block-wrapper docutils container" id="id278">
 <div class="code-block-caption"><span class="caption-text"><em>Inspect the compressed dataset with the ncdump command
 line tool.</em></span><a class="headerlink" href="#id278" title="Permalink to this code">¶</a></div>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ ncdump -h gathered.nc
-netcdf gathered <span class="o">{</span>
-dimensions:
-     <span class="nb">time</span> <span class="o">=</span> <span class="m">2</span> <span class="p">;</span>
-     <span class="nv">lat</span> <span class="o">=</span> <span class="m">4</span> <span class="p">;</span>
-     <span class="nv">lon</span> <span class="o">=</span> <span class="m">5</span> <span class="p">;</span>
-     <span class="nv">landpoint</span> <span class="o">=</span> <span class="m">7</span> <span class="p">;</span>
-variables:
-     double time<span class="o">(</span><span class="nb">time</span><span class="o">)</span> <span class="p">;</span>
-             time:standard_name <span class="o">=</span> <span class="s2">&quot;time&quot;</span> <span class="p">;</span>
-             time:units <span class="o">=</span> <span class="s2">&quot;days since 2000-1-1&quot;</span> <span class="p">;</span>
-     double lat<span class="o">(</span>lat<span class="o">)</span> <span class="p">;</span>
-             lat:standard_name <span class="o">=</span> <span class="s2">&quot;latitude&quot;</span> <span class="p">;</span>
-             lat:units <span class="o">=</span> <span class="s2">&quot;degrees_north&quot;</span> <span class="p">;</span>
-     double lon<span class="o">(</span>lon<span class="o">)</span> <span class="p">;</span>
-             lon:standard_name <span class="o">=</span> <span class="s2">&quot;longitude&quot;</span> <span class="p">;</span>
-             lon:units <span class="o">=</span> <span class="s2">&quot;degrees_east&quot;</span> <span class="p">;</span>
-     int landpoint<span class="o">(</span>landpoint<span class="o">)</span> <span class="p">;</span>
-             landpoint:compress <span class="o">=</span> <span class="s2">&quot;lat lon&quot;</span> <span class="p">;</span>
-     double pr<span class="o">(</span>time, landpoint<span class="o">)</span> <span class="p">;</span>
-             pr:standard_name <span class="o">=</span> <span class="s2">&quot;precipitation_flux&quot;</span> <span class="p">;</span>
-             pr:units <span class="o">=</span> <span class="s2">&quot;kg m2 s-1&quot;</span> <span class="p">;</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> ncdump -h gathered.nc
+<span class="go">netcdf gathered {</span>
+<span class="go">dimensions:</span>
+<span class="go">     time = 2 ;</span>
+<span class="go">     lat = 4 ;</span>
+<span class="go">     lon = 5 ;</span>
+<span class="go">     landpoint = 7 ;</span>
+<span class="go">variables:</span>
+<span class="go">     double time(time) ;</span>
+<span class="go">             time:standard_name = &quot;time&quot; ;</span>
+<span class="go">             time:units = &quot;days since 2000-1-1&quot; ;</span>
+<span class="go">     double lat(lat) ;</span>
+<span class="go">             lat:standard_name = &quot;latitude&quot; ;</span>
+<span class="go">             lat:units = &quot;degrees_north&quot; ;</span>
+<span class="go">     double lon(lon) ;</span>
+<span class="go">             lon:standard_name = &quot;longitude&quot; ;</span>
+<span class="go">             lon:units = &quot;degrees_east&quot; ;</span>
+<span class="go">     int landpoint(landpoint) ;</span>
+<span class="go">             landpoint:compress = &quot;lat lon&quot; ;</span>
+<span class="go">     double pr(time, landpoint) ;</span>
+<span class="go">             pr:standard_name = &quot;precipitation_flux&quot; ;</span>
+<span class="go">             pr:units = &quot;kg m2 s-1&quot; ;</span>
 
-// global attributes:
-             :Conventions <span class="o">=</span> <span class="s2">&quot;CF-1.7&quot;</span> <span class="p">;</span>
-<span class="o">}</span>
+<span class="go">// global attributes:</span>
+<span class="go">             :Conventions = &quot;CF-1.7&quot; ;</span>
+<span class="go">}</span>
 </pre></div>
 </div>
 </div>
@@ -6090,30 +6114,30 @@ initialisation).</p>
 <div class="literal-block-wrapper docutils container" id="id285">
 <div class="code-block-caption"><span class="caption-text"><em>Inspect new the compressed dataset with the ncdump
 command line tool.</em></span><a class="headerlink" href="#id285" title="Permalink to this code">¶</a></div>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ ncdump P_gathered.nc
-netcdf P_gathered <span class="o">{</span>
-dimensions:
-     <span class="nv">dim</span> <span class="o">=</span> <span class="m">2</span> <span class="p">;</span>
-     <span class="nv">dim_1</span> <span class="o">=</span> <span class="m">3</span> <span class="p">;</span>
-     <span class="nv">dim_2</span> <span class="o">=</span> <span class="m">2</span> <span class="p">;</span>
-     <span class="nv">list</span> <span class="o">=</span> <span class="m">3</span> <span class="p">;</span>
-variables:
-     int64 list<span class="o">(</span>list<span class="o">)</span> <span class="p">;</span>
-             list:compress <span class="o">=</span> <span class="s2">&quot;dim_1 dim_2&quot;</span> <span class="p">;</span>
-     float precipitation_flux<span class="o">(</span>dim, list<span class="o">)</span> <span class="p">;</span>
-             precipitation_flux:units <span class="o">=</span> <span class="s2">&quot;kg m-2 s-1&quot;</span> <span class="p">;</span>
-             precipitation_flux:standard_name <span class="o">=</span> <span class="s2">&quot;precipitation_flux&quot;</span> <span class="p">;</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> ncdump P_gathered.nc
+<span class="go">netcdf P_gathered {</span>
+<span class="go">dimensions:</span>
+<span class="go">     dim = 2 ;</span>
+<span class="go">     dim_1 = 3 ;</span>
+<span class="go">     dim_2 = 2 ;</span>
+<span class="go">     list = 3 ;</span>
+<span class="go">variables:</span>
+<span class="go">     int64 list(list) ;</span>
+<span class="go">             list:compress = &quot;dim_1 dim_2&quot; ;</span>
+<span class="go">     float precipitation_flux(dim, list) ;</span>
+<span class="go">             precipitation_flux:units = &quot;kg m-2 s-1&quot; ;</span>
+<span class="go">             precipitation_flux:standard_name = &quot;precipitation_flux&quot; ;</span>
 
-// global attributes:
-             :Conventions <span class="o">=</span> <span class="s2">&quot;CF-1.7&quot;</span> <span class="p">;</span>
-data:
+<span class="go">// global attributes:</span>
+<span class="go">             :Conventions = &quot;CF-1.7&quot; ;</span>
+<span class="go">data:</span>
 
- <span class="nv">list</span> <span class="o">=</span> <span class="m">1</span>, <span class="m">4</span>, <span class="m">5</span> <span class="p">;</span>
+<span class="go"> list = 1, 4, 5 ;</span>
 
- <span class="nv">precipitation_flux</span> <span class="o">=</span>
-  <span class="m">2</span>, <span class="m">1</span>, <span class="m">3</span>,
-  <span class="m">4</span>, <span class="m">0</span>, <span class="m">5</span> <span class="p">;</span>
-<span class="o">}</span>
+<span class="go"> precipitation_flux =</span>
+<span class="go">  2, 1, 3,</span>
+<span class="go">  4, 0, 5 ;</span>
+<span class="go">}</span>
 </pre></div>
 </div>
 </div>
@@ -6170,11 +6194,11 @@ converts PP and UM fields files to netCDF datasets on disk.</p>
 <div class="literal-block-wrapper docutils container" id="id288">
 <div class="code-block-caption"><span class="caption-text"><em>Use the ‘cfa’ shell command to view a PP file and
 convert it to a netCDF dataset.</em></span><a class="headerlink" href="#id288" title="Permalink to this code">¶</a></div>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ cfa umfile.pp
-CF Field: surface_air_pressure<span class="o">(</span>time<span class="o">(</span><span class="m">3</span><span class="o">)</span>, latitude<span class="o">(</span><span class="m">73</span><span class="o">)</span>, longitude<span class="o">(</span><span class="m">96</span><span class="o">))</span> Pa
-$ cfa -o umfile2.nc umfile.pp
-$ cfa umfile2.nc
-CF Field: surface_air_pressure<span class="o">(</span>time<span class="o">(</span><span class="m">3</span><span class="o">)</span>, latitude<span class="o">(</span><span class="m">73</span><span class="o">)</span>, longitude<span class="o">(</span><span class="m">96</span><span class="o">))</span> Pa
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> cfa umfile.pp
+<span class="go">CF Field: surface_air_pressure(time(3), latitude(73), longitude(96)) Pa</span>
+<span class="gp">$</span> cfa -o umfile2.nc umfile.pp
+<span class="gp">$</span> cfa umfile2.nc
+<span class="go">CF Field: surface_air_pressure(time(3), latitude(73), longitude(96)) Pa</span>
 </pre></div>
 </div>
 </div>
@@ -6185,7 +6209,7 @@ CF Field: surface_air_pressure<span class="o">(</span>time<span class="o">(</spa
 are implied by the <a class="reference external" href="http://artefacts.ceda.ac.uk/badc_datadocs/um/umdp_F3-UMDPF3.pdf">PP and lookup header</a>,
 certain lookup header items are stored, for convenience, as field
 construct properties:</p>
-<table class="docutils align-center">
+<table class="docutils align-default">
 <colgroup>
 <col style="width: 20%" />
 <col style="width: 35%" />
@@ -6407,7 +6431,7 @@ reference system.</p>
 <p>The following collapse methods are available, over any subset of the
 domain axes. The “Cell method” column in the table gives the method of
 the new cell method construct (if one is created).</p>
-<table class="docutils align-center">
+<table class="docutils align-default">
 <colgroup>
 <col style="width: 30%" />
 <col style="width: 43%" />
@@ -6629,7 +6653,7 @@ construct.</p>
 weighted must be identified with the <em>weights</em> keyword. A collapse by
 a particular method is either never weighted, or may be weighted, or
 is always weighted, as described in the following table:</p>
-<table class="docutils align-center">
+<table class="docutils align-default">
 <colgroup>
 <col style="width: 44%" />
 <col style="width: 44%" />
@@ -7035,7 +7059,7 @@ day in May from a 1961-1990 climatology).</p>
 being created, all of which are grouped collapses. Each collapse
 method needs to indicate its climatological nature with one of the
 following qualifiers,</p>
-<table class="docutils align-center">
+<table class="docutils align-default">
 <colgroup>
 <col style="width: 41%" />
 <col style="width: 59%" />
@@ -7580,7 +7604,7 @@ regridding dimensions are removed from the regridded field construct.</p>
 “source” and “destination” refer to the domain of the field construct
 being regridded, and the domain that it is being regridded to,
 respectively):</p>
-<table class="docutils align-center">
+<table class="docutils align-default">
 <colgroup>
 <col style="width: 34%" />
 <col style="width: 66%" />
@@ -7604,8 +7628,8 @@ interpolation.</p></td>
 interpolation (only available to
 <a class="reference internal" href="#cartesian-regridding">Cartesian-regridding</a>).</p></td>
 </tr>
-<tr class="row-odd"><td><p>First order conservative</p></td>
-<td><p>Preserve the are integral of the data across
+<tr class="row-odd"><td><p>First-order conservative</p></td>
+<td><p>Preserve the area integral of the data across
 the interpolation from source to
 destination. It uses the proportion of the
 area of the overlapping source and
@@ -7614,16 +7638,29 @@ weights. In particular, the weight of a
 source cell is the ratio of the area of
 intersection of the source and destination
 cells to the area of the whole destination
-cell.</p></td>
+cell. It does not account for the field gradient
+across the source cell, unlike the second-order
+conservative method (see below).</p></td>
 </tr>
-<tr class="row-even"><td><p>Patch</p></td>
+<tr class="row-even"><td><p>Second-order conservative</p></td>
+<td><p>As with first-order (see above), preserves the
+area integral of the field between source and
+destination using a weighted sum with weights
+based on the proportionate area of intersection.
+But unlike first-order, the second-order method
+incorporates further terms to take into
+consideration the gradient of the field across
+the source cell, thereby typically producing a
+smoother result of higher accuracy.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Patch</p></td>
 <td><p>A second degree polynomial regridding method,
 which uses a least squares algorithm to
 calculate the polynomial. This method gives
 better derivatives in the resulting
 destination data than the bilinear method.</p></td>
 </tr>
-<tr class="row-odd"><td><p>Nearest neighbour</p></td>
+<tr class="row-even"><td><p>Nearest neighbour</p></td>
 <td><p>Nearest neighbour interpolation that is useful
 for extrapolation of categorical data. Either
 each destination point is mapped to the
@@ -7646,7 +7683,7 @@ regridding weights is based on areas and distances on the surface of
 the sphere, rather in <a class="reference internal" href="#cartesian-regridding"><span class="std std-ref">Euclidean space</span></a>.</p>
 <p>The following combinations of spherical source and destination domain
 coordinate systems are available to the <a class="reference internal" href="method/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regrids</span></code></a> method:</p>
-<table class="docutils align-center">
+<table class="docutils align-default">
 <colgroup>
 <col style="width: 50%" />
 <col style="width: 50%" />
@@ -7940,40 +7977,40 @@ during operations, and if one operand has no units then the units of
 the other are assumed.</p>
 <div class="literal-block-wrapper docutils container" id="id325">
 <div class="code-block-caption"><span class="caption-text"><em>TODO</em></span><a class="headerlink" href="#id325" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span> <span class="o">&gt;&gt;&gt;</span> <span class="n">q</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="n">t</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">stats</span><span class="p">()</span>
- <span class="p">{</span><span class="s1">&#39;min&#39;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">CF</span> <span class="n">Data</span><span class="p">():</span> <span class="mf">260.0</span> <span class="n">K</span><span class="o">&gt;</span><span class="p">,</span>
-  <span class="s1">&#39;mean&#39;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">CF</span> <span class="n">Data</span><span class="p">():</span> <span class="mf">269.9244444444445</span> <span class="n">K</span><span class="o">&gt;</span><span class="p">,</span>
-  <span class="s1">&#39;max&#39;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">CF</span> <span class="n">Data</span><span class="p">():</span> <span class="mf">280.0</span> <span class="n">K</span><span class="o">&gt;</span><span class="p">,</span>
-  <span class="s1">&#39;range&#39;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">CF</span> <span class="n">Data</span><span class="p">():</span> <span class="mf">20.0</span> <span class="n">K</span><span class="o">&gt;</span><span class="p">,</span>
-  <span class="s1">&#39;mid_range&#39;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">CF</span> <span class="n">Data</span><span class="p">():</span> <span class="mf">270.0</span> <span class="n">K</span><span class="o">&gt;</span><span class="p">,</span>
-  <span class="s1">&#39;standard_deviation&#39;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">CF</span> <span class="n">Data</span><span class="p">():</span> <span class="mf">5.942452002538104</span> <span class="n">K</span><span class="o">&gt;</span><span class="p">,</span>
-  <span class="s1">&#39;sample_size&#39;</span><span class="p">:</span> <span class="mi">90</span><span class="p">}</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">t</span> <span class="o">+</span> <span class="n">t</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="n">x</span>
- <span class="o">&lt;</span><span class="n">CF</span> <span class="n">Field</span><span class="p">:</span> <span class="n">air_temperature</span><span class="p">(</span><span class="n">atmosphere_hybrid_height_coordinate</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">grid_latitude</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">grid_longitude</span><span class="p">(</span><span class="mi">9</span><span class="p">))</span> <span class="n">K</span><span class="o">&gt;</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
- <span class="o">&lt;</span><span class="n">CF</span> <span class="n">Data</span><span class="p">():</span> <span class="mf">520.0</span> <span class="n">K</span><span class="o">&gt;</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="p">(</span><span class="n">t</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
- <span class="o">&lt;</span><span class="n">CF</span> <span class="n">Data</span><span class="p">():</span> <span class="mf">258.0</span> <span class="n">K</span><span class="o">&gt;</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="p">(</span><span class="mi">2</span> <span class="o">+</span> <span class="n">t</span><span class="p">)</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
- <span class="o">&lt;</span><span class="n">CF</span> <span class="n">Data</span><span class="p">():</span> <span class="mf">262.0</span> <span class="n">K</span><span class="o">&gt;</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="p">(</span><span class="n">t</span> <span class="o">*</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">9</span><span class="p">)))</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
- <span class="o">&lt;</span><span class="n">CF</span> <span class="n">Data</span><span class="p">():</span> <span class="mf">0.0</span> <span class="n">K</span><span class="o">&gt;</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="p">(</span><span class="n">t</span> <span class="o">+</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">29</span><span class="p">),</span> <span class="s1">&#39;0.1 K&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
- <span class="o">&lt;</span><span class="n">CF</span> <span class="n">Data</span><span class="p">():</span> <span class="mf">262.6</span> <span class="n">K</span><span class="o">&gt;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">stats</span><span class="p">()</span>
+<span class="go">{&#39;min&#39;: &lt;CF Data(): 260.0 K&gt;,</span>
+<span class="go"> &#39;mean&#39;: &lt;CF Data(): 269.9244444444445 K&gt;,</span>
+<span class="go"> &#39;max&#39;: &lt;CF Data(): 280.0 K&gt;,</span>
+<span class="go"> &#39;range&#39;: &lt;CF Data(): 20.0 K&gt;,</span>
+<span class="go"> &#39;mid_range&#39;: &lt;CF Data(): 270.0 K&gt;,</span>
+<span class="go"> &#39;standard_deviation&#39;: &lt;CF Data(): 5.942452002538104 K&gt;,</span>
+<span class="go"> &#39;sample_size&#39;: 90}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">t</span> <span class="o">+</span> <span class="n">t</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
+<span class="go">&lt;CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+<span class="go">&lt;CF Data(): 520.0 K&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">t</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+<span class="go">&lt;CF Data(): 258.0 K&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="mi">2</span> <span class="o">+</span> <span class="n">t</span><span class="p">)</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+<span class="go">&lt;CF Data(): 262.0 K&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">t</span> <span class="o">*</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">9</span><span class="p">)))</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+<span class="go">&lt;CF Data(): 0.0 K&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">t</span> <span class="o">+</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">29</span><span class="p">),</span> <span class="s1">&#39;0.1 K&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+<span class="go">&lt;CF Data(): 262.6 K&gt;</span>
 </pre></div>
 </div>
 </div>
 <div class="literal-block-wrapper docutils container" id="id326">
 <div class="code-block-caption"><span class="caption-text"><em>TODO</em></span><a class="headerlink" href="#id326" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span> <span class="o">&gt;&gt;&gt;</span> <span class="n">u</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Units</span> <span class="o">-=</span> <span class="mf">273.15</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
- <span class="o">&lt;</span><span class="n">CF</span> <span class="n">Field</span><span class="p">:</span> <span class="n">air_temperature</span><span class="p">(</span><span class="n">grid_longitude</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">grid_latitude</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">atmosphere_hybrid_height_coordinate</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="n">K</span> <span class="o">@</span> <span class="mf">273.15</span><span class="o">&gt;</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="n">t</span> <span class="o">+</span> <span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
- <span class="o">&lt;</span><span class="n">CF</span> <span class="n">Field</span><span class="p">:</span> <span class="n">air_temperature</span><span class="p">(</span><span class="n">atmosphere_hybrid_height_coordinate</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">grid_latitude</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">grid_longitude</span><span class="p">(</span><span class="mi">9</span><span class="p">))</span> <span class="n">K</span><span class="o">&gt;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">Units</span> <span class="o">-=</span> <span class="mf">273.15</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="go">&lt;CF Field: air_temperature(grid_longitude(1), grid_latitude(10), atmosphere_hybrid_height_coordinate(1)) K @ 273.15&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">+</span> <span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="go">&lt;CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K&gt;</span>
 </pre></div>
 </div>
 </div>
@@ -7983,19 +8020,19 @@ the case if the units of the result differ from bother operands, or if
 they have different standard names.</p>
 <div class="literal-block-wrapper docutils container" id="id327">
 <div class="code-block-caption"><span class="caption-text"><em>TODO</em></span><a class="headerlink" href="#id327" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span> <span class="o">&gt;&gt;&gt;</span> <span class="n">t</span><span class="o">.</span><span class="n">identities</span><span class="p">()</span>
- <span class="p">[</span><span class="s1">&#39;air_temperature&#39;</span><span class="p">,</span>
-  <span class="s1">&#39;Conventions=CF-1.7&#39;</span><span class="p">,</span>
-  <span class="s1">&#39;project=research&#39;</span><span class="p">,</span>
-  <span class="s1">&#39;units=K&#39;</span><span class="p">,</span>
-  <span class="s1">&#39;standard_name=air_temperature&#39;</span><span class="p">,</span>
-  <span class="s1">&#39;ncvar%ta&#39;</span><span class="p">]</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="n">u</span> <span class="o">=</span> <span class="n">t</span> <span class="o">*</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;ms-1&#39;</span><span class="p">)</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">identities</span><span class="p">()</span>
- <span class="p">[</span><span class="s1">&#39;Conventions=CF-1.7&#39;</span><span class="p">,</span>
-  <span class="s1">&#39;project=research&#39;</span><span class="p">,</span>
-  <span class="s1">&#39;units=1000 s-1.K&#39;</span><span class="p">,</span>
-  <span class="s1">&#39;ncvar%ta&#39;</span><span class="p">]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">identities</span><span class="p">()</span>
+<span class="go">[&#39;air_temperature&#39;,</span>
+<span class="go"> &#39;Conventions=CF-1.7&#39;,</span>
+<span class="go"> &#39;project=research&#39;,</span>
+<span class="go"> &#39;units=K&#39;,</span>
+<span class="go"> &#39;standard_name=air_temperature&#39;,</span>
+<span class="go"> &#39;ncvar%ta&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span> <span class="o">=</span> <span class="n">t</span> <span class="o">*</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;ms-1&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">identities</span><span class="p">()</span>
+<span class="go">[&#39;Conventions=CF-1.7&#39;,</span>
+<span class="go"> &#39;project=research&#39;,</span>
+<span class="go"> &#39;units=1000 s-1.K&#39;,</span>
+<span class="go"> &#39;ncvar%ta&#39;]</span>
 </pre></div>
 </div>
 </div>
@@ -8048,25 +8085,25 @@ returning a new field construct with modified data values. See the
 <a class="reference internal" href="classes/cf.Field.html#field-unary-arithmetic"><span class="std std-ref">comprehensive list of available unary operations</span></a>.</p>
 <div class="literal-block-wrapper docutils container" id="id329">
 <div class="code-block-caption"><span class="caption-text"><em>TODO</em></span><a class="headerlink" href="#id329" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span> <span class="o">&gt;&gt;&gt;</span> <span class="n">q</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
- <span class="p">[[</span><span class="mf">0.007</span> <span class="mf">0.034</span> <span class="mf">0.003</span> <span class="mf">0.014</span> <span class="mf">0.018</span> <span class="mf">0.037</span> <span class="mf">0.024</span> <span class="mf">0.029</span><span class="p">]</span>
-  <span class="p">[</span><span class="mf">0.023</span> <span class="mf">0.036</span> <span class="mf">0.045</span> <span class="mf">0.062</span> <span class="mf">0.046</span> <span class="mf">0.073</span> <span class="mf">0.006</span> <span class="mf">0.066</span><span class="p">]</span>
-  <span class="p">[</span><span class="mf">0.11</span>  <span class="mf">0.131</span> <span class="mf">0.124</span> <span class="mf">0.146</span> <span class="mf">0.087</span> <span class="mf">0.103</span> <span class="mf">0.057</span> <span class="mf">0.011</span><span class="p">]</span>
-  <span class="p">[</span><span class="mf">0.029</span> <span class="mf">0.059</span> <span class="mf">0.039</span> <span class="mf">0.07</span>  <span class="mf">0.058</span> <span class="mf">0.072</span> <span class="mf">0.009</span> <span class="mf">0.017</span><span class="p">]</span>
-  <span class="p">[</span><span class="mf">0.006</span> <span class="mf">0.036</span> <span class="mf">0.019</span> <span class="mf">0.035</span> <span class="mf">0.018</span> <span class="mf">0.037</span> <span class="mf">0.034</span> <span class="mf">0.013</span><span class="p">]]</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="o">-</span><span class="n">q</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
- <span class="p">[[</span><span class="o">-</span><span class="mf">0.007</span> <span class="o">-</span><span class="mf">0.034</span> <span class="o">-</span><span class="mf">0.003</span> <span class="o">-</span><span class="mf">0.014</span> <span class="o">-</span><span class="mf">0.018</span> <span class="o">-</span><span class="mf">0.037</span> <span class="o">-</span><span class="mf">0.024</span> <span class="o">-</span><span class="mf">0.029</span><span class="p">]</span>
-  <span class="p">[</span><span class="o">-</span><span class="mf">0.023</span> <span class="o">-</span><span class="mf">0.036</span> <span class="o">-</span><span class="mf">0.045</span> <span class="o">-</span><span class="mf">0.062</span> <span class="o">-</span><span class="mf">0.046</span> <span class="o">-</span><span class="mf">0.073</span> <span class="o">-</span><span class="mf">0.006</span> <span class="o">-</span><span class="mf">0.066</span><span class="p">]</span>
-  <span class="p">[</span><span class="o">-</span><span class="mf">0.11</span>  <span class="o">-</span><span class="mf">0.131</span> <span class="o">-</span><span class="mf">0.124</span> <span class="o">-</span><span class="mf">0.146</span> <span class="o">-</span><span class="mf">0.087</span> <span class="o">-</span><span class="mf">0.103</span> <span class="o">-</span><span class="mf">0.057</span> <span class="o">-</span><span class="mf">0.011</span><span class="p">]</span>
-  <span class="p">[</span><span class="o">-</span><span class="mf">0.029</span> <span class="o">-</span><span class="mf">0.059</span> <span class="o">-</span><span class="mf">0.039</span> <span class="o">-</span><span class="mf">0.07</span>  <span class="o">-</span><span class="mf">0.058</span> <span class="o">-</span><span class="mf">0.072</span> <span class="o">-</span><span class="mf">0.009</span> <span class="o">-</span><span class="mf">0.017</span><span class="p">]</span>
-  <span class="p">[</span><span class="o">-</span><span class="mf">0.006</span> <span class="o">-</span><span class="mf">0.036</span> <span class="o">-</span><span class="mf">0.019</span> <span class="o">-</span><span class="mf">0.035</span> <span class="o">-</span><span class="mf">0.018</span> <span class="o">-</span><span class="mf">0.037</span> <span class="o">-</span><span class="mf">0.034</span> <span class="o">-</span><span class="mf">0.013</span><span class="p">]]</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="o">-</span><span class="n">q</span><span class="p">)</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
- <span class="p">[[</span><span class="mf">0.007</span> <span class="mf">0.034</span> <span class="mf">0.003</span> <span class="mf">0.014</span> <span class="mf">0.018</span> <span class="mf">0.037</span> <span class="mf">0.024</span> <span class="mf">0.029</span><span class="p">]</span>
-  <span class="p">[</span><span class="mf">0.023</span> <span class="mf">0.036</span> <span class="mf">0.045</span> <span class="mf">0.062</span> <span class="mf">0.046</span> <span class="mf">0.073</span> <span class="mf">0.006</span> <span class="mf">0.066</span><span class="p">]</span>
-  <span class="p">[</span><span class="mf">0.11</span>  <span class="mf">0.131</span> <span class="mf">0.124</span> <span class="mf">0.146</span> <span class="mf">0.087</span> <span class="mf">0.103</span> <span class="mf">0.057</span> <span class="mf">0.011</span><span class="p">]</span>
-  <span class="p">[</span><span class="mf">0.029</span> <span class="mf">0.059</span> <span class="mf">0.039</span> <span class="mf">0.07</span>  <span class="mf">0.058</span> <span class="mf">0.072</span> <span class="mf">0.009</span> <span class="mf">0.017</span><span class="p">]</span>
-  <span class="p">[</span><span class="mf">0.006</span> <span class="mf">0.036</span> <span class="mf">0.019</span> <span class="mf">0.035</span> <span class="mf">0.018</span> <span class="mf">0.037</span> <span class="mf">0.034</span> <span class="mf">0.013</span><span class="p">]]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]</span>
+<span class="go"> [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]</span>
+<span class="go"> [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]</span>
+<span class="go"> [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]</span>
+<span class="go"> [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="o">-</span><span class="n">q</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[-0.007 -0.034 -0.003 -0.014 -0.018 -0.037 -0.024 -0.029]</span>
+<span class="go"> [-0.023 -0.036 -0.045 -0.062 -0.046 -0.073 -0.006 -0.066]</span>
+<span class="go"> [-0.11  -0.131 -0.124 -0.146 -0.087 -0.103 -0.057 -0.011]</span>
+<span class="go"> [-0.029 -0.059 -0.039 -0.07  -0.058 -0.072 -0.009 -0.017]</span>
+<span class="go"> [-0.006 -0.036 -0.019 -0.035 -0.018 -0.037 -0.034 -0.013]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="o">-</span><span class="n">q</span><span class="p">)</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]</span>
+<span class="go"> [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]</span>
+<span class="go"> [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]</span>
+<span class="go"> [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]</span>
+<span class="go"> [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]</span>
 </pre></div>
 </div>
 </div>
@@ -8091,31 +8128,31 @@ during operations, and if one operand has no units then the units of
 the other are assumed.</p>
 <div class="literal-block-wrapper docutils container" id="id330">
 <div class="code-block-caption"><span class="caption-text"><em>TODO</em></span><a class="headerlink" href="#id330" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span> <span class="o">&gt;&gt;&gt;</span> <span class="n">q</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
- <span class="p">[[</span><span class="mf">0.007</span> <span class="mf">0.034</span> <span class="mf">0.003</span> <span class="mf">0.014</span> <span class="mf">0.018</span> <span class="mf">0.037</span> <span class="mf">0.024</span> <span class="mf">0.029</span><span class="p">]</span>
-  <span class="p">[</span><span class="mf">0.023</span> <span class="mf">0.036</span> <span class="mf">0.045</span> <span class="mf">0.062</span> <span class="mf">0.046</span> <span class="mf">0.073</span> <span class="mf">0.006</span> <span class="mf">0.066</span><span class="p">]</span>
-  <span class="p">[</span><span class="mf">0.11</span>  <span class="mf">0.131</span> <span class="mf">0.124</span> <span class="mf">0.146</span> <span class="mf">0.087</span> <span class="mf">0.103</span> <span class="mf">0.057</span> <span class="mf">0.011</span><span class="p">]</span>
-  <span class="p">[</span><span class="mf">0.029</span> <span class="mf">0.059</span> <span class="mf">0.039</span> <span class="mf">0.07</span>  <span class="mf">0.058</span> <span class="mf">0.072</span> <span class="mf">0.009</span> <span class="mf">0.017</span><span class="p">]</span>
-  <span class="p">[</span><span class="mf">0.006</span> <span class="mf">0.036</span> <span class="mf">0.019</span> <span class="mf">0.035</span> <span class="mf">0.018</span> <span class="mf">0.037</span> <span class="mf">0.034</span> <span class="mf">0.013</span><span class="p">]]</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">((</span><span class="n">q</span> <span class="o">==</span> <span class="n">q</span><span class="p">)</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
- <span class="p">[[</span> <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span><span class="p">]</span>
-  <span class="p">[</span> <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span><span class="p">]</span>
-  <span class="p">[</span> <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span><span class="p">]</span>
-  <span class="p">[</span> <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span><span class="p">]</span>
-  <span class="p">[</span> <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span><span class="p">]]</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">((</span><span class="n">q</span> <span class="o">&lt;</span> <span class="mf">0.05</span><span class="p">)</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
- <span class="p">[[</span> <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span><span class="p">]</span>
-  <span class="p">[</span> <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span> <span class="kc">False</span>  <span class="kc">True</span> <span class="kc">False</span>  <span class="kc">True</span> <span class="kc">False</span><span class="p">]</span>
-  <span class="p">[</span><span class="kc">False</span> <span class="kc">False</span> <span class="kc">False</span> <span class="kc">False</span> <span class="kc">False</span> <span class="kc">False</span> <span class="kc">False</span>  <span class="kc">True</span><span class="p">]</span>
-  <span class="p">[</span> <span class="kc">True</span> <span class="kc">False</span>  <span class="kc">True</span> <span class="kc">False</span> <span class="kc">False</span> <span class="kc">False</span>  <span class="kc">True</span>  <span class="kc">True</span><span class="p">]</span>
-  <span class="p">[</span> <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span><span class="p">]]</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">((</span><span class="n">q</span> <span class="o">&gt;=</span> <span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
- <span class="p">[[</span> <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span><span class="p">]</span>
-  <span class="p">[</span> <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span> <span class="kc">False</span>  <span class="kc">True</span><span class="p">]</span>
-  <span class="p">[</span> <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span> <span class="kc">False</span><span class="p">]</span>
-  <span class="p">[</span> <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span> <span class="kc">False</span> <span class="kc">False</span><span class="p">]</span>
-  <span class="p">[</span><span class="kc">False</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span>  <span class="kc">True</span> <span class="kc">False</span><span class="p">]]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;file.nc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]</span>
+<span class="go"> [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]</span>
+<span class="go"> [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]</span>
+<span class="go"> [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]</span>
+<span class="go"> [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">((</span><span class="n">q</span> <span class="o">==</span> <span class="n">q</span><span class="p">)</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[ True  True  True  True  True  True  True  True]</span>
+<span class="go"> [ True  True  True  True  True  True  True  True]</span>
+<span class="go"> [ True  True  True  True  True  True  True  True]</span>
+<span class="go"> [ True  True  True  True  True  True  True  True]</span>
+<span class="go"> [ True  True  True  True  True  True  True  True]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">((</span><span class="n">q</span> <span class="o">&lt;</span> <span class="mf">0.05</span><span class="p">)</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[ True  True  True  True  True  True  True  True]</span>
+<span class="go"> [ True  True  True False  True False  True False]</span>
+<span class="go"> [False False False False False False False  True]</span>
+<span class="go"> [ True False  True False False False  True  True]</span>
+<span class="go"> [ True  True  True  True  True  True  True  True]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">((</span><span class="n">q</span> <span class="o">&gt;=</span> <span class="n">q</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="go">[[ True  True  True  True  True  True  True  True]</span>
+<span class="go"> [ True  True  True  True  True  True False  True]</span>
+<span class="go"> [ True  True  True  True  True  True  True False]</span>
+<span class="go"> [ True  True  True  True  True  True False False]</span>
+<span class="go"> [False  True  True  True  True  True  True False]]</span>
 </pre></div>
 </div>
 </div>
@@ -8123,19 +8160,19 @@ the other are assumed.</p>
 result, which also has no units.</p>
 <div class="literal-block-wrapper docutils container" id="id331">
 <div class="code-block-caption"><span class="caption-text"><em>TODO</em></span><a class="headerlink" href="#id331" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span> <span class="o">&gt;&gt;&gt;</span> <span class="n">q</span><span class="o">.</span><span class="n">identities</span><span class="p">()</span>
- <span class="p">[</span><span class="s1">&#39;specific_humidity&#39;</span><span class="p">,</span>
-  <span class="s1">&#39;Conventions=CF-1.7&#39;</span><span class="p">,</span>
-  <span class="s1">&#39;project=research&#39;</span><span class="p">,</span>
-  <span class="s1">&#39;units=1&#39;</span><span class="p">,</span>
-  <span class="s1">&#39;standard_name=specific_humidity&#39;</span><span class="p">,</span>
-  <span class="s1">&#39;ncvar%q&#39;</span><span class="p">]</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="n">r</span> <span class="o">=</span> <span class="n">q</span> <span class="o">&gt;</span> <span class="n">q</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="n">r</span><span class="o">.</span><span class="n">identities</span><span class="p">()</span>
- <span class="p">[</span><span class="s1">&#39;Conventions=CF-1.7&#39;</span><span class="p">,</span>
-  <span class="s1">&#39;project=research&#39;</span><span class="p">,</span>
-  <span class="s1">&#39;units=&#39;</span><span class="p">,</span>
-  <span class="s1">&#39;ncvar%q&#39;</span><span class="p">]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">identities</span><span class="p">()</span>
+<span class="go">[&#39;specific_humidity&#39;,</span>
+<span class="go"> &#39;Conventions=CF-1.7&#39;,</span>
+<span class="go"> &#39;project=research&#39;,</span>
+<span class="go"> &#39;units=1&#39;,</span>
+<span class="go"> &#39;standard_name=specific_humidity&#39;,</span>
+<span class="go"> &#39;ncvar%q&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">q</span> <span class="o">&gt;</span> <span class="n">q</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">identities</span><span class="p">()</span>
+<span class="go">[&#39;Conventions=CF-1.7&#39;,</span>
+<span class="go"> &#39;project=research&#39;,</span>
+<span class="go"> &#39;units=&#39;,</span>
+<span class="go"> &#39;ncvar%q&#39;]</span>
 </pre></div>
 </div>
 </div>
@@ -8152,12 +8189,12 @@ constucts with multi-valued data. The strict identity is restricted
 the <code class="xref py py-obj docutils literal notranslate"><span class="pre">identity</span></code> method of a construct:</p>
 <div class="literal-block-wrapper docutils container" id="id332">
 <div class="code-block-caption"><span class="caption-text"><em>Find the “strict” identity of a construct.</em></span><a class="headerlink" href="#id332" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span> <span class="o">&gt;&gt;&gt;</span> <span class="n">y</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">)</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="n">y</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
- <span class="s1">&#39;latitude&#39;</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="k">del</span> <span class="n">y</span><span class="o">.</span><span class="n">standard_name</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="n">y</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
- <span class="s1">&#39;&#39;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">&#39;latitude&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span> <span class="n">y</span><span class="o">.</span><span class="n">standard_name</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">&#39;&#39;</span>
 </pre></div>
 </div>
 </div>
@@ -8211,9 +8248,9 @@ resulting data into the new field construct.</em></span><a class="headerlink" hr
 <div class="literal-block-wrapper docutils container" id="id335">
 <div class="code-block-caption"><span class="caption-text"><em>An example of augmented assignment involving the data of
 two field constructs.</em></span><a class="headerlink" href="#id335" title="Permalink to this code">¶</a></div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span> <span class="o">&gt;&gt;&gt;</span> <span class="n">t</span><span class="o">.</span><span class="n">data</span> <span class="o">-=</span> <span class="n">t</span><span class="o">.</span><span class="n">data</span>
- <span class="o">&gt;&gt;&gt;</span> <span class="n">t</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
- <span class="o">&lt;</span><span class="n">CF</span> <span class="n">Data</span><span class="p">():</span> <span class="mf">0.0</span> <span class="n">K</span><span class="o">&gt;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">data</span> <span class="o">-=</span> <span class="n">t</span><span class="o">.</span><span class="n">data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+<span class="go">&lt;CF Data(): 0.0 K&gt;</span>
 </pre></div>
 </div>
 </div>
@@ -8226,7 +8263,7 @@ functions element-wise to the data, preserving the metadata but
 changing the construct’s units.</p>
 <p>The field construct and metadata constructs the following
 trigonometrical methods:</p>
-<table class="docutils align-center">
+<table class="docutils align-default">
 <colgroup>
 <col style="width: 21%" />
 <col style="width: 79%" />
@@ -8297,7 +8334,7 @@ result.</p>
 <h3><a class="toc-backref" href="#id451">Rounding and truncation</a><a class="headerlink" href="#rounding-and-truncation" title="Permalink to this headline">¶</a></h3>
 <p>The field construct and metadata constructs the following methods to
 round and truncate their data:</p>
-<table class="docutils align-center">
+<table class="docutils align-default">
 <colgroup>
 <col style="width: 21%" />
 <col style="width: 79%" />
@@ -8521,7 +8558,7 @@ format can not reliably be detected automatically.</p>
       &copy;2020, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.0.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

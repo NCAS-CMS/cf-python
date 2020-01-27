@@ -8,12 +8,15 @@
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -30,7 +33,28 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.1.0</a></b></h3>
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.1.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -66,10 +90,10 @@
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
     </form>
     </div>
@@ -87,7 +111,7 @@
 <h1>cf.Field.bin<a class="headerlink" href="#cf-field-bin" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.bin">
-<code class="descclassname">Field.</code><code class="descname">bin</code><span class="sig-paren">(</span><em>method</em>, <em>digitized</em>, <em>weights=None</em>, <em>measure=False</em>, <em>scale=None</em>, <em>mtol=1</em>, <em>ddof=1</em>, <em>radius='earth'</em>, <em>return_indices=False</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.1.0/cf/field.py#L6143"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.bin" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">bin</code><span class="sig-paren">(</span><em class="sig-param">method</em>, <em class="sig-param">digitized</em>, <em class="sig-param">weights=None</em>, <em class="sig-param">measure=False</em>, <em class="sig-param">scale=None</em>, <em class="sig-param">mtol=1</em>, <em class="sig-param">ddof=1</em>, <em class="sig-param">radius='earth'</em>, <em class="sig-param">return_indices=False</em>, <em class="sig-param">verbose=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.1.0/cf/field.py#L6161"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.bin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Collapse the data values that lie in N-dimensional bins.</p>
 <p>The data values of the field construct are binned according to how
 they correspond to the N-dimensionsal histogram bins of another
@@ -131,7 +155,7 @@ each cell of the output field construct. The following
 methods are available (see
 <a class="reference external" href="https://ncas-cms.github.io/cf-python/tutorial.html#collapse-methods">https://ncas-cms.github.io/cf-python/tutorial.html#collapse-methods</a>
 for precise definitions):</p>
-<table class="docutils align-center">
+<table class="docutils align-default">
 <colgroup>
 <col style="width: 44%" />
 <col style="width: 44%" />
@@ -339,7 +363,7 @@ have arbitrary units.</p>
 </dd>
 </dl>
 </dd>
-<dt>mtol: number, optional        </dt><dd><p>Set the fraction of input data elements which is allowed
+<dt>mtol: number, optional</dt><dd><p>Set the fraction of input data elements which is allowed
 to contain missing data when contributing to an individual
 output data element. Where this fraction exceeds <em>mtol</em>,
 missing data is returned. The default is 1, meaning that a
@@ -377,7 +401,7 @@ only if the radius can not found from the datums of any
 coordinate reference constucts, then the default radius
 taken as 6371229 metres.</p>
 </dd>
-<dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional    </dt><dd><p>If True then print a description of the binned field
+<dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then print a description of the binned field
 construct creation process.</p>
 </dd>
 </dl>
@@ -391,29 +415,29 @@ construct creation process.</p>
 </dl>
 <p><strong>Examples:</strong></p>
 <p>Find the range of values that lie in each bin:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>                                       
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
 <span class="go">Field: specific_humidity (ncvar%q)</span>
 <span class="go">----------------------------------</span>
 <span class="go">Data            : specific_humidity(latitude(5), longitude(8)) 0.001 1</span>
 <span class="go">Cell methods    : area: mean</span>
 <span class="go">Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north</span>
 <span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
-<span class="go">                : time(1) = [2019-01-01 00:00:00]       </span>
+<span class="go">                : time(1) = [2019-01-01 00:00:00]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[  7.  34.   3.  14.  18.  37.  24.  29.]</span>
 <span class="go"> [ 23.  36.  45.  62.  46.  73.   6.  66.]</span>
 <span class="go"> [110. 131. 124. 146.  87. 103.  57.  11.]</span>
 <span class="go"> [ 29.  59.  39.  70.  58.  72.   9.  17.]</span>
 <span class="go"> [  6.  36.  19.  35.  18.  37.  34.  13.]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">indices</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>                                             
-<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="s1">&#39;range&#39;</span><span class="p">,</span> <span class="n">digitized</span><span class="o">=</span><span class="n">indices</span><span class="p">)</span>                             
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>                                    
+<span class="gp">&gt;&gt;&gt; </span><span class="n">indices</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="s1">&#39;range&#39;</span><span class="p">,</span> <span class="n">digitized</span><span class="o">=</span><span class="n">indices</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
 <span class="go">Field: specific_humidity</span>
 <span class="go">------------------------</span>
 <span class="go">Data            : specific_humidity(specific_humidity(10)) 0.001 1</span>
 <span class="go">Cell methods    : latitude: longitude: range</span>
 <span class="go">Dimension coords: specific_humidity(10) = [10.15, ..., 138.85000000000002] 0.001 1</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>                                 
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[14. 11. 11. 13. 11.  0.  0.  0.  7.  0.]</span>
 </pre></div>
 </div>
@@ -421,7 +445,7 @@ construct creation process.</p>
 <code class="docutils literal notranslate"><span class="pre">tendency_of_sea_water_potential_temperature_expressed_as_heat_content</span></code>
 data varies with <code class="docutils literal notranslate"><span class="pre">sea_water_potential_temperature</span></code> and
 <code class="docutils literal notranslate"><span class="pre">sea_water_salinity</span></code>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span>
 <span class="go">Field: sea_water_potential_temperature (ncvar%sea_water_potential_temperature)</span>
 <span class="go">------------------------------------------------------------------------------</span>
 <span class="go">Data            : sea_water_potential_temperature(time(1), depth(1), latitude(5), longitude(8)) K</span>
@@ -459,11 +483,11 @@ data varies with <code class="docutils literal notranslate"><span class="pre">se
 <span class="go">   [     --      --   -7.82 -299.79  342.32 -169.38  254.5   -75.4 ]]]]</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t_indices</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t_indices</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">s_indices</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="s1">&#39;sample_size&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">t_indices</span><span class="p">,</span> <span class="n">s_indices</span><span class="p">])</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="s1">&#39;sample_size&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">t_indices</span><span class="p">,</span> <span class="n">s_indices</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
 <span class="go">Field: number_of_observations</span>
 <span class="go">-----------------------------</span>
@@ -478,7 +502,7 @@ data varies with <code class="docutils literal notranslate"><span class="pre">se
 <span class="go"> [ 1 -- 1  3  2  1]]</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">t_indices</span><span class="p">,</span> <span class="n">s_indices</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="s1">&#39;Z&#39;</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">])</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">t_indices</span><span class="p">,</span> <span class="n">s_indices</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="s1">&#39;Z&#39;</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
 <span class="go">Field: tendency_of_sea_water_potential_temperature_expressed_as_heat_content</span>
 <span class="go">----------------------------------------------------------------------------</span>
@@ -493,7 +517,7 @@ data varies with <code class="docutils literal notranslate"><span class="pre">se
 <span class="go"> [158.22      -- -262.75  64.12 -51.83 -219.66]]</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">i</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="s1">&#39;integral&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">t_indices</span><span class="p">,</span> <span class="n">s_indices</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="s1">&#39;Z&#39;</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">],</span> <span class="n">measure</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">i</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="s1">&#39;integral&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">t_indices</span><span class="p">,</span> <span class="n">s_indices</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="s1">&#39;Z&#39;</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">],</span> <span class="n">measure</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
 <span class="go">Field: long_name=integral of tendency_of_sea_water_potential_temperature_expressed_as_heat_content</span>
 <span class="go">--------------------------------------------------------------------------------------------------</span>
@@ -508,7 +532,7 @@ data varies with <code class="docutils literal notranslate"><span class="pre">se
 <span class="go"> [ 3055211773952.0              -- -5073676009472.0  3715958833152.0 -2000787079168.0 -4243632160768.0]]</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">w</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="s1">&#39;sum_of_weights&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">t_indices</span><span class="p">,</span> <span class="n">s_indices</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="s1">&#39;Z&#39;</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">],</span> <span class="n">measure</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">w</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">bin</span><span class="p">(</span><span class="s1">&#39;sum_of_weights&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">t_indices</span><span class="p">,</span> <span class="n">s_indices</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="s1">&#39;Z&#39;</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">],</span> <span class="n">measure</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="go">Field: long_name=sum_of_weights of tendency_of_sea_water_potential_temperature_expressed_as_heat_content</span>
 <span class="go">--------------------------------------------------------------------------------------------------------</span>
 <span class="go">Data            : long_name=sum_of_weights of tendency_of_sea_water_potential_temperature_expressed_as_heat_content(sea_water_salinity(4), sea_water_potential_temperature(6)) 86400 m3.s</span>
@@ -524,8 +548,8 @@ data varies with <code class="docutils literal notranslate"><span class="pre">se
 </div>
 <p>Demonstrate that the integral divided by the sum of the cell
 measures is equal to the mean:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="o">/</span><span class="n">w</span><span class="p">)</span>
-<span class="go">Field: </span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="o">/</span><span class="n">w</span><span class="p">)</span>
+<span class="go">Field:</span>
 <span class="go">-------</span>
 <span class="go">Data            : (sea_water_salinity(4), sea_water_potential_temperature(6)) kg.s-3</span>
 <span class="go">Cell methods    : latitude: longitude: sum</span>
@@ -550,7 +574,7 @@ measures is equal to the mean:</p>
       &copy;2020, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.0.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

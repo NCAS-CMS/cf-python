@@ -8,16 +8,20 @@
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/clipboard.min.js"></script>
     <script type="text/javascript" src="_static/copybutton.js"></script>
+    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="cf.Field" href="classes/cf.Field.html" />
+    <link rel="prev" title="cf.relpath" href="function/cf.relpath.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -29,7 +33,28 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="index.html">cf 3.1.0</a></b></h3>
+
+
+
+<h1 class="logo"><a href="index.html">cf 3.1.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -47,6 +72,7 @@
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
   <li><a href="api_reference.html"><strong>API reference</strong></a><ul>
+      <li>Previous: <a href="function/cf.relpath.html" title="previous chapter">cf.relpath</a></li>
       <li>Next: <a href="classes/cf.Field.html" title="next chapter">cf.Field</a></li>
   </ul></li>
   </ul></li>
@@ -60,10 +86,10 @@
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
     </form>
     </div>
@@ -81,7 +107,7 @@
 <span id="class"></span><h1><strong>cf classes</strong><a class="headerlink" href="#cf-classes" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="field-construct-class">
 <h2><strong>Field construct class</strong><a class="headerlink" href="#field-construct-class" title="Permalink to this headline">¶</a></h2>
-<table class="longtable docutils align-center">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -95,7 +121,7 @@
 </div>
 <div class="section" id="metadata-component-classes">
 <h2><strong>Metadata component classes</strong><a class="headerlink" href="#metadata-component-classes" title="Permalink to this headline">¶</a></h2>
-<table class="longtable docutils align-center">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -130,7 +156,7 @@
 </div>
 <div class="section" id="constructs-class">
 <h2><strong>Constructs class</strong><a class="headerlink" href="#constructs-class" title="Permalink to this headline">¶</a></h2>
-<table class="longtable docutils align-center">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -144,7 +170,7 @@
 </div>
 <div class="section" id="coordinate-component-classes">
 <h2><strong>Coordinate component classes</strong><a class="headerlink" href="#coordinate-component-classes" title="Permalink to this headline">¶</a></h2>
-<table class="longtable docutils align-center">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -164,7 +190,7 @@
 </div>
 <div class="section" id="domain-class">
 <h2><strong>Domain class</strong><a class="headerlink" href="#domain-class" title="Permalink to this headline">¶</a></h2>
-<table class="longtable docutils align-center">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -178,7 +204,7 @@
 </div>
 <div class="section" id="field-list-class">
 <h2><strong>Field list class</strong><a class="headerlink" href="#field-list-class" title="Permalink to this headline">¶</a></h2>
-<table class="longtable docutils align-center">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -192,7 +218,7 @@
 </div>
 <div class="section" id="data-classes">
 <h2><strong>Data classes</strong><a class="headerlink" href="#data-classes" title="Permalink to this headline">¶</a></h2>
-<table class="longtable docutils align-center">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -215,7 +241,7 @@
 </div>
 <div class="section" id="miscellaneous-classes">
 <h2><strong>Miscellaneous classes</strong><a class="headerlink" href="#miscellaneous-classes" title="Permalink to this headline">¶</a></h2>
-<table class="longtable docutils align-center">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -239,7 +265,7 @@
 <div class="section" id="data-compression-classes">
 <h2><strong>Data compression classes</strong><a class="headerlink" href="#data-compression-classes" title="Permalink to this headline">¶</a></h2>
 <p>Classes that support the creation and storage of compressed arrays.</p>
-<table class="longtable docutils align-center">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -282,7 +308,7 @@
       &copy;2020, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.0.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

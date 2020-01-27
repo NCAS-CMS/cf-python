@@ -8,12 +8,15 @@
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -30,7 +33,28 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.1.0</a></b></h3>
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.1.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -66,10 +90,10 @@
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
     </form>
     </div>
@@ -87,7 +111,7 @@
 <h1>cf.Field.convolution_filter<a class="headerlink" href="#cf-field-convolution-filter" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.convolution_filter">
-<code class="descclassname">Field.</code><code class="descname">convolution_filter</code><span class="sig-paren">(</span><em>weights</em>, <em>axis=None</em>, <em>mode=None</em>, <em>cval=None</em>, <em>origin=0</em>, <em>update_bounds=True</em>, <em>inplace=False</em>, <em>i=False</em>, <em>_bounds=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.1.0/cf/decorators.py#L76"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.convolution_filter" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">convolution_filter</code><span class="sig-paren">(</span><em class="sig-param">weights</em>, <em class="sig-param">axis=None</em>, <em class="sig-param">mode=None</em>, <em class="sig-param">cval=None</em>, <em class="sig-param">origin=0</em>, <em class="sig-param">update_bounds=True</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">i=False</em>, <em class="sig-param">_bounds=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.1.0/cf/decorators.py#L76"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.convolution_filter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the field convolved along the given axis with the specified
 filter.</p>
 <p>The magnitude of the integral of the filter (i.e. the sum of the
@@ -126,7 +150,7 @@ default value is <code class="docutils literal notranslate"><span class="pre">'c
 convolved is cyclic (as ascertained by the <a class="reference internal" href="cf.Field.iscyclic.html#cf.Field.iscyclic" title="cf.Field.iscyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iscyclic</span></code></a>
 method), <code class="docutils literal notranslate"><span class="pre">'wrap'</span></code>. The valid values and their behaviour
 is as follows:</p>
-<table class="docutils align-center">
+<table class="docutils align-default">
 <colgroup>
 <col style="width: 19%" />
 <col style="width: 36%" />
@@ -212,7 +236,7 @@ reflect the width and origin of the window.</p>
 </dd>
 </dl>
 <p><strong>Examples:</strong></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">example_field</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">example_field</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 <span class="go">Field: air_potential_temperature (ncvar%air_potential_temperature)</span>
 <span class="go">------------------------------------------------------------------</span>
@@ -221,21 +245,21 @@ reflect the width and origin of the window.</p>
 <span class="go">Dimension coords: time(36) = [1959-12-16 12:00:00, ..., 1962-11-16 00:00:00]</span>
 <span class="go">                : latitude(5) = [-75.0, ..., 75.0] degrees_north</span>
 <span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
-<span class="go">                : air_pressure(1) = [850.0] hPa    </span>
+<span class="go">                : air_pressure(1) = [850.0] hPa</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">array</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
 <span class="go">[210.7 305.3 249.4 288.9 231.1 200.  234.4 289.2 204.3 203.6 261.8 256.2</span>
 <span class="go"> 212.3 231.7 255.1 213.9 255.8 301.2 213.3 200.1 204.6 203.2 244.6 238.4</span>
-<span class="go"> 304.5 269.8 267.9 282.4 215.  288.7 217.3 307.1 299.3 215.9 290.2 239.9]    </span>
+<span class="go"> 304.5 269.8 267.9 282.4 215.  288.7 217.3 307.1 299.3 215.9 290.2 239.9]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">dtarray</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 <span class="go">[cftime.DatetimeGregorian(1959-12-01 00:00:00)</span>
-<span class="go"> cftime.DatetimeGregorian(1960-01-01 00:00:00)]    </span>
+<span class="go"> cftime.DatetimeGregorian(1960-01-01 00:00:00)]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">dtarray</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
 <span class="go">[cftime.DatetimeGregorian(1960-02-01 00:00:00)</span>
 <span class="go"> cftime.DatetimeGregorian(1960-03-01 00:00:00)]</span>
 </pre></div>
 </div>
 <p>Create a 5-point (non-weighted) running mean:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">convolution_filter</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">],</span> <span class="s1">&#39;T&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">convolution_filter</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">],</span> <span class="s1">&#39;T&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
 <span class="go">Field: air_potential_temperature (ncvar%air_potential_temperature)</span>
 <span class="go">------------------------------------------------------------------</span>
@@ -244,13 +268,13 @@ reflect the width and origin of the window.</p>
 <span class="go">Dimension coords: time(36) = [1959-12-16 12:00:00, ..., 1962-11-16 00:00:00]</span>
 <span class="go">                : latitude(5) = [-75.0, ..., 75.0] degrees_north</span>
 <span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
-<span class="go">                : air_pressure(1) = [850.0] hPa       </span>
+<span class="go">                : air_pressure(1) = [850.0] hPa</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">array</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
-<span class="go">[ -- -- 257.08 254.94 240.76 248.72 231.8 226.3 238.66 243.02 227.64 </span>
-<span class="go"> 233.12 243.42 233.84 233.76 251.54 247.86 236.86 235.0 224.48 213.16 </span>
+<span class="go">[ -- -- 257.08 254.94 240.76 248.72 231.8 226.3 238.66 243.02 227.64</span>
+<span class="go"> 233.12 243.42 233.84 233.76 251.54 247.86 236.86 235.0 224.48 213.16</span>
 <span class="go"> 218.18 239.06 252.1 265.04 272.6 267.92 264.76 254.26 262.1 265.48</span>
-<span class="go"> 265.66 265.96 270.48 -- --]   </span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">dtarray</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>          
+<span class="go"> 265.66 265.96 270.48 -- --]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">dtarray</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 <span class="go">[cftime.DatetimeGregorian(1959-12-01 00:00:00)</span>
 <span class="go"> cftime.DatetimeGregorian(1960-03-01 00:00:00)]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">dtarray</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
@@ -259,7 +283,7 @@ reflect the width and origin of the window.</p>
 </pre></div>
 </div>
 <p>Create a 5-point running sum:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">convolution_filter</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;T&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">convolution_filter</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;T&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
 <span class="go">Field: air_potential_temperature (ncvar%air_potential_temperature)</span>
 <span class="go">------------------------------------------------------------------</span>
@@ -268,13 +292,13 @@ reflect the width and origin of the window.</p>
 <span class="go">Dimension coords: time(36) = [1959-12-16 12:00:00, ..., 1962-11-16 00:00:00]</span>
 <span class="go">                : latitude(5) = [-75.0, ..., 75.0] degrees_north</span>
 <span class="go">                : longitude(8) = [22.5, ..., 337.5] degrees_east</span>
-<span class="go">                : air_pressure(1) = [850.0] hPa       </span>
+<span class="go">                : air_pressure(1) = [850.0] hPa</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">array</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
 <span class="go">[ -- -- 1285.4 1274.7 1203.8 1243.6 1159.0 1131.5 1193.3 1215.1</span>
-<span class="go"> 1138.2 1165.6 1217.1 1169.2 1168.8 1257.7 1239.3 1184.3 1175.0 </span>
-<span class="go"> 1122.4 1065.8 1090.9 1195.3 1260.5 1325.2 1363.0 1339.6 1323.8 </span>
+<span class="go"> 1138.2 1165.6 1217.1 1169.2 1168.8 1257.7 1239.3 1184.3 1175.0</span>
+<span class="go"> 1122.4 1065.8 1090.9 1195.3 1260.5 1325.2 1363.0 1339.6 1323.8</span>
 <span class="go"> 1271.3 1310.5 1327.4 1328.3 1329.8 1352.4 -- --]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">dtarray</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>          
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">dtarray</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 <span class="go">[cftime.DatetimeGregorian(1959-12-01 00:00:00)</span>
 <span class="go"> cftime.DatetimeGregorian(1960-03-01 00:00:00)]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">coordinate</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">dtarray</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
@@ -286,7 +310,7 @@ reflect the width and origin of the window.</p>
 using the “nearest” mode at the border of the edges of the time
 dimension (note that the weights returned by
 <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows" title="(in SciPy v1.4.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scipy.signal.windows</span></code></a> functions do not necessarily sum to 1):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">scipy.signal.windows</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">scipy.signal.windows</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">gaussian_weights</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">windows</span><span class="o">.</span><span class="n">gaussian</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">gaussian_weights</span><span class="p">)</span>
 <span class="go">[0.04393693 1.         0.04393693]</span>
@@ -323,7 +347,7 @@ dimension (note that the weights returned by
       &copy;2020, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.0.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

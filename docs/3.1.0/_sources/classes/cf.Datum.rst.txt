@@ -58,7 +58,7 @@ Miscellaneous
    ~cf.Datum.equals
 
 Special
-------
+-------
 
 .. rubric:: Methods
  

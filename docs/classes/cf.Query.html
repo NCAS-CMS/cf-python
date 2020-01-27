@@ -8,12 +8,15 @@
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -30,7 +33,28 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.1.0</a></b></h3>
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.1.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -64,10 +88,10 @@
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
     </form>
     </div>
@@ -86,7 +110,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.Query">
-<em class="property">class </em><code class="descclassname">cf.</code><code class="descname">Query</code><span class="sig-paren">(</span><em>operator</em>, <em>value</em>, <em>units=None</em>, <em>attr=None</em>, <em>exact=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.1.0/cf/query.py#L15"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Query" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Query</code><span class="sig-paren">(</span><em class="sig-param">operator</em>, <em class="sig-param">value</em>, <em class="sig-param">units=None</em>, <em class="sig-param">attr=None</em>, <em class="sig-param">exact=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.1.0/cf/query.py#L15"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Query" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Encapsulate a condition.</p>
 <p>A condition that may be applied to any object may be stored in a
@@ -94,7 +118,7 @@
 “strictly less than 3”. When applied to an object, via its
 <a class="reference internal" href="../method/cf.Query.evaluate.html#cf.Query.evaluate" title="cf.Query.evaluate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">evaluate</span></code></a> method or the Python <code class="xref py py-obj docutils literal notranslate"><span class="pre">==</span></code> operator, the condition is
 evaulated in the context of that object.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Query</span><span class="p">(</span><span class="s1">&#39;lt&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Query</span><span class="p">(</span><span class="s1">&#39;lt&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span>
 <span class="go">&lt;CF Query: (lt 3)&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
@@ -113,7 +137,7 @@ evaulated in the context of that object.</p>
 </div>
 <p>The following operators are supported when constructing <a class="reference internal" href="#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a>
 instances:</p>
-<table class="docutils align-center">
+<table class="docutils align-default">
 <colgroup>
 <col style="width: 20%" />
 <col style="width: 80%" />
@@ -156,10 +180,10 @@ instances:</p>
 <p><strong>Complex conditions</strong></p>
 <p>Multiple conditions may be combined with the Python bitwise “and”
 (<code class="xref py py-obj docutils literal notranslate"><span class="pre">&amp;</span></code>) and “or” (<code class="xref py py-obj docutils literal notranslate"><span class="pre">|</span></code>) operators to form a new <a class="reference internal" href="#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ge3</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Query</span><span class="p">(</span><span class="s1">&#39;ge&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ge3</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Query</span><span class="p">(</span><span class="s1">&#39;ge&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">lt5</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Query</span><span class="p">(</span><span class="s1">&#39;lt&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">ge3</span> <span class="o">&amp;</span> <span class="n">lt5</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="o">&lt;</span><span class="n">CF</span> <span class="n">Query</span><span class="p">:</span> <span class="p">[(</span><span class="n">ge</span> <span class="mi">3</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">lt</span> <span class="mi">5</span><span class="p">)]</span><span class="o">&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">==</span> <span class="mi">2</span>
 <span class="go">False</span>
@@ -180,7 +204,7 @@ instances:</p>
 </pre></div>
 </div>
 <p>A condition can be applied to an attribute of an object.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">upper_bounds_ge_minus4</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Query</span><span class="p">(</span><span class="s1">&#39;ge&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="n">attr</span><span class="o">=</span><span class="s1">&#39;upper_bounds&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">upper_bounds_ge_minus4</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Query</span><span class="p">(</span><span class="s1">&#39;ge&#39;</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="n">attr</span><span class="o">=</span><span class="s1">&#39;upper_bounds&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
 <span class="go">&lt;CF DimensionCoordinate: grid_longitude(9) degrees&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">bounds</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
@@ -200,7 +224,7 @@ instances:</p>
 </div>
 <p>A condition can also be applied to attributes of attributes of an
 object.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span>
 <span class="go">&lt;CF DimensionCoordinate: time(4) &gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">lower_bounds</span><span class="o">.</span><span class="n">month</span><span class="o">.</span><span class="n">array</span>
 <span class="go">array([12,  3,  6,  9])</span>
@@ -217,7 +241,7 @@ of the condition and the operand for which it is being
 evaulated. For example, when the value is an <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, the query
 works if the operand is also an <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, but fails if it is a
 <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Query</span><span class="p">(</span><span class="s1">&#39;lt&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Query</span><span class="p">(</span><span class="s1">&#39;lt&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">==</span> <span class="mi">1</span>
 <span class="go">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">==</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
@@ -227,7 +251,7 @@ works if the operand is also an <a class="reference external" href="https://docs
 <p>This behaviour is overridden if the operand has an appropriate
 “query interface” method. When such a method exists, it is used
 instead of the equivalent built-in Python operator.</p>
-<table class="docutils align-center">
+<table class="docutils align-default">
 <colgroup>
 <col style="width: 32%" />
 <col style="width: 68%" />
@@ -269,7 +293,7 @@ instead of the equivalent built-in Python operator.</p>
 </table>
 <p>In all cases the query value is the only, mandatory argument of
 the method.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">myList</span><span class="p">(</span><span class="nb">list</span><span class="p">):</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">myList</span><span class="p">(</span><span class="nb">list</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">pass</span>
 <span class="gp">...</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">myList_with_override</span><span class="p">(</span><span class="nb">list</span><span class="p">):</span>
@@ -318,7 +342,7 @@ also the <a class="reference internal" href="../method/cf.Query.addattr.html#cf.
 
 <div class="section" id="attributes">
 <h2>Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h2>
-<table class="longtable docutils align-center">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -341,7 +365,7 @@ also the <a class="reference internal" href="../method/cf.Query.addattr.html#cf.
 </div>
 <div class="section" id="methods">
 <h2>Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
-<table class="longtable docutils align-center">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -384,7 +408,7 @@ also the <a class="reference internal" href="../method/cf.Query.addattr.html#cf.
       &copy;2020, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.0.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

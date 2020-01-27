@@ -8,12 +8,15 @@
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -30,7 +33,28 @@
     
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h3><b><a href="../index.html">cf 3.1.0</a></b></h3>
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.1.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -66,10 +90,10 @@
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
     </form>
     </div>
@@ -87,19 +111,16 @@
 <h1>cf.AuxiliaryCoordinate.subspace<a class="headerlink" href="#cf-auxiliarycoordinate-subspace" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.AuxiliaryCoordinate.subspace">
-<code class="descclassname">AuxiliaryCoordinate.</code><code class="descname">subspace</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cf.AuxiliaryCoordinate.subspace" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">AuxiliaryCoordinate.</code><code class="sig-name descname">subspace</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cf.AuxiliaryCoordinate.subspace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a new variable whose data is subspaced.</p>
-<blockquote>
-<div><p>This attribute may be indexed to select a subspace from dimension
+<p>This attribute may be indexed to select a subspace from dimension
 index values.</p>
 <p><strong>Subspacing by indexing</strong></p>
 <p>Subspacing by dimension indices uses an extended Python slicing
 syntax, which is similar numpy array indexing. There are two
 extensions to the numpy indexing functionality:</p>
-</div></blockquote>
 <p>TODO</p>
-<blockquote>
-<div><ul>
+<ul>
 <li><p>Size 1 dimensions are never removed.</p>
 <p>An integer index i takes the i-th element but does not reduce
 the rank of the output array by one.</p>
@@ -113,7 +134,7 @@ in Fortran), rather than by their elements.</p>
 </li>
 </ul>
 <p><strong>Examples:</strong></p>
-</div></blockquote>
+<p>TODO</p>
 </dd></dl>
 
 </div>
@@ -129,7 +150,7 @@ in Fortran), rather than by their elements.</p>
       &copy;2020, David Hassell.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.0.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

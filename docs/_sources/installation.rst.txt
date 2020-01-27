@@ -49,23 +49,23 @@ https://pypi.org/project/cf-python
 To install cf and all of its :ref:`required dependencies <Required>`
 run, for example:
 
-.. code-block:: shell
+.. code-block:: console
    :caption: *Install as root, with any missing dependencies.*
 	     
-   pip install cf-python
+   $ pip install cf-python
 
-.. code-block:: shell
+.. code-block:: console
    :caption: *Install as a user, with any missing dependencies.*
 	     
-   pip install cf-python --user
+   $ pip install cf-python --user
 
 To install cf without any of its dependencies then run, for example:
 
-.. code-block:: shell
+.. code-block:: console
    :caption: *Install as root without installing any of the
              dependencies.*
 	     
-   pip install cf-python --no-deps
+   $ pip install cf-python --no-deps
 
 See the `documentation for pip install
 <https://pip.pypa.io/en/stable/reference/pip_install/>`_ for further
@@ -91,11 +91,11 @@ its :ref:`required <Required>` and :ref:`optional <Optional>`
 dependencies, and the `cf-plot visualisation package
 <http://ajheaps.github.io/cf-plot>`_, run
 
-.. code-block:: shell
+.. code-block:: console
    :caption: *Install with conda.*
 	     
-   conda install -c ncas -c conda-forge cf-python cf-plot udunits2==2.2.25
-   conda install -c conda-forge mpich esmpy
+   $ conda install -c ncas -c conda-forge cf-python cf-plot udunits2==2.2.25
+   $ conda install -c conda-forge mpich esmpy
 
 The second of the two ``conda`` commands is required for
 :ref:`regridding <Regridding>` to work. (Note, however, that the
@@ -120,31 +120,31 @@ To install from source:
 2. Unpack the library (replacing ``<version>`` with the version that
    you want to install, e.g. ``3.0.0``):
 
-   .. code:: bash
+   .. code-block:: console
 	 
-      tar zxvf cf-python-<version>.tar.gz
-      cd cf-python-<version>
+      $ tar zxvf cf-python-<version>.tar.gz
+      $ cd cf-python-<version>
 
 3. Install the package:
   
   * To install the cf-python package to a central location:
 
-    .. code:: bash
+    .. code-block:: console
 	 
-       python setup.py install
+       $ python setup.py install
 
   * To install the cf-python package locally to the user in the default
     location:
 
-    .. code:: bash
+    .. code-block:: console
 
-       python setup.py install --user
+       $ python setup.py install --user
 
   * To install the cf-python package in the <directory> of your choice:
 
-    .. code:: bash
+    .. code-block:: console
 
-       python setup.py install --home=<directory>
+       $ python setup.py install --home=<directory>
 
 Note that :ref:`some environment variables might also need setting
 <UNIDATA-UDUNITS-2-library>` in order for the UDUNITS library to work
@@ -229,9 +229,9 @@ environments for which these features are not required.
 * `ESMF <https://www.earthsystemcog.org/projects/esmpy/>`_, version
   8.0.0 or newer. This is easily installed via conda with
 
-  .. code:: bash
+  .. code-block:: console
 
-     conda install -c conda-forge mpich esmpy
+     $ conda install -c conda-forge mpich esmpy
 
   or may be installed from source.
 
@@ -258,9 +258,9 @@ environments for which these features are not required.
 
 Tests are run from within the ``cf/test`` directory:
 
-.. code:: bash
+.. code-block:: console
  
-   python run_tests.py
+   $ python run_tests.py
        
 ----
 
