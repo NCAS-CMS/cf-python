@@ -1580,7 +1580,7 @@ during operations, and if one operand has no units then the units of
 the other are assumed.
 
 .. code-block:: python
-  :caption: *TODO*
+   :caption: *TODO*
 
    >>> q, t = cf.read('file.nc')
    >>> t.data.stats()   
@@ -1606,7 +1606,7 @@ the other are assumed.
    <CF Data(): 262.6 K>
 
 .. code-block:: python
-  :caption: *TODO*
+   :caption: *TODO*
 
    >>> u = t.copy()
    >>> u.transpose(inplace=True)
@@ -1622,7 +1622,7 @@ the case if the units of the result differ from bother operands, or if
 they have different standard names.
 
 .. code-block:: python
-  :caption: *TODO*
+   :caption: *TODO*
 
    >>> t.identities()
    ['air_temperature',
@@ -1688,7 +1688,7 @@ returning a new field construct with modified data values. See the
 <Field-unary-arithmetic>`.
 
 .. code-block:: python
-  :caption: *TODO*
+   :caption: *TODO*
 
    >>> q, t = cf.read('file.nc')
    >>> print(q.array)  
@@ -1738,7 +1738,7 @@ during operations, and if one operand has no units then the units of
 the other are assumed.
 
 .. code-block:: python
-  :caption: *TODO*
+   :caption: *TODO*
 
    >>> q, t = cf.read('file.nc')
    >>> print(q.array)         
@@ -1770,7 +1770,7 @@ The "standard_name" and "long_name" properties are removed from the
 result, which also has no units.
 
 .. code-block:: python
-  :caption: *TODO*
+   :caption: *TODO*
 
    >>> q.identities()
    ['specific_humidity',
@@ -1801,7 +1801,7 @@ the `!identity` method of a construct:
 
 
 .. code-block:: python
-  :caption: *Find the "strict" identity of a construct.*
+   :caption: *Find the "strict" identity of a construct.*
 
    >>> y = q.coordinate('Y')
    >>> y.identity(strict=True)
@@ -1862,7 +1862,7 @@ physically meaningful broadcasting to occur.
    <CF Data(): 0.0 K>
    
 .. code-block:: python
-  :caption: *An example of augmented assignment involving the data of
+   :caption: *An example of augmented assignment involving the data of
             two field constructs.*
 
    >>> t.data -= t.data

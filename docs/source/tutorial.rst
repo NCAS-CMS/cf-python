@@ -284,8 +284,8 @@ descriptions of the metadata constructs, which include the first and last
 values of their data arrays:
 
 .. code-block:: python
-  :caption: *Inspect the contents of the two field constructs with
-            medium detail.*
+   :caption: *Inspect the contents of the two field constructs with
+             medium detail.*
    
    >>> print(q)
    Field: specific_humidity (ncvar%q)
@@ -328,8 +328,8 @@ properties of all constructs, including metadata constructs and their
 components, and shows the first and last values of all data arrays:
 
 .. code-block:: python
-  :caption: *Inspect the contents of the two field constructs with
-            full detail.*
+   :caption: *Inspect the contents of the two field constructs with
+             full detail.*
 
    >>> q.dump()
    ----------------------------------
@@ -1254,7 +1254,7 @@ the only differences being:
   rather then producing a null result.
   
 .. code-block:: python
-  :caption: *Create a new field construct whose domain spans the first
+   :caption: *Create a new field construct whose domain spans the first
             longitude of the original, and with a reversed latitude
             axis.*
 

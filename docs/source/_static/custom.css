@@ -78,6 +78,11 @@ table.citation td {
 
 /* -- Sphinx 2.3.1 build tweaks (hopefully needed only temporarily) --------- */
 
+/* Remove gap between a bullet and its sub-bullet list in contents listings */
+ul.simple > li > p {
+    margin-bottom: 0px;
+}
+
 /* Force one-line spacing between docstring paragraphs (missing for v 2.3.1) */
 .field-list p {
     margin-bottom: 1.0em;
