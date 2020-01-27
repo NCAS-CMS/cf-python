@@ -86,6 +86,7 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.doctest',
               'sphinx.ext.githubpages',
 #              'sphinxcontrib.programoutput',  # pip install sphinxcontrib-programoutput
+              'sphinx_copybutton',
 ]
 
 
@@ -389,9 +390,12 @@ man_pages = [
      'David Hassell', 1)
     ]
 
-# Set up copybutton
-def setup(app):
-    app.add_javascript('copybutton.js')
+# Configurecopybutton
+copybutton_skip_text = ">>> "  # Python prompt for Python code snippets
+# Awaiting extension to sphinx-copybutton to strip out other prompts (see
+# 'https://github.com/choldgraf/sphinx-copybutton/issues/52') and ideally
+# remove lines of output characterised by not having an initial prompt.
+# copybutton_skip_text = "$ "  # shell ('..code-block:: console') prompt
 
 # This is a function which should return the URL to source code
 # corresponding to the object in given domain with given information.
