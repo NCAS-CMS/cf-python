@@ -2950,7 +2950,8 @@ def _aggregate_2_fields(m0, m1,
 
 def ensemble(f, prop, **kwargs):
     '''
-'''
+    TODO
+    '''
     kwargs.pop('dimension', None)
 
     # Check that the fields are all compatible
@@ -2981,6 +2982,6 @@ def ensemble(f, prop, **kwargs):
 
     # Check that the fields were aggreageted down to one field
     if len(f) != 1:
-        raise ValueError("TODO sd ;oo08 z;kln poih [")
+        raise ValueError("TODO")
 
     return f

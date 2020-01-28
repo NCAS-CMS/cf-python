@@ -254,8 +254,11 @@ def CHUNKSIZE(*args):
 
     The upper limit to the chunksize is given by:
 
-    upper_chunksize = ((free_memory_factor * TOTAL_MEMORY()) / ((mpi_size
-                       * _WORKSPACE_FACTOR_1()) + _WORKSPACE_FACTOR_2()))
+    .. math:: upper\_chunksize = \dfrac{f \cdot total\_memory}{mpi\_size
+                                 \cdot w_1 + w_2}
+
+    where :math:`f` is the *free memory factor* and :math:`w_1` and
+    :math:`w_2` the *workspace factors* *1* and *2* respectively.
 
     :Parameters:
 

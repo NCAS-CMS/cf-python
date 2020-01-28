@@ -8033,7 +8033,7 @@ class Field(mixin.PropertiesData,
 
             For example:
 
-            >>> groups = f.collapse('time: mean', group=10, regroup=True)x
+            >>> groups = f.collapse('time: mean', group=10, regroup=True)
             >>> g = f.collapse('time: mean', group=groups)
 
             is equivalent to:
