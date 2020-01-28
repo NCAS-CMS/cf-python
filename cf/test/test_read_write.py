@@ -31,6 +31,11 @@ atexit.register(_remove_tmpfiles)
 class read_writeTest(unittest.TestCase):
     filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                             'test_file.nc')
+
+    string_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                   'string_char.nc')
+    
+
     chunk_sizes = (17, 34, 300, 100000)[::-1]
     original_chunksize = cf.CHUNKSIZE()
 
@@ -327,7 +332,7 @@ class read_writeTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = cfdm.read(self.string_filename)
+        f = cf.read(self.string_filename)
         for i in range(0, 4):
 
             j = i + int(len(f)/2)
@@ -342,8 +347,8 @@ class read_writeTest(unittest.TestCase):
                      'NETCDF3_64BIT',
                      'NETCDF3_64BIT_OFFSET',
                      'NETCDF3_64BIT_DATA'):
-            f0 = cfdm.read(self.string_filename)
-            cfdm.write(f0, tmpfile0, fmt=fmt0)
+            f0 = cf.read(self.string_filename)
+            cf.write(f0, tmpfile0, fmt=fmt0)
             
             for fmt1 in ('NETCDF4',
                          'NETCDF3_CLASSIC',
@@ -351,10 +356,10 @@ class read_writeTest(unittest.TestCase):
                          'NETCDF3_64BIT',
                          'NETCDF3_64BIT_OFFSET',
                          'NETCDF3_64BIT_DATA'):
-                f1 = cfdm.read(self.string_filename)
-                cfdm.write(f0, tmpfile1, fmt=fmt1)
+                f1 = cf.read(self.string_filename)
+                cf.write(f0, tmpfile1, fmt=fmt1)
 
-                for i, j in zip(cfdm.read(tmpfile1), cfdm.read(tmpfile0)):
+                for i, j in zip(cf.read(tmpfile1), cf.read(tmpfile0)):
                     self.assertTrue(i.equals(j, verbose=1))
         #--- End: for
         

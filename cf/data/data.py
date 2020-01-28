@@ -6747,7 +6747,7 @@ dimensions.
 
             for partition in flat:
                 array = partition.subarray
-                if subarray.dtype is None:
+                if array.dtype is None:
                     partition.open(config)                    
                     array = partition.array
                     partition.close()

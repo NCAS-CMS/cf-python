@@ -69,7 +69,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
     :Parameters:
 
-        data: Data instance
+        data: `Data`
 
         cfvar: cf instance
 
@@ -116,6 +116,12 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                     raise ValueError(
                         "ERROR: Can't write field when array has _FillValue or missing_value at unmasked point: {!r}".format(ncvar))
             #--- End: if
+            
+            if (g['fmt'] == 'NETCDF4' and array.dtype.kind in 'SU' and
+                numpy.ma.isMA(array)):
+                # VLEN variables can not be assigned to by masked arrays
+                # https://github.com/Unidata/netcdf4-python/pull/465
+                array = array.filled('')
 
             # Copy the array into the netCDF variable
             g['nc'][ncvar][partition.indices] = array
@@ -139,7 +145,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
     :Returns:
 
-        out: `str`
+        `str`
             The netCDF name of the dimension coordinate.
 
         '''
@@ -495,12 +501,13 @@ then the input coordinate is not written.
     >>> _random_hex_string(6)
     '7a4acc'
 
-            '''
+        '''
         return ''.join(random.choice(hexdigits) for i in range(size))
 
 
     def _convert_to_builtin_type(self, x):
-        '''Convert a non-JSON-encodable object to a JSON-encodable built-in type.
+        '''Convert a non-JSON-encodable object to a JSON-encodable built-in
+    type.
 
     Possible conversions are:
 
@@ -519,6 +526,7 @@ then the input coordinate is not written.
 
     :Returns:
 
+        'int' or `float` or `bool`
 
     **Examples:**
 
