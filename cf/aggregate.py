@@ -749,8 +749,11 @@ class _Meta:
         `Units` or `None`
 
         '''
-        var_units = variable.Units
-
+        if variable.has_data():        
+            var_units = variable.Units
+        elif variable.has_bounds():
+            var_units = variable.bounds.Units
+            
         _canonical_units = self._canonical_units
 
         if identity in _canonical_units:
@@ -2142,7 +2145,7 @@ def _create_hash_and_first_values(meta, axes, donotchecknonaggregatingaxes,
                 axes = tuple([m_id_to_axis[identity] for identity in anc['axes']])
                 domain_axes = item_axes[key]
                 if axes != domain_axes:
-                    field_anc = field_anc.copy() #_only_Data=True)                        # TODO
+                    field_anc = field_anc.copy() #_only_Data=True)       # TODO
                     iaxes = [domain_axes.index(axis) for axis in axes]
                     field_anc.transpose(iaxes, inplace=True)
 
@@ -2171,7 +2174,7 @@ def _create_hash_and_first_values(meta, axes, donotchecknonaggregatingaxes,
                 axes = tuple([m_id_to_axis[identity] for identity in anc['axes']])
                 domain_axes = item_axes[key]
                 if axes != domain_axes:
-                    domain_anc = domain_anc.copy() #_only_Data=True)                        # TODO
+                    domain_anc = domain_anc.copy() #_only_Data=True)   # TODO
                     iaxes = [domain_axes.index(axis) for axis in axes]
                     domain_anc.transpose(iaxes, inplace=True)
 
@@ -2179,17 +2182,23 @@ def _create_hash_and_first_values(meta, axes, donotchecknonaggregatingaxes,
 
                 # Get the hash of the data array
                 h = _get_hfl(domain_anc, canonical_units,
-                             sort_indices, False, False, False,
-                             hfl_cache, rtol, atol)
-
+                             sort_indices, null_sort=False,
+                             first_and_last_values=False,
+                             first_and_last_bounds=False,
+                             hfl_cache=hfl_cache, rtol=rtol,
+                             atol=atol)
+                    
                 if domain_anc.has_bounds():
                     # Get the hash of the bounds data array
                     hb = _get_hfl(domain_anc.bounds, canonical_units,
-                                  sort_indices, False, False, False,
-                                  hfl_cache, rtol, atol)
+                                  sort_indices, null_sort=False,
+                                  first_and_last_values=False,
+                                  first_and_last_bounds=False,
+                                  hfl_cache=hfl_cache, rtol=rtol,
+                                  atol=atol)
                     h = (h, hb)
                 else:
-                    h = (h,)
+                    h = (h,)                
 
                 anc['hash_value'] = h
 
@@ -2239,8 +2248,13 @@ def _get_hfl(v, canonical_units, sort_indices, null_sort,
     create_flb  = first_and_last_bounds
 
     key = None
-    print (create_fl, create_flb )
-    d = v.get_data()
+
+    d = v.get_data(None)
+    if d is None:
+        if create_fl or create_flb:
+            return None, None, None
+
+        return
 
     if d._pmsize == 1:
         partition = d.partitions.matrix.item()
