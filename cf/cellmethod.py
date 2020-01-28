@@ -7,12 +7,11 @@ from .functions import inspect as cf_inspect
 
 from .data.data import Data
 
-from .functions import (_DEPRECATION_ERROR_KWARGS,
-                        _DEPRECATION_ERROR_METHOD)
+from .functions import _DEPRECATION_ERROR_METHOD
 
 from .decorators import (_inplace_enabled,
                          _inplace_enabled_define_and_cleanup,
-                         _deprecation_error_i_kwarg)
+                         _deprecated_kwarg_check)
 
 
 _collapse_cell_methods = {
@@ -450,7 +449,7 @@ class CellMethod(cfdm.CellMethod):
         self.del_axes(default=AttributeError())
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def expand_intervals(self, inplace=False, i=False):
         '''TODO
@@ -465,7 +464,7 @@ class CellMethod(cfdm.CellMethod):
         return c
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def change_axes(self, axis_map, inplace=False, i=False):
         '''TODO
@@ -487,6 +486,7 @@ class CellMethod(cfdm.CellMethod):
         return c
 
 
+    @_deprecated_kwarg_check('traceback')
     def equivalent(self, other, rtol=None, atol=None, verbose=False,
                    traceback=False):
         '''True if two cell methods are equivalent, False otherwise.
@@ -517,9 +517,6 @@ class CellMethod(cfdm.CellMethod):
     TODO
 
         '''
-        if traceback:
-            _DEPRECATION_ERROR_KWARGS(self, 'equivalent', traceback=True) # pragma: no cover
-
         if self is other:
             return True
 

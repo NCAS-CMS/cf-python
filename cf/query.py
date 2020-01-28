@@ -7,10 +7,12 @@ from .units      import Units
 
 from .data.data import Data
 
-from .functions  import (_DEPRECATION_ERROR_KWARGS,
-                         _DEPRECATION_ERROR_FUNCTION_KWARGS,
+from .functions  import (_DEPRECATION_ERROR_FUNCTION_KWARGS,
                          _DEPRECATION_ERROR_ATTRIBUTE,
                          _DEPRECATION_ERROR_FUNCTION)
+
+from .decorators import _deprecated_kwarg_check
+
 
 class Query:
     '''Encapsulate a condition.
@@ -173,6 +175,7 @@ class Query:
     '''
     isquery = True
 
+    @_deprecated_kwarg_check('exact')
     def __init__(self, operator, value, units=None, attr=None, exact=True):
         '''**Initialization**
 
@@ -202,9 +205,6 @@ class Query:
             Use `re.compile` objects in *value* instead.
 
         '''
-        if not exact:
-            _DEPRECATION_ERROR_KWARGS(self, '__init__', exact=True) # pragma: no cover
-
         if units is not None:
             value_units = getattr(value, 'Units', None)
             if value_units is None:
@@ -498,13 +498,11 @@ class Query:
             return(string)
 
 
+    @_deprecated_kwarg_check('traceback')
     def equals(self, other, verbose=False, traceback=False):
         '''TODO
 
         '''
-        if traceback:
-            _DEPRECATION_ERROR_KWARGS(self, 'equals', traceback=True) # pragma: no cover
-
         if self._compound:
             if not other._compound:
                 if verbose:

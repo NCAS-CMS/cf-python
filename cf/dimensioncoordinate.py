@@ -14,12 +14,11 @@ from . import mixin
 from . import abstract
 
 from .functions import (_DEPRECATION_ERROR_KWARGS,
-                        _DEPRECATION_ERROR_ATTRIBUTE,
-                        )
+                        _DEPRECATION_ERROR_ATTRIBUTE)
 
 from .decorators import (_inplace_enabled,
                          _inplace_enabled_define_and_cleanup,
-                         _deprecation_error_i_kwarg)
+                         _deprecated_kwarg_check)
 
 
 class DimensionCoordinate(abstract.Coordinate,
@@ -655,7 +654,7 @@ class DimensionCoordinate(abstract.Coordinate,
         return bounds
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def flip(self, axes=None, inplace=False, i=False):
         '''TODO
@@ -856,7 +855,7 @@ class DimensionCoordinate(abstract.Coordinate,
         return True
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def roll(self, axis, shift, inplace=False, i=False):
         '''TODO

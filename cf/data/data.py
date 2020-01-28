@@ -94,15 +94,15 @@ from ..functions import (CHUNKSIZE, FM_THRESHOLD, RTOL, ATOL,
                          _numpy_isclose, pathjoin, hash_array,
                          broadcast_array, default_netCDF_fillvals)
 
-from ..functions import (_DEPRECATION_ERROR_KWARGS,
-                         _DEPRECATION_ERROR_METHOD,
+from ..functions import (_DEPRECATION_ERROR_METHOD,
                          _DEPRECATION_ERROR_ATTRIBUTE)
 
 from ..functions import inspect as cf_inspect
 from ..functions import _section
+
 from ..decorators import (_inplace_enabled,
                           _inplace_enabled_define_and_cleanup,
-                          _deprecation_error_i_kwarg)
+                          _deprecated_kwarg_check)
 
 from .abstract           import (Array,
                                  CompressedArray)
@@ -3053,7 +3053,7 @@ place.
             self._auxiliary_mask = None
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     def ceil(self, inplace=False, i=False):
         '''The ceiling of the data, element-wise.
 
@@ -5579,7 +5579,7 @@ place.
         self.partitions.change_axis_names(axis_map)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def _collapse(self, func, fpartial, ffinalise, axes=None,
                   squeeze=False, weights=None, mtol=1, units=None,
@@ -8311,7 +8311,7 @@ False
         self.Units = Units(value, self.get_calendar(default=None))
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     def maximum(self, axes=None, squeeze=False, mtol=1, inplace=False,
                 i=False, _preserve_partitions=False):
         '''Collapse axes with their maximum.
@@ -8393,7 +8393,7 @@ False
                               _preserve_partitions=_preserve_partitions)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     def minimum(self, axes=None, squeeze=False, mtol=1, inplace=False,
                 i=False, _preserve_partitions=False):
         '''Collapse axes with their minimum.
@@ -8475,7 +8475,7 @@ False
                               _preserve_partitions=_preserve_partitions)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     def mean(self, axes=None, squeeze=False, mtol=1, weights=None,
              inplace=False, i=False, _preserve_partitions=False):
         '''Collapse axes with their mean.
@@ -8845,7 +8845,7 @@ False
         return binary_mask
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def clip(self, a_min, a_max, units=None, inplace=False, i=False):
         '''Clip (limit) the values in the data array in place.
@@ -8991,7 +8991,7 @@ False
         for partition in self.partitions.matrix.flat:
             partition.file_close()
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def cos(self, inplace=False, i=False):
         '''Take the trigonometric cosine of the data array in place.
@@ -9546,6 +9546,7 @@ False
         return itertools_product(*[range(0, r) for r in self._shape])
 
 
+    @_deprecated_kwarg_check('traceback')
     def equals(self, other, rtol=None, atol=None,
                ignore_fill_value=False, ignore_data_type=False,
                ignore_type=False, verbose=False, traceback=False,
@@ -9595,9 +9596,6 @@ False
     False
 
         '''
-        if traceback:
-            _DEPRECATION_ERROR_KWARGS(self, 'equals', traceback=True) # pragma: no cover
-
         # Set default tolerances
         if rtol is None:
             rtol = self._RTOL
@@ -9648,7 +9646,7 @@ False
         return True
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def exp(self, inplace=False, i=False):
         '''Take the exponential of the data array.
@@ -10027,7 +10025,7 @@ False
         return out
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     def floor(self, inplace=False, i=False):
         '''Return the floor of the data array.
 
@@ -10054,7 +10052,7 @@ False
         return self.func(numpy_floor, out=True, inplace=inplace)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     def outerproduct(self, e, inplace=False, i=False):
         '''Compute the outer product with another data array.
 
@@ -10128,7 +10126,7 @@ False
         return d
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def change_calendar(self, calendar, inplace=False, i=False):
         '''Change the calendar of the data array elements.
@@ -10157,7 +10155,7 @@ False
         return d
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def override_units(self, units, inplace=False, i=False):
         '''Override the data array units.
@@ -10222,7 +10220,7 @@ False
         return d
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def override_calendar(self, calendar, inplace=False, i=False):
         '''Override the calendar of the data array elements.
@@ -10535,7 +10533,7 @@ False
         return cf_masked
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def mask_invalid(self, inplace=False, i=False):
         '''Mask the array where invalid values occur (NaN or inf).
@@ -10650,7 +10648,7 @@ False
         return cls(array, units=units, chunk=chunk)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     def mid_range(self, axes=None, squeeze=False, mtol=1,
                   inplace=False, _preserve_partitions=False, i=False):
         '''Collapse axes with the unweighted average of their maximum and
@@ -10689,7 +10687,7 @@ False
                               _preserve_partitions=_preserve_partitions)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def flip(self, axes=None, inplace=False, i=False):
         '''Reverse the direction of axes of the data array.
@@ -10910,7 +10908,7 @@ False
             return self == y
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     def rint(self, inplace=False, i=False):
         '''Round the data to the nearest integer, element-wise.
 
@@ -11018,7 +11016,7 @@ False
                               _preserve_partitions=_preserve_partitions)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     def round(self, decimals=0, inplace=False, i=False):
         '''Evenly round elements of the data array to the given number of
     decimals.
@@ -11239,7 +11237,7 @@ False
         return out
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def swapaxes(self, axis0, axis1, inplace=False, i=False):
         '''Interchange two axes of an array.
@@ -11391,7 +11389,7 @@ False
         return CHUNKSIZE() >= self._size*(itemsize+1) <= FREE_MEMORY() - FM_THRESHOLD()
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def where(self, condition, x=None, y=None, inplace=False, i=False,
               _debug=False):
@@ -11810,7 +11808,7 @@ False
         return d
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def sin(self, inplace=False, i=False):
         '''Take the trigonometric sine of the data array in place.
@@ -11869,7 +11867,7 @@ False
         return d
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def sinh(self, inplace=False):
         '''Take the hyperbolic sine of the data array in place.
@@ -11985,7 +11983,7 @@ False
         return d
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def tanh(self, inplace=False):
         '''Take the hyperbolic tangent of the data array.
@@ -12045,7 +12043,7 @@ False
         return d
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def log(self, base=None, inplace=False, i=False):
         '''TODO
@@ -12080,7 +12078,7 @@ False
         return d
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def squeeze(self, axes=None, inplace=False, i=False):
         '''Remove size 1 axes from the data array.
@@ -12231,7 +12229,7 @@ False
         return d
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def tan(self, inplace=False, i=False):
         '''Take the trigonometric tangent of the data array element-wise.
@@ -12321,7 +12319,7 @@ False
         return self.array.tolist()
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def transpose(self, axes=None, inplace=False, i=False):
         '''Permute the axes of the data array.
@@ -12409,7 +12407,7 @@ False
         return d
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     def trunc(self, inplace=False, i=False):
         '''Return the truncated values of the data array.
 
@@ -12545,7 +12543,7 @@ False
                         calendar=calendar, chunk=chunk)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def func(self, f, units=None, out=False, inplace=False, i=False,
              **kwargs):
@@ -12624,7 +12622,7 @@ False
         return d
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     def range(self, axes=None, squeeze=False, mtol=1, inplace=False,
               _preserve_partitions=False, i=False):
         '''Collapse axes with the absolute difference between their maximum
@@ -12661,7 +12659,7 @@ False
                               _preserve_partitions=_preserve_partitions)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     def roll(self, axis, shift, inplace=False, i=False):
         '''A lot like `numpy.roll`
 
@@ -12723,7 +12721,7 @@ False
         return d
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     def sum(self, axes=None, squeeze=False, mtol=1, weights=None,
             inplace=False, i=False, _preserve_partitions=False):
         '''Collapse axes with their sum.
@@ -12810,7 +12808,7 @@ False
                               _preserve_partitions=_preserve_partitions)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     def sum_of_weights(self, axes=None, squeeze=False, mtol=1,
                        weights=None, inplace=False, i=False,
                        _preserve_partitions=False):
@@ -12862,7 +12860,7 @@ False
                               _preserve_partitions=_preserve_partitions)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     def sum_of_weights2(self, axes=None, squeeze=False, mtol=1,
                         weights=None, inplace=False, i=False,
                         _preserve_partitions=False):
@@ -12914,7 +12912,7 @@ False
                               _preserve_partitions=_preserve_partitions)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     def standard_deviation(self, axes=None, squeeze=False, mtol=1,
                            weights=None, ddof=0, inplace=False, i=False,
                            _preserve_partitions=False):
@@ -13069,7 +13067,7 @@ False
                               _preserve_partitions=_preserve_partitions)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     def variance(self, axes=None, squeeze=False, weights=None, mtol=1,
                  ddof=0, inplace=False, i=False,
                  _preserve_partitions=False):

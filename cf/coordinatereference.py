@@ -11,12 +11,11 @@ from . import Datum
 from .data.data import Data
 
 from .functions import (_DEPRECATION_ERROR_METHOD,
-                        _DEPRECATION_ERROR_ATTRIBUTE,
-                        )
+                        _DEPRECATION_ERROR_ATTRIBUTE)
 
 from .decorators import (_inplace_enabled,
                          _inplace_enabled_define_and_cleanup,
-                         _deprecation_error_i_kwarg)
+                         _deprecated_kwarg_check)
 
 
 _units = {}
@@ -282,6 +281,7 @@ class CoordinateReference(cfdm.CoordinateReference):
         return cr_default_values.get(term, 0.0)
 
 
+    @_deprecated_kwarg_check('traceback')
     def equivalent(self, other, atol=None, rtol=None, verbose=False,
                    traceback=False):
         '''True if two coordinate references are logically equal, False
@@ -314,9 +314,6 @@ class CoordinateReference(cfdm.CoordinateReference):
     TODO
 
         '''
-        if traceback:
-            _DEPRECATION_ERROR_KWRAGS(self, 'equivalent', traceback=True) # pragma: no cover
-
         if self is other:
             return True
 
@@ -521,7 +518,7 @@ class CoordinateReference(cfdm.CoordinateReference):
         return self.match_by_identity(*identities)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def change_identifiers(self, identity_map, coordinate=True,
                            ancillary=True, strict=False,

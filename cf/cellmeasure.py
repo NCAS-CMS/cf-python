@@ -2,7 +2,7 @@ import cfdm
 
 from . import mixin
 
-from .functions import _DEPRECATION_ERROR_KWARGS
+from .decorators import _deprecated_kwarg_check
 
 
 class CellMeasure(mixin.PropertiesData,
@@ -69,6 +69,7 @@ class CellMeasure(mixin.PropertiesData,
     def measure(self):        self.del_measure(default=AttributeError())
 
 
+    @_deprecated_kwarg_check('relaxed_identity')
     def identity(self, default='', strict=None, relaxed=False,
                  nc_only=False, relaxed_identity=None):
         '''Return the canonical identity.
@@ -137,10 +138,6 @@ class CellMeasure(mixin.PropertiesData,
     'no identity'
 
         '''
-        if relaxed_identity:
-            _DEPRECATION_ERROR_KWARGS(self, 'identity',
-                                      relaxed_identity=True) # pragma: no cover
-
         if nc_only:
             if strict:
                 raise ValueError("'strict' and 'nc_only' parameters cannot both be True")

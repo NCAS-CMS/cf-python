@@ -7,6 +7,8 @@ from copy import deepcopy
 from .functions import RTOL, ATOL, equals
 from .functions import inspect as cf_inspect
 
+from .decorators import _deprecated_kwarg_check
+
 
 class Flags:
     '''Self-describing CF flag values.
@@ -294,6 +296,7 @@ class Flags:
             return(string)
 
 
+    @_deprecated_kwarg_check('traceback')
     def equals(self, other, rtol=None, atol=None,
                ignore_fill_value=False, verbose=False,
                traceback=False):
@@ -340,9 +343,6 @@ class Flags:
     <CF Flags: flag_values=[0 1 2], flag_masks=[0 2 2], flag_meanings=['low' 'medium' 'high']>
 
         '''
-        if traceback:
-            _DEPRECATION_ERROR_KWARGS(self, 'equals', traceback=True) # pragma: no cover
-
         # Check that each instance is the same type
         if self.__class__ != other.__class__:
             if verbose:

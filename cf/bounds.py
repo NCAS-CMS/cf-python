@@ -2,6 +2,8 @@ import cfdm
 
 from . import mixin
 
+from .decorators import _deprecated_kwarg_check
+
 
 class Bounds(mixin.PropertiesData,
              cfdm.Bounds):
@@ -104,6 +106,8 @@ class Bounds(mixin.PropertiesData,
             else:
                 return (data[1:, 0] >= data[:-1, 1]).all()
 
+
+    @_deprecated_kwarg_check('relaxed_identity')
     def identity(self, default='', strict=False, relaxed=False,
                  nc_only=False, relaxed_identity=None):
         '''Return the canonical identity.
@@ -160,10 +164,6 @@ class Bounds(mixin.PropertiesData,
     'long_name=Longitude'
 
         '''
-        if relaxed_identity:
-            _DEPRECATION_ERROR_KWARGS(self, 'identity',
-                                      relaxed_identity=True) # pragma: no cover
-
         inherited_properties = self.inherited_properties()
         if inherited_properties:
             bounds = self.copy()

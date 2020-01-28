@@ -11,7 +11,7 @@ from .units      import Units
 
 from .data.data import Data
 
-from .functions  import _DEPRECATION_ERROR_KWARGS
+from .decorators import _deprecated_kwarg_check
 
 
 # Define some useful units
@@ -1094,6 +1094,7 @@ class TimeDuration:
         return length
 
 
+    @_deprecated_kwarg_check('traceback')
     def equals(self, other, rtol=None, atol=None, verbose=False,
                traceback=False):
         '''True if two time durations are equal.
@@ -1135,9 +1136,6 @@ class TimeDuration:
     False
 
         '''
-        if traceback:
-            _DEPRECATION_ERROR_KWARGS(self, 'equals', traceback=True) # pragma: no cover
-
         # Check each instance's id
         if self is other:
             return True
@@ -1171,6 +1169,7 @@ class TimeDuration:
         return True
 
 
+    @_deprecated_kwarg_check('traceback')
     def equivalent(self, other, rtol=None, atol=None, verbose=True,
                    traceback=False):
         '''True if two time durations are logically equivalent.
@@ -1214,9 +1213,6 @@ class TimeDuration:
     False
 
         '''
-        if traceback:
-            _DEPRECATION_ERROR_KWARGS(self, 'equivalent', traceback=True) # pragma: no cover
-
         # Check each instance's id
         if self is other:
             return True

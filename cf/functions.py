@@ -60,6 +60,15 @@ from . import mpi_size
 
 class DeprecationError(Exception) :pass
 
+KWARGS_MESSAGE_MAP = {
+    "relaxed_identity": "Use keywords 'strict' or 'relaxed' instead.",
+    "axes": "Use keyword 'axis' instead.",
+    "traceback": "Use keyword 'verbose' instead.",
+    "exact": "Use 're.compile' objects instead.",
+    "i": "Use keyword 'inplace' instead. Note that when inplace=True, "
+         "None is returned.",
+}
+
 # Are we running on GNU/Linux?
 _linux = (platform.system() == 'Linux')
 
@@ -2479,13 +2488,10 @@ def _DEPRECATION_ERROR_FUNCTION_KWARGS(func, kwargs=None, message='',
     if kwargs is None:  # distinguish from falsy '{}'
         kwargs = {}
 
-    if exact:
-        kwargs={'exact': None}
-        message = "Use 're.compile' objects instead."
-
-    if traceback:
-        kwargs={'traceback': None}
-        message = "Use keyword 'verbose' instead."
+    for kwarg, msg in KWARGS_MESSAGE_MAP.items():
+        if kwarg in ('exact', 'traceback') and eval(kwarg):  # safe as this is not a kwarg input by the user
+            kwargs = {kwarg: None}
+            message = msg
 
     for key in kwargs.keys():
         raise DeprecationError("Keyword {1!r} of function '{0}' has been deprecated at version {3} and is no longer available. {2}".format(
@@ -2503,26 +2509,10 @@ def _DEPRECATION_ERROR_KWARGS(instance, method, kwargs=None, message='',
     if kwargs is None:  # distinguish from falsy '{}'
         kwargs = {}
 
-    if relaxed_identity:
-        kwargs={'relaxed_identity': None}
-        message = "Use keywords 'strict' or 'relaxed' instead."
-
-    if i:
-        kwargs={'i': None}
-        message = "Use keyword 'inplace' instead. Note that when inplace=True, None is returned."
-
-    if axes:
-        kwargs={'axes': None}
-        message = "Use keyword 'axis' instead."
-
-    if traceback:
-        kwargs={'traceback': None}
-        message = "Use keyword 'verbose' instead."
-
-    if exact:
-        kwargs={'exact': None}
-        message = "Use 're.compile' objects instead."
-
+    for kwarg, msg in KWARGS_MESSAGE_MAP.items():
+        if eval(kwarg):  # safe as this is not a kwarg input by the user
+            kwargs = {kwarg: None}
+            message = msg
 
     for key in kwargs.keys():
         raise DeprecationError("Keyword {2!r} of method '{0}.{1}' has been deprecated at version {4} and is no longer available. {3}".format(

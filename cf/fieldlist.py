@@ -3,8 +3,9 @@ from copy import copy
 from .functions import (_DEPRECATION_ERROR,
                         _DEPRECATION_ERROR_KWARGS,
                         _DEPRECATION_ERROR_METHOD,
-                        _DEPRECATION_ERROR_DICT,
-                        )
+                        _DEPRECATION_ERROR_DICT)
+
+from .decorators import _deprecated_kwarg_check
 
 
 class FieldList(list):
@@ -460,6 +461,7 @@ class FieldList(list):
         return type(self)([f.copy(data=data) for f in self])
 
 
+    @_deprecated_kwarg_check('traceback')
     def equals(self, other, rtol=None, atol=None, verbose=False,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_properties=(), ignore_compression=False,
@@ -575,9 +577,6 @@ class FieldList(list):
     False
 
         '''
-        if traceback:
-            _DEPRECATION_ERROR_KWARGS(self, 'equals', traceback=True) # pragma: no cover
-
         if ignore:
             _DEPRECATION_ERROR_KWARGS(self, 'equals', {'ignore': ignore},
                                       "Use keyword 'ignore_properties' instead.") # pragma: no cover
