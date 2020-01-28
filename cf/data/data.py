@@ -6734,11 +6734,26 @@ dimensions.
         '''
         datatype = self._dtype
         if datatype is None:
-            flat = self.partitions.matrix.flat
-            datatype = next(flat).subarray.dtype
-            for partition in flat:
-                datatype = numpy_result_type(datatype, partition.subarray)
+            config = self.partition_configuration(readonly=True)
 
+            flat = self.partitions.matrix.flat
+
+            partition = next(flat)
+            datatype = partition.subarray.dtype
+            if datatype is None:
+                partition.open(config)                    
+                datatype = partition.array.dtype
+                partition.close()
+
+            for partition in flat:
+                array = partition.subarray
+                if subarray.dtype is None:
+                    partition.open(config)                    
+                    array = partition.array
+                    partition.close()
+
+                datatype = numpy_result_type(datatype, array)
+                
             self._dtype = datatype
         #--- End: if
 
@@ -10385,7 +10400,7 @@ False
                   'hardmask'       : self.hardmask,
                   'auxiliary_mask' : self._auxiliary_mask,
                   'units'          : self.Units,
-                  'dtype'          : self.dtype,
+                  'dtype'          : self._dtype,
                   'func'           : None,
                   'update'         : True,
                   'serial'         : True,
