@@ -327,6 +327,7 @@ class _Meta:
                     {'identity' : dim_identity,
                      'key'      : dim_coord_key, #axis,
                      'units'    : units,
+                     'hasdata'  : dim_coord.has_data(),
                      'hasbounds': dim_coord.has_bounds(),
                      'coordrefs': self.find_coordrefs(axis)})
 #                     'size'     : None})
@@ -362,6 +363,7 @@ class _Meta:
                     {'identity' : aux_identity,
                      'key'      : key,
                      'units'    : units,
+                     'hasdata'  : aux_coord.has_data(),
                      'hasbounds': aux_coord.has_bounds(),
                      'coordrefs': self.find_coordrefs(key)})
 #                     'size'     : None})
@@ -410,6 +412,7 @@ class _Meta:
                 {'ids'      : tuple([i['identity']  for i in info_1d_coord]),
                  'keys'     : tuple([i['key']       for i in info_1d_coord]),
                  'units'    : tuple([i['units']     for i in info_1d_coord]),
+                 'hasdata'  : tuple([i['hasdata']   for i in info_1d_coord]),
                  'hasbounds': tuple([i['hasbounds'] for i in info_1d_coord]),
                  'coordrefs': tuple([i['coordrefs'] for i in info_1d_coord])}
 #                 'size'     : None} #tuple([i['size']      for i in info_1d_coord])}
@@ -457,6 +460,7 @@ class _Meta:
                 'key'      : key,
                 'units'    : units,
                 'axes'     : axes,
+                'hasdata'  : nd_aux_coord.has_data(),
                 'hasbounds': nd_aux_coord.has_bounds(),
                 'coordrefs': self.find_coordrefs(key)}
         #--- End: for
@@ -1144,6 +1148,7 @@ class _Meta:
         x = [(identity,
               ('ids'      , axis[identity]['ids']),
               ('units'    , tuple([u.formatted(definition=True) for u in axis[identity]['units']])),
+              ('hasdata'  , axis[identity]['hasdata']),
               ('hasbounds', axis[identity]['hasbounds']),
               ('coordrefs', axis[identity]['coordrefs']),
               ('size'     , axis[identity]['size']))
@@ -1162,6 +1167,7 @@ class _Meta:
         x = [(identity,
               ('units'    , nd_aux[identity]['units'].formatted(definition=True)),
               ('axes'     , nd_aux[identity]['axes']),
+              ('hasdata'  , nd_aux[identity]['hasdata']),
               ('hasbounds', nd_aux[identity]['hasbounds']),
               ('coordrefs', nd_aux[identity]['coordrefs']))
              for identity in sorted(nd_aux)]
@@ -2233,7 +2239,7 @@ def _get_hfl(v, canonical_units, sort_indices, null_sort,
     create_flb  = first_and_last_bounds
 
     key = None
-
+    print (create_fl, create_flb )
     d = v.get_data()
 
     if d._pmsize == 1:

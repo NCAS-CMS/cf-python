@@ -12,11 +12,14 @@ from .. import (AuxiliaryCoordinate,
                 Field,
                 FieldAncillary,
                 Bounds,
+                InteriorRing,
                 CoordinateConversion,
                 Datum,
                 Count,
                 List,
                 Index,
+                NodeCountProperties,
+                PartNodeCountProperties,
 )
 
 from ..data import (Data,
@@ -48,14 +51,16 @@ _implementation = CFImplementation(
     Field               = Field,
     FieldAncillary      = FieldAncillary,
 
-    Bounds = Bounds,
-
+    Bounds               = Bounds,
+    InteriorRing         = InteriorRing,
     CoordinateConversion = CoordinateConversion,
     Datum                = Datum,
 
-    List          = List,
-    Index         = Index,
-    Count         = Count,
+    List                    = List,
+    Index                   = Index,
+    Count                   = Count,
+    NodeCountProperties     = NodeCountProperties,
+    PartNodeCountProperties = PartNodeCountProperties,
 
     Data                         = Data,
     GatheredArray                = GatheredArray,
@@ -84,26 +89,28 @@ def implementation():
 <CFDMImplementation: >
 >>> i.classes()
 {'AuxiliaryCoordinate': cf.auxiliarycoordinate.AuxiliaryCoordinate,
- 'Bounds': cf.bounds.Bounds,
  'CellMeasure': cf.cellmeasure.CellMeasure,
  'CellMethod': cf.cellmethod.CellMethod,
- 'CoordinateConversion': cf.coordinateconversion.CoordinateConversion,
  'CoordinateReference': cf.coordinatereference.CoordinateReference,
- 'Count': cf.count.Count,
- 'Data': cf.data.data.Data,
- 'Datum': cf.datum.Datum,
  'DimensionCoordinate': cf.dimensioncoordinate.DimensionCoordinate,
  'DomainAncillary': cf.domainancillary.DomainAncillary,
  'DomainAxis': cf.domainaxis.DomainAxis,
  'Field': cf.field.Field,
  'FieldAncillary': cf.fieldancillary.FieldAncillary,
+ 'Bounds': cf.bounds.Bounds,
+ 'CoordinateConversion': cf.coordinateconversion.CoordinateConversion,
+ 'Datum': cf.datum.Datum,
+ 'Data': cf.data.data.Data,
  'GatheredArray': cf.data.gatheredarray.GatheredArray,
- 'Index': cf.index.Index,
- 'List': cf.list.List,
  'NetCDFArray': cf.data.netcdfarray.NetCDFArray,
  'RaggedContiguousArray': cf.data.raggedcontiguousarray.RaggedContiguousArray,
  'RaggedIndexedArray': cf.data.raggedindexedarray.RaggedIndexedArray,
- 'RaggedIndexedContiguousArray': cf.data.raggedindexedcontiguousarray.RaggedIndexedContiguousArray}
+ 'RaggedIndexedContiguousArray': cf.data.raggedindexedcontiguousarray.RaggedIndexedContiguousArray,
+ 'List': cf.list.List,
+ 'Count': cf.count.Count,
+ 'Index': cf.index.Index,
+ 'NodeCountProperties': cf.nodecountproperties.NodeCountProperties,
+ 'PartNodeCountProperties': cf.partnodecountproperties.PartNodeCountProperties}
 
     '''
     return _implementation.copy()

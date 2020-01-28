@@ -222,5 +222,6 @@ from .examplefield         import example_field
 
 from .read_write import (read,
                          write,
+                         implementation,
                          CFImplementation)
 

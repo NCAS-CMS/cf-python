@@ -1552,7 +1552,7 @@ dtype('float64')
 
     :Returns:
 
-        out: `bool`
+        `bool`
             Whether or not the variable matches the given criteria.
 
     **Examples:**
@@ -1931,7 +1931,7 @@ dtype('float64')
         units      = bounds.Units
         self_units = self.Units
 
-        if units and not units.equivalent(self_units):
+        if data is not None and units and not units.equivalent(self_units):
             raise ValueError(
                 "Can't set bounds: Bounds units of {!r} are not equivalent to {!r}".format(
                     bounds.Units, self.Units))
