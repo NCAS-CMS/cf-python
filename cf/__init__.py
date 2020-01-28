@@ -172,9 +172,12 @@ from .constructs import Constructs
 
 from .abstract             import Coordinate
 
-from .count                import Count
-from .index                import Index
-from .list                 import List
+from .count                   import Count
+from .index                   import Index
+from .list                    import List
+from .nodecountproperties     import NodeCountProperties
+from .partnodecountproperties import PartNodeCountProperties
+from .interiorring            import InteriorRing
 
 from .bounds               import Bounds
 from .domain               import Domain
