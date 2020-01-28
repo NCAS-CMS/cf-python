@@ -10,10 +10,12 @@ import numpy
 
 import cf
 
-tmpfile   = tempfile.mktemp('_cf-python_test')
-tmpfileh  = tempfile.mktemp('_cf-python_test')
-tmpfilec  = tempfile.mktemp('_cf-python_test')
-tmpfiles = [tmpfile, tmpfileh, tmpfilec]
+tmpfile   = tempfile.mktemp('_cf_test')
+tmpfileh  = tempfile.mktemp('_cf_test')
+tmpfilec  = tempfile.mktemp('_cf_test')
+tmpfile0  = tempfile.mktemp('.cf_test')
+tmpfile1  = tempfile.mktemp('.cf_test')
+tmpfiles = [tmpfile, tmpfileh, tmpfilec, tmpfile0, tmpfile1]
 def _remove_tmpfiles():
     '''TODO
     '''
@@ -319,7 +321,7 @@ class read_writeTest(unittest.TestCase):
 
         with self.assertRaises(Exception):
             x = cf.read('test_read_write.py')
-
+            
 
 #--- End: class
 
