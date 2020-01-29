@@ -10,9 +10,9 @@ import numpy
 
 import cf
 
-tmpfile   = tempfile.mktemp('_cf_test')
-tmpfileh  = tempfile.mktemp('_cf_test')
-tmpfilec  = tempfile.mktemp('_cf_test')
+tmpfile   = tempfile.mktemp('.cf_test')
+tmpfileh  = tempfile.mktemp('.cf_test')
+tmpfilec  = tempfile.mktemp('.cf_test')
 tmpfile0  = tempfile.mktemp('.cf_test')
 tmpfile1  = tempfile.mktemp('.cf_test')
 tmpfiles = [tmpfile, tmpfileh, tmpfilec, tmpfile0, tmpfile1]
@@ -333,9 +333,12 @@ class read_writeTest(unittest.TestCase):
             return
 
         f = cf.read(self.string_filename)
-        for i in range(0, 4):
 
-            j = i + int(len(f)/2)
+        n = int(len(f)/2)
+        
+        for i in range(0, n):
+
+            j = i + n
             self.assertTrue(f[i].data.equals(f[j].data, verbose=1),
                             "{!r} {!r}".format(f[i], f[j]))
             self.assertTrue(f[j].data.equals(f[i].data, verbose=1),

@@ -2027,7 +2027,7 @@ class PropertiesData(Properties):
     def shape(self):
         '''A tuple of the data array's dimension sizes.
 
-    .. seealso:: `data`, `hasdata`, `ndim`, `size`
+    .. seealso:: `data`, `has_data`, `ndim`, `size`
 
     **Examples:**
 
@@ -2041,26 +2041,26 @@ class PropertiesData(Properties):
     >>> f.shape
     ()
 
-    >>> f.hasdata
+    >>> f.has_data()
     True
-    >>> len(f.shape) == f.dnim
+    >>> len(f.shape) == f.ndim
     True
     >>> reduce(lambda x, y: x*y, f.shape, 1) == f.size
     True
 
         '''
         return self.data.shape
-
-
+    
+    
     @property
     def ndim(self):
         '''The number of dimensions in the data array.
 
-    .. seealso:: `data`, `hasdata`, `isscalar`, `shape`
+    .. seealso:: `data`, `has_data`, `isscalar`, `shape`
 
     **Examples:**
 
-    >>> f.hasdata
+    >>> f.has_data()
     True
     >>> f.shape
     (73, 96)
@@ -2080,7 +2080,7 @@ class PropertiesData(Properties):
     def size(self):
         '''The number of elements in the data array.
 
-    .. seealso:: `data`, `hasdata`, `ndim`, `shape`
+    .. seealso:: `data`, `has_data`, `ndim`, `shape`
 
     **Examples:**
 
@@ -2103,7 +2103,7 @@ class PropertiesData(Properties):
     >>> f.size
     1
 
-    >>> f.hasdata
+    >>> f.has_data()
     True
     >>> f.size == reduce(lambda x, y: x*y, f.shape, 1)
     True
@@ -2429,7 +2429,7 @@ class PropertiesData(Properties):
     >>> f.isscalar
     False
 
-    >>> f.hasdata
+    >>> f.has_data()
     False
     >>> f.isscalar
     False

@@ -1,3 +1,6 @@
+from functools import reduce
+from operator  import mul    
+
 from numpy import size as numpy_size
 
 from . import PropertiesData
@@ -68,7 +71,7 @@ class PropertiesDataBounds(PropertiesData):
         else:
             new = self.copy() #data=False)
 
-        data = self.data
+##        data = self.data
 
         if auxiliary_mask:
             findices = tuple(auxiliary_mask) + tuple(indices)
@@ -82,7 +85,9 @@ class PropertiesDataBounds(PropertiesData):
             print('{}.__getitem__: indices  = {}'.format(cname, indices)) # Pragma: no cover
             print('{}.__getitem__: findices = {}'.format(cname, findices)) # Pragma: no cover
 
-        new.set_data(data[findices], copy=False)
+        data = self.get_data(None)
+        if data is not None:
+            new.set_data(data[findices], copy=False)
 
         # Subspace the bounds, if there are any
         bounds = self.get_bounds(None)
@@ -90,7 +95,7 @@ class PropertiesDataBounds(PropertiesData):
             bounds_data = bounds.get_data(None)
             if bounds_data is not None:
                 findices = list(findices)
-                if data.ndim <= 1:
+                if data.ndim <= 1 and not self.has_geometry():
                     index = indices[0]
                     if isinstance(index, slice):
                         if index.step < 0:
@@ -661,6 +666,169 @@ class PropertiesDataBounds(PropertiesData):
 
         raise AttributeError(
             "Can't get lower bounds when there are no bounds nor coordinate data")
+
+    
+    @property
+    def ndim(self):
+        '''The number of dimensions in the data array.
+
+    .. seealso:: `data`, `has_data`, `isscalar`, `shape`, `size`
+
+    **Examples:**
+
+    >>> f.shape
+    (73, 96)
+    >>> f.ndim
+    2
+    >>> f.size
+    7008
+
+    >>> f.shape
+    (73, 1, 96)
+    >>> f.ndim
+    3
+    >>> f.size
+    7008
+
+    >>>  f.shape
+    (73,)
+    >>> f.ndim
+    1
+    >>> f.size
+    73
+
+    >>> f.shape
+    ()
+    >>> f.ndim
+    0
+    >>> f.size
+    1
+
+        '''
+        data = self.get_data(None)
+        if data is not None:
+            return data.ndim
+
+        bounds = self.get_bounds_data(None)
+        if bounds is not None:
+            ndim = bounds.ndim
+            if self.has_geometry():
+                ir = self.get_interior_ring(None)
+                if ir is not None:
+                    x = ir.ndim
+                
+
+                    
+                print ('SS',data.ndim, ndim)
+                shape = shape[:-ndim]
+
+            print(shape)
+
+            return ndim
+        
+        raise AttributeError("{!r} object has no attribute 'ndim'".format(
+            self.__class__.__name__))
+
+    
+    @property
+    def shape(self):
+        '''A tuple of the data array's dimension sizes.
+
+    .. seealso:: `data`, `has_data`, `ndim`, `size`
+
+    **Examples:**
+
+    >>> f.shape
+    (73, 96)
+    >>> f.ndim
+    2
+    >>> f.size
+    7008
+
+    >>> f.shape
+    (73, 1, 96)
+    >>> f.ndim
+    3
+    >>> f.size
+    7008
+
+    >>> f.shape
+    (73,)
+    >>> f.ndim
+    1
+    >>> f.size
+    73
+
+    >>> f.shape
+    ()
+    >>> f.ndim
+    0
+    >>> f.size
+    1
+
+        '''
+        data = self.get_data(None)
+        if data is not None:
+            return data.shape
+        
+        data = self.get_bounds_data(None)
+        if data is not None:
+            print (repr(self.bounds))
+            print (repr(data))
+            self.dump()
+            print (repr(self.get_part_node_count(None)))
+            shape = data.shape
+            if self.has_geometry():
+                ndim = self.get_interior_ring().ndim
+                print ('SS',data.ndim, ndim)
+                shape = shape[:-ndim]
+
+            print(shape)
+
+            return shape
+        
+        raise AttributeError("{!r} object has no attribute 'shape'".format(
+            self.__class__.__name__))
+
+
+    @property
+    def size(self):
+        '''The number of elements in the data array.
+
+    .. seealso:: `data`, `has_data`, `ndim`, `shape`
+
+    **Examples:**
+
+    >>> f.shape
+    (73, 96)
+    >>> f.ndim
+    2
+    >>> f.size
+    7008
+
+    >>> f.shape
+    (73, 1, 96)
+    >>> f.ndim
+    3
+    >>> f.size
+    7008
+
+    >>> f.shape
+    (73,)
+    >>> f.ndim
+    1
+    >>> f.size
+    73
+
+    >>> f.shape
+    ()
+    >>> f.ndim
+    0
+    >>> f.size
+    1
+
+        '''
+        return reduce(mul, self.shape, 1)
 
 
     @property

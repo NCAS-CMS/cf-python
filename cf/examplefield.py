@@ -13,6 +13,8 @@ from .data import Data
 
 from .constants import masked
 
+from .functions import CF
+
 
 def example_field(n):
     '''Return an example field construct.
@@ -147,7 +149,7 @@ def example_field(n):
     if n == 0:
         f = Field()
 
-        f.set_properties({'Conventions': 'CF-1.7', 'project': 'research', 'standard_name': 'specific_humidity', 'units': '1'})
+        f.set_properties({'Conventions': 'CF-'+CF(), 'project': 'research', 'standard_name': 'specific_humidity', 'units': '1'})
         f.nc_set_variable('q')
 
         c = DomainAxis(size=5)
@@ -207,7 +209,7 @@ def example_field(n):
     elif n == 1:
         f = Field()
 
-        f.set_properties({'Conventions': 'CF-1.7', 'project': 'research', 'standard_name': 'air_temperature', 'units': 'K'})
+        f.set_properties({'Conventions': 'CF-'+CF(), 'project': 'research', 'standard_name': 'air_temperature', 'units': 'K'})
         f.nc_set_variable('ta')
 
         c = DomainAxis(size=1)
@@ -389,7 +391,7 @@ def example_field(n):
 
         f = Field()
 
-        f.set_properties({'Conventions': 'CF-1.7', 'featureType': 'timeSeries', '_FillValue': -999.9, 'standard_name': 'precipitation_flux', 'units': 'kg m-2 day-1'})
+        f.set_properties({'Conventions': 'CF-'+CF(), 'featureType': 'timeSeries', '_FillValue': -999.9, 'standard_name': 'precipitation_flux', 'units': 'kg m-2 day-1'})
         f.nc_set_variable('p')
         f.nc_set_global_attributes({'Conventions': None, 'featureType': None})
 
@@ -466,7 +468,7 @@ def example_field(n):
     elif n == 4:
         f = Field()
 
-        f.set_properties({'Conventions': 'CF-1.7', 'featureType': 'timeSeriesProfile', '_FillValue': -999.9, 'standard_name': 'air_temperature', 'units': 'K'})
+        f.set_properties({'Conventions': 'CF-'+CF(), 'featureType': 'timeSeriesProfile', '_FillValue': -999.9, 'standard_name': 'air_temperature', 'units': 'K'})
         f.nc_set_variable('ta')
         f.nc_set_global_attribute('Conventions', None)
         f.nc_set_global_attribute('featureType', None)
@@ -565,7 +567,7 @@ def example_field(n):
     elif n == 2:
         f = Field()
 
-        f.set_properties({'Conventions': 'CF-1.7', 'standard_name': 'air_potential_temperature', 'units': 'K'})
+        f.set_properties({'Conventions': 'CF-'+CF(), 'standard_name': 'air_potential_temperature', 'units': 'K'})
         f.nc_set_variable('air_potential_temperature')
         f.nc_set_global_attribute('Conventions', None)
 
@@ -651,7 +653,7 @@ def example_field(n):
     elif n == 5:
         f = Field()
 
-        f.set_properties({'Conventions': 'CF-1.7', 'standard_name': 'air_potential_temperature', 'units': 'K'})
+        f.set_properties({'Conventions': 'CF-'+CF(), 'standard_name': 'air_potential_temperature', 'units': 'K'})
         f.nc_set_variable('air_potential_temperature')
         f.nc_set_global_attributes({'Conventions': None})
 

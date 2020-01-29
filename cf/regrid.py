@@ -99,7 +99,7 @@ class Regrid:
 
     :Returns:
 
-        manager: ESMF.Manager
+        `ESMF.Manager`
             A singleton instance of the ESMPy manager.
 
         '''
@@ -153,7 +153,7 @@ class Regrid:
 
     :Returns:
 
-        out: `ESMF.Grid`
+        `ESMF.Grid`
             The resulting ESMPy grid for use as a source or destination
             grid in regridding.
 
@@ -383,7 +383,7 @@ class Regrid:
 
     :Returns:
 
-        out: `ESMF.Field`
+        `ESMF.Field`
             The resulting ESMPy field for use as a source or
             destination field in regridding.
 
@@ -417,7 +417,7 @@ class Regrid:
 
     :Returns:
 
-        out: `Data`
+        `Data`
             The resulting single Data object.
 
         '''
@@ -446,7 +446,7 @@ class Regrid:
 
     :Returns:
 
-        out: `Data`
+        `Data`
             The resulting reconstructed Data object.
 
         '''
@@ -512,7 +512,7 @@ class Regrid:
 
     :Returns:
 
-        mass: `float`
+        `float`
             The mass of the data field is computed.
 
         '''

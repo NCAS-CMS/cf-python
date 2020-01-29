@@ -2204,7 +2204,6 @@ def _section(o, axes=None, data=False, stop=None, chunks=False,
                 axis_indices.append(o.get_data_axes().index(key))
             except ValueError:
                 pass
-        #--- End: for
     #--- End: if
 
     # find the size of each dimension
@@ -2236,7 +2235,6 @@ def _section(o, axes=None, data=False, stop=None, chunks=False,
             else:
                 steps[index] = int(axis_size/n_chunks)
                 break
-        #--- End: for
     else:
         steps = [size if i in axis_indices else 1 for i, size in enumerate(sizes)]
 
