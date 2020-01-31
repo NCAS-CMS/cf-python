@@ -713,16 +713,9 @@ class PropertiesDataBounds(PropertiesData):
         if bounds is not None:
             ndim = bounds.ndim
             if self.has_geometry():
-                ir = self.get_interior_ring(None)
-                if ir is not None:
-                    x = ir.ndim
-                
-
-                    
-                print ('SS',data.ndim, ndim)
-                shape = shape[:-ndim]
-
-            print(shape)
+               ndim -= 2
+            else:
+               ndim -= 1
 
             return ndim
         
@@ -770,23 +763,17 @@ class PropertiesDataBounds(PropertiesData):
         data = self.get_data(None)
         if data is not None:
             return data.shape
-        
-        data = self.get_bounds_data(None)
-        if data is not None:
-            print (repr(self.bounds))
-            print (repr(data))
-            self.dump()
-            print (repr(self.get_part_node_count(None)))
-            shape = data.shape
-            if self.has_geometry():
-                ndim = self.get_interior_ring().ndim
-                print ('SS',data.ndim, ndim)
-                shape = shape[:-ndim]
 
-            print(shape)
+        bounds = self.get_bounds_data(None)
+        if bounds is not None:
+            shape = bounds.shape
+            if self.has_geometry():
+               shape = shape[:-2]
+            else:
+                shape = shape[:-1]
 
             return shape
-        
+       
         raise AttributeError("{!r} object has no attribute 'shape'".format(
             self.__class__.__name__))
 
