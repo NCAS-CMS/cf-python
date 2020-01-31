@@ -6,10 +6,12 @@ sample_files=$PWD
 test_file=delme_cfa.nc
 test_dir=delme_cfa_dir
 
-mkdir -p $test_dir
+rm -fr $test_dir $test_file
+mkdir $test_dir
 
 for opt in vs vm vc
 do
+#    echo $opt
   cfa    -$opt $sample_files/*[np][cp] >/dev/null
   cfa -1 -$opt $sample_files/*[np][cp] >/dev/null
   for f in `ls $sample_files/*.[np][cp] | grep -v $test_file`

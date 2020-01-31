@@ -1636,16 +1636,16 @@ class PropertiesData(Properties):
 
     * Invalid values in the results of arithmetic operations only
       occur if the raising of `FloatingPointError` exceptions has been
-      suppressed by `cf.data.seterr`.
+      suppressed by `cf.Data.seterr`.
 
     * If the raising of `FloatingPointError` exceptions has been
       allowed then invalid values in the results of arithmetic
       operations it is possible for them to be automatically converted
       to masked values, depending on the setting of
-      `cf.data.mask_fpe`. In this case, such automatic conversion
+      `cf.Data.mask_fpe`. In this case, such automatic conversion
       might be faster than calling `mask_invalid`.
 
-    .. seealso:: `cf.data.mask_fpe`, `cf.data.seterr`
+    .. seealso:: `cf.Data.mask_fpe`, `cf.Data.seterr`
 
     :Parameters:
 
@@ -1667,7 +1667,7 @@ class PropertiesData(Properties):
     >>> print(g.array)
     [ 1.  2.]
 
-    >>> old = cf.data.seterr('ignore')
+    >>> old = cf.Data.seterr('ignore')
     >>> h = g/f
     >>> print(h.array)
     [ inf   2.]
@@ -1682,8 +1682,8 @@ class PropertiesData(Properties):
     >>> print(h.array)
     [1.  --]
 
-    >>> old = cf.data.seterr('raise')
-    >>> old = cf.data.mask_fpe(True)
+    >>> old = cf.Data.seterr('raise')
+    >>> old = cf.Data.mask_fpe(True)
     >>> print((g/f).array)
     [ --  2]
     >>> print((g**12345).array)
@@ -2023,93 +2023,93 @@ class PropertiesData(Properties):
         return Subspace(self)
 
 
-    @property
-    def shape(self):
-        '''A tuple of the data array's dimension sizes.
-
-    .. seealso:: `data`, `has_data`, `ndim`, `size`
-
-    **Examples:**
-
-    >>> f.shape
-    (73, 96)
-    >>> f.ndim
-    2
-
-    >>> f.ndim
-    0
-    >>> f.shape
-    ()
-
-    >>> f.has_data()
-    True
-    >>> len(f.shape) == f.ndim
-    True
-    >>> reduce(lambda x, y: x*y, f.shape, 1) == f.size
-    True
-
-        '''
-        return self.data.shape
-    
-    
-    @property
-    def ndim(self):
-        '''The number of dimensions in the data array.
-
-    .. seealso:: `data`, `has_data`, `isscalar`, `shape`
-
-    **Examples:**
-
-    >>> f.has_data()
-    True
-    >>> f.shape
-    (73, 96)
-    >>> f.ndim
-    2
-
-    >>> f.shape
-    ()
-    >>> f.ndim
-    0
-
-        '''
-        return self.data.ndim
-
-
-    @property
-    def size(self):
-        '''The number of elements in the data array.
-
-    .. seealso:: `data`, `has_data`, `ndim`, `shape`
-
-    **Examples:**
-
-    >>> f.shape
-    (73, 96)
-    >>> f.size
-    7008
-
-    >>> f.shape
-    ()
-    >>> f.ndim
-    0
-    >>> f.size
-    1
-
-    >>> f.shape
-    (1, 1, 1)
-    >>> f.ndim
-    3
-    >>> f.size
-    1
-
-    >>> f.has_data()
-    True
-    >>> f.size == reduce(lambda x, y: x*y, f.shape, 1)
-    True
-
-        '''
-        return self.data.size
+#    @property
+#    def shape(self):
+#        '''A tuple of the data array's dimension sizes.
+#
+#    .. seealso:: `data`, `has_data`, `ndim`, `size`
+#
+#    **Examples:**
+#
+#    >>> f.shape
+#    (73, 96)
+#    >>> f.ndim
+#    2
+#
+#    >>> f.ndim
+#    0
+#    >>> f.shape
+#    ()
+#
+#    >>> f.has_data()
+#    True
+#    >>> len(f.shape) == f.ndim
+#    True
+#    >>> reduce(lambda x, y: x*y, f.shape, 1) == f.size
+#    True
+#
+#        '''
+#        return self.data.shape
+#    
+#    
+#    @property
+#    def ndim(self):
+#        '''The number of dimensions in the data array.
+#
+#    .. seealso:: `data`, `has_data`, `isscalar`, `shape`
+#
+#    **Examples:**
+#
+#    >>> f.has_data()
+#    True
+#    >>> f.shape
+#    (73, 96)
+#    >>> f.ndim
+#    2
+#
+#    >>> f.shape
+#    ()
+#    >>> f.ndim
+#    0
+#
+#        '''
+#        return self.data.ndim
+#
+#
+#    @property
+#    def size(self):
+#        '''The number of elements in the data array.
+#
+#    .. seealso:: `data`, `has_data`, `ndim`, `shape`
+#
+#    **Examples:**
+#
+#    >>> f.shape
+#    (73, 96)
+#    >>> f.size
+#    7008
+#
+#    >>> f.shape
+#    ()
+#    >>> f.ndim
+#    0
+#    >>> f.size
+#    1
+#
+#    >>> f.shape
+#    (1, 1, 1)
+#    >>> f.ndim
+#    3
+#    >>> f.size
+#    1
+#
+#    >>> f.has_data()
+#    True
+#    >>> f.size == reduce(lambda x, y: x*y, f.shape, 1)
+#    True
+#
+#        '''
+#        return self.data.size
 
 
     @property

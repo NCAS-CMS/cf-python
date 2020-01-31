@@ -89,16 +89,22 @@ class PropertiesDataBounds(PropertiesData):
         if data is not None:
             new.set_data(data[findices], copy=False)
 
+        # Subspace the interior ring array, if there is one. 
+        interior_ring = self.get_interior_ring(None) 
+        if interior_ring is not None:
+             new.set_interior_ring(interior_ring[tuple(indices)], copy=False) 
+ 
         # Subspace the bounds, if there are any
         bounds = self.get_bounds(None)
         if bounds is not None:
             bounds_data = bounds.get_data(None)
             if bounds_data is not None:
                 findices = list(findices)
-                if data.ndim <= 1 and not self.has_geometry():
+#                if data.ndim <= 1 and not self.has_geometry():
+                if bounds.ndim <= 2:
                     index = indices[0]
                     if isinstance(index, slice):
-                        if index.step < 0:
+                        if index.step and index.step < 0:
                             # This scalar or 1-d variable has been
                             # reversed so reverse its bounds (as per
                             # 7.1 of the conventions)
@@ -484,9 +490,12 @@ class PropertiesDataBounds(PropertiesData):
         return False
 
 
-    def _apply_superclass_data_oper(
-            self, v, oper_name, *oper_args, bounds=True, **oper_kwargs):
+    def _apply_superclass_data_oper(self, v, oper_name, *oper_args,
+                                    bounds=True, interior_ring=False,
+                                    **oper_kwargs):
         '''Define an operation that can be applied to the data array.
+
+    .. versionadded:: 3.1.0
 
     :Parameters:
 
@@ -506,7 +515,12 @@ class PropertiesDataBounds(PropertiesData):
 
         oper_args, oper_kwargs: all of the arguments for `oper_name`.
 
-        bounds: whether or not there are cell bounds (to consider).
+        bounds: `bool`
+            Whether or not there are cell bounds (to consider).
+
+        interior_ring: `bool`
+            Whether or not a geometry interior ring variable needs to
+            be operated on.
 
         '''
         v = getattr(super(), oper_name)(*oper_args, **oper_kwargs)
@@ -520,9 +534,18 @@ class PropertiesDataBounds(PropertiesData):
             if bounds is not None:
                 getattr(bounds, oper_name)(*oper_args, inplace=True,
                                            **oper_kwargs)
-
+        #--- End: if
+        
+        if interior_ring:
+            interior_ring = v.get_interior_ring(None)
+            if interior_ring is not None:
+                getattr(interior_ring, oper_name)(*oper_args, inplace=True,
+                                                  **oper_kwargs)
+        #--- End: if
+        
         return v
 
+    
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
@@ -668,154 +691,154 @@ class PropertiesDataBounds(PropertiesData):
             "Can't get lower bounds when there are no bounds nor coordinate data")
 
     
-    @property
-    def ndim(self):
-        '''The number of dimensions in the data array.
-
-    .. seealso:: `data`, `has_data`, `isscalar`, `shape`, `size`
-
-    **Examples:**
-
-    >>> f.shape
-    (73, 96)
-    >>> f.ndim
-    2
-    >>> f.size
-    7008
-
-    >>> f.shape
-    (73, 1, 96)
-    >>> f.ndim
-    3
-    >>> f.size
-    7008
-
-    >>>  f.shape
-    (73,)
-    >>> f.ndim
-    1
-    >>> f.size
-    73
-
-    >>> f.shape
-    ()
-    >>> f.ndim
-    0
-    >>> f.size
-    1
-
-        '''
-        data = self.get_data(None)
-        if data is not None:
-            return data.ndim
-
-        bounds = self.get_bounds_data(None)
-        if bounds is not None:
-            ndim = bounds.ndim
-            if self.has_geometry():
-               ndim -= 2
-            else:
-               ndim -= 1
-
-            return ndim
-        
-        raise AttributeError("{!r} object has no attribute 'ndim'".format(
-            self.__class__.__name__))
-
-    
-    @property
-    def shape(self):
-        '''A tuple of the data array's dimension sizes.
-
-    .. seealso:: `data`, `has_data`, `ndim`, `size`
-
-    **Examples:**
-
-    >>> f.shape
-    (73, 96)
-    >>> f.ndim
-    2
-    >>> f.size
-    7008
-
-    >>> f.shape
-    (73, 1, 96)
-    >>> f.ndim
-    3
-    >>> f.size
-    7008
-
-    >>> f.shape
-    (73,)
-    >>> f.ndim
-    1
-    >>> f.size
-    73
-
-    >>> f.shape
-    ()
-    >>> f.ndim
-    0
-    >>> f.size
-    1
-
-        '''
-        data = self.get_data(None)
-        if data is not None:
-            return data.shape
-
-        bounds = self.get_bounds_data(None)
-        if bounds is not None:
-            shape = bounds.shape
-            if self.has_geometry():
-               shape = shape[:-2]
-            else:
-                shape = shape[:-1]
-
-            return shape
-       
-        raise AttributeError("{!r} object has no attribute 'shape'".format(
-            self.__class__.__name__))
-
-
-    @property
-    def size(self):
-        '''The number of elements in the data array.
-
-    .. seealso:: `data`, `has_data`, `ndim`, `shape`
-
-    **Examples:**
-
-    >>> f.shape
-    (73, 96)
-    >>> f.ndim
-    2
-    >>> f.size
-    7008
-
-    >>> f.shape
-    (73, 1, 96)
-    >>> f.ndim
-    3
-    >>> f.size
-    7008
-
-    >>> f.shape
-    (73,)
-    >>> f.ndim
-    1
-    >>> f.size
-    73
-
-    >>> f.shape
-    ()
-    >>> f.ndim
-    0
-    >>> f.size
-    1
-
-        '''
-        return reduce(mul, self.shape, 1)
+#    @property
+#    def ndim(self):
+#        '''The number of dimensions in the data array.
+#
+#    .. seealso:: `data`, `has_data`, `isscalar`, `shape`, `size`
+#
+#    **Examples:**
+#
+#    >>> f.shape
+#    (73, 96)
+#    >>> f.ndim
+#    2
+#    >>> f.size
+#    7008
+#
+#    >>> f.shape
+#    (73, 1, 96)
+#    >>> f.ndim
+#    3
+#    >>> f.size
+#    7008
+#
+#    >>>  f.shape
+#    (73,)
+#    >>> f.ndim
+#    1
+#    >>> f.size
+#    73
+#
+#    >>> f.shape
+#    ()
+#    >>> f.ndim
+#    0
+#    >>> f.size
+#    1
+#
+#        '''
+#        data = self.get_data(None)
+#        if data is not None:
+#            return data.ndim
+#
+#        bounds = self.get_bounds_data(None)
+#        if bounds is not None:
+#            ndim = bounds.ndim
+#            if self.has_geometry():
+#               ndim -= 2
+#            else:
+#               ndim -= 1
+#
+#            return ndim
+#        
+#        raise AttributeError("{!r} object has no attribute 'ndim'".format(
+#            self.__class__.__name__))
+#
+#    
+#    @property
+#    def shape(self):
+#        '''A tuple of the data array's dimension sizes.
+#
+#    .. seealso:: `data`, `has_data`, `ndim`, `size`
+#
+#    **Examples:**
+#
+#    >>> f.shape
+#    (73, 96)
+#    >>> f.ndim
+#    2
+#    >>> f.size
+#    7008
+#
+#    >>> f.shape
+#    (73, 1, 96)
+#    >>> f.ndim
+#    3
+#    >>> f.size
+#    7008
+#
+#    >>> f.shape
+#    (73,)
+#    >>> f.ndim
+#    1
+#    >>> f.size
+#    73
+#
+#    >>> f.shape
+#    ()
+#    >>> f.ndim
+#    0
+#    >>> f.size
+#    1
+#
+#        '''
+#        data = self.get_data(None)
+#        if data is not None:
+#            return data.shape
+#
+#        bounds = self.get_bounds_data(None)
+#        if bounds is not None:
+#            shape = bounds.shape
+#            if self.has_geometry():
+#               shape = shape[:-2]
+#            else:
+#                shape = shape[:-1]
+#
+#            return shape
+#       
+#        raise AttributeError("{!r} object has no attribute 'shape'".format(
+#            self.__class__.__name__))
+#
+#
+#    @property
+#    def size(self):
+#        '''The number of elements in the data array.
+#
+#    .. seealso:: `data`, `has_data`, `ndim`, `shape`
+#
+#    **Examples:**
+#
+#    >>> f.shape
+#    (73, 96)
+#    >>> f.ndim
+#    2
+#    >>> f.size
+#    7008
+#
+#    >>> f.shape
+#    (73, 1, 96)
+#    >>> f.ndim
+#    3
+#    >>> f.size
+#    7008
+#
+#    >>> f.shape
+#    (73,)
+#    >>> f.ndim
+#    1
+#    >>> f.size
+#    73
+#
+#    >>> f.shape
+#    ()
+#    >>> f.ndim
+#    0
+#    >>> f.size
+#    1
+#
+#        '''
+#        return reduce(mul, self.shape, 1)
 
 
     @property
@@ -1120,6 +1143,11 @@ dtype('float64')
         if bounds is not None:
             bounds.chunk(chunksize)
 
+        # Chunk the interior ring, if it exists.
+        interior_ring = self.get_interior_ring(None)
+        if interior_ring is not None:
+            interior_ring.chunk(chunksize)
+
 
     @_deprecation_error_i_kwarg
     @_inplace_enabled
@@ -1196,7 +1224,11 @@ dtype('float64')
         bounds = self.get_bounds(None)
         if bounds is not None:
             bounds.close()
-
+            
+        interior_ring = self.get_interior_ring(None)
+        if interior_ring is not None:
+            interior_ring.close()
+            
 
     @classmethod
     def concatenate(cls, variables, axis=0, _preserve=True):
@@ -1225,6 +1257,14 @@ dtype('float64')
                                         axis=axis,
                                         _preserve=_preserve)
             out.set_bounds(bounds, copy=False)
+
+        interior_ring = variable0.get_interior_ring(None)
+        if interior_ring is not None:
+            interior_ring = interior_ring.concatenate(
+                [v.get_interior_ring() for v in variables],
+                axis=axis,
+                _preserve=_preserve)
+            out.set_interior_ring(interior_ring, copy=False)
 
         return out
 
@@ -1321,6 +1361,11 @@ dtype('float64')
             axes = self._parse_axes(axes)
             bounds.cyclic(axes, iscyclic)
 
+        interior_ring = self.get_interior_ring(None)
+        if interior_ring is not None:
+            axes = self._parse_axes(axes)            
+            interior_ring.cyclic(axes, iscyclic)
+            
         return out
 
 
@@ -1632,6 +1677,11 @@ dtype('float64')
             axes = self._parse_axes(axes)
             bounds.flatten(axes, inplace=True)
 
+        interior_ring = v.get_interior_ring(None)
+        if interior_ring is not None:
+            axes = self._parse_axes(axes)            
+            interior_ring.flatten(axes, inplace=True)
+
         return v
 
     @_deprecation_error_i_kwarg
@@ -1912,6 +1962,10 @@ dtype('float64')
         if bounds is not None:
             out.update(bounds.files())
 
+        interior_ring = self.get_interior_ring(None)
+        if bounds is not None:
+            out.update(interior_ring.files())
+
         return out
 
 
@@ -1956,6 +2010,15 @@ dtype('float64')
         v = _inplace_enabled_define_and_cleanup(self)
         super(PropertiesDataBounds, v).flip(axes=axes, inplace=True)
 
+        interior_ring = v.get_interior_ring(None)
+        if interior_ring is not None:
+            # --------------------------------------------------------
+            # Flip the interior ring. Do this before flipping the
+            # bounds because the axes argument might get changed
+            # during that operation.
+            # --------------------------------------------------------
+            interior_ring.flip(axes, inplace=True)
+
         bounds = v.get_bounds(None)
         if bounds is not None:
             # --------------------------------------------------------
@@ -1967,10 +2030,11 @@ dtype('float64')
             # the variable has 2 or more dimensions then do not flip
             # the trailing dimension.
             # --------------------------------------------------------
-            if not v.ndim:
+            ndim = bounds.ndim
+            if ndim == 1:
                 # Flip the bounds of a 0-d variable
                 axes = (0,)
-            elif v.ndim == 1:
+            elif ndim == 2:
                 # Flip the bounds of a 1-d variable
                 if axes in (0, 1):
                     axes = (0, 1)
@@ -1978,10 +2042,11 @@ dtype('float64')
                     axes = v._parse_axes(axes) + [-1]
             else:
                 # Do not flip the bounds of an N-d variable (N >= 2)
+                # nor a geometry variable
                 axes = v._parse_axes(axes)
 
             bounds.flip(axes, inplace=True)
-
+            
         return v
 
 
@@ -2544,39 +2609,57 @@ dtype('float64')
 
 
     def squeeze(self, axes=None, inplace=False, i=False):
-        '''Remove size 1 dimensions from the data array
+        '''Remove size one axes from the data array.
 
-    .. seealso:: `insert_dimension`, `flip`, `transpose`
-
+    By default all size one axes are removed, but particular size one
+    axes may be selected for removal. Corresponding axes are also
+    removed from the bounds data array, if present.
+    
+    .. seealso:: `flip`, `insert_dimension`, `transpose`
+    
     :Parameters:
-
-        axes: (sequence of) `int`, optional
-            The size 1 axes to remove. By default, all size 1 axes are
-            removed. Size 1 axes for removal are identified by their
-            integer positions in the data array.
-
-
+    
+        axes: (sequence of) `int`
+            The positions of the size one axes to be removed. By
+            default all size one axes are removed. Each axis is
+            identified by its original integer position. Negative
+            integers counting from the last position are allowed.
+    
+            *Parameter example:*
+              ``axes=0``
+    
+            *Parameter example:*
+              ``axes=-2``
+    
+            *Parameter example:*
+              ``axes=[2, 0]``
+    
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-
+    
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
 
     :Returns:
-
-            The construct with squeezed data. If the operation was
-            in-place then `None` is returned.
-
+    
+            The new construct with removed data axes. If the operation
+            was in-place then `None` is returned.
+    
     **Examples:**
-
-
-    TODO
-
-    >>> f.squeeze()
-
-    >>> f.squeeze(1)
-
-    >>> f.squeeze([2, -1])
+    
+    >>> f.shape
+    (1, 73, 1, 96)
+    >>> f.squeeze().shape
+    (73, 96)
+    >>> f.squeeze(0).shape
+    (73, 1, 96)
+    >>> g = f.squeeze([-3, 2])
+    >>> g.shape
+    (73, 96)
+    >>> f.bounds.shape
+    (1, 73, 1, 96, 4)
+    >>> g.shape
+    (73, 96, 4)
 
         '''
         if i:
@@ -2937,7 +3020,7 @@ dtype('float64')
         '''
         return self._apply_superclass_data_oper(
             _inplace_enabled_define_and_cleanup(self), 'roll', iaxis,
-            shift, inplace=inplace, i=i)
+            shift, interior_ring=True, inplace=inplace, i=i)
 
 
     # ----------------------------------------------------------------

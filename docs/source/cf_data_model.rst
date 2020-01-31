@@ -68,6 +68,7 @@ The physical nature of individual data values are described by
 - **cell method constructs** (corresponding to a CF-netCDF
   cell_methods attribute of data variable).
 
+----
 
 .. [#cfdm] Hassell, D., Gregory, J., Blower, J., Lawrence, B. N., and
            Taylor, K. E.: A data model of the Climate and Forecast

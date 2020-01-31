@@ -55,7 +55,7 @@ partially conformant may nonetheless be modified in memory.
 
    >>> import cf
    >>> f = cf.read('file.nc')
-   >>> print(f)
+   >>> print(f[0])
    Field: air_temperature (ncvar%tas)
    ----------------------------------
    Data            : air_temperature(time(12), latitude(64), longitude(128)) K
@@ -123,6 +123,8 @@ range plotting possibilities with example code.
 
    *Example output of cfplot displaying a cf field construct.*
 
+----
+   
 .. [#cfdm] Hassell, D., Gregory, J., Blower, J., Lawrence, B. N., and
            Taylor, K. E.: A data model of the Climate and Forecast
            metadata conventions (CF-1.6) with a software

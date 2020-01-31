@@ -246,7 +246,8 @@ class DSGTest(unittest.TestCase):
         # Subspacing
         g = g[1, ...]
         c = g.construct('longitude')
-        self.assertTrue(c.interior_ring.data.shape[0] == 1)
+
+        self.assertTrue(c.interior_ring.data.shape[0] == 1, c.interior_ring.data.shape)
         self.assertTrue(c.interior_ring.data.ndim == c.data.ndim + 1)
         self.assertTrue(c.interior_ring.data.shape[0] == c.data.shape[0])        
 
@@ -271,6 +272,38 @@ class DSGTest(unittest.TestCase):
         pnc.nc_set_dimension('new_dim_name')
         cf.write(f, self.tempfilename)
 
+        
+    def test_geometry_interior_ring_roll(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = cf.read(self.geometry_interior_ring_file, verbose=False)[0]
+
+        g = f.roll(0, 1)
+        self.assertFalse(f.equals(g))
+        h = g.roll(0, 1)
+        self.assertTrue(f.equals(h))
+
+        for r in (-4, -2, 0, 2, 4):
+            h = f.roll(0, r)
+            self.assertTrue(f.equals(h))
+        
+        for r in (-3, -1, 1, 3):
+            h = f.roll(0, r)
+            self.assertFalse(f.equals(h))
+        
+                
+    def test_geometry_interior_ring_flip(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = cf.read(self.geometry_interior_ring_file, verbose=False)[0]
+
+        g = f.flip(0)
+        self.assertFalse(f.equals(g))
+        h = g.flip(0)
+        self.assertTrue(f.equals(h))
+       
         
 #--- End: class
 
