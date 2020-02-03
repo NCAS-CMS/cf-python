@@ -48,7 +48,6 @@ class AuxiliaryCoordinate(abstract.Coordinate,
         '''
         return super().__repr__().replace('<', '<CF ', 1)
 
-
     @property
     def isauxiliary(self):
         '''True, denoting that the variable is a aucilliary coordinate object.
@@ -65,5 +64,4 @@ class AuxiliaryCoordinate(abstract.Coordinate,
         return True
 
 
-#--- End: class
-
+# --- End: class
