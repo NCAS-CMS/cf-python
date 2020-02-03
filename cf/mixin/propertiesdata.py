@@ -799,18 +799,24 @@ class PropertiesData(Properties):
         return True
 
 
-    def _parse_axes(self, axes):
-        '''TODO
-
-        '''
-        if axes is None:
-            return axes
-
-        if isinstance(axes, int):
-            axes = (axes,)
-
-        ndim = self.ndim
-        return [(i + ndim if i < 0 else i) for i in axes]
+#    def _parse_axes(self, axes):
+#        '''TODO
+#
+#
+#    :Returns:
+#        
+#        `list`
+#
+#        '''
+#        ndim = self.ndim
+#
+#        if axes is None:
+#            return list(range(ndim))
+#
+#        if isinstance(axes, int):
+#            axes = (axes,)
+#
+#        return [(i + ndim if i < 0 else i) for i in axes]
 
 
 #    def _parse_match(self, match):
@@ -997,9 +1003,10 @@ class PropertiesData(Properties):
 
             TODO: is there a way to prevent/bypass the above?
 
-        oper_args, oper_kwargs: all of the arguments for `oper_name`.
+        oper_args, oper_kwargs: all of the arguments for *oper_name*.
 
         delete_props: whether or not to delete name properties.
+
         '''
         # For explicitness on a per-method basis, apply inplace decorator
         # to individual methods calling this method, rather than decorating

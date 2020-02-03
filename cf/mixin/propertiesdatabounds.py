@@ -1683,6 +1683,7 @@ dtype('float64')
             interior_ring.flatten(axes, inplace=True)
 
         return v
+    
 
     @_deprecation_error_i_kwarg
     @_inplace_enabled

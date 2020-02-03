@@ -3,7 +3,8 @@ import cfdm
 from . import mixin
 
 
-class Bounds(mixin.PropertiesData,
+class Bounds(mixin.Coordinate,
+             mixin.PropertiesData,
              cfdm.Bounds):
     '''A cell bounds component of a coordinate or domain ancillary
     construct of the CF data model.

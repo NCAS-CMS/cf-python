@@ -1,14 +1,7 @@
-### DEPRECATED at 3.2.0 ###
-
-from .. import mixin
-
-from ..data.data import Data
-
-
-class Coordinate(mixin.PropertiesDataBounds):
+class Coordinate():
     '''Mixin class for dimension or auxiliary coordinate constructs.
 
-    .. versionadded:: 3.0.0
+    .. versionadded:: 3.2.0
 
     '''
     # ----------------------------------------------------------------

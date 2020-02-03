@@ -303,8 +303,36 @@ class DSGTest(unittest.TestCase):
         self.assertFalse(f.equals(g))
         h = g.flip(0)
         self.assertTrue(f.equals(h))
-       
+    
         
+    def test_geometry_interior_ring_flatten(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = cf.read(self.geometry_interior_ring_file, verbose=False)[0]
+
+        for i in (0, 1):
+            self.assertTrue(f.equals(f.flatten(i), verbose=1))
+
+                    
+    def test_geometry_interior_ring_close(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = cf.read(self.geometry_interior_ring_file, verbose=False)[0]
+
+        self.assertTrue(f.close() is None)
+
+            
+    def test_geometry_interior_ring_files(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = cf.read(self.geometry_interior_ring_file, verbose=False)[0]
+
+        self.assertTrue(isinstance(f.files(), set))
+
+            
 #--- End: class
 
 

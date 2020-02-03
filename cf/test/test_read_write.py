@@ -43,7 +43,7 @@ class read_writeTest(unittest.TestCase):
 #    test_only = ['NOTHING!!!!!']
 #    test_only = ['test_write_reference_datetime']
 #    test_only = ['test_read_write_unlimited']
-#    test_only = ['test_read_write_format']
+    test_only = ['test_read_write_format']
 #    test_only = ['test_read_CDL']
 #    test_only = ['test_read_directory']
 #    test_only = ['test_read_write_netCDF4_compress_shuffle']
@@ -167,19 +167,23 @@ class read_writeTest(unittest.TestCase):
 
         for chunksize in self.chunk_sizes:
             cf.CHUNKSIZE(chunksize)
-            for fmt in (
-                        #'NETCDF3_CLASSIC',
-                        #'NETCDF3_64BIT',
-                        #'NETCDF4',
-                        #'NETCDF4_CLASSIC',
-                        #'CFA3',
+            for fmt in ('NETCDF3_CLASSIC',
+                        'NETCDF3_64BIT',
+                        'NETCDF3_64BIT_OFFSET',
+                        'NETCDF3_64BIT_DATA',
+                        'NETCDF4',
+                        'NETCDF4_CLASSIC',
                         'CFA',):
+                print (fmt)
                 f = cf.read(self.filename)[0]
+                print (f)
                 f0 = f.copy()
-                cf.write(f, tmpfile, fmt=fmt)
-                g = cf.read(tmpfile)
-                self.assertTrue(len(g) == 1, g)
+                cf.write(f, 'tmpfile', fmt=fmt, verbose=1)
+                g = cf.read('tmpfile')
+                print (g[0])
+                self.assertTrue(len(g) == 1, 'g = '+repr(g))
                 g0 = g[0]
+
                 self.assertTrue(f0.equals(g0, verbose=1),
                                 'Bad read/write of format {!r}'.format(fmt))
         #--- End: for
