@@ -44,7 +44,6 @@ class Bounds(mixin.PropertiesData,
         '''
         return super().__repr__().replace('<', '<CF ', 1)
 
-
     def contiguous(self, overlap=True, direction=None):
         '''Return True if the bounds are contiguous.
 
@@ -79,33 +78,33 @@ class Bounds(mixin.PropertiesData,
             for j in range(data.shape[0] - 1):
                 for i in range(data.shape[1] - 1):
                     # Check cells (j, i) and cells (j, i+1) are contiguous
-                    if (bnd[j,i,1] != bnd[j,i+1,0] or
-                        bnd[j,i,2] != bnd[j,i+1,3]):
+                    if (bnd[j, i, 1] != bnd[j, i+1, 0] or
+                            bnd[j, i, 2] != bnd[j, i+1, 3]):
                         return False
 
                     # Check cells (j, i) and (j+1, i) are contiguous
-                    if (bnd[j,i,3] != bnd[j+1,i,0] or
-                        bnd[j,i,2] != bnd[j+1,i,1]):
+                    if (bnd[j, i, 3] != bnd[j+1, i, 0] or
+                            bnd[j, i, 2] != bnd[j+1, i, 1]):
                         return False
-            #--- End: for
+            # --- End: for
 
             return True
 
         if nbounds > 2 or data.ndim > 2:
-            raise ValueError("Can't tell if multidimensional bounds are contiguous")
+            raise ValueError(
+                "Can't tell if multidimensional bounds are contiguous")
 
         if not overlap:
             return data[1:, 0].equals(data[:-1, 1])
         else:
             if direction is None:
                 b = data[(0,)*(data.ndim-1)].array
-                direction =  b.item(0,) < b.item(1,)
+                direction = b.item(0,) < b.item(1,)
 
             if direction:
                 return (data[1:, 0] <= data[:-1, 1]).all()
             else:
                 return (data[1:, 0] >= data[:-1, 1]).all()
-
 
     @_deprecated_kwarg_check('relaxed_identity')
     def identity(self, default='', strict=False, relaxed=False,
@@ -176,4 +175,4 @@ class Bounds(mixin.PropertiesData,
                                 relaxed=relaxed, nc_only=nc_only)
 
 
-#--- End: class
+# --- End: class
