@@ -678,6 +678,10 @@ def _read_a_file(filename, aggregate=True, aggregate_options=None,
     extra_read_vars = {'chunk'            : chunk,
                        'fmt'              : selected_fmt,
                        'ignore_read_error': ignore_read_error,
+                       # 'cfa' defaults to False. If the file has
+                       # "CFA" in its Conventions global attribute
+                       # then 'cfa' will be changed to True in
+                       # netcdf.read
                        'cfa'              : False,
     }
 

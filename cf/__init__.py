@@ -61,6 +61,10 @@ See the cf-python home page (https://ncas-cms.github.io/cf-python) for
 documentation, installation and source code.
 
 '''
+__Conventions__  = 'CF-1.8'
+__author__       = 'David Hassell'
+__date__         = '2020-??-??'
+__version__      = '3.2.0a1'
 
 _requires = ('numpy',
              'netCDF4',
@@ -70,17 +74,13 @@ _requires = ('numpy',
              'psutil',
 )
 
-_error0 = 'cf requires the modules {}. '.format(', '.join(_requires))
+_error0 = 'cf v{} requires the modules {}. '.format(__version__, ', '.join(_requires))
 
 try:
     import cfdm
 except ImportError as error1:
     raise ImportError(_error0+str(error1))
 
-__Conventions__  = 'CF-1.8'
-__author__       = 'David Hassell'
-__date__         = '2020-??-??'
-__version__      = '3.2.0'
 __cf_version__   = cfdm.core.__cf_version__
 
 from distutils.version import LooseVersion
