@@ -619,7 +619,7 @@ class CellMethod(cfdm.CellMethod):
             axis_map = {}
         _DEPRECATED_ERROR_METHOD(
             self, 'write', "Use 'str(cell_method)' instead."
-        )  # Pragma: no cover
+        )  # pragma: no cover
 
     def remove_axes(self, axes):
         '''Deprecated at version 3.0.0. Use method 'del_axes' instead."

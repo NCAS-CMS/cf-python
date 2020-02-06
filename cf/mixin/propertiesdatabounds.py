@@ -76,10 +76,10 @@ class PropertiesDataBounds(PropertiesData):
 
         if _debug:
             cname = self.__class__.__name__
-            print('{}.__getitem__: shape    = {}'.format(cname, self.shape)) # Pragma: no cover
-            print('{}.__getitem__: indices2 = {}'.format(cname, indices2)) # Pragma: no cover
-            print('{}.__getitem__: indices  = {}'.format(cname, indices)) # Pragma: no cover
-            print('{}.__getitem__: findices = {}'.format(cname, findices)) # Pragma: no cover
+            print('{}.__getitem__: shape    = {}'.format(cname, self.shape)) # pragma: no cover
+            print('{}.__getitem__: indices2 = {}'.format(cname, indices2)) # pragma: no cover
+            print('{}.__getitem__: indices  = {}'.format(cname, indices)) # pragma: no cover
+            print('{}.__getitem__: findices = {}'.format(cname, findices)) # pragma: no cover
 
         new.set_data(data[findices], copy=False)
 
