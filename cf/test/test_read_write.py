@@ -43,9 +43,9 @@ class read_writeTest(unittest.TestCase):
 #    test_only = ['NOTHING!!!!!']
 #    test_only = ['test_write_reference_datetime']
 #    test_only = ['test_read_write_unlimited']
-#    test_only = ['test_read_write_format']
+    test_only = ['test_read_write_format']
 #    test_only = ['test_read_CDL']
-#    test_only = ['test_read_directory']
+#    test_only = ['test_read_string']
 #    test_only = ['test_read_write_netCDF4_compress_shuffle']
 
     def test_read_directory(self):
@@ -165,28 +165,28 @@ class read_writeTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
-            for fmt in ('NETCDF3_CLASSIC',
-                        'NETCDF3_64BIT',
-                        'NETCDF3_64BIT_OFFSET',
-                        'NETCDF3_64BIT_DATA',
-                        'NETCDF4',
-                        'NETCDF4_CLASSIC',
-                        'CFA',):
-#                print (fmt)
-                f = cf.read(self.filename)[0]
-#                print (f)
-                f0 = f.copy()
-                cf.write(f, tmpfile, fmt=fmt, verbose=0)
-                g = cf.read(tmpfile, verbose=0)
-#                print (g[0])
-                self.assertTrue(len(g) == 1, 'g = '+repr(g))
-                g0 = g[0]
-
-                self.assertTrue(f0.equals(g0, verbose=1),
-                                'Bad read/write of format {!r}'.format(fmt))
-        #--- End: for
+        for string in (True, False):
+            for chunksize in self.chunk_sizes:
+                cf.CHUNKSIZE(chunksize)
+                for fmt in ('NETCDF3_CLASSIC',
+                            'NETCDF3_64BIT',
+                            'NETCDF3_64BIT_OFFSET',
+                            'NETCDF3_64BIT_DATA',
+                            'NETCDF4',
+                            'NETCDF4_CLASSIC',
+                            'CFA',):
+                    print (fmt, string)
+                    f = cf.read(self.filename)[0]
+    #                print (f)
+                    f0 = f.copy()
+                    cf.write(f, tmpfile, fmt=fmt, verbose=0, string=string)
+                    g = cf.read(tmpfile, verbose=0)
+    #                print (g[0])
+                    self.assertTrue(len(g) == 1, 'g = '+repr(g))
+                    g0 = g[0]
+    
+                    self.assertTrue(f0.equals(g0, verbose=1),
+                                    'Bad read/write of format {!r}'.format(fmt))
 
 
     def test_read_write_netCDF4_compress_shuffle(self):
@@ -339,35 +339,39 @@ class read_writeTest(unittest.TestCase):
         f = cf.read(self.string_filename)
 
         n = int(len(f)/2)
-        
-        for i in range(0, n):
 
+        for i in range(0, n):
+            
             j = i + n
             self.assertTrue(f[i].data.equals(f[j].data, verbose=1),
                             "{!r} {!r}".format(f[i], f[j]))
             self.assertTrue(f[j].data.equals(f[i].data, verbose=1),
                             "{!r} {!r}".format(f[j], f[i]))
-
-        for fmt0 in ('NETCDF4',
-                     'NETCDF3_CLASSIC',
-                     'NETCDF4_CLASSIC',
-                     'NETCDF3_64BIT',
-                     'NETCDF3_64BIT_OFFSET',
-                     'NETCDF3_64BIT_DATA'):
-            f0 = cf.read(self.string_filename)
-            cf.write(f0, tmpfile0, fmt=fmt0)
-            
-            for fmt1 in ('NETCDF4',
+    
+        for string0 in (True, False):        
+            for fmt0 in ('NETCDF4',
                          'NETCDF3_CLASSIC',
                          'NETCDF4_CLASSIC',
                          'NETCDF3_64BIT',
                          'NETCDF3_64BIT_OFFSET',
                          'NETCDF3_64BIT_DATA'):
-                f1 = cf.read(self.string_filename)
-                cf.write(f0, tmpfile1, fmt=fmt1)
-
-                for i, j in zip(cf.read(tmpfile1), cf.read(tmpfile0)):
-                    self.assertTrue(i.equals(j, verbose=1))
+#                print ('fmt0=', fmt0)
+                f0 = cf.read(self.string_filename)
+                cf.write(f0, tmpfile0, fmt=fmt0, string=string0)
+                
+                for string1 in (True, False):        
+                    for fmt1 in ('NETCDF4',
+                                 'NETCDF3_CLASSIC',
+                                 'NETCDF4_CLASSIC',
+                                 'NETCDF3_64BIT',
+                                 'NETCDF3_64BIT_OFFSET',
+                                 'NETCDF3_64BIT_DATA'):
+#                        print ('fmt1=', fmt1)
+                        f1 = cf.read(self.string_filename)
+                        cf.write(f0, tmpfile1, fmt=fmt1, string=string1)
+                        
+                        for i, j in zip(cf.read(tmpfile1), cf.read(tmpfile0)):
+                            self.assertTrue(i.equals(j, verbose=1))
         #--- End: for
         
             

@@ -4920,7 +4920,7 @@ class Field(mixin.PropertiesData,
             particular axes, and an exception will be raised if it is
             not possible to the create weights.
 
-            For **types 1** and **2** come at the expense of not
+            **Type 1** and **Type 2** come at the expense of not
             always being able to control exactly how the weights are
             created (see the *methods* parameter)
 
@@ -4930,9 +4930,9 @@ class Field(mixin.PropertiesData,
               *weights*   Description
               ==========  ============================================
               `True`      This is the default. Weights are created for
-                          non-overlapping subsets of the axes. Set
-                          the *methods* parameter to find out how the
-                          weights were actually created.
+                          all axes. Set the *methods* parameter to
+                          find out how the weights were actually
+                          created.
 
                           In weights components are created for all
                           axes of the field by one or more of the
@@ -4966,11 +4966,7 @@ class Field(mixin.PropertiesData,
                           must be broadcastable to the field
                           construct's data.
 
-              `Field`     Explicit weights from the data of another
-                          field construct, which must be broadcastable
-                          to this field construct's data.
-
-              `dict`      Explicit weights in dictionary of the form
+              `dict`      Explicit weights in a dictionary of the form
                           that is returned from a call to the
                           `weights` method with ``component=True``
               ==========  ============================================
@@ -16771,7 +16767,7 @@ class Field(mixin.PropertiesData,
             # Retrieve the source field's grid, create the ESMPy grid and a
             # handle to regridding.dst_dict
             src_data = d.squeeze().transpose(src_order).array
-            if (not (method == 'nearest_stod' and use_src_mask)
+            if (not (method == 'nearest_stod' and use_rc_mask)
                 and numpy_ma_is_masked(src_data)):
                 mask = src_data.mask
                 if not numpy_array_equal(mask, old_mask):

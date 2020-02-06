@@ -161,7 +161,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         ncdimensions = construct.get_property('cfa_dimensions', '').split()
         dtype = variable.dtype
-        if dtype.kind == 'S' and ncdimensions: # UNICODE???? TODO
+        if self._is_char(ncvar) and dtype.kind in 'SU' and ncdimensions: # UNICODE???? TODO
 #            strlen = len(nc.dimensions[ncdimensions[-1]])
             strlen = g['nc'].dimensions[ncdimensions[-1]].size
             if strlen > 1:
