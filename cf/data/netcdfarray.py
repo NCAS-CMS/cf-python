@@ -28,7 +28,9 @@ class NetCDFArray(cfdm.NetCDFArray,
             set.
 
         dtype: `numpy.dtype`
-            The data type of the array in the netCDF file.
+            The data type of the array in the netCDF file. May be
+            `None` if the numpy data-type is not known (which can be
+            the case for netCDF string types, for example).
 
         shape: `tuple`
             The array dimension sizes in the netCDF file.
@@ -47,7 +49,7 @@ class NetCDFArray(cfdm.NetCDFArray,
     >>> a = NetCDFFileArray(filename='file.nc', ncvar='tas', dtype=v.dtype,
     ...                     ndim=v.ndim, shape=v.shape, size=v.size)
 
-    '''
+        '''
         super().__init__(filename=filename, ncvar=ncvar, varid=varid,
                          dtype=dtype, ndim=ndim, shape=shape,
                          size=size)

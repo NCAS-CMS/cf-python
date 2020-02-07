@@ -381,10 +381,11 @@ then the input coordinate is not written.
 #                                               least_significant_digit=None,
 #                                               endian=g['endian'],
 #                                               **g['netcdf_compression'])
+
                 kwargs = {'varname': p_ncvar,
                           'datatype': self._datatype(array),
                           'dimensions': cfa_dimensions + ncdim_strlen,
-                          'fill_value': False,
+                          'fill_value': None, #False,
                           'least_significant_digit': None,
                           'endian': g['endian']}
                 kwargs.update(g['netcdf_compression'])
@@ -394,7 +395,6 @@ then the input coordinate is not written.
                 self._write_attributes(parent=None, ncvar=p_ncvar,
                                        extra={'cf_role': 'cfa_private'})
 
-#                v[...] = array
                 g['nc'][p_ncvar][...] = array
 
                 # Update the attrs dictionary.

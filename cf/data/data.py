@@ -2910,7 +2910,7 @@ place.
 
         dtype = d['dtype']
         self._dtype = dtype
-
+        print ('asdasdasds', dtype)
         self.Units       = units
         self._axes       = axes
 #        self._flip       = list(d.get('_flip', ()))
@@ -6647,6 +6647,7 @@ dimensions.
                     units, value))
 
         dtype = self.dtype
+
         if dtype is not None:
             if dtype.kind == 'i':
                 char = dtype.char
@@ -6755,7 +6756,6 @@ dimensions.
                 datatype = numpy_result_type(datatype, array)
                 
             self._dtype = datatype
-        #--- End: if
 
         return datatype
     @dtype.setter

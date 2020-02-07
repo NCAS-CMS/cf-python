@@ -161,6 +161,13 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         ncdimensions = construct.get_property('cfa_dimensions', '').split()
         dtype = variable.dtype
+
+        if dtype is str:
+            # netCDF string types have a dtype of `str`, which needs
+            # to be reset as a numpy.dtype, but we don't know what
+            # without reading the data, so set it to None for now.
+            dtype = None
+                    
         if self._is_char(ncvar) and dtype.kind in 'SU' and ncdimensions: # UNICODE???? TODO
 #            strlen = len(nc.dimensions[ncdimensions[-1]])
             strlen = g['nc'].dimensions[ncdimensions[-1]].size
