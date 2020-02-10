@@ -4401,7 +4401,6 @@ class Field(mixin.PropertiesData,
 #        area_clm = self.cell_measures.filter_by_measure('area').filter_by_axis(
 #            'exact', x_axis, y_axis)
 
-
         w = self.weights('area', radius=radius, measure=True, scale=None)
 
 #        if not force and area_clm:
@@ -5508,9 +5507,149 @@ class Field(mixin.PropertiesData,
             return w
         #--- End: def
 
-        # ------------------------------------------------------------
+        def _interior_angle(data_lambda, data_phi):
+            '''TODO
+
+    :Parameters:
+            
+        data_lambda: `Data`
+
+        data_phi: `Data`
+
+    :Returns:
+            
+        `Data`
+
+            '''
+            delta_lambda = data_lambda.diff(axis=-1)
+            
+            cos_phi = data_phi.cos()
+            sin_phi = data_phi.sin()
+            
+            cos_phi_1 = cos_phi[...,  :-1]
+            cos_phi_2 = cos_phi[..., 1:]
+            
+            sin_phi_1 = sin_phi[...,  :-1]
+            sin_phi_2 = sin_phi[..., 1:]
+                            
+            cos_delta_lambda = delta_lambda.cos()
+            sin_delta_lambda = delta_lambda.sin()
+
+            numerator = (cos_phi_2*sin_delta_lambda)**2 + (cos_phi_1*sin_phi_2 - sin_phi_1*cos_phi_2*cos_delta_lambda)**2)**0.5
+            
+            denominator = sin_phi_1*sin_phi_2 + cos_phi_1*cos_phi_2*cos_delta_lambda
+            
+            interior_angle = (numerator/demoninator).arctan()
+
+            return interior_angle
+        
+
+        def _geometry_area_weights(self, comp, weights_axes,
+                                   auto=False, measure=False,
+                                   radius=None, great_circle=False):
+            '''TODO
+
+            '''
+#            pass
+            zz = {}
+            for aux in self.auxiliary_coordinates.filter_by_naxes(1):
+                if aux.get_geometry(None) != 'polygon':
+                    continue
+                
+                if aux.X:
+                    aux_X = aux.copy()
+                elif aux.Y:
+                    aux_Y = aux.copy()
+            #--- End: for
+                        
+            if len(zz) != 2:
+                return
+            
+            if (aux_X.fits_in_one_chunk_in_memory(aux_X.dtype.itemsize)):
+                aux_X.varray
+            if (aux_Y.fits_in_one_chunk_in_memory(aux_Y.dtype.itemsize)):
+                aux_Y.varray
+
+            if aux_X.bounds.Units.equivalant(_Units_metres) and aux_Y.bounds.Units.equivalant(_Units_metres):
+                # Planar oplygon defined by straight lines: Shoelace method
+                
+                # Do this in preference of weights based on sphericl
+                # polygons, which require the great cuircle assumption
+                
+                if aux_X.bounds.Units != aux_Y.bounds.Units:
+                    aux_X.bounds.Units = _Units_metres
+                    aux_Y.bounds.Units = _Units_metres
+                    
+            elif aux_X.bounds.Units.equivalant(_Units_radians) and aux_Y.bounds.Units.equivalant(_Units_radians):
+                # Sphericl polygon defined by great circles
+                
+                if not great_circle:
+                    raise ValueError(
+                        "Must set great_circle=True to derive area weights from spherical polygons.")
+                
+                aux_X.bounds.Units = _Units_radians
+                aux_Y.bounds.Units = _Units_radians
+
+                interior_angle = _interior_angle(aux_X.bounds.data, aux_Y.bounds.data)
+
+                # Find the number of edges of each polygon (note that
+                # this number may be one too few, but we'll adjust for
+                # that later).
+                N = interior_angle.sample_size(axis=-1)
+
+                all_areas = interior_angle.sum(axis=-1) - (N - 2)*numpy_pi
+
+                # 
+                for parts_x, parts_y, parts_area in zip(aux_X.bounds.data, aux_Y.bounds.data, all_areas):
+                    for nodes_x, node_y, area in zip(part_x, part_y, parts_area):
+                        nodes_x = node_x.array
+                        nodes_y = node_y.array
+
+                        if numpy_isMA(polygon_x):
+                            nodes_x = nodes_x.compressed()
+                        if numpy_isMA(polygon_y):
+                            nodes_y = nodes_y.compressed()
+                        
+                        if nodes_x[0] != nodes_x[-1] or nodes_y[0] != nodes_y[-1]:
+                            # First and last nodes of this polygon
+                            # part are different => need to define the
+                            # "last" edge of the polygon that joins
+                            # the first and last points.
+                            interior_angle = _interior_angle(Data(nodes_x[(0, -1)]), Data(nodes_y[(0, -1)]))
+                            area += interior_angle - numpy_pi
+                #--- End: for
+
+                area_min = area.min()
+                if area_min < 0:
+                    raise ValueError(
+                        "A geometry spherical polygon has negative area: {}".format(
+                            area_min))
+                
+            if aux_X.bounds.Units.equivalant(_Units_metres) and aux_Y.bounds.Units.equivalant(_Units_metres):
+                # Planar oplygon defined by straight lines: Shoelace method
+                if aux_X.bounds.Units != aux_Y.bounds.Units:
+                    aux_X.bounds.Units = _Units_metres
+                    aux_Y.bounds.Units = _Units_metres
+                
+            else:
+                return
+
+
+            # --------------------------------------------------------
+            # Sum the areas over parts, subtracting those areas
+            # corresponding to interior rings
+            # --------------------------------------------------------
+            all_areas.squeeze(-1, inpalce=True)
+            all_areas.where(interior_ring, neg(all_areas), inplace=True)
+
+            cell_areas = all_areas.sum(-1)
+
+            return cell_areas                        
+        #--- End: def
+
+        # ============================================================
         # Start of main code (weights)
-        # ------------------------------------------------------------
+        # ============================================================
         if isinstance(weights, str) and weights == 'auto':
             _DEPRECATION_ERROR_KWARG_VALUE(self, 'weights', 'weights',
                                            'auto', message='Use value True instead.',
@@ -5563,6 +5702,13 @@ class Field(mixin.PropertiesData,
                 axis = self.get_data_axes(dc_key)[0]
                 _linear_weights(self, axis, comp, weights_axes,
                                 auto=True, measure=measure)
+
+            ## Area (spherical or planar polygon) weights from geometries
+            #for dc_key in self.dimension_coordinates:
+            #   
+            ## Linear (line length) weights from geometries
+            #for dc_key in self.dimension_coordinates:
+               
             weights_axes = []
             for key in comp:
                 weights_axes.extend(key)
