@@ -4,6 +4,9 @@ version 3.2.0
 
 **not yet released**
 
+*This is the first release for CF-1.8*
+
+* New method: `cf.Data.compressed`
 * New function: `cf.implementation`
 
 version 3.1.0

@@ -5508,17 +5508,21 @@ class Field(mixin.PropertiesData,
         #--- End: def
 
         def _interior_angle(data_lambda, data_phi):
-            '''TODO
+            '''Find the interior angle between each adjacent pair nodes in the
+    last dimension.
 
     :Parameters:
             
         data_lambda: `Data`
+            Longitudes. Must have units of radians.
 
         data_phi: `Data`
+            Latitudes. Must have units of radians.
 
     :Returns:
             
         `Data`
+            The interior angles in units of radians.
 
             '''
             delta_lambda = data_lambda.diff(axis=-1)
@@ -5550,8 +5554,8 @@ class Field(mixin.PropertiesData,
             '''TODO
 
             '''
-#            pass
-            zz = {}
+            aux_x = None
+            aux_Y = None
             for aux in self.auxiliary_coordinates.filter_by_naxes(1):
                 if aux.get_geometry(None) != 'polygon':
                     continue
@@ -5562,91 +5566,136 @@ class Field(mixin.PropertiesData,
                     aux_Y = aux.copy()
             #--- End: for
                         
-            if len(zz) != 2:
+            if aux_X is None or aux_Y is None:
+                # Didn't find both X and Y nodes
                 return
+
+            if aux_X.get_bounds(None) is None or aux_Y.get_bounds(None) is None:
+                # Not both coordinates have bounds
+                return 
+            
+            if aux_X.bounds.shape != aux_Y.bounds.shape:
+                raise ValueError(
+                    "Can't find weights: X and Y geometry coordinate bounds must have the same shape. Got {} and {}".format(
+                        aux_X.bounds.shape, aux_Y.bounds.shape))
+                        
+            # Check for interior rings
+            interior_ring_X = aux_X.get_interior_ring(None)
+            interior_ring_Y = aux_Y.get_interior_ring(None)
+            if interior_ring_X is None and interior_ring_Y is None:
+                interior_ring = None
+            elif interior_ring_X is None:
+                raise ValueError(
+                    "Can't find weights: X coordinates have missing interior ring variable")
+            elif interior_ring_Y is None:
+                raise ValueError(
+                    "Can't find weights: Y coordinates have missing interior ring variable")
+            elif not interior_ring_X.data.equals(interior_ring_Y.data):
+                raise ValueError(
+                    "Can't find weights: Interior ring variables for X and Y coordinates have different data values".)
+            else:
+                interior_ring = interior_ring_X.data
+                if interior_ring.shape != aux_X.bounds.shape[:-1]:
+                    raise ValueError(
+                        "Can't find weights: Interior ring variables have incorrect shape. Got {}, expected {}".format(
+                            interior_ring.shape, aux_X.bounds.shape[:-1]))
+            #--- End: if
             
             if (aux_X.fits_in_one_chunk_in_memory(aux_X.dtype.itemsize)):
                 aux_X.varray
             if (aux_Y.fits_in_one_chunk_in_memory(aux_Y.dtype.itemsize)):
                 aux_Y.varray
 
-            if aux_X.bounds.Units.equivalant(_Units_metres) and aux_Y.bounds.Units.equivalant(_Units_metres):
+            x = aux_X.bounds.data
+            y = aux_Y.bounds.data
+
+            if (x.Units.equivalant(_Units_metres) and
+                y.Units.equivalant(_Units_metres)):
                 # Planar oplygon defined by straight lines: Shoelace method
                 
-                # Do this in preference of weights based on sphericl
+                # Do this in preference of weights based on spherical
                 # polygons, which require the great cuircle assumption
                 
-                if aux_X.bounds.Units != aux_Y.bounds.Units:
-                    aux_X.bounds.Units = _Units_metres
-                    aux_Y.bounds.Units = _Units_metres
+                y.Units = x.Units
+
+                all_areas = ((x[...,:-1] * y[..., 1:]).sum(-1, squeeze=True) -
+                             (x[...  1:] * y[...,:-1]).sum(-1, squeeze=True))
+
+                for part_x, part_y, (i, part_area) in zip(x, y,
+                                                          enumerate(all_areas)):
+                    for nodes_x, node_y, (j, area) in zip(part_x,
+                                                          part_y,
+                                                          enumerate(part_area)):
+                        nodes_x = nodes_x.compressed()
+                        nodes_y = nodes_y.compressed()
+                        
+                        if nodes_x[0] != nodes_x[-1] or nodes_y[0] != nodes_y[-1]:
+                            # First and last nodes of this polygon
+                            # part are different => need to account
+                            # for the "last" edge of the polygon that
+                            # joins the first and last points.
+                            all_areas[i, j] += x[-1]*y[0] - x[0]*y[-1]
+                #--- End: for
+                
+                all_areas = all_areas.abs() * 0.5
                     
-            elif aux_X.bounds.Units.equivalant(_Units_radians) and aux_Y.bounds.Units.equivalant(_Units_radians):
-                # Sphericl polygon defined by great circles
+            elif (x.Units.equivalant(_Units_radians) and
+                  y.Units.equivalant(_Units_radians)):
+                # Spherical polygon defined by great circles
                 
                 if not great_circle:
                     raise ValueError(
                         "Must set great_circle=True to derive area weights from spherical polygons.")
                 
-                aux_X.bounds.Units = _Units_radians
-                aux_Y.bounds.Units = _Units_radians
+                x.Units = _Units_radians
+                y.Units = _Units_radians
 
-                interior_angle = _interior_angle(aux_X.bounds.data, aux_Y.bounds.data)
+                interior_angle = _interior_angle(x, y)
 
                 # Find the number of edges of each polygon (note that
                 # this number may be one too few, but we'll adjust for
                 # that later).
-                N = interior_angle.sample_size(axis=-1)
+                N = interior_angle.sample_size(-1)
 
-                all_areas = interior_angle.sum(axis=-1) - (N - 2)*numpy_pi
+                all_areas = interior_angle.sum(-1, squeeze=True) - (N - 2)*numpy_pi
 
-                # 
-                for parts_x, parts_y, parts_area in zip(aux_X.bounds.data, aux_Y.bounds.data, all_areas):
-                    for nodes_x, node_y, area in zip(part_x, part_y, parts_area):
-                        nodes_x = node_x.array
-                        nodes_y = node_y.array
-
-                        if numpy_isMA(polygon_x):
-                            nodes_x = nodes_x.compressed()
-                        if numpy_isMA(polygon_y):
-                            nodes_y = nodes_y.compressed()
+                for part_x, part_y, (i, part_area) in zip(x, y,
+                                                          enumerate(all_areas)):
+                    for nodes_x, node_y, (j, area) in zip(part_x,
+                                                          part_y,
+                                                          enumerate(part_area)):
+                        nodes_x = nodes_x.compressed()
+                        nodes_y = nodes_y.compressed()
                         
                         if nodes_x[0] != nodes_x[-1] or nodes_y[0] != nodes_y[-1]:
                             # First and last nodes of this polygon
-                            # part are different => need to define the
-                            # "last" edge of the polygon that joins
-                            # the first and last points.
-                            interior_angle = _interior_angle(Data(nodes_x[(0, -1)]), Data(nodes_y[(0, -1)]))
-                            area += interior_angle - numpy_pi
+                            # part are different => need to account
+                            # for the "last" edge of the polygon that
+                            # joins the first and last points.
+                            interior_angle = _interior_angle(nodes_x[(0, -1)],
+                                                             nodes_y[(0, -1)])
+                            all_areas[i, j] += interior_angle - numpy_pi
                 #--- End: for
 
                 area_min = area.min()
                 if area_min < 0:
                     raise ValueError(
-                        "A geometry spherical polygon has negative area: {}".format(
-                            area_min))
-                
-            if aux_X.bounds.Units.equivalant(_Units_metres) and aux_Y.bounds.Units.equivalant(_Units_metres):
-                # Planar oplygon defined by straight lines: Shoelace method
-                if aux_X.bounds.Units != aux_Y.bounds.Units:
-                    aux_X.bounds.Units = _Units_metres
-                    aux_Y.bounds.Units = _Units_metres
-                
+                        "A spherical polygon geometry part has negative area: {}".format(
+                            area_min))                
             else:
+                # 
                 return
 
+            # Change the sign of polygons that are interior rings
+            if interior_ring is not None:
+                all_areas.where(interior_ring, -all_areas, inplace=True)
 
-            # --------------------------------------------------------
-            # Sum the areas over parts, subtracting those areas
-            # corresponding to interior rings
-            # --------------------------------------------------------
-            all_areas.squeeze(-1, inpalce=True)
-            all_areas.where(interior_ring, neg(all_areas), inplace=True)
-
-            cell_areas = all_areas.sum(-1)
-
-            return cell_areas                        
+            # Sum the areas of each part to get the total area of each
+            # cell
+            return all_areas.sum(-1, squeeze=True)
         #--- End: def
 
+        
         # ============================================================
         # Start of main code (weights)
         # ============================================================

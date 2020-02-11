@@ -9006,6 +9006,41 @@ False
         for partition in self.partitions.matrix.flat:
             partition.file_close()
 
+    @_inplace_enabled
+    def compressed(self, inplace=False):
+        '''TODO
+
+        '''
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        d.flatten(inplace=True)
+        
+        n_non_missing = d.count()
+        if n_non_missing == d.size:
+            return d
+
+        comp = self.empty(shape=(n_non_missing,), dtype=self.dtype, units=self.Units)
+
+        # Find the number of array elements that fit in one chunk
+        n = CHUNKSIZE//(self.dtype.itemsize + 1.0)
+
+        i = 0
+        for _ in range(1 + d.size//n):
+            array = d[i:i+n].array
+            if numpy_ma_isMA(array):
+                array = array.compressed()
+
+            comp[i:i+array.size] = array
+            i += n
+
+        if inplace:
+            d.__dict__ = comp.__dict__
+        else:
+            d = comp
+            
+        return d
+
+    
     @_deprecation_error_i_kwarg
     @_inplace_enabled
     def cos(self, inplace=False, i=False):
