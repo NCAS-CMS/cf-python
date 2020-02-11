@@ -27,7 +27,6 @@ class Constructs(cfdm.Constructs):
         '''
         return super().__repr__().replace('<', '<CF ', 1)
 
-
     def _matching_values(self, value0, construct, value1):
         '''TODO
         '''
@@ -36,82 +35,80 @@ class Constructs(cfdm.Constructs):
 
         return super()._matching_values(value0, construct, value1)
 
-
-#    def domain_axis_key(self, identity, default=ValueError()):
-#        '''Return the key of the domain axis construct that is spanned by 1-d
-#coordinate constructs.
+#     def domain_axis_key(self, identity, default=ValueError()):
+#         '''Return the key of the domain axis construct that is spanned by 1-d
+# coordinate constructs.
 #
-#.. versionadded:: 3.0.0
+# .. versionadded:: 3.0.0
 #
-#:Parameters:
+# :Parameters:
 #
-#    identity:
+#     identity:
 #
-#        Select the 1-d coordinate constructs that have the given
-#        identity.
+#         Select the 1-d coordinate constructs that have the given
+#         identity.
 #
-#        An identity is specified by a string (e.g. ``'latitude'``,
-#        ``'long_name=time'``, etc.); or a compiled regular expression
-#        (e.g. ``re.compile('^atmosphere')``), for which all constructs
-#        whose identities match (via `re.search`) are selected.
+#         An identity is specified by a string (e.g. ``'latitude'``,
+#         ``'long_name=time'``, etc.); or a compiled regular expression
+#         (e.g. ``re.compile('^atmosphere')``), for which all constructs
+#         whose identities match (via `re.search`) are selected.
 #
-#        Each coordinate construct has a number of identities, and is
-#        selected if any of them match any of those provided. A
-#        construct's identities are those returned by its `!identities`
-#        method. In the following example, the construct ``x`` has four
-#        identities:
+#         Each coordinate construct has a number of identities, and is
+#         selected if any of them match any of those provided. A
+#         construct's identities are those returned by its `!identities`
+#         method. In the following example, the construct ``x`` has four
+#         identities:
 #
-#           >>> x.identities()
-#           ['time', 'long_name=Time', 'foo=bar', 'ncvar%T']
+#            >>> x.identities()
+#            ['time', 'long_name=Time', 'foo=bar', 'ncvar%T']
 #
-#        In addition, each construct also has an identity based its
-#        construct key (e.g. ``'key%dimensioncoordinate2'``)
+#         In addition, each construct also has an identity based its
+#         construct key (e.g. ``'key%dimensioncoordinate2'``)
 #
-#        Note that in the output of a `print` call or `!dump` method, a
-#        construct is always described by one of its identities, and so
-#        this description may always be used as an *identity* argument.
+#         Note that in the output of a `print` call or `!dump` method, a
+#         construct is always described by one of its identities, and so
+#         this description may always be used as an *identity* argument.
 #
-#    default: optional
-#        Return the value of the *default* parameter if a domain axis
-#        construct can not be found. If set to an `Exception` instance
-#        then it will be raised instead.
+#     default: optional
+#         Return the value of the *default* parameter if a domain axis
+#         construct can not be found. If set to an `Exception` instance
+#         then it will be raised instead.
 #
-#:Returns:
+# :Returns:
 #
-#    `str`
-#        The key of the domain axis construct that is spanned by the
-#        data of the selected 1-d coordinate constructs.
+#     `str`
+#         The key of the domain axis construct that is spanned by the
+#         data of the selected 1-d coordinate constructs.
 #
-#**Examples:**
+# **Examples:**
 #
-#TODO
+# TODO
 #
-#        '''
-#        # Try for index
-#        try:
-#            da_key = self.get_data_axes(default=None)[identity]
-#        except TypeError:
-#            pass
-#        except IndexError:
-#            return self._default(
-#                default,
-#                "Index does not exist for field construct data dimenions")
-#        else:
-#            identity = da_key
+#         '''
+#         # Try for index
+#         try:
+#             da_key = self.get_data_axes(default=None)[identity]
+#         except TypeError:
+#             pass
+#         except IndexError:
+#             return self._default(
+#                 default,
+#                 "Index does not exist for field construct data dimenions")
+#         else:
+#             identity = da_key
 #
-#        domain_axes = self.domain_axes(identity)
-#        if len(domain_axes) == 1:
-#            # identity is a unique domain axis construct identity
-#            da_key = domain_axes.key()
-#        else:
-#            # identity is not a unique domain axis construct identity
-#            da_key = self.domain_axis_key(identity, default=default)
+#         domain_axes = self.domain_axes(identity)
+#         if len(domain_axes) == 1:
+#             # identity is a unique domain axis construct identity
+#             da_key = domain_axes.key()
+#         else:
+#             # identity is not a unique domain axis construct identity
+#             da_key = self.domain_axis_key(identity, default=default)
 #
-#        if key:
-#            return da_key
+#         if key:
+#             return da_key
 #
-#        return self.constructs[da_key]
-
+#         return self.constructs[da_key]
 
     def filter_by_identity(self, *identities):
         '''Select metadata constructs by identity.
@@ -194,7 +191,7 @@ class Constructs(cfdm.Constructs):
 #        field_data_axes = self._field_data_axes
 #
 #        if field_data_axes is not None:
-#            # Allows integer data domain axis positions - do we want this? TODO
+#            # Allows integer data domain axis positions, do we want this? TODO
 #            new_identities = []
 #            for i in identities:
 #                try:
@@ -215,10 +212,9 @@ class Constructs(cfdm.Constructs):
         for n, identity in enumerate(identities):
             if identity in self:
                 identities[n] = 'key%'+identity
-        #--- End: for
+        # --- End: for
 
         return super().filter_by_identity(*identities)
 
 
-#--- End: class
-
+# --- End: class
