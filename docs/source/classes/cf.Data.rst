@@ -61,6 +61,7 @@ Data methods
    ~cf.Data.clip
    ~cf.Data.close
    ~cf.Data.concatenate
+   ~cf.Data.compressed
    ~cf.Data.concatenate_data
    ~cf.Data.copy
    ~cf.Data.cos

@@ -5146,13 +5146,15 @@ class Field(mixin.PropertiesData,
                     return
 
                 raise ValueError(
-                    "Can't get weights: No {!r} cell measure".format(measure))
+                    "Can't find weights: No {!r} cell measure".format(measure))
 
             elif len(m) > 1:
                 if auto:
                     return False
 
-                raise ValueError("Found multiple {!r} cell measures".format(measure))
+                raise ValueError(
+                    "Can't find weights: Multiple {!r} cell measures".format(
+                        measure))
 
             key, clm = dict(m).popitem()
 
@@ -5347,7 +5349,7 @@ class Field(mixin.PropertiesData,
                     else:
                         cells = ycoord.cellsize
                         if measure:
-                            cells *=  radius
+                            cells *= radius
 
                         comp[(yaxis,)] = cells
                 else:
@@ -5360,6 +5362,8 @@ class Field(mixin.PropertiesData,
 
                 weights_axes.add(yaxis)
             #--- End: if
+
+            return True
         #--- End: def
 
         def _field_weights(self, fields, comp, weights_axes):
@@ -5548,28 +5552,38 @@ class Field(mixin.PropertiesData,
             return interior_angle
         
 
-        def _geometry_area_weights(self, comp, weights_axes,
+        def _area_weights_geometry(self, comp, weights_axes,
                                    auto=False, measure=False,
-                                   radius=None, great_circle=False):
+                                   radius=None,
+                                   spherical_polygons=False):
             '''TODO
 
             '''
             aux_x = None
             aux_Y = None
-            for aux in self.auxiliary_coordinates.filter_by_naxes(1):
+            x_axis = None
+            y_axis = None
+            for key, aux in self.auxiliary_coordinates.filter_by_naxes(1).items():
                 if aux.get_geometry(None) != 'polygon':
                     continue
                 
                 if aux.X:
                     aux_X = aux.copy()
+                    x_axis = self.get_data_axes(key)[0]
                 elif aux.Y:
                     aux_Y = aux.copy()
+                    y_axis = self.get_data_axes(key)[0]
             #--- End: for
                         
             if aux_X is None or aux_Y is None:
                 # Didn't find both X and Y nodes
                 return
 
+            if x_axis == y_axis:
+                raise ValueError("TODO")
+
+            axis = x_axis
+             
             if aux_X.get_bounds(None) is None or aux_Y.get_bounds(None) is None:
                 # Not both coordinates have bounds
                 return 
@@ -5601,31 +5615,40 @@ class Field(mixin.PropertiesData,
                             interior_ring.shape, aux_X.bounds.shape[:-1]))
             #--- End: if
             
-            if (aux_X.fits_in_one_chunk_in_memory(aux_X.dtype.itemsize)):
-                aux_X.varray
-            if (aux_Y.fits_in_one_chunk_in_memory(aux_Y.dtype.itemsize)):
-                aux_Y.varray
-
             x = aux_X.bounds.data
             y = aux_Y.bounds.data
 
+            if not methods:
+                if (x.fits_in_one_chunk_in_memory(x.dtype.itemsize)):
+                    x.varray
+                if (y.fits_in_one_chunk_in_memory(y.dtype.itemsize)):
+                    y.varray
+            #--- End: if
+
+            spherical = ''
+                                
             if (x.Units.equivalant(_Units_metres) and
                 y.Units.equivalant(_Units_metres)):
-                # Planar oplygon defined by straight lines: Shoelace method
-                
-                # Do this in preference of weights based on spherical
-                # polygons, which require the great cuircle assumption
-                
-                y.Units = x.Units
+                # ----------------------------------------------------
+                # Plane polygons defined by straight lines.
+                #
+                # Use the shoelace formula:
+                # https://en.wikipedia.org/wiki/Shoelace_formula
+                #
+                # Do this in preference to weights based on spherical
+                # polygons, which require the great circle assumption.
+                # ----------------------------------------------------
+                if methods:
+                    comp[tuple(axis,)] = 'area plane polygon geometry'
+                    return True
 
+                y.Units = x.Units
+                
                 all_areas = ((x[...,:-1] * y[..., 1:]).sum(-1, squeeze=True) -
                              (x[...  1:] * y[...,:-1]).sum(-1, squeeze=True))
 
-                for part_x, part_y, (i, part_area) in zip(x, y,
-                                                          enumerate(all_areas)):
-                    for nodes_x, node_y, (j, area) in zip(part_x,
-                                                          part_y,
-                                                          enumerate(part_area)):
+                for i, (parts_x, parts_y) in enumerate(zip(x, y)):
+                    for j, (nodes_x, node_y) in enumerate(zip(parts_x, parts_y)):
                         nodes_x = nodes_x.compressed()
                         nodes_y = nodes_y.compressed()
                         
@@ -5641,12 +5664,26 @@ class Field(mixin.PropertiesData,
                     
             elif (x.Units.equivalant(_Units_radians) and
                   y.Units.equivalant(_Units_radians)):
-                # Spherical polygon defined by great circles
-                
-                if not great_circle:
+                # ----------------------------------------------------
+                # Spherical polygons defined by great circles
+                #
+                # The area of such a spherical polygon is given by the
+                # sum of the interior angles minus (N-2)pi, where N is
+                # the number of sides (Todhunter):
+                # https://en.wikipedia.org/wiki/Spherical_trigonometry#Spherical_polygons
+                #
+                # The interior angle of a side is calculated with a
+                # special case of the Vincenty formula:
+                # https://en.wikipedia.org/wiki/Great-circle_distance
+                # ----------------------------------------------------
+                if not spherical_polygons:
                     raise ValueError(
-                        "Must set great_circle=True to derive area weights from spherical polygons.")
-                
+                        "Must set spherical_polygons=True to derive area weights from spherical polygons.")
+
+                if methods:
+                    comp[tuple(axis,)] = 'area spherical polygon geometry'
+                    return True
+                    
                 x.Units = _Units_radians
                 y.Units = _Units_radians
 
@@ -5659,11 +5696,8 @@ class Field(mixin.PropertiesData,
 
                 all_areas = interior_angle.sum(-1, squeeze=True) - (N - 2)*numpy_pi
 
-                for part_x, part_y, (i, part_area) in zip(x, y,
-                                                          enumerate(all_areas)):
-                    for nodes_x, node_y, (j, area) in zip(part_x,
-                                                          part_y,
-                                                          enumerate(part_area)):
+                for i, (parts_x, parts_y) in enumerate(zip(x, y)):
+                    for j, (nodes_x, node_y) in enumerate(zip(parts_x, parts_y)):
                         nodes_x = nodes_x.compressed()
                         nodes_y = nodes_y.compressed()
                         
@@ -5677,22 +5711,33 @@ class Field(mixin.PropertiesData,
                             all_areas[i, j] += interior_angle - numpy_pi
                 #--- End: for
 
-                area_min = area.min()
+                area_min = all_areas.min()
                 if area_min < 0:
                     raise ValueError(
                         "A spherical polygon geometry part has negative area: {}".format(
-                            area_min))                
+                            area_min))
+
+                if measure:
+                    all_areas *= radius**2
             else:
                 # 
                 return
-
-            # Change the sign of polygons that are interior rings
+            
+            # Change the sign of areas for polygons that are interior
+            # rings
             if interior_ring is not None:
                 all_areas.where(interior_ring, -all_areas, inplace=True)
 
             # Sum the areas of each part to get the total area of each
             # cell
-            return all_areas.sum(-1, squeeze=True)
+            areas = all_areas.sum(-1, squeeze=True)
+
+            if methods:
+                comp[tuple(axis,)] = 'area {}polygon geometry'.format(spherical)
+            else:
+                comp[tuple(axis,)] = areas
+
+            weights_axes.add(axis)
         #--- End: def
 
         
@@ -5743,16 +5788,25 @@ class Field(mixin.PropertiesData,
 
             # Area weights
             if not _measure_weights(self, 'area', comp, weights_axes, auto=True):
-                _area_weights_XY(self, comp, weights_axes, auto=True,
-                                 measure=measure, radius=radius)
-
+                if not _area_weights_XY(self, comp, weights_axes, auto=True,
+                                        measure=measure, radius=radius):
+                    _area_weights_geometry(self, comp, weights_axes,
+                                           auto=True, measure=measure,
+                                           radius=radius,
+                                           spherical_polygons=spherical_polygons)
+            #--- End: if
+                    
             # 1-d linear weights from dimension coordinates
             for dc_key in self.dimension_coordinates:
                 axis = self.get_data_axes(dc_key)[0]
                 _linear_weights(self, axis, comp, weights_axes,
                                 auto=True, measure=measure)
 
-            ## Area (spherical or planar polygon) weights from geometries
+#            # Area weights from polygon geometries
+#            _area_weights_geometry(self, comp, weights_axes,
+#                                   auto=True, measure=measure,
+#                                   radius=radius,
+#                                   spherical_polygons=spherical_polygons)
             #for dc_key in self.dimension_coordinates:
             #   
             ## Linear (line length) weights from geometries
@@ -5770,7 +5824,7 @@ class Field(mixin.PropertiesData,
 
             missing = set(size_N_axes).difference(weights_axes)
             if missing:
-                raise ValueError("Can't create weights for {!r} axis.".format(missing.pop()))
+                raise ValueError("Can't find weights for {!r} axis.".format(missing.pop()))
 
         elif isinstance(weights, dict):
             # --------------------------------------------------------
@@ -5783,15 +5837,10 @@ class Field(mixin.PropertiesData,
                         raise ValueError("TODO {!r} domain axis".format(k))
                 #--- End: for
 
-#                try:
-#                    key = [data_axes[iaxis] for iaxis in key]
-#                except IndexError:
-#                    raise ValueError("TODO s ^^^^^^ csdcvd 3456 4")
-
                 multiple_weights = weights_axes.intersection(key)
                 if multiple_weights:
                     raise ValueError(
-                        "Multiple weights specifications for {!r} domain axis".format(
+                        "Can't find weights: Multiple specifications for {!r} domain axis".format(
                             self.constructs.domain_axis_identity(multiple_weights.pop())))
 
                 weights_axes.update(key)
@@ -5833,30 +5882,30 @@ class Field(mixin.PropertiesData,
                         axes.append(w)
             #--- End: if
 
-            da_key_x = None
-            da_key_y = None
-            xaxis = self.domain_axis('X', key=True, default=None)
-            yaxis = self.domain_axis('Y', key=True, default=None)
-            for axis in axes:
-                da_key = self.domain_axis(axis, key=True, default=None)
-                da_key = self.domain_axis(axis, key=True, default=None)
-                if da_key == xaxis:
-                    da_key_x = da_key
-                elif da_key == yaxis:
-                    da_key_y = da_key
-            #--- End: if
-
-            if da_key_x and da_key_y:
-                xdim = self.dimension_coordinate(xaxis, default=None)
-                ydim = self.dimension_coordinate(yaxis, default=None)
-                if (xdim is not None and ydim is not None and
-                    xdim.has_bounds() and ydim.has_bounds() and
-                    xdim.Units.equivalent(Units('radians')) and
-                    ydim.Units.equivalent(Units('radians'))):
-                    ydim = ydim.clip(-90, 90, units=Units('degrees'))
-                    ydim.sin(inplace=True)
-                    comp[(yaxis,)] = ydim.cellsize
-            #--- End: if
+#            da_key_x = None
+#            da_key_y = None
+#            xaxis = self.domain_axis('X', key=True, default=None)
+#            yaxis = self.domain_axis('Y', key=True, default=None)
+#            for axis in axes:
+#                da_key = self.domain_axis(axis, key=True, default=None)
+#                da_key = self.domain_axis(axis, key=True, default=None)
+#                if da_key == xaxis:
+#                    da_key_x = da_key
+#                elif da_key == yaxis:
+#                    da_key_y = da_key
+#            #--- End: if
+#
+#            if da_key_x and da_key_y:
+#                xdim = self.dimension_coordinate(xaxis, default=None)
+#                ydim = self.dimension_coordinate(yaxis, default=None)
+#                if (xdim is not None and ydim is not None and
+#                    xdim.has_bounds() and ydim.has_bounds() and
+#                    xdim.Units.equivalent(Units('radians')) and
+#                    ydim.Units.equivalent(Units('radians'))):
+#                    ydim = ydim.clip(-90, 90, units=Units('degrees'))
+#                    ydim.sin(inplace=True)
+#                    comp[(yaxis,)] = ydim.cellsize
+#            #--- End: if
 
             # Field weights
             _field_weights(self, fields, comp, weights_axes)
@@ -5881,7 +5930,7 @@ class Field(mixin.PropertiesData,
             # separately and replace them with area weights
             xaxis = self.domain_axis('X', key=True, default=None)
             yaxis = self.domain_axis('Y', key=True, default=None)
-            if (xaxis,) in comp and (yaxis,) in comp:
+            if xaxis != yaxis and (xaxis,) in comp and (yaxis,) in comp:
                 del comp[(xaxis,)]
                 del comp[(yaxis,)]
                 weights_axes.discard(xaxis)
