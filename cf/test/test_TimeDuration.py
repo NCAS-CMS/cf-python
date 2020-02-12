@@ -283,7 +283,7 @@ class TimeDurationTest(unittest.TestCase):
         self.assertTrue(cf.TimeDuration.days_in_month(2004, 2, calendar='366_day') == 29)
 
 
-#--- End: class
+# --- End: class
 
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.utcnow())

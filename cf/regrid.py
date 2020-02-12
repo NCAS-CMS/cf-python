@@ -173,7 +173,7 @@ class Regrid:
                 if lat.transpose(y_order).shape != shape:
                     raise ValueError('The longitude and latitude coordinates' +
                                      ' must have the same shape.')
-            #--- End: if
+            # --- End: if
 
             if use_bounds:
                 if not coords_2D:
@@ -223,7 +223,7 @@ class Regrid:
                                                                       'degrees')
                         except ValueError:
                             pass
-            #--- End: if
+            # --- End: if
 
             # Create empty grid
             max_index = numpy_array(shape, dtype='int32')
@@ -276,7 +276,7 @@ class Regrid:
                         y_bounds = y_bounds[:-1,:]
                     gridCorner[x][...] = x_bounds
                     gridCorner[y][...] = y_bounds
-            #--- End: if
+            # --- End: if
         else:
             # Test the dimensionality of the list of coordinates
             ndim = len(coords)
@@ -316,7 +316,7 @@ class Regrid:
                     staggerLocs = [ESMF.StaggerLoc.CENTER]
                 else:
                     staggerLocs = [ESMF.StaggerLoc.CENTER_VCENTER]
-            #--- End: if
+            # --- End: if
             grid = ESMF.Grid(max_index, coord_sys=ESMF.CoordSys.CART,
                              staggerloc=staggerLocs)
 
@@ -330,7 +330,7 @@ class Regrid:
                                      staggerloc=ESMF.StaggerLoc.CENTER_VCENTER)
                 gridCentre[...] = coords[d].array.reshape(
                     [shape[d] if x == d else 1 for x in range(0, ndim)])
-            #--- End: for
+            # --- End: for
 
             # Populate grid corners
             if use_bounds:
@@ -356,8 +356,8 @@ class Regrid:
                     gridCorner[d][...] = boundsD.reshape(
                         [shape[d] + 1 if x == d else 1
                          for x in range(0, ndim)])
-            #--- End: if
-        #--- End: if
+            # --- End: if
+        # --- End: if
 
         # Add the mask if appropriate
         if mask is not None:
@@ -478,11 +478,11 @@ class Regrid:
                             new_sections[new_key] = Regrid.concatenate_data(data_list, i)
                             new_key = k[:i]
                             data_list = [sections[k]]
-                     #--- End: for
+                     # --- End: for
 
                     new_sections[new_key] = Regrid.concatenate_data(data_list, i)
                     sections = new_sections
-        #--- End: for
+        # --- End: for
 
 
     @staticmethod
@@ -529,4 +529,4 @@ class Regrid:
         return mass
 
 
-#--- End: class
+# --- End: class

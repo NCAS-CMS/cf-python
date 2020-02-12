@@ -124,7 +124,7 @@ class UMArray(abstract.FileArray):
             mask = (array == fill_value)
             if mask.any():
                 array = numpy.ma.masked_where(mask, array, copy=False)
-        #--- End: if
+        # --- End: if
 
         # ------------------------------------------------------------
         # Unpack the array using the scale_factor and add_offset, if
@@ -247,4 +247,4 @@ class UMArray(abstract.FileArray):
                              byte_ordering=self.byte_ordering)
 
 
-#--- End: class
+# --- End: class

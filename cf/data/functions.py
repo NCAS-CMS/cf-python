@@ -126,7 +126,7 @@ def _open_um_file(filename, aggregate=True, fmt=None, word_size=None,
                 close_one_file()
 
             f.open_fd()
-        #--- End: if
+        # --- End: if
         return f
 
     if open_files_threshold_exceeded():

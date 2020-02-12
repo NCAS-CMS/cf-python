@@ -154,7 +154,7 @@ class DatetimeTest(unittest.TestCase):
             d < cf.dt(2005, 2, 29, calendar='noleap')
 
 
-#--- End: class
+# --- End: class
 
 
 if __name__ == '__main__':

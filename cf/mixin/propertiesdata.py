@@ -848,7 +848,7 @@ class PropertiesData(Properties):
 #            else:
 #                # Identity (not string-valued, e.g. cf.Query).
 #                matches.append({None: m})
-#        #--- End: for
+#        # --- End: for
 #
 #        return matches
 
@@ -969,7 +969,7 @@ class PropertiesData(Properties):
 #            out.del_property('standard_name', None)
 #            out.set_property('long_name', method)
 #            return out
-#        #--- End: if
+#        # --- End: if
 #
 #        raise ValueError(
 #            "ERROR: Can't get {0} when there is no data array".format(method))
@@ -3017,7 +3017,7 @@ class PropertiesData(Properties):
                     print("{}: Different {} attributes: {!r}, {!r}".format(
                         self.__class__.__name__, attr, x, y))
                 return False
-        #--- End: for
+        # --- End: for
 
         # ------------------------------------------------------------
         # Check the data
@@ -3149,7 +3149,7 @@ class PropertiesData(Properties):
                 return t.interval(reftime, end=False)[1]
             else:
                 return t.interval(reftime, end=True)[0]
-        #--- End: def
+        # --- End: def
 
         if not self.Units.isreftime:
             raise ValueError(
@@ -3346,7 +3346,7 @@ class PropertiesData(Properties):
             ok = (ndim == self_ndim)
             if ok:
                 return True
-        #--- End: for
+        # --- End: for
 
         return False
 
@@ -3424,11 +3424,11 @@ class PropertiesData(Properties):
                     ok = Units(value0).equals(self_units)
                 else:
                     ok = Units(value0).equivalent(self_units)
-            #--- End: if
+            # --- End: if
 
             if ok:
                 break
-        #--- End: for
+        # --- End: for
 
         return ok
 
@@ -3528,7 +3528,7 @@ class PropertiesData(Properties):
             else:
                 if y_data is None:
                     y_data = y
-        #--- End: if
+        # --- End: if
 
         return data.allclose(y_data, rtol=rtol, atol=atol)
 
@@ -3677,7 +3677,7 @@ class PropertiesData(Properties):
                 fillval = default_netCDF_fillvals()[d.kind + str(d.itemsize)]
             else:
                 fillval = default
-        #--- End: if
+        # --- End: if
 
         return fillval
 
@@ -4391,7 +4391,7 @@ class PropertiesData(Properties):
             n = self.get_property(prop, None)
             if n is not None:
                 return '{0}={1}'.format(prop, n)
-        #--- End: for
+        # --- End: for
 
         n = self.nc_get_variable(None)
         if n is not None:
@@ -4400,7 +4400,7 @@ class PropertiesData(Properties):
         for ctype in ('X', 'Y', 'Z', 'T'):
             if getattr(self, ctype, False):
                 return ctype
-        #--- End: for
+        # --- End: for
 
         return default
 
@@ -4459,12 +4459,12 @@ class PropertiesData(Properties):
                     out.insert(0, i)
                 else:
                     out.insert(1, i)
-        #--- End: if
+        # --- End: if
 
         for ctype in ('X', 'Y', 'Z', 'T'):
             if getattr(self, ctype, False):
                 out.append(ctype)
-        #--- End: for
+        # --- End: for
 
         return out
 
@@ -4821,7 +4821,7 @@ class PropertiesData(Properties):
                     data = data.override_units(units, inplace=False)
                 else:
                     data.override_units(units, inplace=True)
-        #--- End: if
+        # --- End: if
 
         if copy:
             data = data.copy()
@@ -5114,7 +5114,7 @@ class PropertiesData(Properties):
         _DEPRECATION_ERROR_METHOD(self, 'select') # pragma: no cover
 
 
-#--- End: class
+# --- End: class
 
 
 class Subspace:
@@ -5151,4 +5151,4 @@ class Subspace:
         self.variable[indices] = value
 
 
-#--- End: class
+# --- End: class

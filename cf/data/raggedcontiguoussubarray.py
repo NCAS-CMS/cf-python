@@ -65,4 +65,4 @@ class RaggedContiguousSubarray(abstract.CompressedSubarray):
             return get_subspace(uarray, indices)
 
 
-#--- End: class
+# --- End: class

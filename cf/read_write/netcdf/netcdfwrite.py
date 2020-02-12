@@ -115,7 +115,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                 if numpy.intersect1d(unset_values, temp_array).size:
                     raise ValueError(
                         "ERROR: Can't write field when array has _FillValue or missing_value at unmasked point: {!r}".format(ncvar))
-            #--- End: if
+            # --- End: if
 
             # Copy the array into the netCDF variable
             g['nc'][ncvar][partition.indices] = array
@@ -346,7 +346,7 @@ then the input coordinate is not written.
                         array = _character_array(array)
                         # Get the netCDF dimension for the string length
                         ncdim_strlen = [_string_length_dimension(strlen, g=None)]
-                #--- End: if
+                # --- End: if
 
                 # Create a name for the netCDF variable to contain the array
                 p_ncvar = 'cfa_'+self._random_hex_string()
@@ -432,7 +432,7 @@ then the input coordinate is not written.
                 sfmt = attrs.pop('format', None)
                 if sfmt is not None:
                     attrs['subarray']['format'] = sfmt
-            #--- End: if
+            # --- End: if
 
             # LOCATION: Change from python to CFA indexing (i.e. range
             #           includes the final index)
@@ -454,15 +454,15 @@ then the input coordinate is not written.
                             p.append([x[0], x[1]+1, x[2]])
                     else:
                         p.append(tuple(x))
-                #--- End: for
+                # --- End: for
                 attrs['part'] = str(p)
-            #--- End: if
+            # --- End: if
 
             if 'base' in cfa_array and 'file' in attrs['subarray']:
                 # Make the file name relative to base
                 attrs['subarray']['file'] = relpath(attrs['subarray']['file'],
                                                     cfa_array['base'])
-        #--- End: for
+        # --- End: for
 
         # Add the description (as a JSON string) of the partition array to
         # the netcdf attributes.
@@ -544,4 +544,4 @@ then the input coordinate is not written.
                 type(x), x))
 
 
-#--- End: class
+# --- End: class

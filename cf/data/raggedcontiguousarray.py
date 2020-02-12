@@ -18,5 +18,5 @@ class RaggedContiguousArray(abstract.CompressedArray,
     .. versionadded:: 3.0.0
 
     '''
-#--- End: class
+# --- End: class
 

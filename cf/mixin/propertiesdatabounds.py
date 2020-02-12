@@ -102,7 +102,7 @@ class PropertiesDataBounds(PropertiesData):
                         # reverse its bounds (as per 7.1 of the
                         # conventions)
                         findices.append(slice(None, None, -1))
-                #--- End: if
+                # --- End: if
 
                 if auxiliary_mask:
                     findices[1] = [mask.insert_dimension(-1) for mask in findices[1]]
@@ -112,7 +112,7 @@ class PropertiesDataBounds(PropertiesData):
                         self.__class__.__name__, findices)) # pragma: no cover
 
                 new.bounds.set_data(bounds_data[tuple(findices)], copy=False)
-        #--- End: if
+        # --- End: if
 
         # Remove the direction, as it may now be wrong
         new._custom.pop('direction', None)
@@ -371,7 +371,7 @@ class PropertiesDataBounds(PropertiesData):
 
             if not inplace:
                 new.set_bounds(new_bounds, copy=False)
-        #--- End: if
+        # --- End: if
 
         if not bounds and new.has_bounds():
             new.del_bounds()
@@ -442,7 +442,7 @@ class PropertiesDataBounds(PropertiesData):
                     print('{}: Non-equivalent bounds data: {!r}, {!r}'.format(
                         self.__class__.__name__, self_bounds.data, other_bounds.data)) # pragma: no cover
                 return False
-        #--- End: if
+        # --- End: if
 
         # Still here? Then the data are equivalent.
         return True
@@ -473,7 +473,7 @@ class PropertiesDataBounds(PropertiesData):
                 return value0.search(value1)
             except (AttributeError, TypeError):
                 return self._equals(value1, value0)
-        #--- End: if
+        # --- End: if
 
         return False
 
@@ -557,7 +557,7 @@ class PropertiesDataBounds(PropertiesData):
             data = self.get_data(None)
             if data is not None:
                 return Data.zeros(self.shape, units=self.Units)
-        #--- End: if
+        # --- End: if
 
         raise AttributeError(
             "Can't get cell sizes when there are no bounds nor coordinate data")
@@ -656,7 +656,7 @@ class PropertiesDataBounds(PropertiesData):
             data = self.get_data(None)
             if data is not None:
                 return data.copy()
-        #--- End: if
+        # --- End: if
 
         raise AttributeError(
             "Can't get lower bounds when there are no bounds nor coordinate data")
@@ -734,7 +734,7 @@ class PropertiesDataBounds(PropertiesData):
             data = self.get_data(None)
             if data is not None:
                 return data.copy()
-        #--- End: if
+        # --- End: if
 
         raise AttributeError(
             "Can't get upper bounds when there are no bounds nor coordinate data")
@@ -1233,7 +1233,7 @@ dtype('float64')
                     print("{}: Different {} attributes: {!r}, {!r}".format(
                         self.__class__.__name__, attr, x, y))
                 return False
-        #--- End: for
+        # --- End: for
 
         # ------------------------------------------------------------
         # Check the data
@@ -1570,7 +1570,7 @@ dtype('float64')
             elif x != 'and':
                 raise ValueError(
                     "Positional argument, if provided, must one of 'or', 'and'")
-        #--- End: if
+        # --- End: if
 
         if not properties:
             return True
@@ -1587,7 +1587,7 @@ dtype('float64')
                     break
             elif not ok:
                 break
-        #--- End: for
+        # --- End: for
 
         return ok
 
@@ -1622,11 +1622,11 @@ dtype('float64')
                 ok = self._matching_values(value0, value1)
                 if ok:
                     break
-            #--- End: for
+            # --- End: for
 
             if ok:
                 break
-        #--- End: for
+        # --- End: for
 
         return ok
 
@@ -2630,7 +2630,7 @@ dtype('float64')
 
             if out is not None and not out.startswith('ncvar%'):
                 return out
-        #--- End: if
+        # --- End: if
 
         return default
 
@@ -2804,4 +2804,4 @@ dtype('float64')
             "Use method 'insert_dimension' instead.") # pragma: no cover
 
 
-#--- End: class
+# --- End: class

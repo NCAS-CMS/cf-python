@@ -200,7 +200,7 @@ class generalTest(unittest.TestCase):
         cf.CHUNKSIZE(original_chunksize)
 
 
-#--- End: class
+# --- End: class
 
 if __name__ == "__main__":
     print('Run date:', datetime.datetime.utcnow())

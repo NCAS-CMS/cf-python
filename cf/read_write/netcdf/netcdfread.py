@@ -158,7 +158,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             if strlen > 1:
                 ncdimensions.pop()
                 dtype = numpy_dtype('S{0}'.format(strlen))
-        #--- End: if
+        # --- End: if
 
         cfa_data['dtype'] = dtype
         cfa_data['_axes'] = ncdimensions
@@ -215,9 +215,9 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                             p.append(slice(x[0], x[1]-1, x[2]))
                     else:
                         p.append(list(x))
-                #--- End: for
+                # --- End: for
                 attrs['part'] = p
-        #--- End: for
+        # --- End: for
 
         construct.del_property('cf_role')
         construct.del_property('cfa_array')
@@ -294,5 +294,5 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         _file_to_fh['netCDF'].pop(filename, None)
         return out
 
-#--- End: class
+# --- End: class
 

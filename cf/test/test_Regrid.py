@@ -78,7 +78,7 @@ class RegridTest(unittest.TestCase):
             r = f1.regrids(f5, method='bilinear')
             self.assertTrue(f4.equals(r, verbose=True),
                             'destination = regional Field, CHUNKSIZE = %s' % chunksize)
-        #--- End: for
+        # --- End: for
         cf.CHUNKSIZE(self.original_chunksize)
 
         f6 = cf.read(self.filename6)[0]
@@ -118,13 +118,13 @@ class RegridTest(unittest.TestCase):
             self.assertTrue(f6.equals(f4.regridc(dst, axes=('X', 'Y'), method='conservative'),
                                       verbose=True),
                             'destination = global dict, CHUNKSIZE = %s' % chunksize)
-        #--- End: for
+        # --- End: for
         cf.CHUNKSIZE(self.original_chunksize)
 
         cf.ATOL(original_atol)
 
 
-#--- End: class
+# --- End: class
 
 if __name__ == "__main__":
     print('Run date:', datetime.datetime.now())

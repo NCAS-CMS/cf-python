@@ -211,7 +211,7 @@ class Query:
                 value = Data(value, units)
             elif not value_units.equivalent(Units(units)):
                 raise ValueError("sdfsdfsd99885109^^^^ TODO")
-        #--- End: if
+        # --- End: if
 
         self._operator = operator
         self._value    = value
@@ -544,7 +544,7 @@ class Query:
                     print("{}: Different {!r} attributes: {!r}, {!r}".format(self.__class__.__name__,
                         attr, getattr(self, attr, None), getattr(other, attr, None))) # pragma: no cover
                 return False
-        #--- End: for
+        # --- End: for
 
         return True
 
@@ -629,7 +629,7 @@ class Query:
             except TypeError:
                 raise ValueError(
                         "Can't perform regular expression search on a non-string: {!r}".format(x))
-        #--- End: if
+        # --- End: if
 
         if operator == 'ne':
             try:
@@ -639,7 +639,7 @@ class Query:
             except TypeError:
                 raise ValueError(
                         "Can't perform regular expression search on a non-string: {!r}".format(x))
-        #--- End: if
+        # --- End: if
 
         if operator == 'lt':
             _lt = getattr(x, '__query_lt__', None)
@@ -689,7 +689,7 @@ class Query:
 #                return _contain(value)
 #            else:
 #                return x == value
-#        #--- End: if
+#        # --- End: if
 
         if operator == 'set':
             if isinstance(x, str):
@@ -700,7 +700,7 @@ class Query:
                     except AttributeError:
                         if x == v:
                             return True
-                #--- End: for
+                # --- End: for
 
                 return False
             else:
@@ -715,7 +715,7 @@ class Query:
                     out |= (x == v)
 
                 return out
-        #--- End: if
+        # --- End: if
 
 
     def inspect(self):
@@ -751,7 +751,7 @@ class Query:
         _DEPRECATION_ERROR_FUNCTION(self, 'equivalent')
 
 
-#--- End: class
+# --- End: class
 
 
 # --------------------------------------------------------------------
@@ -1939,7 +1939,7 @@ def seasons(n=4, start=12):
         m0 = m1 + 1
         if m0 > 12:
             m0 = 1
-    #--- End: for
+    # --- End: for
 
     return out
 

@@ -63,7 +63,7 @@ class GatheredSubarray(abstract.CompressedSubarray):
                 if b >= z:
                     (a, b) = divmod(b, z)
                     u_indices[i] = a
-            #--- End: for
+            # --- End: for
             u_indices[compressed_axes[-1]] = b
 
 #            print ('sample_indices=', sample_indices, compressed_array.shape, end=", ")
@@ -75,7 +75,7 @@ class GatheredSubarray(abstract.CompressedSubarray):
 
 #            print ('u_indices=', u_indices, uarray[tuple(u_indices)].shape, compressed.shape)
             uarray[tuple(u_indices)] = compressed
-        #--- End: for
+        # --- End: for
 
         if indices is Ellipsis:
             return uarray
@@ -91,4 +91,4 @@ class GatheredSubarray(abstract.CompressedSubarray):
 #        return "<CF %s: %s>" % (self.__class__.__name__, str(self.array))
 
 
-#--- End: class
+# --- End: class

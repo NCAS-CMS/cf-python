@@ -71,7 +71,7 @@ class FieldTest(unittest.TestCase):
                                                 indent=indent,
                                                 namespace=ns,
                                                 string=s)
-        #--- End: for
+        # --- End: for
 
         for i in range(5):
             f = cf.example_field(i)
@@ -83,7 +83,7 @@ class FieldTest(unittest.TestCase):
                                                     indent=indent,
                                                     namespace=ns,
                                                     string=s)
-        #--- End: for
+        # --- End: for
 
 
     def test_Field_compress_uncompress(self):
@@ -128,7 +128,7 @@ class FieldTest(unittest.TestCase):
 
                     self.assertTrue(bool(c.data.get_compression_type()), message)
                     self.assertTrue(f.equals(c, verbose=True), message)
-        #--- End: for
+        # --- End: for
 
 
     def test_Field_flatten(self):
@@ -170,7 +170,7 @@ class FieldTest(unittest.TestCase):
             self.assertTrue(g.shape == tuple(shape))
             self.assertTrue(g.ndim == f.ndim-len(axes)+1)
             self.assertTrue(g.size == f.size)
-        #--- End: for
+        # --- End: for
 
         self.assertTrue(f.equals(f.flatten([]), verbose=True))
         self.assertTrue(f.flatten(inplace=True) is None)
@@ -281,7 +281,7 @@ class FieldTest(unittest.TestCase):
                     y = f.weights(components=components, measure=m, data=d)
                     y = f.weights('grid_longitude', components=components, measure=m, data=d)
                     y = f.weights(['grid_longitude'], components=components, measure=m, data=d)
-        #--- End: for
+        # --- End: for
 
         with self.assertRaises(Exception):
             f.weights(components=True, data=True)
@@ -299,7 +299,7 @@ class FieldTest(unittest.TestCase):
                   'ncvar%a'):
             for copy in (True, False):
                 f.replace_construct(x, f.construct(x), copy=copy)
-        #--- End: for
+        # --- End: for
 
         with self.assertRaises(Exception):
             f.replace_construct('grid_longitude', f.construct('latitude'))
@@ -353,7 +353,7 @@ class FieldTest(unittest.TestCase):
                     b = getattr(f.data, method)(axes=axes)
                     self.assertTrue(a.equals(b, rtol=1e-05, atol=1e-08, verbose=True),
                                     '{} weights={}, axes={}, {!r}, {!r}'.format(method, weights, axes, a, b))
-            #--- End: for
+            # --- End: for
 
             for method in ('mean',
                            'mean_absolute_value',
@@ -370,7 +370,7 @@ class FieldTest(unittest.TestCase):
                     b = getattr(f.data, method)(axes=axes, weights=d_weights)
                     self.assertTrue(a.equals(b, rtol=1e-05, atol=1e-08, verbose=True),
                                     '{} weights={}, axes={}, {!r}, {!r}'.format(method, weights, axes, a, b))
-                    #--- End: for
+                    # --- End: for
 
             for method in ('integral',):
                 weights = 'area'
@@ -380,7 +380,7 @@ class FieldTest(unittest.TestCase):
                 b = getattr(f.data, method)(axes=axes, weights=d_weights)
                 self.assertTrue(a.equals(b, rtol=1e-05, atol=1e-08, verbose=True),
                                 '{} weighted axes={}, {!r}, {!r}'.format(method, axes, a, b))
-        #--- End: for
+        # --- End: for
 
         for axes in axes_combinations(f):
             if axes == (0,):
@@ -399,7 +399,7 @@ class FieldTest(unittest.TestCase):
                     b = getattr(f.data, method)(axes=axes, ddof=1, weights=d_weights)
                     self.assertTrue(a.equals(b, rtol=1e-05, atol=1e-08, verbose=True),
                                     '{} weights={}, axes={}, {!r}, {!r}'.format(method, weights, axes, a, b))
-            #--- End: for
+            # --- End: for
 
             for method in ('mean_of_upper_decile',):
                 for weights in (None, 'area'):
@@ -413,7 +413,7 @@ class FieldTest(unittest.TestCase):
                     b = getattr(f.data, method)(axes=axes, weights=d_weights)
                     self.assertTrue(a.equals(b, rtol=1e-05, atol=1e-08, verbose=True),
                                     '{} weights={}, axes={}, {!r}, {!r}'.format(method, weights, axes, a, b))
-        #--- End: for
+        # --- End: for
 
 
     def test_Field_all(self):
@@ -556,7 +556,7 @@ class FieldTest(unittest.TestCase):
                 self.assertTrue((g.data._auxiliary_mask_return().array == a.mask).all(), message)
 
                 self.assertTrue(cf.functions._numpy_allclose(t.array, a), message)
-        #--- End: for
+        # --- End: for
         cf.CHUNKSIZE(self.original_chunksize)
 
         query2 = cf.set([1, 3, 5])
@@ -593,7 +593,7 @@ class FieldTest(unittest.TestCase):
                 self.assertTrue((g.data._auxiliary_mask_return().array == a.mask).all(), message)
 
                 self.assertTrue(cf.functions._numpy_allclose(t.array, a), message)
-        #--- End: for
+        # --- End: for
         cf.CHUNKSIZE(self.original_chunksize)
 
         ac3 = numpy.ma.masked_all((2, 3))
@@ -633,7 +633,7 @@ class FieldTest(unittest.TestCase):
                 self.assertTrue((g.data._auxiliary_mask_return().array == a.mask).all(), message)
 
                 self.assertTrue(cf.functions._numpy_allclose(t.array, a), message)
-        #--- End: for
+        # --- End: for
         cf.CHUNKSIZE(self.original_chunksize)
 
 
@@ -888,7 +888,7 @@ class FieldTest(unittest.TestCase):
                 self.assertTrue(
                     x0 < anchor <= x1,
                     'INCREASING period=%s, x0=%s, anchor=%s, x1=%s' % (period, x0, anchor, x1))
-            #--- End: for
+            # --- End: for
 
             # Decreasing dimension coordinate
             flipped_f = f.flip('grid_longitude')
@@ -899,8 +899,8 @@ class FieldTest(unittest.TestCase):
                 self.assertTrue(
                     x1 > anchor >= x0,
                     'DECREASING period=%s, x0=%s, anchor=%s, x1=%s' % (period, x1, anchor, x0))
-            #--- End: for
-        #--- End: for
+            # --- End: for
+        # --- End: for
 
 
     def test_Field_cell_area(self):
@@ -1364,7 +1364,7 @@ class FieldTest(unittest.TestCase):
 
             if mode != 'full':
                 self.assertTrue(g.construct('grid_longitude').array == 40) # TODO
-        #--- End: for
+        # --- End: for
 
         for mode in ('', 'compress', 'full', 'envelope'):
             indices = f.indices(mode, grid_latitude=cf.contains(3))
@@ -1378,7 +1378,7 @@ class FieldTest(unittest.TestCase):
 
             if mode != 'full':
                 self.assertTrue(g.construct('grid_latitude').array == 3)
-        #--- End: for
+        # --- End: for
 
         for mode in ('', 'compress', 'full', 'envelope'):
             indices = f.indices(mode, longitude=cf.contains(83))
@@ -1392,7 +1392,7 @@ class FieldTest(unittest.TestCase):
 
             if mode != 'full':
                 self.assertTrue(g.construct('longitude').array == 83)
-        #--- End: for
+        # --- End: for
 
 #        print (f)
 #        lon2 = f.construct('longitude').transpose()
@@ -1440,7 +1440,7 @@ class FieldTest(unittest.TestCase):
 #
 #            if mode != 'full':
 #                self.assertTrue(g.construct('longitude').array == 83)
-#        #--- End: for
+#        # --- End: for
 
         # Calls that should fail
         with  self.assertRaises(Exception):
@@ -1655,7 +1655,7 @@ class FieldTest(unittest.TestCase):
             f = cf.read(self.filename2)[0][0:100]
             self.assertTrue(len(f.section(('X', 'Y'))) == 100,
                             'CHUNKSIZE = {}'.format(chunksize))
-        #--- End: for
+        # --- End: for
         cf.CHUNKSIZE(self.original_chunksize)
 
 
@@ -2096,7 +2096,7 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(f.mask_invalid(inplace=True) is None)
 
 
-#--- End: class
+# --- End: class
 
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.now())

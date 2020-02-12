@@ -54,7 +54,7 @@ def asanyarray(*args):
             out.append(numpy_asanyarray(x))
         else:
             out.append(x)
-    #--- End: for
+    # --- End: for
 
     return out
 
@@ -763,7 +763,7 @@ def sample_size_f(a, axis=None, masked=False):
             shape = a.shape
             N = numpy_empty(shape[:axis]+shape[axis+1:], dtype=float)
             N[...] = shape[axis]
-    #--- End: if
+    # --- End: if
 
     return asanyarray(N)
 
@@ -1112,7 +1112,7 @@ https://en.wikipedia.org/wiki/Pooled_variance#Population-based_statistics
 
         if weighted and ddof == 1:
             V2 = psum(V2, V2b)
-    #--- End: if
+    # --- End: if
 
     (N, var, avg, V1, V2) = asanyarray(N, var, avg, V1, V2)
 

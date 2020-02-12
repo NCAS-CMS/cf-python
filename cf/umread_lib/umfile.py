@@ -109,7 +109,7 @@ class File:
                 rec.file = self
 
 
-#--- End: class
+# --- End: class
 
 
 class Var:
@@ -177,12 +177,12 @@ class Var:
                 this_grp.sort(key=self._compare_recs_by_orig_order)
                 groups.append(this_grp)
                 this_grp = []
-        #--- End: for
+        # --- End: for
 
         return groups
 
 
-#--- End: class
+# --- End: class
 
 
 class Rec:
@@ -291,7 +291,7 @@ class Rec:
                                   nwords)
 
 
-#--- End: class
+# --- End: class
 
 
 if __name__ == '__main__':

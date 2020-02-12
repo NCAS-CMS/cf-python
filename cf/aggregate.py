@@ -88,7 +88,7 @@ class _HFLCache:
         print(cf_inspect(self))
 
 
-#--- End: class
+# --- End: class
 
 
 class _Meta:
@@ -336,7 +336,7 @@ class _Meta:
             for aux in tuple(aux_1d): #.keys():
                 if axis in f.get_data_axes(aux):
                     aux_coords[aux] = aux_1d.pop(aux)
-            #--- End: for
+            # --- End: for
 
             info_aux = []
             for key, aux_coord in aux_coords.items():
@@ -365,7 +365,7 @@ class _Meta:
                      'hasbounds': aux_coord.has_bounds(),
                      'coordrefs': self.find_coordrefs(key)})
 #                     'size'     : None})
-            #--- End: for
+            # --- End: for
 
             # Sort the 1-d auxiliary coordinate information
             info_aux.sort(key=itemgetter('identity'))
@@ -404,7 +404,7 @@ class _Meta:
                     return
                 else:
                     ncdim = True
-            #--- End: if
+            # --- End: if
 
             self.axis[identity] = \
                 {'ids'      : tuple([i['identity']  for i in info_1d_coord]),
@@ -427,7 +427,7 @@ class _Meta:
 
             self.id_to_axis[identity] = axis
             self.axis_to_id[axis]     = identity
-        #--- End: for
+        # --- End: for
 
         # Create a sorted list of the axes' canonical identities
         #
@@ -459,7 +459,7 @@ class _Meta:
                 'axes'     : axes,
                 'hasbounds': nd_aux_coord.has_bounds(),
                 'coordrefs': self.find_coordrefs(key)}
-        #--- End: for
+        # --- End: for
 
         # ------------------------------------------------------------
         # Cell methods
@@ -534,7 +534,7 @@ class _Meta:
                 self.key_to_identity[key] = identity
 
                 ancs_in_refs.append(key)
-        #--- End: for
+        # --- End: for
 
         # Secondly process domain ancillaries which are not being used
         # in coordinate references
@@ -597,7 +597,7 @@ class _Meta:
 
             info_msr[units].append({'key' : key,
                                     'axes': axes})
-        #--- End: for
+        # --- End: for
 
         # For each cell measure's canonical units, sort the
         # information by axis identities.
@@ -654,11 +654,11 @@ class _Meta:
                         ex_all = [p for p in properties if p not in eq]
                     elif exist:
                         ex_all = [p for p in properties if p not in ex]
-            #--- End: if
+            # --- End: if
 
             self.properties = tuple(sorted(ex_all + ex +
                                            eq_all.items() + eq.items()))
-        #--- End: if
+        # --- End: if
 
         # Attributes
         self.attributes = set(('file',))
@@ -754,7 +754,7 @@ class _Meta:
                 for u in _canonical_units[identity]:
                     if var_units.equivalent(u):
                         return u
-                #--- End: for
+                # --- End: for
 
                 # Still here?
                 _canonical_units[identity].append(var_units)
@@ -766,7 +766,7 @@ class _Meta:
                 _canonical_units[identity] = [var_units]
             elif relaxed_units or variable.dtype.kind in ('S', 'U'):
                 var_units = _no_units
-        #--- End: if
+        # --- End: if
 
         # Still here?
         return var_units
@@ -810,11 +810,11 @@ class _Meta:
                 if not cm.equivalent(canonical_cm, rtol=rtol, atol=atol):
                     equivalent = False
                     break
-            #--- End: for
+            # --- End: for
 
             if equivalent:
                 return canonical_cms
-        #--- End: for
+        # --- End: for
 
         # Still here?
         cms = tuple(cms)
@@ -885,7 +885,7 @@ class _Meta:
                 if getattr(coord, ctype):
                     identity = ctype
                     break
-        #--- End: if
+        # --- End: if
 
         if identity is not None:
             all_coord_identities = self.all_coord_identities.setdefault(axes, set())
@@ -898,7 +898,7 @@ class _Meta:
             if coord.has_data() or (coord.has_bounds() and coord.bounds.has_data()):
                 all_coord_identities.add(identity)
                 return identity
-        #--- End: if
+        # --- End: if
 
         # Still here?
         if self.info:
@@ -938,7 +938,7 @@ class _Meta:
             if anc.has_data():
                 all_field_anc_identities.add(identity)
                 return identity
-        #--- End: if
+        # --- End: if
 
         # Still here?
         if self.info:
@@ -978,7 +978,7 @@ class _Meta:
                     self.messsage = "{0!r} field can't be aggregated due to it having an unidentifiable coordinate reference".format(
                         self.f.identity())
                 return
-        #--- End: for
+        # --- End: for
 
         signatures.sort()
 
@@ -1260,7 +1260,7 @@ class _Meta:
         return tuple(sorted(names))
 
 
-#--- End: class
+# --- End: class
 
 def aggregate(fields,
               info=0,
@@ -1571,7 +1571,7 @@ def aggregate(fields,
                 except TypeError:
                     raise TypeError("Bad type of {!r} parameter: {!r}".format(
                         key, type(value)))
-        #--- End: for
+        # --- End: for
 
         equal  = properties['equal']
         exist  = properties['exist']
@@ -1585,7 +1585,7 @@ def aggregate(fields,
             ignore = _signature_properties.union(ignore)
         else:
             ignore = _signature_properties
-    #--- End: if
+    # --- End: if
 
 
     unaggregatable = False
@@ -1631,7 +1631,7 @@ def aggregate(fields,
                     output_fields_append(f)
                 else:
                     output_fields_append(f.copy())
-            #--- End: if
+            # --- End: if
 
             continue
 
@@ -1640,7 +1640,7 @@ def aggregate(fields,
         # list of fields with the same structural signature.
         # ------------------------------------------------------------
         signatures.setdefault(meta.signature, []).append(meta)
-    #--- End: for
+    # --- End: for
 
     # ================================================================
     # 2. Within each group of fields with the same structural
@@ -1724,7 +1724,7 @@ def aggregate(fields,
                         coord_identity in value['ids']):
                         aggregating_axes.append(identity)
                         break
-            #--- End: for
+            # --- End: for
 
             _create_hash_and_first_values(meta, aggregating_axes,
                                           donotchecknonaggregatingaxes,
@@ -1828,10 +1828,10 @@ def aggregate(fields,
 
                         unaggregatable = True
                         break
-                #--- End: while
+                # --- End: while
 
                 m[:] = [m0]
-            #--- End: for
+            # --- End: for
 
             if unaggregatable:
                 break
@@ -1843,7 +1843,7 @@ def aggregate(fields,
             # aggregation along the next axis.
             # --------------------------------------------------------
             meta = [m for gm in grouped_meta for m in gm]
-        #--- End: for
+        # --- End: for
 
         # Add fields to the output list
         if unaggregatable:
@@ -1855,7 +1855,7 @@ def aggregate(fields,
                     output_fields.extend((m.field for m in meta0))
         else:
             output_fields.extend((m.field for m in meta))
-    #--- End: for
+    # --- End: for
 
     aggregate.status = status
 
@@ -2037,18 +2037,18 @@ def _create_hash_and_first_values(meta, axes, donotchecknonaggregatingaxes,
 ##                            array0 = array[-1, ...].copy()
 ##                            array0.sort()
 ##                            m.last_bounds[identity] = array0
-##                    #--- End: if
+##                    # --- End: if
 ##
 ##                    hash_values.append(hash_value)
 ##
 ##                    # Reinstate the coordinate's original units
 ##                    coord.Units = coord_units
-            #--- End: for
+            # --- End: for
 
             m_hash_values[identity]  = hash_values
             m_first_values[identity] = first_values
             m_last_values[identity]  = last_values
-        #--- End: for
+        # --- End: for
 
         # ------------------------------------------------------------
         # N-d auxiliary coordinates
@@ -2086,7 +2086,7 @@ def _create_hash_and_first_values(meta, axes, donotchecknonaggregatingaxes,
                     h = (h,)
 
                 aux['hash_value'] = h
-        #--- End: if
+        # --- End: if
 
         # ------------------------------------------------------------
         # Cell measures
@@ -2118,7 +2118,7 @@ def _create_hash_and_first_values(meta, axes, donotchecknonaggregatingaxes,
                     hash_values.append((h,))
 
                 msr['hash_values'] = hash_values
-        #--- End: if
+        # --- End: if
 
         # ------------------------------------------------------------
         # Field ancillaries
@@ -2147,7 +2147,7 @@ def _create_hash_and_first_values(meta, axes, donotchecknonaggregatingaxes,
                              False, False, False, hfl_cache, rtol, atol)
 
                 anc['hash_value'] = (h,)
-        #--- End: if
+        # --- End: if
 
         # ------------------------------------------------------------
         # Domain ancillaries
@@ -2207,10 +2207,10 @@ def _create_hash_and_first_values(meta, axes, donotchecknonaggregatingaxes,
 #                             False, False, False, hfl_cache, rtol, atol)
 #
 #                anc['hash_value'] = h
-        #--- End: if
+        # --- End: if
 
         m.cell_values = True
-    #--- End: for
+    # --- End: for
 
 
 def _get_hfl(v, canonical_units, sort_indices, null_sort,
@@ -2251,7 +2251,7 @@ def _get_hfl(v, canonical_units, sort_indices, null_sort,
                 if first_and_last_bounds:
                     first, last = hfl_cache.flb.get(key, (None, None))
                     create_flb = first is None
-    #--- End: if
+    # --- End: if
 
     if create_hash or create_fl or create_flb:
         # Change the data type if required
@@ -2290,7 +2290,7 @@ def _get_hfl(v, canonical_units, sort_indices, null_sort,
                         hash_value = hash_value0
                         found_close = True
                         break
-                #--- End: for
+                # --- End: for
 
                 if not found_close:
                     hfl_cache.hash_to_array[hash_value] = array
@@ -2298,7 +2298,7 @@ def _get_hfl(v, canonical_units, sort_indices, null_sort,
                 pass
 
             hfl_cache.hash[key] = hash_value
-        #--- End: if
+        # --- End: if
 
         if create_fl:
             first = array.item(0)
@@ -2310,7 +2310,7 @@ def _get_hfl(v, canonical_units, sort_indices, null_sort,
             first = numpy_sort(array[0, ...])
             last  = numpy_sort(array[-1, ...])
             hfl_cache.flb[key] = (first, last)
-    #--- End: if
+    # --- End: if
 
     if first_and_last_values or first_and_last_bounds:
         return hash_value, first, last
@@ -2345,7 +2345,7 @@ def _group_fields(meta, axis):
         sort_by_axis_ids = itemgetter(*axes)
         def _hash_values(m):
             return sort_by_axis_ids(m.hash_values)
-        #--- End: def
+        # --- End: def
 
         meta.sort(key=_hash_values)
 
@@ -2368,7 +2368,7 @@ def _group_fields(meta, axis):
             if value != hash1[identity]:
                 count += 1
                 a_identity = identity
-        #--- End: for
+        # --- End: for
 
         hash0 = hash1
 
@@ -2395,7 +2395,7 @@ def _group_fields(meta, axis):
                     # different data array values
                     ok = False
                     break
-            #--- End: for
+            # --- End: for
 
             if not ok:
                 groups_of_fields.append([m1])
@@ -2416,7 +2416,7 @@ def _group_fields(meta, axis):
                         # data array values
                         ok = False
                         break
-            #--- End: for
+            # --- End: for
 
             if not ok:
                 groups_of_fields.append([m1])
@@ -2446,7 +2446,7 @@ def _group_fields(meta, axis):
             # fields which contains field1.
             # --------------------------------------------------------
             groups_of_fields.append([m1])
-    #--- End: for
+    # --- End: for
 
     return groups_of_fields
 
@@ -2469,7 +2469,7 @@ def _sorted_by_first_values(meta, axis):
 
     def _first_values(m):
         return sort_by_axis_ids(m.first_values)
-    #--- End: def
+    # --- End: def
 
     meta.sort(key=_first_values)
 
@@ -2556,7 +2556,7 @@ def _ok_coordinate_arrays(meta, axis, overlap, contiguous, info):
     m0.last_bounds[axis][1])
 
                         return
-            #--- End: if
+            # --- End: if
 
 #            else:
 #                for m0, m1 in zip(meta[:-1], meta[1:]):
@@ -2577,7 +2577,7 @@ def _ok_coordinate_arrays(meta, axis, overlap, contiguous, info):
 #    m1_first_bounds[1], m0_last_bounds[1])
 #
 #                        return
-#            #--- End: if
+#            # --- End: if
 
             if contiguous:
                 for m0, m1 in zip(meta[:-1], meta[1:]):
@@ -2597,8 +2597,8 @@ def _ok_coordinate_arrays(meta, axis, overlap, contiguous, info):
     m1.first_bounds[axis][0])
 
                         return
-            #--- End: if
-        #--- End: if
+            # --- End: if
+        # --- End: if
 
     else:
         # ------------------------------------------------------------
@@ -2621,7 +2621,7 @@ def _ok_coordinate_arrays(meta, axis, overlap, contiguous, info):
     identity)
 
                     return
-    #--- End: if
+    # --- End: if
 
     # ----------------------------------------------------------------
     # Still here? Then the aggregating axis does not overlap between
@@ -2726,7 +2726,7 @@ def _aggregate_2_fields(m0, m1,
 #                hash_value0.append(hash_value1)
 #            except AttributeError:
             aux0['hash_value'] = hash_value0 + hash_value1
-    #--- End: for
+    # --- End: for
 
     # Cell measures
     for units in m0.msr:
@@ -2744,7 +2744,7 @@ def _aggregate_2_fields(m0, m1,
 #                    hash_values0[i].append(hash_values1[i])
 #                except AttributeError:
                 hash_values0[i] = hash_values0[i] + hash_values1[i]
-    #--- End: for
+    # --- End: for
 
     # Field ancillaries
     for identity in m0.field_anc:
@@ -2763,7 +2763,7 @@ def _aggregate_2_fields(m0, m1,
 #                hash_value0.append(hash_value1)
 #            except AttributeError:
             anc0['hash_value'] = hash_value0 + hash_value1
-    #--- End: for
+    # --- End: for
 
     # Domain ancillaries
     for identity in m0.domain_anc:
@@ -2782,7 +2782,7 @@ def _aggregate_2_fields(m0, m1,
 #                hash_value0.append(hash_value1)
 #            except AttributeError:
             anc0['hash_value'] = hash_value0 + hash_value1
-    #--- End: for
+    # --- End: for
 
     # ----------------------------------------------------------------
     # For each matching pair of coordinates, cell measures, field and
@@ -2818,7 +2818,7 @@ def _aggregate_2_fields(m0, m1,
                 data = Data.concatenate((construct1.bounds.get_data(), construct0.bounds.get_data()),
                                         axis, _preserve=False)
                 construct0.bounds.set_data(data)
-    #--- End: for
+    # --- End: for
 
     # ----------------------------------------------------------------
     # Insert the data array from field1 into the data array of field0
@@ -2834,13 +2834,13 @@ def _aggregate_2_fields(m0, m1,
             if axis0 not in data_axes0:
                 field0.insert_dimension(axis0, position=0, inplace=True)
                 data_axes0.insert(0, axis0)
-        #--- End: for
+        # --- End: for
 
         for axis0 in data_axes0:
             axis1 = dim0_name_map[axis0]
             if axis1 not in data_axes1:
                 field1.insert_dimension(axis1, position=0, inplace=True)
-        #--- End: for
+        # --- End: for
 
         # Find the position of the concatenating axis
         if adim0 not in data_axes0:
@@ -2876,7 +2876,7 @@ def _aggregate_2_fields(m0, m1,
 
         # Insert the concatentated data into the field
         field0.set_data(data, set_axes=False, copy=False)
-    #--- End: if
+    # --- End: if
 
     # Make sure that field0 has a standard_name, if possible.
     if getattr(field0, 'id', None) is not None:
@@ -2884,7 +2884,7 @@ def _aggregate_2_fields(m0, m1,
         if standard_name is not None:
             field0.set_property('standard_name', standard_name)
             del field0.id
-    #--- End: if
+    # --- End: if
 
     #-----------------------------------------------------------------
     # Update the properties in field0
@@ -2915,7 +2915,7 @@ def _aggregate_2_fields(m0, m1,
         else:
             if value0 is not None:
                 field0.del_property(prop)
-    #--- End: for
+    # --- End: for
 
 #    #-----------------------------------------------------------------
 #    # Update the attributes in field0
@@ -2936,7 +2936,7 @@ def _aggregate_2_fields(m0, m1,
 #            m0.attributes.discard(attr)
 #            if value0 is not None:
 #                delattr(field0, attr)
-#    #--- End: for
+#    # --- End: for
 
     # Note that the field in this _Meta object has already been
     # aggregated

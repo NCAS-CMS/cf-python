@@ -298,7 +298,7 @@ class TimeDuration:
             units = self.duration.Units
             if not units.istime:
                 raise ValueError("Bad units: {!r}".format(units))
-        #--- End: if
+        # --- End: if
 
         if not (units.iscalendartime or units.istime):
             raise ValueError(
@@ -319,7 +319,7 @@ class TimeDuration:
                     offset[4] = None
                     if units <= _seconds and duration < _one_minute:
                         offset[5] = None
-        #--- End: if
+        # --- End: if
         self.offset = Offset(*offset)
 
 # TODO should offset be None for all "higher" units
@@ -821,7 +821,7 @@ class TimeDuration:
                           calendar)
             d = op(Data(0.0, units), duration)
             return d.datetime_array.item(())
-        #--- End: def
+        # --- End: def
 
         duration = self.duration
         units    = duration.Units
@@ -880,7 +880,7 @@ class TimeDuration:
                     out.append(None)
                 else:
                     out.append(getattr(self, method)(d))
-            #--- End: for
+            # --- End: for
 
             dt[...] = numpy.reshape(out, dt.shape)
 
@@ -1382,7 +1382,7 @@ class TimeDuration:
                 return dt, dt1 #dt.copy(), dt1
             else:
                 return dt1, dt # dt1, dt.copy()
-        #--- End: def
+        # --- End: def
 
         calendar = getattr(dt, 'calendar', _default_calendar)
         if calendar == '':
@@ -1602,7 +1602,7 @@ class TimeDuration:
             return False
 
 
-#--- End: class
+# --- End: class
 
 
 def Y(duration=1, month=1, day=1, hour=0, minute=0, second=0):

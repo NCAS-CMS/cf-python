@@ -68,7 +68,7 @@ import cf
 #            areacella[...] = numpy.arange(90).reshape(9, 10) + 100000.5
 #
 #        nc.close()
-#    #--- End: def
+#    # --- End: def
 #
 #    parent_file = os.path.join(os.path.dirname(os.path.abspath(__file__)),
 #                               'parent.nc')
@@ -241,7 +241,7 @@ class ExternalVariableTest(unittest.TestCase):
             self.assertTrue(external[i].equals(h[i], verbose=True))
 
 
-#--- End: class
+# --- End: class
 
 
 if __name__ == '__main__':

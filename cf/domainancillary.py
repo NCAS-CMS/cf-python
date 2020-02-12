@@ -53,4 +53,4 @@ class DomainAncillary(mixin.PropertiesDataBounds,
         return True
 
 
-#--- End: class
+# --- End: class

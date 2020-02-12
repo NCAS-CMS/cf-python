@@ -293,4 +293,4 @@ class SubspaceField(mixin.Subspace):
             return field[indices]
 
 
-#--- End: class
+# --- End: class

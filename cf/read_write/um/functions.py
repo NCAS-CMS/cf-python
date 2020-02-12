@@ -38,7 +38,7 @@ is returned with an open file descriptor.
                 close_one_file()
 
             f.open_fd()
-        #--- End: if
+        # --- End: if
         return f
 
     if open_files_threshold_exceeded():
@@ -64,7 +64,7 @@ is returned with an open file descriptor.
     _file_to_UM[filename] = f
 
     return f
-#--- End: def
+# --- End: def
 
 def _close_um_file(filename):
     '''Close a PP or UM fields file.
@@ -86,5 +86,5 @@ Does nothing if the file is already closed.
     f = _file_to_UM.pop(filename, None)
     if f is not None:
         f.close_fd()
-#--- End: def
+# --- End: def
 

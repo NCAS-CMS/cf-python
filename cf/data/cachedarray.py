@@ -130,4 +130,4 @@ class CachedArray(abstract.FileArray):
         return self._get_component('_partition_file')
 
 
-#--- End: class
+# --- End: class

@@ -198,7 +198,7 @@ class FileArray(Array):
         pass
 
 
-#--- End: class
+# --- End: class
 
 #Array.register(FileArray)
 

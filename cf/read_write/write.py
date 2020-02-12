@@ -464,7 +464,7 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
         if write_only_on_pe0 and not mpi_rank == 0:
             mpi_comm.Barrier()
             return
-    #--- End: if
+    # --- End: if
 
     if fields:
         extra_write_vars = {'cfa'               : False,
@@ -483,7 +483,7 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
             fmt = 'NETCDF3_CLASSIC'
             if cfa_options:
                 extra_write_vars['cfa_options'] = cfa_options
-        #--- End: if
+        # --- End: if
 
         if extra_write_vars['cfa']:
             if Conventions:
@@ -493,7 +493,7 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
                 Conventions = tuple(Conventions) + ('CFA',)
             else:
                 Conventions = 'CFA'
-        #--- End: if
+        # --- End: if
 
         netcdf.write(fields, filename, fmt=fmt, overwrite=overwrite,
                      global_attributes=global_attributes,
@@ -506,7 +506,7 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
                      shuffle=shuffle, fletcher32=fletcher32,
                      verbose=verbose,
                      extra_write_vars=extra_write_vars)
-    #--- End: if
+    # --- End: if
 
     if mpi_on and write_only_on_pe0:
         mpi_comm.Barrier()

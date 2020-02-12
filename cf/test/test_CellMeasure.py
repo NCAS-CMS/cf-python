@@ -45,7 +45,7 @@ class CellMeasureTest(unittest.TestCase):
         self.assertTrue(x.identity() == '')
 
 
-#--- End: class
+# --- End: class
 
 if __name__ == "__main__":
     print('Run date:', datetime.datetime.now())

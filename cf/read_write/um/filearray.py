@@ -120,7 +120,7 @@ Returns a numpy array.
             mask = (array == fill_value)
             if mask.any():
                 array = numpy_ma_masked_where(mask, array, copy=False)
-        #--- End: if
+        # --- End: if
 
         # ------------------------------------------------------------
         # Unpack the array using the scale_factor and add_offset, if
@@ -142,7 +142,7 @@ Returns a numpy array.
 
         # Return the numpy array
         return array
-    #--- End: def
+    # --- End: def
 
     def __str__(self):
         '''
@@ -151,14 +151,14 @@ x.__str__() <==> str(x)
 
 '''
         return "%s%s in %s" % (self.header_offset, self.shape, self.file)
-    #--- End: def
+    # --- End: def
 
     @property
     def file_pointer(self):
         '''
 '''
         return (self.file, self.header_offset)
-    #--- End: def
+    # --- End: def
 
     def close(self):
         '''
@@ -177,7 +177,7 @@ If the file is not open then no action is taken.
 
 '''
         _close_um_file(self.file)
-    #--- End: def
+    # --- End: def
 
     def open(self):
         '''
@@ -197,6 +197,6 @@ Open the file containing the data array.
                              fmt=getattr(self, 'fmt', None),
                              word_size=getattr(self, 'word_size', None),
                              byte_ordering=getattr(self, 'byte_ordering', None))
-    #--- End: def
+    # --- End: def
 
-#--- End: class
+# --- End: class

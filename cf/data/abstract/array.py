@@ -13,5 +13,5 @@ class Array(cfdm.Array):
         return super().__repr__().replace('<', '<CF ', 1)
 
 
-#--- End: class
+# --- End: class
 
