@@ -10,6 +10,7 @@ from numpy import ceil              as numpy_ceil
 from numpy import cos               as numpy_cos
 from numpy import cosh              as numpy_cosh
 from numpy import cumsum            as numpy_cumsum
+from numpy import diff              as numpy_diff
 from numpy import digitize          as numpy_digitize
 from numpy import dtype             as numpy_dtype
 from numpy import e                 as numpy_e
@@ -2056,7 +2057,27 @@ place.
         #--- End: if
         return processed_partitions
 
+    @_inplace_enabled
+    def diff(self, axis=-1, inplace=False):
+        '''TODO
 
+    .. versionadded:: 3.2.0
+
+        '''
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        # TODO - LAMA this using section
+        out = type(self)(numpy_diff(d.array, axis=axis),
+                         units=self.Units, fill_value=self.fill_value)
+
+        if inplace:
+            d.__dict__ = out.__dict__
+        else:
+            d = out
+            
+        return d
+
+    
     def dumps(self):
         '''Return a JSON string serialization of the data array.
 
@@ -9010,10 +9031,15 @@ False
     def compressed(self, inplace=False):
         '''TODO
 
+    .. versionadded:: 3.2.0
+
         '''
         d = _inplace_enabled_define_and_cleanup(self)
 
-        d.flatten(inplace=True)
+        ndim = d.ndim
+        
+        if ndim != 1:
+            d.flatten(inplace=True)
         
         n_non_missing = d.count()
         if n_non_missing == d.size:
@@ -9022,17 +9048,28 @@ False
         comp = self.empty(shape=(n_non_missing,), dtype=self.dtype, units=self.Units)
 
         # Find the number of array elements that fit in one chunk
-        n = CHUNKSIZE//(self.dtype.itemsize + 1.0)
+        n = int(CHUNKSIZE()//(self.dtype.itemsize + 1.0))
 
+        # Loop around each chunk's worth of elements and assign the
+        # non-missing values to the compressed data
         i = 0
+        start = 0
         for _ in range(1 + d.size//n):
             array = d[i:i+n].array
             if numpy_ma_isMA(array):
                 array = array.compressed()
 
-            comp[i:i+array.size] = array
+            size = array.size
+            if size >= 1:            
+                end  = start + size
+                comp[start:end] = array
+                start = end
+
             i += n
 
+        if not d.ndim:
+            comp.squeeze(inplace=True)
+            
         if inplace:
             d.__dict__ = comp.__dict__
         else:

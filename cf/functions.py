@@ -2536,8 +2536,8 @@ def _DEPRECATION_ERROR_KWARG_VALUE(instance, method, kwarg, value,
     raise DeprecationError("Value {!r} of keyword {!r} of method '{}.{}' has been deprecated at version {} and is no longer available. {}".format(
         value,
         kwarg,
-        method,
         instance.__class__.__name__,
+        method,
         version,
         message))
 

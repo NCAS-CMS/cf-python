@@ -473,10 +473,7 @@ Specifying weighting by horizontal cell area may also use the special
 
 An alternative technique for specifying weights is to set the
 *weights* keyword to the output of a call to the `~Field.weights`
-method; or set the *weights* keyword to `True`. The latter case is
-equivalent to specifying, by their identities, the axes being
-collapsed, and will raise an exception if weights can't be calculated
-for all collapse axes of size greater than 1.
+method.
 		   
 .. code-block:: python
    :caption: *Alternative syntax for specifying weights.*
@@ -491,17 +488,6 @@ for all collapse axes of size greater than 1.
                    : latitude(1) = [0.0] degrees_north
                    : longitude(1) = [180.0] degrees_east
                    : air_pressure(1) = [850.0] hPa
-   >>> b = a.collapse('area: mean', weights=True)
-   >>> print(b)
-   Field: air_potential_temperature (ncvar%air_potential_temperature)
-   ------------------------------------------------------------------
-   Data            : air_potential_temperature(time(120), latitude(1), longitude(1)) K
-   Cell methods    : area: mean area: mean
-   Dimension coords: time(120) = [1959-12-16 12:00:00, ..., 1969-11-16 00:00:00]
-                   : latitude(1) = [0.0] degrees_north
-                   : longitude(1) = [180.0] degrees_east
-                   : air_pressure(1) = [850.0] hPa
-
 
 See the `~Field.weights` method for full details on how weights may be
 specified.
