@@ -412,14 +412,20 @@ class _Meta:
                     ncdim = True
             # --- End: if
 
-            self.axis[identity] = {
-                 'ids': tuple([i['identity'] for i in info_1d_coord]),
-                 'keys': tuple([i['key'] for i in info_1d_coord]),
-                 'units': tuple([i['units'] for i in info_1d_coord]),
-                 'hasbounds': tuple([i['hasbounds'] for i in info_1d_coord]),
-                 'coordrefs': tuple([i['coordrefs'] for i in info_1d_coord])
+            axis_identity_mapping = {
+                 'ids': 'identity',
+                 'keys': 'key',
+                 'units': 'units',
+                 'hasbounds': 'hasbounds',
+                 'coordrefs': 'coordrefs',
             }
             #    'size': None} #tuple([i['size'] for i in info_1d_coord])}
+            axis_identity = {}
+            for key, mapping in axis_identity_mapping.items():
+                axis_identity.update({
+                    key: tuple([i[mapping] for i in info_1d_coord])
+                })
+            self.axis[identity] = axis_identity
 
             if info_dim:
                 self.axis[identity]['dim_coord_index'] = 0
@@ -652,30 +658,20 @@ class _Meta:
             eq_all = {}
             ex_all = []
 
-            if equal_all or exist_all:
-                if equal_all:
-                    if not equal and not exist:
-                        eq_all = properties
-                    elif equal and exist:
-                        eq_all = dict([(p, properties[p]) for p in properties
-                                       if p not in ex and p not in eq])
-                    elif equal:
-                        eq_all = dict([(p, properties[p]) for p in properties
-                                       if p not in eq])
-                    elif exist:
-                        eq_all = dict([(p, properties[p]) for p in properties
-                                       if p not in ex])
-
-                elif exist_all:
-                    if not equal and not exist:
-                        ex_all = list(properties)
-                    elif equal and exist:
-                        ex_all = [p for p in properties
-                                  if p not in ex and p not in eq]
-                    elif equal:
-                        ex_all = [p for p in properties if p not in eq]
-                    elif exist:
-                        ex_all = [p for p in properties if p not in ex]
+            if equal_all:
+                if not equal and not exist:
+                    eq_all = properties
+                else:  # None is Falsy (evaluates to False) & "short-circuits"
+                    eq_all = dict([(p, properties[p]) for p in properties
+                                   if (equal and p not in eq) or
+                                   (exist and p not in ex)])
+            elif exist_all:
+                if not equal and not exist:
+                    ex_all = list(properties)
+                else:  # None is Falsy (evaluates to False) & "short-circuits"
+                    ex_all = dict([(p, properties[p]) for p in properties
+                                   if (equal and p not in eq) or
+                                   (exist and p not in ex)])
             # --- End: if
 
             self.properties = tuple(sorted(ex_all + ex +
