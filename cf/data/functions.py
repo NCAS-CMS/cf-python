@@ -88,7 +88,6 @@ def _close_netcdf_file(filename):
     '''
     nc = _file_to_Dataset.pop(filename, None)
     if nc is not None:
-        print (repr(nc))
         nc.close()
 
 

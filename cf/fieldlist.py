@@ -245,7 +245,6 @@ class FieldList(list):
 
         '''
         for f in self:
-            print ('close', repr(f))
             f.close()
 
 

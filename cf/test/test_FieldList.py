@@ -72,10 +72,11 @@ class FieldTest(unittest.TestCase):
             return
 
         f = cf.read(self.filename)
-        print (11)
         self.assertTrue(f.close() is None)
-        print (12)
 
+        _ = repr(f[0])
+
+        
     def test_FieldList__len__(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -467,19 +468,17 @@ class FieldTest(unittest.TestCase):
 
 
     def test_FieldList_concatenate(self):
-        print (-1)
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        print (0)
         f = cf.read(self.filename2)[0]
-        print (1)
+
         g = cf.FieldList([f[0], f[1:456], f[456:]])
-        print (2)
+
         h = g.concatenate(axis=0)
-        print (3)
+
         self.assertTrue(f.equals(h, verbose=True))
-        print (4)
+
         h = g.concatenate(axis=0, _preserve=False)
         self.assertTrue(f.equals(h, verbose=True))
 

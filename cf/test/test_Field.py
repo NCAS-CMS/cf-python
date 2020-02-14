@@ -36,7 +36,7 @@ class FieldTest(unittest.TestCase):
 
         self.test_only = []
 #        self.test_only = ['NOTHING!!!!']
-#        self.test_only = ['test_Field__add__']
+#        self.test_only = ['test_Field_close']
 #        self.test_only = ['test_Field_weights']
 #        self.test_only = ['test_Field_collapse']
 #        self.test_only = ['test_Field_radius']
@@ -854,6 +854,18 @@ class FieldTest(unittest.TestCase):
         g = f.subspace(grid_longitude=slice(None, None, -1))
         self.assertTrue(f.flip('X', inplace=True) is None)
         self.assertTrue(f.equals(g, verbose=1))
+
+
+    def test_Field_close(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = cf.read(self.filename)[0]
+        self.assertTrue(f.close() is None)
+
+        _ = repr(f.data)
+        for c in f.constructs.filter_by_data().values():
+            _ = repr(c.data)
 
 
     def test_Field_anchor(self):

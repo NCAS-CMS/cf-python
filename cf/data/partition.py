@@ -1156,7 +1156,6 @@ class Partition:
         # ------------------------------------------------------------
         # Remove excessive/insert missing size 1 axes
         # ------------------------------------------------------------
-        # print ('p_shape=', p_shape, p_axes, p_data.shape)
         if p_shape != p_data.shape:
 #        if len_p_axes != len(p_shape):
             p_data = p_data.reshape(p_shape)
@@ -1268,7 +1267,6 @@ class Partition:
 
         '''
         if self.on_disk:
-            print ('file_close', repr(self._subarray))
             self._subarray.close()
 
 

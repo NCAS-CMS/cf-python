@@ -182,13 +182,13 @@ Required
 
 * `numpy <https://pypi.org/project/numpy/>`_, version 1.15 or newer.
 
-* `netCDF4 <https://pypi.org/project/netcdf4/>`_, version 1.4.0 or
+* `netCDF4 <https://pypi.org/project/netcdf4/>`_, version 1.5.3 or
   newer.
 
-* `cftime <https://pypi.org/project/cftime/>`_, version 1.0.4.2 or
-  newer (note that this package is installed with netCDF4).
+* `cftime <https://pypi.org/project/cftime/>`_, version 1.1.0 or
+  newer (note that this package may be installed with netCDF4).
 
-* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.7.11 or newer.
+* `cfdm <https://pypi.org/project/cfdm/>`_, version 1.8.0 or newer.
   
 * `cfunits <https://pypi.org/project/cfunits/>`_, version 3.2.4 or newer.
   
