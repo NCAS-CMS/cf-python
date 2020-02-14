@@ -13,7 +13,7 @@ VN = cf.CF()
 def _make_contiguous_file(filename):
     n = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
 
-    n.Conventions = 'CF-1.7'
+    n.Conventions = 'CF-'+VN
     n.featureType = 'timeSeries'
 
     station = n.createDimension('station', 4)
@@ -102,7 +102,7 @@ def _make_contiguous_file(filename):
 def _make_indexed_file(filename):
     n = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
 
-    n.Conventions = 'CF-1.7'
+    n.Conventions = 'CF-'+VN
     n.featureType = 'timeSeries'
 
     station = n.createDimension('station', 4)
@@ -204,7 +204,7 @@ def _make_indexed_file(filename):
 def _make_indexed_contiguous_file(filename):
     n = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
 
-    n.Conventions = 'CF-1.6'
+    n.Conventions = 'CF-'+VN
     n.featureType = "timeSeriesProfile"
 
     # 3 stations
@@ -378,7 +378,7 @@ def _make_external_files():
         nc.createDimension('grid_latitude', 10)
         nc.createDimension('grid_longitude', 9)
 
-        nc.Conventions = 'CF-1.7'
+        nc.Conventions = 'CF-'+VN
         if parent:
             nc.external_variables = 'areacella'
 
@@ -458,7 +458,7 @@ def _make_gathered_file(filename):
 
     n = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
 
-    n.Conventions = 'CF-1.6'
+    n.Conventions = 'CF-'+VN
 
     time    = n.createDimension('time'   ,  2)
     height  = n.createDimension('height' ,  3)
@@ -924,18 +924,23 @@ def _make_interior_ring_file(filename):
     y[...] = [0, 15, 0,
               5, 10, 5, 5,
               20, 35, 20,
-
               0, 15, 0]
  
-    z = n.createVariable('z', 'f8', ('node',))
+#    z = n.createVariable('z', 'f8', ('node',))
+#    z.units = "m"
+#    z.standard_name = "altitude"
+#    z.axis = "Z"
+#    z[...] = [1, 2, 4,
+#              2, 3, 4, 5,
+#              5, 1, 4,
+#              3, 2, 1]
+ 
+    z = n.createVariable('z', 'f8', ('instance',))
     z.units = "m"
     z.standard_name = "altitude"
-    z.axis = "Z"
-    z[...] = [1, 2, 4,
-              2, 3, 4, 5,
-              5, 1, 4,
-
-              3, 2, 1]
+    z.positive = "up"
+    z.axis = "Z"    
+    z[...] = [5000, 20]
  
     lat = n.createVariable('lat', 'f8', ('instance',))
     lat.units = "degrees_north" 
@@ -952,7 +957,7 @@ def _make_interior_ring_file(filename):
     geometry_container = n.createVariable('geometry_container', 'i4', ())
     geometry_container.geometry_type = "polygon"
     geometry_container.node_count = "node_count"
-    geometry_container.node_coordinates = "x y z"
+    geometry_container.node_coordinates = "x y"
     geometry_container.grid_mapping = "datum"
     geometry_container.coordinates = "lat lon"
     geometry_container.part_node_count = "part_node_count"
@@ -978,14 +983,14 @@ def _make_interior_ring_file(filename):
     pr = n.createVariable('pr', 'f8', ('instance', 'time'))
     pr.standard_name = "preciptitation_amount"
     pr.standard_units = "kg m-2"
-    pr.coordinates = "time lat lon instance_id"
+    pr.coordinates = "time lat lon z instance_id"
     pr.grid_mapping = "datum"
     pr.geometry = "geometry_container"
     pr[...]= [[1, 2, 3, 4],
                     [5, 6, 7, 8]]
   
     someData_2 = n.createVariable('someData_2', 'f8', ('instance', 'time'))
-    someData_2.coordinates = "time lat lon instance_id"
+    someData_2.coordinates = "time lat lon z instance_id"
     someData_2.grid_mapping = "datum"
     someData_2.geometry = "geometry_container"
     someData_2[...]= [[1, 2, 3, 4],

@@ -207,7 +207,7 @@ class DSGTest(unittest.TestCase):
             self.assertTrue(len(g.auxiliary_coordinates) == 4)
 
         g = f[0]
-        for axis in ('X', 'Y', 'Z'):
+        for axis in ('X', 'Y'):
             coord = g.construct('axis='+axis)
             self.assertTrue(coord.has_node_count(), 'axis='+axis)
             self.assertTrue(coord.has_part_node_count(), 'axis='+axis)
@@ -261,7 +261,7 @@ class DSGTest(unittest.TestCase):
         cf.write(f, self.tempfilename)
 
         # Setting of part node count properties
-        coord = f[0].construct('axis=Z')
+        coord = f[0].construct('axis=X')
         pnc = coord.get_part_node_count()
         pnc.set_property('long_name', 'Part node counts')
         cf.write(f, self.tempfilename)

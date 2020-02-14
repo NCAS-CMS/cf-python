@@ -5603,9 +5603,9 @@ class Field(mixin.PropertiesData,
                 elif aux.Y:
                     aux_Y = aux.copy()
                     y_axis = self.get_data_axes(key)[0]
-                elif aux.Z:
-                    aux_Z = aux.copy()
-                    z_axis = self.get_data_axes(key)[0]                    
+#                elif aux.Z:
+#                    aux_Z = aux.copy()
+#                    z_axis = self.get_data_axes(key)[0]                    
             #--- End: for
                         
             if aux_X is None or aux_Y is None:
@@ -5637,21 +5637,27 @@ class Field(mixin.PropertiesData,
                     "Can't find weights: X and Y geometry coordinate bounds must have the same shape. Got {} and {}".format(
                         aux_X.bounds.shape, aux_Y.bounds.shape))
 
-            # Check Z coordinates
-            if aux_Z is not None:
-                if  z_axis != x_axis:
-                    if auto:
-                        return (None,) * 4
-                    
-                    raise ValueError("X, Y and Z geometry coordinates span different domain axes")
-            #--- End_if
-
             if not methods:
                 if aux_X.bounds.data.fits_in_one_chunk_in_memory(aux_X.bounds.dtype.itemsize):
                     aux_X.bounds.varray
                 if aux_X.bounds.data.fits_in_one_chunk_in_memory(aux_Y.bounds.dtype.itemsize):
                     aux_X.bounds.varray
             #--- End: if
+            
+            for key, aux in self.auxiliary_coordinates.filter_by_naxes(1).items():
+                if aux.Z:
+                    aux_Z = aux.copy()
+                    z_axis = self.get_data_axes(key)[0]                    
+            #--- End: for
+                        
+            # Check Z coordinates
+            if aux_Z is not None:
+                if z_axis != x_axis:
+                    if auto:
+                        return (None,) * 4
+                    
+                    raise ValueError("Z coordinates spans different dimension to X and Y geometry coordinates")
+            #--- End_if
 
             return axis, aux_X, aux_Y, aux_Z
         #--- End: def
@@ -5817,15 +5823,18 @@ class Field(mixin.PropertiesData,
 
             if measure and spherical and aux_Z is not None:           
                 # Multiply by radius squared, accounting for any Z
-                # coordinates, to get the actual area
+                # coordinates, to get the actual area                
                 z = aux_Z.get_data(None)
                 if z is None:
                     r = radius
                 else:
+                    if not z.Units.equivalent(_units_metres):
+                        raise ValueError("Z coordinates must have units equivalent to metres for area calculations. Got {!r}".format(z.Units))
+                    
                     positive = aux_Z.get_property('positive', None)
                     if positive is None:
                         raise ValueError("TODO")
-                    
+
                     if positive.lower() == 'up':
                         r = radius + z
                     elif positive.lower() == 'down':
