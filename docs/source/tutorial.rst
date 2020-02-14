@@ -127,7 +127,8 @@ The following file types can be read:
 * :ref:`PP and UM fields files <PP-and-UM-fields-files>`, whose
   contents are mapped into field constructs.
 
-For example, to read the file ``file.nc``, which contains two field
+For example, to read the file ``file.nc`` (found in the :ref:`zip file
+of sample files <Sample-datasets>`), which contains two field
 constructs:
 
 .. code-block:: python
@@ -2425,6 +2426,93 @@ parent coordinate construct, but it may also have its own properties
     'units': 'degrees'}  
    >>> bounds.properties()
    {'units': 'degrees'}
+
+Geometries
+~~~~~~~~~~
+
+For many geospatial applications, cell bounds can not be repreented by
+a simple line or polygon, and different cells may have different
+numbers of bounds' nodes For example, if each cell describes the areal
+extent of a watershed, then it is likely that some watersheds will
+need require more nodes than others. Such cells are called
+`geometries`_.
+
+If a coordinate construct represents geometries then it will have a
+"geometry" attribute with one of the values ``'point'``, '``line'`` or
+``'polygon'``.
+
+This is illustrated with the file ``geometry.nc`` (found in the
+:ref:`zip file of sample files <Sample-datasets>`):
+
+.. code-block:: python
+   :caption: *Read and inspect a dataset containing geometry cell
+             bounds.*
+
+   >>> f = cfdm.read('geometry.nc')[0]
+   >>> print(f)
+   Field: preciptitation_amount (ncvar%pr)
+   ---------------------------------------
+   Data            : preciptitation_amount(cf_role=timeseries_id(2), time(4))
+   Dimension coords: time(4) = [2000-01-02 00:00:00, ..., 2000-01-05 00:00:00]
+   Auxiliary coords: latitude(cf_role=timeseries_id(2)) = [25.0, 7.0] degrees_north
+                   : longitude(cf_role=timeseries_id(2)) = [10.0, 40.0] degrees_east
+                   : altitude(cf_role=timeseries_id(2)) = [5000.0, 20.0] m
+                   : cf_role=timeseries_id(cf_role=timeseries_id(2)) = [b'x1', b'y2']
+   Coord references: grid_mapping_name:latitude_longitude
+   >>> lon.dump()                     
+   Auxiliary coordinate: longitude
+      standard_name = 'longitude'
+      units = 'degrees_east'
+      Data(2) = [10.0, 40.0] degrees_east
+      Geometry: polygon
+      Bounds:axis = 'X'
+      Bounds:standard_name = 'longitude'
+      Bounds:units = 'degrees_east'
+      Bounds:Data(2, 3, 4) = [[[20.0, ..., --]]] degrees_east
+      Interior Ring:Data(2, 3) = [[0, ..., --]]
+   >>> lon.get_geometry()
+   'polygon'
+
+Bounds for geometry cells are also stored in a `Bounds` instance, but
+one that always has *two* extra trailing dimensions (rather than
+one). The fist trailing dimension indexes the distinct parts of a
+geometry, and the second indexes the nodes of each part. When a part
+has fewer nodes than another, its nodes dimension is padded with
+missing data.
+
+
+.. code-block:: python
+   :caption: *Inspect the geometry nodes.*
+ 
+   >>> print(lon.bounds.data.array)
+   [[20.0 10.0  0.0   --]
+    [ 5.0 10.0 15.0 10.0]
+    [20.0 10.0  0.0   --]]
+
+   [[50.0 40.0 30.0   --]
+    [  --   --   --   --]
+    [  --   --   --   --]]]
+
+If a cell is composed of multiple polygon parts, an individual polygon
+may define an "interior ring", i.e. a region that is to be omitted
+from, as opposed to included in, the cell extent. Such cells also have
+and interior ring array that spans the same domain axes as its
+coordinate array, with the addition of one extra dimension that
+indexes the parts for each cell. This array records whether each
+polygon is to be included or excluded from the cell, with vlaues of
+``1`` or ``0`` respectively.
+
+.. code-block:: python
+   :caption: *Inspect the interior ring information.*
+ 
+   >>> print(lon.get_interior_ring().data.array)
+   [[0  1  0]
+    [0 -- --]]
+
+When a field construct containing geometries is written to disk, a
+CF-netCDF geometry container variable is automatically created, and
+the cells encoded with the :ref:`compression <Compression>` techniques
+defined in the CF conventions.
 
 .. _Domain-ancillaries:
 		
@@ -4979,8 +5067,8 @@ however, be incorporated into the field constructs of the dataset, as
 if they had actually been stored in the same file, simply by providing
 the external file names to the `cf.read` function.
 
-This is illustrated with the files ``parent.nc`` (found in the zip
-file of sample files):
+This is illustrated with the files ``parent.nc`` (found in the
+:ref:`zip file of sample files <Sample-datasets>`):
 
 .. code-block:: console
    :caption: *Inspect the parent dataset with the ncdump command line
@@ -5008,7 +5096,8 @@ file of sample files):
    		:external_variables = "areacella" ;
    }
 
-and ``external.nc`` (found in the zip file of sample files):
+and ``external.nc`` (found in the :ref:`zip file of sample files
+<Sample-datasets>`):
 
 .. code-block:: console
    :caption: *Inspect the external dataset with the ncdump command
@@ -5351,7 +5440,7 @@ and is accessed with the `~Data.get_index` method of the `cf.Data`
 instance.
 
 The contiguous case is is illustrated with the file ``contiguous.nc``
-(found in the zip file of sample files):
+(found in the :ref:`zip file of sample files <Sample-datasets>`):
 
 .. code-block:: console
    :caption: *Inspect the compressed dataset with the ncdump command
@@ -5610,8 +5699,8 @@ The list variable that is required to uncompress a gathered array is
 stored in a `cf.List` object and is retrieved with the `~Data.get_list`
 method of the `cf.Data` instance.
 
-This is illustrated with the file ``gathered.nc`` (found in the zip
-file of sample files):
+This is illustrated with the file ``gathered.nc`` (found in the
+:ref:`zip file of sample files <Sample-datasets>`):
 
 .. code-block:: console
    :caption: *Inspect the compressed dataset with the ncdump command
