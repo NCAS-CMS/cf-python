@@ -10,14 +10,15 @@
 
 * Create a link to the new documentation in docs/source/releases.rst
 
-* Make sure that all the Data tests will run by setting `self.test_only = []`
-  in cf/test/test_Data.py (check that none of the individual tests are
-  un-commented so as to override this in the commented listing beneath).
+* Make sure that all the Data tests will run by setting
+  `self.test_only = []` in cf/test/test_Data.py (check that none of
+  the individual tests are un-commented so as to override this in the
+  commented listing beneath).
 
 * Create a source tarball: `python setup.py sdist`
 
 * Test the tarball release using `test_release <vn>`
-  (e.g. ./test_release 3.0.7).
+  (e.g. ./test_release 3.2.0).
 
 * Test tutorial code:
 
@@ -27,22 +28,22 @@ cd docs/source
 cd test_tutorial
 python ../tutorial.py
 
-* Build a development copy of the documentation using
-  `./release_docs <vn> dev` (e.g. ./release_docs 3.0.7 dev) to check API
-  pages for any new methods are present & correct, & that the overall
-  formatting has not been adversely affected for comprehension by any updates
-  in the latest Sphinx or theme etc. (Do not manually commit the dev build.)
+* Build a development copy of the documentation using `./release_docs
+  <vn> dev` (e.g. ./release_docs 3.2.0 dev) to check API pages for any
+  new methods are present & correct, & that the overall formatting has
+  not been adversely affected for comprehension by any updates in the
+  latest Sphinx or theme etc. (Do not manually commit the dev build.)
 
-* Create an archived copy of the documentation using
-  `./release_docs <vn>` (e.g. ./release_docs 3.0.7)
+* Create an archived copy of the documentation using `./release_docs
+  <vn>` (e.g. ./release_docs 3.2.0)
 
 * Update the latest documentation using `./release_docs <vn> latest`
-  (e.g. ./release_docs 3.0.7 latest)
+  (e.g. ./release_docs 3.2.0 latest)
 
 * Push recent commits using `git push origin master`
 
-* Tag the release using `./tag <vn>` (e.g. ./tag 3.0.6)
+* Tag the release using `./tag <vn>` (e.g. ./tag 3.2.0)
 
 * Upload the source tarball to PyPi via `./upload_to_pypi <vn>` (e.g.
-  ./upload_to_pypi 3.1.0). Note this requires the `twine` library (which
+  ./upload_to_pypi 3.2.0). Note this requires the `twine` library (which
   can be installed via `pip`) and relevant project privileges on PyPI.

@@ -5053,6 +5053,23 @@ The new dataset is structured as follows (note, relative to file
    		:project = "research" ;
    }
 
+.. _Strings:
+  
+Strings
+^^^^^^^
+
+String-valued data may be written to netCDF files either as netCDF
+character arrays with a trialing dimension large enough to contain the
+longest value, or as netCDF4 string arrays. The former is allowed for
+all formats of netCDF3 and netCDF4 format files; but string arrays may
+only be written to netCDF4 format files (note that string arrays can
+not be written to netCDF4 classic format files).
+
+By default, netCDF string arrays will be created whenever possible,
+and in all other cases netCDF character arrays will be
+used. Alternatively, netCDF character arrays can be used in all cases
+by setting the *string* keyword of the `cf.write` function.
+
 ----
 
 .. _External-variables:
