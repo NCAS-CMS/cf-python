@@ -1616,6 +1616,65 @@ dtype('float64')
             calendar_months=calendar_months, calendar_years=calendar_years)
 
 
+    def get_property(self, prop, default=ValueError(), bounds=False):
+        '''Get a CF property.
+    
+    .. versionadded:: 3.2.0
+    
+    .. seealso:: `clear_properties`, `del_property`, `has_property`,
+                 `properties`, `set_property`
+    
+    :Parameters:
+    
+        prop: `str`
+            The name of the CF property.
+    
+            *Parameter example:*
+              ``prop='long_name'``
+    
+        default: optional
+            Return the value of the *default* parameter if the
+            property does not exist. If set to an `Exception` instance
+            then it will be raised instead.
+
+        bounds: `bool`
+            TODO 1.8
+
+    :Returns:
+    
+            The value of the named property or the default value, if
+            set.
+    
+    **Examples:**
+    
+    >>> f.set_property('project', 'CMIP7')
+    >>> f.has_property('project')
+    True
+    >>> f.get_property('project')
+    'CMIP7'
+    >>> f.del_property('project')
+    'CMIP7'
+    >>> f.has_property('project')
+    False
+    >>> print(f.del_property('project', None))
+    None
+    >>> print(f.get_property('project', None))
+    None
+
+        '''
+        out = super().get_property(prop, None)
+        if out is not None:
+            return out
+
+        if bounds and self.has_bounds():
+            out = self.get_bounds().get_property(prop, None)
+            if out is not None:
+                return out
+        #--- End: if
+        
+        return super().get_property(prop, default)
+    
+    
     @_inplace_enabled
     def flatten(self, axes=None, inplace=False):
         '''Flatten axes of the data

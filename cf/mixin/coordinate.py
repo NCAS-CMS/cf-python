@@ -54,9 +54,22 @@ class Coordinate():
     True
 
         '''
-        return self.Units.isreftime or self.get_property('axis', None) == 'T'
+        out = (self.Units.isreftime or
+               self.get_property('axis', None) == 'T')
 
+        if out:
+            return True
 
+        # Still here? Then check the bounds.
+        if self.has_bounds():
+            bounds = self.get_bounds(None)
+            if bounds is not None:
+                return bounds.T
+        #--- End: if
+
+        return False
+
+    
     @property
     def X(self):
         '''True if and only if the data are coordinates for a CF 'X' axis.
@@ -91,11 +104,25 @@ class Coordinate():
 #        if data is not None and data.ndim > 1:
 #            return self.get_property('axis', None) == 'X'
 
-        return (self.Units.islongitude or
-                self.get_property('axis', None) == 'X' or
-                self.get_property('standard_name', None) in ('longitude',
-                                                             'projection_x_coordinate',
-                                                             'grid_longitude'))
+        standard_names =  ('longitude',
+                           'projection_x_coordinate',
+                           'grid_longitude')
+        units = self.Units
+        out = (units.islongitude or
+               self.get_property('axis', None) == 'X' or
+               self.get_property('standard_name', None) in standard_names)
+
+        if out:
+            return True
+
+        # Still here? Then check the bounds.
+        if self.has_bounds():
+            bounds = self.get_bounds(None)
+            if bounds is not None:
+                return bounds.X
+        #--- End: if
+
+        return False
 
 
     @property
@@ -127,11 +154,27 @@ class Coordinate():
 #        if self.ndim > 1:
 #            return self.get_property('axis', None) == 'Y'
 
-        return (self.Units.islatitude or
-                self.get_property('axis', None) == 'Y' or
-                self.get_property('standard_name', None) in ('latitude',
-                                                            'projection_y_coordinate',
-                                                            'grid_latitude'))
+        standard_names = ('latitude',
+                          'projection_y_coordinate',
+                          'grid_latitude')
+
+        units = self.Units
+        out = (units.islatitude or
+               self.get_property('axis', None) == 'Y' or
+               self.get_property('standard_name', None) in standard_names)
+
+        if out:
+            return True
+
+        # Still here? Then check the bounds.
+        if self.has_bounds():
+            bounds = self.get_bounds(None)
+            if bounds is not None:
+                return bounds.Y
+        #--- End: if
+
+        return False
+
 
     @property
     def Z(self):
@@ -184,26 +227,38 @@ class Coordinate():
         '''
 #        if self.ndim > 1:
 #            return self.get_property('axis', None) == 'Z'
-
+        standard_names = ('atmosphere_ln_pressure_coordinate',
+                          'atmosphere_sigma_coordinate',
+                          'atmosphere_hybrid_sigma_pressure_coordinate',
+                          'atmosphere_hybrid_height_coordinate',
+                          'atmosphere_sleve_coordinate',
+                          'ocean_sigma_coordinate',
+                          'ocean_s_coordinate',
+                          'ocean_s_coordinate_g1',
+                          'ocean_s_coordinate_g2',
+                          'ocean_sigma_z_coordinate',
+                          'ocean_double_sigma_coordinate')
+        
         units = self.Units
-        return (
+        out = (
             units.ispressure or
             str(self.get_property('positive', 'Z')).lower() in ('up', 'down') or
             self.get_property('axis', None) == 'Z' or
             (units and units.units in ('level', 'layer' 'sigma_level')) or
-            self.get_property('standard_name', None) in
-            ('atmosphere_ln_pressure_coordinate',
-             'atmosphere_sigma_coordinate',
-             'atmosphere_hybrid_sigma_pressure_coordinate',
-             'atmosphere_hybrid_height_coordinate',
-             'atmosphere_sleve_coordinate',
-             'ocean_sigma_coordinate',
-             'ocean_s_coordinate',
-             'ocean_s_coordinate_g1',
-             'ocean_s_coordinate_g2',
-             'ocean_sigma_z_coordinate',
-             'ocean_double_sigma_coordinate')
+            self.get_property('standard_name', None) in standard_names
         )
+
+        if out:
+            return True
+
+        # Still here? Then check the bounds.
+        if self.has_bounds():
+            bounds = self.get_bounds(None)
+            if bounds is not None:
+                return bounds.Z
+        #--- End: if
+
+        return False
 
 
     # ----------------------------------------------------------------

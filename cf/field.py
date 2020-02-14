@@ -5573,7 +5573,7 @@ class Field(mixin.PropertiesData,
             return interior_angle
         
 
-        def _yyy(self, geometry_type, Z=False, auto=False):
+        def _yyy(self, geometry_type, auto=False):
             '''TODO
 
     .. versionadded:: 3.2.0
@@ -5582,8 +5582,6 @@ class Field(mixin.PropertiesData,
 
         geometry_type: `str`
             Either ``'polygon'`` or ``'line'``.
-
-        Z: `bool`
 
         auto: `bool`
 
@@ -5605,7 +5603,7 @@ class Field(mixin.PropertiesData,
                 elif aux.Y:
                     aux_Y = aux.copy()
                     y_axis = self.get_data_axes(key)[0]
-                elif Z and aux.Z:
+                elif aux.Z:
                     aux_Z = aux.copy()
                     z_axis = self.get_data_axes(key)[0]                    
             #--- End: for
@@ -5627,53 +5625,25 @@ class Field(mixin.PropertiesData,
             if aux_X.get_bounds(None) is None or aux_Y.get_bounds(None) is None:
                 # Not both coordinates have bounds
                 if auto:
-                    return             (None,) * 4    
+                    return (None,) * 4    
                 
                 raise ValueError("Not both X and Y coordinates have bounds")
             
             if aux_X.bounds.shape != aux_Y.bounds.shape:
                 if auto:
-                    return                         (None,) * 4    
+                    return (None,) * 4    
                 
                 raise ValueError(
                     "Can't find weights: X and Y geometry coordinate bounds must have the same shape. Got {} and {}".format(
                         aux_X.bounds.shape, aux_Y.bounds.shape))
 
             # Check Z coordinates
-            if Z:
-                if aux_Z is None:
-                    if auto:
-                        return (None,) * 4
-                    
-                    raise ValueError("No Z coordinates")
-
+            if aux_Z is not None:
                 if  z_axis != x_axis:
                     if auto:
                         return (None,) * 4
                     
                     raise ValueError("X, Y and Z geometry coordinates span different domain axes")
-
-                if aux_Z.get_bounds(None):
-                    if auto:
-                        return             (None,) * 4    
-                    
-                    raise ValueError("Z coordinates do not have bounds")
-                
-                if aux_Z.bounds.shape[-1] != (2,):
-                    if auto:
-                        return                         (None,) * 4    
-                    
-                    raise ValueError(
-                        "Can't find weights: Z geometry coordinate bounds have incorrect shape: {}".format(
-                            aux_Z.bounds.shape))
-
-                if not aux_Z.bounds.Units.equivalent(_units_metres):
-                    if auto:
-                        return                 (None,) * 4
-                    
-                    raise ValueError(
-                        "Z coordinates have incorrect units for volume calculations. Expected units equivalent to metres, got: {!r}".format(
-                            aux_Z.bounds.Units))                
             #--- End_if
 
             if not methods:
@@ -5681,8 +5651,6 @@ class Field(mixin.PropertiesData,
                     aux_X.bounds.varray
                 if aux_X.bounds.data.fits_in_one_chunk_in_memory(aux_Y.bounds.dtype.itemsize):
                     aux_X.bounds.varray
-                if Z and aux_Z.bounds.data.fits_in_one_chunk_in_memory(aux_Z.bounds.dtype.itemsize):
-                    aux_Z.bounds.varray
             #--- End: if
 
             return axis, aux_X, aux_Y, aux_Z
@@ -5698,8 +5666,7 @@ class Field(mixin.PropertiesData,
 
             '''
             axis, aux_X, aux_Y, aux_Z = _yyy(self, 'polygon', auto=auto)
-Z + radius for area
-            
+
             if axis is None and auto:
                 return False              
 
@@ -5747,6 +5714,8 @@ Z + radius for area
                 # Do this in preference to weights based on spherical
                 # polygons, which require the great circle assumption.
                 # ----------------------------------------------------
+                spherical = False
+                
                 if methods:
                     comp[(axis,)] = 'area plane polygon geometry'
                     return True
@@ -5761,7 +5730,8 @@ Z + radius for area
                         nodes_x = nodes_x.compressed()
                         nodes_y = nodes_y.compressed()
                         
-                        if nodes_x[0] != nodes_x[-1] or nodes_y[0] != nodes_y[-1]:
+                        if ((nodes_x.size and nodes_x[0] != nodes_x[-1]) or
+                            (nodes_y.size and nodes_y[0] != nodes_y[-1])):
                             # First and last nodes of this polygon
                             # part are different => need to account
                             # for the "last" edge of the polygon that
@@ -5785,6 +5755,8 @@ Z + radius for area
                 # special case of the Vincenty formula:
                 # https://en.wikipedia.org/wiki/Great-circle_distance
                 # ----------------------------------------------------
+                spherical = True
+                
                 if not great_circle:
                     raise ValueError(
                         "Must set great_circle=True to derive area weights from spherical polygons composed from great circle segments.")
@@ -5825,11 +5797,8 @@ Z + radius for area
                 area_min = all_areas.min()
                 if area_min < 0:
                     raise ValueError(
-                        "A spherical polygon geometry part has negative area: {!r}".format(
-                            area_min*(radius**2)))
+                        "A spherical polygon geometry part has negative area")
 
-                if measure:
-                    all_areas *= radius**2
             else:
                 # 
                 return
@@ -5845,6 +5814,30 @@ Z + radius for area
             # Sum the areas of each part to get the total area of each
             # cell
             areas = all_areas.sum(-1, squeeze=True)
+
+            if measure and spherical and aux_Z is not None:           
+                # Multiply by radius squared, accounting for any Z
+                # coordinates, to get the actual area
+                z = aux_Z.get_data(None)
+                if z is None:
+                    r = radius
+                else:
+                    positive = aux_Z.get_property('positive', None)
+                    if positive is None:
+                        raise ValueError("TODO")
+                    
+                    if positive.lower() == 'up':
+                        r = radius + z
+                    elif positive.lower() == 'down':
+                        r = radius - z
+                    else:
+                        raise ValueError(
+                            "Bad value of Z coordinate 'positive' property: {!r}.".format(
+                                positve))
+                #--- End: if
+
+                areas *= r**2
+            #--- End: if
             
             comp[(axis,)] = areas
             
@@ -5953,10 +5946,9 @@ Z + radius for area
     .. versionadded:: 3.2.0
 
             '''
-            axis, aux_X, aux_Y, aux_Z = _yyy(self, 'polygon', Z=True,
+            axis, aux_X, aux_Y, aux_Z = _yyy(self, 'polygon',
                                              auto=auto)
 
-            
             if axis is None and auto:
                 return False              
             
