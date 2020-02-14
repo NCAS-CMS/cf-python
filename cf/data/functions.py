@@ -74,7 +74,7 @@ def _open_netcdf_file(filename, mode, fmt='NETCDF4'): #set_auto_mask=True):
 def _close_netcdf_file(filename):
     '''Close a netCDF file
 
-    does nothing if the file is already closed.
+    Does nothing if the file is already closed.
 
     :Parameters:
 
@@ -85,11 +85,10 @@ def _close_netcdf_file(filename):
 
         `None`
 
-    **Examples:**
-
     '''
     nc = _file_to_Dataset.pop(filename, None)
     if nc is not None:
+        print (repr(nc))
         nc.close()
 
 

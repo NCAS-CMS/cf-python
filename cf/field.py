@@ -4575,7 +4575,7 @@ class Field(mixin.PropertiesData,
 
 
     def close(self):
-        '''Close all files referenced by the field.
+        '''Close all files referenced by the field construct.
 
     Note that a closed file will be automatically reopened if its
     contents are subsequently required.

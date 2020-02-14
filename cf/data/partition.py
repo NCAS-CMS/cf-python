@@ -572,14 +572,14 @@ class Partition:
 
     @property
     def on_disk(self):
-        '''True if and only if the partition's subarray is on disk as opposed to
-    in memory.
+        '''True if and only if the partition's subarray is on disk as opposed
+    to in memory.
 
     **Examples:**
 
     >>> p.on_disk
     True
-    >>> p.to_disk()
+    >>> p.to_memory()
     >>> p.on_disk
     False
 
@@ -1256,11 +1256,11 @@ class Partition:
 
 
     def file_close(self):
-        '''Close all file containing the subarray, if there is one.
+        '''Close the file containing the subarray, if there is one.
 
     :Returns:
 
-        None
+        `None`
 
     **Examples:**
 
@@ -1268,6 +1268,7 @@ class Partition:
 
         '''
         if self.on_disk:
+            print ('file_close', repr(self._subarray))
             self._subarray.close()
 
 
