@@ -360,7 +360,7 @@ Attribute   Description
                 partition.new_part(part,
                                    master_axis_to_position,
                                    master_flip)
-            #--- End: for
+            # --- End: for
 
             return matrix
 
@@ -481,8 +481,8 @@ Attribute   Description
 
                 # Still here? Then move on to the next new boundary
                 x = extra_boundaries.pop(0)
-            #--- End: while
-        #--- End: for
+            # --- End: while
+        # --- End: for
 
         self.matrix = new_matrix
 
@@ -616,7 +616,7 @@ Attribute   Description
             boundaries[axis] = b
 
             indices[i] = 0
-        #--- End: for
+        # --- End: for
 
         return boundaries
 
@@ -723,7 +723,7 @@ Attribute   Description
 
                     start = stop
 
-                #--- End: for
+                # --- End: for
                 indices[m] = slice_None
             else:
                 # ----------------------------------------------------
@@ -737,7 +737,7 @@ Attribute   Description
 
                 for partition in flat:
                     partition.location[n] = location
-        #--- End: for
+        # --- End: for
 
 
     # 0
@@ -834,4 +834,4 @@ Attribute   Description
                                   "Use method 'insert_dimension' instead.") # pragma: no cover
 
 
-#--- End: class
+# --- End: class

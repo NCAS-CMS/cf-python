@@ -318,7 +318,7 @@ class AuxiliaryCoordinateTest(unittest.TestCase):
         self.assertTrue(aux.clip(-15, 25, inplace=True) is None)
 
 
-#--- End: class
+# --- End: class
 
 if __name__ == "__main__":
     print('Run date:', datetime.datetime.now())

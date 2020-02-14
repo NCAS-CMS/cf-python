@@ -14,12 +14,11 @@ from . import mixin
 from . import abstract
 
 from .functions import (_DEPRECATION_ERROR_KWARGS,
-                        _DEPRECATION_ERROR_ATTRIBUTE,
-                        )
+                        _DEPRECATION_ERROR_ATTRIBUTE)
 
 from .decorators import (_inplace_enabled,
                          _inplace_enabled_define_and_cleanup,
-                         _deprecation_error_i_kwarg)
+                         _deprecated_kwarg_check)
 
 
 class DimensionCoordinate(abstract.Coordinate,
@@ -122,7 +121,7 @@ class DimensionCoordinate(abstract.Coordinate,
             if data._size > 1:
                 data = data[0:2].array
                 return bool(data.item(0,) < data.item(1,))
-        #--- End: if
+        # --- End: if
 
         # Still here?
         data = self.get_bounds_data(None)
@@ -641,12 +640,12 @@ class DimensionCoordinate(abstract.Coordinate,
 
                 if not direction:
                     bounds_1d = bounds_1d[::-1]
-            #--- End: if
+            # --- End: if
 
             bounds = numpy_empty((size, 2), dtype=dtype)
             bounds[:,0] = bounds_1d[:-1]
             bounds[:,1] = bounds_1d[1:]
-        #--- End: if
+        # --- End: if
 
         # Create coordinate bounds object
         bounds = Bounds(data=Data(bounds, units=self.Units),
@@ -655,7 +654,7 @@ class DimensionCoordinate(abstract.Coordinate,
         return bounds
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def flip(self, axes=None, inplace=False, i=False):
         '''TODO
@@ -780,7 +779,7 @@ class DimensionCoordinate(abstract.Coordinate,
                     raise ValueError(
                         "Period units {!r} are not equivalent to coordinate units {!r}".format(
                             units, self.Units))
-            #--- End: if
+            # --- End: if
 
             value = abs(value)
             value.dtype = float
@@ -792,7 +791,7 @@ class DimensionCoordinate(abstract.Coordinate,
                 raise ValueError(
                     "The coordinate range of {!r} is not less than the period of {!r}".format(
                         r, value))
-        #--- End: if
+        # --- End: if
 
         self._custom['period'] = value
 
@@ -829,7 +828,7 @@ class DimensionCoordinate(abstract.Coordinate,
             if self.get_property('standard_name', None) not in ('longitude', 'grid_longitude'):
                 if verbose: print(1)
                 return False
-        #--- End: if
+        # --- End: if
 
         bounds = self.get_bounds(None)
         if bounds is None:
@@ -856,7 +855,7 @@ class DimensionCoordinate(abstract.Coordinate,
         return True
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def roll(self, axis, shift, inplace=False, i=False):
         '''TODO
@@ -866,7 +865,7 @@ class DimensionCoordinate(abstract.Coordinate,
                 return
             else:
                 return self.copy()
-        #--- End: if
+        # --- End: if
 
         shift %= self.size
 
@@ -921,7 +920,7 @@ class DimensionCoordinate(abstract.Coordinate,
                 c -= period
                 if bounds_data is not None:
                     b -= period
-        #--- End: if
+        # --- End: if
 
         c._custom['direction'] = direction
 
@@ -942,5 +941,5 @@ class DimensionCoordinate(abstract.Coordinate,
             "Use attribute 'construct_type' instead") # pragma: no cover
 
 
-#--- End: class
+# --- End: class
 

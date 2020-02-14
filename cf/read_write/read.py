@@ -492,7 +492,7 @@ def read(files, external=None, verbose=False, warnings=False,
                             break
                 else:
                     files3.append(x)
-            #--- End: for
+            # --- End: for
 
             files2 = files3
 
@@ -527,8 +527,8 @@ def read(files, external=None, verbose=False, warnings=False,
 
             field_counter = len(field_list)
             file_counter += 1
-        #--- End: for
-    #--- End: for
+        # --- End: for
+    # --- End: for
 
     # Print some informative messages
     if verbose:
@@ -550,7 +550,7 @@ def read(files, external=None, verbose=False, warnings=False,
             print('{0} input field{1} aggregated into {2} field{3}'.format(
                 org_len, _plural(org_len),
                 n, _plural(n))) # pragma: no cover
-    #--- End: if
+    # --- End: if
 
     # ----------------------------------------------------------------
     # Sort by netCDF variable name
@@ -566,7 +566,7 @@ def read(files, external=None, verbose=False, warnings=False,
         if standard_name is not None:
             f.set_property('standard_name', standard_name)
             del f._custom['standard_name']
-    #--- End: for
+    # --- End: for
 
     # ----------------------------------------------------------------
     # Squeeze size one dimensions from the data arrays. Do one of:
@@ -585,7 +585,7 @@ def read(files, external=None, verbose=False, warnings=False,
     elif unsqueeze:
         for f in field_list:
             f.unsqueeze(inplace=True)
-    #--- End: if
+    # --- End: if
 
     if nfields is not None and len(field_list) != nfields:
         raise ValueError(
@@ -658,7 +658,7 @@ def _read_a_file(filename, aggregate=True, aggregate_options=None,
                 word_size = 4
             if endian is None:
                 endian = 'big'
-        #--- End: if
+        # --- End: if
 
         if umversion is not None:
             umversion = float(str(umversion).replace('.', '0', 1))
@@ -673,7 +673,7 @@ def _read_a_file(filename, aggregate=True, aggregate_options=None,
                 print('WARNING: {}'.format(error)) # pragma: no cover
 
             return FieldList()
-    #--- End: if
+    # --- End: if
 
     extra_read_vars = {'chunk'            : chunk,
                        'fmt'              : selected_fmt,
@@ -702,7 +702,7 @@ def _read_a_file(filename, aggregate=True, aggregate_options=None,
                 raise IOError(
                     "Can't determine format of file {} generated from CDL file {}".format(
                         filename, cdl_filename))
-    #--- End: if
+    # --- End: if
 
     if ftype == 'netCDF' and extra_read_vars['fmt'] in (None, 'NETCDF', 'CFA'):
         fields = netcdf.read(filename, external=external, extra=extra,

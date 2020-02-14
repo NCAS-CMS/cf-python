@@ -420,7 +420,8 @@ are unweighted during the collapse operation.
 To inspect the weights, call the  `~Field.weights` method directly.
 
 .. code-block:: python
-   :caption: *TODO*
+   :caption: *Create and view weights derived from the field construct’s
+             time axis.*
  	     
    >>> w = a.weights(weights='T')
    >>> print(w)
@@ -1320,12 +1321,14 @@ Spherical source domain         Spherical destination domain
 `Tripolar`_                     `Tripolar`_
 ==============================  ==============================
 
-The most convenient usage is for the destination domain to be exist
-in another field construct. In this case, the regridding command is
-very simple:
+The most convenient usage is when the destination domain exists
+in another field construct. In this case, all you need to specify is the
+field construct having the desired destination domain and the
+regridding method to use:
 
 .. code-block:: python
-   :caption: *TODO.*
+   :caption: *Regrid the field construct a conservatively onto a grid
+             contained in field construct b.*
 
    >>> a = cf.read('air_temperature.nc')[0]
    >>> b = cf.read('precipitation_flux.nc')[0]
@@ -1371,7 +1374,8 @@ destination domain may be defined solely by dimension or auxiliary
 coordinate constructs.
 
 .. code-block:: python
-   :caption: *TODO*
+   :caption: *Regrid 'a' onto two-dimensional (curvilinear) dimension
+             coordinates latitude and longitude.*
 
    >>> import numpy
    >>> lat = cf.DimensionCoordinate(data=cf.Data(numpy.arange(-90, 92.5, 2.5), 'degrees_north'))
@@ -1386,7 +1390,7 @@ coordinate constructs.
                    : longitude(72) = [0.0, ..., 355.0] degrees_east
                    : height(1) = [2.0] m
 
-A destination domain defined by two dimensional (curvilinear) latitude
+A destination domain defined by two-dimensional (curvilinear) latitude
 and longitude auxiliary coordinate constructs can also be specified in
 a similar manner.
 
@@ -1428,7 +1432,9 @@ coordinate system can be regridded with Cartesian regridding, which
 will produce similar results to using using spherical regridding.
 
 .. code-block:: python
-   :caption: *TODO*
+   :caption: *Regrid the time axis 'T' of field 'a' with the bilinear
+             method onto the grid specified in the dimension coordinate
+             time.*
 
    >>> time = cf.DimensionCoordinate()
    >>> time.standard_name='time'
@@ -1446,9 +1452,15 @@ will produce similar results to using using spherical regridding.
                    : longitude(96) = [0.0, ..., 356.25] degrees_east
                    : height(1) = [2.0] m
 
+
+Note the requirement for the conservative method of contiguous,
+non-overlapping bounds on the destination domain:
+
 .. code-block:: python
-   :caption: *TODO*
-		   
+   :caption: *Regrid the time axis 'T' of field 'a' conservatively
+             (to first order) onto the grid specified in the dimension
+             coordinate time.*
+
    >>> c = a.regridc({'T': time}, axes='T', method='conservative')  # Raises Exception
    ValueError: Destination coordinates must have contiguous, non-overlapping bounds for conservative regridding.
    >>> bounds = time.create_bounds()
@@ -1495,7 +1507,7 @@ Vertical regridding
 
 The only option for regridding along a vertical axis is to use
 Cartesian regridding. However, care must be taken to ensure that the
-vertical axis is transformed so that it's coordinate values are vary
+vertical axis is transformed so that it's coordinate values vary
 linearly. For example, to regrid data on one set of vertical pressure
 coordinates to another set, the pressure coordinates may first be
 transformed into the logarithm of pressure, and then changed back to
@@ -1580,7 +1592,8 @@ during operations, and if one operand has no units then the units of
 the other are assumed.
 
 .. code-block:: python
-   :caption: *TODO*
+   :caption: *Apply some binary arithmetic operations to combine the
+              data for a pair of field constructs.*
 
    >>> q, t = cf.read('file.nc')
    >>> t.data.stats()   
@@ -1606,7 +1619,10 @@ the other are assumed.
    <CF Data(): 262.6 K>
 
 .. code-block:: python
-   :caption: *TODO*
+   :caption: *Apply a binary addition operation to apply an offset to
+             the units and permute the axes of air temperature data
+             on a field construct. Note the use of augmented
+             assignment to apply an offset to the units.*
 
    >>> u = t.copy()
    >>> u.transpose(inplace=True)
@@ -1622,7 +1638,9 @@ the case if the units of the result differ from bother operands, or if
 they have different standard names.
 
 .. code-block:: python
-   :caption: *TODO*
+   :caption: *Applying a binary operation where the resultant field construct
+             has a different physical nature to the two operands. Note the
+             removal of the 'standard_name' property to account for this.*
 
    >>> t.identities()
    ['air_temperature',
@@ -1688,7 +1706,7 @@ returning a new field construct with modified data values. See the
 <Field-unary-arithmetic>`.
 
 .. code-block:: python
-   :caption: *TODO*
+   :caption: *Apply some unary operations to a field construct's data.*
 
    >>> q, t = cf.read('file.nc')
    >>> print(q.array)  
@@ -1719,7 +1737,7 @@ Relational operations
 A field construct may compared with another field construct, or any
 other object that is broadcastable to its data. See the
 :ref:`comprehensive list of available relational operations
-<Field-comparison>`. The result is a field construct with a boolean
+<Field-comparison>`. The result is a field construct with Boolean
 data values.
 
 When comparing with another field construct, its data is actually
@@ -1738,7 +1756,9 @@ during operations, and if one operand has no units then the units of
 the other are assumed.
 
 .. code-block:: python
-   :caption: *TODO*
+   :caption: *Produce field constructs of Boolean data encapsulating
+             the nature of some relations between a field construct and
+             another operand.*
 
    >>> q, t = cf.read('file.nc')
    >>> print(q.array)         
@@ -1770,7 +1790,10 @@ The "standard_name" and "long_name" properties are removed from the
 result, which also has no units.
 
 .. code-block:: python
-   :caption: *TODO*
+   :caption: *A field construct of Boolean data created from a relational
+             operation on a field construct and another operand will be
+             stripped of its standard_name property (and its long_name
+             property if it has been set, unlike for 'q' here).*
 
    >>> q.identities()
    ['specific_humidity',
@@ -2050,7 +2073,10 @@ around; a one-sided difference is calculated at the edges; or missing
 data is inserted.
 
 .. code-block:: python
-   :caption: *TODO*
+   :caption: *Calculate for a field construct's data the derivative along both
+             the 'X' and 'Y' axes, where the former (by default) uses missing
+             values in the calculation, but the latter has been told to use a
+             one-sided finite difference at the boundary.*
 
    >>> r = q.derivative('X')
    >>> r = q.derivative('Y', one_sided_at_boundary=True)
@@ -2072,7 +2098,7 @@ where :math:`x` and :math:`y` are points on along the 'X' and 'Y'
 Cartesian dimensions respectively; and :math:`u` and :math:`v` denote
 the 'X' and 'Y' components of the horizontal winds.
 
-If the wind field field is defined on a spherical latitude-longitude
+If the wind field is defined on a spherical latitude-longitude
 domain then a correction factor is included:
 
 .. math:: \zeta _{spherical} = \frac{\delta v}{\delta x} -
@@ -2088,7 +2114,9 @@ using finite differences to approximate the derivatives. Dimensions
 other than 'X' and 'Y' remain unchanged by the operation.
 
 .. code-block:: python
-   :caption: *TODO*
+   :caption: *Generate a relative vorticity field construct from wind
+             component field constructs, then round the field's data to
+             8 decimal places.*
    
    >>> u, v = cf.read('wind_components.nc')
    >>> zeta = cf.relative_vorticity(u, v)

@@ -38,7 +38,6 @@ class Coordinate(mixin.PropertiesDataBounds):
             if getattr(self, t):
                 return t
 
-
     @property
     def T(self):
         '''True if and only if the data are coordinates for a CF 'T' axis.
@@ -60,7 +59,6 @@ class Coordinate(mixin.PropertiesDataBounds):
 
         '''
         return self.Units.isreftime or self.get_property('axis', None) == 'T'
-
 
     @property
     def X(self):
@@ -96,12 +94,14 @@ class Coordinate(mixin.PropertiesDataBounds):
 #        if data is not None and data.ndim > 1:
 #            return self.get_property('axis', None) == 'X'
 
-        return (self.Units.islongitude or
-                self.get_property('axis', None) == 'X' or
-                self.get_property('standard_name', None) in ('longitude',
-                                                             'projection_x_coordinate',
-                                                             'grid_longitude'))
-
+        return (
+            self.Units.islongitude or
+            self.get_property('axis', None) == 'X' or
+            self.get_property('standard_name', None) in
+            ('longitude',
+             'projection_x_coordinate',
+             'grid_longitude')
+        )
 
     @property
     def Y(self):
@@ -132,11 +132,14 @@ class Coordinate(mixin.PropertiesDataBounds):
 #        if self.ndim > 1:
 #            return self.get_property('axis', None) == 'Y'
 
-        return (self.Units.islatitude or
-                self.get_property('axis', None) == 'Y' or
-                self.get_property('standard_name', None) in ('latitude',
-                                                            'projection_y_coordinate',
-                                                            'grid_latitude'))
+        return (
+            self.Units.islatitude or
+            self.get_property('axis', None) == 'Y' or
+            self.get_property('standard_name', None) in
+            ('latitude',
+             'projection_y_coordinate',
+             'grid_latitude')
+        )
 
     @property
     def Z(self):
@@ -193,7 +196,8 @@ class Coordinate(mixin.PropertiesDataBounds):
         units = self.Units
         return (
             units.ispressure or
-            str(self.get_property('positive', 'Z')).lower() in ('up', 'down') or
+            str(self.get_property('positive', 'Z')).lower() in
+            ('up', 'down') or
             self.get_property('axis', None) == 'Z' or
             (units and units.units in ('level', 'layer' 'sigma_level')) or
             self.get_property('standard_name', None) in
@@ -209,7 +213,6 @@ class Coordinate(mixin.PropertiesDataBounds):
              'ocean_sigma_z_coordinate',
              'ocean_double_sigma_coordinate')
         )
-
 
     # ----------------------------------------------------------------
     # CF properties
@@ -239,9 +242,11 @@ class Coordinate(mixin.PropertiesDataBounds):
 
         '''
         return self.get_property('axis', default=AttributeError())
+
     @axis.setter
     def axis(self, value):
         self.set_property('axis', value)
+
     @axis.deleter
     def axis(self):
         self.del_property('axis')
@@ -275,103 +280,104 @@ class Coordinate(mixin.PropertiesDataBounds):
 
         '''
         return self.get_property('positive', default=AttributeError())
+
     @positive.setter
     def positive(self, value):
         self.set_property('positive', value)
         self._direction = None
+
     @positive.deleter
     def positive(self):
         self.del_property('positive')
         self._direction = None
 
-
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
-#    def period(self, *value):
-#        '''Set the period for cyclic coordinates.
+#     def period(self, *value):
+#         '''Set the period for cyclic coordinates.
 #
-#:Parameters:
+# :Parameters:
 #
-#    value: data-like or `None`, optional
-#        The period. The absolute value is used.
+#     value: data-like or `None`, optional
+#         The period. The absolute value is used.
 #
-#        {+data-like-scalar}
+#         {+data-like-scalar}
 #
-#:Returns:
+# :Returns:
 #
-#    out: `cf.Data` or `None`
-#        The period prior to the change, or the current period if no
-#        *value* was specified. In either case, None is returned if the
-#        period had not been set previously.
+#     out: `cf.Data` or `None`
+#         The period prior to the change, or the current period if no
+#         *value* was specified. In either case, None is returned if the
+#         period had not been set previously.
 #
-#**Examples:**
+# **Examples:**
 #
-#>>> print(c.period())
-#None
-#>>> c.Units
-#<CF Units: degrees_east>
-#>>> print(c.period(360))
-#None
-#>>> c.period()
-#<CF Data: 360.0 'degrees_east'>
-#>>> import math
-#>>> c.period(cf.Data(2*math.pi, 'radians'))
-#<CF Data: 360.0 degrees_east>
-#>>> c.period()
-#<CF Data: 6.28318530718 radians>
-#>>> c.period(None)
-#<CF Data: 6.28318530718 radians>
-#>>> print(c.period())
-#None
-#>>> print(c.period(-360))
-#None
-#>>> c.period()
-#<CF Data: 360.0 degrees_east>
+# >>> print(c.period())
+# None
+# >>> c.Units
+# <CF Units: degrees_east>
+# >>> print(c.period(360))
+# None
+# >>> c.period()
+# <CF Data: 360.0 'degrees_east'>
+# >>> import math
+# >>> c.period(cf.Data(2*math.pi, 'radians'))
+# <CF Data: 360.0 degrees_east>
+# >>> c.period()
+# <CF Data: 6.28318530718 radians>
+# >>> c.period(None)
+# <CF Data: 6.28318530718 radians>
+# >>> print(c.period())
+# None
+# >>> print(c.period(-360))
+# None
+# >>> c.period()
+# <CF Data: 360.0 degrees_east>
 #
-#        '''
-#        old = self._period
-#        if old is not None:
-#            old = old.copy()
+#         '''
+#         old = self._period
+#         if old is not None:
+#             old = old.copy()
 #
-#        if not value:
-#            return old
+#         if not value:
+#             return old
 #
-#        value = value[0]
+#         value = value[0]
 #
-#        if value is not None:
-#            value = Data.asdata(value)
-#            units = value.Units
-#            if not units:
-#                value = value.override_units(self.Units)
-#            elif units != self.Units:
-#                if units.equivalent(self.Units):
-#                    value.Units = self.Units
-#                else:
-#                    raise ValueError(
-#"Period units {!r} are not equivalent to coordinate units {!r}".format(
-#    units, self.Units))
-#            #--- End: if
+#         if value is not None:
+#             value = Data.asdata(value)
+#             units = value.Units
+#             if not units:
+#                 value = value.override_units(self.Units)
+#             elif units != self.Units:
+#                 if units.equivalent(self.Units):
+#                     value.Units = self.Units
+#                 else:
+#                     raise ValueError(
+# "Period units {!r} are not equivalent to coordinate units {!r}".format(
+#     units, self.Units))
+#             # --- End: if
 #
-#            value = abs(value)
-#            value.dtype = float
+#             value = abs(value)
+#             value.dtype = float
 #
-#            if self.isdimension:
-#                # Faster than `range`
-#                array = self.array
-#                r =  abs(array[-1] - array[0])
-#            else:
-#                r = self.data.range().datum(0)
+#             if self.isdimension:
+#                 #  Faster than `range`
+#                 array = self.array
+#                 r =  abs(array[-1] - array[0])
+#             else:
+#                 r = self.data.range().datum(0)
 #
-#            if r >= value.datum(0):
-#                raise ValueError(
-#"The coordinate range {!r} is not less than the period {!r}".format(
-#    range, value))
-#        #--- End: if
+#             if r >= value.datum(0):
+#                 raise ValueError(
+# "The coordinate range {!r} is not less than the period {!r}".format(
+#     range, value))
+#         # --- End: if
 #
-#        self._period = value
+#         self._period = value
 #
-#        return old
+#         return old
 
 
-#--- End: class
+# --- End: class

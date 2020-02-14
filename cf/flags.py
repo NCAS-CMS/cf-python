@@ -7,6 +7,8 @@ from copy import deepcopy
 from .functions import RTOL, ATOL, equals
 from .functions import inspect as cf_inspect
 
+from .decorators import _deprecated_kwarg_check
+
 
 class Flags:
     '''Self-describing CF flag values.
@@ -83,7 +85,7 @@ class Flags:
         for attr in ('_flag_meanings', '_flag_values', '_flag_masks'):
             if hasattr(self, attr):
                 return True
-        #--- End: for
+        # --- End: for
 
         return False
 
@@ -284,7 +286,7 @@ class Flags:
             value = getattr(self, attr, None)
             if value is not None:
                 string.append('%s%s = %s' % (indent1, attr[1:], list(value)))
-        #--- End: for
+        # --- End: for
 
         string = '\n'.join(string)
 
@@ -294,6 +296,7 @@ class Flags:
             return(string)
 
 
+    @_deprecated_kwarg_check('traceback')
     def equals(self, other, rtol=None, atol=None,
                ignore_fill_value=False, verbose=False,
                traceback=False):
@@ -340,9 +343,6 @@ class Flags:
     <CF Flags: flag_values=[0 1 2], flag_masks=[0 2 2], flag_meanings=['low' 'medium' 'high']>
 
         '''
-        if traceback:
-            _DEPRECATION_ERROR_KWARGS(self, 'equals', traceback=True) # pragma: no cover
-
         # Check that each instance is the same type
         if self.__class__ != other.__class__:
             if verbose:
@@ -385,7 +385,7 @@ class Flags:
                     print("%s: Different attributes: %s" %
                           (self.__class__.__name__, attr[1:])) # pragma: no cover
                 return False
-        #--- End: for
+        # --- End: for
 
         return True
 
@@ -431,13 +431,13 @@ class Flags:
             if hasattr(self, attr):
                 indices = numpy_argsort(getattr(self, attr))
                 break
-        #--- End: for
+        # --- End: for
 
         for attr in ('_flag_values', '_flag_meanings', '_flag_masks'):
             if hasattr(self, attr):
                 array      = getattr(self, attr).view()
                 array[...] = array[indices]
-        #--- End: for
+        # --- End: for
 
 
-#--- End: class
+# --- End: class

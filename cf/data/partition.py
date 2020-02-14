@@ -67,7 +67,7 @@ def _lock_files_present(lock_files):
         if isfile(filename):
             lock_files_present = True
             break
-    #--- End: for
+    # --- End: for
 
     return lock_files_present
 
@@ -140,7 +140,7 @@ def _remove_temporary_files(filename=None):
                 except OSError:
                     pass
                 del _temporary_files[filename]
-        #--- End: if
+        # --- End: if
 
         return
 
@@ -160,13 +160,13 @@ def _remove_temporary_files(filename=None):
                 remove(lock_file)
             except OSError:
                 pass
-        #--- End: for
+        # --- End: for
 
         try:
             rmdir(dirname)
         except OSError:
             pass
-    #--- End: for
+    # --- End: for
 
     _temporary_files.clear()
 
@@ -332,7 +332,7 @@ class Partition:
                 # If we're here then it is likely that FileArray has been
                 # torn down, so just do nothing.
                 pass
-        #--- End: if
+        # --- End: if
 
 
 #    def __getstate__(self):
@@ -1083,7 +1083,7 @@ class Partition:
                 # unmasked numpy array
                 p_data = p_data.data
                 masked = False
-        #--- End: if
+        # --- End: if
 
         if masked:
             # Set the hardness of the mask
@@ -1091,7 +1091,7 @@ class Partition:
                 p_data.harden_mask()
             else:
                 p_data.soften_mask()
-        #--- End: if
+        # --- End: if
 
         self.masked = masked
 
@@ -1117,7 +1117,7 @@ class Partition:
                 # not possible
                 copy = False
                 in_place_changes = False
-        #--- End: if
+        # --- End: if
 
         flip = config.get('flip', None)
         if flip or p_flip:
@@ -1148,10 +1148,10 @@ class Partition:
                         if i not in iaxes:
 #                            iaxes.append(i)
                             iaxes.insert(i, i)
-                #--- End: if
+                # --- End: if
 
                 p_data = numpy_transpose(p_data, iaxes)
-        #--- End: if
+        # --- End: if
 
         # ------------------------------------------------------------
         # Remove excessive/insert missing size 1 axes
@@ -1173,7 +1173,7 @@ class Partition:
                         masked = True
 
                     p_data.mask = (mask | p_data.mask).array
-            #--- End: for
+            # --- End: for
 
             self.masked = True
 
@@ -1194,7 +1194,7 @@ class Partition:
                 # not possible
                 copy = False
                 in_place_changes = False
-        #--- End: if
+        # --- End: if
 
         # ------------------------------------------------------------
         # Copy the array
@@ -1215,7 +1215,7 @@ class Partition:
                 # whilst netCDF4.netcdftime.datetime is mucking bout, don't copy!!!!
                 #p_data = _copy(p_data)
                 pass
-        #--- End: if
+        # --- End: if
 
         # ------------------------------------------------------------
         # Update the partition
@@ -1463,10 +1463,10 @@ class Partition:
                 else:
                     size -= 1
                     indices[i] = [size-j for j in indices[i]]
-            #--- End: for
+            # --- End: for
 
             self.flip = p_flip
-        #--- End: if
+        # --- End: if
 
         slice_None = slice(None)
 
@@ -1527,7 +1527,7 @@ class Partition:
                     new_part = part_index[index]
                 else:
                     new_part = [part_index[i] for i in index]
-            #--- End: if
+            # --- End: if
 
             # Still here? Then the new element of p_part is a list of
             # integers, so let's see if we can convert it to a slice
@@ -1547,10 +1547,10 @@ class Partition:
                             if stop < 0:
                                 stop = None
                             new_part = slice(start, stop, step)
-            #--- End: if
+            # --- End: if
 
             p_part.append(new_part)
-        #--- End: for
+        # --- End: for
 
         self.part = p_part
 
@@ -1591,7 +1591,7 @@ class Partition:
                         memory_overlap |= isinstance(p_data.mask.base, numpy_ndarray)
 
                     extra_memory = memory_overlap
-                #--- End: if
+                # --- End: if
 
                 p_dtype = p_data.dtype
 
@@ -1613,7 +1613,7 @@ class Partition:
                     dtype = config['dtype']
                     if dtype is not None and dtype != p_data.dtype:
                         extra_memory = True
-        #--- End: if
+        # --- End: if
 
         # ------------------------------------------------------------
         # Amount of extra memory (in bytes) required to access the
@@ -1730,11 +1730,11 @@ class Partition:
                         if stop < 0:
                             stop = None
                         index = slice(start, stop, step)
-            #--- End: if
+            # --- End: if
 
             p_indices.append(index)
             shape.append(index_size)
-        #--- End: for
+        # --- End: for
 
         # Still here? Then this partition does span the slice and the
         # elements of this partition specified by p_indices are in the
@@ -1941,4 +1941,4 @@ class Partition:
             _other_lock_files.remove(_lock_file)
 
 
-#--- End: class
+# --- End: class

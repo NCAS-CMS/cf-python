@@ -19,7 +19,7 @@ class PartitionTest(unittest.TestCase):
             return
 
 
-#--- End: class
+# --- End: class
 
 
 if __name__ == "__main__":

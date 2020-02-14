@@ -1,5 +1,7 @@
 from functools import wraps
 
+from .functions  import _DEPRECATION_ERROR_KWARGS
+
 
 # Identifier for 'inplace_enabled' to use as internal '_custom' dictionary key,
 # or directly as a (temporary) attribute name if '_custom' is not provided:
@@ -71,20 +73,31 @@ def _inplace_enabled_define_and_cleanup(instance):
     return x
 
 
-def _deprecation_error_i_kwarg(operation_method):
-    '''A decorator for adding a keyword argument deprecation check.'''
-    @wraps(operation_method)
+# @_deprecated_kwarg_check('i') -> example usage for decorating, using i kwarg
+def _deprecated_kwarg_check(depr_kwargs):
+    '''A wrapper for provision of positional arguments to the decorator.'''
+    def deprecated_kwarg_check_decorator(operation_method):
+        '''A decorator for a deprecation check on given kwargs.
 
-    def precede_with_i_kwarg_deprecation_check(self, *args, **kwargs):
-        i_kwarg = kwargs.get('i')
+        For a specified list `deprecated_kwargs`, check if the decorated
+        method has been supplied with any of the elements as keyword arguments
+        and if so, call _DEPRECATION_ERROR_KWARGS on them, optionally
+        providing a custom message to raise inside it.
+        '''
+        @wraps(operation_method)
 
-        if i_kwarg:
-            _DEPRECATION_ERROR_KWARGS(
-                self, operation_method.__name__, i=i_kwarg) # pragma: no cover
+        def precede_with_kwarg_deprecation_check(self, *args, **kwargs):
 
-        operation_method_result = operation_method(self, *args, **kwargs)
+            for depr_kwarg in depr_kwargs:
+                if kwargs.get(depr_kwarg):
+                    _DEPRECATION_ERROR_KWARGS(
+                        self, operation_method.__name__,
+                        depr_kwarg=True) # pragma: no cover
 
-        # The decorated method has the same return signature as if undecorated:
-        return operation_method_result
+            operation_method_result = operation_method(self, *args, **kwargs)
 
-    return precede_with_i_kwarg_deprecation_check
+            # Decorated method has same return signature as if undecorated:
+            return operation_method_result
+
+        return precede_with_kwarg_deprecation_check
+    return deprecated_kwarg_check_decorator

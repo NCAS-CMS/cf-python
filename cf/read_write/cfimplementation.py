@@ -32,7 +32,7 @@ class CFImplementation(cfdm.CFDMImplementation):
 
 .. versionadded:: 3.0.0
     '''
-#--- End: class
+# --- End: class
 
 
 _implementation = CFImplementation(

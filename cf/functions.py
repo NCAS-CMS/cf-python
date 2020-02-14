@@ -60,6 +60,15 @@ from . import mpi_size
 
 class DeprecationError(Exception) :pass
 
+KWARGS_MESSAGE_MAP = {
+    "relaxed_identity": "Use keywords 'strict' or 'relaxed' instead.",
+    "axes": "Use keyword 'axis' instead.",
+    "traceback": "Use keyword 'verbose' instead.",
+    "exact": "Use 're.compile' objects instead.",
+    "i": "Use keyword 'inplace' instead. Note that when inplace=True, "
+         "None is returned.",
+}
+
 # Are we running on GNU/Linux?
 _linux = (platform.system() == 'Linux')
 
@@ -115,7 +124,7 @@ if _linux:
                 n += 1
                 if n > 3:
                     break
-        #--- End: for
+        # --- End: for
 
         free_bytes = free_KiB * 1024
 
@@ -143,7 +152,7 @@ else:
         return float(virtual_memory().available)
 
 
-#--- End: if
+# --- End: if
 
 def FREE_MEMORY():
     '''The available physical memory.
@@ -245,8 +254,11 @@ def CHUNKSIZE(*args):
 
     The upper limit to the chunksize is given by:
 
-    upper_chunksize = ((free_memory_factor * TOTAL_MEMORY()) / ((mpi_size
-                       * _WORKSPACE_FACTOR_1()) + _WORKSPACE_FACTOR_2()))
+    .. math:: upper\_chunksize = \dfrac{f \cdot total\_memory}{mpi\_size
+                                 \cdot w_1 + w_2}
+
+    where :math:`f` is the *free memory factor* and :math:`w_1` and
+    :math:`w_2` the *workspace factors* *1* and *2* respectively.
 
     :Parameters:
 
@@ -275,7 +287,7 @@ def CHUNKSIZE(*args):
                 raise ValueError('Chunk size must be positive')
 
             CONSTANTS['CHUNKSIZE'] = chunksize
-    #--- End: if
+    # --- End: if
 
     return old
 
@@ -339,7 +351,7 @@ def SET_PERFORMANCE(chunksize=None, free_memory_factor=None):
         except ValueError:
             FREE_MEMORY_FACTOR(old[1])
             raise
-    #--- End: if
+    # --- End: if
 
     return old
 
@@ -347,7 +359,7 @@ def MIN_TOTAL_MEMORY():
     '''The minumum total memory across nodes.
     '''
     return CONSTANTS['MIN_TOTAL_MEMORY']
-#--- End: def
+# --- End: def
 
 def TOTAL_MEMORY():
     '''TODO
@@ -788,7 +800,7 @@ def close_files(file_format=None):
                 fh.close()
 
             _file_to_fh[file_format].clear()
-    #--- End: if
+    # --- End: if
 
 
 def close_one_file(file_format=None):
@@ -1065,7 +1077,7 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
         if isinstance(arg0, str) and arg0 == 'mask':
             mask_indices = indices[1]
             indices = indices[2:]
-    #--- End: if
+    # --- End: if
 
     # Initialize the list of parsed indices as the input indices with any
     # Ellipsis objects expanded
@@ -1105,7 +1117,7 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
         #else:
         raise IndexError("Scalar array can only be indexed with () or Ellipsis")
 
-    #--- End: if
+    # --- End: if
 
 
     for i, (index, size) in enumerate(zip(parsed_indices, shape)):
@@ -1150,7 +1162,7 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
                     # 3:6:-1 => 3:-4:-1
                     # 3:9:-1 => 3:-1:-1
                     stop -= size
-            #--- End: if
+            # --- End: if
 
             if step > 0 and -size <= start < 0 and 0 <= stop <= size+start:
                 # [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -1295,8 +1307,8 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
                     raise IndexError(
                         "Invalid indices {} for array with shape {}".format(
                             parsed_indices, shape))
-            #--- End: if
-        #--- End: if
+            # --- End: if
+        # --- End: if
 
         if is_slice:
             if reverse and index.step < 0:
@@ -1326,7 +1338,7 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
 
                 index = slice(start, stop, step)
                 flip.append(i)
-            #--- End: if
+            # --- End: if
 
             # If step is greater than one then make sure that
             # index.stop isn't bigger than it needs to be
@@ -1335,7 +1347,7 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
                 div, mod = divmod(stop-start-1, step)
                 stop     = start + div*step + 1
                 index    = slice(start, stop, step)
-            #--- End: if
+            # --- End: if
 
             #
             if envelope:
@@ -1343,10 +1355,10 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
                 # index of a numpy array of integers
                 compressed_indices.append(index)
                 index = slice(start, stop, (1 if reverse else _numpy_sign(step)))
-        #--- End: if
+        # --- End: if
 
         parsed_indices[i] = index
-    #--- End: for
+    # --- End: for
 
     if not (cyclic or reverse or envelope or mask):
         return parsed_indices
@@ -1565,7 +1577,7 @@ def load_stash2standard_name(table=None, delimiter='!', merge=True):
         merge = False
         package_path = os.path.dirname(__file__)
         table = os.path.join(package_path, 'etc/STASH_to_CF.txt')
-    #--- End: if
+    # --- End: if
 
     with open(table, 'r') as open_table:
         lines = csv.reader(open_table, delimiter=delimiter,
@@ -1640,7 +1652,7 @@ def load_stash2standard_name(table=None, delimiter='!', merge=True):
             stash2sn[key] += line
         else:
             stash2sn[key] = line
-    #--- End: for
+    # --- End: for
 
     if not merge:
         _stash2standard_name.clear()
@@ -1729,7 +1741,7 @@ def flat(x):
                 yield sub
         else:
             yield a
-    #--- End: for
+    # --- End: for
 
 
 def abspath(filename):
@@ -1956,7 +1968,7 @@ def hash_array(array):
             array = array.filled()
         else:
             array = array.data
-    #--- End: if
+    # --- End: if
 
     if not array.flags.c_contiguous:
 #        array = array.copy()
@@ -2204,8 +2216,8 @@ def _section(o, axes=None, data=False, stop=None, chunks=False,
                 axis_indices.append(o.get_data_axes().index(key))
             except ValueError:
                 pass
-        #--- End: for
-    #--- End: if
+        # --- End: for
+    # --- End: if
 
     # find the size of each dimension
     sizes = o.shape
@@ -2236,7 +2248,7 @@ def _section(o, axes=None, data=False, stop=None, chunks=False,
             else:
                 steps[index] = int(axis_size/n_chunks)
                 break
-        #--- End: for
+        # --- End: for
     else:
         steps = [size if i in axis_indices else 1 for i, size in enumerate(sizes)]
 
@@ -2380,7 +2392,7 @@ def environment(display=True, paths=True, string=True):
         out.append('scipy: ' + str(scipy.__version__))
         if paths:
             out[-1] += ' ' + str(_os_path_abspath(scipy.__file__))
-    #--- End: try
+    # --- End: try
 
     try:
         import matplotlib
@@ -2390,7 +2402,7 @@ def environment(display=True, paths=True, string=True):
         out.append('matplotlib: ' + str(matplotlib.__version__))
         if paths:
             out[-1] += ' ' + str(_os_path_abspath(matplotlib.__file__))
-    #--- End: try
+    # --- End: try
 
     try:
         import ESMF
@@ -2400,7 +2412,7 @@ def environment(display=True, paths=True, string=True):
         out.append('ESMF: ' + str(ESMF.__version__))
         if paths:
             out[-1] += ' ' + str(_os_path_abspath(ESMF.__file__))
-    #--- End: try
+    # --- End: try
 
     out.append('cfdm: ' + str(cfdm.__version__))
     if paths:
@@ -2418,7 +2430,7 @@ def environment(display=True, paths=True, string=True):
         out.append('cfplot: ' + str(cfplot.__version__))
         if paths:
             out[-1] += ' ' + str(_os_path_abspath(cfplot.__file__))
-    #--- End: try
+    # --- End: try
 
     out.append('cf: ' + str(__version__))
     if paths:
@@ -2479,13 +2491,10 @@ def _DEPRECATION_ERROR_FUNCTION_KWARGS(func, kwargs=None, message='',
     if kwargs is None:  # distinguish from falsy '{}'
         kwargs = {}
 
-    if exact:
-        kwargs={'exact': None}
-        message = "Use 're.compile' objects instead."
-
-    if traceback:
-        kwargs={'traceback': None}
-        message = "Use keyword 'verbose' instead."
+    for kwarg, msg in KWARGS_MESSAGE_MAP.items():
+        if kwarg in ('exact', 'traceback') and eval(kwarg):  # safe as this is not a kwarg input by the user
+            kwargs = {kwarg: None}
+            message = msg
 
     for key in kwargs.keys():
         raise DeprecationError("Keyword {1!r} of function '{0}' has been deprecated at version {3} and is no longer available. {2}".format(
@@ -2503,26 +2512,10 @@ def _DEPRECATION_ERROR_KWARGS(instance, method, kwargs=None, message='',
     if kwargs is None:  # distinguish from falsy '{}'
         kwargs = {}
 
-    if relaxed_identity:
-        kwargs={'relaxed_identity': None}
-        message = "Use keywords 'strict' or 'relaxed' instead."
-
-    if i:
-        kwargs={'i': None}
-        message = "Use keyword 'inplace' instead. Note that when inplace=True, None is returned."
-
-    if axes:
-        kwargs={'axes': None}
-        message = "Use keyword 'axis' instead."
-
-    if traceback:
-        kwargs={'traceback': None}
-        message = "Use keyword 'verbose' instead."
-
-    if exact:
-        kwargs={'exact': None}
-        message = "Use 're.compile' objects instead."
-
+    for kwarg, msg in KWARGS_MESSAGE_MAP.items():
+        if eval(kwarg):  # safe as this is not a kwarg input by the user
+            kwargs = {kwarg: None}
+            message = msg
 
     for key in kwargs.keys():
         raise DeprecationError("Keyword {2!r} of method '{0}.{1}' has been deprecated at version {4} and is no longer available. {3}".format(

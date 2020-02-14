@@ -57,4 +57,4 @@ class FieldAncillary(mixin.PropertiesData,
         return True
 
 
-#--- End: class
+# --- End: class

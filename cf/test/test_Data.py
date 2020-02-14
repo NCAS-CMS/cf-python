@@ -242,7 +242,7 @@ class DataTest(unittest.TestCase):
                         e.where(cf.set([e.min(), e.max()]), cf.masked, e-1, inplace=True)
                         f = d.digitize(bins, upper=upper)
                         self.assertTrue(e.equals(f, verbose=True))
-        #--- End: for
+        # --- End: for
         cf.CHUNKSIZE(self.original_chunksize)
 
 
@@ -266,7 +266,7 @@ class DataTest(unittest.TestCase):
                 b = numpy.cumsum(self.ma, axis=i)
                 e = d.cumsum(axis=i, masked_as_zero=False)
                 self.assertTrue(cf.functions._numpy_allclose(e.array, b))
-        #--- End: for
+        # --- End: for
         cf.CHUNKSIZE(self.original_chunksize)
 
 
@@ -305,7 +305,7 @@ class DataTest(unittest.TestCase):
                 self.assertTrue(e.shape == tuple(shape))
                 self.assertTrue(e.ndim == d.ndim-len(axes)+1)
                 self.assertTrue(e.size == d.size)
-        #--- End: for
+        # --- End: for
         cf.CHUNKSIZE(self.original_chunksize)
 
 
@@ -338,7 +338,7 @@ class DataTest(unittest.TestCase):
 
             for partition in d.partitions.flat:
                 self.assertTrue(partition.in_cached_file)
-        #--- End: for
+        # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
         cf.FREE_MEMORY_FACTOR(original_FMF)
@@ -448,7 +448,7 @@ class DataTest(unittest.TestCase):
             self.assertTrue((f._auxiliary_mask_return().array == fm).all())
 
         cf.CHUNKSIZE(self.original_chunksize)
-    #--- End: for
+    # --- End: for
 
     def test_Data___contains__(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -580,7 +580,7 @@ class DataTest(unittest.TestCase):
                         self.assertTrue((d.array == a).all() in (True, numpy.ma.masked), message)
                         self.assertTrue((d.mask.array == numpy.ma.getmaskarray(a)).all(),
                                         'd.mask.array='+repr(d.mask.array)+'\nnumpy.ma.getmaskarray(a)='+repr(numpy.ma.getmaskarray(a)))
-                #--- End: for
+                # --- End: for
 
                 a = numpy.ma.arange(3000).reshape(50, 60)
                 if hardmask:
@@ -601,9 +601,9 @@ class DataTest(unittest.TestCase):
                     a[j, i] = dvalue
                     self.assertTrue((d.array == a).all() in (True, numpy.ma.masked), message)
                     self.assertTrue((d.mask.array == numpy.ma.getmaskarray(a)).all(), message)
-                #--- End: for
+                # --- End: for
 #                print('hardmask =',hardmask,', pmshape =', d._pmshape)
-            #--- End: for
+            # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
 
@@ -991,7 +991,7 @@ class DataTest(unittest.TestCase):
                     self.assertTrue(d.datum(index)  == d.array[index].item())
                     self.assertTrue(d.datum(*index) == d.array[index].item(),
                                     '{}, {}'.format(d.datum(*index), d.array[index].item()))
-            #--- End: for
+            # --- End: for
 
             d = cf.Data(5, 'metre')
             d[()] = cf.masked
@@ -1111,8 +1111,8 @@ class DataTest(unittest.TestCase):
                       ):
                 for i, j in zip(d.ndindex(), numpy.ndindex(d.shape)):
                     self.assertTrue(i == j)
-            #--- End: for
-        #--- End: for
+            # --- End: for
+        # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
 
@@ -1181,7 +1181,7 @@ class DataTest(unittest.TestCase):
                     message = 'cf.Data.swapaxes({}, {}) failed'.format(i, j)
                     self.assertTrue(b.shape == e.shape, message)
                     self.assertTrue((b == e.array).all(), message)
-        #--- End: for
+        # --- End: for
         cf.CHUNKSIZE(self.original_chunksize)
 
 
@@ -1202,7 +1202,7 @@ class DataTest(unittest.TestCase):
                     message = 'cf.Data.transpose(%s) failed: d.shape=%s, a.shape=%s' % (axes, d.shape, a.shape)
                     self.assertTrue(d.shape == a.shape, message)
                     self.assertTrue((d.array == a).all(), message)
-        #--- End: for
+        # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
 
@@ -1320,7 +1320,7 @@ class DataTest(unittest.TestCase):
                     else:
                         message = 'Failed in {!r}**{!r}'.format(d, x)
                         self.assertTrue((d**x).all(), message)
-            #--- End: for
+            # --- End: for
 
             for a0 in arrays:
                 d = cf.Data(a0, 'metre')
@@ -1431,7 +1431,7 @@ class DataTest(unittest.TestCase):
                         e = d.copy()
                         e.__itruediv__(x)
                         self.assertTrue(e.equals(cf.Data(a, 'm'), verbose=1)), '%s.__itruediv__(%s)' % (d, x)
-                #--- End: for
+                # --- End: for
 
                 for x in (cf.Data(2, 'metre'), cf.Data(2.0, 'metre')):
                     self.assertTrue((d +  x).equals(cf.Data(a0 +  x.datum(), 'm' ), verbose=1))
@@ -1448,7 +1448,7 @@ class DataTest(unittest.TestCase):
                         self.assertTrue((x**d).all(), '%s**%s' % (x, repr(d)))
 
                     self.assertTrue(d.__truediv__(x).equals(cf.Data(a0.__truediv__(x.datum()), ''), verbose=1))
-        #--- End: for
+        # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
 
@@ -1482,7 +1482,7 @@ class DataTest(unittest.TestCase):
                     de = d*e
                     self.assertTrue(de.shape == ab.shape)
                     self.assertTrue((de.array == ab).all())
-        #--- End: for
+        # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
 
@@ -1667,7 +1667,7 @@ class DataTest(unittest.TestCase):
             self.assertTrue(e.shape == shape,
                 "{}, axes={}, not squeezed bad shape: {} != {}".format(
                     h, None, e.shape, shape))
-        #--- End: for
+        # --- End: for
 
 
     def test_Data_max_min_sum_sum_of_squares(self):
@@ -1694,7 +1694,7 @@ class DataTest(unittest.TestCase):
                             e.allclose(b, rtol=1e-05, atol=1e-08),
                             "%s, axis=%s, unweighted, unmasked \ne=%s, \nb=%s, \ne-b=%s" %
                             (h, axes, e.array, b, e.array-b))
-                #--- End: for
+                # --- End: for
 
                 # unweighted, masked
                 d = cf.Data(self.ma)
@@ -1719,7 +1719,7 @@ class DataTest(unittest.TestCase):
                             e.allclose(b, rtol=1e-05, atol=1e-08),
                             "%s, axis=%s, unweighted, masked \ne=%s, \nb=%s, \ne-b=%s" %
                             (h, axes, e.array, b, e.array-b))
-        #--- End: for
+        # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
 
@@ -1769,7 +1769,7 @@ class DataTest(unittest.TestCase):
                         e.allclose(b, rtol=1e-05, atol=1e-08),
                         "median, axis=%s, unweighted, masked \ne=%s, \nb=%s, \ne-b=%s" %
                         (axes, e.array, b, e.array-b))
-        #--- End: for
+        # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
 
@@ -1830,7 +1830,7 @@ class DataTest(unittest.TestCase):
                         e.allclose(b, rtol=1e-05, atol=1e-08),
                         "mean_of_upper_decile, axis=%s, unweighted, masked \ne=%s, \nb=%s, \ne-b=%s" %
                         (axes, e.array, b, e.array-b))
-        #--- End: for
+        # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
 
@@ -1861,7 +1861,7 @@ class DataTest(unittest.TestCase):
                             e.allclose(b, rtol=1e-05, atol=1e-08),
                             "%s, axis=%s, unweighted, unmasked \ne=%s, \nb=%s, \ne-b=%s" %
                             (h, axes, e.array, b, e.array-b))
-                #--- End: for
+                # --- End: for
 
                 # unweighted, masked
                 d = cf.Data(self.ma)
@@ -1889,7 +1889,7 @@ class DataTest(unittest.TestCase):
                             e.allclose(b, rtol=1e-05, atol=1e-08),
                             "%s, axis=%s, unweighted, masked \ne=%s, \nb=%s, \ne-b=%s" %
                             (h, axes, e.array, b, e.array-b))
-        #--- End: for
+        # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
 
@@ -1917,7 +1917,7 @@ class DataTest(unittest.TestCase):
                         e.allclose(b, rtol=1e-05, atol=1e-08),
                         "axis={}, unmasked \ne={}, \nb={}, \ne-b={}".format(
                             axes, e.array, b, e.array-b))
-                #--- End: for
+                # --- End: for
 
                 # masked
                 d = cf.Data(self.ma)
@@ -1939,7 +1939,7 @@ class DataTest(unittest.TestCase):
                         e.allclose(b, rtol=1e-05, atol=1e-08),
                         "axis={}, masked \ne={}, \nb={}, \ne-b={}".format(
                             axes, e.array, b, e.array-b))
-        #--- End: for
+        # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
 
@@ -1963,7 +1963,7 @@ class DataTest(unittest.TestCase):
                         self.assertTrue(
                             e.allclose(b, rtol=1e-05, atol=1e-08),
                             "%s, axis=%s, unweighted, unmasked, pp=%s, \ne=%s, \nb=%s, \ne-b=%s" % (h, axes, pp, e.array, b, e.array-b))
-                #--- End: for
+                # --- End: for
 
                 # unweighted, masked
                 d = cf.Data(self.ma)
@@ -1983,7 +1983,7 @@ class DataTest(unittest.TestCase):
                             e.allclose(b, rtol=1e-05, atol=1e-08),
                             "%s, axis=%s, unweighted, masked, pp=%s, \ne=%s, \nb=%s, \ne-b=%s" %
                             (h, axes, pp, e.array, b, e.array-b))
-                #--- End: for
+                # --- End: for
 
 
                 # weighted, masked
@@ -2008,7 +2008,7 @@ class DataTest(unittest.TestCase):
                             e.allclose(b, rtol=1e-05, atol=1e-08),
                             "%s, axis=%s, \ne=%s, \nb=%s, \ne-b=%s" %
                             (h, axes, e.array, b, e.array-b))
-                #--- End: for
+                # --- End: for
 
                 # weighted, unmasked
                 d = cf.Data(self.a)
@@ -2024,7 +2024,7 @@ class DataTest(unittest.TestCase):
                             e.allclose(b, rtol=1e-05, atol=1e-08),
                             "%s, axis=%s, \ne=%s, \nb=%s, \ne-b=%s" %
                             (h, axes, e.array, b, e.array-b))
-        #--- End: for
+        # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
 
@@ -2056,7 +2056,7 @@ class DataTest(unittest.TestCase):
                         e.allclose(b, rtol=1e-05, atol=1e-08),
                         "{} axis={}, unweighted, unmasked \ne={}, \nb={}, \ne-b={}".format(
                             method, axes, e.array, b, e.array-b))
-                #--- End: for
+                # --- End: for
 
                 # weighted, unmasked
                 x = cf.Data(self.w)
@@ -2071,7 +2071,7 @@ class DataTest(unittest.TestCase):
                         e.allclose(b, rtol=1e-05, atol=1e-08),
                         "%s weighted, unmasked axis=%s, \ne=%s, \nb=%s, \ne-b=%s" %
                         (method, axes, e.array, b, e.array-b))
-                #--- End: for
+                # --- End: for
 
                 # unweighted, masked
                 d = cf.Data(self.ma)
@@ -2091,7 +2091,7 @@ class DataTest(unittest.TestCase):
                         e.allclose(b, rtol=1e-05, atol=1e-08),
                         "%s unweighted, masked axis=%s, \ne=%s, \nb=%s, \ne-b=%s" %
                         (method, axes, e.array, b, e.array-b))
-                #--- End: for
+                # --- End: for
 
                 # weighted, masked
                 for axes in self.axes_combinations:
@@ -2111,7 +2111,7 @@ class DataTest(unittest.TestCase):
                         e.allclose(b, rtol=1e-05, atol=1e-08),
                         "%s weighted, masked axis=%s, \ne=%s, \nb=%s, \ne-b=%s" %
                         (method, axes, e.array, b, e.array-b))
-        #--- End: for
+        # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
 
@@ -2133,7 +2133,7 @@ class DataTest(unittest.TestCase):
                     e.allclose(b, rtol=1e-05, atol=1e-08),
                     "axis={}, unweighted, unmasked \ne={}, \nb={}, \ne-b={}".format(
                         axes, e.array, b, e.array-b))
-            #--- End: for
+            # --- End: for
 
             # weighted, unmasked
             x = cf.Data(self.w)
@@ -2148,7 +2148,7 @@ class DataTest(unittest.TestCase):
                     e.allclose(b, rtol=1e-05, atol=1e-08),
                     "axis={}, weighted, unmasked \ne={}, \nb={}, \ne-b={}".format(
                         axes, e.array, b, e.array-b))
-            #--- End: for
+            # --- End: for
 
             # unweighted, masked
             d = cf.Data(self.ma)
@@ -2168,7 +2168,7 @@ class DataTest(unittest.TestCase):
                     e.allclose(b, rtol=1e-05, atol=1e-08),
                     "axis={}, unweighted, masked \ne={}, \nb={}, \ne-b={}".format(
                         axes, e.array, b, e.array-b))
-            #--- End: for
+            # --- End: for
 
             # weighted, masked
             for axes in self.axes_combinations:
@@ -2188,7 +2188,7 @@ class DataTest(unittest.TestCase):
                     e.allclose(b, rtol=1e-05, atol=1e-08),
                     "axis={}, weighted, masked \ne={}, \nb={}, \ne-b={}".format(
                         axes, e.array, b, e.array-b))
-        #--- End: for
+        # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
 
@@ -2211,7 +2211,7 @@ class DataTest(unittest.TestCase):
                     e.allclose(b, rtol=1e-05, atol=1e-08),
                     "axis=%s, \ne=%s, \nb=%s, \ne-b=%s" %
                     (axes, e.array, b, e.array-b))
-            #--- End: for
+            # --- End: for
 
             # masked
             d = cf.Data(self.ma)
@@ -2224,7 +2224,7 @@ class DataTest(unittest.TestCase):
                     e.allclose(b, rtol=1e-05, atol=1e-08),
                     "axis=%s, \ne=%s, \nb=%s, \ne-b=%s" %
                     (axes, e.array, b, e.array-b))
-            #--- End: for
+            # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
 
@@ -2253,7 +2253,7 @@ class DataTest(unittest.TestCase):
                                 e.allclose(b, rtol=1e-05, atol=1e-08),
                                 "%s, axis=%s, unweighted, unmasked pp=%s, \ne=%s, \nb=%s, \ne-b=%s" %
                                 (h, axes, pp, e.array, b, e.array-b))
-                #--- End: for
+                # --- End: for
 
                 # unweighted, masked
                 d = cf.Data(self.ma, units='K')
@@ -2269,7 +2269,7 @@ class DataTest(unittest.TestCase):
                                 e.allclose(b, rtol=1e-05, atol=1e-08),
                                 "%s, axis=%s, unweighted, masked, pp=%s, \ne=%s, \nb=%s, \ne-b=%s" %
                                 (h, axes, pp, e.array, b, e.array-b))
-                #--- End: for
+                # --- End: for
 
                 # weighted, unmasked
                 d = cf.Data(self.a, units='K')
@@ -2309,7 +2309,7 @@ class DataTest(unittest.TestCase):
                                 e.allclose(b, rtol=1e-05, atol=1e-08) ,
                                 "%s, axis=%s, weighted, unmasked, pp=%s, ddof=%s, \ne=%s, \nb=%s, \ne-b=%s" %
                                 (h, axes, pp, ddof, e.array, b, e.array-b))
-                #--- End: for
+                # --- End: for
 
                 # weighted, masked
                 d = cf.Data(self.ma, units='K')
@@ -2361,7 +2361,7 @@ class DataTest(unittest.TestCase):
                                 e.allclose(b, rtol=1e-05, atol=1e-08),
                                 "%s, axis=%s, weighted, masked, pp=%s, ddof=%s, \ne=%s, \nb=%s, \ne-b=%s" %
                                 (h, axes, pp, ddof, e.array, b, e.array-b))
-        #--- End: for
+        # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
 
@@ -2470,12 +2470,12 @@ class DataTest(unittest.TestCase):
                             (d.mask.array == c.mask).all(),
                              "{}, {}, {}".format(method, units, d.array-c)
                         )
-        #--- End: for
+        # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
 
 
-#--- End: class
+# --- End: class
 
 
 if __name__ == "__main__":

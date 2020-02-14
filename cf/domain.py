@@ -24,4 +24,4 @@ class Domain(cfdm.Domain):
         return super().__repr__().replace('<', '<CF ', 1)
 
 
-#--- End: class
+# --- End: class

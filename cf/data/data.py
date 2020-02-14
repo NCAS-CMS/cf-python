@@ -94,15 +94,15 @@ from ..functions import (CHUNKSIZE, FM_THRESHOLD, RTOL, ATOL,
                          _numpy_isclose, pathjoin, hash_array,
                          broadcast_array, default_netCDF_fillvals)
 
-from ..functions import (_DEPRECATION_ERROR_KWARGS,
-                         _DEPRECATION_ERROR_METHOD,
+from ..functions import (_DEPRECATION_ERROR_METHOD,
                          _DEPRECATION_ERROR_ATTRIBUTE)
 
 from ..functions import inspect as cf_inspect
 from ..functions import _section
+
 from ..decorators import (_inplace_enabled,
                           _inplace_enabled_define_and_cleanup,
-                          _deprecation_error_i_kwarg)
+                          _deprecated_kwarg_check)
 
 from .abstract           import (Array,
                                  CompressedArray)
@@ -124,7 +124,7 @@ if mpi_on:
     from .. import mpi_size
     from .. import mpi_rank
     from mpi4py.MPI import SUM as mpi_sum
-#--- End: if
+# --- End: if
 
 _year_length = 365.242198781
 _month_length = _year_length / 12
@@ -198,7 +198,7 @@ _seterr_raise_to_ignore = _seterr.copy()
 for key, value in _seterr.items():
     if value == 'raise':
         _seterr_raise_to_ignore[key] = 'ignore'
-#--- End: for
+# --- End: for
 
 # --------------------------------------------------------------------
 # _mask_fpe[0] = Whether or not to automatically set
@@ -567,7 +567,7 @@ place.
                             raise ValueError('TODO')
                     else:
                         d_calendar = x_calendar
-                #--- End: if
+                # --- End: if
 
                 if not units:
                     # Set the units to something that is (hopefully)
@@ -609,7 +609,7 @@ place.
                 raise ValueError(
                     "Can't initialise a reference time array with units {!r}".format(
                         units))
-        #--- End: if
+        # --- End: if
 
         shape = data.shape
         ndim  = data.ndim
@@ -658,7 +658,7 @@ place.
 #
 #            if chunk:
 #                self.chunk()
-#        #--- End: if
+#        # --- End: if
 
         if mask is not None:
             self.where(mask, cf_masked, inplace=True)
@@ -846,12 +846,12 @@ place.
                                          'i_element_index'  : 0,
                                          'c_element_axis'   : 2,
                                          'c_element_indices': slice(start, stop)})
-                    #--- End: if
+                    # --- End: if
 
                     partition.subarray = subarray
                     partition.part = []
-                #--- End: for
-            #--- End: for
+                # --- End: for
+            # --- End: for
 
         elif compression_type == 'gathered':
             # --------------------------------------------------------
@@ -879,7 +879,7 @@ place.
                         'indices'             : indices})
 
                 partition.part = []
-        #--- End: if
+        # --- End: if
 
         self.partitions = new.partitions
 
@@ -932,7 +932,7 @@ place.
 
             if value in array:
                 return True
-        #--- End: for
+        # --- End: for
 
         return False
 
@@ -994,7 +994,7 @@ place.
 
                 mask = self._auxiliary_mask_component(jj, ind, True)
                 auxiliary_mask.append(mask)
-        #--- End: for
+        # --- End: for
 
         return auxiliary_mask
 
@@ -1019,7 +1019,7 @@ place.
                 return type(self).full(shape, fill_value=False, dtype=bool)
             else:
                 return None
-        #--- End: if
+        # --- End: if
 
         mask = _auxiliary_mask[0]
         for m in _auxiliary_mask[1:]:
@@ -1072,7 +1072,7 @@ place.
                     m0 |= mask
                     append = False
                     break
-        #--- End: if
+        # --- End: if
 
         if append:
             mask = mask.copy()
@@ -1160,7 +1160,7 @@ place.
                 index = set(index)
                 if len(index) < n:
                     auxiliary_mask = auxiliary_mask.take(sorted(index), axis=iaxis)
-        #--- End: if
+        # --- End: if
 
         # Add missing size 1 axes to the auxiliary mask
         if auxiliary_mask.ndim < self.ndim:
@@ -1478,7 +1478,7 @@ place.
                             axis))
 
                 d = d.roll(axis, shift)
-        #--- End: if
+        # --- End: if
 
         new_shape = tuple(map(_size_of_index, indices, shape))
         new_size  = reduce(operator_mul, new_shape, 1)
@@ -1550,7 +1550,7 @@ place.
                  if n1 != n0 and axis in cyclic_axes]
             if x:
                 new._cyclic = cyclic_axes.difference(x)
-        #--- End: if
+        # --- End: if
 
         #-------------------------------------------------------------
         # Remove size 1 axes from the partition matrix
@@ -1631,7 +1631,7 @@ place.
                 stop = None
 
             return slice(start, stop, -1)
-        #--- End: def
+        # --- End: def
 
         config = self.partition_configuration(readonly=False)
 
@@ -1649,7 +1649,7 @@ place.
         if roll:
             for iaxis, shift in roll.items():
                 self.roll(iaxis, shift, inplace=True)
-        #--- End: if
+        # --- End: if
 
         if mask:
             original_self = self.copy()
@@ -1675,12 +1675,12 @@ place.
                     raise ValueError(
                         "Can't assign values with units {!r} to data with units {!r}".format(
                             value.Units, self.Units))
-            #--- End: if
+            # --- End: if
 
             if value._size == 1:
                 scalar_value = True
                 value = value.datum(0)
-        #--- End: if
+        # --- End: if
 
         source = self.source(None)
         if source is not None and source.get_compression_type():
@@ -1711,7 +1711,7 @@ place.
             if roll:
                 for iaxis, shift in roll.items():
                     self.roll(iaxis, -shift, inplace=True)
-            #--- End: if
+            # --- End: if
 
             if mask:
                 indices = tuple(indices)
@@ -1721,7 +1721,7 @@ place.
                     u.where(m, original_self, inplace=True)
 
                 self[indices] = u
-            #--- End: if
+            # --- End: if
 
             return
 
@@ -1774,7 +1774,7 @@ place.
             else:
                 raise ValueError("Can't broadcast data with shape {!r} across shape {!r}".format(
                     shape1, tuple(shape00)))
-        #--- End: for
+        # --- End: for
 
         previous_location = ((-1,),) * self_ndim
         start             = [0] * value_ndim
@@ -1813,7 +1813,7 @@ place.
                     stop             = shape[j]
                     value_indices[i] = slice(0, stop)
                     start[i]         = stop
-            #--- End: for
+            # --- End: for
 
             previous_location = partition.location
             previous_slice    = value_indices[:]
@@ -1846,13 +1846,13 @@ place.
             self._set_subspace(array, p_indices, v)
 
             partition.close()
-        #--- End: For
+        # --- End: For
 
         if roll:
             # Unroll
             for iaxis, shift in roll.items():
                 self.roll(iaxis, -shift, inplace=True)
-        #--- End: if
+        # --- End: if
 
         if mask:
             indices = tuple(indices)
@@ -1878,8 +1878,8 @@ place.
                         partition._process_partition = True
                     else:
                         partition._process_partition = False
-                    #--- End: if
-                #--- End: for
+                    # --- End: if
+                # --- End: for
                 self._max_partitions_per_process = 1
             elif n_partitions % mpi_size == 0:
                 for i, partition in enumerate(self.partitions.matrix.flat):
@@ -1887,8 +1887,8 @@ place.
                         partition._process_partition = True
                     else:
                         partition._process_partition = False
-                    #--- End: if
-                #--- End: for
+                    # --- End: if
+                # --- End: for
                 self._max_partitions_per_process = x
             else:
                 for i, partition in enumerate(self.partitions.matrix.flat):
@@ -1896,15 +1896,15 @@ place.
                         partition._process_partition = True
                     else:
                         partition._process_partition = False
-                    #--- End: if
-                #--- End: for
+                    # --- End: if
+                # --- End: for
                 self._max_partitions_per_process = x + 1
-            #--- End: if
+            # --- End: if
         else:
             # Flag all partitions for processing on all processes
             for partition in self.partitions.matrix.flat:
                 partition._process_partition = True
-        #--- End: if
+        # --- End: if
 
 
     def _share_lock_files(self, parallelise):
@@ -1918,10 +1918,10 @@ place.
                     lock_file = partition._register_temporary_file()
                     lock_files = mpi_comm.allgather(lock_file)
                     partition._update_lock_files(lock_files)
-                #--- End: if
-            #--- End: for
-        #--- End: if
-    #--- End: if
+                # --- End: if
+            # --- End: for
+        # --- End: if
+    # --- End: if
 
     @classmethod
     def _share_partitions(cls, processed_partitions, parallelise):
@@ -1938,14 +1938,14 @@ place.
                     n_partitions = len(processed_partitions)
                 else:
                     n_partitions = None
-                #--- End: if
+                # --- End: if
                 n_partitions = mpi_comm.bcast(n_partitions, root=rank)
 
                 # Share each of the processed partitions on each rank with
                 # all the other ranks using broadcasting
                 if mpi_rank != rank:
                     shared_partitions = []
-                #--- End: if
+                # --- End: if
 
                 for i in range(n_partitions):
                     if mpi_rank == rank:
@@ -1965,17 +1965,17 @@ place.
                                 partition._subarray_is_masked = subarray.mask is not numpy_ma_nomask
                             else:
                                 partition._subarray_is_masked = False
-                            #--- End: if
+                            # --- End: if
                         else:
                             # The partition's subarray is either not a
                             # numpy array or is, for example, an array
                             # of strings, so it will be pickled and
                             # broadcast with the partition.
                             partition._subarray_removed = False
-                        #--- End: if
+                        # --- End: if
                     else:
                         partition = None
-                    #--- End: if
+                    # --- End: if
 
                     # Pickle and broadcast the partition with or
                     # without the subarray
@@ -1995,19 +1995,19 @@ place.
                                 else:
                                     subarray = numpy_ma_empty(partition._subarray_shape,
                                                               dtype=partition._subarray_dtype)
-                                #--- End: if
-                            #--- End: if
+                                # --- End: if
+                            # --- End: if
                             mpi_comm.Bcast(subarray.data, root=rank)
                             if partition._subarray_is_masked:
                                 mpi_comm.Bcast(subarray.mask, root=rank)
-                            #--- End: if
+                            # --- End: if
                         else:
                             if mpi_rank != rank:
                                 subarray = numpy_empty(partition._subarray_shape,
                                                        dtype=partition._subarray_dtype)
-                            #--- End: if
+                            # --- End: if
                             mpi_comm.Bcast(subarray, root=rank)
-                        #--- End: if
+                        # --- End: if
 
                         # Swap the subarray back into the partition
                         partition._subarray = subarray
@@ -2018,7 +2018,7 @@ place.
                             # subarray must be put back in the list of
                             # processed partitions
                             processed_partitions[i] = partition
-                        #--- End: if
+                        # --- End: if
 
                         # Clean up temporary attributes
                         del partition._subarray_dtype
@@ -2030,15 +2030,15 @@ place.
                         # when it is deleted it does not delete the
                         # temporary file
                         partition._subarray = None
-                    #--- End: if
+                    # --- End: if
 
                     # Clean up temporary attribute
                     del partition._subarray_removed
 
                     if mpi_rank != rank:
                         shared_partitions.append(partition)
-                    #--- End: if
-                #--- End: for
+                    # --- End: if
+                # --- End: for
 
                 # Add the sublist of processed partitions from each rank
                 # to a list
@@ -2046,14 +2046,14 @@ place.
                     partition_list.append(processed_partitions)
                 else:
                     partition_list.append(shared_partitions)
-                #--- End: if
-            #--- End: for
+                # --- End: if
+            # --- End: for
 
             # Flatten the list of lists of processed partitions
             processed_partitions = [item
                                     for sublist in partition_list
                                     for item in sublist]
-        #--- End: if
+        # --- End: if
         return processed_partitions
 
 
@@ -2079,7 +2079,7 @@ place.
         for p in d['Partitions']:
             if 'Units' in p:
                 p['units'] = str(p.pop('Units'))
-        #--- End: for
+        # --- End: for
 
         return json_dumps(d, default=_convert_to_builtin_type)
 
@@ -2271,7 +2271,7 @@ place.
             for i, (u, l) in enumerate(zip(bins[:-1, 1], bins[1:, 0])):
                 if u > l:
                     raise ValueError("TODO overlap")
-            #--- End: for
+            # --- End: for
 
             two_d_bins = bins
             bins = numpy_unique(bins)
@@ -2325,7 +2325,7 @@ place.
             else:
                 mx = bins[(-1,) * ndim]
                 bins[(-1,) * ndim] += abs(mx) * epsilon
-        #--- End: if
+        # --- End: if
 
         if not open_ends:
             delete_bins.insert(0, 0)
@@ -2354,7 +2354,7 @@ place.
                     d -= n
                     array = numpy_ma_where(array==d, numpy_ma_masked, array)
                     array = numpy_ma_where(array>d, array-1, array)
-            #--- End: if
+            # --- End: if
 
             if mask is not None:
                 array = numpy_ma_where(mask, numpy_ma_masked, array)
@@ -2405,7 +2405,7 @@ place.
                 mask = (d < p90)
             else:
                 mask = (d <= p90)
-        #--- End: with
+        # --- End: with
 
         if mtol < 1:
             mask.filled(False, inplace=True)
@@ -2621,7 +2621,7 @@ place.
 
             sections[key] = type(self)(p, units=self.Units,
                                        fill_value=self.fill_value)
-        #--- End: for
+        # --- End: for
 
         # Glue the sections back together again
         out = self.reconstruct_sectioned_data(sections)
@@ -2667,7 +2667,7 @@ place.
 
             if 'units' in p:
                 p['Units'] = Units(p.pop('units'))
-        #--- End: for
+        # --- End: for
 
         self.loadd(d, chunk=chunk)
 
@@ -2823,7 +2823,7 @@ place.
 #
 #                    if value is not None:
 #                        subarray[attr] = value
-                #--- End: for
+                # --- End: for
 
                 if p_dtype != dtype:
                     subarray['dtype'] = p_dtype
@@ -2851,7 +2851,7 @@ place.
 #                attrs['subarray'] = p_subarray.array
 
             partitions.append(attrs)
-        #--- End: for
+        # --- End: for
 
         cfa_data['Partitions'] = partitions
 
@@ -3031,11 +3031,11 @@ place.
                     partition.subarray = NetCDFArray(**kwargs)
                 elif fmt == 'UM':
                     partition.subarray = UMArray(**kwargs)
-            #--- End: if
+            # --- End: if
 
             # Put the partition into the partition array
             partition_matrix[index] = partition
-        #--- End: for
+        # --- End: for
 
         # Save the partition array
         self.partitions = partition_matrix
@@ -3053,7 +3053,7 @@ place.
             self._auxiliary_mask = None
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     def ceil(self, inplace=False, i=False):
         '''The ceiling of the data, element-wise.
 
@@ -3261,10 +3261,10 @@ place.
                 omit_axes.append(i)
 
                 d[axes[i]] = list(range(1, shape[i]))
-            #--- End: for
+            # --- End: for
 
             self._chunk_add_partitions(d, axes)
-        #--- End: if
+        # --- End: if
 
         if pmshape:
             if len(pmshape) != self._ndim:
@@ -3301,12 +3301,12 @@ place.
 
                 if n_chunks <= 1:
                     break
-            #--- End: for
+            # --- End: for
 
             self._chunk_add_partitions(d, axes)
 
             return
-        #--- End: if
+        # --- End: if
 
         # Still here?
         order = list(range(self._ndim))
@@ -3354,10 +3354,10 @@ place.
 
                 if n_chunks <= 1:
                     break
-            #--- End: for
+            # --- End: for
 
             self._chunk_add_partitions(d, axes)
-        #--- End: while
+        # --- End: while
 
 
 #        # ------------------------------------------------------------
@@ -3414,9 +3414,9 @@ place.
 #                            break
 #                        elif len(new_partition_boundaries) + 1 != n_chunks:
 #                            raise ValueError("Bad pmshape {}".format(pmshape))
-#                #--- End: for
-#            #--- End: for
-#        #--- End: for
+#                # --- End: for
+#            # --- End: for
+#        # --- End: for
 #
 #        # ------------------------------------------------------------
 #        # Create any new partition boundaries for each axis
@@ -3433,7 +3433,7 @@ place.
 #
 #            # Create the new partitions
 #            self.add_partitions(sorted(set(extra_bounds)), axis)
-#        #--- End: for
+#        # --- End: for
 
 
     @_inplace_enabled
@@ -3545,7 +3545,7 @@ place.
             else:
                 raise ValueError(
                     "Can't convert {!r} data to numeric reference times".format(units))
-        #--- End: if
+        # --- End: if
 
         config = d.partition_configuration(readonly=False, func=dt2rt, dtype=None)
 
@@ -3616,7 +3616,7 @@ place.
                 data0.override_units(units1, inplace=True)
                 data0._asreftime(inplace=True)
                 units0 = units1
-        #--- End: if
+        # --- End: if
 
         if method_type in ('_eq', '_ne', '_lt', '_le', '_gt', '_ge'):
             #---------------------------------------------------------
@@ -3634,7 +3634,7 @@ place.
             else:
                 raise ValueError(
                     "Can't compare {0!r} to {1!r}".format(units0, units1))
-        #--- End: if
+        # --- End: if
 
         # still here?
         if method_type in ('and', '_or', 'ior', 'ror', 'xor', 'ift'):
@@ -3658,7 +3658,7 @@ place.
                 raise ValueError(
                     "Can't operate with {} on data with {!r} to {!r}".format(
                         method, units0, units1))
-        #--- End: if
+        # --- End: if
 
         # Still here?
         if units0.isreftime:
@@ -3738,7 +3738,7 @@ place.
                 else:
                     # Raise an exception
                     getattr(units0, method)(units1)
-        #--- End: if
+        # --- End: if
 
         # Still here?
         if method_type in ('mul', 'div'):
@@ -3760,7 +3760,7 @@ place.
                 # Both units are defined (note: if the units are
                 # noncombinable then this will raise an exception)
                 return data0, data1, getattr(units0, method)(units1)
-        #--- End: if
+        # --- End: if
 
         # Still here?
         if method_type in ('sub', 'add', 'mod'):
@@ -3784,7 +3784,7 @@ place.
                 # the units are noncombinable then this will raise an
                 # exception)
                 return data0, data1, getattr(units0, method)(units1)
-        #--- End: if
+        # --- End: if
 
         # Still here?
         if method_type == 'pow':
@@ -3923,12 +3923,12 @@ place.
                                     units0, p))
 
                         return data0, data1, units0**p
-                #--- End: if
+                # --- End: if
 
                 # This will deliberately raise an exception
                 units0 ** units1
-            #--- End: if
-        #--- End: if
+            # --- End: if
+        # --- End: if
 
         # Still here?
         raise ValueError(
@@ -4096,12 +4096,12 @@ place.
                         axis = data0._new_axis_identifier(existing_axes)
                         existing_axes.append(axis)
                         new_axes.append(axis)
-                    #--- End: for
+                    # --- End: for
                     new_axes += data0._axes
-                #--- End: for
+                # --- End: for
 
                 align_offset = 0
-            #--- End: if
+            # --- End: if
 
             broadcast_indices = []
             for a, b in zip(shape0, shape1):
@@ -4150,17 +4150,17 @@ place.
 #                        broadcast_size *= n0
 #                    else:
 #                        broadcast_size *= n1
-#                #--- End: for
+#                # --- End: for
 #
 #                if broadcast_size > max_size:
 #                    max_size = broadcast_size
-#            #--- End: for
+#            # --- End: for
 #
 #            chunksize = CHUNKSIZE()
 #            ffff = max_size*(new_dtype.itemsize + 1)
 #            if ffff > chunksize:
 #                data0.chunk(chunksize*(chunksize/ffff))
-#        #--- End: if
+#        # --- End: if
 
 
         # ------------------------------------------------------------
@@ -4208,7 +4208,7 @@ place.
                 new_dtype = numpy_result_type(data0.dtype, other.dtype)
             else:
                 new_dtype = data0.dtype
-        #--- End: if
+        # --- End: if
 
         # ------------------------------------------------------------
         # Set flags to control whether or not the data of result and
@@ -4312,7 +4312,7 @@ place.
                             numpy_result_type(array0.dtype, array1.dtype).name, array0.dtype.name))
                 else:
                     raise TypeError(error)
-            #--- End: try
+            # --- End: try
 
             if array0 is NotImplemented:
                 array0 = numpy_zeros(partition.shape, dtype=bool)
@@ -4340,7 +4340,7 @@ place.
 
             if not inplace:
                 partition_s.close()
-        #--- End: for
+        # --- End: for
 
         # Reset numpy.seterr
         numpy_seterr(**original_numpy_seterr)
@@ -4522,7 +4522,7 @@ place.
 #
 #            partition.subarray = out
 #            partition.close()
-#        #--- End: for
+#        # --- End: for
 #
 #        new.dtype = bool
 #
@@ -4543,7 +4543,7 @@ place.
 #            print(array, new.Units, type(value0), value1)
 #            partition.subarray = (array >= value0) & (array <= value1)
 #            partition.close()
-#        #--- End: for
+#        # --- End: for
 #
 #        new.dtype = bool
 #
@@ -4563,7 +4563,7 @@ place.
 #            array = partition.dataarray(**pda_args)
 #            partition.subarray = (array < value0) | (array > value1)
 #            partition.close()
-#        #--- End: for
+#        # --- End: for
 #
 #        new.dtype = bool
 #
@@ -4649,7 +4649,7 @@ place.
                 if d is data0:
                     data0 = data0.copy()
                     break
-        #--- End: if
+        # --- End: if
 
         # Turn a scalar array into a 1-d array
         ndim = data0._ndim
@@ -4681,7 +4681,7 @@ place.
             if not units0.equivalent(data1.Units):
                 raise ValueError(
                     "Can't concatenate: All the input arrays must have equivalent units")
-        #--- End: for
+        # --- End: for
 
         for i, data1 in enumerate(data):
             if _preserve:
@@ -4693,7 +4693,7 @@ place.
                     if d is data1:
                         data1 = data1.copy()
                         break
-            #--- End: if
+            # --- End: if
 
             # Turn a scalar array into a 1-d array
             if not data1._ndim:
@@ -4715,7 +4715,7 @@ place.
                     axis_map[axis0] = axis1
 
                 data0._change_axis_names(axis_map)
-            #--- End: if
+            # --- End: if
 
             # ------------------------------------------------------------
             # Find the internal name of the concatenation axis
@@ -4754,7 +4754,7 @@ place.
 
 #                if Paxis not in f_partitions.axes:
 #                    f_partitions.insert_dimension(Paxis, inplace=True)
-            #--- End: for
+            # --- End: for
 
             # ------------------------------------------------------------
             # 3. Make sure that aggregating axis is the outermost (slowest
@@ -4806,8 +4806,8 @@ place.
                                      (data1, data0, bounds1, bounds0)):
                     extra_bounds = [i for i in bg if i in symmetric_diff]
                     f.add_partitions(extra_bounds, dim)
-                #--- End: for
-            #--- End: for
+                # --- End: for
+            # --- End: for
 
             # ------------------------------------------------------------
             # 6. Concatenate data0 and data1 partition matrices
@@ -4877,7 +4877,7 @@ place.
                         new_auxiliary_mask.append(mask)
 
                     new_auxiliary_mask.append(new_mask)
-                #--- End: for
+                # --- End: for
 
             if data1._auxiliary_mask:
                 # data1 has an auxiliary mask
@@ -4900,15 +4900,15 @@ place.
                         new_auxiliary_mask.append(mask)
 
                     new_auxiliary_mask.append(new_mask)
-                #--- End: for
-            #--- End: if
+                # --- End: for
+            # --- End: if
 
             if new_auxiliary_mask:
                 data0._auxiliary_mask = new_auxiliary_mask
 #                # Set the concatenated auxiliary mask
 #                for mask in new_auxiliary_mask:
 #                    data0._auxiliary_mask_add_component(mask)
-        #--- End: for
+        # --- End: for
 
         # ------------------------------------------------------------
         # Done
@@ -4935,9 +4935,9 @@ place.
                     p_flip.remove(axis)
                 elif axis in p_axes:
                     p_flip.append(axis)
-            #--- End: for
+            # --- End: for
             partition.flip = p_flip
-        #--- End: for
+        # --- End: for
 
 #        self._flip = []
         self._flip([])
@@ -4978,7 +4978,7 @@ place.
 #            else:
 #                raise ValueError(
 #                    "Invalid axis: {!r}".format(method, axis))
-#        #--- End: for
+#        # --- End: for
 #
 #        # Check for duplicate axes
 #        n = len(axes2)
@@ -5548,8 +5548,8 @@ place.
                         existing_axes.append(axis)
                     else:
                         axis_map[axis] = axis
-                #--- End: for
-        #--- End: if
+                # --- End: for
+        # --- End: if
 
         if all([axis0==axis1 for axis0, axis1 in axis_map.items()]):
             # Return without doing anything if the mapping is null
@@ -5579,7 +5579,7 @@ place.
         self.partitions.change_axis_names(axis_map)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def _collapse(self, func, fpartial, ffinalise, axes=None,
                   squeeze=False, weights=None, mtol=1, units=None,
@@ -5653,7 +5653,7 @@ place.
             Nmax = 1
             for i in axes:
                 Nmax *= self_shape[i]
-        #--- End: if
+        # --- End: if
 
         #-------------------------------------------------------------
         # Parse the weights.
@@ -5685,13 +5685,13 @@ place.
 
                     weights_axes.update(key)
                     weights[tuple([self_axes[i] for i in key])] = value
-                #--- End: for
+                # --- End: for
 
                 if not weights_axes.intersection(axes):
                     # Ignore all of the weights if none of them span
                     # any collapse axes
                     weights = {}
-            #--- End: if
+            # --- End: if
 
             for key, weight in tuple(weights.items()):
                 if weight is None or numpy_size(weight) == 1:
@@ -5715,7 +5715,7 @@ place.
                         raise ValueError(
                             "Can't collapse: Incorrect weights shape {!r}".format(
                                 numpy_shape(weight)))
-                #--- End: for
+                # --- End: for
 
                 # Convert weight to a data object, if necessary.
                 weight = type(self).asdata(weight)
@@ -5726,8 +5726,8 @@ place.
                     continue
 
                 weights[key] = weight
-            #--- End: for
-        #--- End: if
+            # --- End: for
+        # --- End: if
 
         if axes != list(range(n_non_collapse_axes, ndim)):
             transpose_iaxes = [i for i in range(ndim) if i not in axes] + axes
@@ -5767,7 +5767,7 @@ place.
 #
 #                if key.difference(axes):
 #                    raise ValueError('Weights {!r} span a non-collapse axis.'.format(weight))
-        #--- End: for
+        # --- End: for
 
         # If the input data array 'fits' in one chunk of memory, then
         # make sure that it has only one partition
@@ -5834,7 +5834,7 @@ place.
                     _parallelise_collapse_subspace = False
                     # "turn on" parallelism in _collapse
                     _parallelise_collapse = True
-                #--- End: if
+                # --- End: if
             elif mode == 1:
                 # "turn off" parallelism in _collapse_subspace
                 _parallelise_collapse_subspace = False
@@ -5847,7 +5847,7 @@ place.
                 _parallelise_collapse = False
             else:
                 raise ValueError('Invalid collapse parallel mode')
-            #--- End: if
+            # --- End: if
         else:
             # "turn off" parallelism in both functions
             _parallelise_collapse_subspace = False
@@ -5890,8 +5890,8 @@ place.
 
                 # Add each partition to a list of processed partitions
                 processed_partitions.append(partition)
-            #--- End: if
-        #--- End: for
+            # --- End: if
+        # --- End: for
 
         # processed_partitions contains a list of all the partitions
         # that have been processed on this rank. In the serial case
@@ -5911,7 +5911,7 @@ place.
             p_datatype = partition.subarray.dtype
             if datatype != p_datatype:
                 datatype = numpy_result_type(p_datatype, datatype)
-        #--- End: for
+        # --- End: for
 
         # Share the lock files created by each rank for each partition
         # now in a temporary file so that __del__ knows which lock
@@ -5933,7 +5933,7 @@ place.
             if new_axes != original_self_axes:
                 iaxes = [new_axes.index(axis) for axis in original_self_axes]
                 new.transpose(iaxes, inplace=True)
-        #--- End: if
+        # --- End: if
 
         # ------------------------------------------------------------
         # Update d in place and return
@@ -6068,10 +6068,10 @@ dimensions.
                             # The array is all missing data
                             partition.close()
                             continue
-                    #--- End: if
+                    # --- End: if
 
                     kwargs['weights'] = w
-                #--- End: if
+                # --- End: if
 
                 partition.close()
 
@@ -6092,7 +6092,7 @@ dimensions.
                             new_shape = (w.size,)
 
                         kwargs['weights'] = numpy_reshape(w, new_shape)
-                #--- End: if
+                # --- End: if
 
                 p_out = func(array, masked=p_masked, **kwargs)
 
@@ -6101,16 +6101,16 @@ dimensions.
                         # There is exactly one partition so we are done
                         out = p_out
                         break
-                    #--- End: if
+                    # --- End: if
                     out = fpartial(p_out)
                 else:
                     out = fpartial(out, p_out)
-                #--- End: if
+                # --- End: if
 
                 sub_samples += 1
 
-            #--- End: if
-        #--- End: for
+            # --- End: if
+        # --- End: for
 
         if _parallelise_collapse_subspace:
             # Aggregate the outputs of each rank using the group=True
@@ -6137,7 +6137,7 @@ dimensions.
                                     item_props['is_masked'] = item.mask is not numpy_ma_nomask
                                 else:
                                     item_props['is_masked'] = False
-                                #--- End: if
+                                # --- End: if
                                 item_props['shape'] = item.shape
                                 item_props['dtype'] = item.dtype
                             else:
@@ -6146,9 +6146,9 @@ dimensions.
                                 # strings, so will be pickled when
                                 # sent.
                                 item_props['is_numpy_array'] = False
-                            #--- End: if
+                            # --- End: if
                             out_props.append(item_props)
-                        #--- End: for
+                        # --- End: for
 
                         # Send information about the properties of
                         # each item in out so that it can be received
@@ -6166,11 +6166,11 @@ dimensions.
                                     mpi_comm.Send(item.data, dest=0)
                                 else:
                                     mpi_comm.Send(item, dest=0)
-                                #--- End: if
+                                # --- End: if
                             else:
                                 mpi_comm.send(item, dest=0)
-                            #--- End: if
-                        #--- End: for
+                            # --- End: if
+                        # --- End: for
                 elif mpi_rank == 0:
                     p_out_is_none = mpi_comm.recv(source=rank)
                     if p_out_is_none:
@@ -6201,9 +6201,9 @@ dimensions.
                                     mpi_comm.Recv(item, source=rank)
                             else:
                                 item = mpi_comm.recv(source=rank)
-                            #--- End: if
+                            # --- End: if
                             p_out.append(item)
-                        #--- End: for
+                        # --- End: for
                         p_out = tuple(p_out)
 
                         # Aggregate out and p_out if out is not None.
@@ -6211,10 +6211,10 @@ dimensions.
                             out = p_out
                         else:
                             out = fpartial(out, p_out, group=True)
-                        #--- End: if
-                    #--- End: if
-                #--- End: for
-            #--- End: if
+                        # --- End: if
+                    # --- End: if
+                # --- End: for
+            # --- End: if
 
             # Finalise
             sub_samples = mpi_comm.gather(sub_samples, root=0)
@@ -6223,7 +6223,7 @@ dimensions.
                 out = self._collapse_finalise(ffinalise, out,
                                               sub_samples, masked, Nmax, mtol, data,
                                               n_non_collapse_axes)
-            #--- End: if
+            # --- End: if
 
             # Broadcast the aggregated result back from process 0 to
             # all processes.
@@ -6237,12 +6237,12 @@ dimensions.
                     out_props['is_masked'] = out.mask is not numpy_ma_nomask
                 else:
                     out_props['is_masked'] = False
-                #--- End: if
+                # --- End: if
                 out_props['shape'] = out.shape
                 out_props['dtype'] = out.dtype
             else:
                 out_props = None
-            #--- End: if
+            # --- End: if
             out_props = mpi_comm.bcast(out_props, root=0)
 
             # Do the broadcast.
@@ -6250,28 +6250,28 @@ dimensions.
                 if mpi_rank != 0:
                     out = numpy_ma_masked_all(out_props['shape'],
                                               dtype=out_props['dtype'])
-                #--- End: if
+                # --- End: if
                 mpi_comm.Bcast(out.data, root=0)
                 mpi_comm.Bcast(out.mask, root=0)
             elif out_props['isMA']:
                 if mpi_rank != 0:
                     out = numpy_ma_empty(out_props['shape'],
                                          dtype=out_props['dtype'])
-                #--- End: if
+                # --- End: if
                 mpi_comm.Bcast(out.data, root=0)
             else:
                 if mpi_rank != 0:
                     out = numpy_empty(out_props['shape'],
                                       dtype=out_props['dtype'])
-                #--- End: if
+                # --- End: if
                 mpi_comm.Bcast(out, root=0)
-            #--- End: if
+            # --- End: if
         else:
             # In the case that the inner loop is not parallelised,
             # just finalise.
             out = self._collapse_finalise(ffinalise, out, sub_samples,
                                           masked, Nmax, mtol, data, n_non_collapse_axes)
-        #--- End: if
+        # --- End: if
 
         return out
 
@@ -6319,7 +6319,7 @@ dimensions.
             x = N < (1-mtol)*Nmax
             if x.any():
                 array = numpy_ma_masked_where(x, array, copy=False)
-        #--- End: if
+        # --- End: if
 
         return array
 
@@ -6437,7 +6437,7 @@ dimensions.
             if masked and numpy_ma_isMA(array):
                 if not (array.mask | weights_out.mask == array.mask).all():
                     raise ValueError("weights mask is duff")
-        #--- End: if
+        # --- End: if
 
         return weights_out
 
@@ -6456,7 +6456,7 @@ dimensions.
             if non_partitioned_axes.issuperset(key):
                 x.append(key)
                 new_key += key
-        #--- End: for
+        # --- End: for
 
         if len(x) > 1:
             reshaped_weights = []
@@ -6740,7 +6740,7 @@ dimensions.
                 datatype = numpy_result_type(datatype, partition.subarray)
 
             self._dtype = datatype
-        #--- End: if
+        # --- End: if
 
         return datatype
     @dtype.setter
@@ -6825,7 +6825,7 @@ False
                 if m.any():
                     # Found a masked element
                     return True
-            #--- End: for
+            # --- End: for
 
             # Still here? Then remove the auxiliary mask because it
             # must be all False.
@@ -7187,7 +7187,7 @@ False
                 array_out[partition.indices] = p_array
 
                 partition.close()
-            #--- End: for
+            # --- End: for
 
         # ------------------------------------------------------------
         # Apply the auxiliary mask
@@ -7209,7 +7209,7 @@ False
                 # back to a non-masked array.
                 array_out = array_out.data
                 masked = False
-        #--- End: if
+        # --- End: if
 
         if masked and self.hardmask:
             # Harden the mask of the output array
@@ -7334,7 +7334,7 @@ False
             array_out[partition.indices] = p_array
 
             # Note that there is no need to close the partition here
-        #--- End: for
+        # --- End: for
 
         # ------------------------------------------------------------
         # Apply an auxiliary mask
@@ -7358,7 +7358,7 @@ False
                 masked = False
 
             self._auxiliary_mask = None
-        #--- End: if
+        # --- End: if
 
         if masked and self.hardmask:
             # Harden the mask of the output array
@@ -7688,7 +7688,7 @@ False
                 _seterr['invalid'] = invalid
                 if invalid == 'raise':
                      _seterr_raise_to_ignore['invalid'] = 'ignore'
-        #--- End: if
+        # --- End: if
 
         return old
 
@@ -8024,7 +8024,7 @@ False
                         data_list.append(sections[k])
 
                     return cls.concatenate_data(data_list, i)
-            #--- End: if
+            # --- End: if
 
             if keys[0][i] is not None:
                 new_sections = {}
@@ -8037,11 +8037,11 @@ False
                         new_sections[new_key] = cls.concatenate_data(data_list, axis=i)
                         new_key = k[:i]
                         data_list = [sections[k]]
-                #--- End: for
+                # --- End: for
 
                 new_sections[new_key] = cls.concatenate_data(data_list, i)
                 sections = new_sections
-        #--- End: for
+        # --- End: for
 
 
     def argmax(self, axis=None, unravel=False):
@@ -8095,7 +8095,7 @@ False
 
             if ndim == 1 and axis == 0:
                 axis=None
-        #--- End: if
+        # --- End: if
 
         if axis is None:
             config = self.partition_configuration(readonly=True)
@@ -8311,7 +8311,7 @@ False
         self.Units = Units(value, self.get_calendar(default=None))
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     def maximum(self, axes=None, squeeze=False, mtol=1, inplace=False,
                 i=False, _preserve_partitions=False):
         '''Collapse axes with their maximum.
@@ -8393,7 +8393,7 @@ False
                               _preserve_partitions=_preserve_partitions)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     def minimum(self, axes=None, squeeze=False, mtol=1, inplace=False,
                 i=False, _preserve_partitions=False):
         '''Collapse axes with their minimum.
@@ -8475,7 +8475,7 @@ False
                               _preserve_partitions=_preserve_partitions)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     def mean(self, axes=None, squeeze=False, mtol=1, weights=None,
              inplace=False, i=False, _preserve_partitions=False):
         '''Collapse axes with their mean.
@@ -8762,7 +8762,7 @@ False
                     weights_units = getattr(w, 'Units', None)
                     if weights_units is not None:
                         units = units * weights_units
-        #--- End: if
+        # --- End: if
 
         return self._collapse(sum_f, sum_fpartial, sum_ffinalise,
                               axes=axes, squeeze=squeeze,
@@ -8837,7 +8837,7 @@ False
             partition.Units = _units_1
 
             partition.close()
-        #--- End: for
+        # --- End: for
 
         binary_mask.Units = _units_1
         binary_mask.dtype = 'int32'
@@ -8845,7 +8845,7 @@ False
         return binary_mask
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def clip(self, a_min, a_max, units=None, inplace=False, i=False):
         '''Clip (limit) the values in the data array in place.
@@ -8898,7 +8898,7 @@ False
             if self_units != units:
                 a_min = Units.conform(a_min, units, self_units)
                 a_max = Units.conform(a_max, units, self_units)
-         #--- End: if
+         # --- End: if
 
         config = d.partition_configuration(readonly=False)
 
@@ -8968,7 +8968,7 @@ False
             if dtype is not None and numpy_dtype(dtype) != data.dtype:
                 data = data.copy()
                 data.dtype = dtype
-        #--- End: if
+        # --- End: if
 
         return data
 
@@ -8991,7 +8991,7 @@ False
         for partition in self.partitions.matrix.flat:
             partition.file_close()
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def cos(self, inplace=False, i=False):
         '''Take the trigonometric cosine of the data array in place.
@@ -9111,8 +9111,8 @@ False
                 n += numpy_ma_count(array)
                 partition.close()
                 processed_partitions.append(partition)
-            #--- End: if
-        #--- End: for
+            # --- End: if
+        # --- End: for
 
         # processed_partitions contains a list of all the partitions
         # that have been processed on this rank. In the serial case
@@ -9128,7 +9128,7 @@ False
         pm = self.partitions.matrix
         for partition in processed_partitions:
             pm[partition._pmindex] = partition
-        #--- End: for
+        # --- End: for
 
         # Share the lock files created by each rank for each partition
         # now in a temporary file so that __del__ knows which lock
@@ -9139,7 +9139,7 @@ False
         # processes
         if mpi_on:
             n = mpi_comm.allreduce(n, op=mpi_sum)
-        #--- End: if
+        # --- End: if
 
         return n
 
@@ -9191,7 +9191,7 @@ False
             self._auxiliary_mask = [mask.copy() for mask in auxiliary_mask]
             for mask in self._auxiliary_mask:
                 mask.cyclic(axes_in, iscyclic)
-        #--- End: if
+        # --- End: if
 
         return old
 
@@ -9227,7 +9227,7 @@ False
                 array = rt2dt(array, units_in)
 
             return _array_getattr(array, attr)
-        #--- End: def
+        # --- End: def
 
         if not self.Units.isreftime:
             raise ValueError(
@@ -9499,7 +9499,7 @@ False
 
         for attr in ('fill_value', 'Units'):
             string.append('{0}.{1} = {2!r}'.format(prefix, attr, getattr(self, attr)))
-        #--- End: for
+        # --- End: for
 
         string = '\n'.join(string)
 
@@ -9546,6 +9546,7 @@ False
         return itertools_product(*[range(0, r) for r in self._shape])
 
 
+    @_deprecated_kwarg_check('traceback')
     def equals(self, other, rtol=None, atol=None,
                ignore_fill_value=False, ignore_data_type=False,
                ignore_type=False, verbose=False, traceback=False,
@@ -9595,9 +9596,6 @@ False
     False
 
         '''
-        if traceback:
-            _DEPRECATION_ERROR_KWARGS(self, 'equals', traceback=True) # pragma: no cover
-
         # Set default tolerances
         if rtol is None:
             rtol = self._RTOL
@@ -9640,7 +9638,7 @@ False
                         self.__class__.__name__, atol, rtol))
 
                 return False
-        #--- End: for
+        # --- End: for
 
         # ------------------------------------------------------------
         # Still here? Then the two instances are equal.
@@ -9648,7 +9646,7 @@ False
         return True
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def exp(self, inplace=False, i=False):
         '''Take the exponential of the data array.
@@ -9756,7 +9754,7 @@ False
         if d._auxiliary_mask:
             for mask in d._auxiliary_mask:
                 mask.insert_dimension(position, inplace=True)
-        #--- End: if
+        # --- End: if
 
         return d
 
@@ -9817,7 +9815,7 @@ False
 
                 if fill_value is None:
                     raise ValueError("TODO {}".format(d.dtype.str))
-        #--- End: if
+        # --- End: if
 
         hardmask = d.hardmask
         d.hardmask = False
@@ -10027,7 +10025,7 @@ False
         return out
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     def floor(self, inplace=False, i=False):
         '''Return the floor of the data array.
 
@@ -10054,7 +10052,7 @@ False
         return self.func(numpy_floor, out=True, inplace=inplace)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     def outerproduct(self, e, inplace=False, i=False):
         '''Compute the outer product with another data array.
 
@@ -10128,7 +10126,7 @@ False
         return d
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def change_calendar(self, calendar, inplace=False, i=False):
         '''Change the calendar of the data array elements.
@@ -10157,7 +10155,7 @@ False
         return d
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def override_units(self, units, inplace=False, i=False):
         '''Override the data array units.
@@ -10222,7 +10220,7 @@ False
         return d
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def override_calendar(self, calendar, inplace=False, i=False):
         '''Override the calendar of the data array elements.
@@ -10337,7 +10335,7 @@ False
                     partition.array
 
                 partition.close()
-        #--- End: for
+        # --- End: for
 
 
     @property
@@ -10354,7 +10352,7 @@ False
         for partition in self.partitions.matrix.flat:
             if not partition.in_memory:
                 return False
-        #--- End: for
+        # --- End: for
 
         return True
 
@@ -10535,7 +10533,7 @@ False
         return cf_masked
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def mask_invalid(self, inplace=False, i=False):
         '''Mask the array where invalid values occur (NaN or inf).
@@ -10650,7 +10648,7 @@ False
         return cls(array, units=units, chunk=chunk)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     def mid_range(self, axes=None, squeeze=False, mtol=1,
                   inplace=False, _preserve_partitions=False, i=False):
         '''Collapse axes with the unweighted average of their maximum and
@@ -10689,7 +10687,7 @@ False
                               _preserve_partitions=_preserve_partitions)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def flip(self, axes=None, inplace=False, i=False):
         '''Reverse the direction of axes of the data array.
@@ -10762,7 +10760,7 @@ False
                 # matrix
                 indices[_pmaxes.index(axis)] = slice(None, None, -1)
                 flip_partition_matrix = True
-        #--- End: for
+        # --- End: for
 
         d._flip(reverse)
 #        d._flip = reverse
@@ -10780,7 +10778,7 @@ False
         if d._auxiliary_mask:
             for mask in d._auxiliary_mask:
                 mask.flip(iaxes, inplace=True)
-        #--- End: if
+        # --- End: if
 
         return d
 
@@ -10910,7 +10908,7 @@ False
             return self == y
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     def rint(self, inplace=False, i=False):
         '''Round the data to the nearest integer, element-wise.
 
@@ -11018,7 +11016,7 @@ False
                               _preserve_partitions=_preserve_partitions)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     def round(self, decimals=0, inplace=False, i=False):
         '''Evenly round elements of the data array to the given number of
     decimals.
@@ -11231,7 +11229,7 @@ False
                     value = f(squeeze=True, weights=weights)
 
                 out[stat] = value
-        #--- End: for
+        # --- End: for
 
         if all or sample_size:
             out['sample_size'] = int(self.sample_size())
@@ -11239,7 +11237,7 @@ False
         return out
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def swapaxes(self, axis0, axis1, inplace=False, i=False):
         '''Interchange two axes of an array.
@@ -11293,7 +11291,7 @@ False
         if d._auxiliary_mask:
             for mask in d._auxiliary_mask:
                 mask.swapaxes(axis0, axis1, inplace=True)
-        #--- End: if
+        # --- End: if
 
         return d
 
@@ -11330,7 +11328,7 @@ False
 #            except AttributeError:
 #                raise ValueError(
 #                    "save_to_disk: Must set itemsize if there is no dtype")
-#        #--- End: if
+#        # --- End: if
 #
 #        # ------------------------------------------------------------
 #        # Note that self._size*(itemsize+1) is the array size in bytes
@@ -11391,7 +11389,7 @@ False
         return CHUNKSIZE() >= self._size*(itemsize+1) <= FREE_MEMORY() - FM_THRESHOLD()
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def where(self, condition, x=None, y=None, inplace=False, i=False,
               _debug=False):
@@ -11517,7 +11515,7 @@ False
                         for n, i in zip(data.shape[::-1], indices[::-1])]
 
             return data[tuple(indices2)[::-1]].array
-        #--- End: def
+        # --- End: def
 
         def _is_broadcastable(data0, data1, do_not_broadcast, is_scalar):
             '''Check that the data1 is broadcastable to data0 and return data1, as
@@ -11569,7 +11567,7 @@ False
                         shape1, shape0))
 
             return data1
-        #--- End: def
+        # --- End: def
 
         d = _inplace_enabled_define_and_cleanup(self)
 
@@ -11626,14 +11624,14 @@ False
                         raise ValueError(
                             "where: Can't assign values with units {!r} to data with units {!r}".format(
                                 value.Units, d.Units))
-                #--- End: if
+                # --- End: if
 
                 # Check that the value is broadcastable
                 value = _is_broadcastable(d, value, do_not_broadcast, is_scalar)
-            #--- End: if
+            # --- End: if
 
             xy.append(value)
-        #--- End: for
+        # --- End: for
 
         (x, y) = xy
         (condition_is_scalar, x_is_scalar, y_is_scalar) = is_scalar
@@ -11667,7 +11665,7 @@ False
                 if inplace:
                     d = None
                 return d
-        #--- End: if
+        # --- End: if
 
         # Still here?
         hardmask = d.hardmask
@@ -11745,7 +11743,7 @@ False
                         T = _broadcast(T, shape)
                     else:
                         F = _broadcast(F, shape)
-            #--- End: if
+            # --- End: if
 
             if _debug:
                 print('  array =', array) # pragma: no cover
@@ -11793,7 +11791,7 @@ False
                     # hardmask, so apply the original partition's mask
                     # to the new array.
                     new = numpy_ma_masked_where(array.mask, new, copy=False)
-            #--- End: if
+            # --- End: if
 
             # --------------------------------------------------------
             # Replace the partition's subarray with the new numpy
@@ -11805,12 +11803,12 @@ False
             partition.subarray = new
 
             partition.close()
-        #--- End: for
+        # --- End: for
 
         return d
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def sin(self, inplace=False, i=False):
         '''Take the trigonometric sine of the data array in place.
@@ -11869,7 +11867,7 @@ False
         return d
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def sinh(self, inplace=False):
         '''Take the hyperbolic sine of the data array in place.
@@ -11985,7 +11983,7 @@ False
         return d
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def tanh(self, inplace=False):
         '''Take the hyperbolic tangent of the data array.
@@ -12045,7 +12043,7 @@ False
         return d
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def log(self, base=None, inplace=False, i=False):
         '''TODO
@@ -12080,7 +12078,7 @@ False
         return d
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def squeeze(self, axes=None, inplace=False, i=False):
         '''Remove size 1 axes from the data array.
@@ -12165,7 +12163,7 @@ False
                     raise ValueError(
                         "Can't squeeze {}: Can't remove axis of size {}".format(
                             d.__class__.__name__, shape[i]))
-        #--- End: if
+        # --- End: if
 
         if not axes:
             if inplace:
@@ -12202,7 +12200,7 @@ False
                 p_shape.pop(i)
                 if axis in p_flip:
                     p_flip.remove(axis)
-            #--- End: for
+            # --- End: for
 
             partition.location = p_location
             partition.shape    = p_shape
@@ -12226,12 +12224,12 @@ False
         if d._auxiliary_mask:
             for mask in d._auxiliary_mask:
                 mask.squeeze(axes, inplace=True)
-        #--- End: if
+        # --- End: if
 
         return d
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def tan(self, inplace=False, i=False):
         '''Take the trigonometric tangent of the data array element-wise.
@@ -12321,7 +12319,7 @@ False
         return self.array.tolist()
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def transpose(self, axes=None, inplace=False, i=False):
         '''Permute the axes of the data array.
@@ -12383,7 +12381,7 @@ False
             if len(iaxes) != ndim:
                 raise ValueError(
                     "Can't tranpose: Axes don't match array: {}".format(iaxes))
-        #--- End: if
+        # --- End: if
 
         # Permute the axes
         data_axes = d._axes
@@ -12409,7 +12407,7 @@ False
         return d
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     def trunc(self, inplace=False, i=False):
         '''Return the truncated values of the data array.
 
@@ -12545,7 +12543,7 @@ False
                         calendar=calendar, chunk=chunk)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def func(self, f, units=None, out=False, inplace=False, i=False,
              **kwargs):
@@ -12624,7 +12622,7 @@ False
         return d
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     def range(self, axes=None, squeeze=False, mtol=1, inplace=False,
               _preserve_partitions=False, i=False):
         '''Collapse axes with the absolute difference between their maximum
@@ -12661,7 +12659,7 @@ False
                               _preserve_partitions=_preserve_partitions)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     def roll(self, axis, shift, inplace=False, i=False):
         '''A lot like `numpy.roll`
 
@@ -12723,7 +12721,7 @@ False
         return d
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     def sum(self, axes=None, squeeze=False, mtol=1, weights=None,
             inplace=False, i=False, _preserve_partitions=False):
         '''Collapse axes with their sum.
@@ -12810,7 +12808,7 @@ False
                               _preserve_partitions=_preserve_partitions)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     def sum_of_weights(self, axes=None, squeeze=False, mtol=1,
                        weights=None, inplace=False, i=False,
                        _preserve_partitions=False):
@@ -12853,7 +12851,7 @@ False
                     weights_units = getattr(w, 'Units', None)
                     if weights_units is not None:
                         units = units * weights_units
-        #--- End: if
+        # --- End: if
 
         return self._collapse(sw_f, sw_fpartial, sw_ffinalise,
                               axes=axes, squeeze=squeeze,
@@ -12862,7 +12860,7 @@ False
                               _preserve_partitions=_preserve_partitions)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     def sum_of_weights2(self, axes=None, squeeze=False, mtol=1,
                         weights=None, inplace=False, i=False,
                         _preserve_partitions=False):
@@ -12905,7 +12903,7 @@ False
                     weights_units = getattr(w, 'Units', None)
                     if weights_units is not None:
                         units = units * (weights_units ** 2)
-        #--- End: if
+        # --- End: if
 
         return self._collapse(sw2_f, sw2_fpartial, sw2_ffinalise,
                               axes=axes, squeeze=squeeze,
@@ -12914,7 +12912,7 @@ False
                               _preserve_partitions=_preserve_partitions)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     def standard_deviation(self, axes=None, squeeze=False, mtol=1,
                            weights=None, ddof=0, inplace=False, i=False,
                            _preserve_partitions=False):
@@ -13069,7 +13067,7 @@ False
                               _preserve_partitions=_preserve_partitions)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     def variance(self, axes=None, squeeze=False, weights=None, mtol=1,
                  ddof=0, inplace=False, i=False,
                  _preserve_partitions=False):
@@ -13269,7 +13267,7 @@ False
                                   "Use method 'insert_dimension' instead.") # pragma: no cover
 
 
-#--- End: class
+# --- End: class
 
 
 def _size_of_index(index, size=None):
@@ -13365,7 +13363,7 @@ def _overlapping_partitions(partitions, indices, axes, master_flip):
         new_partition_matrix[...] = partition
 
         return new_partition_matrix
-    #--- End: if
+    # --- End: if
 
     # Still here? Then there are 2 or more partitions.
 
@@ -13399,7 +13397,7 @@ def _overlapping_partitions(partitions, indices, axes, master_flip):
         flat_pm_indices_append(i)
 
         i = partitions_flat.index
-    #--- End: for
+    # --- End: for
 
     new_shape = [len(set(s))
                  for s in numpy_unravel_index(flat_pm_indices, partitions.shape)]
@@ -13506,4 +13504,4 @@ class AuxiliaryMask:
         self._mask.append(mask)
 
 
-#--- End: class
+# --- End: class

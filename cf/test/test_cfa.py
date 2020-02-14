@@ -18,7 +18,7 @@ class cfaTest(unittest.TestCase):
                        shell=True, check=True)
 
 
-#--- End: class
+# --- End: class
 
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.now())

@@ -5,13 +5,12 @@ from . import PropertiesData
 from ..functions    import parse_indices
 from ..functions    import equivalent as cf_equivalent
 from ..functions    import inspect    as cf_inspect
-from ..functions    import (_DEPRECATION_ERROR_KWARGS,
-                            _DEPRECATION_ERROR_METHOD,
+from ..functions    import (_DEPRECATION_ERROR_METHOD,
                             _DEPRECATION_ERROR_ATTRIBUTE)
 
 from ..decorators import (_inplace_enabled,
                           _inplace_enabled_define_and_cleanup,
-                          _deprecation_error_i_kwarg)
+                          _deprecated_kwarg_check)
 
 from ..query        import Query
 from ..units        import Units
@@ -77,10 +76,10 @@ class PropertiesDataBounds(PropertiesData):
 
         if _debug:
             cname = self.__class__.__name__
-            print('{}.__getitem__: shape    = {}'.format(cname, self.shape)) # Pragma: no cover
-            print('{}.__getitem__: indices2 = {}'.format(cname, indices2)) # Pragma: no cover
-            print('{}.__getitem__: indices  = {}'.format(cname, indices)) # Pragma: no cover
-            print('{}.__getitem__: findices = {}'.format(cname, findices)) # Pragma: no cover
+            print('{}.__getitem__: shape    = {}'.format(cname, self.shape)) # pragma: no cover
+            print('{}.__getitem__: indices2 = {}'.format(cname, indices2)) # pragma: no cover
+            print('{}.__getitem__: indices  = {}'.format(cname, indices)) # pragma: no cover
+            print('{}.__getitem__: findices = {}'.format(cname, findices)) # pragma: no cover
 
         new.set_data(data[findices], copy=False)
 
@@ -103,7 +102,7 @@ class PropertiesDataBounds(PropertiesData):
                         # reverse its bounds (as per 7.1 of the
                         # conventions)
                         findices.append(slice(None, None, -1))
-                #--- End: if
+                # --- End: if
 
                 if auxiliary_mask:
                     findices[1] = [mask.insert_dimension(-1) for mask in findices[1]]
@@ -113,7 +112,7 @@ class PropertiesDataBounds(PropertiesData):
                         self.__class__.__name__, findices)) # pragma: no cover
 
                 new.bounds.set_data(bounds_data[tuple(findices)], copy=False)
-        #--- End: if
+        # --- End: if
 
         # Remove the direction, as it may now be wrong
         new._custom.pop('direction', None)
@@ -372,7 +371,7 @@ class PropertiesDataBounds(PropertiesData):
 
             if not inplace:
                 new.set_bounds(new_bounds, copy=False)
-        #--- End: if
+        # --- End: if
 
         if not bounds and new.has_bounds():
             new.del_bounds()
@@ -443,7 +442,7 @@ class PropertiesDataBounds(PropertiesData):
                     print('{}: Non-equivalent bounds data: {!r}, {!r}'.format(
                         self.__class__.__name__, self_bounds.data, other_bounds.data)) # pragma: no cover
                 return False
-        #--- End: if
+        # --- End: if
 
         # Still here? Then the data are equivalent.
         return True
@@ -474,7 +473,7 @@ class PropertiesDataBounds(PropertiesData):
                 return value0.search(value1)
             except (AttributeError, TypeError):
                 return self._equals(value1, value0)
-        #--- End: if
+        # --- End: if
 
         return False
 
@@ -558,7 +557,7 @@ class PropertiesDataBounds(PropertiesData):
             data = self.get_data(None)
             if data is not None:
                 return Data.zeros(self.shape, units=self.Units)
-        #--- End: if
+        # --- End: if
 
         raise AttributeError(
             "Can't get cell sizes when there are no bounds nor coordinate data")
@@ -657,7 +656,7 @@ class PropertiesDataBounds(PropertiesData):
             data = self.get_data(None)
             if data is not None:
                 return data.copy()
-        #--- End: if
+        # --- End: if
 
         raise AttributeError(
             "Can't get lower bounds when there are no bounds nor coordinate data")
@@ -735,13 +734,13 @@ class PropertiesDataBounds(PropertiesData):
             data = self.get_data(None)
             if data is not None:
                 return data.copy()
-        #--- End: if
+        # --- End: if
 
         raise AttributeError(
             "Can't get upper bounds when there are no bounds nor coordinate data")
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def mask_invalid(self, inplace=False, i=False):
         '''Mask the array where invalid values occur.
@@ -894,7 +893,7 @@ dtype('float64')
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def ceil(self, bounds=True, inplace=False, i=False):
         '''The ceiling of the data, element-wise.
@@ -966,7 +965,7 @@ dtype('float64')
             bounds.chunk(chunksize)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def clip(self, a_min, a_max, units=None, bounds=True,
              inplace=False, i=False):
@@ -1074,7 +1073,7 @@ dtype('float64')
         return out
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def cos(self, bounds=True, inplace=False,  i=False):
         '''Take the trigonometric cosine of the data, element-wise.
@@ -1234,7 +1233,7 @@ dtype('float64')
                     print("{}: Different {} attributes: {!r}, {!r}".format(
                         self.__class__.__name__, attr, x, y))
                 return False
-        #--- End: for
+        # --- End: for
 
         # ------------------------------------------------------------
         # Check the data
@@ -1310,7 +1309,7 @@ dtype('float64')
 #        return False
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def convert_reference_time(self, units=None,
                                calendar_months=False,
@@ -1479,7 +1478,7 @@ dtype('float64')
 
         return v
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def floor(self, bounds=True, inplace=False, i=False):
         '''Floor the data array, element-wise.
@@ -1571,7 +1570,7 @@ dtype('float64')
             elif x != 'and':
                 raise ValueError(
                     "Positional argument, if provided, must one of 'or', 'and'")
-        #--- End: if
+        # --- End: if
 
         if not properties:
             return True
@@ -1588,7 +1587,7 @@ dtype('float64')
                     break
             elif not ok:
                 break
-        #--- End: for
+        # --- End: for
 
         return ok
 
@@ -1623,16 +1622,16 @@ dtype('float64')
                 ok = self._matching_values(value0, value1)
                 if ok:
                     break
-            #--- End: for
+            # --- End: for
 
             if ok:
                 break
-        #--- End: for
+        # --- End: for
 
         return ok
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def override_calendar(self, calendar, inplace=False,  i=False):
         '''Override the calendar of date-time units.
@@ -1676,7 +1675,7 @@ dtype('float64')
             calendar, inplace=inplace, i=i)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def override_units(self, units, inplace=False, i=False):
         '''Override the units.
@@ -1760,7 +1759,7 @@ dtype('float64')
         return out
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def flip(self, axes=None, inplace=False, i=False):
         '''Flip (reverse the direction of) data dimensions.
@@ -1830,7 +1829,7 @@ dtype('float64')
         return v
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def exp(self, bounds=True, inplace=False, i=False):
         '''The exponential of the data, element-wise.
@@ -1954,7 +1953,7 @@ dtype('float64')
         super().set_bounds(bounds, copy=False)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def sin(self, bounds=True, inplace=False, i=False):
         '''The trigonometric sine of the data, element-wise.
@@ -2013,7 +2012,7 @@ dtype('float64')
             inplace=inplace, i=i)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def arctan(self, bounds=True, inplace=False):
         '''Take the trigonometric inverse tangent of the data element-wise.
@@ -2269,7 +2268,7 @@ dtype('float64')
             bounds=bounds, inplace=inplace)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def tan(self, bounds=True, inplace=False, i=False):
         '''The trigonometric tangent of the data, element-wise.
@@ -2326,7 +2325,7 @@ dtype('float64')
             inplace=inplace, i=i)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def log(self, base=None, bounds=True, inplace=False, i=False):
         '''The logarithm of the data array.
@@ -2388,6 +2387,7 @@ dtype('float64')
             inplace=inplace, i=i)
 
 
+    @_deprecated_kwarg_check('i')
     def squeeze(self, axes=None, inplace=False, i=False):
         '''Remove size 1 dimensions from the data array
 
@@ -2424,13 +2424,10 @@ dtype('float64')
     >>> f.squeeze([2, -1])
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, 'squeeze', i=True) # pragma: no cover
-
         return super().squeeze(axes=axes, inplace=inplace)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def trunc(self, bounds=True, inplace=False, i=False):
         '''Truncate the data, element-wise.
@@ -2538,6 +2535,7 @@ dtype('float64')
         return identities
 
 
+    @_deprecated_kwarg_check('relaxed_identity')
     def identity(self, default='', strict=False, relaxed=False,
                  nc_only=False, relaxed_identity=None):
         '''Return the canonical identity.
@@ -2619,10 +2617,6 @@ dtype('float64')
     'axis=Z'
 
         '''
-        if relaxed_identity:
-            _DEPRECATAION_ERROR_KWARGS(
-                self, 'identity', relaxed_identity=True) # pragma: no cover
-
         identity = super().identity(default=None, strict=strict,
                                     relaxed=relaxed, nc_only=nc_only)
 
@@ -2636,7 +2630,7 @@ dtype('float64')
 
             if out is not None and not out.startswith('ncvar%'):
                 return out
-        #--- End: if
+        # --- End: if
 
         return default
 
@@ -2654,7 +2648,7 @@ dtype('float64')
         print(cf_inspect(self)) # pragma: no cover
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def rint(self, bounds=True, inplace=False, i=False):
         '''Round the data to the nearest integer, element-wise.
@@ -2696,7 +2690,7 @@ dtype('float64')
             inplace=inplace, i=i)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def round(self, decimals=0, bounds=True, inplace=False, i=False):
         '''Round the data to the given number of decimals.
@@ -2753,7 +2747,7 @@ dtype('float64')
             bounds=bounds, inplace=inplace, i=i, decimals=decimals)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def roll(self, iaxis, shift, inplace=False, i=False):
         '''Roll the data along an axis.
@@ -2810,4 +2804,4 @@ dtype('float64')
             "Use method 'insert_dimension' instead.") # pragma: no cover
 
 
-#--- End: class
+# --- End: class

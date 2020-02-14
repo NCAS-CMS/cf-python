@@ -222,7 +222,7 @@ class QueryTest(unittest.TestCase):
             self.assertFalse(x == cf.wi(8, 11)       == x)
             self.assertFalse(x == cf.wo(3, 8)        == x)
             self.assertFalse(x == cf.set([3, 8, 11]) == x)
-        #--- End: for
+        # --- End: for
 
         c = cf.wi(2, 4)
         d = cf.wi(6, 8)
@@ -273,7 +273,7 @@ class QueryTest(unittest.TestCase):
         self.assertTrue(x != cf.eq(re.compile('^.*RTY$' )))
 
 
-#--- End: class
+# --- End: class
 
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.now())

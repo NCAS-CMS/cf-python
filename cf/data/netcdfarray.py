@@ -103,6 +103,6 @@ class NetCDFArray(cfdm.NetCDFArray,
         return _open_netcdf_file(self.get_filename(), 'r')
 
 
-#--- End: class
+# --- End: class
 
 #abstract.Array.register(NetCDFArray)

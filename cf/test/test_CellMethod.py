@@ -85,7 +85,7 @@ class CellMethodTest(unittest.TestCase):
             cms = cf.CellMethod.create(s)
             for cm in cms:
                 self.assertTrue(cm.equivalent(cm.copy(), verbose=True))
-        #--- End: for
+        # --- End: for
 
         # Intervals
         for s0, s1 in (
@@ -117,7 +117,7 @@ class CellMethodTest(unittest.TestCase):
             for cm0, cm1 in zip(cms0, cms1):
                 self.assertTrue(cm0.equivalent(cm1, verbose=True),
                                 '{0!r} not equivalent to {1!r}'.format(cm0, cm1))
-        #--- End: for
+        # --- End: for
 
 
     def test_CellMethod_get_set_delete(self):
@@ -137,7 +137,7 @@ class CellMethodTest(unittest.TestCase):
         self.assertTrue(cm1.axes == ('time',))
 
 
-#--- End: class
+# --- End: class
 
 
 if __name__ == "__main__":

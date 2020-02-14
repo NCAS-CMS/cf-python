@@ -2,7 +2,7 @@ import cfdm
 
 from . import mixin
 
-from .functions import _DEPRECATION_ERROR_KWARGS
+from .decorators import _deprecated_kwarg_check
 
 
 class CellMeasure(mixin.PropertiesData,
@@ -42,7 +42,6 @@ class CellMeasure(mixin.PropertiesData,
         '''
         return super().__repr__().replace('<', '<CF ', 1)
 
-
     @property
     def ismeasure(self):
         '''Always True.
@@ -57,18 +56,19 @@ class CellMeasure(mixin.PropertiesData,
         '''
         return True
 
-
     @property
     def measure(self):
         '''TODO
         '''
         return self.get_measure(default=AttributeError())
+
     @measure.setter
     def measure(self, value): self.set_measure(value)
+
     @measure.deleter
     def measure(self):        self.del_measure(default=AttributeError())
 
-
+    @_deprecated_kwarg_check('relaxed_identity')
     def identity(self, default='', strict=None, relaxed=False,
                  nc_only=False, relaxed_identity=None):
         '''Return the canonical identity.
@@ -137,16 +137,13 @@ class CellMeasure(mixin.PropertiesData,
     'no identity'
 
         '''
-        if relaxed_identity:
-            _DEPRECATION_ERROR_KWARGS(self, 'identity',
-                                      relaxed_identity=True) # pragma: no cover
-
+        err_msg = "%{0} and 'nc_only' parameters cannot both be True"
         if nc_only:
             if strict:
-                raise ValueError("'strict' and 'nc_only' parameters cannot both be True")
+                raise ValueError(err_msg.format("'strict'"))
 
             if relaxed:
-                raise ValueError("'relaxed' and 'nc_only' parameters cannot both be True")
+                raise ValueError(err_msg.format("'relaxed'"))
 
             n = self.nc_get_variable(None)
             if n is not None:
@@ -180,11 +177,11 @@ class CellMeasure(mixin.PropertiesData,
         if strict:
             return default
 
-        for prop in  ('long_name',):
+        for prop in ('long_name',):
             n = self.get_property(prop, None)
             if n is not None:
                 return '{0}={1}'.format(prop, n)
-        #--- End: for
+        # --- End: for
 
         n = self.nc_get_variable(None)
         if n is not None:
@@ -193,4 +190,4 @@ class CellMeasure(mixin.PropertiesData,
         return default
 
 
-#--- End: class
+# --- End: class

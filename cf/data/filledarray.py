@@ -238,4 +238,4 @@ class FilledArray(abstract.Array):
         return self[...]
 
 
-#--- End: class
+# --- End: class

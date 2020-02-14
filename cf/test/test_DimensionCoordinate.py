@@ -295,7 +295,7 @@ class DimensionCoordinateTest(unittest.TestCase):
         self.assertTrue((x.array == (d+2)*2 + 2).all())
 
 
-#--- End: class
+# --- End: class
 
 if __name__ == "__main__":
     print('Run date:', datetime.datetime.now())

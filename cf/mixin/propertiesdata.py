@@ -17,13 +17,11 @@ from ..data import Data
 
 from . import Properties
 
-from ..functions import (_DEPRECATION_ERROR_KWARGS,
-                         _DEPRECATION_ERROR_METHOD,
-                        )
+from ..functions import _DEPRECATION_ERROR_METHOD
 
 from ..decorators import (_inplace_enabled,
                           _inplace_enabled_define_and_cleanup,
-                          _deprecation_error_i_kwarg)
+                          _deprecated_kwarg_check)
 
 
 _units_None = Units()
@@ -850,7 +848,7 @@ class PropertiesData(Properties):
 #            else:
 #                # Identity (not string-valued, e.g. cf.Query).
 #                matches.append({None: m})
-#        #--- End: for
+#        # --- End: for
 #
 #        return matches
 
@@ -971,7 +969,7 @@ class PropertiesData(Properties):
 #            out.del_property('standard_name', None)
 #            out.set_property('long_name', method)
 #            return out
-#        #--- End: if
+#        # --- End: if
 #
 #        raise ValueError(
 #            "ERROR: Can't get {0} when there is no data array".format(method))
@@ -1625,7 +1623,7 @@ class PropertiesData(Properties):
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def mask_invalid(self, inplace=False, i=False):
         '''Mask the array where invalid values occur.
@@ -1919,7 +1917,7 @@ class PropertiesData(Properties):
             "ERROR: Can't get the sum when there is no data array")
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def swapaxes(self, axis0, axis1, inplace=False):
         '''Interchange two axes of an array.
@@ -2442,7 +2440,7 @@ class PropertiesData(Properties):
         return data.isscalar
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def ceil(self, inplace=False, i=False):
         '''The ceiling of the data, element-wise.
@@ -2500,7 +2498,7 @@ class PropertiesData(Properties):
             data.chunk(chunksize)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def clip(self, a_min, a_max, units=None, inplace=False, i=False):
         '''Limit the values in the data.
@@ -2600,7 +2598,7 @@ class PropertiesData(Properties):
         return out
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def cos(self, inplace=False, i=False):
         '''Take the trigonometric cosine of the data, element-wise.
@@ -3019,7 +3017,7 @@ class PropertiesData(Properties):
                     print("{}: Different {} attributes: {!r}, {!r}".format(
                         self.__class__.__name__, attr, x, y))
                 return False
-        #--- End: for
+        # --- End: for
 
         # ------------------------------------------------------------
         # Check the data
@@ -3032,7 +3030,7 @@ class PropertiesData(Properties):
         return True
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def convert_reference_time(self, units=None,
                                calendar_months=False,
@@ -3151,7 +3149,7 @@ class PropertiesData(Properties):
                 return t.interval(reftime, end=False)[1]
             else:
                 return t.interval(reftime, end=True)[0]
-        #--- End: def
+        # --- End: def
 
         if not self.Units.isreftime:
             raise ValueError(
@@ -3201,7 +3199,7 @@ class PropertiesData(Properties):
         return v
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def flatten(self, axes=None, inplace=False):
         '''Flatten axes of the data
@@ -3257,7 +3255,7 @@ class PropertiesData(Properties):
             inplace=inplace)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def floor(self, inplace=False, i=False):
         '''Floor the data array, element-wise.
@@ -3348,7 +3346,7 @@ class PropertiesData(Properties):
             ok = (ndim == self_ndim)
             if ok:
                 return True
-        #--- End: for
+        # --- End: for
 
         return False
 
@@ -3426,11 +3424,11 @@ class PropertiesData(Properties):
                     ok = Units(value0).equals(self_units)
                 else:
                     ok = Units(value0).equivalent(self_units)
-            #--- End: if
+            # --- End: if
 
             if ok:
                 break
-        #--- End: for
+        # --- End: for
 
         return ok
 
@@ -3530,7 +3528,7 @@ class PropertiesData(Properties):
             else:
                 if y_data is None:
                     y_data = y
-        #--- End: if
+        # --- End: if
 
         return data.allclose(y_data, rtol=rtol, atol=atol)
 
@@ -3679,12 +3677,12 @@ class PropertiesData(Properties):
                 fillval = default_netCDF_fillvals()[d.kind + str(d.itemsize)]
             else:
                 fillval = default
-        #--- End: if
+        # --- End: if
 
         return fillval
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def flip(self, axes=None, inplace=False, i=False):
         '''Flip (reverse the direction of) data dimensions.
@@ -3728,7 +3726,7 @@ class PropertiesData(Properties):
             inplace=inplace, i=i)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def exp(self, inplace=False, i=False):
         '''The exponential of the data, element-wise.
@@ -3774,7 +3772,7 @@ class PropertiesData(Properties):
             inplace=inplace, i=i, delete_props=True)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def sin(self, inplace=False, i=False):
         '''The trigonometric sine of the data, element-wise.
@@ -3832,7 +3830,7 @@ class PropertiesData(Properties):
             inplace=inplace, i=i, delete_props=True)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def arctan(self, inplace=False):
         '''Take the trigonometric inverse tangent of the data element-wise.
@@ -3874,7 +3872,7 @@ class PropertiesData(Properties):
             inplace=inplace, delete_props=True)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def arcsinh(self, inplace=False):
         '''Take the inverse hyperbolic sine of the data element-wise.
@@ -3917,7 +3915,7 @@ class PropertiesData(Properties):
             inplace=inplace, delete_props=True)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def tan(self, inplace=False, i=False):
         '''The trigonometric tangent of the data, element-wise.
@@ -3976,7 +3974,7 @@ class PropertiesData(Properties):
             inplace=inplace, i=i, delete_props=True)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def tanh(self, inplace=False):
         '''Take the hyperbolic tangent of the data array.
@@ -4035,7 +4033,7 @@ class PropertiesData(Properties):
             inplace=inplace, delete_props=True)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def sinh(self, inplace=False):
         '''Take the hyperbolic sine of the data array in place.
@@ -4093,7 +4091,7 @@ class PropertiesData(Properties):
             inplace=inplace, delete_props=True)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def cosh(self, inplace=False):
         '''Take the hyperbolic cosine of the data array in place.
@@ -4150,7 +4148,7 @@ class PropertiesData(Properties):
             inplace=inplace, delete_props=True)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def log(self, base=None, inplace=False, i=False):
         '''The logarithm of the data array.
@@ -4208,7 +4206,7 @@ class PropertiesData(Properties):
             inplace=inplace, i=i, delete_props=True)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def trunc(self, inplace=False, i=False):
         '''Truncate the data, element-wise.
@@ -4282,6 +4280,7 @@ class PropertiesData(Properties):
             "ERROR: Can't get unique values when there is no data array")
 
 
+    @_deprecated_kwarg_check('relaxed_identity')
     def identity(self, default='', strict=False, relaxed=False,
                  nc_only=False, relaxed_identity=None):
         '''Return the canonical identity.
@@ -4353,10 +4352,6 @@ class PropertiesData(Properties):
     'no identity'
 
         '''
-        if relaxed_identity:
-            _DEPRECATION_ERROR_KWARGS(self, 'identity',
-                                      relaxed_identity=True) # pragma: no cover
-
         if nc_only:
             if strict:
                 raise ValueError("'strict' and 'nc_only' parameters cannot both be True")
@@ -4396,7 +4391,7 @@ class PropertiesData(Properties):
             n = self.get_property(prop, None)
             if n is not None:
                 return '{0}={1}'.format(prop, n)
-        #--- End: for
+        # --- End: for
 
         n = self.nc_get_variable(None)
         if n is not None:
@@ -4405,7 +4400,7 @@ class PropertiesData(Properties):
         for ctype in ('X', 'Y', 'Z', 'T'):
             if getattr(self, ctype, False):
                 return ctype
-        #--- End: for
+        # --- End: for
 
         return default
 
@@ -4464,12 +4459,12 @@ class PropertiesData(Properties):
                     out.insert(0, i)
                 else:
                     out.insert(1, i)
-        #--- End: if
+        # --- End: if
 
         for ctype in ('X', 'Y', 'Z', 'T'):
             if getattr(self, ctype, False):
                 out.append(ctype)
-        #--- End: for
+        # --- End: for
 
         return out
 
@@ -4532,7 +4527,7 @@ class PropertiesData(Properties):
         return super().get_data(default=default, _units=False)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def override_calendar(self, calendar, inplace=False,  i=False):
         '''Override the calendar of date-time units.
@@ -4589,7 +4584,7 @@ class PropertiesData(Properties):
         return v
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def override_units(self, units, inplace=False, i=False):
         '''Override the units.
@@ -4655,7 +4650,7 @@ class PropertiesData(Properties):
         return v
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def rint(self, inplace=False, i=False):
         '''Round the data to the nearest integer, element-wise.
@@ -4693,7 +4688,7 @@ class PropertiesData(Properties):
             inplace=inplace, i=i)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def round(self, decimals=0, inplace=False, i=False):
         '''Round the data to the given number of decimals.
@@ -4744,7 +4739,7 @@ class PropertiesData(Properties):
             inplace=inplace, i=i, decimals=decimals)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def roll(self, iaxis, shift, inplace=False, i=False):
         '''Roll the data along an axis.
@@ -4826,7 +4821,7 @@ class PropertiesData(Properties):
                     data = data.override_units(units, inplace=False)
                 else:
                     data.override_units(units, inplace=True)
-        #--- End: if
+        # --- End: if
 
         if copy:
             data = data.copy()
@@ -4834,7 +4829,7 @@ class PropertiesData(Properties):
         self._set_component('data', data, copy=False)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def where(self, condition, x=None, y=None, inplace=False, i=False,
               _debug=False):
@@ -5119,7 +5114,7 @@ class PropertiesData(Properties):
         _DEPRECATION_ERROR_METHOD(self, 'select') # pragma: no cover
 
 
-#--- End: class
+# --- End: class
 
 
 class Subspace:
@@ -5156,4 +5151,4 @@ class Subspace:
         self.variable[indices] = value
 
 
-#--- End: class
+# --- End: class

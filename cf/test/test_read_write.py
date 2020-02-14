@@ -177,7 +177,7 @@ class read_writeTest(unittest.TestCase):
                 g0 = g[0]
                 self.assertTrue(f0.equals(g0, verbose=1),
                                 'Bad read/write of format {!r}'.format(fmt))
-        #--- End: for
+        # --- End: for
 
 
     def test_read_write_netCDF4_compress_shuffle(self):
@@ -202,7 +202,7 @@ class read_writeTest(unittest.TestCase):
                             f.equals(g, verbose=True),
                             'Bad read/write with lossless compression: {0}, {1}, {2}'.format(
                                 fmt, compress, shuffle))
-        #--- End: for
+        # --- End: for
         cf.CHUNKSIZE(self.original_chunksize)
 
 
@@ -219,7 +219,7 @@ class read_writeTest(unittest.TestCase):
             g = cf.read(tmpfile)[0]
             self.assertTrue(g.dtype == numpy.dtype('float32'),
                             'datatype read in is '+str(g.dtype))
-        #--- End: for
+        # --- End: for
         cf.CHUNKSIZE(self.original_chunksize)
 
 
@@ -241,7 +241,7 @@ class read_writeTest(unittest.TestCase):
                 t = g.dimension_coordinate('T')
                 self.assertTrue(t.Units == cf.Units('days since '+reference_datetime),
                                 'Units written were '+repr(t.Units.reftime)+' not '+repr(reference_datetime))
-        #--- End: for
+        # --- End: for
         cf.CHUNKSIZE(self.original_chunksize)
 
 
@@ -255,7 +255,7 @@ class read_writeTest(unittest.TestCase):
 #                f = cf.read(self.filename)[0]
 #                f.HDF_chunks({'T': 10000, 1: 3, 'grid_lat': 222, 45:45})
 #                cf.write(f, tmpfile, fmt=fmt, HDF_chunksizes={'X': 6})
-#        #--- End: for
+#        # --- End: for
 #        cf.CHUNKSIZE(self.original_chunksize)
 
 
@@ -323,7 +323,7 @@ class read_writeTest(unittest.TestCase):
             x = cf.read('test_read_write.py')
             
 
-#--- End: class
+# --- End: class
 
 if __name__ == "__main__":
     print('Run date:', datetime.datetime.now())

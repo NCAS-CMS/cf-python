@@ -135,5 +135,5 @@ class CompressedSubarray(abc.ABC):
         return getrefcount(self.array) <= 2
 
 
-#--- End: class
+# --- End: class
 

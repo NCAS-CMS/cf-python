@@ -134,7 +134,7 @@ class FieldTest(unittest.TestCase):
             print(g)
             print(g.constructs)
         self.assertTrue(g.shape == (8, 4, 5))
-    #--- End: def
+    # --- End: def
 
     def test_COLLAPSE(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -233,7 +233,7 @@ class FieldTest(unittest.TestCase):
 
             a = a.min(axis=0)
             self.assertTrue(numpy.allclose(a, g.array[m % 12]))
-        #--- End: for
+        # --- End: for
 
         g = f.collapse('T: mean', group=360)
 
@@ -247,7 +247,7 @@ class FieldTest(unittest.TestCase):
                             "{}!={}, group={}".format(bound.month, group.offset.month, group))
             self.assertTrue(bound.day   == group.offset.day,
                             "{}!={}, group={}".format(bound.day, group.offset.day, group))
-        #--- End: for
+        # --- End: for
 
 #            for group in (cf.D(30),
 #                          cf.D(30, month=12),
@@ -257,7 +257,7 @@ class FieldTest(unittest.TestCase):
 #                bound = g.coord('T').bounds.datetime_array[0, 1]
 #                self.assertTrue(bound.day == group.offset.day,
 #                                "{}!={}, bound={}, group={}".format(bound.day, group.offset.day, bound, group))
-    #--- End: def
+    # --- End: def
 
     def test_COLLAPSE_weights(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -273,7 +273,7 @@ class FieldTest(unittest.TestCase):
         g = f.collapse('area: mean', weights='area')
         if verbose:
             print(g)
-    #--- End: def
+    # --- End: def
 
     def test_COLLAPSE_groups(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -424,9 +424,9 @@ class FieldTest(unittest.TestCase):
 #                           group_contiguous=2)
 #            g = f.collapse('T: mean', group=cf.M(5, month= 3),
 #                           group_contiguous=2)
-    #--- End: def
+    # --- End: def
 
-#--- End: class
+# --- End: class
 
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.now())

@@ -437,7 +437,7 @@ class UMField:
                         # records.
                         split_group = True
                         nz = 1
-                #--- End: if
+                # --- End: if
 
                 if split_group:
                     # This group doesn't form a complete nz x nt
@@ -452,9 +452,9 @@ class UMField:
                     groups2.append(group)
                     groups_nz.append(nz)
                     groups_nt.append(group_size/nz)
-            #--- End: for
+            # --- End: for
             groups = groups2
-        #--- End: if
+        # --- End: if
 
         rec0 = groups[0][0]
 
@@ -621,7 +621,7 @@ class UMField:
                 self.cf_info  = cf_info
 
                 break
-        #--- End: if
+        # --- End: if
 
         if stash:
             section, item = divmod(stash, 1000)
@@ -700,7 +700,7 @@ class UMField:
                 if LBVC in (2, 9, 65) or LBLEV in (7777, 8888): # CHECK!
                     self.LBLEV = LBLEV
                     c = self.model_level_number_coordinate(aux=bool(c))
-            #--- End: if
+            # --- End: if
 
             # ------------------------------------------------------------
             # Create the 'Y' dimension coordinate
@@ -720,7 +720,7 @@ class UMField:
                                                                        'y')
                 else:
                     ykey, yc = self.xy_coordinate(axiscode, 'y')
-            #--- End: if
+            # --- End: if
 
             # ------------------------------------------------------------
             # Create the 'X' dimension coordinate
@@ -739,7 +739,7 @@ class UMField:
                             c = self.time_coordinate_from_um_timeseries(axiscode, 'x')
                 else:
                     xkey, xc = self.xy_coordinate(axiscode, 'x')
-            #--- End: if
+            # --- End: if
 
             # -10: rotated latitude  (not an official axis code)
             # -11: rotated longitude (not an official axis code)
@@ -851,7 +851,7 @@ class UMField:
                 field.cyclic('X', period=360)
 
             self.fields.append(field)
-        #--- End: for
+        # --- End: for
 
         self._bool = True
 
@@ -1188,7 +1188,7 @@ class UMField:
                 cell_methods.append(cf_info['where'])
                 if 'over' in cf_info:
                     cell_methods.append(cf_info['over'])
-             #--- End: if
+             # --- End: if
 
             if LBPROC == 64:
                cell_methods.append('x: mean')
@@ -1216,7 +1216,7 @@ class UMField:
             elif LBTIM_IB == 3:
                 cell_methods.append('t: mean within years')
                 cell_methods.append('t: mean over years')
-        #--- End: if
+        # --- End: if
 
         if not cell_methods:
             return None
@@ -1330,7 +1330,7 @@ class UMField:
             c.positive = positive
             if positive == 'down' and axiscode != 4:
                 self.down_axes.add(domain_axis_key)
-        #--- End: if
+        # --- End: if
 
         return c
 
@@ -1582,7 +1582,7 @@ class UMField:
 
                     if self.verbose:
                         print('    header_offset =', rec.hdr_offset, 'location =',location,'subarray[...].max() =', subarray[...].max()) # pragma: no cover
-                #--- End: for
+                # --- End: for
 
                 # Populate the 1-d partition matrix
                 matrix = numpy_array(partitions, dtype=object)
@@ -1630,12 +1630,12 @@ class UMField:
 
                     if self.verbose:
                         print('    location =',location,'subarray[...].max() =', subarray[...].max()) # pragma: no cover
-                #--- End: for
+                # --- End: for
 
                 # Populate the 2-d partition matrix
                 matrix = numpy_array(partitions, dtype=object)
                 matrix.resize(pmshape)
-            #--- End: if
+            # --- End: if
 
             data_axes = pmaxes + data_axes
 
@@ -1648,7 +1648,7 @@ class UMField:
             data._size      = data_size
             data.partitions = PartitionMatrix(matrix, pmaxes)
             data.dtype      = numpy_result_type(*file_data_types)
-        #--- End: if
+        # --- End: if
 
         self.data      = data
         self.data_axes = data_axes
@@ -1700,7 +1700,7 @@ class UMField:
                 index = int(bits[i:i+6], 2)
                 if index < _n_characters:
                     runid.append(_characters[index])
-            #--- End: for
+            # --- End: for
 
             runid = ''.join(runid)
 
@@ -1762,7 +1762,7 @@ class UMField:
                 out.append('EXTRA DATA:')
                 for key in sorted(self.extra):
                     out.append('{0}: {1}'.format(key, str(self.extra[key])))
-            #--- End: if
+            # --- End: if
 
             out.append('file: '+self.filename)
             out.append('format, byte order, word size: {}, {}, {}'.format(
@@ -1771,7 +1771,7 @@ class UMField:
             out.append('')
 
             out2.append('\n'.join(out))
-        #--- End: for
+        # --- End: for
 
         return out2
 
@@ -1809,7 +1809,7 @@ class UMField:
             atol = self.atol
             if abs(BDX) >= atol and abs(BDY) >= atol:
                 _cached_latlon[cache_key] = (lat, lon)
-        #--- End: if
+        # --- End: if
 
         if xc.has_bounds() and yc.has_bounds(): # TODO push to  implementation
             cache_key = ('bounds',) + cache_key
@@ -1951,7 +1951,7 @@ class UMField:
 #            else:
 #                # Float
 #                data_type = 'float%d' % (rec_file.word_size * 8)
-#        #--- End: if
+#        # --- End: if
 #
 #        return numpy_dtype(data_type)
 
@@ -2040,7 +2040,7 @@ class UMField:
         if units is None:
             units = Units(time_units, calendar)
             _Units[key] = units
-        #--- End: if
+        # --- End: if
 
         self.refUnits = units
         self.refunits = time_units
@@ -2372,7 +2372,7 @@ class UMField:
                                                                     # has
                                                                     # axis_code
                                                                     # 13
-                #--- End: if
+                # --- End: if
             else:
                 coord_type = '{0}_domain_lower_bound'.format(extra_type)
                 if coord_type in p.extra:
@@ -2392,8 +2392,8 @@ class UMField:
                                                    array=numpy_array(data),
                                                    pubattr={'axis': None},
                                                    dimensions=[xdim])# DCH xdim?
-           #--- End: if
-       #--- End: for
+           # --- End: if
+       # --- End: for
 
 
     def unrotated_latlon(self, rotated_lat, rotated_lon, pole_lat, pole_lon):
@@ -2511,7 +2511,7 @@ class UMField:
                     origin -= 360.0
                 while origin + delta*size < -360.0:
                     origin += 360.0
-            #--- End: if
+            # --- End: if
 
             array = numpy_arange(origin+delta, origin+delta*(size+0.5), delta,
                                  dtype=float)
@@ -2608,7 +2608,7 @@ class UMField:
             print('    '+dc.dump(display=False)) # pragma: no cover
 
         return dc
-    #--- End: def
+    # --- End: def
 
     def z_reference_coordinate(self, axiscode):
         '''TODO
@@ -2639,7 +2639,7 @@ class UMField:
                         break
 
                     bounds.append((BRLEV, BRSVD1))
-                #--- End: for
+                # --- End: for
             else:
                 bounds = None
 
@@ -2658,7 +2658,7 @@ class UMField:
 
             _cached_z_reference_coordinate[key] = dc
             copy = False
-        #--- End: def
+        # --- End: def
 
 #        self.field.insert_dim(dc, key=_axis['z'], copy=copy)
         self.implementation.set_dimension_coordinate(self.field, dc,
@@ -2666,9 +2666,9 @@ class UMField:
                                                      copy=copy)
 
         return dc
-    #--- End: def
+    # --- End: def
 
-#--- End: class
+# --- End: class
 
 #_stash2standard_name = {}
 #
@@ -2718,7 +2718,7 @@ class UMField:
 #        merge = False
 #        package_path = os.path.dirname(__file__)
 #        table = os.path.join(package_path, 'etc/STASH_to_CF.txt')
-#    #--- End: if
+#    # --- End: if
 #
 #    lines = csv.reader(open(table, 'r'),
 #                       delimiter=delimiter, skipinitialspace=True)
@@ -2732,7 +2732,7 @@ class UMField:
 #            raw_list.pop(0)
 #            continue
 #        break
-#    #--- End: for
+#    # --- End: for
 #
 #    # Convert to a dictionary which is keyed by (submodel, STASHcode)
 #    # tuples
@@ -2793,13 +2793,13 @@ class UMField:
 #        else:
 #            stash2sn[key] = line
 #
-#    #--- End: for
+#    # --- End: for
 #
 #    if not merge:
 #        _stash2standard_name.clear()
 #
 #    _stash2standard_name.update(stash2sn)
-##--- End: def
+## --- End: def
 
 # ---------------------------------------------------------------------
 # Create the STASH code to standard_name conversion dictionary
@@ -2949,7 +2949,7 @@ class UMRead(cfdm.read_write.IORead):
                              fmt=g['fmt'])
 
 
-#--- End: class
+# --- End: class
 
 '''
 Problems:

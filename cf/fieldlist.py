@@ -3,8 +3,9 @@ from copy import copy
 from .functions import (_DEPRECATION_ERROR,
                         _DEPRECATION_ERROR_KWARGS,
                         _DEPRECATION_ERROR_METHOD,
-                        _DEPRECATION_ERROR_DICT,
-                        )
+                        _DEPRECATION_ERROR_DICT)
+
+from .decorators import _deprecated_kwarg_check
 
 
 class FieldList(list):
@@ -109,7 +110,7 @@ class FieldList(list):
         for f in self:
             if f.equals(y):
                 return True
-        #--- End: for
+        # --- End: for
 
         return False
 
@@ -295,7 +296,7 @@ class FieldList(list):
         for i, f in enumerate(self[start:stop]):
             if f.equals(value):
                return i + start
-        #--- End: for
+        # --- End: for
 
         raise ValueError(
             "{0!r} is not in {1}".format(value, self.__class__.__name__))
@@ -314,7 +315,7 @@ class FieldList(list):
             if f.equals(value):
                 del self[i]
                 return
-        #--- End: for
+        # --- End: for
 
         raise ValueError(
             "{0}.remove(x): x not in {0}".format(self.__class__.__name__))
@@ -460,6 +461,7 @@ class FieldList(list):
         return type(self)([f.copy(data=data) for f in self])
 
 
+    @_deprecated_kwarg_check('traceback')
     def equals(self, other, rtol=None, atol=None, verbose=False,
                ignore_data_type=False, ignore_fill_value=False,
                ignore_properties=(), ignore_compression=False,
@@ -575,9 +577,6 @@ class FieldList(list):
     False
 
         '''
-        if traceback:
-            _DEPRECATION_ERROR_KWARGS(self, 'equals', traceback=True) # pragma: no cover
-
         if ignore:
             _DEPRECATION_ERROR_KWARGS(self, 'equals', {'ignore': ignore},
                                       "Use keyword 'ignore_properties' instead.") # pragma: no cover
@@ -655,7 +654,7 @@ class FieldList(list):
                             fl[0].__class__.__name__,
     			    len(fl), len(gl))) # pragma: no cover
                     return False
-            #--- End: for
+            # --- End: for
 
     	    # For each identity, check that there are matching pairs
             # of equal fields.
@@ -675,14 +674,14 @@ class FieldList(list):
                             found_match = True
                             del gl[i]
                             break
-                #--- End: for
+                # --- End: for
 
                 if not found_match:
                     if verbose:
                         print("{0}: No {1} equal to: {2!r}".format(
     			    self.__class__.__name__, g.__class__.__name__, f)) # pragma: no cover
                     return False
-        #--- End: if
+        # --- End: if
 
         # ------------------------------------------------------------
     	# Still here? Then the field lists are equal
@@ -833,7 +832,7 @@ class FieldList(list):
 #                                          kwargs={key: value},
 #                                          message=message,
 #                                          version='3.1.0') # pragma: no cover
-#        #--- End: if
+#        # --- End: if
 
         if identities:
             if identities[0] == 'or':
@@ -845,7 +844,7 @@ class FieldList(list):
                 _DEPRECATION_ERROR_ARG(self, 'select_by_construct',
                                        'and', message="Use 'OR=False' instead.",
                                        version='3.1.0') # pragma: no cover
-        #--- End: if
+        # --- End: if
 
         return type(self)(f for f in self
                           if f.match_by_construct(*identities, OR=OR, **conditions))
@@ -1296,7 +1295,7 @@ class FieldList(list):
                     _DEPRECATION_ERROR(
                         "The identity format {!r} has been deprecated at version 3.0.0. Try {!r} instead.".format(
                             i,  i.replace(':', '=', 1))) # pragma: no cover
-        #--- End: for
+        # --- End: for
 
         return self.select_by_identity(*identities)
 
@@ -1339,4 +1338,4 @@ class FieldList(list):
                                   "Use method 'fl.select_field' instead.") # pragma: no cover
 
 
-#--- End: class
+# --- End: class

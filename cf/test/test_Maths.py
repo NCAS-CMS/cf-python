@@ -54,13 +54,13 @@ class MathTest(unittest.TestCase):
 #                g = f. convolution_filter(window, 5, mode='reflect')
 #                self.assertTrue((g.array == convolve1d(f.array,
 #                                    get_window(window, 5, False))).all())
-#            #--- End: for
+#            # --- End: for
 #
 #            # Exponential window is a special case
 #            g = f.convolution_filter(('exponential', 2.5), 5, mode='reflect')
 #            self.assertTrue((g.array == convolve1d(f.array,
 #                    get_window(('exponential', None, 2.5), 5, False))).all())
-        #--- End: for
+        # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
 
@@ -97,7 +97,7 @@ class MathTest(unittest.TestCase):
 
             g = f.derivative('X', wrap=True)
             self.assertTrue((g.array == 2.0).all())
-        #--- End: for
+        # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
 
@@ -140,7 +140,7 @@ class MathTest(unittest.TestCase):
 
             rv = cf.relative_vorticity(u, v, one_sided_at_boundary=True)
             self.assertTrue((rv.array == 0.0).all())
-        #--- End: for
+        # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
 

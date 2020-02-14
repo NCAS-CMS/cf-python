@@ -553,7 +553,7 @@ class Properties:
                 return getattr(self, prop)
             except AttributeError as err:
                 return self._default(default, err)
-        #--- End: if
+        # --- End: if
 
         # Still here? Then get a non-special property
         return super().get_property(prop, default=default)
@@ -656,7 +656,7 @@ class Properties:
             else:
                 delattr(self, prop)
                 return out
-        #--- End: if
+        # --- End: if
 
         # Still here? Then del a non-special attribute
         return super().del_property(prop, default=default)
@@ -723,11 +723,11 @@ class Properties:
                 ok = self._matching_values(value0, value1)
                 if ok:
                     break
-            #--- End: for
+            # --- End: for
 
             if ok:
                 break
-        #--- End: for
+        # --- End: for
 
         return ok
 
@@ -792,7 +792,7 @@ class Properties:
             ok = self._matching_values(value0, ncvar)
             if ok:
                 break
-        #--- End: for
+        # --- End: for
 
         return ok
 
@@ -873,7 +873,7 @@ class Properties:
             elif x != 'and':
                 raise ValueError(
                     "Positional argument, if provided, must one of 'or', 'and'")
-        #--- End: if
+        # --- End: if
 
         if not properties:
             return True
@@ -894,7 +894,7 @@ class Properties:
                     break
             elif not ok:
                 break
-        #--- End: for
+        # --- End: for
 
         return ok
 
@@ -940,7 +940,7 @@ class Properties:
                 out.pop(prop, None)
             else:
                 out[prop] = value
-        #--- End: for
+        # --- End: for
 
         return out
 
@@ -1070,7 +1070,7 @@ class Properties:
         for i in identities:
            if isinstance(i, dict):
                 _DEPRECATION_ERROR_DICT("Use 'match_by_*' methods instead.") # pragma: no cover
-        #--- End: for
+        # --- End: for
 
         return self.match_by_identity(*identities)
 
@@ -1117,4 +1117,4 @@ class Properties:
                                   "Use method 'get_property' instead") # pragma: no cover
 
 
-#--- End: class
+# --- End: class

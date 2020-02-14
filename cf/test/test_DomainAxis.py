@@ -48,7 +48,7 @@ class DomainAxisTest(unittest.TestCase):
         _ = hash(x)
 
 
-#--- End: class
+# --- End: class
 
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.utcnow())

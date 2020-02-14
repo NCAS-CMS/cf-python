@@ -96,7 +96,7 @@ class aggregateTest(unittest.TestCase):
         cf.CHUNKSIZE(self.original_chunksize)
 
 
-#--- End: class
+# --- End: class
 
 if __name__ == "__main__":
     print('Run date:', datetime.datetime.now())

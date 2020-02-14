@@ -89,7 +89,7 @@ from .functions import (_DEPRECATION_ERROR,
 
 from .decorators import (_inplace_enabled,
                          _inplace_enabled_define_and_cleanup,
-                         _deprecation_error_i_kwarg)
+                         _deprecated_kwarg_check)
 
 _debug = False
 
@@ -319,7 +319,7 @@ class Field(mixin.PropertiesData,
             flags = getattr(source, 'Flags', None)
             if flags is not None:
                 self.Flags = flags.copy()
-        #--- End: if
+        # --- End: if
 
 
     def __getitem__(self, indices):
@@ -461,7 +461,7 @@ class Field(mixin.PropertiesData,
                         dice.append(indices[data_axes.index(axis)])
                     else:
                         dice.append(slice(None))
-                #--- End: for
+                # --- End: for
 
                 # Generally we do not apply an auxiliary mask to the
                 # metadata items, but for DSGs we do.
@@ -477,7 +477,7 @@ class Field(mixin.PropertiesData,
                                     break
 
                                 mask = mask.squeeze(i)
-                        #--- End: for
+                        # --- End: for
 
                         if iaxes is None:
                             item_mask = None
@@ -487,15 +487,15 @@ class Field(mixin.PropertiesData,
                             for i, axis in enumerate(construct_axes):
                                 if axis not in data_axes:
                                     mask1.inset_dimension(i)
-                            #--- End: for
+                            # --- End: for
 
                             item_mask.append(mask1)
-                    #--- End: for
+                    # --- End: for
 
                     if item_mask:
                         needs_slicing = True
                         dice = [auxiliary_mask[0], item_mask] + dice
-                #--- End: if
+                # --- End: if
 
                 if _debug:
                     print('    dice = ', dice) # pragma: no cover
@@ -504,8 +504,8 @@ class Field(mixin.PropertiesData,
                 if needs_slicing:
                     new.set_construct(construct[tuple(dice)], key=key,
                                       axes=construct_axes, copy=False)
-            #--- End: for
-        #--- End: if
+            # --- End: for
+        # --- End: if
 
         new.set_data(new_data, axes=data_axes, copy=False)
 
@@ -707,7 +707,7 @@ class Field(mixin.PropertiesData,
                         if getattr(dim, ctype, False):
                             identity = ctype
                             break
-                #--- End: if
+                # --- End: if
 
                 if identity is None and relaxed_identities:
                     identity = dim.identity(relaxed=True, default=None)
@@ -739,7 +739,7 @@ class Field(mixin.PropertiesData,
 #                        if getattr(dim, ctype, False):
 #                            identity = ctype
 #                            break
-#                #--- End: if
+#                # --- End: if
 
                 if identity:
                     if identity in id_to_axis:
@@ -787,11 +787,11 @@ class Field(mixin.PropertiesData,
                         axis_to_aux[axis]     = key
                         id_to_aux[identity]   = key
                         continue
-            #--- End: if
+            # --- End: if
 
             # Still here? Then this axis is undefined
             undefined_axes.append(axis)
-        #--- End: for
+        # --- End: for
 
         return {
                 'axis_to_id'    : axis_to_id,
@@ -844,7 +844,7 @@ class Field(mixin.PropertiesData,
         for n, m in zip(shape1[::-1], shape0[::-1]):
             if n != m and n != 1:
                 return False
-        #--- End: for
+        # --- End: for
 
         return True
 
@@ -950,7 +950,7 @@ class Field(mixin.PropertiesData,
                           for a in s['undefined_axes']),
                     tuple(other.constructs.domain_axis_identity(a)
                           for a in v['undefined_axes'])))
-        #--- End: if
+        # --- End: if
 
         # Find the axis names which are present in both fields
         matching_ids = set(s['id_to_axis']).intersection(v['id_to_axis'])
@@ -966,7 +966,7 @@ class Field(mixin.PropertiesData,
                 raise ValueError(
                     "Can't combine fields: {!r} axis defined by auxiliary in only 1 field".format(
                         standard_name)) ########~WRONG
-        #--- End: for
+        # --- End: for
 
         # ------------------------------------------------------------
         # For matching dimension coordinates check that they have
@@ -1144,7 +1144,7 @@ class Field(mixin.PropertiesData,
                     # data arrays and are both size 1 => this axis to
                     # be omitted from the result field
                     remove_size1_axes0.append(axis0)
-        #--- End: for
+        # --- End: for
         if _debug:
             print("1: s['size1_broadcast_axes'] =", s['size1_broadcast_axes']) # pragma: no cover
             print("1: v['size1_broadcast_axes'] =", v['size1_broadcast_axes']) # pragma: no cover
@@ -1201,7 +1201,7 @@ class Field(mixin.PropertiesData,
             else:
                 # Defined but unmatched axis
                 axes_unM.append(axis0)
-        #--- End: for
+        # --- End: for
         if _debug:
             print('2: axes_unD, axes_unM , axes0_M =', axes_unD , axes_unM , axes0_M) # pragma: no cover
 
@@ -1243,7 +1243,7 @@ class Field(mixin.PropertiesData,
             else:
                 # Defined but unmatched axis
                 axes_unM.append(axis1)
-        #--- End: for
+        # --- End: for
         if _debug:
             print('2: axes_unD , axes_unM , axes0_M =',axes_unD , axes_unM , axes0_M) # pragma: no cover
 
@@ -1273,7 +1273,7 @@ class Field(mixin.PropertiesData,
         for axis0, axis1 in axis0_to_axis1.items():
             if field1.direction(axis1) != field0.direction(axis0):
                 field1.flip(axis1, inplace=True)
-        #--- End: for
+        # --- End: for
 
         # ------------------------------------------------------------
         # 2f. Insert size 1 axes into the data array of field0 to
@@ -1304,7 +1304,7 @@ class Field(mixin.PropertiesData,
                 start_of_matched0   += 1
 
                 data_axes0 = field0.get_data_axes()
-        #--- End: if
+        # --- End: if
 
         # ------------------------------------------------------------
         # Insert size 1 axes into the data array of field1 to
@@ -1333,7 +1333,7 @@ class Field(mixin.PropertiesData,
                 start_of_unmatched1 += 1
 
                 data_axes1 = field1.get_data_axes()
-         #--- End: if
+         # --- End: if
 
         # ------------------------------------------------------------
         # Insert size 1 axes into the data array of field0 to
@@ -1356,7 +1356,7 @@ class Field(mixin.PropertiesData,
                 s['new_size1_axes'].append(axis0)
 
                 data_axes0 = field0.get_data_axes()
-        #--- End: if
+        # --- End: if
         if _debug:
             print('2: axis0_to_axis1 =', axis0_to_axis1) # pragma: no cover
             print('2: axis1_to_axis0 =', axis1_to_axis0) # pragma: no cover
@@ -1442,7 +1442,7 @@ class Field(mixin.PropertiesData,
 #5: field1.Items().keys() = ['aux0', 'aux1', 'aux2', 'c
 #                                 for axis in field1.Items.axes(key1)]
 #                        insert_domain_anc[key1] = axes0
-            #--- End: for
+            # --- End: for
 
             # Remove all field0 auxiliary coordinates and domain
             # ancillaries which span this axis
@@ -1458,8 +1458,8 @@ class Field(mixin.PropertiesData,
                     remove_items.add(key0)
                     remove_items.update(field0.domain_ancillaries(
                         *tuple(ref0.coordinate_conversion.domain_ancillaries().values())))
-            #--- End: for
-        #--- End: for
+            # --- End: for
+        # --- End: for
 
         # ------------------------------------------------------------
         # Consolidate auxiliary coordinates for matching axes
@@ -1536,11 +1536,11 @@ class Field(mixin.PropertiesData,
                     found_equivalent_auxiliary_coordinates = True
                     del auxs1[key1]
                     break
-            #--- End: for
+            # --- End: for
 
             if not found_equivalent_auxiliary_coordinates:
                 remove_items.add(key0)
-        #--- End: for
+        # --- End: for
 
         # ------------------------------------------------------------
         # Copy field1 auxiliary coordinates which do not span any
@@ -1553,7 +1553,7 @@ class Field(mixin.PropertiesData,
             axes1 = field1.constructs.data_axes()[key1]
             if set(axes1).isdisjoint(matching_axis1_to_axis0):
                 insert_aux[key1] = [axis1_to_axis0[axis1] for axis1 in axes1]
-        #--- End: for
+        # --- End: for
 
         # ------------------------------------------------------------
         # Insert field1 items into field0
@@ -1790,7 +1790,7 @@ class Field(mixin.PropertiesData,
                             if getattr(coord, ctype, False):
                                 identity = ctype
                                 break
-                    #--- End: if
+                    # --- End: if
 
                     if identity is None and relaxed_identities:
                         identity = coord.identity(relaxed=True, default=None)
@@ -1807,7 +1807,7 @@ class Field(mixin.PropertiesData,
 
                         if identity is None and relaxed_identities:
                             identity = coord.identity(relaxed=True, default=None)
-                #--- End: if
+                # --- End: if
 
                 if identity is None:
                     identity = i
@@ -1820,7 +1820,7 @@ class Field(mixin.PropertiesData,
                                      coord=coord,
                                      coord_type=coord_type,
                                      scalar=(axis not in data_axes))
-        #--- End: for
+        # --- End: for
 
         for identity, y in tuple(out1.items()):
             asdas = True
@@ -1832,7 +1832,7 @@ class Field(mixin.PropertiesData,
 
             if y.scalar and asdas:
                 del out1[identity]
-        #--- End: for
+        # --- End: for
 
         for identity, a in tuple(out0.items()):
             asdas = True
@@ -1844,7 +1844,7 @@ class Field(mixin.PropertiesData,
 
             if a.scalar and asdas:
                 del out0[identity]
-        #--- End: for
+        # --- End: for
 
         if verbose:
             print()
@@ -1916,7 +1916,7 @@ class Field(mixin.PropertiesData,
 #                    print(y.coord)
 #                    print(refs0,refs1)
 #                    pass
-        #--- End: for
+        # --- End: for
 
         # Make sure that both data arrays have the same number of
         # dimensions
@@ -1956,7 +1956,7 @@ class Field(mixin.PropertiesData,
                 field1.swapaxes(field1.get_data_axes().index(y.axis),
                                 field0.get_data_axes().index(a.axis),
                                 inplace=True)
-        #--- End: for
+        # --- End: for
 
         axis_map = {axis1: axis0 for axis1, axis0 in zip(field1.get_data_axes(),
                                                          field0.get_data_axes())}
@@ -2018,11 +2018,11 @@ class Field(mixin.PropertiesData,
                         n_equivalent_refs += 1
                         refs0.remove(ref0)
                         break
-            #--- End: for
+            # --- End: for
 
             if n_equivalent_refs != n_refs:
                 raise  ValueError("TODO")
-        #--- End: for
+        # --- End: for
 
         # Change the domain axis sizes in field0 so that they match
         # the broadcasted result data
@@ -2045,7 +2045,7 @@ class Field(mixin.PropertiesData,
             elif y.size > 1:
                 axis0 = axis_map[y.axis]
                 field0.domain_axis(axis0).set_size(y.size)
-        #--- End: for
+        # --- End: for
         if verbose:
             print()
             print(repr(field0))
@@ -2083,7 +2083,7 @@ class Field(mixin.PropertiesData,
 #                axes = [axis_map[axis1] for axis1 in field1.get_data_axes(key1)]
 #                key0 = field0.set_construct(c, axes=axes, copy=False)
 #                already_copied[key1] = key0
-#        #--- End: if
+#        # --- End: if
 
 #        for axis1, y in axes_to_replace_from_field1.items():
 #            axis0 = axis_map[axis1]
@@ -2101,14 +2101,14 @@ class Field(mixin.PropertiesData,
                 axes = [axis_map[axis1] for axis1 in c_axes]
                 key0 = field0.set_construct(c, axes=axes, copy=False)
                 already_copied[key] = key0
-        #--- End: if
+        # --- End: if
 
 #        for axis1, y in axes_to_replace_from_field1.items():
 #            axis0 = axis_map[axis1]
 #            for c in field1.coordinates.filter_by_axis('exact', axis1).values():
 #                key0 = field0.set_construct(c, axes=axis0, copy=False)
 #                already_copied[y.key] = key0
-#        #--- End: for
+#        # --- End: for
 
         # ------------------------------------------------------------
         # Copy over coordinate reference constructs from field1,
@@ -2120,7 +2120,7 @@ class Field(mixin.PropertiesData,
                 refs_to_add_from_field1.append(ref)
             elif axes.intersection(axes_to_replace_from_field1):
                 refs_to_add_from_field1.append(ref)
-        #--- End: for
+        # --- End: for
 
         if verbose:
             print()
@@ -2138,12 +2138,12 @@ class Field(mixin.PropertiesData,
                         axes = [axis_map[axis] for axis in field1.get_data_axes(key1)]
                         key0 = field0.set_construct(c, axes=axes, copy=False)
                         already_copied[key1] = key0
-                #--- End: if
+                # --- End: if
 
                 key0 = already_copied[key1]
                 if key0 is not None:
                     coords.append(key0)
-            #--- End: for
+            # --- End: for
 
             ref.clear_coordinates()
             ref.set_coordinates(coords)
@@ -2158,14 +2158,14 @@ class Field(mixin.PropertiesData,
                         axes = [axis_map[axis] for axis in field1.get_data_axes(key1)]
                         key0 = field0.set_construct(c, axes=axes, copy=False)
                         already_copied[key1] = key0
-                #--- End: if
+                # --- End: if
 
                 key0 = already_copied[key1]
                 ref.coordinate_conversion.set_domain_ancillary(term, key0)
 
             # Copy coordinate reference to field0
             field0.set_construct(ref, copy=False)
-        #--- End: for
+        # --- End: for
 
         # ------------------------------------------------------------
         # Remove misleading identities
@@ -2286,10 +2286,10 @@ class Field(mixin.PropertiesData,
                     continue
 
                 axis_map[axis] = self.domain_axis(axis, key=True, default=axis)
-            #--- End: for
+            # --- End: for
 
             cm.change_axes(axis_map, inplace=True)
-        #--- End: for
+        # --- End: for
 
     def _equivalent_coordinate_references(self, field1, key0, key1,
                                           atol=None, rtol=None,
@@ -2348,7 +2348,7 @@ class Field(mixin.PropertiesData,
                                                    axis_map=axis_map):
                 # add traceback TODO
                 return False
-        #--- End: for
+        # --- End: for
 
         return True
 
@@ -2434,7 +2434,7 @@ class Field(mixin.PropertiesData,
                                 axis_size))
 
                     axes2.append(dakey)
-                #--- End: for
+                # --- End: for
 
                 axes = axes2
 
@@ -2442,7 +2442,7 @@ class Field(mixin.PropertiesData,
                     raise ValueError(
                         "Can't insert {} {}: Mismatched number of axes ({} != {})".format(
                             item.identity(), item.__class__.__name__, len(set(axes)), ndim))
-        #--- End: if
+        # --- End: if
 
         return axes
 
@@ -2492,7 +2492,7 @@ class Field(mixin.PropertiesData,
                 raise ValueError(
                     "Can't assign: {0!r} axis defined by auxiliary in only 1 field".format(
                         identity))
-        #--- End: for
+        # --- End: for
 
         copied = False
 
@@ -2550,7 +2550,7 @@ class Field(mixin.PropertiesData,
                 axis1 = v['id_to_axis'][identity]
                 if axis1 in data_axes1:
                     transpose_axes1.append(axis1)
-        #--- End: for
+        # --- End: for
 
         if transpose_axes1 != data_axes1:
             if not copied:
@@ -2576,7 +2576,7 @@ class Field(mixin.PropertiesData,
                     expand_positions1.append(i)
             else:
                 expand_positions1.append(i)
-        #--- End: for
+        # --- End: for
 
         if expand_positions1:
             if not copied:
@@ -2586,7 +2586,7 @@ class Field(mixin.PropertiesData,
             for i in expand_positions1:
                 new_axis = other.set_construct(other._DomainAxis(1))
                 other.insert_dimension(new_axis, position=i, inplace=True)
-        #--- End: if
+        # --- End: if
 
         # ----------------------------------------------------------------
         # Make sure that each pair of matching axes has the same
@@ -2598,7 +2598,7 @@ class Field(mixin.PropertiesData,
             axis0 = s['id_to_axis'][identity]
             if other.direction(axis1) != self.direction(axis0):
                 flip_axes1.append(axis1)
-        #--- End: for
+        # --- End: for
 
         if flip_axes1:
             if not copied:
@@ -2658,7 +2658,7 @@ class Field(mixin.PropertiesData,
                     other, key0=refs0[0], key1=refs1[0], s=s, t=v,
                     verbose=_debug):
                 raise ValueError("TODO")
-        #--- End: for
+        # --- End: for
 
         return other
 
@@ -2691,7 +2691,7 @@ class Field(mixin.PropertiesData,
         if ndiff > 0 and set(other.shape[:ndiff]) == set((1,)):
             for i in range(ndiff):
                 other = other.squeeze(0)
-        #--- End: if
+        # --- End: if
 
 #        if not self._is_broadcastable(other.shape):
 #            raise ValueError(
@@ -2791,7 +2791,7 @@ class Field(mixin.PropertiesData,
                     return False
 
                 transpose_axes.append(axes1.index(axis1))
-        #--- End: if
+        # --- End: if
 
 
 #        transpose_axes = []
@@ -2814,7 +2814,7 @@ class Field(mixin.PropertiesData,
 #                        "{}: In other field, domain axis {!r} is not spanned by {!r}".format(
 #                            self.__class__.__name__, axis1, item1))
 #                return False
-#        #--- End: for
+#        # --- End: for
 
         copy1 = True
 
@@ -2950,7 +2950,7 @@ class Field(mixin.PropertiesData,
                     raise ValueError(
                         "Key {!r} must be specified for axes of {} field.".format(
                             key, name))
-            #--- End: for
+            # --- End: for
 
             if axes['X'] in (1, 0) and axes['Y'] in (0, 1):
                 # Axes specified by integer position in dimensions of
@@ -3010,7 +3010,7 @@ class Field(mixin.PropertiesData,
                         lon_found = True
                         x = aux
                         x_key = key
-                #--- End: if
+                # --- End: if
 
                 if aux.Units.islatitude:
                     if lat_found:
@@ -3021,7 +3021,7 @@ class Field(mixin.PropertiesData,
                         lat_found = True
                         y = aux
                         y_key = key
-            #--- End: for
+            # --- End: for
 
             if not lon_found or not lat_found:
                 raise ValueError('Both longitude and latitude ' +
@@ -3038,7 +3038,7 @@ class Field(mixin.PropertiesData,
                     raise ValueError('Axes of latitude do not match ' +
                                      'those specified for ' + name +
                                      ' field.')
-            #--- End: if
+            # --- End: if
             coords_2D = True
         else:
             coords_2D = False
@@ -3047,7 +3047,7 @@ class Field(mixin.PropertiesData,
                 raise ValueError('Neither the longitude nor latitude' +
                                  ' dimension coordinates of the ' + name +
                                  ' field can be of size 1.')
-        #--- End: if
+        # --- End: if
 
         coord_keys = [x_key, y_key]
         coords = [x, y]
@@ -3103,6 +3103,7 @@ class Field(mixin.PropertiesData,
         return axis_keys, coords
 
 
+    @_deprecated_kwarg_check('i')
     def _regrid_get_axis_indices(self, axis_keys, i=False):
         '''Get axis indices and their orders in rank of this field.
 
@@ -3123,10 +3124,6 @@ class Field(mixin.PropertiesData,
             A numpy array of the rank order of the axes.
 
         '''
-        if i:
-            _DEPRECATION_ERROR_KWARGS(self, '_regrid_get_axis_indices',
-                                      {'i': i}) # pragma: no cover
-
         # Get the positions of the axes
         axis_indices = []
         for axis_key in axis_keys:
@@ -3236,34 +3233,34 @@ class Field(mixin.PropertiesData,
 #                if not coord.hasbounds or not coord.contiguous(overlap=False):
 #                    method = 'bilinear'
 #                    break
-#            #--- End: for
+#            # --- End: for
 #            for coord in dst_coords:
 #                if not coord.hasbounds or not coord.contiguous(overlap=False):
 #                    method = 'bilinear'
 #                    break
-#            #--- End: for
+#            # --- End: for
 #            if ext_coords is not None:
 #                for coord in ext_coords:
 #                    if (not coord.hasbounds or
 #                        not coord.contiguous(overlap=False)):
 #                        method = 'bilinear'
 #                        break
-#                #--- End: for
-#            #--- End: if
+#                # --- End: for
+#            # --- End: if
         if method in conservative_regridding_methods:
             for coord in src_coords:
                 if not coord.has_bounds() or not coord.contiguous(overlap=False):
                     raise ValueError('Source coordinates must have' +
                                      ' contiguous, non-overlapping bounds' +
                                      ' for conservative regridding.')
-            #--- End: for
+            # --- End: for
 
             for coord in dst_coords:
                 if not coord.has_bounds() or not coord.contiguous(overlap=False):
                     raise ValueError('Destination coordinates must have' +
                                      ' contiguous, non-overlapping bounds' +
                                      ' for conservative regridding.')
-            #--- End: for
+            # --- End: for
 
             if ext_coords is not None:
                 for coord in ext_coords:
@@ -3272,9 +3269,9 @@ class Field(mixin.PropertiesData,
                         raise ValueError('Dimension coordinates must have' +
                                          ' contiguous, non-overlapping bounds' +
                                          ' for conservative regridding.')
-                #--- End: for
-            #--- End: if
-        #--- End: if
+                # --- End: for
+            # --- End: if
+        # --- End: if
 
 #        return method
 
@@ -3367,7 +3364,7 @@ class Field(mixin.PropertiesData,
 
                 else:
                     raise ValueError('Axis not found: ' + str(axis))
-        #--- End: if
+        # --- End: if
 
         # Section the data
         sections = self.data.section(regrid_axis_indices)
@@ -3415,7 +3412,7 @@ class Field(mixin.PropertiesData,
             for coord in coords_ext:
                 tmp.append(coord.size)
                 dst_mask = numpy_tile(dst_mask, tmp + [1]*dst_mask.ndim)
-        #--- End: if
+        # --- End: if
 
         return dst_mask
 
@@ -3624,9 +3621,9 @@ class Field(mixin.PropertiesData,
 
                         self.set_construct(DomainAncillary(source=value),
                                            key=key, axes=d_axes, copy=False)
-                #--- End: if
-            #--- End: for
-        #--- End: for
+                # --- End: if
+            # --- End: for
+        # --- End: for
 
 
     def _regrid_copy_coordinate_references(self, dst, dst_axis_keys):
@@ -3736,7 +3733,7 @@ class Field(mixin.PropertiesData,
                 axis_map = {}
                 for k_s, k_d in zip(src_axis_keys, dst_axis_keys):
                     axis_map[k_d] = k_s
-            #--- End: if
+            # --- End: if
 
             # Insert coordinates from dst into new field
             if dst_dict:
@@ -3782,7 +3779,7 @@ class Field(mixin.PropertiesData,
                     for aux in dst.auxiliary_coordinates.filter_by_axis(
                             'exact', dst_axis_key).values():
                         self.set_construct(aux, axes=[src_axis_key])
-                #--- End: for
+                # --- End: for
 
                 for aux_key, aux in dst.auxiliary_coordinates.filter_by_axis(
                         'exact', *dst_axis_keys).items():
@@ -3791,9 +3788,9 @@ class Field(mixin.PropertiesData,
                         self.set_construct(aux, axes=src_axis_keys)
                     else:
                         self.set_construct(aux, axes=src_axis_keys[::-1])
-                #--- End: for
-            #--- End: if
-        #--- End: if
+                # --- End: for
+            # --- End: if
+        # --- End: if
 
         # Copy names of dimensions from destination to source field
         if not dst_dict:
@@ -3801,7 +3798,7 @@ class Field(mixin.PropertiesData,
                 ncdim = dst.domain_axes[dst_axis_key].nc_get_dimension(None)
                 if ncdim is not None:
                     self.domain_axes[src_axis_key].nc_set_dimension(ncdim)
-        #--- End: if
+        # --- End: if
 
 
     # ----------------------------------------------------------------
@@ -3873,7 +3870,7 @@ class Field(mixin.PropertiesData,
             ncdim = domain_axis.nc_get_dimension(None)
             if ncdim is not None:
                 out[dim] = ncdim
-        #--- End: for
+        # --- End: for
 
         return out
 
@@ -4424,7 +4421,7 @@ class Field(mixin.PropertiesData,
 #            radius **= 2
 #            w *= radius
 #            w.override_units(radius.Units, inplace=True)
-#        #--- End: if
+#        # --- End: if
 
         w.set_property('standard_name', 'cell_area')
 
@@ -4499,11 +4496,11 @@ class Field(mixin.PropertiesData,
                     if r == _:
                         got = True
                         break
-                #--- End: for
+                # --- End: for
 
                 if not got:
                     radii.append(r)
-        #--- End: for
+        # --- End: for
 
         if len(radii) > 1:
             raise ValueError(
@@ -4738,7 +4735,7 @@ class Field(mixin.PropertiesData,
                 # it into the output field.
                 out.set_construct(construct, key=key,
                                   axes=construct_axes, copy=False)
-        #--- End: for
+        # --- End: for
 
 #        for role in ('d', 'a', 'm', 'f', 'c'):
 #            for key, item in field0.items(role=role).items():
@@ -4758,7 +4755,7 @@ class Field(mixin.PropertiesData,
 #                        # This field does not have this item
 #                        items = None
 #                        break
-#                #--- End: for
+#                # --- End: for
 #
 #                if not items:
 #                    # Not every field has this item, so remove it from the
@@ -4780,8 +4777,8 @@ class Field(mixin.PropertiesData,
 #                    # it into the output field.
 #                    out.insert_item(role, item, key=key, axes=item_axes,
 #                                    copy=False, replace=True)
-#            #--- End: for
-#        #--- End: for
+#            # --- End: for
+#        # --- End: for
 
         return out
 
@@ -4879,7 +4876,7 @@ class Field(mixin.PropertiesData,
                 elif dim.period() is None:
                     raise ValueError(
                         "A cyclic dimension coordinate must have a period")
-        #--- End: if
+        # --- End: if
 
         return old
 
@@ -5129,7 +5126,7 @@ class Field(mixin.PropertiesData,
             w.long_name = 'weight'
             w.comment   = 'Weights for {!r}'.format(self)
             return w
-        #--- End: def
+        # --- End: def
 
         def _measure_weights(self, measure, comp, weights_axes, auto=False):
             '''Cell measure weights
@@ -5174,7 +5171,7 @@ class Field(mixin.PropertiesData,
                     raise ValueError(
                         "Multiple weights specifications for {!r} axis".format(
                             self.constructs.domain_axis_identity(axis)))
-            #--- End: for
+            # --- End: for
 
             clm = clm.get_data().copy()
             if clm_axes != clm_axes0:
@@ -5189,7 +5186,7 @@ class Field(mixin.PropertiesData,
             weights_axes.update(clm_axes)
 
             return True
-        #--- End: def
+        # --- End: def
 
         def _linear_weights(self, axis, comp, weights_axes,
                             auto=False, measure=False):
@@ -5238,10 +5235,10 @@ class Field(mixin.PropertiesData,
                     comp[(da_key,)] = 'linear '+self.constructs.domain_axis_identity(da_key)
                 else:
                     comp[(da_key,)] = dim.cellsize
-            #--- End: if
+            # --- End: if
 
             weights_axes.add(da_key)
-        #--- End: def
+        # --- End: def
 
         def _area_weights_XY(self, comp, weights_axes, auto=False,
                              measure=False, radius=None):
@@ -5303,7 +5300,7 @@ class Field(mixin.PropertiesData,
                     raise ValueError(
                         "Multiple weights specifications for {!r} axis".format(
                             self.constructs.domain_axis_identity(axis)))
-            #--- End: if
+            # --- End: if
 
             if measure and radius is not None:
                 radius = self.radius(default=radius)
@@ -5332,7 +5329,7 @@ class Field(mixin.PropertiesData,
                     comp[(xaxis,)] = cells
 
                 weights_axes.add(xaxis)
-            #--- End: if
+            # --- End: if
 
             if measure or ycoord.size > 1:
                 if not ycoord.has_bounds():
@@ -5361,11 +5358,11 @@ class Field(mixin.PropertiesData,
                     else:
                         cells = ycoord.cellsize
                         comp[(yaxis,)] = cells
-                #--- End: if
+                # --- End: if
 
                 weights_axes.add(yaxis)
-            #--- End: if
-        #--- End: def
+            # --- End: if
+        # --- End: def
 
         def _field_weights(self, fields, comp, weights_axes):
             # ------------------------------------------------------------
@@ -5379,7 +5376,7 @@ class Field(mixin.PropertiesData,
                 if t['undefined_axes']:
                     if set(t.domain_axes.filter_by_size(gt(1))).intersection(t['undefined_axes']):
                         raise ValueError("345jn456jn TODO")
-                #--- End: if
+                # --- End: if
 
                 w = w.squeeze()
 
@@ -5448,7 +5445,7 @@ class Field(mixin.PropertiesData,
                     if not equivalent_refs:
                         raise ValueError(
                             "Input weights field has an incompatible coordinate reference")
-                #--- End: for
+                # --- End: for
 
                 axes0 = tuple([axis1_to_axis0[axis1] for axis1 in w.get_data_axes()])
 
@@ -5457,12 +5454,12 @@ class Field(mixin.PropertiesData,
                         raise ValueError(
                             "Multiple weights specified for {!r} axis".format(
                                 self.constructs.domain_axis_identity(axis0)))
-                #--- End: for
+                # --- End: for
 
                 comp[tuple(axes0)] = w.data
 
                 weights_axes.update(axes0)
-        #--- End: def
+        # --- End: def
 
         def _data_weights(self, data, comp, weights_axes):
             # ------------------------------------------------------------
@@ -5472,7 +5469,7 @@ class Field(mixin.PropertiesData,
                 if w.ndim > 0:
                     while w.shape[0] == 1:
                         w = w.squeeze(0)
-                #--- End: if
+                # --- End: if
 
                 if not self._is_broadcastable(w.shape):
                     raise ValueError("TODO")
@@ -5484,12 +5481,12 @@ class Field(mixin.PropertiesData,
                         raise ValueError(
                             "Multiple weights specified for {!r} axis".format(
                                 self.constructs.domain_axis_identity(axis0)))
-                #--- End: for
+                # --- End: for
 
                 comp[tuple(axes0)] = w
 
                 weights_axes.update(axes0)
-        #--- End: def
+        # --- End: def
 
         def _scale(w, scale):
             '''Scale the weights so that they are <= scale.
@@ -5510,7 +5507,7 @@ class Field(mixin.PropertiesData,
                 w = w / factor
 
             return w
-        #--- End: def
+        # --- End: def
 
         # ------------------------------------------------------------
         # Start of main code (weights)
@@ -5575,7 +5572,7 @@ class Field(mixin.PropertiesData,
             for key, c in self.domain_axes.items():
                 if c.get_size(0) > 1:
                     size_N_axes.append(key)
-            #--- End: for
+            # --- End: for
 
             missing = set(size_N_axes).difference(weights_axes)
             if missing:
@@ -5590,7 +5587,7 @@ class Field(mixin.PropertiesData,
                 for k in key:
                     if k not in data_axes:
                         raise ValueError("TODO {!r} domain axis".format(k))
-                #--- End: for
+                # --- End: for
 
 #                try:
 #                    key = [data_axes[iaxis] for iaxis in key]
@@ -5640,7 +5637,7 @@ class Field(mixin.PropertiesData,
                         cell_measures.append(w)
                     else:
                         axes.append(w)
-            #--- End: if
+            # --- End: if
 
             da_key_x = None
             da_key_y = None
@@ -5653,7 +5650,7 @@ class Field(mixin.PropertiesData,
                     da_key_x = da_key
                 elif da_key == yaxis:
                     da_key_y = da_key
-            #--- End: if
+            # --- End: if
 
             if da_key_x and da_key_y:
                 xdim = self.dimension_coordinate(xaxis, default=None)
@@ -5665,7 +5662,7 @@ class Field(mixin.PropertiesData,
                     ydim = ydim.clip(-90, 90, units=Units('degrees'))
                     ydim.sin(inplace=True)
                     comp[(yaxis,)] = ydim.cellsize
-            #--- End: if
+            # --- End: if
 
             # Field weights
             _field_weights(self, fields, comp, weights_axes)
@@ -5679,7 +5676,7 @@ class Field(mixin.PropertiesData,
                 if not _measure_weights(self, 'area', comp, weights_axes):
                     _area_weights_XY(self, comp, weights_axes,
                                      measure=measure, radius=radius)
-            #--- End: if
+            # --- End: if
 
             # 1-d linear weights from dimension coordinates
             for axis in axes:
@@ -5698,7 +5695,7 @@ class Field(mixin.PropertiesData,
                 if not _measure_weights(self, 'area', comp, weights_axes):
                     _area_weights_XY(self, comp, weights_axes,
                                      measure=measure, radius=radius)
-        #--- End: if
+        # --- End: if
 
         if scale is not None and not methods:
             # --------------------------------------------------------
@@ -5706,14 +5703,14 @@ class Field(mixin.PropertiesData,
             # --------------------------------------------------------
             for key, w in comp.items():
                 comp[key] = _scale(w, scale)
-        #--- End: if
+        # --- End: if
 
         for w in comp.values():
             mn = w.min()
             if mn <= 0:
                 raise ValueError(
                     "All weights must be positive. Got a weight of {}".format(mn))
-        #--- End: for
+        # --- End: for
 
         if components:
             # --------------------------------------------------------
@@ -5778,7 +5775,7 @@ class Field(mixin.PropertiesData,
                 if axis not in waxes:
                     waxes.insert(i, axis)
                     wdata.insert_dimension(i, inplace=True)
-            #--- End: for
+            # --- End: for
 
             return wdata
 
@@ -5798,7 +5795,7 @@ class Field(mixin.PropertiesData,
         for key in field.coordinate_references:
             if field.coordinate_reference_domain_axes(key).intersection(not_needed_axes):
                 field.del_coordinate_reference(key)
-        #--- End: for
+        # --- End: for
 
         for key in field.constructs.filter_by_axis('or', *not_needed_axes):
             field.del_construct(key)
@@ -6141,7 +6138,7 @@ class Field(mixin.PropertiesData,
              long_name = f.del_property('long_name', None)
              if long_name is not None:
                  f.set_property('bin_long_name', long_name)
-        #--- End: if
+        # --- End: if
 
         bin_units = bins.Units
         units = getattr(bin_units, 'units', None)
@@ -6579,7 +6576,7 @@ class Field(mixin.PropertiesData,
             if scale is not None:
                 raise ValueError(
                     "Can't set scale for 'integral' calculations.")
-        #--- End: if
+        # --- End: if
 
         axes           = []
         bin_indices    = []
@@ -7003,7 +7000,7 @@ class Field(mixin.PropertiesData,
                                               default=default)
                 out.append(ref)
                 continue
-        #--- End: for
+        # --- End: for
 
         return out
 
@@ -7123,7 +7120,7 @@ class Field(mixin.PropertiesData,
                     out.append(ref)
 
                 continue
-        #--- End: for
+        # --- End: for
 
         return out
 
@@ -7185,7 +7182,7 @@ class Field(mixin.PropertiesData,
             if value in field.coordinates:
                 identity = field.coordinates[value].identity(strict=strict)
                 ckeys.append(self.coordinate(identity, key=True, default=None))
-        #--- End: for
+        # --- End: for
 
         ref.clear_coordinates()
         ref.set_coordinates(ckeys)
@@ -7199,7 +7196,7 @@ class Field(mixin.PropertiesData,
                 dakeys[term] = self.domain_ancillary(identity, key=True, default=None)
             else:
                 dakeys[term] = None
-        #--- End: for
+        # --- End: for
 
         ref.coordinate_conversion.clear_domain_ancillaries()
         ref.coordinate_conversion.set_domain_ancillaries(dakeys)
@@ -7207,7 +7204,7 @@ class Field(mixin.PropertiesData,
         return self.set_construct(ref, key=key, copy=False)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     def collapse(self, method, axes=None, squeeze=False, mtol=1,
                  weights=None, ddof=1, a=None, inplace=False,
                  group=None, regroup=False, within_days=None,
@@ -8036,7 +8033,7 @@ class Field(mixin.PropertiesData,
 
             For example:
 
-            >>> groups = f.collapse('time: mean', group=10, regroup=True)x
+            >>> groups = f.collapse('time: mean', group=10, regroup=True)
             >>> g = f.collapse('time: mean', group=groups)
 
             is equivalent to:
@@ -8691,10 +8688,10 @@ class Field(mixin.PropertiesData,
                         raise ValueError("Can't find the collapse axis identified by {!r}".format(axis))
 
                     axes2.append(a)
-            #--- End: for
+            # --- End: for
 
             all_axes.append(axes2)
-        #--- End: for
+        # --- End: for
 
         if verbose:
             print('    all_methods, all_axes, all_within, all_over =',
@@ -8788,7 +8785,7 @@ class Field(mixin.PropertiesData,
 #                        d = f.item(axes, role='d')
 #                        if d and not d.has_bounds():
 #                            d.get_bounds(create=True, insert=True, cellsize=0)
-                #--- End: if
+                # --- End: if
 
                 continue
 
@@ -8867,7 +8864,7 @@ class Field(mixin.PropertiesData,
                                           radius=radius)
                     if not g_weights:
                         g_weights = None
-                #--- End: if
+                # --- End: if
 
                 axis = collapse_axes.key()
 
@@ -8977,7 +8974,7 @@ class Field(mixin.PropertiesData,
 
                 if d_weights:
                     d_kwargs['weights'] = d_weights
-            #--- End: if
+            # --- End: if
 
             if method in _collapse_ddof_methods:
                 d_kwargs['ddof'] = ddof
@@ -9063,7 +9060,7 @@ class Field(mixin.PropertiesData,
                         aux.set_data(d.data, copy=False)
                         if d.has_bounds():
                             aux.bounds.set_data(d.bounds.data, copy=False)
-                #--- End: for
+                # --- End: for
 
                 # Reset the axis size
                 f.domain_axes[axis].set_size(1)
@@ -9097,7 +9094,7 @@ class Field(mixin.PropertiesData,
 
                 dim.set_data(data, copy=False)
                 dim.set_bounds(bounds, copy=False)
-            #--- End: for
+            # --- End: for
 
             # --------------------------------------------------------
             # Update the cell methods
@@ -9109,7 +9106,7 @@ class Field(mixin.PropertiesData,
                                                 within=within,
                                                 over=over,
                                                 verbose=verbose)
-        #--- End: for
+        # --- End: for
 
         # ------------------------------------------------------------
         # Return the collapsed field (or the classification array)
@@ -9175,7 +9172,7 @@ class Field(mixin.PropertiesData,
             n += 1
 
             return classification, n, lower, upper
-        #--- End: def
+        # --- End: def
 
         def _time_interval(classification, n, coord, interval, lower,
                            upper, lower_limit, upper_limit, group_by,
@@ -9227,7 +9224,7 @@ class Field(mixin.PropertiesData,
                     classification, n, lower, upper = _ddddd(
                         classification, n, lower, upper, False,
                         coord, group_by_coords, extra_condition)
-            #--- End: if
+            # --- End: if
 
             return classification, n
 
@@ -9285,7 +9282,7 @@ class Field(mixin.PropertiesData,
                     classification, n, lower, upper = _ddddd(
                         classification, n, lower, upper, False,
                         coord, group_by_coords, extra_condition)
-            #--- End: if
+            # --- End: if
 
             return classification, n
 
@@ -9321,7 +9318,7 @@ class Field(mixin.PropertiesData,
                     classification, n, lower, upper = _ddddd(
                         classification, n, lower, upper, False,
                         coord, group_by_coords, extra_condition)
-            #--- End: if
+            # --- End: if
 
             return classification, n
 
@@ -9383,10 +9380,10 @@ class Field(mixin.PropertiesData,
 #                    for i in range(1, max(1, int(float(len(x))/group_span))):
 #                        n += 1
 #                        classification[x[i*group_span:(i+1)*group_span]] = n
-#                #--- End: if
+#                # --- End: if
 
 #                n += 1
-            #--- End: for
+            # --- End: for
 
             return classification, n
 
@@ -9445,7 +9442,7 @@ class Field(mixin.PropertiesData,
                     classification[start:i+1] = n
                     start = i + 1
                     n += 1
-            #--- End: for
+            # --- End: for
 
             return classification
 
@@ -9506,7 +9503,7 @@ class Field(mixin.PropertiesData,
                     raise ValueError(
                         "Can't group by {} when coordinates have units {!r}".format(
                             TimeDuration.__class__.__name__, coord.Units))
-            #--- End: if
+            # --- End: if
 
             return (lower, upper, lower_limit, upper_limit)
 
@@ -9555,7 +9552,7 @@ class Field(mixin.PropertiesData,
                     indices[iaxes.index(iaxis)] = index
                     weights[iaxes] = value[tuple(indices)]
                     break
-            #--- End: for
+            # --- End: for
 
             return weights
 
@@ -9629,7 +9626,7 @@ class Field(mixin.PropertiesData,
                     start = end
                     end  += group
                     n += 1
-                #--- End: while
+                # --- End: while
 
                 if group_span is True or group_span is None:
                     # Use the group definition as the group span
@@ -9729,7 +9726,7 @@ class Field(mixin.PropertiesData,
                     raise ValueError(
                         "Can't collapse: Can't set group_span=True when group={!r}".format(
                             group))
-        #--- End: if
+        # --- End: if
 
         if classification is None:
             if over == 'days':
@@ -9758,7 +9755,7 @@ class Field(mixin.PropertiesData,
                     if over_days.Units.istime and over_days < Data(1, 'day'):
                         raise ValueError(
                             "Bad parameter value: over_days={!r}".format(over_days))
-                #--- End: if
+                # --- End: if
 
                 coordinate = 'min'
 
@@ -9861,7 +9858,7 @@ class Field(mixin.PropertiesData,
                         raise ValueError(
                             "over_years is not a whole number of calendar years: {!r}".format(
                                 over_years))
-                #--- End: if
+                # --- End: if
 
                 coordinate = 'min'
 
@@ -9933,7 +9930,7 @@ class Field(mixin.PropertiesData,
                                                        selection=over_years,
                                                        parameter='over_years',
                                                        extra_condition=mdHMS)
-                #--- End: for
+                # --- End: for
 
             elif within == 'days':
                 # ----------------------------------------------------
@@ -9960,7 +9957,7 @@ class Field(mixin.PropertiesData,
                         raise ValueError(
                             "Can't collapse: within_days={!r} is not an exact factor of 1 day".format(
                                 within_days))
-                #--- End: if
+                # --- End: if
 
                 if isinstance(within_days, TimeDuration):
                     # ------------------------------------------------
@@ -10073,7 +10070,7 @@ class Field(mixin.PropertiesData,
             elif within is not None:
                 raise ValueError(
                     "Can't collapse: Bad 'within' syntax: {!r}".format(within))
-        #--- End: if
+        # --- End: if
 
         if classification is not None:
             #---------------------------------------------------------
@@ -10102,7 +10099,7 @@ class Field(mixin.PropertiesData,
 #                            ignore_n -= 1
 #                            continue
 #
-##--- End: if
+## --- End: if
 
                 # ----------------------------------------------------
                 # Ignore groups that don't meet the specified criteria
@@ -10146,7 +10143,7 @@ class Field(mixin.PropertiesData,
                                 classification[index] = ignore_n
                                 ignore_n -= 1
                                 continue
-                    #--- End: if
+                    # --- End: if
 
                     if group_contiguous and coord is not None and coord.has_bounds():
                         if not coord.bounds.contiguous(overlap=(group_contiguous == 2)):
@@ -10155,7 +10152,7 @@ class Field(mixin.PropertiesData,
                             classification[index] = ignore_n
                             ignore_n -= 1
                             continue
-                #--- End: if
+                # --- End: if
 
                 if regroup:
                     continue
@@ -10173,7 +10170,7 @@ class Field(mixin.PropertiesData,
                                       squeeze=False, inplace=True,
                                       _create_zero_size_cell_bounds=True,
                                       _update_cell_methods=False))
-            #--- End: for
+            # --- End: for
 
             if regroup:
                 # return the numpy array
@@ -10203,7 +10200,7 @@ class Field(mixin.PropertiesData,
                         c.set_bounds(c.create_bounds())
                 except:
                     pass
-            #--- End: for
+            # --- End: for
 
             # --------------------------------------------------------
             # Sort the list of collapsed fields
@@ -10220,7 +10217,7 @@ class Field(mixin.PropertiesData,
                 f = self.concatenate(fl, axis=iaxis, _preserve=False)
             except ValueError as error:
                 raise ValueError("Can't collapse: {0}".format(error))
-        #--- End: if
+        # --- End: if
 
         if squeeze and f.domain_axes[axis].get_size() == 1:
             # Remove a totally collapsed axis from the field's
@@ -10309,7 +10306,7 @@ class Field(mixin.PropertiesData,
                             lastcm.over = over
 
                         cell_method = None
-        #--- End: if
+        # --- End: if
 
         if cell_method is not None:
             self.set_construct(cell_method)
@@ -10318,6 +10315,7 @@ class Field(mixin.PropertiesData,
             print('    Modified cell methods =', self.cell_methods.ordered()) # pragma: no cover
 
 
+    @_deprecated_kwarg_check('axes')
     def direction(self, identity, axes=None, **kwargs):
         '''Whether or not a domain axis is increasing.
 
@@ -10367,9 +10365,6 @@ class Field(mixin.PropertiesData,
     False
 
         '''
-        if axes:
-            _DEPRECATION_ERROR_KWARGS(self, 'direction', axes=True) # pragma: no cover
-
         if kwargs:
             _DEPRECATION_ERROR_KWARGS(self, 'direction', kwargs) # pragma: no cover
 
@@ -10380,7 +10375,7 @@ class Field(mixin.PropertiesData,
         for key, coord in self.dimension_coordinates.items():
             if axis == self.get_data_axes(key)[0]:
                 return coord.direction()
-        #--- End: for
+        # --- End: for
 
         return True
 
@@ -10409,7 +10404,7 @@ class Field(mixin.PropertiesData,
             if not direction:
                 axis = self.get_data_axes(key)[0]
                 out[axis] = dc.direction()
-        #--- End: for
+        # --- End: for
 
         return out
 
@@ -10729,7 +10724,7 @@ class Field(mixin.PropertiesData,
                 (axes, key, construct, value))
 
             unique_axes.update(sorted_axes)
-        #--- End: for
+        # --- End: for
 
         if len(unique_axes) < n_axes:
             raise ValueError(
@@ -10971,14 +10966,14 @@ class Field(mixin.PropertiesData,
                             else:
                                 contains = False
                                 break
-                        #--- End: if
+                        # --- End: if
 
                         v = Data.asdata(v)
                         if v.Units:
                             v.Units = construct.Units
 
                         points2.append(v.datum())
-                #--- End: if
+                # --- End: if
 
                 if contains:
                     # The coordinates have bounds and the condition is
@@ -11007,8 +11002,8 @@ class Field(mixin.PropertiesData,
 
                     if delete:
                         ind = [numpy_delete(ind_1d, delete) for ind_1d in ind]
-                #--- End: if
-            #--- End: if
+                # --- End: if
+            # --- End: if
 
             if ind is not None:
                 mask_shape = [None] * self.ndim
@@ -11050,7 +11045,7 @@ class Field(mixin.PropertiesData,
                     mask_shape[position] = size
                     masked_subspace_size *= size
                     ind[i] -= start
-                #--- End: for
+                # --- End: for
 
                 create_mask = ind.shape[1] < masked_subspace_size
             else:
@@ -11072,7 +11067,7 @@ class Field(mixin.PropertiesData,
                 if _debug:
                     print('    mask_shape  =', mask_shape) # pragma: no cover
                     print('    mask.shape  =', mask.shape) # pragma: no cover
-        #--- End: for
+        # --- End: for
 
         indices = tuple(parse_indices(self.shape, tuple(indices)))
 
@@ -11180,7 +11175,7 @@ class Field(mixin.PropertiesData,
                         data = data.override_units(units, inplace=False)
                     else:
                         data.override_units(units, inplace=True)
-            #--- End: if
+            # --- End: if
 
             super(cfdm.Field, self).set_data(data, axes=None, copy=copy)
             return
@@ -11217,7 +11212,7 @@ class Field(mixin.PropertiesData,
                     raise ValueError(
                         "Can't set data: Data shape {} differs from shape implied by axes {}: {}".format(
                             data.shape, axes, axes_shape))
-            #--- End: for
+            # --- End: for
 
         elif self.get_data_axes(default=None) is None:
             # --------------------------------------------------------
@@ -11264,7 +11259,7 @@ class Field(mixin.PropertiesData,
 #                    raise ValueError(
 #                        "Can't insert data: Ambiguous data shape: {}. {} domain axes have size {}. Consider setting the axes parameter.".format(
 #                            data.shape, len(da), n))
-#            #--- End: for
+#            # --- End: for
 
             domain_axes = self.domain_axes
             for axis, size in zip(axes, data.shape):
@@ -11277,8 +11272,8 @@ class Field(mixin.PropertiesData,
 #                except ValueError:
 #                    raise ValueError(
 #"Can't insert data: Incompatible size for axis {!r}: {}".format(axis, size))
-            #--- End: for
-        #--- End: if
+            # --- End: for
+        # --- End: if
 
         if not data.Units:
             units = getattr(self, 'Units', None)
@@ -11288,7 +11283,7 @@ class Field(mixin.PropertiesData,
                     data = data.override_units(units, inplace=False)
                 else:
                     data.override_units(units, inplace=True)
-        #--- End: if
+        # --- End: if
 
         super(cfdm.Field, self).set_data(data, axes=axes, copy=copy)
 
@@ -11473,7 +11468,7 @@ class Field(mixin.PropertiesData,
 #                                          kwargs={key: value},
 #                                          message=message,
 #                                          version='3.1.0') # pragma: no cover
-#        #--- End: if
+#        # --- End: if
 
         if identities:
             if identities[0] == 'or':
@@ -11485,7 +11480,7 @@ class Field(mixin.PropertiesData,
                 _DEPRECATION_ERROR_ARG(self, 'match_by_construct',
                                        'and', message="Use 'OR=False' instead.",
                                        version='3.1.0') # pragma: no cover
-        #--- End: if
+        # --- End: if
 
 
         if not identities and not conditions:
@@ -11512,7 +11507,7 @@ class Field(mixin.PropertiesData,
                             for axis in cm.get_axes(())]
                     if axes:
                         cm.set_axes(axes)
-            #--- End: if
+            # --- End: if
 
             if not cms:
                 filtered = constructs(identity)
@@ -11526,7 +11521,7 @@ class Field(mixin.PropertiesData,
                                 return False
 
                             n -= 1
-                    #--- End: if
+                    # --- End: if
 
                     n += 1
                 elif not OR:
@@ -11560,10 +11555,10 @@ class Field(mixin.PropertiesData,
                     if not ok:
                         n -= 1
                         break
-                #--- End: for
+                # --- End: for
 
                 n += 1
-        #--- End: for
+        # --- End: for
 
         if conditions:
             for identity, value in conditions.items():
@@ -11571,7 +11566,7 @@ class Field(mixin.PropertiesData,
                     n += 1
                 elif not OR:
                     return False
-        #--- End: if
+        # --- End: if
 
         if OR:
             return bool(n)
@@ -11632,12 +11627,12 @@ class Field(mixin.PropertiesData,
             ok = (rank == n_domain_axes)
             if ok:
                 return True
-        #--- End: for
+        # --- End: for
 
         return False
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def convolution_filter(self, weights, axis=None, mode=None,
                            cval=None, origin=0, update_bounds=True,
@@ -11867,7 +11862,7 @@ class Field(mixin.PropertiesData,
                 mode = 'wrap'
             else:
                 mode = 'constant'
-        #--- End: if
+        # --- End: if
 
         # Get the axis index
         axis_index = self.get_data_axes().index(axis_key)
@@ -11893,7 +11888,7 @@ class Field(mixin.PropertiesData,
             if masked or (mode == 'constant' and numpy_isnan(cval)):
                 with numpy_errstate(invalid='ignore'):
                     output_array = numpy_ma_masked_invalid(output_array)
-            #--- End: if
+            # --- End: if
 
             sections[k] = Data(output_array, units=self.Units)
 
@@ -12173,7 +12168,7 @@ class Field(mixin.PropertiesData,
                         bounds = bounds.array
                         data = data.varray
                         data[...] = (bounds[:, 0] + bounds[:, 1])*0.5
-            #--- End: if
+            # --- End: if
 
             # Update the cell methods
             cell_method = CellMethod(axes=[axis_key], method='sum')
@@ -12516,7 +12511,7 @@ class Field(mixin.PropertiesData,
                             value[i] = data_name
                         else:
                             value[i] = str(data)
-                    #--- End: for
+                    # --- End: for
 
                     value = ', '.join(value)
                     value = "["+value+"]"
@@ -12571,7 +12566,7 @@ class Field(mixin.PropertiesData,
                     domain_ancillaries))
 
             out.append("{}.set_construct(c)".format(name))
-        #--- End: for
+        # --- End: for
 
         if string:
             out[0] = indent+out[0]
@@ -12580,7 +12575,7 @@ class Field(mixin.PropertiesData,
         return out
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def flip(self, axes=None, inplace=False, i=False, **kwargs):
         '''Flip (reverse the direction of) axes of the field.
@@ -12651,12 +12646,12 @@ class Field(mixin.PropertiesData,
             if construct_flip_axes:
                 iaxes = [construct_axes.index(axis) for axis in construct_flip_axes]
                 construct.flip(iaxes, inplace=True)
-        #--- End: for
+        # --- End: for
 
         return f
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def anchor(self, axis, value, inplace=False, dry_run=False,
                i=False, **kwargs):
@@ -12838,7 +12833,7 @@ class Field(mixin.PropertiesData,
 #            dim = f.dimension_coordinates.filter_by_axis('and', axis).value()
             #dim = f.item(axis)
             n = ((value - dim.data[0]) / period).floor()
-        #--- End: if
+        # --- End: if
 
         if dry_run:
             return  {'axis': axis, 'roll': shift, 'nperiod': n*period}
@@ -12849,7 +12844,7 @@ class Field(mixin.PropertiesData,
             bounds = dim.get_bounds(None)
             if bounds is not None:
                 bounds += np
-        #--- End: if
+        # --- End: if
 
         return f
 
@@ -12980,7 +12975,7 @@ class Field(mixin.PropertiesData,
                 self.cyclic(key, iscyclic=False)
                 if verbose: print(1)
                 return False
-        #--- End: if
+        # --- End: if
 
         bounds = dim.get_bounds(None)
         if bounds is None:
@@ -13061,7 +13056,7 @@ class Field(mixin.PropertiesData,
         return self.domain_axes.filter_by_key(*out)
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     def squeeze(self, axes=None, inplace=False, i=False, **kwargs):
         '''Remove size 1 axes from the data.
 
@@ -13195,7 +13190,7 @@ class Field(mixin.PropertiesData,
         return f
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     def transpose(self, axes=None, constructs=False, inplace=False,
                   items=True, i=False, **kwargs):
         '''Permute the axes of the data array.
@@ -13332,7 +13327,7 @@ class Field(mixin.PropertiesData,
 #        return f
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def unsqueeze(self, inplace=False, i=False, axes=None, **kwargs):
         '''Insert size 1 axes into the data array.
@@ -14075,7 +14070,7 @@ class Field(mixin.PropertiesData,
             for cr_key, cr in self.coordinate_references.items():
                 if cr.match(identity):
                     c._set_construct(cr, key=cr_key, copy=False)
-        #--- End: if
+        # --- End: if
 
         if key:
             return c.key(default=default)
@@ -14564,7 +14559,7 @@ class Field(mixin.PropertiesData,
                 out[key] = value
             else:
                 del out[key]
-        #--- End: for
+        # --- End: for
 
         return out
 
@@ -14784,7 +14779,7 @@ class Field(mixin.PropertiesData,
             if set_axes:
                 axes = self._set_construct_parse_axes(construct, axes,
                                                       allow_scalar=True)
-        #--- End: if
+        # --- End: if
 
         if construct_type == 'dimension_coordinate':
             for dim, dim_axes in self.constructs.filter_by_type(construct_type).data_axes().items():
@@ -14793,7 +14788,7 @@ class Field(mixin.PropertiesData,
 
                 if dim_axes == tuple(axes):
                     self.del_construct(dim, default=None)
-        #--- End: if
+        # --- End: if
 
         out = super().set_construct(construct, key=key, axes=axes, copy=copy)
 
@@ -14812,7 +14807,7 @@ class Field(mixin.PropertiesData,
         elif construct_type == 'coordinate_reference':
             for ckey in self.coordinates:
                 self._conform_coordinate_references(ckey)
-        #--- End: if
+        # --- End: if
 
         # Return the construct key
         return out
@@ -15132,7 +15127,7 @@ class Field(mixin.PropertiesData,
                     c.set_bounds(Bounds(data=bounds), copy=False)
 
                 out.set_construct(c, axes=c_axes, key=key, copy=False)
-        #--- End: if
+        # --- End: if
 
         # TODO
         other_axes = set([axis
@@ -15146,7 +15141,7 @@ class Field(mixin.PropertiesData,
             for key, c in self.constructs.filter_by_axis('subset', *other_axes).items():
                 c_axes = self.get_data_axes(key)
                 out.set_construct(c, axes=c_axes, key=key)
-        #--- End: if
+        # --- End: if
 
         # ------------------------------------------------------------
         # Copy coordinate reference constructs to the output field
@@ -15157,12 +15152,12 @@ class Field(mixin.PropertiesData,
             for c_key in ref.coordinates():
                 if c_key not in out.coordinates:
                     ref.del_coordinate(c_key)
-            #--- End:for
+            # --- End:for
 
             for term, da_key in ref.coordinate_conversion.domain_ancillaries().items():
                 if da_key not in out.domain_ancillaries:
                     ref.coordinate_conversion.set_domain_ancillary(term, None)
-            #--- End:for
+            # --- End:for
 
             out.set_construct(ref, key=cr_key, copy=False)
 
@@ -15360,7 +15355,7 @@ class Field(mixin.PropertiesData,
             shape1 = getattr(construct, 'shape', None)
             if shape0 != shape1:
                 raise ValueError('TODO')
-        #--- End: if
+        # --- End: if
 
         self.set_construct(construct, key=key, axes=axes, copy=copy)
 
@@ -15576,7 +15571,7 @@ class Field(mixin.PropertiesData,
 
                         if sn is not None:
                             break
-                    #--- End: for
+                    # --- End: for
 
                     if sn is None:
                         f.del_construct(key)
@@ -15584,11 +15579,11 @@ class Field(mixin.PropertiesData,
                         break
                     else:
                         cm_axes[i] = sn
-                #--- End: for
+                # --- End: for
 
                 if set_axes:
                     cm.set_axes(cm_axes)
-        #--- End: for
+        # --- End: for
 
         # Flatten the constructs that span all of the flattened axes,
         # or all of the flattened axes all bar some which have size 1.
@@ -15623,7 +15618,7 @@ class Field(mixin.PropertiesData,
         return f
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def roll(self, axis, shift, inplace=False, i=False, **kwargs):
         '''Roll the field along a cyclic axis.
@@ -15700,12 +15695,12 @@ class Field(mixin.PropertiesData,
             axes = f.get_data_axes(key, default=())
             if axis in axes:
                 construct.roll(axes.index(axis), shift, inplace=True)
-        #--- End: for
+        # --- End: for
 
         return f
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     def where(self, condition, x=None, y=None, inplace=False,
               construct=None, i=False, _debug=False, item=None,
               **item_options):
@@ -15999,11 +15994,11 @@ class Field(mixin.PropertiesData,
                 for i, axis in enumerate(data_axes):
                     if axis not in construct_data_axes:
                         construct.insert_dimension(i, inplace=True)
-            #--- End: if
+            # --- End: if
 #TODO some error checking, here
 
             condition = condition.evaluate(construct).get_data()
-        #--- End: if
+        # --- End: if
 
         if x is not None and isinstance(x, self_class):
             x = self._conform_for_assignment(x)
@@ -16315,7 +16310,7 @@ class Field(mixin.PropertiesData,
         '''
         return FieldList(_section(self, axes, data=False, stop=stop, **kwargs))
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def regrids(self, dst, method, src_cyclic=None, dst_cyclic=None,
                 use_src_mask=True, use_dst_mask=False,
@@ -16722,7 +16717,7 @@ class Field(mixin.PropertiesData,
             else:
                 dst_coord_order = dst._regrid_get_coord_order(dst_axis_keys,
                                                               dst_coord_keys)
-        #--- End: if
+        # --- End: if
 
         # Get the shape of each section after it has been regridded.
         shape = self._regrid_get_section_shape(dst_axis_sizes,
@@ -16813,7 +16808,7 @@ class Field(mixin.PropertiesData,
                                            ignore_degenerate=ignore_degenerate)
                     unmasked_grid_created = True
                     old_mask = None
-            #--- End: if
+            # --- End: if
 
             # Fill the source and destination fields (the destination
             # field gets filled with a fill value, the source field
@@ -16850,7 +16845,7 @@ class Field(mixin.PropertiesData,
             sections[k] = \
                 Data(regridded_data.transpose(src_order).reshape(shape),
                      units=self.Units)
-        #--- End: for
+        # --- End: for
 
         # Construct new data from regridded sdst_dictections
         new_data = Data.reconstruct_sectioned_data(sections)
@@ -16913,7 +16908,7 @@ class Field(mixin.PropertiesData,
         return f
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def regridc(self, dst, axes, method, use_src_mask=True,
                 use_dst_mask=False, fracfield=False, axis_order=None,
@@ -17168,7 +17163,7 @@ class Field(mixin.PropertiesData,
                 except KeyError:
                     raise ValueError('Axis ' + str(axis) +
                                      ' not specified in dst.')
-            #--- End: for
+            # --- End: for
             dst_axis_keys = None
         else:
             dst_axis_keys, dst_coords = \
@@ -17184,7 +17179,7 @@ class Field(mixin.PropertiesData,
                 raise ValueError(
                     "Units of source and destination domains are not equivalent: {!r}, {!r}".format(
                         src_coord.Units, dst_coord.Units))
-        #--- End: if
+        # --- End: if
 
         # Get the axis indices and their order for the source field
         src_axis_indices, src_order = \
@@ -17334,7 +17329,7 @@ class Field(mixin.PropertiesData,
                                                ignore_degenerate=ignore_degenerate)
                         unmasked_grid_created = True
                         old_mask = None
-                #--- End: if
+                # --- End: if
 
                 # Fill the source and destination fields
                 f._regrid_fill_fields(src_data, srcfield, dstfield)
@@ -17367,9 +17362,9 @@ class Field(mixin.PropertiesData,
                 subsections[k2] = Data(
                     regridded_data.squeeze().transpose(src_order_ext).reshape(shape),
                     units=f.Units)
-            #--- End: for
+            # --- End: for
             sections[k] = Data.reconstruct_sectioned_data(subsections)
-        #--- End: for
+        # --- End: for
 
         # Construct new data from regridded sections
         new_data = Data.reconstruct_sectioned_data(sections)
@@ -17379,7 +17374,7 @@ class Field(mixin.PropertiesData,
 #            f = self
 #        else:
 #            f = self.copy(_omit_Data=True)
-#        #--- End:if
+#        # --- End:if
 
         ## Update ancillary variables of new field
         #f._conform_ancillary_variables(src_axis_keys, keep_size_1=False)
@@ -17418,7 +17413,7 @@ class Field(mixin.PropertiesData,
         return f
 
 
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def derivative(self, axis, wrap=None, one_sided_at_boundary=False,
                    inplace=False, i=False, cyclic=None):
@@ -17511,7 +17506,7 @@ class Field(mixin.PropertiesData,
         if not cyclic and not one_sided_at_boundary:
             with numpy_errstate(invalid='ignore'):
                 d = numpy_ma_masked_invalid(d)
-        #--- End: if
+        # --- End: if
 
         # Reshape the finite difference of the axis for broadcasting
         shape = [1] * self.ndim
@@ -17573,7 +17568,7 @@ class Field(mixin.PropertiesData,
                     _DEPRECATION_ERROR(
                         "The identity format {!r} has been deprecated at version 3.0.0. Try {!r} instead.".format(
                             i,  i.replace(':', '=', 1))) # pragma: no cover
-        #--- End: for
+        # --- End: for
 
         return self.auxiliary_coordinates(*identities)
 
@@ -17632,7 +17627,7 @@ class Field(mixin.PropertiesData,
                     _DEPRECATION_ERROR(
                         "The identity format {!r} has been deprecated at version 3.0.0. Try {!r} instead.".format(
                             i,  i.replace(':', '=', 1))) # pragma: no cover
-        #--- End: for
+        # --- End: for
 
         return self.coordinates.filter_by_identity(*identities)
 
@@ -17674,7 +17669,7 @@ class Field(mixin.PropertiesData,
                     _DEPRECATION_ERROR(
                         "The identity format {!r} has been deprecated at version 3.0.0. Try {!r} instead.".format(
                             i,  i.replace(':', '=', 1))) # pragma: no cover
-        #--- End: for
+        # --- End: for
 
         return self.dimension_coordinates.filter_by_identity(*identities)
 
@@ -17714,7 +17709,7 @@ class Field(mixin.PropertiesData,
                     _DEPRECATION_ERROR(
                         "The identity format {!r} has been deprecated at version 3.0.0. Try {!r} instead.".format(
                             i,  i.replace(':', '=', 1))) # pragma: no cover
-        #--- End: for
+        # --- End: for
 
         return self.domain_ancillaries.filter_by_identity(*identities)
 
@@ -17755,7 +17750,7 @@ class Field(mixin.PropertiesData,
                     _DEPRECATION_ERROR(
                         "The identity format {!r} has been deprecated at version 3.0.0. Try {!r} instead.".format(
                             i,  i.replace(':', '=', 1))) # pragma: no cover
-        #--- End: for
+        # --- End: for
 
         return self.field_ancillaries.filter_by_identity(*identities)
 
@@ -17786,7 +17781,7 @@ class Field(mixin.PropertiesData,
                 _DEPRECATION_ERROR_DICT() # pragma: no cover
             elif isinstance(i, (list, tuple, set)):
                 _DEPRECATION_ERROR_SEQUENCE(i) # pragma: no cover
-        #--- End: for
+        # --- End: for
 
         return self.constructs.filter_by_data().filter_by_identity(*identities)
 
@@ -17843,7 +17838,7 @@ class Field(mixin.PropertiesData,
                     _DEPRECATION_ERROR(
                         "The identity format {!r} has been deprecated at version 3.0.0. Try {!r} instead.".format(
                             i,  i.replace(':', '=', 1))) # pragma: no cover
-        #--- End: for
+        # --- End: for
 
         return self.cell_measures(*identities)
 
@@ -17872,7 +17867,7 @@ class Field(mixin.PropertiesData,
                 _DEPRECATION_ERROR_DICT() # pragma: no cover
             elif isinstance(i, (list, tuple, set)):
                 _DEPRECATION_ERROR_SEQUENCE(i) # pragma: no cover
-        #--- End: for
+        # --- End: for
 
         return self.coordinate_references(*identities)
 
@@ -18224,4 +18219,4 @@ class Field(mixin.PropertiesData,
             "Use methods 'DomainAxis.nc_is_unlimited', and 'DomainAxis.nc_set_unlimited' instead.") # pragma: no cover
 
 
-#--- End: class
+# --- End: class

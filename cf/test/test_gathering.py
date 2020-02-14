@@ -17,7 +17,7 @@ import cf
 #            if i in list_values:
 #                array[index] = i
 #        return array
-#    #--- End: def
+#    # --- End: def
 #
 #    n = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
 #
@@ -346,7 +346,7 @@ class DSGTest(unittest.TestCase):
                 [1, 4, 5])).all(), message)
 
 
-#--- End: class
+# --- End: class
 
 
 if __name__ == '__main__':

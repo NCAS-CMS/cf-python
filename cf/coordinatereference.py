@@ -11,12 +11,11 @@ from . import Datum
 from .data.data import Data
 
 from .functions import (_DEPRECATION_ERROR_METHOD,
-                        _DEPRECATION_ERROR_ATTRIBUTE,
-                        )
+                        _DEPRECATION_ERROR_ATTRIBUTE)
 
 from .decorators import (_inplace_enabled,
                          _inplace_enabled_define_and_cleanup,
-                         _deprecation_error_i_kwarg)
+                         _deprecated_kwarg_check)
 
 
 _units = {}
@@ -81,9 +80,8 @@ class CoordinateReference(cfdm.CoordinateReference):
     def __new__(cls, *args, **kwargs):
         instance = super().__new__(cls)
         instance._CoordinateConversion = CoordinateConversion
-        instance._Datum                = Datum
+        instance._Datum = Datum
         return instance
-
 
     def __getitem__(self, key):
         '''Return a parameter value of the datum or the coordinate conversion.
@@ -105,20 +103,21 @@ class CoordinateReference(cfdm.CoordinateReference):
                 out.append(self.datum.get_parameter(key))
             except ValueError:
                 pass
-        #--- End: try
+        # --- End: try
 
         if len(out) == 1:
             return out[0]
 
         if not out:
             raise KeyError(
-                "No {!r} parameter exists in the coordinate conversion nor the datum".format(
-                    key))
+                "No {!r} parameter exists in the coordinate conversion nor "
+                "the datum".format(key)
+            )
 
         raise KeyError(
-            "{!r} parameter exists in both the coordinate conversion and the datum".format(
-                key))
-
+            "{!r} parameter exists in both the coordinate conversion and "
+            "the datum".format(key)
+        )
 
     def __hash__(self):
         '''x.__hash__() <==> hash(x)
@@ -128,11 +127,10 @@ class CoordinateReference(cfdm.CoordinateReference):
 #            raise ValueError("Can't hash a formula_terms %s" %
 #                             self.__class__.__name__)
 
-        h = sorted(self.items())# TODO
+        h = sorted(self.items())  # TODO
         h.append(self.identity())
 
         return hash(tuple(h))
-
 
     def __repr__(self):
         '''Called by the `repr` built-in function.
@@ -142,7 +140,6 @@ class CoordinateReference(cfdm.CoordinateReference):
         '''
         return super().__repr__().replace('<', '<CF ', 1)
 
-
     # ----------------------------------------------------------------
     # Private methods
     # ----------------------------------------------------------------
@@ -150,14 +147,13 @@ class CoordinateReference(cfdm.CoordinateReference):
         '''TODO
         '''
         if isinstance(value0, Query):
-            return bool(value0.evaluate(value1)) # TODO vectors
+            return bool(value0.evaluate(value1))  # TODO vectors
 
         try:
             # re.compile object
             return value0.search(value1)
         except (AttributeError, TypeError):
             return self._equals(value1, value0)
-
 
     # ----------------------------------------------------------------
     # Private attributes
@@ -171,9 +167,9 @@ class CoordinateReference(cfdm.CoordinateReference):
         '''
         return cr_coordinates.get(self.identity(), ())
 
-
     def has_bounds(self):
-        '''Returns False since coordinate reference constructs do not have cell bounds.
+        '''Returns False since coordinate reference constructs do not have
+    cell bounds.
 
     **Examples:**
 
@@ -186,7 +182,7 @@ class CoordinateReference(cfdm.CoordinateReference):
 
 #    def canonical(self, field=None):
 #        '''
-#'''
+#        '''
 #        ref = self.copy()
 #
 #        for term, value in ref.parameters.iteritems():
@@ -211,10 +207,9 @@ class CoordinateReference(cfdm.CoordinateReference):
 #                    if not canonical_units.equivalent(units):
 #                        raise ValueError("xasdddddddddddddd 87236768 TODO")
 #                    value.Units = canonical_units
-#        #--- End: for
+#        # --- End: for
 #
 #        return ref
-
 
     @classmethod
     def canonical_units(cls, term):
@@ -241,7 +236,6 @@ class CoordinateReference(cfdm.CoordinateReference):
         '''
         return cr_canonical_units.get(term, None)
 
-
     def close(self):
         '''Close all files referenced by coordinate conversion term values.
 
@@ -255,7 +249,6 @@ class CoordinateReference(cfdm.CoordinateReference):
 
         '''
         pass
-
 
     @classmethod
     def default_value(cls, term):
@@ -281,7 +274,7 @@ class CoordinateReference(cfdm.CoordinateReference):
         '''
         return cr_default_values.get(term, 0.0)
 
-
+    @_deprecated_kwarg_check('traceback')
     def equivalent(self, other, atol=None, rtol=None, verbose=False,
                    traceback=False):
         '''True if two coordinate references are logically equal, False
@@ -314,9 +307,6 @@ class CoordinateReference(cfdm.CoordinateReference):
     TODO
 
         '''
-        if traceback:
-            _DEPRECATION_ERROR_KWRAGS(self, 'equivalent', traceback=True) # pragma: no cover
-
         if self is other:
             return True
 
@@ -325,7 +315,9 @@ class CoordinateReference(cfdm.CoordinateReference):
             if verbose:
                 print("{}: Different types ({!r} != {!r})".format(
                     self.__class__.__name__,
-                    self.__class__.__name__, other.__class__.__name__)) # pragma: no cover
+                    self.__class__.__name__,
+                    other.__class__.__name__)
+                )  # pragma: no cover
             return False
 
         # ------------------------------------------------------------
@@ -334,7 +326,10 @@ class CoordinateReference(cfdm.CoordinateReference):
         if self.identity() != other.identity():
             if verbose:
                 print("{}: Different identities ({!r} != {!r})".format(
-                    self.__class__.__name__, self.identity(), other.identity())) # pragma: no cover
+                    self.__class__.__name__,
+                    self.identity(),
+                    other.identity()
+                ))  # pragma: no cover
             return False
 
         # ------------------------------------------------------------
@@ -347,7 +342,8 @@ class CoordinateReference(cfdm.CoordinateReference):
         if set(ancillaries0) != set(ancillaries1):
             if verbose:
                 print("{}: Non-equivalent domain ancillary terms".format(
-                    self.__class__.__name__)) # pragma: no cover
+                    self.__class__.__name__)
+                )  # pragma: no cover
             return False
 
         # Check that if one term is None then so is the other
@@ -355,10 +351,11 @@ class CoordinateReference(cfdm.CoordinateReference):
             if (value0 is None) != (ancillaries1[term] is None):
                 if verbose:
                     print(
-                        "{}: Non-equivalent domain ancillary-valued term {!r}".format(
-                            self.__class__.__name__,  term)) # pragma: no cover
+                        "{}: Non-equivalent domain ancillary-valued "
+                        "term {!r}".format(self.__class__.__name__,  term)
+                    )  # pragma: no cover
                 return False
-        #--- End: for
+        # --- End: for
 
         # ------------------------------------------------------------
         # Check the parameter terms and their values
@@ -387,14 +384,17 @@ class CoordinateReference(cfdm.CoordinateReference):
 
             if value1 is None:
                 # Term is unset in other
-               value1 = other.default_value(term)
+                value1 = other.default_value(term)
 
             if not allclose(value0, value1, rtol=rtol, atol=atol):
                 if verbose:
-                    print("{}: Non-equivalent coordinate conversion parameter-valued term {!r}".format(
-                        self.__class__.__name__,  term)) # pragma: no cover
+                    print(
+                        "{}: Non-equivalent coordinate conversion parameter-"
+                        "valued term {!r}".format(
+                            self.__class__.__name__, term)
+                    )  # pragma: no cover
                 return False
-        #--- End: for
+        # --- End: for
 
         parameters0 = self.datum.parameters()
         parameters1 = other.datum.parameters()
@@ -413,18 +413,19 @@ class CoordinateReference(cfdm.CoordinateReference):
 
             if value1 is None:
                 # Term is unset in other
-               value1 = other.default_value(term)
+                value1 = other.default_value(term)
 
             if not allclose(value0, value1, rtol=rtol, atol=atol):
                 if verbose:
-                    print("{}: Non-equivalent datum parameter-valued term {!r}".format(
-                        self.__class__.__name__,  term)) # pragma: no cover
+                    print(
+                        "{}: Non-equivalent datum parameter-valued "
+                        "term {!r}".format(self.__class__.__name__, term)
+                    )  # pragma: no cover
                 return False
-        #--- End: for
+        # --- End: for
 
-       # Still here?
+        # Still here?
         return True
-
 
     def get(self, key, default=None):
         '''Return a parameter value of the datum or the coordinate conversion.
@@ -450,7 +451,6 @@ class CoordinateReference(cfdm.CoordinateReference):
         except KeyError:
             return default
 
-
     def inspect(self):
         '''Inspect the attributes.
 
@@ -461,8 +461,7 @@ class CoordinateReference(cfdm.CoordinateReference):
         `None`
 
         '''
-        print(cf_inspect(self)) # pragma: no cover
-
+        print(cf_inspect(self))  # pragma: no cover
 
     def match_by_identity(self, *identities):
         '''Determine whether or not one of the identities matches.
@@ -505,14 +504,13 @@ class CoordinateReference(cfdm.CoordinateReference):
                 ok = self._matching_values(value0, value1)
                 if ok:
                     break
-            #--- End: for
+            # --- End: for
 
             if ok:
                 break
-        #--- End: for
+        # --- End: for
 
         return ok
-
 
     def match(self, *identities):
         '''Alias for `cf.CoordinateReference.match_by_identity`
@@ -520,15 +518,14 @@ class CoordinateReference(cfdm.CoordinateReference):
         '''
         return self.match_by_identity(*identities)
 
-
-    @_deprecation_error_i_kwarg
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def change_identifiers(self, identity_map, coordinate=True,
                            ancillary=True, strict=False,
                            inplace=False, i=False):
         '''Change the TODO
 
-    ntifier is not in the provided mapping then it is
+    If an identifier is not in the provided mapping then it is
     set to `None` and thus effectively removed from the coordinate
     reference.
 
@@ -555,8 +552,9 @@ class CoordinateReference(cfdm.CoordinateReference):
     ...                             b='ncvar:bk')
     >>> r.coordinates
     {'atmosphere_hybrid_height_coordinate'}
-    >>> r.change_coord_identitiers({'atmosphere_hybrid_height_coordinate', 'dim1',
-    ...                             'ncvar:ak': 'aux0'})
+    >>> r.change_coord_identitiers({
+    ...     'atmosphere_hybrid_height_coordinate', 'dim1', 'ncvar:ak': 'aux0'
+    ... })
     >>> r.coordinates
     {'dim1', 'aux0'}
 
@@ -572,11 +570,14 @@ class CoordinateReference(cfdm.CoordinateReference):
             default = None
 
         if ancillary:
-            for term, identifier in r.coordinate_conversion.domain_ancillaries().items():
+            for term, identifier in (
+                    r.coordinate_conversion.domain_ancillaries().items()):
                 if not strict:
                     default = identifier
-                r.coordinate_conversion.set_domain_ancillary(term, identity_map.get(identifier, default), copy=False)
-        #--- End: if
+                r.coordinate_conversion.set_domain_ancillary(
+                    term, identity_map.get(identifier, default), copy=False
+                )
+        # --- End: if
 
         if coordinate:
             for identifier in r.coordinates():
@@ -585,12 +586,11 @@ class CoordinateReference(cfdm.CoordinateReference):
 
                 r.del_coordinate(identifier)
                 r.set_coordinate(identity_map.get(identifier, default))
-        #--- End: if
+        # --- End: if
 
         r.del_coordinate(None, None)
 
         return r
-
 
     def structural_signature(self, rtol=None, atol=None):
         '''TODO
@@ -601,7 +601,6 @@ class CoordinateReference(cfdm.CoordinateReference):
         '''
         s = [self.identity()]
         append = s.append
-
 
         for component in ('datum', 'coordinate_conversion'):
             x = getattr(self, component)
@@ -639,19 +638,24 @@ class CoordinateReference(cfdm.CoordinateReference):
                     if not ok:
                         _units[str(cu)] = cu
 
-                if allclose(value, self.default_value(term), rtol=rtol, atol=atol):
+                if allclose(
+                        value, self.default_value(term), rtol=rtol, atol=atol):
                     # Do not add a default value to the structural signature
                     continue
 
-                append((component+':'+term, value, cu.formatted(definition=True)))
-        #--- End: for
+                append((
+                    component + ':' + term, value,
+                    cu.formatted(definition=True)
+                ))
+        # --- End: for
 
         # Add the domain ancillary-valued terms which have been set
-        append(tuple(sorted([term for term, value in self.coordinate_conversion.domain_ancillaries().items()
-                             if value is not None])))
+        terms = self.coordinate_conversion.domain_ancillaries()
+        append(tuple(sorted(
+            [term for term, value in terms.items() if value is not None]
+        )))
 
         return tuple(s)
-
 
     # ----------------------------------------------------------------
     # Deprecated attributes and methods
@@ -664,9 +668,12 @@ class CoordinateReference(cfdm.CoordinateReference):
     'coordinate_conversion.del_domain_ancillary' instead.
 
         '''
-        _DEPRECATION_ERROR_METHOD(self, '__getitem__',
-                                  "Use method 'datum.del_parameter', 'coordinate_conversion.del_parameter' or 'coordinate_conversion.del_domain_ancillary' instead.") # pragma: no cover
-
+        _DEPRECATION_ERROR_METHOD(
+            self, '__getitem__',
+            "Use method 'datum.del_parameter', "
+            "'coordinate_conversion.del_parameter' or "
+            "'coordinate_conversion.del_domain_ancillary' instead."
+        )  # pragma: no cover
 
     @property
     def conversion(self):
@@ -676,8 +683,8 @@ class CoordinateReference(cfdm.CoordinateReference):
         '''
         _DEPRECATION_ERROR_ATTRIBUTE(
             self, 'conversion',
-            "Use attribute 'coordinate_conversion' instead.") # pragma: no cover
-
+            "Use attribute 'coordinate_conversion' instead."
+        )  # pragma: no cover
 
     @property
     def hasbounds(self):
@@ -687,9 +694,8 @@ class CoordinateReference(cfdm.CoordinateReference):
 
         '''
         _DEPRECATION_ERROR_ATTRIBUTE(
-            self, 'hasbounds',
-            "Use method 'has_bounds' instead.") # pragma: no cover
-
+            self, 'hasbounds', "Use method 'has_bounds' instead."
+        )  # pragma: no cover
 
     @property
     def ancillaries(self):
@@ -699,8 +705,9 @@ class CoordinateReference(cfdm.CoordinateReference):
         '''
         _DEPRECATION_ERROR_ATTRIBUTE(
             self, 'ancillaries',
-            "Use the 'coordinate_conversion.domain_ancillaries' method instead.") # pragma: no cover
-
+            "Use the 'coordinate_conversion.domain_ancillaries' method "
+            "instead."
+        )  # pragma: no cover
 
     @property
     def parameters(self):
@@ -711,8 +718,9 @@ class CoordinateReference(cfdm.CoordinateReference):
         '''
         _DEPRECATION_ERROR_ATTRIBUTE(
             self, 'parameters',
-            "Use methods 'coordinate_conversion.parameters' and 'datum.parameters' instead.") # pragma: no cover
-
+            "Use methods 'coordinate_conversion.parameters' and "
+            "'datum.parameters' instead."
+        )  # pragma: no cover
 
     def clear(self, coordinates=True, parameters=True, ancillaries=True):
         '''Deprecated at version 3.0.0. Use methods
@@ -721,23 +729,24 @@ class CoordinateReference(cfdm.CoordinateReference):
         '''
         _DEPRECATION_ERROR_METHOD(
             self, 'parameters',
-            "Use methods 'coordinate_conversion.parameters' and 'datum.parameters' instead.") # pragma: no cover
-
+            "Use methods 'coordinate_conversion.parameters' and "
+            "'datum.parameters' instead."
+        )  # pragma: no cover
 
     def name(self, default=None, identity=False, ncvar=False):
         '''Return a name.
 
     Deprecated at version 3.0.0. Use the 'identity' method instead.
         '''
-        _DEPRECATION_ERROR_METHOD(self, 'name', "Use the 'identity' method instead.") # pragma: no cover
-
+        _DEPRECATION_ERROR_METHOD(
+            self, 'name', "Use the 'identity' method instead."
+        )  # pragma: no cover
 
     def all_identifiers(self):
         '''Deprecated at version 3.0.0.
 
         '''
-        _DEPRECATION_ERROR_METHOD(self, 'all_identifiers') # pragma: no cover
-
+        _DEPRECATION_ERROR_METHOD(self, 'all_identifiers')  # pragma: no cover
 
     def set_term(self, term_type, term, value):
         '''Deprecated at version 3.0.0. Use method 'datum.set_parameter',
@@ -747,8 +756,10 @@ class CoordinateReference(cfdm.CoordinateReference):
         '''
         _DEPRECATION_ERROR_METHOD(
             self, 'set_term',
-            "Use method 'datum.set_parameter', 'coordinate_conversion.set_parameter' or 'coordinate_conversion.set_domain_ancillary' instead.") # pragma: no cover
+            "Use method 'datum.set_parameter', "
+            "'coordinate_conversion.set_parameter' or "
+            "'coordinate_conversion.set_domain_ancillary' instead."
+        )  # pragma: no cover
 
 
-#--- End: class
-
+# --- End: class
