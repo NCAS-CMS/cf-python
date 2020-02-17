@@ -669,9 +669,9 @@ class _Meta:
                 if not equal and not exist:
                     ex_all = list(properties)
                 else:  # None is Falsy (evaluates to False) & "short-circuits"
-                    ex_all = dict([(p, properties[p]) for p in properties
-                                   if (equal and p not in eq) or
-                                   (exist and p not in ex)])
+                    ex_all = [p for p in properties
+                              if (equal and p not in eq) or
+                              (exist and p not in ex)]
             # --- End: if
 
             self.properties = tuple(sorted(ex_all + ex +
