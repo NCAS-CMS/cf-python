@@ -195,6 +195,8 @@ def read(files, external=None, verbose=False, warnings=False,
             ``'cell_measure'``          Cell measure constructs
             ==========================  ===============================
 
+            This parameter replaces the deprecated *field* parameter.
+
             *Parameter example:*
               To create field constructs from auxiliary coordinate
               constructs: ``extra='auxiliary_coordinate'`` or
@@ -283,10 +285,13 @@ def read(files, external=None, verbose=False, warnings=False,
             lead to infinite recursion if a symbolic link points to a
             parent directory of itself.
 
+            This parameter replaces the deprecated *follow_symlinks*
+            parameter.
+
         um: `dict`, optional
             For Met Office (UK) PP files and Met Office (UK) fields
             files only, provide extra decoding instructions. This
-            option is ignored for input files which are not PP or
+            option is ignored for input files which are notPP or
             fields files. In most cases, how to decode a file is
             inferrable from the file's contents, but if not then each
             key/value pair in the dictionary sets a decoding option as
@@ -343,6 +348,9 @@ def read(files, external=None, verbose=False, warnings=False,
 
             If format is specified as ``'PP'`` then the word size and
             byte order default to ``4`` and ``'big'`` respectively.
+
+            This parameter replaces the deprecated *umversion* and
+            *height_at_top_of_model* parameters.
 
             *Parameter example:*
               To specify that the input files are 32-bit, big-endian

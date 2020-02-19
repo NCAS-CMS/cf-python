@@ -4,10 +4,13 @@ version 3.2.0
 
 **not yet released**
 
-*This is the first release for CF-1.8*
-
 * New methods: `cf.Data.compressed`, `cf.Data.diff`
 * New function: `cf.implementation`
+* Implemented simple geometries for CF-1.8.
+* Implemented string data-types for CF-1.8.
+* Fixed bug that prevented writing to ``'NETCDF3_64BIT_OFFSET'`` and
+  ``'NETCDF3_64BIT_DATA'`` format files
+  (https://github.com/NCAS-CMS/cfdm/issues/9).
 
 version 3.1.0
 -------------

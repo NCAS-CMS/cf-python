@@ -8,7 +8,7 @@ import numpy
 
 import cf
 
-class FieldTest(unittest.TestCase):
+class Field_collapseTest(unittest.TestCase):
     def setUp(self):
         self.filename2 = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                       'test_file2.nc')
@@ -24,7 +24,7 @@ class FieldTest(unittest.TestCase):
 #        self.test_only = ['test_COLLAPSE']
 #        self.test_only = ['test_COLLAPSE_GROUP_OPTIONS']
 
-    def test_COLLAPSE_CLIMATOLOGICAL_TIME(self):
+    def test_Field_collapse_CLIMATOLOGICAL_TIME(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -136,7 +136,7 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(g.shape == (8, 4, 5))
     #--- End: def
 
-    def test_COLLAPSE(self):
+    def test_Field_collapse(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -259,7 +259,7 @@ class FieldTest(unittest.TestCase):
 #                                "{}!={}, bound={}, group={}".format(bound.day, group.offset.day, bound, group))
     #--- End: def
 
-    def test_COLLAPSE_weights(self):
+    def test_Field_collapse_WEIGHTS(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -275,7 +275,7 @@ class FieldTest(unittest.TestCase):
             print(g)
     #--- End: def
 
-    def test_COLLAPSE_groups(self):
+    def test_Field_collapse_GROUPS(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 

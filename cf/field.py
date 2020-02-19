@@ -5133,6 +5133,7 @@ class Field(mixin.PropertiesData,
             w.set_data(data, copy=False)
             w.long_name = 'weight'
             w.comment   = 'Weights for {!r}'.format(self)
+            
             return w
         #--- End: def
 
@@ -5248,6 +5249,8 @@ class Field(mixin.PropertiesData,
             #--- End: if
 
             weights_axes.add(da_key)
+
+            return True
         #--- End: def
 
         def _area_weights_XY(self, comp, weights_axes, auto=False,
@@ -5341,7 +5344,7 @@ class Field(mixin.PropertiesData,
                     comp[(xaxis,)] = cells
 
                 weights_axes.add(xaxis)
-                out.add(xaxis)
+#                out.add(xaxis)
             #--- End: if
 
             if measure or ycoord.size > 1:
@@ -5374,10 +5377,10 @@ class Field(mixin.PropertiesData,
                 #--- End: if
 
                 weights_axes.add(yaxis)
-                out.add(yaxis)
+#                out.add(yaxis)
             #--- End: if
 
-            return out  #True
+            return True #out
         #--- End: def
 
         def _field_weights(self, fields, comp, weights_axes):
@@ -5475,6 +5478,9 @@ class Field(mixin.PropertiesData,
                 comp[tuple(axes0)] = w.data
 
                 weights_axes.update(axes0)
+            #--- End: for
+            
+            return True
         #--- End: def
 
         def _data_weights(self, data, comp, weights_axes):
@@ -5502,6 +5508,9 @@ class Field(mixin.PropertiesData,
                 comp[tuple(axes0)] = w
 
                 weights_axes.update(axes0)
+            #--- End: for
+        
+            return True
         #--- End: def
 
         def _scale(w, scale):
@@ -5526,8 +5535,20 @@ class Field(mixin.PropertiesData,
         #--- End: def
 
         def _interior_angle(data_lambda, data_phi):
-            '''Find the interior angle between each adjacent pair nodes in the
-    last dimension.
+            '''Find the interior angle between each adjacent pair of geometry
+    nodes defined on a sphere.
+
+    The interior angle of two points on the sphere is calculated with
+    a special case of the Vincenty formula
+    (https://en.wikipedia.org/wiki/Great-circle_distance):
+
+    \Delta \sigma =\arctan {
+        \frac {\sqrt {\left(\cos \phi _{2}\sin(\Delta \lambda )\right)^{2} +
+               \left(\cos \phi _{1}\sin \phi _{2} -
+                     \sin \phi _{1}\cos \phi _{2}\cos(\Delta \lambda )\right)^{2}}}
+              {\sin \phi _{1}\sin \phi _{2} +
+               \cos \phi _{1}\cos \phi _{2}\cos(\Delta \lambda )}
+              }
 
     :Parameters:
             
@@ -5611,14 +5632,19 @@ class Field(mixin.PropertiesData,
             if aux_X is None or aux_Y is None:
                 if auto:
                     return (None,) * 4
+
                 
-                raise ValueError("Didn't find both X and Y nodes")
+                
+                raise ValueError(
+                    "Can't create weights: Need both X and Y nodes to calculate {} geometry weights".format(
+                        geometry_type))
+                    
 
             if x_axis != y_axis:
                 if auto:
                     return (None,) * 4
                 
-                raise ValueError("X and Y nodes span different domain axes")
+                raise ValueError("Can't create weights: X and Y nodes span different domain axes")
 
             axis = x_axis
              
@@ -5754,12 +5780,13 @@ class Field(mixin.PropertiesData,
                 #
                 # The area of such a spherical polygon is given by the
                 # sum of the interior angles minus (N-2)pi, where N is
-                # the number of sides (Todhunter):
-                # https://en.wikipedia.org/wiki/Spherical_trigonometry#Spherical_polygons
+                # the number of sides (Todhunter,
+                # https://en.wikipedia.org/wiki/Spherical_trigonometry#Spherical_polygons):
                 #
-                # The interior angle of a side is calculated with a
-                # special case of the Vincenty formula:
-                # https://en.wikipedia.org/wiki/Great-circle_distance
+                # Area of N-sided polygon on the unit sphere =
+                #     \left(\sum _{n=1}^{N}A_{n}\right) - (N - 2)\pi
+                #
+                # where A_{n} denotes the n-th interior angle.
                 # ----------------------------------------------------
                 spherical = True
                 
@@ -6276,17 +6303,8 @@ class Field(mixin.PropertiesData,
 
                 if _linear_weights(self, axis, comp, weights_axes,
                                    auto=True, measure=measure):
-                    # Linear weights from dimension coordinates                    
+                    # Linear weights from dimension coordinates
                     pass
-#                elif _volume_weights_geometry(self, comp,
-#                                              weights_axes,
-#                                              measure=measure,
-#                                              radius=radius,
-#                                              great_circle=great_circle,
-#                                              auto=True):
-#                    # Volume weights from polygon geometries with an
-#                    # altitude/depth Z axis
-#                    pass
                 elif _area_weights_geometry(self, comp, weights_axes,
                                             measure=measure,
                                             radius=radius,

@@ -5059,7 +5059,7 @@ Strings
 ^^^^^^^
 
 String-valued data may be written to netCDF files either as netCDF
-character arrays with a trialing dimension large enough to contain the
+character arrays with a trailing dimension large enough to contain the
 longest value, or as netCDF4 string arrays. The former is allowed for
 all formats of netCDF3 and netCDF4 format files; but string arrays may
 only be written to netCDF4 format files (note that string arrays can

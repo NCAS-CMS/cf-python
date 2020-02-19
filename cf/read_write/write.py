@@ -368,6 +368,9 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
             <http://unidata.github.io/netcdf4-python>`_ for more
             details.
 
+            This parameter replaces the deprecated *no_shuffle*
+            parameter.
+    
         datatype: `dict`, optional
             Specify data type conversions to be applied prior to
             writing data to disk. This may be useful as a means of
@@ -418,7 +421,7 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
             If True then print a summary of how constructs map to output
             netCDF dimensions, variables and attributes.
 
-        HDF_chunksizes:  deprecated at version 3.0.0
+        HDF_chunksizes: deprecated at version 3.0.0
             HDF chunk sizes may be set for individual constructs prior
             to writing, instead. See `cf.Data.nc_set_hdf5_chunksizes`.
 
