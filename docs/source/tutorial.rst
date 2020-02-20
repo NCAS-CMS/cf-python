@@ -127,6 +127,13 @@ The following file types can be read:
 * :ref:`PP and UM fields files <PP-and-UM-fields-files>`, whose
   contents are mapped into field constructs.
 
+..
+
+* A future release of cf will include support for :ref:`netCDF4 files
+  containing data organised in hierarchical groups <netCDF4_Groups>`,
+  but this is not available in version |release| (even though it is
+  allowed in CF-|version|).
+
 For example, to read the file ``file.nc`` (found in the :ref:`zip file
 of sample files <Sample-datasets>`), which contains two field
 constructs:
@@ -5071,6 +5078,19 @@ used. Alternatively, netCDF character arrays can be used in all cases
 by setting the *string* keyword of the `cf.write` function.
 
 ----
+   
+.. _netCDF4_Groups:
+
+**Groups**
+----------
+
+`Groups`_ provide a powerful mechanism to structure data
+hierarchically. A future release of cfdm will include support for
+netCDF4 files containing data organised in hierarchical groups, but
+this is not available in version |release| (even though it is allowed
+in CF-|version|).
+   
+----
 
 .. _External-variables:
 
@@ -6113,3 +6133,4 @@ is straight forward with the `cf.load_stash2standard_name` function.
 .. _indexed:                          http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#_indexed_ragged_array_representation
 .. _indexed contiguous:               http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#_ragged_array_representation_of_time_series_profiles
 .. _geometries:                       http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#geometries
+.. _Groups:                           http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#groups

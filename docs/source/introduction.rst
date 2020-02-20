@@ -55,6 +55,8 @@ partially conformant may nonetheless be modified in memory.
 
    >>> import cf
    >>> f = cf.read('file.nc')
+   >>> f
+   [<CF Field: air_temperature(time(12), latitude(64), longitude(128)) K>]
    >>> print(f[0])
    Field: air_temperature (ncvar%tas)
    ----------------------------------

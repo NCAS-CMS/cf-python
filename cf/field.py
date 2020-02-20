@@ -12950,8 +12950,8 @@ class Field(mixin.PropertiesData,
     #
     # cell_method
     c = cf.CellMethod()
-    c.method = 'mean'
-    c.axes = ('area',)
+    c.set_method('mean')
+    c.set_axes(('area',))
     f.set_construct(c)
 
     >>> print(q.creation_commands(representative_data=True, namespace='', indent=4))
@@ -13016,8 +13016,8 @@ class Field(mixin.PropertiesData,
         #
         # cell_method
         c = CellMethod()
-        c.method = 'mean'
-        c.axes = ('area',)
+        c.set_method('mean')
+        c.set_axes(('area',))
         f.set_construct(c)
 
         '''
@@ -13136,11 +13136,11 @@ class Field(mixin.PropertiesData,
             out.append("c = {}{}()".format(namespace, c.__class__.__name__))
             method = c.get_method(None)
             if method is not None:
-                out.append("c.method = {!r}".format(method))
+                out.append("c.set_method({!r})".format(method))
 
             axes = c.get_axes(None)
             if axes is not None:
-                out.append("c.axes = {!r}".format(axes))
+                out.append("c.set_axes({!r})".format(axes))
 
             for term, value in c.qualifiers().items():
                 if term == 'interval':
