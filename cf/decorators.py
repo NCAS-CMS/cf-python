@@ -90,9 +90,10 @@ def _deprecated_kwarg_check(depr_kwargs):
 
             for depr_kwarg in depr_kwargs:
                 if kwargs.get(depr_kwarg):
+                    pass_in_kwarg = {depr_kwarg: True}
                     _DEPRECATION_ERROR_KWARGS(
                         self, operation_method.__name__,
-                        depr_kwarg=True) # pragma: no cover
+                        **pass_in_kwarg) # pragma: no cover
 
             operation_method_result = operation_method(self, *args, **kwargs)
 
