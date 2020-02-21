@@ -106,6 +106,33 @@ class QueryTest(unittest.TestCase):
                     cf.Data([True, False]))
             )
 
+    def test_Query_as_where_condition(self):
+        """Check queries work correctly as conditions in 'where' method."""
+        # TODO: extent test; as-is this code is to test & isolate a known bug
+
+        s_data = cf.Data([30, 60, 90], 'second')
+
+        m_lt_query = cf.lt(1, units="minute")
+        s_lt_query = cf.lt(60, units="second")
+        m_ge_query = cf.ge(1, units="minute")
+        s_ge_query = cf.ge(60, units="second")
+        for query_pair in [
+                (m_lt_query, s_lt_query), (m_ge_query, s_ge_query)]:
+            m_query, s_query = query_pair
+
+            equal_units_where = s_data.data.where(s_query, 0)
+            mixed_units_where = s_data.data.where(m_query, 0)
+            self.assertTrue(
+                (mixed_units_where.array == equal_units_where.array).all()
+            )
+
+            equal_units_where_masked = s_data.data.where(s_query, cf.masked)
+            mixed_units_where_masked = s_data.data.where(m_query, cf.masked)
+            self.assertEqual(
+                mixed_units_where_masked.count(),
+                equal_units_where_masked.count()
+            )
+
     def test_Query_datetime1(self):
         d = cf.Data([[1., 5.], [6, 2]], 'days since 2000-12-29 21:00:00', calendar='standard')
 
