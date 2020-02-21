@@ -5,17 +5,17 @@ from netCDF4 import Dataset as netCDF4_Dataset
 from ..constants import _file_to_fh
 from ..functions import open_files_threshold_exceeded, close_one_file
 
-#from ..read_write.umread_lib.umfile import File #, UMFileException
-from ..umread_lib.umfile import File #, UMFileException
+# from ..read_write.umread_lib.umfile import File #, UMFileException
+from ..umread_lib.umfile import File  # , UMFileException
 
-#if 'netCDF' not in _file_to_fh:
-#    _file_to_fh['netCDF'] = {}
+# if 'netCDF' not in _file_to_fh:
+#     _file_to_fh['netCDF'] = {}
 
-_file_to_UM      = _file_to_fh.setdefault('UM', {})
+_file_to_UM = _file_to_fh.setdefault('UM', {})
 _file_to_Dataset = _file_to_fh.setdefault('netCDF', {})
 
 
-def _open_netcdf_file(filename, mode, fmt='NETCDF4'): #set_auto_mask=True):
+def _open_netcdf_file(filename, mode, fmt='NETCDF4'):  # set_auto_mask=True):
     '''Open a netCDF file and read it into a netCDF4.Dataset object.
 
     If the file is already open then the existing netCDF4.Dataset
@@ -172,5 +172,3 @@ def _close_um_file(filename):
     f = _file_to_UM.pop(filename, None)
     if f is not None:
         f.close_fd()
-
-

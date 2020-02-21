@@ -1,3 +1,5 @@
+from . import abstract
+
 from numpy import empty   as numpy_empty
 from numpy import full    as numpy_full
 from numpy import load    as numpy_load
@@ -12,8 +14,6 @@ from ..functions import parse_indices, get_subspace
 from ..constants import masked as cf_masked
 
 _debug = False
-
-from . import abstract
 
 
 class FilledArray(abstract.Array):
@@ -45,7 +45,6 @@ class FilledArray(abstract.Array):
         '''
         super().__init__(dtype=dtype, ndim=ndim, shape=shape,
                          size=size, fill_value=fill_value)
-
 
     def __getitem__(self, indices):
         '''x.__getitem__(indices) <==> x[indices]
@@ -79,7 +78,7 @@ class FilledArray(abstract.Array):
                         array_shape.append(a)
                 else:
                     array_shape.append(len(index))
-        #-- End: if
+        # --- End: if
 
         if self.fill_value() is cf_masked:
             return numpy_ma_masked_all(array_shape, dtype=self.dtype)
@@ -88,7 +87,6 @@ class FilledArray(abstract.Array):
                               dtype=self.dtype)
         else:
             return numpy_empty(array_shape, dtype=self.dtype)
-
 
     # ----------------------------------------------------------------
     # Attributes
@@ -106,7 +104,6 @@ class FilledArray(abstract.Array):
 
         '''
         return self._get_component('dtype')
-
 
     @property
     def ndim(self):
@@ -137,7 +134,6 @@ class FilledArray(abstract.Array):
         '''
         return self._get_component('ndim')
 
-
     @property
     def shape(self):
         '''Tuple of array dimension sizes.
@@ -166,7 +162,6 @@ class FilledArray(abstract.Array):
     1
         '''
         return self._get_component('shape')
-
 
     @property
     def size(self):
@@ -198,7 +193,6 @@ class FilledArray(abstract.Array):
         '''
         return self._get_component('size')
 
-
     def fill_value(self):
         '''TODO        '''
         return self._get_component('fill_value')
@@ -208,29 +202,25 @@ class FilledArray(abstract.Array):
 #        '''TODO        '''
 #        return self._get_component('masked_all')
 
-
     @property
     def array(self):
         '''TODO
         '''
         return self[...]
 
-
     def reshape(self, newshape):
         '''TODO
         '''
         new = self.copy()
         new.shape = newshape
-        new.ndim  = len(newshape)
+        new.ndim = len(newshape)
         return new
-
 
     def resize(self, newshape):
         '''TODO
         '''
         self.shape = newshape
-        self.ndim  = len(newshape)
-
+        self.ndim = len(newshape)
 
     def view(self):
         '''TODO
