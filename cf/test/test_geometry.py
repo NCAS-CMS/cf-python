@@ -27,6 +27,8 @@ class DSGTest(unittest.TestCase):
                                             'geometry_4.nc')
         self.geometry_interior_ring_file = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                                         'geometry_interior_ring.nc')
+        self.geometry_interior_ring_file_2 = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                          'geometry_interior_ring_2.nc')
 
         (fd, self.tempfilename) = tempfile.mkstemp(suffix='.nc', prefix='cf_', dir='.')
         os.close(fd)
@@ -198,79 +200,81 @@ class DSGTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        f = cf.read(self.geometry_interior_ring_file, verbose=False)
+        for geometry_file in (self.geometry_interior_ring_file,
+                              self.geometry_interior_ring_file_2):
+            f = cf.read(geometry_file, verbose=False)
 
-        self.assertTrue(len(f) == 2, 'f = '+repr(f))
-
-        for g in f:
-            self.assertTrue(g.equals(g.copy(), verbose=True))
-            self.assertTrue(len(g.auxiliary_coordinates) == 4)
-
-        g = f[0]
-        for axis in ('X', 'Y'):
-            coord = g.construct('axis='+axis)
-            self.assertTrue(coord.has_node_count(), 'axis='+axis)
-            self.assertTrue(coord.has_part_node_count(), 'axis='+axis)
-            self.assertTrue(coord.has_interior_ring(), 'axis='+axis)
-
-        cf.write(f, self.tempfilename, Conventions='CF-'+VN, verbose=False)
-
-        f2 = cf.read(self.tempfilename, verbose=False)
-
-        self.assertTrue(len(f2) == 2, 'f2 = '+repr(f2))
-        
-        for a, b in zip(f, f2):
-            self.assertTrue(a.equals(b, verbose=True))
-
-        # Interior ring component
-        c = g.construct('longitude')
-        
-        self.assertTrue(c.interior_ring.equals(g.construct('longitude').get_interior_ring()))
-        self.assertTrue(c.interior_ring.data.ndim == c.data.ndim + 1)
-        self.assertTrue(c.interior_ring.data.shape[0] == c.data.shape[0])
-        
-        _ = g.dump(display=False)
-
-        d = c.insert_dimension(0)
-        self.assertTrue(d.data.shape == (1,) + c.data.shape)
-        self.assertTrue(d.interior_ring.data.shape == (1,) + c.interior_ring.data.shape)
-
-        e = d.squeeze(0)
-        self.assertTrue(e.data.shape == c.data.shape)
-        self.assertTrue(e.interior_ring.data.shape == c.interior_ring.data.shape)
-
-        t = d.transpose()
-        self.assertTrue(t.data.shape == d.data.shape[::-1], (t.data.shape, c.data.shape[::-1]))
-        self.assertTrue(t.interior_ring.data.shape == d.interior_ring.data.shape[-2::-1] + (d.interior_ring.data.shape[-1],))
-
-        # Subspacing
-        g = g[1, ...]
-        c = g.construct('longitude')
-
-        self.assertTrue(c.interior_ring.data.shape[0] == 1, c.interior_ring.data.shape)
-        self.assertTrue(c.interior_ring.data.ndim == c.data.ndim + 1)
-        self.assertTrue(c.interior_ring.data.shape[0] == c.data.shape[0])        
-
-        # Setting of node count properties
-        coord = f[0].construct('axis=Y')
-        nc = coord.get_node_count()
-        nc.set_property('long_name', 'Node counts')
-        cf.write(f, self.tempfilename)
-        
-        nc.nc_set_variable('new_var_name')
-        cf.write(f, self.tempfilename)
-
-        # Setting of part node count properties
-        coord = f[0].construct('axis=X')
-        pnc = coord.get_part_node_count()
-        pnc.set_property('long_name', 'Part node counts')
-        cf.write(f, self.tempfilename)
-        
-        pnc.nc_set_variable('new_var_name')
-        cf.write(f, self.tempfilename)
-        
-        pnc.nc_set_dimension('new_dim_name')
-        cf.write(f, self.tempfilename)
+            self.assertTrue(len(f) == 2, 'f = '+repr(f))
+    
+            for g in f:
+                self.assertTrue(g.equals(g.copy(), verbose=True))
+                self.assertTrue(len(g.auxiliary_coordinates) == 4)
+    
+            g = f[0]
+            for axis in ('X', 'Y'):
+                coord = g.construct('axis='+axis)
+                self.assertTrue(coord.has_node_count(), 'axis='+axis)
+                self.assertTrue(coord.has_part_node_count(), 'axis='+axis)
+                self.assertTrue(coord.has_interior_ring(), 'axis='+axis)
+    
+            cf.write(f, self.tempfilename, Conventions='CF-'+VN, verbose=False)
+    
+            f2 = cf.read(self.tempfilename, verbose=False)
+    
+            self.assertTrue(len(f2) == 2, 'f2 = '+repr(f2))
+            
+            for a, b in zip(f, f2):
+                self.assertTrue(a.equals(b, verbose=True))
+    
+            # Interior ring component
+            c = g.construct('longitude')
+            
+            self.assertTrue(c.interior_ring.equals(g.construct('longitude').get_interior_ring()))
+            self.assertTrue(c.interior_ring.data.ndim == c.data.ndim + 1)
+            self.assertTrue(c.interior_ring.data.shape[0] == c.data.shape[0])
+            
+            _ = g.dump(display=False)
+    
+            d = c.insert_dimension(0)
+            self.assertTrue(d.data.shape == (1,) + c.data.shape)
+            self.assertTrue(d.interior_ring.data.shape == (1,) + c.interior_ring.data.shape)
+    
+            e = d.squeeze(0)
+            self.assertTrue(e.data.shape == c.data.shape)
+            self.assertTrue(e.interior_ring.data.shape == c.interior_ring.data.shape)
+    
+            t = d.transpose()
+            self.assertTrue(t.data.shape == d.data.shape[::-1], (t.data.shape, c.data.shape[::-1]))
+            self.assertTrue(t.interior_ring.data.shape == d.interior_ring.data.shape[-2::-1] + (d.interior_ring.data.shape[-1],))
+    
+            # Subspacing
+            g = g[1, ...]
+            c = g.construct('longitude')
+    
+            self.assertTrue(c.interior_ring.data.shape[0] == 1, c.interior_ring.data.shape)
+            self.assertTrue(c.interior_ring.data.ndim == c.data.ndim + 1)
+            self.assertTrue(c.interior_ring.data.shape[0] == c.data.shape[0])        
+    
+            # Setting of node count properties
+            coord = f[0].construct('axis=Y')
+            nc = coord.get_node_count()
+            nc.set_property('long_name', 'Node counts')
+            cf.write(f, self.tempfilename)
+            
+            nc.nc_set_variable('new_var_name')
+            cf.write(f, self.tempfilename)
+    
+            # Setting of part node count properties
+            coord = f[0].construct('axis=X')
+            pnc = coord.get_part_node_count()
+            pnc.set_property('long_name', 'Part node counts')
+            cf.write(f, self.tempfilename)
+            
+            pnc.nc_set_variable('new_var_name')
+            cf.write(f, self.tempfilename)
+            
+            pnc.nc_set_dimension('new_dim_name')
+            cf.write(f, self.tempfilename)
 
         
     def test_geometry_interior_ring_roll(self):

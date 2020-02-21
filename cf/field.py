@@ -5624,9 +5624,9 @@ class Field(mixin.PropertiesData,
                 elif aux.Y:
                     aux_Y = aux.copy()
                     y_axis = self.get_data_axes(key)[0]
-#                elif aux.Z:
-#                    aux_Z = aux.copy()
-#                    z_axis = self.get_data_axes(key)[0]                    
+                elif aux.Z:
+                    aux_Z = aux.copy()
+                    z_axis = self.get_data_axes(key)[0]                    
             #--- End: for
                         
             if aux_X is None or aux_Y is None:
@@ -5669,12 +5669,13 @@ class Field(mixin.PropertiesData,
                 if aux_X.bounds.data.fits_in_one_chunk_in_memory(aux_Y.bounds.dtype.itemsize):
                     aux_X.bounds.varray
             #--- End: if
-            
-            for key, aux in self.auxiliary_coordinates.filter_by_naxes(1).items():
-                if aux.Z:
-                    aux_Z = aux.copy()
-                    z_axis = self.get_data_axes(key)[0]                    
-            #--- End: for
+
+            if aux_Z is None:
+                for key, aux in self.auxiliary_coordinates.filter_by_naxes(1).items():
+                    if aux.Z:
+                        aux_Z = aux.copy()
+                        z_axis = self.get_data_axes(key)[0]                    
+            #--- End: if
                         
             # Check Z coordinates
             if aux_Z is not None:

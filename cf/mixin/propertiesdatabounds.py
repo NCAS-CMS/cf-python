@@ -610,7 +610,7 @@ class PropertiesDataBounds(PropertiesData):
         if data is not None:
             return data.dtype
 
-        bounds = self.get_bounds(None)
+        bounds = self.get_bounds_data(None)
         if bounds is not None:
             return bounds.dtype
 
@@ -622,7 +622,7 @@ class PropertiesDataBounds(PropertiesData):
         if data is not None:
             data.dtype = value
 
-        bounds = self.get_bounds(None)
+        bounds = self.get_bounds_data(None)
         if bounds is not None:
             bounds.dtype = value
 
