@@ -36,14 +36,14 @@ class FieldTest(unittest.TestCase):
 
         f = f + f.copy()
         self.assertTrue(len(f) == 2)
-        self.assertTrue(isinstance(f, cf.FieldList))
+        self.assertIsInstance(f, cf.FieldList)
 
         f += (f[0].copy(),)
         self.assertTrue(len(f) == 3)
 
         f += [f[0].copy()]
         self.assertTrue(len(f) == 4)
-        self.assertTrue(isinstance(f, cf.FieldList))
+        self.assertIsInstance(f, cf.FieldList)
 
         f += list(f[0].copy())
         self.assertTrue(len(f) == 5)
@@ -96,30 +96,30 @@ class FieldTest(unittest.TestCase):
         f = cf.FieldList()
         f = f * 4
         self.assertTrue(len(f) == 0)
-        self.assertTrue(isinstance(f, cf.FieldList))
+        self.assertIsInstance(f, cf.FieldList)
 
         f = cf.FieldList()
         f *= 4
         self.assertTrue(len(f) == 0)
-        self.assertTrue(isinstance(f, cf.FieldList))
+        self.assertIsInstance(f, cf.FieldList)
 
         f = cf.read(self.filename)
         f = f * 4
         self.assertTrue(len(f) == 4)
-        self.assertTrue(isinstance(f, cf.FieldList))
+        self.assertIsInstance(f, cf.FieldList)
 
         f = cf.read(self.filename)
         f *= 4
         self.assertTrue(len(f) == 4)
-        self.assertTrue(isinstance(f, cf.FieldList))
+        self.assertIsInstance(f, cf.FieldList)
 
         f = f * 2
         self.assertTrue(len(f) == 8)
-        self.assertTrue(isinstance(f, cf.FieldList))
+        self.assertIsInstance(f, cf.FieldList)
 
         f *= 3
         self.assertTrue(len(f) == 24)
-        self.assertTrue(isinstance(f, cf.FieldList))
+        self.assertIsInstance(f, cf.FieldList)
 
 
     def test_FieldList__repr__(self):
@@ -141,11 +141,11 @@ class FieldTest(unittest.TestCase):
 
         f.append(cf.read(self.filename)[0])
         self.assertTrue(len(f) == 1)
-        self.assertTrue(isinstance(f, cf.FieldList))
+        self.assertIsInstance(f, cf.FieldList)
 
         f.append(f[0].copy())
         self.assertTrue(len(f) == 2)
-        self.assertTrue(isinstance(f, cf.FieldList))
+        self.assertIsInstance(f, cf.FieldList)
 
         f.append(f[0].copy())
         self.assertTrue(len(f) == 3)
@@ -155,11 +155,11 @@ class FieldTest(unittest.TestCase):
 
         f.extend(cf.read(self.filename))
         self.assertTrue(len(f) == 1)
-        self.assertTrue(isinstance(f, cf.FieldList))
+        self.assertIsInstance(f, cf.FieldList)
 
         f.extend(f.copy())
         self.assertTrue(len(f) == 2)
-        self.assertTrue(isinstance(f, cf.FieldList))
+        self.assertIsInstance(f, cf.FieldList)
 
         f.extend(f.copy())
         self.assertTrue(len(f) == 4)
@@ -254,13 +254,13 @@ class FieldTest(unittest.TestCase):
 
         f.insert(0, g.copy())
         self.assertTrue(len(f) == 2)
-        self.assertTrue(isinstance(f, cf.FieldList))
+        self.assertIsInstance(f, cf.FieldList)
 
         g = g + 10
         f.insert(-1, g)
         self.assertTrue(len(f) == 3)
         self.assertTrue(f[0].max() == (f[1].max() - 10))
-        self.assertTrue(isinstance(f, cf.FieldList))
+        self.assertIsInstance(f, cf.FieldList)
 
         # Pop
         f = cf.read(self.filename)
@@ -271,12 +271,12 @@ class FieldTest(unittest.TestCase):
         z = f.pop(0)
         self.assertTrue(z is g)
         self.assertTrue(len(f) == 1)
-        self.assertTrue(isinstance(f, cf.FieldList))
+        self.assertIsInstance(f, cf.FieldList)
 
         z = f.pop(-1)
         self.assertTrue(z is h)
         self.assertTrue(len(f) == 0)
-        self.assertTrue(isinstance(f, cf.FieldList))
+        self.assertIsInstance(f, cf.FieldList)
 
         # Remove
         f = cf.read(self.filename)
@@ -288,14 +288,14 @@ class FieldTest(unittest.TestCase):
 
         f.remove(g)
         self.assertTrue(len(f) == 1)
-        self.assertTrue(isinstance(f, cf.FieldList))
+        self.assertIsInstance(f, cf.FieldList)
 
         with self.assertRaises(Exception):
             f.remove(f[0]*-99)
 
         f.remove(f[0].copy())
         self.assertTrue(len(f) == 0)
-        self.assertTrue(isinstance(f, cf.FieldList))
+        self.assertIsInstance(f, cf.FieldList)
 
 
     def test_FieldList_reverse(self):
@@ -311,7 +311,7 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(h is f[1])
 
         f.reverse()
-        self.assertTrue(isinstance(f, cf.FieldList))
+        self.assertIsInstance(f, cf.FieldList)
         self.assertTrue(len(f) == 2)
         self.assertTrue(g is f[1])
         self.assertTrue(h is f[0])
@@ -324,15 +324,15 @@ class FieldTest(unittest.TestCase):
         f = cf.read(self.filename)
 
         g = f('not this one')
-        self.assertTrue(isinstance(g, cf.FieldList), type(g))
+        self.assertIsInstance(g, cf.FieldList)
         self.assertTrue(len(g) == 0)
 
         g = f('eastward_wind')
-        self.assertTrue(isinstance(g, cf.FieldList))
+        self.assertIsInstance(g, cf.FieldList)
         self.assertTrue(len(g) == 1, len(g))
 
         g = f(re.compile('^eastw'))
-        self.assertTrue(isinstance(g, cf.FieldList))
+        self.assertIsInstance(g, cf.FieldList)
         self.assertTrue(len(g) == 1, len(g))
 
         f *= 9
@@ -342,11 +342,11 @@ class FieldTest(unittest.TestCase):
         f[6].standard_name = 'this one'
 
         g = f(re.compile('^eastw'))
-        self.assertTrue(isinstance(g, cf.FieldList))
+        self.assertIsInstance(g, cf.FieldList)
         self.assertTrue(len(g) == 7, len(g))
 
         g = f('this one')
-        self.assertTrue(isinstance(g, cf.FieldList))
+        self.assertIsInstance(g, cf.FieldList)
         self.assertTrue(len(g) == 2)
 
         # select_by_Units
@@ -456,10 +456,10 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(f.select_field('not this one', None) is None)
 
         g = f.select_field('eastward_wind')
-        self.assertTrue(isinstance(g, cf.Field))
+        self.assertIsInstance(g, cf.Field)
 
         g = f.select_field(re.compile('^eastw'))
-        self.assertTrue(isinstance(g, cf.Field))
+        self.assertIsInstance(g, cf.Field)
 
         with self.assertRaises(Exception):
             g = f.select_field(re.compile('^QWERTY'))

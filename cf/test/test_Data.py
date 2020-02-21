@@ -127,7 +127,7 @@ class DataTest(unittest.TestCase):
 
         d = cf.Data([[0, 1, 2], [3, -99, 5]], mask=[[0, 0, 0], [0, 1, 0]])
 
-        self.assertTrue(isinstance(d.stats(), dict))
+        self.assertIsInstance(d.stats(), dict)
         _ = d.stats(all=True)
         _ = d.stats(mean_of_upper_decile=True, range=False)
 
