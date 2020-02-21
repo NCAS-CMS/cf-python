@@ -59,12 +59,6 @@ class QueryTest(unittest.TestCase):
         self.assertTrue(((cf.contains(999)==c).array ==
                          numpy.array([0,0,0,0,0,0,0,0,0], bool)).all())
 
-        cf.Query('gt', cf.Data(12, 'm'), attr='bounds')
-        cf.Query('gt', cf.Data(12, 'm'), attr='bounds', units='km')
-        cf.Query('gt', 12, attr='bounds', units='km')
-        with self.assertRaises(Exception):
-            cf.Query('gt', cf.Data(12, 'm'), attr='bounds', units='s')
-
         _ = cf.cellsize(34)
         _ = cf.cellsize(q)
 
@@ -75,6 +69,42 @@ class QueryTest(unittest.TestCase):
         _ = cf.cellwi(1, 2)
         _ = cf.cellwo(1, 2)
 
+    def test_Query_object_units(self):
+        """Check units are processed correctly in and from queries."""
+
+        equivalent_units = {
+            1000: ('m', 'km'),
+            60: ('s', 'minute')
+        }  # keys are conversion factors; only use exact equivalents for test
+        for conversion, equivalents in equivalent_units.items():
+            s_unit, l_unit = equivalents  # s for smaller, l for larger
+
+            # Case 1: only specify units to one component
+            q1 = cf.Query('gt', cf.Data(1, s_unit))
+            q2 = cf.Query('ge', 1, units=s_unit)
+            # Case 2: specify *equal* units across the two components
+            q3 = cf.Query('lt', cf.Data(1, s_unit), units=s_unit)
+            # Case 3: specify *equivalent* units across the two components
+            q4 = cf.Query('le', cf.Data(1, s_unit), units=l_unit)
+            # See also final Case 4, below.
+
+            # A) test processed correctly inside unit itself
+            for q in [q1, q2, q3, q4]:
+                self.assertIsInstance(q, cf.query.Query)
+                # TODO: should q4 should return s_ or l_unit? ATM is s_unit.
+                self.assertTrue(q._value.Units._units == s_unit)
+
+            with self.assertRaises(ValueError):
+                # Case 4: provide non-equivalent units i.e. non-sensical query
+                cf.Query('le', cf.Data(1, 'm'), units='s')
+
+            # B) Check units are processed correctly when a Query is evaluated
+            q5 = cf.Query('eq', conversion, units=s_unit)
+            # Pre-comparison, values should be converted for consistent units
+            self.assertTrue(
+                q5.evaluate(cf.Data([1, 2], l_unit)).equals(
+                    cf.Data([True, False]))
+            )
 
     def test_Query_datetime1(self):
         d = cf.Data([[1., 5.], [6, 2]], 'days since 2000-12-29 21:00:00', calendar='standard')
