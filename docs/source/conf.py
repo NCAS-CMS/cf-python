@@ -56,6 +56,13 @@ def _get_year():
     return str(datetime.datetime.now().year)
 
 
+def _get_date():
+    '''Get the current calendar year.
+
+    '''
+    return str(datetime.date.today())
+
+
 # If extensions (or modules to document with autodoc) are in another
 # directory, add these directories to sys.path here. If the directory
 # is relative to the documentation root, use os.path.abspath to make
@@ -78,7 +85,7 @@ needs_sphinx = '2.3.1'
 extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.autosummary',
 #              'sphinx.ext.viewcode',
-              'sphinx.ext.linkcode',
+#              'sphinx.ext.linkcode',
               'sphinx.ext.mathjax',
               'sphinx.ext.graphviz',
 #              'sphinx.ext.inheritance_diagram',
@@ -155,7 +162,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'Python cf package'
-copyright = _get_year()+', David Hassell'
+#copyright = _get_year()+', David Hassell'
+copyright = _get_year()+', David Hassell | Page built on '+_get_date()
 
 # The version info for the project you're documenting, acts as
 # replacement for |version| and |release|, also used in various other

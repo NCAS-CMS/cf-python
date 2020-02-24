@@ -1604,7 +1604,7 @@ the other are assumed.
 
 If the physical nature of the result differs from both operands, then
 the "standard_name" and "long_name" properties are removed. This is
-the case if the units of the result differ from bother operands, or if
+the case if the units of the result differ from both operands, or if
 they have different standard names.
 
 .. code-block:: python
@@ -2062,10 +2062,10 @@ If the wind field field is defined on a spherical latitude-longitude
 domain then a correction factor is included:
 
 .. math:: \zeta _{spherical} = \frac{\delta v}{\delta x} -
-          \frac{\delta u}{\delta y} + \frac{u}{a}tan(\phi)
+          \frac{\delta u}{\delta y} + \frac{u}{r}tan(\phi)
 
 where :math:`u` and :math:`v` denote the longitudinal and latitudinal
-components of the horizontal wind field; :math:`a` is the radius of
+components of the horizontal wind field; :math:`r` is the radius of
 the Earth; and :math:`\phi` is the latitude at each point.
 
 The `cf.relative_vorticity` function creates a relative vorticity

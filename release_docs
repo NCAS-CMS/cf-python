@@ -32,7 +32,9 @@ cd -
 # Make the latest docs    
 # --------------------------------------------------------------------
 cd docs
-rm -fr $dir/.doctrees
+if [[ $2 = "latest" ]] || [[ $2 = "archive" ]] ; then
+  rm -fr $dir/.doctrees
+fi
 
 make html $dir
 
@@ -53,7 +55,7 @@ done
 # Add and commit the latest
 # --------------------------------------------------------------------
 if [[ $2 = "latest" ]] || [[ $2 = "archive" ]] ; then
-    echo "d2=$2"
+  echo "d2=$2"
   cd $dir
   git add \
 	  *.html \
