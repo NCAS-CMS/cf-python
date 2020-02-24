@@ -2177,7 +2177,7 @@ def _section(o, axes=None, data=False, stop=None, chunks=False,
         min_step: `int`, optional
             The minimum step size when making chunks. By default this
             is 1. Can be set higher to avoid size 1 dimensions, which
-            are problematic for bilinear regridding.
+            are problematic for linear regridding.
 
     :Returns:
 

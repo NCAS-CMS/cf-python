@@ -214,11 +214,18 @@ _relational_methods = (
     '__ge__'
 )
 
-conservative_regridding_methods = (
+conservative_regridding_methods = [
     'conservative',
     'conservative_1st',
     'conservative_2nd'
-)
+]
+regridding_methods = [
+    'linear',  # prefer over 'bilinear' as of v3.1.1
+    'bilinear',  # only for backward compatibility, use & document 'linear'
+    'patch',
+    'nearest_stod',
+    'nearest_dtos',
+] + conservative_regridding_methods
 
 _xxx = namedtuple(
     'data_dimension',
@@ -3231,19 +3238,19 @@ class Field(mixin.PropertiesData,
 #            method = 'conservative'
 #            for coord in src_coords:
 #                if not coord.hasbounds or not coord.contiguous(overlap=False):
-#                    method = 'bilinear'
+#                    method = 'linear'
 #                    break
 #            # --- End: for
 #            for coord in dst_coords:
 #                if not coord.hasbounds or not coord.contiguous(overlap=False):
-#                    method = 'bilinear'
+#                    method = 'linear'
 #                    break
 #            # --- End: for
 #            if ext_coords is not None:
 #                for coord in ext_coords:
 #                    if (not coord.hasbounds or
 #                        not coord.contiguous(overlap=False)):
-#                        method = 'bilinear'
+#                        method = 'linear'
 #                        break
 #                # --- End: for
 #            # --- End: if
@@ -3289,7 +3296,7 @@ class Field(mixin.PropertiesData,
         if method is None:
             raise ValueError("Can't regrid: Must select a regridding method")
 
-        if method not in conservative_regridding_methods + ('patch', 'bilinear', 'nearest_stod', 'nearest_dtos'):
+        if method not in regridding_methods:
             raise ValueError("Can't regrid: Invalid method: {!r}".format(method))
 
 
@@ -16325,18 +16332,18 @@ class Field(mixin.PropertiesData,
 
     The regridding method must be specified. First-order conservative
     interpolation conserves the global area integral of the field, but
-    may not give approximations to the values as good as bilinear
+    may not give approximations to the values as good as linear
     interpolation. Second-order conservative interpolation also takes
     into account the gradient across the source cells, so in general
     gives a smoother, more accurate representation of the source field
-    especially when going from a coarser to a finer grid. Bilinear
+    especially when going from a coarser to a finer grid. Linear
     interpolation is available. The latter method is particular useful
     for cases when the latitude and longitude coordinate cell
     boundaries are not known nor inferrable. Higher order patch
-    recovery is available as an alternative to bilinear
+    recovery is available as an alternative to linear
     interpolation. This typically results in better approximations to
     values and derivatives compared to the latter, but the weight
-    matrix can be larger than the bilinear matrix, which can be an
+    matrix can be larger than the linear matrix, which can be an
     issue when regridding close to the memory limit on a
     machine. Nearest neighbour interpolation is also
     available. Nearest source to destination is particularly useful
@@ -16451,7 +16458,12 @@ class Field(mixin.PropertiesData,
               ======================  ====================================
               *method*                Description
               ======================  ====================================
-              ``'bilinear'``          Bilinear interpolation.
+              ``'linear'``            Linear interpolation in the
+              (previously             corresponding number of dimensions;
+              ``'bilinear'``, which   since spherical regridding can only
+              is still supported)     be applied to 2D domains, this amounts
+                                      to *bi*linear interpolation (linear
+                                      interpolation in *both* X and Y).
 
               ``'patch'``             Higher order patch recovery.
 
@@ -16583,10 +16595,10 @@ class Field(mixin.PropertiesData,
 
     >>> h = f.regrids(g, 'conservative')
 
-    Regrid f to the grid of g using bilinear regridding and forcing
+    Regrid f to the grid of g using linear regridding and forcing
     the source field f to be treated as cyclic.
 
-    >>> h = f.regrids(g, src_cyclic=True, method='bilinear')
+    >>> h = f.regrids(g, src_cyclic=True, method='linear')
 
     Regrid f to the grid of g using the mask of g.
 
@@ -16604,7 +16616,7 @@ class Field(mixin.PropertiesData,
     Regrid field, f, on tripolar grid to latitude-longitude grid of
     field, g.
 
-    >>> h = f.regrids(g, 'bilinear, src_axes={'X': 'ncdim%x', 'Y': 'ncdim%y'},
+    >>> h = f.regrids(g, 'linear, src_axes={'X': 'ncdim%x', 'Y': 'ncdim%y'},
     ...               src_cyclic=True)
 
     Regrid f to the grid of g iterating over the 'Z' axis last and the
@@ -16937,7 +16949,7 @@ class Field(mixin.PropertiesData,
     an alternative to (multi)linear interpolation.  This typically
     results in better approximations to values and derivatives
     compared to the latter, but the weight matrix can be larger than
-    the bilinear matrix, which can be an issue when regridding close
+    the linear matrix, which can be an issue when regridding close
     to the memory limit on a machine. It is only available in
     2D. Nearest neighbour interpolation is also available. Nearest
     source to destination is particularly useful for regridding
@@ -17007,7 +17019,11 @@ class Field(mixin.PropertiesData,
               ======================  ====================================
               *method*                Description
               ======================  ====================================
-              ``'bilinear'``          (Multi)linear interpolation.
+              ``'linear'``            (Multi-)linear interpolation in the
+              (previously             corresponding number of dimensions,
+              ``'bilinear'``, which   e.g. for 2D domains this amounts
+              is still suported)      to *bi*linear interpolation (linear
+                                      interpolation in *both* X and Y).
 
               ``'patch'``             Higher order patch recovery.
 
@@ -17111,10 +17127,10 @@ class Field(mixin.PropertiesData,
 
     >>> h = f.regridc({'T': t}, axes=('T'), 'conservative_1st')
 
-    Regrid the T axis of field ``f`` using bilinear interpolation onto
+    Regrid the T axis of field ``f`` using linear interpolation onto
     a grid contained in field ``g``:
 
-    >>> h = f.regridc(g, axes=('T'), method='bilinear')
+    >>> h = f.regridc(g, axes=('T'), method='linear')
 
     Regrid the X and Y axes of field ``f`` conservatively onto a grid
     contained in field ``g``:
@@ -17124,7 +17140,7 @@ class Field(mixin.PropertiesData,
     Regrid the X and T axes of field ``f`` conservatively onto a grid
     contained in field ``g`` using the destination mask:
 
-    >>> h = f.regridc(g, axes=('X','Y'), use_dst_mask=True, method='bilinear')
+    >>> h = f.regridc(g, axes=('X','Y'), use_dst_mask=True, method='linear')
 
         '''
         # Initialise ESMPy for regridding if found

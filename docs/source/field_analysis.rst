@@ -1233,22 +1233,20 @@ The following regridding methods are available (in this table,
 being regridded, and the domain that it is being regridded to,
 respectively):
 
-=========================  ==============================================
+=========================  ===============================================
 Method                     Notes
-=========================  ==============================================
-Linear                     One dimensional linear interpolation (only
-                           available to `Cartesian regridding`_).
-			  
-Bilinear                   Two dimensional variant of linear
-                           interpolation.
-			  
-Trilinear                  Three dimensional variant of linear
-                           interpolation (only available to
-                           `Cartesian-regridding`_).
-			  
+=========================  ===============================================
+Linear (``'linear'``)      Linear interpolation in the number of
+                           dimensions corresponding to the domain,
+                           e.g. for 2D domains this amounts to *bi*linear
+                           interpolation (linear interpolation in *both*
+                           axes) and for regridding in 3D (only available
+                           with `Cartesian-regridding`_) it amounts to
+                           *tri*linear interpolation over the three axes.
+
 First-order conservative   Preserve the area integral of the data across
-                           the interpolation from source to
-                           destination. It uses the proportion of the
+(``'conservative'``        or the interpolation from source to
+``'conservative_1st'``)    destination. It uses the proportion of the
                            area of the overlapping source and
                            destination cells to determine appropriate
                            weights. In particular, the weight of a
@@ -1260,7 +1258,7 @@ First-order conservative   Preserve the area integral of the data across
                            conservative method (see below).
 
 Second-order conservative  As with first-order (see above), preserves the
-                           area integral of the field between source and
+(``'conservative_2nd'``)   area integral of the field between source and
                            destination using a weighted sum with weights
                            based on the proportionate area of intersection.
                            But unlike first-order, the second-order method
@@ -1269,21 +1267,27 @@ Second-order conservative  As with first-order (see above), preserves the
                            the source cell, thereby typically producing a
                            smoother result of higher accuracy.
 
-Patch                      A second degree polynomial regridding method,
-                           which uses a least squares algorithm to
+Higher order patch         A second degree polynomial regridding method,
+recovery (``'patch'``)     which uses a least squares algorithm to
                            calculate the polynomial. This method gives
                            better derivatives in the resulting
-                           destination data than the bilinear method.
+                           destination data than the linear method.
 
-Nearest neighbour          Nearest neighbour interpolation that is useful
-                           for extrapolation of categorical data. Either
-                           each destination point is mapped to the
-                           closest source; or each source point is mapped
-                           to the closest destination point. In the
-                           latter case, a given destination point may
-                           receive input from multiple source points, but
-                           no source point will map to more than one
-                           destination point.
+Nearest neighbour          Nearest neighbour interpolation, which is useful
+interpolation mapping      for extrapolation of categorical data. In this
+destination to nearest     variant, *each destination point* is mapped to the
+source                     *closest source*. See also below, for another
+(``'nearest_stod'``)       variant.
+
+Nearest neighbour          Nearest neighbour interpolation, which is useful
+interpolation mapping      for extrapolation of categorical data. In this
+source to nearest          variant, *each source point* is mapped to the
+destination                *closest destination*. In this case, a given
+(``'nearest_dtos'``)       destination point may receive input from multiple
+                           source points, but no source point will map to
+                           more than one destination point. See also above
+                           for another variant of nearest neighbour
+                           interpolation.
 =========================  ==============================================
 
 .. _Spherical-regridding:
@@ -1380,7 +1384,7 @@ coordinate constructs.
    >>> import numpy
    >>> lat = cf.DimensionCoordinate(data=cf.Data(numpy.arange(-90, 92.5, 2.5), 'degrees_north'))
    >>> lon = cf.DimensionCoordinate(data=cf.Data(numpy.arange(0, 360, 5.0), 'degrees_east'))
-   >>> c = a.regrids({'latitude': lat, 'longitude': lon}, 'bilinear')
+   >>> c = a.regrids({'latitude': lat, 'longitude': lon}, 'linear')
    Field: air_temperature (ncvar%tas)
    ----------------------------------
    Data            : air_temperature(time(2), latitude(73), longitude(72)) K
@@ -1432,7 +1436,7 @@ coordinate system can be regridded with Cartesian regridding, which
 will produce similar results to using using spherical regridding.
 
 .. code-block:: python
-   :caption: *Regrid the time axis 'T' of field 'a' with the bilinear
+   :caption: *Regrid the time axis 'T' of field 'a' with the linear
              method onto the grid specified in the dimension coordinate
              time.*
 
@@ -1442,7 +1446,7 @@ will produce similar results to using using spherical regridding.
    ...                       units='days since 1860-01-01', calendar='360_day'))
    >>> time
    <CF DimensionCoordinate: time(60) days since 1860-01-01 360_day>
-   >>> c = a.regridc({'T': time}, axes='T', method='bilinear')
+   >>> c = a.regridc({'T': time}, axes='T', method='linear')
    Field: air_temperature (ncvar%tas)
    ----------------------------------
    Data            : air_temperature(time(60), latitude(73), longitude(96)) K
@@ -1539,7 +1543,7 @@ pressure coordinates after the regridding operation.
    >>> _ = v.replace_construct('Z', z_ln_p)
    >>> new_z_p = cf.DimensionCoordinate(data=cf.Data([800, 705, 632, 510, 320.], 'hPa'))
    >>> new_z_ln_p = new_z_p.log()
-   >>> new_v = v.regridc({'Z': new_z_ln_p}, axes='Z', method='bilinear') 
+   >>> new_v = v.regridc({'Z': new_z_ln_p}, axes='Z', method='linear')
    >>> new_v.replace_construct('Z', new_z_p)
    >>> print(new_v)
    Field: eastward_wind (ncvar%ua)
