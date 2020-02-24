@@ -11697,7 +11697,6 @@ False
 
             partition.open(config)
             array = partition.array
-
             # --------------------------------------------------------
             # Find the master array indices for this partition
             # --------------------------------------------------------
@@ -11708,6 +11707,21 @@ False
             # Find the condition for this partition
             # --------------------------------------------------------
             if getattr(condition, 'isquery', False):
+                if hasattr(condition._value, '_Units'):
+                    # Ensure query data has equal units before evaluation
+                    orig_condition_units = condition._value._Units
+                    p_units = partition.Units
+                    if orig_condition_units.equivalent(p_units):
+                        if not orig_condition_units.equals(p_units):
+                            # Convert equivalent units to equal units
+                            condition._value._Units = p_units
+                    else:
+                        raise ValueError(
+                            "where: Can't apply a query condition with "
+                            "units '{!s}' on data with non-equivalent "
+                            "units '{!s}'".format(
+                                orig_condition_units, p_units)
+                        )
                 c = condition.evaluate(array)
             elif condition_is_scalar:
                 c = condition
