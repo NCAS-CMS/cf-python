@@ -1904,18 +1904,46 @@ The field construct and metadata constructs have `~Field.cos`,
 functions element-wise to the data, preserving the metadata but
 changing the construct's units.
 
-The field construct and metadata constructs the following
+The field construct and metadata constructs support the following
 trigonometrical methods:
 
-===============  ========================================================
-Method           Description
-===============  ========================================================
-`~Field.arctan`  Take the trigonometric inverse tangent of the data
-                 element-wise.
-`~Field.cos`     Take the trigonometric tangent of the data element-wise.
-`~Field.sin`     Take the trigonometric tangent of the data element-wise.
-`~Field.tan`     Take the trigonometric tangent of the data element-wise.
-===============  ========================================================
+================  ========================================================
+Method            Description
+================  ========================================================
+`~Field.arccos`   Take the inverse trigonometric cosine of the data
+                  element-wise.
+`~Field.arcsin`   Take the inverse trigonometric sine of the data
+                  element-wise.
+`~Field.arctan`   Take the inverse trigonometric tangent of the data
+                  element-wise.
+`~Field.cos`      Take the trigonometric cosine of the data element-wise.
+`~Field.sin`      Take the trigonometric sine of the data element-wise.
+`~Field.tan`      Take the trigonometric tangent of the data element-wise.
+================  ========================================================
+
+As well as `~Field.arctan` there is a method `~Field.arctan2` available
+which takes the inverse trigonometric tangent of data element-wise, but
+does so instead for two constructs where the inverse tangent of the
+quotient between corresponding elements is taken, in each case choosing the
+correct quadrant (see
+`the corresponding NumPy method <http://cfpython.bitbucket.io/docs/2.0/index.html>`_ for further details).
+
+The field construct and metadata constructs also support the following
+hyperbolic methods:
+
+================  ========================================================
+Method            Description
+================  ========================================================
+`~Field.arccosh`  Take the inverse hyperbolic cosine of the data
+                  element-wise.
+`~Field.arcsinh`  Take the inverse hyperbolic sine of the data
+                  element-wise.
+`~Field.arctanh`  Take the inverse hyperbolic tangent of the data
+                  element-wise.
+`~Field.cosh`     Take the hyperbolic cosine of the data element-wise.
+`~Field.sinh`     Take the hyperbolic sine of the data element-wise.
+`~Field.tanh`     Take the hyperbolic tangent of the data element-wise.
+================  ========================================================
 
 .. code-block:: python
    :caption: *Find the sine of each latitude coordinate value.*

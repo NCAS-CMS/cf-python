@@ -2597,6 +2597,60 @@ class PropertiesData(Properties):
 
         return out
 
+    @classmethod
+    def arctan2(cls, y, x):
+        '''Take the "two-argument" trigonometric inverse tangent
+    element-wise for `y`/`x`.
+
+    Explicitly this returns, for all corresponding elements, the angle
+    between the positive `x` axis and the line to the point (`x`, `y`),
+    where the signs of both `x` and `y` are taken into account to
+    determine the quadrant. Such knowledge of the signs of `x` and `y`
+    are lost when the quotient is input to the standard "one-argument"
+    `arctan` function, such that use of `arctan` leaves the quadrant
+    ambiguous. `arctan2` may therefore be preferred.
+
+    Units are ignored in the calculation. The result has units of radians.
+
+    The "standard_name" and "long_name" properties are removed from
+    the result.
+
+    .. versionadded:: 3.1.1
+
+    .. seealso:: `arctan`, `tan`
+
+    :Parameters:
+
+        y: `Data`
+            The data array to provide the numerator elements, corresponding
+            to the `y` coordinates in the `arctan2` definition.
+
+        x: `Data`
+            The data array to provide the denominator elements,
+            corresponding to the `x` coordinates in the `arctan2`
+            definition.
+
+    :Returns:
+
+        The construct with the "two-argument" trigonometric inverse tangent
+        of data values. If the operation was in-place then `None` is
+        returned.
+
+    **Examples:**
+
+    TODO
+
+        '''
+        # TODO: keeping metadata of just y, but should it be a combo of x & y?
+        out = y.copy()
+
+        data = Data.arctan2(x.get_data(None), y.get_data(None))
+        out.set_data(data, copy=False)
+
+        out.del_property('standard_name', None)
+        out.del_property('long_name', None)
+
+        return out
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -2613,7 +2667,7 @@ class PropertiesData(Properties):
     The "standard_name" and "long_name" properties are removed from
     the result.
 
-    .. seealso:: `sin`, `tan`
+    .. seealso:: `arccos`, `sin`, `tan`, `cosh`
 
     :Parameters:
 
@@ -3842,7 +3896,7 @@ class PropertiesData(Properties):
 
     .. versionadded:: 3.0.7
 
-    .. seealso:: `tan`
+    .. seealso:: `arctan2`, `tan`
 
     :Parameters:
 
@@ -3871,6 +3925,71 @@ class PropertiesData(Properties):
             _inplace_enabled_define_and_cleanup(self), 'arctan',
             inplace=inplace, delete_props=True)
 
+    @_deprecated_kwarg_check('i')
+    @_inplace_enabled
+    def arctanh(self, inplace=False):
+        '''Take the inverse hyperbolic tangent of the data element-wise.
+
+    Units are ignored in the calculation. The result has units of radians.
+
+    The "standard_name" and "long_name" properties are removed from
+    the result.
+
+    .. versionadded:: 3.1.1
+
+    .. seealso:: `tanh`, `arcsinh`, `arccosh`, `arctan`
+
+    :Parameters:
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+
+    :Returns:
+
+            The construct with the inverse hyperbolic tangent of data
+            values. If the operation was in-place then `None` is returned.
+
+    **Examples:**
+
+    TODO
+
+        '''
+        return self._apply_data_oper(
+            _inplace_enabled_define_and_cleanup(self), 'arctanh',
+            inplace=inplace, delete_props=True)
+
+    @_deprecated_kwarg_check('i')
+    @_inplace_enabled
+    def arcsin(self, inplace=False):
+        '''Take the trigonometric inverse sine of the data element-wise.
+
+    Units are ignored in the calculation. The result has units of radians.
+
+    The "standard_name" and "long_name" properties are removed from
+    the result.
+
+    .. versionadded:: 3.1.1
+
+    .. seealso:: `sin`, `arccos`, `arctan`, `arcsinh`
+
+    :Parameters:
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+
+    :Returns:
+
+            The construct with the trigonometric inverse sine of data
+            values. If the operation was in-place then `None` is returned.
+
+    **Examples:**
+
+    TODO
+
+        '''
+        return self._apply_data_oper(
+            _inplace_enabled_define_and_cleanup(self), 'arcsin',
+            inplace=inplace, delete_props=True)
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -3914,6 +4033,71 @@ class PropertiesData(Properties):
             _inplace_enabled_define_and_cleanup(self), 'arcsinh',
             inplace=inplace, delete_props=True)
 
+    @_deprecated_kwarg_check('i')
+    @_inplace_enabled
+    def arccos(self, inplace=False):
+        '''Take the trigonometric inverse cosine of the data element-wise.
+
+    Units are ignored in the calculation. The result has units of radians.
+
+    The "standard_name" and "long_name" properties are removed from
+    the result.
+
+    .. versionadded:: 3.1.1
+
+    .. seealso:: `cos`, `arcsin`, `arctan`, `arccosh`
+
+    :Parameters:
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+
+    :Returns:
+
+            The construct with the trigonometric inverse cosine of data
+            values. If the operation was in-place then `None` is returned.
+
+    **Examples:**
+
+    TODO
+
+        '''
+        return self._apply_data_oper(
+            _inplace_enabled_define_and_cleanup(self), 'arccos',
+            inplace=inplace, delete_props=True)
+
+    @_deprecated_kwarg_check('i')
+    @_inplace_enabled
+    def arccosh(self, inplace=False):
+        '''Take the inverse hyperbolic cosine of the data element-wise.
+
+    Units are ignored in the calculation. The result has units of radians.
+
+    The "standard_name" and "long_name" properties are removed from
+    the result.
+
+    .. versionadded:: 3.1.1
+
+    .. seealso:: `cosh`, `arcsinh`, `arctanh`, `arccos`
+
+    :Parameters:
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+
+    :Returns:
+
+            The construct with the inverse hyperbolic cosine of data
+            values. If the operation was in-place then `None` is returned.
+
+    **Examples:**
+
+    TODO
+
+        '''
+        return self._apply_data_oper(
+            _inplace_enabled_define_and_cleanup(self), 'arccosh',
+            inplace=inplace, delete_props=True)
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -3931,7 +4115,7 @@ class PropertiesData(Properties):
     The "standard_name" and "long_name" properties are removed from
     the result.
 
-    .. seealso:: `arctan`, `cos`, `sin`
+    .. seealso:: `arctan`, `arctan2`, `cos`, `sin`, `tanh`
 
     :Parameters:
 
@@ -4051,7 +4235,7 @@ class PropertiesData(Properties):
 
     .. versionadded:: 3.1.0
 
-    .. seealso:: `arcsinh`, `cosh`, `tanh`
+    .. seealso:: `arcsinh`, `cosh`, `tanh`, `sin`
 
     :Parameters:
 
@@ -4108,7 +4292,7 @@ class PropertiesData(Properties):
 
     .. versionadded:: 3.1.0
 
-    .. seealso:: `sinh`, `tanh`
+    .. seealso:: `arccosh`, `sinh`, `tanh`, `cos`
 
     :Parameters:
 

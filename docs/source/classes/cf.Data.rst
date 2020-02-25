@@ -51,8 +51,13 @@ Data methods
    ~cf.Data.all
    ~cf.Data.allclose
    ~cf.Data.any
+   ~cf.Data.arccos
+   ~cf.Data.arccosh
+   ~cf.Data.arcsin
    ~cf.Data.arcsinh
    ~cf.Data.arctan
+   ~cf.Data.arctan2
+   ~cf.Data.arctanh
    ~cf.Data.argmax
    ~cf.Data.asdata
    ~cf.Data.ceil

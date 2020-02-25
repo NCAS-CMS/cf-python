@@ -256,8 +256,13 @@ Mathematical operations
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.Index.arccos
+   ~cf.Index.arccosh
+   ~cf.Index.arcsin
    ~cf.Index.arcsinh
    ~cf.Index.arctan
+   ~cf.Index.arctan2
+   ~cf.Index.arctanh
    ~cf.Index.cos
    ~cf.Index.cosh
    ~cf.Index.sin

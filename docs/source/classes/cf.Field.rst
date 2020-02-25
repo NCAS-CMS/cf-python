@@ -325,7 +325,7 @@ Miscellaneous
    ~cf.Field.creation_commands
    ~cf.Field.radius
    ~cf.Field.uncompress
-   cf.Field.concatenate
+   ~cf.Field.concatenate
    
 .. rubric:: Attributes
 	    
@@ -414,15 +414,19 @@ Mathematical operations
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.Field.arccos
+   ~cf.Field.arccosh
+   ~cf.Field.arcsin
    ~cf.Field.arcsinh
    ~cf.Field.arctan
+   ~cf.Field.arctan2
+   ~cf.Field.arctanh
    ~cf.Field.cos
    ~cf.Field.cosh
    ~cf.Field.sin
    ~cf.Field.sinh
    ~cf.Field.tan
    ~cf.Field.tanh
-
 
 .. rubric:: Rounding and truncation
 

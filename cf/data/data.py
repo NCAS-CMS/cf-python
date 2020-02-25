@@ -2,8 +2,13 @@ from functools   import reduce
 from operator    import itemgetter
 
 import numpy
+from numpy import arccos            as numpy_arccos
+from numpy import arccosh           as numpy_arccosh
+from numpy import arcsin            as numpy_arcsin
 from numpy import arcsinh           as numpy_arcsinh
 from numpy import arctan            as numpy_arctan
+from numpy import arctan2           as numpy_arctan2
+from numpy import arctanh           as numpy_arctanh
 from numpy import array             as numpy_array
 from numpy import asanyarray        as numpy_asanyarray
 from numpy import ceil              as numpy_ceil
@@ -7750,7 +7755,7 @@ False
 
     .. versionadded:: 3.0.7
 
-    .. seealso:: `tan`
+    .. seealso:: `arctan2`, `tan`, `arcsin`, `arccos`, `arctanh`
 
     :Parameters:
 
@@ -7781,6 +7786,107 @@ False
 
         return d
 
+    @classmethod
+    def arctan2(cls, y, x):
+        '''Take the "two-argument" trigonometric inverse tangent
+    element-wise for `y`/`x`.
+
+    Explicitly this returns, for all corresponding elements, the angle
+    between the positive `x` axis and the line to the point (`x`, `y`),
+    where the signs of both `x` and `y` are taken into account to
+    determine the quadrant. Such knowledge of the signs of `x` and `y`
+    are lost when the quotient is input to the standard "one-argument"
+    `arctan` function, such that use of `arctan` leaves the quadrant
+    ambiguous. `arctan2` may therefore be preferred.
+
+    Units are ignored in the calculation. The result has units of radians.
+
+    .. versionadded:: 3.1.1
+
+    .. seealso:: `arctan`, `tan`
+
+    :Parameters:
+
+        y: `Data`
+            The data array to provide the numerator elements, corresponding
+            to the `y` coordinates in the `arctan2` definition.
+
+        x: `Data`
+            The data array to provide the denominator elements,
+            corresponding to the `x` coordinates in the `arctan2`
+            definition.
+
+    :Returns:
+
+        `Data`
+
+    **Examples:**
+
+    TODO
+
+        '''
+        return cls(numpy_arctan2(y, x), units=_units_radians)
+
+    @_inplace_enabled
+    def arctanh(self, inplace=False):
+        '''Take the inverse hyperbolic tangent of the data element-wise.
+
+    Units are ignored in the calculation. The result has units of radians.
+
+    .. versionadded:: 3.1.1
+
+    .. seealso::  `tanh`, `arcsinh`, `arccosh`, `arctan`
+
+    :Parameters:
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+
+    :Returns:
+
+        `Data` or `None`
+
+    **Examples:**
+
+    TODO
+
+        '''
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        d.func(numpy_arctanh, units=_units_radians, inplace=True)
+
+        return d
+
+    @_inplace_enabled
+    def arcsin(self, inplace=False):
+        '''Take the trigonometric inverse sine of the data element-wise.
+
+    Units are ignored in the calculation. The result has units of radians.
+
+    .. versionadded:: 3.1.1
+
+    .. seealso::  `sin`, `arccos`, `arctan`, `arcsinh`
+
+    :Parameters:
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+
+    :Returns:
+
+        `Data` or `None`
+
+    **Examples:**
+
+    TODO
+
+        '''
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        d.func(numpy_arcsin, units=_units_radians, inplace=True)
+
+        return d
+
     @_inplace_enabled
     def arcsinh(self, inplace=False):
         '''Take the inverse hyperbolic sine of the data element-wise.
@@ -7789,7 +7895,7 @@ False
 
     .. versionadded:: 3.1.0
 
-    .. seealso:: `sinh`
+    .. seealso:: `sinh`, `arccosh`, `arctanh`, `arcsin`
 
     :Parameters:
 
@@ -7817,6 +7923,66 @@ False
         d = _inplace_enabled_define_and_cleanup(self)
 
         d.func(numpy_arcsinh, units=_units_radians, inplace=True)
+
+        return d
+
+    @_inplace_enabled
+    def arccos(self, inplace=False):
+        '''Take the trigonometric inverse cosine of the data element-wise.
+
+    Units are ignored in the calculation. The result has units of radians.
+
+    .. versionadded:: 3.1.1
+
+    .. seealso:: `cos`, `arcsin`, `arctan`, `arccosh`
+
+    :Parameters:
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+
+    :Returns:
+
+        `Data` or `None`
+
+    **Examples:**
+
+    TODO
+
+        '''
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        d.func(numpy_arccos, units=_units_radians, inplace=True)
+
+        return d
+
+    @_inplace_enabled
+    def arccosh(self, inplace=False):
+        '''Take the inverse hyperbolic cosine of the data element-wise.
+
+    Units are ignored in the calculation. The result has units of radians.
+
+    .. versionadded:: 3.1.1
+
+    .. seealso::  `cosh`, `arcsinh`, `arctanh`, `arccos`
+
+    :Parameters:
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+
+    :Returns:
+
+        `Data` or `None`
+
+    **Examples:**
+
+    TODO
+
+        '''
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        d.func(numpy_arccosh, units=_units_radians, inplace=True)
 
         return d
 
@@ -9029,6 +9195,8 @@ False
     is 0.0, as is the cosine of 1.57079632 kg m-2.
 
     The output units are changed to '1' (nondimensional).
+
+    .. seealso:: `arccos`, `sin`, `tan`, `cosh`
 
     :Parameters:
 
@@ -11854,7 +12022,7 @@ False
 
     The output units are changed to '1' (nondimensional).
 
-    .. seealso:: `cos`, `tan`
+    .. seealso:: `arcsin`, `cos`, `tan`, `sinh`
 
     :Parameters:
 
@@ -11915,7 +12083,7 @@ False
 
     .. versionadded:: 3.1.0
 
-    .. seealso:: `arcsinh`, `cosh`, `tanh`
+    .. seealso:: `arcsinh`, `cosh`, `tanh`, `sin`
 
     :Parameters:
 
@@ -11971,7 +12139,7 @@ False
 
     .. versionadded:: 3.1.0
 
-    .. seealso:: `sinh`, `tanh`
+    .. seealso:: `arccosh`, `sinh`, `tanh`, `cos`
 
     :Parameters:
 
@@ -12029,7 +12197,7 @@ False
 
     .. versionadded:: 3.1.0
 
-    .. seealso:: `sinh`, `cosh`
+    .. seealso:: `arctanh`, `sinh`, `cosh`, `tan`
 
 
     :Parameters:
@@ -12272,7 +12440,7 @@ False
 
     The output units are changed to '1' (nondimensional).
 
-    .. seealso:: `cos`, `sin`
+    .. seealso:: `arctan`, `arctan2`, `cos`, `sin`, `tanh`
 
     :Parameters:
 

@@ -282,15 +282,19 @@ Mathematical operations
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.CellMeasure.arccos
+   ~cf.CellMeasure.arccosh
+   ~cf.CellMeasure.arcsin
    ~cf.CellMeasure.arcsinh
    ~cf.CellMeasure.arctan
+   ~cf.CellMeasure.arctan2
+   ~cf.CellMeasure.arctanh
    ~cf.CellMeasure.cos
    ~cf.CellMeasure.cosh
    ~cf.CellMeasure.sin
    ~cf.CellMeasure.sinh
    ~cf.CellMeasure.tan
    ~cf.CellMeasure.tanh
-
 
 .. rubric:: *Rounding and truncation*
 

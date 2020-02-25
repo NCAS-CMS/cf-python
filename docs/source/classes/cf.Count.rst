@@ -257,8 +257,13 @@ Mathematical operations
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.Count.arccos
+   ~cf.Count.arccosh
+   ~cf.Count.arcsin
    ~cf.Count.arcsinh
    ~cf.Count.arctan
+   ~cf.Count.arctan2
+   ~cf.Count.arctanh
    ~cf.Count.cos
    ~cf.Count.cosh
    ~cf.Count.sin

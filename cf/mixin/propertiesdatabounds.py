@@ -1072,6 +1072,62 @@ dtype('float64')
 
         return out
 
+    @classmethod
+    def arctan2(cls, y, x, bounds=True):
+        '''Take the "two-argument" trigonometric inverse tangent
+    element-wise for `y`/`x`.
+
+    Explicitly this returns, for all corresponding elements, the angle
+    between the positive `x` axis and the line to the point (`x`, `y`),
+    where the signs of both `x` and `y` are taken into account to
+    determine the quadrant. Such knowledge of the signs of `x` and `y`
+    are lost when the quotient is input to the standard "one-argument"
+    `arctan` function, such that use of `arctan` leaves the quadrant
+    ambiguous. `arctan2` may therefore be preferred.
+
+    Units are ignored in the calculation. The result has units of radians.
+
+    .. versionadded:: 3.1.1
+
+    .. seealso:: `arctan`, `tan`
+
+    :Parameters:
+
+        y: `Data`
+            The data array to provide the numerator elements, corresponding
+            to the `y` coordinates in the `arctan2` definition.
+
+        x: `Data`
+            The data array to provide the denominator elements,
+            corresponding to the `x` coordinates in the `arctan2`
+            definition.
+
+        bounds: `bool`, optional
+            If False then do not alter any bounds. By default any
+            bounds are also altered. Note that bounds will only be changed
+            if both `x` and `y` have bounds to consider.
+
+    :Returns:
+
+        The construct with the "two-argument" trigonometric inverse tangent
+        of data values. If the operation was in-place then `None` is
+        returned.
+
+    **Examples:**
+
+    TODO
+
+        '''
+        out = super().arctan2(y, x)
+
+        if bounds:
+            bounds_y = y.get_bounds(None)
+            bounds_x = x.get_bounds(None)
+            if bounds_x is not None and bounds_y is not None:
+                bounds = Data.arctan2(x.get_bounds(), y.get_bounds())
+                out.set_bounds(bounds, copy=False)
+
+        return out
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -1085,7 +1141,7 @@ dtype('float64')
 
     The output units are '1' (nondimensional).
 
-    .. seealso:: `sin`, `tan`
+    .. seealso:: `arccos`, `sin`, `tan`, `cosh`
 
     :Parameters:
 
@@ -1965,7 +2021,7 @@ dtype('float64')
 
     The Units are changed to '1' (nondimensional).
 
-    .. seealso:: `cos`, `tan`
+    .. seealso:: `arcsin`, `cos`, `tan`, `sinh`
 
     :Parameters:
 
@@ -2024,7 +2080,7 @@ dtype('float64')
 
     .. versionadded:: 3.0.7
 
-    .. seealso:: `tan`
+    .. seealso:: `arctan2`, `tan`
 
     :Parameters:
 
@@ -2054,6 +2110,69 @@ dtype('float64')
             _inplace_enabled_define_and_cleanup(self), 'arctan',
             inplace=inplace)
 
+    @_inplace_enabled
+    def arctanh(self, bounds=True, inplace=False):
+        '''Take the inverse hyperbolic tangent of the data element-wise.
+
+    Units are ignored in the calculation. The result has units of radians.
+
+    The "standard_name" and "long_name" properties are removed from
+    the result.
+
+    .. versionadded:: 3.1.1
+
+    .. seealso:: `tanh`, `arcsinh`, `arccosh`, `arctan`
+
+    :Parameters:
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+
+    :Returns:
+
+            The construct with the inverse hyperbolic tangent of data
+            values. If the operation was in-place then `None` is returned.
+
+    **Examples:**
+
+    TODO
+
+        '''
+        return self._apply_superclass_data_oper(
+            _inplace_enabled_define_and_cleanup(self), 'arctanh',
+            bounds=bounds, inplace=inplace)
+
+    @_inplace_enabled
+    def arcsin(self, bounds=True, inplace=False):
+        '''Take the trigonometric inverse sine of the data element-wise.
+
+    Units are ignored in the calculation. The result has units of radians.
+
+    The "standard_name" and "long_name" properties are removed from
+    the result.
+
+    .. versionadded:: 3.1.1
+
+    .. seealso:: `sin`, `arccos`, `arctan`, `arcsinh`
+
+    :Parameters:
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+
+    :Returns:
+
+            The construct with the trigonometric inverse sine of data
+            values. If the operation was in-place then `None` is returned.
+
+    **Examples:**
+
+    TODO
+
+        '''
+        return self._apply_superclass_data_oper(
+            _inplace_enabled_define_and_cleanup(self), 'arcsin',
+            bounds=bounds, inplace=inplace)
 
     @_inplace_enabled
     def arcsinh(self, bounds=True, inplace=False):
@@ -2096,6 +2215,69 @@ dtype('float64')
             _inplace_enabled_define_and_cleanup(self), 'arcsinh',
             bounds=bounds, inplace=inplace)
 
+    @_inplace_enabled
+    def arccos(self, bounds=True, inplace=False):
+        '''Take the trigonometric inverse cosine of the data element-wise.
+
+    Units are ignored in the calculation. The result has units of radians.
+
+    The "standard_name" and "long_name" properties are removed from
+    the result.
+
+    .. versionadded:: 3.1.1
+
+    .. seealso:: `cos`, `arcsin`, `arctan`, `arccosh`
+
+    :Parameters:
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+
+    :Returns:
+
+            The construct with the trigonometric inverse cosine of data
+            values. If the operation was in-place then `None` is returned.
+
+    **Examples:**
+
+    TODO
+
+        '''
+        return self._apply_superclass_data_oper(
+            _inplace_enabled_define_and_cleanup(self), 'arccos',
+            bounds=bounds, inplace=inplace)
+
+    @_inplace_enabled
+    def arccosh(self, bounds=True, inplace=False):
+        '''Take the inverse hyperbolic cosine of the data element-wise.
+
+    Units are ignored in the calculation. The result has units of radians.
+
+    The "standard_name" and "long_name" properties are removed from
+    the result.
+
+    .. versionadded:: 3.1.1
+
+    .. seealso:: `cosh`, `arcsinh`, `arctanh`, `arccos`
+
+    :Parameters:
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+
+    :Returns:
+
+            The construct with the inverse hyperbolic cosine of data
+            values. If the operation was in-place then `None` is returned.
+
+    **Examples:**
+
+    TODO
+
+        '''
+        return self._apply_superclass_data_oper(
+            _inplace_enabled_define_and_cleanup(self), 'arccosh',
+            bounds=bounds, inplace=inplace)
 
     @_inplace_enabled
     def tanh(self, bounds=True, inplace=False):
@@ -2114,7 +2296,7 @@ dtype('float64')
 
     .. versionadded:: 3.1.0
 
-    .. seealso:: `sinh`, `cosh`
+    .. seealso:: `arctanh`, `sinh`, `cosh`, `tan`
 
 
     :Parameters:
@@ -2172,7 +2354,7 @@ dtype('float64')
 
     .. versionadded:: 3.1.0
 
-    .. seealso:: `arcsinh`, `cosh`, `tanh`
+    .. seealso:: `arcsinh`, `cosh`, `tanh`, `sin`
 
     :Parameters:
 
@@ -2228,7 +2410,7 @@ dtype('float64')
 
     .. versionadded:: 3.1.0
 
-    .. seealso:: `sinh`, `tanh`
+    .. seealso:: `arccosh`, `sinh`, `tanh`, `cos`
 
     :Parameters:
 
@@ -2281,7 +2463,7 @@ dtype('float64')
 
     The Units are changed to '1' (nondimensional).
 
-    .. seealso:: `arctan`, `cos`, `sin`
+    .. seealso:: `arctan`, `arctan2`, `cos`, `sin`, `tanh`
 
     :Parameters:
 
