@@ -5235,6 +5235,7 @@ class Field(mixin.PropertiesData,
             if not dim.has_bounds():
                 # No bounds
                 if auto:
+                    print (999)
                     return
 
                 raise ValueError(
@@ -5606,6 +5607,10 @@ class Field(mixin.PropertiesData,
 
         auto: `bool`
 
+    :Returns:
+            
+        `tuple`
+            
             '''
             aux_X = None
             aux_Y = None
@@ -6299,27 +6304,29 @@ class Field(mixin.PropertiesData,
             for axis in axes:
                 da_key = self.domain_axis(axis, key=True, default=None)
                 if da_key is None:
-                    raise ValueError("Can't create weights: Can't find axis matching {!r}".format(
-                        axis))
-
-                if _linear_weights(self, axis, comp, weights_axes,
-                                   auto=True, measure=measure):
-                    # Linear weights from dimension coordinates
+                    raise ValueError(
+                        "Can't create weights: Can't find axis matching {!r}".format(
+                            axis))
+                
+                if _area_weights_geometry(self, comp, weights_axes,
+                                          measure=measure,
+                                          radius=radius,
+                                          great_circle=great_circle,
+                                          auto=True):
+                    # Area weights from polygon geometries
                     pass
-                elif _area_weights_geometry(self, comp, weights_axes,
+                elif _line_weights_geometry(self, comp, weights_axes,
                                             measure=measure,
                                             radius=radius,
                                             great_circle=great_circle,
                                             auto=True):
-                    # Area weights from polygon geometries
+                    # Linear weights from line geometries
                     pass
                 else:
-                    # Linear weights from line geometries
-                    _line_weights_geometry(self, comp, weights_axes,
-                                           measure=measure,
-                                           radius=radius,
-                                           great_circle=great_circle,
-                                           auto=False)
+                    _linear_weights(self, axis, comp, weights_axes,
+                                        auto=False, measure=measure)
+                    # Linear weights from dimension coordinates
+                    pass
             #--- End: for
 
             # Check for area weights specified by X and Y axes
