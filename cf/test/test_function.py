@@ -14,10 +14,10 @@ class functionTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        for n in range(5):
+        for n in range(6):
             f = cf.example_field(n)
-            a = f.array
-            d = f.dump(display=False)
+            _ = f.array
+            _ = f.dump(display=False)
 
         with self.assertRaises(Exception):
             _ = cf.example_field(-999)

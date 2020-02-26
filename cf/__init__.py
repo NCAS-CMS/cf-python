@@ -219,9 +219,9 @@ from .functions            import *
 from .maths                import relative_vorticity, histogram
 from .examplefield         import example_field
 
+from .cfimplementation import (CFImplementation,
+                               implementation)
 
 from .read_write import (read,
-                         write,
-                         implementation,
-                         CFImplementation)
+                         write)
 

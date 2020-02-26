@@ -3,15 +3,15 @@ import os
 from glob    import glob
 from os.path import isdir
 
-from . import implementation
+from .netcdf import NetCDFRead
+from .um     import UMRead
+
+from ..cfimplementation import implementation
 
 from ..fieldlist import FieldList
 from ..functions import flat
 
 from ..aggregate import aggregate as cf_aggregate
-
-from .netcdf import NetCDFRead
-from .um     import UMRead
 
 from ..functions import _DEPRECATION_ERROR_FUNCTION_KWARGS
 

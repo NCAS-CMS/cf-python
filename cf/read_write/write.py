@@ -1,10 +1,12 @@
-from os.path       import abspath
+from os.path import abspath
 
-from . import implementation
 from .netcdf import NetCDFWrite
+
+from ..cfimplementation import implementation
 
 from ..functions import flat
 from ..functions import _DEPRECATION_ERROR_FUNCTION_KWARGS
+
 
 #from . import mpi_on
 mpi_on = False
