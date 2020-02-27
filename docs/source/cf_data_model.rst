@@ -68,6 +68,10 @@ The physical nature of individual data values are described by
 - **cell method constructs** (corresponding to a CF-netCDF
   cell_methods attribute of data variable).
 
+----
+
+|
+
 .. figure:: images/field.png
    :scale: 35 %
 

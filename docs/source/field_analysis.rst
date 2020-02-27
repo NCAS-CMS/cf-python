@@ -1617,12 +1617,34 @@ they have different standard names.
     'units=K',
     'standard_name=air_temperature',
     'ncvar%ta']
-   >>> u = t * cf.Data(10, 'ms-1')
+   >>> u = t * cf.Data(10, 'm s-1')
    >>> u.identities()
    ['Conventions=CF-1.7',
     'project=research',
-    'units=1000 s-1.K',
+    'units=m.s-1.K',
     'ncvar%ta']
+	     
+The :ref:`domain <domain>` metadata constructs of the result of a
+binary operation are unambiguously well defined: The domain metadata
+constructs of the result of a succesful operation are copied from the
+left hand side (LHS) operand, except when a coordinate construct in
+the LHS operand has size 1 and the corresponding coordinate construct
+in right hand side (RHS) field construct operand has size greater
+than 1. In this case the coordinate construct from the RHS operand is
+used in the result, to match up with the data broadcasting that will
+have occured during the operation.
+
+In circumstances when unambiguously well defined domain metadata
+constructs can not be inferred then an exception will be raised. For
+example, this will be the case if both operands are field constructs
+with corresponding coordinate constructs of size greater than 1 *and
+with different coordinate values*.
+
+
+
+This will be made easier in a future release with a new function for
+combining such field constructs.
+
 
 .. note:: Care must be taken when combining a field construct with a
           `numpy` array or a `Data` instance, due to the ways in which
@@ -1661,8 +1683,7 @@ they have different standard names.
 	     cf.field.Field
 	     >>> type(cf.Data(b) * t)
 	     cf.data.data.Data
-	     
-
+     
 .. _Unary-operations:
 
 Unary operations

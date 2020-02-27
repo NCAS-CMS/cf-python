@@ -19,7 +19,7 @@ Version |release| for version |version| of the CF conventions.
 **Operating systems**
 ---------------------
 
-cf works only for Linux and Mac operating systems.
+The cf package works only for Linux and Mac operating systems.
 
 If you have a Windows operating system then you can either install the
 `Microsoft Windows Subsystem for Linux (WSL)
@@ -33,7 +33,7 @@ installing a Linux Virtual Machine also works.
 **Python versions**
 -------------------
 
-cf at versions 3.0.0 or later works only for Python 3.5 or
+The cf package at versions 3.0.0 or later works only for Python 3.5 or
 later. (Versions 2.x of cf work only for Python 2.7.)
 
 ----
@@ -43,11 +43,11 @@ later. (Versions 2.x of cf work only for Python 2.7.)
 **pip**
 -------
 
-cf-python is in the Python package index:
-https://pypi.org/project/cf-python
-  
-To install cf and all of its :ref:`required dependencies <Required>`
-run, for example:
+cf is in the Python package index: https://pypi.org/project/cf-python
+
+cf has some :ref:`optional dependencies <Optional>` which are **not**
+automatically installed via ``pip``, but to install cf and all of its
+:ref:`required dependencies <Required>` run, for example:
 
 .. code-block:: console
    :caption: *Install as root, with any missing dependencies.*
@@ -71,10 +71,6 @@ See the `documentation for pip install
 <https://pip.pypa.io/en/stable/reference/pip_install/>`_ for further
 options.
 
-The :ref:`optional dependencies <Optional>` are **not** automatically
-installed via ``pip``.
-
-
 Note that :ref:`some environment variables might also need setting
 <UNIDATA-UDUNITS-2-library>` in order for the UDUNITS library to work
 properly, although the defaults are usually sufficient.
@@ -86,8 +82,8 @@ properly, although the defaults are usually sufficient.
 **conda**
 ---------
 
-cf-python is in the ``ncas`` conda channel. To install cf with all of
-its :ref:`required <Required>` and :ref:`optional <Optional>`
+The cf package is in the ``ncas`` conda channel. To install cf with
+all of its :ref:`required <Required>` and :ref:`optional <Optional>`
 dependencies, and the `cf-plot visualisation package
 <http://ajheaps.github.io/cf-plot>`_, run
 
@@ -115,10 +111,10 @@ properly, although the defaults are usually sufficient.
 
 To install from source:
 
-1. Download the cf-python package from https://pypi.org/project/cf-python
+1. Download the cf package from https://pypi.org/project/cf-python
 
 2. Unpack the library (replacing ``<version>`` with the version that
-   you want to install, e.g. ``3.0.0``):
+   you want to install, e.g. ``3.2.0``):
 
    .. code-block:: console
 	 
@@ -140,7 +136,8 @@ To install from source:
 
        $ python setup.py install --user
 
-  * To install the cf-python package in the <directory> of your choice:
+  * To install the cf-python package in the ``<directory>`` of your
+    choice:
 
     .. code-block:: console
 
@@ -198,19 +195,20 @@ Required
 
 * `UNIDATA UDUNITS-2 library
   <http://www.unidata.ucar.edu/software/udunits>`_, version 2.2.20 or
-  newer.
+  newer. UDUNITS-2 is a C library that provides support for units of
+  physical quantities.  
 
-  UDUNITS-2 is a C library that provides support for units of physical
-  quantities. If the UDUNITS-2 shared library file
-  (``libudunits2.so.0`` on GNU/Linux or ``libudunits2.0.dylibfile`` on
-  MacOS) is in a non-standard location then its directory path should
-  be added to the ``LD_LIBRARY_PATH`` environment variable. It may
-  also be necessary to specify the location (directory path *and* file
-  name) of the ``udunits2.xml`` file in the ``UDUNITS2_XML_PATH``
-  environment variable, although the default location is usually
-  correct. For example, ``export
+  If the UDUNITS-2 shared library file (``libudunits2.so.0`` on
+  GNU/Linux or ``libudunits2.0.dylibfile`` on MacOS) is in a
+  non-standard location then its directory path should be added to the
+  ``LD_LIBRARY_PATH`` environment variable.
+
+  It may also be necessary to specify the location (directory path
+  *and* file name) of the ``udunits2.xml`` file in the
+  ``UDUNITS2_XML_PATH`` environment variable, although the default
+  location is usually correct. For example, ``export
   UDUNITS2_XML_PATH=/home/user/anaconda3/share/udunits/udunits2.xml``.
-  If you get an error that looks like ``assert(0 ==
+  If you get a run-time error that looks like ``assert(0 ==
   _ut_unmap_symbol_to_unit(_ut_system, _c_char_p(b'Sv'), _UT_ASCII))``
   then setting the ``UDUNITS2_XML_PATH`` environment variable is the
   likely solution.
@@ -271,6 +269,8 @@ Tests are run from within the ``cf/test`` directory:
 
 The complete source code and issue tracker is available at
 https://github.com/NCAS-CMS/cf-python
+    
+----
 
 .. .. rubric:: Footnotes
 
