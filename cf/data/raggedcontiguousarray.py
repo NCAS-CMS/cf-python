@@ -19,4 +19,3 @@ class RaggedContiguousArray(abstract.CompressedArray,
 
     '''
 # --- End: class
-

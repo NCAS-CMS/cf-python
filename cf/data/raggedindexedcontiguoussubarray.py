@@ -29,16 +29,17 @@ class RaggedIndexedContiguousSubarray(abstract.CompressedSubarray):
 
         compression = self.compression
 
-        instance_axis     = compression['instance_axis']
-        instance_index    = compression['instance_index']
-        i_element_axis    = compression['i_element_axis']
-        i_element_index   = compression['i_element_index']
-        c_element_axis    = compression['c_element_axis']
+        instance_axis = compression['instance_axis']
+        instance_index = compression['instance_index']
+        i_element_axis = compression['i_element_axis']
+        i_element_index = compression['i_element_index']
+        c_element_axis = compression['c_element_axis']
         c_element_indices = compression['c_element_indices']
 
-        p_indices[instance_axis]  = instance_index
+        p_indices[instance_axis] = instance_index
         p_indices[i_element_axis] = i_element_index
-        p_indices[c_element_axis] = slice(0, c_element_indices.stop - c_element_indices.start)
+        p_indices[c_element_axis] = slice(
+            0, c_element_indices.stop - c_element_indices.start)
 
         uarray[tuple(p_indices)] = array[c_element_indices]
 

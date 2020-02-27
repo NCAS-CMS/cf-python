@@ -1,4 +1,4 @@
-from os       import close
+from os import close
 from operator import mul
 
 import numpy
@@ -32,24 +32,24 @@ class RaggedIndexedSubarray(abstract.CompressedSubarray):
 
         compression = self.compression
 
-        instance_axis  = compression['instance_axis']
+        instance_axis = compression['instance_axis']
         instance_index = compression['instance_index']
-        element_axis   = compression['i_element_axis']
+        element_axis = compression['i_element_axis']
         sample_indices = compression['i_element_indices']
 
         p_indices[instance_axis] = instance_index
-        p_indices[element_axis]  = slice(0, len(sample_indices))
+        p_indices[element_axis] = slice(0, len(sample_indices))
 
         uarray[tuple(p_indices)] = array[sample_indices]
 
         if _debug:
-            print('instance_axis    =', instance_axis )
+            print('instance_axis    =', instance_axis)
             print('instance_index   =', instance_index)
-            print('element_axis     =', element_axis  )
+            print('element_axis     =', element_axis)
             print('sample_indices   =', sample_indices)
-            print('p_indices        =', p_indices     )
-            print('uarray.shape     =', uarray.shape  )
-            print('self.array.shape =', array.shape   )
+            print('p_indices        =', p_indices)
+            print('uarray.shape     =', uarray.shape)
+            print('self.array.shape =', array.shape)
 
         if indices is Ellipsis:
             return uarray
