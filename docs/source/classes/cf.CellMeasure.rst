@@ -287,7 +287,7 @@ Mathematical operations
    ~cf.CellMeasure.arcsin
    ~cf.CellMeasure.arcsinh
    ~cf.CellMeasure.arctan
-   ~cf.CellMeasure.arctan2
+   .. ~cf.CellMeasure.arctan2  [AT2]
    ~cf.CellMeasure.arctanh
    ~cf.CellMeasure.cos
    ~cf.CellMeasure.cosh

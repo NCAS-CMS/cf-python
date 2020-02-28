@@ -262,7 +262,7 @@ Mathematical operations
    ~cf.Count.arcsin
    ~cf.Count.arcsinh
    ~cf.Count.arctan
-   ~cf.Count.arctan2
+   .. ~cf.Count.arctan2  [AT2]
    ~cf.Count.arctanh
    ~cf.Count.cos
    ~cf.Count.cosh

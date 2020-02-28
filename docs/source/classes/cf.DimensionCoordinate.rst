@@ -291,7 +291,7 @@ Mathematical operations
    ~cf.DimensionCoordinate.arcsin
    ~cf.DimensionCoordinate.arcsinh
    ~cf.DimensionCoordinate.arctan
-   ~cf.DimensionCoordinate.arctan2
+   .. ~cf.DimensionCoordinate.arctan2  [AT2]
    ~cf.DimensionCoordinate.arctanh
    ~cf.DimensionCoordinate.cos
    ~cf.DimensionCoordinate.cosh

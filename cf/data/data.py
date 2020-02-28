@@ -7,7 +7,7 @@ from numpy import arccosh           as numpy_arccosh
 from numpy import arcsin            as numpy_arcsin
 from numpy import arcsinh           as numpy_arcsinh
 from numpy import arctan            as numpy_arctan
-from numpy import arctan2           as numpy_arctan2
+#from numpy import arctan2           as numpy_arctan2  AT2
 from numpy import arctanh           as numpy_arctanh
 from numpy import array             as numpy_array
 from numpy import asanyarray        as numpy_asanyarray
@@ -7747,6 +7747,7 @@ False
 
         return old
 
+    # `arctan2`, AT2 seealso
     @_inplace_enabled
     def arctan(self, inplace=False):
         '''Take the trigonometric inverse tangent of the data element-wise.
@@ -7755,7 +7756,7 @@ False
 
     .. versionadded:: 3.0.7
 
-    .. seealso:: `arctan2`, `tan`, `arcsin`, `arccos`, `arctanh`
+    .. seealso:: `tan`, `arcsin`, `arccos`, `arctanh`
 
     :Parameters:
 
@@ -7786,46 +7787,48 @@ False
 
         return d
 
-    @classmethod
-    def arctan2(cls, y, x):
-        '''Take the "two-argument" trigonometric inverse tangent
-    element-wise for `y`/`x`.
-
-    Explicitly this returns, for all corresponding elements, the angle
-    between the positive `x` axis and the line to the point (`x`, `y`),
-    where the signs of both `x` and `y` are taken into account to
-    determine the quadrant. Such knowledge of the signs of `x` and `y`
-    are lost when the quotient is input to the standard "one-argument"
-    `arctan` function, such that use of `arctan` leaves the quadrant
-    ambiguous. `arctan2` may therefore be preferred.
-
-    Units are ignored in the calculation. The result has units of radians.
-
-    .. versionadded:: 3.1.1
-
-    .. seealso:: `arctan`, `tan`
-
-    :Parameters:
-
-        y: `Data`
-            The data array to provide the numerator elements, corresponding
-            to the `y` coordinates in the `arctan2` definition.
-
-        x: `Data`
-            The data array to provide the denominator elements,
-            corresponding to the `x` coordinates in the `arctan2`
-            definition.
-
-    :Returns:
-
-        `Data`
-
-    **Examples:**
-
-    TODO
-
-        '''
-        return cls(numpy_arctan2(y, x), units=_units_radians)
+# AT2
+#
+#    @classmethod
+#    def arctan2(cls, y, x):
+#        '''Take the "two-argument" trigonometric inverse tangent
+#    element-wise for `y`/`x`.
+#
+#    Explicitly this returns, for all corresponding elements, the angle
+#    between the positive `x` axis and the line to the point (`x`, `y`),
+#    where the signs of both `x` and `y` are taken into account to
+#    determine the quadrant. Such knowledge of the signs of `x` and `y`
+#    are lost when the quotient is input to the standard "one-argument"
+#    `arctan` function, such that use of `arctan` leaves the quadrant
+#    ambiguous. `arctan2` may therefore be preferred.
+#
+#    Units are ignored in the calculation. The result has units of radians.
+#
+#    .. versionadded:: 3.1.1
+#
+#    .. seealso:: `arctan`, `tan`
+#
+#    :Parameters:
+#
+#        y: `Data`
+#            The data array to provide the numerator elements, corresponding
+#            to the `y` coordinates in the `arctan2` definition.
+#
+#        x: `Data`
+#            The data array to provide the denominator elements,
+#            corresponding to the `x` coordinates in the `arctan2`
+#            definition.
+#
+#    :Returns:
+#
+#        `Data`
+#
+#    **Examples:**
+#
+#    TODO
+#
+#        '''
+#        return cls(numpy_arctan2(y, x), units=_units_radians)
 
     @_inplace_enabled
     def arctanh(self, inplace=False):
@@ -12427,6 +12430,7 @@ False
 
         return d
 
+    # `arctan2`, AT2 seealso
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def tan(self, inplace=False, i=False):
@@ -12440,7 +12444,7 @@ False
 
     The output units are changed to '1' (nondimensional).
 
-    .. seealso:: `arctan`, `arctan2`, `cos`, `sin`, `tanh`
+    .. seealso:: `arctan`, `cos`, `sin`, `tanh`
 
     :Parameters:
 

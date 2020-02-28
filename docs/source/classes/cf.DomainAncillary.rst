@@ -283,7 +283,7 @@ Mathematical operations
    ~cf.DomainAncillary.arcsin
    ~cf.DomainAncillary.arcsinh
    ~cf.DomainAncillary.arctan
-   ~cf.DomainAncillary.arctan2
+   .. ~cf.DomainAncillary.arctan2  [AT2]
    ~cf.DomainAncillary.arctanh
    ~cf.DomainAncillary.cos
    ~cf.DomainAncillary.cosh

@@ -286,7 +286,7 @@ Mathematical operations
    ~cf.AuxiliaryCoordinate.arcsin
    ~cf.AuxiliaryCoordinate.arcsinh
    ~cf.AuxiliaryCoordinate.arctan
-   ~cf.AuxiliaryCoordinate.arctan2
+   .. ~cf.AuxiliaryCoordinate.arctan2  [AT2]
    ~cf.AuxiliaryCoordinate.arctanh
    ~cf.AuxiliaryCoordinate.cos
    ~cf.AuxiliaryCoordinate.cosh

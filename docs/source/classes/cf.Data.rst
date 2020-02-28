@@ -56,7 +56,7 @@ Data methods
    ~cf.Data.arcsin
    ~cf.Data.arcsinh
    ~cf.Data.arctan
-   ~cf.Data.arctan2
+   .. ~cf.Data.arctan2  [AT2]
    ~cf.Data.arctanh
    ~cf.Data.argmax
    ~cf.Data.asdata

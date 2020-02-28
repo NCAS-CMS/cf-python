@@ -263,7 +263,7 @@ Mathematical operations
    ~cf.FieldAncillary.arcsin
    ~cf.FieldAncillary.arcsinh
    ~cf.FieldAncillary.arctan
-   ~cf.FieldAncillary.arctan2
+   .. ~cf.FieldAncillary.arctan2  [AT2]
    ~cf.FieldAncillary.arctanh
    ~cf.FieldAncillary.cos
    ~cf.FieldAncillary.cosh

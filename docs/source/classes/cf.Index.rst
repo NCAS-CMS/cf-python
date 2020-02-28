@@ -261,7 +261,7 @@ Mathematical operations
    ~cf.Index.arcsin
    ~cf.Index.arcsinh
    ~cf.Index.arctan
-   ~cf.Index.arctan2
+   .. ~cf.Index.arctan2  [AT2]
    ~cf.Index.arctanh
    ~cf.Index.cos
    ~cf.Index.cosh

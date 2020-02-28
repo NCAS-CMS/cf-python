@@ -1072,62 +1072,65 @@ dtype('float64')
 
         return out
 
-    @classmethod
-    def arctan2(cls, y, x, bounds=True):
-        '''Take the "two-argument" trigonometric inverse tangent
-    element-wise for `y`/`x`.
 
-    Explicitly this returns, for all corresponding elements, the angle
-    between the positive `x` axis and the line to the point (`x`, `y`),
-    where the signs of both `x` and `y` are taken into account to
-    determine the quadrant. Such knowledge of the signs of `x` and `y`
-    are lost when the quotient is input to the standard "one-argument"
-    `arctan` function, such that use of `arctan` leaves the quadrant
-    ambiguous. `arctan2` may therefore be preferred.
-
-    Units are ignored in the calculation. The result has units of radians.
-
-    .. versionadded:: 3.1.1
-
-    .. seealso:: `arctan`, `tan`
-
-    :Parameters:
-
-        y: `Data`
-            The data array to provide the numerator elements, corresponding
-            to the `y` coordinates in the `arctan2` definition.
-
-        x: `Data`
-            The data array to provide the denominator elements,
-            corresponding to the `x` coordinates in the `arctan2`
-            definition.
-
-        bounds: `bool`, optional
-            If False then do not alter any bounds. By default any
-            bounds are also altered. Note that bounds will only be changed
-            if both `x` and `y` have bounds to consider.
-
-    :Returns:
-
-        The construct with the "two-argument" trigonometric inverse tangent
-        of data values. If the operation was in-place then `None` is
-        returned.
-
-    **Examples:**
-
-    TODO
-
-        '''
-        out = super().arctan2(y, x)
-
-        if bounds:
-            bounds_y = y.get_bounds(None)
-            bounds_x = x.get_bounds(None)
-            if bounds_x is not None and bounds_y is not None:
-                bounds = Data.arctan2(x.get_bounds(), y.get_bounds())
-                out.set_bounds(bounds, copy=False)
-
-        return out
+# AT2
+#
+#    @classmethod
+#    def arctan2(cls, y, x, bounds=True):
+#        '''Take the "two-argument" trigonometric inverse tangent
+#    element-wise for `y`/`x`.
+#
+#    Explicitly this returns, for all corresponding elements, the angle
+#    between the positive `x` axis and the line to the point (`x`, `y`),
+#    where the signs of both `x` and `y` are taken into account to
+#    determine the quadrant. Such knowledge of the signs of `x` and `y`
+#    are lost when the quotient is input to the standard "one-argument"
+#    `arctan` function, such that use of `arctan` leaves the quadrant
+#    ambiguous. `arctan2` may therefore be preferred.
+#
+#    Units are ignored in the calculation. The result has units of radians.
+#
+#    .. versionadded:: 3.1.1
+#
+#    .. seealso:: `arctan`, `tan`
+#
+#    :Parameters:
+#
+#        y: `Data`
+#            The data array to provide the numerator elements, corresponding
+#            to the `y` coordinates in the `arctan2` definition.
+#
+#        x: `Data`
+#            The data array to provide the denominator elements,
+#            corresponding to the `x` coordinates in the `arctan2`
+#            definition.
+#
+#        bounds: `bool`, optional
+#            If False then do not alter any bounds. By default any
+#            bounds are also altered. Note that bounds will only be changed
+#            if both `x` and `y` have bounds to consider.
+#
+#    :Returns:
+#
+#        The construct with the "two-argument" trigonometric inverse tangent
+#        of data values. If the operation was in-place then `None` is
+#        returned.
+#
+#    **Examples:**
+#
+#    TODO
+#
+#        '''
+#        out = super().arctan2(y, x)
+#
+#        if bounds:
+#            bounds_y = y.get_bounds(None)
+#            bounds_x = x.get_bounds(None)
+#            if bounds_x is not None and bounds_y is not None:
+#                bounds = Data.arctan2(x.get_bounds(), y.get_bounds())
+#                out.set_bounds(bounds, copy=False)
+#
+#        return out
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -2068,6 +2071,7 @@ dtype('float64')
             inplace=inplace, i=i)
 
 
+    # `arctan2`, AT2 seealso
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def arctan(self, bounds=True, inplace=False):
@@ -2080,7 +2084,7 @@ dtype('float64')
 
     .. versionadded:: 3.0.7
 
-    .. seealso:: `arctan2`, `tan`
+    .. seealso:: `tan`
 
     :Parameters:
 
@@ -2450,6 +2454,7 @@ dtype('float64')
             bounds=bounds, inplace=inplace)
 
 
+    # `arctan2`, AT2 seealso
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def tan(self, bounds=True, inplace=False, i=False):
@@ -2463,7 +2468,7 @@ dtype('float64')
 
     The Units are changed to '1' (nondimensional).
 
-    .. seealso:: `arctan`, `arctan2`, `cos`, `sin`, `tanh`
+    .. seealso:: `arctan`, `cos`, `sin`, `tanh`
 
     :Parameters:
 

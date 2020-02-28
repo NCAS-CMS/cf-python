@@ -2488,25 +2488,27 @@ class DataTest(unittest.TestCase):
                         )
         # --- End: for
 
-        # Treat arctan2 separately (as is a class method & takes two inputs)
-        for x in (1, -1):
-            a1 = 0.9 * x * self.ma
-            a2 = 0.5 * x * self.a
-            # Transform data for 'a' into range more appropriate for inverse:
-            a1 = numpy.sin(a1.data)
-            a2 = numpy.cos(a2.data)
+        # AT2
+        #
+        ## Treat arctan2 separately (as is a class method & takes two inputs)
+        #for x in (1, -1):
+        #    a1 = 0.9 * x * self.ma
+        #    a2 = 0.5 * x * self.a
+        #    # Transform data for 'a' into range more appropriate for inverse:
+        #    a1 = numpy.sin(a1.data)
+        #    a2 = numpy.cos(a2.data)
 
-            c = numpy.ma.arctan2(a1, a2)
-            for chunksize in self.chunk_sizes:
-                cf.CHUNKSIZE(chunksize)
-                for units in (None, '', '1', 'radians', 'K'):
-                    d1 = cf.Data(a1, units=units)
-                    d2 = cf.Data(a2, units=units)
-                    e = cf.Data.arctan2(d1, d2)
-                    # Note: no inplace arg for arctan2 (operates on 2 arrays)
-                    self.assertTrue(d1.shape == c.shape)
-                    self.assertTrue((e.array == c).all())
-                    self.assertTrue((d1.mask.array == c.mask).all())
+        #    c = numpy.ma.arctan2(a1, a2)
+        #    for chunksize in self.chunk_sizes:
+        #        cf.CHUNKSIZE(chunksize)
+        #        for units in (None, '', '1', 'radians', 'K'):
+        #            d1 = cf.Data(a1, units=units)
+        #            d2 = cf.Data(a2, units=units)
+        #            e = cf.Data.arctan2(d1, d2)
+        #            # Note: no inplace arg for arctan2 (operates on 2 arrays)
+        #            self.assertTrue(d1.shape == c.shape)
+        #            self.assertTrue((e.array == c).all())
+        #            self.assertTrue((d1.mask.array == c.mask).all())
 
         cf.CHUNKSIZE(self.original_chunksize)
 

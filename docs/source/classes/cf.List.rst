@@ -261,7 +261,7 @@ Mathematical operations
    ~cf.List.arcsin
    ~cf.List.arcsinh
    ~cf.List.arctan
-   ~cf.List.arctan2
+   .. ~cf.List.arctan2  [AT2]
    ~cf.List.arctanh
    ~cf.List.cos
    ~cf.List.cosh

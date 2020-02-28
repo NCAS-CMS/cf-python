@@ -1921,12 +1921,13 @@ Method            Description
 `~Field.tan`      Take the trigonometric tangent of the data element-wise.
 ================  ========================================================
 
-As well as `~Field.arctan` there is a method available, `~Field.arctan2`,
-which takes the inverse trigonometric tangent of data element-wise, but
-does so instead for two constructs where the inverse tangent of the
-quotient between corresponding elements is taken, such that the signs of
-`x` and `y` values are taken into account to determine the correct quadrant
-(see `here <https://en.wikipedia.org/wiki/Atan2>`_ for further details).
+.. AT2 : As well as `~Field.arctan` there is a method available,
+   `~Field.arctan2`,
+   which takes the inverse trigonometric tangent of data element-wise, but
+   does so instead for two constructs where the inverse tangent of the
+   quotient between corresponding elements is taken, such that the signs of
+   `x` and `y` values are taken into account to determine the correct quadrant
+   (see `here <https://en.wikipedia.org/wiki/Atan2>`_ for further details).
 
 The field construct and metadata constructs also support the following
 hyperbolic methods:

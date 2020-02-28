@@ -419,7 +419,7 @@ Mathematical operations
    ~cf.Field.arcsin
    ~cf.Field.arcsinh
    ~cf.Field.arctan
-   ~cf.Field.arctan2
+   .. ~cf.Field.arctan2  [AT2]
    ~cf.Field.arctanh
    ~cf.Field.cos
    ~cf.Field.cosh
