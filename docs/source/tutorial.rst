@@ -2466,6 +2466,7 @@ This is illustrated with the file ``geometry.nc`` (found in the
                    : altitude(cf_role=timeseries_id(2)) = [5000.0, 20.0] m
                    : cf_role=timeseries_id(cf_role=timeseries_id(2)) = [b'x1', b'y2']
    Coord references: grid_mapping_name:latitude_longitude
+   >>> lon = f.auxiliary_coordinate('X')
    >>> lon.dump()                     
    Auxiliary coordinate: longitude
       standard_name = 'longitude'
