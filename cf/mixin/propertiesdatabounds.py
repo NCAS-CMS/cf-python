@@ -1495,7 +1495,7 @@ dtype('float64')
 
               * An internal axis identifier. Selects this axis.
 
-              * An integer. Selects the axis coresponding to the given
+              * An integer. Selects the axis corresponding to the given
                 position in the list of axes of the data array.
 
             No axes are flattened if *axes* is an empty sequence.

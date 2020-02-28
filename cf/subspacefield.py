@@ -42,7 +42,7 @@ class SubspaceField(mixin.Subspace):
       by a `Query` instance is assumed to "wrap" around the edges of
       the data.
 
-    * Conditions may also be applied to multi-dimensionsal metadata
+    * Conditions may also be applied to multi-dimensional metadata
       constructs. The "compress" mode is still the default mode (see
       the positional arguments), but because the indices may not be
       acting along orthogonal dimensions, some missing data may still
@@ -184,7 +184,7 @@ class SubspaceField(mixin.Subspace):
       by a `Query` instance is assumed to "wrap" around the edges of
       the data.
 
-    * Conditions may also be applied to multi-dimensionsal metadata
+    * Conditions may also be applied to multi-dimensional metadata
       constructs. The "compress" mode is still the default mode (see
       the positional arguments), but because the indices may not be
       acting along orthogonal dimensions, some missing data may still
@@ -197,7 +197,7 @@ class SubspaceField(mixin.Subspace):
 
         positional arguments: *optional*
             There are three modes of operation, each of which provides
-            a different type of subspace:
+            a different type of subspace, plus a testing mode:
 
             ==============  ==========================================
             *argument*      Description

@@ -2821,12 +2821,12 @@ class PropertiesData(Properties):
                 more dimensions.  ..
 
               * Two or more integers. These arguments are interpreted
-                as a multidimensionsal index to the array. There must
+                as a multidimensional index to the array. There must
                 be the same number of integers as data array
                 dimensions.  ..
 
               * A tuple of integers. This argument is interpreted as a
-                multidimensionsal index to the array. There must be
+                multidimensional index to the array. There must be
                 the same number of integers as data array dimensions.
 
                 *Example:*
@@ -3278,7 +3278,7 @@ class PropertiesData(Properties):
 
               * An internal axis identifier. Selects this axis.
 
-              * An integer. Selects the axis coresponding to the given
+              * An integer. Selects the axis corresponding to the given
                 position in the list of axes of the data array.
 
             No axes are flattened if *axes* is an empty sequence.

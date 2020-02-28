@@ -272,7 +272,7 @@ class Data(cfdm.Data):
 * Supports masked arrays, regardless of whether or not it was
   initialised with a masked array.
 
-* Stores and operates on data arrays which are larger then the
+* Stores and operates on data arrays which are larger than the
   available memory.
 
 **Indexing**
@@ -288,7 +288,7 @@ A data array is indexable in a similar way to numpy array:
 
 There are three extensions to the numpy indexing functionality:
 
-* Size 1 dimensions are never removed bi indexing.
+* Size 1 dimensions are never removed by indexing.
 
   An integer index i takes the i-th element but does not reduce the
   rank of the output array by one:
@@ -1589,7 +1589,7 @@ place.
 
     The treatment of missing data elements during assignment to a
     subspace depends on the value of the `hardmask` attribute. If it
-    is True then masked elements will notbe unmasked, otherwise masked
+    is True then masked elements will not be unmasked, otherwise masked
     elements may be set to any value.
 
     In either case, unmasked elements may be set, (including missing
@@ -2475,7 +2475,7 @@ place.
 
         axes: (sequence of) `int`, optional
             Select the axes. The *axes* argument may be one, or a
-            sequence, of integers that select the axis coresponding to
+            sequence, of integers that select the axis corresponding to
             the given position in the list of axes of the data array.
 
             By default, of *axes* is `None`, all axes are selected.
@@ -4631,12 +4631,12 @@ place.
             carried out in the order given. Each data array must have
             equivalent units and the same shape, except in the
             concatenation axis. Note that scalar arrays are treated as
-            if they were one dimensionsal.
+            if they were one dimensional.
 
         axis: `int`, optional
             The axis along which the arrays will be joined. The
             default is 0. Note that scalar arrays are treated as if
-            they were one dimensionsal.
+            they were one dimensional.
 
         _preserve: `bool`, optional
             If False then the time taken to do the concatenation is
@@ -8713,13 +8713,13 @@ False
 
             *Parameter example:*
               If ``weights={1: w, (2, 0): x}`` then ``w`` must contain
-              1-dimensionsal weights for axis 1 and ``x`` must contain
-              2-dimensionsal weights for axes 2 and 0. This is
+              1-dimensional weights for axis 1 and ``x`` must contain
+              2-dimensional weights for axes 2 and 0. This is
               equivalent, for example, to ``weights={(1, 2, 0), y}``,
               where ``y`` is the outer product of ``w`` and ``x``. If
               ``axes=[1, 2, 0]`` then ``weights={(1, 2, 0), y}`` is
               equivalent to ``weights=y``. If ``axes=None`` and the
-              array is 3-dimensionsal then ``weights={(1, 2, 0), y}``
+              array is 3-dimensional then ``weights={(1, 2, 0), y}``
               is equivalent to ``weights=y.transpose([2, 0, 1])``.
 
         mtol: number, optional
@@ -8918,13 +8918,13 @@ False
 
             *Parameter example:*
               If ``weights={1: w, (2, 0): x}`` then ``w`` must contain
-              1-dimensionsal weights for axis 1 and ``x`` must contain
-              2-dimensionsal weights for axes 2 and 0. This is
+              1-dimensional weights for axis 1 and ``x`` must contain
+              2-dimensional weights for axes 2 and 0. This is
               equivalent, for example, to ``weights={(1, 2, 0), y}``,
               where ``y`` is the outer product of ``w`` and ``x``. If
               ``axes=[1, 2, 0]`` then ``weights={(1, 2, 0), y}`` is
               equivalent to ``weights=y``. If ``axes=None`` and the
-              array is 3-dimensionsal then ``weights={(1, 2, 0), y}``
+              array is 3-dimensional then ``weights={(1, 2, 0), y}``
               is equivalent to ``weights=y.transpose([2, 0, 1])``.
 
         mtol: number, optional
@@ -10082,7 +10082,7 @@ False
 
               * An internal axis identifier. Selects this axis.
 
-              * An integer. Selects the axis coresponding to the given
+              * An integer. Selects the axis corresponding to the given
                 position in the list of axes of the data array.
 
             No axes are flattened if *axes* is an empty sequence.
@@ -10608,11 +10608,11 @@ False
               data array is a scalar array.
 
             * Two or more integers. These arguments are interpreted as a
-              multidimensionsal index to the array. There must be the
+              multidimensional index to the array. There must be the
               same number of integers as data array dimensions.
 
             * A tuple of integers. This argument is interpreted as a
-              multidimensionsal index to the array. There must be the
+              multidimensional index to the array. There must be the
               same number of integers as data array dimensions.
 
               *Parameter example:*
@@ -11149,13 +11149,13 @@ False
 
             *Parameter example:*
               If ``weights={1: w, (2, 0): x}`` then ``w`` must contain
-              1-dimensionsal weights for axis 1 and ``x`` must contain
-              2-dimensionsal weights for axes 2 and 0. This is
+              1-dimensional weights for axis 1 and ``x`` must contain
+              2-dimensional weights for axes 2 and 0. This is
               equivalent, for example, to ``weights={(1, 2, 0), y}``,
               where ``y`` is the outer product of ``w`` and ``x``. If
               ``axes=[1, 2, 0]`` then ``weights={(1, 2, 0), y}`` is
               equivalent to ``weights=y``. If ``axes=None`` and the
-              array is 3-dimensionsal then ``weights={(1, 2, 0), y}``
+              array is 3-dimensional then ``weights={(1, 2, 0), y}``
               is equivalent to ``weights=y.transpose([2, 0, 1])``.
 
         mtol: number, optional
@@ -12291,7 +12291,7 @@ False
         axes: (sequence of) int, optional
             Select the axes.  By default all size 1 axes are
             removed. The *axes* argument may be one, or a sequence, of
-            integers that select the axis coresponding to the given
+            integers that select the axis corresponding to the given
             position in the list of axes of the data array.
 
             No axes are removed if *axes* is an empty sequence.

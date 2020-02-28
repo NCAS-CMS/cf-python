@@ -6168,7 +6168,7 @@ class Field(mixin.PropertiesData,
         '''Collapse the data values that lie in N-dimensional bins.
 
     The data values of the field construct are binned according to how
-    they correspond to the N-dimensionsal histogram bins of another
+    they correspond to the N-dimensional histogram bins of another
     set of variables (see `cf.histogram` for details), and each bin of
     values is collapsed with one of the collapse methods allowed by
     the *method* parameter.
@@ -6185,7 +6185,7 @@ class Field(mixin.PropertiesData,
     example, if only one digitized field construct is provided then
     the output bins simply comprise its one-dimensional bins; if there
     are two digitized field constructs then the output bins comprise
-    the two-dimensionsal matrix formed by all possible combinations of
+    the two-dimensional matrix formed by all possible combinations of
     the two sets of one-dimensional bins; etc.
 
     An output value for a bin is formed by collapsing (using the
@@ -6293,7 +6293,7 @@ class Field(mixin.PropertiesData,
             One or more field constructs that contain digitized data
             with corresponding metadata, as would be output by
             `cf.Field.digitize`. Each field construct contains indices
-            to the one-dimensionsal bins to which each value of an
+            to the one-dimensional bins to which each value of an
             original field construct belongs; and there must be
             ``bin_count`` and ``bin_bounds`` properties as defined by
             the `digitize` method (and any of the extra properties
@@ -6708,7 +6708,7 @@ class Field(mixin.PropertiesData,
                                    radius=radius)
 
         # ------------------------------------------------------------
-        # Find the unique multi-dimensionsal bin indices (TODO: can I
+        # Find the unique multi-dimensional bin indices (TODO: can I
         # LAMA this?)
         # ------------------------------------------------------------
         y = numpy_empty((len(bin_indices), bin_indices[0].size), dtype=int)
@@ -10533,7 +10533,7 @@ class Field(mixin.PropertiesData,
       by a `Query` instance is assumed to "wrap" around the edges of
       the data.
 
-    * Conditions may also be applied to multi-dimensionsal metadata
+    * Conditions may also be applied to multi-dimensional metadata
       constructs. The "compress" mode is still the default mode (see
       the positional arguments), but because the indices may not be
       acting along orthogonal dimensions, some missing data may still
@@ -16058,7 +16058,7 @@ class Field(mixin.PropertiesData,
       by a `Query` instance is assumed to "wrap" around the edges of
       the data.
 
-    * Conditions may also be applied to multi-dimensionsal metadata
+    * Conditions may also be applied to multi-dimensional metadata
       constructs. The "compress" mode is still the default mode (see
       the positional arguments), but because the indices may not be
       acting along orthogonal dimensions, some missing data may still
@@ -16384,7 +16384,7 @@ class Field(mixin.PropertiesData,
     regions where the input data array is masked. By default the mask
     of the destination grid is not taken into account. If the
     destination field data has more than two dimensions then the mask,
-    if used, is taken from the two dimensionsal section of the data
+    if used, is taken from the two dimensional section of the data
     where the indices of all axes other than X and Y are zero.
 
 
