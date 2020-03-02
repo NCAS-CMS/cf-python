@@ -2434,8 +2434,10 @@ parent coordinate construct, but it may also have its own properties
    >>> bounds.properties()
    {'units': 'degrees'}
 
-Geometries
-~~~~~~~~~~
+.. _Geometry-cells:
+
+Geometry cells
+~~~~~~~~~~~~~~
 
 For many geospatial applications, cell bounds can not be repreented by
 a simple line or polygon, and different cells may have different
@@ -2449,7 +2451,7 @@ If a coordinate construct represents geometries then it will have a
 ``'polygon'``.
 
 This is illustrated with the file ``geometry.nc`` (found in the
-:ref:`zip file of sample files <Sample-datasets>`):
+:ref:`sample datasets <Sample-datasets>`):
 
 .. code-block:: python
    :caption: *Read and inspect a dataset containing geometry cell
@@ -2517,6 +2519,14 @@ polygon is to be included or excluded from the cell, with vlaues of
    [[0  1  0]
     [0 -- --]]
 
+Note it is preferable to access the data type, number of dimensions,
+dimension sizes and number of elements of the coordinate construct via
+the construct's attributes, rather than the attributes of the
+`cf.Data` instance that provides representative values for each
+cell. This is because the representative cell values for geometries
+are optional, and if they are missing then the construct attributes
+are able to infer these attributes from the bounds.
+  
 When a field construct containing geometries is written to disk, a
 CF-netCDF geometry container variable is automatically created, and
 the cells encoded with the :ref:`compression <Compression>` techniques
