@@ -1,6 +1,6 @@
 from functools import wraps
 
-from .functions  import _DEPRECATION_ERROR_KWARGS
+from .functions import _DEPRECATION_ERROR_KWARGS
 
 
 # Identifier for 'inplace_enabled' to use as internal '_custom' dictionary key,
@@ -17,10 +17,10 @@ def _inplace_enabled(operation_method):
 
     Note that methods decorated with this should assign the core variable
     storing the relevant instance for use throughout the method to
-    `_inplace_enabled_define_and_cleanup(self)`, before the variable is used.
+    `_inplace_enabled_define_and_cleanup(self)`.
+
     '''
     @wraps(operation_method)
-
     def inplace_wrapper(self, *args, **kwargs):
         is_inplace = kwargs.get('inplace')
         try:
@@ -63,7 +63,9 @@ def _inplace_enabled_define_and_cleanup(instance):
 
     In doing so, the relevant construct variable can be defined appropriately
     and the internal attribute created for that purpose by inplace_enabled
-    (which is no longer required) can be cleaned up, all in one line.'''
+    (which is no longer required) can be cleaned up, all in one line.
+
+    '''
     try:
         x = instance._custom.pop(INPLACE_ENABLED_PLACEHOLDER)
     except (AttributeError, KeyError):
@@ -83,17 +85,17 @@ def _deprecated_kwarg_check(depr_kwargs):
         method has been supplied with any of the elements as keyword arguments
         and if so, call _DEPRECATION_ERROR_KWARGS on them, optionally
         providing a custom message to raise inside it.
+
         '''
         @wraps(operation_method)
-
         def precede_with_kwarg_deprecation_check(self, *args, **kwargs):
 
             for depr_kwarg in depr_kwargs:
                 if kwargs.get(depr_kwarg):
                     pass_in_kwarg = {depr_kwarg: True}
                     _DEPRECATION_ERROR_KWARGS(
-                        self, operation_method.__name__,
-                        **pass_in_kwarg) # pragma: no cover
+                        self, operation_method.__name__, **pass_in_kwarg
+                    )  # pragma: no cover
 
             operation_method_result = operation_method(self, *args, **kwargs)
 
