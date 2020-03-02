@@ -134,9 +134,9 @@ The following file types can be read:
   but this is not available in version |release| (even though it is
   allowed in CF-|version|).
 
-For example, to read the file ``file.nc`` (found in the :ref:`zip file
-of sample files <Sample-datasets>`), which contains two field
-constructs:
+For example, to read the file ``file.nc`` (found in the :ref:`sample
+datasets <Sample-datasets>`), which contains
+two field constructs:
 
 .. code-block:: python
    :caption: *Read file.nc and show that the result is a two-element
@@ -2439,16 +2439,17 @@ parent coordinate construct, but it may also have its own properties
 Geometry cells
 ~~~~~~~~~~~~~~
 
-For many geospatial applications, cell bounds can not be repreented by
-a simple line or polygon, and different cells may have different
-numbers of bounds' nodes For example, if each cell describes the areal
-extent of a watershed, then it is likely that some watersheds will
-need require more nodes than others. Such cells are called
+For many geospatial applications, cell bounds can not be represented
+by a simple line or polygon, and different cells may have different
+numbers of nodes describing their bounds. For example, if each cell
+describes the areal extent of a watershed, then it is likely that some
+watersheds will require more nodes than others. Such cells are called
 `geometries`_.
 
 If a coordinate construct represents geometries then it will have a
-"geometry" attribute with one of the values ``'point'``, '``line'`` or
-``'polygon'``.
+"geometry" attribute (not a :ref:`CF property
+<Metadata-construct-properties>`) with one of the values ``'point'``,
+'``line'`` or ``'polygon'``.
 
 This is illustrated with the file ``geometry.nc`` (found in the
 :ref:`sample datasets <Sample-datasets>`):
@@ -2506,8 +2507,8 @@ missing data.
 If a cell is composed of multiple polygon parts, an individual polygon
 may define an "interior ring", i.e. a region that is to be omitted
 from, as opposed to included in, the cell extent. Such cells also have
-and interior ring array that spans the same domain axes as its
-coordinate array, with the addition of one extra dimension that
+an interior ring array that spans the same domain axes as the
+coordinate cells, with the addition of one extra dimension that
 indexes the parts for each cell. This array records whether each
 polygon is to be included or excluded from the cell, with vlaues of
 ``1`` or ``0`` respectively.
@@ -5116,7 +5117,7 @@ if they had actually been stored in the same file, simply by providing
 the external file names to the `cf.read` function.
 
 This is illustrated with the files ``parent.nc`` (found in the
-:ref:`zip file of sample files <Sample-datasets>`):
+:ref:`sample datasets <Sample-datasets>`):
 
 .. code-block:: console
    :caption: *Inspect the parent dataset with the ncdump command line
@@ -5144,7 +5145,7 @@ This is illustrated with the files ``parent.nc`` (found in the
    		:external_variables = "areacella" ;
    }
 
-and ``external.nc`` (found in the :ref:`zip file of sample files
+and ``external.nc`` (found in the :ref:`sample datasets
 <Sample-datasets>`):
 
 .. code-block:: console
@@ -5488,7 +5489,7 @@ and is accessed with the `~Data.get_index` method of the `cf.Data`
 instance.
 
 The contiguous case is is illustrated with the file ``contiguous.nc``
-(found in the :ref:`zip file of sample files <Sample-datasets>`):
+(found in the :ref:`sample datasets <Sample-datasets>`):
 
 .. code-block:: console
    :caption: *Inspect the compressed dataset with the ncdump command
@@ -5748,7 +5749,7 @@ stored in a `cf.List` object and is retrieved with the `~Data.get_list`
 method of the `cf.Data` instance.
 
 This is illustrated with the file ``gathered.nc`` (found in the
-:ref:`zip file of sample files <Sample-datasets>`):
+:ref:`sample datasets <Sample-datasets>`):
 
 .. code-block:: console
    :caption: *Inspect the compressed dataset with the ncdump command
