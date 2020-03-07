@@ -21,8 +21,7 @@ of their metadata constructs which span those domain axis constructs.
 These rules are be used for deciding whether or not two arbitrary
 field constructs may be aggregated into one, larger field construct.
 The rules are based solely on the field constructs' metadata as
-recognised by the `CF data model
-<https://doi.org/10.5194/gmd-10-4619-2017>`_. For example, netCDF
+recognised by the :ref:`CF-data-model` [#cfdm]_. For example, netCDF
 variable names are ignored during the aggregation process, meaning
 that having different netCDF variable names does not preclude the
 aggregation of two field constructs.
@@ -31,8 +30,8 @@ More than two field constructs are aggregated by repeated applications
 of the aggregation algorithm, and aggregations over multiple domain
 axis constructs are similarly possible.
 
-Aggregation is implemented by the `cf.read` and `cf.aggregate`
-functions.
+Aggregation is implemented in the `cf.aggregate` function, and is
+applied by default by the `cf.read` function.
 
 ----
 
@@ -190,3 +189,9 @@ field construct.
   domain ancillary constructs.
 
 ----
+   
+.. [#cfdm] Hassell, D., Gregory, J., Blower, J., Lawrence, B. N., and
+           Taylor, K. E.: A data model of the Climate and Forecast
+           metadata conventions (CF-1.6) with a software
+           implementation (cf-python v2.1), Geosci. Model Dev., 10,
+           4619-4646, https://doi.org/10.5194/gmd-10-4619-2017, 2017.

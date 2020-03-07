@@ -75,8 +75,9 @@ Data methods
    ~cf.Data.del_calendar
    ~cf.Data.del_fill_value
    ~cf.Data.del_units
-   ~cf.Data.dump
+   ~cf.Data.diff
    ~cf.Data.digitize
+   ~cf.Data.dump
    ~cf.Data.dumpd
    ~cf.Data.dumps
    ~cf.Data.empty

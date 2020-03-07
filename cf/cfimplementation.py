@@ -75,7 +75,7 @@ _implementation = CFImplementation(
 def implementation():
     '''Return a container for the CF data model implementation.
 
-    .. versionadded:: 3.0.0
+    .. versionadded:: 3.1.0
     
     .. seealso:: `cf.example_field`, `cf.read`, `cf.write`
     

@@ -9045,7 +9045,8 @@ False
         if n_non_missing == d.size:
             return d
 
-        comp = self.empty(shape=(n_non_missing,), dtype=self.dtype, units=self.Units)
+        comp = self.empty(shape=(n_non_missing,), dtype=self.dtype,
+                          units=self.Units)
 
         # Find the number of array elements that fit in one chunk
         n = int(CHUNKSIZE()//(self.dtype.itemsize + 1.0))

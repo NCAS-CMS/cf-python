@@ -130,9 +130,9 @@ The following file types can be read:
 ..
 
 * A future release of cf will include support for :ref:`netCDF4 files
-  containing data organised in hierarchical groups <netCDF4_Groups>`,
-  but this is not available in version |release| (even though it is
-  allowed in CF-|version|).
+  containing data organised in hierarchical groups
+  <Hierarchical-groups>`, but this is not available in version
+  |release| (even though it is allowed in CF-|version|).
 
 For example, to read the file ``file.nc`` (found in the :ref:`sample
 datasets <Sample-datasets>`), which contains
@@ -5091,17 +5091,17 @@ by setting the *string* keyword of the `cf.write` function.
 
 ----
    
-.. _netCDF4_Groups:
+.. _Hierarchical-groups:
 
-**Groups**
-----------
+**Hierarchical groups**
+-----------------------
 
-`Groups`_ provide a powerful mechanism to structure data
-hierarchically. A future release of cfdm will include support for
-netCDF4 files containing data organised in hierarchical groups, but
-this is not available in version |release| (even though it is allowed
-in CF-|version|).
-   
+`Hierarchical groups`_ provide a powerful mechanism to structure
+variables within datasets. A future release of cf will include support
+for netCDF4 files containing data organised in hierarchical groups,
+but this is not available in version |release| (even though it is
+allowed in CF-|version|).
+
 ----
 
 .. _External-variables:
@@ -6145,4 +6145,5 @@ is straight forward with the `cf.load_stash2standard_name` function.
 .. _indexed:                          http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#_indexed_ragged_array_representation
 .. _indexed contiguous:               http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#_ragged_array_representation_of_time_series_profiles
 .. _geometries:                       http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#geometries
-.. _Groups:                           http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#groups
+.. _Hierarchical groups:              http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#groups
+
