@@ -11775,8 +11775,14 @@ class Field(mixin.PropertiesData,
             If False then do not set the domain axes constructs that
             are spanned by the data, even if the *axes* parameter has
             been set. By default the axes are set either according to
-            the *axes* parameter, or an attempt will be made to assign
-            existing domain axis constructs to the data.
+            the *axes* parameter, or if any domain axis constructs
+            exist then an attempt will be made to assign existing
+            domain axis constructs to the data.
+
+            If the *axes* parameter is `None` and no domain axis
+            constructs exist then no attempt is made to assign domain
+            axes constructs to the data, regardless of the value of
+            *set_axes*.
 
         copy: `bool`, optional
             If True then set a copy of the data. By default the data
@@ -11817,6 +11823,9 @@ class Field(mixin.PropertiesData,
     >>> f.insert_data(cf.Data([3, 4, 5]))
 
         '''
+        if axes is None and not self.domain_axes:
+            set_axes = False
+            
         if not set_axes:
             if not data.Units:
                 units = getattr(self, 'Units', None)
@@ -13032,7 +13041,7 @@ class Field(mixin.PropertiesData,
         f.set_construct(c)
 
         '''
-        if variable_name in ('data', 'c', 'b'):
+        if variable_name in ('data', 'c', 'b', 'i'):
             raise ValueError(
                 "'variable_name' parameter can not have the value {!r}".format(
                     variable_name))
@@ -13050,29 +13059,6 @@ class Field(mixin.PropertiesData,
 
         indent = ' ' * indent
 
-#        name = 'f'
-#
- #       namespace0 = namespace
- #       if namespace0:
- #           namespace = namespace+"."
- #       else:
- #           namespace = ""
-#
-#        indent = ' ' * indent
-
-#        out = []
-#        out.append("# {}: {}".format(self.construct_type, self.identity()))
-#        out.append("{} = {}{}()".format(variable_name, namespace, self.__class__.__name__))
-#
-#        out.append("")
-#        properties = self.properties()
-#        if properties:
-#            out.append("{}.set_properties({})".format(name, properties))
-#
-#        nc = self.nc_get_variable(None)
-#        if nc is not None:
-#            out.append("{}.nc_set_variable({!r})".format(name, nc))
-
         nc_global_attributes = self.nc_global_attributes()
         if nc_global_attributes:
             out.append("")
@@ -13083,37 +13069,19 @@ class Field(mixin.PropertiesData,
         # Domain axes
         for key, c in self.domain_axes.items():
             out.append("")
-            out.append("# "+c.construct_type)
-            out.append("c = {}{}(size={})".format(namespace,
-                                                  c.__class__.__name__,
-                                                  c.size))
+            out.extend(c.creation_commands(representative_data=representative_data,
+                                           string=False,
+                                           namespace=namespace0))
+            out.append("{}.set_construct(c, key={!r}, copy=False)".format(
+                variable_name, key))
 
-            nc = c.nc_get_dimension(None)
-            if nc is not None:
-                out.append("c.nc_set_dimension({!r})".format(nc))
-
-            if c.nc_is_unlimited():
-                out.append("c.nc_set_unlimited({})".format(True))
-
-            out.append("{}.set_construct(c, key={!r})".format(variable_name, key))
-
-        # Field data
-        data = self.get_data(None)
-        if data is not None:
-#            out.append("")
-#            out.append("# field data")
-#            if representative_data:
-#                out.append("data = {!r} # Representative data".format(data))
-#            else:
-#                out.extend(data.creation_commands(name='data',
-#                                                  namespace=namespace0,
-#                                                  string=False))
-#
-            ppppppp
+        # Field data axes
+        data_axes = self.get_data_axes(None)
+        if data_axes is not None:
             out.append("")
             out.append("# field data axes")
-            out.append("{}.set_data(data, axes={})".format(
-                variable_name, self.get_data_axes()))
+            out.append("{}.set_data_axes({})".format(
+                variable_name, data_axes))
 
         for key, c in self.constructs.filter_by_type('dimension_coordinate',
                                                      'auxiliary_coordinate',
@@ -13122,7 +13090,8 @@ class Field(mixin.PropertiesData,
                                                      'field_ancillary').items():
             out.append("")
             out.extend(c.creation_commands(representative_data=representative_data,
-                                           string=False, namespace=namespace))
+                                           string=False,
+                                           namespace=namespace0))
             
             out.append("{}.set_construct(c, axes={}, key={!r}, copy=False)".format(
                 variable_name, self.get_data_axes(key), key))

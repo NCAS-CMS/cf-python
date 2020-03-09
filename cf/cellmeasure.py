@@ -71,19 +71,18 @@ class CellMeasure(mixin.PropertiesData,
     @measure.deleter
     def measure(self):        self.del_measure(default=AttributeError())
 
-
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
     def creation_commands(self, representative_data=False,
                           namespace='cf', indent=0, string=True,
                           variable_name='c'):
-        '''Return the commands that would create the field construct.
+        '''Return the commands that would create the cell measure construct.
 
     .. versionadded:: 3.2.0
 
-    .. seealso:: `set_construct`, `cf.Data.creation_commands`,
-                 `cf.example_field`
+    .. seealso:: `cf.Data.creation_commands`,
+                 `cf.Field.creation_commands`
 
     :Parameters:
 
@@ -135,7 +134,8 @@ class CellMeasure(mixin.PropertiesData,
 
         measure = self.get_measure(None)
         if measure is not None:
-            out.append("c.set_measure({!r})".format(measure))
+            out.append("{}.set_measure({!r})".format(variable_name,
+                                                     measure))
 
         if string:
             out[0] = indent+out[0]

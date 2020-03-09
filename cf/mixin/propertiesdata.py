@@ -2713,8 +2713,7 @@ class PropertiesData(Properties):
         
     .. versionadded:: 3.2.0
 
-    .. seealso:: `set_construct`, `cf.example_field`,
-                 `cf.Data.creation_commands`,
+    .. seealso:: `cf.Data.creation_commands`,
                  `cf.Field.creation_commands`
 
     :Parameters:
@@ -2773,7 +2772,12 @@ class PropertiesData(Properties):
         indent = ' ' * indent
 
         out = []
-        out.append("# {}: {}".format(self.construct_type, self.identity()))
+
+        construct_type = getattr(self, 'construct_type', None)
+        if construct_type is not None:
+            out.append("# {}: {}".format(construct_type,
+                                         self.identity()))
+            
         out.append("{} = {}{}()".format(variable_name, namespace,
                                         self.__class__.__name__))
 
@@ -2781,7 +2785,7 @@ class PropertiesData(Properties):
         if properties:
             out.append("{}.set_properties({})".format(variable_name,
                                                       properties))
-            
+
         data = self.get_data(None)
         if data is not None:
             if representative_data:
@@ -2792,7 +2796,7 @@ class PropertiesData(Properties):
                                                   string=False))
                 
             out.append("{}.set_data(data)".format(variable_name))
-
+        
         nc = self.nc_get_variable(None)
         if nc is not None:
             out.append("{}.nc_set_variable({!r})".format(variable_name,

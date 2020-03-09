@@ -1326,7 +1326,6 @@ dtype('float64')
         return self._apply_superclass_data_oper(
             _inplace_enabled_define_and_cleanup(self), 'cos', bounds=bounds)
 
-
     def creation_commands(self, representative_data=False,
                           namespace='cf', indent=0, string=True,
                           variable_name='c', bounds_name='b'):
@@ -1334,8 +1333,7 @@ dtype('float64')
 
     .. versionadded:: 3.2.0
 
-    .. seealso:: `set_construct`, `cf.example_field`,
-                 `cf.Data.creation_commands`,
+    .. seealso:: `cf.Data.creation_commands`,
                  `cf.Field.creation_commands`
 
     :Parameters:
@@ -1403,33 +1401,24 @@ dtype('float64')
 
         indent = ' ' * indent
 
-        if self.has_bounds():
-            out.append("{} = {}{}()".format(bounds_name, namespace,
-                                            self.bounds.__class__.__name__))
-            properties = self.bounds.properties()
-            if properties:
-                out.append("{}.set_properties({})".format(bounds_name,
-                                                          properties))
-                
-            nc = self.bounds.nc_get_variable(None)
-            if nc is not None:
-                out.append("{}.nc_set_variable({!r})".format(bounds_name,
-                                                             nc))
-                
-            data = self.bounds.get_data(None)
-            if data is not None:
-                if representative_data:
-                    out.append("data = {!r} # Representative data".format(data))
-                else:
-                    out.extend(data.creation_commands(name='data',
-                                                      namespace=namespace0,
-                                                      string=False))
-                        
-                out.append("{}.set_data(data)".format(bounds_name))
-                    
+        bounds = self.get_bounds(None)
+        if bounds is not None:
+            out.extend(bounds.creation_commands(
+                representative_data=representative_data,
+                namespace=namespace0, string=False,
+                variable_name='b'))
+            
             out.append("{}.set_bounds({})".format(variable_name,
-                                                 bounds_name))
+                                                  bounds_name))
+                    
+        interior_ring = self.get_interior_ring(None)
+        if interior_ring is not None:
+            out.extend(interior_ring.creation_commands(
+                representative_data=representative_data,
+                namespace=namespace0, string=False, variable_name='i'))                
 
+            out.append("{}.set_interior_ring({})".format(variable_name, 'i'))
+            
         if string:
             out[0] = indent+out[0]
             out = ('\n'+indent).join(out)

@@ -163,6 +163,90 @@ class DomainAxis(cfdm.DomainAxis):
         self.del_size(default=AttributeError())
 
 
+    # ----------------------------------------------------------------
+    # Methods
+    # ----------------------------------------------------------------
+    def creation_commands(self, representative_data=False,
+                          namespace='cf', indent=0, string=True,
+                          variable_name='c'):
+        '''Return the commands that would create the domain axis construct.
+
+    .. versionadded:: 3.2.0
+
+    .. seealso:: `cf.Field.creation_commands`
+
+    :Parameters:
+
+        representative_data: `bool`, optional
+            Ignored.
+
+        namespace: `str`, optional
+            The namespace containing classes of the ``cf``
+            package. This is prefixed to the class name in commands
+            that instantiate instances of ``cf`` objects. By default,
+            *namespace* is ``'cf'``, i.e. it is assumed that ``cf``
+            was imported as ``import cf``.
+
+            *Parameter example:*
+              If ``cf`` was imported as ``import cf as cfp`` then set
+              ``namespace='cfp'``
+
+            *Parameter example:*
+              If ``cf`` was imported as ``from cf import *`` then set
+              ``namespace=''``
+
+        indent: `int`, optional
+            Indent each line by this many spaces. By default no
+            indentation is applied. Ignored if *string* is False.
+
+        string: `bool`, optional
+            If False then return each command as an element of a
+            `list`. By default the commands are concatenated into
+            a string, with a new line inserted between each command.
+
+    :Returns:
+
+        `str` or `list`
+            The commands in a string, with a new line inserted between
+            each command. If *string* is False then the separate
+            commands are returned as each element of a `list`.
+
+    **Examples:**
+
+        TODO
+
+        '''
+        namespace0 = namespace
+        if namespace0:
+            namespace = namespace+"."
+        else:
+            namespace = ""
+
+        indent = ' ' * indent
+
+        out = []
+        out.append("# {}: {}".format(self.construct_type, self.identity()))
+        out.append("{} = {}{}()".format(variable_name, namespace,
+                                        self.__class__.__name__))
+
+        size = self.get_size(None)
+        if size is not None:
+            out.append("{}.set_size({})".format(variable_name, size))        
+              
+        nc = self.nc_get_dimension(None)
+        if nc is not None:
+            out.append("{}.nc_set_dimension({!r})".format(variable_name,
+                                                          nc))
+
+        if self.nc_is_unlimited():
+            out.append("c.nc_set_unlimited({})".format(True))
+            
+        if string:
+            out[0] = indent+out[0]
+            out = ('\n'+indent).join(out)
+
+        return out
+
     def inspect(self):
         '''Inspect the object for debugging.
 
