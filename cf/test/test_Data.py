@@ -2488,6 +2488,23 @@ class DataTest(unittest.TestCase):
                         )
         # --- End: for
 
+        # Uncomment below to reveal a bug!? When commented the test passes,
+        # but uncommented, changing the chunksize, it fails (adds masking):
+        ### cf.CHUNKSIZE(self.original_chunksize)
+
+        # Also test masking behaviour: under-the-hood masking of invalid data
+        # was once observed so we must check that invalid values emerge.
+        inverse_methods = [method for method in trig_and_hyperbolic_methods
+                           if method.startswith('arc')]
+        d = cf.Data([2, 1.5, 1, 0.5, 0], mask=[1, 0, 0, 0, 1])
+        for method in inverse_methods:
+            e = getattr(d, method)()
+            ### print(e.mask.array, d.mask.array)
+            self.assertTrue(
+                (e.mask.array == d.mask.array).all(),
+                "{}, {}, {}".format(method, units, e.array-d)
+            )
+
         # AT2
         #
         ## Treat arctan2 separately (as is a class method & takes two inputs)

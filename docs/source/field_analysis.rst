@@ -1923,13 +1923,13 @@ physically meaningful broadcasting to occur.
    >>> t.min()
    <CF Data(): 0.0 K>
     
-Trigonometrical functions
-^^^^^^^^^^^^^^^^^^^^^^^^^
+Trigonometrical and hyperbolic functions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The field construct and metadata constructs have `~Field.cos`,
-`~Field.sin`, and `~Field.tan` methods for applying trigonometrical
-functions element-wise to the data, preserving the metadata but
-changing the construct's units.
+The field construct and metadata constructs have methods to apply
+trigonometric and hyperbolic functions, and their inverses,
+element-wise to the data. These preserve the metadata but
+change the construct's units.
 
 The field construct and metadata constructs support the following
 trigonometrical methods:
@@ -1986,7 +1986,29 @@ Method            Description
 
 The "standard_name" and "long_name" properties are removed from the
 result.
-       
+
+Note that a number of the inverse methods have
+`mathematically restricted domains <https://mathworld.wolfram.com/InverseTrigonometricFunctions.html>`_ (see also
+`here <https://mathworld.wolfram.com/InverseHyperbolicFunctions.html>`_)
+and therefore may return
+`"invalid" values <https://docs.scipy.org/doc/numpy/reference/constants.html>`_
+(`nan` or `inf`). When applying these methods to constructs with masked
+data, you may prefer to output masked values instead of invalid ones. In
+this case, you can use `mask_invalid` to do the conversion afterwards:
+
+.. code-block:: python
+   :caption: *Take the `arctanh` of some masked data and then transform
+             resultant invalid values into masked data values.*
+
+   >>> d = cf.Data([2, 1.5, 1, 0.5, 0], mask=[1, 0, 0, 0, 1])
+   >>> e = d.arctanh()
+   >>> print(e.array)
+   [-- nan inf 0.5493061443340548 --]
+   >>> e.mask_invalid(inplace=True)
+   >>> print(e.array)
+   [-- -- -- 0.5493061443340548 --]
+
+
 Exponential and logarithmic functions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
