@@ -3296,8 +3296,14 @@ class Field(mixin.PropertiesData,
         if method is None:
             raise ValueError("Can't regrid: Must select a regridding method")
 
-        if method not in regridding_methods:
+        elif method not in regridding_methods:
             raise ValueError("Can't regrid: Invalid method: {!r}".format(method))
+        elif method == 'bilinear':  # use logging.info() once have logging
+            print(
+                "Note the 'bilinear' method argument has been renamed to "
+                "'linear' at version 3.2.0. It is still supported for now "
+                "but please use 'linear' in future."
+            )
 
 
     @classmethod
@@ -7110,16 +7116,9 @@ class Field(mixin.PropertiesData,
                 "Can't identify construct from {!r}".format(construct))
 
         for cr_key, ref in tuple(self.coordinate_references.items()):
-            if c_key in ref.coordinates():
-                if key:
-                    if cr_key not in out:
-                        out.append(cr_key)
-                elif ref not in out:
-                    out.append(ref)
-
-                continue
-
-            if c_key in ref.coordinate_conversion.domain_ancillaries().values():
+            if c_key in [
+                    ref.coordinates(),
+                    ref.coordinate_conversion.domain_ancillaries().values()]:
                 if key:
                     if cr_key not in out:
                         out.append(cr_key)
@@ -16390,10 +16389,9 @@ class Field(mixin.PropertiesData,
 
     **Implementation**
 
-    The interpolation is carried by out using the `ESMF` package - a
+    The interpolation is carried out using the `ESMPy` package, a
     Python interface to the Earth System Modeling Framework (ESMF)
-    regridding utility. For more information see:
-    https://www.earthsystemcog.org/projects/esmf/regridding
+    `regridding utility <https://www.earthsystemcog.org/projects/esmf/regridding>`_.
 
 
     **Logging**
@@ -16453,42 +16451,43 @@ class Field(mixin.PropertiesData,
 
         method: `str`
             Specify the regridding method. The *method* parameter must
-            be one of:
+            be one of the following, which are described in more detail in
+            :ref:`Regridding-methods`, but to summarise:
 
-              ======================  ====================================
-              *method*                Description
-              ======================  ====================================
-              ``'linear'``            Linear interpolation in the
-              (previously             corresponding number of dimensions;
-              ``'bilinear'``, which   since spherical regridding can only
-              is still supported)     be applied to 2D domains, this amounts
-                                      to *bi*linear interpolation (linear
-                                      interpolation in *both* X and Y).
-
-              ``'patch'``             Higher order patch recovery.
-
-              ``'conservative_1st'``  First-order conservative regridding
-              or ``'conservative'``   will be used (requires both of the
-                                      fields to have contiguous, non-
-                                      overlapping bounds).
-
-              ``'conservative_2nd'``  Second-order conservative regridding
-                                      will be used (requires both of the
-                                      fields to have contiguous, non-
-                                      overlapping bounds).
-
-              ``'nearest_stod'``      Nearest neighbor interpolation is
-                                      used where each destination point is
-                                      mapped to the closest source point
-
-              ``'nearest_dtos'``      Nearest neighbor interpolation is
-                                      used where each source point is
-                                      mapped to the closest destination
-                                      point. A given destination point may
-                                      receive input from multiple source
-                                      points, but no source point will map
-                                      to more than one destination point.
-              ======================  ====================================
+              +------------------------+---------------------------------+
+              | *method*               | Form of regridding to be        |
+              |                        | applied:                        |
+              +========================+=================================+
+              | ``'linear'``           | Linear interpolation in the     |
+              | (previously called     | corresponding number of         |
+              | ``'bilinear'``,        | dimensions, which for spherical |  
+              | which is               | regridding is always two, so    |
+              | is still               | this amounts to *bilinear       |
+              | supported)             | interpolation* (linear          |
+              |                        | interpolation in *both* X and   |
+              |                        | Y).                             |
+              +------------------------+---------------------------------+
+              | ``'conservative'`` or  | First-order conservative. Note  |
+              | ``'conservative_1st'`` | this requires both of the       |
+              |                        | fields to have contiguous,      |
+              |                        | non-overlapping bounds.         |
+              +------------------------+---------------------------------+
+              | ``'conservative_2nd'`` | Second-order conservative. Note |
+              |                        | this requires both of the       |
+              |                        | fields to have contiguous,      |
+              |                        | non-overlapping bounds.         |
+              +------------------------+---------------------------------+
+              | ``'patch'``            | Higher order patch recovery.    | 
+              +------------------------+---------------------------------+
+              | ``'nearest_stod'``     | Nearest neighbor interpolation  |
+              |                        | where each destination point is |
+              |                        | mapped to the *closest source*. |
+              +------------------------+---------------------------------+
+              | ``'nearest_dtos'``     | Nearest neighbor interpolation  |
+              |                        | where each source point is      |
+              |                        | mapped to the *closest*         |
+              |                        | *destination* point.            |
+              +------------------------+---------------------------------+
 
         src_cyclic: `bool`, optional
             Specifies whether the longitude for the source grid is
@@ -16983,10 +16982,9 @@ class Field(mixin.PropertiesData,
 
     **Implementation**
 
-    The interpolation is carried by out using the `ESMF` package - a
+    The interpolation is carried out using the `ESMPy` package, a
     Python interface to the Earth System Modeling Framework (ESMF)
-    regridding utility. For more information see:
-    https://www.earthsystemcog.org/projects/esmf/regridding
+    `regridding utility <https://www.earthsystemcog.org/projects/esmf/regridding>`_.
 
 
     **Logging**
@@ -17013,42 +17011,41 @@ class Field(mixin.PropertiesData,
             the number of specifiers passed in.
 
         method: `str`
-            Specify the regridding method. The *method* parameter must be
-            one of:
+            Specify the regridding method. The *method* parameter must
+            be one of the following, which are described in more detail in
+            :ref:`Regridding-methods`, but to summarise:
 
-              ======================  ====================================
-              *method*                Description
-              ======================  ====================================
-              ``'linear'``            (Multi-)linear interpolation in the
-              (previously             corresponding number of dimensions,
-              ``'bilinear'``, which   e.g. for 2D domains this amounts
-              is still suported)      to *bi*linear interpolation (linear
-                                      interpolation in *both* X and Y).
+              +------------------------+---------------------------------+
+              | *method*               | Form of regridding to be        |
+              |                        | applied:                        |
+              +========================+=================================+
+              | ``'linear'``           | Linear interpolation in the     |
+              | (previously called     | corresponding number of         |
+              | ``'bilinear'``, which  | dimensions.                     |
+              | is still supported)    |                                 |
+              +------------------------+---------------------------------+
+              | ``'conservative'`` or  | First-order conservative. Note  |
+              | ``'conservative_1st'`` | this requires both of the       |
+              |                        | fields to have contiguous,      |
+              |                        | non-overlapping bounds.         |
+              +------------------------+---------------------------------+
+              | ``'conservative_2nd'`` | Second-order conservative. Note |
+              |                        | this requires both of the       |
+              |                        | fields to have contiguous,      |
+              |                        | non-overlapping bounds.         |
+              +------------------------+---------------------------------+
+              | ``'patch'``            | Higher order patch recovery.    | 
+              +------------------------+---------------------------------+
+              | ``'nearest_stod'``     | Nearest neighbor interpolation  |
+              |                        | where each destination point is |
+              |                        | mapped to the *closest source*. |
+              +------------------------+---------------------------------+
+              | ``'nearest_dtos'``     | Nearest neighbor interpolation  |
+              |                        | where each source point is      |
+              |                        | mapped to the *closest*         |
+              |                        | *destination* point.            |
+              +------------------------+---------------------------------+
 
-              ``'patch'``             Higher order patch recovery.
-
-              ``'conservative_1st'``  First-order conservative regridding
-              or ``'conservative'``   will be used (requires both of the
-                                      fields to have contiguous, non-
-                                      overlapping bounds).
-
-              ``'conservative_2nd'``  Second-order conservative regridding
-                                      will be used (requires both of the
-                                      fields to have contiguous, non-
-                                      overlapping bounds).
-
-              ``'nearest_stod'``      Nearest neighbor interpolation is
-                                      used where each destination point is
-                                      mapped to the closest source point
-
-              ``'nearest_dtos'``      Nearest neighbor interpolation is
-                                      used where each source point is
-                                      mapped to the closest destination
-                                      point. A given destination point may
-                                      receive input from multiple source
-                                      points, but no source point will map
-                                      to more than one destination point.
-              ======================  ====================================
 
         use_src_mask: `bool`, optional
             For all methods other than 'nearest_stod', this must be

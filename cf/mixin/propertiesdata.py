@@ -2658,7 +2658,7 @@ class PropertiesData(Properties):
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def cos(self, inplace=False, i=False):
-        '''Take the trigonometric cosine of the data, element-wise.
+        '''Take the trigonometric cosine of the data element-wise.
 
     Units are accounted for in the calculation, so that the cosine
     of 90 degrees_east is 0.0, as is the cosine of 1.57079632
@@ -3832,7 +3832,7 @@ class PropertiesData(Properties):
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def sin(self, inplace=False, i=False):
-        '''The trigonometric sine of the data, element-wise.
+        '''Take the trigonometric sine of the data element-wise.
 
     Units are accounted for in the calculation. For example, the
     sine of 90 degrees_east is 1.0, as is the sine of 1.57079632
@@ -4106,7 +4106,7 @@ class PropertiesData(Properties):
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def tan(self, inplace=False, i=False):
-        '''The trigonometric tangent of the data, element-wise.
+        '''Take the trigonometric tangent of the data element-wise.
 
     Units are accounted for in the calculation, so that the
     tangent of 180 degrees_east is 0.0, as is the tangent of
@@ -4224,7 +4224,7 @@ class PropertiesData(Properties):
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def sinh(self, inplace=False):
-        '''Take the hyperbolic sine of the data array in place.
+        '''Take the hyperbolic sine of the data element-wise.
 
     Units are accounted for in the calculation. If the units are not
     equivalent to radians (such as Kelvin) then they are treated as if
@@ -4282,7 +4282,7 @@ class PropertiesData(Properties):
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def cosh(self, inplace=False):
-        '''Take the hyperbolic cosine of the data array in place.
+        '''Take the hyperbolic cosine of the data element-wise.
 
     Units are accounted for in the calculation. If the units are not
     equivalent to radians (such as Kelvin) then they are treated as if

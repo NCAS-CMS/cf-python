@@ -1135,7 +1135,7 @@ dtype('float64')
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def cos(self, bounds=True, inplace=False,  i=False):
-        '''Take the trigonometric cosine of the data, element-wise.
+        '''Take the trigonometric cosine of the data element-wise.
 
     Units are accounted for in the calculation, so that the cosine
     of 90 degrees_east is 0.0, as is the cosine of 1.57079632
@@ -2015,7 +2015,7 @@ dtype('float64')
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def sin(self, bounds=True, inplace=False, i=False):
-        '''The trigonometric sine of the data, element-wise.
+        '''Take the trigonometric sine of the data element-wise.
 
     Units are accounted for in the calculation. For example, the
     sine of 90 degrees_east is 1.0, as is the sine of 1.57079632
@@ -2285,7 +2285,7 @@ dtype('float64')
 
     @_inplace_enabled
     def tanh(self, bounds=True, inplace=False):
-        '''Take the hyperbolic tangent of the data array.
+        '''Take the hyperbolic tangent of the data element-wise.
 
     Units are accounted for in the calculation. If the units are not
     equivalent to radians (such as Kelvin) then they are treated as if
@@ -2343,7 +2343,7 @@ dtype('float64')
 
     @_inplace_enabled
     def sinh(self, bounds=True, inplace=False):
-        '''Take the hyperbolic sine of the data array in place.
+        '''Take the hyperbolic sine of the data element-wise.
 
     Units are accounted for in the calculation. If the units are not
     equivalent to radians (such as Kelvin) then they are treated as if
@@ -2400,7 +2400,7 @@ dtype('float64')
 
     @_inplace_enabled
     def cosh(self, bounds=True, inplace=False):
-        '''Take the hyperbolic cosine of the data array in place.
+        '''Take the hyperbolic cosine of the data element-wise.
 
     Units are accounted for in the calculation. If the units are not
     equivalent to radians (such as Kelvin) then they are treated as if
@@ -2458,7 +2458,7 @@ dtype('float64')
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def tan(self, bounds=True, inplace=False, i=False):
-        '''The trigonometric tangent of the data, element-wise.
+        '''Take the trigonometric tangent of the data element-wise.
 
     Units are accounted for in the calculation, so that the
     tangent of 180 degrees_east is 0.0, as is the tangent of

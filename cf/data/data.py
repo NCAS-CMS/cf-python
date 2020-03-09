@@ -9190,7 +9190,7 @@ False
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def cos(self, inplace=False, i=False):
-        '''Take the trigonometric cosine of the data array in place.
+        '''Take the trigonometric cosine of the data element-wise.
 
     Units are accounted for in the calculation. If the units are not
     equivalent to radians (such as Kelvin) then they are treated as if
@@ -12016,7 +12016,7 @@ False
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def sin(self, inplace=False, i=False):
-        '''Take the trigonometric sine of the data array in place.
+        '''Take the trigonometric sine of the data element-wise.
 
     Units are accounted for in the calculation. If the units are not
     equivalent to radians (such as Kelvin) then they are treated as if
@@ -12074,7 +12074,7 @@ False
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def sinh(self, inplace=False):
-        '''Take the hyperbolic sine of the data array in place.
+        '''Take the hyperbolic sine of the data element-wise.
 
     Units are accounted for in the calculation. If the units are not
     equivalent to radians (such as Kelvin) then they are treated as if
@@ -12131,7 +12131,7 @@ False
 
     @_inplace_enabled
     def cosh(self, inplace=False):
-        '''Take the hyperbolic cosine of the data array in place.
+        '''Take the hyperbolic cosine of the data element-wise.
 
     Units are accounted for in the calculation. If the units are not
     equivalent to radians (such as Kelvin) then they are treated as if
@@ -12188,7 +12188,7 @@ False
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def tanh(self, inplace=False):
-        '''Take the hyperbolic tangent of the data array.
+        '''Take the hyperbolic tangent of the data element-wise.
 
     Units are accounted for in the calculation. If the units are not
     equivalent to radians (such as Kelvin) then they are treated as if
@@ -12434,7 +12434,7 @@ False
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def tan(self, inplace=False, i=False):
-        '''Take the trigonometric tangent of the data array element-wise.
+        '''Take the trigonometric tangent of the data element-wise.
 
     Units are accounted for in the calculation. If the units are not
     equivalent to radians (such as Kelvin) then they are treated as if
