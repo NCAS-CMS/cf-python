@@ -6214,9 +6214,8 @@ class Field(mixin.PropertiesData,
         method: `str`
             The collapse method used to combine values that map to
             each cell of the output field construct. The following
-            methods are available (see
-            https://ncas-cms.github.io/cf-python/tutorial.html#collapse-methods
-            for precise definitions):
+            methods are available (see :ref:`this table <Collapse-methods>`
+            for more precise definitions):
 
             ============================  ============================  ========
             *method*                      Description                   Weighted
@@ -7274,8 +7273,7 @@ class Field(mixin.PropertiesData,
     **Collapse methods**
 
     The following collapse methods are available (see
-    https://ncas-cms.github.io/cf-python/tutorial.html#collapse-methods
-    for precise definitions):
+    :ref:`this table <Collapse-methods>` for precise definitions):
 
     ============================  ============================
     Method                        Description
@@ -7573,8 +7571,7 @@ class Field(mixin.PropertiesData,
             the *axes* parameter are collapsed simultaneously by this
             method. The method is given by one of the following
             strings (see
-            https://ncas-cms.github.io/cf-python/tutorial.html#collapse-methods
-            for precise definitions):
+            :ref:`this table <Collapse-methods>` for precise definitions):
 
             ============================  ============================  ========
             *method*                      Description                   Weighted
@@ -8593,9 +8590,8 @@ class Field(mixin.PropertiesData,
 
     **Examples:**
 
-    See the on-line documention for further worked examples:
-    https://ncas-cms.github.io/cf-python/tutorial.html#statistical-collapses
-
+    There are further worked examples
+    :ref:`in the tutorial <Statistical-collapses>`
         '''
         if _debug:
             _DEPRECATION_ERROR_KWARGS(self, 'collapse', {'_debug': _debug},
@@ -16141,8 +16137,8 @@ class Field(mixin.PropertiesData,
 
     **Examples:**
 
-    See the on-line documention for further worked examples:
-    https://ncas-cms.github.io/cf-python/tutorial.html#subspacing-by-metadata
+    There are further worked examples
+    :ref:`in the tutorial <Subspacing-by-metadata>`.
 
     >>> g = f.subspace(X=112.5)
     >>> g = f.subspace(X=112.5, latitude=cf.gt(-60))

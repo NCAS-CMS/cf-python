@@ -116,8 +116,8 @@ class SubspaceField(mixin.Subspace):
 
     **Examples:**
 
-    See the on-line documention for further worked examples:
-    https://ncas-cms.github.io/cf-python/tutorial.html#subspacing-by-metadata
+    There are further worked examples
+    :ref:`in the tutorial <Subspacing-by-metadata>`.
 
     >>> g = f.subspace(X=112.5)
     >>> g = f.subspace(X=112.5, latitude=cf.gt(-60))
@@ -246,8 +246,8 @@ class SubspaceField(mixin.Subspace):
 
     **Examples:**
 
-    See the on-line documention for further worked examples:
-    https://ncas-cms.github.io/cf-python/tutorial.html#subspacing-by-metadata
+    There are further worked examples
+    :ref:`in the tutorial <Subspacing-by-metadata>`.
 
     >>> g = f.subspace(X=112.5)
     >>> g = f.subspace(X=112.5, latitude=cf.gt(-60))

@@ -57,7 +57,7 @@ constructs uses the `cfplot` package
 (http://ajheaps.github.io/cf-plot), that is automatically installed
 along with with cf.
 
-See the cf-python home page (https://ncas-cms.github.io/cf-python) for
+See the :ref:`cf-python home page <cf-python-home>` for
 documentation, installation and source code.
 
 '''

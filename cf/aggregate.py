@@ -1309,8 +1309,7 @@ def aggregate(fields,
 
     Aggregation is the combination of field constructs to create a new
     field construct that occupies a "larger" domain. Using the
-    aggregation rules
-    (https://ncas-cms.github.io/cf-python/aggregation_rules.html),
+    :ref:`aggregation rules <Aggregation-rules>`,
     field constructs are separated into aggregatable groups and each
     group is then aggregated to a single field construct.
 
