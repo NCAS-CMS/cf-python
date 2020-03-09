@@ -12829,7 +12829,8 @@ class Field(mixin.PropertiesData,
 
 
     def creation_commands(self, representative_data=False,
-                          namespace='cf', indent=0, string=True):
+                          namespace='cf', indent=0, string=True,
+                          variable_name='f'):
         '''Return the commands that would create the field construct.
 
     **Construct keys**
@@ -12897,6 +12898,7 @@ class Field(mixin.PropertiesData,
                     : longitude(8) = [22.5, ..., 337.5] degrees_east
                     : time(1) = [2019-01-01 00:00:00]
     >>> print(q.creation_commands())
+    # field: specific_humidity
     f = cf.Field()
     #
     f.set_properties({'Conventions': 'CF-1.7', 'project': 'research', 'standard_name': 'specific_humidity', 'units': '1'})
@@ -12963,6 +12965,7 @@ class Field(mixin.PropertiesData,
     f.set_construct(c)
 
     >>> print(q.creation_commands(representative_data=True, namespace='', indent=4))
+        # field: specific_humidity
         f = Field()
         #
         f.set_properties({'Conventions': 'CF-1.7', 'project': 'research', 'standard_name': 'specific_humidity', 'units': '1'})
@@ -13029,8 +13032,16 @@ class Field(mixin.PropertiesData,
         f.set_construct(c)
 
         '''
-        name = 'f'
-
+        if variable_name in ('data', 'c', 'b'):
+            raise ValueError(
+                "'variable_name' parameter can not have the value {!r}".format(
+                    variable_name))
+        
+        out = super().creation_commands(
+            representative_data=representative_data, indent=indent,
+            namespace=namespace, string=False,
+            variable_name=variable_name)
+        
         namespace0 = namespace
         if namespace0:
             namespace = namespace+"."
@@ -13039,21 +13050,35 @@ class Field(mixin.PropertiesData,
 
         indent = ' ' * indent
 
-        out = ["{} = {}{}()".format(name, namespace, self.__class__.__name__)]
+#        name = 'f'
+#
+ #       namespace0 = namespace
+ #       if namespace0:
+ #           namespace = namespace+"."
+ #       else:
+ #           namespace = ""
+#
+#        indent = ' ' * indent
 
-        out.append("")
-        properties = self.properties()
-        if properties:
-            out.append("{}.set_properties({})".format(name, properties))
-
-        nc = self.nc_get_variable(None)
-        if nc is not None:
-            out.append("{}.nc_set_variable({!r})".format(name, nc))
+#        out = []
+#        out.append("# {}: {}".format(self.construct_type, self.identity()))
+#        out.append("{} = {}{}()".format(variable_name, namespace, self.__class__.__name__))
+#
+#        out.append("")
+#        properties = self.properties()
+#        if properties:
+#            out.append("{}.set_properties({})".format(name, properties))
+#
+#        nc = self.nc_get_variable(None)
+#        if nc is not None:
+#            out.append("{}.nc_set_variable({!r})".format(name, nc))
 
         nc_global_attributes = self.nc_global_attributes()
         if nc_global_attributes:
+            out.append("")
+            out.append("# netCDF global attributes")
             out.append("{}.nc_set_global_attributes({!r})".format(
-                name, nc_global_attributes))
+                variable_name, nc_global_attributes))
 
         # Domain axes
         for key, c in self.domain_axes.items():
@@ -13070,21 +13095,25 @@ class Field(mixin.PropertiesData,
             if c.nc_is_unlimited():
                 out.append("c.nc_set_unlimited({})".format(True))
 
-            out.append("{}.set_construct(c, key={!r})".format(name, key))
+            out.append("{}.set_construct(c, key={!r})".format(variable_name, key))
 
         # Field data
-        out.append("")
-        out.append("# field data")
-        data = self.data
-        if representative_data:
-            out.append("data = {!r} # Representative data".format(data))
-        else:
-            out.extend(data.creation_commands(name='data',
-                                              namespace=namespace0,
-                                              string=False))
-
-        out.append("{}.set_data(data, axes={})".format(
-            name, self.get_data_axes()))
+        data = self.get_data(None)
+        if data is not None:
+#            out.append("")
+#            out.append("# field data")
+#            if representative_data:
+#                out.append("data = {!r} # Representative data".format(data))
+#            else:
+#                out.extend(data.creation_commands(name='data',
+#                                                  namespace=namespace0,
+#                                                  string=False))
+#
+            ppppppp
+            out.append("")
+            out.append("# field data axes")
+            out.append("{}.set_data(data, axes={})".format(
+                variable_name, self.get_data_axes()))
 
         for key, c in self.constructs.filter_by_type('dimension_coordinate',
                                                      'auxiliary_coordinate',
@@ -13092,51 +13121,11 @@ class Field(mixin.PropertiesData,
                                                      'domain_ancillary',
                                                      'field_ancillary').items():
             out.append("")
-            out.append("# "+c.construct_type)
-            out.append("c = {}{}()".format(namespace, c.__class__.__name__))
-            properties = c.properties()
-            if properties:
-                out.append("c.set_properties({})".format(properties))
-
-            nc = c.nc_get_variable(None)
-            if nc is not None:
-                out.append("c.nc_set_variable({!r})".format(nc))
-
-            data = c.data
-            if representative_data:
-                out.append("data = {!r} # Representative data".format(data))
-            else:
-                out.extend(data.creation_commands(name='data',
-                                                  namespace=namespace0,
-                                                  string=False))
-
-            out.append("c.set_data(data)")
-            if c.has_bounds():
-                out.append("b = {}{}()".format(namespace, c.bounds.__class__.__name__))
-                properties = c.bounds.properties()
-                if properties:
-                    out.append("b.set_properties({})".format(properties))
-
-                nc = c.bounds.nc_get_variable(None)
-                if nc is not None:
-                    out.append("b.nc_set_variable({!r})".format(nc))
-
-                data = c.bounds.data
-                if representative_data:
-                    out.append("data = {!r} # Representative data".format(data))
-                else:
-                    out.extend(data.creation_commands(name='data',
-                                                      namespace=namespace0,
-                                                      string=False))
-
-                out.append("b.set_data(data)")
-                out.append("c.set_bounds(b)")
-
-            if c.construct_type == 'cell_measure' and c.get_measure(None) is not None:
-                out.append("c.set_measure({!r})".format(c.measure))
-
+            out.extend(c.creation_commands(representative_data=representative_data,
+                                           string=False, namespace=namespace))
+            
             out.append("{}.set_construct(c, axes={}, key={!r}, copy=False)".format(
-                name, self.get_data_axes(key), key))
+                variable_name, self.get_data_axes(key), key))
 
         for key, c in self.cell_methods.items():
             out.append("")
@@ -13171,7 +13160,7 @@ class Field(mixin.PropertiesData,
 
                 out.append("c.set_qualifier({!r}, {})".format(term, value))
 
-            out.append("{}.set_construct(c)".format(name))
+            out.append("{}.set_construct(c)".format(variable_name))
 
         for key, c in self.coordinate_references.items():
             out.append("")
@@ -13216,7 +13205,7 @@ class Field(mixin.PropertiesData,
                 out.append("c.coordinate_conversion.set_domain_ancillaries({})".format(
                     domain_ancillaries))
 
-            out.append("{}.set_construct(c)".format(name))
+            out.append("{}.set_construct(c)".format(variable_name))
         #--- End: for
 
         if string:

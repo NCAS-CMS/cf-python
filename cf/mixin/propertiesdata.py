@@ -2706,7 +2706,104 @@ class PropertiesData(Properties):
 
         return data.count_masked()
 
+    def creation_commands(self, representative_data=False,
+                          namespace='cf', indent=0, string=True,
+                          variable_name='c'):
+        '''Return the commands that would create the construct.
+        
+    .. versionadded:: 3.2.0
 
+    .. seealso:: `set_construct`, `cf.example_field`,
+                 `cf.Data.creation_commands`,
+                 `cf.Field.creation_commands`
+
+    :Parameters:
+
+        representative_data: `bool`, optional
+            Return one-line representations of `Data` instances, which
+            are not executable code but prevent the data being
+            converted in its entirety to a string representation.
+
+        namespace: `str`, optional
+            The namespace containing classes of the ``cf``
+            package. This is prefixed to the class name in commands
+            that instantiate instances of ``cf`` objects. By default,
+            *namespace* is ``'cf'``, i.e. it is assumed that ``cf``
+            was imported as ``import cf``.
+
+            *Parameter example:*
+              If ``cf`` was imported as ``import cf as cfp`` then set
+              ``namespace='cfp'``
+
+            *Parameter example:*
+              If ``cf`` was imported as ``from cf import *`` then set
+              ``namespace=''``
+
+        indent: `int`, optional
+            Indent each line by this many spaces. By default no
+            indentation is applied. Ignored if *string* is False.
+
+        string: `bool`, optional
+            If False then return each command as an element of a
+            `list`. By default the commands are concatenated into
+            a string, with a new line inserted between each command.
+
+    :Returns:
+
+        `str` or `list`
+            The commands in a string, with a new line inserted between
+            each command. If *string* is False then the separate
+            commands are returned as each element of a `list`.
+
+    **Examples:**
+
+        TODO
+
+        '''
+        if variable_name == 'data':
+            raise ValueError(
+                "'variable_name' parameter can not have the value 'data'")
+        
+        namespace0 = namespace
+        if namespace0:
+            namespace = namespace+"."
+        else:
+            namespace = ""
+
+        indent = ' ' * indent
+
+        out = []
+        out.append("# {}: {}".format(self.construct_type, self.identity()))
+        out.append("{} = {}{}()".format(variable_name, namespace,
+                                        self.__class__.__name__))
+
+        properties = self.properties()
+        if properties:
+            out.append("{}.set_properties({})".format(variable_name,
+                                                      properties))
+            
+        data = self.get_data(None)
+        if data is not None:
+            if representative_data:
+                out.append("data = {!r} # Representative data".format(data))
+            else:
+                out.extend(data.creation_commands(name='data',
+                                                  namespace=namespace0,
+                                                  string=False))
+                
+            out.append("{}.set_data(data)".format(variable_name))
+
+        nc = self.nc_get_variable(None)
+        if nc is not None:
+            out.append("{}.nc_set_variable({!r})".format(variable_name,
+                                                         nc))
+            
+        if string:
+            out[0] = indent+out[0]
+            out = ('\n'+indent).join(out)
+
+        return out
+    
     def cyclic(self, axes=None, iscyclic=True):
         '''Set the cyclicity of an axis.
 
