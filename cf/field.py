@@ -12839,7 +12839,7 @@ class Field(mixin.PropertiesData,
 
     def creation_commands(self, representative_data=False,
                           namespace='cf', indent=0, string=True,
-                          variable_name='f'):
+                          name='f'):
         '''Return the commands that would create the field construct.
 
     **Construct keys**
@@ -13041,15 +13041,15 @@ class Field(mixin.PropertiesData,
         f.set_construct(c)
 
         '''
-        if variable_name in ('data', 'c', 'b', 'i'):
+        if name in 'bcdi':
             raise ValueError(
-                "'variable_name' parameter can not have the value {!r}".format(
-                    variable_name))
+                "'name' parameter can not have the value {!r}".format(
+                    name))
         
         out = super().creation_commands(
             representative_data=representative_data, indent=indent,
-            namespace=namespace, string=False,
-            variable_name=variable_name)
+            namespace=namespace, string=False, name=name,
+            data_name='d')
         
         namespace0 = namespace
         if namespace0:
@@ -13064,25 +13064,26 @@ class Field(mixin.PropertiesData,
             out.append("")
             out.append("# netCDF global attributes")
             out.append("{}.nc_set_global_attributes({!r})".format(
-                variable_name, nc_global_attributes))
+                name, nc_global_attributes))
 
         # Domain axes
         for key, c in self.domain_axes.items():
             out.append("")
             out.extend(c.creation_commands(representative_data=representative_data,
                                            string=False,
-                                           namespace=namespace0))
+                                           namespace=namespace0,
+                                           name='c'))
             out.append("{}.set_construct(c, key={!r}, copy=False)".format(
-                variable_name, key))
+                name, key))
 
         # Field data axes
         data_axes = self.get_data_axes(None)
         if data_axes is not None:
             out.append("")
             out.append("# field data axes")
-            out.append("{}.set_data_axes({})".format(
-                variable_name, data_axes))
+            out.append("{}.set_data_axes({})".format(name, data_axes))
 
+        # Metadata constructs with data
         for key, c in self.constructs.filter_by_type('dimension_coordinate',
                                                      'auxiliary_coordinate',
                                                      'cell_measure',
@@ -13091,91 +13092,26 @@ class Field(mixin.PropertiesData,
             out.append("")
             out.extend(c.creation_commands(representative_data=representative_data,
                                            string=False,
-                                           namespace=namespace0))
-            
+                                           namespace=namespace0,
+                                           name='c', data_name='d'))
             out.append("{}.set_construct(c, axes={}, key={!r}, copy=False)".format(
-                variable_name, self.get_data_axes(key), key))
+                name, self.get_data_axes(key), key))
 
+        # Cell method constructs
         for key, c in self.cell_methods.items():
             out.append("")
-            out.append("# {}".format(c.construct_type))
-            out.append("c = {}{}()".format(namespace, c.__class__.__name__))
-            method = c.get_method(None)
-            if method is not None:
-                out.append("c.set_method({!r})".format(method))
+            out.extend(c.creation_commands(namespace=namespace0,
+                                           indent=0, string=False,
+                                           name='c'))
+            out.append("{}.set_construct(c)".format(name))
 
-            axes = c.get_axes(None)
-            if axes is not None:
-                out.append("c.set_axes({!r})".format(axes))
-
-            for term, value in c.qualifiers().items():
-                if term == 'interval':
-                    value = deepcopy(value)
-                    for i, data in enumerate(value[:]):
-                        if isinstance(data, Data):
-                            data_name = "interval{}".format(i)
-                            out.extend(data.creation_commands(name=data_name,
-                                                              namespace=namespace0,
-                                                              string=False))
-                            value[i] = data_name
-                        else:
-                            value[i] = str(data)
-                    #--- End: for
-
-                    value = ', '.join(value)
-                    value = "["+value+"]"
-                else:
-                    value = repr(value)
-
-                out.append("c.set_qualifier({!r}, {})".format(term, value))
-
-            out.append("{}.set_construct(c)".format(variable_name))
-
+        # Coordinate reference constructs
         for key, c in self.coordinate_references.items():
             out.append("")
-            out.append("# "+c.construct_type)
-            out.append("c = {}{}()".format(namespace, c.__class__.__name__))
-
-            nc = c.nc_get_variable(None)
-            if nc is not None:
-                out.append("c.nc_set_variable({!r})".format(nc))
-
-            coordinates = c.coordinates()
-            if coordinates:
-                out.append("c.set_coordinates({})".format(coordinates))
-
-            for term, value in c.datum.parameters().items():
-                if isinstance(value, Data):
-                    data_name = "parameter{}".format(i)
-                    out.extend(data.creation_commands(name=data_name,
-                                                      namespace=namespace0,
-                                                      string=False))
-                    value = data_name
-                else:
-                    value = repr(value)
-
-                out.append("c.datum.set_parameter({!r}, {})".format(term, value))
-
-            for term, value in c.coordinate_conversion.parameters().items():
-                if isinstance(value, Data):
-                    data_name = "parameter{}".format(i)
-                    out.extend(data.creation_commands(name=data_name,
-                                                      namespace=namespace0,
-                                                      string=False))
-                    value = data_name
-                else:
-                    value = repr(value)
-
-                out.append("c.coordinate_conversion.set_parameter({!r}, {})".format(
-                    term, value))
-
-            domain_ancillaries = c.coordinate_conversion.domain_ancillaries()
-            if domain_ancillaries:
-                out.append("c.coordinate_conversion.set_domain_ancillaries({})".format(
-                    domain_ancillaries))
-
-            out.append("{}.set_construct(c)".format(variable_name))
-        #--- End: for
+            out.extend(c.creation_commands(namespace=namespace0,
+                                           indent=0, string=False,
+                                           name='c'))
+            out.append("{}.set_construct(c)".format(name))
 
         if string:
             out[0] = indent+out[0]

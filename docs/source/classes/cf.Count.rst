@@ -211,6 +211,7 @@ Data
    ~cf.Count.chunk
    ~cf.Count.close
    ~cf.Count.convert_reference_time
+   ~cf.Count.creation_commands
    ~cf.Count.cyclic
    ~cf.Count.files
    ~cf.Count.has_bounds

@@ -245,6 +245,7 @@ Data
    ~cf.DomainAncillary.chunk
    ~cf.DomainAncillary.close
    ~cf.DomainAncillary.convert_reference_time
+   ~cf.DomainAncillary.creation_commands
    ~cf.DomainAncillary.cyclic
    ~cf.DomainAncillary.files
 

@@ -2708,7 +2708,7 @@ class PropertiesData(Properties):
 
     def creation_commands(self, representative_data=False,
                           namespace='cf', indent=0, string=True,
-                          variable_name='c'):
+                          name='c', data_name='d'):
         '''Return the commands that would create the construct.
         
     .. versionadded:: 3.2.0
@@ -2758,10 +2758,11 @@ class PropertiesData(Properties):
 
         TODO
 
-        '''
-        if variable_name == 'data':
+        '''        
+        if name == data_name:
             raise ValueError(
-                "'variable_name' parameter can not have the value 'data'")
+                "'name' and 'data_name' parameters can not have the same value: {!r}".format(
+                    name))
         
         namespace0 = namespace
         if namespace0:
@@ -2778,29 +2779,30 @@ class PropertiesData(Properties):
             out.append("# {}: {}".format(construct_type,
                                          self.identity()))
             
-        out.append("{} = {}{}()".format(variable_name, namespace,
+        out.append("{} = {}{}()".format(name, namespace,
                                         self.__class__.__name__))
 
         properties = self.properties()
         if properties:
-            out.append("{}.set_properties({})".format(variable_name,
+            out.append("{}.set_properties({})".format(name,
                                                       properties))
 
         data = self.get_data(None)
         if data is not None:
             if representative_data:
-                out.append("data = {!r} # Representative data".format(data))
+                out.append("{} = {!r} # Representative data".format(
+                    data_name, data))
             else:
-                out.extend(data.creation_commands(name='data',
+                out.extend(data.creation_commands(name=data_name,
                                                   namespace=namespace0,
+                                                  indent=0,
                                                   string=False))
                 
-            out.append("{}.set_data(data)".format(variable_name))
+            out.append("{}.set_data(d)".format(name))
         
         nc = self.nc_get_variable(None)
         if nc is not None:
-            out.append("{}.nc_set_variable({!r})".format(variable_name,
-                                                         nc))
+            out.append("{}.nc_set_variable({!r})".format(name, nc))
             
         if string:
             out[0] = indent+out[0]

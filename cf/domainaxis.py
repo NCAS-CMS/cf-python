@@ -168,7 +168,7 @@ class DomainAxis(cfdm.DomainAxis):
     # ----------------------------------------------------------------
     def creation_commands(self, representative_data=False,
                           namespace='cf', indent=0, string=True,
-                          variable_name='c'):
+                          name='c'):
         '''Return the commands that would create the domain axis construct.
 
     .. versionadded:: 3.2.0
@@ -226,17 +226,16 @@ class DomainAxis(cfdm.DomainAxis):
 
         out = []
         out.append("# {}: {}".format(self.construct_type, self.identity()))
-        out.append("{} = {}{}()".format(variable_name, namespace,
+        out.append("{} = {}{}()".format(name, namespace,
                                         self.__class__.__name__))
 
         size = self.get_size(None)
         if size is not None:
-            out.append("{}.set_size({})".format(variable_name, size))        
+            out.append("{}.set_size({})".format(name, size))        
               
         nc = self.nc_get_dimension(None)
         if nc is not None:
-            out.append("{}.nc_set_dimension({!r})".format(variable_name,
-                                                          nc))
+            out.append("{}.nc_set_dimension({!r})".format(name, nc))
 
         if self.nc_is_unlimited():
             out.append("c.nc_set_unlimited({})".format(True))

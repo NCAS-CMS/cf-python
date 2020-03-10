@@ -213,6 +213,7 @@ Data
    ~cf.Bounds.chunk
    ~cf.Bounds.close
    ~cf.Bounds.convert_reference_time
+   ~cf.Bounds.creation_commands
    ~cf.Bounds.cyclic
    ~cf.Bounds.files
    ~cf.Bounds.has_bounds

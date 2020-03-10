@@ -76,7 +76,7 @@ class CellMeasure(mixin.PropertiesData,
     # ----------------------------------------------------------------
     def creation_commands(self, representative_data=False,
                           namespace='cf', indent=0, string=True,
-                          variable_name='c'):
+                          name='c', data_name='d'):
         '''Return the commands that would create the cell measure construct.
 
     .. versionadded:: 3.2.0
@@ -129,13 +129,12 @@ class CellMeasure(mixin.PropertiesData,
         '''
         out = super().creation_commands(
             representative_data=representative_data, indent=indent,
-            namespace=namespace, string=False,
-            variable_name=variable_name)
+            namespace=namespace, string=False, name=name,
+            data_name=data_name)
 
         measure = self.get_measure(None)
         if measure is not None:
-            out.append("{}.set_measure({!r})".format(variable_name,
-                                                     measure))
+            out.append("{}.set_measure({!r})".format(name, measure))
 
         if string:
             out[0] = indent+out[0]

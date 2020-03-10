@@ -248,6 +248,7 @@ Data
    ~cf.AuxiliaryCoordinate.chunk
    ~cf.AuxiliaryCoordinate.close
    ~cf.AuxiliaryCoordinate.convert_reference_time
+   ~cf.AuxiliaryCoordinate.creation_commands
    ~cf.AuxiliaryCoordinate.cyclic
    ~cf.AuxiliaryCoordinate.files
 

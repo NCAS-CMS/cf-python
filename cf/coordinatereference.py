@@ -591,6 +591,267 @@ class CoordinateReference(cfdm.CoordinateReference):
 
         return r
 
+    def creation_commands(self, representative_data=False,
+                          namespace='cf', indent=0, string=True,
+                          name='c'):
+        '''Return the commands that would create the field construct.
+
+    **Construct keys**
+
+    The *key* parameter of the output `set_construct` commands is
+    utilised in order minimise the number of commands needed to
+    implement cross-referencing between constructs (e.g. between a
+    coordinate reference construct and coordinate constructs). This is
+    usually not necessary when building field constructs, as by
+    default the `set_construct` method returns a unique construct key
+    for the construct being set.
+
+    .. versionadded:: 3.2.0
+
+    .. seealso:: `cf.Data.creation_commands`,
+                 `cf.Field.creation_commands`
+
+    :Parameters:
+
+        representative_data: `bool`, optional
+            Return one-line representations of `Data` instances, which
+            are not executable code but prevent the data being
+            converted in its entirety to a string representation.
+
+        namespace: `str`, optional
+            The namespace containing classes of the ``cf``
+            package. This is prefixed to the class name in commands
+            that instantiate instances of ``cf`` objects. By default,
+            *namespace* is ``'cf'``, i.e. it is assumed that ``cf``
+            was imported as ``import cf``.
+
+            *Parameter example:*
+              If ``cf`` was imported as ``import cf as cfp`` then set
+              ``namespace='cfp'``
+
+            *Parameter example:*
+              If ``cf`` was imported as ``from cf import *`` then set
+              ``namespace=''``
+
+        indent: `int`, optional
+            Indent each line by this many spaces. By default no
+            indentation is applied. Ignored if *string* is False.
+
+        string: `bool`, optional
+            If False then return each command as an element of a
+            `list`. By default the commands are concatenated into
+            a string, with a new line inserted between each command.
+
+    :Returns:
+
+        `str` or `list`
+            The commands in a string, with a new line inserted between
+            each command. If *string* is False then the separate
+            commands are returned as each element of a `list`.
+
+    **Examples:**
+
+    >>> q = cf.example_field(0)
+    >>> print(q)
+    Field: specific_humidity (ncvar%q)
+    ----------------------------------
+    Data            : specific_humidity(latitude(5), longitude(8)) 1
+    Cell methods    : area: mean
+    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(8) = [22.5, ..., 337.5] degrees_east
+                    : time(1) = [2019-01-01 00:00:00]
+    >>> print(q.creation_commands())
+    # field: specific_humidity
+    f = cf.Field()
+    #
+    f.set_properties({'Conventions': 'CF-1.7', 'project': 'research', 'standard_name': 'specific_humidity', 'units': '1'})
+    f.nc_set_variable('q')
+    #
+    # domain_axis
+    c = cf.DomainAxis(size=5)
+    c.nc_set_dimension('lat')
+    f.set_construct(c, key='domainaxis0')
+    #
+    # domain_axis
+    c = cf.DomainAxis(size=8)
+    c.nc_set_dimension('lon')
+    f.set_construct(c, key='domainaxis1')
+    #
+    # domain_axis
+    c = cf.DomainAxis(size=1)
+    f.set_construct(c, key='domainaxis2')
+    #
+    # field data
+    data = cf.Data([[0.007, 0.034, 0.003, 0.014, 0.018, 0.037, 0.024, 0.029], [0.023, 0.036, 0.045, 0.062, 0.046, 0.073, 0.006, 0.066], [0.11, 0.131, 0.124, 0.146, 0.087, 0.103, 0.057, 0.011], [0.029, 0.059, 0.039, 0.07, 0.058, 0.072, 0.009, 0.017], [0.006, 0.036, 0.019, 0.035, 0.018, 0.037, 0.034, 0.013]], units='1', dtype='f8')
+    f.set_data(data, axes=('domainaxis0', 'domainaxis1'))
+    #
+    # dimension_coordinate
+    c = cf.DimensionCoordinate()
+    c.set_properties({'units': 'degrees_north', 'standard_name': 'latitude'})
+    c.nc_set_variable('lat')
+    data = cf.Data([-75.0, -45.0, 0.0, 45.0, 75.0], units='degrees_north', dtype='f8')
+    c.set_data(data)
+    b = cf.Bounds()
+    b.set_properties({'units': 'degrees_north'})
+    b.nc_set_variable('lat_bnds')
+    data = cf.Data([[-90.0, -60.0], [-60.0, -30.0], [-30.0, 30.0], [30.0, 60.0], [60.0, 90.0]], units='degrees_north', dtype='f8')
+    b.set_data(data)
+    c.set_bounds(b)
+    f.set_construct(c, axes=('domainaxis0',), key='dimensioncoordinate0', copy=False)
+    #
+    # dimension_coordinate
+    c = cf.DimensionCoordinate()
+    c.set_properties({'units': 'degrees_east', 'standard_name': 'longitude'})
+    c.nc_set_variable('lon')
+    data = cf.Data([22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5, 337.5], units='degrees_east', dtype='f8')
+    c.set_data(data)
+    b = cf.Bounds()
+    b.set_properties({'units': 'degrees_east'})
+    b.nc_set_variable('lon_bnds')
+    data = cf.Data([[0.0, 45.0], [45.0, 90.0], [90.0, 135.0], [135.0, 180.0], [180.0, 225.0], [225.0, 270.0], [270.0, 315.0], [315.0, 360.0]], units='degrees_east', dtype='f8')
+    b.set_data(data)
+    c.set_bounds(b)
+    f.set_construct(c, axes=('domainaxis1',), key='dimensioncoordinate1', copy=False)
+    #
+    # dimension_coordinate
+    c = cf.DimensionCoordinate()
+    c.set_properties({'units': 'days since 2018-12-01', 'standard_name': 'time'})
+    c.nc_set_variable('time')
+    data = cf.Data([31.0], units='days since 2018-12-01', dtype='f8')
+    c.set_data(data)
+    f.set_construct(c, axes=('domainaxis2',), key='dimensioncoordinate2', copy=False)
+    #
+    # cell_method
+    c = cf.CellMethod()
+    c.set_method('mean')
+    c.set_axes(('area',))
+    f.set_construct(c)
+
+    >>> print(q.creation_commands(representative_data=True, namespace='', indent=4))
+        # field: specific_humidity
+        f = Field()
+        #
+        f.set_properties({'Conventions': 'CF-1.7', 'project': 'research', 'standard_name': 'specific_humidity', 'units': '1'})
+        f.nc_set_variable('q')
+        #
+        # domain_axis
+        c = DomainAxis(size=5)
+        c.nc_set_dimension('lat')
+        f.set_construct(c, key='domainaxis0')
+        #
+        # domain_axis
+        c = DomainAxis(size=8)
+        c.nc_set_dimension('lon')
+        f.set_construct(c, key='domainaxis1')
+        #
+        # domain_axis
+        c = DomainAxis(size=1)
+        f.set_construct(c, key='domainaxis2')
+        #
+        # field data
+        data = <CF Data(5, 8): [[0.007, ..., 0.013]] 1> # Representative data
+        f.set_data(data, axes=('domainaxis0', 'domainaxis1'))
+        #
+        # dimension_coordinate
+        c = DimensionCoordinate()
+        c.set_properties({'units': 'degrees_north', 'standard_name': 'latitude'})
+        c.nc_set_variable('lat')
+        data = <CF Data(5): [-75.0, ..., 75.0] degrees_north> # Representative data
+        c.set_data(data)
+        b = Bounds()
+        b.set_properties({'units': 'degrees_north'})
+        b.nc_set_variable('lat_bnds')
+        data = <CF Data(5, 2): [[-90.0, ..., 90.0]] degrees_north> # Representative data
+        b.set_data(data)
+        c.set_bounds(b)
+        f.set_construct(c, axes=('domainaxis0',), key='dimensioncoordinate0', copy=False)
+        #
+        # dimension_coordinate
+        c = DimensionCoordinate()
+        c.set_properties({'units': 'degrees_east', 'standard_name': 'longitude'})
+        c.nc_set_variable('lon')
+        data = <CF Data(8): [22.5, ..., 337.5] degrees_east> # Representative data
+        c.set_data(data)
+        b = Bounds()
+        b.set_properties({'units': 'degrees_east'})
+        b.nc_set_variable('lon_bnds')
+        data = <CF Data(8, 2): [[0.0, ..., 360.0]] degrees_east> # Representative data
+        b.set_data(data)
+        c.set_bounds(b)
+        f.set_construct(c, axes=('domainaxis1',), key='dimensioncoordinate1', copy=False)
+        #
+        # dimension_coordinate
+        c = DimensionCoordinate()
+        c.set_properties({'units': 'days since 2018-12-01', 'standard_name': 'time'})
+        c.nc_set_variable('time')
+        data = <CF Data(1): [2019-01-01 00:00:00]> # Representative data
+        c.set_data(data)
+        f.set_construct(c, axes=('domainaxis2',), key='dimensioncoordinate2', copy=False)
+        #
+        # cell_method
+        c = CellMethod()
+        c.set_method('mean')
+        c.set_axes(('area',))
+        f.set_construct(c)
+
+        '''
+        namespace0 = namespace
+        if namespace0:
+            namespace = namespace+"."
+        else:
+            namespace = ""
+
+        indent = ' ' * indent
+
+        out = []
+        out.append("# "+self.construct_type)
+        out.append("{} = {}{}()".format(name, namespace,
+                                        self.__class__.__name__))
+
+        nc = self.nc_get_variable(None)
+        if nc is not None:
+            out.append("{}.nc_set_variable({!r})".format(name, nc))
+
+        coordinates = self.coordinates()
+        if coordinates:
+            out.append("{}.set_coordinates({})".format(name,
+                                                       coordinates))
+            
+        for term, value in self.datum.parameters().items():
+            if isinstance(value, Data):
+                value = value.creation_commands(name=None,
+                                                namespace=namespace0,
+                                                indent=0,
+                                                string=False)
+            else:
+                value = repr(value)
+
+            out.append("{}.datum.set_parameter({!r}, {})".format(
+                name, term, value))
+
+        for term, value in self.coordinate_conversion.parameters().items():
+            if isinstance(value, Data):
+                value = value.creation_commands(name=None,
+                                                namespace=namespace0,
+                                                indent=0,
+                                                string=False)
+            else:
+                value = repr(value)
+
+            out.append("{}.coordinate_conversion.set_parameter({!r}, {})".format(
+                name, term, value))
+
+        domain_ancillaries = self.coordinate_conversion.domain_ancillaries()
+        if domain_ancillaries:
+            out.append("{}.coordinate_conversion.set_domain_ancillaries({})".format(
+                name, domain_ancillaries))
+
+        if string:
+            out[0] = indent+out[0]
+            out = ('\n'+indent).join(out)
+
+        return out
+
 
     def structural_signature(self, rtol=None, atol=None):
         '''TODO
@@ -652,7 +913,6 @@ class CoordinateReference(cfdm.CoordinateReference):
 
         return tuple(s)
 
-
     # ----------------------------------------------------------------
     # Deprecated attributes and methods
     # ----------------------------------------------------------------
@@ -667,7 +927,6 @@ class CoordinateReference(cfdm.CoordinateReference):
         _DEPRECATION_ERROR_METHOD(self, '__getitem__',
                                   "Use method 'datum.del_parameter', 'coordinate_conversion.del_parameter' or 'coordinate_conversion.del_domain_ancillary' instead.") # pragma: no cover
 
-
     @property
     def conversion(self):
         '''Deprecated at version 3.0.0. Use attribute 'coordinate_conversion'
@@ -677,7 +936,6 @@ class CoordinateReference(cfdm.CoordinateReference):
         _DEPRECATION_ERROR_ATTRIBUTE(
             self, 'conversion',
             "Use attribute 'coordinate_conversion' instead.") # pragma: no cover
-
 
     @property
     def hasbounds(self):
@@ -690,7 +948,6 @@ class CoordinateReference(cfdm.CoordinateReference):
             self, 'hasbounds',
             "Use method 'has_bounds' instead.") # pragma: no cover
 
-
     @property
     def ancillaries(self):
         '''Deprecated at version 3.0.0. Use the
@@ -701,18 +958,15 @@ class CoordinateReference(cfdm.CoordinateReference):
             self, 'ancillaries',
             "Use the 'coordinate_conversion.domain_ancillaries' method instead.") # pragma: no cover
 
-
     @property
     def parameters(self):
         '''Deprecated at version 3.0.0. Use methods
-    'coordinate_conversion.parameters' and 'c.datum.parameters'
-    instead.
+    'coordinate_conversion.parameters' and 'datum.parameters' instead.
 
         '''
         _DEPRECATION_ERROR_ATTRIBUTE(
             self, 'parameters',
             "Use methods 'coordinate_conversion.parameters' and 'datum.parameters' instead.") # pragma: no cover
-
 
     def clear(self, coordinates=True, parameters=True, ancillaries=True):
         '''Deprecated at version 3.0.0. Use methods
@@ -723,7 +977,6 @@ class CoordinateReference(cfdm.CoordinateReference):
             self, 'parameters',
             "Use methods 'coordinate_conversion.parameters' and 'datum.parameters' instead.") # pragma: no cover
 
-
     def name(self, default=None, identity=False, ncvar=False):
         '''Return a name.
 
@@ -731,13 +984,11 @@ class CoordinateReference(cfdm.CoordinateReference):
         '''
         _DEPRECATION_ERROR_METHOD(self, 'name', "Use the 'identity' method instead.") # pragma: no cover
 
-
     def all_identifiers(self):
         '''Deprecated at version 3.0.0.
 
         '''
         _DEPRECATION_ERROR_METHOD(self, 'all_identifiers') # pragma: no cover
-
 
     def set_term(self, term_type, term, value):
         '''Deprecated at version 3.0.0. Use method 'datum.set_parameter',
@@ -748,7 +999,6 @@ class CoordinateReference(cfdm.CoordinateReference):
         _DEPRECATION_ERROR_METHOD(
             self, 'set_term',
             "Use method 'datum.set_parameter', 'coordinate_conversion.set_parameter' or 'coordinate_conversion.set_domain_ancillary' instead.") # pragma: no cover
-
 
 #--- End: class
 

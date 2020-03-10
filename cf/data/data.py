@@ -4399,15 +4399,15 @@ place.
 
             return self
 
-
-    def creation_commands(self, name='data', namespace='cf', string=True):
+    def creation_commands(self, name='data', namespace='cf', indent=0,
+                          string=True):
         '''Return the commands that would create the data object.
 
     .. versionadded:: 3.0.4
 
     :Parameters:
 
-        name: `str`, optional
+        name: `str` or None, optional
             Set the variable name of `Data` object that the commands
             create.
 
@@ -4425,6 +4425,10 @@ place.
             *Parameter example:*
               If ``cf`` was imported as ``from cf import *`` then set
               ``namespace=''``
+
+        indent: `int`, optional
+            Indent each line by this many spaces. By default no
+            indentation is applied. Ignored if *string* is False.
 
         string: `bool`, optional
             If False then return each command as an element of a
@@ -4462,6 +4466,8 @@ place.
         else:
             namespace = ""
 
+        indent = ' ' * indent
+        
         mask = self.mask
         if mask.any():
             masked = True
@@ -4490,15 +4496,22 @@ place.
 
         dtype = self.dtype.descr[0][1][1:]
 
-        out = []
         if masked:
-            out.append(mask.creation_commands(name="{}_mask".format(name),
-                                              namespace=namespace0))
-            mask = ", mask={}_mask".format(name)
+            mask = mask.creation_commands(name="mask".format(name),
+                                          namespace=namespace0,
+                                          string=True)
+            mask = mask.replace('mask = ', 'mask=', 1)
+            mask = ", {}".format(mask)
         else:
             mask = ''
 
-        out.append("{0} = {1}{2}({3}{4}{5}, dtype={6!r}{7}{8})".format(
+        if name is None:
+            name = ''
+        else:
+            name = name + " = "
+            
+        out = []
+        out.append("{0}{1}{2}({3}{4}{5}, dtype={6!r}{7}{8})".format(
             name,
             namespace,
             self.__class__.__name__,
@@ -4510,7 +4523,8 @@ place.
             fill_value))
 
         if string:
-            out = '\n'.join(out)
+            out[0] = indent+out[0]
+            out = ('\n'+indent).join(out)
 
         return out
 

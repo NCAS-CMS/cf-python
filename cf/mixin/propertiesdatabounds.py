@@ -1328,7 +1328,8 @@ dtype('float64')
 
     def creation_commands(self, representative_data=False,
                           namespace='cf', indent=0, string=True,
-                          variable_name='c', bounds_name='b'):
+                          name='c', data_name='d', bounds_name='b',
+                          interior_ring_name='i'):
         '''Return the commands that would create the construct.
 
     .. versionadded:: 3.2.0
@@ -1379,19 +1380,20 @@ dtype('float64')
         TODO
 
         '''
-        if bounds_name == 'data':
+        if name in (data_name, bounds_name, interior_ring_name):
             raise ValueError(
-                "'bounds_name' parameter can not have the value 'data'")
+                "'name' parameter can not have the same value as any of the 'data_name', 'bounds_name', or 'interior_ring_name' parameters: {!r}".format(
+                    name))
         
-        if variable_name == bounds_name:
+        if data_name in (name, bounds_name, interior_ring_name):
             raise ValueError(
-                "'variable_name' and 'bounds_name' parameters can not have the same value: {!r}".format(
-                    variable_name))
+                "'data_name' parameter can not have the same value as any of the 'name', 'bounds_name', or 'interior_ring_name'parameters: {!r}".format(
+                    data_name))
         
         out = super().creation_commands(
-            representative_data=representative_data, indent=indent,
-            namespace=namespace, string=False,
-            variable_name=variable_name)
+            representative_data=representative_data, indent=0,
+            namespace=namespace, string=False, name=name,
+            data_name=data_name)
         
         namespace0 = namespace
         if namespace0:
@@ -1404,27 +1406,27 @@ dtype('float64')
         bounds = self.get_bounds(None)
         if bounds is not None:
             out.extend(bounds.creation_commands(
-                representative_data=representative_data,
-                namespace=namespace0, string=False,
-                variable_name='b'))
+                representative_data=representative_data, indent=0,
+                namespace=namespace0, string=False, name=bounds_name,
+                data_name=data_name))
             
-            out.append("{}.set_bounds({})".format(variable_name,
-                                                  bounds_name))
+            out.append("{}.set_bounds({})".format(name, bounds_name))
                     
         interior_ring = self.get_interior_ring(None)
         if interior_ring is not None:
             out.extend(interior_ring.creation_commands(
-                representative_data=representative_data,
-                namespace=namespace0, string=False, variable_name='i'))                
+                representative_data=representative_data, indent=0,
+                namespace=namespace0, string=False,
+                name=interior_ring_name, data_name=data_name))
 
-            out.append("{}.set_interior_ring({})".format(variable_name, 'i'))
+            out.append("{}.set_interior_ring({})".format(name,
+                                                         interior_ring_name))
             
         if string:
             out[0] = indent+out[0]
             out = ('\n'+indent).join(out)
 
-        return out
-    
+        return out    
 
     def cyclic(self, axes=None, iscyclic=True):
         '''Set the cyclicity of axes of the data array.
