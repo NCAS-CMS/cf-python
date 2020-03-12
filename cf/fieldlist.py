@@ -55,13 +55,11 @@ class FieldList(list):
             else:
                 self.extend(fields)
 
-
     def __call__(self, *identities):
         '''Alias for `cf.FieldList.select_by_identity`.
 
         '''
         return self.select_by_identity(*identities)
-
 
     def __repr__(self):
         '''Called by the `repr` built-in function.
@@ -72,7 +70,6 @@ class FieldList(list):
         out = [repr(f) for f in self]
         out = ',\n '.join(out)
         return '['+out+']'
-
 
     # ----------------------------------------------------------------
     # Overloaded list methods
@@ -94,8 +91,6 @@ class FieldList(list):
         '''
         return type(self)(list.__add__(self, x))
 
-
-
     def __contains__(self, y):
         '''Called to implement membership test operators.
 
@@ -114,7 +109,6 @@ class FieldList(list):
 
         return False
 
-
     def __mul__(self, x):
         '''The binary arithmetic operation ``*``
 
@@ -132,7 +126,6 @@ class FieldList(list):
         '''
         return type(self)(list.__mul__(self, x))
 
-
     def __eq__(self, other):
         '''The rich comparison operator ``==``
 
@@ -149,7 +142,6 @@ class FieldList(list):
 
         '''
         return self.equals(other)
-
 
     def __getslice__(self, i, j):
         '''Called to implement evaluation of f[i:j]
@@ -169,7 +161,6 @@ class FieldList(list):
 
         '''
         return type(self)(list.__getslice__(self, i, j))
-
 
     def __getitem__(self, index):
         '''Called to implement evaluation of f[index]
@@ -197,7 +188,6 @@ class FieldList(list):
 
         return out
 
-
     def __ne__(self, other):
         '''The rich comparison operator ``!=``
 
@@ -215,7 +205,6 @@ class FieldList(list):
         '''
         return not self.equals(other)
 
-
     # ???
     __len__     = list.__len__
     __setitem__ = list.__setitem__
@@ -225,7 +214,6 @@ class FieldList(list):
     pop         = list.pop
     reverse     = list.reverse
     sort        = list.sort
-
 
     # ----------------------------------------------------------------
     # Methods
@@ -247,7 +235,6 @@ class FieldList(list):
         '''
         for f in self:
             f.close()
-
 
     def count(self, value):
         '''Return number of occurrences of value
@@ -273,7 +260,6 @@ class FieldList(list):
         '''
         return len([None for f in self if f.equals(value)])
 
-
     def index(self, value, start=0, stop=None):
         '''Return first index of value.
 
@@ -295,12 +281,11 @@ class FieldList(list):
 
         for i, f in enumerate(self[start:stop]):
             if f.equals(value):
-               return i + start
+                return i + start
         # --- End: for
 
         raise ValueError(
             "{0!r} is not in {1}".format(value, self.__class__.__name__))
-
 
     def remove(self, value):
         '''Remove first occurrence of value.
@@ -319,7 +304,6 @@ class FieldList(list):
 
         raise ValueError(
             "{0}.remove(x): x not in {0}".format(self.__class__.__name__))
-
 
     def sort(self, key=None, reverse=False):
         '''Sort of the field list in place.
@@ -400,14 +384,11 @@ class FieldList(list):
 
         return super().sort(key=key, reverse=reverse)
 
-
-
     def __deepcopy__(self, memo):
         '''Called by the `copy.deepcopy` standard library function.
 
         '''
         return self.copy()
-
 
     def concatenate(self, axis=0, _preserve=True):
         '''Join the sequence of fields together.
@@ -432,7 +413,6 @@ class FieldList(list):
 
         '''
         return self[0].concatenate(self, axis=axis, _preserve=_preserve)
-
 
     def copy(self, data=True):
         '''Return a deep copy.
@@ -459,7 +439,6 @@ class FieldList(list):
 
         '''
         return type(self)([f.copy(data=data) for f in self])
-
 
     @_deprecated_kwarg_check('traceback')
     def equals(self, other, rtol=None, atol=None, verbose=False,
@@ -578,8 +557,10 @@ class FieldList(list):
 
         '''
         if ignore:
-            _DEPRECATION_ERROR_KWARGS(self, 'equals', {'ignore': ignore},
-                                      "Use keyword 'ignore_properties' instead.") # pragma: no cover
+            _DEPRECATION_ERROR_KWARGS(
+                self, 'equals', {'ignore': ignore},
+                "Use keyword 'ignore_properties' instead."
+            )  # pragma: no cover
 
         # Check for object identity
         if self is other:
@@ -591,25 +572,30 @@ class FieldList(list):
                 other = type(self)(source=other, copy=False)
         elif not isinstance(other, self.__class__):
             if verbose:
-                print("{0}: Incompatible type: {1}".format(
-		    self.__class__.__name__, other.__class__.__name__)) # pragma: no cover
+                print(
+                    "{0}: Incompatible type: {1}".format(
+                        self.__class__.__name__, other.__class__.__name__)
+                )  # pragma: no cover
             return False
 
         # Check that there are equal numbers of fields
         len_self = len(self)
         if len_self != len(other):
             if verbose:
-                print("{0}: Different numbers of field construct: {1}, {2}".format(
-		    self.__class__.__name__,
-		    len_self, len(other))) # pragma: no cover
+                print(
+                    "{0}: Different numbers of field construct: "
+                    "{1}, {2}".format(
+                        self.__class__.__name__,
+                        len_self, len(other))
+                )  # pragma: no cover
             return False
 
         if not unordered or len_self == 1:
-       	    # ----------------------------------------------------
-    	    # Check the lists pair-wise
-    	    # ----------------------------------------------------
-    	    for i, (f, g) in enumerate(zip(self, other)):
-    	        if not f.equals(g, rtol=rtol, atol=atol,
+            # ----------------------------------------------------
+            # Check the lists pair-wise
+            # ----------------------------------------------------
+            for i, (f, g) in enumerate(zip(self, other)):
+                if not f.equals(g, rtol=rtol, atol=atol,
                                 ignore_fill_value=ignore_fill_value,
                                 ignore_properties=ignore_properties,
                                 ignore_compression=ignore_compression,
@@ -617,14 +603,17 @@ class FieldList(list):
                                 ignore_type=ignore_type,
                                 verbose=verbose):
                     if verbose:
-                        print("{0}: Different field constructs at element {1}: {2!r}, {3!r}".format(
-    			    self.__class__.__name__, i, f, g)) # pragma: no cover
+                        print(
+                            "{0}: Different field constructs at element {1}: "
+                            "{2!r}, {3!r}".format(
+                                self.__class__.__name__, i, f, g)
+                        )  # pragma: no cover
                     return False
         else:
-    	    # ----------------------------------------------------
-    	    # Check the lists set-wise
-    	    # ----------------------------------------------------
-    	    # Group the variables by identity
+            # ----------------------------------------------------
+            # Check the lists set-wise
+            # ----------------------------------------------------
+            # Group the variables by identity
             self_identity = {}
             for f in self:
                 self_identity.setdefault(f.identity(), []).append(f)
@@ -633,30 +622,34 @@ class FieldList(list):
             for f in other:
                 other_identity.setdefault(f.identity(), []).append(f)
 
-    	    # Check that there are the same identities
+            # Check that there are the same identities
             if set(self_identity) != set(other_identity):
-    	        if verbose:
+                if verbose:
                     print("{}: Different sets of identities: {}, {}".format(
-    			self.__class__.__name__,
-    			set(self_identity),
-    			set(other_identity))) # pragma: no cover
-    	        return False
+                        self.__class__.__name__,
+                        set(self_identity),
+                        set(other_identity)))  # pragma: no cover
+                return False
 
             # Check that there are the same number of variables
-    	    # for each identity
+            # for each identity
             for identity, fl in self_identity.items():
-    	        gl = other_identity[identity]
-    	        if len(fl) != len(gl):
+                gl = other_identity[identity]
+                if len(fl) != len(gl):
                     if verbose:
-                        print("{0}: Different numbers of {1!r} {2}s: {3}, {4}".format(
-    			    self.__class__.__name__,
-    			    identity,
-                            fl[0].__class__.__name__,
-    			    len(fl), len(gl))) # pragma: no cover
+                        print(
+                            "{0}: Different numbers of {1!r} {2}s: "
+                            "{3}, {4}".format(
+                                self.__class__.__name__,
+                                identity,
+                                fl[0].__class__.__name__,
+                                len(fl), len(gl)
+                            )
+                        )  # pragma: no cover
                     return False
             # --- End: for
 
-    	    # For each identity, check that there are matching pairs
+            # For each identity, check that there are matching pairs
             # of equal fields.
             for identity, fl in self_identity.items():
                 gl = other_identity[identity]
@@ -678,16 +671,18 @@ class FieldList(list):
 
                 if not found_match:
                     if verbose:
-                        print("{0}: No {1} equal to: {2!r}".format(
-    			    self.__class__.__name__, g.__class__.__name__, f)) # pragma: no cover
+                        print(
+                            "{0}: No {1} equal to: {2!r}".format(
+                                self.__class__.__name__,
+                                g.__class__.__name__, f)
+                        )  # pragma: no cover
                     return False
         # --- End: if
 
         # ------------------------------------------------------------
-    	# Still here? Then the field lists are equal
-    	# ------------------------------------------------------------
+        # Still here? Then the field lists are equal
+        # ------------------------------------------------------------
         return True
-
 
     def select_by_construct(self, *identities, OR=False, **conditions):
         '''Select field constructs by metadata constructs.
@@ -824,9 +819,11 @@ class FieldList(list):
 #        if constructs:
 #            for key, value in constructs.items():
 #                if value is None:
-#                    message = "Since its value is None, use {!r} as a positional argument instead".format(value)
+#                    message = ("Since its value is None, use {!r} as a "
+#                               "positional argument instead".format(value))
 #                else:
-#                    message = "Evaluating criteria on data values is not longer possible with this method."
+#                    message = ("Evaluating criteria on data values is no "
+#                               "longer possible with this method.")
 #
 #                _DEPRECATION_ERROR_KWARGS(self, 'select_by_construct',
 #                                          kwargs={key: value},
@@ -836,19 +833,22 @@ class FieldList(list):
 
         if identities:
             if identities[0] == 'or':
-                _DEPRECATION_ERROR_ARG(self, 'select_by_construct',
-                                       'or', message="Use 'OR=True' instead.",
-                                       version='3.1.0') # pragma: no cover
+                _DEPRECATION_ERROR_ARG(
+                    self, 'select_by_construct', 'or',
+                    message="Use 'OR=True' instead.", version='3.1.0'
+                )  # pragma: no cover
 
             if identities[0] == 'and':
-                _DEPRECATION_ERROR_ARG(self, 'select_by_construct',
-                                       'and', message="Use 'OR=False' instead.",
-                                       version='3.1.0') # pragma: no cover
+                _DEPRECATION_ERROR_ARG(
+                    self, 'select_by_construct', 'and',
+                    message="Use 'OR=False' instead.", version='3.1.0'
+                )  # pragma: no cover
         # --- End: if
 
-        return type(self)(f for f in self
-                          if f.match_by_construct(*identities, OR=OR, **conditions))
-
+        return type(self)(
+            f for f in self
+            if f.match_by_construct(*identities, OR=OR, **conditions)
+        )
 
     def select_by_identity(self, *identities):
         '''Select field constructs by identity.
@@ -916,7 +916,6 @@ class FieldList(list):
         '''
         return type(self)(f for f in self if f.match_by_identity(*identities))
 
-
     def select_by_naxes(self, *naxes):
         '''Select field constructs by property.
 
@@ -955,7 +954,6 @@ class FieldList(list):
 
         '''
         return type(self)(f for f in self if f.match_by_naxes(*naxes))
-
 
     def select_by_rank(self, *ranks):
         '''Select field constructs by the number of domain axis constructs.
@@ -998,7 +996,6 @@ class FieldList(list):
         '''
 
         return type(self)(f for f in self if f.match_by_rank(*ranks))
-
 
     def select_by_ncvar(self, *rank):
         '''Select field constructs by netCDF variable name.
@@ -1048,7 +1045,6 @@ class FieldList(list):
         '''
         return type(self)(f for f in self if f.match_by_ncvar(*ncvars))
 
-
     def select_by_property(self, *mode, **properties):
         '''Select field constructs by property.
 
@@ -1057,8 +1053,8 @@ class FieldList(list):
     constucts. For example, to select all field constructs which do
     *not* have a long_name property of 'Air Pressure':
 
-       >>> gl = cf.FieldList(f for f in fl
-       ...                   if not f.match_by_property(long_name='Air Pressure))
+       >>> gl = cf.FieldList(f for f in fl if not
+       ...                   f.match_by_property(long_name='Air Pressure))
 
     .. versionadded:: 3.0.0
 
@@ -1105,8 +1101,8 @@ class FieldList(list):
     TODO
 
         '''
-        return type(self)(f for f in self if f.match_by_property(*mode, **properties))
-
+        return type(self)(
+            f for f in self if f.match_by_property(*mode, **properties))
 
     def select_by_units(self, *units, exact=True):
         '''Select field constructs by units.
@@ -1166,7 +1162,6 @@ class FieldList(list):
         '''
         return type(self)(f for f in self
                           if f.match_by_units(*units, exact=exact))
-
 
     def select_field(self, identity, default=ValueError()):
         '''Select a unique field construct by its identity.
@@ -1251,7 +1246,6 @@ class FieldList(list):
 
         return out[0]
 
-
     # ----------------------------------------------------------------
     # Aliases
     # ----------------------------------------------------------------
@@ -1272,17 +1266,25 @@ class FieldList(list):
         if kwargs:
             _DEPRECATION_ERROR_KWARGS(
                 self, 'select', kwargs,
-                "Use methods 'select_by_units', 'select_by_construct', 'select_by_properties', 'select_by_naxes', 'select_by_rank' instead.") # pragma: no cover
+                "Use methods 'select_by_units', 'select_by_construct', "
+                "'select_by_properties', 'select_by_naxes', 'select_by_rank' "
+                "instead."
+            )  # pragma: no cover
 
         if identities and isinstance(identities[0], (list, tuple, set)):
             _DEPRECATION_ERROR(
-                "Use of a {!r} for identities has been deprecated. Use the * operator to unpack the arguments instead.".format(
-                identities[0].__class__.__name__)) # pragma: no cover
+                "Use of a {!r} for identities has been deprecated. Use the "
+                "* operator to unpack the arguments instead.".format(
+                    identities[0].__class__.__name__)
+            )  # pragma: no cover
 
         for i in identities:
             if isinstance(i, dict):
                 _DEPRECATION_ERROR_DICT(
-                    "Use methods 'select_by_units', 'select_by_construct', 'select_by_properties', 'select_by_naxes', 'select_by_rank' instead.") # pragma: no cover
+                    "Use methods 'select_by_units', 'select_by_construct', "
+                    "'select_by_properties', 'select_by_naxes', "
+                    "'select_by_rank' instead."
+                )  # pragma: no cover
 
             if isinstance(i, str) and ':' in i:
                 error = True
@@ -1293,12 +1295,13 @@ class FieldList(list):
 
                 if error:
                     _DEPRECATION_ERROR(
-                        "The identity format {!r} has been deprecated at version 3.0.0. Try {!r} instead.".format(
-                            i,  i.replace(':', '=', 1))) # pragma: no cover
+                        "The identity format {!r} has been deprecated at "
+                        "version 3.0.0. Try {!r} instead.".format(
+                            i,  i.replace(':', '=', 1))
+                    )  # pragma: no cover
         # --- End: for
 
         return self.select_by_identity(*identities)
-
 
     # ----------------------------------------------------------------
     # Deprecated attributes and methods
@@ -1307,15 +1310,14 @@ class FieldList(list):
         '''Deprecated at version 3.0.0.
 
         '''
-        _DEPRECATION_ERROR_METHOD(self, '_parameters') # pragma: no cover
-
+        _DEPRECATION_ERROR_METHOD(self, '_parameters')  # pragma: no cover
 
     def _deprecated_method(self, name):
         '''Deprecated at version 3.0.0.
 
         '''
-        _DEPRECATION_ERROR_METHOD(self, '_deprecated_method') # pragma: no cover
-
+        _DEPRECATION_ERROR_METHOD(
+            self, '_deprecated_method')  # pragma: no cover
 
     def set_equals(self, other, rtol=None, atol=None,
                    ignore_data_type=False, ignore_fill_value=False,
@@ -1327,15 +1329,16 @@ class FieldList(list):
         '''
         _DEPRECATION_ERROR_METHOD(
             self, 'set_equals',
-            "Use method 'equals' with unordered=True instead.") # pragma: no cover
-
+            "Use method 'equals' with unordered=True instead."
+        )  # pragma: no cover
 
     def select1(self, *args, **kwargs):
         '''Deprecated at version 3.0.0. Use method 'fl.select_field' instead.
 
         '''
-        _DEPRECATION_ERROR_METHOD(self, 'select1',
-                                  "Use method 'fl.select_field' instead.") # pragma: no cover
+        _DEPRECATION_ERROR_METHOD(
+            self, 'select1', "Use method 'fl.select_field' instead."
+        )  # pragma: no cover
 
 
 # --- End: class

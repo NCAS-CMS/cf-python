@@ -37,7 +37,6 @@ class CompressedSubarray(abc.ABC):
         # DO NOT CHANGE IN PLACE
         self.size = reduce(mul, shape, 1)
 
-
     @abc.abstractmethod
     def __getitem__(self, indices):
         '''x.__getitem__(indices) <==> x[indices]
@@ -45,8 +44,7 @@ class CompressedSubarray(abc.ABC):
     Returns a numpy array.
 
         '''
-        raise NotImplementedError() # pragma: no cover
-
+        raise NotImplementedError()  # pragma: no cover
 
     def __repr__(self):
         '''x.__repr__() <==> repr(x)
@@ -56,8 +54,8 @@ class CompressedSubarray(abc.ABC):
         shape = str(array.shape)
         shape = shape.replace(',)', ')')
 
-        return "<CF {}{}: {}>".format(self.__class__.__name__, shape, str(array))
-
+        return "<CF {}{}: {}>".format(
+            self.__class__.__name__, shape, str(array))
 
     @property
     def dtype(self):
@@ -76,7 +74,6 @@ class CompressedSubarray(abc.ABC):
         '''
         return getattr(self.array, 'file', None)
 
-
     def close(self):
         '''Close all referenced open files.
 
@@ -92,7 +89,6 @@ class CompressedSubarray(abc.ABC):
         if self.on_disk():
             self.array.close()
 
-
     def copy(self):
         '''TODO
 
@@ -101,7 +97,6 @@ class CompressedSubarray(abc.ABC):
         new = C.__new__(C)
         new.__dict__ = self.__dict__.copy()
         return new
-
 
     def inspect(self):
         '''Inspect the object for debugging.
@@ -127,7 +122,6 @@ class CompressedSubarray(abc.ABC):
         '''
         return not hasattr(self.array, '__array_interface__')
 
-
     def unique(self):
         '''TODO
 
@@ -136,4 +130,3 @@ class CompressedSubarray(abc.ABC):
 
 
 # --- End: class
-

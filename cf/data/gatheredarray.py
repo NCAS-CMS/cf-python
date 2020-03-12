@@ -18,4 +18,3 @@ class GatheredArray(abstract.CompressedArray,
 
     '''
 # --- End: class
-

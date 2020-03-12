@@ -183,10 +183,10 @@ def dt_vector(arg, month=1, day=1, hour=0, minute=0, second=0,
               date-time strings (in which non-Gregorian calendar dates
               are allowed).
 
-            * A two dimensionsal array of `int`. There may be up to 7
+            * A two dimensional array of `int`. There may be up to 7
               columns, each one specifying the years, months, days,
               hours minutes, seconds and microseconds respectively. If
-              fewer thaan 7 trailing dimensions are provided then teh
+              fewer than 7 trailing dimensions are provided then the
               default value for the missing components are used
 
         calendar: `str`, optional

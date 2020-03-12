@@ -214,11 +214,18 @@ _relational_methods = (
     '__ge__'
 )
 
-conservative_regridding_methods = (
+conservative_regridding_methods = [
     'conservative',
     'conservative_1st',
     'conservative_2nd'
-)
+]
+regridding_methods = [
+    'linear',  # prefer over 'bilinear' as of v3.1.1
+    'bilinear',  # only for backward compatibility, use & document 'linear'
+    'patch',
+    'nearest_stod',
+    'nearest_dtos',
+] + conservative_regridding_methods
 
 _xxx = namedtuple(
     'data_dimension',
@@ -3231,19 +3238,19 @@ class Field(mixin.PropertiesData,
 #            method = 'conservative'
 #            for coord in src_coords:
 #                if not coord.hasbounds or not coord.contiguous(overlap=False):
-#                    method = 'bilinear'
+#                    method = 'linear'
 #                    break
 #            # --- End: for
 #            for coord in dst_coords:
 #                if not coord.hasbounds or not coord.contiguous(overlap=False):
-#                    method = 'bilinear'
+#                    method = 'linear'
 #                    break
 #            # --- End: for
 #            if ext_coords is not None:
 #                for coord in ext_coords:
 #                    if (not coord.hasbounds or
 #                        not coord.contiguous(overlap=False)):
-#                        method = 'bilinear'
+#                        method = 'linear'
 #                        break
 #                # --- End: for
 #            # --- End: if
@@ -3289,8 +3296,14 @@ class Field(mixin.PropertiesData,
         if method is None:
             raise ValueError("Can't regrid: Must select a regridding method")
 
-        if method not in conservative_regridding_methods + ('patch', 'bilinear', 'nearest_stod', 'nearest_dtos'):
+        elif method not in regridding_methods:
             raise ValueError("Can't regrid: Invalid method: {!r}".format(method))
+        elif method == 'bilinear':  # use logging.info() once have logging
+            print(
+                "Note the 'bilinear' method argument has been renamed to "
+                "'linear' at version 3.2.0. It is still supported for now "
+                "but please use 'linear' in future."
+            )
 
 
     @classmethod
@@ -6161,7 +6174,7 @@ class Field(mixin.PropertiesData,
         '''Collapse the data values that lie in N-dimensional bins.
 
     The data values of the field construct are binned according to how
-    they correspond to the N-dimensionsal histogram bins of another
+    they correspond to the N-dimensional histogram bins of another
     set of variables (see `cf.histogram` for details), and each bin of
     values is collapsed with one of the collapse methods allowed by
     the *method* parameter.
@@ -6178,7 +6191,7 @@ class Field(mixin.PropertiesData,
     example, if only one digitized field construct is provided then
     the output bins simply comprise its one-dimensional bins; if there
     are two digitized field constructs then the output bins comprise
-    the two-dimensionsal matrix formed by all possible combinations of
+    the two-dimensional matrix formed by all possible combinations of
     the two sets of one-dimensional bins; etc.
 
     An output value for a bin is formed by collapsing (using the
@@ -6201,9 +6214,8 @@ class Field(mixin.PropertiesData,
         method: `str`
             The collapse method used to combine values that map to
             each cell of the output field construct. The following
-            methods are available (see
-            https://ncas-cms.github.io/cf-python/tutorial.html#collapse-methods
-            for precise definitions):
+            methods are available (see :ref:`this table <Collapse-methods>`
+            for more precise definitions):
 
             ============================  ============================  ========
             *method*                      Description                   Weighted
@@ -6286,7 +6298,7 @@ class Field(mixin.PropertiesData,
             One or more field constructs that contain digitized data
             with corresponding metadata, as would be output by
             `cf.Field.digitize`. Each field construct contains indices
-            to the one-dimensionsal bins to which each value of an
+            to the one-dimensional bins to which each value of an
             original field construct belongs; and there must be
             ``bin_count`` and ``bin_bounds`` properties as defined by
             the `digitize` method (and any of the extra properties
@@ -6701,7 +6713,7 @@ class Field(mixin.PropertiesData,
                                    radius=radius)
 
         # ------------------------------------------------------------
-        # Find the unique multi-dimensionsal bin indices (TODO: can I
+        # Find the unique multi-dimensional bin indices (TODO: can I
         # LAMA this?)
         # ------------------------------------------------------------
         y = numpy_empty((len(bin_indices), bin_indices[0].size), dtype=int)
@@ -7103,16 +7115,9 @@ class Field(mixin.PropertiesData,
                 "Can't identify construct from {!r}".format(construct))
 
         for cr_key, ref in tuple(self.coordinate_references.items()):
-            if c_key in ref.coordinates():
-                if key:
-                    if cr_key not in out:
-                        out.append(cr_key)
-                elif ref not in out:
-                    out.append(ref)
-
-                continue
-
-            if c_key in ref.coordinate_conversion.domain_ancillaries().values():
+            if c_key in [
+                    ref.coordinates(),
+                    ref.coordinate_conversion.domain_ancillaries().values()]:
                 if key:
                     if cr_key not in out:
                         out.append(cr_key)
@@ -7268,8 +7273,7 @@ class Field(mixin.PropertiesData,
     **Collapse methods**
 
     The following collapse methods are available (see
-    https://ncas-cms.github.io/cf-python/tutorial.html#collapse-methods
-    for precise definitions):
+    :ref:`this table <Collapse-methods>` for precise definitions):
 
     ============================  ============================
     Method                        Description
@@ -7567,8 +7571,7 @@ class Field(mixin.PropertiesData,
             the *axes* parameter are collapsed simultaneously by this
             method. The method is given by one of the following
             strings (see
-            https://ncas-cms.github.io/cf-python/tutorial.html#collapse-methods
-            for precise definitions):
+            :ref:`this table <Collapse-methods>` for precise definitions):
 
             ============================  ============================  ========
             *method*                      Description                   Weighted
@@ -8587,9 +8590,8 @@ class Field(mixin.PropertiesData,
 
     **Examples:**
 
-    See the on-line documention for further worked examples:
-    https://ncas-cms.github.io/cf-python/tutorial.html#statistical-collapses
-
+    There are further worked examples
+    :ref:`in the tutorial <Statistical-collapses>`
         '''
         if _debug:
             _DEPRECATION_ERROR_KWARGS(self, 'collapse', {'_debug': _debug},
@@ -10526,7 +10528,7 @@ class Field(mixin.PropertiesData,
       by a `Query` instance is assumed to "wrap" around the edges of
       the data.
 
-    * Conditions may also be applied to multi-dimensionsal metadata
+    * Conditions may also be applied to multi-dimensional metadata
       constructs. The "compress" mode is still the default mode (see
       the positional arguments), but because the indices may not be
       acting along orthogonal dimensions, some missing data may still
@@ -16051,7 +16053,7 @@ class Field(mixin.PropertiesData,
       by a `Query` instance is assumed to "wrap" around the edges of
       the data.
 
-    * Conditions may also be applied to multi-dimensionsal metadata
+    * Conditions may also be applied to multi-dimensional metadata
       constructs. The "compress" mode is still the default mode (see
       the positional arguments), but because the indices may not be
       acting along orthogonal dimensions, some missing data may still
@@ -16135,8 +16137,8 @@ class Field(mixin.PropertiesData,
 
     **Examples:**
 
-    See the on-line documention for further worked examples:
-    https://ncas-cms.github.io/cf-python/tutorial.html#subspacing-by-metadata
+    There are further worked examples
+    :ref:`in the tutorial <Subspacing-by-metadata>`.
 
     >>> g = f.subspace(X=112.5)
     >>> g = f.subspace(X=112.5, latitude=cf.gt(-60))
@@ -16325,18 +16327,18 @@ class Field(mixin.PropertiesData,
 
     The regridding method must be specified. First-order conservative
     interpolation conserves the global area integral of the field, but
-    may not give approximations to the values as good as bilinear
+    may not give approximations to the values as good as linear
     interpolation. Second-order conservative interpolation also takes
     into account the gradient across the source cells, so in general
     gives a smoother, more accurate representation of the source field
-    especially when going from a coarser to a finer grid. Bilinear
+    especially when going from a coarser to a finer grid. Linear
     interpolation is available. The latter method is particular useful
     for cases when the latitude and longitude coordinate cell
     boundaries are not known nor inferrable. Higher order patch
-    recovery is available as an alternative to bilinear
+    recovery is available as an alternative to linear
     interpolation. This typically results in better approximations to
     values and derivatives compared to the latter, but the weight
-    matrix can be larger than the bilinear matrix, which can be an
+    matrix can be larger than the linear matrix, which can be an
     issue when regridding close to the memory limit on a
     machine. Nearest neighbour interpolation is also
     available. Nearest source to destination is particularly useful
@@ -16377,16 +16379,15 @@ class Field(mixin.PropertiesData,
     regions where the input data array is masked. By default the mask
     of the destination grid is not taken into account. If the
     destination field data has more than two dimensions then the mask,
-    if used, is taken from the two dimensionsal section of the data
+    if used, is taken from the two dimensional section of the data
     where the indices of all axes other than X and Y are zero.
 
 
     **Implementation**
 
-    The interpolation is carried by out using the `ESMF` package - a
+    The interpolation is carried out using the `ESMPy` package, a
     Python interface to the Earth System Modeling Framework (ESMF)
-    regridding utility. For more information see:
-    https://www.earthsystemcog.org/projects/esmf/regridding
+    `regridding utility <https://www.earthsystemcog.org/projects/esmf/regridding>`_.
 
 
     **Logging**
@@ -16446,37 +16447,43 @@ class Field(mixin.PropertiesData,
 
         method: `str`
             Specify the regridding method. The *method* parameter must
-            be one of:
+            be one of the following, which are described in more detail in
+            :ref:`Regridding-methods`, but to summarise:
 
-              ======================  ====================================
-              *method*                Description
-              ======================  ====================================
-              ``'bilinear'``          Bilinear interpolation.
-
-              ``'patch'``             Higher order patch recovery.
-
-              ``'conservative_1st'``  First-order conservative regridding
-              or ``'conservative'``   will be used (requires both of the
-                                      fields to have contiguous, non-
-                                      overlapping bounds).
-
-              ``'conservative_2nd'``  Second-order conservative regridding
-                                      will be used (requires both of the
-                                      fields to have contiguous, non-
-                                      overlapping bounds).
-
-              ``'nearest_stod'``      Nearest neighbor interpolation is
-                                      used where each destination point is
-                                      mapped to the closest source point
-
-              ``'nearest_dtos'``      Nearest neighbor interpolation is
-                                      used where each source point is
-                                      mapped to the closest destination
-                                      point. A given destination point may
-                                      receive input from multiple source
-                                      points, but no source point will map
-                                      to more than one destination point.
-              ======================  ====================================
+              +------------------------+---------------------------------+
+              | *method*               | Form of regridding to be        |
+              |                        | applied:                        |
+              +========================+=================================+
+              | ``'linear'``           | Linear interpolation in the     |
+              | (previously called     | corresponding number of         |
+              | ``'bilinear'``,        | dimensions, which for spherical |  
+              | which is               | regridding is always two, so    |
+              | is still               | this amounts to *bilinear       |
+              | supported)             | interpolation* (linear          |
+              |                        | interpolation in *both* X and   |
+              |                        | Y).                             |
+              +------------------------+---------------------------------+
+              | ``'conservative'`` or  | First-order conservative. Note  |
+              | ``'conservative_1st'`` | this requires both of the       |
+              |                        | fields to have contiguous,      |
+              |                        | non-overlapping bounds.         |
+              +------------------------+---------------------------------+
+              | ``'conservative_2nd'`` | Second-order conservative. Note |
+              |                        | this requires both of the       |
+              |                        | fields to have contiguous,      |
+              |                        | non-overlapping bounds.         |
+              +------------------------+---------------------------------+
+              | ``'patch'``            | Higher order patch recovery.    | 
+              +------------------------+---------------------------------+
+              | ``'nearest_stod'``     | Nearest neighbor interpolation  |
+              |                        | where each destination point is |
+              |                        | mapped to the *closest source*. |
+              +------------------------+---------------------------------+
+              | ``'nearest_dtos'``     | Nearest neighbor interpolation  |
+              |                        | where each source point is      |
+              |                        | mapped to the *closest*         |
+              |                        | *destination* point.            |
+              +------------------------+---------------------------------+
 
         src_cyclic: `bool`, optional
             Specifies whether the longitude for the source grid is
@@ -16583,10 +16590,10 @@ class Field(mixin.PropertiesData,
 
     >>> h = f.regrids(g, 'conservative')
 
-    Regrid f to the grid of g using bilinear regridding and forcing
+    Regrid f to the grid of g using linear regridding and forcing
     the source field f to be treated as cyclic.
 
-    >>> h = f.regrids(g, src_cyclic=True, method='bilinear')
+    >>> h = f.regrids(g, src_cyclic=True, method='linear')
 
     Regrid f to the grid of g using the mask of g.
 
@@ -16604,7 +16611,7 @@ class Field(mixin.PropertiesData,
     Regrid field, f, on tripolar grid to latitude-longitude grid of
     field, g.
 
-    >>> h = f.regrids(g, 'bilinear, src_axes={'X': 'ncdim%x', 'Y': 'ncdim%y'},
+    >>> h = f.regrids(g, 'linear, src_axes={'X': 'ncdim%x', 'Y': 'ncdim%y'},
     ...               src_cyclic=True)
 
     Regrid f to the grid of g iterating over the 'Z' axis last and the
@@ -16937,7 +16944,7 @@ class Field(mixin.PropertiesData,
     an alternative to (multi)linear interpolation.  This typically
     results in better approximations to values and derivatives
     compared to the latter, but the weight matrix can be larger than
-    the bilinear matrix, which can be an issue when regridding close
+    the linear matrix, which can be an issue when regridding close
     to the memory limit on a machine. It is only available in
     2D. Nearest neighbour interpolation is also available. Nearest
     source to destination is particularly useful for regridding
@@ -16971,10 +16978,9 @@ class Field(mixin.PropertiesData,
 
     **Implementation**
 
-    The interpolation is carried by out using the `ESMF` package - a
+    The interpolation is carried out using the `ESMPy` package, a
     Python interface to the Earth System Modeling Framework (ESMF)
-    regridding utility. For more information see:
-    https://www.earthsystemcog.org/projects/esmf/regridding
+    `regridding utility <https://www.earthsystemcog.org/projects/esmf/regridding>`_.
 
 
     **Logging**
@@ -17001,38 +17007,41 @@ class Field(mixin.PropertiesData,
             the number of specifiers passed in.
 
         method: `str`
-            Specify the regridding method. The *method* parameter must be
-            one of:
+            Specify the regridding method. The *method* parameter must
+            be one of the following, which are described in more detail in
+            :ref:`Regridding-methods`, but to summarise:
 
-              ======================  ====================================
-              *method*                Description
-              ======================  ====================================
-              ``'bilinear'``          (Multi)linear interpolation.
+              +------------------------+---------------------------------+
+              | *method*               | Form of regridding to be        |
+              |                        | applied:                        |
+              +========================+=================================+
+              | ``'linear'``           | Linear interpolation in the     |
+              | (previously called     | corresponding number of         |
+              | ``'bilinear'``, which  | dimensions.                     |
+              | is still supported)    |                                 |
+              +------------------------+---------------------------------+
+              | ``'conservative'`` or  | First-order conservative. Note  |
+              | ``'conservative_1st'`` | this requires both of the       |
+              |                        | fields to have contiguous,      |
+              |                        | non-overlapping bounds.         |
+              +------------------------+---------------------------------+
+              | ``'conservative_2nd'`` | Second-order conservative. Note |
+              |                        | this requires both of the       |
+              |                        | fields to have contiguous,      |
+              |                        | non-overlapping bounds.         |
+              +------------------------+---------------------------------+
+              | ``'patch'``            | Higher order patch recovery.    | 
+              +------------------------+---------------------------------+
+              | ``'nearest_stod'``     | Nearest neighbor interpolation  |
+              |                        | where each destination point is |
+              |                        | mapped to the *closest source*. |
+              +------------------------+---------------------------------+
+              | ``'nearest_dtos'``     | Nearest neighbor interpolation  |
+              |                        | where each source point is      |
+              |                        | mapped to the *closest*         |
+              |                        | *destination* point.            |
+              +------------------------+---------------------------------+
 
-              ``'patch'``             Higher order patch recovery.
-
-              ``'conservative_1st'``  First-order conservative regridding
-              or ``'conservative'``   will be used (requires both of the
-                                      fields to have contiguous, non-
-                                      overlapping bounds).
-
-              ``'conservative_2nd'``  Second-order conservative regridding
-                                      will be used (requires both of the
-                                      fields to have contiguous, non-
-                                      overlapping bounds).
-
-              ``'nearest_stod'``      Nearest neighbor interpolation is
-                                      used where each destination point is
-                                      mapped to the closest source point
-
-              ``'nearest_dtos'``      Nearest neighbor interpolation is
-                                      used where each source point is
-                                      mapped to the closest destination
-                                      point. A given destination point may
-                                      receive input from multiple source
-                                      points, but no source point will map
-                                      to more than one destination point.
-              ======================  ====================================
 
         use_src_mask: `bool`, optional
             For all methods other than 'nearest_stod', this must be
@@ -17111,10 +17120,10 @@ class Field(mixin.PropertiesData,
 
     >>> h = f.regridc({'T': t}, axes=('T'), 'conservative_1st')
 
-    Regrid the T axis of field ``f`` using bilinear interpolation onto
+    Regrid the T axis of field ``f`` using linear interpolation onto
     a grid contained in field ``g``:
 
-    >>> h = f.regridc(g, axes=('T'), method='bilinear')
+    >>> h = f.regridc(g, axes=('T'), method='linear')
 
     Regrid the X and Y axes of field ``f`` conservatively onto a grid
     contained in field ``g``:
@@ -17124,7 +17133,7 @@ class Field(mixin.PropertiesData,
     Regrid the X and T axes of field ``f`` conservatively onto a grid
     contained in field ``g`` using the destination mask:
 
-    >>> h = f.regridc(g, axes=('X','Y'), use_dst_mask=True, method='bilinear')
+    >>> h = f.regridc(g, axes=('X','Y'), use_dst_mask=True, method='linear')
 
         '''
         # Initialise ESMPy for regridding if found

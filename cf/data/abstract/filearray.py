@@ -15,13 +15,11 @@ class FileArray(Array):
         '''
         pass
 
-
     def __str__(self):
         '''x.__str__() <==> str(x)
 
         '''
         return "%s in %s" % (self.shape, self.file)
-
 
     # ----------------------------------------------------------------
     # Attributes
@@ -39,7 +37,6 @@ class FileArray(Array):
 
         '''
         return self._get_component('dtype')
-
 
     @property
     def ndim(self):
@@ -71,7 +68,6 @@ class FileArray(Array):
         '''
         return self._get_component('ndim')
 
-
     @property
     def shape(self):
         '''Tuple of array dimension sizes.
@@ -101,7 +97,6 @@ class FileArray(Array):
 
         '''
         return self._get_component('shape')
-
 
     @property
     def size(self):
@@ -133,7 +128,6 @@ class FileArray(Array):
         '''
         return self._get_component('size')
 
-
     @property
     def filename(self):
         '''TODO
@@ -144,7 +138,6 @@ class FileArray(Array):
 
         '''
         return self._get_component('filename')
-
 
     @property
     def array(self):
@@ -164,7 +157,6 @@ class FileArray(Array):
         '''
         return self[...]
 
-
     def inspect(self):
         '''Inspect the object for debugging.
 
@@ -175,8 +167,7 @@ class FileArray(Array):
         `None`
 
         '''
-        print(cf_inspect(self)) # pragma: no cover
-
+        print(cf_inspect(self))  # pragma: no cover
 
     def get_filename(self):
         '''The name of the file containing the array.
@@ -189,10 +180,8 @@ class FileArray(Array):
         '''
         return self._get_component('filename')
 
-
     def close(self):
         pass
-
 
     def open(self):
         pass
@@ -200,5 +189,4 @@ class FileArray(Array):
 
 # --- End: class
 
-#Array.register(FileArray)
-
+# Array.register(FileArray)

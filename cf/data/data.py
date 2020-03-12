@@ -2,8 +2,13 @@ from functools   import reduce
 from operator    import itemgetter
 
 import numpy
+from numpy import arccos            as numpy_arccos
+from numpy import arccosh           as numpy_arccosh
+from numpy import arcsin            as numpy_arcsin
 from numpy import arcsinh           as numpy_arcsinh
 from numpy import arctan            as numpy_arctan
+#from numpy import arctan2           as numpy_arctan2  AT2
+from numpy import arctanh           as numpy_arctanh
 from numpy import array             as numpy_array
 from numpy import asanyarray        as numpy_asanyarray
 from numpy import ceil              as numpy_ceil
@@ -184,17 +189,20 @@ _debug = True
 #           operations are handled. These defaults are those of
 #           numpy 1.10.1.
 # --------------------------------------------------------------------
-_seterr = {'divide' : 'warn',
-           'invalid': 'warn',
-           'over'   : 'warn',
-           'under'  : 'ignore',
-           }
+_seterr = {
+    'divide': 'warn',
+    'invalid': 'warn',
+    'over': 'warn',
+    'under': 'ignore',
+}
 
 # --------------------------------------------------------------------
 # _seterr_raise_to_ignore = As _seterr but with any values of 'raise'
 #                           changed to 'ignore'.
 # --------------------------------------------------------------------
 _seterr_raise_to_ignore = _seterr.copy()
+
+
 for key, value in _seterr.items():
     if value == 'raise':
         _seterr_raise_to_ignore[key] = 'ignore'
@@ -211,15 +219,17 @@ _xxx = numpy_empty((), dtype=object)
 
 _empty_set = set()
 
-_units_None    = Units()
-_units_1       = Units('1')
+_units_None = Units()
+_units_1 = Units('1')
 _units_radians = Units('radians')
 
 _dtype_object = numpy_dtype(object)
-_dtype_float  = numpy_dtype(float)
-_dtype_bool   = numpy_dtype(bool)
+_dtype_float = numpy_dtype(float)
+_dtype_bool = numpy_dtype(bool)
 
 _cached_axes = {0: []}
+
+
 def _initialise_axes(ndim):
     '''TODO
 
@@ -262,7 +272,7 @@ class Data(cfdm.Data):
 * Supports masked arrays, regardless of whether or not it was
   initialised with a masked array.
 
-* Stores and operates on data arrays which are larger then the
+* Stores and operates on data arrays which are larger than the
   available memory.
 
 **Indexing**
@@ -278,7 +288,7 @@ A data array is indexable in a similar way to numpy array:
 
 There are three extensions to the numpy indexing functionality:
 
-* Size 1 dimensions are never removed bi indexing.
+* Size 1 dimensions are never removed by indexing.
 
   An integer index i takes the i-th element but does not reduce the
   rank of the output array by one:
@@ -466,7 +476,7 @@ place.
             return
 
         if not (loadd or loads):
-            units       = Units(units, calendar=calendar)
+            units = Units(units, calendar=calendar)
             self._Units = units
 
         empty_list = []
@@ -532,7 +542,7 @@ place.
                 data = numpy_array(data)
 
             if (data.dtype.kind == 'O' and not dt and
-                hasattr(data.item((0,)*data.ndim), 'timetuple')):
+                    hasattr(data.item((0,)*data.ndim), 'timetuple')):
                 # We've been given one or more date-time objects
                 dt = True
         else:
@@ -555,15 +565,17 @@ place.
             elif kind == 'O':
                 # Convert date-time objects to reference time floats
                 x = data.item(0)
-                x_since = 'days since ' + '-'.join(map(str, (x.year, x.month, x.day)))
+                x_since = 'days since ' + '-'.join(
+                    map(str, (x.year, x.month, x.day)))
                 x_calendar = getattr(x, 'calendar', 'gregorian')
 
                 d_calendar = getattr(self.Units, 'calendar', None)
-                d_units    = getattr(self.Units, 'units', None)
+                d_units = getattr(self.Units, 'units', None)
 
-                if x_calendar !=  '':
+                if x_calendar != '':
                     if d_calendar is not None:
-                        if not self.Units.equivalent(Units(x_since, x_calendar)):
+                        if not self.Units.equivalent(
+                                Units(x_since, x_calendar)):
                             raise ValueError('TODO')
                     else:
                         d_calendar = x_calendar
@@ -580,14 +592,15 @@ place.
 
                 self._Units = units
 
-
                 # Check that all date-time objects have correct and
                 # equivalent calendars
-                calendars = set([getattr(x, 'calendar', 'gregorian') for x in data.flat])
+                calendars = set(
+                    [getattr(x, 'calendar', 'gregorian') for x in data.flat])
                 if len(calendars) > 1:
                     raise ValueError(
-                        'Not all date-time objects have equivalent calendars: {}'.format(
-                            tuple(calendars)))
+                        "Not all date-time objects have equivalent "
+                        "calendars: {}".format(tuple(calendars))
+                    )
 
                 # If the date-times are calendar-agnostic, assign the
                 # given calendar, defaulting to Gregorian.
@@ -607,23 +620,24 @@ place.
 
             if not units.isreftime:
                 raise ValueError(
-                    "Can't initialise a reference time array with units {!r}".format(
-                        units))
+                    "Can't initialise a reference time array with "
+                    "units {!r}".format(units)
+                )
         # --- End: if
 
         shape = data.shape
-        ndim  = data.ndim
-        size  = data.size
-        axes  = _initialise_axes(ndim)
+        ndim = data.ndim
+        size = data.size
+        axes = _initialise_axes(ndim)
 
         # The _axes attribute is the ordered list of the data array's
         # axis names. Each axis name is an arbitrary, unique
         # string. DO NOT CHANGE IN PLACE.
         self._axes = axes
 
-        self._ndim  = ndim
+        self._ndim = ndim
         self._shape = shape
-        self._size  = size
+        self._size = size
 
         if dtype is not None:
             _dtype = numpy_dtype(dtype)
@@ -663,7 +677,6 @@ place.
         if mask is not None:
             self.where(mask, cf_masked, inplace=True)
 
-
     def _set_partition_matrix(self, array, chunk=True,
                               check_free_memory=True):
         '''Set the array.
@@ -692,13 +705,15 @@ place.
 
         matrix = _xxx.copy()
 
-        matrix[()] = Partition(location = [(0, n) for n in shape],
-                               shape    = list(shape),
-                               axes     = self._axes,
-                               flip     = empty_list,
-                               Units    = self.Units,
-                               subarray = array,
-                               part     = empty_list)
+        matrix[()] = Partition(
+            location=[(0, n) for n in shape],
+            shape=list(shape),
+            axes=self._axes,
+            flip=empty_list,
+            Units=self.Units,
+            subarray=array,
+            part=empty_list
+        )
 
         self.partitions = PartitionMatrix(matrix, empty_list)
 
@@ -711,7 +726,6 @@ place.
         source = self.source(None)
         if source is not None and source.get_compression_type():
             self._del_Array(None)
-
 
     def _set_CompressedArray(self, compressed_array, copy=None,
                              check_free_memory=True):
@@ -761,10 +775,12 @@ place.
                 partition.subarray = RaggedContiguousSubarray(
                     array=source_data,
                     shape=partition.shape,
-                    compression={'instance_axis'    : 0,
-                                 'instance_index'   : 0,
-                                 'c_element_axis'   : 1,
-                                 'c_element_indices': slice(start, end)},
+                    compression={
+                        'instance_axis': 0,
+                        'instance_index': 0,
+                        'c_element_axis': 1,
+                        'c_element_indices': slice(start, end)
+                    },
                 )
                 partition.part = []
 
@@ -780,14 +796,18 @@ place.
 
             (instances, inverse) = numpy.unique(index, return_inverse=True)
 
-            for i, partition in zip(numpy.unique(inverse), new.partitions.flat):
+            for i, partition in zip(
+                    numpy.unique(inverse), new.partitions.flat):
                 partition.subarray = RaggedIndexedSubarray(
                     array=source_data,
                     shape=partition.shape,
-                    compression={'instance_axis'    : 0,
-                                 'instance_index'   : 0,
-                                 'i_element_axis'   : 1,
-                                 'i_element_indices': numpy_where(inverse == i)[0]})
+                    compression={
+                        'instance_axis': 0,
+                        'instance_index': 0,
+                        'i_element_axis': 1,
+                        'i_element_indices': numpy_where(inverse == i)[0]
+                    }
+                )
                 partition.part = []
 
         elif compression_type == 'ragged indexed contiguous':
@@ -820,11 +840,10 @@ place.
 
                     if j >= n_profiles:
                         # This partition is full of missing data
-                        subarray = FilledArray(shape=partition.shape,
-                                               size=partition.size,
-                                               ndim=partition.ndim,
-                                               dtype=compressed_array.dtype,
-                                               fill_value=cf_masked)
+                        subarray = FilledArray(
+                            shape=partition.shape, size=partition.size,
+                            ndim=partition.ndim, dtype=compressed_array.dtype,
+                            fill_value=cf_masked)
                     else:
                         # Find the location in the count array of the number
                         # of elements in this profile
@@ -840,12 +859,15 @@ place.
                         subarray = RaggedIndexedContiguousSubarray(
                             array=source_data,
                             shape=partition.shape,
-                            compression={'instance_axis'    : 0,
-                                         'instance_index'   : 0,
-                                         'i_element_axis'   : 1,
-                                         'i_element_index'  : 0,
-                                         'c_element_axis'   : 2,
-                                         'c_element_indices': slice(start, stop)})
+                            compression={
+                                'instance_axis': 0,
+                                'instance_index': 0,
+                                'i_element_axis': 1,
+                                'i_element_index': 0,
+                                'c_element_axis': 2,
+                                'c_element_indices': slice(start, stop)
+                            }
+                        )
                     # --- End: if
 
                     partition.subarray = subarray
@@ -858,25 +880,28 @@ place.
             # Gathered
             # --------------------------------------------------------
             compressed_dimension = compressed_array.get_compressed_dimension()
-            compressed_axes      = compressed_array.get_compressed_axes()
-            indices              = compressed_array.get_list().array
+            compressed_axes = compressed_array.get_compressed_axes()
+            indices = compressed_array.get_list().array
 
-            new.chunk(omit_axes=compressed_axes) #, total=[0])
+            new.chunk(omit_axes=compressed_axes)  # , total=[0])
 
             for partition in new.partitions.flat:
                 partition_indices = partition.indices
-                compressed_part = [partition_indices[i] for i in range(new.ndim)
-                                   if i not in compressed_axes]
+                compressed_part = [partition_indices[i] for i in
+                                   range(new.ndim) if
+                                   i not in compressed_axes]
                 compressed_part.insert(compressed_dimension, slice(None))
 
                 partition.subarray = GatheredSubarray(
                     array=source_data,
                     shape=partition.shape,
-                    compression = {
+                    compression={
                         'compressed_dimension': compressed_dimension,
-                        'compressed_axes'     : compressed_axes,
-                        'compressed_part'     : compressed_part,
-                        'indices'             : indices})
+                        'compressed_axes': compressed_axes,
+                        'compressed_part': compressed_part,
+                        'indices': indices
+                    }
+                )
 
                 partition.part = []
         # --- End: if
@@ -884,7 +909,6 @@ place.
         self.partitions = new.partitions
 
         self._set_Array(compressed_array, copy=False)
-
 
     def __contains__(self, value):
         '''Membership test operator ``in``
@@ -912,7 +936,7 @@ place.
 
         '''
         if isinstance(value, self.__class__):
-            self_units  = self.Units
+            self_units = self.Units
             value_units = value.Units
             if value_units.equivalent(self_units):
                 if not value_units.equals(self_units):
@@ -936,7 +960,6 @@ place.
 
         return False
 
-
     @property
     def _ATOL(self):
         '''Return the current value of the `ATOL` function.
@@ -944,14 +967,12 @@ place.
         '''
         return ATOL()
 
-
     @property
     def _RTOL(self):
         '''Return the current value of the `RTOL` function.
 
         '''
         return RTOL()
-
 
     def _auxiliary_mask_from_1d_indices(self, compressed_indices):
         '''TODO
@@ -967,9 +988,11 @@ place.
     '''
         auxiliary_mask = []
 
-        for i, (compressed_index, size) in enumerate(zip(compressed_indices, self._shape)):
+        for i, (compressed_index, size) in enumerate(
+                zip(compressed_indices, self._shape)):
 
-            if isinstance(compressed_index, slice) and compressed_index.step in (-1, 1):
+            if (isinstance(compressed_index, slice) and
+                    compressed_index.step in (-1, 1)):
                 # Compressed index is a slice object with a step of
                 # +-1 => no auxiliary mask required for this axis
                 continue
@@ -997,7 +1020,6 @@ place.
         # --- End: for
 
         return auxiliary_mask
-
 
     def _auxiliary_mask_return(self):
         '''Return the auxiliary mask.
@@ -1027,7 +1049,6 @@ place.
 
         return mask
 
-
     def _auxiliary_mask_add_component(self, mask):
         '''Add a new auxiliary mask.
 
@@ -1051,16 +1072,18 @@ place.
         # dimensions
         if mask.ndim != self._ndim:
             raise ValueError(
-                "Auxiliary mask must have same number of axes as the data array ({}!={})".format(
-                    mask.ndim, self.ndim))
+                "Auxiliary mask must have same number of axes as the data "
+                "array ({}!={})".format(mask.ndim, self.ndim)
+            )
 
         # Check that this mask component has an appropriate shape
         mask_shape = mask.shape
         for i, j in zip(mask_shape, self._shape):
             if not (i == j or i == 1):
                 raise ValueError(
-                    "Auxiliary mask shape {} is not broadcastable to data array shape {}".format(
-                        mask.shape, self._shape))
+                    "Auxiliary mask shape {} is not broadcastable to data "
+                    "array shape {}".format(mask.shape, self._shape)
+                )
 
         # Merge this mask component with another, if possible.
         append = True
@@ -1087,7 +1110,6 @@ place.
             else:
                 self._auxiliary_mask.append(mask)
 
-
     def _auxiliary_mask_subspace(self, indices):
         '''Subspace the new auxiliary mask.
 
@@ -1111,7 +1133,6 @@ place.
             new.append(mask[tuple(mask_indices)])
 
         self._auxiliary_mask = new
-
 
     def _create_auxiliary_mask_component(self, mask_shape, ind, compress):
         '''TODO
@@ -1159,7 +1180,8 @@ place.
             for iaxis, (index, n) in enumerate(zip(ind, shape)):
                 index = set(index)
                 if len(index) < n:
-                    auxiliary_mask = auxiliary_mask.take(sorted(index), axis=iaxis)
+                    auxiliary_mask = auxiliary_mask.take(
+                        sorted(index), axis=iaxis)
         # --- End: if
 
         # Add missing size 1 axes to the auxiliary mask
@@ -1168,7 +1190,6 @@ place.
             auxiliary_mask = auxiliary_mask[tuple(i)]
 
         return type(self)(auxiliary_mask)
-
 
     def _auxiliary_mask_tidy(self):
         '''Remove unnecessary auxiliary mask components.
@@ -1193,13 +1214,11 @@ place.
 
         self._auxiliary_mask = auxiliary_mask
 
-
     def __data__(self):
         '''Returns a new reference to self.
 
         '''
         return self
-
 
     def __hash__(self):
         '''The built-in function `hash`
@@ -1253,7 +1272,6 @@ place.
         '''
         return hash_array(self.array)
 
-
     def __float__(self):
         '''Called to implement the built-in function `float`
 
@@ -1265,7 +1283,6 @@ place.
                 "only length-1 arrays can be converted to Python scalars")
 
         return float(self.datum())
-
 
     def __round__(self, *ndigits):
         '''Called to implement the built-in function `round`
@@ -1279,7 +1296,6 @@ place.
 
         return round(self.datum(), *ndigits)
 
-
     def __int__(self):
         '''Called to implement the built-in function `int`
 
@@ -1291,7 +1307,6 @@ place.
                 "only length-1 arrays can be converted to Python scalars")
 
         return int(self.datum())
-
 
     def __iter__(self):
         '''Called when an iterator is required.
@@ -1347,7 +1362,6 @@ place.
                 out.squeeze(0, inplace=True)
                 yield out
 
-
     def __len__(self):
         '''The built-in function `len`
 
@@ -1371,7 +1385,6 @@ place.
 
         raise TypeError("len() of scalar {}".format(self.__class__.__name__))
 
-
     def __bool__(self):
         '''Truth value testing and the built-in operation `bool`
 
@@ -1391,8 +1404,9 @@ place.
             return bool(self.array)
 
         raise ValueError(
-            "The truth value of Data with more than one element is ambiguous. Use d.any() or d.all()")
-
+            "The truth value of Data with more than one element is "
+            "ambiguous. Use d.any() or d.all()"
+        )
 
     def __repr__(self):
         '''Called by the `repr` built-in function.
@@ -1401,7 +1415,6 @@ place.
 
         '''
         return super().__repr__().replace('<', '<CF ', 1)
-
 
     def __getitem__(self, indices):
         '''Return a subspace of the data defined by indices.
@@ -1451,10 +1464,10 @@ place.
 
         d = self
 
-        axes           = d._axes
-        flip           = d._flip()
-        shape          = d._shape
-        cyclic_axes    = d._cyclic
+        axes = d._axes
+        flip = d._flip()
+        shape = d._shape
+        cyclic_axes = d._cyclic
         auxiliary_mask = []
 
         try:
@@ -1464,7 +1477,7 @@ place.
         else:
             if isinstance(arg0, str) and arg0 == 'mask':
                 auxiliary_mask = indices[1]
-                indices        = tuple(indices[2:])
+                indices = tuple(indices[2:])
             else:
                 pass
 
@@ -1474,25 +1487,26 @@ place.
             for axis, shift in roll.items():
                 if axes[axis] not in cyclic_axes:
                     raise IndexError(
-                        "Can't take a cyclic slice of a non-cyclic axis (axis position {})".format(
-                            axis))
+                        "Can't take a cyclic slice of a non-cyclic "
+                        "axis (axis position {})".format(axis)
+                    )
 
                 d = d.roll(axis, shift)
         # --- End: if
 
         new_shape = tuple(map(_size_of_index, indices, shape))
-        new_size  = reduce(operator_mul, new_shape, 1)
+        new_size = reduce(operator_mul, new_shape, 1)
 
-        new = d.copy() #Data.__new__(Data)
+        new = d.copy()  # Data.__new__(Data)
 
-        source = new.source(None) #
+        source = new.source(None)
         if source is not None and source.get_compression_type():
             new._del_Array(None)
 
 #        new.get_fill_value = d.get_fill_value(None)
 
-        new._shape      = new_shape
-        new._size       = new_size
+        new._shape = new_shape
+        new._size = new_size
 #        new._ndim       = d._ndim
 #        new.hardmask   = d.hardmask
 #        new._all_axes   = d._all_axes
@@ -1546,19 +1560,19 @@ place.
         # ------------------------------------------------------------
         if cyclic_axes:
             x = [i
-                 for i, (axis, n0, n1) in enumerate(zip(axes, shape, new_shape))
+                 for i, (axis, n0, n1) in enumerate(
+                         zip(axes, shape, new_shape))
                  if n1 != n0 and axis in cyclic_axes]
             if x:
                 new._cyclic = cyclic_axes.difference(x)
         # --- End: if
 
-        #-------------------------------------------------------------
+        # -------------------------------------------------------------
         # Remove size 1 axes from the partition matrix
-        #-------------------------------------------------------------
+        # -------------------------------------------------------------
         new_partitions.squeeze(inplace=True)
 
         return new
-
 
     def __setitem__(self, indices, value):
         '''Implement indexed assignment.
@@ -1575,7 +1589,7 @@ place.
 
     The treatment of missing data elements during assignment to a
     subspace depends on the value of the `hardmask` attribute. If it
-    is True then masked elements will notbe unmasked, otherwise masked
+    is True then masked elements will not be unmasked, otherwise masked
     elements may be set to any value.
 
     In either case, unmasked elements may be set, (including missing
@@ -1626,7 +1640,7 @@ place.
             start, stop, step = index.indices(size)
             size -= 1
             start = size - start
-            stop  = size - stop
+            stop = size - stop
             if stop < 0:
                 stop = None
 
@@ -1640,11 +1654,8 @@ place.
         # ------------------------------------------------------------
 #        indices, roll, flip_axes = _parse_indices(self, indices)
         indices_in = indices
-        indices, roll, flip_axes, mask = parse_indices(self._shape,
-                                                       indices_in,
-                                                       cyclic=True,
-                                                       reverse=True,
-                                                       mask=True)
+        indices, roll, flip_axes, mask = parse_indices(
+            self._shape, indices_in, cyclic=True, reverse=True, mask=True)
 
         if roll:
             for iaxis, shift in roll.items():
@@ -1656,7 +1667,7 @@ place.
 
         scalar_value = False
         if value is cf_masked:
-            scalar_value  = True
+            scalar_value = True
         else:
             copied = False
             if not isinstance(value, Data):
@@ -1673,8 +1684,9 @@ place.
                     copied = True
                 else:
                     raise ValueError(
-                        "Can't assign values with units {!r} to data with units {!r}".format(
-                            value.Units, self.Units))
+                        "Can't assign values with units {!r} to data with "
+                        "units {!r}".format(value.Units, self.Units)
+                    )
             # --- End: if
 
             if value._size == 1:
@@ -1728,19 +1740,19 @@ place.
         # ------------------------------------------------------------
         # Still here? Then the value is not logically scalar.
         # ------------------------------------------------------------
-        data0_shape  = self._shape
+        data0_shape = self._shape
         value_shape = value._shape
 
         shape00 = list(map(_size_of_index, indices, data0_shape))
         shape0 = shape00[:]
 
-        self_ndim  = self._ndim
+        self_ndim = self._ndim
         value_ndim = value._ndim
         align_offset = self_ndim - value_ndim
         if align_offset >= 0:
             # self has more dimensions than other
-            shape0   = shape0[align_offset:]
-            shape1   = value_shape
+            shape0 = shape0[align_offset:]
+            shape1 = value_shape
             ellipsis = None
 
             flip_axes = [i-align_offset for i in flip_axes
@@ -1754,15 +1766,15 @@ place.
                 raise ValueError("Can't broadcast shape %r across shape %r" %
                                  (value_shape, data0_shape))
 
-            shape1       = value_shape[v_align_offset:]
-            ellipsis     = Ellipsis
+            shape1 = value_shape[v_align_offset:]
+            ellipsis = Ellipsis
             align_offset = 0
 
         # Find out which of the dimensions of value are to be
         # broadcast, and those which are not. Note that, as in numpy,
         # it is not allowed for a dimension in value to be larger than
         # a size 1 dimension in self
-        base_value_indices       = []
+        base_value_indices = []
         non_broadcast_dimensions = []
 
         for i, (a, b) in enumerate(zip(shape0, shape1)):
@@ -1772,12 +1784,14 @@ place.
                 base_value_indices.append(None)
                 non_broadcast_dimensions.append(i)
             else:
-                raise ValueError("Can't broadcast data with shape {!r} across shape {!r}".format(
-                    shape1, tuple(shape00)))
+                raise ValueError(
+                    "Can't broadcast data with shape {!r} across "
+                    "shape {!r}".format(shape1, tuple(shape00))
+                )
         # --- End: for
 
         previous_location = ((-1,),) * self_ndim
-        start             = [0] * value_ndim
+        start = [0] * value_ndim
 
 #        save = pda_args['save']
 #        keep_in_memory = pda_args['keep_in_memory']
@@ -1797,26 +1811,26 @@ place.
             value_indices = base_value_indices[:]
 
             for i in non_broadcast_dimensions:
-                j                  = i + align_offset
-                location           = partition.location[j][0]
+                j = i + align_offset
+                location = partition.location[j][0]
                 reference_location = previous_location[j][0]
 
                 if location > reference_location:
-                    stop             = start[i] + shape[j]
+                    stop = start[i] + shape[j]
                     value_indices[i] = slice(start[i], stop)
-                    start[i]         = stop
+                    start[i] = stop
 
                 elif location == reference_location:
                     value_indices[i] = previous_slice[i]
 
                 elif location < reference_location:
-                    stop             = shape[j]
+                    stop = shape[j]
                     value_indices[i] = slice(0, stop)
-                    start[i]         = stop
+                    start[i] = stop
             # --- End: for
 
             previous_location = partition.location
-            previous_slice    = value_indices[:]
+            previous_slice = value_indices[:]
 
             for i in flip_axes:
                 value_indices[i] = _mirror_slice(value_indices[i], shape1[i])
@@ -1863,7 +1877,6 @@ place.
 
             self[indices] = u
 
-
     def _flag_partitions_for_processing(self, parallelise=True):
         '''
         '''
@@ -1905,7 +1918,6 @@ place.
             for partition in self.partitions.matrix.flat:
                 partition._process_partition = True
         # --- End: if
-
 
     def _share_lock_files(self, parallelise):
         if parallelise:
@@ -1950,8 +1962,9 @@ place.
                 for i in range(n_partitions):
                     if mpi_rank == rank:
                         partition = processed_partitions[i]
-                        if (isinstance(partition._subarray, numpy_ndarray) and
-                            partition._subarray.dtype.kind in {'b', 'i', 'u', 'f', 'c'}):
+                        if (isinstance(partition._subarray, numpy_ndarray)
+                                and partition._subarray.dtype.kind in
+                                {'b', 'i', 'u', 'f', 'c'}):
                             # If the subarray is a supported numpy
                             # array, swap it out before broadcasting
                             # the partition
@@ -1960,9 +1973,11 @@ place.
                             partition._subarray_removed = True
                             partition._subarray_dtype = subarray.dtype
                             partition._subarray_shape = subarray.shape
-                            partition._subarray_isMA = numpy_ma_isMA(subarray)
+                            partition._subarray_isMA = numpy_ma_isMA(
+                                subarray)
                             if partition._subarray_isMA:
-                                partition._subarray_is_masked = subarray.mask is not numpy_ma_nomask
+                                partition._subarray_is_masked = (
+                                    subarray.mask is not numpy_ma_nomask)
                             else:
                                 partition._subarray_is_masked = False
                             # --- End: if
@@ -1990,11 +2005,15 @@ place.
                             # the data and the mask separately
                             if mpi_rank != rank:
                                 if partition._subarray_is_masked:
-                                    subarray = numpy_ma_masked_all(partition._subarray_shape,
-                                                                   dtype=partition._subarray_dtype)
+                                    subarray = numpy_ma_masked_all(
+                                        partition._subarray_shape,
+                                        dtype=partition._subarray_dtype
+                                    )
                                 else:
-                                    subarray = numpy_ma_empty(partition._subarray_shape,
-                                                              dtype=partition._subarray_dtype)
+                                    subarray = numpy_ma_empty(
+                                        partition._subarray_shape,
+                                        dtype=partition._subarray_dtype
+                                    )
                                 # --- End: if
                             # --- End: if
                             mpi_comm.Bcast(subarray.data, root=rank)
@@ -2003,8 +2022,10 @@ place.
                             # --- End: if
                         else:
                             if mpi_rank != rank:
-                                subarray = numpy_empty(partition._subarray_shape,
-                                                       dtype=partition._subarray_dtype)
+                                subarray = numpy_empty(
+                                    partition._subarray_shape,
+                                    dtype=partition._subarray_dtype
+                                )
                             # --- End: if
                             mpi_comm.Bcast(subarray, root=rank)
                         # --- End: if
@@ -2056,7 +2077,6 @@ place.
         # --- End: if
         return processed_partitions
 
-
     def dumps(self):
         '''Return a JSON string serialization of the data array.
 
@@ -2082,7 +2102,6 @@ place.
         # --- End: for
 
         return json_dumps(d, default=_convert_to_builtin_type)
-
 
     def digitize(self, bins, upper=False, open_ends=False,
                  closed_ends=None, return_bins=False):
@@ -2297,11 +2316,15 @@ place.
 
             if not closed_ends:
                 raise ValueError(
-                    "Can't set closed_ends=False when specifying bins as a scalar.")
+                    "Can't set closed_ends=False when specifying bins as "
+                    "a scalar."
+                )
 
             if open_ends:
                 raise ValueError(
-                    "Can't set open_ends=True when specifying bins as a scalar.")
+                    "Can't set open_ends=True when specifying bins as a "
+                    "scalar."
+                )
 
             mx = self.max().datum()
             mn = self.min().datum()
@@ -2352,8 +2375,9 @@ place.
             if delete_bins:
                 for n, d in enumerate(delete_bins):
                     d -= n
-                    array = numpy_ma_where(array==d, numpy_ma_masked, array)
-                    array = numpy_ma_where(array>d, array-1, array)
+                    array = numpy_ma_where(
+                        array == d, numpy_ma_masked, array)
+                    array = numpy_ma_where(array > d, array - 1, array)
             # --- End: if
 
             if mask is not None:
@@ -2373,34 +2397,37 @@ place.
 
         return out
 
-
-    def median(self, axes=None, squeeze=False, mtol=1, inplace=False,
-               _preserve_partitions=False):
+    def median(
+            self, axes=None, squeeze=False, mtol=1, inplace=False,
+            _preserve_partitions=False):
         '''TODO
 
         '''
 
-
-        return self.percentile(50, axes=axes, squeeze=squeeze,
-                               mtol=mtol, inplace=inplace,
-                               _preserve_partitions=_preserve_partitions)
+        return self.percentile(
+            50, axes=axes, squeeze=squeeze, mtol=mtol, inplace=inplace,
+            _preserve_partitions=_preserve_partitions
+        )
 
     @_inplace_enabled
-    def mean_of_upper_decile(self, axes=None, include_decile=True,
-                             squeeze=False, weights=None, mtol=1,
-                             inplace=False,
-                             _preserve_partitions=False):
+    def mean_of_upper_decile(
+            self, axes=None, include_decile=True, squeeze=False,
+            weights=None, mtol=1, inplace=False, _preserve_partitions=False):
         '''TODO
 
         '''
         d = _inplace_enabled_define_and_cleanup(self)
 
-        p90 = d.percentile(90, axes=axes, squeeze=False, mtol=mtol,
-                           inplace=False,
-                           _preserve_partitions=_preserve_partitions)
+        p90 = d.percentile(
+            90, axes=axes, squeeze=False, mtol=mtol, inplace=False,
+            _preserve_partitions=_preserve_partitions
+        )
 
         with numpy_testing_suppress_warnings() as sup:
-            sup.filter(RuntimeWarning, message='.*invalid value encountered in less.*')
+            sup.filter(
+                RuntimeWarning,
+                message='.*invalid value encountered in less.*'
+            )
             if include_decile:
                 mask = (d < p90)
             else:
@@ -2412,16 +2439,16 @@ place.
 
         d.where(mask, cf_masked, inplace=True)
 
-        d.mean(axes=axes, squeeze=squeeze, weights=weights,
-               inplace=True,
-               _preserve_partitions=_preserve_partitions)
+        d.mean(
+            axes=axes, squeeze=squeeze, weights=weights, inplace=True,
+            _preserve_partitions=_preserve_partitions
+        )
 
         return d
 
-
-    def percentile(self, ranks, axes=None, interpolation='linear',
-                   squeeze=False, mtol=1, inplace=False,
-                   _preserve_partitions=False):
+    def percentile(
+            self, ranks, axes=None, interpolation='linear', squeeze=False,
+            mtol=1, inplace=False, _preserve_partitions=False):
         '''Compute percentiles of the data along the specified axes.
 
     The default is to compute the percentiles along a flattened
@@ -2448,7 +2475,7 @@ place.
 
         axes: (sequence of) `int`, optional
             Select the axes. The *axes* argument may be one, or a
-            sequence, of integers that select the axis coresponding to
+            sequence, of integers that select the axis corresponding to
             the given position in the list of axes of the data array.
 
             By default, of *axes* is `None`, all axes are selected.
@@ -2571,8 +2598,9 @@ place.
 
         if ranks[0] < 0 or ranks[-1] > 100:
             raise ValueError(
-                "Each percentile rank must be in the range [0, 100]. Got {!r}".format(
-                    ranks))
+                "Each percentile rank must be in the range [0, 100]. "
+                "Got {!r}".format(ranks)
+            )
 
         n_ranks = ranks.size
         if n_ranks == 1:
@@ -2586,7 +2614,7 @@ place.
         # If the input data array 'fits' in one chunk of memory, then
         # make sure that it has only one partition
         if (not mpi_on and not _preserve_partitions and self._pmndim and
-            self.fits_in_one_chunk_in_memory(self.dtype.itemsize)):
+                self.fits_in_one_chunk_in_memory(self.dtype.itemsize)):
             self.varray
 
         org_chunksize = CHUNKSIZE(CHUNKSIZE()/n_ranks)
@@ -2606,7 +2634,10 @@ place.
                 func = numpy_nanpercentile
 
                 with numpy_testing_suppress_warnings() as sup:
-                    sup.filter(RuntimeWarning, message='.*All-NaN slice encountered')
+                    sup.filter(
+                        RuntimeWarning,
+                        message='.*All-NaN slice encountered'
+                    )
                     p = func(array, ranks, axis=axes,
                              interpolation=interpolation, keepdims=True,
                              overwrite_input=False)
@@ -2643,7 +2674,6 @@ place.
 
         return out
 
-
     def loads(self, j, chunk=True):
         '''TODO
         '''
@@ -2670,7 +2700,6 @@ place.
         # --- End: for
 
         self.loadd(d, chunk=chunk)
-
 
     def dumpd(self):
         '''Return a serialization of the data array.
@@ -2728,17 +2757,17 @@ place.
     True
 
         '''
-        axes  = self._axes
+        axes = self._axes
         units = self.Units
         dtype = self.dtype
 
         cfa_data = {
-            'dtype'   : dtype,
-            'Units'   : str(units),
-            'shape'   : self._shape,
-            '_axes'   : axes[:],
+            'dtype': dtype,
+            'Units': str(units),
+            'shape': self._shape,
+            '_axes': axes[:],
             '_pmshape': self._pmshape,
-            }
+        }
 
         pmaxes = self._pmaxes
         if pmaxes:
@@ -2747,7 +2776,7 @@ place.
 #        flip = self._flip
         flip = self._flip()
         if flip:
-            cfa_data['_flip'] =  flip[:]
+            cfa_data['_flip'] = flip[:]
 
         fill_value = self.get_fill_value(None)
         if fill_value is not None:
@@ -2767,7 +2796,7 @@ place.
             attrs = {}
 
             p_subarray = partition.subarray
-            p_dtype    = p_subarray.dtype
+            p_dtype = p_subarray.dtype
 
             # Location in partition matrix
             if index:
@@ -2792,7 +2821,7 @@ place.
                 attrs['Units'] = str(p_Units)
 
             # Sub-array flipped axes
-            p_flip  = partition.flip
+            p_flip = partition.flip
             if p_flip:
                 attrs['flip'] = p_flip[:]
 
@@ -2800,7 +2829,7 @@ place.
             # File format specific stuff
             # --------------------------------------------------------
             if isinstance(p_subarray, NetCDFArray):
-#            if isinstance(p_subarray.array, NetCDFFileArray):
+                # if isinstance(p_subarray.array, NetCDFFileArray):
                 # ----------------------------------------------------
                 # NetCDF File Array
                 # ----------------------------------------------------
@@ -2808,18 +2837,18 @@ place.
 
                 subarray = {}
 
-                subarray['file']  = p_subarray.get_filename()
+                subarray['file'] = p_subarray.get_filename()
                 subarray['shape'] = p_subarray.shape
 
 #                for attr in ('file', 'shape'):
 #                    subarray[attr] = getattr(p_subarray, attr)
 
-                subarray['ncvar']  = p_subarray.get_ncvar()
-                subarray['varid']  = p_subarray.get_varid()
+                subarray['ncvar'] = p_subarray.get_ncvar()
+                subarray['varid'] = p_subarray.get_varid()
 #                for attr in ('ncvar', 'varid'):
 #                    value = getattr(p_subarray, attr, None)
-##                    value = getattr(p_subarray.array, attr, None)
-##                    p_subarray.array.inspect()
+# #                    value = getattr(p_subarray.array, attr, None)
+# #                    p_subarray.array.inspect()
 #
 #                    if value is not None:
 #                        subarray[attr] = value
@@ -2831,7 +2860,7 @@ place.
                 attrs['subarray'] = subarray
 
             elif isinstance(p_subarray, UMArray):
-#            elif isinstance(p_subarray.array, UMFileArray):
+                # elif isinstance(p_subarray.array, UMFileArray):
                 # ----------------------------------------------------
                 # UM File Array
                 # ----------------------------------------------------
@@ -2859,10 +2888,10 @@ place.
         # Auxiliary mask
         # ------------------------------------------------------------
         if self._auxiliary_mask:
-            cfa_data['_auxiliary_mask'] = [m.copy() for m in self._auxiliary_mask]
+            cfa_data['_auxiliary_mask'] = [m.copy() for m in
+                                           self._auxiliary_mask]
 
         return cfa_data
-
 
     def loadd(self, d, chunk=True):
         '''Reset the data array in place from a data array serialization.
@@ -2899,7 +2928,7 @@ place.
     True
 
         '''
-        axes  = list(d.get('_axes', ()))
+        axes = list(d.get('_axes', ()))
         shape = tuple(d.get('shape', ()))
 
         units = d.get('Units', None)
@@ -2911,15 +2940,15 @@ place.
         dtype = d['dtype']
         self._dtype = dtype
 
-        self.Units       = units
-        self._axes       = axes
-#        self._flip       = list(d.get('_flip', ()))
+        self.Units = units
+        self._axes = axes
+#        self._flip = list(d.get('_flip', ()))
         self._flip(list(d.get('_flip', ())))
         self.set_fill_value(d.get('fill_value', None))
 
         self._shape = shape
-        self._ndim  = len(shape)
-        self._size  = reduce(operator_mul, shape, 1)
+        self._ndim = len(shape)
+        self._size = reduce(operator_mul, shape, 1)
 
         cyclic = d.get('_cyclic', None)
         if cyclic:
@@ -2980,12 +3009,12 @@ place.
                 p_units = Units(p_units)
 
             partition = Partition(
-                location = location,
-                axes     = attrs.get('axes', axes)[:],
-                flip     = attrs.get('flip', [])[:],
-                Units    = p_units,
-                part     = attrs.get('part', [])[:],
-                )
+                location=location,
+                axes=attrs.get('axes', axes)[:],
+                flip=attrs.get('flip', [])[:],
+                Units=p_units,
+                part=attrs.get('part', [])[:],
+            )
 
             fmt = attrs.get('format', None)
             if fmt is None:
@@ -3001,7 +3030,9 @@ place.
                 partition.subarray = attrs['subarray']
                 if fmt not in ('netCDF', 'UM'):
                     raise TypeError(
-                        "Don't know how to load sub-array from file format {!r}".format(fmt))
+                        "Don't know how to load sub-array from file "
+                        "format {!r}".format(fmt)
+                    )
 
                 # Set the 'subarray' attribute
                 kwargs = attrs['subarray'].copy()
@@ -3052,7 +3083,6 @@ place.
         else:
             self._auxiliary_mask = None
 
-
     @_deprecated_kwarg_check('i')
     def ceil(self, inplace=False, i=False):
         '''The ceiling of the data, element-wise.
@@ -3087,7 +3117,6 @@ place.
 
         '''
         return self.func(numpy_ceil, out=True, inplace=inplace)
-
 
     def cumsum(self, axis, masked_as_zero=False):
         '''Return the data cumulatively summed along the given axis.
@@ -3148,8 +3177,10 @@ place.
             axis += ndim + 1
         elif not 0 <= axis <= ndim:
             raise ValueError(
-                "Can't cumsum: Invalid axis specification: Expected -{0}<=axis<{0}, got axis={1}".format(
-                    ndim, axis))
+                "Can't cumsum: Invalid axis specification: Expected "
+                "-{0}<=axis<{0}, got axis={1}".format(
+                    ndim, axis)
+            )
 
         sections = self.section(axis, chunks=True)
 
@@ -3168,7 +3199,6 @@ place.
         out = self.reconstruct_sectioned_data(sections)
         return out
 
-
     def _chunk_add_partitions(self, d, axes):
         '''TODO
         '''
@@ -3179,17 +3209,18 @@ place.
                 continue
 
             if axis not in self.partitions.axes:
-#                print( 'self.partitions.matrix.shape=',self.partitions.matrix.shape, axis)
+                # print('self.partitions.matrix.shape=',
+                #       self.partitions.matrix.shape, axis)
                 # Create a new partition axis
                 self.partitions.insert_dimension(axis, inplace=True)
-#                print( 'self.partitions.matrix.shape=',self.partitions.matrix.shape)
+#               print('self.partitions.matrix.shape=',
+#                   self.partitions.matrix.shape)
 
             # Create the new partitions
             self.add_partitions(sorted(set(extra_bounds)), axis)
 
             # Update d in-place
             d[axis] = []
-
 
     def chunk(self, chunksize=None, total=None, omit_axes=None,
               pmshape=None):
@@ -3240,7 +3271,7 @@ place.
         # partition boundaries for that axis.
         #
         # E.g. {'dim0': [], 'dim1': []}
-        axes  = self._axes
+        axes = self._axes
         d = {}
         for axis in axes:
             d[axis] = []
@@ -3256,7 +3287,9 @@ place.
             for i in sorted(total):
                 if i in omit_axes:
                     raise ValueError(
-                        "Chunking error: Axis {} can't be specified by both 'total' and 'omit_axes' keywords".format(i))
+                        "Chunking error: Axis {} can't be specified by "
+                        "both 'total' and 'omit_axes' keywords".format(i)
+                    )
 
                 omit_axes.append(i)
 
@@ -3272,8 +3305,9 @@ place.
 
             if self._pmsize > 1:
                 raise ValueError(
-                    "Can't set pmshape when there is more than one partition: {}".format(
-                        self._pmsize))
+                    "Can't set pmshape when there is more than one "
+                    "partition: {}".format(self._pmsize)
+                )
 
 #            shape = self._shape
             for i, n_chunks in enumerate(pmshape):
@@ -3293,11 +3327,13 @@ place.
                 if step < 1:
                     raise ValueError("Bad shape: {}".format(pmshape))
 
-
                 d[axis] = list(range(step, axis_size, step))
 
                 if len(d[axis]) + 1 != n_chunks:
-                    raise ValueError('asdasdasdasds {} {} : {}'.format( len(d[axis])+1, n_chunks, d[axis]))
+                    raise ValueError(
+                        'asdasdasdasds {} {} : {}'.format(
+                            len(d[axis]) + 1, n_chunks, d[axis])
+                    )
 
                 if n_chunks <= 1:
                     break
@@ -3315,7 +3351,7 @@ place.
             # Do not chunk particular axes
             order = [i for i in order if i not in omit_axes]
 
-        while order: # Only enter if there are axes to chunk
+        while order:  # Only enter if there are axes to chunk
 
             (largest_partition_size, largest_partition) = sorted(
                 [(partition.size, partition)
@@ -3345,11 +3381,12 @@ place.
                 location = largest_partition.location[i]
 
                 if axis_size <= n_chunks:
-                    d[axis] = list(range(location[0]+1, location[1]))
+                    d[axis] = list(range(location[0] + 1, location[1]))
                     n_chunks = int(math_ceil(float(n_chunks)/axis_size))
                 else:
                     step = int(axis_size/n_chunks)
-                    d[axis] = list(range(location[0]+step, location[1], step))
+                    d[axis] = list(
+                        range(location[0] + step, location[1], step))
                     break
 
                 if n_chunks <= 1:
@@ -3407,7 +3444,8 @@ place.
 #                        n_chunks = int(math_ceil(float(n_chunks)/axis_size))
 #                    else:
 #                        step = int(axis_size/n_chunks)
-#                        new_partition_boundaries = range(location[0]+step, location[1], step)
+#                        new_partition_boundaries = range(
+#                            location[0]+step, location[1], step)
 #                        d[axis].extend(new_partition_boundaries)
 #
 #                        if not pmshape:
@@ -3434,7 +3472,6 @@ place.
 #            # Create the new partitions
 #            self.add_partitions(sorted(set(extra_bounds)), axis)
 #        # --- End: for
-
 
     @_inplace_enabled
     def _asdatetime(self, inplace=False):
@@ -3482,7 +3519,8 @@ place.
                 d = None
             return d
 
-        config = d.partition_configuration(readonly=False, func=rt2dt, dtype=None)
+        config = d.partition_configuration(
+            readonly=False, func=rt2dt, dtype=None)
 
         for partition in d.partitions.matrix.flat:
             partition.open(config)
@@ -3497,12 +3535,10 @@ place.
 
         return d
 
-
     def _isdatetime(self):
         '''TODO
         '''
         return self.dtype.kind == 'O' and self.Units.isreftime
-
 
     @_inplace_enabled
     def _asreftime(self, inplace=False):
@@ -3544,10 +3580,13 @@ place.
                 return d
             else:
                 raise ValueError(
-                    "Can't convert {!r} data to numeric reference times".format(units))
+                    "Can't convert {!r} data to numeric reference "
+                    "times".format(units)
+                )
         # --- End: if
 
-        config = d.partition_configuration(readonly=False, func=dt2rt, dtype=None)
+        config = d.partition_configuration(
+            readonly=False, func=dt2rt, dtype=None)
 
         for partition in d.partitions.matrix.flat:
             partition.open(config)
@@ -3561,7 +3600,6 @@ place.
         d._dtype = array.dtype
 
         return d
-
 
     def _combined_units(self, data1, method, inplace):
         '''TODO
@@ -3600,7 +3638,7 @@ place.
             return data0, data1, units0
 
         if (units0.isreftime and units1.isreftime and
-            not units0.equivalent(units1)):
+                not units0.equivalent(units1)):
             # Both are reference_time, but have non-equivalent
             # calendars
             if units0._canonical_calendar and not units1._canonical_calendar:
@@ -3619,9 +3657,9 @@ place.
         # --- End: if
 
         if method_type in ('_eq', '_ne', '_lt', '_le', '_gt', '_ge'):
-            #---------------------------------------------------------
+            # ---------------------------------------------------------
             # Operator is one of ==, !=, >=, >, <=, <
-            #---------------------------------------------------------
+            # ---------------------------------------------------------
             if units0.equivalent(units1):
                 # Units are equivalent
                 if not units0.equals(units1):
@@ -3638,9 +3676,9 @@ place.
 
         # still here?
         if method_type in ('and', '_or', 'ior', 'ror', 'xor', 'ift'):
-            #---------------------------------------------------------
+            # ---------------------------------------------------------
             # Operation is one of &, |, ^, >>, <<
-            #---------------------------------------------------------
+            # ---------------------------------------------------------
             if units0.equivalent(units1):
                 # Units are equivalent
                 if not units0.equals(units1):
@@ -3662,9 +3700,9 @@ place.
 
         # Still here?
         if units0.isreftime:
-            #---------------------------------------------------------
+            # ---------------------------------------------------------
             # units0 is reference time
-            #---------------------------------------------------------
+            # ---------------------------------------------------------
             if method_type == 'sub':
                 if units1.isreftime:
                     if units0.equivalent(units1):
@@ -3718,9 +3756,9 @@ place.
                 getattr(units0, method)(units1)
 
         elif units1.isreftime:
-            #---------------------------------------------------------
+            # ---------------------------------------------------------
             # units1 is reference time
-            #---------------------------------------------------------
+            # ---------------------------------------------------------
             if method_type == 'add':
                 if units0.istime:
                     # Time plus reference_time: the output units are
@@ -3742,9 +3780,9 @@ place.
 
         # Still here?
         if method_type in ('mul', 'div'):
-            #---------------------------------------------------------
+            # ---------------------------------------------------------
             # Method is one of *, /, //
-            #---------------------------------------------------------
+            # ---------------------------------------------------------
             if not units1:
                 # units1 is undefined
                 return data0, data1, getattr(units0, method)(_units_1)
@@ -3755,7 +3793,8 @@ place.
 #                # Both units are defined and equivalent but not equal
 #                data1 = data1.copy()
 #                data1.Units = units0
-#                return data0, data1, getattr(units0, method)(units0)#  !!!!!!! units0*units0 YOWSER
+#                return data0, data1, getattr(
+#                    units0, method)(units0)#  !!!!!!! units0*units0 YOWSER
             else:
                 # Both units are defined (note: if the units are
                 # noncombinable then this will raise an exception)
@@ -3764,9 +3803,9 @@ place.
 
         # Still here?
         if method_type in ('sub', 'add', 'mod'):
-            #---------------------------------------------------------
+            # ---------------------------------------------------------
             # Operator is one of +, -
-            #---------------------------------------------------------
+            # ---------------------------------------------------------
             if units0.equivalent(units1):
                 # Units are equivalent
                 if not units0.equals(units1):
@@ -3789,9 +3828,9 @@ place.
         # Still here?
         if method_type == 'pow':
             if method == '__rpow__':
-                #-----------------------------------------------------
+                # -----------------------------------------------------
                 # Operator is __rpow__
-                #-----------------------------------------------------
+                # -----------------------------------------------------
                 if not units1:
                     # units1 is undefined
                     if not units0:
@@ -3834,7 +3873,9 @@ place.
                         p = data0.datum(0)
                         if units0 != (units0**p)**(1.0/p):
                             raise ValueError(
-"Can't raise shifted units {!r} to the power {}".format(units0, p))
+                                "Can't raise shifted units {!r} to the "
+                                "power {}".format(units0, p)
+                            )
 
                         return data0, data1, units1**p
                     elif units0.isdimensionless:
@@ -3850,8 +3891,9 @@ place.
                         p = data0.datum(0)
                         if units0 != (units0**p)**(1.0/p):
                             raise ValueError(
-                                "Can't raise shifted units {!r} to the power {}".format(
-                                    units0, p))
+                                "Can't raise shifted units {!r} to the "
+                                "power {}".format(units0, p)
+                            )
 
                         return data0, data1, units1**p
                 # --- End: if
@@ -3859,9 +3901,9 @@ place.
                 # This will deliberately raise an exception
                 units1 ** units0
             else:
-                #-----------------------------------------------------
+                # -----------------------------------------------------
                 # Operator is __pow__
-                #-----------------------------------------------------
+                # -----------------------------------------------------
                 if not units0:
                     # units0 is undefined
                     if not units1:
@@ -3894,7 +3936,8 @@ place.
                 else:
                     # units0 is defined and is not dimensionless
                     if data1._size > 1:
-                        raise ValueError("kkkkkkkkkjjjjjjjjjjjjjjjj 8888888888888888")
+                        raise ValueError(
+                            "kkkkkkkkkjjjjjjjjjjjjjjjj 8888888888888888")
 
                     if not units1:
                         # Check that the units are not shifted, as
@@ -3903,8 +3946,9 @@ place.
                         p = data1.datum(0)
                         if units0 != (units0**p)**(1.0/p):
                             raise ValueError(
-                                "Can't raise shifted units {!r} to the power {}".format(
-                                    units0, p))
+                                "Can't raise shifted units {!r} to the "
+                                "power {}".format(units0, p)
+                            )
 
                         return data0, data1, units0**p
                     elif units1.isdimensionless:
@@ -3919,8 +3963,9 @@ place.
                         p = data1.datum(0)
                         if units0 != (units0**p)**(1.0/p):
                             raise ValueError(
-                                "Can't raise shifted units {!r} to the power {}".format(
-                                    units0, p))
+                                "Can't raise shifted units {!r} to the "
+                                "power {}".format(units0, p)
+                            )
 
                         return data0, data1, units0**p
                 # --- End: if
@@ -3934,7 +3979,6 @@ place.
         raise ValueError(
             "Can't operate with {} on data with {!r} to {!r}".format(
                 method, units0, units1))
-
 
     def _binary_operation(self, other, method):
         '''Implement binary arithmetic and comparison operations with the
@@ -3978,8 +4022,8 @@ place.
     [0 2 4 6]
 
         '''
-        inplace      = (method[2] == 'i')
-        method_type  = method[-5:-2]
+        inplace = (method[2] == 'i')
+        method_type = method[-5:-2]
 
         # ------------------------------------------------------------
         # Ensure that other is an independent Data object
@@ -3990,9 +4034,12 @@ place.
 
         elif not isinstance(other, self.__class__):
             if (isinstance(other, cftime.datetime) and
-                other.calendar == '' and self.Units.isreftime):
-                other = cf_dt(other, #.timetuple()[0:6], microsecond=other.microsecond,
-                              calendar=getattr(self.Units, 'calendar', 'standard'))
+                    other.calendar == '' and self.Units.isreftime):
+                other = cf_dt(
+                    other,
+                    # .timetuple()[0:6], microsecond=other.microsecond,
+                    calendar=getattr(self.Units, 'calendar', 'standard')
+                )
 
             other = type(self).asdata(other)
 
@@ -4009,7 +4056,8 @@ place.
 
         data0, other, new_Units = data0._combined_units(other, method, True)
 
-#        calendar_arithmetic = data0.Units.isreftime and other.Units.iscalendartime
+#        calendar_arithmetic = (data0.Units.isreftime and
+#                               other.Units.iscalendartime)
 
         # ------------------------------------------------------------
         # Bring other into memory, if appropriate.
@@ -4056,12 +4104,12 @@ place.
             broadcasting = False
 
             align_offset = 0
-            ellipsis     = None
+            ellipsis = None
 
             new_shape = data0_shape
-            new_ndim  = data0._ndim
-            new_axes  = data0._axes
-            new_size  = data0._size
+            new_ndim = data0._ndim
+            new_axes = data0._axes
+            new_size = data0._size
 
         else:
             # self and other have different shapes
@@ -4077,16 +4125,16 @@ place.
                 shape1 = data1_shape
 
                 new_shape = data0_shape[:align_offset]
-                new_ndim  = data0_ndim
-                new_axes  = data0._axes
+                new_ndim = data0_ndim
+                new_axes = data0._axes
             else:
                 # other has more axes than self
                 align_offset = -align_offset
-                shape0       = data0_shape
-                shape1       = data1_shape[align_offset:]
+                shape0 = data0_shape
+                shape1 = data1_shape[align_offset:]
 
                 new_shape = data1_shape[:align_offset]
-                new_ndim  = data1_ndim
+                new_ndim = data1_ndim
                 if not data0_ndim:
                     new_axes = other._axes
                 else:
@@ -4125,7 +4173,7 @@ place.
             new_size = reduce(operator_mul, new_shape, 1)
 
             dummy_location = [None] * new_ndim
-        #---End: if
+        # ---End: if
 
         new_flip = []
 
@@ -4145,7 +4193,8 @@ place.
 #                          for index in parse_indices(other, indices1)]
 #
 #                broadcast_size = 1
-#                for n0, n1 in izip_longest(shape0[::-1], shape1[::-1], fillvalue=1):
+#                for n0, n1 in izip_longest(
+#                        shape0[::-1], shape1[::-1], fillvalue=1):
 #                    if n0 > 1:
 #                        broadcast_size *= n0
 #                    else:
@@ -4162,7 +4211,6 @@ place.
 #                data0.chunk(chunksize*(chunksize/ffff))
 #        # --- End: if
 
-
         # ------------------------------------------------------------
         # Create a Data object which just contains the metadata for
         # the result. If we're doing a binary arithmetic operation
@@ -4171,24 +4219,24 @@ place.
         # with this new metadata.
         # ------------------------------------------------------------
 
-        #if new_shape != data0_shape:
-        #    set_location_map = True
-        #    new_size = self._size
-        #    dummy_location   = [None] * new_ndim
-        #else:
-        #    set_location_map = False
-        #    new_size = reduce(mul, new_shape, 1)
+        # if new_shape != data0_shape:
+        #     set_location_map = True
+        #     new_size = self._size
+        #     dummy_location   = [None] * new_ndim
+        # else:
+        #     set_location_map = False
+        #     new_size = reduce(mul, new_shape, 1)
 
 #        if not set_location_map:
 #            new_size = reduce(mul, new_shape, 1)
 #        else:
 #            new_size = self._size
 
-        result        = data0.copy()
+        result = data0.copy()
         result._shape = new_shape
-        result._ndim  = new_ndim
-        result._size  = new_size
-        result._axes  = new_axes
+        result._ndim = new_ndim
+        result._size = new_size
+        result._axes = new_axes
 #        result._flip  = new_flip()
 
         # Is the result an array of date-time objects?
@@ -4253,7 +4301,7 @@ place.
 
             indices = partition_s.indices
 
-            array0  = partition_s.array
+            array0 = partition_s.array
 
             if broadcasting:
                 indices = tuple([
@@ -4265,7 +4313,8 @@ place.
 
             array1 = other[indices].array
 
-            # UNRESOLVED ISSUE: array1 could be much larger than the chunk size.
+            # UNRESOLVED ISSUE: array1 could be much larger than the
+            # chunk size.
 
             if not inplace:
                 partition = partition_r
@@ -4281,15 +4330,17 @@ place.
 #            else:
 
             try:
-                if method == '__eq__': # and data0.Units.isreftime:
-                    array0 = _numpy_isclose(array0, array1, rtol=rtol, atol=atol)
+                if method == '__eq__':  # and data0.Units.isreftime:
+                    array0 = _numpy_isclose(
+                        array0, array1, rtol=rtol, atol=atol)
                 elif method == '__ne__':
-                    array0 = ~_numpy_isclose(array0, array1, rtol=rtol, atol=atol)
+                    array0 = ~_numpy_isclose(
+                        array0, array1, rtol=rtol, atol=atol)
                 else:
-#                    print(method)
-#                    print(repr(array0))
-#                    print(repr(array1))
-#                    print()
+                    # print(method)
+                    # print(repr(array0))
+                    # print(repr(array1))
+                    # print()
                     array0 = getattr(array0, method)(array1)
 #            try:
 #                array0 = getattr(array0, method)(array1)
@@ -4308,8 +4359,12 @@ place.
             except TypeError as error:
                 if inplace:
                     raise TypeError(
-                        "Incompatible result data-type ({0!r}) for in-place {1!r} arithmetic".format(
-                            numpy_result_type(array0.dtype, array1.dtype).name, array0.dtype.name))
+                        "Incompatible result data-type ({0!r}) for "
+                        "in-place {1!r} arithmetic".format(
+                            numpy_result_type(
+                                array0.dtype, array1.dtype).name,
+                            array0.dtype.name)
+                    )
                 else:
                     raise TypeError(error)
             # --- End: try
@@ -4325,16 +4380,16 @@ place.
                     new_dtype = numpy_result_type(p_datatype, new_dtype)
 
             partition.subarray = array0
-            partition.Units    = new_Units
-            partition.axes     = new_axes
-            partition.flip     = new_flip
-            partition.part     = []
+            partition.Units = new_Units
+            partition.axes = new_axes
+            partition.flip = new_flip
+            partition.part = []
 
             if broadcasting:
                 partition.location = dummy_location
-                partition.shape    = list(array0.shape)
+                partition.shape = list(array0.shape)
 
-            partition._original      = None
+            partition._original = None
             partition._write_to_disk = False
             partition.close()
 
@@ -4351,7 +4406,7 @@ place.
 
         if not inplace:
             result._Units = new_Units
-            result.dtype  = new_dtype
+            result.dtype = new_dtype
             result._flip(new_flip)
 
             if broadcasting:
@@ -4364,12 +4419,12 @@ place.
         else:
             # Update the metadata for the new master array in place
             data0._shape = new_shape
-            data0._ndim  = new_ndim
-            data0._size  = new_size
-            data0._axes  = new_axes
+            data0._ndim = new_ndim
+            data0._size = new_size
+            data0._axes = new_axes
             data0._flip(new_flip)
             data0._Units = new_Units
-            data0.dtype  = new_dtype
+            data0.dtype = new_dtype
 
             if broadcasting:
                 data0.partitions.set_location_map(new_axes)
@@ -4377,7 +4432,6 @@ place.
             self.__dict__ = data0.__dict__
 
             return self
-
 
     def creation_commands(self, name='data', namespace='cf', string=True):
         '''Return the commands that would create the data object.
@@ -4493,7 +4547,6 @@ place.
 
         return out
 
-
     def __query_set__(self, values):
         '''TODO
 
@@ -4528,7 +4581,6 @@ place.
 #
 #        return new
 
-
     def __query_wi__(self, value):
         '''TODO
         '''
@@ -4549,7 +4601,6 @@ place.
 #
 #        return new
 
-
     def __query_wo__(self, value):
         '''TODO
 
@@ -4569,7 +4620,6 @@ place.
 #
 #        return new
 
-
     @classmethod
     def concatenate(cls, data, axis=0, _preserve=True):
         '''Join a sequence of data arrays together.
@@ -4581,12 +4631,12 @@ place.
             carried out in the order given. Each data array must have
             equivalent units and the same shape, except in the
             concatenation axis. Note that scalar arrays are treated as
-            if they were one dimensionsal.
+            if they were one dimensional.
 
         axis: `int`, optional
             The axis along which the arrays will be joined. The
             default is 0. Note that scalar arrays are treated as if
-            they were one dimensionsal.
+            they were one dimensional.
 
         _preserve: `bool`, optional
             If False then the time taken to do the concatenation is
@@ -4638,7 +4688,7 @@ place.
                 "Can't concatenate: Must provide at least two data arrays")
 
         data0 = data[0]
-        data  = data[1:]
+        data = data[1:]
 
         if _preserve:
             data0 = data0.copy()
@@ -4664,9 +4714,11 @@ place.
         if axis < 0:
             axis += ndim
         if not 0 <= axis < ndim:
-             raise ValueError(
-                 "Can't concatenate: Invalid axis specification: Expected -{0}<=axis<{0}, got axis={1}".format(
-                     ndim, axis))
+            raise ValueError(
+                "Can't concatenate: Invalid axis specification: Expected "
+                "-{0}<=axis<{0}, got axis={1}".format(
+                    ndim, axis)
+            )
 
         shape0 = data0._shape
         units0 = data0.Units
@@ -4674,13 +4726,17 @@ place.
         for data1 in data:
             shape1 = data1._shape
             if (shape0[axis_p1:] != shape1[axis_p1:] or
-                shape0[:axis]    != shape1[:axis]):
+                    shape0[:axis] != shape1[:axis]):
                 raise ValueError(
-                    "Can't concatenate: All the input array axes except for the concatenation axis must have the same size")
+                    "Can't concatenate: All the input array axes except "
+                    "for the concatenation axis must have the same size"
+                )
 
             if not units0.equivalent(data1.Units):
                 raise ValueError(
-                    "Can't concatenate: All the input arrays must have equivalent units")
+                    "Can't concatenate: All the input arrays must have "
+                    "equivalent units"
+                )
         # --- End: for
 
         for i, data1 in enumerate(data):
@@ -4769,7 +4825,8 @@ place.
             #    the same order as those in data0
             # ------------------------------------------------------------
             pmaxes1 = data1.partitions.axes
-            ipmaxes = [pmaxes1.index(pmaxis) for pmaxis in data0.partitions.axes]
+            ipmaxes = [pmaxes1.index(pmaxis) for pmaxis in
+                       data0.partitions.axes]
             data1.partitions.transpose(ipmaxes, inplace=True)
 
             # --------------------------------------------------------
@@ -4820,7 +4877,7 @@ place.
             matrix0 = data0.partitions.matrix
             matrix1 = data1.partitions.matrix
 
-            new_pmshape     = list(matrix0.shape)
+            new_pmshape = list(matrix0.shape)
             new_pmshape[0] += matrix1.shape[0]
 
             # Initialise an empty partition matrix with the new shape
@@ -4844,9 +4901,9 @@ place.
 
             data0._size += data1._size
 
-            shape0        = list(shape0)
+            shape0 = list(shape0)
             shape0[axis] += shape1[axis]
-            data0._shape  = tuple(shape0)
+            data0._shape = tuple(shape0)
 
             dtype0 = data0.dtype
             dtype1 = data1.dtype
@@ -4862,7 +4919,7 @@ place.
                 for mask in data0._auxiliary_mask:
                     size = mask.size
                     if ((size > 1 and mask.shape[axis] > 1) or
-                        (size == 1 and mask.datum())):
+                            (size == 1 and mask.datum())):
                         new_shape = list(mask.shape)
                         new_shape[axis] = shape0[axis]
                         new_mask = cls.empty(new_shape, dtype=bool)
@@ -4884,7 +4941,7 @@ place.
                 for mask in data1._auxiliary_mask:
                     size = mask.size
                     if ((size > 1 and mask.shape[axis] > 1) or
-                        (size == 1 and mask.datum())):
+                            (size == 1 and mask.datum())):
                         new_shape = list(mask.shape)
                         new_shape[axis] = shape0[axis]
                         new_mask = cls.empty(new_shape, dtype=bool)
@@ -4915,7 +4972,6 @@ place.
         # ------------------------------------------------------------
         return data0
 
-
     def _move_flip_to_partitions(self):
         '''TODO
 
@@ -4942,52 +4998,50 @@ place.
 #        self._flip = []
         self._flip([])
 
-
-#    def _parse_axes(self, axes, method=None):
+#     def _parse_axes(self, axes, method=None):
 #        '''
 #
-#:Parameters:
+# :Parameters:
 #
-#    axes: (sequence of) `int`
-#        The axes of the data array. May be one of, or a sequence of
-#        any combination of zero or more of:
+#     axes: (sequence of) `int`
+#         The axes of the data array. May be one of, or a sequence of
+#         any combination of zero or more of:
 #
-#            * The integer position of a dimension in the data array
-#              (negative indices allowed).
+#             * The integer position of a dimension in the data array
+#               (negative indices allowed).
 #
-#    method: `str`
+#     method: `str`
 #
-#:Returns:
+# :Returns:
 #
-#    `list`
+#     `list`
 #
-#**Examples:**
+# **Examples:**
 #
-#'''
-#        ndim = self._ndim
+# '''
+#         ndim = self._ndim
 #
-#        if isinstance(axes, int):
-#            axes = (axes,)
+#         if isinstance(axes, int):
+#             axes = (axes,)
 #
-#        axes2 = []
-#        for axis in axes:
-#            if 0 <= axis < ndim:
-#                axes2.append(axis)
-#            elif -ndim <= axis < 0:
-#                axes2.append(axis + ndim)
-#            else:
-#                raise ValueError(
-#                    "Invalid axis: {!r}".format(method, axis))
-#        # --- End: for
+#         axes2 = []
+#         for axis in axes:
+#             if 0 <= axis < ndim:
+#                 axes2.append(axis)
+#             elif -ndim <= axis < 0:
+#                 axes2.append(axis + ndim)
+#             else:
+#                 raise ValueError(
+#                     "Invalid axis: {!r}".format(method, axis))
+#         # --- End: for
 #
-#        # Check for duplicate axes
-#        n = len(axes2)
-#        if n > 1 and n > len(set(axes2)):
-#            raise ValueError("Can't {}: Duplicate axis: {}".format(
-#                method, axes2))
+#         # Check for duplicate axes
+#         n = len(axes2)
+#         if n > 1 and n > len(set(axes2)):
+#             raise ValueError("Can't {}: Duplicate axis: {}".format(
+#                 method, axes2))
 #
-#        return axes2
-
+#         return axes2
 
     def _unary_operation(self, operation):
         '''Implement unary arithmetic operations.
@@ -5038,7 +5092,6 @@ place.
 
         return new
 
-
     def __add__(self, other):
         '''The binary arithmetic operation ``+``
 
@@ -5046,7 +5099,6 @@ place.
 
         '''
         return self._binary_operation(other, '__add__')
-
 
     def __iadd__(self, other):
         '''The augmented arithmetic assignment ``+=``
@@ -5056,7 +5108,6 @@ place.
         '''
         return self._binary_operation(other, '__iadd__')
 
-
     def __radd__(self, other):
         '''The binary arithmetic operation ``+`` with reflected operands
 
@@ -5064,7 +5115,6 @@ place.
 
         '''
         return self._binary_operation(other, '__radd__')
-
 
     def __sub__(self, other):
         '''The binary arithmetic operation ``-``
@@ -5074,7 +5124,6 @@ place.
         '''
         return self._binary_operation(other, '__sub__')
 
-
     def __isub__(self, other):
         '''The augmented arithmetic assignment ``-=``
 
@@ -5082,7 +5131,6 @@ place.
 
         '''
         return self._binary_operation(other, '__isub__')
-
 
     def __rsub__(self, other):
         '''The binary arithmetic operation ``-`` with reflected operands
@@ -5092,7 +5140,6 @@ place.
         '''
         return self._binary_operation(other, '__rsub__')
 
-
     def __mul__(self, other):
         '''The binary arithmetic operation ``*``
 
@@ -5100,7 +5147,6 @@ place.
 
         '''
         return self._binary_operation(other, '__mul__')
-
 
     def __imul__(self, other):
         '''The augmented arithmetic assignment ``*=``
@@ -5110,7 +5156,6 @@ place.
         '''
         return self._binary_operation(other, '__imul__')
 
-
     def __rmul__(self, other):
         '''The binary arithmetic operation ``*`` with reflected operands
 
@@ -5118,7 +5163,6 @@ place.
 
         '''
         return self._binary_operation(other, '__rmul__')
-
 
     def __div__(self, other):
         '''The binary arithmetic operation ``/``
@@ -5128,7 +5172,6 @@ place.
         '''
         return self._binary_operation(other, '__div__')
 
-
     def __idiv__(self, other):
         '''The augmented arithmetic assignment ``/=``
 
@@ -5136,7 +5179,6 @@ place.
 
         '''
         return self._binary_operation(other, '__idiv__')
-
 
     def __rdiv__(self, other):
         '''The binary arithmetic operation ``/`` with reflected operands
@@ -5146,7 +5188,6 @@ place.
         '''
         return self._binary_operation(other, '__rdiv__')
 
-
     def __floordiv__(self, other):
         '''The binary arithmetic operation ``//``
 
@@ -5154,7 +5195,6 @@ place.
 
         '''
         return self._binary_operation(other, '__floordiv__')
-
 
     def __ifloordiv__(self, other):
         '''The augmented arithmetic assignment ``//=``
@@ -5164,7 +5204,6 @@ place.
         '''
         return self._binary_operation(other, '__ifloordiv__')
 
-
     def __rfloordiv__(self, other):
         '''The binary arithmetic operation ``//`` with reflected operands
 
@@ -5172,7 +5211,6 @@ place.
 
         '''
         return self._binary_operation(other, '__rfloordiv__')
-
 
     def __truediv__(self, other):
         '''The binary arithmetic operation ``/`` (true division)
@@ -5182,7 +5220,6 @@ place.
         '''
         return self._binary_operation(other, '__truediv__')
 
-
     def __itruediv__(self, other):
         '''The augmented arithmetic assignment ``/=`` (true division)
 
@@ -5190,7 +5227,6 @@ place.
 
         '''
         return self._binary_operation(other, '__itruediv__')
-
 
     def __rtruediv__(self, other):
         '''The binary arithmetic operation ``/`` (true division) with
@@ -5200,7 +5236,6 @@ place.
 
         '''
         return self._binary_operation(other, '__rtruediv__')
-
 
     def __pow__(self, other, modulo=None):
         '''The binary arithmetic operations ``**`` and ``pow``
@@ -5215,7 +5250,6 @@ place.
 
         return self._binary_operation(other, '__pow__')
 
-
     def __ipow__(self, other, modulo=None):
         '''The augmented arithmetic assignment ``**=``
 
@@ -5229,10 +5263,9 @@ place.
 
         return self._binary_operation(other, '__ipow__')
 
-
     def __rpow__(self, other, modulo=None):
-        '''The binary arithmetic operations ``**`` and ``pow`` with reflected
-    operands
+        '''The binary arithmetic operations ``**`` and ``pow`` with
+    reflected operands
 
     x.__rpow__(y) <==> y**x
 
@@ -5244,7 +5277,6 @@ place.
 
         return self._binary_operation(other, '__rpow__')
 
-
     def __mod__(self, other):
         '''The binary arithmetic operation ``%``
 
@@ -5252,7 +5284,6 @@ place.
 
         '''
         return self._binary_operation(other, '__mod__')
-
 
     def __imod__(self, other):
         '''The binary arithmetic operation ``%=``
@@ -5262,7 +5293,6 @@ place.
         '''
         return self._binary_operation(other, '__imod__')
 
-
     def __rmod__(self, other):
         '''The binary arithmetic operation ``%`` with reflected operands
 
@@ -5270,7 +5300,6 @@ place.
 
         '''
         return self._binary_operation(other, '__rmod__')
-
 
     def __eq__(self, other):
         '''The rich comparison operator ``==``
@@ -5280,7 +5309,6 @@ place.
         '''
         return self._binary_operation(other, '__eq__')
 
-
     def __ne__(self, other):
         '''The rich comparison operator ``!=``
 
@@ -5288,7 +5316,6 @@ place.
 
         '''
         return self._binary_operation(other, '__ne__')
-
 
     def __ge__(self, other):
         '''The rich comparison operator ``>=``
@@ -5298,7 +5325,6 @@ place.
         '''
         return self._binary_operation(other, '__ge__')
 
-
     def __gt__(self, other):
         '''The rich comparison operator ``>``
 
@@ -5306,7 +5332,6 @@ place.
 
         '''
         return self._binary_operation(other, '__gt__')
-
 
     def __le__(self, other):
         '''The rich comparison operator ``<=``
@@ -5316,7 +5341,6 @@ place.
         '''
         return self._binary_operation(other, '__le__')
 
-
     def __lt__(self, other):
         '''The rich comparison operator ``<``
 
@@ -5324,7 +5348,6 @@ place.
 
         '''
         return self._binary_operation(other, '__lt__')
-
 
     def __and__(self, other):
         '''The binary bitwise operation ``&``
@@ -5334,7 +5357,6 @@ place.
         '''
         return self._binary_operation(other, '__and__')
 
-
     def __iand__(self, other):
         '''The augmented bitwise assignment ``&=``
 
@@ -5342,7 +5364,6 @@ place.
 
         '''
         return self._binary_operation(other, '__iand__')
-
 
     def __rand__(self, other):
         '''The binary bitwise operation ``&`` with reflected operands
@@ -5352,7 +5373,6 @@ place.
         '''
         return self._binary_operation(other, '__rand__')
 
-
     def __or__(self, other):
         '''The binary bitwise operation ``|``
 
@@ -5360,7 +5380,6 @@ place.
 
         '''
         return self._binary_operation(other, '__or__')
-
 
     def __ior__(self, other):
         '''The augmented bitwise assignment ``|=``
@@ -5370,7 +5389,6 @@ place.
         '''
         return self._binary_operation(other, '__ior__')
 
-
     def __ror__(self, other):
         '''The binary bitwise operation ``|`` with reflected operands
 
@@ -5378,7 +5396,6 @@ place.
 
         '''
         return self._binary_operation(other, '__ror__')
-
 
     def __xor__(self, other):
         '''The binary bitwise operation ``^``
@@ -5388,7 +5405,6 @@ place.
         '''
         return self._binary_operation(other, '__xor__')
 
-
     def __ixor__(self, other):
         '''The augmented bitwise assignment ``^=``
 
@@ -5396,7 +5412,6 @@ place.
 
         '''
         return self._binary_operation(other, '__ixor__')
-
 
     def __rxor__(self, other):
         '''The binary bitwise operation ``^`` with reflected operands
@@ -5406,7 +5421,6 @@ place.
         '''
         return self._binary_operation(other, '__rxor__')
 
-
     def __lshift__(self, y):
         '''The binary bitwise operation ``<<``
 
@@ -5414,7 +5428,6 @@ place.
 
         '''
         return self._binary_operation(y, '__lshift__')
-
 
     def __ilshift__(self, y):
         '''The augmented bitwise assignment ``<<=``
@@ -5424,7 +5437,6 @@ place.
         '''
         return self._binary_operation(y, '__ilshift__')
 
-
     def __rlshift__(self, y):
         '''The binary bitwise operation ``<<`` with reflected operands
 
@@ -5432,7 +5444,6 @@ place.
 
         '''
         return self._binary_operation(y, '__rlshift__')
-
 
     def __rshift__(self, y):
         '''The binary bitwise operation ``>>``
@@ -5442,7 +5453,6 @@ place.
         '''
         return self._binary_operation(y, '__rshift__')
 
-
     def __irshift__(self, y):
         '''The augmented bitwise assignment ``>>=``
 
@@ -5450,7 +5460,6 @@ place.
 
         '''
         return self._binary_operation(y, '__irshift__')
-
 
     def __rrshift__(self, y):
         '''The binary bitwise operation ``>>`` with reflected operands
@@ -5460,7 +5469,6 @@ place.
         '''
         return self._binary_operation(y, '__rrshift__')
 
-
     def __abs__(self):
         '''The unary arithmetic operation ``abs``
 
@@ -5468,7 +5476,6 @@ place.
 
         '''
         return self._unary_operation('__abs__')
-
 
     def __neg__(self):
         '''The unary arithmetic operation ``-``
@@ -5478,7 +5485,6 @@ place.
         '''
         return self._unary_operation('__neg__')
 
-
     def __invert__(self):
         '''The unary bitwise operation ``~``
 
@@ -5487,7 +5493,6 @@ place.
         '''
         return self._unary_operation('__invert__')
 
-
     def __pos__(self):
         '''The unary arithmetic operation ``+``
 
@@ -5495,7 +5500,6 @@ place.
 
         '''
         return self._unary_operation('__pos__')
-
 
     def _all_axis_names(self):
         '''Return a set of all the dimension names in use by the data array.
@@ -5525,7 +5529,6 @@ place.
         else:
             return list(all_axes)
 
-
     def _change_axis_names(self, axis_map):
         '''Change the axis names.
 
@@ -5544,14 +5547,15 @@ place.
                 existing_axes = all_axes[:]
                 for axis in d:
                     if axis in axis_map.values():
-                        axis_map[axis] = self._new_axis_identifier(existing_axes)
+                        axis_map[axis] = self._new_axis_identifier(
+                            existing_axes)
                         existing_axes.append(axis)
                     else:
                         axis_map[axis] = axis
                 # --- End: for
         # --- End: if
 
-        if all([axis0==axis1 for axis0, axis1 in axis_map.items()]):
+        if all([axis0 == axis1 for axis0, axis1 in axis_map.items()]):
             # Return without doing anything if the mapping is null
             return
 
@@ -5577,7 +5581,6 @@ place.
 
         # Partitions in the partition matrix
         self.partitions.change_axis_names(axis_map)
-
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -5628,8 +5631,8 @@ place.
 
         '''
         d = _inplace_enabled_define_and_cleanup(self)
-        ndim       = d._ndim
-        self_axes  = d._axes
+        ndim = d._ndim
+        self_axes = d._axes
         self_shape = d._shape
 
         original_self_axes = self_axes[:]
@@ -5637,7 +5640,7 @@ place.
         if axes is None:
             # Collapse all axes
             axes = list(range(ndim))
-            n_collapse_axes     = ndim
+            n_collapse_axes = ndim
             n_non_collapse_axes = 0
             Nmax = d._size
         elif not axes and axes != 0:
@@ -5647,15 +5650,15 @@ place.
             return d
         else:
             # Collapse some (maybe all) axes
-            axes = sorted(d._parse_axes(axes)) #, '_collapse'))
-            n_collapse_axes     = len(axes)
+            axes = sorted(d._parse_axes(axes))  # , '_collapse'))
+            n_collapse_axes = len(axes)
             n_non_collapse_axes = ndim - n_collapse_axes
             Nmax = 1
             for i in axes:
                 Nmax *= self_shape[i]
         # --- End: if
 
-        #-------------------------------------------------------------
+        # -------------------------------------------------------------
         # Parse the weights.
         #
         # * Change the keys from dimension names to the integer
@@ -5679,7 +5682,7 @@ place.
                 weights_axes = set()
                 for key, value in tuple(weights.items()):
                     del weights[key]
-                    key = d._parse_axes(key) #, 'asdasds12983487 TODO')
+                    key = d._parse_axes(key)  # , 'asdasds12983487 TODO')
                     if weights_axes.intersection(key):
                         raise ValueError("Duplicate weights axis")
 
@@ -5702,19 +5705,22 @@ place.
                 weight_ndim = numpy_ndim(weight)
                 if weight_ndim != len(key):
                     raise ValueError(
-                        "Can't collapse: Incorrect number of weights axes (%d != %d)" %
-                        (weight.ndim, len(key)))
+                        "Can't collapse: Incorrect number of weights "
+                        "axes (%d != %d)" % (weight.ndim, len(key))
+                    )
 
                 if weight_ndim > ndim:
                     raise ValueError(
-                        "Can't collapse: Incorrect number of weights axes (%d > %d)" %
-                        (weight.ndim, ndim))
+                        "Can't collapse: Incorrect number of weights "
+                        "axes (%d > %d)" % (weight.ndim, ndim)
+                    )
 
                 for n, axis in zip(numpy_shape(weight), key):
                     if n != self_shape[self_axes.index(axis)]:
                         raise ValueError(
-                            "Can't collapse: Incorrect weights shape {!r}".format(
-                                numpy_shape(weight)))
+                            "Can't collapse: Incorrect weights "
+                            "shape {!r}".format(numpy_shape(weight))
+                        )
                 # --- End: for
 
                 # Convert weight to a data object, if necessary.
@@ -5762,22 +5768,27 @@ place.
 #                if len(key) > n_collapse_axes and key.issuperset(axes):
 #                    shape = tuple(self.shape[i] for i in axes)
 #                    raise ValueError(
-#                        "Weights {!r} span too many axes. Expected weights shape to broadcast to {}".format(
-#                            weight, shape))
+#                        "Weights {!r} span too many axes. Expected "
+#                        "weights shape to broadcast to {}".format(
+#                            weight, shape)
+#                    )
 #
 #                if key.difference(axes):
-#                    raise ValueError('Weights {!r} span a non-collapse axis.'.format(weight))
+#                    raise ValueError(
+#                        'Weights {!r} span a non-collapse axis.'.format(
+#                            weight)
+#                    )
         # --- End: for
 
         # If the input data array 'fits' in one chunk of memory, then
         # make sure that it has only one partition
         if (not mpi_on and not _preserve_partitions and d._pmndim and
-            d.fits_in_one_chunk_in_memory(d.dtype.itemsize)):
+                d.fits_in_one_chunk_in_memory(d.dtype.itemsize)):
             d.varray
 
-        #-------------------------------------------------------------
+        # -------------------------------------------------------------
         # Initialise the output data array
-        #-------------------------------------------------------------
+        # -------------------------------------------------------------
         new = d[(Ellipsis,) + (0,)*n_collapse_axes]
 
         new._auxiliary_mask = None
@@ -5786,7 +5797,7 @@ place.
             # parittion's of d
             del partition.subarray
 
-        #d.to_memory()
+        # d.to_memory()
 
 #        save = not new.fits_in_memory(new.dtype.itemsize)
         keep_in_memory = new.fits_in_memory(new.dtype.itemsize)
@@ -5798,14 +5809,16 @@ place.
         else:
             new_units = units
 
-        p_axes  = new._axes[:n_non_collapse_axes]
+        p_axes = new._axes[:n_non_collapse_axes]
         p_units = new_units
 
         c_slice = (slice(None),) * n_collapse_axes
 
-        config = new.partition_configuration(readonly=False,
-                                             auxiliary_mask=None, # DCH ??x
-                                             extra_memory=False)
+        config = new.partition_configuration(
+            readonly=False,
+            auxiliary_mask=None,  # DCH ??x
+            extra_memory=False
+        )
 
         if mpi_on:
             mode = COLLAPSE_PARALLEL_MODE()
@@ -5817,32 +5830,34 @@ place.
                 # each case. The latter is calculated by
                 # _flag_partitions_for_processing
                 new._flag_partitions_for_processing()
-                partition  = new.partitions.matrix.item((0,) * new._pmndim) # "first" partition of new
+                partition = new.partitions.matrix.item(
+                    (0,) * new._pmndim)  # "first" partition of new
                 indices = partition.indices[:n_non_collapse_axes] + c_slice
                 data = d[indices]
                 data._flag_partitions_for_processing()
                 n_data = data.partitions.matrix.size
                 n_new = new.partitions.matrix.size
 
-                if new._max_partitions_per_process*n_data > data._max_partitions_per_process*n_new:
+                if (new._max_partitions_per_process*n_data >
+                        data._max_partitions_per_process*n_new):
                     # "turn on" parallelism in _collapse_subspace
-                    _parallelise_collapse_subspace = True
+                    _parallelise_collapse_sub = True
                     # "turn off" parallelism in _collapse
                     _parallelise_collapse = False
                 else:
                     # "turn off" parallelism in _collapse_subspace
-                    _parallelise_collapse_subspace = False
+                    _parallelise_collapse_sub = False
                     # "turn on" parallelism in _collapse
                     _parallelise_collapse = True
                 # --- End: if
             elif mode == 1:
                 # "turn off" parallelism in _collapse_subspace
-                _parallelise_collapse_subspace = False
+                _parallelise_collapse_sub = False
                 # "turn on" parallelism in _collapse
                 _parallelise_collapse = True
             elif mode == 2:
                 # "turn on" parallelism in _collapse_subspace
-                _parallelise_collapse_subspace = True
+                _parallelise_collapse_sub = True
                 # "turn off" parallelism in _collapse
                 _parallelise_collapse = False
             else:
@@ -5850,7 +5865,7 @@ place.
             # --- End: if
         else:
             # "turn off" parallelism in both functions
-            _parallelise_collapse_subspace = False
+            _parallelise_collapse_sub = False
             _parallelise_collapse = False
 
         # Flag which partitions will be processed on this rank. If
@@ -5868,14 +5883,16 @@ place.
                 # matrix
                 partition._pmindex = pmindex
 
-                partition.axes  = p_axes
-                partition.flip  = []
-                partition.part  = []
+                partition.axes = p_axes
+                partition.flip = []
+                partition.part = []
                 partition.Units = p_units
 
                 if squeeze:
-                    partition.location = partition.location[:n_non_collapse_axes]
-                    partition.shape    = partition.shape[:n_non_collapse_axes]
+                    # Note: parentheses for line continuation (not a tuple):
+                    partition.location = (
+                        partition.location[:n_non_collapse_axes])
+                    partition.shape = partition.shape[:n_non_collapse_axes]
 
                 indices = partition.indices[:n_non_collapse_axes] + c_slice
 
@@ -5883,7 +5900,7 @@ place.
                     func, fpartial, ffinalise,
                     indices, n_non_collapse_axes, n_collapse_axes,
                     Nmax, mtol, _preserve_partitions=_preserve_partitions,
-                    _parallelise_collapse_subspace=_parallelise_collapse_subspace,
+                    _parallelise_collapse_subspace=_parallelise_collapse_sub,
                     **kwargs)
 
                 partition.close(keep_in_memory=keep_in_memory)
@@ -5919,14 +5936,14 @@ place.
         new._share_lock_files(_parallelise_collapse)
 
         new._all_axes = None
-#        new._flip     = []
+#        new._flip = []
         new._flip([])
-        new._Units    = new_units
-        new.dtype     = datatype
+        new._Units = new_units
+        new.dtype = datatype
 
         if squeeze:
-            new._axes  = p_axes
-            new._ndim  = ndim - n_collapse_axes
+            new._axes = p_axes
+            new._ndim = ndim - n_collapse_axes
             new._shape = new._shape[:new._ndim]
         else:
             new_axes = new._axes
@@ -5941,7 +5958,6 @@ place.
         d.__dict__ = new.__dict__
 
         return d
-
 
     def _collapse_subspace(self, func, fpartial, ffinalise, indices,
                            n_non_collapse_axes, n_collapse_axes, Nmax,
@@ -6000,8 +6016,8 @@ dimensions.
         # If the input data array 'fits' in one chunk of memory, then
         # make sure that it has only one partition
         if (not mpi_on and not _preserve_partitions and data._pmndim
-            and data.fits_in_memory(data.dtype.itemsize)):
-           data.varray
+                and data.fits_in_memory(data.dtype.itemsize)):
+            data.varray
 
         # True iff at least two, but not all, axes are to be
         # collapsed.
@@ -6024,7 +6040,7 @@ dimensions.
 
         masked = False
 
-        sub_samples  = 0
+        sub_samples = 0
 
 #        pda_args = data.pda_args(revert_to_file=True) #, readonly=True)
         config = data.partition_configuration(readonly=True)
@@ -6059,11 +6075,13 @@ dimensions.
                                                       n_collapse_axes)
                     wmin = w.min()
                     if wmin < 0:
-                        raise ValueError("Can't collapse with negative weights")
+                        raise ValueError(
+                            "Can't collapse with negative weights")
 
                     if wmin == 0:
                         # Mask the array where the weights are zero
-                        array = numpy_ma_masked_where(w==0, array, copy=True)
+                        array = numpy_ma_masked_where(
+                            w == 0, array, copy=True)
                         if array.mask.all():
                             # The array is all missing data
                             partition.close()
@@ -6080,8 +6098,9 @@ dimensions.
                     # => we need to reshape the array and the weights.
                     shape = array.shape
                     ndim = array.ndim
-                    new_shape  = shape[:n_non_collapse_axes]
-                    new_shape += (reduce(operator_mul, shape[n_non_collapse_axes:]),)
+                    new_shape = shape[:n_non_collapse_axes]
+                    new_shape += (
+                        reduce(operator_mul, shape[n_non_collapse_axes:]),)
                     array = numpy_reshape(array.copy(), new_shape)
 
                     if weights is not None:
@@ -6097,7 +6116,8 @@ dimensions.
                 p_out = func(array, masked=p_masked, **kwargs)
 
                 if out is None:
-                    if not _parallelise_collapse_subspace and data.partitions.size == i + 1:
+                    if (not _parallelise_collapse_subspace and
+                            data.partitions.size == i + 1):
                         # There is exactly one partition so we are done
                         out = p_out
                         break
@@ -6128,13 +6148,15 @@ dimensions.
                         for item in out:
                             item_props = {}
                             if (isinstance(item, numpy_ndarray) and
-                                item.dtype.kind in {'b', 'i', 'u', 'f', 'c'}):
+                                    item.dtype.kind in
+                                    {'b', 'i', 'u', 'f', 'c'}):
                                 # The item is a supported numpy array,
                                 # so can be sent without pickling it.
                                 item_props['is_numpy_array'] = True
                                 item_props['isMA'] = numpy_ma_isMA(item)
                                 if item_props['isMA']:
-                                    item_props['is_masked'] = item.mask is not numpy_ma_nomask
+                                    item_props['is_masked'] = (
+                                        item.mask is not numpy_ma_nomask)
                                 else:
                                     item_props['is_masked'] = False
                                 # --- End: if
@@ -6187,17 +6209,23 @@ dimensions.
                         for item_props in p_out_props:
                             if item_props['is_numpy_array']:
                                 if item_props['is_masked']:
-                                    item = numpy_ma_masked_all(item_props['shape'],
-                                                               dtype=item_props['dtype'])
+                                    item = numpy_ma_masked_all(
+                                        item_props['shape'],
+                                        dtype=item_props['dtype']
+                                    )
                                     mpi_comm.Recv(item.data, source=rank)
                                     mpi_comm.Recv(item.mask, source=rank)
                                 elif item_props['isMA']:
-                                    item = numpy_ma_empty(item_props['shape'],
-                                                          dtype=item_props['dtype'])
+                                    item = numpy_ma_empty(
+                                        item_props['shape'],
+                                        dtype=item_props['dtype']
+                                    )
                                     mpi_comm.Recv(item.data, source=rank)
                                 else:
-                                    item = numpy_empty(item_props['shape'],
-                                                       dtype=item_props['dtype'])
+                                    item = numpy_empty(
+                                        item_props['shape'],
+                                        dtype=item_props['dtype']
+                                    )
                                     mpi_comm.Recv(item, source=rank)
                             else:
                                 item = mpi_comm.recv(source=rank)
@@ -6220,9 +6248,10 @@ dimensions.
             sub_samples = mpi_comm.gather(sub_samples, root=0)
             if mpi_rank == 0:
                 sub_samples = sum(sub_samples)
-                out = self._collapse_finalise(ffinalise, out,
-                                              sub_samples, masked, Nmax, mtol, data,
-                                              n_non_collapse_axes)
+                out = self._collapse_finalise(
+                    ffinalise, out, sub_samples, masked, Nmax, mtol, data,
+                    n_non_collapse_axes
+                )
             # --- End: if
 
             # Broadcast the aggregated result back from process 0 to
@@ -6269,12 +6298,13 @@ dimensions.
         else:
             # In the case that the inner loop is not parallelised,
             # just finalise.
-            out = self._collapse_finalise(ffinalise, out, sub_samples,
-                                          masked, Nmax, mtol, data, n_non_collapse_axes)
+            out = self._collapse_finalise(
+                ffinalise, out, sub_samples, masked, Nmax, mtol, data,
+                n_non_collapse_axes
+            )
         # --- End: if
 
         return out
-
 
     @classmethod
     def _collapse_finalise(cls, ffinalise, out, sub_samples, masked,
@@ -6292,7 +6322,6 @@ dimensions.
                                       data.dtype)
 
         return out
-
 
     @staticmethod
     def _collapse_mask(array, masked, N, Nmax, mtol):
@@ -6322,7 +6351,6 @@ dimensions.
         # --- End: if
 
         return array
-
 
     @staticmethod
     def _collapse_create_weights(array, indices, master_indices, master_shape,
@@ -6358,13 +6386,13 @@ dimensions.
 
         '''
         array_shape = array.shape
-        array_ndim  = array.ndim
+        array_ndim = array.ndim
 
         weights_indices = []
         for master_index, index, size in zip(master_indices,
                                              indices,
                                              master_shape):
-            start , stop , step = master_index.indices(size)
+            start, stop, step = master_index.indices(size)
 
             size1, mod = divmod(stop-start-1, step)
 
@@ -6376,14 +6404,14 @@ dimensions.
                 size2 += 1
 
             start += start1 * step
-            step  *= step1
-            stop   = start + (size2-1)*step + 1
+            step *= step1
+            stop = start + (size2-1)*step + 1
 
             weights_indices.append(slice(start, stop, step))
 
         base_shape = (1,) * array_ndim
 
-        masked       = False
+        masked = False
         zero_weights = False
 
         weights = []
@@ -6418,15 +6446,19 @@ dimensions.
         weights_out_shape = weights_out.shape
 
         if (not masked and
-            weights_out_shape[:n_non_collapse_axes] == base_shape[:n_non_collapse_axes]):
+                weights_out_shape[:n_non_collapse_axes] ==
+                base_shape[:n_non_collapse_axes]):
             # The input weights are not masked and only span collapse axes
-            weights_out = weights_out.reshape(weights_out_shape[n_non_collapse_axes:])
+            weights_out = weights_out.reshape(
+                weights_out_shape[n_non_collapse_axes:])
 
-            if weights_out_shape[n_non_collapse_axes:] != array_shape[n_non_collapse_axes:]:
+            if (weights_out_shape[n_non_collapse_axes:] !=
+                    array_shape[n_non_collapse_axes:]):
                 # The input weights span some, but not all, of the
                 # collapse axes, so broadcast the weights over all
                 # collapse axes
-                weights_out = broadcast_array(weights_out, array_shape[n_non_collapse_axes:])
+                weights_out = broadcast_array(
+                    weights_out, array_shape[n_non_collapse_axes:])
         else:
             if weights_out_shape != array_shape:
                 # Either a) The input weights span at least one
@@ -6440,7 +6472,6 @@ dimensions.
         # --- End: if
 
         return weights_out
-
 
     def _collapse_optimize_weights(self, weights):
         '''Optimise when weights span only non-partitioned axes.
@@ -6477,7 +6508,6 @@ dimensions.
             weights[new_key] = type(self)(new_weight)
 
         return weights
-
 
     def _new_axis_identifier(self, existing_axes=None):
         '''Return an axis name not being used by the data array.
@@ -6523,7 +6553,6 @@ dimensions.
 
         return axis
 
-
     # ----------------------------------------------------------------
     # Private attributes
     # ----------------------------------------------------------------
@@ -6533,79 +6562,102 @@ dimensions.
             return self._custom['_Units']
         except KeyError:
             raise AttributeError()
+
     @_Units.setter
     def _Units(self, value): self._custom['_Units'] = value
+
     @_Units.deleter
-    def _Units(self):        self._custom['_Units'] = _units_None
+    def _Units(self): self._custom['_Units'] = _units_None
 
     @property
-    def _auxiliary_mask(self):        return self._custom['_auxiliary_mask']
+    def _auxiliary_mask(self): return self._custom['_auxiliary_mask']
+
     @_auxiliary_mask.setter
     def _auxiliary_mask(self, value): self._custom['_auxiliary_mask'] = value
+
     @_auxiliary_mask.deleter
-    def _auxiliary_mask(self):        del self._custom['_auxiliary_mask']
+    def _auxiliary_mask(self): del self._custom['_auxiliary_mask']
 
     @property
-    def _cyclic(self):        return self._custom['_cyclic']
+    def _cyclic(self): return self._custom['_cyclic']
+
     @_cyclic.setter
     def _cyclic(self, value): self._custom['_cyclic'] = value
+
     @_cyclic.deleter
-    def _cyclic(self):        del self._custom['_cyclic']
+    def _cyclic(self): del self._custom['_cyclic']
 
     @property
-    def _dtype(self):        return self._custom['_dtype']
+    def _dtype(self): return self._custom['_dtype']
+
     @_dtype.setter
     def _dtype(self, value): self._custom['_dtype'] = value
+
     @_dtype.deleter
-    def _dtype(self):        del self._custom['_dtype']
+    def _dtype(self): del self._custom['_dtype']
 
     @property
-    def _HDF_chunks(self):        return self._custom['_HDF_chunks']
+    def _HDF_chunks(self): return self._custom['_HDF_chunks']
+
     @_HDF_chunks.setter
     def _HDF_chunks(self, value): self._custom['_HDF_chunks'] = value
+
     @_HDF_chunks.deleter
-    def _HDF_chunks(self):        del self._custom['_HDF_chunks']
+    def _HDF_chunks(self): del self._custom['_HDF_chunks']
 
     @property
-    def partitions(self):        return self._custom['partitions']
+    def partitions(self): return self._custom['partitions']
+
     @partitions.setter
     def partitions(self, value): self._custom['partitions'] = value
+
     @partitions.deleter
-    def partitions(self):        del self._custom['partitions']
+    def partitions(self): del self._custom['partitions']
 
     @property
-    def _ndim(self):        return self._custom['_ndim']
+    def _ndim(self): return self._custom['_ndim']
+
     @_ndim.setter
     def _ndim(self, value): self._custom['_ndim'] = value
+
     @_ndim.deleter
-    def _ndim(self):        del self._custom['_ndim']
+    def _ndim(self): del self._custom['_ndim']
+
     @property
-    def _size(self):        return self._custom['_size']
+    def _size(self): return self._custom['_size']
+
     @_size.setter
     def _size(self, value): self._custom['_size'] = value
+
     @_size.deleter
-    def _size(self):        del self._custom['_size']
+    def _size(self): del self._custom['_size']
 
     @property
-    def _shape(self):        return self._custom['_shape']
+    def _shape(self): return self._custom['_shape']
+
     @_shape.setter
     def _shape(self, value): self._custom['_shape'] = value
+
     @_shape.deleter
-    def _shape(self):        del self._custom['_shape']
+    def _shape(self): del self._custom['_shape']
 
     @property
-    def _axes(self):        return self._custom['_axes']
+    def _axes(self): return self._custom['_axes']
+
     @_axes.setter
     def _axes(self, value): self._custom['_axes'] = value
+
     @_axes.deleter
-    def _axes(self):        del self._custom['_axes']
+    def _axes(self): del self._custom['_axes']
 
     @property
-    def _all_axes(self):        return self._custom['_all_axes']
+    def _all_axes(self): return self._custom['_all_axes']
+
     @_all_axes.setter
     def _all_axes(self, value): self._custom['_all_axes'] = value
+
     @_all_axes.deleter
-    def _all_axes(self):        del self._custom['_all_axes']
+    def _all_axes(self): del self._custom['_all_axes']
 
     def _flip(self, *flip):
         '''
@@ -6614,7 +6666,6 @@ dimensions.
             self._custom['flip'] = flip[0]
         else:
             return self._custom['flip']
-
 
     # ----------------------------------------------------------------
     # Attributes
@@ -6638,13 +6689,15 @@ dimensions.
 
         '''
         return self._Units
+
     @Units.setter
     def Units(self, value):
         units = getattr(self, '_Units', _units_None)
         if units and not self._Units.equivalent(value, verbose=1):
             raise ValueError(
-                "Can't set units (currently {!r}) to non-equivalent units {!r}".format(
-                    units, value))
+                "Can't set units (currently {!r}) to non-equivalent "
+                "units {!r}".format(units, value)
+            )
 
         dtype = self.dtype
         if dtype is not None:
@@ -6658,12 +6711,12 @@ dimensions.
                     old_units = getattr(self, '_Units', None)
                     if old_units is not None and not old_units.equals(value):
                         self.dtype = float
-        #-- End: if
+        # --- End: if
 
         self._Units = value
-    @Units.deleter
-    def Units(self): del self._Units #= _units_None
 
+    @Units.deleter
+    def Units(self): del self._Units  # = _units_None
 
     @property
     def data(self):
@@ -6676,7 +6729,6 @@ dimensions.
 
         '''
         return self
-
 
     @property
     def dtype(self):
@@ -6743,13 +6795,14 @@ dimensions.
         # --- End: if
 
         return datatype
+
     @dtype.setter
     def dtype(self, value):
         self._dtype = numpy_dtype(value)
+
     @dtype.deleter
     def dtype(self):
         self._dtype = None
-
 
     @property
     def fill_value(self):
@@ -6775,8 +6828,9 @@ dimensions.
 
     @fill_value.setter
     def fill_value(self, value): self.set_fill_value(value)
+
     @fill_value.deleter
-    def fill_value(self)       : self.del_fill_value(None)
+    def fill_value(self): self.del_fill_value(None)
 
     @property
     def hardmask(self):
@@ -6798,13 +6852,17 @@ False
 
         '''
         return self._custom['hardmask']
+
     @hardmask.setter
     def hardmask(self, value):
         self._custom['hardmask'] = bool(value)
+
     @hardmask.deleter
     def hardmask(self):
         raise AttributeError(
-            "Can't delete {} attribute 'hardmask'".format(self.__class__.__name__))
+            "Can't delete {} attribute 'hardmask'".format(
+                self.__class__.__name__)
+        )
 
     @property
     def ismasked(self):
@@ -6847,7 +6905,6 @@ False
         # There are no masked elements
         return False
 
-
     @property
     def ispartitioned(self):
         '''True if the data array is partitioned.
@@ -6867,7 +6924,6 @@ False
         '''
         return self._pmsize > 1
 
-
     @property
     def isscalar(self):
         '''True if the data array is a 0-d scalar array.
@@ -6886,7 +6942,6 @@ False
 
         '''
         return not self._ndim
-
 
     @property
     def nbytes(self):
@@ -6911,7 +6966,6 @@ False
 
         '''
         return self._size * self.dtype.itemsize
-
 
     @property
     def ndim(self):
@@ -6943,14 +6997,12 @@ False
         '''
         return self._ndim
 
-
     @property
     def _pmaxes(self):
         '''TODO
 
         '''
         return self.partitions.axes
-
 
     @property
     def _pmndim(self):
@@ -6971,7 +7023,6 @@ False
         '''
         return self.partitions.ndim
 
-
     @property
     def _pmsize(self):
         '''Number of partitions in the partition matrix.
@@ -6991,7 +7042,6 @@ False
         '''
         return self.partitions.size
 
-
     @property
     def _pmshape(self):
         '''Tuple of the partition matrix's dimension sizes.
@@ -7008,7 +7058,6 @@ False
 
         '''
         return self.partitions.shape
-
 
     @property
     def shape(self):
@@ -7036,9 +7085,10 @@ False
         try:
             return self._shape
         except:
-            raise AttributeError("{!r} object has no attribute 'shape'".format(
-                self.__class__.__name__))
-
+            raise AttributeError(
+                "{!r} object has no attribute 'shape'".format(
+                    self.__class__.__name__)
+            )
 
     @property
     def size(self):
@@ -7068,7 +7118,6 @@ False
 
         '''
         return self._size
-
 
     @property
     def array(self):
@@ -7217,7 +7266,6 @@ False
 
         return array_out
 
-
     @property
     def datetime_array(self):
         '''An independent numpy array of date-time objects.
@@ -7236,12 +7284,15 @@ False
         '''
         if not self.Units.isreftime:
             raise ValueError(
-                "Can't create date-time array from units {!r}".format(self.Units))
+                "Can't create date-time array from units "
+                "{!r}".format(self.Units)
+            )
 
         if getattr(self.Units, 'calendar', None) == 'none':
             raise ValueError(
-                "Can't create date-time array from units {!r} because calendar is 'none'".format(
-                    self.Units))
+                "Can't create date-time array from units {!r} because "
+                "calendar is 'none'".format(self.Units)
+            )
 
         units, reftime = self.Units.units.split(' since ')
 
@@ -7251,18 +7302,21 @@ False
         # otherwise.
         if units in ('months', 'month'):
             d = self * _month_length
-            d.override_units(Units('days since '+reftime,
-                                   calendar=getattr(self.Units, 'calendar', None)),
-                             inplace=True)
+            d.override_units(
+                Units('days since ' + reftime, calendar=getattr(
+                    self.Units, 'calendar', None)),
+                inplace=True
+            )
         elif units in ('years', 'year', 'yr'):
             d = self * _year_length
-            d.override_units(Units('days since '+reftime,
-                                   calendar=getattr(self.Units, 'calendar', None)),
-                             inplace=True)
+            d.override_units(
+                Units('days since ' + reftime, calendar=getattr(
+                    self.Units, 'calendar', None)),
+                inplace=True
+            )
 
         d._dtarray = True
         return d.array
-
 
     @property
     def varray(self):
@@ -7291,11 +7345,11 @@ False
 
         if getattr(self, '_dtarray', False):
             del self._dtarray
-        elif self._isdatetime(): #self._isdt:
+        elif self._isdatetime():  # self._isdt:
             data_type = numpy_dtype(float)
             config['func'] = dt2rt
             # Turn off data-type checking and partition updating
-            config['dtype']  = None
+            config['dtype'] = None
 
         if self.partitions.size == 1:
             # If there is only one partition, then we can return a
@@ -7394,7 +7448,6 @@ False
 
         return array_out
 
-
     @property
     def mask(self):
         '''The boolean missing data mask of the data array.
@@ -7442,12 +7495,11 @@ False
             partition.close()
 
         mask._Units = _units_None
-        mask.dtype  = _dtype_bool
+        mask.dtype = _dtype_bool
 
         mask.hardmask = True
 
         return mask
-
 
     @staticmethod
     def mask_fpe(*arg):
@@ -7518,11 +7570,10 @@ False
 
         return old
 
-
     @staticmethod
     def seterr(all=None, divide=None, over=None, under=None, invalid=None):
-        '''Set how floating-point errors in the results of arithmetic operations
-    are handled.
+        '''Set how floating-point errors in the results of arithmetic
+    operations are handled.
 
     The options for handling floating-point errors are:
 
@@ -7658,40 +7709,45 @@ False
         old = _seterr.copy()
 
         if all:
-            _seterr.update({'divide' : all,
-                            'invalid': all,
-                            'under'  : all,
-                            'over'   : all})
+            _seterr.update({
+                'divide': all,
+                'invalid': all,
+                'under': all,
+                'over': all
+            })
             if all == 'raise':
-                _seterr_raise_to_ignore.update({'divide' : 'ignore',
-                                                'invalid': 'ignore',
-                                                'under'  : 'ignore',
-                                                'over'   : 'ignore'})
+                _seterr_raise_to_ignore.update({
+                    'divide': 'ignore',
+                    'invalid': 'ignore',
+                    'under': 'ignore',
+                    'over': 'ignore'
+                })
 
         else:
             if divide:
                 _seterr['divide'] = divide
                 if divide == 'raise':
-                     _seterr_raise_to_ignore['divide'] = 'ignore'
+                    _seterr_raise_to_ignore['divide'] = 'ignore'
 
             if over:
                 _seterr['over'] = over
                 if over == 'raise':
-                     _seterr_raise_to_ignore['over'] = 'ignore'
+                    _seterr_raise_to_ignore['over'] = 'ignore'
 
             if under:
                 _seterr['under'] = under
                 if under == 'raise':
-                     _seterr_raise_to_ignore['under'] = 'ignore'
+                    _seterr_raise_to_ignore['under'] = 'ignore'
 
             if invalid:
                 _seterr['invalid'] = invalid
                 if invalid == 'raise':
-                     _seterr_raise_to_ignore['invalid'] = 'ignore'
+                    _seterr_raise_to_ignore['invalid'] = 'ignore'
         # --- End: if
 
         return old
 
+    # `arctan2`, AT2 seealso
     @_inplace_enabled
     def arctan(self, inplace=False):
         '''Take the trigonometric inverse tangent of the data element-wise.
@@ -7700,7 +7756,7 @@ False
 
     .. versionadded:: 3.0.7
 
-    .. seealso:: `tan`
+    .. seealso:: `tan`, `arcsin`, `arccos`, `arctanh`
 
     :Parameters:
 
@@ -7731,6 +7787,108 @@ False
 
         return d
 
+# AT2
+#
+#    @classmethod
+#    def arctan2(cls, y, x):
+#        '''Take the "two-argument" trigonometric inverse tangent
+#    element-wise for `y`/`x`.
+#
+#    Explicitly this returns, for all corresponding elements, the angle
+#    between the positive `x` axis and the line to the point (`x`, `y`),
+#    where the signs of both `x` and `y` are taken into account to
+#    determine the quadrant. Such knowledge of the signs of `x` and `y`
+#    are lost when the quotient is input to the standard "one-argument"
+#    `arctan` function, such that use of `arctan` leaves the quadrant
+#    ambiguous. `arctan2` may therefore be preferred.
+#
+#    Units are ignored in the calculation. The result has units of radians.
+#
+#    .. versionadded:: 3.1.1
+#
+#    .. seealso:: `arctan`, `tan`
+#
+#    :Parameters:
+#
+#        y: `Data`
+#            The data array to provide the numerator elements, corresponding
+#            to the `y` coordinates in the `arctan2` definition.
+#
+#        x: `Data`
+#            The data array to provide the denominator elements,
+#            corresponding to the `x` coordinates in the `arctan2`
+#            definition.
+#
+#    :Returns:
+#
+#        `Data`
+#
+#    **Examples:**
+#
+#    TODO
+#
+#        '''
+#        return cls(numpy_arctan2(y, x), units=_units_radians)
+
+    @_inplace_enabled
+    def arctanh(self, inplace=False):
+        '''Take the inverse hyperbolic tangent of the data element-wise.
+
+    Units are ignored in the calculation. The result has units of radians.
+
+    .. versionadded:: 3.1.1
+
+    .. seealso::  `tanh`, `arcsinh`, `arccosh`, `arctan`
+
+    :Parameters:
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+
+    :Returns:
+
+        `Data` or `None`
+
+    **Examples:**
+
+    TODO
+
+        '''
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        d.func(numpy_arctanh, units=_units_radians, inplace=True)
+
+        return d
+
+    @_inplace_enabled
+    def arcsin(self, inplace=False):
+        '''Take the trigonometric inverse sine of the data element-wise.
+
+    Units are ignored in the calculation. The result has units of radians.
+
+    .. versionadded:: 3.1.1
+
+    .. seealso::  `sin`, `arccos`, `arctan`, `arcsinh`
+
+    :Parameters:
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+
+    :Returns:
+
+        `Data` or `None`
+
+    **Examples:**
+
+    TODO
+
+        '''
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        d.func(numpy_arcsin, units=_units_radians, inplace=True)
+
+        return d
 
     @_inplace_enabled
     def arcsinh(self, inplace=False):
@@ -7740,7 +7898,7 @@ False
 
     .. versionadded:: 3.1.0
 
-    .. seealso:: `sinh`
+    .. seealso:: `sinh`, `arccosh`, `arctanh`, `arcsin`
 
     :Parameters:
 
@@ -7771,6 +7929,65 @@ False
 
         return d
 
+    @_inplace_enabled
+    def arccos(self, inplace=False):
+        '''Take the trigonometric inverse cosine of the data element-wise.
+
+    Units are ignored in the calculation. The result has units of radians.
+
+    .. versionadded:: 3.1.1
+
+    .. seealso:: `cos`, `arcsin`, `arctan`, `arccosh`
+
+    :Parameters:
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+
+    :Returns:
+
+        `Data` or `None`
+
+    **Examples:**
+
+    TODO
+
+        '''
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        d.func(numpy_arccos, units=_units_radians, inplace=True)
+
+        return d
+
+    @_inplace_enabled
+    def arccosh(self, inplace=False):
+        '''Take the inverse hyperbolic cosine of the data element-wise.
+
+    Units are ignored in the calculation. The result has units of radians.
+
+    .. versionadded:: 3.1.1
+
+    .. seealso::  `cosh`, `arcsinh`, `arctanh`, `arccos`
+
+    :Parameters:
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+
+    :Returns:
+
+        `Data` or `None`
+
+    **Examples:**
+
+    TODO
+
+        '''
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        d.func(numpy_arccosh, units=_units_radians, inplace=True)
+
+        return d
 
     def add_partitions(self, extra_boundaries, pdim):
         '''Add partition boundaries.
@@ -7795,7 +8012,6 @@ False
         self.partitions.add_partitions(self._axes, self._flip(),
                                        extra_boundaries,
                                        pdim)
-
 
     def all(self):
         '''Test whether all data array elements evaluate to True.
@@ -7847,7 +8063,6 @@ False
             partition.close()
 
         return True
-
 
     def allclose(self, y, rtol=None, atol=None):
         '''Returns True if two broadcastable arrays have equal values, False
@@ -7903,7 +8118,6 @@ False
         '''
         return self.isclose(y, rtol=rtol, atol=atol).all()
 
-
     def any(self):
         '''Test whether any data array elements evaluate to True.
 
@@ -7947,7 +8161,6 @@ False
 
         return False
 
-
     # 0
     @classmethod
     def concatenate_data(cls, data_list, axis):
@@ -7979,7 +8192,6 @@ False
         else:
             assert len(data_list) == 1
             return data_list[0]
-
 
     @classmethod
     def reconstruct_sectioned_data(cls, sections):
@@ -8034,7 +8246,8 @@ False
                     if k[:i] == new_key:
                         data_list.append(sections[k])
                     else:
-                        new_sections[new_key] = cls.concatenate_data(data_list, axis=i)
+                        new_sections[new_key] = cls.concatenate_data(
+                            data_list, axis=i)
                         new_key = k[:i]
                         data_list = [sections[k]]
                 # --- End: for
@@ -8042,7 +8255,6 @@ False
                 new_sections[new_key] = cls.concatenate_data(data_list, i)
                 sections = new_sections
         # --- End: for
-
 
     def argmax(self, axis=None, unravel=False):
         '''Return the indices of the maximum values along an axis.
@@ -8090,11 +8302,12 @@ False
                 axis += ndim + 1
             elif not 0 <= axis <= ndim:
                 raise ValueError(
-                    "Can't argmax: Invalid axis specification: Expected -{0}<=axis<{0}, got axis={1}".format(
-                        ndim, axis))
+                    "Can't argmax: Invalid axis specification: Expected "
+                    "-{0}<=axis<{0}, got axis={1}".format(ndim, axis)
+                )
 
             if ndim == 1 and axis == 0:
-                axis=None
+                axis = None
         # --- End: if
 
         if axis is None:
@@ -8124,8 +8337,9 @@ False
             axis += ndim + 1
         elif not 0 <= axis <= ndim:
             raise ValueError(
-                "Can't argmax: Invalid axis specification: Expected -{0}<=axis<{0}, got axis={1}".format(
-                    ndim, axis))
+                "Can't argmax: Invalid axis specification: Expected "
+                "-{0}<=axis<{0}, got axis={1}".format(ndim, axis)
+            )
 
         sections = self.section(axis, chunks=True)
         for key, d in sections.items():
@@ -8140,7 +8354,6 @@ False
 
         return out
 
-
     def get_data(self, default=ValueError()):
         '''TODO
 
@@ -8148,7 +8361,6 @@ False
 
         '''
         return self
-
 
     def get_units(self, default=ValueError()):
         '''Return the units.
@@ -8183,7 +8395,6 @@ False
         except AttributeError:
             return super().get_units(default=default)
 
-
     def get_calendar(self, default=ValueError()):
         '''Return the calendar.
 
@@ -8217,7 +8428,6 @@ False
         except AttributeError:
             return super().get_calendar(default=default)
 
-
     def set_calendar(self, calendar):
         '''Set the calendar.
 
@@ -8246,41 +8456,39 @@ False
         '''
         self.Units = Units(self.get_units(default=None), calendar)
 
-
-#    def set_fill_value(self, value):
-#        '''Set the missing data value.
+#     def set_fill_value(self, value):
+#         '''Set the missing data value.
 #
-#.. seealso:: `del_fill_value`, `get_fill_vlaue`
+# .. seealso:: `del_fill_value`, `get_fill_vlaue`
 #
-#:Parameters:
+# :Parameters:
 #
-#    value: scalar
-#        The new fill value.
+#     value: scalar
+#         The new fill value.
 #
-#:Returns:
+# :Returns:
 #
-#    `None`
+#     `None`
 #
-#**Examples:**
+# **Examples:**
 #
-#>>> f.set_fill_value(-9999)
-#>>> f.get_fill_value()
-#-9999
-#>>> print(f.del_fill_value())
-#-9999
-#>>> f.get_fill_value()
-#ValueError: Can't get non-existent fill value
-#>>> f.get_fill_value(10**10)
-#10000000000
-#>>> print(f.get_fill_value(None))
-#None
-#>>> f.set_fill_value(None)
-#>>> print(f.get_fill_value())
-#None
+# >>> f.set_fill_value(-9999)
+# >>> f.get_fill_value()
+# -9999
+# >>> print(f.del_fill_value())
+# -9999
+# >>> f.get_fill_value()
+# ValueError: Can't get non-existent fill value
+# >>> f.get_fill_value(10**10)
+# 10000000000
+# >>> print(f.get_fill_value(None))
+# None
+# >>> f.set_fill_value(None)
+# >>> print(f.get_fill_value())
+# None
 #
-#        '''
-#        self._fill_value = value
-
+#         '''
+#         self._fill_value = value
 
     def set_units(self, value):
         '''Set the units.
@@ -8309,7 +8517,6 @@ False
 
         '''
         self.Units = Units(value, self.get_calendar(default=None))
-
 
     @_deprecated_kwarg_check('i')
     def maximum(self, axes=None, squeeze=False, mtol=1, inplace=False,
@@ -8345,7 +8552,6 @@ False
         return self._collapse(max_f, max_fpartial, max_ffinalise, axes=axes,
                               squeeze=squeeze, mtol=mtol, inplace=inplace,
                               _preserve_partitions=_preserve_partitions)
-
 
     def maximum_absolute_value(self, axes=None, squeeze=False, mtol=1,
                                inplace=False,
@@ -8392,7 +8598,6 @@ False
                               inplace=inplace,
                               _preserve_partitions=_preserve_partitions)
 
-
     @_deprecated_kwarg_check('i')
     def minimum(self, axes=None, squeeze=False, mtol=1, inplace=False,
                 i=False, _preserve_partitions=False):
@@ -8427,7 +8632,6 @@ False
         return self._collapse(min_f, min_fpartial, min_ffinalise, axes=axes,
                               squeeze=squeeze, mtol=mtol, inplace=inplace,
                               _preserve_partitions=_preserve_partitions)
-
 
     def minimum_absolute_value(self, axes=None, squeeze=False, mtol=1,
                                inplace=False,
@@ -8474,7 +8678,6 @@ False
                               inplace=inplace,
                               _preserve_partitions=_preserve_partitions)
 
-
     @_deprecated_kwarg_check('i')
     def mean(self, axes=None, squeeze=False, mtol=1, weights=None,
              inplace=False, i=False, _preserve_partitions=False):
@@ -8513,13 +8716,13 @@ False
 
             *Parameter example:*
               If ``weights={1: w, (2, 0): x}`` then ``w`` must contain
-              1-dimensionsal weights for axis 1 and ``x`` must contain
-              2-dimensionsal weights for axes 2 and 0. This is
+              1-dimensional weights for axis 1 and ``x`` must contain
+              2-dimensional weights for axes 2 and 0. This is
               equivalent, for example, to ``weights={(1, 2, 0), y}``,
               where ``y`` is the outer product of ``w`` and ``x``. If
               ``axes=[1, 2, 0]`` then ``weights={(1, 2, 0), y}`` is
               equivalent to ``weights=y``. If ``axes=None`` and the
-              array is 3-dimensionsal then ``weights={(1, 2, 0), y}``
+              array is 3-dimensional then ``weights={(1, 2, 0), y}``
               is equivalent to ``weights=y.transpose([2, 0, 1])``.
 
         mtol: number, optional
@@ -8640,7 +8843,6 @@ False
                               inplace=inplace,
                               _preserve_partitions=_preserve_partitions)
 
-
     def mean_absolute_value(self, axes=None, squeeze=False, mtol=1,
                             weights=None, inplace=False,
                             _preserve_partitions=False):
@@ -8684,7 +8886,6 @@ False
                               mtol=mtol, inplace=inplace,
                               _preserve_partitions=_preserve_partitions)
 
-
     def integral(self, axes=None, squeeze=False, mtol=1, weights=None,
                  inplace=False, _preserve_partitions=False):
         '''TODO
@@ -8720,13 +8921,13 @@ False
 
             *Parameter example:*
               If ``weights={1: w, (2, 0): x}`` then ``w`` must contain
-              1-dimensionsal weights for axis 1 and ``x`` must contain
-              2-dimensionsal weights for axes 2 and 0. This is
+              1-dimensional weights for axis 1 and ``x`` must contain
+              2-dimensional weights for axes 2 and 0. This is
               equivalent, for example, to ``weights={(1, 2, 0), y}``,
               where ``y`` is the outer product of ``w`` and ``x``. If
               ``axes=[1, 2, 0]`` then ``weights={(1, 2, 0), y}`` is
               equivalent to ``weights=y``. If ``axes=None`` and the
-              array is 3-dimensionsal then ``weights={(1, 2, 0), y}``
+              array is 3-dimensional then ``weights={(1, 2, 0), y}``
               is equivalent to ``weights=y.transpose([2, 0, 1])``.
 
         mtol: number, optional
@@ -8770,9 +8971,9 @@ False
                               inplace=inplace, units=units,
                               _preserve_partitions=_preserve_partitions)
 
-
-    def sample_size(self, axes=None, squeeze=False, mtol=1, inplace=False, i=False,
-                    _preserve_partitions=False):
+    def sample_size(
+            self, axes=None, squeeze=False, mtol=1, inplace=False, i=False,
+            _preserve_partitions=False):
         '''TODO
 
     :Parameters:
@@ -8789,7 +8990,6 @@ False
                               axes=axes, squeeze=squeeze, weights=None,
                               mtol=mtol, units=Units('1'), inplace=inplace,
                               _preserve_partitions=_preserve_partitions)
-
 
     @property
     def binary_mask(self):
@@ -8833,7 +9033,6 @@ False
                 # data is not masked
                 partition.subarray = numpy_array(array, 'int32')
 
-
             partition.Units = _units_1
 
             partition.close()
@@ -8843,7 +9042,6 @@ False
         binary_mask.dtype = 'int32'
 
         return binary_mask
-
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -8898,7 +9096,7 @@ False
             if self_units != units:
                 a_min = Units.conform(a_min, units, self_units)
                 a_max = Units.conform(a_max, units, self_units)
-         # --- End: if
+        # --- End: if
 
         config = d.partition_configuration(readonly=False)
 
@@ -8909,7 +9107,6 @@ False
             partition.close()
 
         return d
-
 
     @classmethod
     def asdata(cls, d, dtype=None, copy=False):
@@ -8972,7 +9169,6 @@ False
 
         return data
 
-
     def close(self):
         '''Close all files referenced by the data array.
 
@@ -8994,7 +9190,7 @@ False
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def cos(self, inplace=False, i=False):
-        '''Take the trigonometric cosine of the data array in place.
+        '''Take the trigonometric cosine of the data element-wise.
 
     Units are accounted for in the calculation. If the units are not
     equivalent to radians (such as Kelvin) then they are treated as if
@@ -9002,6 +9198,8 @@ False
     is 0.0, as is the cosine of 1.57079632 kg m-2.
 
     The output units are changed to '1' (nondimensional).
+
+    .. seealso:: `arccos`, `sin`, `tan`, `cosh`
 
     :Parameters:
 
@@ -9047,7 +9245,6 @@ False
 
         return d
 
-
     def _var(self, partition, config):
         partition.open(config)
         v = partition.array
@@ -9057,11 +9254,10 @@ False
         v = v ** 2
         v = v + 1
         v = v ** 0.5
-        v =  numpy_ma_var(v)
+        v = numpy_ma_var(v)
         print(' ', v)
         partition.close()
         return v
-
 
     def count(self):
         '''Count the non-masked elements of the data.
@@ -9143,7 +9339,6 @@ False
 
         return n
 
-
     def count_masked(self):
         '''Count the masked elements of the data.
 
@@ -9151,7 +9346,6 @@ False
 
         '''
         return self._size - self.count()
-
 
     def cyclic(self, axes=None, iscyclic=True):
         '''TODO
@@ -9171,14 +9365,14 @@ False
 
         '''
         cyclic_axes = self._cyclic
-        data_axes   = self._axes
+        data_axes = self._axes
 
         old = set([data_axes.index(axis) for axis in cyclic_axes])
 
         if axes is None:
             return old
 
-        axes = [data_axes[i] for i in self._parse_axes(axes)] #, 'cyclic')]
+        axes = [data_axes[i] for i in self._parse_axes(axes)]  # , 'cyclic')]
 
         if iscyclic:
             self._cyclic = cyclic_axes.union(axes)
@@ -9194,7 +9388,6 @@ False
         # --- End: if
 
         return old
-
 
     def _YMDhms(self, attr):
         '''TODO
@@ -9235,9 +9428,10 @@ False
 
         new = self.copy()
 
-        new._Units  = _units_None
+        new._Units = _units_None
 
-        config = new.partition_configuration(readonly=False, func=_func, dtype=None)
+        config = new.partition_configuration(
+            readonly=False, func=_func, dtype=None)
 
         for partition in new.partitions.matrix.flat:
             partition.open(config)
@@ -9248,7 +9442,6 @@ False
         new._dtype = new_dtype
 
         return new
-
 
     @property
     def year(self):
@@ -9270,7 +9463,6 @@ False
         '''
         return self._YMDhms('year')
 
-
     @property
     def month(self):
         '''The month of each data array element.
@@ -9290,7 +9482,6 @@ False
 
         '''
         return self._YMDhms('month')
-
 
     @property
     def day(self):
@@ -9312,7 +9503,6 @@ False
         '''
         return self._YMDhms('day')
 
-
     @property
     def hour(self):
         '''The hour of each data array element.
@@ -9332,7 +9522,6 @@ False
 
         '''
         return self._YMDhms('hour')
-
 
     @property
     def minute(self):
@@ -9354,7 +9543,6 @@ False
         '''
         return self._YMDhms('minute')
 
-
     @property
     def second(self):
         '''The second of each data array element.
@@ -9372,7 +9560,6 @@ False
 
         '''
         return self._YMDhms('second')
-
 
     @_inplace_enabled
     def uncompress(self, inplace=False):
@@ -9423,7 +9610,6 @@ False
 
         return d
 
-
     def unique(self):
         '''The unique elements of the array.
 
@@ -9465,7 +9651,6 @@ False
 
         return type(self)(u, units=self.Units)
 
-
     def dump(self, display=True, prefix=None):
         '''Return a string containing a full description of the instance.
 
@@ -9492,13 +9677,18 @@ False
         string = ['{0}.shape = {1}'.format(prefix, self._shape)]
 
         if self._size == 1:
-            string.append('{0}.first_datum = {1}'.format(prefix, self.datum(0)))
+            string.append(
+                '{0}.first_datum = {1}'.format(prefix, self.datum(0)))
         else:
-            string.append('{0}.first_datum = {1}'.format(prefix, self.datum(0)))
-            string.append('{0}.last_datum  = {1}'.format(prefix, self.datum(-1)))
+            string.append(
+                '{0}.first_datum = {1}'.format(prefix, self.datum(0)))
+            string.append(
+                '{0}.last_datum  = {1}'.format(prefix, self.datum(-1)))
 
         for attr in ('fill_value', 'Units'):
-            string.append('{0}.{1} = {2!r}'.format(prefix, attr, getattr(self, attr)))
+            string.append(
+                '{0}.{1} = {2!r}'.format(prefix, attr, getattr(self, attr))
+            )
         # --- End: for
 
         string = '\n'.join(string)
@@ -9507,7 +9697,6 @@ False
             print(string)
         else:
             return string
-
 
     def ndindex(self):
         '''Return an iterator over the N-dimensional indices of the data
@@ -9544,7 +9733,6 @@ False
 
         '''
         return itertools_product(*[range(0, r) for r in self._shape])
-
 
     @_deprecated_kwarg_check('traceback')
     def equals(self, other, rtol=None, atol=None,
@@ -9614,7 +9802,7 @@ False
         # Check that each instance has equal array values
         # ------------------------------------------------------------
         # Check that each instance has the same units
-        self_Units  = self.Units
+        self_Units = self.Units
         other_Units = other.Units
         if self_Units != other_Units:
             if verbose:
@@ -9634,8 +9822,11 @@ False
 
             if not _numpy_allclose(array0, array1, rtol=rtol, atol=atol):
                 if verbose:
-                    print("{0}: Different array values (atol={1}, rtol={2})".format(
-                        self.__class__.__name__, atol, rtol))
+                    print(
+                        "{0}: Different array values (atol={1}, "
+                        "rtol={2})".format(
+                            self.__class__.__name__, atol, rtol)
+                    )
 
                 return False
         # --- End: for
@@ -9644,7 +9835,6 @@ False
         # Still here? Then the two instances are equal.
         # ------------------------------------------------------------
         return True
-
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -9673,8 +9863,9 @@ False
         units = self.Units
         if units and not units.isdimensionless:
             raise ValueError(
-                "Can't take exponential of dimensional quantities: {!r}".format(
-                    units))
+                "Can't take exponential of dimensional "
+                "quantities: {!r}".format(units)
+            )
 
         if d.Units:
             d.Units = _units_1
@@ -9682,7 +9873,6 @@ False
         d.func(numpy_exp, inplace=True)
 
         return d
-
 
     @_inplace_enabled
     def insert_dimension(self, position=0, inplace=False):
@@ -9738,7 +9928,7 @@ False
         location = (0, 1)
         for partition in d.partitions.matrix.flat:
             partition.location = partition.location[:]
-            partition.shape    = partition.shape[:]
+            partition.shape = partition.shape[:]
 
             partition.location.insert(position, location)
             partition.shape.insert(position, 1)
@@ -9757,7 +9947,6 @@ False
         # --- End: if
 
         return d
-
 
     def files(self):
         '''Return the names of files containing parts of the data array.
@@ -9784,7 +9973,6 @@ False
         out.discard(None)
         return out
 
-
     @_inplace_enabled
     def filled(self, fill_value=None, inplace=False):
         '''TODO
@@ -9808,12 +9996,13 @@ False
 
         if fill_value is None:
             fill_value = d.get_fill_value(None)
-            if fill_value is None:
-                fill_value = default_netCDF_fillvals().get(d.dtype.str[1:], None)
+            if fill_value is None:  # still...
+                fill_value = default_netCDF_fillvals().get(
+                    d.dtype.str[1:], None)
                 if fill_value is None and d.dtype.kind in ('SU'):
                     fill_value = default_netCDF_fillvals().get('S1', None)
 
-                if fill_value is None:
+                if fill_value is None:  # should not be None by this stage
                     raise ValueError("TODO {}".format(d.dtype.str))
         # --- End: if
 
@@ -9825,7 +10014,6 @@ False
         d.hardmask = hardmask
 
         return d
-
 
     def flat(self, ignore_masked=True):
         '''Return a flat iterator over elements of the data array.
@@ -9874,7 +10062,6 @@ False
                 else:
                     yield cf_masked
 
-
     def flatten(self, axes=None, inplace=False):
         '''Flatten axes of the data
 
@@ -9898,7 +10085,7 @@ False
 
               * An internal axis identifier. Selects this axis.
 
-              * An integer. Selects the axis coresponding to the given
+              * An integer. Selects the axis corresponding to the given
                 position in the list of axes of the data array.
 
             No axes are flattened if *axes* is an empty sequence.
@@ -9971,8 +10158,9 @@ False
         if not ndim:
             if axes or axes == 0:
                 raise ValueError(
-                    "Can't flatten: Can't remove an axis from scalar {}".format(
-                        self.__class__.__name__))
+                    "Can't flatten: Can't remove an axis from "
+                    "scalar {}".format(self.__class__.__name__)
+                )
 
             if inplace:
                 d = None
@@ -10024,7 +10212,6 @@ False
 
         return out
 
-
     @_deprecated_kwarg_check('i')
     def floor(self, inplace=False, i=False):
         '''Return the floor of the data array.
@@ -10050,7 +10237,6 @@ False
 
         '''
         return self.func(numpy_floor, out=True, inplace=inplace)
-
 
     @_deprecated_kwarg_check('i')
     def outerproduct(self, e, inplace=False, i=False):
@@ -10125,7 +10311,6 @@ False
 
         return d
 
-
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def change_calendar(self, calendar, inplace=False, i=False):
@@ -10145,15 +10330,15 @@ False
 
         if not self.Units.isreftime:
             raise ValueError(
-                "Can't change calendar of non-reference time units: {!r}".format(
-                    self.Units))
+                "Can't change calendar of non-reference time "
+                "units: {!r}".format(self.Units)
+            )
 
         d._asdatetime(inplace=True)
         d.override_units(Units(self.Units.units, calendar), inplace=True)
         d._asreftime(inplace=True)
 
         return d
-
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -10219,7 +10404,6 @@ False
 
         return d
 
-
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def override_calendar(self, calendar, inplace=False, i=False):
@@ -10255,8 +10439,9 @@ False
 
         if not self.Units.isreftime:
             raise ValueError(
-                "Can't override the calender of non-reference-time units: {0!r}".format(
-                    self.Units))
+                "Can't override the calender of non-reference-time "
+                "units: {0!r}".format(self.Units)
+            )
 
         for partition in d.partitions.matrix.flat:
             partition.Units = Units(partition.Units._units, calendar)
@@ -10265,7 +10450,6 @@ False
         d._Units = Units(d.Units._units, calendar)
 
         return d
-
 
     def to_disk(self):
         '''Store the data array on disk.
@@ -10290,10 +10474,9 @@ False
                 partition.array
                 partition.close()
 
-
     def to_memory(self, regardless=False, parallelise=False):
-        '''Store each partition's data in memory in place if the master array is
-    smaller than the chunk size.
+        '''Store each partition's data in memory in place if the
+    master array is smaller than the chunk size.
 
     There is no change to partitions with data that are already in memory.
 
@@ -10331,12 +10514,12 @@ False
                 # Only move the partition to memory if it is flagged
                 # for processing
                 partition.open(config)
-                if partition.on_disk and partition.nbytes <= FREE_MEMORY() - fm_threshold:
+                if (partition.on_disk and
+                        partition.nbytes <= FREE_MEMORY() - fm_threshold):
                     partition.array
 
                 partition.close()
         # --- End: for
-
 
     @property
     def in_memory(self):
@@ -10356,7 +10539,6 @@ False
 
         return True
 
-
     def partition_boundaries(self):
         '''Return the partition boundaries for each partition matrix dimension.
 
@@ -10369,31 +10551,29 @@ False
         '''
         return self.partitions.partition_boundaries(self._axes)
 
-
     def partition_configuration(self, readonly, **kwargs):
         '''Return parameters for opening and closing array partitions.
 
     If dtype=None then data-type checking is disabled.
 
         '''
-        config = {'readonly'       : readonly,
-                  'axes'           : self._axes,
-#                  'flip'           : self._flip,
-                  'flip'           : self._flip(),
-                  'hardmask'       : self.hardmask,
-                  'auxiliary_mask' : self._auxiliary_mask,
-                  'units'          : self.Units,
-                  'dtype'          : self.dtype,
-                  'func'           : None,
-                  'update'         : True,
-                  'serial'         : True,
-              }
+        config = {
+            'readonly': readonly,
+            'axes': self._axes,
+            'flip': self._flip(),
+            'hardmask': self.hardmask,
+            'auxiliary_mask': self._auxiliary_mask,
+            'units': self.Units,
+            'dtype': self.dtype,
+            'func': None,
+            'update': True,
+            'serial': True,
+        }
 
         if kwargs:
             config.update(kwargs)
 
         return config
-
 
     def datum(self, *index):
         '''Return an element of the data array as a standard Python scalar.
@@ -10431,11 +10611,11 @@ False
               data array is a scalar array.
 
             * Two or more integers. These arguments are interpreted as a
-              multidimensionsal index to the array. There must be the
+              multidimensional index to the array. There must be the
               same number of integers as data array dimensions.
 
             * A tuple of integers. This argument is interpreted as a
-              multidimensionsal index to the array. There must be the
+              multidimensional index to the array. There must be the
               same number of integers as data array dimensions.
 
               *Parameter example:*
@@ -10520,8 +10700,9 @@ False
 
         else:
             raise ValueError(
-                "Can only convert a {} array of size 1 to a Python scalar".format(
-                    self.__class__.__name__))
+                "Can only convert a {} array of size 1 to a "
+                "Python scalar".format(self.__class__.__name__)
+            )
 
         if not numpy_ma_isMA(array):
             return array.item()
@@ -10531,7 +10712,6 @@ False
             return array.item()
 
         return cf_masked
-
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -10610,7 +10790,6 @@ False
 
         return d
 
-
     @classmethod
     def masked_all(cls, shape, dtype=None, units=None, chunk=True):
         '''Return a new data array of given shape and type with all elements
@@ -10646,7 +10825,6 @@ False
                             fill_value=cf_masked)
 
         return cls(array, units=units, chunk=chunk)
-
 
     @_deprecated_kwarg_check('i')
     def mid_range(self, axes=None, squeeze=False, mtol=1,
@@ -10685,7 +10863,6 @@ False
                               squeeze=squeeze, mtol=mtol,
                               inplace=inplace,
                               _preserve_partitions=_preserve_partitions)
-
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -10735,13 +10912,13 @@ False
         if axes is None:
             iaxes = list(range(d._ndim))
         else:
-            iaxes = d._parse_axes(axes) #, 'flip')
+            iaxes = d._parse_axes(axes)  # , 'flip')
 
 #        reverse    = d._flip[:]
-        reverse    = d._flip()[:]
-        data_axes  = d._axes
+        reverse = d._flip()[:]
+        data_axes = d._axes
         partitions = d.partitions
-        _pmaxes    = partitions.axes
+        _pmaxes = partitions.axes
 
         flip_partition_matrix = False
         if _pmaxes:
@@ -10782,7 +10959,6 @@ False
 
         return d
 
-
     def HDF_chunks(self, *chunks):
         '''
         '''
@@ -10817,7 +10993,6 @@ False
 
         return org_HDF_chunks
 
-
     def inspect(self):
         '''Inspect the object for debugging.
 
@@ -10828,8 +11003,7 @@ False
         `None`
 
         '''
-        print(cf_inspect(self)) # pragma: no cover
-
+        print(cf_inspect(self))  # pragma: no cover
 
     def isclose(self, y, rtol=None, atol=None):
         '''Return where data are element-wise equal to other, broadcastable
@@ -10907,7 +11081,6 @@ False
         except (TypeError, NotImplementedError, IndexError):
             return self == y
 
-
     @_deprecated_kwarg_check('i')
     def rint(self, inplace=False, i=False):
         '''Round the data to the nearest integer, element-wise.
@@ -10938,7 +11111,6 @@ False
 
         '''
         return self.func(numpy_rint, out=True, inplace=inplace)
-
 
     def root_mean_square(self, axes=None, squeeze=False, mtol=1,
                          weights=None, inplace=False,
@@ -10980,13 +11152,13 @@ False
 
             *Parameter example:*
               If ``weights={1: w, (2, 0): x}`` then ``w`` must contain
-              1-dimensionsal weights for axis 1 and ``x`` must contain
-              2-dimensionsal weights for axes 2 and 0. This is
+              1-dimensional weights for axis 1 and ``x`` must contain
+              2-dimensional weights for axes 2 and 0. This is
               equivalent, for example, to ``weights={(1, 2, 0), y}``,
               where ``y`` is the outer product of ``w`` and ``x``. If
               ``axes=[1, 2, 0]`` then ``weights={(1, 2, 0), y}`` is
               equivalent to ``weights=y``. If ``axes=None`` and the
-              array is 3-dimensionsal then ``weights={(1, 2, 0), y}``
+              array is 3-dimensional then ``weights={(1, 2, 0), y}``
               is equivalent to ``weights=y.transpose([2, 0, 1])``.
 
         mtol: number, optional
@@ -11014,7 +11186,6 @@ False
                               squeeze=squeeze, weights=weights,
                               mtol=mtol, inplace=inplace,
                               _preserve_partitions=_preserve_partitions)
-
 
     @_deprecated_kwarg_check('i')
     def round(self, decimals=0, inplace=False, i=False):
@@ -11210,17 +11381,20 @@ False
 
         '''
 
-        no_weights = ('minimum', 'maximum', 'range', 'mid_range',
-                      'minimum_absolute_value',
-                      'maximum_absolute_value', 'median', 'sum',
-                      'sum_of_squares')
+        no_weights = (
+            'minimum', 'maximum', 'range', 'mid_range',
+            'minimum_absolute_value', 'maximum_absolute_value',
+            'median', 'sum', 'sum_of_squares'
+        )
 
         out = {}
-        for stat in ('minimum', 'mean', 'median','maximum', 'range',
-                     'mid_range','standard_deviation',
-                     'root_mean_square', 'minimum_absolute_value',
-                     'maximum_absolute_value', 'mean_absolute_value',
-                     'mean_of_upper_decile', 'sum', 'sum_of_squares', 'variance'):
+        for stat in (
+                'minimum', 'mean', 'median', 'maximum', 'range',
+                'mid_range', 'standard_deviation', 'root_mean_square',
+                'minimum_absolute_value', 'maximum_absolute_value',
+                'mean_absolute_value', 'mean_of_upper_decile', 'sum',
+                'sum_of_squares', 'variance'
+        ):
             if all or locals()[stat]:
                 f = getattr(self, stat)
                 if stat in no_weights:
@@ -11235,7 +11409,6 @@ False
             out['sample_size'] = int(self.sample_size())
 
         return out
-
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -11295,47 +11468,47 @@ False
 
         return d
 
-
     def save_to_disk(self, itemsize=None):
         raise NotImplementedError(
-"cf.Data.save_to_disk is dead. Use not cf.Data.fits_in_memory instead.")
+            "cf.Data.save_to_disk is dead. Use not "
+            "cf.Data.fits_in_memory instead."
+        )
 #        '''
 #
-#Return True if the master array is large enough to be saved to disk.
+# Return True if the master array is large enough to be saved to disk.
 #
-#:Parameters:
+# :Parameters:
 #
-#    itemsize : int, optional
-#        The number of bytes per word of the master data array. By
-#        default it taken from the array's data-type.
+#     itemsize : int, optional
+#         The number of bytes per word of the master data array. By
+#         default it taken from the array's data-type.
 #
-#:Returns:
+# :Returns:
 #
-#    `bool`
+#     `bool`
 #
-#**Examples:**
+# **Examples:**
 #
-#>>> print(d.save_to_disk())
-#True
+# >>> print(d.save_to_disk())
+# True
 #
-#>>> print(d.save_to_disk(8))
-#False
+# >>> print(d.save_to_disk(8))
+# False
 #
-#'''
-#        if not itemsize:
-#            try:
-#                itemsize = self.dtype.itemsize
-#            except AttributeError:
-#                raise ValueError(
-#                    "save_to_disk: Must set itemsize if there is no dtype")
-#        # --- End: if
+# '''
+#         if not itemsize:
+#             try:
+#                 itemsize = self.dtype.itemsize
+#             except AttributeError:
+#                 raise ValueError(
+#                     "save_to_disk: Must set itemsize if there is no dtype")
+#         # --- End: if
 #
-#        # ------------------------------------------------------------
-#        # Note that self._size*(itemsize+1) is the array size in bytes
-#        # including space for a full boolean mask
-#        # ------------------------------------------------------------
-#        return self._size*(itemsize+1) > FREE_MEMORY() - FM_THRESHOLD()
-
+#         # ------------------------------------------------------------
+#         # Note that self._size*(itemsize+1) is the array size in bytes
+#         # including space for a full boolean mask
+#         # ------------------------------------------------------------
+#         return self._size*(itemsize+1) > FREE_MEMORY() - FM_THRESHOLD()
 
     def fits_in_memory(self, itemsize):
         '''Return True if the master array is small enough to be retained in
@@ -11362,7 +11535,6 @@ False
         # ------------------------------------------------------------
         return self._size*(itemsize+1) <= FREE_MEMORY() - FM_THRESHOLD()
 
-
     def fits_in_one_chunk_in_memory(self, itemsize):
         '''Return True if the master array is small enough to be retained in
     memory.
@@ -11386,8 +11558,8 @@ False
         # Note that self._size*(itemsize+1) is the array size in bytes
         # including space for a full boolean mask
         # ------------------------------------------------------------
-        return CHUNKSIZE() >= self._size*(itemsize+1) <= FREE_MEMORY() - FM_THRESHOLD()
-
+        return (CHUNKSIZE() >= self._size*(itemsize+1) <=
+                FREE_MEMORY() - FM_THRESHOLD())
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -11497,8 +11669,8 @@ False
 
         '''
         def _slice_to_partition(data, indices):
-            '''Return a numpy array for the part of the input data which spans the
-        given indices.
+            '''Return a numpy array for the part of the input data which
+        spans the given indices.
 
         :Parameters:
 
@@ -11518,8 +11690,8 @@ False
         # --- End: def
 
         def _is_broadcastable(data0, data1, do_not_broadcast, is_scalar):
-            '''Check that the data1 is broadcastable to data0 and return data1, as
-        a python scalar if possible.
+            '''Check that the data1 is broadcastable to data0 and
+        return data1, as a python scalar if possible.
 
         .. note:: The input lists are updated inplace.
 
@@ -11541,7 +11713,7 @@ False
             '''
             shape0 = data0._shape
             shape1 = data1._shape
-            size1  = data1._size
+            size1 = data1._size
 
             if shape1 == shape0:
                 do_not_broadcast.append(True)
@@ -11559,12 +11731,14 @@ False
                 for n, m in zip(shape1[::-1], shape0[::-1]):
                     if n != m and n != 1:
                         raise ValueError(
-                            "where: Can't broadcast data with shape {} to shape {}".format(
-                                shape1, shape0))
+                            "where: Can't broadcast data with shape {} to "
+                            "shape {}".format(shape1, shape0)
+                        )
             else:
                 raise ValueError(
-                    "where: Can't broadcast data with shape {} to shape {}".format(
-                        shape1, shape0))
+                    "where: Can't broadcast data with shape {} to "
+                    "shape {}".format(shape1, shape0)
+                )
 
             return data1
         # --- End: def
@@ -11572,8 +11746,8 @@ False
         d = _inplace_enabled_define_and_cleanup(self)
 
         if _debug:
-            print('    data.shape =', d.shape) # pragma: no cover
-            print('    condition =', repr(condition)) # pragma: no cover
+            print('    data.shape =', d.shape)  # pragma: no cover
+            print('    condition =', repr(condition))  # pragma: no cover
 
         if x is None and y is None:
             # The data is unchanged regardless of condition
@@ -11582,7 +11756,7 @@ False
             return d
 
         do_not_broadcast = []
-        is_scalar        = []
+        is_scalar = []
 
 #        # ------------------------------------------------------------
 #        # Make sure that the condition is a cf.Data object
@@ -11595,7 +11769,8 @@ False
         # Check that the input condition is broadcastable
         # ------------------------------------------------------------
         condition = Data.asdata(condition, copy=False)
-        condition = _is_broadcastable(d, condition, do_not_broadcast, is_scalar)
+        condition = _is_broadcastable(
+            d, condition, do_not_broadcast, is_scalar)
 
 #        if isinstance(condition, Query):
 #        condition = condition.evaluate(f).Data
@@ -11622,12 +11797,15 @@ False
                             value.Units = d.Units
                     elif value.Units:
                         raise ValueError(
-                            "where: Can't assign values with units {!r} to data with units {!r}".format(
-                                value.Units, d.Units))
+                            "where: Can't assign values with "
+                            "units {!r} to data with units {!r}".format(
+                                value.Units, d.Units)
+                        )
                 # --- End: if
 
                 # Check that the value is broadcastable
-                value = _is_broadcastable(d, value, do_not_broadcast, is_scalar)
+                value = _is_broadcastable(
+                    d, value, do_not_broadcast, is_scalar)
             # --- End: if
 
             xy.append(value)
@@ -11638,19 +11816,32 @@ False
         broadcast = not any(do_not_broadcast)
 
         if _debug:
-            print('    x =', repr(x)) # pragma: no cover
-            print('    y =', repr(y)) # pragma: no cover
-            print('    condition_is_scalar =', repr(condition_is_scalar)) # pragma: no cover
-            print('    x_is_scalar         =', repr(x_is_scalar)) # pragma: no cover
-            print('    y_is_scalar         =', repr(y_is_scalar)) # pragma: no cover
-            print('    broadcast           =', repr(broadcast)) # pragma: no cover
+            print(
+                '    x =', repr(x)
+            )  # pragma: no cover
+            print(
+                '    y =', repr(y)
+            )  # pragma: no cover
+            print(
+                '    condition_is_scalar =', repr(condition_is_scalar)
+            )  # pragma: no cover
+            print(
+                '    x_is_scalar         =', repr(x_is_scalar)
+            )  # pragma: no cover
+            print(
+                '    y_is_scalar         =', repr(y_is_scalar)
+            )  # pragma: no cover
+            print(
+                '    broadcast           =', repr(broadcast)
+            )  # pragma: no cover
 
-        #-------------------------------------------------------------
+        # -------------------------------------------------------------
         # Try some short cuts if the condition is a scalar
-        #-------------------------------------------------------------
+        # -------------------------------------------------------------
         if condition_is_scalar and not getattr(condition, 'isquery', False):
             if _debug:
-                print('    Condition is a scalar:', repr(condition), type(condition))
+                print('    Condition is a scalar:', repr(condition),
+                      type(condition))
             if condition:
                 if x is not None:
                     d[...] = x
@@ -11669,15 +11860,14 @@ False
 
         # Still here?
         hardmask = d.hardmask
-        config = d.partition_configuration(readonly=False) # or True?
+        config = d.partition_configuration(readonly=False)  # or True?
 
         for partition in d.partitions.matrix.flat:
             if _debug:
-                print('   Partition:') # pragma: no cover
+                print('   Partition:')  # pragma: no cover
 
             partition.open(config)
             array = partition.array
-
             # --------------------------------------------------------
             # Find the master array indices for this partition
             # --------------------------------------------------------
@@ -11688,6 +11878,21 @@ False
             # Find the condition for this partition
             # --------------------------------------------------------
             if getattr(condition, 'isquery', False):
+                if hasattr(condition._value, '_Units'):
+                    # Ensure query data has equal units before evaluation
+                    orig_condition_units = condition._value._Units
+                    p_units = partition.Units
+                    if orig_condition_units.equivalent(p_units):
+                        if not orig_condition_units.equals(p_units):
+                            # Convert equivalent units to equal units
+                            condition._value._Units = p_units
+                    else:
+                        raise ValueError(
+                            "where: Can't apply a query condition with "
+                            "units '{!s}' on data with non-equivalent "
+                            "units '{!s}'".format(
+                                orig_condition_units, p_units)
+                        )
                 c = condition.evaluate(array)
             elif condition_is_scalar:
                 c = condition
@@ -11736,7 +11941,8 @@ False
                 if x is cf_masked or y is cf_masked:
                     c = _broadcast(c, shape)
                 else:
-                    max_sizes = max((numpy_size(c), numpy_size(T), numpy_size(F)))
+                    max_sizes = max(
+                        (numpy_size(c), numpy_size(T), numpy_size(F)))
                     if numpy_size(c) == max_sizes:
                         c = _broadcast(c, shape)
                     elif numpy_size(T) == max_sizes:
@@ -11746,10 +11952,10 @@ False
             # --- End: if
 
             if _debug:
-                print('  array =', array) # pragma: no cover
-                print('      c =', c) # pragma: no cover
-                print('      T =', T) # pragma: no cover
-                print('      F =', F) # pragma: no cover
+                print('  array =', array)  # pragma: no cover
+                print('      c =', c)  # pragma: no cover
+                print('      T =', T)  # pragma: no cover
+                print('      F =', F)  # pragma: no cover
 
             # --------------------------------------------------------
             # Create a numpy array which takes vales from T where c
@@ -11798,7 +12004,7 @@ False
             # array
             # --------------------------------------------------------
             if _debug:
-                print('      new=', new) # pragma: no cover
+                print('      new=', new)  # pragma: no cover
 
             partition.subarray = new
 
@@ -11807,11 +12013,10 @@ False
 
         return d
 
-
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def sin(self, inplace=False, i=False):
-        '''Take the trigonometric sine of the data array in place.
+        '''Take the trigonometric sine of the data element-wise.
 
     Units are accounted for in the calculation. If the units are not
     equivalent to radians (such as Kelvin) then they are treated as if
@@ -11820,7 +12025,7 @@ False
 
     The output units are changed to '1' (nondimensional).
 
-    .. seealso:: `cos`, `tan`
+    .. seealso:: `arcsin`, `cos`, `tan`, `sinh`
 
     :Parameters:
 
@@ -11866,11 +12071,10 @@ False
 
         return d
 
-
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def sinh(self, inplace=False):
-        '''Take the hyperbolic sine of the data array in place.
+        '''Take the hyperbolic sine of the data element-wise.
 
     Units are accounted for in the calculation. If the units are not
     equivalent to radians (such as Kelvin) then they are treated as if
@@ -11882,7 +12086,7 @@ False
 
     .. versionadded:: 3.1.0
 
-    .. seealso:: `arcsinh`, `cosh`, `tanh`
+    .. seealso:: `arcsinh`, `cosh`, `tanh`, `sin`
 
     :Parameters:
 
@@ -11925,10 +12129,9 @@ False
 
         return d
 
-
     @_inplace_enabled
     def cosh(self, inplace=False):
-        '''Take the hyperbolic cosine of the data array in place.
+        '''Take the hyperbolic cosine of the data element-wise.
 
     Units are accounted for in the calculation. If the units are not
     equivalent to radians (such as Kelvin) then they are treated as if
@@ -11939,7 +12142,7 @@ False
 
     .. versionadded:: 3.1.0
 
-    .. seealso:: `sinh`, `tanh`
+    .. seealso:: `arccosh`, `sinh`, `tanh`, `cos`
 
     :Parameters:
 
@@ -11982,11 +12185,10 @@ False
 
         return d
 
-
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def tanh(self, inplace=False):
-        '''Take the hyperbolic tangent of the data array.
+        '''Take the hyperbolic tangent of the data element-wise.
 
     Units are accounted for in the calculation. If the units are not
     equivalent to radians (such as Kelvin) then they are treated as if
@@ -11998,7 +12200,7 @@ False
 
     .. versionadded:: 3.1.0
 
-    .. seealso:: `sinh`, `cosh`
+    .. seealso:: `arctanh`, `sinh`, `cosh`, `tan`
 
 
     :Parameters:
@@ -12042,7 +12244,6 @@ False
 
         return d
 
-
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def log(self, base=None, inplace=False, i=False):
@@ -12077,7 +12278,6 @@ False
 
         return d
 
-
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def squeeze(self, axes=None, inplace=False, i=False):
@@ -12094,7 +12294,7 @@ False
         axes: (sequence of) int, optional
             Select the axes.  By default all size 1 axes are
             removed. The *axes* argument may be one, or a sequence, of
-            integers that select the axis coresponding to the given
+            integers that select the axis corresponding to the given
             position in the list of axes of the data array.
 
             No axes are removed if *axes* is an empty sequence.
@@ -12143,8 +12343,9 @@ False
         if not ndim:
             if axes or axes == 0:
                 raise ValueError(
-                    "Can't squeeze: Can't remove an axis from scalar {}".format(
-                        d.__class__.__name__))
+                    "Can't squeeze: Can't remove an axis from "
+                    "scalar {}".format(d.__class__.__name__)
+                )
 
             if inplace:
                 d = None
@@ -12161,8 +12362,9 @@ False
             for i in axes:
                 if shape[i] > 1:
                     raise ValueError(
-                        "Can't squeeze {}: Can't remove axis of size {}".format(
-                            d.__class__.__name__, shape[i]))
+                        "Can't squeeze {}: Can't remove axis of "
+                        "size {}".format(d.__class__.__name__, shape[i])
+                    )
         # --- End: if
 
         if not axes:
@@ -12173,8 +12375,8 @@ False
         # Still here? Then the data array is not scalar and at least
         # one size 1 axis needs squeezing.
         data_axes = d._axes[:]
-#        flip      = d._flip[:]
-        flip      = d._flip()[:]
+#        flip = d._flip[:]
+        flip = d._flip()[:]
 
         if not d._all_axes:
             d._all_axes = tuple(data_axes)
@@ -12192,8 +12394,8 @@ False
 
         for partition in d.partitions.matrix.flat:
             p_location = partition.location[:]
-            p_shape    = partition.shape[:]
-            p_flip     = partition.flip[:]
+            p_shape = partition.shape[:]
+            p_flip = partition.flip[:]
 
             for i, axis in i_axis:
                 p_location.pop(i)
@@ -12203,10 +12405,10 @@ False
             # --- End: for
 
             partition.location = p_location
-            partition.shape    = p_shape
-            partition.flip     = p_flip
+            partition.shape = p_shape
+            partition.flip = p_flip
 
-        d._ndim  = len(shape)
+        d._ndim = len(shape)
         d._shape = tuple(shape)
 
         # Remove squeezed axes from list of cyclic axes
@@ -12228,11 +12430,11 @@ False
 
         return d
 
-
+    # `arctan2`, AT2 seealso
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def tan(self, inplace=False, i=False):
-        '''Take the trigonometric tangent of the data array element-wise.
+        '''Take the trigonometric tangent of the data element-wise.
 
     Units are accounted for in the calculation. If the units are not
     equivalent to radians (such as Kelvin) then they are treated as if
@@ -12242,7 +12444,7 @@ False
 
     The output units are changed to '1' (nondimensional).
 
-    .. seealso:: `cos`, `sin`
+    .. seealso:: `arctan`, `cos`, `sin`, `tanh`
 
     :Parameters:
 
@@ -12288,7 +12490,6 @@ False
 
         return d
 
-
     def tolist(self):
         '''Return the array as a (possibly nested) list.
 
@@ -12317,7 +12518,6 @@ False
 
         '''
         return self.array.tolist()
-
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -12370,7 +12570,7 @@ False
 
             iaxes = tuple(range(ndim-1, -1, -1))
         else:
-            iaxes = d._parse_axes(axes) #, 'transpose')
+            iaxes = d._parse_axes(axes)  # , 'transpose')
 
             # Return unchanged if axes are in the same order as the data
             if iaxes == tuple(range(ndim)):
@@ -12394,10 +12594,10 @@ False
         # Permute the locations map
         for partition in d.partitions.matrix.flat:
             location = partition.location
-            shape    = partition.shape
+            shape = partition.shape
 
             partition.location = [location[i] for i in iaxes]
-            partition.shape    = [shape[i]    for i in iaxes]
+            partition.shape = [shape[i] for i in iaxes]
 
         # Transpose the auxiliary mask
         if d._auxiliary_mask:
@@ -12405,7 +12605,6 @@ False
                 mask.transpose(iaxes, inplace=True)
 
         return d
-
 
     @_deprecated_kwarg_check('i')
     def trunc(self, inplace=False, i=False):
@@ -12440,7 +12639,6 @@ False
 
         '''
         return self.func(numpy_trunc, out=True, inplace=inplace)
-
 
     @classmethod
     def empty(cls, shape, dtype=None, units=None, calendar=None,
@@ -12477,7 +12675,6 @@ False
         '''
         return cls.full(shape, fill_value=None, dtype=dtype,
                         units=units, calendar=calendar, chunk=chunk)
-
 
     @classmethod
     def full(cls, shape, fill_value, dtype=None, units=None,
@@ -12522,7 +12719,6 @@ False
 
         return cls(array, units=units, calendar=calendar, chunk=chunk)
 
-
     @classmethod
     def ones(cls, shape, dtype=None, units=None, calendar=None,
              chunk=True):
@@ -12532,7 +12728,6 @@ False
         return cls.full(shape, 1, dtype=dtype, units=units,
                         calendar=calendar, chunk=chunk)
 
-
     @classmethod
     def zeros(cls, shape, dtype=None, units=None, calendar=None,
               chunk=True):
@@ -12541,7 +12736,6 @@ False
         '''
         return cls.full(shape, 0, dtype=dtype, units=units,
                         calendar=calendar, chunk=chunk)
-
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -12621,7 +12815,6 @@ False
 
         return d
 
-
     @_deprecated_kwarg_check('i')
     def range(self, axes=None, squeeze=False, mtol=1, inplace=False,
               _preserve_partitions=False, i=False):
@@ -12658,7 +12851,6 @@ False
                               mtol=mtol, inplace=inplace,
                               _preserve_partitions=_preserve_partitions)
 
-
     @_deprecated_kwarg_check('i')
     def roll(self, axis, shift, inplace=False, i=False):
         '''A lot like `numpy.roll`
@@ -12683,7 +12875,7 @@ False
 
             return self.copy()
 
-        iaxes = self._parse_axes(axis) #, 'roll')
+        iaxes = self._parse_axes(axis)  # , 'roll')
         if len(iaxes) != 1:
             raise ValueError("TODO 987345 9087345 ^^ roll ^")
 
@@ -12719,7 +12911,6 @@ False
             return
 
         return d
-
 
     @_deprecated_kwarg_check('i')
     def sum(self, axes=None, squeeze=False, mtol=1, weights=None,
@@ -12759,7 +12950,6 @@ False
                               weights=weights, mtol=mtol,
                               inplace=inplace,
                               _preserve_partitions=_preserve_partitions)
-
 
     def sum_of_squares(self, axes=None, squeeze=False, mtol=1,
                        weights=None, inplace=False,
@@ -12806,7 +12996,6 @@ False
                               squeeze=squeeze, weights=weights,
                               units=units, mtol=mtol, inplace=inplace,
                               _preserve_partitions=_preserve_partitions)
-
 
     @_deprecated_kwarg_check('i')
     def sum_of_weights(self, axes=None, squeeze=False, mtol=1,
@@ -12859,7 +13048,6 @@ False
                               inplace=inplace,
                               _preserve_partitions=_preserve_partitions)
 
-
     @_deprecated_kwarg_check('i')
     def sum_of_weights2(self, axes=None, squeeze=False, mtol=1,
                         weights=None, inplace=False, i=False,
@@ -12910,7 +13098,6 @@ False
                               weights=weights, mtol=mtol, units=units,
                               inplace=inplace,
                               _preserve_partitions=_preserve_partitions)
-
 
     @_deprecated_kwarg_check('i')
     def standard_deviation(self, axes=None, squeeze=False, mtol=1,
@@ -13066,7 +13253,6 @@ False
                               inplace=inplace,
                               _preserve_partitions=_preserve_partitions)
 
-
     @_deprecated_kwarg_check('i')
     def variance(self, axes=None, squeeze=False, weights=None, mtol=1,
                  ddof=0, inplace=False, i=False,
@@ -13111,7 +13297,6 @@ False
                               ddof=ddof, inplace=inplace,
                               _preserve_partitions=_preserve_partitions)
 
-
     def section(self, axes, stop=None, chunks=False, min_step=1,
                 mode='dictionary'):
         '''Return a dictionary of Data objects, which are the m dimensional
@@ -13147,7 +13332,7 @@ False
         min_step: `int`, optional
             The minimum step size when making chunks. By default this
             is 1. Can be set higher to avoid size 1 dimensions, which
-            are problematic for bilinear regridding.
+            are problematic for linear regridding.
 
     :Returns:
 
@@ -13165,7 +13350,6 @@ False
         return _section(self, axes, data=True, stop=stop, chunks=chunks,
                         min_step=min_step)
 
-
     # ----------------------------------------------------------------
     # Alias
     # ----------------------------------------------------------------
@@ -13176,38 +13360,36 @@ False
         '''
         return self.datetime_array
 
-
     def max(self, axes=None, squeeze=False, mtol=1, inplace=False, i=False,
             _preserve_partitions=False):
         '''Alias for `maximum`
 
         '''
-        return self.maximum(axes=axes, squeeze=squeeze, mtol=mtol,
-                            inplace=inplace, i=i,
-                            _preserve_partitions=_preserve_partitions)
-
+        return self.maximum(
+            axes=axes, squeeze=squeeze, mtol=mtol, inplace=inplace, i=i,
+            _preserve_partitions=_preserve_partitions
+        )
 
     def min(self, axes=None, squeeze=False, mtol=1, inplace=False, i=False,
             _preserve_partitions=False):
         '''Alias for `minimum`
 
         '''
-        return self.minimum(axes=axes, squeeze=squeeze, mtol=mtol,
-                            inplace=inplace, i=i,
-                            _preserve_partitions=_preserve_partitions)
-
+        return self.minimum(
+            axes=axes, squeeze=squeeze, mtol=mtol, inplace=inplace, i=i,
+            _preserve_partitions=_preserve_partitions
+        )
 
     def sd(self, axes=None, squeeze=False, mtol=1, weights=None,
            ddof=0, inplace=False, i=False, _preserve_partitions=False):
         '''Alias for `standard_deviation`
 
         '''
-        return self.standard_deviation(axes=axes, squeeze=squeeze,
-                                       weights=weights, mtol=mtol, ddof=ddof,
-                                       inplace=inplace,
-                                       _preserve_partitions=_preserve_partitions)
-
-
+        return self.standard_deviation(
+            axes=axes, squeeze=squeeze, weights=weights, mtol=mtol,
+            ddof=ddof, inplace=inplace,
+            _preserve_partitions=_preserve_partitions
+        )
 
     def var(self, axes=None, squeeze=False, weights=None, mtol=1,
             ddof=0, inplace=False, i=False,
@@ -13215,11 +13397,11 @@ False
         '''Alias of `variance`
 
         '''
-        return self.variance(axes=axes, squeeze=squeeze,
-                             weights=weights, mtol=mtol, ddof=ddof,
-                             inplace=inplace,
-                             _preserve_partitions=_preserve_partitions)
-
+        return self.variance(
+            axes=axes, squeeze=squeeze, weights=weights, mtol=mtol,
+            ddof=ddof, inplace=inplace,
+            _preserve_partitions=_preserve_partitions
+        )
 
     # ----------------------------------------------------------------
     # Deprecated attributes and methods
@@ -13231,9 +13413,9 @@ False
     Deprecated at version 3.0.0. Use attribute 'data' instead.
 
         '''
-        _DEPRECATION_ERROR_ATTRIBUTE(self, 'Data',
-                                     "Use attribute 'data' instead.") # pragma: no cover
-
+        _DEPRECATION_ERROR_ATTRIBUTE(
+            self, 'Data', "Use attribute 'data' instead."
+        )  # pragma: no cover
 
     @property
     def dtvarray(self):
@@ -13241,8 +13423,7 @@ False
 
         Deprecated at version 3.0.0.
         '''
-        _DEPRECATION_ERROR_ATTRIBUTE(self, 'dtvarray') # pragma: no cover
-
+        _DEPRECATION_ERROR_ATTRIBUTE(self, 'dtvarray')  # pragma: no cover
 
     @property
     def unsafe_array(self):
@@ -13253,8 +13434,8 @@ False
         '''
         _DEPRECATION_ERROR_ATTRIBUTE(
             self, 'unsafe_array',
-            "Use 'array' attribute instead.") # pragma: no cover
-
+            "Use 'array' attribute instead."
+        )  # pragma: no cover
 
     def expand_dims(self, position=0, i=False):
         '''Expand the shape of the data array in place.
@@ -13263,9 +13444,9 @@ False
     instead.
 
         '''
-        _DEPRECATION_ERROR_METHOD(self, 'expand_dims',
-                                  "Use method 'insert_dimension' instead.") # pragma: no cover
-
+        _DEPRECATION_ERROR_METHOD(
+            self, 'expand_dims', "Use method 'insert_dimension' instead."
+        )  # pragma: no cover
 
 # --- End: class
 
@@ -13359,7 +13540,7 @@ def _overlapping_partitions(partitions, indices, axes, master_flip):
         partition.new_part(p_indices, axis_to_position, master_flip)
         partition.shape = shape
 
-        new_partition_matrix      = numpy_empty(partitions.shape, dtype=object)
+        new_partition_matrix = numpy_empty(partitions.shape, dtype=object)
         new_partition_matrix[...] = partition
 
         return new_partition_matrix
@@ -13367,10 +13548,10 @@ def _overlapping_partitions(partitions, indices, axes, master_flip):
 
     # Still here? Then there are 2 or more partitions.
 
-    partitions_list        = []
+    partitions_list = []
     partitions_list_append = partitions_list.append
 
-    flat_pm_indices        = []
+    flat_pm_indices = []
     flat_pm_indices_append = flat_pm_indices.append
 
     partitions_flat = partitions.matrix.flat
@@ -13399,8 +13580,8 @@ def _overlapping_partitions(partitions, indices, axes, master_flip):
         i = partitions_flat.index
     # --- End: for
 
-    new_shape = [len(set(s))
-                 for s in numpy_unravel_index(flat_pm_indices, partitions.shape)]
+    new_shape = [len(set(s)) for s in
+                 numpy_unravel_index(flat_pm_indices, partitions.shape)]
 
     new_partition_matrix = numpy_empty((len(flat_pm_indices),), dtype=object)
     new_partition_matrix[...] = partitions_list
@@ -13416,6 +13597,8 @@ def _getattr(x, attr):
     if not x:
         return False
     return getattr(x, attr)
+
+
 _array_getattr = numpy_vectorize(_getattr)
 
 
@@ -13462,7 +13645,6 @@ class AuxiliaryMask:
         '''
         self._mask = []
 
-
     def __getitem__(self, indices):
         '''TODO
         '''
@@ -13475,7 +13657,6 @@ class AuxiliaryMask:
 
         return new
 
-
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
@@ -13486,14 +13667,12 @@ class AuxiliaryMask:
         '''
         return self._mask[0].ndim
 
-
     @property
     def dtype(self):
         '''TODO
 
         '''
         return self._mask[0].dtype
-
 
     # ----------------------------------------------------------------
     # Methods

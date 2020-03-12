@@ -263,10 +263,10 @@ class FieldTest(unittest.TestCase):
         x = f.weights(w)
         self.assertTrue(x.equals(w, verbose=True))
 
-        self.assertTrue(isinstance(f.weights(), cf.Field))
-        self.assertTrue(isinstance(f.weights(True), cf.Field))
-        self.assertTrue(isinstance(f.weights(data=True), cf.Data))
-        self.assertTrue(isinstance(f.weights(components=True), dict))
+        self.assertIsInstance(f.weights(), cf.Field)
+        self.assertIsInstance(f.weights(True), cf.Field)
+        self.assertIsInstance(f.weights(data=True), cf.Data)
+        self.assertIsInstance(f.weights(components=True), dict)
 
         for components in (False, True):
             for m in (False, True):

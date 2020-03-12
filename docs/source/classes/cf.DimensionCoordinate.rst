@@ -286,8 +286,13 @@ Mathematical operations
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.DimensionCoordinate.arccos
+   ~cf.DimensionCoordinate.arccosh
+   ~cf.DimensionCoordinate.arcsin
    ~cf.DimensionCoordinate.arcsinh
    ~cf.DimensionCoordinate.arctan
+   .. ~cf.DimensionCoordinate.arctan2  [AT2]
+   ~cf.DimensionCoordinate.arctanh
    ~cf.DimensionCoordinate.cos
    ~cf.DimensionCoordinate.cosh
    ~cf.DimensionCoordinate.sin

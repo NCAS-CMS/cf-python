@@ -256,14 +256,19 @@ Mathematical operations
    :toctree: ../method/
    :template: method.rst
 
-   ~cf.Bounds.arcsinh
-   ~cf.Bounds.arctan
-   ~cf.Bounds.cos
-   ~cf.Bounds.cosh
-   ~cf.Bounds.sin
-   ~cf.Bounds.sinh
-   ~cf.Bounds.tan
-   ~cf.Bounds.tanh
+   ~cf.List.arccos
+   ~cf.List.arccosh
+   ~cf.List.arcsin
+   ~cf.List.arcsinh
+   ~cf.List.arctan
+   .. ~cf.List.arctan2  [AT2]
+   ~cf.List.arctanh
+   ~cf.List.cos
+   ~cf.List.cosh
+   ~cf.List.sin
+   ~cf.List.sinh
+   ~cf.List.tan
+   ~cf.List.tanh
 
 .. rubric:: *Rounding and truncation*
 

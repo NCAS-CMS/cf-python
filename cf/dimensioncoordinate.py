@@ -66,7 +66,6 @@ class DimensionCoordinate(abstract.Coordinate,
         '''
         return super().__repr__().replace('<', '<CF ', 1)
 
-
     def _centre(self, period):
         '''It assumed, but not checked, that the period has been set.
 
@@ -79,7 +78,6 @@ class DimensionCoordinate(abstract.Coordinate,
             mx = self.data[0]
 
         return ((mx // period) * period).squeeze()
-
 
     def _infer_direction(self):
         '''Return True if a coordinate is increasing, otherwise return False.
@@ -128,12 +126,11 @@ class DimensionCoordinate(abstract.Coordinate,
         if data is not None:
             # Infer the direction from the dimension coordinate's
             # bounds
-            b  = data[(0,)*(data.ndim-1)].array
+            b = data[(0,)*(data.ndim-1)].array
             return bool(b.item(0,) < b.item(1,))
 
         # Still here? Then infer the direction from the units.
         return not self.Units.ispressure
-
 
     # ----------------------------------------------------------------
     # Attributes
@@ -142,29 +139,29 @@ class DimensionCoordinate(abstract.Coordinate,
 #    def cellsize(self):
 #        '''The cell sizes.
 #
-#:Returns:
+#    :Returns:
 #
-#    `Data`
-#        The size for each cell.
+#        `Data`
+#            The size for each cell.
 #
-#**Examples:**
+#    **Examples:**
 #
-#>>> print(c.bounds)
-#<CF Bounds: latitude(3, 2) degrees_north>
-#>>> print(c.bounds.array)
-#[[-90. -87.]
-# [-87. -80.]
-# [-80. -67.]]
-#>>> print(d.cellsize)
-#<CF Data(3): [3.0, 7.0, 13.0] degrees_north>
-#>>> print(d.cellsize.array)
-#[  3.   7.  13.]
-#>>> print(c.sin().cellsize.array)
-#[ 0.00137047  0.01382178  0.0643029 ]
+#    >>> print(c.bounds)
+#    <CF Bounds: latitude(3, 2) degrees_north>
+#    >>> print(c.bounds.array)
+#    [[-90. -87.]
+#     [-87. -80.]
+#     [-80. -67.]]
+#    >>> print(d.cellsize)
+#    <CF Data(3): [3.0, 7.0, 13.0] degrees_north>
+#    >>> print(d.cellsize.array)
+#    [  3.   7.  13.]
+#    >>> print(c.sin().cellsize.array)
+#    [ 0.00137047  0.01382178  0.0643029 ]
 #
-#>>> del(c.bounds)
-#>>> c.cellsize
-#AttributeError: Can't get cell sizes when coordinates have no bounds
+#    >>> del(c.bounds)
+#    >>> c.cellsize
+#    AttributeError: Can't get cell sizes when coordinates have no bounds
 #
 #        '''
 #        cells = self.get_bounds_data(None)
@@ -180,7 +177,6 @@ class DimensionCoordinate(abstract.Coordinate,
 #        cells.squeeze(1, inplace=True)
 #
 #        return cells
-
 
     @property
     def decreasing(self):
@@ -210,7 +206,6 @@ class DimensionCoordinate(abstract.Coordinate,
         '''
         return not self.direction()
 
-
     @property
     def increasing(self):
         '''`True` for dimension coordinate constructs, `False` otherwise.
@@ -239,7 +234,6 @@ class DimensionCoordinate(abstract.Coordinate,
         '''
         return self.direction()
 
-
     @property
     def isdimension(self):
         '''True, denoting that the variable is a dimension coordinate object.
@@ -255,28 +249,28 @@ class DimensionCoordinate(abstract.Coordinate,
         '''
         return True
 
-
 #    @property
 #    def lower_bounds(self):
 #        '''The lower dimension coordinate bounds in a `cf.Data` object.
 #
-#.. seealso:: `bounds`, `upper_bounds`
+#    .. seealso:: `bounds`, `upper_bounds`
 #
-#**Examples:**
+#    **Examples:**
 #
-#>>> print(c.bounds.array)
-#[[ 5  3]
-# [ 3  1]
-# [ 1 -1]]
-#>>> c.lower_bounds
-#<CF Data(3): [3, 1, -1]>
-#>>> print(c.lower_bounds.array)
-#[ 3  1 -1]
+#    >>> print(c.bounds.array)
+#    [[ 5  3]
+#     [ 3  1]
+#     [ 1 -1]]
+#    >>> c.lower_bounds
+#    <CF Data(3): [3, 1, -1]>
+#    >>> print(c.lower_bounds.array)
+#    [ 3  1 -1]
 #
 #        '''
 #        data = self.get_bounds_data(None)
 #        if data is None:
-#            raise ValueError("Can't get lower bounds when there are no bounds")
+#            raise ValueError(
+#                "Can't get lower bounds when there are no bounds")
 #
 #        if self.direction():
 #            i = 0
@@ -292,23 +286,24 @@ class DimensionCoordinate(abstract.Coordinate,
 #    def upper_bounds(self):
 #        '''The upper dimension coordinate bounds in a `cf.Data` object.
 #
-#.. seealso:: `bounds`, `lower_bounds`
+#    .. seealso:: `bounds`, `lower_bounds`
 #
-#**Examples:**
+#    **Examples:**
 #
-#>>> print(c.bounds.array)
-#[[ 5  3]
-# [ 3  1]
-# [ 1 -1]]
-#>>> c.upper_bounds
-#<CF Data(3): [5, 3, 1]>
-#>>> print(c.upper_bounds.array)
-#[5  3  1]
+#    >>> print(c.bounds.array)
+#    [[ 5  3]
+#     [ 3  1]
+#     [ 1 -1]]
+#    >>> c.upper_bounds
+#    <CF Data(3): [5, 3, 1]>
+#    >>> print(c.upper_bounds.array)
+#    [5  3  1]
 #
 #        '''
 #        data = self.get_bounds_data(None)
 #        if data is None:
-#            raise ValueError("Can't get upper bounds when there are no bounds")
+#            raise ValueError(
+#                "Can't get upper bounds when there are no bounds")
 #
 #        if self.direction():
 #            i = 1
@@ -316,7 +311,6 @@ class DimensionCoordinate(abstract.Coordinate,
 #            i = 0
 #
 #        return data[..., i].squeeze(1)
-
 
     def direction(self):
         '''Return True if the dimension coordinate values are increasing,
@@ -357,7 +351,6 @@ class DimensionCoordinate(abstract.Coordinate,
         self._custom['direction'] = _direction
 
         return _direction
-
 
     def create_bounds(self, bound=None, cellsize=None, flt=0.5,
                       max=None, min=None):
@@ -529,7 +522,9 @@ class DimensionCoordinate(abstract.Coordinate,
         if cellsize is not None:
             if bound:
                 raise ValueError(
-                    "bound parameter can't be True when setting the cellsize parameter")
+                    "bound parameter can't be True when setting the "
+                    "cellsize parameter"
+                )
 
             if not isinstance(cellsize, TimeDuration):
                 # ----------------------------------------------------
@@ -577,8 +572,10 @@ class DimensionCoordinate(abstract.Coordinate,
                 # ----------------------------------------------------
                 if not self.Units.isreftime:
                     raise ValueError(
-                        "Can't create reference time bounds for non-reference time coordinates: {0!r}".format(
-                            self.Units))
+                        "Can't create reference time bounds for "
+                        "non-reference time coordinates: {0!r}".format(
+                            self.Units)
+                    )
 
                 bounds = numpy_empty((size, 2), dtype=object)
 
@@ -643,8 +640,8 @@ class DimensionCoordinate(abstract.Coordinate,
             # --- End: if
 
             bounds = numpy_empty((size, 2), dtype=dtype)
-            bounds[:,0] = bounds_1d[:-1]
-            bounds[:,1] = bounds_1d[1:]
+            bounds[:, 0] = bounds_1d[:-1]
+            bounds[:, 1] = bounds_1d[1:]
         # --- End: if
 
         # Create coordinate bounds object
@@ -652,7 +649,6 @@ class DimensionCoordinate(abstract.Coordinate,
                         copy=False)
 
         return bounds
-
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -667,7 +663,6 @@ class DimensionCoordinate(abstract.Coordinate,
             d._custom['direction'] = not direction
 
         return d
-
 
     def get_bounds(self, default=ValueError(), **kwargs):
         '''Return the bounds.
@@ -711,10 +706,11 @@ class DimensionCoordinate(abstract.Coordinate,
         if kwargs:
             _DEPRECATION_ERROR_KWARGS(
                 self, 'get_bounds', kwargs,
-                "Bounds creation now uses the 'create_bounds' and 'set_bounds' methods.") # pragma: no cover
+                "Bounds creation now uses the 'create_bounds' and "
+                "'set_bounds' methods."
+            )  # pragma: no cover
 
         return super().get_bounds(default=default)
-
 
     def period(self, *value):
         '''Set the period for cyclic coordinates.
@@ -777,20 +773,22 @@ class DimensionCoordinate(abstract.Coordinate,
                     value.Units = self.Units
                 else:
                     raise ValueError(
-                        "Period units {!r} are not equivalent to coordinate units {!r}".format(
-                            units, self.Units))
+                        "Period units {!r} are not equivalent to coordinate "
+                        "units {!r}".format(units, self.Units)
+                    )
             # --- End: if
 
             value = abs(value)
             value.dtype = float
 
             array = self.array
-            r =  abs(array[-1] - array[0])
+            r = abs(array[-1] - array[0])
 
             if r >= value.datum(0):
                 raise ValueError(
-                    "The coordinate range of {!r} is not less than the period of {!r}".format(
-                        r, value))
+                    "The coordinate range of {!r} is not less than the "
+                    "period of {!r}".format(r, value)
+                )
         # --- End: if
 
         self._custom['period'] = value
@@ -824,20 +822,25 @@ class DimensionCoordinate(abstract.Coordinate,
 
         '''
         if not self.Units.islongitude:
-            if verbose: print(0)
-            if self.get_property('standard_name', None) not in ('longitude', 'grid_longitude'):
-                if verbose: print(1)
+            if verbose:
+                print(0)
+            if (self.get_property('standard_name', None) not in
+                    ('longitude', 'grid_longitude')):
+                if verbose:
+                    print(1)
                 return False
         # --- End: if
 
         bounds = self.get_bounds(None)
         if bounds is None:
-            if verbose: print(2)
+            if verbose:
+                print(2)
             return False
 
         bounds_data = bounds.get_data(None)
         if bounds_data is None:
-            if verbose: print(3)
+            if verbose:
+                print(3)
             return False
 
         bounds = bounds_data.array
@@ -847,13 +850,13 @@ class DimensionCoordinate(abstract.Coordinate,
         period.Units = bounds_data.Units
 
         if abs(bounds[-1, -1] - bounds[0, 0]) != period.array:
-            if verbose: print(4)
+            if verbose:
+                print(4)
             return False
 
         self.period(period)
 
         return True
-
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -887,7 +890,8 @@ class DimensionCoordinate(abstract.Coordinate,
         centre = self._centre(period)
 
         if axis not in [0, -1]:
-            raise ValueError("Can't roll axis {} when there is only one axis".format(axis))
+            raise ValueError(
+                "Can't roll axis {} when there is only one axis".format(axis))
 
         c = _inplace_enabled_define_and_cleanup(self)
         super(c.__class__, c).roll(axis, shift, inplace=True)
@@ -926,7 +930,6 @@ class DimensionCoordinate(abstract.Coordinate,
 
         return c
 
-
     # ----------------------------------------------------------------
     # Deprecated attributes and methods
     # ----------------------------------------------------------------
@@ -938,8 +941,8 @@ class DimensionCoordinate(abstract.Coordinate,
         '''
         _DEPRECATION_ERROR_ATTRIBUTE(
             self, 'role',
-            "Use attribute 'construct_type' instead") # pragma: no cover
+            "Use attribute 'construct_type' instead"
+        )  # pragma: no cover
 
 
 # --- End: class
-

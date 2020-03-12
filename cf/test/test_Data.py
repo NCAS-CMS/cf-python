@@ -73,29 +73,31 @@ class DataTest(unittest.TestCase):
         self.test_only = []
 #        self.test_only = ['NOTHING!!!!!']
 
-#        self.test_only = ['test_Data_AUXILIARY_MASK',
+#        self.test_only = [
+#                          'test_Data_trigonometric_hyperbolic']
+#                          'test_Data_AUXILIARY_MASK',
 #                          'test_Data_datum',
-##                          'test_Data_ERROR',
+##                         'test_Data_ERROR',
 #                          'test_Data_array',
 #                          'test_Data_varray',
 #                          'test_Data_stats',
 #                          'test_Data_datetime_array',
-##                          'test_Data_cumsum',
+##                         'test_Data_cumsum',
 #                          'test_Data_dumpd_loadd_dumps',
 #                          'test_Data_root_mean_square',
 #                          'test_Data_mean_mean_absolute_value',
 #                          'test_Data_squeeze_insert_dimension',
 #                          'test_Data_months_years',
 #                          'test_Data_binary_mask',
-##                          'test_Data_CachedArray',
+##                         'test_Data_CachedArray',
 #                          'test_Data_digitize',
-##                          'test_Data_outerproduct',
-##                          'test_Data_flatten',
-##                          'test_Data_transpose',
+##                         'test_Data_outerproduct',
+##                         'test_Data_flatten',
+##                         'test_Data_transpose',
 #                          'test_Data__collapse_SHAPE',
-##                          'test_Data_range_mid_range',
-##                          'test_Data_median',
-##                          'test_Data_mean_of_upper_decile',
+##                         'test_Data_range_mid_range',
+##                         'test_Data_median',
+##                         'test_Data_mean_of_upper_decile',
 #                          'test_Data__init__dtype_mask',
 #        ]
 
@@ -127,7 +129,7 @@ class DataTest(unittest.TestCase):
 
         d = cf.Data([[0, 1, 2], [3, -99, 5]], mask=[[0, 0, 0], [0, 1, 0]])
 
-        self.assertTrue(isinstance(d.stats(), dict))
+        self.assertIsInstance(d.stats(), dict)
         _ = d.stats(all=True)
         _ = d.stats(mean_of_upper_decile=True, range=False)
 
@@ -2449,10 +2451,23 @@ class DataTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        for method in ('sin', 'cos', 'tan', 'sinh', 'cosh', 'tanh',
-                       'arctan', 'arcsinh'):
+        # Construct all trig. and hyperbolic method names from the 3 roots:
+        trig_methods_root = ['sin', 'cos', 'tan']
+        trig_methods = trig_methods_root + [
+            'arc' + method for method in trig_methods_root]
+        trig_and_hyperbolic_methods = trig_methods + [
+            method + 'h' for method in trig_methods]
+        
+        for method in trig_and_hyperbolic_methods:
             for x in (1, -1):
                 a = 0.9 * x * self.ma
+                # Use more appropriate data for testing for inverse methods;
+                # apply some trig operation to convert it to valid range:
+                if method.startswith('arc'):
+                    if method == 'arccosh':  # has unusual domain (x >= 1)
+                        a = numpy.cosh(a.data)  # convert non-masked x to >= 1
+                    else:  # convert non-masked values x to range |x| < 1
+                        a = numpy.sin(a.data)
                 c = getattr(numpy.ma, method)(a)
                 for chunksize in self.chunk_sizes:
                     cf.CHUNKSIZE(chunksize)
@@ -2460,7 +2475,8 @@ class DataTest(unittest.TestCase):
                         d = cf.Data(a, units=units)
                         e = getattr(d, method)()
                         self.assertTrue(getattr(d, method)(inplace=True) is None)
-                        self.assertTrue(d.equals(e, verbose=True), "{}".format(method, ))
+                        self.assertTrue(
+                            d.equals(e, verbose=True), "{}".format(method))
                         self.assertTrue(d.shape == c.shape)
                         self.assertTrue(
                             (d.array == c).all(),
@@ -2471,6 +2487,45 @@ class DataTest(unittest.TestCase):
                              "{}, {}, {}".format(method, units, d.array-c)
                         )
         # --- End: for
+
+        # Uncomment below to reveal a bug!? When commented the test passes,
+        # but uncommented, changing the chunksize, it fails (adds masking):
+        ### cf.CHUNKSIZE(self.original_chunksize)
+
+        # Also test masking behaviour: under-the-hood masking of invalid data
+        # was once observed so we must check that invalid values emerge.
+        inverse_methods = [method for method in trig_and_hyperbolic_methods
+                           if method.startswith('arc')]
+        d = cf.Data([2, 1.5, 1, 0.5, 0], mask=[1, 0, 0, 0, 1])
+        for method in inverse_methods:
+            e = getattr(d, method)()
+            ### print(e.mask.array, d.mask.array)
+            self.assertTrue(
+                (e.mask.array == d.mask.array).all(),
+                "{}, {}, {}".format(method, units, e.array-d)
+            )
+
+        # AT2
+        #
+        ## Treat arctan2 separately (as is a class method & takes two inputs)
+        #for x in (1, -1):
+        #    a1 = 0.9 * x * self.ma
+        #    a2 = 0.5 * x * self.a
+        #    # Transform data for 'a' into range more appropriate for inverse:
+        #    a1 = numpy.sin(a1.data)
+        #    a2 = numpy.cos(a2.data)
+
+        #    c = numpy.ma.arctan2(a1, a2)
+        #    for chunksize in self.chunk_sizes:
+        #        cf.CHUNKSIZE(chunksize)
+        #        for units in (None, '', '1', 'radians', 'K'):
+        #            d1 = cf.Data(a1, units=units)
+        #            d2 = cf.Data(a2, units=units)
+        #            e = cf.Data.arctan2(d1, d2)
+        #            # Note: no inplace arg for arctan2 (operates on 2 arrays)
+        #            self.assertTrue(d1.shape == c.shape)
+        #            self.assertTrue((e.array == c).all())
+        #            self.assertTrue((d1.mask.array == c.mask).all())
 
         cf.CHUNKSIZE(self.original_chunksize)
 

@@ -1278,13 +1278,13 @@ print(c)
 import numpy
 lat = cf.DimensionCoordinate(data=cf.Data(numpy.arange(-90, 92.5, 2.5), 'degrees_north'))
 lon = cf.DimensionCoordinate(data=cf.Data(numpy.arange(0, 360, 5.0), 'degrees_east'))
-c = a.regrids({'latitude': lat, 'longitude': lon}, 'bilinear')
+c = a.regrids({'latitude': lat, 'longitude': lon}, 'linear')
 time = cf.DimensionCoordinate()
 time.standard_name='time'
 time.set_data(cf.Data(numpy.arange(0.5, 60, 1),
                        units='days since 1860-01-01', calendar='360_day'))
 time
-c = a.regridc({'T': time}, axes='T', method='bilinear')
+c = a.regridc({'T': time}, axes='T', method='linear')
 try:
     c = a.regridc({'T': time}, axes='T', method='conservative')
 except:
@@ -1304,7 +1304,7 @@ print(z_ln_p.array)
 _ = v.replace_construct('Z', z_ln_p)
 new_z_p = cf.DimensionCoordinate(data=cf.Data([800, 705, 632, 510, 320.], 'hPa'))
 new_z_ln_p = new_z_p.log()
-new_v = v.regridc({'Z': new_z_ln_p}, axes='Z', method='bilinear')
+new_v = v.regridc({'Z': new_z_ln_p}, axes='Z', method='linear')
 new_v.replace_construct('Z', new_z_p)
 print(new_v)
 

@@ -59,9 +59,11 @@ class UMArray(abstract.FileArray):
     ...                 dtype=numpy.dtype('float32'), shape=(30, 24),
     ...                 size=720, ndim=2, disk_length=0)
 
-    >>> a = UMFileArray(file='packed_file.pp', header_offset=3156, data_offset=3420,
-    ...                 dtype=numpy.dtype('float32'), shape=(30, 24),
-    ...                 size=720, ndim=2, disk_length=423)
+    >>> a = UMFileArray(
+    ...         file='packed_file.pp', header_offset=3156, data_offset=3420,
+    ...         dtype=numpy.dtype('float32'), shape=(30, 24),
+    ...         size=720, ndim=2, disk_length=423
+    ...     )
 
     '''
         super().__init__(filename=filename, dtype=dtype, ndim=ndim,
@@ -75,7 +77,6 @@ class UMArray(abstract.FileArray):
         # By default, do not close the UM file after data array access
         self._close = False
 
-
     def __getitem__(self, indices):
         '''Implement indexing
 
@@ -86,12 +87,10 @@ class UMArray(abstract.FileArray):
         '''
         f = self.open()
 
-        rec = Rec.from_file_and_offsets(f,
-                                        self.header_offset,
-                                        self.data_offset,
-                                        self.disk_length)
+        rec = Rec.from_file_and_offsets(
+            f, self.header_offset, self.data_offset, self.disk_length)
 
-        int_hdr  = rec.int_hdr
+        int_hdr = rec.int_hdr
         real_hdr = rec.real_hdr
 
         array = rec.get_data().reshape(int_hdr.item(17,), int_hdr.item(18,))
@@ -147,13 +146,11 @@ class UMArray(abstract.FileArray):
         # Return the numpy array
         return array
 
-
     def __str__(self):
         '''x.__str__() <==> str(x)
 
         '''
         return "%s%s in %s" % (self.header_offset, self.shape, self.filename)
-
 
     @property
     def file_pointer(self):
@@ -162,14 +159,12 @@ class UMArray(abstract.FileArray):
         '''
         return (self.filename, self.header_offset)
 
-
     @property
     def header_offset(self):
         '''TODO
 
         '''
         return self._get_component('header_offset')
-
 
     @property
     def data_offset(self):
@@ -178,15 +173,12 @@ class UMArray(abstract.FileArray):
         '''
         return self._get_component('data_offset')
 
-
     @property
     def disk_length(self):
         '''TODO
 
         '''
         return self._get_component('disk_length')
-
-
 
     @property
     def fmt(self):
@@ -195,7 +187,6 @@ class UMArray(abstract.FileArray):
         '''
         return self._get_component('fmt')
 
-
     @property
     def byte_ordering(self):
         '''TODO
@@ -203,14 +194,12 @@ class UMArray(abstract.FileArray):
         '''
         return self._get_component('byte_ordering')
 
-
     @property
     def word_size(self):
         '''TODO
 
         '''
         return self._get_component('word_size')
-
 
     def close(self):
         '''Close the file containing the data array.
@@ -227,7 +216,6 @@ class UMArray(abstract.FileArray):
 
         '''
         _close_um_file(self.filename)
-
 
     def open(self):
         '''Open the file containing the data array.

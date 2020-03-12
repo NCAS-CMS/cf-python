@@ -56,7 +56,6 @@ class NetCDFArray(cfdm.NetCDFArray,
         # access
         self._set_component('close', False, copy=False)
 
-
     @property
     def file_pointer(self):
         '''TODO
@@ -67,7 +66,6 @@ class NetCDFArray(cfdm.NetCDFArray,
             offset = self.varid
 
         return (self.get_filename(), offset)
-
 
     def close(self):
         '''Close the file containing the data array.
@@ -84,7 +82,6 @@ class NetCDFArray(cfdm.NetCDFArray,
 
         '''
         _close_netcdf_file(self.get_filename())
-
 
     def open(self):
         '''Return a `netCDF4.Dataset` object for the file containing the data
@@ -105,4 +102,4 @@ class NetCDFArray(cfdm.NetCDFArray,
 
 # --- End: class
 
-#abstract.Array.register(NetCDFArray)
+# abstract.Array.register(NetCDFArray)

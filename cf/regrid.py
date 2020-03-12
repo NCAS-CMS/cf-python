@@ -49,7 +49,7 @@ class Regrid:
             'conservative' first-order conservative regridding is
             used. If it is set to 'conservative_2nd' second order
             conservative regridding is used. If it is set to
-            'bilinear' then (multi)linear interpolation is used.  If
+            'linear' then (multi)linear interpolation is used.  If
             it is set to 'patch' then higher-order patch recovery is
             used.  If it is set to 'nearest_stod' then nearest source
             to destination interpolation is used. If it is set to
@@ -62,7 +62,8 @@ class Regrid:
         '''
         # create a handle to the regridding method
         regrid_method_map = {
-            'bilinear': ESMF.RegridMethod.BILINEAR,
+            'linear': ESMF.RegridMethod.BILINEAR,  # see comment below...
+            'bilinear': ESMF.RegridMethod.BILINEAR,  # (for back compat)
             'conservative': ESMF.RegridMethod.CONSERVE,
             'conservative_1st': ESMF.RegridMethod.CONSERVE,
             'conservative_2nd': ESMF.RegridMethod.CONSERVE_2ND,
@@ -70,6 +71,9 @@ class Regrid:
             'nearest_stod': ESMF.RegridMethod.NEAREST_STOD,
             'patch': ESMF.RegridMethod.PATCH,
         }
+        # ... diverge from ESMF with respect to name for bilinear method by
+        # using 'linear' because 'bi' implies 2D linear interpolation, which
+        # could mislead or confuse for Cartesian regridding in 1D or 3D.
         regrid_method = regrid_method_map.get(
             method, ValueError('Regrid method not recognised.'))
         # Initialise the regridder. This also creates the

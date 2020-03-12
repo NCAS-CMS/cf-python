@@ -71,11 +71,11 @@ class RegridTest(unittest.TestCase):
             f4 = cf.read(self.filename4)[0]
             f5 = cf.read(self.filename5)[0]
 
-            r = f1.regrids(f5, 'bilinear')
+            r = f1.regrids(f5, 'linear')
             self.assertTrue(f4.equals(r, verbose=True),
                             'destination = regional Field, CHUNKSIZE = %s' % chunksize)
 
-            r = f1.regrids(f5, method='bilinear')
+            r = f1.regrids(f5, method='linear')
             self.assertTrue(f4.equals(r, verbose=True),
                             'destination = regional Field, CHUNKSIZE = %s' % chunksize)
         # --- End: for
@@ -83,7 +83,7 @@ class RegridTest(unittest.TestCase):
 
         f6 = cf.read(self.filename6)[0]
         with self.assertRaises(Exception):
-            f1.regridc(f6, axes='T', method='bilinear')
+            f1.regridc(f6, axes='T', method='linear')
 
         cf.ATOL(original_atol)
 
@@ -100,7 +100,7 @@ class RegridTest(unittest.TestCase):
             f1 = cf.read(self.filename7)[0]
             f2 = cf.read(self.filename8)[0]
             f3 = cf.read(self.filename9)[0]
-            self.assertTrue(f3.equals(f1.regridc(f2, axes='T', method='bilinear'), verbose=True),
+            self.assertTrue(f3.equals(f1.regridc(f2, axes='T', method='linear'), verbose=True),
                             'destination = time series, CHUNKSIZE = %s' % chunksize)
             f4 = cf.read(self.filename1)[0]
             f5 = cf.read(self.filename2)[0]

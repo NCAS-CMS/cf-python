@@ -7,7 +7,7 @@ from numpy import empty       as numpy_empty
 from numpy import expand_dims as numpy_expand_dims
 from numpy import squeeze     as numpy_squeeze
 
-from copy      import deepcopy
+from copy import deepcopy
 
 from operator import mul
 
@@ -21,6 +21,7 @@ from ..decorators import (_inplace_enabled,
 
 
 _empty_matrix = numpy_empty((), dtype=object)
+
 
 class PartitionMatrix:
     '''
@@ -66,26 +67,26 @@ Attribute   Description
     **Examples:**
 
     >>> pm = PartitionMatrix(
-    ...          numpy.array(Partition(location    = [(0, 1), (2, 4)],
-    ...                                shape       = [1, 2],
-    ...                                _dimensions = ['dim2', 'dim0'],
-    ...                                Units       = cf.Units('m'),
-    ...                                part        = [],
-    ...                                data        = numpy.array([[5, 6], [7, 8]])),
-    ...                      dtype=object),
-    ...          axes=[])
+    ...          numpy.array(Partition(
+    ...              location = [(0, 1), (2, 4)],
+    ...              shape = [1, 2],
+    ...              _dimensions = ['dim2', 'dim0'],
+    ...              Units = cf.Units('m'),
+    ...              part = [],
+    ...              data = numpy.array([[5, 6], [7, 8]])
+    ...          ), dtype=object),
+    ...          axes=[]
+    ...      )
 
         '''
         self.matrix = matrix
-        self.axes   = axes
-
+        self.axes = axes
 
     def __deepcopy__(self, memo):
         '''Used if copy.deepcopy is called on the variable.
 
         '''
         return self.copy()
-
 
     def __getitem__(self, indices):
         '''x.__getitem__(indices) <==> x[indices]
@@ -130,13 +131,11 @@ Attribute   Description
 
         return type(self)(numpy_squeeze(out), axes)
 
-
     def __repr__(self):
         '''x.__repr__() <==> repr(x)
 
         '''
         return '<CF %s: %s>' % (self.__class__.__name__, self.shape)
-
 
     def __setitem__(self, indices, value):
         '''x.__setitem__(indices, y) <==> x[indices]=y
@@ -167,7 +166,6 @@ Attribute   Description
         '''
         self.matrix[indices] = value
 
-
     def __str__(self):
         '''x.__str__() <==> str(x)
 
@@ -178,7 +176,6 @@ Attribute   Description
             out.append(str(partition))
 
         return '\n'.join(out)
-
 
     def change_axis_names(self, axis_map):
         '''Change the axis names.
@@ -205,7 +202,6 @@ Attribute   Description
         # axis_name_map.
         for partition in self.matrix.flat:
             partition.change_axis_names(axis_map)
-
 
     # ----------------------------------------------------------------
     # Attributes
@@ -238,7 +234,6 @@ Attribute   Description
         '''
         return self.matrix.flat
 
-
     @property
     def ndim(self):
         '''The number of partition dimensions in the partition matrix.
@@ -260,7 +255,6 @@ Attribute   Description
 
         '''
         return self.matrix.ndim
-
 
     @property
     def shape(self):
@@ -286,7 +280,6 @@ Attribute   Description
         '''
         return self.matrix.shape
 
-
     @property
     def size(self):
         '''The number of partitions in the partition matrix.
@@ -308,7 +301,6 @@ Attribute   Description
 
         '''
         return self.matrix.size
-
 
     def add_partitions(self, adimensions, master_flip, extra_boundaries, axis):
         '''Add partition boundaries.
@@ -352,10 +344,10 @@ Attribute   Description
             '''
             for partition in matrix.flat:
                 partition.location = partition.location[:]
-                partition.shape    = partition.shape[:]
+                partition.shape = partition.shape[:]
 
                 partition.location[master_index] = location
-                partition.shape[master_index]    = shape
+                partition.shape[master_index] = shape
 
                 partition.new_part(part,
                                    master_axis_to_position,
@@ -364,14 +356,13 @@ Attribute   Description
 
             return matrix
 
-
         # If no extra boundaries have been provided, just return
         # without doing anything
         if not extra_boundaries:
             return
 
         master_index = adimensions.index(axis)
-        index        = self.axes.index(axis)
+        index = self.axes.index(axis)
 
         # Find the position of the extra-boundaries dimension in the
         # list of master array dimensions
@@ -391,10 +382,10 @@ Attribute   Description
         new_shape[index] += len(extra_boundaries)
         new_matrix = numpy_empty(new_shape, dtype=object)
 
-        part        = [slice(None)] * len(adimensions)
-        indices     = [slice(None)] * matrix.ndim
+        part = [slice(None)] * len(adimensions)
+        indices = [slice(None)] * matrix.ndim
         new_indices = indices[:]
-        new_indices[index] = slice(0, 1) #0
+        new_indices[index] = slice(0, 1)  # 0
 
         # Find the first extra boundary
         x = extra_boundaries.pop(0)
@@ -412,7 +403,8 @@ Attribute   Description
                 # straight into the new matrix
                 new_matrix[tuple(new_indices)] = sub_matrix
 #                new_indices[index] += 1
-                new_indices[index] = slice(new_indices[index].start+1, new_indices[index].stop+1)
+                new_indices[index] = slice(
+                    new_indices[index].start+1, new_indices[index].stop+1)
                 continue
 
             # --------------------------------------------------------
@@ -422,18 +414,17 @@ Attribute   Description
 
             # Find the new extent of the original partition(s)
             location = (r0, x)
-            shape    = x - r0
-            part[master_index]  = slice(0, shape)
+            shape = x - r0
+            part[master_index] = slice(0, shape)
 
             # Create new partition(s) in place of the original ones(s)
             # and set the location, shape and part attributes
-            new_matrix[tuple(new_indices)] = _update_p(deepcopy(sub_matrix),
-                                                       location, master_index,
-                                                       part,
-                                                       master_axis_to_position,
-                                                       master_flip)
+            new_matrix[tuple(new_indices)] = _update_p(
+                deepcopy(sub_matrix), location, master_index, part,
+                master_axis_to_position, master_flip)
 #            new_indices[index] += 1
-            new_indices[index] = slice(new_indices[index].start+1, new_indices[index].stop+1)
+            new_indices[index] = slice(
+                new_indices[index].start+1, new_indices[index].stop+1)
 
             while x < r1:
                 # Find the extent of the new partition(s)
@@ -450,29 +441,29 @@ Attribute   Description
                     location1 = min(extra_boundaries[0], r1)
 
                 location = (x, location1)
-                shape    = location1 - x
-                offset   = x - r0
+                shape = location1 - x
+                offset = x - r0
                 part[master_index] = slice(offset, offset + shape)
 
                 # Create the new partition(s) and set the
                 # location, shape and part attributes
-                new_matrix[tuple(new_indices)] = _update_p(deepcopy(sub_matrix),
-                                                           location, master_index,
-                                                           part,
-                                                           master_axis_to_position,
-                                                           master_flip)
+                new_matrix[tuple(new_indices)] = _update_p(
+                    deepcopy(sub_matrix), location, master_index, part,
+                    master_axis_to_position, master_flip
+                )
 
-                new_indices[index] = slice(new_indices[index].start+1, new_indices[index].stop+1)
+                new_indices[index] = slice(
+                    new_indices[index].start+1, new_indices[index].stop+1)
 #                new_indices[index] += 1
 
                 if not extra_boundaries:
                     # There are no more extra boundaries, so we can
-                    # return now
-#                    new_indices[index] = slice(new_indices[index],
-#                                               None)
+                    # return now.
+                    #  new_indices[index] = slice(new_indices[index],
+                    #  None)
                     new_indices[index] = slice(new_indices[index].start,
                                                None)
-                    indices[index]     = slice(i+1, None)
+                    indices[index] = slice(i+1, None)
 
                     new_matrix[tuple(new_indices)] = matrix[tuple(indices)]
                     self.matrix = new_matrix
@@ -485,7 +476,6 @@ Attribute   Description
         # --- End: for
 
         self.matrix = new_matrix
-
 
     def copy(self):
         '''Return a deep copy.
@@ -510,15 +500,14 @@ Attribute   Description
         matrix = self.matrix
 
         if not matrix.ndim:
-            new_matrix = _empty_matrix.copy() #numpy_empty((), dtype=object)
+            new_matrix = _empty_matrix.copy()  # numpy_empty((), dtype=object)
             new_matrix[()] = matrix.item().copy()
-            return type(self)(new_matrix , [])
+            return type(self)(new_matrix, [])
         else:
             new_matrix = numpy.empty(matrix.size, dtype=object)
             new_matrix[...] = [partition.copy() for partition in matrix.flat]
             new_matrix.resize(matrix.shape)
             return type(self)(new_matrix, self.axes)
-
 
     # 0
     @_inplace_enabled
@@ -551,10 +540,9 @@ Attribute   Description
         p = _inplace_enabled_define_and_cleanup(self)
 
         p.matrix = numpy_expand_dims(p.matrix, 0)
-        p.axes  = [axis] + p.axes
+        p.axes = [axis] + p.axes
 
         return p
-
 
     def ndenumerate(self):
         '''Return an iterator yielding pairs of array indices and values.
@@ -580,7 +568,6 @@ Attribute   Description
 
         '''
         return numpy_ndenumerate(self.matrix)
-
 
     # 0
     def partition_boundaries(self, data_axes):
@@ -619,7 +606,6 @@ Attribute   Description
         # --- End: for
 
         return boundaries
-
 
     # 0
     @_inplace_enabled
@@ -661,7 +647,6 @@ Attribute   Description
 
         return p
 
-
     # 0
     def set_location_map(self, data_axes, ns=None):
         '''Set the `!location` attribute of each partition of the partition
@@ -687,7 +672,7 @@ Attribute   Description
         matrix = self.matrix
 
         shape = matrix.shape
-        axes  = self.axes
+        axes = self.axes
 
         slice_None = slice(None)
 
@@ -709,7 +694,7 @@ Attribute   Description
                 m = axes.index(axis)
                 start = 0
                 for i in range(shape[m]):
-                    indices[m] = slice(i, i+1) # i
+                    indices[m] = slice(i, i+1)  # i
                     flat = matrix[tuple(indices)].flat
 
                     partition = next(flat)
@@ -738,7 +723,6 @@ Attribute   Description
                 for partition in flat:
                     partition.location[n] = location
         # --- End: for
-
 
     # 0
     @_inplace_enabled
@@ -774,7 +758,7 @@ Attribute   Description
         p = _inplace_enabled_define_and_cleanup(self)
 
         matrix = p.matrix
-        shape  = matrix.shape
+        shape = matrix.shape
 
         if 1 in shape:
             p.matrix = matrix.squeeze()
@@ -783,7 +767,6 @@ Attribute   Description
             p.axes = [axis for axis, size in zip(axes, shape) if size > 1]
 
         return p
-
 
     @_inplace_enabled
     def transpose(self, axes, inplace=False):
@@ -819,7 +802,6 @@ Attribute   Description
 
         return p
 
-
     # ----------------------------------------------------------------
     # Deprecated attributes and methods
     # ----------------------------------------------------------------
@@ -830,8 +812,9 @@ Attribute   Description
     instead.
 
         '''
-        _DEPRECATION_ERROR_METHOD(self, 'expand_dims',
-                                  "Use method 'insert_dimension' instead.") # pragma: no cover
+        _DEPRECATION_ERROR_METHOD(
+            self, 'expand_dims', "Use method 'insert_dimension' instead."
+        )  # pragma: no cover
 
 
 # --- End: class

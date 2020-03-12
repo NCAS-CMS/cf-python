@@ -204,7 +204,7 @@ def histogram(*digitized):
     example, if only one digitized field construct is provided then
     the histogram bins simply comprise its one-dimensional bins; if
     there are two digitized field constructs then the histogram bins
-    comprise the two-dimensionsal matrix formed by all possible
+    comprise the two-dimensional matrix formed by all possible
     combinations of the two sets of one-dimensional bins; etc.
 
     An output value for an histogram bin is formed by counting the
@@ -229,7 +229,7 @@ def histogram(*digitized):
             One or more field constructs that contain digitized data
             with corresponding metadata, as would be output by
             `cf.Field.digitize`. Each field construct contains indices
-            to the one-dimensionsal bins to which each value of an
+            to the one-dimensional bins to which each value of an
             original field construct belongs; and there must be
             ``bin_count`` and ``bin_bounds`` properties as defined by
             the `cf.Field.digitize` method (and any of the extra

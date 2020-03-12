@@ -1233,58 +1233,89 @@ The following regridding methods are available (in this table,
 being regridded, and the domain that it is being regridded to,
 respectively):
 
-=========================  ==============================================
-Method                     Notes
-=========================  ==============================================
-Linear                     One dimensional linear interpolation (only
-                           available to `Cartesian regridding`_).
-			  
-Bilinear                   Two dimensional variant of linear
-                           interpolation.
-			  
-Trilinear                  Three dimensional variant of linear
-                           interpolation (only available to
-                           `Cartesian-regridding`_).
-			  
-First-order conservative   Preserve the area integral of the data across
-                           the interpolation from source to
-                           destination. It uses the proportion of the
-                           area of the overlapping source and
-                           destination cells to determine appropriate
-                           weights. In particular, the weight of a
-                           source cell is the ratio of the area of
-                           intersection of the source and destination
-                           cells to the area of the whole destination
-                           cell. It does not account for the field gradient
-                           across the source cell, unlike the second-order
-                           conservative method (see below).
-
-Second-order conservative  As with first-order (see above), preserves the
-                           area integral of the field between source and
-                           destination using a weighted sum with weights
-                           based on the proportionate area of intersection.
-                           But unlike first-order, the second-order method
-                           incorporates further terms to take into
-                           consideration the gradient of the field across
-                           the source cell, thereby typically producing a
-                           smoother result of higher accuracy.
-
-Patch                      A second degree polynomial regridding method,
-                           which uses a least squares algorithm to
-                           calculate the polynomial. This method gives
-                           better derivatives in the resulting
-                           destination data than the bilinear method.
-
-Nearest neighbour          Nearest neighbour interpolation that is useful
-                           for extrapolation of categorical data. Either
-                           each destination point is mapped to the
-                           closest source; or each source point is mapped
-                           to the closest destination point. In the
-                           latter case, a given destination point may
-                           receive input from multiple source points, but
-                           no source point will map to more than one
-                           destination point.
-=========================  ==============================================
++--------------------------+-----------------------------------------+
+| Method                   | Notes                                   |
++==========================+=========================================+
+| Linear (``'linear'``,    | Linear interpolation in the number of   |
+| previously called        | dimensions corresponding to the domain. |
+| ``'bilinear'``, which    |                                         |
+| is still supported,      | For example, for 2D domains this        |
+| but you are encouraged   | amounts to *bilinear*                   |
+| to use ``'linear'``      | interpolation (that is, linear          |
+| instead now)             | interpolation in *both* axes) and for   |
+|                          | regridding in 3D (only available with   |
+|                          | `Cartesian-regridding`_) it amounts to  |
+|                          | *trilinear* interpolation over the      |
+|                          | three axes.                             |
++--------------------------+-----------------------------------------+
+| *First-order*            | Preserve the area integral of the data  |
+| conservative             | across the interpolation from source    |
+| (``'conservative'`` or   | to destination. It uses the proportion  |
+| ``'conservative_1st'``)  | of the area of the overlapping source   |
+|                          | and destination cells to determine      |
+|                          | appropriate weights.                    |
+|                          |                                         |
+|                          | In particular, the weight of            |
+|                          | a source cell is the ratio of           |
+|                          | the area of intersection of the source  |
+|                          | and destination cells to the area of    |
+|                          | the whole destination cell.             |
+|                          |                                         |
+|                          | It does not account for the             |
+|                          | field gradient across the source        |
+|                          | cell, unlike the second-order           |
+|                          | conservative method (see below).        |
++--------------------------+-----------------------------------------+
+| *Second-order*           | As with first-order (see above),        |
+| conservative             | preserves the area integral of the      |
+| (``'conservative_2nd'``) | field between source and destination    |
+|                          | using a weighted sum, with weights      |
+|                          | based on the proportionate area of      |
+|                          | intersection.                           |
+|                          |                                         |
+|                          | But unlike first-order, the             |
+|                          | second-order method incorporates        |
+|                          | further terms to take into              |
+|                          | consideration the gradient of the       |
+|                          | field across the source cell,           |
+|                          | thereby typically producing a           |
+|                          | smoother result of higher accuracy.     |
++--------------------------+-----------------------------------------+
+| Higher order patch       | A second degree polynomial regridding   |
+| recovery (``'patch'``)   | method, which uses a least squares      |
+|                          | algorithm to calculate the polynomial.  |
+|                          |                                         |
+|                          | This method gives better                |
+|                          | derivatives in the resulting            |
+|                          | destination data than the linear        |
+|                          | method.                                 |
++--------------------------+-----------------------------------------+
+| Nearest neighbour        | Nearest neighbour interpolation, which  |
+| interpolation mapping    | is useful for extrapolation of          |
+| *destination to nearest* | categorical data. In this variant,      |
+| *source*                 | *each destination point* is mapped      |
+| (``'nearest_stod'``)     | to the *closest source*.                |
+|                          |                                         |
+|                          | See also below for the                  |
+|                          | the other variant of the                |
+|                          | nearest neighbour approach.             |
++--------------------------+-----------------------------------------+
+| Nearest neighbour        | Nearest neighbour interpolation, which  |
+| interpolation mapping    | is useful for extrapolation of          |
+| *source to nearest*      | categorical data. In this variant,      |
+| *destination*            | *each source point* is mapped to the    |
+| (``'nearest_dtos'``)     | *closest destination*.                  |
+|                          |                                         |
+|                          | In this case, a given destination       |
+|                          | point may receive input from multiple   |
+|                          | source points, but no source point      |
+|                          | will map to more than one               |
+|                          | destination point.                      |
+|                          |                                         |
+|                          | See also above for the other            |
+|                          | variant of nearest neighbour            |
+|                          | interpolation.                          |
++--------------------------+-----------------------------------------+
 
 .. _Spherical-regridding:
 
@@ -1380,7 +1411,7 @@ coordinate constructs.
    >>> import numpy
    >>> lat = cf.DimensionCoordinate(data=cf.Data(numpy.arange(-90, 92.5, 2.5), 'degrees_north'))
    >>> lon = cf.DimensionCoordinate(data=cf.Data(numpy.arange(0, 360, 5.0), 'degrees_east'))
-   >>> c = a.regrids({'latitude': lat, 'longitude': lon}, 'bilinear')
+   >>> c = a.regrids({'latitude': lat, 'longitude': lon}, 'linear')
    Field: air_temperature (ncvar%tas)
    ----------------------------------
    Data            : air_temperature(time(2), latitude(73), longitude(72)) K
@@ -1432,7 +1463,7 @@ coordinate system can be regridded with Cartesian regridding, which
 will produce similar results to using using spherical regridding.
 
 .. code-block:: python
-   :caption: *Regrid the time axis 'T' of field 'a' with the bilinear
+   :caption: *Regrid the time axis 'T' of field 'a' with the linear
              method onto the grid specified in the dimension coordinate
              time.*
 
@@ -1442,7 +1473,7 @@ will produce similar results to using using spherical regridding.
    ...                       units='days since 1860-01-01', calendar='360_day'))
    >>> time
    <CF DimensionCoordinate: time(60) days since 1860-01-01 360_day>
-   >>> c = a.regridc({'T': time}, axes='T', method='bilinear')
+   >>> c = a.regridc({'T': time}, axes='T', method='linear')
    Field: air_temperature (ncvar%tas)
    ----------------------------------
    Data            : air_temperature(time(60), latitude(73), longitude(96)) K
@@ -1539,7 +1570,7 @@ pressure coordinates after the regridding operation.
    >>> _ = v.replace_construct('Z', z_ln_p)
    >>> new_z_p = cf.DimensionCoordinate(data=cf.Data([800, 705, 632, 510, 320.], 'hPa'))
    >>> new_z_ln_p = new_z_p.log()
-   >>> new_v = v.regridc({'Z': new_z_ln_p}, axes='Z', method='bilinear') 
+   >>> new_v = v.regridc({'Z': new_z_ln_p}, axes='Z', method='linear')
    >>> new_v.replace_construct('Z', new_z_p)
    >>> print(new_v)
    Field: eastward_wind (ncvar%ua)
@@ -1892,26 +1923,55 @@ physically meaningful broadcasting to occur.
    >>> t.min()
    <CF Data(): 0.0 K>
     
-Trigonometrical functions
-^^^^^^^^^^^^^^^^^^^^^^^^^
+Trigonometrical and hyperbolic functions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The field construct and metadata constructs have `~Field.cos`,
-`~Field.sin`, and `~Field.tan` methods for applying trigonometrical
-functions element-wise to the data, preserving the metadata but
-changing the construct's units.
+The field construct and metadata constructs have methods to apply
+trigonometric and hyperbolic functions, and their inverses,
+element-wise to the data. These preserve the metadata but
+change the construct's units.
 
-The field construct and metadata constructs the following
+The field construct and metadata constructs support the following
 trigonometrical methods:
 
-===============  ========================================================
-Method           Description
-===============  ========================================================
-`~Field.arctan`  Take the trigonometric inverse tangent of the data
-                 element-wise.
-`~Field.cos`     Take the trigonometric tangent of the data element-wise.
-`~Field.sin`     Take the trigonometric tangent of the data element-wise.
-`~Field.tan`     Take the trigonometric tangent of the data element-wise.
-===============  ========================================================
+================  ========================================================
+Method            Description
+================  ========================================================
+`~Field.arccos`   Take the inverse trigonometric cosine of the data
+                  element-wise.
+`~Field.arcsin`   Take the inverse trigonometric sine of the data
+                  element-wise.
+`~Field.arctan`   Take the inverse trigonometric tangent of the data
+                  element-wise.
+`~Field.cos`      Take the trigonometric cosine of the data element-wise.
+`~Field.sin`      Take the trigonometric sine of the data element-wise.
+`~Field.tan`      Take the trigonometric tangent of the data element-wise.
+================  ========================================================
+
+.. AT2 : As well as `~Field.arctan` there is a method available,
+   `~Field.arctan2`,
+   which takes the inverse trigonometric tangent of data element-wise, but
+   does so instead for two constructs where the inverse tangent of the
+   quotient between corresponding elements is taken, such that the signs of
+   `x` and `y` values are taken into account to determine the correct quadrant
+   (see `here <https://en.wikipedia.org/wiki/Atan2>`_ for further details).
+
+The field construct and metadata constructs also support the following
+hyperbolic methods:
+
+================  ========================================================
+Method            Description
+================  ========================================================
+`~Field.arccosh`  Take the inverse hyperbolic cosine of the data
+                  element-wise.
+`~Field.arcsinh`  Take the inverse hyperbolic sine of the data
+                  element-wise.
+`~Field.arctanh`  Take the inverse hyperbolic tangent of the data
+                  element-wise.
+`~Field.cosh`     Take the hyperbolic cosine of the data element-wise.
+`~Field.sinh`     Take the hyperbolic sine of the data element-wise.
+`~Field.tanh`     Take the hyperbolic tangent of the data element-wise.
+================  ========================================================
 
 .. code-block:: python
    :caption: *Find the sine of each latitude coordinate value.*
@@ -1926,7 +1986,29 @@ Method           Description
 
 The "standard_name" and "long_name" properties are removed from the
 result.
-       
+
+Note that a number of the inverse methods have
+`mathematically restricted domains <https://mathworld.wolfram.com/InverseTrigonometricFunctions.html>`_ (see also
+`here <https://mathworld.wolfram.com/InverseHyperbolicFunctions.html>`_)
+and therefore may return
+`"invalid" values <https://docs.scipy.org/doc/numpy/reference/constants.html>`_
+(`nan` or `inf`). When applying these methods to constructs with masked
+data, you may prefer to output masked values instead of invalid ones. In
+this case, you can use `mask_invalid` to do the conversion afterwards:
+
+.. code-block:: python
+   :caption: *Take the `arctanh` of some masked data and then transform
+             resultant invalid values into masked data values.*
+
+   >>> d = cf.Data([2, 1.5, 1, 0.5, 0], mask=[1, 0, 0, 0, 1])
+   >>> e = d.arctanh()
+   >>> print(e.array)
+   [-- nan inf 0.5493061443340548 --]
+   >>> e.mask_invalid(inplace=True)
+   >>> print(e.array)
+   [-- -- -- 0.5493061443340548 --]
+
+
 Exponential and logarithmic functions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 

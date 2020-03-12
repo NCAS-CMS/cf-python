@@ -28,15 +28,16 @@ from numpy.ma import nomask      as numpy_ma_nomask
 
 from numpy.ma.core import MaskedConstant as numpy_ma_core_MaskedConstant
 
-#from cfunits import Units
+# from cfunits import Units
 
 from ..units     import Units
 from ..functions import get_subspace, FREE_MEMORY, FM_THRESHOLD
 from ..functions import inspect as cf_inspect
 from ..constants import CONSTANTS
 
-#from .filearray import  _TempFileArray #, SharedMemoryArray, _shared_memory_array,FileArray
-from .cachedarray import  CachedArray
+# from .filearray import  (_TempFileArray #, SharedMemoryArray,
+#                          _shared_memory_array,FileArray)
+from .cachedarray import CachedArray
 
 from .abstract import FileArray
 
@@ -60,6 +61,7 @@ _dtype_object = numpy_dtype(object)
 #  set('/tmp/cf_array_CrbJVf/cf_array_INZQQc.npy_xQ5LVo'))}
 # --------------------------------------------------------------------
 _temporary_files = {}
+
 
 def _lock_files_present(lock_files):
     lock_files_present = False
@@ -242,44 +244,43 @@ class Partition:
     ...               part       = [],
     ...               Units      = cf.Units('K'))
 
-    >>> p = Partition(subarray       = numpy.arange(20).reshape(2,5,1),
+    >>> p = Partition(subarray   = numpy.arange(20).reshape(2,5,1),
     ...               location   = [(0, 6), (1, 3), (4, 5)],
     ...               axes       = ['dim1', 'dim0', 'dim2'],
     ...               shape      = [5, 2, 1],
-    ...               part       = [slice(None, None, -1), [0,1,3,4], slice(None)],
+    ...               part       = [slice(None, None, -1), [0,1,3,4],
+    ...                             slice(None)],
     ...               Units      = cf.Units('K'))
 
     >>> p = Partition(subarray   = numpy.array(4),
     ...               location   = [(4, 5)],
-    ...               axes = ['dim1'],
+    ...               axes       = ['dim1'],
     ...               part       = [],
     ...               Units      = cf.Units('K'))
 
         '''
 
-        self._subarray  = None
+        self._subarray = None
 
-        self.axes      = axes      # DO NOT UPDATE INPLACE
-        self.flip      = flip      # DO NOT UPDATE INPLACE
-        self.part      = part      # DO NOT UPDATE INPLACE
-        self.location  = location  # DO NOT UPDATE INPLACE
-        self.shape     = shape     # DO NOT UPDATE INPLACE
-        self.Units     = Units     # DO NOT UPDATE INPLACE
-        self.subarray  = subarray  # DO NOT UPDATE INPLACE
-        self.fill      = fill      # DO NOT UPDATE INPLACE
+        self.axes = axes          # DO NOT UPDATE INPLACE
+        self.flip = flip          # DO NOT UPDATE INPLACE
+        self.part = part          # DO NOT UPDATE INPLACE
+        self.location = location  # DO NOT UPDATE INPLACE
+        self.shape = shape        # DO NOT UPDATE INPLACE
+        self.Units = Units        # DO NOT UPDATE INPLACE
+        self.subarray = subarray  # DO NOT UPDATE INPLACE
+        self.fill = fill          # DO NOT UPDATE INPLACE
 
         if shape is None and location is not None:
             self.shape = [i[1]-i[0] for i in location]
 
         self._write_to_disk = None
 
-
     def __deepcopy__(self, memo):
         '''Used if copy.deepcopy is called on the variable.
 
         '''
         return self.copy()
-
 
     def __del__(self):
         '''Called when the partition's reference count reaches zero.
@@ -334,53 +335,49 @@ class Partition:
                 pass
         # --- End: if
 
-
 #    def __getstate__(self):
 #        '''
 #
-#Called when pickling.
+#    Called when pickling.
 #
-#:Parameters:
+#    :Parameters:
 #
-#    None
+#        None
 #
-#:Returns:
+#    :Returns:
 #
-#    `dict`
-#        A dictionary of the instance's attributes
+#        `dict`
+#            A dictionary of the instance's attributes
 #
-#**Examples:**
+#    **Examples:**
 #
-#'''
+#        '''
 #        return dict([(attr, getattr(self, attr))
 #                     for attr in self.__slots__ if hasattr(self, attr)])
-#
 #
 #    def __setstate__(self, odict):
 #        '''
 #
-#Called when unpickling.
+#    Called when unpickling.
 #
-#:Parameters:
+#    :Parameters:
 #
-#    odict : dict
-#        The output from the instance's `__getstate__` method.
+#        odict : dict
+#            The output from the instance's `__getstate__` method.
 #
-#:Returns:
+#    :Returns:
 #
-#    None
+#        None
 #
-#'''
+#        '''
 #        for attr, value in odict.items():
 #            setattr(self, attr, value)
-
 
     def __str__(self):
         '''x.__str__() <==> str(x)
 
         '''
         return '%s: %s' % (self.__class__.__name__, self.__dict__)
-
 
     def _add_to_file_counter(self, i):
         '''Add i to the count of subarrays referencing the file of this
@@ -406,7 +403,7 @@ class Partition:
 
         try:
             if (isinstance(subarray, FileArray) and
-                not isinstance(subarray, CachedArray)):
+                    not isinstance(subarray, CachedArray)):
                 try:
                     filename = subarray.get_filename()
                 except:
@@ -431,7 +428,6 @@ class Partition:
             # torn down, so just do nothing.
             pass
 
-
     def _increment_file_counter(self):
         '''Add 1 to the Partition.file_counter if self._subarray is an
     instance of FileArray and not a temporary FileArray.
@@ -443,7 +439,6 @@ class Partition:
         '''
         self._add_to_file_counter(1)
 
-
     def _decrement_file_counter(self):
         '''Subtract 1 from the Partition.file_counter if self._subarray is an
     instance of FileArray and not a temporary FileArray.
@@ -454,7 +449,6 @@ class Partition:
 
         '''
         self._add_to_file_counter(-1)
-
 
     def _configure_auxiliary_mask(self, auxiliary_mask):
         '''Add the auxiliary mask to the config dictionary.
@@ -488,7 +482,6 @@ class Partition:
 
         self.config['auxiliary_mask'] = new
 
-
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
@@ -518,7 +511,6 @@ class Partition:
         '''
         return tuple([slice(*r) for r in self.location])
 
-
     @property
     def in_memory(self):
         '''True if and only if the partition's subarray is in memory as
@@ -537,21 +529,20 @@ class Partition:
 #    def in_shared_memory(self):
 #        '''
 #
-#True if and only if the partition's subarray is a shared memory array.
+#    True if and only if the partition's subarray is a shared memory array.
 #
-#.. seealso:: `array`, `in_memory`, `on_disk`, `to_shared_memory`
+#    .. seealso:: `array`, `in_memory`, `on_disk`, `to_shared_memory`
 #
-#**Examples:**
+#    **Examples:**
 #
-#>>> p.in_shared_memory
-#True
-#>>> p.to_disk()
-#>>> p.in_shared_memory
-#False
+#    >>> p.in_shared_memory
+#    True
+#    >>> p.to_disk()
+#    >>> p.in_shared_memory
+#    False
 #
-#'''
+#        '''
 #        return isinstance(self._subarray, SharedMemoryArray)
-
 
     @property
     def in_cached_file(self):
@@ -569,11 +560,10 @@ class Partition:
         '''
         return isinstance(self._subarray, CachedArray)
 
-
     @property
     def on_disk(self):
-        '''True if and only if the partition's subarray is on disk as opposed to
-    in memory.
+        '''True if and only if the partition's subarray is on disk as
+    opposed to in memory.
 
     **Examples:**
 
@@ -586,11 +576,10 @@ class Partition:
         '''
         return isinstance(self._subarray, FileArray)
 
-
     @property
     def in_file(self):
-        '''True if and only if the partition's subarray is on disk as opposed to
-    in memory.
+        '''True if and only if the partition's subarray is on disk as
+    opposed to in memory.
 
     **Examples:**
 
@@ -603,14 +592,12 @@ class Partition:
         '''
         return self.on_disk and not self.in_cached_file
 
-
     @property
     def dtype(self):
         '''The data type of the master array
 
         '''
         return self.config['dtype']
-
 
     @property
     def isscalar(self):
@@ -630,7 +617,6 @@ class Partition:
 
         '''
         return not self.axes
-
 
     @property
     def nbytes(self):
@@ -652,14 +638,12 @@ class Partition:
 
         return nbytes
 
-
     @property
     def ndim(self):
         '''TODO
 
         '''
         return len(self.shape)
-
 
     @property
     def size(self):
@@ -675,41 +659,40 @@ class Partition:
         '''
         return reduce(mul, self.shape, 1)
 
-
     @property
     def subarray(self):
         '''TODO
 
         '''
         return self._subarray
+
     @subarray.setter
     def subarray(self, value):
         self._decrement_file_counter()
         self._subarray = value
         self._increment_file_counter()
         self._in_place_changes = False
+
     @subarray.deleter
     def subarray(self):
         self._decrement_file_counter()
         self._subarray = None
         self._in_place_changes = True
 
-
 #    @property
 #    def subarray_in_external_file(self):
 #        '''
 #
-#True if and only if the partition's subarray is in an external file.
+#    True if and only if the partition's subarray is in an external file.
 #
-#**Examples:**
+#    **Examples:**
 #
-#>>> p.subarray_in_external_file
-#False
+#    >>> p.subarray_in_external_file
+#    False
 #
-#'''
+#        '''
 #
 #        return not (self.in_memory or isinstance(self.subarray, FileArray))
-
 
     def change_axis_names(self, axis_map):
         '''Change the axis names.
@@ -750,7 +733,6 @@ class Partition:
         flip = self.flip
         if flip:
             self.flip = [axis_map[axis] for axis in flip]
-
 
     def close(self, **kwargs):
         '''Close the partition after it has been conformed.
@@ -804,14 +786,14 @@ class Partition:
 
         if not original:
             originally_on_disk = False
-            original_subarray  = None
+            original_subarray = None
         else:
             originally_on_disk = not original.in_memory
-            original_subarray  = original._subarray
+            original_subarray = original._subarray
 
         config = self.config
         if _debug:
-            print(' config =',config)
+            print(' config =', config)
 
         if config['serial']:
             # --------------------------------------------------------
@@ -843,22 +825,25 @@ class Partition:
                         #         subarray in memory, but there is not
                         #         enough free memory to do so.
                         if _debug:
-                            print('    1.1.1.2 revert ({} <= {})'.format(FREE_MEMORY(), FM_THRESHOLD()))
+                            print('    1.1.1.2 revert ({} <= {})'.format(
+                                FREE_MEMORY(), FM_THRESHOLD()))
                         self.revert()
                     else:
                         # 1.1.1.3 The original subarray was on disk
                         #         and there is enough memory to keep
                         #         the current subarray in memory
                         if (config['unique_subarray'] and
-                            isinstance(original_subarray, CachedArray)):
+                                isinstance(original_subarray, CachedArray)):
                             # The original subarray was a temporary
                             # file which is not referenced by any
                             # other partitions
-                            _remove_temporary_files(original_subarray._partition_file)
+                            _remove_temporary_files(
+                                original_subarray._partition_file)
 
                         del self.masked
                         if _debug:
-                            print('    1.1.1.3 del masked ({} > {})'.format(FREE_MEMORY(), FM_THRESHOLD()))
+                            print('    1.1.1.3 del masked ({} > {})'.format(
+                                FREE_MEMORY(), FM_THRESHOLD()))
 
                 else:
                     if _debug:
@@ -892,11 +877,12 @@ class Partition:
                         #         there and we don't want to keep the
                         #         array
                         if (config['unique_subarray'] and
-                            isinstance(original_subarray, CachedArray)):
+                                isinstance(original_subarray, CachedArray)):
                             # Original subarray was a temporary file
                             # on disk which is not referenced by any
                             # other partitions
-                            _remove_temporary_files(original_subarray._partition_file)
+                            _remove_temporary_files(
+                                original_subarray._partition_file)
 
                         if _debug:
                             print('    1.2.1.1 to_disk')
@@ -906,11 +892,12 @@ class Partition:
                         #         there is not enough memory to keep
                         #         it
                         if (config['unique_subarray'] and
-                            isinstance(original_subarray, CachedArray)):
+                                isinstance(original_subarray, CachedArray)):
                             # Original subarray was a temporary file
                             # on disk which is not referenced by any
                             # other partitions
-                            _remove_temporary_files(original_subarray._partition_file)
+                            _remove_temporary_files(
+                                original_subarray._partition_file)
 
                         if _debug:
                             print('    1.2.1.2 to_disk')
@@ -959,7 +946,6 @@ class Partition:
         except AttributeError:
             pass
 
-
     def copy(self):
         '''Return a deep copy.
 
@@ -980,7 +966,6 @@ class Partition:
         self._increment_file_counter()
 
         return new
-
 
     @property
     def array(self):
@@ -1011,11 +996,11 @@ class Partition:
 
         unique_array = config['unique_subarray']
 
-        p_axes   = self.axes
-        p_flip   = self.flip
-        p_part   = self.part
-        p_units  = self.Units
-        p_shape  = self.shape
+        p_axes = self.axes
+        p_flip = self.flip
+        p_part = self.part
+        p_units = self.Units
+        p_shape = self.shape
         p_location = self.location
         subarray = self._subarray
 
@@ -1030,9 +1015,9 @@ class Partition:
             # --------------------------------------------------------
             self._original = self.copy()
 
-            unique_array   = True
-            update         = True
-            copy           = False
+            unique_array = True
+            update = True
+            copy = False
 
             if not p_part:
                 indices = Ellipsis
@@ -1078,7 +1063,8 @@ class Partition:
         masked = numpy_ma_isMA(p_data)
         if masked:
             # The p_data is a masked array
-            if p_data.mask is numpy_ma_nomask or not numpy_ma_is_masked(p_data):
+            if (p_data.mask is numpy_ma_nomask or
+                    not numpy_ma_is_masked(p_data)):
                 # There are no missing data points so recast as an
                 # unmasked numpy array
                 p_data = p_data.data
@@ -1109,7 +1095,7 @@ class Partition:
 
         if func is not None:
             inplace = not copy
-            p_data  = func(p_data, p_units, units, inplace)
+            p_data = func(p_data, p_units, units, inplace)
             p_units = units
 
             if not inplace:
@@ -1146,7 +1132,7 @@ class Partition:
                 if len_p_axes > len(iaxes):
                     for i in range(len_p_axes):
                         if i not in iaxes:
-#                            iaxes.append(i)
+                            # iaxes.append(i)
                             iaxes.insert(i, i)
                 # --- End: if
 
@@ -1158,7 +1144,7 @@ class Partition:
         # ------------------------------------------------------------
         # print ('p_shape=', p_shape, p_axes, p_data.shape)
         if p_shape != p_data.shape:
-#        if len_p_axes != len(p_shape):
+            # if len_p_axes != len(p_shape):
             p_data = p_data.reshape(p_shape)
 
         # ------------------------------------------------------------
@@ -1184,7 +1170,7 @@ class Partition:
         dtype = config.get('dtype', None)
         if dtype is not None and dtype != p_dtype:
             try:
-                p_data = p_data.astype(dtype) # Note: returns a copy
+                p_data = p_data.astype(dtype)  # Note: returns a copy
             except ValueError:
                 raise ValueError(
                     "Can't recast partition array from {} to {}".format(
@@ -1212,8 +1198,9 @@ class Partition:
                 # not possible
                 in_place_changes = False
             else:
-                # whilst netCDF4.netcdftime.datetime is mucking bout, don't copy!!!!
-                #p_data = _copy(p_data)
+                # whilst netCDF4.netcdftime.datetime is mucking bout,
+                # don't copy!!!!
+                # p_data = _copy(p_data)
                 pass
         # --- End: if
 
@@ -1221,14 +1208,14 @@ class Partition:
         # Update the partition
         # ------------------------------------------------------------
         if update:
-            self.subarray  = p_data ##?? DCH CHECK
-            self.Units     = p_units
-            self.part      = []
-            self.axes      = axes
-            self.flip      = flip
-            self.flatten   = []
-            self.shape     = p_shape
-            self.location  = p_location
+            self.subarray = p_data  # ?? DCH CHECK
+            self.Units = p_units
+            self.part = []
+            self.axes = axes
+            self.flip = flip
+            self.flatten = []
+            self.shape = p_shape
+            self.location = p_location
 
             self._in_place_changes = in_place_changes
 
@@ -1236,7 +1223,6 @@ class Partition:
         # Return the numpy array
         # ------------------------------------------------------------
         return p_data
-
 
     @property
     def isdt(self):
@@ -1254,7 +1240,6 @@ class Partition:
         '''
         return self.Units.isreftime and self._subarray.dtype == _dtype_object
 
-
     def file_close(self):
         '''Close all file containing the subarray, if there is one.
 
@@ -1270,70 +1255,68 @@ class Partition:
         if self.on_disk:
             self._subarray.close()
 
-
 #    def flat(self):
 #        '''
 #
-#Return an iterator that yields the partition itself.
+#    Return an iterator that yields the partition itself.
 #
-#This is provided as a convienience to make it easier to iterate
-#through a partition matrix.
+#    This is provided as a convienience to make it easier to iterate
+#    through a partition matrix.
 #
-#:Returns:
+#    :Returns:
 #
-#    generator
-#        An iterator that yields the partition itself.
+#        generator
+#            An iterator that yields the partition itself.
 #
-#**Examples:**
+#    **Examples:**
 #
-#>>> type(p.flat())
-#<generator object flat at 0x519a0a0>
-#>>> for q in p.flat():
-#...     print(q is p)
-#True
+#    >>> type(p.flat())
+#    <generator object flat at 0x519a0a0>
+#    >>> for q in p.flat():
+#    ...    print(q is p)
+#    True
 #
-#'''
-#        yield self
+#    '''
+#            yield self
 #
 #
 #    def ndindex(self):
 #        '''
 #
-#Return an iterator over the N-dimensional indices of the partition's
-#data array.
+#    Return an iterator over the N-dimensional indices of the partition's
+#    data array.
 #
-#At each iteration a tuple of indices is returned, the last dimension
-#is iterated over first.
+#    At each iteration a tuple of indices is returned, the last dimension
+#    is iterated over first.
 #
-#:Returns:
+#    :Returns:
 #
-#    generator
-#        An iterator over indices of the partition's data array.
+#        generator
+#            An iterator over indices of the partition's data array.
 #
-#**Examples:**
+#    **Examples:**
 #
-#>>> p.shape
-#[2, 1, 3]
-#>>> for index in p.ndindex():
-#...     print(index)
-#...
-#(0, 0, 0)
-#(0, 0, 1)
-#(0, 0, 2)
-#(1, 0, 0)
-#(1, 0, 1)
-#(1, 0, 2)
+#    >>> p.shape
+#    [2, 1, 3]
+#    >>> for index in p.ndindex():
+#    ...     print(index)
+#    ...
+#    (0, 0, 0)
+#    (0, 0, 1)
+#    (0, 0, 2)
+#    (1, 0, 0)
+#    (1, 0, 1)
+#    (1, 0, 2)
 #
-#>>> p.shape
-#[]
-#>>> for index in p.ndindex():
-#...     print(index)
-#...
-#()
+#    >>> p.shape
+#    []
+#    >>> for index in p.ndindex():
+#    ...     print(index)
+#    ...
+#    ()
 #
-#'''
+#        '''
 #        return itertools_product(*[range(0, r) for r in self.shape])
-
 
     def inspect(self):
         '''Inspect the object for debugging.
@@ -1351,8 +1334,7 @@ class Partition:
         '''
         print(cf_inspect(self))
 
-
-    def master_ndindex(self): #itermaster_indices(self):
+    def master_ndindex(self):  # itermaster_indices(self):
         '''Return an iterator over indices of the master array which are
     spanned by the data array.
 
@@ -1377,8 +1359,8 @@ class Partition:
     (4, 0, 2)
 
         '''
-        return itertools_product(*[range(*r) for r in self.location]) # TODO check
-
+        return itertools_product(
+            *[range(*r) for r in self.location])  # TODO check
 
     def new_part(self, indices, master_axis_to_position, master_flip):
         '''Update the `!part` attribute in-place for new indices of the master
@@ -1433,7 +1415,7 @@ class Partition:
             for axis, i in master_axis_to_position.items():
 
                 if ((axis not in p_flip and axis not in master_flip) or
-                    (axis in p_flip     and axis in master_flip)):
+                        (axis in p_flip and axis in master_flip)):
                     # This axis runs in the correct direction
                     continue
 
@@ -1456,7 +1438,7 @@ class Partition:
                     # Note that step is assumed to be always +ve here
                     div, mod = divmod(stop-start-1, step)
                     start = size - 1 - start
-                    stop  = start - div*step - 1
+                    stop = start - div*step - 1
                     if stop < 0:
                         stop = None
                     indices[i] = slice(start, stop, -step)
@@ -1495,7 +1477,7 @@ class Partition:
             if isinstance(part_index, slice):
                 if isinstance(index, slice):
 
-                    start , stop , step  = part_index.indices(size)
+                    start, stop, step = part_index.indices(size)
 
                     size1, mod = divmod(stop-start-1, step)
 
@@ -1507,8 +1489,8 @@ class Partition:
                         size2 += 1
 
                     start += start1 * step
-                    step  *= step1
-                    stop   = start + (size2-1)*step
+                    step *= step1
+                    stop = start + (size2-1)*step
 
                     if step > 0:
                         stop += 1
@@ -1554,7 +1536,6 @@ class Partition:
 
         self.part = p_part
 
-
     def extra_memory(self):
         '''The extra memory required to access the array.
 
@@ -1584,11 +1565,13 @@ class Partition:
                     extra_memory = isinstance(p_data.base, numpy_ndarray)
                 else:
                     # The p_data is a masked array
-                    memory_overlap = isinstance(p_data.data.base, numpy_ndarray)
+                    memory_overlap = isinstance(
+                        p_data.data.base, numpy_ndarray)
                     if not (p_data.mask is numpy_ma_nomask or
                             not numpy_ma_is_masked(p_data)):
                         # There is at least one missing data point
-                        memory_overlap |= isinstance(p_data.mask.base, numpy_ndarray)
+                        memory_overlap |= isinstance(
+                            p_data.mask.base, numpy_ndarray)
 
                     extra_memory = memory_overlap
                 # --- End: if
@@ -1602,8 +1585,11 @@ class Partition:
                         p_units = self.Units
                         units = config['units']
                         if (not p_units.equals(units) and
-                            bool(p_units) is bool(units) and
-                            not (p_data.flags['C_CONTIGUOUS'] and p_dtype.kind == 'f')):
+                                bool(p_units) is bool(units) and
+                                not (
+                                    p_data.flags['C_CONTIGUOUS'] and
+                                    p_dtype.kind == 'f'
+                                )):
                             extra_memory = True
 
                 # ------------------------------------------------------------
@@ -1620,7 +1606,6 @@ class Partition:
         # array
         # ------------------------------------------------------------
         return self.nbytes if extra_memory else 0
-
 
     def open(self, config):
         '''Open the partition prior to getting its array.
@@ -1647,13 +1632,12 @@ class Partition:
         self.config['extra_memory'] = self.extra_memory()
 
         self._in_place_changes = True
-        self.masked            = True
+        self.masked = True
 
         if hasattr(self, 'output'):
             del self.output
 
         return config
-
 
     def overlaps(self, indices):
         '''Return True if the subarray overlaps a subspace of the master array.
@@ -1683,7 +1667,7 @@ class Partition:
 
         '''
         p_indices = []
-        shape     = []
+        shape = []
 
         if not indices:
             return p_indices, shape
@@ -1741,7 +1725,6 @@ class Partition:
         # slice.
         return p_indices, shape
 
-
 #    def parallelise(self, use_shared_memory=1, from_disk=True):
 #        '''
 #        '''
@@ -1760,7 +1743,6 @@ class Partition:
 #
 #        # Still here? Then work on this partition in serial.
 #        return False
-
 
     def to_disk(self, reopen=True):
         '''Move the partition's subarray to a temporary file on disk.
@@ -1802,20 +1784,19 @@ class Partition:
 
         return True
 
-
 #    def to_shared_memory(self, from_disk=True):
 #        '''
 #
-#:Parameters:
+#    :Parameters:
 #
-#    from_disk : bool, optional
+#        from_disk : bool, optional
 #
-#:Returns:
+#    :Returns:
 #
-#    `bool`
-#        Whether or not the subarray is in shared memory.
+#        `bool`
+#            Whether or not the subarray is in shared memory.
 #
-#'''
+#        '''
 #        if self.in_shared_memory:
 #            return True
 #
@@ -1836,7 +1817,6 @@ class Partition:
 #        self.open(self.config)
 #
 #        return True
-
 
     def revert(self):
         '''Completely update the partition with another partition's attributes
@@ -1874,10 +1854,9 @@ class Partition:
         if keep_output:
             self.output = output
 
-
     def update_inplace_from(self, other):
-        '''Completely update the partition with another partition's attributes in
-    place.
+        '''Completely update the partition with another partition's
+    attributes in place.
 
     :Parameters:
 
@@ -1894,20 +1873,18 @@ class Partition:
         '''
         self.__dict__ = other.__dict__.copy()
 
-
     # def set_from_child_process(self, other):
     #     '''
     #     '''
     #     if other.in_shared_memory and self.in_shared_memory:
     #         # If BOTH subarrays are in shared memory
-    #         _shared_memory_array[id(other.subarray)] = _shared_memory_array[id(self.subarray)]
-
+    #         _shared_memory_array[id(other.subarray)] = (
+    #              _shared_memory_array[id(self.subarray)])
     #     if other.in_cached_file:
     #         # The other subarray is in a temporary file
     #         _temporary_files.add(other._subarray._partition_file)
 
     #     self.__dict__ = other.__dict__
-
 
     def _register_temporary_file(self):
         '''Register a temporary file on this rank that has been created on
@@ -1927,13 +1904,13 @@ class Partition:
 
         return _lock_file
 
-
     def _update_lock_files(self, lock_files):
         '''Add the lock files listed in lock_files to the list of lock files
     managed by other ranks
 
         '''
-        _, _lock_file, _other_lock_files = _temporary_files[self._subarray._partition_file]
+        _, _lock_file, _other_lock_files = _temporary_files[
+            self._subarray._partition_file]
         _other_lock_files.update(set(lock_files))
         if _lock_file in _other_lock_files:
             # If the lock file managed by this rank is in the list of

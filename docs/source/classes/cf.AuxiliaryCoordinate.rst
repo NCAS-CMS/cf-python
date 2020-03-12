@@ -281,8 +281,13 @@ Mathematical operations
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.AuxiliaryCoordinate.arccos
+   ~cf.AuxiliaryCoordinate.arccosh
+   ~cf.AuxiliaryCoordinate.arcsin
    ~cf.AuxiliaryCoordinate.arcsinh
    ~cf.AuxiliaryCoordinate.arctan
+   .. ~cf.AuxiliaryCoordinate.arctan2  [AT2]
+   ~cf.AuxiliaryCoordinate.arctanh
    ~cf.AuxiliaryCoordinate.cos
    ~cf.AuxiliaryCoordinate.cosh
    ~cf.AuxiliaryCoordinate.sin

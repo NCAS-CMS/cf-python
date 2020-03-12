@@ -86,7 +86,7 @@ def psum(x, y):
         if numpy_ma_isMA(y):
             # x and y are both masked
             x_mask = x.mask
-            x  = x.filled(0)
+            x = x.filled(0)
             x += y.filled(0)
             x = numpy_ma_array(x, mask=x_mask & y.mask, copy=False)
         else:
@@ -125,19 +125,19 @@ def pmax(x, y):
             z = numpy_maximum(x, y)
             z = numpy_ma_where(x.mask & ~y.mask, y, z)
             x = numpy_ma_where(y.mask & ~x.mask, x, z)
-            if x.mask is numpy_ma_nomask: #not numpy_any(x.mask):
+            if x.mask is numpy_ma_nomask:  # not numpy_any(x.mask):
                 x = numpy_array(x)
         else:
             # Only x is masked
             z = numpy_maximum(x, y)
             x = numpy_ma_where(x.mask, y, z)
-            if x.mask is numpy_ma_nomask: #not numpy_any(x.mask):
+            if x.mask is numpy_ma_nomask:  # not numpy_any(x.mask):
                 x = numpy_array(x)
     elif numpy_ma_isMA(y):
         # Only y is masked
         z = numpy_maximum(x, y)
         x = numpy_ma_where(y.mask, x, z)
-        if x.mask is numpy_ma_nomask: #not numpy_any(x.mask):
+        if x.mask is numpy_ma_nomask:  # not numpy_any(x.mask):
             x = numpy_array(x)
     else:
         # x and y are both unmasked
@@ -251,9 +251,9 @@ def double_precision(a):
         return a.astype(newtype, copy=False)
 
 
-#---------------------------------------------------------------------
+# --------------------------------------------------------------------
 # Maximum
-#---------------------------------------------------------------------
+# --------------------------------------------------------------------
 def max_f(a, axis=None, masked=False):
     '''Return the maximum of an array, or the maxima of an array along an
     axis.
@@ -293,7 +293,7 @@ def max_fpartial(out, out1=None, group=False):
 
     if out1 is not None:
         N1, amax1 = out1
-        N    = psum(N, N1)
+        N = psum(N, N1)
         amax = pmax(amax, amax1)
 
     return asanyarray(N, amax)
@@ -311,9 +311,9 @@ def max_ffinalise(out, sub_samples=None):
     return mask_where_too_few_values(1, *out)
 
 
-#---------------------------------------------------------------------
+# --------------------------------------------------------------------
 # Minimum
-#---------------------------------------------------------------------
+# --------------------------------------------------------------------
 def min_f(a, axis=None, masked=False):
     '''Return the minimum of an array, or the minima of an array along an
     axis.
@@ -348,7 +348,7 @@ def min_fpartial(out, out1=None, group=False):
 
     if out1 is not None:
         N1, amin1 = out1
-        N    = psum(N, N1)
+        N = psum(N, N1)
         amin = pmin(amin, amin1)
 
     return asanyarray(N, amin)
@@ -366,9 +366,9 @@ def min_ffinalise(out, sub_samples=None):
     return mask_where_too_few_values(1, *out)
 
 
-#---------------------------------------------------------------------
+# --------------------------------------------------------------------
 # maximum_absolute_value
-#---------------------------------------------------------------------
+# --------------------------------------------------------------------
 def max_abs_f(a, axis=None, masked=False):
     '''Return the maximum of the absolute array, or the maxima of the
     absolute array along an axis.
@@ -393,13 +393,13 @@ def max_abs_f(a, axis=None, masked=False):
     return max_f(numpy_abs(a), axis=axis, masked=masked)
 
 
-max_abs_fpartial  = max_fpartial
+max_abs_fpartial = max_fpartial
 max_abs_ffinalise = max_ffinalise
 
 
-#---------------------------------------------------------------------
+# --------------------------------------------------------------------
 # minimum_absolute_value
-#---------------------------------------------------------------------
+# --------------------------------------------------------------------
 def min_abs_f(a, axis=None, masked=False):
     '''Return the minimum of the absolute array, or the minima of the
     absolute array along an axis.
@@ -424,13 +424,13 @@ def min_abs_f(a, axis=None, masked=False):
     return min_f(numpy_abs(a), axis=axis, masked=masked)
 
 
-min_abs_fpartial  = min_fpartial
+min_abs_fpartial = min_fpartial
 min_abs_ffinalise = min_ffinalise
 
 
-#---------------------------------------------------------------------
+# --------------------------------------------------------------------
 # mean
-#---------------------------------------------------------------------
+# --------------------------------------------------------------------
 def mean_f(a, axis=None, weights=None, masked=False):
     '''The weighted average along the specified axes.
 
@@ -464,10 +464,10 @@ def mean_f(a, axis=None, weights=None, masked=False):
 
     if not numpy_ndim(avg):
         avg = numpy_asanyarray(avg)
-        sw  = numpy_asanyarray(sw)
+        sw = numpy_asanyarray(sw)
 
     if weights is None:
-        N  = sw.copy()
+        N = sw.copy()
     else:
         N, = sample_size_f(a, axis=axis, masked=masked)
 
@@ -507,9 +507,9 @@ def mean_fpartial(out, out1=None, group=False):
         if not group:
             avg1 *= sw1
 
-        N   = psum(N, N1)
-        avg = psum(avg, avg1) # Now a partial sum
-        sw  = psum(sw, sw1)
+        N = psum(N, N1)
+        avg = psum(avg, avg1)  # Now a partial sum
+        sw = psum(sw, sw1)
 
     return asanyarray(N, avg, sw)
 
@@ -540,9 +540,9 @@ def mean_ffinalise(out, sub_samples=None):
     return mask_where_too_few_values(1, N, avg)
 
 
-#---------------------------------------------------------------------
+# --------------------------------------------------------------------
 # mean_absolute_value
-#---------------------------------------------------------------------
+# --------------------------------------------------------------------
 def mean_abs_f(a, axis=None, weights=None, masked=False):
     '''Return the mean of the absolute array, or the means of the absolute
     array along an axis.
@@ -567,13 +567,13 @@ def mean_abs_f(a, axis=None, weights=None, masked=False):
     return mean_f(numpy_abs(a), axis=axis, weights=weights, masked=masked)
 
 
-mean_abs_fpartial  = mean_fpartial
+mean_abs_fpartial = mean_fpartial
 mean_abs_ffinalise = mean_ffinalise
 
 
-#---------------------------------------------------------------------
+# --------------------------------------------------------------------
 # root_mean_square
-#---------------------------------------------------------------------
+# --------------------------------------------------------------------
 def root_mean_square_f(a, axis=None, weights=None, masked=False):
     '''The RMS along the specified axes.
 
@@ -603,6 +603,7 @@ def root_mean_square_f(a, axis=None, weights=None, masked=False):
 
 root_mean_square_fpartial = mean_fpartial
 
+
 def root_mean_square_ffinalise(out, sub_samples=None):
     '''Divide the weighted sum by the sum of weights and take the square
     root.
@@ -629,9 +630,9 @@ def root_mean_square_ffinalise(out, sub_samples=None):
     return asanyarray(N, avg)
 
 
-#---------------------------------------------------------------------
+# --------------------------------------------------------------------
 # Mid range: Average of maximum and minimum
-#---------------------------------------------------------------------
+# --------------------------------------------------------------------
 def mid_range_f(a, axis=None, masked=False):
     '''Return the minimum and maximum of an array or the minima and maxima
     along an axis.
@@ -656,7 +657,7 @@ def mid_range_f(a, axis=None, masked=False):
             The minimum and maximum inside a 2-tuple.
 
     '''
-    N,   = sample_size_f(a, axis=axis, masked=masked)
+    N, = sample_size_f(a, axis=axis, masked=masked)
     amin = numpy_amin(a, axis=axis)
     amax = numpy_amax(a, axis=axis)
 
@@ -678,7 +679,7 @@ def mid_range_fpartial(out, out1=None, group=False):
     if out1 is not None:
         N1, amin1, amax1 = out1
 
-        N    = psum(N, N1)
+        N = psum(N, N1)
         amin = pmin(amin, amin1)
         amax = pmax(amax, amax1)
 
@@ -714,11 +715,12 @@ def mid_range_ffinalise(out, sub_samples=None):
     return mask_where_too_few_values(1, N, amax)
 
 
-#---------------------------------------------------------------------
+# ---------------------------------------------------------------------
 # Range: Absolute difference between maximum and minimum
-#---------------------------------------------------------------------
-range_f        = mid_range_f
+# ---------------------------------------------------------------------
+range_f = mid_range_f
 range_fpartial = mid_range_fpartial
+
 
 def range_ffinalise(out, sub_samples=None):
     '''Absolute difference between maximum and minimum
@@ -739,9 +741,9 @@ def range_ffinalise(out, sub_samples=None):
     return mask_where_too_few_values(1, N, amax)
 
 
-#---------------------------------------------------------------------
+# ---------------------------------------------------------------------
 # Sample size
-#---------------------------------------------------------------------
+# ---------------------------------------------------------------------
 def sample_size_f(a, axis=None, masked=False):
     '''TODO
 
@@ -808,9 +810,9 @@ def sample_size_ffinalise(out, sub_samples=None):
     return asanyarray(N, N)
 
 
-#---------------------------------------------------------------------
+# ---------------------------------------------------------------------
 # sum
-#---------------------------------------------------------------------
+# ---------------------------------------------------------------------
 def sum_f(a, axis=None, weights=None, masked=False):
     '''Return the sum of an array or the sum along an axis.
 
@@ -863,7 +865,7 @@ def sum_fpartial(out, out1=None, group=False):
 
     if out1 is not None:
         N1, asum1 = out1
-        N    = psum(N, N1)
+        N = psum(N, N1)
         asum = psum(asum, asum1)
 
     return asanyarray(N, asum)
@@ -880,9 +882,9 @@ def sum_ffinalise(out, sub_samples=None):
     return mask_where_too_few_values(1, *out)
 
 
-#---------------------------------------------------------------------
+# ---------------------------------------------------------------------
 # sum_of_squares
-#---------------------------------------------------------------------
+# ---------------------------------------------------------------------
 def sum_of_squares_f(a, axis=None, weights=None, masked=False):
     '''Return the sum of the square of an array or the sum of squares
     along an axis.
@@ -906,13 +908,13 @@ def sum_of_squares_f(a, axis=None, weights=None, masked=False):
     return sum_f(a**2, axis=axis, weights=weights, masked=masked)
 
 
-sum_of_squares_fpartial  = sum_fpartial
+sum_of_squares_fpartial = sum_fpartial
 sum_of_squares_ffinalise = sum_ffinalise
 
 
-#---------------------------------------------------------------------
+# ---------------------------------------------------------------------
 # Sum of weights
-#---------------------------------------------------------------------
+# ---------------------------------------------------------------------
 def sw_f(a, axis=None, masked=False, weights=None, N=None,
          sum_of_squares=False):
     '''TODO
@@ -946,19 +948,20 @@ def sw_f(a, axis=None, masked=False, weights=None, N=None,
     return asanyarray(N, sw)
 
 
-sw_fpartial  = sum_fpartial
+sw_fpartial = sum_fpartial
 sw_ffinalise = sum_ffinalise
 
-#---------------------------------------------------------------------
+# ---------------------------------------------------------------------
 # Sum of squares of weights
-#---------------------------------------------------------------------
-sw2_f         = functools_partial(sw_f, sum_of_squares=True)
-sw2_fpartial  = sum_fpartial
+# ---------------------------------------------------------------------
+sw2_f = functools_partial(sw_f, sum_of_squares=True)
+sw2_fpartial = sum_fpartial
 sw2_ffinalise = sum_ffinalise
 
-#---------------------------------------------------------------------
+
+# ---------------------------------------------------------------------
 # Variance
-#---------------------------------------------------------------------
+# ---------------------------------------------------------------------
 def var_f(a, axis=None, weights=None, masked=False, ddof=0):
     '''TODO
 
@@ -1022,7 +1025,7 @@ def var_f(a, axis=None, weights=None, masked=False, ddof=0):
     else:
         reshape_avg = False
 
-    var  = a - avg
+    var = a - avg
     var *= var
 
     if masked:
@@ -1108,7 +1111,7 @@ https://en.wikipedia.org/wiki/Pooled_variance#Population-based_statistics
 
         var = psum(var, varb)
         avg = psum(avg, avgb)
-        V1  = psum(V1 , V1b)
+        V1 = psum(V1, V1b)
 
         if weighted and ddof == 1:
             V2 = psum(V2, V2b)
@@ -1126,7 +1129,7 @@ def var_ffinalise(out, sub_samples=None):
     (N, var, avg, V1, V2, ddof, weighted) = out
 
     N, var = mask_where_too_few_values(max(2, ddof+1), N, var)
-    N, V1  = mask_where_too_few_values(max(2, ddof+1), N, V1)
+    N, V1 = mask_where_too_few_values(max(2, ddof+1), N, V1)
     if V2 is not None:
         N, V2 = mask_where_too_few_values(max(2, ddof+1), N, V2)
 
@@ -1173,17 +1176,19 @@ def var_ffinalise(out, sub_samples=None):
         var /= V1
     elif ddof:
         raise ValueError(
-            "Can only calculate a weighted variance with a delta degrees of freedom (ddof) of 0 or 1: Got {}".format(
-                ddof))
+            "Can only calculate a weighted variance with a delta degrees "
+            "of freedom (ddof) of 0 or 1: Got {}".format(ddof)
+        )
 
     return asanyarray(N, var)
 
 
-#---------------------------------------------------------------------
+# ---------------------------------------------------------------------
 # standard_deviation
-#---------------------------------------------------------------------
-sd_f        = var_f
+# ---------------------------------------------------------------------
+sd_f = var_f
 sd_fpartial = var_fpartial
+
 
 def sd_ffinalise(out, sub_samples=None):
     '''TODO

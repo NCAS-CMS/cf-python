@@ -421,8 +421,8 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
 
     **Examples:**
 
-    See the on-line documention for further worked examples:
-    https://ncas-cms.github.io/cf-python/tutorial.html#writing-to-disk
+    There are further worked examples
+    :ref:`in the tutorial <Writing-to-a-netCDF-dataset>`.
 
     >>> cf.write(f, 'file.nc')
 

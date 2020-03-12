@@ -30,7 +30,6 @@ class DomainAxis(cfdm.DomainAxis):
         '''
         return super().__repr__().replace('<', '<CF ', 1)
 
-
     def __hash__(self):
         '''TODO
 
@@ -38,7 +37,6 @@ class DomainAxis(cfdm.DomainAxis):
         return hash((self.__class__.__name__,
                      self.get_size(None),
                      self.nc_get_dimension()))
-
 
     def __eq__(self, other):
         '''The rich comparison operator ``==``
@@ -48,7 +46,6 @@ class DomainAxis(cfdm.DomainAxis):
         '''
         return self.get_size() == int(other)
 
-
     def __ne__(self, other):
         '''The rich comparison operator ``!=``
 
@@ -56,7 +53,6 @@ class DomainAxis(cfdm.DomainAxis):
 
         '''
         return self.get_size() != int(other)
-
 
     def __gt__(self, other):
         '''The rich comparison operator ``>``
@@ -66,7 +62,6 @@ class DomainAxis(cfdm.DomainAxis):
         '''
         return self.get_size() > int(other)
 
-
     def __ge__(self, other):
         '''The rich comparison operator ``>=``
 
@@ -74,7 +69,6 @@ class DomainAxis(cfdm.DomainAxis):
 
         '''
         return self.get_size() >= int(other)
-
 
     def __lt__(self, other):
         '''The rich comparison operator ``<``
@@ -84,7 +78,6 @@ class DomainAxis(cfdm.DomainAxis):
         '''
         return self.get_size() < int(other)
 
-
     def __le__(self, other):
         '''The rich comparison operator ``<=``
 
@@ -93,7 +86,6 @@ class DomainAxis(cfdm.DomainAxis):
         '''
         return self.get_size() <= int(other)
 
-
     def __add__(self, other):
         '''TODO
         '''
@@ -101,19 +93,16 @@ class DomainAxis(cfdm.DomainAxis):
         new.set_size(self.get_size() + int(other))
         return new
 
-
     def __radd__(self, other):
         '''TODO
         '''
         return self + other
-
 
     def __iadd__(self, other):
         '''TODO
         '''
         self.set_size(self.get_size() + int(other))
         return self
-
 
     def __sub__(self, other):
         '''TODO
@@ -122,13 +111,11 @@ class DomainAxis(cfdm.DomainAxis):
         new.set_size(self.get_size() - int(other))
         return new
 
-
     def __isub__(self, other):
         '''TODO
         '''
         self.set_size(self.get_size() - int(other))
         return self
-
 
     def __int__(self):
         '''TODO
@@ -136,7 +123,6 @@ class DomainAxis(cfdm.DomainAxis):
     x.__int__() <==> int(x)
         '''
         return self.get_size()
-
 
     @property
     def size(self):
@@ -155,13 +141,14 @@ class DomainAxis(cfdm.DomainAxis):
 
         '''
         return self.get_size(default=AttributeError())
+
     @size.setter
     def size(self, value):
         self.set_size(value)
+
     @size.deleter
     def size(self):
         self.del_size(default=AttributeError())
-
 
     def inspect(self):
         '''Inspect the object for debugging.
@@ -177,7 +164,7 @@ class DomainAxis(cfdm.DomainAxis):
     >>> d.inspect()
 
         '''
-        print(cf_inspect(self)) # pragma: no cover
+        print(cf_inspect(self))  # pragma: no cover
 
 
 # --- End: class

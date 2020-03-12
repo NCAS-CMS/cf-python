@@ -22,6 +22,18 @@ class functionTest(unittest.TestCase):
         with self.assertRaises(Exception):
             _ = cf.example_field(-999)
 
+    def test_keyword_deprecation(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        # Use as test case 'i' kwarg, the deprecated old name for 'inplace':
+        a = cf.Data([list(range(100))])
+        a.squeeze(inplace=True)  # new way to specify operation tested below
+
+        b = cf.Data([list(range(100))])
+        with self.assertRaises(cf.functions.DeprecationError):
+            b.squeeze(i=True)
+
 
 # --- End: class
 

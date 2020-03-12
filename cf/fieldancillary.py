@@ -2,6 +2,7 @@ import cfdm
 
 from . import mixin
 
+
 class FieldAncillary(mixin.PropertiesData,
                      cfdm.FieldAncillary):
     '''A field ancillary construct of the CF data model.
@@ -40,7 +41,6 @@ class FieldAncillary(mixin.PropertiesData,
 
         '''
         return super().__repr__().replace('<', '<CF ', 1)
-
 
     @property
     def isfieldancillary(self):

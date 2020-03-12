@@ -45,7 +45,8 @@ class CachedArray(abstract.FileArray):
         # Use mkstemp because we want to be responsible for deleting
         # the temporary file when done with it.
         # ------------------------------------------------------------
-        _partition_dir = mkdtemp(prefix='cf_cachedarray_', dir=CONSTANTS['TEMPDIR'])
+        _partition_dir = mkdtemp(
+            prefix='cf_cachedarray_', dir=CONSTANTS['TEMPDIR'])
         fd, _partition_file = mkstemp(prefix='cf_cachedarray_', suffix='.npy',
                                       dir=_partition_dir)
         close(fd)
@@ -81,7 +82,6 @@ class CachedArray(abstract.FileArray):
                 # Array is not a masked array.
                 numpy_save(_partition_file, array)
 
-
     def __getitem__(self, indices):
         '''x.__getitem__(indices) <==> x[indices]
 
@@ -103,13 +103,11 @@ class CachedArray(abstract.FileArray):
         # Return the numpy array
         return array
 
-
     def __str__(self):
         '''x.__str__() <==> str(x)
 
         '''
         return '%s in %s' % (self.shape, self._partition_file)
-
 
     # ----------------------------------------------------------------
     # Attributes
@@ -120,7 +118,6 @@ class CachedArray(abstract.FileArray):
 
         '''
         return self._get_component('_partition_dir')
-
 
     @property
     def _partition_file(self):
