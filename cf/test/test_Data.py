@@ -108,7 +108,7 @@ class DataTest(unittest.TestCase):
 #        self.test_only = ['test_Data__collapse_WEIGHTED_UNMASKED']
 #        self.test_only = ['test_Data__collapse_WEIGHTED_MASKED']
 #        self.test_only = ['test_Data_ERROR']
-#        self.test_only = ['test_Data_sample_size']
+        self.test_only = ['test_Data_diff']
 #        self.test_only = ['test_Data__init__dtype_mask']
 #        self.test_only = ['test_Data_section']
 #        self.test_only = ['test_Data_sum_of_weights_sum_of_weights2']
@@ -120,6 +120,12 @@ class DataTest(unittest.TestCase):
 #        self.test_only = ['test_Data_clip']
 #        self.test_only = ['test_Data__init__dtype_mask']
 
+
+    def test_Data_diff(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        self.assertTrue(False)
 
     def test_Data_stats(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
