@@ -2058,17 +2058,102 @@ place.
         return processed_partitions
 
     @_inplace_enabled
-    def diff(self, axis=-1, inplace=False):
-        '''TODO
+    def diff(self, axis=-1, n=1, inplace=False):
+        '''Calculate the n-th discrete difference along the given axis.
+
+    The first difference is given by ``x[i+1] - x[i]`` along the given
+    axis, higher differences are calculated by using `diff`
+    recursively.
+
+    The shape of the output is the same as the input except along the
+    given axis, where the dimension is smaller by *n*. The data type
+    of the output is the same as the type of the difference between
+    any two elements of the input.
 
     .. versionadded:: 3.2.0
+
+    :Parameters:
+
+        axis: int, optional
+            The axis along which the difference is taken. By default
+            the last axis is used. The *axis* argument is an integer
+            that selects the axis coresponding to the given position
+            in the list of axes of the data array.
+
+        n: int, optional
+            The number of times values are differenced. If zero, the
+            input is returned as-is. By default *n* is ``1``.
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+
+    :Returns:
+
+        `Data` or `None`
+
+            The n-th differences, or `None` if the operation was
+            in-place.
+
+    **Examples:**
+
+    >>> d = cf.Data(numpy.arange(12.).reshape(3, 4))
+    >>> d[1, 1] = 4.5
+    >>> d[2, 2] = 10.5
+    >>> print(d.array)
+    [[ 0.   1.   2.   3. ]
+     [ 4.   4.5  6.   7. ]
+     [ 8.   9.  10.5 11. ]]
+    >>> print(d.diff().array)
+    [[1.  1.  1. ]
+     [0.5 1.5 1. ]
+     [1.  1.5 0.5]]
+    >>> print(d.diff(n=2).array)
+    [[ 0.   0. ]
+     [ 1.  -0.5]
+     [ 0.5 -1. ]]
+    >>> print(d.diff(axis=0).array)
+    [[4.  3.5 4.  4. ]
+     [4.  4.5 4.5 4. ]]    
+    >>> print(d.diff(axis=0, n=2).array)
+    [[0.  1.  0.5 0. ]]
+    >>> d[1, 2] = cf.masked
+    >>> print(d.array)
+    [[0.0 1.0  2.0  3.0]
+     [4.0 4.5   --  7.0]
+     [8.0 9.0 10.5 11.0]]
+    >>> print(d.diff().array)
+    [[1.0 1.0 1.0]
+     [0.5  --  --]
+     [1.0 1.5 0.5]]
+    >>> print(d.diff(n=2).array)
+    [[0.0  0.0]
+     [ --   --]
+     [0.5 -1.0]]
+    >>> print(d.diff(axis=0).array)
+    [[4.0 3.5 -- 4.0]
+     [4.0 4.5 -- 4.0]]
+    >>> print(d.diff(axis=0, n=2).array)
+    [[0.0 1.0 -- 0.0]]
 
         '''
         d = _inplace_enabled_define_and_cleanup(self)
 
-        # TODO - LAMA this using section
-        out = type(self)(numpy_diff(d.array, axis=axis),
-                         units=self.Units, fill_value=self.fill_value)
+        if n == 0:
+            return d
+
+        out = d
+        for _ in range(n):
+            sections = out.section(axis, chunks=True)
+            
+            # Diff each section
+            for key, data in sections.items():
+                output_array = numpy_diff(data.array, axis=axis)
+                
+                sections[key] = type(self)(output_array, units=self.Units,
+                                           fill_value=self.fill_value)
+                
+            # Glue the sections back together again
+            out = self.__class__.reconstruct_sectioned_data(sections)
 
         if inplace:
             d.__dict__ = out.__dict__

@@ -466,7 +466,6 @@ class FieldTest(unittest.TestCase):
         with self.assertRaises(Exception):
             g = f.select_field(re.compile('^QWERTY'))
 
-
     def test_FieldList_concatenate(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -476,12 +475,10 @@ class FieldTest(unittest.TestCase):
         g = cf.FieldList([f[0], f[1:456], f[456:]])
 
         h = g.concatenate(axis=0)
-
         self.assertTrue(f.equals(h, verbose=True))
 
         h = g.concatenate(axis=0, _preserve=False)
         self.assertTrue(f.equals(h, verbose=True))
-
 
     def test_FieldList_index(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

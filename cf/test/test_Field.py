@@ -110,7 +110,7 @@ class FieldTest(unittest.TestCase):
                     elif f.ndim != 2:
                         continue
 
-#                    print(method, method1, f.ndim)
+                    print(method, method1, f.ndim)
                     c = u.compress(method1)
                     self.assertTrue(bool(c.data.get_compression_type()), message)
 

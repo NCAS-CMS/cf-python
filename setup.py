@@ -253,7 +253,7 @@ setup(name = "cf-python",
 #                          'scipy>=1.1.0',
 #                          'matplotlib>=3.0.0',
 #                          'mpi4py>=3.0.0',
-#                          'ESMF>=7.1',
+#                          'ESMF>=8.0',
 #                          'udunits2==2.2.25',
                       ],
       cmdclass     = {'build': build_umread}, #https://docs.python.org/2/distutils/apiref.html

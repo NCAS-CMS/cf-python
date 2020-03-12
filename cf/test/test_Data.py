@@ -71,7 +71,7 @@ class DataTest(unittest.TestCase):
             for axes in itertools.permutations(range(self.a.ndim), n)]
 
         self.test_only = []
-#        self.test_only = ['NOTHING!!!!!']
+        self.test_only = ['NOTHING!!!!!']
 
 #        self.test_only = ['test_Data_AUXILIARY_MASK',
 #                          'test_Data_datum',
@@ -101,7 +101,7 @@ class DataTest(unittest.TestCase):
 
 #        self.test_only = ['test_Data_mean_mean_absolute_value']
 #        self.test_only = ['test_Data_AUXILIARY_MASK']
-        self.test_only = ['test_Data_mean_of_upper_decile']
+#        self.test_only = ['test_Data_mean_of_upper_decile']
 #        self.test_only = ['test_Data__collapse_SHAPE']
 #        self.test_only = ['test_Data__collapse_UNWEIGHTED_MASKED']
 #        self.test_only = ['test_Data__collapse_UNWEIGHTED_UNMASKED']
