@@ -2090,7 +2090,6 @@ place.
     :Returns:
 
         `Data` or `None`
-
             The n-th differences, or `None` if the operation was
             in-place.
 
@@ -9128,9 +9127,49 @@ False
 
     @_inplace_enabled
     def compressed(self, inplace=False):
-        '''TODO
+        '''Return all non-masked values in a one dimensional data array.
+
+    Not to be confused with compression by convention (see the
+    `uncompress` method).
 
     .. versionadded:: 3.2.0
+
+    .. seealso:: `flatten`
+
+    :Parameters:
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+
+    :Returns:
+
+        `Data` or `None`
+            The non-masked values, or `None` if the operation was
+            in-place.
+
+    **Examples**
+
+    >>> d = cf.Data(numpy.arange(12).reshape(3, 4))
+    >>> print(d.array)
+    [[ 0  1  2  3]
+     [ 4  5  6  7]
+     [ 8  9 10 11]]
+    >>> print(d.compressed().array)
+    [ 0  1  2  3  4  5  6  7  8  9 10 11]
+    >>> d[1, 1] = cf.masked
+    >>> d[2, 3] = cf.masked
+    >>> print(d.array)
+    [[0  1  2  3]
+     [4 --  6  7]
+     [8  9 10 --]]    
+    >>> print(d.compressed().array)
+    [ 0  1  2  3  4  6  7  8  9 10]
+    
+    >>> d = cf.Data(9)
+    >>> print(d.array)
+    9
+    >>> print(d.compressed().array)
+    9
 
         '''
         d = _inplace_enabled_define_and_cleanup(self)
@@ -9155,6 +9194,9 @@ False
         i = 0
         start = 0
         for _ in range(1 + d.size//n):
+            if i >= d.size:
+                break
+            
             array = d[i:i+n].array
             if numpy_ma_isMA(array):
                 array = array.compressed()
@@ -9565,12 +9607,28 @@ False
     def uncompress(self, inplace=False):
         '''Uncompress the underlying data.
 
-    If the data is not compressed, then no change is made.
+    Compression saves space by identifying and removing unwanted
+    missing data. Such compression techniques store the data more
+    efficiently and result in no precision loss.
 
-    .. versionadded:: 3.0.0
+    Whether or not the data is compressed does not alter its
+    functionality nor external appearance.
+
+    Data that is already uncompressed will be returned uncompressed.
+
+    The following type of compression are available:
+
+        * Ragged arrays for discrete sampling geometries (DSG). Three
+          different types of ragged array representation are
+          supported.
+        
+        ..
+        
+        * Compression by gathering.
+
+    .. versionadded:: 3.0.6
 
     .. seealso:: `array`, `compressed_array`, `source`
-
 
     :Parameters:
 
@@ -10077,7 +10135,8 @@ False
 
     .. versionadded:: 3.0.2
 
-    .. seealso:: `insert_dimension`, `flip`, `swapaxes`, `transpose`
+    .. seealso:: `compressed`, `insert_dimension`, `flip`, `swapaxes`,
+                 `transpose`
 
     :Parameters:
 
@@ -11487,43 +11546,7 @@ False
 
     def save_to_disk(self, itemsize=None):
         raise NotImplementedError(
-"cf.Data.save_to_disk is dead. Use not cf.Data.fits_in_memory instead.")
-#        '''
-#
-#Return True if the master array is large enough to be saved to disk.
-#
-#:Parameters:
-#
-#    itemsize : int, optional
-#        The number of bytes per word of the master data array. By
-#        default it taken from the array's data-type.
-#
-#:Returns:
-#
-#    `bool`
-#
-#**Examples:**
-#
-#>>> print(d.save_to_disk())
-#True
-#
-#>>> print(d.save_to_disk(8))
-#False
-#
-#'''
-#        if not itemsize:
-#            try:
-#                itemsize = self.dtype.itemsize
-#            except AttributeError:
-#                raise ValueError(
-#                    "save_to_disk: Must set itemsize if there is no dtype")
-#        #--- End: if
-#
-#        # ------------------------------------------------------------
-#        # Note that self._size*(itemsize+1) is the array size in bytes
-#        # including space for a full boolean mask
-#        # ------------------------------------------------------------
-#        return self._size*(itemsize+1) > FREE_MEMORY() - FM_THRESHOLD()
+            "cf.Data.save_to_disk is dead. Use not cf.Data.fits_in_memory instead.")
 
 
     def fits_in_memory(self, itemsize):

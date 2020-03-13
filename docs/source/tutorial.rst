@@ -1446,12 +1446,12 @@ A `cf.Data` instance can also assigned values in the same way:
 Masked values
 ^^^^^^^^^^^^^
  
-Data array elements may be set to missing values by assigning them to
+Data array elements may be set to masked values by assigning them to
 the `cf.masked` constant, thereby updating the the :ref:`data mask
 <Data-mask>`.
 
 .. code-block:: python
-   :caption: *Set a column of elements to missing values.*
+   :caption: *Set a column of elements to masked values.*
 	     
    >>> t[0, :, -2] = cf.masked
    >>> print(t.array)

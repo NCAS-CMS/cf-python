@@ -108,7 +108,7 @@ class DataTest(unittest.TestCase):
 #        self.test_only = ['test_Data__collapse_WEIGHTED_UNMASKED']
 #        self.test_only = ['test_Data__collapse_WEIGHTED_MASKED']
 #        self.test_only = ['test_Data_ERROR']
-        self.test_only = ['test_Data_diff']
+        self.test_only = ['test_Data_diff', 'test_Data_compressed']
 #        self.test_only = ['test_Data__init__dtype_mask']
 #        self.test_only = ['test_Data_section']
 #        self.test_only = ['test_Data_sum_of_weights_sum_of_weights2']
@@ -125,8 +125,89 @@ class DataTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        self.assertTrue(False)
+        a = numpy.ma.arange(12.).reshape(3, 4)
+        a[1, 1] = 4.5
+        a[2, 2] = 10.5
+        a[1, 2] = numpy.ma.masked
 
+        d = cf.Data(a)
+
+        self.assertTrue((d.array == a).all())
+
+        e = d.copy()
+        x = e.diff(inplace=True)
+        self.assertTrue(x is None)
+        self.assertTrue(e.equals(d.diff()))
+
+        for n in (0, 1, 2):
+            for axis in (0, 1, -1, -2):
+                a_diff = numpy.diff(a, n=n, axis=axis)
+                d_diff = d.diff(n=n, axis=axis)
+            
+                self.assertTrue((a_diff == d_diff).all())
+                self.assertTrue((a_diff.mask == d_diff.mask).all())
+
+                e = d.copy()
+                x = e.diff(n=n, axis=axis, inplace=True)
+                self.assertTrue(x is None)
+                self.assertTrue(e.equals(d_diff))                
+        #--- End: for
+                
+        for chunksize in self.chunk_sizes:
+            cf.CHUNKSIZE(chunksize)
+            
+            d = cf.Data(self.ma, 'km')
+            for n in (0, 1, 2):
+                for axis in (0, 1, 2, 3):
+                    a_diff = numpy.diff(self.ma, n=n, axis=axis)
+                    d_diff = d.diff(n=n, axis=axis)
+                    self.assertTrue((a_diff == d_diff).all())
+                    self.assertTrue((a_diff.mask == d_diff.mask).all())
+        #--- End: for
+        cf.CHUNKSIZE(self.original_chunksize)
+
+        
+    def test_Data_compressed(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        a = numpy.ma.arange(12).reshape(3, 4)
+
+        d = cf.Data(a)
+        self.assertTrue((d.array == a).all())               
+        self.assertTrue((a.compressed() == d.compressed()).all())
+
+        e = d.copy()
+        x = e.compressed(inplace=True)
+        self.assertTrue(x is None)
+        self.assertTrue(e.equals(d.compressed()))
+                
+        a[1, 1] = numpy.ma.masked
+        a[2, 3] = numpy.ma.masked
+
+        d = cf.Data(a)
+        self.assertTrue((d.array == a).all())
+        self.assertTrue((d.mask.array == a.mask).all())
+        self.assertTrue((a.compressed() == d.compressed()).all())
+        
+        e = d.copy()
+        x = e.compressed(inplace=True)
+        self.assertTrue(x is None)
+        self.assertTrue(e.equals(d.compressed()))
+                
+        for chunksize in self.chunk_sizes:
+            cf.CHUNKSIZE(chunksize)            
+            d = cf.Data(self.a, 'km')
+            self.assertTrue((self.a.flatten() == d.compressed()).all())
+
+        for chunksize in self.chunk_sizes:
+            cf.CHUNKSIZE(chunksize)            
+            d = cf.Data(self.ma, 'km')
+            self.assertTrue((self.ma.compressed() == d.compressed()).all())
+
+        cf.CHUNKSIZE(self.original_chunksize)
+
+        
     def test_Data_stats(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return

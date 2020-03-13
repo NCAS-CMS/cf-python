@@ -304,10 +304,11 @@ html_use_smartypants = True
 # Custom sidebar templates, maps document names to template names.
 #html_sidebars = {'**': ['my_con.html', 'globaltoc.html', 'sourcelink.html']}
 html_sidebars = { '**': ['about.html',
+                         'searchbox.html',
                          'globaltoc.html',
                          'relations.html',
                          'sourcelink.html',
-                         'searchbox.html']
+]
 }
 
 # Additional templates that should be rendered to pages, maps page
