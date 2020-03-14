@@ -8,8 +8,9 @@ cf.Data
    :no-members:
    :no-inherited-members:
 
-Data attributes
----------------
+
+Inspection
+----------
 
 .. autosummary::
    :nosignatures:
@@ -17,187 +18,554 @@ Data attributes
    :template: attribute.rst
 
    ~cf.Data.array
-   ~cf.Data.binary_mask
-   ~cf.Data.data
-   ~cf.Data.day
-   ~cf.Data.datetime_array
+   ~cf.Data.varray
    ~cf.Data.dtype
-   ~cf.Data.fill_value
-   ~cf.Data.hardmask
-   ~cf.Data.hour
-   ~cf.Data.ismasked
-   ~cf.Data.isscalar
-   ~cf.Data.mask
-   ~cf.Data.minute
-   ~cf.Data.month
-   ~cf.Data.nbytes
    ~cf.Data.ndim
-   ~cf.Data.second
    ~cf.Data.shape
    ~cf.Data.size
+   ~cf.Data.nbytes
+   ~cf.Data.dump
+   ~cf.Data.inspect
+   ~cf.Data.isscalar
+   
+Units
+-----
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Data.del_units
+   ~cf.Data.get_units
+   ~cf.Data.has_units
+   ~cf.Data.set_units
+   ~cf.Data.override_units
+   ~cf.Data.del_calendar
+   ~cf.Data.get_calendar
+   ~cf.Data.has_calendar
+   ~cf.Data.set_calendar
+   ~cf.Data.override_calendar
+   ~cf.Data.change_calendar
+
+.. rubric:: Attributes
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
    ~cf.Data.Units 
-   ~cf.Data.varray
+
+Data creation routines
+----------------------
+
+Ones and zeros
+^^^^^^^^^^^^^^
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Data.empty
+   ~cf.Data.full
+   ~cf.Data.ones
+   ~cf.Data.zeros
+
+From existing data
+^^^^^^^^^^^^^^^^^^
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Data.copy
+   ~cf.Data.asdata
+   ~cf.Data.loadd
+   ~cf.Data.loads
+
+Data manipulation routines
+--------------------------
+
+Changing data shape
+^^^^^^^^^^^^^^^^^^^
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Data.flatten
+
+Transpose-like operations
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Data.swapaxes		 
+   ~cf.Data.transpose
+
+Changing number of dimensions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Data.insert_dimension
+   ~cf.Data.squeeze
+    
+Joining data
+^^^^^^^^^^^^
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Data.concatenate
+   
+Adding and removing elements
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Data.unique
+	    
+Rearranging elements
+^^^^^^^^^^^^^^^^^^^^
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Data.flip
+   ~cf.Data.roll
+	    
+Binary operations
+^^^^^^^^^^^^^^^^^
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+Date-time support
+-----------------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Data.datetime_as_string
+
+**Attributes**
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cf.Data.datetime_array
+   ~cf.Data.day
+   ~cf.Data.hour
+   ~cf.Data.minute
+   ~cf.Data.month
+   ~cf.Data.second
    ~cf.Data.year
  
-Data methods
+Indexing routines
+-----------------
+
+Single value selection
+^^^^^^^^^^^^^^^^^^^^^^
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Data.datum
+   ~cf.Data.first_element
+   ~cf.Data.second_element
+   ~cf.Data.last_element
+
+Iterating over data
+^^^^^^^^^^^^^^^^^^^
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Data.flat
+   ~cf.Data.ndindex
+
+Cyclic axes
+-----------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Data.cyclic
+   
+Input and output
+----------------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Data.dumpd
+   ~cf.Data.dumps
+   ~cf.Data.tolist
+
+Linear algebra
+--------------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Data.outerproduct
+
+Logic functions
+---------------
+
+Truth value testing
+^^^^^^^^^^^^^^^^^^^
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Data.all
+   ~cf.Data.any
+
+Comparison
+^^^^^^^^^^
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Data.allclose
+   ~cf.Data.isclose
+   ~cf.Data.equals
+
+Mask support
 ------------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Data.count
+   ~cf.Data.count_masked
+   ~cf.Data.compressed
+   ~cf.Data.filled
+   ~cf.Data.mask_fpe
+   ~cf.Data.mask_invalid
+   ~cf.Data.del_fill_value
+   ~cf.Data.get_fill_value
+   ~cf.Data.has_fill_value
+   ~cf.Data.set_fill_value
+   
+**Attributes**
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cf.Data.binary_mask
+   ~cf.Data.hardmask
+   ~cf.Data.ismasked
+   ~cf.Data.mask
+   ~cf.Data.fill_value
+
+Mathematical functions
+----------------------
+
+Trigonometric functions
+^^^^^^^^^^^^^^^^^^^^^^^
+  
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Data.sin
+   ~cf.Data.cos 
+   ~cf.Data.tan 
+   ~cf.Data.arcsin
+   ~cf.Data.arccos
+   ~cf.Data.arctan
+
+Hyperbolic functions
+^^^^^^^^^^^^^^^^^^^^
+
+  
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Data.sinh
+   ~cf.Data.cosh
+   ~cf.Data.tanh 
+   ~cf.Data.arcsinh
+   ~cf.Data.arccosh
+   ~cf.Data.arctanh
+
+Rounding
+^^^^^^^^
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Data.ceil
+   ~cf.Data.floor
+   ~cf.Data.rint
+   ~cf.Data.round
+   ~cf.Data.trunc
+
+Sums, products, differences
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Data.cumsum
+   ~cf.Data.diff
+   ~cf.Data.sum
+
+Exponents and logarithms
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Data.exp
+   ~cf.Data.log
+		 
+Miscellaneous
+^^^^^^^^^^^^^
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Data.clip
+
+Set routines
+-------------
+
+Making proper sets
+^^^^^^^^^^^^^^^^^^    
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Data.unique
+	    
+Sorting, searching, and counting
+--------------------------------
+
+Searching
+^^^^^^^^^
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Data.argmax
+   ~cf.Data.where
+	      
+Counting
+^^^^^^^^
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Data.count
+   ~cf.Data.count_masked
+
+Statistics
+----------
+
+Order statistics
+^^^^^^^^^^^^^^^^
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Data.maximum
+   ~cf.Data.maximum_absolute_value
+   ~cf.Data.minimum
+   ~cf.Data.minimum_absolute_value
+   ~cf.Data.percentile
+
+Averages and variances
+^^^^^^^^^^^^^^^^^^^^^^
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Data.mean
+   ~cf.Data.mean_absolute_value
+   ~cf.Data.mean_of_upper_decile
+   ~cf.Data.median
+   ~cf.Data.mid_range
+   ~cf.Data.range
+   ~cf.Data.root_mean_square
+   ~cf.Data.standard_deviation
+   ~cf.Data.variance
+
+Sums
+^^^^
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Data.integral
+   ~cf.Data.sum
+   ~cf.Data.sum_of_squares
+
+Histograms
+^^^^^^^^^^
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Data.digitize
+     
+Miscellaneous
+^^^^^^^^^^^^^
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Data.sample_size
+   ~cf.Data.stats
+   ~cf.Data.sum_of_weights
+   ~cf.Data.sum_of_weights2
+
+
+Error handling
+--------------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Data.seterr
+
+Compression by convention
+-------------------------
    
 .. autosummary::
    :nosignatures:
    :toctree: ../method/
    :template: method.rst
 
-   ~cf.Data.add_partitions
-   ~cf.Data.all
-   ~cf.Data.allclose
-   ~cf.Data.any
-   ~cf.Data.arcsinh
-   ~cf.Data.arctan
-   ~cf.Data.argmax
-   ~cf.Data.asdata
-   ~cf.Data.ceil
-   ~cf.Data.change_calendar
-   ~cf.Data.chunk
-   ~cf.Data.clip
-   ~cf.Data.close
-   ~cf.Data.concatenate
-   ~cf.Data.compressed
-   ~cf.Data.concatenate_data
-   ~cf.Data.copy
-   ~cf.Data.cos
-   ~cf.Data.cosh
-   ~cf.Data.count
-   ~cf.Data.count_masked
-   ~cf.Data.creation_commands
-   ~cf.Data.cumsum
-   ~cf.Data.cyclic
-   ~cf.Data.datum
-   ~cf.Data.del_calendar
-   ~cf.Data.del_fill_value
-   ~cf.Data.del_units
-   ~cf.Data.diff
-   ~cf.Data.digitize
-   ~cf.Data.dump
-   ~cf.Data.dumpd
-   ~cf.Data.dumps
-   ~cf.Data.empty
-   ~cf.Data.equals
-   ~cf.Data.exp
-   ~cf.Data.expand_dims
-   ~cf.Data.files
-   ~cf.Data.filled
-   ~cf.Data.first_element
-   ~cf.Data.fits_in_memory
-   ~cf.Data.fits_in_one_chunk_in_memory
-   ~cf.Data.flat
-   ~cf.Data.flatten
-   ~cf.Data.flip
-   ~cf.Data.floor
-   ~cf.Data.full
-   ~cf.Data.func
-   ~cf.Data.get_calendar
    ~cf.Data.get_compressed_axes
    ~cf.Data.get_compressed_dimension
    ~cf.Data.get_compression_type
    ~cf.Data.get_count
-   ~cf.Data.get_data
-   ~cf.Data.get_fill_value
    ~cf.Data.get_index
    ~cf.Data.get_list
-   ~cf.Data.get_units
-   ~cf.Data.has_calendar
-   ~cf.Data.has_fill_value
-   ~cf.Data.has_units
-   ~cf.Data.insert_dimension
-   ~cf.Data.inspect
-   ~cf.Data.integral
-   ~cf.Data.isclose
-   ~cf.Data.last_element
-   ~cf.Data.loadd
-   ~cf.Data.loads
-   ~cf.Data.log
-   ~cf.Data.mask_fpe
-   ~cf.Data.mask_invalid
-   ~cf.Data.max
-   ~cf.Data.maximum
-   ~cf.Data.maximum_absolute_value
-   ~cf.Data.mean
-   ~cf.Data.mean_absolute_value
-   ~cf.Data.mean_of_upper_decile
-   ~cf.Data.median
-   ~cf.Data.mid_range
-   ~cf.Data.min
-   ~cf.Data.minimum
-   ~cf.Data.minimum_absolute_value
-   ~cf.Data.nc_clear_hdf5_chunksizes
-   ~cf.Data.nc_hdf5_chunksizes
-   ~cf.Data.nc_set_hdf5_chunksizes
-   ~cf.Data.ndindex
-   ~cf.Data.ones
-   ~cf.Data.outerproduct
-   ~cf.Data.override_calendar
-   ~cf.Data.override_units
-   ~cf.Data.partition_boundaries
-   ~cf.Data.partition_configuration
-   ~cf.Data.percentile
-   ~cf.Data.range
-   ~cf.Data.reconstruct_sectioned_data
-   ~cf.Data.rint
-   ~cf.Data.roll
-   ~cf.Data.root_mean_square
-   ~cf.Data.round
-   ~cf.Data.sample_size
-   ~cf.Data.save_to_disk
-   ~cf.Data.sd
-   ~cf.Data.standard_deviation
-   ~cf.Data.second_element
-   ~cf.Data.section
-   ~cf.Data.set_calendar
-   ~cf.Data.set_fill_value
-   ~cf.Data.set_units
-   ~cf.Data.seterr
-   ~cf.Data.sin
-   ~cf.Data.sinh
-   ~cf.Data.source
-   ~cf.Data.squeeze
-   ~cf.Data.standard_deviation      
-   ~cf.Data.stats
-   ~cf.Data.sum
-   ~cf.Data.sum_of_squares
-   ~cf.Data.sum_of_weights
-   ~cf.Data.sum_of_weights2
-   ~cf.Data.swapaxes
-   ~cf.Data.tan
-   ~cf.Data.tanh
-   ~cf.Data.to_disk
-   ~cf.Data.to_memory
-   ~cf.Data.tolist
-   ~cf.Data.transpose
-   ~cf.Data.trunc
    ~cf.Data.uncompress
-   ~cf.Data.unique
-   ~cf.Data.var
-   ~cf.Data.variance
-   ~cf.Data.where
-   ~cf.Data.zeros
 
-Data static methods
--------------------
-
+Miscellaneous
+-------------
+   
 .. autosummary::
    :nosignatures:
    :toctree: ../method/
    :template: method.rst
 
-   ~cf.Data.mask_fpe
-   ~cf.Data.seterr
- 
-Data arithmetic and comparison operations
------------------------------------------
+   ~cf.Data.creation_commands
+   ~cf.Data.files
+   ~cf.Data.get_data
+   ~cf.Data.source
 
-Arithmetic, bitwise and comparison operations are defined as
-element-wise data array operations which yield a new `cf.Data` object
-or, for augmented assignments, modify the data in-place.
+.. rubric:: Attributes
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cf.Data.data
+
+Performance
+-----------
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+	      
+   ~cf.Data.nc_clear_hdf5_chunksizes
+   ~cf.Data.nc_hdf5_chunksizes
+   ~cf.Data.nc_set_hdf5_chunksizes
+   ~cf.Data.close
+   ~cf.Data.chunk
+   ~cf.Data.add_partitions
+   ~cf.Data.partition_boundaries
+   ~cf.Data.partition_configuration
+   ~cf.Data.to_disk
+   ~cf.Data.to_memory
+   ~cf.Data.fits_in_memory
+   ~cf.Data.fits_in_one_chunk_in_memory
+   ~cf.Data.section
+   ~cf.Data.reconstruct_sectioned_data
+ 
+Element-wise arithmetic, bit and comparison operations
+------------------------------------------------------
+
+Arithmetic, bit and comparison operations are defined as element-wise
+data array operations which yield a new `cf.Data` object or, for
+augmented assignments, modify the data in-place.
 
 .. rubric:: Comparison operators
 
@@ -345,9 +713,9 @@ Special
    ~cf.Data.__hash__
    ~cf.Data.__iter__ 
    ~cf.Data.__len__
-   ~cf.Data.__query_set__
-   ~cf.Data.__query_wi__
-   ~cf.Data.__query_wo__
    ~cf.Data.__repr__
    ~cf.Data.__setitem__ 
    ~cf.Data.__str__
+   ~cf.Data.__query_set__
+   ~cf.Data.__query_wi__
+   ~cf.Data.__query_wo__
