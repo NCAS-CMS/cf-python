@@ -515,6 +515,15 @@ Compression by convention
    ~cf.Data.get_list
    ~cf.Data.uncompress
 
+.. rubric:: Attributes
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../attribute/
+   :template: attribute.rst
+
+   ~cf.Data.compressed_array
+
 Miscellaneous
 -------------
    
