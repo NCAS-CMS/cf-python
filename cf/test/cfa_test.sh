@@ -11,10 +11,10 @@ mkdir $test_dir
 
 for opt in vs vm vc
 do
-#    echo $opt
-  cfa    -$opt $sample_files/*[np][cp] >/dev/null
-  cfa -1 -$opt $sample_files/*[np][cp] >/dev/null
-  for f in `ls $sample_files/*.[np][cp] | grep -v $test_file`
+#  echo $opt
+  cfa    -$opt $sample_files/[a-be-zD]*.[np][cp] >/dev/null
+  cfa -1 -$opt $sample_files/[a-be-zD]*.[np][cp] >/dev/null
+  for f in `ls $sample_files/[a-be-zD]*.[np][cp] | grep -v $test_file`
   do
 #    echo $f
     cfa -$opt $f >/dev/null
@@ -27,7 +27,7 @@ do
 done
 
 rm -f $test_file
-cfa --overwrite -d $test_dir  $sample_files/*.[np][cp]
+cfa --overwrite -d $test_dir  $sample_files/[a-be-zD]*.[np][cp]
 
 #echo 1
 rm -f $test_file
