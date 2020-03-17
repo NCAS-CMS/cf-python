@@ -12,6 +12,8 @@ cf.Data
 Inspection
 ----------
 
+.. rubric:: Attributes
+
 .. autosummary::
    :nosignatures:
    :toctree: ../attribute/
@@ -161,14 +163,7 @@ Binary operations
 Date-time support
 -----------------
 
-.. autosummary::
-   :nosignatures:
-   :toctree: ../method/
-   :template: method.rst
-
-   ~cf.Data.datetime_as_string
-
-**Attributes**
+.. rubric:: Attributes
 
 .. autosummary::
    :nosignatures:
@@ -176,6 +171,7 @@ Date-time support
    :template: attribute.rst
 
    ~cf.Data.datetime_array
+   ~cf.Data.datetime_as_string
    ~cf.Data.day
    ~cf.Data.hour
    ~cf.Data.minute
@@ -286,7 +282,7 @@ Mask support
    ~cf.Data.has_fill_value
    ~cf.Data.set_fill_value
    
-**Attributes**
+.. rubric:: Attributes
 
 .. autosummary::
    :nosignatures:

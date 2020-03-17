@@ -1706,11 +1706,11 @@ class PropertiesData(Properties):
         return v
 
 
-    def max(self):
+    def maximum(self):
         '''The maximum of the data array.
 
-    .. seealso:: `mean`, `mid_range`, `min`, `range`, `sample_size`,
-                 `sd`, `sum`, `var`
+    .. seealso:: `mean`, `mid_range`, `minimum`, `range`,
+                 `sample_size`, `sd`, `sum`, `var`
 
     :Returns:
 
@@ -1721,13 +1721,13 @@ class PropertiesData(Properties):
 
     >>> f.data
     <CF Data(12, 64, 128): [[[236.512756, ..., 256.93371]]] K>
-    >>> f.max()
+    >>> f.maximum()
     <CF Data(): 311.343780 K>
 
         '''
         data = self.get_data(None)
         if data is not None:
-            return data.max(squeeze=True)
+            return data.maximum(squeeze=True)
 
         raise ValueError(
             "ERROR: Can't get the maximum when there is no data array")
@@ -1736,7 +1736,7 @@ class PropertiesData(Properties):
     def mean(self):
         '''The unweighted mean the data array.
 
-    .. seealso:: `max`, `mid_range`, `min`, `range`, `sample_size`, `sd`,
+    .. seealso:: `maximum`, `mid_range`, `minimum`, `range`, `sample_size`, `sd`,
                  `sum`, `var`
 
     :Returns:
@@ -1764,7 +1764,7 @@ class PropertiesData(Properties):
         '''The unweighted average of the maximum and minimum of the data
     array.
 
-    .. seealso:: `max`, `mean`, `min`, `range`, `sample_size`, `sd`,
+    .. seealso:: `maximum`, `mean`, `minimum`, `range`, `sample_size`, `sd`,
                  `sum`, `var`
 
     :Returns:
@@ -1789,11 +1789,12 @@ class PropertiesData(Properties):
             "ERROR: Can't get the mid-range when there is no data array")
 
 
-    def min(self):
+    def minimum(self):
         '''The minimum of the data array.
 
-    .. seealso:: `max`, `mean`, `mid_range`, `range`, `sample_size`,
-                 `sd`, `sum`, `var`
+    .. seealso:: `maximum`, `mean`, `mid_range`, `range`,
+                 `sample_size`, `standard_deviation`, `sum`,
+                 `variance`
 
     :Returns:
 
@@ -1804,13 +1805,13 @@ class PropertiesData(Properties):
 
     >>> f.data
     <CF Data(12, 73, 96): [[[236.512756348, ..., 256.93371582]]] K>
-    >>> f.min()
+    >>> f.minimum()
     <CF Data(): 198.828598022 K>
 
         '''
         data = self.get_data(None)
         if data is not None:
-            return data.min(squeeze=True)
+            return data.minimum(squeeze=True)
 
         raise ValueError(
             "ERROR: Can't get the minimum when there is no data array")
@@ -1820,8 +1821,9 @@ class PropertiesData(Properties):
         '''The absolute difference between the maximum and minimum of the data
     array.
 
-    .. seealso:: `max`, `mean`, `mid_range`, `min`, `sample_size`,
-                 `sd`, `sum`, `var`
+    .. seealso:: `maximum`, `mean`, `mid_range`, `minimum`,
+                 `sample_size`, `standard_deviation`, `sum`,
+                 `variance`
 
     :Returns:
 
@@ -1848,8 +1850,8 @@ class PropertiesData(Properties):
     def sample_size(self):
         '''The number of non-missing data elements in the data array.
 
-    .. seealso:: `count`, `max`, `mean`, `mid_range`, `min`, `range`,
-                 `sd`, `sum`, `var`
+    .. seealso:: `count`, `maximum`, `mean`, `mid_range`, `minimum`,
+                 `range`, `standard_deviation`, `sum`, `variance`
 
     :Returns:
 
@@ -1875,7 +1877,7 @@ class PropertiesData(Properties):
     def sd(self):
         '''The unweighted sample standard deviation of the data array.
 
-    .. seealso:: `max`, `mean`, `mid_range`, `min`, `range`,
+    .. seealso:: `maximum`, `mean`, `mid_range`, `minimum`, `range`,
                  `sample_size`, `sum`, `var`
 
     :Returns:
@@ -1902,7 +1904,7 @@ class PropertiesData(Properties):
     def sum(self):
        	'''The sum of the data array.
 
-    .. seealso:: `max`, `mean`, `mid_range`, `min`, `range`,
+    .. seealso:: `maximum`, `mean`, `mid_range`, `minimum`, `range`,
                  `sample_size`, `sd`, `var`
 
     :Returns:
@@ -1970,7 +1972,7 @@ class PropertiesData(Properties):
     def var(self):
         '''The unweighted sample variance of the data array.
 
-    .. seealso:: `max`, `mean`, `mid_range`, `min`, `range`,
+    .. seealso:: `maximum`, `mean`, `mid_range`, `minimum`, `range`,
                  `sample_size`, `sd`, `sum`
 
     :Returns:
@@ -2551,8 +2553,9 @@ class PropertiesData(Properties):
 
         '''
         return self._apply_data_oper(
-            _inplace_enabled_define_and_cleanup(self), 'clip', a_min, a_max,
-            inplace=inplace, i=i, units=units, delete_props=True)
+            _inplace_enabled_define_and_cleanup(self), 'clip', a_min,
+            a_max, inplace=inplace, i=i, units=units,
+            delete_props=True)
 
 
     def close(self):
@@ -5023,6 +5026,17 @@ class PropertiesData(Properties):
         '''
         return self.datetime_array
 
+    def max(self, *args, **kwargs):
+        '''Alias for `maximum`.
+
+        '''
+        return self.maximum(*args, **kwargs)
+
+    def min(self, *args, **kwargs):
+        '''Alias for `minimum`.
+
+        '''
+        return self.minimum(*args, **kwargs)
 
     # ----------------------------------------------------------------
     # Deprecated attributes and methods

@@ -8452,7 +8452,7 @@ False
 
     Missing data array elements are omitted from the calculation.
 
-    .. seealso:: `min`, `mean`, `mid_range`, `sum`, `sd`, `var`
+    .. seealso:: `minimum`, `mean`, `mid_range`, `sum`, `sd`, `var`
 
     :Parameters:
 
@@ -8479,7 +8479,6 @@ False
         return self._collapse(max_f, max_fpartial, max_ffinalise, axes=axes,
                               squeeze=squeeze, mtol=mtol, inplace=inplace,
                               _preserve_partitions=_preserve_partitions)
-
 
     def maximum_absolute_value(self, axes=None, squeeze=False, mtol=1,
                                inplace=False,

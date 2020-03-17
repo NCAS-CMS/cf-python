@@ -60,9 +60,9 @@ class ppTest(unittest.TestCase):
     def test_PP_WGDOS_UNPACKING(self):
         f = cf.read(self.ppfilename)[0]
 
-        self.assertTrue(f.min() > 221.71,
+        self.assertTrue(f.minimum() > 221.71,
                         'Bad unpacking of WGDOS packed data')
-        self.assertTrue(f.max() < 310.45,
+        self.assertTrue(f.maximum() < 310.45,
                         'Bad unpacking of WGDOS packed data')
 
         array = f.array

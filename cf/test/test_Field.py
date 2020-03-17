@@ -2083,20 +2083,20 @@ class FieldTest(unittest.TestCase):
 
         for condition in (True, 1, [[[True]]], [[[[[456]]]]]):
             g = f.where(condition, -9)
-            self.assertTrue(g[0].min() == -9, str(condition))
-            self.assertTrue(g[0].max() == -9, str(condition))
+            self.assertTrue(g[0].minimum() == -9, str(condition))
+            self.assertTrue(g[0].maximum() == -9, str(condition))
 
         g = f.where(cf.le(34), 34)
-        self.assertTrue(g[0].min() == 34)
-        self.assertTrue(g[0].max() == 89)
+        self.assertTrue(g[0].minimum() == 34)
+        self.assertTrue(g[0].maximum() == 89)
 
         g = f.where(cf.le(34), cf.masked)
-        self.assertTrue(g[0].min() == 35)
-        self.assertTrue(g[0].max() == 89)
+        self.assertTrue(g[0].minimum() == 35)
+        self.assertTrue(g[0].maximum() == 89)
 
         self.assertTrue(f.where(cf.le(34), cf.masked, 45, inplace=True) is None)
-        self.assertTrue(f[0].min() == 45)
-        self.assertTrue(f[0].max() == 45)
+        self.assertTrue(f[0].minimum() == 45)
+        self.assertTrue(f[0].maximum() == 45)
 
 
     def test_Field_mask_invalid(self):

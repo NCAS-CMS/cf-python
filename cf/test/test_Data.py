@@ -71,7 +71,7 @@ class DataTest(unittest.TestCase):
             for axes in itertools.permutations(range(self.a.ndim), n)]
 
         self.test_only = []
-        self.test_only = ['NOTHING!!!!!']
+#        self.test_only = ['NOTHING!!!!!']
 
 #        self.test_only = ['test_Data_AUXILIARY_MASK',
 #                          'test_Data_datum',
@@ -108,7 +108,7 @@ class DataTest(unittest.TestCase):
 #        self.test_only = ['test_Data__collapse_WEIGHTED_UNMASKED']
 #        self.test_only = ['test_Data__collapse_WEIGHTED_MASKED']
 #        self.test_only = ['test_Data_ERROR']
-        self.test_only = ['test_Data_diff', 'test_Data_compressed']
+#        self.test_only = ['test_Data_diff', 'test_Data_compressed']
 #        self.test_only = ['test_Data__init__dtype_mask']
 #        self.test_only = ['test_Data_section']
 #        self.test_only = ['test_Data_sum_of_weights_sum_of_weights2']
@@ -326,7 +326,7 @@ class DataTest(unittest.TestCase):
 
                         self.assertTrue((e.array == b).all())
 
-                        e.where(cf.set([e.min(), e.max()]), cf.masked, e-1, inplace=True)
+                        e.where(cf.set([e.minimum(), e.maximum()]), cf.masked, e-1, inplace=True)
                         f = d.digitize(bins, upper=upper)
                         self.assertTrue(e.equals(f, verbose=True))
         #--- End: for
@@ -1129,24 +1129,24 @@ class DataTest(unittest.TestCase):
         self.assertTrue(d._pmshape == (3,))
         self.assertTrue(d[0].shape  == (1, 4, 5))
         self.assertTrue(d[-1].shape == (1, 4, 5))
-        self.assertTrue(d[0].max()  == 4*5)
-        self.assertTrue(d[-1].max() == 3*4*5)
+        self.assertTrue(d[0].maximum()  == 4*5)
+        self.assertTrue(d[-1].maximum() == 3*4*5)
 
         for i in (2, 1):
             e = d.flip(i)
             self.assertTrue(e._pmshape == (3,))
             self.assertTrue(e[0].shape  == (1, 4, 5))
             self.assertTrue(e[-1].shape == (1, 4, 5))
-            self.assertTrue(e[0].max()  == 4*5)
-            self.assertTrue(e[-1].max() == 3*4*5)
+            self.assertTrue(e[0].maximum()  == 4*5)
+            self.assertTrue(e[-1].maximum() == 3*4*5)
 
         i = 0
         e = d.flip(i)
         self.assertTrue(e._pmshape == (3,))
         self.assertTrue(e[0].shape  == (1, 4, 5))
         self.assertTrue(e[-1].shape == (1, 4, 5))
-        self.assertTrue(e[0].max()  == 3*4*5)
-        self.assertTrue(e[-1].max() == 4*5)
+        self.assertTrue(e[0].maximum()  == 3*4*5)
+        self.assertTrue(e[-1].maximum() == 4*5)
 
 
     def test_Data_max(self):
@@ -1157,12 +1157,12 @@ class DataTest(unittest.TestCase):
             for pp in (False, True):
                 cf.CHUNKSIZE(chunksize)
                 d = cf.Data([[4, 5, 6], [1, 2, 3]], 'metre')
-                self.assertTrue(d.max(_preserve_partitions=pp) == cf.Data(6, 'metre'))
-                self.assertTrue(d.max(_preserve_partitions=pp).datum() == 6)
+                self.assertTrue(d.maximum(_preserve_partitions=pp) == cf.Data(6, 'metre'))
+                self.assertTrue(d.maximum(_preserve_partitions=pp).datum() == 6)
                 d[0, 2] = cf.masked
-                self.assertTrue(d.max(_preserve_partitions=pp) == 5)
-                self.assertTrue(d.max(_preserve_partitions=pp).datum() == 5)
-                self.assertTrue(d.max(_preserve_partitions=pp) == cf.Data(0.005, 'km'))
+                self.assertTrue(d.maximum(_preserve_partitions=pp) == 5)
+                self.assertTrue(d.maximum(_preserve_partitions=pp).datum() == 5)
+                self.assertTrue(d.maximum(_preserve_partitions=pp) == cf.Data(0.005, 'km'))
 
         cf.CHUNKSIZE(self.original_chunksize)
 
@@ -1175,12 +1175,12 @@ class DataTest(unittest.TestCase):
             for pp in (False, True):
                 cf.CHUNKSIZE(chunksize)
                 d = cf.Data([[4, 5, 6], [1, 2, 3]], 'metre')
-                self.assertTrue(d.min(_preserve_partitions=pp) == cf.Data(1, 'metre'))
-                self.assertTrue(d.min(_preserve_partitions=pp).datum() == 1)
+                self.assertTrue(d.minimum(_preserve_partitions=pp) == cf.Data(1, 'metre'))
+                self.assertTrue(d.minimum(_preserve_partitions=pp).datum() == 1)
                 d[1, 0] = cf.masked
-                self.assertTrue(d.min(_preserve_partitions=pp) == 2)
-                self.assertTrue(d.min(_preserve_partitions=pp).datum() == 2)
-                self.assertTrue(d.min(_preserve_partitions=pp) == cf.Data(0.002, 'km'))
+                self.assertTrue(d.minimum(_preserve_partitions=pp) == 2)
+                self.assertTrue(d.minimum(_preserve_partitions=pp).datum() == 2)
+                self.assertTrue(d.minimum(_preserve_partitions=pp) == cf.Data(0.002, 'km'))
 #            print('pmshape =', d._pmshape)
 
         cf.CHUNKSIZE(self.original_chunksize)

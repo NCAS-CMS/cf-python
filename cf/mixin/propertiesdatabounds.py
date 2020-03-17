@@ -678,7 +678,7 @@ class PropertiesDataBounds(PropertiesData):
         '''
         data = self.get_bounds_data(None)
         if data is not None:
-            out = data.min(-1)
+            out = data.minimum(-1)
             out.squeeze(-1, inplace=True)
             return out
         else:
@@ -906,7 +906,7 @@ class PropertiesDataBounds(PropertiesData):
         '''
         data = self.get_bounds_data(None)
         if data is not None:
-            out = data.max(-1)
+            out = data.maximum(-1)
             out.squeeze(-1, inplace=True)
             return out
         else:
@@ -989,61 +989,61 @@ class PropertiesDataBounds(PropertiesData):
             bounds=True, inplace=inplace, i=i)
 
     # ----------------------------------------------------------------
-    # Attribute
+    # Attributes
     # ----------------------------------------------------------------
     @property
     def dtype(self):
         '''The `numpy` data type of the data array.
 
-By default this is the data type with the smallest size and smallest
-scalar kind to which all sub-arrays of the master data array may be
-safely cast without loss of information. For example, if the
-sub-arrays have data types 'int64' and 'float32' then the master data
-array's data type will be 'float64'; or if the sub-arrays have data
-types 'int64' and 'int32' then the master data array's data type will
-be 'int64'.
-
-Setting the data type to a `numpy.dtype` object, or any object
-convertible to a `numpy.dtype` object, will cause the master data
-array elements to be recast to the specified type at the time that
-they are next accessed, and not before. This does not immediately
-change the master data array elements, so, for example, reinstating
-the original data type prior to data access results in no loss of
-information.
-
-Deleting the data type forces the default behaviour. Note that if the
-data type of any sub-arrays has changed after `dtype` has been set
-(which could occur if the data array is accessed) then the reinstated
-default data type may be different to the data type prior to `dtype`
-being set.
-
-**Examples:**
-
->>> f.dtype
-dtype('float64')
->>> type(f.dtype)
-<type 'numpy.dtype'>
-
->>> print(f.array)
-[0.5 1.5 2.5]
->>> import numpy
->>> f.dtype = numpy.dtype(int)
->>> print(f.array)
-[0 1 2]
->>> f.dtype = bool
->>> print(f.array)
-[False  True  True]
->>> f.dtype = 'float64'
->>> print(f.array)
-[ 0.  1.  1.]
-
->>> print(f.array)
-[0.5 1.5 2.5]
->>> f.dtype = int
->>> f.dtype = bool
->>> f.dtype = float
->>> print(f.array)
-[ 0.5  1.5  2.5]
+    By default this is the data type with the smallest size and
+    smallest scalar kind to which all sub-arrays of the master data
+    array may be safely cast without loss of information. For example,
+    if the sub-arrays have data types 'int64' and 'float32' then the
+    master data array's data type will be 'float64'; or if the
+    sub-arrays have data types 'int64' and 'int32' then the master
+    data array's data type will be 'int64'.
+    
+    Setting the data type to a `numpy.dtype` object, or any object
+    convertible to a `numpy.dtype` object, will cause the master data
+    array elements to be recast to the specified type at the time that
+    they are next accessed, and not before. This does not immediately
+    change the master data array elements, so, for example,
+    reinstating the original data type prior to data access results in
+    no loss of information.
+    
+    Deleting the data type forces the default behaviour. Note that if
+    the data type of any sub-arrays has changed after `dtype` has been
+    set (which could occur if the data array is accessed) then the
+    reinstated default data type may be different to the data type
+    prior to `dtype` being set.
+    
+    **Examples:**
+    
+    >>> f.dtype
+    dtype('float64')
+    >>> type(f.dtype)
+    <type 'numpy.dtype'>
+    
+    >>> print(f.array)
+    [0.5 1.5 2.5]
+    >>> import numpy
+    >>> f.dtype = numpy.dtype(int)
+    >>> print(f.array)
+    [0 1 2]
+    >>> f.dtype = bool
+    >>> print(f.array)
+    [False  True  True]
+    >>> f.dtype = 'float64'
+    >>> print(f.array)
+    [ 0.  1.  1.]
+    
+    >>> print(f.array)
+    [0.5 1.5 2.5]
+    >>> f.dtype = int
+    >>> f.dtype = bool
+    >>> f.dtype = float
+    >>> print(f.array)
+    [ 0.5  1.5  2.5]
 
         '''
         try:
@@ -1116,7 +1116,6 @@ dtype('float64')
             _inplace_enabled_define_and_cleanup(self), 'ceil',
             bounds=bounds, inplace=inplace, i=i)
 
-
     def chunk(self, chunksize=None):
         '''Partition the data array.
 
@@ -1147,7 +1146,6 @@ dtype('float64')
         interior_ring = self.get_interior_ring(None)
         if interior_ring is not None:
             interior_ring.chunk(chunksize)
-
 
     @_deprecation_error_i_kwarg
     @_inplace_enabled
@@ -1198,9 +1196,8 @@ dtype('float64')
 
         '''
         return self._apply_superclass_data_oper(
-            _inplace_enabled_define_and_cleanup(self), 'clip', a_min, a_max,
-            bounds=bounds, inplace=inplace, i=i, units=units)
-
+            _inplace_enabled_define_and_cleanup(self), 'clip', a_min,
+            a_max, bounds=bounds, inplace=inplace, i=i, units=units)
 
     def close(self):
         '''Close all files referenced by the construct.

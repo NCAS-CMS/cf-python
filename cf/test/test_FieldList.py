@@ -261,7 +261,7 @@ class FieldTest(unittest.TestCase):
         g = g + 10
         f.insert(-1, g)
         self.assertTrue(len(f) == 3)
-        self.assertTrue(f[0].max() == (f[1].max() - 10))
+        self.assertTrue(f[0].maximum() == (f[1].maximum() - 10))
         self.assertTrue(isinstance(f, cf.FieldList))
 
         # Pop

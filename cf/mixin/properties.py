@@ -30,7 +30,6 @@ class Properties:
         '''
         return ATOL()
 
-
     @property
     def _RTOL(self):
         '''Return the tolerance on relative differences between real numbers,
@@ -40,7 +39,6 @@ class Properties:
 
         '''
         return RTOL()
-
 
     # ----------------------------------------------------------------
     # Private methods
@@ -82,7 +80,6 @@ class Properties:
 
             return self._equals(value1, value0)
 
-
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
@@ -119,7 +116,6 @@ class Properties:
         except KeyError:
             raise AttributeError("{} doesn't have attribute 'id'".format(
                 self.__class__.__name__))
-
 
     # ----------------------------------------------------------------
     # CF properties
