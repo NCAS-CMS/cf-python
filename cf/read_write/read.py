@@ -470,13 +470,14 @@ def read(files, external=None, verbose=False, warnings=False,
     elif isinstance(extra, str):
         extra = (extra,)
 
+    ftypes = set()
+        
     # Count the number of fields (in all files) and the number of
     # files
     field_counter = -1
     file_counter  = 0
 
     for file_glob in flat(files):
-
         # Expand variables
         file_glob = os.path.expanduser(os.path.expandvars(file_glob))
 
@@ -507,11 +508,29 @@ def read(files, external=None, verbose=False, warnings=False,
         for filename in files2:
             if verbose:
                 print('File: {0}'.format(filename)) # pragma: no cover
+                
+            if um:
+                ftype = 'UM'
+            else:
+                try:
+                    ftype = file_type(filename)
+                except Exception as error:
+                    if not ignore_read_error:
+                        raise Exception(error)
+                    
+                    if verbose:
+                        print('WARNING: {}'.format(error)) # pragma: no cover
+
+                    continue
+            #--- End: if
+
+            ftypes.add(ftype)
 
             # --------------------------------------------------------
             # Read the file into fields
             # --------------------------------------------------------
-            fields = _read_a_file(filename, external=external,
+            fields = _read_a_file(filename, ftype=ftype,
+                                  external=external,
                                   ignore_read_error=ignore_read_error,
                                   verbose=verbose, warnings=warnings,
                                   aggregate=aggregate,
@@ -522,9 +541,9 @@ def read(files, external=None, verbose=False, warnings=False,
                                   chunk=chunk)
 
             # --------------------------------------------------------
-            # Select matching fields
-            # --------------------------------------------------------
-            if select:
+            # Select matching fields (not from UM files) 
+            # --------------------------------------------------------            
+            if select and ftype != 'UM':
                 fields = fields.select(*select)
 
             # --------------------------------------------------------
@@ -577,6 +596,14 @@ def read(files, external=None, verbose=False, warnings=False,
     #--- End: for
 
     # ----------------------------------------------------------------
+    # Select matching fields from UM/PP fields (post setting of
+    # standard names)
+    # ----------------------------------------------------------------
+    print (ftypes)
+    if select and 'UM' in ftypes:
+        fields = fields.select(*select)
+                
+    # ----------------------------------------------------------------
     # Squeeze size one dimensions from the data arrays. Do one of:
     #
     # 1) Squeeze the fields, i.e. remove all size one dimensions from
@@ -610,17 +637,20 @@ def _plural(n): # pragma: no cover
     return 's' if n !=1 else '' # pragma: no cover
 
 
-def _read_a_file(filename, aggregate=True, aggregate_options=None,
-                 ignore_read_error=False, verbose=False,
-                 warnings=False, external=None, selected_fmt=None,
-                 um=None, extra=None, height_at_top_of_model=None,
-                 chunk=True):
+def _read_a_file(filename, ftype=None, aggregate=True,
+                 aggregate_options=None, ignore_read_error=False,
+                 verbose=False, warnings=False, external=None,
+                 selected_fmt=None, um=None, extra=None,
+                 height_at_top_of_model=None, chunk=True):
     '''Read the contents of a single file into a field list.
 
     :Parameters:
 
         filename: `str`
             The file name.
+
+        ftype: `str`
+            TODO
 
         aggregate_options: `dict`, optional
             The keys and values of this dictionary may be passed as
@@ -652,7 +682,7 @@ def _read_a_file(filename, aggregate=True, aggregate_options=None,
     umversion              = 405
 
     if um:
-        ftype = 'UM'
+#        ftype = 'UM'
         fmt                    = um.get('fmt')
         word_size              = um.get('word_size')
         endian                 = um.get('endian')
@@ -670,17 +700,17 @@ def _read_a_file(filename, aggregate=True, aggregate_options=None,
 
         if umversion is not None:
             umversion = float(str(umversion).replace('.', '0', 1))
-    else:
-        try:
-            ftype = file_type(filename)
-        except Exception as error:
-            if not ignore_read_error:
-                raise Exception(error)
-
-            if verbose:
-                print('WARNING: {}'.format(error)) # pragma: no cover
-
-            return FieldList()
+#    else:
+#        try:
+#            ftype = file_type(filename)
+#        except Exception as error:
+#            if not ignore_read_error:
+#                raise Exception(error)
+#
+#            if verbose:
+#                print('WARNING: {}'.format(error)) # pragma: no cover
+#
+#            return FieldList()
     #--- End: if
 
     extra_read_vars = {'chunk'            : chunk,
@@ -698,9 +728,9 @@ def _read_a_file(filename, aggregate=True, aggregate_options=None,
     # ----------------------------------------------------------------
     if ftype == 'CDL':
         # Create a temporary netCDF file from input CDL
+        ftype = 'netCDF'
         cdl_filename = filename
         filename = netcdf.cdl_to_netcdf(filename)
-        ftype = 'netCDF'
         extra_read_vars['fmt'] = 'NETCDF'
 
         if not netcdf.is_netcdf_file(filename):
@@ -748,9 +778,8 @@ def _read_a_file(filename, aggregate=True, aggregate_options=None,
     # ----------------------------------------------------------------
     return FieldList(fields)
 
-
 def file_type(filename):
-    '''TODO
+    '''Return the file format.
 
     :Parameters:
 
