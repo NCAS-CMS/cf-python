@@ -14,7 +14,10 @@ version 3.2.0
 * Fixed bug that prevented writing to ``'NETCDF3_64BIT_OFFSET'`` and
   ``'NETCDF3_64BIT_DATA'`` format files
   (https://github.com/NCAS-CMS/cfdm/issues/9).
-
+* Fixed bug that prevented the ``select`` keyword of `cf.read` from
+  working with PP and UM files
+  (https://github.com/NCAS-CMS/cf-python/issues/40).
+  
 version 3.1.0
 -------------
 ----
