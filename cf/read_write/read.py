@@ -599,7 +599,6 @@ def read(files, external=None, verbose=False, warnings=False,
     # Select matching fields from UM/PP fields (post setting of
     # standard names)
     # ----------------------------------------------------------------
-    print (ftypes)
     if select and 'UM' in ftypes:
         fields = fields.select(*select)
                 
