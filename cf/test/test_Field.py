@@ -267,6 +267,7 @@ class FieldTest(unittest.TestCase):
         self.assertIsInstance(f.weights(True), cf.Field)
         self.assertIsInstance(f.weights(data=True), cf.Data)
         self.assertIsInstance(f.weights(components=True), dict)
+        self.assertIsInstance(f.weights(methods=True), dict)
 
         for components in (False, True):
             for m in (False, True):

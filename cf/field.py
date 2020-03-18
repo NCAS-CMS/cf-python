@@ -5710,20 +5710,25 @@ class Field(mixin.PropertiesData,
                                      measure=measure, radius=radius)
         # --- End: if
 
-        if scale is not None and not methods:
-            # --------------------------------------------------------
-            # Scale the weights so that they are <= scale
-            # --------------------------------------------------------
-            for key, w in comp.items():
-                comp[key] = _scale(w, scale)
+        if not methods:
+            if scale is not None:
+                # --------------------------------------------------------
+                # Scale the weights so that they are <= scale
+                # --------------------------------------------------------
+                for key, w in comp.items():
+                    comp[key] = _scale(w, scale)
+            # --- End: if
+
+            for w in comp.values():
+                mn = w.min()
+                if mn <= 0:
+                    raise ValueError(
+                        "All weights must be positive. Got a weight "
+                        "of {}".format(mn)
+                    )
+            # --- End: for
         # --- End: if
 
-        for w in comp.values():
-            mn = w.min()
-            if mn <= 0:
-                raise ValueError(
-                    "All weights must be positive. Got a weight of {}".format(mn))
-        # --- End: for
 
         if components:
             # --------------------------------------------------------
