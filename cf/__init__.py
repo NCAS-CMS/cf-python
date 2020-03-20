@@ -64,7 +64,7 @@ documentation, installation and source code.
 __Conventions__  = 'CF-1.8'
 __author__       = 'David Hassell'
 __date__         = '2020-??-??'
-__version__      = '3.2.0a1'
+__version__      = '3.2.0'
 
 _requires = ('numpy',
              'netCDF4',
@@ -140,12 +140,26 @@ try:
 except ImportError as error1:
     raise ImportError(_error0+str(error1))
 
+# Check the version of psutil
+_minimum_vn = '0.6.0'
+if LooseVersion(psutil.__version__) < LooseVersion(_minimum_vn):
+    raise ValueError(
+        "Bad psutil version: cf requires psutil version {} or later. Got {} at {}".format(
+            _minimum_vn, psutil.__version__, psutil.__file__))
+
 # Check the version of netCDF4
-_minimum_vn = '1.4.0'
+_minimum_vn = '1.5.3'
 if LooseVersion(netCDF4.__version__) < LooseVersion(_minimum_vn):
     raise ValueError(
         "Bad netCDF4 version: cf requires netCDF4 version {} or later. Got {} at {}".format(
             _minimum_vn, netCDF4.__version__, netCDF4.__file__))
+
+# Check the version of cftime
+_minimum_vn = '1.1.1'
+if LooseVersion(cftime.__version__) < LooseVersion(_minimum_vn):
+    raise ValueError(
+        "Bad cftime version: cf requires cftime version {} or later. Got {} at {}".format(
+            _minimum_vn, cftime.__version__, cftime.__file__))
 
 # Check the version of numpy
 _minimum_vn = '1.15'

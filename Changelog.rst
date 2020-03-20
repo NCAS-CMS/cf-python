@@ -2,8 +2,10 @@ version 3.2.0
 -------------
 ----
 
-**not yet released**
+**2020-??-??**
 
+* First release for CF-1.8 (does not include netCDF hierarchical
+  groups functionality).
 * New methods: `cf.Data.compressed`, `cf.Data.diff`
 * New function: `cf.implementation`
 * Implemented simple geometries for CF-1.8.

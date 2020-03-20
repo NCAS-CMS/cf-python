@@ -116,12 +116,12 @@ http://ncas-cms.github.io/cf-python
 Tutorial
 ========
 
-https://ncas-cms.github.io/cf-python/tutorial.html
+https://ncas-cms.github.io/cf-python/tutorial
 
 Installation
 ============
 
-http://ncas-cms.github.io/cf-python/installation.html
+http://ncas-cms.github.io/cf-python/installation
 
 
 Functionality
