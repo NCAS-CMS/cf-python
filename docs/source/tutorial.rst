@@ -19,7 +19,7 @@ script (:download:`download <../source/tutorial.py>`, 36kB).
 
 .. http://docutils.sourceforge.net/docs/ref/rst/directives.html#list-table
   
-.. note:: **This version of cf is for Python 3 only** and there are
+.. important:: **This version of cf is for Python 3 only** and there are
           :ref:`incompatible differences between versions 2.x and 3.x
           <two-to-three-changes>` of cf.
 
@@ -600,6 +600,18 @@ retrieved with the `~Field.properties` method:
     'standard_name': 'air_temperature',
     'units': 'K'}
    
+.. note::
+
+   From a Python script or using the standard Python shell, the result of
+   methods such as the property methods given here will be returned in
+   condensed form, without linebreaks between items.
+
+   If a "pretty printed" output as displayed in these pages is preferred,
+   use the
+   `ipython shell <https://ipython.readthedocs.io/en/stable/index.html>`_ or
+   wrap calls with a suitable method from Python's dedicated
+   `pprint module <https://docs.python.org/3/library/pprint.html>`_.
+
 Individual properties may be accessed and modified with the
 `~Field.del_property`, `~Field.get_property`, `~Field.has_property`,
 and `~Field.set_property` methods:

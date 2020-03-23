@@ -29,7 +29,7 @@ is built on a complete implementation of the :ref:`CF-data-model`.
 -----------------
 ----
 
-.. note:: **This version of cf is for Python 3 only** and there are
+.. important:: **This version of cf is for Python 3 only** and there are
           :ref:`incompatible differences between versions 2.x and 3.x
           <two-to-three-changes>` of cf.
 

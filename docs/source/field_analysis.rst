@@ -1687,7 +1687,7 @@ they have different standard names.
     'units=1000 s-1.K',
     'ncvar%ta']
 
-.. note:: Care must be taken when combining a field construct with a
+.. warning:: Care must be taken when combining a field construct with a
           `numpy` array or a `Data` instance, due to the ways in which
           both of these objects allow themselves to be combined with
           other types:
