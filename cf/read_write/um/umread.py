@@ -28,9 +28,6 @@ from numpy import sum          as numpy_sum
 from numpy import transpose    as numpy_transpose
 from numpy import where        as numpy_where
 
-#from numpy.ma import array  as numpy_ma_array
-#from numpy.ma import masked as numpy_ma_masked
-
 from netCDF4 import date2num as netCDF4_date2num
 
 import cftime
@@ -1213,22 +1210,28 @@ class UMField:
         # ------------------------------------------------------------
         # Time cell methods
         # ------------------------------------------------------------
+        if 't' in _axis:
+            axis = 't'
+        else:
+            axis = 'time'
+            
         if LBTIM_IB == 0 or LBTIM_IB == 1:
-            cell_methods.append('t: point')
+            if axis == 't':
+                cell_methods.append(axis+': point')
         elif LBPROC == 4096:
-            cell_methods.append('t: minimum')
+            cell_methods.append(axis+': minimum')
         elif LBPROC == 8192:
-            cell_methods.append('t: maximum')
+            cell_methods.append(axis+': maximum')
         if tmean_proc == 128:
             if LBTIM_IB == 2:
-                cell_methods.append('t: mean')
+                cell_methods.append(axis+': mean')
             elif LBTIM_IB == 3:
-                cell_methods.append('t: mean within years')
-                cell_methods.append('t: mean over years')
+                cell_methods.append(axis+': mean within years')
+                cell_methods.append(axis+': mean over years')
         #--- End: if
 
         if not cell_methods:
-            return None
+            return []
 
         cell_methods = self.implementation.initialise_CellMethod().create(
             ' '.join(cell_methods))
