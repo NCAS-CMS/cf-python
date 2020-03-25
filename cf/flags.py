@@ -39,20 +39,17 @@ class Flags:
             if value is not None:
                 setattr(self, attr, value)
 
-
     def __eq__(self, other):
         '''x.__eq__(y) <==> x==y <==> x.equals(y)
 
         '''
         return self.equals(other)
 
-
     def __ne__(self, other):
         '''x.__ne__(y) <==> x!=y <==> not x.equals(y)
 
         '''
         return not self.equals(other)
-
 
     def __hash__(self):
         '''Return the hash value of the flags.
@@ -77,7 +74,6 @@ class Flags:
 
         return hash(tuple(x))
 
-
     def __bool__(self):
         '''x.__bool__() <==> x!=0
 
@@ -88,7 +84,6 @@ class Flags:
         # --- End: for
 
         return False
-
 
     # ----------------------------------------------------------------
     # Attributes
@@ -133,7 +128,6 @@ class Flags:
             raise AttributeError("Can't delete '%s' attribute 'flag_values'" %
                                  self.__class__.__name__)
 
-
     # ----------------------------------------------------------------
     # Property attribute: flag_masks
     # ----------------------------------------------------------------
@@ -174,7 +168,6 @@ class Flags:
             raise AttributeError("Can't delete '%s' attribute 'flag_masks'" %
                                  self.__class__.__name__)
 
-
     @property
     def flag_meanings(self):
         '''The flag_meanings CF attribute.
@@ -205,8 +198,10 @@ class Flags:
         try:
             return self._flag_meanings
         except AttributeError:
-            raise AttributeError("'%s' object has no attribute 'flag_meanings'" %
-                                 self.__class__.__name__)
+            raise AttributeError(
+                "'%s' object has no attribute 'flag_meanings'" %
+                self.__class__.__name__
+            )
 
     @flag_meanings.setter
     def flag_meanings(self, value):
@@ -222,9 +217,10 @@ class Flags:
         try:
             del self._flag_meanings
         except AttributeError:
-            raise AttributeError("Can't delete '%s' attribute 'flag_meanings'" %
-                                 self.__class__.__name__)
-
+            raise AttributeError(
+                "Can't delete '%s' attribute 'flag_meanings'" %
+                self.__class__.__name__
+            )
 
     def __repr__(self):
         '''x.__repr__() <==> repr(x)
@@ -243,7 +239,6 @@ class Flags:
         return '<CF %s: %s>' % (self.__class__.__name__,
                                 ', '.join(string))
 
-
     def copy(self):
         '''Return a deep copy.
 
@@ -259,7 +254,6 @@ class Flags:
 
         '''
         return deepcopy(self)
-
 
     def dump(self, display=True, _level=0):
         '''Return a string containing a full description of the instance.
@@ -294,7 +288,6 @@ class Flags:
             print(string)
         else:
             return(string)
-
 
     @_deprecated_kwarg_check('traceback')
     def equals(self, other, rtol=None, atol=None,
@@ -346,9 +339,12 @@ class Flags:
         # Check that each instance is the same type
         if self.__class__ != other.__class__:
             if verbose:
-                print("%s: Different type: %s, %s" %
-                      (self.__class__.__name__,
-                       self.__class__.__name__, other.__class__.__name__)) # pragma: no cover
+                print(
+                    "%s: Different type: %s, %s" % (
+                        self.__class__.__name__,
+                        self.__class__.__name__, other.__class__.__name__
+                    )
+                )  # pragma: no cover
             return False
 
         self.sort()
@@ -364,8 +360,10 @@ class Flags:
             if hasattr(self, attr):
                 if not hasattr(other, attr):
                     if verbose:
-                        print("%s: Different attributes: %s" %
-                              (self.__class__.__name__, attr[1:])) # pragma: no cover
+                        print(
+                            "%s: Different attributes: %s" %
+                            (self.__class__.__name__, attr[1:])
+                        )  # pragma: no cover
                     return False
 
                 x = getattr(self, attr)
@@ -376,19 +374,22 @@ class Flags:
                                ignore_fill_value=ignore_fill_value,
                                verbose=verbose)):
                     if verbose:
-                        print("%s: Different '%s': %r, %r" %
-                              (self.__class__.__name__, attr[1:], x, y)) # pragma: no cover
+                        print(
+                            "%s: Different '%s': %r, %r" %
+                            (self.__class__.__name__, attr[1:], x, y)
+                        )  # pragma: no cover
                     return False
 
             elif hasattr(other, attr):
                 if verbose:
-                    print("%s: Different attributes: %s" %
-                          (self.__class__.__name__, attr[1:])) # pragma: no cover
+                    print(
+                        "%s: Different attributes: %s" %
+                        (self.__class__.__name__, attr[1:])
+                    )  # pragma: no cover
                 return False
         # --- End: for
 
         return True
-
 
     def inspect(self):
         '''Inspect the object for debugging.
@@ -400,8 +401,7 @@ class Flags:
         `None`
 
         '''
-        print(cf_inspect(self)) # pragma: no cover
-
+        print(cf_inspect(self))  # pragma: no cover
 
     def sort(self):
         '''Sort the flags in place.
@@ -435,7 +435,7 @@ class Flags:
 
         for attr in ('_flag_values', '_flag_meanings', '_flag_masks'):
             if hasattr(self, attr):
-                array      = getattr(self, attr).view()
+                array = getattr(self, attr).view()
                 array[...] = array[indices]
         # --- End: for
 
