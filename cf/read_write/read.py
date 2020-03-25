@@ -263,12 +263,11 @@ def read(files, external=None, verbose=False, warnings=False,
             If True then insert size 1 axes from each field
             construct's domain into its data array.
 
-        select, select_options: optional TODO
-            Only return field constructs which satisfy the given
-            conditions on their property values. Only field constructs
-            which, prior to any aggregation, satisfy
-            ``f.match(description=select, **select_options) == True``
-            are returned. See `cf.Field.match` for details.
+        select: (sequence of) str, optional 
+            Only return field constructs which have given identities ,
+            i.e. those that satisfy
+            ``f.match_by_identity(*select)``. See
+            `cf.Field.match_by_identity` for details.
 
         recursive: `bool`, optional
             If True then recursively read sub-directories of any
@@ -544,7 +543,7 @@ def read(files, external=None, verbose=False, warnings=False,
             # Select matching fields (not from UM files) 
             # --------------------------------------------------------            
             if select and ftype != 'UM':
-                fields = fields.select(*select)
+                fields = fields.select_by_identity(*select)
 
             # --------------------------------------------------------
             # Add this file's fields to those already read from other
@@ -600,7 +599,7 @@ def read(files, external=None, verbose=False, warnings=False,
     # standard names)
     # ----------------------------------------------------------------
     if select and 'UM' in ftypes:
-        fields = fields.select(*select)
+        field_list = field_list.select_by_identity(*select)
                 
     # ----------------------------------------------------------------
     # Squeeze size one dimensions from the data arrays. Do one of:
