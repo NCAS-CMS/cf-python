@@ -81,8 +81,10 @@ def relative_vorticity(u, v, wrap=None, one_sided_at_boundary=False,
 
     '''
     if cyclic:
-        _DEPRECATION_ERROR_FUNCTION_KWARGS('relative_vorticity', {'cyclic': cyclic},
-                                           "Use the 'wrap' keyword instead") # pragma: no cover
+        _DEPRECATION_ERROR_FUNCTION_KWARGS(
+            'relative_vorticity', {'cyclic': cyclic},
+            "Use the 'wrap' keyword instead"
+        )  # pragma: no cover
 
     # Get the standard names of u and v
     u_std_name = u.get_property('standard_name', None)
@@ -93,8 +95,10 @@ def relative_vorticity(u, v, wrap=None, one_sided_at_boundary=False,
     v = v.copy()
 
     # Get the X and Y coordinates
-    (u_x_key, u_y_key), (u_x, u_y) = u._regrid_get_cartesian_coords('u', ('X', 'Y'))
-    (v_x_key, v_y_key), (v_x, v_y) = v._regrid_get_cartesian_coords('v', ('X', 'Y'))
+    (u_x_key, u_y_key), (u_x, u_y) = u._regrid_get_cartesian_coords(
+        'u', ('X', 'Y'))
+    (v_x_key, v_y_key), (v_x, v_y) = v._regrid_get_cartesian_coords(
+        'v', ('X', 'Y'))
 
     if not u_x.equals(v_x) or not u_y.equals(v_y):
         raise ValueError('u and v must be on the same grid.')
@@ -168,8 +172,10 @@ def relative_vorticity(u, v, wrap=None, one_sided_at_boundary=False,
         rv.dim('Y').Units = y_units
 
     else:
-        v.derivative(v_x_key, one_sided_at_boundary=one_sided_at_boundary, inplace=True)
-        u.derivative(u_y_key, one_sided_at_boundary=one_sided_at_boundary, inplace=True)
+        v.derivative(
+            v_x_key, one_sided_at_boundary=one_sided_at_boundary, inplace=True)
+        u.derivative(
+            u_y_key, one_sided_at_boundary=one_sided_at_boundary, inplace=True)
 
         rv = v - u
 
@@ -178,7 +184,7 @@ def relative_vorticity(u, v, wrap=None, one_sided_at_boundary=False,
 
     # Set the standard name if appropriate and delete the long_name
     if ((u_std_name == 'eastward_wind' and v_std_name == 'northward_wind') or
-        (u_std_name == 'x_wind' and v_std_name == 'y_wind')):
+            (u_std_name == 'x_wind' and v_std_name == 'y_wind')):
         rv.standard_name = 'atmosphere_relative_vorticity'
     else:
         rv.del_property('standard_name', None)
