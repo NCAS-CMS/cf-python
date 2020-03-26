@@ -107,66 +107,69 @@ _units_1 = Units('1')
 # Data method. Input collapse methods not in this sictionary are
 # assumed to have a corresponding Data method with the same name.
 # --------------------------------------------------------------------
-_collapse_methods = {
-    'mean': 'mean',
-    'mean_absolute_value': 'mean_absolute_value',
-    'mean_of_upper_decile': 'mean_of_upper_decile',
+_collapse_methods = {**{name: name for name in [
+    'mean',  # results in 'mean': 'mean' entry, etc.
+    'mean_absolute_value',
+    'mean_of_upper_decile',
+    'max',
+    'maximum_absolute_value',
+    'min',
+    'max',
+    'minimum_absolute_value',
+    'mid_range',
+    'range',
+    'median',
+    'sd',
+    'sum',
+    'sum_of_squares',
+    'integral',
+    'root_mean_square',
+    'var',
+    'sample_size',
+    'sum_of_weights',
+    'sum_of_weights2',
+]}, **{  # non-identical mapped names:
     'avg': 'mean',
     'average': 'mean',
-    'max': 'max',
     'maximum': 'max',
-    'maximum_absolute_value': 'maximum_absolute_value',
-    'min': 'min',
     'minimum': 'min',
-    'minimum_absolute_value': 'minimum_absolute_value',
-    'mid_range': 'mid_range',
-    'range': 'range',
-    'median': 'median',
     'standard_deviation': 'sd',
-    'sd': 'sd',
-    'sum': 'sum',
-    'sum_of_squares': 'sum_of_squares',
-    'integral': 'integral',
-    'root_mean_square': 'root_mean_square',
     'variance': 'var',
-    'var': 'var',
-    'sample_size': 'sample_size',
-    'sum_of_weights': 'sum_of_weights',
-    'sum_of_weights2': 'sum_of_weights2',
-}
+}}
 
 # --------------------------------------------------------------------
 # Map each allowed input collapse method name to its corresponding CF
 # cell method.
 # --------------------------------------------------------------------
-_collapse_cell_methods = {
-    'point': 'point',
-    'mean': 'mean',
-    'mean_absolute_value': 'mean_absolute_value',
-    'mean_of_upper_decile': 'mean_of_upper_decile',
+_collapse_cell_methods = {**{name: name for name in [
+    'point',
+    'mean',
+    'mean_absolute_value',
+    'mean_of_upper_decile',
+    'maximum',
+    'maximum_absolute_value',
+    'minimum',
+    'minimum_absolute_value',
+    'mid_range',
+    'range',
+    'median',
+    'standard_deviation',
+    'sum',
+    'root_mean_square',
+    'sum_of_squares',
+    'variance',
+]}, **{  # non-identical mapped names:
     'avg': 'mean',
     'average': 'mean',
     'max': 'maximum',
-    'maximum': 'maximum',
-    'maximum_absolute_value': 'maximum_absolute_value',
     'min': 'minimum',
-    'minimum': 'minimum',
-    'minimum_absolute_value': 'minimum_absolute_value',
-    'mid_range': 'mid_range',
-    'range': 'range',
-    'median': 'median',
-    'standard_deviation': 'standard_deviation',
     'sd': 'standard_deviation',
-    'sum': 'sum',
     'integral': 'sum',
-    'root_mean_square': 'root_mean_square',
-    'sum_of_squares': 'sum_of_squares',
-    'variance': 'variance',
     'var': 'variance',
     'sample_size': 'point',
     'sum_of_weights': 'sum',
     'sum_of_weights2': 'sum',
-}
+}}
 
 # --------------------------------------------------------------------
 # Map each Data method to its corresponding minimum number of
@@ -9607,35 +9610,22 @@ class Field(mixin.PropertiesData,
 
             axes2 = []
             for axis in axes:
+                msg = ("Must have '{}' axes for an '{}' collapse. Can't "
+                       "find {{!r}} axis")
                 if axis == 'area':
-                    for x in ('X', 'Y'):
-                        a = self.domain_axis(x, key=True, default=None)
-                        if a is None:
-                            raise ValueError(
-                                "Must have 'X' and 'Y' axes for an 'area' "
-                                "collapse. Can't find {!r} axis".format(x)
-                            )
-
-                        axes2.append(a)
+                    iterate_over = ('X', 'Y')
+                    msg = msg.format("', '".join(iterate_over), axis)
                 elif axis == 'volume':
-                    for x in ('X', 'Y', 'Z'):
-                        a = self.domain_axis(x, key=True, default=None)
-                        if a is None:
-                            raise ValueError(
-                                "Must have 'X', 'Y' and 'Z' axes for a "
-                                "'volume' collapse. Can't find {!r} "
-                                "axis".format(x)
-                            )
-
-                        axes2.append(a)
+                    iterate_over = ('X', 'Y', 'Z')
+                    msg = msg.format("', '".join(iterate_over), axis)
                 else:
-                    a = self.domain_axis(axis, key=True, default=None)
-                    if a is None:
-                        raise ValueError(
-                            "Can't find the collapse axis identified by "
-                            "{!r}".format(axis)
-                        )
+                    iterate_over = (axis,)
+                    msg = "Can't find the collapse axis identified by {!r}"
 
+                for x in iterate_over:
+                    a = self.domain_axis(x, key=True, default=None)
+                    if a is None:
+                        raise ValueError(msg.format(x))
                     axes2.append(a)
             # --- End: for
 
@@ -11921,27 +11911,20 @@ class Field(mixin.PropertiesData,
                     size = item.size
                     if abs(anchor1 - anchor0) >= item.period():
                         if value.operator == 'wo':
-                            start = 0
-                            stop = 0
+                            set_start_stop = 0
                         else:
-                            start = -a
-                            stop = -a
+                            set_start_stop = -a
+                        start = set_start_stop
+                        stop = set_start_stop
                     elif a + b == size:
                         b = self.anchor(axis, anchor1, dry_run=True)['roll']
-                        if b == a:
-                            if value.operator == 'wo':
-                                start = -a
-                                stop = -a
-                            else:
-                                start = 0
-                                stop = 0
+                        if (b == a and value.operator == 'wo') or not (
+                                b == a or value.operator == 'wo'):
+                            set_start_stop = -a
                         else:
-                            if value.operator == 'wo':
-                                start = 0
-                                stop = 0
-                            else:
-                                start = -a
-                                stop = -a
+                            set_start_stop = 0
+                        start = set_start_stop
+                        stop = set_start_stop
                     else:
                         if value.operator == 'wo':
                             start = b - size
