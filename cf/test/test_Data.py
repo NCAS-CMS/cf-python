@@ -2488,22 +2488,29 @@ class DataTest(unittest.TestCase):
                         )
         # --- End: for
 
-        # Uncomment below to reveal a bug!? When commented the test passes,
-        # but uncommented, changing the chunksize, it fails (adds masking):
-        ### cf.CHUNKSIZE(self.original_chunksize)
+        cf.CHUNKSIZE(self.original_chunksize)  # reset after changes in loop
 
-        # Also test masking behaviour: under-the-hood masking of invalid data
-        # was once observed so we must check that invalid values emerge.
-        inverse_methods = [method for method in trig_and_hyperbolic_methods
+        # Also test masking behaviour: masking of invalid data occurs for
+        # numpy.ma module by default but we don't want that so there is logic
+        # to workaround it. So check that invalid values do emerge.
+        """inverse_methods = [method for method in trig_and_hyperbolic_methods
                            if method.startswith('arc')]
         d = cf.Data([2, 1.5, 1, 0.5, 0], mask=[1, 0, 0, 0, 1])
         for method in inverse_methods:
             e = getattr(d, method)()
-            ### print(e.mask.array, d.mask.array)
             self.assertTrue(
                 (e.mask.array == d.mask.array).all(),
-                "{}, {}, {}".format(method, units, e.array-d)
+                "{}, {}".format(method, e.array-d)
             )
+        """
+
+        # In addition, test that 'nan', inf' and '-inf' emerge distinctly
+        f = cf.Data([-2, -1, 1, 2], mask=[0, 0, 0, 1])
+        g = f.arctanh().array  # expect [ nan, -inf,  inf,  --]
+        self.assertTrue(numpy.isnan(g[0]))
+        self.assertTrue(numpy.isneginf(g[1]))
+        self.assertTrue(numpy.isposinf(g[2]))
+        self.assertTrue(g[3] is cf.masked)
 
         # AT2
         #

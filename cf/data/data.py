@@ -7856,7 +7856,9 @@ False
         '''
         d = _inplace_enabled_define_and_cleanup(self)
 
-        d.func(numpy_arctanh, units=_units_radians, inplace=True)
+        # preserve_invalid necessary because arctanh has a restricted domain
+        d.func(numpy_arctanh, units=_units_radians, inplace=True,
+               preserve_invalid=True)
 
         return d
 
@@ -7886,7 +7888,9 @@ False
         '''
         d = _inplace_enabled_define_and_cleanup(self)
 
-        d.func(numpy_arcsin, units=_units_radians, inplace=True)
+        # preserve_invalid necessary because arcsin has a restricted domain
+        d.func(numpy_arcsin, units=_units_radians, inplace=True,
+               preserve_invalid=True)
 
         return d
 
@@ -7955,7 +7959,9 @@ False
         '''
         d = _inplace_enabled_define_and_cleanup(self)
 
-        d.func(numpy_arccos, units=_units_radians, inplace=True)
+        # preserve_invalid necessary because arccos has a restricted domain
+        d.func(numpy_arccos, units=_units_radians, inplace=True,
+               preserve_invalid=True)
 
         return d
 
@@ -7985,7 +7991,9 @@ False
         '''
         d = _inplace_enabled_define_and_cleanup(self)
 
-        d.func(numpy_arccosh, units=_units_radians, inplace=True)
+        # preserve_invalid necessary because arccosh has a restricted domain
+        d.func(numpy_arccosh, units=_units_radians, inplace=True,
+               preserve_invalid=True)
 
         return d
 
@@ -12725,8 +12733,8 @@ False
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
-    def func(self, f, units=None, out=False, inplace=False, i=False,
-             **kwargs):
+    def func(self, f, units=None, out=False, inplace=False,
+             preserve_invalid=False, i=False, **kwargs):
         '''Apply an element-wise array operation to the data array.
 
     :Parameters:
@@ -12740,6 +12748,10 @@ False
 
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
+
+        preserve_invalid: `bool`, optional
+            For MaskedArray arrays only, if True any invalid values produced
+            by the operation will be preserved, otherwise they are masked.
 
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
@@ -12767,8 +12779,25 @@ False
     [[0.0   1.0]
      [0.0  -1.0]]
 
+    >>> d = cf.Data([-2, -1, 1, 2], mask=[0, 0, 0, 1])
+    >>> f = d.func(numpy.arctanh, preserve_invalid=True)
+    >>> f.array
+    masked_array(data=[nan, -inf, inf, --],
+                 mask=[False, False, False,  True],
+           fill_value=1e+20)
+    >>> e = d.func(numpy.arctanh)  # default preserve_invalid is False
+    >>> e.array
+    masked_array(data=[--, --, --, --],
+                 mask=[ True,  True,  True,  True],
+           fill_value=1e+20,
+                dtype=float64)
+
         '''
         d = _inplace_enabled_define_and_cleanup(self)
+
+        detatch_mask = False
+        if preserve_invalid and numpy_ma_isMA(d.array):
+            detatch_mask = True
 
         config = d.partition_configuration(readonly=False)
 
@@ -12778,14 +12807,24 @@ False
             partition.open(config)
             array = partition.array
 
+            # Steps for masked data when want to presereve invalid values:
+            # Step 1. extract the non-masked data and the mask separately
+            if detatch_mask:
+                array = array.data
+                mask = partition._subarray.mask
+
             if out:
                 f(array, out=array, **kwargs)
             else:
-                array = f(array, **kwargs)
+                array = f(array, **kwargs)  # Step 2: apply op to data alone
 
             p_datatype = array.dtype
             if datatype != p_datatype:
                 datatype = numpy_result_type(p_datatype, datatype)
+
+            if detatch_mask:
+                # Step 3: reattach original mask onto the output data
+                array = numpy_ma_array(array, mask=mask)
 
             partition.subarray = array
 
