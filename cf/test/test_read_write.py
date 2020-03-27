@@ -10,10 +10,13 @@ import numpy
 
 import cf
 
-tmpfile   = tempfile.mktemp('_cf-python_test')
-tmpfileh  = tempfile.mktemp('_cf-python_test')
-tmpfilec  = tempfile.mktemp('_cf-python_test')
-tmpfiles = [tmpfile, tmpfileh, tmpfilec]
+tmpfile   = tempfile.mktemp('.cf_test')
+tmpfileh  = tempfile.mktemp('.cf_test')
+tmpfilec  = tempfile.mktemp('.cf_test')
+tmpfile0  = tempfile.mktemp('.cf_test')
+tmpfile1  = tempfile.mktemp('.cf_test')
+tmpfiles = [tmpfile, tmpfileh, tmpfilec, tmpfile0, tmpfile1]
+
 def _remove_tmpfiles():
     '''TODO
     '''
@@ -23,12 +26,17 @@ def _remove_tmpfiles():
         except OSError:
             pass
 
-
 atexit.register(_remove_tmpfiles)
+
 
 class read_writeTest(unittest.TestCase):
     filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                             'test_file.nc')
+
+    string_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                   'string_char.nc')
+    
+
     chunk_sizes = (17, 34, 300, 100000)[::-1]
     original_chunksize = cf.CHUNKSIZE()
 
@@ -37,8 +45,8 @@ class read_writeTest(unittest.TestCase):
 #    test_only = ['test_write_reference_datetime']
 #    test_only = ['test_read_write_unlimited']
 #    test_only = ['test_read_write_format']
-#    test_only = ['test_read_CDL']
 #    test_only = ['test_read_directory']
+#    test_only = ['test_read_string']
 #    test_only = ['test_read_write_netCDF4_compress_shuffle']
 
     def test_read_directory(self):
@@ -47,47 +55,56 @@ class read_writeTest(unittest.TestCase):
 
         pwd = os.getcwd() + '/'
 
+        dir = 'dir_'+inspect.stack()[0][3]
+
         try:
-            os.mkdir('dir')
+            os.mkdir(dir)
         except FileExistsError:
             pass
         except:
-            raise ValueError("Can not make 'dir'")
-        else:
-            f = 'test_file2.nc'
-            os.symlink(pwd+f, pwd+'dir/'+f)
+            raise ValueError("Can not mkdir {}{}".format(pwd, dir))
 
+        f = 'test_file2.nc'
         try:
-            os.mkdir('dir/subdir')
+            os.symlink(pwd+f, pwd+dir+'/'+f)
+        except FileExistsError:
+            pass
+
+        subdir = dir+'/subdir'
+        try:
+            os.mkdir(subdir)
         except FileExistsError:
             pass
         except:
-            raise ValueError("Can not make 'dir/subdir'")
-        else:
-            for f in ('test_file3.nc', 'test_file4.nc'):
-                os.symlink(pwd+f, pwd+'dir/subdir/'+f)
+            raise ValueError("Can not mkdir {}{}".format(pwd, subdir))
 
-        f = cf.read('dir', aggregate=False)
+        for f in ('test_file3.nc', 'test_file.nc'):
+            try:
+                os.symlink(pwd+f, pwd+subdir+'/'+f)
+            except FileExistsError:
+                pass
+        # --- End: for
+
+        f = cf.read(dir, aggregate=False)
         self.assertTrue(len(f) == 1, f)
 
-        f = cf.read('dir', recursive=True, aggregate=False)
+        f = cf.read(dir, recursive=True, aggregate=False)
         self.assertTrue(len(f) == 3, f)
 
-        f = cf.read(['dir', 'dir/subdir'], aggregate=False)
+        f = cf.read([dir, subdir], aggregate=False)
         self.assertTrue(len(f) == 3, f)
 
-        f = cf.read(['dir/subdir', 'dir'], aggregate=False)
+        f = cf.read([subdir, dir], aggregate=False)
         self.assertTrue(len(f) == 3, f)
 
-        f = cf.read(['dir', 'dir/subdir'], recursive=True, aggregate=False)
+        f = cf.read([dir, subdir], recursive=True, aggregate=False)
         self.assertTrue(len(f) == 5, f)
 
-        f = cf.read('dir/subdir', aggregate=False)
+        f = cf.read(subdir, aggregate=False)
         self.assertTrue(len(f) == 2, f)
 
-        f = cf.read('dir/subdir', recursive=True, aggregate=False)
+        f = cf.read(subdir, recursive=True, aggregate=False)
         self.assertTrue(len(f) == 2, f)
-
 
     def test_read_select(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -97,7 +114,6 @@ class read_writeTest(unittest.TestCase):
         f = cf.read(self.filename, select='eastward_wind')
         g = cf.read(self.filename)
         self.assertTrue(f.equals(g, verbose=True), 'Bad read with select keyword')
-
 
     def test_read_squeeze(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -109,7 +125,6 @@ class read_writeTest(unittest.TestCase):
         with self.assertRaises(Exception):
             f = cf.read(self.filename, unsqueeze=True, squeeze=True)
 
-
     def test_read_aggregate(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -117,7 +132,6 @@ class read_writeTest(unittest.TestCase):
         f = cf.read(self.filename, aggregate=True)
         f = cf.read(self.filename, aggregate=False)
         f = cf.read(self.filename, aggregate={})
-
 
     def test_read_extra(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -153,30 +167,30 @@ class read_writeTest(unittest.TestCase):
                                      'domain_ancillary'))
         self.assertTrue(len(f) == 15, '\n'+str(f))
 
-
     def test_read_write_format(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)
-            for fmt in (
-                        #'NETCDF3_CLASSIC',
-                        #'NETCDF3_64BIT',
-                        #'NETCDF4',
-                        #'NETCDF4_CLASSIC',
-                        #'CFA3',
-                        'CFA',):
-                f = cf.read(self.filename)[0]
-                f0 = f.copy()
-                cf.write(f, tmpfile, fmt=fmt)
-                g = cf.read(tmpfile)
-                self.assertTrue(len(g) == 1, g)
-                g0 = g[0]
-                self.assertTrue(f0.equals(g0, verbose=1),
-                                'Bad read/write of format {!r}'.format(fmt))
-        # --- End: for
-
+        for string in (True, False):
+            for chunksize in self.chunk_sizes:
+                cf.CHUNKSIZE(chunksize)
+                for fmt in ('NETCDF3_CLASSIC',
+                            'NETCDF3_64BIT',
+                            'NETCDF3_64BIT_OFFSET',
+                            'NETCDF3_64BIT_DATA',
+                            'NETCDF4',
+                            'NETCDF4_CLASSIC',
+                            'CFA',):
+#                    print (fmt, string)
+                    f = cf.read(self.filename)[0]
+                    f0 = f.copy()
+                    cf.write(f, tmpfile, fmt=fmt, verbose=0, string=string)
+                    g = cf.read(tmpfile, verbose=0)
+                    self.assertTrue(len(g) == 1, 'g = '+repr(g))
+                    g0 = g[0]
+    
+                    self.assertTrue(f0.equals(g0, verbose=1),
+                                    'Bad read/write of format {!r}'.format(fmt))
 
     def test_read_write_netCDF4_compress_shuffle(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -203,7 +217,6 @@ class read_writeTest(unittest.TestCase):
         # --- End: for
         cf.CHUNKSIZE(self.original_chunksize)
 
-
     def test_write_datatype(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -219,7 +232,6 @@ class read_writeTest(unittest.TestCase):
                             'datatype read in is '+str(g.dtype))
         # --- End: for
         cf.CHUNKSIZE(self.original_chunksize)
-
 
     def test_write_reference_datetime(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -242,7 +254,6 @@ class read_writeTest(unittest.TestCase):
         # --- End: for
         cf.CHUNKSIZE(self.original_chunksize)
 
-
 #    def test_write_HDF_chunks(self):
 #        if self.test_only and inspect.stack()[0][3] not in self.test_only:
 #            return
@@ -255,7 +266,6 @@ class read_writeTest(unittest.TestCase):
 #                cf.write(f, tmpfile, fmt=fmt, HDF_chunksizes={'X': 6})
 #        # --- End: for
 #        cf.CHUNKSIZE(self.original_chunksize)
-
 
     def test_read_write_unlimited(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -280,7 +290,6 @@ class read_writeTest(unittest.TestCase):
         self.assertTrue(f.domain_axes['domainaxis0'].nc_is_unlimited())
         self.assertTrue(f.domain_axes['domainaxis2'].nc_is_unlimited())
 
-
     def test_read_pp(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -294,7 +303,6 @@ class read_writeTest(unittest.TestCase):
                          'height_at_top_of_model': 23423.65})[0]
 
         self.assertTrue(p.equals(p0, verbose=True))
-
 
     def test_read_CDL(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -319,8 +327,49 @@ class read_writeTest(unittest.TestCase):
 
         with self.assertRaises(Exception):
             x = cf.read('test_read_write.py')
+            
+    def test_read_write_string(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
 
+        f = cf.read(self.string_filename)
 
+        n = int(len(f)/2)
+
+        for i in range(0, n):
+            
+            j = i + n
+            self.assertTrue(f[i].data.equals(f[j].data, verbose=1),
+                            "{!r} {!r}".format(f[i], f[j]))
+            self.assertTrue(f[j].data.equals(f[i].data, verbose=1),
+                            "{!r} {!r}".format(f[j], f[i]))
+    
+        for string0 in (True, False):        
+            for fmt0 in ('NETCDF4',
+                         'NETCDF3_CLASSIC',
+                         'NETCDF4_CLASSIC',
+                         'NETCDF3_64BIT',
+                         'NETCDF3_64BIT_OFFSET',
+                         'NETCDF3_64BIT_DATA'):
+#                print ('fmt0=', fmt0)
+                f0 = cf.read(self.string_filename)
+                cf.write(f0, tmpfile0, fmt=fmt0, string=string0)
+                
+                for string1 in (True, False):        
+                    for fmt1 in ('NETCDF4',
+                                 'NETCDF3_CLASSIC',
+                                 'NETCDF4_CLASSIC',
+                                 'NETCDF3_64BIT',
+                                 'NETCDF3_64BIT_OFFSET',
+                                 'NETCDF3_64BIT_DATA'):
+#                        print ('fmt1=', fmt1)
+                        f1 = cf.read(self.string_filename)
+                        cf.write(f0, tmpfile1, fmt=fmt1, string=string1)
+                        
+                        for i, j in zip(cf.read(tmpfile1), cf.read(tmpfile0)):
+                            self.assertTrue(i.equals(j, verbose=1))
+        # --- End: for
+        
 # --- End: class
 
 if __name__ == "__main__":

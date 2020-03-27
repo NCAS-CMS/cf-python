@@ -15,6 +15,7 @@ from numpy import ceil              as numpy_ceil
 from numpy import cos               as numpy_cos
 from numpy import cosh              as numpy_cosh
 from numpy import cumsum            as numpy_cumsum
+from numpy import diff              as numpy_diff
 from numpy import digitize          as numpy_digitize
 from numpy import dtype             as numpy_dtype
 from numpy import e                 as numpy_e
@@ -411,9 +412,9 @@ place.
             Apply this mask to the data given by the *array*
             parameter. By default, or if *mask* is `None`, no mask is
             applied. May be any scalar or array-like object (such as a
-            `numpy` array or `Data` instance) that is broadcastable to
-            the shape of *array*. Masking will be carried out where
-            the mask elements evaluate to `True`.
+            `list`, `numpy` array or `Data` instance) that is
+            broadcastable to the shape of *array*. Masking will be
+            carried out where the mask elements evaluate to `True`.
 
             This mask will applied in addition to any mask already
             defined by the *array* parameter.
@@ -532,7 +533,11 @@ place.
             check_free_memory = True
 
             if isinstance(data, self.__class__):
-                self.loadd(data.dumpd(), chunk=chunk)
+#                self.loadd(data.dumpd(), chunk=chunk)
+                self.__dict__ = data.copy().__dict__
+                if chunk:
+                    self.chunk()
+
                 if mask is not None:
                     self.where(mask, cf_masked, inplace=True)
 
@@ -2077,6 +2082,110 @@ place.
         # --- End: if
         return processed_partitions
 
+    @_inplace_enabled
+    def diff(self, axis=-1, n=1, inplace=False):
+        '''Calculate the n-th discrete difference along the given axis.
+
+    The first difference is given by ``x[i+1] - x[i]`` along the given
+    axis, higher differences are calculated by using `diff`
+    recursively.
+
+    The shape of the output is the same as the input except along the
+    given axis, where the dimension is smaller by *n*. The data type
+    of the output is the same as the type of the difference between
+    any two elements of the input.
+
+    .. versionadded:: 3.2.0
+
+    :Parameters:
+
+        axis: int, optional
+            The axis along which the difference is taken. By default
+            the last axis is used. The *axis* argument is an integer
+            that selects the axis coresponding to the given position
+            in the list of axes of the data array.
+
+        n: int, optional
+            The number of times values are differenced. If zero, the
+            input is returned as-is. By default *n* is ``1``.
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+
+    :Returns:
+
+        `Data` or `None`
+            The n-th differences, or `None` if the operation was
+            in-place.
+
+    **Examples:**
+
+    >>> d = cf.Data(numpy.arange(12.).reshape(3, 4))
+    >>> d[1, 1] = 4.5
+    >>> d[2, 2] = 10.5
+    >>> print(d.array)
+    [[ 0.   1.   2.   3. ]
+     [ 4.   4.5  6.   7. ]
+     [ 8.   9.  10.5 11. ]]
+    >>> print(d.diff().array)
+    [[1.  1.  1. ]
+     [0.5 1.5 1. ]
+     [1.  1.5 0.5]]
+    >>> print(d.diff(n=2).array)
+    [[ 0.   0. ]
+     [ 1.  -0.5]
+     [ 0.5 -1. ]]
+    >>> print(d.diff(axis=0).array)
+    [[4.  3.5 4.  4. ]
+     [4.  4.5 4.5 4. ]]    
+    >>> print(d.diff(axis=0, n=2).array)
+    [[0.  1.  0.5 0. ]]
+    >>> d[1, 2] = cf.masked
+    >>> print(d.array)
+    [[0.0 1.0  2.0  3.0]
+     [4.0 4.5   --  7.0]
+     [8.0 9.0 10.5 11.0]]
+    >>> print(d.diff().array)
+    [[1.0 1.0 1.0]
+     [0.5  --  --]
+     [1.0 1.5 0.5]]
+    >>> print(d.diff(n=2).array)
+    [[0.0  0.0]
+     [ --   --]
+     [0.5 -1.0]]
+    >>> print(d.diff(axis=0).array)
+    [[4.0 3.5 -- 4.0]
+     [4.0 4.5 -- 4.0]]
+    >>> print(d.diff(axis=0, n=2).array)
+    [[0.0 1.0 -- 0.0]]
+
+        '''
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        if n == 0:
+            return d
+
+        out = d
+        for _ in range(n):
+            sections = out.section(axis, chunks=True)
+            
+            # Diff each section
+            for key, data in sections.items():
+                output_array = numpy_diff(data.array, axis=axis)
+                
+                sections[key] = type(self)(output_array, units=self.Units,
+                                           fill_value=self.fill_value)
+                
+            # Glue the sections back together again
+            out = self.__class__.reconstruct_sectioned_data(sections)
+
+        if inplace:
+            d.__dict__ = out.__dict__
+        else:
+            d = out
+            
+        return d
+
     def dumps(self):
         '''Return a JSON string serialization of the data array.
 
@@ -2707,7 +2816,7 @@ place.
     The serialization may be used to reconstruct the data array as it
     was at the time of the serialization creation.
 
-    .. seealso:: `loadd`
+    .. seealso:: `loadd`, `loads`
 
     :Returns:
 
@@ -2894,9 +3003,9 @@ place.
         return cfa_data
 
     def loadd(self, d, chunk=True):
-        '''Reset the data array in place from a data array serialization.
+        '''Reset the data in place from a dictionary serialization.
 
-    .. seealso:: `dumpd`
+    .. seealso:: `dumpd`, `loads`
 
     :Parameters:
 
@@ -2939,10 +3048,10 @@ place.
 
         dtype = d['dtype']
         self._dtype = dtype
+#        print ('P45 asdasdasds', dtype)
+        self.Units       = units
+        self._axes       = axes
 
-        self.Units = units
-        self._axes = axes
-#        self._flip = list(d.get('_flip', ()))
         self._flip(list(d.get('_flip', ())))
         self.set_fill_value(d.get('fill_value', None))
 
@@ -2964,6 +3073,7 @@ place.
 
         filename = d.get('file', None)
 #        if filename is not None:
+
 #            filename = abspath(filename)
 
         base = d.get('base', None)
@@ -4433,14 +4543,15 @@ place.
 
             return self
 
-    def creation_commands(self, name='data', namespace='cf', string=True):
+    def creation_commands(self, name='data', namespace='cf', indent=0,
+                          string=True):
         '''Return the commands that would create the data object.
 
     .. versionadded:: 3.0.4
 
     :Parameters:
 
-        name: `str`, optional
+        name: `str` or None, optional
             Set the variable name of `Data` object that the commands
             create.
 
@@ -4458,6 +4569,10 @@ place.
             *Parameter example:*
               If ``cf`` was imported as ``from cf import *`` then set
               ``namespace=''``
+
+        indent: `int`, optional
+            Indent each line by this many spaces. By default no
+            indentation is applied. Ignored if *string* is False.
 
         string: `bool`, optional
             If False then return each command as an element of a
@@ -4495,6 +4610,8 @@ place.
         else:
             namespace = ""
 
+        indent = ' ' * indent
+        
         mask = self.mask
         if mask.any():
             masked = True
@@ -4523,15 +4640,22 @@ place.
 
         dtype = self.dtype.descr[0][1][1:]
 
-        out = []
         if masked:
-            out.append(mask.creation_commands(name="{}_mask".format(name),
-                                              namespace=namespace0))
-            mask = ", mask={}_mask".format(name)
+            mask = mask.creation_commands(name="mask".format(name),
+                                          namespace=namespace0,
+                                          string=True)
+            mask = mask.replace('mask = ', 'mask=', 1)
+            mask = ", {}".format(mask)
         else:
             mask = ''
 
-        out.append("{0} = {1}{2}({3}{4}{5}, dtype={6!r}{7}{8})".format(
+        if name is None:
+            name = ''
+        else:
+            name = name + " = "
+            
+        out = []
+        out.append("{0}{1}{2}({3}{4}{5}, dtype={6!r}{7}{8})".format(
             name,
             namespace,
             self.__class__.__name__,
@@ -4543,7 +4667,8 @@ place.
             fill_value))
 
         if string:
-            out = '\n'.join(out)
+            out[0] = indent+out[0]
+            out = ('\n'+indent).join(out)
 
         return out
 
@@ -6700,6 +6825,7 @@ dimensions.
             )
 
         dtype = self.dtype
+
         if dtype is not None:
             if dtype.kind == 'i':
                 char = dtype.char
@@ -6786,13 +6912,27 @@ dimensions.
         '''
         datatype = self._dtype
         if datatype is None:
-            flat = self.partitions.matrix.flat
-            datatype = next(flat).subarray.dtype
-            for partition in flat:
-                datatype = numpy_result_type(datatype, partition.subarray)
+            config = self.partition_configuration(readonly=True)
 
+            flat = self.partitions.matrix.flat
+
+            partition = next(flat)
+            datatype = partition.subarray.dtype
+            if datatype is None:
+                partition.open(config)                    
+                datatype = partition.array.dtype
+                partition.close()
+
+            for partition in flat:
+                array = partition.subarray
+                if array.dtype is None:
+                    partition.open(config)                    
+                    array = partition.array
+                    partition.close()
+
+                datatype = numpy_result_type(datatype, array)
+                
             self._dtype = datatype
-        # --- End: if
 
         return datatype
 
@@ -8533,7 +8673,7 @@ False
 
     Missing data array elements are omitted from the calculation.
 
-    .. seealso:: `min`, `mean`, `mid_range`, `sum`, `sd`, `var`
+    .. seealso:: `minimum`, `mean`, `mid_range`, `sum`, `sd`, `var`
 
     :Parameters:
 
@@ -9195,6 +9335,100 @@ False
         for partition in self.partitions.matrix.flat:
             partition.file_close()
 
+    @_inplace_enabled
+    def compressed(self, inplace=False):
+        '''Return all non-masked values in a one dimensional data array.
+
+    Not to be confused with compression by convention (see the
+    `uncompress` method).
+
+    .. versionadded:: 3.2.0
+
+    .. seealso:: `flatten`
+
+    :Parameters:
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+
+    :Returns:
+
+        `Data` or `None`
+            The non-masked values, or `None` if the operation was
+            in-place.
+
+    **Examples**
+
+    >>> d = cf.Data(numpy.arange(12).reshape(3, 4))
+    >>> print(d.array)
+    [[ 0  1  2  3]
+     [ 4  5  6  7]
+     [ 8  9 10 11]]
+    >>> print(d.compressed().array)
+    [ 0  1  2  3  4  5  6  7  8  9 10 11]
+    >>> d[1, 1] = cf.masked
+    >>> d[2, 3] = cf.masked
+    >>> print(d.array)
+    [[0  1  2  3]
+     [4 --  6  7]
+     [8  9 10 --]]    
+    >>> print(d.compressed().array)
+    [ 0  1  2  3  4  6  7  8  9 10]
+    
+    >>> d = cf.Data(9)
+    >>> print(d.array)
+    9
+    >>> print(d.compressed().array)
+    9
+
+        '''
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        ndim = d.ndim
+        
+        if ndim != 1:
+            d.flatten(inplace=True)
+        
+        n_non_missing = d.count()
+        if n_non_missing == d.size:
+            return d
+
+        comp = self.empty(shape=(n_non_missing,), dtype=self.dtype,
+                          units=self.Units)
+
+        # Find the number of array elements that fit in one chunk
+        n = int(CHUNKSIZE()//(self.dtype.itemsize + 1.0))
+
+        # Loop around each chunk's worth of elements and assign the
+        # non-missing values to the compressed data
+        i = 0
+        start = 0
+        for _ in range(1 + d.size//n):
+            if i >= d.size:
+                break
+            
+            array = d[i:i+n].array
+            if numpy_ma_isMA(array):
+                array = array.compressed()
+
+            size = array.size
+            if size >= 1:            
+                end  = start + size
+                comp[start:end] = array
+                start = end
+
+            i += n
+
+        if not d.ndim:
+            comp.squeeze(inplace=True)
+            
+        if inplace:
+            d.__dict__ = comp.__dict__
+        else:
+            d = comp
+            
+        return d
+
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def cos(self, inplace=False, i=False):
@@ -9573,12 +9807,28 @@ False
     def uncompress(self, inplace=False):
         '''Uncompress the underlying data.
 
-    If the data is not compressed, then no change is made.
+    Compression saves space by identifying and removing unwanted
+    missing data. Such compression techniques store the data more
+    efficiently and result in no precision loss.
 
-    .. versionadded:: 3.0.0
+    Whether or not the data is compressed does not alter its
+    functionality nor external appearance.
+
+    Data that is already uncompressed will be returned uncompressed.
+
+    The following type of compression are available:
+
+        * Ragged arrays for discrete sampling geometries (DSG). Three
+          different types of ragged array representation are
+          supported.
+        
+        ..
+        
+        * Compression by gathering.
+
+    .. versionadded:: 3.0.6
 
     .. seealso:: `array`, `compressed_array`, `source`
-
 
     :Parameters:
 
@@ -10083,7 +10333,8 @@ False
 
     .. versionadded:: 3.0.2
 
-    .. seealso:: `insert_dimension`, `flip`, `swapaxes`, `transpose`
+    .. seealso:: `compressed`, `insert_dimension`, `flip`, `swapaxes`,
+                 `transpose`
 
     :Parameters:
 
@@ -10577,7 +10828,6 @@ False
             'update': True,
             'serial': True,
         }
-
         if kwargs:
             config.update(kwargs)
 
@@ -10654,7 +10904,7 @@ False
     >>> d[0, 1] = cf.masked
     >>> print(d)
     [[4 -- 6]
-     [1 2 3]]
+     [1  2 3]]
     >>> d.datum(0)
     4
     >>> d.datum(-1)
@@ -11481,42 +11731,6 @@ False
             "cf.Data.save_to_disk is dead. Use not "
             "cf.Data.fits_in_memory instead."
         )
-#        '''
-#
-# Return True if the master array is large enough to be saved to disk.
-#
-# :Parameters:
-#
-#     itemsize : int, optional
-#         The number of bytes per word of the master data array. By
-#         default it taken from the array's data-type.
-#
-# :Returns:
-#
-#     `bool`
-#
-# **Examples:**
-#
-# >>> print(d.save_to_disk())
-# True
-#
-# >>> print(d.save_to_disk(8))
-# False
-#
-# '''
-#         if not itemsize:
-#             try:
-#                 itemsize = self.dtype.itemsize
-#             except AttributeError:
-#                 raise ValueError(
-#                     "save_to_disk: Must set itemsize if there is no dtype")
-#         # --- End: if
-#
-#         # ------------------------------------------------------------
-#         # Note that self._size*(itemsize+1) is the array size in bytes
-#         # including space for a full boolean mask
-#         # ------------------------------------------------------------
-#         return self._size*(itemsize+1) > FREE_MEMORY() - FM_THRESHOLD()
 
     def fits_in_memory(self, itemsize):
         '''Return True if the master array is small enough to be retained in
@@ -12758,7 +12972,8 @@ False
 
     :Returns:
 
-        TODO
+        `Data` or `None`
+            TODO
 
     **Examples:**
 

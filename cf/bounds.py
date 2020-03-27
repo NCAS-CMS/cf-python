@@ -5,7 +5,8 @@ from . import mixin
 from .decorators import _deprecated_kwarg_check
 
 
-class Bounds(mixin.PropertiesData,
+class Bounds(mixin.Coordinate,
+             mixin.PropertiesData,
              cfdm.Bounds):
     '''A cell bounds component of a coordinate or domain ancillary
     construct of the CF data model.

@@ -67,6 +67,7 @@ Miscellaneous
    :template: method.rst
 
    ~cf.DomainAxis.copy
+   ~cf.DomainAxis.creation_commands
    ~cf.DomainAxis.equals
    ~cf.DomainAxis.inspect
 

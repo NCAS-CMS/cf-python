@@ -1,3 +1,28 @@
+version 3.2.0
+-------------
+----
+
+**2020-??-??**
+
+* First release for CF-1.8 (does not include netCDF hierarchical
+  groups functionality).
+* New methods: `cf.Data.compressed`, `cf.Data.diff`
+* New function: `cf.implementation`
+* Implemented simple geometries for CF-1.8.
+* Implemented string data-types for CF-1.8.
+* Changed minimum cfdm dependency to version 1.8.0.
+* Changed minimum cfunits dependency to version 3.2.5.
+* Changed minimum netCDF4 dependency to version 1.5.3.
+* Changed minimum cftime dependency to version 1.1.1.
+* Fixed bug that prevented writing to ``'NETCDF3_64BIT_OFFSET'`` and
+  ``'NETCDF3_64BIT_DATA'`` format files
+  (https://github.com/NCAS-CMS/cfdm/issues/9).
+* Fixed bug that prevented the ``select`` keyword of `cf.read` from
+  working with PP and UM files
+  (https://github.com/NCAS-CMS/cf-python/issues/40).
+* Fixed bug that prevented the reading of PP and UM files with "zero"
+  data or validity times.
+  
 version 3.1.0
 -------------
 ----

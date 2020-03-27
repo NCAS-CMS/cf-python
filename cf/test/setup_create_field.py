@@ -159,7 +159,7 @@ class create_fieldTest(unittest.TestCase):
 #        f.dump()
 
         # Write the file, and read it in
-        cf.write(f, self.filename, verbose=False)
+        cf.write(f, self.filename, verbose=False, string=True)
 
         g = cf.read(self.filename, squeeze=True, verbose=False)[0]
 

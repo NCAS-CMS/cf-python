@@ -220,9 +220,9 @@ class TimeDuration:
     `cf.s`    Create a time duration of seconds.
     ========  ============================================================
 
-    .. seealso:: `cf.dt`, `cf.Data`, `cf.Datetime`
-
     .. versionadded:: 1.0
+
+    .. seealso:: `cf.dt`, `cf.Data`, `cf.Datetime`
 
     '''
     def __init__(self, duration, units=None, month=1, day=1, hour=0,
@@ -1099,9 +1099,9 @@ class TimeDuration:
                traceback=False):
         '''True if two time durations are equal.
 
-    .. seealso:: `equivalent`
-
     .. versionadded:: 1.0
+
+    .. seealso:: `equivalent`
 
     :Parameters:
 
@@ -1174,9 +1174,9 @@ class TimeDuration:
                    traceback=False):
         '''True if two time durations are logically equivalent.
 
-    .. seealso:: `equals`
-
     .. versionadded:: 1.0
+
+    .. seealso:: `equals`
 
     :Parameters:
 
@@ -1247,9 +1247,9 @@ class TimeDuration:
     def inspect(self):
         '''Inspect the attributes.
 
-    .. seealso:: `cf.inspect`
-
     .. versionadded:: 1.0
+
+    .. seealso:: `cf.inspect`
 
     :Returns:
 
@@ -1266,9 +1266,9 @@ class TimeDuration:
     the time interval is determined by the date-time given by the *dt*
     parameter.
 
-    .. seealso:: `bounds`
-
     .. versionadded:: 1.0
+
+    .. seealso:: `bounds`
 
     :Parameters:
 
@@ -1464,9 +1464,9 @@ class TimeDuration:
     The interval spans the time duration and starts and ends at
     date-times consistent with the time duration's offset.
 
-    .. seealso:: `cf.dt`, `cf.Datetime`, `interval` TODO
-
     .. versionadded:: 1.2.3
+
+    .. seealso:: `cf.dt`, `cf.Datetime`, `interval` TODO
 
     :Parameters:
 
@@ -1615,9 +1615,9 @@ def Y(duration=1, month=1, day=1, hour=0, minute=0, second=0):
     ``cf.Y(duration, *args, **kwargs)`` is equivalent to
     ``cf.TimeDuration(duration, 'calendar_year', *args, **kwargs)``.
 
-    .. seealso:: `cf.M`, `cf.D`, `cf.h`, `cf.m`, `cf.s`
-
     .. versionadded:: 1.0
+
+    .. seealso:: `cf.M`, `cf.D`, `cf.h`, `cf.m`, `cf.s`
 
     :Parameters:
 
@@ -1636,7 +1636,7 @@ def Y(duration=1, month=1, day=1, hour=0, minute=0, second=0):
 
     :Returns:
 
-        `cf.TimeDuration`
+        `TimeDuration`
             The new `cf.TimeDuration` object.
 
     **Examples:**
@@ -1662,9 +1662,9 @@ def M(duration=1, month=1, day=1, hour=0, minute=0, second=0):
 
     ``cf.M()`` is equivalent to ``cf.TimeDuration(1, 'calendar_month')``.
 
-    .. seealso:: `cf.Y`, `cf.D`, `cf.h`, `cf.m`, `cf.s`
-
     .. versionadded:: 1.0
+
+    .. seealso:: `cf.Y`, `cf.D`, `cf.h`, `cf.m`, `cf.s`
 
     :Parameters:
 
@@ -1707,9 +1707,9 @@ def D(duration=1, month=1, day=1, hour=0, minute=0, second=0):
 
     ``cf.D()`` is equivalent to ``cf.TimeDuration(1, 'day')``.
 
-    .. seealso:: `cf.Y`, `cf.M`, `cf.h`, `cf.m`, `cf.s`
-
     .. versionadded:: 1.0
+
+    .. seealso:: `cf.Y`, `cf.M`, `cf.h`, `cf.m`, `cf.s`
 
     :Parameters:
 
@@ -1727,7 +1727,7 @@ def D(duration=1, month=1, day=1, hour=0, minute=0, second=0):
 
     :Returns:
 
-        `cf.TimeDuration`
+        `TimeDuration`
             The new `cf.TimeDuration` object.
 
     **Examples:**
@@ -1753,9 +1753,9 @@ def h(duration=1, month=1, day=1, hour=0, minute=0, second=0):
 
     ``cf.h()`` is equivalent to ``cf.TimeDuration(1, 'hour')``.
 
-    .. seealso:: `cf.Y`, `cf.M`, `cf.D`, `cf.m`, `cf.s`
-
     .. versionadded:: 1.0
+
+    .. seealso:: `cf.Y`, `cf.M`, `cf.D`, `cf.m`, `cf.s`
 
     :Parameters:
 
@@ -1774,7 +1774,7 @@ def h(duration=1, month=1, day=1, hour=0, minute=0, second=0):
 
     :Returns:
 
-        `cf.TimeDuration`
+        `TimeDuration`
             The new `cf.TimeDuration` object.
 
     **Examples:**
@@ -1800,9 +1800,9 @@ def m(duration=1, month=1, day=1, hour=0, minute=0, second=0):
 
     ``cf.m()`` is equivalent to ``cf.TimeDuration(1, 'minute')``.
 
-    .. seealso:: `cf.Y`, `cf.M`, `cf.D`, `cf.h`, `cf.s`
-
     .. versionadded:: 1.0
+
+    .. seealso:: `cf.Y`, `cf.M`, `cf.D`, `cf.h`, `cf.s`
 
     :Parameters:
 
@@ -1821,7 +1821,7 @@ def m(duration=1, month=1, day=1, hour=0, minute=0, second=0):
 
     :Returns:
 
-        `cf.TimeDuration`
+        `TimeDuration`
             The new `cf.TimeDuration` object.
 
     **Examples:**
@@ -1847,9 +1847,9 @@ def s(duration=1, month=1, day=1, hour=0, minute=0, second=0):
 
     ``cf.s()`` is equivalent to ``cf.TimeDuration(1, 'second')``.
 
-    .. seealso:: `cf.Y`, `cf.M`, `cf.D`, `cf.h`, `cf.m`
-
     .. versionadded:: 1.0
+
+    .. seealso:: `cf.Y`, `cf.M`, `cf.D`, `cf.h`, `cf.m`
 
     :Parameters:
 
@@ -1868,7 +1868,7 @@ def s(duration=1, month=1, day=1, hour=0, minute=0, second=0):
 
     :Returns:
 
-        `cf.TimeDuration`
+        `TimeDuration`
             The new `cf.TimeDuration` object.
 
     **Examples:**

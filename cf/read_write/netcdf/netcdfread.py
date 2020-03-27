@@ -97,6 +97,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         # Still here?
         cfa_dimensions = g['variable_attributes'][ncvar].get('cfa_dimensions', '').split()
+
         ncdim_to_axis = g['ncdim_to_axis']
         axes = [ncdim_to_axis[ncdim] for ncdim in cfa_dimensions
                 if ncdim in ncdim_to_axis]
@@ -110,6 +111,14 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         '''TODO
 
     .. versionadded:: 3.0.0
+
+    :Parameters:
+        
+
+    :Returns:
+
+        `Data`
+
         '''
         g = self.read_vars
 
@@ -130,7 +139,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         # ------------------------------------------------------------
         # Still here? Then create data for a CFA netCDF variable
         # ------------------------------------------------------------
-#        print ('\nCreating data from CFA variable', repr(ncvar), repr(construct))
+#        print ('    Creating data from CFA variable', repr(ncvar), repr(construct))
         try:
             cfa_data = json.loads(construct.get_property('cfa_array'))
         except ValueError as error:
@@ -152,7 +161,14 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         ncdimensions = construct.get_property('cfa_dimensions', '').split()
         dtype = variable.dtype
-        if dtype.kind == 'S' and ncdimensions: # UNICODE???? TODO
+
+        if dtype is str:
+            # netCDF string types have a dtype of `str`, which needs
+            # to be reset as a numpy.dtype, but we don't know what
+            # without reading the data, so set it to None for now.
+            dtype = None
+                    
+        if self._is_char(ncvar) and dtype.kind in 'SU' and ncdimensions: # UNICODE???? TODO
 #            strlen = len(nc.dimensions[ncdimensions[-1]])
             strlen = g['nc'].dimensions[ncdimensions[-1]].size
             if strlen > 1:
@@ -216,6 +232,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                     else:
                         p.append(list(x))
                 # --- End: for
+
                 attrs['part'] = p
         # --- End: for
 
@@ -223,9 +240,8 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         construct.del_property('cfa_array')
         construct.del_property('cfa_dimensions', None)
 
-#        print ('out loaddd=', cfa_data)
         out = self._create_Data(loadd=cfa_data)
-#        print ('out =', repr(out))
+
         return out
 
 
@@ -274,8 +290,25 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             for ncvar in g['variables']:
                 if g['variable_attributes'][ncvar].get('cf_role', None) == 'cfa_private':
                     g['do_not_create_field'].add(ncvar)
+        # --- End: if
 
+        # ------------------------------------------------------------
+        # 
+        # ------------------------------------------------------------
+        if g['cfa']:
+            for ncvar, ncdims in tuple(g['variable_dimensions'].items()):
+                if ncdims != ():
+                    continue
 
+                if not (ncvar not in g['external_variables'] and
+                        g['variable_attributes'][ncvar].get('cf_role') == 'cfa_variable'):
+                    continue
+
+                ncdimensions = g['variable_attributes'][ncvar].get('cfa_dimensions', '').split()
+                if ncdimensions:
+                    g['variable_dimensions'][ncvar] = tuple(map(str, ncdimensions))
+
+                            
     def file_open(self, filename):
         '''Open the netCDf file for reading.
 
@@ -286,8 +319,8 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
     :Returns:
 
-        out: `netCDF4.Dataset`
-            A `netCDF4.Dataset` object for the file.
+        `netCDF4.Dataset`
+            The object for the file.
 
         '''
         out = super().file_open(filename)

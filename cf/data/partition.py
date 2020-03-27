@@ -569,7 +569,7 @@ class Partition:
 
     >>> p.on_disk
     True
-    >>> p.to_disk()
+    >>> p.to_memory()
     >>> p.on_disk
     False
 
@@ -1142,7 +1142,6 @@ class Partition:
         # ------------------------------------------------------------
         # Remove excessive/insert missing size 1 axes
         # ------------------------------------------------------------
-        # print ('p_shape=', p_shape, p_axes, p_data.shape)
         if p_shape != p_data.shape:
             # if len_p_axes != len(p_shape):
             p_data = p_data.reshape(p_shape)
@@ -1241,11 +1240,11 @@ class Partition:
         return self.Units.isreftime and self._subarray.dtype == _dtype_object
 
     def file_close(self):
-        '''Close all file containing the subarray, if there is one.
+        '''Close the file containing the subarray, if there is one.
 
     :Returns:
 
-        None
+        `None`
 
     **Examples:**
 

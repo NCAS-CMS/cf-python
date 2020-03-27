@@ -29,7 +29,8 @@ _units_None = Units()
 _month_units = ('month', 'months')
 _year_units  = ('year', 'years', 'yr')
 
-_relational_methods = ('__eq__', '__ne__', '__lt__', '__le__', '__gt__', '__ge__')
+_relational_methods = ('__eq__', '__ne__', '__lt__', '__le__',
+                       '__gt__', '__ge__')
 
 
 class PropertiesData(Properties):
@@ -63,7 +64,6 @@ class PropertiesData(Properties):
 
         return value in data
 
-
     def __data__(self):
         '''Returns a new reference to the data.
 
@@ -88,7 +88,6 @@ class PropertiesData(Properties):
             return data
 
         raise ValueError("{} has no data".format(self.__class__.__name__))
-
 
     def __setitem__(self, indices, value):
         '''Called to implement assignment to x[indices]
@@ -797,18 +796,24 @@ class PropertiesData(Properties):
         return True
 
 
-    def _parse_axes(self, axes):
-        '''TODO
-
-        '''
-        if axes is None:
-            return axes
-
-        if isinstance(axes, int):
-            axes = (axes,)
-
-        ndim = self.ndim
-        return [(i + ndim if i < 0 else i) for i in axes]
+#    def _parse_axes(self, axes):
+#        '''TODO
+#
+#
+#    :Returns:
+#        
+#        `list`
+#
+#        '''
+#        ndim = self.ndim
+#
+#        if axes is None:
+#            return list(range(ndim))
+#
+#        if isinstance(axes, int):
+#            axes = (axes,)
+#
+#        return [(i + ndim if i < 0 else i) for i in axes]
 
 
 #    def _parse_match(self, match):
@@ -995,9 +1000,10 @@ class PropertiesData(Properties):
 
             TODO: is there a way to prevent/bypass the above?
 
-        oper_args, oper_kwargs: all of the arguments for `oper_name`.
+        oper_args, oper_kwargs: all of the arguments for *oper_name*.
 
         delete_props: whether or not to delete name properties.
+
         '''
         # For explicitness on a per-method basis, apply inplace decorator
         # to individual methods calling this method, rather than decorating
@@ -1634,16 +1640,16 @@ class PropertiesData(Properties):
 
     * Invalid values in the results of arithmetic operations only
       occur if the raising of `FloatingPointError` exceptions has been
-      suppressed by `cf.data.seterr`.
+      suppressed by `cf.Data.seterr`.
 
     * If the raising of `FloatingPointError` exceptions has been
       allowed then invalid values in the results of arithmetic
       operations it is possible for them to be automatically converted
       to masked values, depending on the setting of
-      `cf.data.mask_fpe`. In this case, such automatic conversion
+      `cf.Data.mask_fpe`. In this case, such automatic conversion
       might be faster than calling `mask_invalid`.
 
-    .. seealso:: `cf.data.mask_fpe`, `cf.data.seterr`
+    .. seealso:: `cf.Data.mask_fpe`, `cf.Data.seterr`
 
     :Parameters:
 
@@ -1665,7 +1671,7 @@ class PropertiesData(Properties):
     >>> print(g.array)
     [ 1.  2.]
 
-    >>> old = cf.data.seterr('ignore')
+    >>> old = cf.Data.seterr('ignore')
     >>> h = g/f
     >>> print(h.array)
     [ inf   2.]
@@ -1680,8 +1686,8 @@ class PropertiesData(Properties):
     >>> print(h.array)
     [1.  --]
 
-    >>> old = cf.data.seterr('raise')
-    >>> old = cf.data.mask_fpe(True)
+    >>> old = cf.Data.seterr('raise')
+    >>> old = cf.Data.mask_fpe(True)
     >>> print((g/f).array)
     [ --  2]
     >>> print((g**12345).array)
@@ -1697,11 +1703,11 @@ class PropertiesData(Properties):
         return v
 
 
-    def max(self):
+    def maximum(self):
         '''The maximum of the data array.
 
-    .. seealso:: `mean`, `mid_range`, `min`, `range`, `sample_size`,
-                 `sd`, `sum`, `var`
+    .. seealso:: `mean`, `mid_range`, `minimum`, `range`,
+                 `sample_size`, `sd`, `sum`, `var`
 
     :Returns:
 
@@ -1712,13 +1718,13 @@ class PropertiesData(Properties):
 
     >>> f.data
     <CF Data(12, 64, 128): [[[236.512756, ..., 256.93371]]] K>
-    >>> f.max()
+    >>> f.maximum()
     <CF Data(): 311.343780 K>
 
         '''
         data = self.get_data(None)
         if data is not None:
-            return data.max(squeeze=True)
+            return data.maximum(squeeze=True)
 
         raise ValueError(
             "ERROR: Can't get the maximum when there is no data array")
@@ -1727,7 +1733,7 @@ class PropertiesData(Properties):
     def mean(self):
         '''The unweighted mean the data array.
 
-    .. seealso:: `max`, `mid_range`, `min`, `range`, `sample_size`, `sd`,
+    .. seealso:: `maximum`, `mid_range`, `minimum`, `range`, `sample_size`, `sd`,
                  `sum`, `var`
 
     :Returns:
@@ -1755,7 +1761,7 @@ class PropertiesData(Properties):
         '''The unweighted average of the maximum and minimum of the data
     array.
 
-    .. seealso:: `max`, `mean`, `min`, `range`, `sample_size`, `sd`,
+    .. seealso:: `maximum`, `mean`, `minimum`, `range`, `sample_size`, `sd`,
                  `sum`, `var`
 
     :Returns:
@@ -1780,11 +1786,12 @@ class PropertiesData(Properties):
             "ERROR: Can't get the mid-range when there is no data array")
 
 
-    def min(self):
+    def minimum(self):
         '''The minimum of the data array.
 
-    .. seealso:: `max`, `mean`, `mid_range`, `range`, `sample_size`,
-                 `sd`, `sum`, `var`
+    .. seealso:: `maximum`, `mean`, `mid_range`, `range`,
+                 `sample_size`, `standard_deviation`, `sum`,
+                 `variance`
 
     :Returns:
 
@@ -1795,13 +1802,13 @@ class PropertiesData(Properties):
 
     >>> f.data
     <CF Data(12, 73, 96): [[[236.512756348, ..., 256.93371582]]] K>
-    >>> f.min()
+    >>> f.minimum()
     <CF Data(): 198.828598022 K>
 
         '''
         data = self.get_data(None)
         if data is not None:
-            return data.min(squeeze=True)
+            return data.minimum(squeeze=True)
 
         raise ValueError(
             "ERROR: Can't get the minimum when there is no data array")
@@ -1811,8 +1818,9 @@ class PropertiesData(Properties):
         '''The absolute difference between the maximum and minimum of the data
     array.
 
-    .. seealso:: `max`, `mean`, `mid_range`, `min`, `sample_size`,
-                 `sd`, `sum`, `var`
+    .. seealso:: `maximum`, `mean`, `mid_range`, `minimum`,
+                 `sample_size`, `standard_deviation`, `sum`,
+                 `variance`
 
     :Returns:
 
@@ -1839,8 +1847,8 @@ class PropertiesData(Properties):
     def sample_size(self):
         '''The number of non-missing data elements in the data array.
 
-    .. seealso:: `count`, `max`, `mean`, `mid_range`, `min`, `range`,
-                 `sd`, `sum`, `var`
+    .. seealso:: `count`, `maximum`, `mean`, `mid_range`, `minimum`,
+                 `range`, `standard_deviation`, `sum`, `variance`
 
     :Returns:
 
@@ -1866,7 +1874,7 @@ class PropertiesData(Properties):
     def sd(self):
         '''The unweighted sample standard deviation of the data array.
 
-    .. seealso:: `max`, `mean`, `mid_range`, `min`, `range`,
+    .. seealso:: `maximum`, `mean`, `mid_range`, `minimum`, `range`,
                  `sample_size`, `sum`, `var`
 
     :Returns:
@@ -1893,7 +1901,7 @@ class PropertiesData(Properties):
     def sum(self):
        	'''The sum of the data array.
 
-    .. seealso:: `max`, `mean`, `mid_range`, `min`, `range`,
+    .. seealso:: `maximum`, `mean`, `mid_range`, `minimum`, `range`,
                  `sample_size`, `sd`, `var`
 
     :Returns:
@@ -1961,7 +1969,7 @@ class PropertiesData(Properties):
     def var(self):
         '''The unweighted sample variance of the data array.
 
-    .. seealso:: `max`, `mean`, `mid_range`, `min`, `range`,
+    .. seealso:: `maximum`, `mean`, `mid_range`, `minimum`, `range`,
                  `sample_size`, `sd`, `sum`
 
     :Returns:
@@ -2021,93 +2029,93 @@ class PropertiesData(Properties):
         return Subspace(self)
 
 
-    @property
-    def shape(self):
-        '''A tuple of the data array's dimension sizes.
-
-    .. seealso:: `data`, `hasdata`, `ndim`, `size`
-
-    **Examples:**
-
-    >>> f.shape
-    (73, 96)
-    >>> f.ndim
-    2
-
-    >>> f.ndim
-    0
-    >>> f.shape
-    ()
-
-    >>> f.hasdata
-    True
-    >>> len(f.shape) == f.dnim
-    True
-    >>> reduce(lambda x, y: x*y, f.shape, 1) == f.size
-    True
-
-        '''
-        return self.data.shape
-
-
-    @property
-    def ndim(self):
-        '''The number of dimensions in the data array.
-
-    .. seealso:: `data`, `hasdata`, `isscalar`, `shape`
-
-    **Examples:**
-
-    >>> f.hasdata
-    True
-    >>> f.shape
-    (73, 96)
-    >>> f.ndim
-    2
-
-    >>> f.shape
-    ()
-    >>> f.ndim
-    0
-
-        '''
-        return self.data.ndim
-
-
-    @property
-    def size(self):
-        '''The number of elements in the data array.
-
-    .. seealso:: `data`, `hasdata`, `ndim`, `shape`
-
-    **Examples:**
-
-    >>> f.shape
-    (73, 96)
-    >>> f.size
-    7008
-
-    >>> f.shape
-    ()
-    >>> f.ndim
-    0
-    >>> f.size
-    1
-
-    >>> f.shape
-    (1, 1, 1)
-    >>> f.ndim
-    3
-    >>> f.size
-    1
-
-    >>> f.hasdata
-    True
-    >>> f.size == reduce(lambda x, y: x*y, f.shape, 1)
-    True
-
-        '''
-        return self.data.size
+#    @property
+#    def shape(self):
+#        '''A tuple of the data array's dimension sizes.
+#
+#    .. seealso:: `data`, `has_data`, `ndim`, `size`
+#
+#    **Examples:**
+#
+#    >>> f.shape
+#    (73, 96)
+#    >>> f.ndim
+#    2
+#
+#    >>> f.ndim
+#    0
+#    >>> f.shape
+#    ()
+#
+#    >>> f.has_data()
+#    True
+#    >>> len(f.shape) == f.ndim
+#    True
+#    >>> reduce(lambda x, y: x*y, f.shape, 1) == f.size
+#    True
+#
+#        '''
+#        return self.data.shape
+#    
+#    
+#    @property
+#    def ndim(self):
+#        '''The number of dimensions in the data array.
+#
+#    .. seealso:: `data`, `has_data`, `isscalar`, `shape`
+#
+#    **Examples:**
+#
+#    >>> f.has_data()
+#    True
+#    >>> f.shape
+#    (73, 96)
+#    >>> f.ndim
+#    2
+#
+#    >>> f.shape
+#    ()
+#    >>> f.ndim
+#    0
+#
+#        '''
+#        return self.data.ndim
+#
+#
+#    @property
+#    def size(self):
+#        '''The number of elements in the data array.
+#
+#    .. seealso:: `data`, `has_data`, `ndim`, `shape`
+#
+#    **Examples:**
+#
+#    >>> f.shape
+#    (73, 96)
+#    >>> f.size
+#    7008
+#
+#    >>> f.shape
+#    ()
+#    >>> f.ndim
+#    0
+#    >>> f.size
+#    1
+#
+#    >>> f.shape
+#    (1, 1, 1)
+#    >>> f.ndim
+#    3
+#    >>> f.size
+#    1
+#
+#    >>> f.has_data()
+#    True
+#    >>> f.size == reduce(lambda x, y: x*y, f.shape, 1)
+#    True
+#
+#        '''
+#        return self.data.size
 
 
     @property
@@ -2427,7 +2435,7 @@ class PropertiesData(Properties):
     >>> f.isscalar
     False
 
-    >>> f.hasdata
+    >>> f.has_data()
     False
     >>> f.isscalar
     False
@@ -2542,8 +2550,9 @@ class PropertiesData(Properties):
 
         '''
         return self._apply_data_oper(
-            _inplace_enabled_define_and_cleanup(self), 'clip', a_min, a_max,
-            inplace=inplace, i=i, units=units, delete_props=True)
+            _inplace_enabled_define_and_cleanup(self), 'clip', a_min,
+            a_max, inplace=inplace, i=i, units=units,
+            delete_props=True)
 
 
     def close(self):
@@ -2754,7 +2763,110 @@ class PropertiesData(Properties):
 
         return data.count_masked()
 
+    def creation_commands(self, representative_data=False,
+                          namespace='cf', indent=0, string=True,
+                          name='c', data_name='d'):
+        '''Return the commands that would create the construct.
+        
+    .. versionadded:: 3.2.0
 
+    .. seealso:: `cf.Data.creation_commands`,
+                 `cf.Field.creation_commands`
+
+    :Parameters:
+
+        representative_data: `bool`, optional
+            Return one-line representations of `Data` instances, which
+            are not executable code but prevent the data being
+            converted in its entirety to a string representation.
+
+        namespace: `str`, optional
+            The namespace containing classes of the ``cf``
+            package. This is prefixed to the class name in commands
+            that instantiate instances of ``cf`` objects. By default,
+            *namespace* is ``'cf'``, i.e. it is assumed that ``cf``
+            was imported as ``import cf``.
+
+            *Parameter example:*
+              If ``cf`` was imported as ``import cf as cfp`` then set
+              ``namespace='cfp'``
+
+            *Parameter example:*
+              If ``cf`` was imported as ``from cf import *`` then set
+              ``namespace=''``
+
+        indent: `int`, optional
+            Indent each line by this many spaces. By default no
+            indentation is applied. Ignored if *string* is False.
+
+        string: `bool`, optional
+            If False then return each command as an element of a
+            `list`. By default the commands are concatenated into
+            a string, with a new line inserted between each command.
+
+    :Returns:
+
+        `str` or `list`
+            The commands in a string, with a new line inserted between
+            each command. If *string* is False then the separate
+            commands are returned as each element of a `list`.
+
+    **Examples:**
+
+        TODO
+
+        '''        
+        if name == data_name:
+            raise ValueError(
+                "'name' and 'data_name' parameters can not have the same value: {!r}".format(
+                    name))
+        
+        namespace0 = namespace
+        if namespace0:
+            namespace = namespace+"."
+        else:
+            namespace = ""
+
+        indent = ' ' * indent
+
+        out = []
+
+        construct_type = getattr(self, 'construct_type', None)
+        if construct_type is not None:
+            out.append("# {}: {}".format(construct_type,
+                                         self.identity()))
+            
+        out.append("{} = {}{}()".format(name, namespace,
+                                        self.__class__.__name__))
+
+        properties = self.properties()
+        if properties:
+            out.append("{}.set_properties({})".format(name,
+                                                      properties))
+
+        data = self.get_data(None)
+        if data is not None:
+            if representative_data:
+                out.append("{} = {!r} # Representative data".format(
+                    data_name, data))
+            else:
+                out.extend(data.creation_commands(name=data_name,
+                                                  namespace=namespace0,
+                                                  indent=0,
+                                                  string=False))
+                
+            out.append("{}.set_data(d)".format(name))
+        
+        nc = self.nc_get_variable(None)
+        if nc is not None:
+            out.append("{}.nc_set_variable({!r})".format(name, nc))
+            
+        if string:
+            out[0] = indent+out[0]
+            out = ('\n'+indent).join(out)
+
+        return out
+    
     def cyclic(self, axes=None, iscyclic=True):
         '''Set the cyclicity of an axis.
 
@@ -5096,6 +5208,17 @@ class PropertiesData(Properties):
         '''
         return self.datetime_array
 
+    def max(self, *args, **kwargs):
+        '''Alias for `maximum`.
+
+        '''
+        return self.maximum(*args, **kwargs)
+
+    def min(self, *args, **kwargs):
+        '''Alias for `minimum`.
+
+        '''
+        return self.minimum(*args, **kwargs)
 
     # ----------------------------------------------------------------
     # Deprecated attributes and methods

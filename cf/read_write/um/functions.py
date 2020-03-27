@@ -8,22 +8,22 @@ _file_to_UM = _file_to_fh.setdefault('UM', {})
 def _open_um_file(filename, aggregate=True, fmt=None, word_size=None,
                   byte_ordering=None):
     '''Open a UM fields file or PP file and read it into a
-`umread.umfile.File` object.
-
-If there is already a `umread.umfile.File` object for the file then it
-is returned with an open file descriptor.
-
-:Parameters:
-
-    filename : str
-        The file to be opened.
-
-:Returns:
-
-    out : umread.umfile.File
-        The opened file with an open file descriptor.
-
-:Examples:
+    `umread.umfile.File` object.
+    
+    If there is already a `umread.umfile.File` object for the file
+    then it is returned with an open file descriptor.
+    
+    :Parameters:
+    
+        filename: `str`
+            The file to be opened.
+    
+    :Returns:
+    
+        `umread.umfile.File`
+            The opened file with an open file descriptor.
+    
+    **Examples:**
 
     '''
 #    filename = abspath(filename)
@@ -64,27 +64,24 @@ is returned with an open file descriptor.
     _file_to_UM[filename] = f
 
     return f
-# --- End: def
 
 def _close_um_file(filename):
     '''Close a PP or UM fields file.
 
-Does nothing if the file is already closed.
-
-:Parameters:
-
-    filename : str
-        The file to be closed.
-
-:Returns:
-
-    None
-
-:Examples:
+    Does nothing if the file is already closed.
+    
+    :Parameters:
+    
+        filename: `str`
+            The file to be closed.
+    
+    :Returns:
+    
+        `None`
+    
+    **Examples:**
 
     '''
     f = _file_to_UM.pop(filename, None)
     if f is not None:
         f.close_fd()
-# --- End: def
-
