@@ -31,7 +31,8 @@ _units_None = Units()
 _month_units = ('month', 'months')
 _year_units  = ('year', 'years', 'yr')
 
-_relational_methods = ('__eq__', '__ne__', '__lt__', '__le__', '__gt__', '__ge__')
+_relational_methods = ('__eq__', '__ne__', '__lt__', '__le__',
+                       '__gt__', '__ge__')
 
 
 class PropertiesData(Properties):
@@ -65,7 +66,6 @@ class PropertiesData(Properties):
 
         return value in data
 
-
     def __data__(self):
         '''Returns a new reference to the data.
 
@@ -90,7 +90,6 @@ class PropertiesData(Properties):
             return data
 
         raise ValueError("{} has no data".format(self.__class__.__name__))
-
 
     def __setitem__(self, indices, value):
         '''Called to implement assignment to x[indices]

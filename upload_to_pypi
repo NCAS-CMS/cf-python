@@ -6,19 +6,19 @@
 #
 # It is presumed that `python setup.py sdist` has already been run.
 #
-#>> ./upload_to_pypi 3.0.2
+#>> ./upload_to_pypi 3.2.0
 # --------------------------------------------------------------------
 
 set -x
 
 if [[ ! $1 ]] ; then
-  echo "No version \$1 (e.g. 3.0.2)"
+  echo "No version \$1 (e.g. 3.2.0)"
   exit 1
 fi
 
 version=$1
 
-tarball=dist/cf-python-${version}.tar.gz
+tarball=dist/cf-${version}.tar.gz
 
 if [[ ! -f $tarball ]] ; then
   echo "Tar ball for version $version does not exist: $tarball"

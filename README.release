@@ -24,7 +24,7 @@
   the individual tests are un-commented so as to override this in the
   commented listing beneath).
 
-* Make sure that the correct path to the cfdm library is in the
+* Make sure that the correct path to the cf library is in the
   PYTHONPATH environment variable:
 
 export PYTHONPATH=$PWD:$PYTHONPATH
@@ -60,4 +60,4 @@ python ../tutorial.py
 
 * Upload the source tarball to PyPi via `./upload_to_pypi <vn>` (e.g.
   ./upload_to_pypi 3.2.0). Note this requires the `twine` library (which
-  can be installed via `pip`) and relevant project privileges on PyPI.
+  can be installed via `pip`) and relevant project privileges on PyPi.

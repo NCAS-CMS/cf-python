@@ -1,3 +1,9 @@
+from ctypes.util import find_library
+_libpath = find_library('udunits2')
+if _libpath is None:
+    raise FileNotFoundError(
+        "cf requires UNIDATA UDUNITS-2. Can't find the 'udunits2' library.")
+
 from  cfunits import Units as cfUnits
 
 
@@ -14,10 +20,8 @@ class Units:
     def __new__(cls, *args, **kwargs):
         return cfUnits(*args, **kwargs)
 
-
     @staticmethod
     def conform(*args, **kwargs):
         return cfUnits.conform(*args, **kwargs)
-
 
 #--- End: class

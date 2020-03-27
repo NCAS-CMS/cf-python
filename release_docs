@@ -68,9 +68,12 @@ if [[ $2 = "latest" ]] || [[ $2 = "archive" ]] ; then
 	  _sources \
 	  _static \
 	  _downloads/cf_tutorial_files.zip \
-	  _downloads/tutorial.py
+	  _downloads/tutorial.py \
+	  _images/*.png
 
-  git commit -a -m "v$version documentation"
+  git commit -a -m "v$version $2 documentation"
 fi
+
+echo PYTHONATH=$PYTHONPATH
 
 set +x

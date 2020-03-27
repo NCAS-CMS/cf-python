@@ -20,6 +20,11 @@ import cf
 
 import cfdm
 
+print('\ncf environment:')
+print('-----------------')
+cf.environment()
+print()
+
 cfdm_version = cfdm.__version__
 
 def _read(fname):

@@ -12,17 +12,15 @@ class Field_collapseTest(unittest.TestCase):
     def setUp(self):
         self.filename2 = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                       'test_file2.nc')
-        self.filename4 = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                      'test_file4.nc')
 
         self.chunk_sizes = (17, 50, 100, 300, 3000, 300000)[::-1]
         self.original_chunksize = cf.CHUNKSIZE()
 
         self.test_only = []
 #        self.test_only = ['nought']
-#        self.test_only = ['test_COLLAPSE_CLIMATOLOGICAL_TIME']
-#        self.test_only = ['test_COLLAPSE']
-#        self.test_only = ['test_COLLAPSE_GROUP_OPTIONS']
+#        self.test_only = ['test_Field_collapse']
+#        self.test_only = ['test_Field_collapse_CLIMATOLOGICAL_TIME']
+#        self.test_only = ['test_Field_collapse_GROUPS']
 
     def test_Field_collapse_CLIMATOLOGICAL_TIME(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -30,111 +28,161 @@ class Field_collapseTest(unittest.TestCase):
 
         verbose = False
 
-        f = cf.read(self.filename4)[0]
+        f = cf.example_field(2)
 
-        g = f.collapse('T: mean within years time: minimum over years', within_years=cf.seasons(), _debug=False)
+        g = f.collapse('T: mean within years time: minimum over years',
+                       within_years=cf.seasons())
+        expected_shape = list(f.shape)
+        expected_shape[0] = 4
+
         if verbose:
             print('\n',f)
             print(g)
             print(g.constructs)
-        self.assertTrue(g.shape == (4, 4, 5))
+        self.assertTrue(list(g.shape) == expected_shape, g.shape)
 
         g = f.collapse('T: max within years time: minimum over years', within_years=cf.seasons())
+        expected_shape = list(f.shape)
+        expected_shape[0] = 4
+        
         if verbose:
             print('\n',f)
             print(g)
             print(g.constructs)
-        self.assertTrue(g.shape == (4, 4, 5))
+        self.assertTrue(list(g.shape) == expected_shape)
 
-        g = f.collapse('T: mean within years time: minimum over years', within_years=cf.M(), _debug=0)
+        g = f.collapse('T: mean within years time: minimum over years',
+                       within_years=cf.M())
+        expected_shape = list(f.shape)
+        expected_shape[0] = 12
+        
         if verbose:
             print('\n',f)
             print(g)
             print(g.constructs)
-        self.assertTrue(g.shape == (12, 4, 5))
+        self.assertTrue(list(g.shape) == expected_shape)
 
         g = f.collapse('T: max within years time: minimum over years', within_years=cf.M())
+        expected_shape = list(f.shape)
+        expected_shape[0] = 12
+  
         if verbose:
             print('\n',f)
             print(g)
             print(g.constructs)
-        self.assertTrue(g.shape == (12, 4, 5))
+        self.assertTrue(list(g.shape) == expected_shape)
 
-        g = f[:12].collapse('T: mean within years time: minimum over years', within_years=cf.seasons())
+        g = f[:12].collapse('T: mean within years time: minimum over years',
+                            within_years=cf.seasons())
+        expected_shape = list(f.shape)
+        expected_shape[0] = 4
+        
         if verbose:
             print('\n',f[:12])
             print(g)
             print(g.constructs)
-        self.assertTrue(g.shape == (4, 4, 5))
+        self.assertTrue(list(g.shape) == expected_shape)
 
-        g = f[:12].collapse('T: max within years time: minimum over years', within_years=cf.seasons())
+        g = f[:12].collapse('T: max within years time: minimum over years',
+                            within_years=cf.seasons())
+        expected_shape = list(f.shape)
+        expected_shape[0] = 4
+
         if verbose:
             print('\n',f[:12])
             print(g)
             print(g.constructs)
-        self.assertTrue(g.shape == (4, 4, 5))
+        self.assertTrue(list(g.shape) == expected_shape)
 
-        g = f[:12].collapse('T: mean within years time: minimum over years', within_years=cf.M())
+        g = f[:12].collapse('T: mean within years time: minimum over years',
+                            within_years=cf.M())
+        expected_shape = list(f.shape)
+        expected_shape[0] = 12
+
         if verbose:
             print('\n',f[:12])
             print(g)
             print(g.constructs)
-        self.assertTrue(g.shape == (12, 4, 5))
+        self.assertTrue(list(g.shape) == expected_shape)
 
-        g = f[:12].collapse('T: max within years time: minimum over years', within_years=cf.M())
+        g = f[:12].collapse('T: max within years time: minimum over years',
+                            within_years=cf.M())
+        expected_shape = list(f.shape)
+        expected_shape[0] = 12
+
         if verbose:
             print('\n',f[:12])
             print(g)
             print(g.constructs)
-        self.assertTrue(g.shape == (12, 4, 5))
+        self.assertTrue(list(g.shape) == expected_shape)
 
         for key in f.cell_methods:
             f.del_construct(key)
 
-        g = f.collapse('T: max within years time: minimum over years', within_years=cf.seasons())
+        g = f.collapse('T: max within years time: minimum over years',
+                       within_years=cf.seasons())
+        expected_shape = list(f.shape)
+        expected_shape[0] = 4
+
         if verbose:
             print('\n',f)
             print(g)
             print(g.constructs)
-        self.assertTrue(g.shape == (4, 4, 5))
+        self.assertTrue(list(g.shape) == expected_shape)
 
         g = f.collapse('T: max within years time: min over years', within_years=cf.M())
+        expected_shape = list(f.shape)
+        expected_shape[0] = 12
+
         if verbose:
             print('\n',f)
             print(g)
             print(g.constructs)
-        self.assertTrue(g.shape == (12, 4, 5))
+        self.assertTrue(list(g.shape) == expected_shape)
 
-        g = f[:12].collapse('T: max within years time: minimum over years', within_years=cf.seasons())
+        g = f[:12].collapse('T: max within years time: minimum over years',
+                            within_years=cf.seasons())
+        expected_shape = list(f.shape)
+        expected_shape[0] = 4
+
         if verbose:
             print('\n',f[:12])
             print(g)
             print(g.constructs)
-        self.assertTrue(g.shape == (4, 4, 5))
+        self.assertTrue(list(g.shape) == expected_shape)
 
-        g = f[:12].collapse('T: max within years time: minimum over years', within_years=cf.M())
+        g = f[:12].collapse('T: max within years time: minimum over years',
+                            within_years=cf.M())
+        expected_shape = list(f.shape)
+        expected_shape[0] = 12
+
         if verbose:
             print('\n',f[:12])
             print(g)
             print(g.constructs)
-        self.assertTrue(g.shape == (12, 4, 5))
+        self.assertTrue(list(g.shape) == expected_shape)
 
         g = f.collapse('T: max within years time: minimum over years',
-                       within_years=cf.seasons(), over_years=cf.Y(5))
+                       within_years=cf.seasons(), over_years=cf.Y(2))
+        expected_shape = list(f.shape)
+        expected_shape[0] = 8
+
         if verbose:
             print('\n',f)
             print(g)
             print(g.constructs)
-        self.assertTrue(g.shape == (8, 4, 5))
+        self.assertTrue(list(g.shape) == expected_shape)
 
         g = f[::-1, ...].collapse('T: max within years time: minimum over years',
-                                  within_years=cf.seasons(), over_years=cf.Y(5))
+                                  within_years=cf.seasons(), over_years=cf.Y(2))
+        expected_shape = list(f.shape)
+        expected_shape[0] = 8
+
         if verbose:
-            print('\n',f)
+            print('\n',f[::-1, ...])
             print(g)
             print(g.constructs)
-        self.assertTrue(g.shape == (8, 4, 5))
-    #--- End: def
+        self.assertTrue(list(g.shape) == expected_shape)
 
     def test_Field_collapse(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -216,7 +264,7 @@ class Field_collapseTest(unittest.TestCase):
         self.assertTrue(g.shape == (1, 4, 1))
 
         g = f.collapse('T: mean within years time: minimum over years',
-                       within_years=cf.M(), _debug=0)
+                       within_years=cf.M())
         if verbose:
             print('\n',f)
             print(g)
@@ -257,7 +305,6 @@ class Field_collapseTest(unittest.TestCase):
 #                bound = g.coord('T').bounds.datetime_array[0, 1]
 #                self.assertTrue(bound.day == group.offset.day,
 #                                "{}!={}, bound={}, group={}".format(bound.day, group.offset.day, bound, group))
-    #--- End: def
 
     def test_Field_collapse_WEIGHTS(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -265,7 +312,8 @@ class Field_collapseTest(unittest.TestCase):
 
         verbose = False
 
-        f = cf.read(self.filename4)[0]
+        f = cf.example_field(2)
+        
         if verbose:
             print(f)
 
@@ -273,7 +321,6 @@ class Field_collapseTest(unittest.TestCase):
         g = f.collapse('area: mean', weights='area')
         if verbose:
             print(g)
-    #--- End: def
 
     def test_Field_collapse_GROUPS(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -281,139 +328,207 @@ class Field_collapseTest(unittest.TestCase):
 
         verbose = False
 
-        f = cf.read(self.filename4)[0]
-
-        g = f.collapse('T: mean', group=cf.M(12), group_span=cf.Y(), _debug=0)
+        f = cf.example_field(2)
+        
+        g = f.collapse('T: mean', group=cf.M(12), group_span=cf.Y())
+        expected_shape = list(f.shape)
+        expected_shape[0] = 2
+        
         if verbose:
             print(f)
             print(g)
             print(g.constructs)
-        self.assertTrue(g.shape == (9, 4, 5))
+        self.assertTrue(list(g.shape) == expected_shape, g.shape)
 
-        g = f.collapse('T: mean', group=cf.M(12, month=12)        , group_span=cf.Y())
+        g = f.collapse('T: mean', group=cf.M(12, month=12), group_span=cf.Y())
+        expected_shape = list(f.shape)
+        expected_shape[0] = 3
+        
         if verbose:
             print(f)
             print(g)
             print(g.constructs)
-        self.assertTrue(g.shape == (10, 4, 5))
+        self.assertTrue(list(g.shape) == expected_shape, g.shape)
 
-        g = f.collapse('T: mean', group=cf.M(12, day=16)          , group_span=cf.Y())
+        g = f.collapse('T: mean', group=cf.M(12, day=16), group_span=cf.Y())
+        expected_shape = list(f.shape)
+        expected_shape[0] = 2
+        
         if verbose:
             print(f)
             print(g)
             print(g.constructs)
-        self.assertTrue(g.shape == (9, 4, 5))
+        self.assertTrue(list(g.shape) == expected_shape, g.shape)
 
         g = f.collapse('T: mean', group=cf.M(12, month=11, day=27), group_span=cf.Y())
+        expected_shape = list(f.shape)
+        expected_shape[0] = 3
+
         if verbose:
             print(f)
             print(g)
             print(g.constructs)
-        self.assertTrue(g.shape == (10, 4, 5))
+        self.assertTrue(list(g.shape) == expected_shape, g.shape)
 
-        g = f.collapse('T: mean', group=cf.M(12, month=6, day=27), group_span=cf.Y(), _debug=0)
+        g = f.collapse('T: mean', group=cf.M(12, month=6, day=27), group_span=cf.Y())
+        expected_shape = list(f.shape)
+        expected_shape[0] = 2
+
         if verbose:
             print(f)
             print(g)
             print(g.dimension_coordinates('T').value().bounds.data.datetime_array)
             print(g.constructs)
-        self.assertTrue(g.shape == (9, 4, 5))
-
+        self.assertTrue(list(g.shape) == expected_shape, g.shape)
+        
         g = f.collapse('T: mean', group=cf.M(5, month=12), group_span=cf.M(5), group_contiguous=1)
-        if verbose:
-            print(f)
-            print(g)
-            print(g.dimension_coordinates('T').value().bounds.data.datetime_array)
-            print(g.constructs)
-        self.assertTrue(g.shape == (24, 4, 5))
+        expected_shape = list(f.shape)
+        expected_shape[0] = 7
 
-        g = f.collapse('T: mean', group=cf.M(5, month= 3), group_span=cf.M(5), group_contiguous=1)
         if verbose:
             print(f)
             print(g)
             print(g.dimension_coordinates('T').value().bounds.data.datetime_array)
             print(g.constructs)
-        self.assertTrue(g.shape == (24, 4, 5))
+        self.assertTrue(list(g.shape) == expected_shape, g.shape)
+        
+        g = f.collapse('T: mean', group=cf.M(5, month=12), group_span=cf.M(5), group_contiguous=1)
+        expected_shape = list(f.shape)
+        expected_shape[0] = 7
 
-        g = f.collapse('T: mean', group=cf.M(5, month=2), group_span=cf.M(5), group_contiguous=1)
         if verbose:
             print(f)
             print(g)
             print(g.dimension_coordinates('T').value().bounds.data.datetime_array)
             print(g.constructs)
-        self.assertTrue(g.shape == (24, 4, 5))
+        self.assertTrue(list(g.shape) == expected_shape, g.shape)
 
-        g = f.collapse('T: mean', group=cf.M(5, month=12), group_span=cf.M(5), group_contiguous=2)
-        if verbose:
-            print(f)
-            print(g)
-            print(g.dimension_coordinates('T').value().bounds.data.datetime_array)
-            print(g.constructs)
-        self.assertTrue(g.shape == (24, 4, 5))
+        g = f.collapse('T: mean', group=cf.M(5, month= 3), group_span=cf.M(5),
+                       group_contiguous=1)
+        expected_shape = list(f.shape)
+        expected_shape[0] = 7
 
-        g = f.collapse('T: mean', group=cf.M(5, month=3), _debug=0)
         if verbose:
             print(f)
             print(g)
             print(g.dimension_coordinates('T').value().bounds.data.datetime_array)
             print(g.constructs)
-        self.assertTrue(g.shape == (24, 4, 5)) # TODO - look into month offset when M< 12
+        self.assertTrue(list(g.shape) == expected_shape, g.shape)
 
-        g = f.collapse('T: mean', group=cf.M(5, month=3), group_span=cf.M(5), group_contiguous=2)
+        g = f.collapse('T: mean', group=cf.M(5, month=2), group_span=cf.M(5),
+                       group_contiguous=1)
+        expected_shape = list(f.shape)
+        expected_shape[0] = 7
+
         if verbose:
             print(f)
             print(g)
             print(g.dimension_coordinates('T').value().bounds.data.datetime_array)
             print(g.constructs)
-        self.assertTrue(g.shape == (24, 4, 5))
+        self.assertTrue(list(g.shape) == expected_shape, g.shape)
+
+        g = f.collapse('T: mean', group=cf.M(5, month=12), group_span=cf.M(5),
+                       group_contiguous=2)
+        expected_shape = list(f.shape)
+        expected_shape[0] = 7
+
+        if verbose:
+            print(f)
+            print(g)
+            print(g.dimension_coordinates('T').value().bounds.data.datetime_array)
+            print(g.constructs)
+        self.assertTrue(list(g.shape) == expected_shape, g.shape)
+        
+        g = f.collapse('T: mean', group=cf.M(5, month=3))
+        expected_shape = list(f.shape)
+        expected_shape[0] = 7
+
+        if verbose:
+            print(f)
+            print(g)
+            print(g.dimension_coordinates('T').value().bounds.data.datetime_array)
+            print(g.constructs)
+        self.assertTrue(list(g.shape) == expected_shape, g.shape) # TODO - look into month offset when M< 12
+
+        g = f.collapse('T: mean', group=cf.M(5, month=3), group_span=cf.M(5),
+                       group_contiguous=2)
+        expected_shape = list(f.shape)
+        expected_shape[0] = 7
+
+        if verbose:
+            print(f)
+            print(g)
+            print(g.dimension_coordinates('T').value().bounds.data.datetime_array)
+            print(g.constructs)
+        self.assertTrue(list(g.shape) == expected_shape, g.shape)
 
         g = f.collapse('T: mean', group=cf.M(5, month=12), group_contiguous=1)
+        expected_shape = list(f.shape)
+        expected_shape[0] = 7
+
         if verbose:
             print(f)
             print(g)
             print(g.dimension_coordinates('T').value().bounds.data.datetime_array)
             print(g.constructs)
-        self.assertTrue(g.shape == (24, 4, 5))
+        self.assertTrue(list(g.shape) == expected_shape, g.shape)
 
         g = f.collapse('T: mean', group=cf.M(5, month= 3), group_contiguous=1)
+        expected_shape = list(f.shape)
+        expected_shape[0] = 7
+
         if verbose:
             print(f)
             print(g)
             print(g.dimension_coordinates('T').value().bounds.data.datetime_array)
             print(g.constructs)
-        self.assertTrue(g.shape == (24, 4, 5))
+        self.assertTrue(list(g.shape) == expected_shape, g.shape)
 
         g = f.collapse('T: mean', group=cf.M(5, month=12), group_contiguous=2)
+        expected_shape = list(f.shape)
+        expected_shape[0] = 7
+
         if verbose:
             print(f)
             print(g)
             print(g.dimension_coordinates('T').value().bounds.data.datetime_array)
             print(g.constructs)
-        self.assertTrue(g.shape == (24, 4, 5))
+        self.assertTrue(list(g.shape) == expected_shape, g.shape)
 
         g = f.collapse('T: mean', group=cf.M(5, month= 3), group_contiguous=2)
-        if verbose:
-            print(f)
-            print(g)
-            print(g.dimension_coordinates('T').value().bounds.data.datetime_array)
-            print(g.constructs)
-        self.assertTrue(g.shape == (24, 4, 5))
+        expected_shape = list(f.shape)
+        expected_shape[0] = 7
 
-        g = f.collapse('T: mean within years time: minimum over years', within_years=cf.M(3), group_span=True)
         if verbose:
             print(f)
             print(g)
             print(g.dimension_coordinates('T').value().bounds.data.datetime_array)
             print(g.constructs)
-        self.assertTrue(g.shape == (4, 4, 5))
+        self.assertTrue(list(g.shape) == expected_shape, g.shape)
 
-        g = f.collapse('T: mean within years time: minimum over years', within_years=cf.seasons(), group_span=cf.M(3))
+        g = f.collapse('T: mean within years time: minimum over years',
+                       within_years=cf.M(3), group_span=True)
+        expected_shape = list(f.shape)
+        expected_shape[0] = 4
+
         if verbose:
             print(f)
             print(g)
             print(g.dimension_coordinates('T').value().bounds.data.datetime_array)
             print(g.constructs)
-        self.assertTrue(g.shape == (4, 4, 5))
+        self.assertTrue(list(g.shape) == expected_shape, g.shape)
+
+        g = f.collapse('T: mean within years time: minimum over years',
+                       within_years=cf.seasons(), group_span=cf.M(3))
+        expected_shape = list(f.shape)
+        expected_shape[0] = 4
+
+        if verbose:
+            print(f)
+            print(g)
+            print(g.dimension_coordinates('T').value().bounds.data.datetime_array)
+            print(g.constructs)
+        self.assertTrue(list(g.shape) == expected_shape, g.shape)
 
 #            g = f[::2].collapse('T: mean', group=cf.M(5, month=12),
 #                                group_span=cf.M(5),group_contiguous=1)
@@ -424,7 +539,6 @@ class Field_collapseTest(unittest.TestCase):
 #                           group_contiguous=2)
 #            g = f.collapse('T: mean', group=cf.M(5, month= 3),
 #                           group_contiguous=2)
-    #--- End: def
 
 #--- End: class
 

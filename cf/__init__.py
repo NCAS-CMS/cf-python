@@ -90,7 +90,7 @@ import platform
 # Check the version of python
 _minimum_vn = '3.5.0'
 if LooseVersion(platform.python_version()) < LooseVersion(_minimum_vn):
-    raise ValueError(
+    raise RuntimeError(
         "Bad python version: cf requires python version {} or later. Got {}".format(
             _minimum_vn, platform.python_version()))
 
@@ -143,48 +143,48 @@ except ImportError as error1:
 # Check the version of psutil
 _minimum_vn = '0.6.0'
 if LooseVersion(psutil.__version__) < LooseVersion(_minimum_vn):
-    raise ValueError(
+    raise RuntimeError(
         "Bad psutil version: cf requires psutil version {} or later. Got {} at {}".format(
             _minimum_vn, psutil.__version__, psutil.__file__))
 
 # Check the version of netCDF4
 _minimum_vn = '1.5.3'
 if LooseVersion(netCDF4.__version__) < LooseVersion(_minimum_vn):
-    raise ValueError(
+    raise RuntimeError(
         "Bad netCDF4 version: cf requires netCDF4 version {} or later. Got {} at {}".format(
             _minimum_vn, netCDF4.__version__, netCDF4.__file__))
 
 # Check the version of cftime
 _minimum_vn = '1.1.1'
 if LooseVersion(cftime.__version__) < LooseVersion(_minimum_vn):
-    raise ValueError(
+    raise RuntimeError(
         "Bad cftime version: cf requires cftime version {} or later. Got {} at {}".format(
             _minimum_vn, cftime.__version__, cftime.__file__))
 
 # Check the version of numpy
 _minimum_vn = '1.15'
 if LooseVersion(numpy.__version__) < LooseVersion(_minimum_vn):
-    raise ValueError(
+    raise RuntimeError(
         "Bad numpy version: cf requires numpy version {} or later. Got {} at {}".format(
             _minimum_vn, numpy.__version__, numpy.__file__))
 
 # Check the version of cfunits
-_minimum_vn = '3.2.4'
+_minimum_vn = '3.2.5'
 if LooseVersion(cfunits.__version__) < LooseVersion(_minimum_vn):
-    raise ValueError(
+    raise RuntimeError(
         "Bad cfunits version: cf requires cfunits version {} or later. Got {} at {}".format(
             _minimum_vn, cfunits.__version__, cfunits.__file__))
 
 # Check the version of cfdm
 _minimum_vn = '1.8.0'
 if LooseVersion(cfdm.__version__) < LooseVersion(_minimum_vn):
-    raise ValueError(
+    raise RuntimeError(
         "Bad cfdm version: cf requires cfdm version {} or later. Got {} at {}".format(
             _minimum_vn, cfdm.__version__, cfdm.__file__))
 
 from .constructs import Constructs
 
-from .abstract             import Coordinate
+from .abstract import Coordinate
 
 from .count                   import Count
 from .index                   import Index
@@ -198,40 +198,41 @@ from .domain               import Domain
 from .datum                import Datum
 from .coordinateconversion import CoordinateConversion
 
-from .cfdatetime           import dt, dt_vector
-from .flags                import Flags
-from .timeduration         import TimeDuration, Y, M, D, h, m, s
-from .units                import Units
+from .cfdatetime   import dt, dt_vector
+from .flags        import Flags
+from .timeduration import TimeDuration, Y, M, D, h, m, s
+from .units        import Units
 
-from .fieldlist            import FieldList
+from .fieldlist import FieldList
 
-from .dimensioncoordinate  import DimensionCoordinate
-from .auxiliarycoordinate  import AuxiliaryCoordinate
-from .coordinatereference  import CoordinateReference
-from .cellmethod           import CellMethod
-from .cellmeasure          import CellMeasure
-from .domainancillary      import DomainAncillary
-from .domainaxis           import DomainAxis
-from .fieldancillary       import FieldAncillary
-from .field                import Field
-from .data                 import (Data,
-                                   FilledArray,
-                                   GatheredArray,
-                                   NetCDFArray,
-                                   RaggedContiguousArray,
-                                   RaggedIndexedArray,
-                                   RaggedIndexedContiguousArray)
+from .dimensioncoordinate import DimensionCoordinate
+from .auxiliarycoordinate import AuxiliaryCoordinate
+from .coordinatereference import CoordinateReference
+from .cellmethod          import CellMethod
+from .cellmeasure         import CellMeasure
+from .domainancillary     import DomainAncillary
+from .domainaxis          import DomainAxis
+from .fieldancillary      import FieldAncillary
+from .field               import Field
+from .data                import (Data,
+                                  FilledArray,
+                                  GatheredArray,
+                                  NetCDFArray,
+                                  RaggedContiguousArray,
+                                  RaggedIndexedArray,
+                                  RaggedIndexedContiguousArray)
 
-from .aggregate            import aggregate
-from .query                import (Query, lt, le, gt, ge, eq, ne, contain, contains,
-                                   wi, wo, set, year, month, day, hour, minute,
-                                   second, dtlt, dtle, dtgt, dtge, dteq, dtne,
-                                   cellsize, cellge, cellgt, cellle, celllt,
-                                   cellwi, cellwo, djf, mam, jja, son, seasons)
-from .constants            import *
-from .functions            import *
-from .maths                import relative_vorticity, histogram
-from .examplefield         import example_field
+from .aggregate    import aggregate
+from .query        import (Query, lt, le, gt, ge, eq, ne, contain, contains,
+                           wi, wo, set, year, month, day, hour,
+                           minute, second, dtlt, dtle, dtgt, dtge,
+                           dteq, dtne, cellsize, cellge, cellgt,
+                           cellle, celllt, cellwi, cellwo, djf, mam,
+                           jja, son, seasons)
+from .constants    import *
+from .functions    import *
+from .maths        import relative_vorticity, histogram
+from .examplefield import example_field
 
 
 from .cfimplementation import (CFImplementation,

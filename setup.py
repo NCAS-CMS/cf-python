@@ -14,7 +14,6 @@ def find_package_data_files(directory):
                 filename = os.path.join(root, basename)
                 yield filename.replace('cf/', '', 1)
 
-
 def find_test_files(directory):
     for root, dirs, files in os.walk(directory):
         for basename in files:
@@ -23,7 +22,6 @@ def find_test_files(directory):
                 fnmatch.fnmatch(basename, '*.pp')):
                 filename = os.path.join(root, basename)
                 yield filename.replace('cf/', '', 1)
-
 
 def _read(fname):
     '''Returns content of a file.
@@ -34,7 +32,6 @@ def _read(fname):
     with open(fpath, 'r') as file_:
         return file_.read()
 
-
 def _get_version():
     '''Returns library version by inspecting __init__.py file.
 
@@ -42,7 +39,6 @@ def _get_version():
     return re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
                      _read("cf/__init__.py"),
                      re.MULTILINE).group(1)
-
 
 version      = _get_version()
 packages     = ['cf']
@@ -86,7 +82,7 @@ class build_umread(build):
             else:
                 print('WARNING: Failed to build the UM read C library.')
                 print('         Attempting to read UKMO PP and UM format files will result in failure.')
-                print('         This will not affect any other cf-python functionality.')
+                print('         This will not affect any other cf functionality.')
                 print('         In particular, netCDF file processing is unaffected.')
 
             print('-' * 80)
@@ -209,7 +205,7 @@ Tests are run from within the ``cf/test`` directory:
     python run_tests.py
 """
 
-setup(name = "cf-python",
+setup(name = "cf",
       long_description = long_description,
       version      = version,
       description  = "Python interface to the CF conventions",
@@ -249,7 +245,7 @@ setup(name = "cf-python",
                           'numpy>=1.15',
                           'cfdm>=1.8.0',
                           'psutil>=0.6.0',
-                          'cfunits>=3.2.4'
+                          'cfunits>=3.2.5'
 #                          'scipy>=1.1.0',
 #                          'matplotlib>=3.0.0',
 #                          'mpi4py>=3.0.0',

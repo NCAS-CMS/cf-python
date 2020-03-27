@@ -402,9 +402,9 @@ place.
             Apply this mask to the data given by the *array*
             parameter. By default, or if *mask* is `None`, no mask is
             applied. May be any scalar or array-like object (such as a
-            `numpy` array or `Data` instance) that is broadcastable to
-            the shape of *array*. Masking will be carried out where
-            the mask elements evaluate to `True`.
+            `list`, `numpy` array or `Data` instance) that is
+            broadcastable to the shape of *array*. Masking will be
+            carried out where the mask elements evaluate to `True`.
 
             This mask will applied in addition to any mask already
             defined by the *array* parameter.
@@ -523,7 +523,11 @@ place.
             check_free_memory = True
 
             if isinstance(data, self.__class__):
-                self.loadd(data.dumpd(), chunk=chunk)
+#                self.loadd(data.dumpd(), chunk=chunk)
+                self.__dict__ = data.copy().__dict__
+                if chunk:
+                    self.chunk()
+
                 if mask is not None:
                     self.where(mask, cf_masked, inplace=True)
 
@@ -2776,14 +2780,13 @@ place.
 
         self.loadd(d, chunk=chunk)
 
-
     def dumpd(self):
         '''Return a serialization of the data array.
 
     The serialization may be used to reconstruct the data array as it
     was at the time of the serialization creation.
 
-    .. seealso:: `loadd`
+    .. seealso:: `loadd`, `loads`
 
     :Returns:
 
@@ -2970,9 +2973,9 @@ place.
 
 
     def loadd(self, d, chunk=True):
-        '''Reset the data array in place from a data array serialization.
+        '''Reset the data in place from a dictionary serialization.
 
-    .. seealso:: `dumpd`
+    .. seealso:: `dumpd`, `loads`
 
     :Parameters:
 
@@ -3015,10 +3018,9 @@ place.
 
         dtype = d['dtype']
         self._dtype = dtype
-        print ('asdasdasds', dtype)
+#        print ('P45 asdasdasds', dtype)
         self.Units       = units
         self._axes       = axes
-#        self._flip       = list(d.get('_flip', ()))
         self._flip(list(d.get('_flip', ())))
         self.set_fill_value(d.get('fill_value', None))
 
@@ -3040,6 +3042,7 @@ place.
 
         filename = d.get('file', None)
 #        if filename is not None:
+
 #            filename = abspath(filename)
 
         base = d.get('base', None)
@@ -3106,7 +3109,8 @@ place.
                 partition.subarray = attrs['subarray']
                 if fmt not in ('netCDF', 'UM'):
                     raise TypeError(
-                        "Don't know how to load sub-array from file format {!r}".format(fmt))
+                        "Don't know how to load subarray from file format {!r}".format(
+                            fmt))
 
                 # Set the 'subarray' attribute
                 kwargs = attrs['subarray'].copy()
@@ -3157,7 +3161,6 @@ place.
         else:
             self._auxiliary_mask = None
 
-
     @_deprecation_error_i_kwarg
     def ceil(self, inplace=False, i=False):
         '''The ceiling of the data, element-wise.
@@ -3192,7 +3195,6 @@ place.
 
         '''
         return self.func(numpy_ceil, out=True, inplace=inplace)
-
 
     def cumsum(self, axis, masked_as_zero=False):
         '''Return the data cumulatively summed along the given axis.
@@ -3273,7 +3275,6 @@ place.
         out = self.reconstruct_sectioned_data(sections)
         return out
 
-
     def _chunk_add_partitions(self, d, axes):
         '''TODO
         '''
@@ -3294,7 +3295,6 @@ place.
 
             # Update d in-place
             d[axis] = []
-
 
     def chunk(self, chunksize=None, total=None, omit_axes=None,
               pmshape=None):
@@ -3540,7 +3540,6 @@ place.
 #            self.add_partitions(sorted(set(extra_bounds)), axis)
 #        #--- End: for
 
-
     @_inplace_enabled
     def _asdatetime(self, inplace=False):
         '''Change the internal representation of data array elements from
@@ -3602,12 +3601,10 @@ place.
 
         return d
 
-
     def _isdatetime(self):
         '''TODO
         '''
         return self.dtype.kind == 'O' and self.Units.isreftime
-
 
     @_inplace_enabled
     def _asreftime(self, inplace=False):
@@ -3666,7 +3663,6 @@ place.
         d._dtype = array.dtype
 
         return d
-
 
     def _combined_units(self, data1, method, inplace):
         '''TODO
@@ -4039,7 +4035,6 @@ place.
         raise ValueError(
             "Can't operate with {} on data with {!r} to {!r}".format(
                 method, units0, units1))
-
 
     def _binary_operation(self, other, method):
         '''Implement binary arithmetic and comparison operations with the
@@ -4612,7 +4607,6 @@ place.
 
         return out
 
-
     def __query_set__(self, values):
         '''TODO
 
@@ -4647,7 +4641,6 @@ place.
 #
 #        return new
 
-
     def __query_wi__(self, value):
         '''TODO
         '''
@@ -4668,7 +4661,6 @@ place.
 #
 #        return new
 
-
     def __query_wo__(self, value):
         '''TODO
 
@@ -4687,7 +4679,6 @@ place.
 #        new.dtype = bool
 #
 #        return new
-
 
     @classmethod
     def concatenate(cls, data, axis=0, _preserve=True):
@@ -5034,7 +5025,6 @@ place.
         # ------------------------------------------------------------
         return data0
 
-
     def _move_flip_to_partitions(self):
         '''TODO
 
@@ -5060,7 +5050,6 @@ place.
 
 #        self._flip = []
         self._flip([])
-
 
 #    def _parse_axes(self, axes, method=None):
 #        '''
@@ -5106,7 +5095,6 @@ place.
 #                method, axes2))
 #
 #        return axes2
-
 
     def _unary_operation(self, operation):
         '''Implement unary arithmetic operations.
@@ -5157,7 +5145,6 @@ place.
 
         return new
 
-
     def __add__(self, other):
         '''The binary arithmetic operation ``+``
 
@@ -5165,7 +5152,6 @@ place.
 
         '''
         return self._binary_operation(other, '__add__')
-
 
     def __iadd__(self, other):
         '''The augmented arithmetic assignment ``+=``
@@ -5175,7 +5161,6 @@ place.
         '''
         return self._binary_operation(other, '__iadd__')
 
-
     def __radd__(self, other):
         '''The binary arithmetic operation ``+`` with reflected operands
 
@@ -5183,7 +5168,6 @@ place.
 
         '''
         return self._binary_operation(other, '__radd__')
-
 
     def __sub__(self, other):
         '''The binary arithmetic operation ``-``
@@ -5193,7 +5177,6 @@ place.
         '''
         return self._binary_operation(other, '__sub__')
 
-
     def __isub__(self, other):
         '''The augmented arithmetic assignment ``-=``
 
@@ -5201,7 +5184,6 @@ place.
 
         '''
         return self._binary_operation(other, '__isub__')
-
 
     def __rsub__(self, other):
         '''The binary arithmetic operation ``-`` with reflected operands
@@ -5211,7 +5193,6 @@ place.
         '''
         return self._binary_operation(other, '__rsub__')
 
-
     def __mul__(self, other):
         '''The binary arithmetic operation ``*``
 
@@ -5219,7 +5200,6 @@ place.
 
         '''
         return self._binary_operation(other, '__mul__')
-
 
     def __imul__(self, other):
         '''The augmented arithmetic assignment ``*=``
@@ -5229,7 +5209,6 @@ place.
         '''
         return self._binary_operation(other, '__imul__')
 
-
     def __rmul__(self, other):
         '''The binary arithmetic operation ``*`` with reflected operands
 
@@ -5237,7 +5216,6 @@ place.
 
         '''
         return self._binary_operation(other, '__rmul__')
-
 
     def __div__(self, other):
         '''The binary arithmetic operation ``/``
@@ -5247,7 +5225,6 @@ place.
         '''
         return self._binary_operation(other, '__div__')
 
-
     def __idiv__(self, other):
         '''The augmented arithmetic assignment ``/=``
 
@@ -5255,7 +5232,6 @@ place.
 
         '''
         return self._binary_operation(other, '__idiv__')
-
 
     def __rdiv__(self, other):
         '''The binary arithmetic operation ``/`` with reflected operands
@@ -5265,7 +5241,6 @@ place.
         '''
         return self._binary_operation(other, '__rdiv__')
 
-
     def __floordiv__(self, other):
         '''The binary arithmetic operation ``//``
 
@@ -5273,7 +5248,6 @@ place.
 
         '''
         return self._binary_operation(other, '__floordiv__')
-
 
     def __ifloordiv__(self, other):
         '''The augmented arithmetic assignment ``//=``
@@ -5283,7 +5257,6 @@ place.
         '''
         return self._binary_operation(other, '__ifloordiv__')
 
-
     def __rfloordiv__(self, other):
         '''The binary arithmetic operation ``//`` with reflected operands
 
@@ -5291,7 +5264,6 @@ place.
 
         '''
         return self._binary_operation(other, '__rfloordiv__')
-
 
     def __truediv__(self, other):
         '''The binary arithmetic operation ``/`` (true division)
@@ -5301,7 +5273,6 @@ place.
         '''
         return self._binary_operation(other, '__truediv__')
 
-
     def __itruediv__(self, other):
         '''The augmented arithmetic assignment ``/=`` (true division)
 
@@ -5309,7 +5280,6 @@ place.
 
         '''
         return self._binary_operation(other, '__itruediv__')
-
 
     def __rtruediv__(self, other):
         '''The binary arithmetic operation ``/`` (true division) with
@@ -5319,7 +5289,6 @@ place.
 
         '''
         return self._binary_operation(other, '__rtruediv__')
-
 
     def __pow__(self, other, modulo=None):
         '''The binary arithmetic operations ``**`` and ``pow``
@@ -5334,7 +5303,6 @@ place.
 
         return self._binary_operation(other, '__pow__')
 
-
     def __ipow__(self, other, modulo=None):
         '''The augmented arithmetic assignment ``**=``
 
@@ -5347,7 +5315,6 @@ place.
                     self.__class__.__name__))
 
         return self._binary_operation(other, '__ipow__')
-
 
     def __rpow__(self, other, modulo=None):
         '''The binary arithmetic operations ``**`` and ``pow`` with reflected
@@ -5363,7 +5330,6 @@ place.
 
         return self._binary_operation(other, '__rpow__')
 
-
     def __mod__(self, other):
         '''The binary arithmetic operation ``%``
 
@@ -5371,7 +5337,6 @@ place.
 
         '''
         return self._binary_operation(other, '__mod__')
-
 
     def __imod__(self, other):
         '''The binary arithmetic operation ``%=``
@@ -5381,7 +5346,6 @@ place.
         '''
         return self._binary_operation(other, '__imod__')
 
-
     def __rmod__(self, other):
         '''The binary arithmetic operation ``%`` with reflected operands
 
@@ -5389,7 +5353,6 @@ place.
 
         '''
         return self._binary_operation(other, '__rmod__')
-
 
     def __eq__(self, other):
         '''The rich comparison operator ``==``
@@ -5399,7 +5362,6 @@ place.
         '''
         return self._binary_operation(other, '__eq__')
 
-
     def __ne__(self, other):
         '''The rich comparison operator ``!=``
 
@@ -5407,7 +5369,6 @@ place.
 
         '''
         return self._binary_operation(other, '__ne__')
-
 
     def __ge__(self, other):
         '''The rich comparison operator ``>=``
@@ -5417,7 +5378,6 @@ place.
         '''
         return self._binary_operation(other, '__ge__')
 
-
     def __gt__(self, other):
         '''The rich comparison operator ``>``
 
@@ -5425,7 +5385,6 @@ place.
 
         '''
         return self._binary_operation(other, '__gt__')
-
 
     def __le__(self, other):
         '''The rich comparison operator ``<=``
@@ -5435,7 +5394,6 @@ place.
         '''
         return self._binary_operation(other, '__le__')
 
-
     def __lt__(self, other):
         '''The rich comparison operator ``<``
 
@@ -5443,7 +5401,6 @@ place.
 
         '''
         return self._binary_operation(other, '__lt__')
-
 
     def __and__(self, other):
         '''The binary bitwise operation ``&``
@@ -5453,7 +5410,6 @@ place.
         '''
         return self._binary_operation(other, '__and__')
 
-
     def __iand__(self, other):
         '''The augmented bitwise assignment ``&=``
 
@@ -5461,7 +5417,6 @@ place.
 
         '''
         return self._binary_operation(other, '__iand__')
-
 
     def __rand__(self, other):
         '''The binary bitwise operation ``&`` with reflected operands
@@ -5471,7 +5426,6 @@ place.
         '''
         return self._binary_operation(other, '__rand__')
 
-
     def __or__(self, other):
         '''The binary bitwise operation ``|``
 
@@ -5479,7 +5433,6 @@ place.
 
         '''
         return self._binary_operation(other, '__or__')
-
 
     def __ior__(self, other):
         '''The augmented bitwise assignment ``|=``
@@ -5489,7 +5442,6 @@ place.
         '''
         return self._binary_operation(other, '__ior__')
 
-
     def __ror__(self, other):
         '''The binary bitwise operation ``|`` with reflected operands
 
@@ -5497,7 +5449,6 @@ place.
 
         '''
         return self._binary_operation(other, '__ror__')
-
 
     def __xor__(self, other):
         '''The binary bitwise operation ``^``
@@ -5507,7 +5458,6 @@ place.
         '''
         return self._binary_operation(other, '__xor__')
 
-
     def __ixor__(self, other):
         '''The augmented bitwise assignment ``^=``
 
@@ -5515,7 +5465,6 @@ place.
 
         '''
         return self._binary_operation(other, '__ixor__')
-
 
     def __rxor__(self, other):
         '''The binary bitwise operation ``^`` with reflected operands
@@ -5525,7 +5474,6 @@ place.
         '''
         return self._binary_operation(other, '__rxor__')
 
-
     def __lshift__(self, y):
         '''The binary bitwise operation ``<<``
 
@@ -5533,7 +5481,6 @@ place.
 
         '''
         return self._binary_operation(y, '__lshift__')
-
 
     def __ilshift__(self, y):
         '''The augmented bitwise assignment ``<<=``
@@ -5543,7 +5490,6 @@ place.
         '''
         return self._binary_operation(y, '__ilshift__')
 
-
     def __rlshift__(self, y):
         '''The binary bitwise operation ``<<`` with reflected operands
 
@@ -5551,7 +5497,6 @@ place.
 
         '''
         return self._binary_operation(y, '__rlshift__')
-
 
     def __rshift__(self, y):
         '''The binary bitwise operation ``>>``
@@ -5561,7 +5506,6 @@ place.
         '''
         return self._binary_operation(y, '__rshift__')
 
-
     def __irshift__(self, y):
         '''The augmented bitwise assignment ``>>=``
 
@@ -5569,7 +5513,6 @@ place.
 
         '''
         return self._binary_operation(y, '__irshift__')
-
 
     def __rrshift__(self, y):
         '''The binary bitwise operation ``>>`` with reflected operands
@@ -5579,7 +5522,6 @@ place.
         '''
         return self._binary_operation(y, '__rrshift__')
 
-
     def __abs__(self):
         '''The unary arithmetic operation ``abs``
 
@@ -5587,7 +5529,6 @@ place.
 
         '''
         return self._unary_operation('__abs__')
-
 
     def __neg__(self):
         '''The unary arithmetic operation ``-``
@@ -5597,7 +5538,6 @@ place.
         '''
         return self._unary_operation('__neg__')
 
-
     def __invert__(self):
         '''The unary bitwise operation ``~``
 
@@ -5606,7 +5546,6 @@ place.
         '''
         return self._unary_operation('__invert__')
 
-
     def __pos__(self):
         '''The unary arithmetic operation ``+``
 
@@ -5614,7 +5553,6 @@ place.
 
         '''
         return self._unary_operation('__pos__')
-
 
     def _all_axis_names(self):
         '''Return a set of all the dimension names in use by the data array.
@@ -5643,7 +5581,6 @@ place.
             return self._axes[:]
         else:
             return list(all_axes)
-
 
     def _change_axis_names(self, axis_map):
         '''Change the axis names.
@@ -5696,7 +5633,6 @@ place.
 
         # Partitions in the partition matrix
         self.partitions.change_axis_names(axis_map)
-
 
     @_deprecation_error_i_kwarg
     @_inplace_enabled
@@ -7528,7 +7464,6 @@ False
 
         return array_out
 
-
     @property
     def mask(self):
         '''The boolean missing data mask of the data array.
@@ -7581,7 +7516,6 @@ False
         mask.hardmask = True
 
         return mask
-
 
     @staticmethod
     def mask_fpe(*arg):
@@ -7651,7 +7585,6 @@ False
             _mask_fpe[0] = bool(arg[0])
 
         return old
-
 
     @staticmethod
     def seterr(all=None, divide=None, over=None, under=None, invalid=None):
@@ -10713,7 +10646,7 @@ False
     >>> d[0, 1] = cf.masked
     >>> print(d)
     [[4 -- 6]
-     [1 2 3]]
+     [1  2 3]]
     >>> d.datum(0)
     4
     >>> d.datum(-1)
@@ -10778,7 +10711,6 @@ False
             return array.item()
 
         return cf_masked
-
 
     @_deprecation_error_i_kwarg
     @_inplace_enabled
@@ -12753,7 +12685,6 @@ False
         return cls.full(shape, 0, dtype=dtype, units=units,
                         calendar=calendar, chunk=chunk)
 
-
     @_deprecation_error_i_kwarg
     @_inplace_enabled
     def func(self, f, units=None, out=False, inplace=False, i=False,
@@ -12777,7 +12708,8 @@ False
 
     :Returns:
 
-        TODO
+        `Data` or `None`
+            TODO
 
     **Examples:**
 

@@ -83,15 +83,15 @@ The cf package can:
 
 * write field constructs to netCDF datasets on disk,
 
-* incorporate, and create, metadata stored in external files (new in
-  version 3.0.0),
+* incorporate, and create, metadata stored in external files (*new in
+  version 3.0.0*),
 
 * read, write, and create data that have been compressed by convention
   (i.e. ragged or gathered arrays), whilst presenting a view of the
   data in its uncompressed form,
 
-* read, write, and create coordinates defined by geometry cells (new
-  in version 3.2.0),
+* read, write, and create coordinates defined by geometry cells (**new
+  in version 3.2.0**),
 
 * combine field constructs arithmetically,
 
@@ -101,7 +101,7 @@ The cf package can:
 * perform statistical collapses on field constructs,
 
 * perform histogram, percentile and binning operations on field
-  constructs (new in version 3.0.3),
+  constructs (*new in version 3.0.3*),
   
 * regrid field constructs with (multi-)linear, nearest neighbour,
   first- and second-order conservative and higher order patch recovery
@@ -113,6 +113,15 @@ The cf package can:
 
 * create field constructs to create derived quantities (such as
   vorticity).
+
+Hierarchical groups
+^^^^^^^^^^^^^^^^^^^
+
+Hierarchical groups provide a powerful mechanism to structure
+variables within datasets. A future release of cf will include support
+for netCDF4 files containing data organised in hierarchical groups,
+but this is not available in version |release| (even though it is
+allowed in CF-1.8).
 
 **Visualization**
 -----------------
