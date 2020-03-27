@@ -2493,7 +2493,7 @@ class DataTest(unittest.TestCase):
         # Also test masking behaviour: masking of invalid data occurs for
         # numpy.ma module by default but we don't want that so there is logic
         # to workaround it. So check that invalid values do emerge.
-        """inverse_methods = [method for method in trig_and_hyperbolic_methods
+        inverse_methods = [method for method in trig_and_hyperbolic_methods
                            if method.startswith('arc')]
         d = cf.Data([2, 1.5, 1, 0.5, 0], mask=[1, 0, 0, 0, 1])
         for method in inverse_methods:
@@ -2502,7 +2502,6 @@ class DataTest(unittest.TestCase):
                 (e.mask.array == d.mask.array).all(),
                 "{}, {}".format(method, e.array-d)
             )
-        """
 
         # In addition, test that 'nan', inf' and '-inf' emerge distinctly
         f = cf.Data([-2, -1, 1, 2], mask=[0, 0, 0, 1])
