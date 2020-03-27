@@ -1200,17 +1200,17 @@ class PropertiesDataBounds(PropertiesData):
     <Units: degrees_east>
     >>> print(f.array)
     [[-90 0 90 --]]
-    >>> f.cos()
-    >>> f.Units
+    >>> g = f.cos()
+    >>> g.Units
     <Units: 1>
-    >>> print(f.array)
+    >>> print(g.array)
     [[0.0 1.0 0.0 --]]
 
     >>> f.Units
     <Units: m s-1>
     >>> print(f.array)
     [[1 2 3 --]]
-    >>> f.cos()
+    >>> f.cos(inplace=True)
     >>> f.Units
     <Units: 1>
     >>> print(f.array)
@@ -2252,17 +2252,17 @@ class PropertiesDataBounds(PropertiesData):
     <Units: degrees_north>
     >>> print(f.array)
     [[-90 0 90 --]]
-    >>> f.sin()
-    >>> f.Units
+    >>> g = f.sin()
+    >>> g.Units
     <Units: 1>
-    >>> print(f.array)
+    >>> print(g.array)
     [[-1.0 0.0 1.0 --]]
 
     >>> f.Units
     <Units: m s-1>
     >>> print(f.array)
     [[1 2 3 --]]
-    >>> f.sin()
+    >>> f.sin(inplace=True)
     >>> f.Units
     <Units: 1>
     >>> print(f.array)
@@ -2300,14 +2300,14 @@ class PropertiesDataBounds(PropertiesData):
 
     **Examples:**
 
-    >>> d = cf.Data([[0, 1, 2], [3, -99, 5]], mask=[[0, 0, 0], [0, 1, 0]])
-    >>> print(d.array)
+    >>> f = cf.Data([[0, 1, 2], [3, -99, 5]], mask=[[0, 0, 0], [0, 1, 0]])
+    >>> print(f.array)
     [[0  1 2]
      [3 -- 5]]
-    >>> e = d.arctan()
-    >>> e
+    >>> g = f.arctan()
+    >>> g
     <CF Data(2, 3): [[0.0, ..., 1.373400766945016]] radians>
-    >>> print(e.array)
+    >>> print(g.array)
     [[0.0                0.7853981633974483 1.1071487177940904]
      [1.2490457723982544                 -- 1.373400766945016 ]]
 
@@ -2405,14 +2405,14 @@ class PropertiesDataBounds(PropertiesData):
 
     **Examples:**
 
-    >>> d = cf.Data([[0, 1, 2], [3, -99, 5]], mask=[[0, 0, 0], [0, 1, 0]])
-    >>> print(d.array)
+    >>> f = cf.Data([[0, 1, 2], [3, -99, 5]], mask=[[0, 0, 0], [0, 1, 0]])
+    >>> print(f.array)
     [[0  1 2]
      [3 -- 5]]
-    >>> e = d.arcsinh()
-    >>> e
+    >>> g = f.arcsinh()
+    >>> g
     <CF Data(2, 3): [[0.0, ..., 2.3124383412727525]] radians>
-    >>> print(e.array)
+    >>> print(g.array)
     [[0.0 0.881373587019543 1.4436354751788103]
      [1.8184464592320668 -- 2.3124383412727525]]
 
@@ -2517,24 +2517,24 @@ class PropertiesDataBounds(PropertiesData):
 
     **Examples:**
 
-    >>> d.Units
+    >>> f.Units
     <Units: degrees_north>
-    >>> print(d.array)
+    >>> print(f.array)
     [[-90 0 90 --]]
-    >>> e = d.tanh()
-    >>> e.Units
+    >>> g = f.tanh()
+    >>> g.Units
     <Units: 1>
-    >>> print(e.array)
+    >>> print(g.array)
     [[-0.9171523356672744 0.0 0.9171523356672744 --]]
 
-    >>> d.Units
+    >>> f.Units
     <Units: m s-1>
-    >>> print(d.array)
+    >>> print(f.array)
     [[1 2 3 --]]
-    >>> d.tanh(inplace=True)
-    >>> d.Units
+    >>> f.tanh(inplace=True)
+    >>> f.Units
     <Units: 1>
-    >>> print(d.array)
+    >>> print(f.array)
     [[0.7615941559557649 0.9640275800758169 0.9950547536867305 --]]
 
         '''
@@ -2573,24 +2573,24 @@ class PropertiesDataBounds(PropertiesData):
 
     **Examples:**
 
-    >>> d.Units
+    >>> f.Units
     <Units: degrees_north>
-    >>> print(d.array)
+    >>> print(f.array)
     [[-90 0 90 --]]
-    >>> d.sinh(inplace=True)
-    >>> d.Units
+    >>> g = f.sinh(inplace=True)
+    >>> g.Units
     <Units: 1>
-    >>> print(d.array)
+    >>> print(g.array)
     [[-2.3012989023072947 0.0 2.3012989023072947 --]]
 
-    >>> d.Units
+    >>> f.Units
     <Units: m s-1>
-    >>> print(d.array)
+    >>> print(f.array)
     [[1 2 3 --]]
-    >>> d.sinh(inplace=True)
-    >>> d.Units
+    >>> f.sinh(inplace=True)
+    >>> f.Units
     <Units: 1>
-    >>> print(d.array)
+    >>> print(f.array)
     [[1.1752011936438014 3.626860407847019 10.017874927409903 --]]
 
         '''
@@ -2628,24 +2628,24 @@ class PropertiesDataBounds(PropertiesData):
 
     **Examples:**
 
-    >>> d.Units
+    >>> f.Units
     <Units: degrees_north>
-    >>> print(d.array)
+    >>> print(f.array)
     [[-90 0 90 --]]
-    >>> e = d.cosh()
-    >>> e.Units
+    >>> g = f.cosh()
+    >>> g.Units
     <Units: 1>
-    >>> print(e.array)
+    >>> print(g.array)
     [[2.5091784786580567 1.0 2.5091784786580567 --]]
 
-    >>> d.Units
+    >>> f.Units
     <Units: m s-1>
-    >>> print(d.array)
+    >>> print(f.array)
     [[1 2 3 --]]
-    >>> d.cosh(inplace=True)
-    >>> d.Units
+    >>> f.cosh(inplace=True)
+    >>> f.Units
     <Units: 1>
-    >>> print(d.array)
+    >>> print(f.array)
     [[1.5430806348152437 3.7621956910836314 10.067661995777765 --]]
 
         '''
@@ -2689,20 +2689,20 @@ class PropertiesDataBounds(PropertiesData):
     <Units: degrees_north>
     >>> print(f.array)
     [[-45 0 45 --]]
-    >>> f.tan(inplace=True)
-    >>> f.Units
+    >>> g = f.tan()
+    >>> g.Units
     <Units: 1>
-    >>> print(f.array)
+    >>> print(g.array)
     [[-1.0 0.0 1.0 --]]
 
     >>> f.Units
     <Units: m s-1>
     >>> print(f.array)
     [[1 2 3 --]]
-    >>> e = f.tan()
-    >>> e.Units
+    >>> f.tan(inplace=True)
+    >>> f.Units
     <Units: 1>
-    >>> print(e.array)
+    >>> print(f.array)
     [[1.55740772465 -2.18503986326 -0.142546543074 --]]
 
         '''

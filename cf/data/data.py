@@ -9461,17 +9461,17 @@ False
     <Units: degrees_east>
     >>> print(d.array)
     [[-90 0 90 --]]
-    >>> d.cos()
-    >>> d.Units
+    >>> e = d.cos()
+    >>> e.Units
     <Units: 1>
-    >>> print(d.array)
+    >>> print(e.array)
     [[0.0 1.0 0.0 --]]
 
     >>> d.Units
     <Units: m s-1>
     >>> print(d.array)
     [[1 2 3 --]]
-    >>> d.cos()
+    >>> d.cos(inplace=True)
     >>> d.Units
     <Units: 1>
     >>> print9d.array)
@@ -12254,17 +12254,17 @@ False
     <Units: degrees_north>
     >>> print(d.array)
     [[-90 0 90 --]]
-    >>> d.sin()
-    >>> d.Units
+    >>> e = d.sin()
+    >>> e.Units
     <Units: 1>
-    >>> print(d.array)
+    >>> print(e.array)
     [[-1.0 0.0 1.0 --]]
 
     >>> d.Units
     <Units: m s-1>
     >>> print(d.array)
     [[1 2 3 --]]
-    >>> d.sin()
+    >>> d.sin(inplace=True)
     >>> d.Units
     <Units: 1>
     >>> print(d.array)
@@ -12312,10 +12312,10 @@ False
     <Units: degrees_north>
     >>> print(d.array)
     [[-90 0 90 --]]
-    >>> d.sinh(inplace=True)
-    >>> d.Units
+    >>> e = d.sinh()
+    >>> e.Units
     <Units: 1>
-    >>> print(d.array)
+    >>> print(e.array)
     [[-2.3012989023072947 0.0 2.3012989023072947 --]]
 
     >>> d.Units
@@ -12673,17 +12673,17 @@ False
     <Units: degrees_north>
     >>> print(d.array)
     [[-45 0 45 --]]
-    >>> d.tan()
-    >>> d.Units
+    >>> e = d.tan()
+    >>> e.Units
     <Units: 1>
-    >>> print(d.array)
+    >>> print(e.array)
     [[-1.0 0.0 1.0 --]]
 
     >>> d.Units
     <Units: m s-1>
     >>> print(d.array)
     [[1 2 3 --]]
-    >>> d.tan()
+    >>> d.tan(inplace=True)
     >>> d.Units
     <Units: 1>
     >>> print(d.array)
