@@ -211,6 +211,7 @@ Data
    ~cf.Index.chunk
    ~cf.Index.close
    ~cf.Index.convert_reference_time
+   ~cf.Index.creation_commands
    ~cf.Index.cyclic
    ~cf.Index.files
    ~cf.Index.has_bounds

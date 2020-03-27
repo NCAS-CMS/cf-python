@@ -1,10 +1,12 @@
-from os.path       import abspath
+from os.path import abspath
 
-from . import implementation
 from .netcdf import NetCDFWrite
+
+from ..cfimplementation import implementation
 
 from ..functions import flat
 from ..functions import _DEPRECATION_ERROR_FUNCTION_KWARGS
+
 
 #from . import mpi_on
 mpi_on = False
@@ -22,8 +24,8 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
           least_significant_digit=None, endian='native', compress=0,
           fletcher32=False, shuffle=True, reference_datetime=None,
           verbose=False, cfa_options=None, mode='w', single=False,
-          double=False, variable_attributes=None, HDF_chunksizes=None,
-          no_shuffle=None, unlimited=None):
+          double=False, variable_attributes=None, string=True,
+          HDF_chunksizes=None, no_shuffle=None, unlimited=None):
     '''Write field constructs to a netCDF file.
 
     **File format**
@@ -368,6 +370,9 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
             <http://unidata.github.io/netcdf4-python>`_ for more
             details.
 
+            This parameter replaces the deprecated *no_shuffle*
+            parameter.
+    
         datatype: `dict`, optional
             Specify data type conversions to be applied prior to
             writing data to disk. This may be useful as a means of
@@ -403,17 +408,30 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
             numpy.dtype('float64'), numpy.dtype('int32'):
             numpy.dtype('int64')}``.
 
-        unlimited: sequence of `str`, optional
-            Create unlimited dimensions (dimensions that can be appended
-            to). A dimension is identified by either a standard name; one
-            of T, Z, Y, X denoting time, height or horixontal axes
-            repsectively (as defined by the CF conventions); or the value
-            of an arbitrary CF property preceeded by the property name and
-            a colon.
+       string: `bool`, optional
+           By default string-valued construct data are written as
+           netCDF arrays of type string if the output file format is
+           ``'NETCDF4'``, or of type char with an extra dimension
+           denoting the maximum string length for any other output
+           file format (see the *fmt* parameter). If *string* is False
+           then string-valued construct data are written as netCDF
+           arrays of type char with an extra dimension denoting the
+           maximum string length, regardless of the selected output
+           file format.
 
-        verbose : `bool`, optional
+        verbose: `bool`, optional
             If True then print a summary of how constructs map to output
             netCDF dimensions, variables and attributes.
+
+        HDF_chunksizes: deprecated at version 3.0.0
+            HDF chunk sizes may be set for individual constructs prior
+            to writing, instead. See `cf.Data.nc_set_hdf5_chunksizes`.
+
+        no_shuffle: deprecated at version 3.0.0
+            Use keyword *shuffle* instead.
+
+        unlimited: deprecated at version 3.0.0
+            Use method `DomainAxis.nc_set_unlimited` instead.
 
     :Returns:
 
@@ -442,8 +460,9 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
                                            "Use keyword 'shuffle' instead.") # pragma: no cover
 
     if HDF_chunksizes is not None:
-        _DEPRECATION_ERROR_FUNCTION_KWARGS('cf.write', {'HDF_chunksizes': HDF_chunksizes},
-                                           "HDF chunk sizes may be set for individual field constructs prior to writing, instead.") # pragma: no cover
+        _DEPRECATION_ERROR_FUNCTION_KWARGS(
+            'cf.write', {'HDF_chunksizes': HDF_chunksizes},
+            "HDF chunk sizes may be set for individual field constructs prior to writing, instead.") # pragma: no cover
 
     # Flatten the sequence of intput fields
     fields = tuple(flat(fields))
@@ -504,7 +523,7 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
                      least_significant_digit=least_significant_digit,
                      endian=endian, compress=compress,
                      shuffle=shuffle, fletcher32=fletcher32,
-                     verbose=verbose,
+                     verbose=verbose, string=string,
                      extra_write_vars=extra_write_vars)
     # --- End: if
 

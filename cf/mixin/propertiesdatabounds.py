@@ -1,3 +1,6 @@
+from functools import reduce
+from operator  import mul    
+
 from numpy import size as numpy_size
 
 from . import PropertiesData
@@ -67,7 +70,7 @@ class PropertiesDataBounds(PropertiesData):
         else:
             new = self.copy()  # data=False)
 
-        data = self.data
+##        data = self.data
 
         if auxiliary_mask:
             findices = tuple(auxiliary_mask) + tuple(indices)
@@ -89,18 +92,26 @@ class PropertiesDataBounds(PropertiesData):
                 '{}.__getitem__: findices = {}'.format(cname, findices)
             )  # pragma: no cover
 
-        new.set_data(data[findices], copy=False)
+        data = self.get_data(None)
+        if data is not None:
+            new.set_data(data[findices], copy=False)
 
+        # Subspace the interior ring array, if there is one. 
+        interior_ring = self.get_interior_ring(None) 
+        if interior_ring is not None:
+             new.set_interior_ring(interior_ring[tuple(indices)], copy=False) 
+ 
         # Subspace the bounds, if there are any
         bounds = self.get_bounds(None)
         if bounds is not None:
             bounds_data = bounds.get_data(None)
             if bounds_data is not None:
                 findices = list(findices)
-                if data.ndim <= 1:
+#                if data.ndim <= 1 and not self.has_geometry():
+                if bounds.ndim <= 2:
                     index = indices[0]
                     if isinstance(index, slice):
-                        if index.step < 0:
+                        if index.step and index.step < 0:
                             # This scalar or 1-d variable has been
                             # reversed so reverse its bounds (as per
                             # 7.1 of the conventions)
@@ -465,9 +476,12 @@ class PropertiesDataBounds(PropertiesData):
 
         return False
 
-    def _apply_superclass_data_oper(
-            self, v, oper_name, *oper_args, bounds=True, **oper_kwargs):
+    def _apply_superclass_data_oper(self, v, oper_name, *oper_args,
+                                    bounds=True, interior_ring=False,
+                                    **oper_kwargs):
         '''Define an operation that can be applied to the data array.
+
+    .. versionadded:: 3.1.0
 
     :Parameters:
 
@@ -487,7 +501,12 @@ class PropertiesDataBounds(PropertiesData):
 
         oper_args, oper_kwargs: all of the arguments for `oper_name`.
 
-        bounds: whether or not there are cell bounds (to consider).
+        bounds: `bool`
+            Whether or not there are cell bounds (to consider).
+
+        interior_ring: `bool`
+            Whether or not a geometry interior ring variable needs to
+            be operated on.
 
         '''
         v = getattr(super(), oper_name)(*oper_args, **oper_kwargs)
@@ -501,9 +520,18 @@ class PropertiesDataBounds(PropertiesData):
             if bounds is not None:
                 getattr(bounds, oper_name)(*oper_args, inplace=True,
                                            **oper_kwargs)
-
+        # --- End: if
+        
+        if interior_ring:
+            interior_ring = v.get_interior_ring(None)
+            if interior_ring is not None:
+                getattr(interior_ring, oper_name)(*oper_args, inplace=True,
+                                                  **oper_kwargs)
+        # --- End: if
+        
         return v
 
+    
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
@@ -570,7 +598,7 @@ class PropertiesDataBounds(PropertiesData):
         if data is not None:
             return data.dtype
 
-        bounds = self.get_bounds(None)
+        bounds = self.get_bounds_data(None)
         if bounds is not None:
             return bounds.dtype
 
@@ -583,7 +611,7 @@ class PropertiesDataBounds(PropertiesData):
         if data is not None:
             data.dtype = value
 
-        bounds = self.get_bounds(None)
+        bounds = self.get_bounds_data(None)
         if bounds is not None:
             bounds.dtype = value
 
@@ -637,7 +665,7 @@ class PropertiesDataBounds(PropertiesData):
         '''
         data = self.get_bounds_data(None)
         if data is not None:
-            out = data.min(-1)
+            out = data.minimum(-1)
             out.squeeze(-1, inplace=True)
             return out
         else:
@@ -718,7 +746,7 @@ class PropertiesDataBounds(PropertiesData):
         '''
         data = self.get_bounds_data(None)
         if data is not None:
-            out = data.max(-1)
+            out = data.maximum(-1)
             out.squeeze(-1, inplace=True)
             return out
         else:
@@ -802,61 +830,61 @@ class PropertiesDataBounds(PropertiesData):
             bounds=True, inplace=inplace, i=i)
 
     # ----------------------------------------------------------------
-    # Attribute
+    # Attributes
     # ----------------------------------------------------------------
     @property
     def dtype(self):
         '''The `numpy` data type of the data array.
 
-By default this is the data type with the smallest size and smallest
-scalar kind to which all sub-arrays of the master data array may be
-safely cast without loss of information. For example, if the
-sub-arrays have data types 'int64' and 'float32' then the master data
-array's data type will be 'float64'; or if the sub-arrays have data
-types 'int64' and 'int32' then the master data array's data type will
-be 'int64'.
-
-Setting the data type to a `numpy.dtype` object, or any object
-convertible to a `numpy.dtype` object, will cause the master data
-array elements to be recast to the specified type at the time that
-they are next accessed, and not before. This does not immediately
-change the master data array elements, so, for example, reinstating
-the original data type prior to data access results in no loss of
-information.
-
-Deleting the data type forces the default behaviour. Note that if the
-data type of any sub-arrays has changed after `dtype` has been set
-(which could occur if the data array is accessed) then the reinstated
-default data type may be different to the data type prior to `dtype`
-being set.
-
-**Examples:**
-
->>> f.dtype
-dtype('float64')
->>> type(f.dtype)
-<type 'numpy.dtype'>
-
->>> print(f.array)
-[0.5 1.5 2.5]
->>> import numpy
->>> f.dtype = numpy.dtype(int)
->>> print(f.array)
-[0 1 2]
->>> f.dtype = bool
->>> print(f.array)
-[False  True  True]
->>> f.dtype = 'float64'
->>> print(f.array)
-[ 0.  1.  1.]
-
->>> print(f.array)
-[0.5 1.5 2.5]
->>> f.dtype = int
->>> f.dtype = bool
->>> f.dtype = float
->>> print(f.array)
-[ 0.5  1.5  2.5]
+    By default this is the data type with the smallest size and
+    smallest scalar kind to which all sub-arrays of the master data
+    array may be safely cast without loss of information. For example,
+    if the sub-arrays have data types 'int64' and 'float32' then the
+    master data array's data type will be 'float64'; or if the
+    sub-arrays have data types 'int64' and 'int32' then the master
+    data array's data type will be 'int64'.
+    
+    Setting the data type to a `numpy.dtype` object, or any object
+    convertible to a `numpy.dtype` object, will cause the master data
+    array elements to be recast to the specified type at the time that
+    they are next accessed, and not before. This does not immediately
+    change the master data array elements, so, for example,
+    reinstating the original data type prior to data access results in
+    no loss of information.
+    
+    Deleting the data type forces the default behaviour. Note that if
+    the data type of any sub-arrays has changed after `dtype` has been
+    set (which could occur if the data array is accessed) then the
+    reinstated default data type may be different to the data type
+    prior to `dtype` being set.
+    
+    **Examples:**
+    
+    >>> f.dtype
+    dtype('float64')
+    >>> type(f.dtype)
+    <type 'numpy.dtype'>
+    
+    >>> print(f.array)
+    [0.5 1.5 2.5]
+    >>> import numpy
+    >>> f.dtype = numpy.dtype(int)
+    >>> print(f.array)
+    [0 1 2]
+    >>> f.dtype = bool
+    >>> print(f.array)
+    [False  True  True]
+    >>> f.dtype = 'float64'
+    >>> print(f.array)
+    [ 0.  1.  1.]
+    
+    >>> print(f.array)
+    [0.5 1.5 2.5]
+    >>> f.dtype = int
+    >>> f.dtype = bool
+    >>> f.dtype = float
+    >>> print(f.array)
+    [ 0.5  1.5  2.5]
 
         '''
         try:
@@ -954,6 +982,11 @@ dtype('float64')
         if bounds is not None:
             bounds.chunk(chunksize)
 
+        # Chunk the interior ring, if it exists.
+        interior_ring = self.get_interior_ring(None)
+        if interior_ring is not None:
+            interior_ring.chunk(chunksize)
+
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def clip(self, a_min, a_max, units=None, bounds=True,
@@ -1003,8 +1036,8 @@ dtype('float64')
 
         '''
         return self._apply_superclass_data_oper(
-            _inplace_enabled_define_and_cleanup(self), 'clip', a_min, a_max,
-            bounds=bounds, inplace=inplace, i=i, units=units)
+            _inplace_enabled_define_and_cleanup(self), 'clip', a_min,
+            a_max, bounds=bounds, inplace=inplace, i=i, units=units)
 
     def close(self):
         '''Close all files referenced by the construct.
@@ -1028,6 +1061,10 @@ dtype('float64')
         bounds = self.get_bounds(None)
         if bounds is not None:
             bounds.close()
+            
+        interior_ring = self.get_interior_ring(None)
+        if interior_ring is not None:
+            interior_ring.close()
 
     @classmethod
     def concatenate(cls, variables, axis=0, _preserve=True):
@@ -1056,6 +1093,14 @@ dtype('float64')
                                         axis=axis,
                                         _preserve=_preserve)
             out.set_bounds(bounds, copy=False)
+
+        interior_ring = variable0.get_interior_ring(None)
+        if interior_ring is not None:
+            interior_ring = interior_ring.concatenate(
+                [v.get_interior_ring() for v in variables],
+                axis=axis,
+                _preserve=_preserve)
+            out.set_interior_ring(interior_ring, copy=False)
 
         return out
 
@@ -1175,6 +1220,108 @@ dtype('float64')
         return self._apply_superclass_data_oper(
             _inplace_enabled_define_and_cleanup(self), 'cos', bounds=bounds)
 
+    def creation_commands(self, representative_data=False,
+                          namespace='cf', indent=0, string=True,
+                          name='c', data_name='d', bounds_name='b',
+                          interior_ring_name='i'):
+        '''Return the commands that would create the construct.
+
+    .. versionadded:: 3.2.0
+
+    .. seealso:: `cf.Data.creation_commands`,
+                 `cf.Field.creation_commands`
+
+    :Parameters:
+
+        representative_data: `bool`, optional
+            Return one-line representations of `Data` instances, which
+            are not executable code but prevent the data being
+            converted in its entirety to a string representation.
+
+        namespace: `str`, optional
+            The namespace containing classes of the ``cf``
+            package. This is prefixed to the class name in commands
+            that instantiate instances of ``cf`` objects. By default,
+            *namespace* is ``'cf'``, i.e. it is assumed that ``cf``
+            was imported as ``import cf``.
+
+            *Parameter example:*
+              If ``cf`` was imported as ``import cf as cfp`` then set
+              ``namespace='cfp'``
+
+            *Parameter example:*
+              If ``cf`` was imported as ``from cf import *`` then set
+              ``namespace=''``
+
+        indent: `int`, optional
+            Indent each line by this many spaces. By default no
+            indentation is applied. Ignored if *string* is False.
+
+        string: `bool`, optional
+            If False then return each command as an element of a
+            `list`. By default the commands are concatenated into
+            a string, with a new line inserted between each command.
+
+    :Returns:
+
+        `str` or `list`
+            The commands in a string, with a new line inserted between
+            each command. If *string* is False then the separate
+            commands are returned as each element of a `list`.
+
+    **Examples:**
+
+        TODO
+
+        '''
+        if name in (data_name, bounds_name, interior_ring_name):
+            raise ValueError(
+                "'name' parameter can not have the same value as any of the 'data_name', 'bounds_name', or 'interior_ring_name' parameters: {!r}".format(
+                    name))
+        
+        if data_name in (name, bounds_name, interior_ring_name):
+            raise ValueError(
+                "'data_name' parameter can not have the same value as any of the 'name', 'bounds_name', or 'interior_ring_name'parameters: {!r}".format(
+                    data_name))
+        
+        out = super().creation_commands(
+            representative_data=representative_data, indent=0,
+            namespace=namespace, string=False, name=name,
+            data_name=data_name)
+        
+        namespace0 = namespace
+        if namespace0:
+            namespace = namespace+"."
+        else:
+            namespace = ""
+
+        indent = ' ' * indent
+
+        bounds = self.get_bounds(None)
+        if bounds is not None:
+            out.extend(bounds.creation_commands(
+                representative_data=representative_data, indent=0,
+                namespace=namespace0, string=False, name=bounds_name,
+                data_name=data_name))
+            
+            out.append("{}.set_bounds({})".format(name, bounds_name))
+                    
+        interior_ring = self.get_interior_ring(None)
+        if interior_ring is not None:
+            out.extend(interior_ring.creation_commands(
+                representative_data=representative_data, indent=0,
+                namespace=namespace0, string=False,
+                name=interior_ring_name, data_name=data_name))
+
+            out.append("{}.set_interior_ring({})".format(name,
+                                                         interior_ring_name))
+            
+        if string:
+            out[0] = indent+out[0]
+            out = ('\n'+indent).join(out)
+
+        return out    
+
     def cyclic(self, axes=None, iscyclic=True):
         '''Set the cyclicity of axes of the data array.
 
@@ -1209,6 +1356,11 @@ dtype('float64')
             axes = self._parse_axes(axes)
             bounds.cyclic(axes, iscyclic)
 
+        interior_ring = self.get_interior_ring(None)
+        if interior_ring is not None:
+            axes = self._parse_axes(axes)            
+            interior_ring.cyclic(axes, iscyclic)
+            
         return out
 
     def equivalent(self, other, rtol=None, atol=None, traceback=False):
@@ -1455,6 +1607,64 @@ dtype('float64')
             'convert_reference_time', inplace=inplace, i=i, units=units,
             calendar_months=calendar_months, calendar_years=calendar_years)
 
+    def get_property(self, prop, default=ValueError(), bounds=False):
+        '''Get a CF property.
+    
+    .. versionadded:: 3.2.0
+    
+    .. seealso:: `clear_properties`, `del_property`, `has_property`,
+                 `properties`, `set_property`
+    
+    :Parameters:
+    
+        prop: `str`
+            The name of the CF property.
+    
+            *Parameter example:*
+              ``prop='long_name'``
+    
+        default: optional
+            Return the value of the *default* parameter if the
+            property does not exist. If set to an `Exception` instance
+            then it will be raised instead.
+
+        bounds: `bool`
+            TODO 1.8
+
+    :Returns:
+    
+            The value of the named property or the default value, if
+            set.
+    
+    **Examples:**
+    
+    >>> f.set_property('project', 'CMIP7')
+    >>> f.has_property('project')
+    True
+    >>> f.get_property('project')
+    'CMIP7'
+    >>> f.del_property('project')
+    'CMIP7'
+    >>> f.has_property('project')
+    False
+    >>> print(f.del_property('project', None))
+    None
+    >>> print(f.get_property('project', None))
+    None
+
+        '''
+        out = super().get_property(prop, None)
+        if out is not None:
+            return out
+
+        if bounds and self.has_bounds():
+            out = self.get_bounds().get_property(prop, None)
+            if out is not None:
+                return out
+        # --- End: if
+        
+        return super().get_property(prop, default)
+
     @_inplace_enabled
     def flatten(self, axes=None, inplace=False):
         '''Flatten axes of the data
@@ -1516,7 +1726,13 @@ dtype('float64')
             axes = self._parse_axes(axes)
             bounds.flatten(axes, inplace=True)
 
+        interior_ring = v.get_interior_ring(None)
+        if interior_ring is not None:
+            axes = self._parse_axes(axes)            
+            interior_ring.flatten(axes, inplace=True)
+
         return v
+    
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -1589,7 +1805,7 @@ dtype('float64')
 
     :Returns:
 
-        out: `bool`
+        `bool`
             Whether or not the variable matches the given criteria.
 
     **Examples:**
@@ -1791,6 +2007,10 @@ dtype('float64')
         if bounds is not None:
             out.update(bounds.files())
 
+        interior_ring = self.get_interior_ring(None)
+        if bounds is not None:
+            out.update(interior_ring.files())
+
         return out
 
     @_deprecated_kwarg_check('i')
@@ -1834,6 +2054,15 @@ dtype('float64')
         v = _inplace_enabled_define_and_cleanup(self)
         super(PropertiesDataBounds, v).flip(axes=axes, inplace=True)
 
+        interior_ring = v.get_interior_ring(None)
+        if interior_ring is not None:
+            # --------------------------------------------------------
+            # Flip the interior ring. Do this before flipping the
+            # bounds because the axes argument might get changed
+            # during that operation.
+            # --------------------------------------------------------
+            interior_ring.flip(axes, inplace=True)
+
         bounds = v.get_bounds(None)
         if bounds is not None:
             # --------------------------------------------------------
@@ -1845,10 +2074,11 @@ dtype('float64')
             # the variable has 2 or more dimensions then do not flip
             # the trailing dimension.
             # --------------------------------------------------------
-            if not v.ndim:
+            ndim = bounds.ndim
+            if ndim == 1:
                 # Flip the bounds of a 0-d variable
                 axes = (0,)
-            elif v.ndim == 1:
+            elif ndim == 2:
                 # Flip the bounds of a 1-d variable
                 if axes in (0, 1):
                     axes = (0, 1)
@@ -1856,10 +2086,11 @@ dtype('float64')
                     axes = v._parse_axes(axes) + [-1]
             else:
                 # Do not flip the bounds of an N-d variable (N >= 2)
+                # nor a geometry variable
                 axes = v._parse_axes(axes)
 
             bounds.flip(axes, inplace=True)
-
+            
         return v
 
     @_deprecated_kwarg_check('i')
@@ -1962,7 +2193,7 @@ dtype('float64')
         units = bounds.Units
         self_units = self.Units
 
-        if units and not units.equivalent(self_units):
+        if data is not None and units and not units.equivalent(self_units):
             raise ValueError(
                 "Can't set bounds: Bounds units of {!r} are not equivalent "
                 "to {!r}".format(bounds.Units, self.Units)
@@ -2542,39 +2773,57 @@ dtype('float64')
 
     @_deprecated_kwarg_check('i')
     def squeeze(self, axes=None, inplace=False, i=False):
-        '''Remove size 1 dimensions from the data array
+        '''Remove size one axes from the data array.
 
-    .. seealso:: `insert_dimension`, `flip`, `transpose`
-
+    By default all size one axes are removed, but particular size one
+    axes may be selected for removal. Corresponding axes are also
+    removed from the bounds data array, if present.
+    
+    .. seealso:: `flip`, `insert_dimension`, `transpose`
+    
     :Parameters:
-
-        axes: (sequence of) `int`, optional
-            The size 1 axes to remove. By default, all size 1 axes are
-            removed. Size 1 axes for removal are identified by their
-            integer positions in the data array.
-
-
+    
+        axes: (sequence of) `int`
+            The positions of the size one axes to be removed. By
+            default all size one axes are removed. Each axis is
+            identified by its original integer position. Negative
+            integers counting from the last position are allowed.
+    
+            *Parameter example:*
+              ``axes=0``
+    
+            *Parameter example:*
+              ``axes=-2``
+    
+            *Parameter example:*
+              ``axes=[2, 0]``
+    
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-
+    
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
 
     :Returns:
-
-            The construct with squeezed data. If the operation was
-            in-place then `None` is returned.
-
+    
+            The new construct with removed data axes. If the operation
+            was in-place then `None` is returned.
+    
     **Examples:**
-
-
-    TODO
-
-    >>> f.squeeze()
-
-    >>> f.squeeze(1)
-
-    >>> f.squeeze([2, -1])
+    
+    >>> f.shape
+    (1, 73, 1, 96)
+    >>> f.squeeze().shape
+    (73, 96)
+    >>> f.squeeze(0).shape
+    (73, 1, 96)
+    >>> g = f.squeeze([-3, 2])
+    >>> g.shape
+    (73, 96)
+    >>> f.bounds.shape
+    (1, 73, 1, 96, 4)
+    >>> g.shape
+    (73, 96, 4)
 
         '''
         return super().squeeze(axes=axes, inplace=inplace)
@@ -2922,7 +3171,7 @@ dtype('float64')
         '''
         return self._apply_superclass_data_oper(
             _inplace_enabled_define_and_cleanup(self), 'roll', iaxis,
-            shift, inplace=inplace, i=i)
+            shift, interior_ring=True, inplace=inplace, i=i)
 
     # ----------------------------------------------------------------
     # Deprecated attributes and methods

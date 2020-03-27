@@ -9,7 +9,7 @@ import numpy
 
 import cf
 
-tmpfile  = tempfile.mktemp('.cf-python_test')
+tmpfile  = tempfile.mktemp('.cf_test')
 tmpfiles = [tmpfile]
 def _remove_tmpfiles():
     '''
@@ -60,9 +60,9 @@ class ppTest(unittest.TestCase):
     def test_PP_WGDOS_UNPACKING(self):
         f = cf.read(self.ppfilename)[0]
 
-        self.assertTrue(f.min() > 221.71,
+        self.assertTrue(f.minimum() > 221.71,
                         'Bad unpacking of WGDOS packed data')
-        self.assertTrue(f.max() < 310.45,
+        self.assertTrue(f.maximum() < 310.45,
                         'Bad unpacking of WGDOS packed data')
 
         array = f.array
@@ -84,10 +84,6 @@ class ppTest(unittest.TestCase):
 
                 self.assertTrue((f.array == array).all(),
                                 'Bad unpacking of WGDOS packed data')
-
-
-#                f.dump()
-#                g.dump()
 
                 self.assertTrue(f.equals(g, verbose=True),
                                 'Bad writing/reading. format='+fmt)

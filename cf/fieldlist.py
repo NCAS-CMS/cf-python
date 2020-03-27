@@ -219,7 +219,7 @@ class FieldList(list):
     # Methods
     # ----------------------------------------------------------------
     def close(self):
-        '''Close all files referenced by each field.
+        '''Close all files referenced by each field construct.
 
     Note that a closed file will be automatically reopened if its
     contents are subsequently required.
@@ -230,7 +230,7 @@ class FieldList(list):
 
     **Examples:**
 
-    >>> f.close()
+    >>> fl.close()
 
         '''
         for f in self:

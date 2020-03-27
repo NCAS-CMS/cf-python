@@ -16,12 +16,15 @@ from numpy import cos          as numpy_cos
 from numpy import deg2rad      as numpy_deg2rad
 from numpy import dtype        as numpy_dtype
 from numpy import empty        as numpy_empty
+from numpy import isnan        as numpy_isnan
 from numpy import mean         as numpy_mean
+from numpy import nan          as numpy_nan
 from numpy import pi           as numpy_pi
 from numpy import rad2deg      as numpy_rad2deg
 from numpy import resize       as numpy_resize
 from numpy import result_type  as numpy_result_type
 from numpy import sin          as numpy_sin
+from numpy import sum          as numpy_sum
 from numpy import transpose    as numpy_transpose
 from numpy import where        as numpy_where
 
@@ -364,6 +367,8 @@ class UMField:
 
         height_at_top_of_model: `float`
 
+        verbose: `bool`, optional
+
         kwargs: *optional*
             Keyword arguments providing extra CF properties for each
             return field constuct.
@@ -453,6 +458,7 @@ class UMField:
                     groups_nz.append(nz)
                     groups_nt.append(group_size/nz)
             # --- End: for
+
             groups = groups2
         # --- End: if
 
@@ -1204,22 +1210,28 @@ class UMField:
         # ------------------------------------------------------------
         # Time cell methods
         # ------------------------------------------------------------
+        if 't' in _axis:
+            axis = 't'
+        else:
+            axis = 'time'
+            
         if LBTIM_IB == 0 or LBTIM_IB == 1:
-            cell_methods.append('t: point')
+            if axis == 't':
+                cell_methods.append(axis+': point')
         elif LBPROC == 4096:
-            cell_methods.append('t: minimum')
+            cell_methods.append(axis+': minimum')
         elif LBPROC == 8192:
-            cell_methods.append('t: maximum')
+            cell_methods.append(axis+': maximum')
         if tmean_proc == 128:
             if LBTIM_IB == 2:
-                cell_methods.append('t: mean')
+                cell_methods.append(axis+': mean')
             elif LBTIM_IB == 3:
-                cell_methods.append('t: mean within years')
-                cell_methods.append('t: mean over years')
+                cell_methods.append(axis+': mean within years')
+                cell_methods.append(axis+': mean over years')
         # --- End: if
 
         if not cell_methods:
-            return None
+            return []
 
         cell_methods = self.implementation.initialise_CellMethod().create(
             ' '.join(cell_methods))
@@ -1712,7 +1724,20 @@ class UMField:
 
 
     def dtime(self, rec):
-        '''TODO
+        '''Return the elapsed time since the data time of the given record.
+
+    :Parameters:
+
+        rec:
+
+    :Returns:
+
+        `float`
+
+    **Examples:**
+
+    >>> u.dtime(rec)
+    31.5
 
         '''
         reftime = self.refUnits
@@ -1725,14 +1750,18 @@ class UMField:
         time = _cached_date2num.get(key, None)
         if time is None:
             # It is important to use the same time_units as vtime
-            if self.calendar == 'gregorian':
-                time = netCDF4_date2num(
-                    datetime(*LBDTIME), units, calendar)
-            else:
-                time = netCDF4_date2num(
-                    cftime.datetime(*LBDTIME), units, calendar)
+            try:
+                if self.calendar == 'gregorian':
+                    time = netCDF4_date2num(
+                        datetime(*LBDTIME), units, calendar)
+                else:
+                    time = netCDF4_date2num(
+                        cftime.datetime(*LBDTIME), units, calendar)
 
-            _cached_date2num[key] = time
+                _cached_date2num[key] = time
+            except ValueError:
+                time = numpy_nan # ppp
+        # --- End: if
 
         return time
 
@@ -1746,7 +1775,7 @@ class UMField:
 
         `list`
 
-    '''
+        '''
         out2 = []
         for i, rec in enumerate(self.recs):
             out = ['Field {0}:'.format(i)]
@@ -1771,7 +1800,6 @@ class UMField:
             out.append('')
 
             out2.append('\n'.join(out))
-        # --- End: for
 
         return out2
 
@@ -2027,12 +2055,12 @@ class UMField:
 
         return dc
 
-
     def reference_time_Units(self):
         '''TODO
 
         '''
-        time_units = 'days since {}-1-1'.format(self.int_hdr[lbyr])
+        LBYR = self.int_hdr[lbyr]
+        time_units = 'days since {}-1-1'.format(LBYR)
         calendar = self.calendar
 
         key = time_units+' calendar='+calendar
@@ -2040,13 +2068,11 @@ class UMField:
         if units is None:
             units = Units(time_units, calendar)
             _Units[key] = units
-        # --- End: if
 
         self.refUnits = units
         self.refunits = time_units
 
         return units
-
 
     def size_1_height_coordinate(self, axiscode, height, units):
         '''TODO
@@ -2085,7 +2111,6 @@ class UMField:
                                                      axes=[_axis['z']],
                                                      copy=copy)
         return dc
-
 
     def test_um_condition(self, um_condition, LBCODE, BPLAT, BPLON):
         '''Return `True` if a field satisfies the condition specified for a
@@ -2198,9 +2223,13 @@ class UMField:
 
         '''
         recs = self.t_recs
+
         vtimes = numpy_array([self.vtime(rec) for rec in recs], dtype=float)
         dtimes = numpy_array([self.dtime(rec) for rec in recs], dtype=float)
 
+        if numpy_isnan(vtimes.sum()) or numpy_isnan(dtimes.sum()):
+           return # ppp
+        
         IB = self.lbtim_ib
 
         if IB <= 1 or vtimes.item(0,) >= dtimes.item(0,):
@@ -2292,15 +2321,21 @@ class UMField:
 
 
     def vtime(self, rec):
-        '''TODO
+        '''Return the elapsed time since the validity time of the given
+    record.
 
     :Parameters:
 
-        rec: `umfile.Rec`
+        rec:
 
     :Returns:
 
         `float`
+
+    **Examples:**
+
+    >>> u.vtime(rec)
+    31.5
 
         '''
         reftime  = self.refUnits
@@ -2310,20 +2345,24 @@ class UMField:
         LBVTIME = tuple(self.header_vtime(rec))
 
         key = (LBVTIME, units, calendar)
+
         time = _cached_date2num.get(key, None)
         if time is None:
             # It is important to use the same time_units as dtime
-            if self.calendar == 'gregorian':
-                time = netCDF4_date2num(
-                    datetime(*LBVTIME), units, calendar)
-            else:
-                time = netCDF4_date2num(cftime.datetime(*LBVTIME),
-                                        units, calendar)
-
-            _cached_date2num[key] = time
-
+            try:
+                if self.calendar == 'gregorian':
+                    time = netCDF4_date2num(
+                        datetime(*LBVTIME), units, calendar)
+                else:                
+                    time = netCDF4_date2num(cftime.datetime(*LBVTIME),
+                                            units, calendar)
+                    
+                _cached_date2num[key] = time
+            except ValueError:
+                time = numpy_nan # ppp
+        # --- End: if
+        
         return time
-
 
     def dddd(self):
         '''TODO
@@ -2372,7 +2411,6 @@ class UMField:
                                                                     # has
                                                                     # axis_code
                                                                     # 13
-                # --- End: if
             else:
                 coord_type = '{0}_domain_lower_bound'.format(extra_type)
                 if coord_type in p.extra:
@@ -2394,7 +2432,6 @@ class UMField:
                                                    dimensions=[xdim])# DCH xdim?
            # --- End: if
        # --- End: for
-
 
     def unrotated_latlon(self, rotated_lat, rotated_lon, pole_lat, pole_lon):
         '''Create 2-d arrays of unrotated latitudes and longitudes.
@@ -2602,13 +2639,11 @@ class UMField:
 
         self.implementation.set_dimension_coordinate(self.field, dc,
                                                      axes=[_axis['z']], copy=copy)
-#       self.field.insert_dim(dc, key=_axis['z'], copy=copy)
 
         if self.verbose:
             print('    '+dc.dump(display=False)) # pragma: no cover
 
         return dc
-    # --- End: def
 
     def z_reference_coordinate(self, axiscode):
         '''TODO
@@ -2639,14 +2674,12 @@ class UMField:
                         break
 
                     bounds.append((BRLEV, BRSVD1))
-                # --- End: for
             else:
                 bounds = None
 
             if bounds:
                 bounds = numpy_array((bounds,), dtype=float)
 
-#            dc = DimensionCoordinate()
             dc = self.implementation.initialise_DimensionCoordinate()
             dc = self.coord_data(dc, array, bounds,
                                  units=_axiscode_to_Units.setdefault(axiscode, None))
@@ -2658,15 +2691,13 @@ class UMField:
 
             _cached_z_reference_coordinate[key] = dc
             copy = False
-        # --- End: def
+        # --- End: if
 
-#        self.field.insert_dim(dc, key=_axis['z'], copy=copy)
         self.implementation.set_dimension_coordinate(self.field, dc,
                                                      axes=[_axis['z']],
                                                      copy=copy)
 
         return dc
-    # --- End: def
 
 # --- End: class
 
@@ -2718,7 +2749,6 @@ class UMField:
 #        merge = False
 #        package_path = os.path.dirname(__file__)
 #        table = os.path.join(package_path, 'etc/STASH_to_CF.txt')
-#    # --- End: if
 #
 #    lines = csv.reader(open(table, 'r'),
 #                       delimiter=delimiter, skipinitialspace=True)
@@ -2732,7 +2762,6 @@ class UMField:
 #            raw_list.pop(0)
 #            continue
 #        break
-#    # --- End: for
 #
 #    # Convert to a dictionary which is keyed by (submodel, STASHcode)
 #    # tuples
@@ -2792,14 +2821,12 @@ class UMField:
 #            stash2sn[key] += line
 #        else:
 #            stash2sn[key] = line
-#
 #    # --- End: for
 #
 #    if not merge:
 #        _stash2standard_name.clear()
 #
 #    _stash2standard_name.update(stash2sn)
-## --- End: def
 
 # ---------------------------------------------------------------------
 # Create the STASH code to standard_name conversion dictionary

@@ -7,11 +7,13 @@ import netCDF4
 
 import cf
 
+VN = cf.CF()
+
 
 def _make_contiguous_file(filename):
     n = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
 
-    n.Conventions = 'CF-1.7'
+    n.Conventions = 'CF-'+VN
     n.featureType = 'timeSeries'
 
     station = n.createDimension('station', 4)
@@ -100,7 +102,7 @@ def _make_contiguous_file(filename):
 def _make_indexed_file(filename):
     n = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
 
-    n.Conventions = 'CF-1.7'
+    n.Conventions = 'CF-'+VN
     n.featureType = 'timeSeries'
 
     station = n.createDimension('station', 4)
@@ -202,7 +204,7 @@ def _make_indexed_file(filename):
 def _make_indexed_contiguous_file(filename):
     n = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
 
-    n.Conventions = 'CF-1.6'
+    n.Conventions = 'CF-'+VN
     n.featureType = "timeSeriesProfile"
 
     # 3 stations
@@ -365,11 +367,6 @@ def _make_indexed_contiguous_file(filename):
     return filename
 
 
-contiguous_file = _make_contiguous_file('DSG_timeSeries_contiguous.nc')
-indexed_file    = _make_indexed_file('DSG_timeSeries_indexed.nc')
-indexed_contiguous_file = _make_indexed_contiguous_file('DSG_timeSeriesProfile_indexed_contiguous.nc')
-
-
 def _make_external_files():
     '''
     '''
@@ -381,7 +378,7 @@ def _make_external_files():
         nc.createDimension('grid_latitude', 10)
         nc.createDimension('grid_longitude', 9)
 
-        nc.Conventions = 'CF-1.7'
+        nc.Conventions = 'CF-'+VN
         if parent:
             nc.external_variables = 'areacella'
 
@@ -448,12 +445,6 @@ def _make_external_files():
     return parent_file, external_file, combined_file, external_missing_file
 
 
-(parent_file,
- external_file,
- combined_file,
- external_missing_file) = _make_external_files()
-
-
 def _make_gathered_file(filename):
     '''
     '''
@@ -467,7 +458,7 @@ def _make_gathered_file(filename):
 
     n = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
 
-    n.Conventions = 'CF-1.6'
+    n.Conventions = 'CF-'+VN
 
     time    = n.createDimension('time'   ,  2)
     height  = n.createDimension('height' ,  3)
@@ -572,7 +563,638 @@ def _make_gathered_file(filename):
 
     return filename
 
+
+# --------------------------------------------------------------------
+# Geometry files
+# --------------------------------------------------------------------
+def _make_geometry_1_file(filename):
+    '''See n.comment for details.
+
+    '''
+    n = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
+    
+    n.Conventions = 'CF-'+VN
+    n.featureType = 'timeSeries'
+    n.comment     = "Make a netCDF file with 2 node coordinates variables, each of which has a corresponding auxiliary coordinate variable."
+    
+    time     = n.createDimension('time'    , 4)
+    instance = n.createDimension('instance', 2)
+    node     = n.createDimension('node'    , 5)
+    
+    t =  n.createVariable('time', 'i4', ('time',))
+    t.units = "seconds since 2016-11-07 20:00 UTC" 
+    t[...] = [1, 2, 3, 4 ]
+
+    lat = n.createVariable('lat', 'f8', ('instance',))
+    lat.standard_name = "latitude"
+    lat.units = "degrees_north"
+    lat.nodes = "y"
+    lat[...] = [30, 50]
+
+    lon = n.createVariable('lon', 'f8', ('instance',))
+    lon.standard_name = "longitude"
+    lon.units = "degrees_east"
+    lon.nodes = "x"
+    lon[...] = [10, 60]    
+
+    datum = n.createVariable('datum', 'i4', ())
+    datum.grid_mapping_name = "latitude_longitude"
+    datum.longitude_of_prime_meridian = 0.0
+    datum.semi_major_axis = 6378137.0
+    datum.inverse_flattening = 298.257223563
+    
+    geometry_container = n.createVariable('geometry_container', 'i4', ());
+    geometry_container.geometry_type = "line"
+    geometry_container.node_count = "node_count"
+    geometry_container.node_coordinates = "x y"
+    geometry_container.geometry_dimension = "instance"
+    
+    node_count = n.createVariable('node_count', 'i4', ('instance',))
+    node_count[...] = [3, 2]
+    
+    x = n.createVariable('x', 'f8', ('node',))
+    x.units = "degrees_east"
+    x.standard_name = "longitude"
+    x.axis = "X"
+    x[...] = [30, 10, 40, 50, 50]
+    
+    y = n.createVariable('y', 'f8', ('node',))
+    y.units = "degrees_north"
+    y.standard_name = "latitude"
+    y.axis = "Y"
+    y[...] = [10, 30, 40, 60, 50]
+    
+    pr = n.createVariable('pr', 'f8', ('instance', 'time'))
+    pr.standard_name = 'precipitation_amount'
+    pr.units = 'kg m-2'
+    pr.coordinates = "time lat lon"
+    pr.grid_mapping = "datum"
+    pr.geometry = "geometry_container"
+    pr[...] = [[1, 2, 3, 4],
+                       [5, 6, 7, 8]]
+
+    someData_2 = n.createVariable('someData_2', 'f8', ('instance', 'time'))
+    someData_2.coordinates = "time lat lon"
+    someData_2.grid_mapping = "datum"
+    someData_2.geometry = "geometry_container"
+    someData_2[...] = [[10, 20, 30, 40],
+                       [50, 60, 70, 80]]
+
+    n.close()
+    
+    return filename
+
+
+def _make_geometry_2_file(filename):        
+    '''See n.comment for details
+
+    '''
+    n = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
+    
+    n.Conventions = 'CF-'+VN
+    n.featureType = 'timeSeries'
+    n.comment     = 'A netCDF file with 3 node coordinates variables, only two of which have a corresponding auxiliary coordinate variable.'
+   
+    time     = n.createDimension('time'    , 4)
+    instance = n.createDimension('instance', 2)
+    node     = n.createDimension('node'    , 5)
+    
+    t =  n.createVariable('time', 'i4', ('time',))
+    t.units = "seconds since 2016-11-07 20:00 UTC" 
+    t[...] = [1, 2, 3, 4 ]
+
+    lat = n.createVariable('lat', 'f8', ('instance',))
+    lat.standard_name = "latitude"
+    lat.units = "degrees_north"
+    lat.nodes = "y"
+    lat[...] = [30, 50]
+
+    lon = n.createVariable('lon', 'f8', ('instance',))
+    lon.standard_name = "longitude"
+    lon.units = "degrees_east"
+    lon.nodes = "x"
+    lon[...] = [10, 60]    
+
+    datum = n.createVariable('datum', 'i4', ())
+    datum.grid_mapping_name = "latitude_longitude"
+    datum.longitude_of_prime_meridian = 0.0
+    datum.semi_major_axis = 6378137.0
+    datum.inverse_flattening = 298.257223563
+    
+    geometry_container = n.createVariable('geometry_container', 'i4', ());
+    geometry_container.geometry_type = "line"
+    geometry_container.node_count = "node_count"
+    geometry_container.node_coordinates = "x y z"
+    geometry_container.geometry_dimension = "instance"
+    
+    node_count = n.createVariable('node_count', 'i4', ('instance',))
+    node_count[...] = [3, 2]
+    
+    x = n.createVariable('x', 'f8', ('node',))
+    x.units = "degrees_east"
+    x.standard_name = "longitude"
+    x.axis = "X"
+    x[...] = [30, 10, 40, 50, 50]
+    
+    y = n.createVariable('y', 'f8', ('node',))
+    y.units = "degrees_north"
+    y.standard_name = "latitude"
+    y.axis = "Y"
+    y[...] = [10, 30, 40, 60, 50]
+    
+    z = n.createVariable('z', 'f8', ('node',))
+    z.units = "m"
+    z.standard_name = "altitude"
+    z.axis = "Z"
+    z[...] = [100, 150, 200, 125, 80]
+    
+    someData = n.createVariable('someData', 'f8', ('instance', 'time'))
+    someData.coordinates = "time lat lon"
+    someData.grid_mapping = "datum"
+    someData.geometry = "geometry_container"
+    someData[...] = [[1, 2, 3, 4],
+                     [5, 6, 7, 8]]
+
+    someData_2 = n.createVariable('someData_2', 'f8', ('instance', 'time'))
+    someData_2.coordinates = "time lat lon"
+    someData_2.grid_mapping = "datum"
+    someData_2.geometry = "geometry_container"
+    someData_2[...] = [[1, 2, 3, 4],
+                       [5, 6, 7, 8]]
+
+    n.close()
+    
+    return filename
+
+
+def _make_geometry_3_file(filename):        
+    '''See n.comment for details
+
+    '''
+    n = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
+    
+    n.Conventions = 'CF-'+VN
+    n.featureType = 'timeSeries'
+    n.comment     = "A netCDF file with 3 node coordinates variables, each of which contains only one point, only two of which have a corresponding auxiliary coordinate variables. There is no node count variable."
+
+   
+    time     = n.createDimension('time'    , 4)
+    instance = n.createDimension('instance', 3)
+    node     = n.createDimension('node'    , 3)
+    
+    t =  n.createVariable('time', 'i4', ('time',))
+    t.units = "seconds since 2016-11-07 20:00 UTC" 
+    t[...] = [1, 2, 3, 4 ]
+
+    lat = n.createVariable('lat', 'f8', ('instance',))
+    lat.standard_name = "latitude"
+    lat.units = "degrees_north"
+    lat.nodes = "y"
+    lat[...] = [30, 50, 70]
+    
+    lon = n.createVariable('lon', 'f8', ('instance',))
+    lon.standard_name = "longitude"
+    lon.units = "degrees_east"
+    lon.nodes = "x"
+    lon[...] = [10, 60, 80]    
+    
+    datum = n.createVariable('datum', 'i4', ())
+    datum.grid_mapping_name = "latitude_longitude"
+    datum.longitude_of_prime_meridian = 0.0
+    datum.semi_major_axis = 6378137.0
+    datum.inverse_flattening = 298.257223563
+    
+    geometry_container = n.createVariable('geometry_container', 'i4', ());
+    geometry_container.geometry_type = "point"
+    geometry_container.node_coordinates = "x y z"
+    geometry_container.geometry_dimension = "instance"
+    
+    x = n.createVariable('x', 'f8', ('node',))
+    x.units = "degrees_east"
+    x.standard_name = "longitude"
+    x.axis = "X"
+    x[...] = [30, 10, 40]
+    
+    y = n.createVariable('y', 'f8', ('node',))
+    y.units = "degrees_north"
+    y.standard_name = "latitude"
+    y.axis = "Y"
+    y[...] = [10, 30, 40]
+    
+    z = n.createVariable('z', 'f8', ('node',))
+    z.units = "m"
+    z.standard_name = "altitude"
+    z.axis = "Z"
+    z[...] = [100, 150, 200]
+    
+    someData_1 = n.createVariable('someData_1', 'f8', ('instance', 'time'))
+    someData_1.coordinates = "lat lon"
+    someData_1.grid_mapping = "datum"
+    someData_1.geometry = "geometry_container"
+    someData_1[...] = [[1,  2,  3,  4],
+                       [5,  6,  7,  8],
+                       [9, 10, 11, 12]]
+    
+    someData_2 = n.createVariable('someData_2', 'f8', ('instance', 'time'))
+    someData_2.coordinates = "lat lon"
+    someData_2.grid_mapping = "datum"
+    someData_2.geometry = "geometry_container"
+    someData_2[...] = [[10,  20,  30,  40],
+                       [50,  60,  70,  80],
+                       [90, 100, 110, 120]]
+    
+    n.close()
+    
+    return filename
+
+
+def _make_geometry_4_file(filename):
+    '''See n.comment for details.
+    '''
+    n = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
+    
+    n.Conventions = 'CF-'+VN
+    n.featureType = 'timeSeries'
+    n.comment     = "A netCDF file with 2 node coordinates variables, none of which have a corresponding auxiliary coordinate variable."
+    
+    time     = n.createDimension('time'    , 4)
+    instance = n.createDimension('instance', 2)
+    node     = n.createDimension('node'    , 5)
+    strlen   = n.createDimension('strlen'  , 2)
+
+    # Variables
+    t = n.createVariable('time', 'i4', ('time',))
+    t.standard_name = "time" 
+    t.units = "days since 2000-01-01"
+    t[...] = [1, 2, 3, 4]
+
+    instance_id = n.createVariable('instance_id', 'S1', ('instance', 'strlen'))
+    instance_id.cf_role = "timeseries_id"
+    instance_id[...] = [['x', '1'],
+                        ['y', '2']]
+
+    datum = n.createVariable('datum', 'i4', ())
+    datum.grid_mapping_name = "latitude_longitude"
+    datum.longitude_of_prime_meridian = 0.0
+    datum.semi_major_axis = 6378137.0
+    datum.inverse_flattening = 298.257223563
+    
+    geometry_container = n.createVariable('geometry_container', 'i4', ());
+    geometry_container.geometry_type = "line"
+    geometry_container.node_count = "node_count"
+    geometry_container.node_coordinates = "x y"
+    geometry_container.geometry_dimension = "instance"
+    
+    node_count = n.createVariable('node_count', 'i4', ('instance',))
+    node_count[...] = [3, 2]
+    
+    x = n.createVariable('x', 'f8', ('node',))
+    x.units = "degrees_east"
+    x.standard_name = "longitude"
+    x.axis = "X"
+    x[...] = [30, 10, 40, 50, 50]
+    
+    y = n.createVariable('y', 'f8', ('node',))
+    y.units = "degrees_north"
+    y.standard_name = "latitude"
+    y.axis = "Y"
+    y[...] = [10, 30, 40, 60, 50]
+    
+    someData_1 = n.createVariable('someData_1', 'f8', ('instance', 'time'))
+    someData_1.coordinates = "instance_id"
+    someData_1.grid_mapping = "datum"
+    someData_1.geometry = "geometry_container"
+    someData_1[...] = [[1, 2, 3, 4],
+                       [5, 6, 7, 8]]
+
+    someData_2 = n.createVariable('someData_2', 'f8', ('instance', 'time'))
+    someData_2.coordinates = "instance_id"
+    someData_2.grid_mapping = "datum"
+    someData_2.geometry = "geometry_container"
+    someData_2[...] = [[10, 20, 30, 40],
+                       [50, 60, 70, 80]]
+
+    n.close()
+    
+    return filename
+
+
+def _make_interior_ring_file(filename):        
+    '''See n.comment for details.
+    '''
+    n = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
+    
+    # Global arttributes
+    n.Conventions = 'CF-'+VN
+    n.featureType = 'timeSeries'
+    n.comment = 'TODO'
+
+    # Dimensions
+    time     = n.createDimension('time', 4)
+    instance = n.createDimension('instance', 2)
+    node     = n.createDimension('node', 13)
+    part     = n.createDimension('part', 4)
+    strlen   = n.createDimension('strlen', 2)
+
+    # Variables
+    t = n.createVariable('time', 'i4', ('time',))
+    t.standard_name = "time" 
+    t.units = "days since 2000-01-01"
+    t[...] = [1, 2, 3, 4]
+
+    instance_id = n.createVariable('instance_id', 'S1', ('instance', 'strlen'))
+    instance_id.cf_role = "timeseries_id"
+    instance_id[...] = [['x', '1'],
+                        ['y', '2']]
+    
+    x = n.createVariable('x', 'f8', ('node',))
+    x.units = "degrees_east"
+    x.standard_name = "longitude"
+    x.axis = "X"
+    x[...] = [20, 10, 0,
+              5, 10, 15, 10,
+              20, 10, 0,
+              50, 40, 30]
+ 
+    y = n.createVariable('y', 'f8', ('node',))
+    y.units = "degrees_north"
+    y.standard_name = "latitude"
+    y.axis = "Y"
+    y[...] = [0, 15, 0,
+              5, 10, 5, 5,
+              20, 35, 20,
+              0, 15, 0]
+ 
+    z = n.createVariable('z', 'f8', ('instance',))
+    z.units = "m"
+    z.standard_name = "altitude"
+    z.positive = "up"
+    z.axis = "Z"    
+    z[...] = [5000, 20]
+ 
+    lat = n.createVariable('lat', 'f8', ('instance',))
+    lat.units = "degrees_north" 
+    lat.standard_name = "latitude"
+    lat.nodes = "y"
+    lat[...] = [25, 7]
+
+    lon = n.createVariable('lon', 'f8', ('instance',))
+    lon.units = "degrees_east"
+    lon.standard_name = "longitude"
+    lon.nodes = "x"
+    lon[...] = [10, 40]
+
+    geometry_container = n.createVariable('geometry_container', 'i4', ())
+    geometry_container.geometry_type = "polygon"
+    geometry_container.node_count = "node_count"
+    geometry_container.node_coordinates = "x y"
+    geometry_container.grid_mapping = "datum"
+    geometry_container.coordinates = "lat lon"
+    geometry_container.part_node_count = "part_node_count"
+    geometry_container.interior_ring = "interior_ring"
+    geometry_container.geometry_dimension = "instance"
+    
+    node_count = n.createVariable('node_count', 'i4', ('instance'))
+    node_count[...] = [10, 3]
+
+    part_node_count = n.createVariable('part_node_count', 'i4', ('part'))
+    part_node_count[...] = [3, 4, 3,
+                            3]
+    
+    interior_ring = n.createVariable('interior_ring', 'i4', ('part'))
+    interior_ring[...] = [0, 1, 0, 0]
+
+    datum = n.createVariable('datum', 'f4', ())
+    datum.grid_mapping_name = "latitude_longitude"
+    datum.semi_major_axis = 6378137.
+    datum.inverse_flattening = 298.257223563
+    datum.longitude_of_prime_meridian = 0.
+    
+    pr = n.createVariable('pr', 'f8', ('instance', 'time'))
+    pr.standard_name = "preciptitation_amount"
+    pr.standard_units = "kg m-2"
+    pr.coordinates = "time lat lon z instance_id"
+    pr.grid_mapping = "datum"
+    pr.geometry = "geometry_container"
+    pr[...]= [[1, 2, 3, 4],
+                    [5, 6, 7, 8]]
+  
+    someData_2 = n.createVariable('someData_2', 'f8', ('instance', 'time'))
+    someData_2.coordinates = "time lat lon z instance_id"
+    someData_2.grid_mapping = "datum"
+    someData_2.geometry = "geometry_container"
+    someData_2[...]= [[1, 2, 3, 4],
+                      [5, 6, 7, 8]]
+  
+    n.close()
+    
+    return filename
+
+
+def _make_interior_ring_file_2(filename):
+    '''See n.comment for details.
+    '''
+    n = netCDF4.Dataset(filename, 'w', format='NETCDF3_CLASSIC')
+    
+    # Global arttributes
+    n.Conventions = 'CF-'+VN
+    n.featureType = 'timeSeries'
+    n.comment = 'TODO'
+
+    # Dimensions
+    time     = n.createDimension('time', 4)
+    instance = n.createDimension('instance', 2)
+    node     = n.createDimension('node', 13)
+    part     = n.createDimension('part', 4)
+    strlen   = n.createDimension('strlen', 2)
+
+    # Variables
+    t = n.createVariable('time', 'i4', ('time',))
+    t.standard_name = "time" 
+    t.units = "days since 2000-01-01"
+    t[...] = [1, 2, 3, 4]
+
+    instance_id = n.createVariable('instance_id', 'S1', ('instance', 'strlen'))
+    instance_id.cf_role = "timeseries_id"
+    instance_id[...] = [['x', '1'],
+                        ['y', '2']]
+    
+    x = n.createVariable('x', 'f8', ('node',))
+    x.units = "degrees_east"
+    x.standard_name = "longitude"
+    x.axis = "X"
+    x[...] = [20, 10, 0,
+              5, 10, 15, 10,
+              20, 10, 0,
+              50, 40, 30]
+ 
+    y = n.createVariable('y', 'f8', ('node',))
+    y.units = "degrees_north"
+    y.standard_name = "latitude"
+    y.axis = "Y"
+    y[...] = [0, 15, 0,
+              5, 10, 5, 5,
+              20, 35, 20,
+              0, 15, 0]
+ 
+    z = n.createVariable('z', 'f8', ('node',))
+    z.units = "m"
+    z.standard_name = "altitude"
+    z.axis = "Z"
+    z[...] = [1, 2, 4,
+              2, 3, 4, 5,
+              5, 1, 4,
+              3, 2, 1]
+
+    lat = n.createVariable('lat', 'f8', ('instance',))
+    lat.units = "degrees_north" 
+    lat.standard_name = "latitude"
+    lat.nodes = "y"
+    lat[...] = [25, 7]
+
+    lon = n.createVariable('lon', 'f8', ('instance',))
+    lon.units = "degrees_east"
+    lon.standard_name = "longitude"
+    lon.nodes = "x"
+    lon[...] = [10, 40]
+
+    geometry_container = n.createVariable('geometry_container', 'i4', ())
+    geometry_container.geometry_type = "polygon"
+    geometry_container.node_count = "node_count"
+    geometry_container.node_coordinates = "x y z"
+    geometry_container.grid_mapping = "datum"
+    geometry_container.coordinates = "lat lon"
+    geometry_container.part_node_count = "part_node_count"
+    geometry_container.interior_ring = "interior_ring"
+    geometry_container.geometry_dimension = "instance"
+    
+    node_count = n.createVariable('node_count', 'i4', ('instance'))
+    node_count[...] = [10, 3]
+
+    part_node_count = n.createVariable('part_node_count', 'i4', ('part'))
+    part_node_count[...] = [3, 4, 3,
+                            3]
+    
+    interior_ring = n.createVariable('interior_ring', 'i4', ('part'))
+    interior_ring[...] = [0, 1, 0, 0]
+
+    datum = n.createVariable('datum', 'f4', ())
+    datum.grid_mapping_name = "latitude_longitude"
+    datum.semi_major_axis = 6378137.
+    datum.inverse_flattening = 298.257223563
+    datum.longitude_of_prime_meridian = 0.
+    
+    pr = n.createVariable('pr', 'f8', ('instance', 'time'))
+    pr.standard_name = "preciptitation_amount"
+    pr.standard_units = "kg m-2"
+    pr.coordinates = "time lat lon z instance_id"
+    pr.grid_mapping = "datum"
+    pr.geometry = "geometry_container"
+    pr[...]= [[1, 2, 3, 4],
+              [5, 6, 7, 8]]
+  
+    someData_2 = n.createVariable('someData_2', 'f8', ('instance', 'time'))
+    someData_2.coordinates = "time lat lon z instance_id"
+    someData_2.grid_mapping = "datum"
+    someData_2.geometry = "geometry_container"
+    someData_2[...]= [[1, 2, 3, 4],
+                      [5, 6, 7, 8]]
+  
+    n.close()
+    
+    return filename
+
+
+def _make_string_char_file(filename):        
+    '''See n.comment for details
+
+    '''
+    n = netCDF4.Dataset(filename, 'w', format='NETCDF4')
+    
+    n.Conventions = 'CF-'+VN
+    n.comment     = "A netCDF file with variables of string and char data types"
+   
+    dim1 = n.createDimension('dim1', 1)
+    time = n.createDimension('time', 4)
+    lat  = n.createDimension('lat' , 2)
+    lon  = n.createDimension('lon' , 3)
+    strlen8 = n.createDimension('strlen8' , 8)
+    strlen7 = n.createDimension('strlen7' , 7)
+    strlen5 = n.createDimension('strlen5' , 5)
+    strlen3 = n.createDimension('strlen3' , 3)
+
+    months  = numpy.array(['January', 'February', 'March', 'April'], dtype='S8')
+    
+    months_m  = numpy.ma.array(months, dtype='S7', mask=[0, 1, 0, 0], fill_value=b'')
+
+    numbers = numpy.array([['one', 'two', 'three'], ['four', 'five', 'six']], dtype='S5')
+
+    s_months4 = n.createVariable('s_months4', str, ('time',))
+    s_months4.long_name = "string: Four months"
+    s_months4[:] = months
+
+    s_months1 = n.createVariable('s_months1', str, ('dim1',))
+    s_months1.long_name = "string: One month"
+    s_months1[:] = numpy.array(['December'], dtype='S8')
+
+    s_months0 = n.createVariable('s_months0', str, ())
+    s_months0.long_name = "string: One month (scalar)"
+    s_months0[:] = numpy.array(['May'], dtype='S3')
+
+    s_numbers = n.createVariable('s_numbers', str, ('lat', 'lon'))
+    s_numbers.long_name = "string: Two dimensional"
+    s_numbers[...] = numbers
+
+    s_months4m = n.createVariable('s_months4m', str, ('time',))
+    s_months4m.long_name = "string: Four months (masked)"
+    array = months.copy()
+    array[1] = ''
+    s_months4m[...] = array
+
+    c_months4 = n.createVariable('c_months4', 'S1', ('time', 'strlen8'))
+    c_months4.long_name = "char: Four months"
+    c_months4[:, :] = netCDF4.stringtochar(months)
+
+    c_months1 = n.createVariable('c_months1', 'S1', ('dim1', 'strlen8'))
+    c_months1.long_name = "char: One month"
+    c_months1[:] = netCDF4.stringtochar(numpy.array(['December'], dtype='S8'))
+    c_months0 = n.createVariable('c_months0', 'S1', ('strlen3',))
+    c_months0.long_name = "char: One month (scalar)"
+    c_months0[:] = numpy.array(list('May'))
+
+    c_numbers = n.createVariable('c_numbers', 'S1', ('lat', 'lon', 'strlen5'))
+    c_numbers.long_name = "char: Two dimensional"
+    c_numbers[...] = netCDF4.stringtochar(numbers)
+
+    c_months4m = n.createVariable('c_months4m', 'S1', ('time', 'strlen7'))
+    c_months4m.long_name = "char: Four months (masked)"
+    array = netCDF4.stringtochar(months_m)
+    c_months4m[:, :] = array
+
+    n.close()
+    
+    return filename
+
+
+contiguous_file = _make_contiguous_file('DSG_timeSeries_contiguous.nc')
+indexed_file    = _make_indexed_file('DSG_timeSeries_indexed.nc')
+indexed_contiguous_file = _make_indexed_contiguous_file('DSG_timeSeriesProfile_indexed_contiguous.nc')
+
+(parent_file,
+ external_file,
+ combined_file,
+ external_missing_file) = _make_external_files()
+
+geometry_1_file    = _make_geometry_1_file('geometry_1.nc')
+geometry_2_file    = _make_geometry_2_file('geometry_2.nc')
+geometry_3_file    = _make_geometry_3_file('geometry_3.nc')
+geometry_4_file    = _make_geometry_4_file('geometry_4.nc')
+interior_ring_file = _make_interior_ring_file('geometry_interior_ring.nc')
+interior_ring_file_2 = _make_interior_ring_file_2('geometry_interior_ring_2.nc')
+
 gathered = _make_gathered_file('gathered.nc')
+
+string_char_file   = _make_string_char_file('string_char.nc')
 
 
 if __name__ == '__main__':

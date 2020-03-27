@@ -1,10 +1,10 @@
 import cfdm
 
 from . import mixin
-from . import abstract
+#from . import abstract
 
 
-class AuxiliaryCoordinate(abstract.Coordinate,
+class AuxiliaryCoordinate(mixin.Coordinate,
                           mixin.PropertiesDataBounds,
                           cfdm.AuxiliaryCoordinate):
     '''An auxiliary coordinate construct of the CF data model.

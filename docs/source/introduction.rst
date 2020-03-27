@@ -55,7 +55,9 @@ partially conformant may nonetheless be modified in memory.
 
    >>> import cf
    >>> f = cf.read('file.nc')
-   >>> print(f)
+   >>> f
+   [<CF Field: air_temperature(time(12), latitude(64), longitude(128)) K>]
+   >>> print(f[0])
    Field: air_temperature (ncvar%tas)
    ----------------------------------
    Data            : air_temperature(time(12), latitude(64), longitude(128)) K
@@ -67,7 +69,7 @@ partially conformant may nonetheless be modified in memory.
 
 The cf package can:
 
-* read field constructs from netCDF, PP and UM datasets,
+* read field constructs from netCDF, CDL, PP and UM datasets,
 
 * create new field constructs in memory,
 
@@ -81,11 +83,15 @@ The cf package can:
 
 * write field constructs to netCDF datasets on disk,
 
-* incorporate, and create, metadata stored in external files,
+* incorporate, and create, metadata stored in external files (*new in
+  version 3.0.0*),
 
-* read, write, and create data that have been compressed by
-  convention (i.e. ragged or gathered arrays), whilst presenting a
-  view of the data in its uncompressed form,
+* read, write, and create data that have been compressed by convention
+  (i.e. ragged or gathered arrays), whilst presenting a view of the
+  data in its uncompressed form,
+
+* read, write, and create coordinates defined by geometry cells (**new
+  in version 3.2.0**),
 
 * combine field constructs arithmetically,
 
@@ -95,16 +101,27 @@ The cf package can:
 * perform statistical collapses on field constructs,
 
 * perform histogram, percentile and binning operations on field
-  constructs,
+  constructs (*new in version 3.0.3*),
   
-* regrid field constructs with (multi-)linear, nearest neighbour, first-
-  and second-order conservative and higher order patch recovery methods,
+* regrid field constructs with (multi-)linear, nearest neighbour,
+  first- and second-order conservative and higher order patch recovery
+  methods,
 
 * apply convolution filters to field constructs,
 
 * calculate derivatives of field constructs,
 
-* create field constructs to create derived quantities (such as vorticity).
+* create field constructs to create derived quantities (such as
+  vorticity).
+
+Hierarchical groups
+^^^^^^^^^^^^^^^^^^^
+
+Hierarchical groups provide a powerful mechanism to structure
+variables within datasets. A future release of cf will include support
+for netCDF4 files containing data organised in hierarchical groups,
+but this is not available in version |release| (even though it is
+allowed in CF-1.8).
 
 **Visualization**
 -----------------
@@ -123,6 +140,8 @@ range plotting possibilities with example code.
 
    *Example output of cfplot displaying a cf field construct.*
 
+----
+   
 .. [#cfdm] Hassell, D., Gregory, J., Blower, J., Lawrence, B. N., and
            Taylor, K. E.: A data model of the Climate and Forecast
            metadata conventions (CF-1.6) with a software
