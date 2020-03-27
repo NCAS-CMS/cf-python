@@ -10823,11 +10823,12 @@ False
             'hardmask': self.hardmask,
             'auxiliary_mask': self._auxiliary_mask,
             'units': self.Units,
-            'dtype': self.dtype,
+            'dtype': self._dtype,
             'func': None,
             'update': True,
             'serial': True,
         }
+        
         if kwargs:
             config.update(kwargs)
 
