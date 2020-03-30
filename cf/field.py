@@ -5,8 +5,7 @@ from operator    import mul as operator_mul
 from operator    import itemgetter
 
 try:
-    from scipy.ndimage.filters import convolve1d
-    from scipy.signal          import get_window
+#    from scipy.ndimage.filters import convolve1d as scipy_convolve1d
     from matplotlib.path       import Path
 except ImportError:
     pass
@@ -19,8 +18,9 @@ from numpy import asanyarray  as numpy_asanyarray
 from numpy import can_cast    as numpy_can_cast
 from numpy import diff        as numpy_diff
 from numpy import empty       as numpy_empty
-from numpy import errstate    as numpy_errstate
+#from numpy import errstate    as numpy_errstate
 from numpy import finfo       as numpy_finfo
+from numpy import full        as numpy_full
 from numpy import isnan       as numpy_isnan
 from numpy import nan         as numpy_nan
 from numpy import ndarray     as numpy_ndarray
@@ -5792,7 +5792,7 @@ class Field(mixin.PropertiesData,
                     "Got {}".format(scale)
                 )
 
-            wmax = w.max()
+            wmax = w.maximum()
             factor = wmax / scale
             factor.dtype = float
             if numpy_can_cast(factor.dtype, w.dtype):
@@ -6623,7 +6623,7 @@ class Field(mixin.PropertiesData,
             # --- End: if
 
             for w in comp.values():
-                mn = w.min()
+                mn = w.minimum()
                 if mn <= 0:
                     raise ValueError(
                         "All weights must be positive. Got a weight of {}".format(mn))
@@ -12763,35 +12763,21 @@ class Field(mixin.PropertiesData,
 
         return False
 
-    @_deprecated_kwarg_check('i')
     @_inplace_enabled
-    def convolution_filter(self, weights, axis=None, mode=None,
-                           cval=None, origin=0, update_bounds=True,
-                           inplace=False, i=False, _bounds=True):
-        '''Return the field convolved along the given axis with the specified
-    filter.
+    def moving_average(self, window_size=None, axis=None,
+                       weights=None, mode=None, cval=None, origin=0,
+                       update_bounds=True, inplace=False):
+        '''TODO
 
-    The magnitude of the integral of the filter (i.e. the sum of the
-    weights defined by the *weights* parameter) affects the convolved
-    values. For example, filter weights of ``[0.2, 0.2 0.2, 0.2,
-    0.2]`` will produce a 5-point (non-weighted) running mean; and
-    weights of ``[1, 1, 1, 1, 1]`` will produce a 5-point running
-    sum. Note that the weights returned by functions of the
-    `scipy.signal.windows` package do not necessarily sum to 1.
+    .. versionadded:: TODO
 
-    .. seealso:: `collapse`, `derivative`, `cf.relative_vorticity`
+    .. seealso:: `convolution_filter`, `collapse`, `derivative`,
+                 `cf.relative_vorticity`
 
     :Parameters:
-
-        weights: sequence of numbers
-            Specify the window of weights to use for the filter.
-
-            *Parameter example:*
-              An unweighted 5-point moving average can be computed
-              with ``weights=[0.2, 0.2, 0.2, 0.2, 0.2]``
-
-            Note that the `scipy.signal.windows` package has suite of
-            window functions for creating weights for filtering.
+        
+        window_sze: int
+            TODO
 
         axis:
             Select the domain axis over which the filter is to be
@@ -12799,15 +12785,18 @@ class Field(mixin.PropertiesData,
             passing the given axis description to a call of the field
             construct's `domain_axis` method. For example, for a value
             of ``'X'``, the domain axis construct returned by
-            ``f.domain_axis('X'))`` is selected.
+            ``f.domain_axis('X')`` is selected.
+
+        weights: 
+            TODO
 
         mode: `str`, optional
             The *mode* parameter determines how the input array is
             extended when the filter overlaps an array border. The
             default value is ``'constant'`` or, if the dimension being
             convolved is cyclic (as ascertained by the `iscyclic`
-            method), ``'wrap'``. The valid values and their behaviour
-            is as follows:
+            method), ``'wrap'``. The valid values and their behaviours
+            are as follows:
 
             ==============  ==========================  =================================
             *mode*          Description                 Behaviour
@@ -12816,25 +12805,26 @@ class Field(mixin.PropertiesData,
                             reflecting about the edge
 
             ``'constant'``  The input is extended by    ``(k k k k | a b c d | k k k k)``
-                            filling  ll values beyond
+                            filling all values beyond
                             the edge with the same
-                            constant value, defined
-                            by the *cval* parameter.
+                            constant value (``k``),
+                            defined by the *cval*
+                            parameter.
 
             ``'nearest'``   The input is extended by    ``(a a a a | a b c d | d d d d)``
                             replicating the last point
 
             ``'mirror'``    The input is extended by    ``(d c b | a b c d | c b a)``
                             reflecting about the
-                            center of the last point.
+                            centre of the last point.
 
             ``'wrap'``      The input is extended by    ``(a b c d | a b c d | a b c d)``
                             wrapping around to the
                             opposite edge.
             ==============  ==========================  =================================
 
-            The position of the window can be changed by using the
-            *origin* parameter.
+            The position of the window realtive to each value can be
+            changed by using the *origin* parameter.
 
         cval: scalar, optional
             Value to fill past the edges of the array if *mode* is
@@ -12870,9 +12860,268 @@ class Field(mixin.PropertiesData,
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
 
+    :Returns:
+
+        `Field` or `None`
+            TODO
+        
+    **Examples:**
+
+    >>> f = cf.example_field(2)
+    >>> print(f)
+    Field: air_potential_temperature (ncvar%air_potential_temperature)
+    ------------------------------------------------------------------
+    Data            : air_potential_temperature(time(36), latitude(5), longitude(8)) K
+    Cell methods    : area: mean
+    Dimension coords: time(36) = [1959-12-16 12:00:00, ..., 1962-11-16 00:00:00]
+                    : latitude(5) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(8) = [22.5, ..., 337.5] degrees_east
+                    : air_pressure(1) = [850.0] hPa
+    >>> print(f.array[:, 0, 0])
+    [210.7 305.3 249.4 288.9 231.1 200.  234.4 289.2 204.3 203.6 261.8 256.2
+     212.3 231.7 255.1 213.9 255.8 301.2 213.3 200.1 204.6 203.2 244.6 238.4
+     304.5 269.8 267.9 282.4 215.  288.7 217.3 307.1 299.3 215.9 290.2 239.9]
+    >>> print(f.coordinate('T').bounds.dtarray[0])
+    [cftime.DatetimeGregorian(1959-12-01 00:00:00)
+     cftime.DatetimeGregorian(1960-01-01 00:00:00)]
+    >>> print(f.coordinate('T').bounds.dtarray[2])
+    [cftime.DatetimeGregorian(1960-02-01 00:00:00)
+     cftime.DatetimeGregorian(1960-03-01 00:00:00)]
+
+    Create a 5-point (non-weighted) running mean:
+
+    >>> g = f.convolution_filter([0.2, 0.2, 0.2, 0.2, 0.2], 'T')
+    >>> print(g)
+    Field: air_potential_temperature (ncvar%air_potential_temperature)
+    ------------------------------------------------------------------
+    Data            : air_potential_temperature(time(36), latitude(5), longitude(8)) K
+    Cell methods    : area: mean
+    Dimension coords: time(36) = [1959-12-16 12:00:00, ..., 1962-11-16 00:00:00]
+                    : latitude(5) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(8) = [22.5, ..., 337.5] degrees_east
+                    : air_pressure(1) = [850.0] hPa
+    >>> print(g.array[:, 0, 0])
+    [ -- -- 257.08 254.94 240.76 248.72 231.8 226.3 238.66 243.02 227.64
+     233.12 243.42 233.84 233.76 251.54 247.86 236.86 235.0 224.48 213.16
+     218.18 239.06 252.1 265.04 272.6 267.92 264.76 254.26 262.1 265.48
+     265.66 265.96 270.48 -- --]
+    >>> print(g.coordinate('T').bounds.dtarray[0])
+    [cftime.DatetimeGregorian(1959-12-01 00:00:00)
+     cftime.DatetimeGregorian(1960-03-01 00:00:00)]
+    >>> print(g.coordinate('T').bounds.dtarray[2])
+    [cftime.DatetimeGregorian(1959-12-01 00:00:00)
+     cftime.DatetimeGregorian(1960-05-01 00:00:00)]
+
+    Create a 5-point running sum:
+
+    >>> g = f.convolution_filter([1, 1, 1, 1, 1], 'T')
+    >>> print(g)
+    Field: air_potential_temperature (ncvar%air_potential_temperature)
+    ------------------------------------------------------------------
+    Data            : air_potential_temperature(time(36), latitude(5), longitude(8)) K
+    Cell methods    : area: mean
+    Dimension coords: time(36) = [1959-12-16 12:00:00, ..., 1962-11-16 00:00:00]
+                    : latitude(5) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(8) = [22.5, ..., 337.5] degrees_east
+                    : air_pressure(1) = [850.0] hPa
+    >>> print(g.array[:, 0, 0])
+    [ -- -- 1285.4 1274.7 1203.8 1243.6 1159.0 1131.5 1193.3 1215.1
+     1138.2 1165.6 1217.1 1169.2 1168.8 1257.7 1239.3 1184.3 1175.0
+     1122.4 1065.8 1090.9 1195.3 1260.5 1325.2 1363.0 1339.6 1323.8
+     1271.3 1310.5 1327.4 1328.3 1329.8 1352.4 -- --]
+    >>> print(g.coordinate('T').bounds.dtarray[0])
+    [cftime.DatetimeGregorian(1959-12-01 00:00:00)
+     cftime.DatetimeGregorian(1960-03-01 00:00:00)]
+    >>> print(g.coordinate('T').bounds.dtarray[2])
+    [cftime.DatetimeGregorian(1959-12-01 00:00:00)
+     cftime.DatetimeGregorian(1960-05-01 00:00:00)]
+
+    Calculate a convolution along the time axis with Gaussian weights,
+    using the "nearest" mode at the border of the edges of the time
+    dimension (note that the weights returned by
+    `scipy.signal.windows` functions do not necessarily sum to 1):
+
+    >>> import scipy.signal.windows
+    >>> gaussian_weights = scipy.signal.windows.gaussian(3, std=0.4)
+    >>> print(gaussian_weights)
+    [0.04393693 1.         0.04393693]
+    >>> g = f.convolution_filter(gaussian_weights, 'T', mode='nearest')
+    >>> print(g.array[:, 0, 0])
+    [233.37145775 325.51538316 275.50732596 310.01169661 252.58076685
+     220.4526426  255.89394793 308.47513278 225.95212089 224.07900476
+     282.00220208 277.03050023 233.73682991 252.23612278 274.67829762
+     236.34737939 278.43191451 321.81081556 235.32558483 218.46124456
+     222.31976533 222.93647058 264.00254989 262.52577025 326.82874967
+     294.94950081 292.16197475 303.61714525 240.09238279 307.69393641
+     243.47762505 329.79781991 322.27901629 241.80082237 310.22645435
+     263.19096851]
+    >>> print(g.coordinate('T').bounds.dtarray[0])
+    [cftime.DatetimeGregorian(1959-12-01 00:00:00)
+     cftime.DatetimeGregorian(1960-02-01 00:00:00)]
+    >>> print(g.coordinate('T').bounds.dtarray[1])
+    [cftime.DatetimeGregorian(1959-12-01 00:00:00)
+     cftime.DatetimeGregorian(1960-03-01 00:00:00)]
+
+        '''
+        # Retrieve the axis
+        axis = self.domain_axis(axis, key=True)
+        iaxis = self.get_data_axes().index(axis)
+        
+        f = _inplace_enabled_define_and_cleanup(self)
+
+        if weights in (None, False):
+            weights = None
+
+        if weights is not None:
+            w = f.weights(weights, data=True, scale=1.0)
+            
+            # Divide the weights by their minimum and multiply thre
+            # field by these new weights
+            wmin = w.minimum()
+            wmin.dtype = float
+            if numpy_can_cast(wmin.dtype, w.dtype):
+                w /= wmin
+            else:
+                w = w / wmin
+
+            f.data *= w
+                        
+        window = numpy_full((window_size,), 1.0)
+        if weights is None:
+            window /= window.size
+            
+        f.convolution_filter(window, axis=axis, mode=mode, cval=cval,
+                             origin=origin,
+                             update_bounds=update_bounds,
+                             inplace=True)
+
+        if weights is not None:
+            # Divide the field by the running sum of the weights
+            w.convolution_filter(window=window, axis=iaxis, mode=mode,
+                                 cval=cval, origin=origin, inplace=True)
+            f.data /= w
+
+        return f
+
+    @_deprecated_kwarg_check('i')
+    @_inplace_enabled
+    def convolution_filter(self, weights=None, axis=None, mode=None,
+                           cval=None, origin=0, update_bounds=True,
+                           inplace=False, i=False):
+        '''Return the field convolved along the given axis with the specified
+    filter.
+
+    The magnitude of the integral of the filter (i.e. the sum of the
+    weights defined by the *weights* parameter) affects the convolved
+    values. For example, filter weights of ``[0.2, 0.2 0.2, 0.2,
+    0.2]`` will produce a non-weighted 5-point running mean; and
+    weights of ``[1, 1, 1, 1, 1]`` will produce a 5-point running
+    sum. Note that the weights returned by functions of the
+    `scipy.signal.windows` package do not necessarily sum to 1 (see
+    the examples for details).
+
+    .. seealso:: `collapse`, `derivative`, `moving_average`,
+                 `cf.relative_vorticity`
+
+    :Parameters:
+
+        weights: sequence of numbers
+            Specify the window of weights to use for the filter.
+
+            *Parameter example:*
+              An unweighted 5-point moving average can be computed
+              with ``weights=[0.2, 0.2, 0.2, 0.2, 0.2]``
+
+            Note that the `scipy.signal.windows` package has suite of
+            window functions for creating weights for filtering (see
+            the examples for details).
+
+        axis:
+            Select the domain axis over which the filter is to be
+            applied, defined by that which would be selected by
+            passing the given axis description to a call of the field
+            construct's `domain_axis` method. For example, for a value
+            of ``'X'``, the domain axis construct returned by
+            ``f.domain_axis('X')`` is selected.
+
+        mode: `str`, optional
+            The *mode* parameter determines how the input array is
+            extended when the filter overlaps an array border. The
+            default value is ``'constant'`` or, if the dimension being
+            convolved is cyclic (as ascertained by the `iscyclic`
+            method), ``'wrap'``. The valid values and their behaviours
+            are as follows:
+
+            ==============  ==========================  =================================
+            *mode*          Description                 Behaviour
+            ==============  ==========================  =================================
+            ``'reflect'``   The input is extended by    ``(d c b a | a b c d | d c b a)``
+                            reflecting about the edge
+
+            ``'constant'``  The input is extended by    ``(k k k k | a b c d | k k k k)``
+                            filling all values beyond
+                            the edge with the same
+                            constant value (``k``),
+                            defined by the *cval*
+                            parameter.
+
+            ``'nearest'``   The input is extended by    ``(a a a a | a b c d | d d d d)``
+                            replicating the last point
+
+            ``'mirror'``    The input is extended by    ``(d c b | a b c d | c b a)``
+                            reflecting about the
+                            centre of the last point.
+
+            ``'wrap'``      The input is extended by    ``(a b c d | a b c d | a b c d)``
+                            wrapping around to the
+                            opposite edge.
+            ==============  ==========================  =================================
+
+            The position of the window realtive to each value can be
+            changed by using the *origin* parameter.
+
+        cval: scalar, optional
+            Value to fill past the edges of the array if *mode* is
+            ``'constant'``. Defaults to `None`, in which case the
+            edges of the array will be filled with missing data.
+
+            *Parameter example:*
+               To extend the input by filling all values beyond the
+               edge with zero: ``cval=0``
+
+        origin: `int`, optional
+            Controls the placement of the filter. Defaults to 0, which
+            is the centre of the window. If the window has an even
+            number of weights then then a value of 0 defines the index
+            defined by ``width/2 -1``.
+
+            *Parameter example:*
+              For a weighted moving average computed with a weights
+              window of ``[0.1, 0.15, 0.5, 0.15, 0.1]``, if
+              ``origin=0`` then the average is centred on each
+              point. If ``origin=-2`` then the average is shifted to
+              inclued the previous four points. If ``origin=1`` then
+              the average is shifted to include the previous point and
+              the and the next three points.
+
+        update_bounds: `bool`, optional
+            If False then the bounds of a dimension coordinate
+            construct that spans the convolved axis are not
+            altered. By default, the bounds of a dimension coordinate
+            construct that spans the convolved axis are updated to
+            reflect the width and origin of the window.
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+
         i: deprecated at version 3.0.0
             Use the *inplace* parameter instead.
 
+    :Returns:
+
+        `Field` or `None`
+            TODO
+        
     **Examples:**
 
     >>> f = cf.example_field(2)
@@ -12988,96 +13237,103 @@ class Field(mixin.PropertiesData,
                 "window functions."
             )  # pragma: no cover
 
-        try:
-            get_window
-            convolve1d
-        except NameError:
-            raise ImportError(
-                "Must install scipy to use the convolution_filter method.")
+#        try:
+#            scipy_convolve1d
+#        except NameError:
+#            raise ImportError(
+#                "Must install scipy to use the convolution_filter method.")
 
         # Retrieve the axis
         axis_key = self.domain_axis(axis, key=True)
-
-        # Default mode to 'wrap' if the axis is cyclic
-        if mode is None:
-            if self.iscyclic(axis_key):
-                mode = 'wrap'
-            else:
-                mode = 'constant'
-        # --- End: if
-
-        # Get the axis index
-        axis_index = self.get_data_axes().index(axis_key)
-
-        # Set cval to NaN if it is currently None, so that the edges
-        # will be filled with missing data if the mode is 'constant'
-        if cval is None:
-            cval = numpy_nan
-
-        # Section the data into sections up to a chunk in size
-        sections = self.data.section([axis_index], chunks=True)
-
-        # Filter each section replacing masked points with numpy
-        # NaNs and then remasking after filtering.
-        for k in sections:
-            input_array = sections[k].array
-            masked = numpy_ma_is_masked(input_array)
-            if masked:
-                input_array = input_array.filled(numpy_nan)
-
-            output_array = convolve1d(input_array, weights, axis=axis_index,
-                                      mode=mode, cval=cval, origin=origin)
-            if masked or (mode == 'constant' and numpy_isnan(cval)):
-                with numpy_errstate(invalid='ignore'):
-                    output_array = numpy_ma_masked_invalid(output_array)
-            # --- End: if
-
-            sections[k] = Data(output_array, units=self.Units)
-
-        # Glue the sections back together again
-        new_data = Data.reconstruct_sectioned_data(sections)
+        iaxis = self.get_data_axes().index(axis_key)
+        
+#        # Default mode to 'wrap' if the axis is cyclic
+#        if mode is None:
+#            if self.iscyclic(axis_key):
+#                mode = 'wrap'
+#            else:
+#                mode = 'constant'
+#        # --- End: if
+#
+#        # Get the axis index
+#        axis_index = self.get_data_axes().index(axis_key)
+#
+#        # Set cval to NaN if it is currently None, so that the edges
+#        # will be filled with missing data if the mode is 'constant'
+#        if cval is None:
+#            cval = numpy_nan
+#
+#        # Section the data into sections up to a chunk in size
+#        sections = self.data.section([axis_index], chunks=True)
+#
+#        # Filter each section replacing masked points with numpy
+#        # NaNs and then remasking after filtering.
+#        for k in sections:
+#            input_array = sections[k].array
+#            masked = numpy_ma_is_masked(input_array)
+#            if masked:
+#                input_array = input_array.filled(numpy_nan)
+#
+#            output_array = scipy_convolve1d(input_array, weights,
+#                                            axis=axis_index, mode=mode,
+#                                            cval=cval, origin=origin)
+#            if masked or (mode == 'constant' and numpy_isnan(cval)):
+#                with numpy_errstate(invalid='ignore'):
+#                    output_array = numpy_ma_masked_invalid(output_array)
+#            # --- End: if
+#
+#            sections[k] = Data(output_array, units=self.Units)
+#
+#        # Glue the sections back together again
+#        new_data = Data.reconstruct_sectioned_data(sections)
 
         # Construct new field
         f = _inplace_enabled_define_and_cleanup(self)
+        
+        f.data.convolution_filter(window=weights, axis=iaxis,
+                                  mode=mode, cval=cval, origin=origin,
+                                  inplace=True)
 
-        # Insert filtered data into new field
-        f.set_data(new_data, axes=self.get_data_axes(), copy=False)
+#        # Insert filtered data into new field
+#        f.set_data(new_data, axes=self.get_data_axes(), copy=False)
 
         # Update the bounds of the convolution axis if necessary
-        coord = f.dimension_coordinate(axis_key, default=None)
-        if _bounds and coord is not None and coord.has_bounds():
-            old_bounds = coord.bounds.array
-            length = old_bounds.shape[0]
-            new_bounds = numpy_empty((length, 2))
-            len_weights = len(weights)
-            lower_offset = len_weights//2 + origin
-            upper_offset = len_weights - 1 - lower_offset
-            if mode == 'wrap':
-                if coord.direction():
-                    new_bounds[:, 0] = (
-                        coord.roll(0,  upper_offset).bounds.array[:, 0])
-                    new_bounds[:, 1] = (
-                        coord.roll(0, -lower_offset).bounds.array[:, 1] +
-                        coord.period()
-                    )
+        if update_bounds:
+            coord = f.dimension_coordinate(axis_key, default=None)
+            if coord is not None and coord.has_bounds():
+                old_bounds = coord.bounds.array
+                length = old_bounds.shape[0]
+                new_bounds = numpy_empty((length, 2))
+                len_weights = len(weights)
+                lower_offset = len_weights//2 + origin
+                upper_offset = len_weights - 1 - lower_offset
+                if mode == 'wrap':
+                    if coord.direction():
+                        new_bounds[:, 0] = (
+                            coord.roll(0,  upper_offset).bounds.array[:, 0])
+                        new_bounds[:, 1] = (
+                            coord.roll(0, -lower_offset).bounds.array[:, 1] +
+                            coord.period()
+                        )
+                    else:
+                        new_bounds[:, 0] = (
+                            coord.roll(0,  upper_offset).bounds.array[:, 0] +
+                            2*coord.period()
+                        )
+                        new_bounds[:, 1] = coord.roll(
+                            0, -lower_offset).bounds.array[:, 1] + coord.period()
                 else:
-                    new_bounds[:, 0] = (
-                        coord.roll(0,  upper_offset).bounds.array[:, 0] +
-                        2*coord.period()
-                    )
-                    new_bounds[:, 1] = coord.roll(
-                        0, -lower_offset).bounds.array[:, 1] + coord.period()
-            else:
-                new_bounds[upper_offset:length, 0] = old_bounds[
-                    0:length - upper_offset, 0]
-                new_bounds[0:upper_offset, 0] = old_bounds[0, 0]
-                new_bounds[0:length - lower_offset, 1] = old_bounds[
-                    lower_offset:length, 1]
-                new_bounds[length - lower_offset:length, 1] = old_bounds[
-                    length - 1, 1]
-
-            coord.set_bounds(Bounds(data=Data(new_bounds, units=coord.Units)))
-
+                    new_bounds[upper_offset:length, 0] = old_bounds[
+                        0:length - upper_offset, 0]
+                    new_bounds[0:upper_offset, 0] = old_bounds[0, 0]
+                    new_bounds[0:length - lower_offset, 1] = old_bounds[
+                        lower_offset:length, 1]
+                    new_bounds[length - lower_offset:length, 1] = old_bounds[
+                        length - 1, 1]
+                
+                coord.set_bounds(Bounds(data=Data(new_bounds, units=coord.Units)))
+        # --- End: if
+        
         return f
 
     def convert(self, identity, full_domain=True, cellsize=False):
@@ -18575,6 +18831,12 @@ class Field(mixin.PropertiesData,
                 "Use the 'wrap' keyword instead"
             )  # pragma: no cover
 
+#        try:
+#            scipy_convolve1d
+#        except NameError:
+#            raise ImportError(
+#                "Must install scipy to use the derivative method.")
+
         # Retrieve the axis
         axis = self.domain_axis(axis, key=True, default=None)
         if axis is None:
@@ -18608,27 +18870,32 @@ class Field(mixin.PropertiesData,
 
         # Find the finite difference of the field
         f.convolution_filter([1, 0, -1], axis=axis, mode=mode,
-                             update_bounds=False, inplace=True,
-                             _bounds=False)
+                             update_bounds=False, inplace=True)
 
         # Find the finite difference of the axis
-        d = convolve1d(coord, [1, 0, -1], mode=mode, cval=numpy_nan)
-        if not cyclic and not one_sided_at_boundary:
-            with numpy_errstate(invalid='ignore'):
-                d = numpy_ma_masked_invalid(d)
-        # --- End: if
+        d = coord.data.convolution_filter(window=[1, 0, -1], axis=0,
+                                          mode=mode, cval=numpy_nan)
+#        d = scipy_convolve1d(coord, [1, 0, -1], mode=mode,
+#                             cval=numpy_nan)
+#        if not cyclic and not one_sided_at_boundary:
+#            with numpy_errstate(invalid='ignore'):
+#                d = numpy_ma_masked_invalid(d)
+#        # --- End: if
 
         # Reshape the finite difference of the axis for broadcasting
-        shape = [1] * self.ndim
-        shape[axis_index] = d.size
-        d = d.reshape(shape)
-
+#        shape = [1] * self.ndim
+#        shape[axis_index] = d.size
+#        d = d.reshape(shape)
+        for _ in range(self.ndim - 1 - axis_index):
+            d.insert_dimension(position=1, inplace=True)
+        
         # Find the derivative
-        f.data /= Data(d, coord.units)
+#        f.data /= Data(d, coord.units)
+        f.data /= d
 
         # Update the standard name and long name
-        standard_name = getattr(f, 'standard_name', None)
-        long_name = getattr(f, 'long_name', None)
+        standard_name = f.get_property('standard_name', None)
+        long_name = f.get_property('long_name', None)
         if standard_name is not None:
             del f.standard_name
             f.long_name = 'derivative of {}'.format(standard_name)

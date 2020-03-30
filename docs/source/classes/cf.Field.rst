@@ -489,6 +489,7 @@ Mathematical operations
    :template: method.rst
 
    ~cf.Field.convolution_filter
+   ~cf.Field.moving_average
 
 .. rubric:: Cumulative sums
 

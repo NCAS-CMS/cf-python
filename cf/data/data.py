@@ -1,6 +1,11 @@
 from functools   import reduce
 from operator    import itemgetter
 
+try:
+    from scipy.ndimage.filters import convolve1d as scipy_convolve1d
+except ImportError:
+    pass
+
 import numpy
 from numpy import arccos            as numpy_arccos
 from numpy import arccosh           as numpy_arccosh
@@ -20,6 +25,7 @@ from numpy import digitize          as numpy_digitize
 from numpy import dtype             as numpy_dtype
 from numpy import e                 as numpy_e
 from numpy import empty             as numpy_empty
+from numpy import errstate          as numpy_errstate
 from numpy import exp               as numpy_exp
 from numpy import floor             as numpy_floor
 from numpy import finfo             as numpy_finfo
@@ -3227,6 +3233,189 @@ place.
 
         '''
         return self.func(numpy_ceil, out=True, inplace=inplace)
+        # Retrieve the axis
+        axis_key = self.domain_axis(axis, key=True)
+
+    @_inplace_enabled
+    def convolution_filter(self, window=None, axis=None, mode=None,
+                           cval=None, origin=0, inplace=False):
+        '''TODO Return the field convolved along the given axis with the specified
+    filter.
+
+    The magnitude of the integral of the filter (i.e. the sum of the
+    weights defined by the *weights* parameter) affects the convolved
+    values. For example, filter weights of ``[0.2, 0.2 0.2, 0.2,
+    0.2]`` will produce a non-weighted 5-point running mean; and
+    weights of ``[1, 1, 1, 1, 1]`` will produce a 5-point running
+    sum. Note that the weights returned by functions of the
+    `scipy.signal.windows` package do not necessarily sum to 1 (see
+    the examples for details).
+
+    .. versionadded:: TODO
+
+    :Parameters:
+
+        window: sequence of numbers
+            Specify the window of weights to use for the filter.
+
+            *Parameter example:*
+              An unweighted 5-point moving average can be computed
+              with ``weights=[0.2, 0.2, 0.2, 0.2, 0.2]``
+
+            Note that the `scipy.signal.windows` package has suite of
+            window functions for creating weights for filtering (see
+            the examples for details).
+
+        axis:
+            Select the domain axis over which the filter is to be
+            applied, defined by that which would be selected by
+            passing the given axis description to a call of the field
+            construct's `domain_axis` method. For example, for a value
+            of ``'X'``, the domain axis construct returned by
+            ``f.domain_axis('X')`` is selected.
+
+        mode: `str`, optional
+            The *mode* parameter determines how the input array is
+            extended when the filter overlaps an array border. The
+            default value is ``'constant'`` or, if the dimension being
+            convolved is cyclic (as ascertained by the `iscyclic`
+            method), ``'wrap'``. The valid values and their behaviours
+            are as follows:
+
+            ==============  ==========================  =================================
+            *mode*          Description                 Behaviour
+            ==============  ==========================  =================================
+            ``'reflect'``   The input is extended by    ``(d c b a | a b c d | d c b a)``
+                            reflecting about the edge
+
+            ``'constant'``  The input is extended by    ``(k k k k | a b c d | k k k k)``
+                            filling all values beyond
+                            the edge with the same
+                            constant value (``k``),
+                            defined by the *cval*
+                            parameter.
+
+            ``'nearest'``   The input is extended by    ``(a a a a | a b c d | d d d d)``
+                            replicating the last point
+
+            ``'mirror'``    The input is extended by    ``(d c b | a b c d | c b a)``
+                            reflecting about the
+                            centre of the last point.
+
+            ``'wrap'``      The input is extended by    ``(a b c d | a b c d | a b c d)``
+                            wrapping around to the
+                            opposite edge.
+            ==============  ==========================  =================================
+
+            The position of the window realtive to each value can be
+            changed by using the *origin* parameter.
+
+        cval: scalar, optional
+            Value to fill past the edges of the array if *mode* is
+            ``'constant'``. Defaults to `None`, in which case the
+            edges of the array will be filled with missing data.
+
+            *Parameter example:*
+               To extend the input by filling all values beyond the
+               edge with zero: ``cval=0``
+
+        origin: `int`, optional
+            Controls the placement of the filter. Defaults to 0, which
+            is the centre of the window. If the window has an even
+            number of weights then then a value of 0 defines the index
+            defined by ``width/2 -1``.
+
+            *Parameter example:*
+              For a weighted moving average computed with a weights
+              window of ``[0.1, 0.15, 0.5, 0.15, 0.1]``, if
+              ``origin=0`` then the average is centred on each
+              point. If ``origin=-2`` then the average is shifted to
+              inclued the previous four points. If ``origin=1`` then
+              the average is shifted to include the previous point and
+              the and the next three points.
+
+        update_bounds: `bool`, optional
+            If False then the bounds of a dimension coordinate
+            construct that spans the convolved axis are not
+            altered. By default, the bounds of a dimension coordinate
+            construct that spans the convolved axis are updated to
+            reflect the width and origin of the window.
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+
+        i: deprecated at version 3.0.0
+            Use the *inplace* parameter instead.
+
+    :Returns:
+
+        `Field` or `None`
+            TODO
+        
+    **Examples:**
+
+    >>> f = cf.example_field(2)
+    >>> print(f)
+
+        '''
+        try:
+            scipy_convolve1d
+        except NameError:
+            raise ImportError(
+                "Must install scipy to use the convolution_filter method.")
+
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        iaxis = d._parse_axes(axis)
+        if len(iaxis) != 1:
+            raise ValueError("TODO")
+
+        iaxis = iaxis[0]
+                
+        # Default mode to 'wrap' if the axis is cyclic
+        if mode is None:
+            if iaxis in d.cyclic():
+                mode = 'wrap'
+            else:
+                mode = 'constant'
+        # --- End: if
+
+        # Set cval to NaN if it is currently None, so that the edges
+        # will be filled with missing data if the mode is 'constant'
+        if cval is None:
+            cval = numpy_nan
+
+        # Section the data into sections up to a chunk in size
+        sections = self.section([iaxis], chunks=True)
+
+        # Filter each section replacing masked points with numpy
+        # NaNs and then remasking after filtering.
+        for key, data in sections.items():
+            input_array = data.array
+            masked = numpy_ma_is_masked(input_array)
+            if masked:
+                input_array = input_array.filled(numpy_nan)
+
+            output_array = scipy_convolve1d(input_array, window,
+                                            axis=iaxis, mode=mode,
+                                            cval=cval, origin=origin)
+            if masked or (mode == 'constant' and numpy_isnan(cval)):
+                with numpy_errstate(invalid='ignore'):
+                    output_array = numpy_ma_masked_invalid(output_array)
+            # --- End: if
+
+            sections[key] = type(self)(output_array, units=self.Units,
+                                       fill_value=self.fill_value)
+
+        # Glue the sections back together again
+        out = self.__class__.reconstruct_sectioned_data(sections)
+
+        if inplace:
+            d.__dict__ = out.__dict__
+        else:
+            d = out
+
+        return d
 
     def cumsum(self, axis, masked_as_zero=False):
         '''Return the data cumulatively summed along the given axis.

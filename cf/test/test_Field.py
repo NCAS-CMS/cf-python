@@ -7,6 +7,8 @@ import unittest
 
 import numpy
 
+from scipy.ndimage import convolve1d
+
 import cf
 
 def axes_combinations(f):
@@ -28,6 +30,9 @@ class FieldTest(unittest.TestCase):
         self.indexed_contiguous = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                                'DSG_timeSeriesProfile_indexed_contiguous.nc')
 
+        self.filename1 = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                      'regrid_file1.nc')
+        
         self.chunk_sizes = (100000, 300, 34, 17)
         self.original_chunksize = cf.CHUNKSIZE()
         self.atol = cf.ATOL()
@@ -36,7 +41,7 @@ class FieldTest(unittest.TestCase):
 
         self.test_only = []
 #        self.test_only = ['NOTHING!!!!']
-#        self.test_only = ['test_Field__gt__']
+        self.test_only = ['test_Field_convolution_filter', 'test_Field_derivative']
 #        self.test_only = ['test_Field_weights']
 #        self.test_only = ['test_Field_collapse']
 #        self.test_only = ['test_Field_radius']
@@ -344,7 +349,7 @@ class FieldTest(unittest.TestCase):
                     self.assertTrue(a.equals(b, rtol=1e-05, atol=1e-08, verbose=True),
                                     '{} weights={}, axes={}, {!r}, {!r}'.format(
                                         method, weights, axes, a, b))
-            #--- End: for
+            # --- End: for
 
             for method in ('mean',
                            'mean_absolute_value',
@@ -1584,6 +1589,50 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(f.constructs.filter_by_data().equals(f.items(), verbose=True))
         self.assertTrue(f.constructs('X', 'Y').equals(f.items(*['X', 'Y']), verbose=True))
 
+    def test_Field_convolution_filter(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        window = [0.1, 0.15, 0.5, 0.15, 0.1]
+
+        f = cf.read(self.filename1)[0]
+
+        # Test user weights in different modes
+        for mode in ('reflect', 'constant', 'nearest', 'mirror', 'wrap'):
+            g = f.convolution_filter(window, axis=-1, mode=mode, cval=0.0)
+            self.assertTrue((g.array == convolve1d(f.array, window, axis=-1,
+                                                   mode=mode)).all())
+        
+    def test_Field_derivative(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        x_min = 0.0
+        x_max = 359.0
+        dx = 1.0
+
+        x_1d = numpy.arange(x_min, x_max, dx)
+
+        data_1d = x_1d*2.0 + 1.0
+
+        dim_x = cf.DimensionCoordinate(data=cf.Data(x_1d, 's'),
+                                       properties={'axis': 'X'})
+
+        f = cf.Field()
+        f.set_construct(cf.DomainAxis(size=x_1d.size))
+        f.set_construct(dim_x)
+        f.set_data(cf.Data(data_1d, 'm'), axes='X')
+        f.cyclic('X', period=360.0)
+
+        g = f.derivative('X')
+        self.assertTrue((g.array == 2.0).all())
+
+        g = f.derivative('X', one_sided_at_boundary=True)
+        self.assertTrue((g.array == 2.0).all())
+
+        g = f.derivative('X', wrap=True)
+        self.assertTrue((g.array == 2.0).all())
+
     def test_Field_convert(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -2054,7 +2103,7 @@ class FieldTest(unittest.TestCase):
         g = f.mask_invalid()
         self.assertTrue(f.mask_invalid(inplace=True) is None)
 
-#--- End: class
+# --- End: class
 
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.now())
