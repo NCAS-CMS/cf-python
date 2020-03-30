@@ -6686,7 +6686,6 @@ class Field(mixin.PropertiesData,
         waxes = [waxes[i] for i in transpose]
 
         # Set cyclicity
-        print ('waxes=', waxes, transpose)
         for axis in self.get_data_axes():
             if axis in waxes and self.iscyclic(axis):
                 wdata.cyclic(waxes.index(axis), iscyclic=True)
@@ -12771,7 +12770,7 @@ class Field(mixin.PropertiesData,
 
     @_inplace_enabled
     def moving_average(self, window_size=None, axis=None,
-                       weights=None, mode=None, cval=None, origin=0,
+                       weights=False, mode=None, cval=None, origin=0,
                        update_bounds=True, inplace=False):
         '''TODO
 
@@ -12793,8 +12792,8 @@ class Field(mixin.PropertiesData,
             of ``'X'``, the domain axis construct returned by
             ``f.domain_axis('X')`` is selected.
 
-        weights: 
-            TODO
+        weights: `bool`, optional
+            If True then TODO
 
         mode: `str`, optional
             The *mode* parameter determines how the input array is
@@ -12835,7 +12834,8 @@ class Field(mixin.PropertiesData,
         cval: scalar, optional
             Value to fill past the edges of the array if *mode* is
             ``'constant'``. Defaults to `None`, in which case the
-            edges of the array will be filled with missing data.
+            edges of the array will be filled with missing data. The
+            only other valid value is ``0``.
 
             *Parameter example:*
                To extend the input by filling all values beyond the
@@ -12969,17 +12969,17 @@ class Field(mixin.PropertiesData,
      cftime.DatetimeGregorian(1960-03-01 00:00:00)]
 
         '''
-        # Retrieve the axis
-        axis = self.domain_axis(axis, key=True)
-        iaxis = self.get_data_axes().index(axis)
-        
         f = _inplace_enabled_define_and_cleanup(self)
 
-        if weights in (None, False):
-            weights = None
-
-        if weights is not None:
-            w = f.weights(weights, data=True, scale=1.0)
+        .... don;t know aht mode is yet .....
+        if mode == 'constant' and cval is not None and cval != 0:
+            raise ValueError("cval parameter must be None or 0")
+        
+        # Retrieve the axis
+        axis = f.domain_axis(axis, key=True)
+        
+        if weights:
+            w = f.weights(axis, data=True, scale=1.0)
             
             # Divide the weights by their minimum and multiply thre
             # field by these new weights
@@ -12993,7 +12993,7 @@ class Field(mixin.PropertiesData,
             f.data *= w
                         
         window = numpy_full((window_size,), 1.0)
-        if weights is None:
+        if not weights:
             window /= window.size
             
         f.convolution_filter(window, axis=axis, mode=mode, cval=cval,
@@ -13001,10 +13001,11 @@ class Field(mixin.PropertiesData,
                              update_bounds=update_bounds,
                              inplace=True)
 
-        if weights is not None:
+        if weights:
             # Divide the field by the running sum of the weights
+            iaxis = self.get_data_axes().index(axis)                    
             w.convolution_filter(window=window, axis=iaxis, mode=mode,
-                                 cval=cval, origin=origin, inplace=True)
+                                 cval=0, origin=origin, inplace=True)
             f.data /= w
 
         return f
