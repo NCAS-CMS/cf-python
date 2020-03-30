@@ -9783,7 +9783,11 @@ False
 
     :Parameters:
 
-        TODO
+        axes: (sequence of) `int`, optional
+            TODO
+
+        iscyclic: `bool`
+            TODO
 
     :Returns:
 

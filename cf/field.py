@@ -5862,7 +5862,6 @@ class Field(mixin.PropertiesData,
             
             return interior_angle
         
-
         def _yyy(self, geometry_type, auto=False):
             '''TODO
 
@@ -6686,6 +6685,13 @@ class Field(mixin.PropertiesData,
         wdata = wdata.transpose(transpose)
         waxes = [waxes[i] for i in transpose]
 
+        # Set cyclicity
+        print ('waxes=', waxes, transpose)
+        for axis in self.get_data_axes():
+            if axis in waxes and self.iscyclic(axis):
+                wdata.cyclic(waxes.index(axis), iscyclic=True)
+        # --- End: for
+        
         if data:
             # Insert missing size one dimensions for broadcasting
             for i, axis in enumerate(self.get_data_axes()):
@@ -12776,7 +12782,7 @@ class Field(mixin.PropertiesData,
 
     :Parameters:
         
-        window_sze: int
+        window_sze: `int`
             TODO
 
         axis:
