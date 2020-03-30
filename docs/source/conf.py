@@ -298,6 +298,11 @@ html_title = "Documentation"
 # the builtin "default.css".
 html_static_path = ['_static']
 
+# Paths (filenames) here must be relative to (under) html_static_path as above:
+html_css_files = [
+    'customise-alabaster.css',
+]
+
 # If not '', a 'Last updated on:' timestamp is inserted at every page
 # bottom, using the given strftime format.
 html_last_updated_fmt = '%b %d, %Y'
