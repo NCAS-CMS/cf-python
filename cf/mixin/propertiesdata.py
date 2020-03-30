@@ -6,8 +6,8 @@ from numpy import vectorize   as numpy_vectorize
 
 
 from ..cfdatetime   import dt
-from ..functions    import equivalent as cf_equivalent
-from ..functions    import inspect    as cf_inspect
+from ..functions    import equivalent              as cf_equivalent
+from ..functions    import inspect                 as cf_inspect
 from ..functions    import default_netCDF_fillvals
 from ..query        import Query
 from ..timeduration import TimeDuration
@@ -27,7 +27,7 @@ from ..decorators import (_inplace_enabled,
 _units_None = Units()
 
 _month_units = ('month', 'months')
-_year_units  = ('year', 'years', 'yr')
+_year_units = ('year', 'years', 'yr')
 
 _relational_methods = ('__eq__', '__ne__', '__lt__', '__le__',
                        '__gt__', '__ge__')
@@ -40,7 +40,6 @@ class PropertiesData(Properties):
     _special_properties = ('units',
                            'calendar')
 
-
     def __array__(self, *dtype):
         '''Returns a numpy array representation of the data.
 
@@ -50,7 +49,6 @@ class PropertiesData(Properties):
             return data.__array__(*dtype)
 
         raise ValueError("{} has no data".format(self.__class__.__name__))
-
 
     def __contains__(self, value):
         '''Called to implement membership test operators.
@@ -83,7 +81,7 @@ class PropertiesData(Properties):
     <CF Data(12): [14, ..., 56] km)
 
         '''
-        data =self.get_data(None)
+        data = self.get_data(None)
         if data is not None:
             return data
 
@@ -104,7 +102,6 @@ class PropertiesData(Properties):
 
         data[indices] = value
 
-
     def __add__(self, y):
         '''The binary arithmetic operation ``+``
 
@@ -112,7 +109,6 @@ class PropertiesData(Properties):
 
         '''
         return self._binary_operation(y, '__add__')
-
 
     def __iadd__(self, y):
         '''The augmented arithmetic assignment ``+=``
@@ -122,7 +118,6 @@ class PropertiesData(Properties):
         '''
         return self._binary_operation(y, '__iadd__')
 
-
     def __radd__(self, y):
         '''The binary arithmetic operation ``+`` with reflected operands
 
@@ -130,7 +125,6 @@ class PropertiesData(Properties):
 
         '''
         return self._binary_operation(y, '__radd__')
-
 
     def __sub__(self, y):
         '''The binary arithmetic operation ``-``
@@ -140,7 +134,6 @@ class PropertiesData(Properties):
         '''
         return self._binary_operation(y, '__sub__')
 
-
     def __isub__(self, y):
         '''The augmented arithmetic assignment ``-=``
 
@@ -148,7 +141,6 @@ class PropertiesData(Properties):
 
         '''
         return self._binary_operation(y, '__isub__')
-
 
     def __rsub__(self, y):
         '''The binary arithmetic operation ``-`` with reflected operands
@@ -158,7 +150,6 @@ class PropertiesData(Properties):
         '''
         return self._binary_operation(y, '__rsub__')
 
-
     def __mul__(self, y):
         '''The binary arithmetic operation ``*``
 
@@ -166,7 +157,6 @@ class PropertiesData(Properties):
 
         '''
         return self._binary_operation(y, '__mul__')
-
 
     def __imul__(self, y):
         '''The augmented arithmetic assignment ``*=``
@@ -176,7 +166,6 @@ class PropertiesData(Properties):
         '''
         return self._binary_operation(y, '__imul__')
 
-
     def __rmul__(self, y):
         '''The binary arithmetic operation ``*`` with reflected operands
 
@@ -184,7 +173,6 @@ class PropertiesData(Properties):
 
         '''
         return self._binary_operation(y, '__rmul__')
-
 
     def __div__(self, y):
         '''The binary arithmetic operation ``/``
@@ -194,7 +182,6 @@ class PropertiesData(Properties):
         '''
         return self._binary_operation(y, '__div__')
 
-
     def __idiv__(self, y):
         '''The augmented arithmetic assignment ``/=``
 
@@ -202,7 +189,6 @@ class PropertiesData(Properties):
 
         '''
         return self._binary_operation(y, '__idiv__')
-
 
     def __rdiv__(self, y):
         '''The binary arithmetic operation ``/`` with reflected operands
@@ -212,7 +198,6 @@ class PropertiesData(Properties):
         '''
         return self._binary_operation(y, '__rdiv__')
 
-
     def __floordiv__(self, y):
         '''The binary arithmetic operation ``//``
 
@@ -220,7 +205,6 @@ class PropertiesData(Properties):
 
         '''
         return self._binary_operation(y, '__floordiv__')
-
 
     def __ifloordiv__(self, y):
         '''The augmented arithmetic assignment ``//=``
@@ -230,7 +214,6 @@ class PropertiesData(Properties):
         '''
         return self._binary_operation(y, '__ifloordiv__')
 
-
     def __rfloordiv__(self, y):
         '''The binary arithmetic operation ``//`` with reflected operands
 
@@ -238,7 +221,6 @@ class PropertiesData(Properties):
 
         '''
         return self._binary_operation(y, '__rfloordiv__')
-
 
     def __truediv__(self, y):
         '''The binary arithmetic operation ``/`` (true division)
@@ -248,7 +230,6 @@ class PropertiesData(Properties):
         '''
         return self._binary_operation(y, '__truediv__')
 
-
     def __itruediv__(self, y):
         '''The augmented arithmetic assignment ``/=`` (true division)
 
@@ -256,7 +237,6 @@ class PropertiesData(Properties):
 
         '''
         return self._binary_operation(y, '__itruediv__')
-
 
     def __rtruediv__(self, y):
         '''The binary arithmetic operation ``/`` (true division) with
@@ -266,7 +246,6 @@ class PropertiesData(Properties):
 
         '''
         return self._binary_operation(y, '__rtruediv__')
-
 
     def __pow__(self, y, modulo=None):
         '''The binary arithmetic operations ``**`` and ``pow``
@@ -280,7 +259,6 @@ class PropertiesData(Properties):
 
         return self._binary_operation(y, '__pow__')
 
-
     def __ipow__(self, y, modulo=None):
         '''The augmented arithmetic assignment ``**=``
 
@@ -292,7 +270,6 @@ class PropertiesData(Properties):
                                       self.__class__.__name__)
 
         return self._binary_operation(y, '__ipow__')
-
 
     def __rpow__(self, y, modulo=None):
         '''The binary arithmetic operations ``**`` and ``pow`` with reflected
@@ -307,7 +284,6 @@ class PropertiesData(Properties):
 
         return self._binary_operation(y, '__rpow__')
 
-
     def __mod__(self, y):
         '''The binary arithmetic operation ``%``
 
@@ -317,7 +293,6 @@ class PropertiesData(Properties):
 
         '''
         return self._binary_operation(y, '__mod__')
-
 
     def __imod__(self, y):
         '''The binary arithmetic operation ``%=``
@@ -329,7 +304,6 @@ class PropertiesData(Properties):
         '''
         return self._binary_operation(y, '__imod__')
 
-
     def __rmod__(self, y):
         '''The binary arithmetic operation ``%`` with reflected operands
 
@@ -340,7 +314,6 @@ class PropertiesData(Properties):
         '''
         return self._binary_operation(y, '__rmod__')
 
-
     def __eq__(self, y):
         '''The rich comparison operator ``==``
 
@@ -348,7 +321,6 @@ class PropertiesData(Properties):
 
         '''
         return self._binary_operation(y, '__eq__')
-
 
     def __ne__(self, y):
         '''The rich comparison operator ``!=``
@@ -358,7 +330,6 @@ class PropertiesData(Properties):
         '''
         return self._binary_operation(y, '__ne__')
 
-
     def __ge__(self, y):
         '''The rich comparison operator ``>=``
 
@@ -366,7 +337,6 @@ class PropertiesData(Properties):
 
         '''
         return self._binary_operation(y, '__ge__')
-
 
     def __gt__(self, y):
         '''The rich comparison operator ``>``
@@ -376,7 +346,6 @@ class PropertiesData(Properties):
         '''
         return self._binary_operation(y, '__gt__')
 
-
     def __le__(self, y):
         '''The rich comparison operator ``<=``
 
@@ -384,7 +353,6 @@ class PropertiesData(Properties):
 
         '''
         return self._binary_operation(y, '__le__')
-
 
     def __lt__(self, y):
         '''The rich comparison operator ``<``
@@ -394,7 +362,6 @@ class PropertiesData(Properties):
         '''
         return self._binary_operation(y, '__lt__')
 
-
     def __and__(self, y):
         '''The binary bitwise operation ``&``
 
@@ -402,7 +369,6 @@ class PropertiesData(Properties):
 
         '''
         return self._binary_operation(y, '__and__')
-
 
     def __iand__(self, y):
         '''The augmented bitwise assignment ``&=``
@@ -412,7 +378,6 @@ class PropertiesData(Properties):
         '''
         return self._binary_operation(y, '__iand__')
 
-
     def __rand__(self, y):
         '''The binary bitwise operation ``&`` with reflected operands
 
@@ -420,7 +385,6 @@ class PropertiesData(Properties):
 
         '''
         return self._binary_operation(y, '__rand__')
-
 
     def __or__(self, y):
         '''The binary bitwise operation ``|``
@@ -430,7 +394,6 @@ class PropertiesData(Properties):
         '''
         return self._binary_operation(y, '__or__')
 
-
     def __ior__(self, y):
         '''The augmented bitwise assignment ``|=``
 
@@ -438,7 +401,6 @@ class PropertiesData(Properties):
 
         '''
         return self._binary_operation(y, '__ior__')
-
 
     def __ror__(self, y):
         '''The binary bitwise operation ``|`` with reflected operands
@@ -448,7 +410,6 @@ class PropertiesData(Properties):
         '''
         return self._binary_operation(y, '__ror__')
 
-
     def __xor__(self, y):
         '''The binary bitwise operation ``^``
 
@@ -456,7 +417,6 @@ class PropertiesData(Properties):
 
         '''
         return self._binary_operation(y, '__xor__')
-
 
     def __ixor__(self, y):
         '''The augmented bitwise assignment ``^=``
@@ -466,7 +426,6 @@ class PropertiesData(Properties):
         '''
         return self._binary_operation(y, '__ixor__')
 
-
     def __rxor__(self, y):
         '''The binary bitwise operation ``^`` with reflected operands
 
@@ -474,7 +433,6 @@ class PropertiesData(Properties):
 
         '''
         return self._binary_operation(y, '__rxor__')
-
 
     def __lshift__(self, y):
         '''The binary bitwise operation ``<<``
@@ -484,7 +442,6 @@ class PropertiesData(Properties):
         '''
         return self._binary_operation(y, '__lshift__')
 
-
     def __ilshift__(self, y):
         '''The augmented bitwise assignment ``<<=``
 
@@ -492,7 +449,6 @@ class PropertiesData(Properties):
 
         '''
         return self._binary_operation(y, '__ilshift__')
-
 
     def __rlshift__(self, y):
         '''The binary bitwise operation ``<<`` with reflected operands
@@ -502,7 +458,6 @@ class PropertiesData(Properties):
         '''
         return self._binary_operation(y, '__rlshift__')
 
-
     def __rshift__(self, y):
         '''The binary bitwise operation ``>>``
 
@@ -510,7 +465,6 @@ class PropertiesData(Properties):
 
         '''
         return self._binary_operation(y, '__rshift__')
-
 
     def __irshift__(self, y):
         '''The augmented bitwise assignment ``>>=``
@@ -520,7 +474,6 @@ class PropertiesData(Properties):
         '''
         return self._binary_operation(y, '__irshift__')
 
-
     def __rrshift__(self, y):
         '''The binary bitwise operation ``>>`` with reflected operands
 
@@ -528,7 +481,6 @@ class PropertiesData(Properties):
 
         '''
         return self._binary_operation(y, '__rrshift__')
-
 
     def __abs__(self):
         '''The unary arithmetic operation ``abs``
@@ -538,7 +490,6 @@ class PropertiesData(Properties):
         '''
         return self._unary_operation('__abs__')
 
-
     def __neg__(self):
         '''The unary arithmetic operation ``-``
 
@@ -546,7 +497,6 @@ class PropertiesData(Properties):
 
         '''
         return self._unary_operation('__neg__')
-
 
     def __invert__(self):
         '''The unary bitwise operation ``~``
@@ -556,7 +506,6 @@ class PropertiesData(Properties):
         '''
         return self._unary_operation('__invert__')
 
-
     def __pos__(self):
         '''The unary arithmetic operation ``+``
 
@@ -564,7 +513,6 @@ class PropertiesData(Properties):
 
         '''
         return self._unary_operation('__pos__')
-
 
     # ----------------------------------------------------------------
     # Private methods
@@ -620,7 +568,7 @@ class PropertiesData(Properties):
             y = y.data
 
         if not inplace:
-            new = self.copy() #data=False) TODO
+            new = self.copy()  # data=False) TODO
             new_data = data._binary_operation(y, method)
             new.set_data(new_data, copy=False)
         else:
@@ -649,13 +597,12 @@ class PropertiesData(Properties):
 
         new_units = new.Units
         if (method in _relational_methods or
-            not units.equivalent(new_units) and
-            not (units.isreftime and new_units.isreftime)):
+                not units.equivalent(new_units) and
+                not (units.isreftime and new_units.isreftime)):
             new.del_property('standard_name', None)
             new.del_property('long_name', None)
 
         return new
-
 
 #    def _ooo(self):
 #        '''
@@ -705,30 +652,28 @@ class PropertiesData(Properties):
 #    def _change_axis_names(self, dim_name_map):
 #        '''Change the axis names of the Data object.
 #
-#:Parameters:
+#    :Parameters:
 #
-#    dim_name_map: `dict`
+#        dim_name_map: `dict`
 #
-#:Returns:
+#    :Returns:
 #
-#    `None`
+#        `None`
 #
-#**Examples:**
+#    **Examples:**
 #
-#>>> f._change_axis_names({'0': 'dim1', '1': 'dim2'})
+#    >>> f._change_axis_names({'0': 'dim1', '1': 'dim2'})
 #
 #        '''
 #        data = self.get_data(None)
 #        if data is not None:
 #            data.change_axis_names(dim_name_map)
 
-
     def _conform_for_assignment(self, other):
         '''TODO
 
         '''
         return other
-
 
     def _equivalent_data(self, other, atol=None, rtol=None,
                          verbose=False):
@@ -780,7 +725,7 @@ class PropertiesData(Properties):
             if verbose:
                 print("{}: Data have non-equivalent units: {!r}, {!r}".format(
                     self.__class__.__name__, data0.Units, data1.Units))
-            return  False
+            return False
 
 #        if atol is None:
 #            atol = ATOL()
@@ -789,19 +734,20 @@ class PropertiesData(Properties):
 
         if not data0.allclose(data1, rtol=rtol, atol=atol):
             if verbose:
-                print("{}: Data have non-equivalent values: {!r}, {!r}".format(
-                    self.__class__.__name__, data0, data1))
+                print(
+                    "{}: Data have non-equivalent values: {!r}, {!r}".format(
+                        self.__class__.__name__, data0, data1)
+                )
             return False
 
         return True
-
 
 #    def _parse_axes(self, axes):
 #        '''TODO
 #
 #
 #    :Returns:
-#        
+#
 #        `list`
 #
 #        '''
@@ -814,7 +760,6 @@ class PropertiesData(Properties):
 #            axes = (axes,)
 #
 #        return [(i + ndim if i < 0 else i) for i in axes]
-
 
 #    def _parse_match(self, match):
 #        '''Called by `match`
@@ -857,7 +802,6 @@ class PropertiesData(Properties):
 #
 #        return matches
 
-
     def __query_set__(self, values):
         '''TODO
 
@@ -865,7 +809,6 @@ class PropertiesData(Properties):
         new = self.copy()
         new.set_data(self.data.__query_set__(values), copy=False)
         return new
-
 
 #    def _query_contain(self, value):
 #        '''TODO#
@@ -875,7 +818,6 @@ class PropertiesData(Properties):
 #        new.set_data(self.data._query_contain(value), copy=False)
 #        return new
 
-
 #    def _query_contains(self, value):
 #        '''TODO
 #
@@ -883,7 +825,6 @@ class PropertiesData(Properties):
 #        new = self.copy()
 #        new.set_data(self.data._query_contains(value), copy=False)
 #        return new
-
 
     def __query_wi__(self, value):
         '''TODO
@@ -893,7 +834,6 @@ class PropertiesData(Properties):
         new.set_data(self.data.__query_wi__(value), copy=False)
         return new
 
-
     def __query_wo__(self, value):
         '''TODO
 1
@@ -901,7 +841,6 @@ class PropertiesData(Properties):
         new = self.copy()
         new.set_data(self.data.__query_wo__(value), copy=False)
         return new
-
 
     def _unary_operation(self, method):
         '''Implement unary arithmetic operations on the data array.
@@ -945,16 +884,17 @@ class PropertiesData(Properties):
 
         return new
 
-
     def _YMDhms(self, attr):
         '''TODO
         '''
         data = self.get_data(None)
         if data is None:
             raise ValueError(
-                "ERROR: Can't get {}s when there is no data array".format(attr))
+                "ERROR: Can't get {}s when there is no data array".format(
+                    attr)
+            )
 
-        out = self.copy() # data=False)
+        out = self.copy()  # data=False)
 
         out.set_data(getattr(data, attr), copy=False)
 
@@ -964,7 +904,6 @@ class PropertiesData(Properties):
         out.override_units(Units(), inplace=True)
 
         return out
-
 
 #    def _hmmm(self, method):
 #        data = self.get_data(None)
@@ -978,7 +917,6 @@ class PropertiesData(Properties):
 #
 #        raise ValueError(
 #            "ERROR: Can't get {0} when there is no data array".format(method))
-
     @staticmethod
     def _apply_data_oper(
             v, oper_name, *oper_args, delete_props=False, **oper_kwargs):
@@ -1022,7 +960,6 @@ class PropertiesData(Properties):
 
         return v
 
-
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
@@ -1043,7 +980,6 @@ class PropertiesData(Properties):
         '''
         return False
 
-
     @property
     def X(self):
         '''Always False.
@@ -1057,7 +993,6 @@ class PropertiesData(Properties):
 
         '''
         return False
-
 
     @property
     def Y(self):
@@ -1073,7 +1008,6 @@ class PropertiesData(Properties):
         '''
         return False
 
-
     @property
     def Z(self):
         '''Always False.
@@ -1087,7 +1021,6 @@ class PropertiesData(Properties):
 
         '''
         return False
-
 
     @property
     def binary_mask(self):
@@ -1111,7 +1044,6 @@ class PropertiesData(Properties):
         out.set_data(self.data.binary_mask(), copy=False)
         return out
 
-
     @property
     def data(self):
         '''The `Data` object containing the data array.
@@ -1128,13 +1060,14 @@ class PropertiesData(Properties):
 
         '''
         return self.get_data()
+
     @data.setter
     def data(self, value):
         self.set_data(value, set_axes=False, copy=False)
+
     @data.deleter
     def data(self):
         return self.del_data()
-
 
     @property
     def reference_datetime(self):
@@ -1160,8 +1093,9 @@ class PropertiesData(Properties):
         units = self.Units
         if not units.isreftime:
             raise AttributeError(
-                "Can't set 'reference_datetime' for non reference date-time units".format(
-                    self.__class__.__name__))
+                "Can't set 'reference_datetime' for non reference date-time "
+                "units".format(self.__class__.__name__)
+            )
 
         units = units.units.split(' since ')
         try:
@@ -1170,7 +1104,6 @@ class PropertiesData(Properties):
             raise ValueError(
                 "Can't override reference date-time {0!r} with {1!r}".format(
                     units[1], value))
-
 
     @property
     def Units(self):
@@ -1220,9 +1153,9 @@ class PropertiesData(Properties):
     @Units.deleter
     def Units(self):
         raise AttributeError(
-            "Can't delete {} attribute 'Units'. Use the override_units method.".format(
-                self.__class__.__name__))
-
+            "Can't delete {} attribute 'Units'. Use the override_units "
+            "method.".format(self.__class__.__name__)
+        )
 
     @property
     def year(self):
@@ -1242,7 +1175,6 @@ class PropertiesData(Properties):
         '''
         return self._YMDhms('year')
 
-
     @property
     def month(self):
         '''The month of each date-time data array element.
@@ -1260,7 +1192,6 @@ class PropertiesData(Properties):
 
         '''
         return self._YMDhms('month')
-
 
     @property
     def day(self):
@@ -1280,7 +1211,6 @@ class PropertiesData(Properties):
         '''
         return self._YMDhms('day')
 
-
     @property
     def hour(self):
         '''The hour of each date-time data array element.
@@ -1298,7 +1228,6 @@ class PropertiesData(Properties):
 
         '''
         return self._YMDhms('hour')
-
 
     @property
     def minute(self):
@@ -1318,7 +1247,6 @@ class PropertiesData(Properties):
         '''
         return self._YMDhms('minute')
 
-
     @property
     def second(self):
         '''The second of each date-time data array element.
@@ -1336,7 +1264,6 @@ class PropertiesData(Properties):
 
         '''
         return self._YMDhms('second')
-
 
     @property
     def mask(self):
@@ -1377,7 +1304,6 @@ class PropertiesData(Properties):
         out.nc_del_variable(default=None)
 
         return out
-
 
     # ----------------------------------------------------------------
     # CF properties
@@ -1421,7 +1347,6 @@ class PropertiesData(Properties):
         if not self.has_property('scale_factor'):
             del self.dtype
 
-
     @property
     def calendar(self):
         '''The calendar CF property.
@@ -1452,11 +1377,9 @@ class PropertiesData(Properties):
                     self.__class__.__name__))
         return value
 
-
     @calendar.setter
     def calendar(self, value):
         self.Units = Units(getattr(self, 'units', None), value)
-
 
     @calendar.deleter
     def calendar(self):
@@ -1501,13 +1424,14 @@ class PropertiesData(Properties):
 
         '''
         return self.get_property('_FillValue', default=AttributeError())
+
     @_FillValue.setter
     def _FillValue(self, value):
         self.set_property('_FillValue', value)
+
     @_FillValue.deleter
     def _FillValue(self):
         self.del_property('_FillValue', default=AttributeError())
-
 
     @property
     def missing_value(self):
@@ -1544,13 +1468,14 @@ class PropertiesData(Properties):
 
         '''
         return self.get_property('missing_value', default=AttributeError())
+
     @missing_value.setter
     def missing_value(self, value):
         self.set_property('missing_value', value)
+
     @missing_value.deleter
     def missing_value(self):
         self.del_property('missing_value', default=AttributeError())
-
 
     @property
     def scale_factor(self):
@@ -1578,11 +1503,13 @@ class PropertiesData(Properties):
 
         '''
         return self.get_property('scale_factor', default=AttributeError())
+
     @scale_factor.setter
     def scale_factor(self, value): self.set_property('scale_factor', value)
-    @scale_factor.deleter
-    def scale_factor(self):        self.del_property('scale_factor', default=AttributeError())
 
+    @scale_factor.deleter
+    def scale_factor(self):
+        self.del_property('scale_factor', default=AttributeError())
 
     @property
     def units(self):
@@ -1613,9 +1540,11 @@ class PropertiesData(Properties):
                 self.__class__.__name__))
 
         return value
+
     @units.setter
     def units(self, value):
         self.Units = Units(value, getattr(self, 'calendar', None))
+
     @units.deleter
     def units(self):
         if getattr(self, 'units', None) is None:
@@ -1624,7 +1553,6 @@ class PropertiesData(Properties):
                     self.__class__.__name__))
 
         self.Units = Units(None, getattr(self, 'calendar', None))
-
 
     # ----------------------------------------------------------------
     # Methods
@@ -1702,7 +1630,6 @@ class PropertiesData(Properties):
 
         return v
 
-
     def maximum(self):
         '''The maximum of the data array.
 
@@ -1729,12 +1656,11 @@ class PropertiesData(Properties):
         raise ValueError(
             "ERROR: Can't get the maximum when there is no data array")
 
-
     def mean(self):
         '''The unweighted mean the data array.
 
-    .. seealso:: `maximum`, `mid_range`, `minimum`, `range`, `sample_size`, `sd`,
-                 `sum`, `var`
+    .. seealso:: `maximum`, `mid_range`, `minimum`, `range`, `sample_size`,
+                 `sd`, `sum`, `var`
 
     :Returns:
 
@@ -1755,7 +1681,6 @@ class PropertiesData(Properties):
 
         raise ValueError(
             "ERROR: Can't get the mean when there is no data array")
-
 
     def mid_range(self):
         '''The unweighted average of the maximum and minimum of the data
@@ -1785,7 +1710,6 @@ class PropertiesData(Properties):
         raise ValueError(
             "ERROR: Can't get the mid-range when there is no data array")
 
-
     def minimum(self):
         '''The minimum of the data array.
 
@@ -1812,7 +1736,6 @@ class PropertiesData(Properties):
 
         raise ValueError(
             "ERROR: Can't get the minimum when there is no data array")
-
 
     def range(self):
         '''The absolute difference between the maximum and minimum of the data
@@ -1843,7 +1766,6 @@ class PropertiesData(Properties):
         raise ValueError(
             "ERROR: Can't get the range when there is no data array")
 
-
     def sample_size(self):
         '''The number of non-missing data elements in the data array.
 
@@ -1870,7 +1792,6 @@ class PropertiesData(Properties):
         raise ValueError(
             "ERROR: Can't get the sample size when there is no data array")
 
-
     def sd(self):
         '''The unweighted sample standard deviation of the data array.
 
@@ -1895,11 +1816,12 @@ class PropertiesData(Properties):
             return data.sd(squeeze=True, ddof=0)
 
         raise ValueError(
-            "ERROR: Can't get the standard deviation when there is no data array")
-
+            "ERROR: Can't get the standard deviation when there is no data "
+            "array"
+        )
 
     def sum(self):
-       	'''The sum of the data array.
+        '''The sum of the data array.
 
     .. seealso:: `maximum`, `mean`, `mid_range`, `minimum`, `range`,
                  `sample_size`, `sd`, `var`
@@ -1923,7 +1845,6 @@ class PropertiesData(Properties):
 
         raise ValueError(
             "ERROR: Can't get the sum when there is no data array")
-
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -1965,7 +1886,6 @@ class PropertiesData(Properties):
             _inplace_enabled_define_and_cleanup(self), 'swapaxes',
             axis0, axis1, inplace=inplace, delete_props=True)
 
-
     def var(self):
         '''The unweighted sample variance of the data array.
 
@@ -1991,7 +1911,6 @@ class PropertiesData(Properties):
                 "ERROR: Can't get the variance when there is no data array")
 
         return data.var(squeeze=True, ddof=0)
-
 
     @property
     def subspace(self):
@@ -2028,7 +1947,6 @@ class PropertiesData(Properties):
         '''
         return Subspace(self)
 
-
 #    @property
 #    def shape(self):
 #        '''A tuple of the data array's dimension sizes.
@@ -2056,8 +1974,8 @@ class PropertiesData(Properties):
 #
 #        '''
 #        return self.data.shape
-#    
-#    
+#
+#
 #    @property
 #    def ndim(self):
 #        '''The number of dimensions in the data array.
@@ -2117,7 +2035,6 @@ class PropertiesData(Properties):
 #        '''
 #        return self.data.size
 
-
     @property
     def datetime_array(self):
         '''An independent numpy array of date-time objects.
@@ -2148,7 +2065,6 @@ class PropertiesData(Properties):
                 "{} has no data array".format(self.__class__.__name__))
 
         return data.datetime_array
-
 
     @property
     def dtype(self):
@@ -2214,7 +2130,7 @@ class PropertiesData(Properties):
 
     @dtype.setter
     def dtype(self, value):
-# DCH - allow dtype to be set before data c.f.  Units
+        # DCH - allow dtype to be set before data c.f.  Units
         data = self.get_data(None)
         if data is not None:
             data.dtype = value
@@ -2224,7 +2140,6 @@ class PropertiesData(Properties):
         data = self.get_data(None)
         if data is not None:
             del data.dtype
-
 
     @property
     def hardmask(self):
@@ -2251,25 +2166,29 @@ class PropertiesData(Properties):
         data = self.get_data(None)
         if data is None:
             raise AttributeError(
-                "{} doesn't have attribute 'hardmask'".format(self.__class__.__name__))
+                "{} doesn't have attribute 'hardmask'".format(
+                    self.__class__.__name__)
+            )
 
         return data.hardmask
-
 
     @hardmask.setter
     def hardmask(self, value):
         data = self.get_data(None)
         if data is None:
             raise AttributeError(
-                "{} doesn't have attribute 'hardmask'".format(self.__class__.__name__))
+                "{} doesn't have attribute 'hardmask'".format(
+                    self.__class__.__name__)
+            )
 
         data.hardmask = value
 
     @hardmask.deleter
     def hardmask(self):
         raise AttributeError(
-            "Won't delete {} attribute 'hardmask'".format(self.__class__.__name__))
-
+            "Won't delete {} attribute 'hardmask'".format(
+                self.__class__.__name__)
+        )
 
     @property
     def array(self):
@@ -2299,10 +2218,10 @@ class PropertiesData(Properties):
         '''
         data = self.get_data(None)
         if data is None:
-            raise AttributeError("{} has no data array".format(self.__class__.__name__))
+            raise AttributeError(
+                "{} has no data array".format(self.__class__.__name__))
 
         return data.array
-
 
     @property
     def varray(self):
@@ -2332,10 +2251,10 @@ class PropertiesData(Properties):
         '''
         data = self.get_data(None)
         if data is None:
-            raise AttributeError("{} has no data array".format(self.__class__.__name__))
+            raise AttributeError(
+                "{} has no data array".format(self.__class__.__name__))
 
         return data.varray
-
 
     @property
     def isauxiliary(self):
@@ -2352,7 +2271,6 @@ class PropertiesData(Properties):
         '''
         return False
 
-
     @property
     def isdimension(self):
         '''True if the variable is a dimension coordinate object.
@@ -2367,7 +2285,6 @@ class PropertiesData(Properties):
 
         '''
         return False
-
 
     @property
     def isdomainancillary(self):
@@ -2384,7 +2301,6 @@ class PropertiesData(Properties):
         '''
         return False
 
-
     @property
     def isfieldancillary(self):
         '''True if the variable is a field ancillary object.
@@ -2400,7 +2316,6 @@ class PropertiesData(Properties):
         '''
         return False
 
-
     @property
     def ismeasure(self):
         '''True if the variable is a cell measure object.
@@ -2415,7 +2330,6 @@ class PropertiesData(Properties):
 
         '''
         return False
-
 
     @property
     def isscalar(self):
@@ -2446,7 +2360,6 @@ class PropertiesData(Properties):
             return False
 
         return data.isscalar
-
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -2488,7 +2401,6 @@ class PropertiesData(Properties):
             _inplace_enabled_define_and_cleanup(self), 'ceil',
             inplace=inplace, i=i, delete_props=True)
 
-
     def chunk(self, chunksize=None):
         '''Partition the data array.
 
@@ -2504,7 +2416,6 @@ class PropertiesData(Properties):
         data = self.get_data(None)
         if data is not None:
             data.chunk(chunksize)
-
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -2554,7 +2465,6 @@ class PropertiesData(Properties):
             a_max, inplace=inplace, i=i, units=units,
             delete_props=True)
 
-
     def close(self):
         '''Close all files referenced by the construct.
 
@@ -2576,7 +2486,6 @@ class PropertiesData(Properties):
         if data is not None:
             data.close()
 
-
     @classmethod
     def concatenate(cls, variables, axis=0, _preserve=True):
         '''Join a sequence of variables together.
@@ -2597,7 +2506,7 @@ class PropertiesData(Properties):
         if len(variables) == 1:
             return variable0.copy()
 
-        out = variable0.copy() #data=False)
+        out = variable0.copy()  # data=False)
 
         data = Data.concatenate([v.get_data() for v in variables],
                                 axis=axis,
@@ -2605,7 +2514,6 @@ class PropertiesData(Properties):
         out.set_data(data, copy=False)
 
         return out
-
 
 # AT2
 #
@@ -2721,7 +2629,6 @@ class PropertiesData(Properties):
             _inplace_enabled_define_and_cleanup(self), 'cos',
             inplace=inplace, i=i, delete_props=True)
 
-
     def count(self):
         '''Count the non-masked elements of the data.
 
@@ -2741,7 +2648,6 @@ class PropertiesData(Properties):
                 "Can't count when there are data")
 
         return data.count()
-
 
     def count_masked(self):
         '''Count the masked elements of the data.
@@ -2767,7 +2673,7 @@ class PropertiesData(Properties):
                           namespace='cf', indent=0, string=True,
                           name='c', data_name='d'):
         '''Return the commands that would create the construct.
-        
+
     .. versionadded:: 3.2.0
 
     .. seealso:: `cf.Data.creation_commands`,
@@ -2815,12 +2721,13 @@ class PropertiesData(Properties):
 
         TODO
 
-        '''        
+        '''
         if name == data_name:
             raise ValueError(
-                "'name' and 'data_name' parameters can not have the same value: {!r}".format(
-                    name))
-        
+                "'name' and 'data_name' parameters can not have the same "
+                "value: {!r}".format(name)
+            )
+
         namespace0 = namespace
         if namespace0:
             namespace = namespace+"."
@@ -2835,7 +2742,7 @@ class PropertiesData(Properties):
         if construct_type is not None:
             out.append("# {}: {}".format(construct_type,
                                          self.identity()))
-            
+
         out.append("{} = {}{}()".format(name, namespace,
                                         self.__class__.__name__))
 
@@ -2854,19 +2761,19 @@ class PropertiesData(Properties):
                                                   namespace=namespace0,
                                                   indent=0,
                                                   string=False))
-                
+
             out.append("{}.set_data(d)".format(name))
-        
+
         nc = self.nc_get_variable(None)
         if nc is not None:
             out.append("{}.nc_set_variable({!r})".format(name, nc))
-            
+
         if string:
             out[0] = indent+out[0]
             out = ('\n'+indent).join(out)
 
         return out
-    
+
     def cyclic(self, axes=None, iscyclic=True):
         '''Set the cyclicity of an axis.
 
@@ -2901,7 +2808,6 @@ class PropertiesData(Properties):
             return set()
 
         return data.cyclic(axes, iscyclic)
-
 
     def datum(self, *index):
         '''Return an element of the data array as a standard Python scalar.
@@ -2999,7 +2905,6 @@ class PropertiesData(Properties):
                 "ERROR: Can't return an element when there is no data array")
 
         return data.datum(*index)
-
 
     def equals(self, other, rtol=None, atol=None, verbose=False,
                ignore_data_type=False, ignore_fill_value=False,
@@ -3113,14 +3018,15 @@ class PropertiesData(Properties):
         except AttributeError:
             pass
 
-        ignore_properties = tuple(ignore_properties) + self._special_properties
+        ignore_properties = (tuple(ignore_properties) +
+                             self._special_properties)
 
-        return super().equals(other, rtol=rtol, atol=atol,
-                              verbose=verbose, ignore_data_type=ignore_data_type,
-                              ignore_fill_value=ignore_fill_value,
-                              ignore_properties=ignore_properties,
-                              ignore_type=ignore_type)
-
+        return super().equals(
+            other, rtol=rtol, atol=atol, verbose=verbose,
+            ignore_data_type=ignore_data_type,
+            ignore_fill_value=ignore_fill_value,
+            ignore_properties=ignore_properties, ignore_type=ignore_type
+        )
 
     def equivalent(self, other, rtol=None, atol=None, traceback=False):
         '''True if two constructs are equal, False otherwise.
@@ -3166,7 +3072,7 @@ class PropertiesData(Properties):
         # ------------------------------------------------------------
         # Check the special attributes
         # ------------------------------------------------------------
-        self_special  = self._private['special_attributes']
+        self_special = self._private['special_attributes']
         other_special = other._private['special_attributes']
         if set(self_special) != set(other_special):
             if traceback:
@@ -3197,7 +3103,6 @@ class PropertiesData(Properties):
             return False
 
         return True
-
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -3299,7 +3204,7 @@ class PropertiesData(Properties):
     <Units: days since 2000-1-1>
 
         '''
-        def _convert_reftime_units(value, units, reftime): #, calendar):
+        def _convert_reftime_units(value, units, reftime):  # , calendar):
             '''sads
 
     :Parameters:
@@ -3337,36 +3242,43 @@ class PropertiesData(Properties):
                           calendar=units0._calendar)
         elif not getattr(units, 'isreftime', False):
             raise ValueError(
-                "New units must be reference time units, not {0!r}".format(units))
+                "New units must be reference time units, not {0!r}".format(
+                    units)
+            )
 
         if units0._units_since_reftime in _month_units:
             if calendar_months:
-                units0 = Units('calendar_'+units0.units, calendar=units0._calendar)
+                units0 = Units(
+                    'calendar_'+units0.units, calendar=units0._calendar)
             else:
-                units0 = Units('days since '+units0.units.split(' since ')[1],
-                                calendar=units0._calendar)
+                units0 = Units(
+                    'days since ' + units0.units.split(' since ')[1],
+                    calendar=units0._calendar
+                )
                 v.Units = units0
         elif units0._units_since_reftime in _year_units:
             if calendar_years:
-                units0 = Units('calendar_'+units0.units, calendar=units0._calendar)
+                units0 = Units(
+                    'calendar_' + units0.units, calendar=units0._calendar)
             else:
-                units0 = Units('days since '+units0.units.split(' since ')[1],
-                                calendar=units0._calendar)
+                units0 = Units(
+                    'days since ' + units0.units.split(' since ')[1],
+                    calendar=units0._calendar
+                )
                 v.Units = units0
-
 
         # Not LAMAed!
         v.set_data(Data(
             numpy_vectorize(
-                functools_partial(_convert_reftime_units,
-                                  units=units0._units_since_reftime,
-                                  reftime=dt(units0.reftime, calendar=units0._calendar),
-                                  ),
+                functools_partial(
+                    _convert_reftime_units, units=units0._units_since_reftime,
+                    reftime=dt(units0.reftime, calendar=units0._calendar),
+                ),
                 otypes=[object])(v),
-            units=units))
+            units=units)
+        )
 
         return v
-
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -3423,7 +3335,6 @@ class PropertiesData(Properties):
             _inplace_enabled_define_and_cleanup(self), 'flatten', axes,
             inplace=inplace)
 
-
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def floor(self, inplace=False, i=False):
@@ -3463,7 +3374,6 @@ class PropertiesData(Properties):
         return self._apply_data_oper(
             _inplace_enabled_define_and_cleanup(self), 'floor',
             inplace=inplace, i=i, delete_props=True)
-
 
     def match_by_naxes(self, *naxes):
         '''Whether or not the data has a given dimensionality.
@@ -3518,7 +3428,6 @@ class PropertiesData(Properties):
         # --- End: for
 
         return False
-
 
     def match_by_units(self, *units, exact=True):
         '''Whether or not the construct has given units.
@@ -3601,7 +3510,6 @@ class PropertiesData(Properties):
 
         return ok
 
-
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
@@ -3636,7 +3544,6 @@ class PropertiesData(Properties):
             return data.all()
 
         return False
-
 
     def allclose(self, y, atol=None, rtol=None):
         '''Test whether all data are element-wise equal to other,
@@ -3701,7 +3608,6 @@ class PropertiesData(Properties):
 
         return data.allclose(y_data, rtol=rtol, atol=atol)
 
-
     def any(self):
         '''Test whether any data elements evaluate to True.
 
@@ -3739,7 +3645,6 @@ class PropertiesData(Properties):
 
         return False
 
-
     def files(self):
         '''Return the names of any files containing parts of the data array.
 
@@ -3769,7 +3674,6 @@ class PropertiesData(Properties):
             out = data.files()
 
         return out
-
 
     def fill_value(self, default=None):
         '''Return the data array missing data value.
@@ -3850,7 +3754,6 @@ class PropertiesData(Properties):
 
         return fillval
 
-
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def flip(self, axes=None, inplace=False, i=False):
@@ -3893,7 +3796,6 @@ class PropertiesData(Properties):
         return self._apply_data_oper(
             _inplace_enabled_define_and_cleanup(self), 'flip', axes,
             inplace=inplace, i=i)
-
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -3939,7 +3841,6 @@ class PropertiesData(Properties):
         return self._apply_data_oper(
             _inplace_enabled_define_and_cleanup(self), 'exp',
             inplace=inplace, i=i, delete_props=True)
-
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -4273,7 +4174,6 @@ class PropertiesData(Properties):
             _inplace_enabled_define_and_cleanup(self), 'tan',
             inplace=inplace, i=i, delete_props=True)
 
-
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def tanh(self, inplace=False):
@@ -4332,7 +4232,6 @@ class PropertiesData(Properties):
             _inplace_enabled_define_and_cleanup(self), 'tanh',
             inplace=inplace, delete_props=True)
 
-
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def sinh(self, inplace=False):
@@ -4390,7 +4289,6 @@ class PropertiesData(Properties):
             _inplace_enabled_define_and_cleanup(self), 'sinh',
             inplace=inplace, delete_props=True)
 
-
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def cosh(self, inplace=False):
@@ -4446,7 +4344,6 @@ class PropertiesData(Properties):
         return self._apply_data_oper(
             _inplace_enabled_define_and_cleanup(self), 'cosh',
             inplace=inplace, delete_props=True)
-
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -4505,7 +4402,6 @@ class PropertiesData(Properties):
             _inplace_enabled_define_and_cleanup(self), 'log', base,
             inplace=inplace, i=i, delete_props=True)
 
-
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def trunc(self, inplace=False, i=False):
@@ -4547,7 +4443,6 @@ class PropertiesData(Properties):
             _inplace_enabled_define_and_cleanup(self), 'trunc',
             inplace=inplace, i=i)
 
-
     def unique(self):
         '''The unique elements of the data.
 
@@ -4578,7 +4473,6 @@ class PropertiesData(Properties):
 
         raise ValueError(
             "ERROR: Can't get unique values when there is no data array")
-
 
     @_deprecated_kwarg_check('relaxed_identity')
     def identity(self, default='', strict=False, relaxed=False,
@@ -4654,10 +4548,12 @@ class PropertiesData(Properties):
         '''
         if nc_only:
             if strict:
-                raise ValueError("'strict' and 'nc_only' parameters cannot both be True")
+                raise ValueError(
+                    "'strict' and 'nc_only' parameters cannot both be True")
 
             if relaxed:
-                raise ValueError("'relaxed' and 'nc_only' parameters cannot both be True")
+                raise ValueError(
+                    "'relaxed' and 'nc_only' parameters cannot both be True")
 
             n = self.nc_get_variable(None)
             if n is not None:
@@ -4687,7 +4583,7 @@ class PropertiesData(Properties):
         if strict:
             return default
 
-        for prop in  ('cf_role', 'axis', 'long_name'):
+        for prop in ('cf_role', 'axis', 'long_name'):
             n = self.get_property(prop, None)
             if n is not None:
                 return '{0}={1}'.format(prop, n)
@@ -4703,7 +4599,6 @@ class PropertiesData(Properties):
         # --- End: for
 
         return default
-
 
     def identities(self):
         '''Return all possible identities.
@@ -4755,7 +4650,8 @@ class PropertiesData(Properties):
                 out = [i]
             else:
                 out0 = out[0]
-                if '=' in out0 or '%' in out0 or True in [a == out0 for a in 'XYZT']:
+                if ('=' in out0 or '%' in out0 or
+                        True in [a == out0 for a in 'XYZT']):
                     out.insert(0, i)
                 else:
                     out.insert(1, i)
@@ -4768,7 +4664,6 @@ class PropertiesData(Properties):
 
         return out
 
-
     def inspect(self):
         '''Inspect the object for debugging.
 
@@ -4779,8 +4674,7 @@ class PropertiesData(Properties):
         `None`
 
         '''
-        print(cf_inspect(self)) # pragma: no cover
-
+        print(cf_inspect(self))  # pragma: no cover
 
     def get_data(self, default=ValueError()):
         '''Return the data.
@@ -4825,7 +4719,6 @@ class PropertiesData(Properties):
 
         '''
         return super().get_data(default=default, _units=False)
-
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -4875,14 +4768,14 @@ class PropertiesData(Properties):
         else:
             if not v.Units.isreftime:
                 raise ValueError(
-                    "Can't override the calender of non-reference-time units: {0!r}".format(
-                        self.Units))
+                    "Can't override the calender of non-reference-time "
+                    "units: {0!r}".format(self.Units)
+                )
 
-            PropertiesData.Units.fset(v, Units(getattr(v.Units, 'units', None),
-                                               calendar=calendar))
+            PropertiesData.Units.fset(
+                v, Units(getattr(v.Units, 'units', None), calendar=calendar))
 
         return v
-
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -4949,7 +4842,6 @@ class PropertiesData(Properties):
 
         return v
 
-
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def rint(self, inplace=False, i=False):
@@ -4986,7 +4878,6 @@ class PropertiesData(Properties):
         return self._apply_data_oper(
             _inplace_enabled_define_and_cleanup(self), 'rint',
             inplace=inplace, i=i)
-
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -5038,7 +4929,6 @@ class PropertiesData(Properties):
             _inplace_enabled_define_and_cleanup(self), 'round',
             inplace=inplace, i=i, decimals=decimals)
 
-
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def roll(self, iaxis, shift, inplace=False, i=False):
@@ -5070,7 +4960,6 @@ class PropertiesData(Properties):
         return self._apply_data_oper(
             _inplace_enabled_define_and_cleanup(self), 'roll',  iaxis,
             shift, inplace=inplace, i=i)
-
 
     def set_data(self, data, copy=True):
         '''Set the data.
@@ -5127,7 +5016,6 @@ class PropertiesData(Properties):
             data = data.copy()
 
         self._set_component('data', data, copy=False)
-
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -5189,14 +5077,14 @@ class PropertiesData(Properties):
             if y_data is None:
                 raise ValueError(
                     "ERROR: Can't set data from {} with no data array".format(
-                        y.__class__.__name__))
+                        y.__class__.__name__)
+                )
 
             y = y_data
 
         data.where(condition, x, y, inplace=True, _debug=_debug)
 
         return v
-
 
     # ----------------------------------------------------------------
     # Aliases
@@ -5232,7 +5120,6 @@ class PropertiesData(Properties):
         '''
         _DEPRECATION_ERROR_ATTRIBUTE(self, 'attributes')
 
-
     @property
     def Data(self):
         '''The `Data` object containing the data array.
@@ -5243,18 +5130,22 @@ class PropertiesData(Properties):
         '''
         _DEPRECATATION_ERROR_ATTRIBUTE(
             self, 'Data',
-            "Use 'data' attribute or 'get_data' method instead.") # pragma: no cover
+            "Use 'data' attribute or 'get_data' method instead."
+        )  # pragma: no cover
+
     @data.setter
     def Data(self, value):
         _DEPRECATATION_ERROR_ATTRIBUTE(
             self, 'Data',
-            "Use 'data' attribute or 'set_data' method instead.") # pragma: no cover
+            "Use 'data' attribute or 'set_data' method instead."
+        )  # pragma: no cover
+
     @data.deleter
     def Data(self):
         _DEPRECATATION_ERROR_ATTRIBUTE(
             self, 'Data',
-            "Use 'data' attribute or 'del_data' method instead.") # pragma: no cover
-
+            "Use 'data' attribute or 'del_data' method instead."
+        )  # pragma: no cover
 
     @property
     def dtvarray(self):
@@ -5263,8 +5154,7 @@ class PropertiesData(Properties):
         Deprecated at version 3.0.0.
 
         '''
-        _DEPRECATION_ERROR_ATTRIBUTE(self, 'dtvarray') # pragma: no cover
-
+        _DEPRECATION_ERROR_ATTRIBUTE(self, 'dtvarray')  # pragma: no cover
 
     @property
     def hasbounds(self):
@@ -5280,8 +5170,8 @@ class PropertiesData(Properties):
     ...     b = c.bounds
 
         '''
-        _DEPRECATION_ERROR_ATTRIBUTE(self, 'hasbounds', "Use 'has_bounds' method instead")
-
+        _DEPRECATION_ERROR_ATTRIBUTE(
+            self, 'hasbounds', "Use 'has_bounds' method instead")
 
     @property
     def hasdata(self):
@@ -5299,8 +5189,8 @@ class PropertiesData(Properties):
     ...     print(f.data)
 
         '''
-        _DEPRECATION_ERROR_ATTRIBUTE(self, 'hasdata', "Use 'has_data' method instead")
-
+        _DEPRECATION_ERROR_ATTRIBUTE(
+            self, 'hasdata', "Use 'has_data' method instead")
 
     @property
     def unsafe_array(self):
@@ -5311,8 +5201,7 @@ class PropertiesData(Properties):
         '''
         _DEPRECATION_ERROR_ATTRIBUTE(
             self, 'unsafe_array',
-            "Use 'array' attribute instead.") # pragma: no cover
-
+            "Use 'array' attribute instead.")  # pragma: no cover
 
     def asdatetime(self, i=False):
         '''Convert the internal representation of data array elements to
@@ -5341,8 +5230,7 @@ class PropertiesData(Properties):
     dtype('O')
 
         '''
-        _DEPRECATION_ERROR_METHOD(self, 'asdatetime') # pragma: no cover
-
+        _DEPRECATION_ERROR_METHOD(self, 'asdatetime')  # pragma: no cover
 
     def asreftime(self, i=False):
         '''Convert the internal representation of data array elements
@@ -5371,8 +5259,7 @@ class PropertiesData(Properties):
     dtype('float64')
 
         '''
-        _DEPRECATION_ERROR_METHOD(self, 'asreftime') # pragma: no cover
-
+        _DEPRECATION_ERROR_METHOD(self, 'asreftime')  # pragma: no cover
 
     def expand_dims(self, position=0, i=False):
         '''Insert a size 1 axis into the data array.
@@ -5383,8 +5270,7 @@ class PropertiesData(Properties):
         '''
         _DEPRECATION_ERROR_METHOD(
             self, 'expand_dims',
-            "Use method 'insert_dimension' instead.") # pragma: no cover
-
+            "Use method 'insert_dimension' instead.")  # pragma: no cover
 
     def insert_data(self, data, copy=True):
         '''Deprecated at version 3.0.0. Use method 'set_data' instead.
@@ -5392,8 +5278,7 @@ class PropertiesData(Properties):
         '''
         _DEPRECATION_ERROR_METHOD(
             self, 'insert_data',
-            "Use method 'set_data' instead.") # pragma: no cover
-
+            "Use method 'set_data' instead.")  # pragma: no cover
 
     def name(self, default=None, identity=False, ncvar=False,
              relaxed_identity=None):
@@ -5404,8 +5289,7 @@ class PropertiesData(Properties):
         '''
         _DEPRECATION_ERROR_METHOD(
             self, 'name',
-            "Use method 'identity' instead") # pragma: no cover
-
+            "Use method 'identity' instead")  # pragma: no cover
 
     def remove_data(self):
         '''Remove and return the data array.
@@ -5415,15 +5299,13 @@ class PropertiesData(Properties):
         '''
         _DEPRECATION_ERROR_METHOD(
             self, 'remove_data',
-            "Use method 'del_data' instead.") # pragma: no cover
-
+            "Use method 'del_data' instead.")  # pragma: no cover
 
     def select(self, *args, **kwargs):
         '''Deprecated at version 3.0.0.
 
         '''
-        _DEPRECATION_ERROR_METHOD(self, 'select') # pragma: no cover
-
+        _DEPRECATION_ERROR_METHOD(self, 'select')  # pragma: no cover
 
 # --- End: class
 
@@ -5440,7 +5322,6 @@ class Subspace:
         '''
         self.variable = variable
 
-
     def __getitem__(self, indices):
         '''Called to implement evaluation of x[indices].
 
@@ -5448,7 +5329,6 @@ class Subspace:
 
         '''
         return self.variable[indices]
-
 
     def __setitem__(self, indices, value):
         '''Called to implement assignment to x[indices]
@@ -5460,6 +5340,5 @@ class Subspace:
             value = value.data
 
         self.variable[indices] = value
-
 
 # --- End: class
