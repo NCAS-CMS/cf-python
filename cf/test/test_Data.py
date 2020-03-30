@@ -72,7 +72,7 @@ class DataTest(unittest.TestCase):
 
         self.test_only = []
 #        self.test_only = ['NOTHING!!!!!']
-        self.test_only = ['test_Data_datum']
+#        self.test_only = ['test_Data_datum']
         
 #        self.test_only = [
 #                          'test_Data_trigonometric_hyperbolic']

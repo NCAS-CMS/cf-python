@@ -13011,10 +13011,6 @@ False
         '''
         d = _inplace_enabled_define_and_cleanup(self)
 
-        detatch_mask = False
-        if preserve_invalid and numpy_ma_isMA(d.array):
-            detatch_mask = True
-
         config = d.partition_configuration(readonly=False)
 
         datatype = d.dtype
@@ -13025,14 +13021,17 @@ False
 
             # Steps for masked data when want to presereve invalid values:
             # Step 1. extract the non-masked data and the mask separately
+            detatch_mask = preserve_invalid and numpy_ma_isMA(array)
             if detatch_mask:
                 array = array.data
+                # array is an ndarray, partition._subarray is the MaskedArray
                 mask = partition._subarray.mask
 
             if out:
                 f(array, out=array, **kwargs)
             else:
-                array = f(array, **kwargs)  # Step 2: apply op to data alone
+                # Step 2: apply op to data alone
+                array = f(array, **kwargs)
 
             p_datatype = array.dtype
             if datatype != p_datatype:
