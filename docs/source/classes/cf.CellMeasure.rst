@@ -236,6 +236,7 @@ Data
    ~cf.CellMeasure.chunk
    ~cf.CellMeasure.close
    ~cf.CellMeasure.convert_reference_time
+   ~cf.CellMeasure.creation_commands
    ~cf.CellMeasure.cyclic
    ~cf.CellMeasure.files
    ~cf.CellMeasure.has_bounds

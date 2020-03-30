@@ -20,6 +20,11 @@ import cf
 
 import cfdm
 
+print('\ncf environment:')
+print('-----------------')
+cf.environment()
+print()
+
 cfdm_version = cfdm.__version__
 
 def _read(fname):
@@ -56,6 +61,13 @@ def _get_year():
     return str(datetime.datetime.now().year)
 
 
+def _get_date():
+    '''Get the current calendar year.
+
+    '''
+    return str(datetime.date.today())
+
+
 # If extensions (or modules to document with autodoc) are in another
 # directory, add these directories to sys.path here. If the directory
 # is relative to the documentation root, use os.path.abspath to make
@@ -66,7 +78,7 @@ sys.path.insert(0, os.path.abspath('../..'))
 # -- General configuration ----------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
-needs_sphinx = '1.0'
+needs_sphinx = '2.3.1'
 
 #rst_prolog = """
 #.. |CF| replace:: """+_get_cf_version()+"""
@@ -78,7 +90,7 @@ needs_sphinx = '1.0'
 extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.autosummary',
 #              'sphinx.ext.viewcode',
-              'sphinx.ext.linkcode',
+#              'sphinx.ext.linkcode',
               'sphinx.ext.mathjax',
               'sphinx.ext.graphviz',
 #              'sphinx.ext.inheritance_diagram',
@@ -155,7 +167,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'Python cf package'
-copyright = _get_year()+', David Hassell'
+copyright = _get_year()+', NCAS | Page built on '+_get_date()
+author = "David Hassell, Sadie Bartholomew"
 
 # The version info for the project you're documenting, acts as
 # replacement for |version| and |release|, also used in various other
@@ -296,10 +309,11 @@ html_use_smartypants = True
 # Custom sidebar templates, maps document names to template names.
 #html_sidebars = {'**': ['my_con.html', 'globaltoc.html', 'sourcelink.html']}
 html_sidebars = { '**': ['about.html',
+                         'searchbox.html',
                          'globaltoc.html',
                          'relations.html',
                          'sourcelink.html',
-                         'searchbox.html']
+]
 }
 
 # Additional templates that should be rendered to pages, maps page
@@ -351,7 +365,7 @@ htmlhelp_basename = 'cfdoc'
 # [howto/manual]).
 latex_documents = [
     ('index', 'cf.tex', 'cf-python Documentation',
-     'David Hassell', 'manual'),
+     'NCAS', 'manual'),
     ]
 
 # The name of an image file (relative to this directory) to place at
@@ -387,7 +401,7 @@ latex_elements = {'papersize': 'a4paper'}
 # description, authors, manual section).
 man_pages = [
     ('index', 'cf', 'cf Documentation',
-     'David Hassell', 1)
+     'NCAS', 1)
     ]
 
 # Configurecopybutton

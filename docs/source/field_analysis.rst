@@ -474,10 +474,7 @@ Specifying weighting by horizontal cell area may also use the special
 
 An alternative technique for specifying weights is to set the
 *weights* keyword to the output of a call to the `~Field.weights`
-method; or set the *weights* keyword to `True`. The latter case is
-equivalent to specifying, by their identities, the axes being
-collapsed, and will raise an exception if weights can't be calculated
-for all collapse axes of size greater than 1.
+method.
 		   
 .. code-block:: python
    :caption: *Alternative syntax for specifying weights.*
@@ -492,17 +489,6 @@ for all collapse axes of size greater than 1.
                    : latitude(1) = [0.0] degrees_north
                    : longitude(1) = [180.0] degrees_east
                    : air_pressure(1) = [850.0] hPa
-   >>> b = a.collapse('area: mean', weights=True)
-   >>> print(b)
-   Field: air_potential_temperature (ncvar%air_potential_temperature)
-   ------------------------------------------------------------------
-   Data            : air_potential_temperature(time(120), latitude(1), longitude(1)) K
-   Cell methods    : area: mean area: mean
-   Dimension coords: time(120) = [1959-12-16 12:00:00, ..., 1969-11-16 00:00:00]
-                   : latitude(1) = [0.0] degrees_north
-                   : longitude(1) = [180.0] degrees_east
-                   : air_pressure(1) = [850.0] hPa
-
 
 See the `~Field.weights` method for full details on how weights may be
 specified.
@@ -1665,7 +1651,7 @@ the other are assumed.
 
 If the physical nature of the result differs from both operands, then
 the "standard_name" and "long_name" properties are removed. This is
-the case if the units of the result differ from bother operands, or if
+the case if the units of the result differ from both operands, or if
 they have different standard names.
 
 .. code-block:: python
@@ -1680,14 +1666,38 @@ they have different standard names.
     'units=K',
     'standard_name=air_temperature',
     'ncvar%ta']
-   >>> u = t * cf.Data(10, 'ms-1')
+   >>> u = t * cf.Data(10, 'm s-1')
    >>> u.identities()
    ['Conventions=CF-1.7',
     'project=research',
-    'units=1000 s-1.K',
+    'units=m.s-1.K',
     'ncvar%ta']
+	     
+The :ref:`domain <domain>` metadata constructs of the result of a
+successful arithmetical operation between two field constructs are
+unambiguously well defined: The domain metadata constructs of the
+result of a succesful operation are copied from the left hand side
+(LHS) operand, except when a coordinate construct in the LHS operand
+has size 1 and the corresponding coordinate construct in right hand
+side (RHS) field construct operand has size greater than 1. In this
+case the coordinate construct from the RHS operand is used in the
+result, to match up with the data broadcasting that will have occured
+during the operation.
 
-.. note:: Care must be taken when combining a field construct with a
+.. _ambiguous-result:
+
+In circumstances when domain metadata constructs in the result can not
+be inferred unambiguously then an exception will be raised. For
+example, this will be the case if both operands are field constructs
+with corresponding coordinate constructs of size greater than 1 *and
+with different coordinate values*. In such circumstances, the field
+constructs' data instances may be operated on directly, bypassing any
+checks on the metadata. See :ref:`Operating-on-the-field-constructs-data`
+for more details. *(This will be made easier in a future release with
+a new function for combining such field constructs.)*
+
+
+.. warning:: Care must be taken when combining a field construct with a
           `numpy` array or a `Data` instance, due to the ways in which
           both of these objects allow themselves to be combined with
           other types:
@@ -1724,8 +1734,7 @@ they have different standard names.
 	     cf.field.Field
 	     >>> type(cf.Data(b) * t)
 	     cf.data.data.Data
-	     
-
+     
 .. _Unary-operations:
 
 Unary operations
@@ -1840,6 +1849,28 @@ result, which also has no units.
     'units=',
     'ncvar%q']
 
+The :ref:`domain <domain>` metadata constructs of the result of a
+successful relational operation between two field constructs are
+unambiguously well defined: The domain metadata constructs of the
+result of a succesful operation are copied from the left hand side
+(LHS) operand, except when a coordinate construct in the LHS operand
+has size 1 and the corresponding coordinate construct in right hand
+side (RHS) field construct operand has size greater than 1. In this
+case the coordinate construct from the RHS operand is used in the
+result, to match up with the data broadcasting that will have occured
+during the operation.
+
+In circumstances when domain metadata constructs in the result can not
+be inferred unambiguously then an exception will be raised. For
+example, this will be the case if both operands are field constructs
+with corresponding coordinate constructs of size greater than 1 *and
+with different coordinate values*. In such circumstances, the field
+constructs' data instances may be operated on directly, bypassing any
+checks on the metadata. See :ref:`Operating-on-the-field-constructs-data`
+for more details. *(This will be made easier in a future release with
+a new function for combining such field constructs.)*
+
+.. _Arithmetical-and-relational-operations-with-insufficient-metadata:
 
 Arithmetical and relational operations with insufficient metadata
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1869,7 +1900,8 @@ compatible dimensions, then there are various techniques that allow
 the operation to proceed:
 
 * **Option 1:** The operation may applied to the field constructs'
-  data instances instead. See below for more details.
+  data instances instead. See
+  :ref:`Operating-on-the-field-constructs-data` for more details.
 
 * **Option 2:** If the mapping is not possible due to the absence of
   `!standard_name` properties (or `!id` attributes) on metadata
@@ -1882,17 +1914,48 @@ the operation to proceed:
 
 * **Option 3:** Add more metadata to the field and metadata constructs.
 
-For **Option 1** the resulting data may then be inserted into a copy
-of one of the field constructs, either with the `~cf.Field.set_data`
-method of the field construct, or with :ref:`indexed assignment
-<Assignment-by-index>`. The former technique is faster and more memory
-efficient, but the latter technique allows
+.. _Operating-on-the-field-constructs-data:
+
+Operating on the field constructs' data
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+:ref:`Arithmetical <Arithmetical-operations>` and :ref:`relational
+<Relational-operations>` operations between may also be carried out on
+their data instances, thereby bypassing any reference to, or checks
+on, the metadata constucts. This can be useful if there
+:ref:`insufficient metadata
+<Arithmetical-and-relational-operations-with-insufficient-metadata>`
+for determining if the two field constructs are compatible; or if the
+domain metadata constructs of the result can not be
+:ref:`unambiguously defined <ambiguous-result>`.
+     
+In such cases the data instances may be operated on instead and the
+result then inserted into one of the field constructs, either with the
+`~cf.Field.set_data` method of the field construct, or with
+:ref:`indexed assignment <Assignment-by-index>`. The former technique
+is faster and more memory efficient, but the latter technique allows
 broadcasting. Alternatively, for augmented assignments, the field
 construct data may be changed in-place.
 
-Note that it is assumed, and not checked, that the dimensions of both
-`~cf.Data` instance operands are already in the correct order for
-physically meaningful broadcasting to occur.
+It is up to the user to ensure that the data instances are consistent
+in terms of size 1 dimensions (to satisfy the `numpy broadcasting
+rules`_), dimension order and dimension direction, and that the
+resulting data is compatible with the metadata of the field constuct
+which will contain it. Automatic units conversions are, however, still
+accounted for when combining the data instances.
+
+
+.. For **Option 1** the resulting data may then be inserted into a copy
+   of one of the field constructs, either with the `~cf.Field.set_data`
+   method of the field construct, or with :ref:`indexed assignment
+   <Assignment-by-index>`. The former technique is faster and more memory
+   efficient, but the latter technique allows
+   broadcasting. Alternatively, for augmented assignments, the field
+   construct data may be changed in-place.
+   
+   Note that it is assumed, and not checked, that the dimensions of both
+   `~cf.Data` instance operands are already in the correct order for
+   physically meaningful broadcasting to occur.
 
 .. code-block:: python
    :caption: *Operate on the data and use 'set_data' to put the
@@ -2184,10 +2247,10 @@ If the wind field is defined on a spherical latitude-longitude
 domain then a correction factor is included:
 
 .. math:: \zeta _{spherical} = \frac{\delta v}{\delta x} -
-          \frac{\delta u}{\delta y} + \frac{u}{a}tan(\phi)
+          \frac{\delta u}{\delta y} + \frac{u}{r}tan(\phi)
 
 where :math:`u` and :math:`v` denote the longitudinal and latitudinal
-components of the horizontal wind field; :math:`a` is the radius of
+components of the horizontal wind field; :math:`r` is the radius of
 the Earth; and :math:`\phi` is the latitude at each point.
 
 The `cf.relative_vorticity` function creates a relative vorticity
@@ -2236,6 +2299,8 @@ derivative wraps around by default.
 .. External links
 
 .. _Tripolar:                 https://doi.org/10.1007%2FBF00211684
+
+.. _numpy broadcasting rules: https://docs.scipy.org/doc/numpy/user/basics.broadcasting.html
 
 .. External links to the CF conventions (will need updating with new versions of CF)
    

@@ -60,6 +60,7 @@ The `cf` package can:
 * read, write, and create data that have been compressed by convention
   (i.e. ragged or gathered arrays), whilst presenting a view of the
   data in its uncompressed form,
+* read, write, and create coordinates defined by geometry cells,
 * combine field constructs arithmetically,
 * manipulate field construct data by arithmetical and trigonometrical
   operations,
@@ -72,6 +73,15 @@ The `cf` package can:
 * calculate derivatives of field constructs,
 * create field constructs to create derived quantities (such as
   vorticity).
+
+Hierarchical groups
+-------------------
+
+Hierarchical groups provide a powerful mechanism to structure
+variables within datasets. A future release of cf will include support
+for netCDF4 files containing data organised in hierarchical groups,
+but this is not available in version 3.2.0 (even though it is allowed
+in CF-1.8).
 
 > **This version of cf is for Python 3 only** and there are
 > [incompatible differences between versions 2.x and

@@ -105,6 +105,7 @@ class QueryTest(unittest.TestCase):
                 q5.evaluate(cf.Data([1, 2], l_unit)).equals(
                     cf.Data([True, False]))
             )
+            self.assertTrue(q5.evaluate(1, l_unit))
 
     def test_Query_as_where_condition(self):
         """Check queries work correctly as conditions in 'where' method."""

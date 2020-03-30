@@ -1,3 +1,6 @@
+from functools import reduce
+from operator  import mul    
+
 from numpy import size as numpy_size
 
 from . import PropertiesData
@@ -17,12 +20,12 @@ from ..units        import Units
 
 from ..data.data import Data
 
-_debug=False
+_debug = False
 
 _units_None = Units()
 
 _month_units = ('month', 'months')
-_year_units  = ('year', 'years', 'yr')
+_year_units = ('year', 'years', 'yr')
 
 
 class PropertiesDataBounds(PropertiesData):
@@ -46,10 +49,10 @@ class PropertiesDataBounds(PropertiesData):
         arg0 = indices[0]
         if isinstance(arg0, str) and arg0 == 'mask':
             auxiliary_mask = indices[:2]
-            indices2       = indices[2:]
+            indices2 = indices[2:]
         else:
             auxiliary_mask = None
-            indices2       = indices
+            indices2 = indices
 
         indices, roll = parse_indices(self.shape, indices2, cyclic=True)
 
@@ -65,9 +68,9 @@ class PropertiesDataBounds(PropertiesData):
 
                 new = new.roll(iaxis, shift)
         else:
-            new = self.copy() #data=False)
+            new = self.copy()  # data=False)
 
-        data = self.data
+##        data = self.data
 
         if auxiliary_mask:
             findices = tuple(auxiliary_mask) + tuple(indices)
@@ -76,23 +79,39 @@ class PropertiesDataBounds(PropertiesData):
 
         if _debug:
             cname = self.__class__.__name__
-            print('{}.__getitem__: shape    = {}'.format(cname, self.shape)) # pragma: no cover
-            print('{}.__getitem__: indices2 = {}'.format(cname, indices2)) # pragma: no cover
-            print('{}.__getitem__: indices  = {}'.format(cname, indices)) # pragma: no cover
-            print('{}.__getitem__: findices = {}'.format(cname, findices)) # pragma: no cover
+            print(
+                '{}.__getitem__: shape    = {}'.format(cname, self.shape)
+            )  # pragma: no cover
+            print(
+                '{}.__getitem__: indices2 = {}'.format(cname, indices2)
+            )  # pragma: no cover
+            print(
+                '{}.__getitem__: indices  = {}'.format(cname, indices)
+            )  # pragma: no cover
+            print(
+                '{}.__getitem__: findices = {}'.format(cname, findices)
+            )  # pragma: no cover
 
-        new.set_data(data[findices], copy=False)
+        data = self.get_data(None)
+        if data is not None:
+            new.set_data(data[findices], copy=False)
 
+        # Subspace the interior ring array, if there is one. 
+        interior_ring = self.get_interior_ring(None) 
+        if interior_ring is not None:
+             new.set_interior_ring(interior_ring[tuple(indices)], copy=False) 
+ 
         # Subspace the bounds, if there are any
         bounds = self.get_bounds(None)
         if bounds is not None:
             bounds_data = bounds.get_data(None)
             if bounds_data is not None:
                 findices = list(findices)
-                if data.ndim <= 1:
+#                if data.ndim <= 1 and not self.has_geometry():
+                if bounds.ndim <= 2:
                     index = indices[0]
                     if isinstance(index, slice):
-                        if index.step < 0:
+                        if index.step and index.step < 0:
                             # This scalar or 1-d variable has been
                             # reversed so reverse its bounds (as per
                             # 7.1 of the conventions)
@@ -105,11 +124,12 @@ class PropertiesDataBounds(PropertiesData):
                 # --- End: if
 
                 if auxiliary_mask:
-                    findices[1] = [mask.insert_dimension(-1) for mask in findices[1]]
+                    findices[1] = [mask.insert_dimension(-1) for mask in
+                                   findices[1]]
 
                 if _debug:
                     print('{}.__getitem__: findices for bounds ='.format(
-                        self.__class__.__name__, findices)) # pragma: no cover
+                        self.__class__.__name__, findices))  # pragma: no cover
 
                 new.bounds.set_data(bounds_data[tuple(findices)], copy=False)
         # --- End: if
@@ -120,7 +140,6 @@ class PropertiesDataBounds(PropertiesData):
         # Return the new bounded variable
         return new
 
-
     def __eq__(self, y):
         '''The rich comparison operator ``==``
 
@@ -128,7 +147,6 @@ class PropertiesDataBounds(PropertiesData):
 
         '''
         return self._binary_operation(y, '__eq__', False)
-
 
     def __ne__(self, y):
         '''The rich comparison operator ``!=``
@@ -138,7 +156,6 @@ class PropertiesDataBounds(PropertiesData):
         '''
         return self._binary_operation(y, '__ne__', False)
 
-
     def __ge__(self, y):
         '''The rich comparison operator ``>=``
 
@@ -146,7 +163,6 @@ class PropertiesDataBounds(PropertiesData):
 
         '''
         return self._binary_operation(y, '__ge__', False)
-
 
     def __gt__(self, y):
         '''The rich comparison operator ``>``
@@ -156,7 +172,6 @@ class PropertiesDataBounds(PropertiesData):
         '''
         return self._binary_operation(y, '__gt__', False)
 
-
     def __le__(self, y):
         '''The rich comparison operator ``<=``
 
@@ -164,7 +179,6 @@ class PropertiesDataBounds(PropertiesData):
 
         '''
         return self._binary_operation(y, '__le__', False)
-
 
     def __lt__(self, y):
         '''The rich comparison operator ``<``
@@ -174,7 +188,6 @@ class PropertiesDataBounds(PropertiesData):
         '''
         return self._binary_operation(y, '__lt__', False)
 
-
     def __and__(self, other):
         '''The binary bitwise operation ``&``
 
@@ -182,7 +195,6 @@ class PropertiesDataBounds(PropertiesData):
 
         '''
         return self._binary_operation(other, '__and__', False)
-
 
     def __iand__(self, other):
         '''The augmented bitwise assignment ``&=``
@@ -192,7 +204,6 @@ class PropertiesDataBounds(PropertiesData):
         '''
         return self._binary_operation(other, '__iand__', False)
 
-
     def __rand__(self, other):
         '''The binary bitwise operation ``&`` with reflected operands
 
@@ -200,7 +211,6 @@ class PropertiesDataBounds(PropertiesData):
 
         '''
         return self._binary_operation(other, '__rand__', False)
-
 
     def __or__(self, other):
         '''The binary bitwise operation ``|``
@@ -210,7 +220,6 @@ class PropertiesDataBounds(PropertiesData):
         '''
         return self._binary_operation(other, '__or__', False)
 
-
     def __ior__(self, other):
         '''The augmented bitwise assignment ``|=``
 
@@ -218,7 +227,6 @@ class PropertiesDataBounds(PropertiesData):
 
         '''
         return self._binary_operation(other, '__ior__', False)
-
 
     def __ror__(self, other):
         '''The binary bitwise operation ``|`` with reflected operands
@@ -236,7 +244,6 @@ class PropertiesDataBounds(PropertiesData):
         '''
         return self._binary_operation(other, '__xor__', False)
 
-
     def __ixor__(self, other):
         '''The augmented bitwise assignment ``^=``
 
@@ -244,7 +251,6 @@ class PropertiesDataBounds(PropertiesData):
 
         '''
         return self._binary_operation(other, '__ixor__', False)
-
 
     def __rxor__(self, other):
         '''The binary bitwise operation ``^`` with reflected operands
@@ -254,7 +260,6 @@ class PropertiesDataBounds(PropertiesData):
         '''
         return self._binary_operation(other, '__rxor__', False)
 
-
     def __lshift__(self, y):
         '''The binary bitwise operation ``<<``
 
@@ -262,7 +267,6 @@ class PropertiesDataBounds(PropertiesData):
 
         '''
         return self._binary_operation(y, '__lshift__', False)
-
 
     def __ilshift__(self, y):
         '''The augmented bitwise assignment ``<<=``
@@ -272,7 +276,6 @@ class PropertiesDataBounds(PropertiesData):
         '''
         return self._binary_operation(y, '__ilshift__', False)
 
-
     def __rlshift__(self, y):
         '''The binary bitwise operation ``<<`` with reflected operands
 
@@ -280,7 +283,6 @@ class PropertiesDataBounds(PropertiesData):
 
         '''
         return self._binary_operation(y, '__rlshift__', False)
-
 
     def __rshift__(self, y):
         '''The binary bitwise operation ``>>``
@@ -290,7 +292,6 @@ class PropertiesDataBounds(PropertiesData):
         '''
         return self._binary_operation(y, '__rshift__', False)
 
-
     def __irshift__(self, y):
         '''The augmented bitwise assignment ``>>=``
 
@@ -299,7 +300,6 @@ class PropertiesDataBounds(PropertiesData):
         '''
         return self._binary_operation(y, '__irshift__', False)
 
-
     def __rrshift__(self, y):
         '''The binary bitwise operation ``>>`` with reflected operands
 
@@ -307,7 +307,6 @@ class PropertiesDataBounds(PropertiesData):
 
         '''
         return self._binary_operation(y, '__rrshift__', False)
-
 
     # ----------------------------------------------------------------
     # Private methods
@@ -352,20 +351,21 @@ class PropertiesDataBounds(PropertiesData):
         new = super()._binary_operation(other, method)
 
         if has_bounds:
-#            try:
-#                other_has_bounds = other.has_bounds()
-#            except AttributeError:
-#                other_has_bounds = False
+            # try:
+            #     other_has_bounds = other.has_bounds()
+            # except AttributeError:
+            #     other_has_bounds = False
 
-#            if other_has_bounds:
-#                new_bounds = self.bounds._binary_operation(other.bounds, method)
-#            else:
+            # if other_has_bounds:
+            #     new_bounds = self.bounds._binary_operation(
+            #         other.bounds, method)
+            # else:
             if numpy_size(other) > 1:
                 try:
                     other = other.insert_dimension(-1)
                 except AttributeError:
                     other = numpy_expand_dims(other, -1)
-            #-- End: if
+            # --- End: if
 
             new_bounds = self.bounds._binary_operation(other, method)
 
@@ -380,7 +380,6 @@ class PropertiesDataBounds(PropertiesData):
             return self
         else:
             return new
-
 
     def _equivalent_data(self, other, rtol=None, atol=None,
                          verbose=False):
@@ -414,14 +413,14 @@ class PropertiesDataBounds(PropertiesData):
         if hasbounds != (other_bounds is not None):
             # add traceback
             if verbose:
-                print('one has bounds, the other not TODO') # pragma: no cover
+                print('one has bounds, the other not TODO')  # pragma: no cover
             return False
 
         try:
             direction0 = self.direction()
             direction1 = other.direction()
             if (direction0 != direction1 and
-                direction0 is not None and direction1 is not None):
+                    direction0 is not None and direction1 is not None):
                 other = other.flip()
         except AttributeError:
             pass
@@ -430,7 +429,7 @@ class PropertiesDataBounds(PropertiesData):
         if not super()._equivalent_data(
                 other, rtol=rtol, atol=atol, verbose=verbose):
             if verbose:
-                print('non equivaelnt data arrays TODO') # pragma: no cover
+                print('non equivaelnt data arrays TODO')  # pragma: no cover
             return False
 
         if hasbounds:
@@ -440,13 +439,14 @@ class PropertiesDataBounds(PropertiesData):
                                                 verbose=verbose):
                 if verbose:
                     print('{}: Non-equivalent bounds data: {!r}, {!r}'.format(
-                        self.__class__.__name__, self_bounds.data, other_bounds.data)) # pragma: no cover
+                        self.__class__.__name__, self_bounds.data,
+                        other_bounds.data
+                    ))  # pragma: no cover
                 return False
         # --- End: if
 
         # Still here? Then the data are equivalent.
         return True
-
 
     def _YMDhms(self, attr):
         '''TODO
@@ -454,7 +454,6 @@ class PropertiesDataBounds(PropertiesData):
         out = super()._YMDhms(attr)
         out.del_bounds(None)
         return out
-
 
     def _matching_values(self, value0, value1, units=False):
         '''TODO
@@ -467,7 +466,7 @@ class PropertiesDataBounds(PropertiesData):
             return Units(value0).equals(Units(value1))
 
         if isinstance(value0, Query):
-            return bool(value0.evaluate(value1)) # TODO vectors
+            return bool(value0.evaluate(value1))  # TODO vectors
         else:
             try:
                 return value0.search(value1)
@@ -477,10 +476,12 @@ class PropertiesDataBounds(PropertiesData):
 
         return False
 
-
-    def _apply_superclass_data_oper(
-            self, v, oper_name, *oper_args, bounds=True, **oper_kwargs):
+    def _apply_superclass_data_oper(self, v, oper_name, *oper_args,
+                                    bounds=True, interior_ring=False,
+                                    **oper_kwargs):
         '''Define an operation that can be applied to the data array.
+
+    .. versionadded:: 3.1.0
 
     :Parameters:
 
@@ -500,7 +501,12 @@ class PropertiesDataBounds(PropertiesData):
 
         oper_args, oper_kwargs: all of the arguments for `oper_name`.
 
-        bounds: whether or not there are cell bounds (to consider).
+        bounds: `bool`
+            Whether or not there are cell bounds (to consider).
+
+        interior_ring: `bool`
+            Whether or not a geometry interior ring variable needs to
+            be operated on.
 
         '''
         v = getattr(super(), oper_name)(*oper_args, **oper_kwargs)
@@ -514,9 +520,18 @@ class PropertiesDataBounds(PropertiesData):
             if bounds is not None:
                 getattr(bounds, oper_name)(*oper_args, inplace=True,
                                            **oper_kwargs)
-
+        # --- End: if
+        
+        if interior_ring:
+            interior_ring = v.get_interior_ring(None)
+            if interior_ring is not None:
+                getattr(interior_ring, oper_name)(*oper_args, inplace=True,
+                                                  **oper_kwargs)
+        # --- End: if
+        
         return v
 
+    
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
@@ -547,8 +562,10 @@ class PropertiesDataBounds(PropertiesData):
         if data is not None:
             if data.shape[-1] != 2:
                 raise ValueError(
-                    "Can only calculate cell sizes from bounds when there are exactly two bounds per cell. Got {}".format(
-                        data.shape[-1]))
+                    "Can only calculate cell sizes from bounds when there are "
+                    "exactly two bounds per cell. Got {}".format(
+                        data.shape[-1])
+                )
 
             out = abs(data[..., 1] - data[..., 0])
             out.squeeze(-1, inplace=True)
@@ -560,8 +577,8 @@ class PropertiesDataBounds(PropertiesData):
         # --- End: if
 
         raise AttributeError(
-            "Can't get cell sizes when there are no bounds nor coordinate data")
-
+            "Can't get cell sizes when there are no bounds nor coordinate data"
+        )
 
     @property
     def dtype(self):
@@ -581,22 +598,22 @@ class PropertiesDataBounds(PropertiesData):
         if data is not None:
             return data.dtype
 
-        bounds = self.get_bounds(None)
+        bounds = self.get_bounds_data(None)
         if bounds is not None:
             return bounds.dtype
 
         raise AttributeError("{} doesn't have attribute 'dtype'".format(
             self.__class__.__name__))
+
     @dtype.setter
     def dtype(self, value):
         data = self.get_data(None)
         if data is not None:
             data.dtype = value
 
-        bounds = self.get_bounds(None)
+        bounds = self.get_bounds_data(None)
         if bounds is not None:
             bounds.dtype = value
-
 
     @property
     def isperiodic(self):
@@ -619,7 +636,6 @@ class PropertiesDataBounds(PropertiesData):
 
     '''
         return self._custom.get('period', None) is not None
-
 
     @property
     def lower_bounds(self):
@@ -649,7 +665,7 @@ class PropertiesDataBounds(PropertiesData):
         '''
         data = self.get_bounds_data(None)
         if data is not None:
-            out = data.min(-1)
+            out = data.minimum(-1)
             out.squeeze(-1, inplace=True)
             return out
         else:
@@ -659,8 +675,9 @@ class PropertiesDataBounds(PropertiesData):
         # --- End: if
 
         raise AttributeError(
-            "Can't get lower bounds when there are no bounds nor coordinate data")
-
+            "Can't get lower bounds when there are no bounds nor coordinate "
+            "data"
+        )
 
     @property
     def Units(self):
@@ -680,6 +697,7 @@ class PropertiesDataBounds(PropertiesData):
 
         '''
         return super().Units
+
     @Units.setter
     def Units(self, value):
         PropertiesData.Units.fset(self, value)
@@ -695,6 +713,7 @@ class PropertiesDataBounds(PropertiesData):
             period = period.copy()
             period.Units = value
             self._custom['period'] = period
+
     @Units.deleter
     def Units(self):
         PropertiesData.Units.fdel(self)
@@ -727,7 +746,7 @@ class PropertiesDataBounds(PropertiesData):
         '''
         data = self.get_bounds_data(None)
         if data is not None:
-            out = data.max(-1)
+            out = data.maximum(-1)
             out.squeeze(-1, inplace=True)
             return out
         else:
@@ -737,8 +756,9 @@ class PropertiesDataBounds(PropertiesData):
         # --- End: if
 
         raise AttributeError(
-            "Can't get upper bounds when there are no bounds nor coordinate data")
-
+            "Can't get upper bounds when there are no bounds nor coordinate "
+            "data"
+        )
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -810,61 +830,61 @@ class PropertiesDataBounds(PropertiesData):
             bounds=True, inplace=inplace, i=i)
 
     # ----------------------------------------------------------------
-    # Attribute
+    # Attributes
     # ----------------------------------------------------------------
     @property
     def dtype(self):
         '''The `numpy` data type of the data array.
 
-By default this is the data type with the smallest size and smallest
-scalar kind to which all sub-arrays of the master data array may be
-safely cast without loss of information. For example, if the
-sub-arrays have data types 'int64' and 'float32' then the master data
-array's data type will be 'float64'; or if the sub-arrays have data
-types 'int64' and 'int32' then the master data array's data type will
-be 'int64'.
-
-Setting the data type to a `numpy.dtype` object, or any object
-convertible to a `numpy.dtype` object, will cause the master data
-array elements to be recast to the specified type at the time that
-they are next accessed, and not before. This does not immediately
-change the master data array elements, so, for example, reinstating
-the original data type prior to data access results in no loss of
-information.
-
-Deleting the data type forces the default behaviour. Note that if the
-data type of any sub-arrays has changed after `dtype` has been set
-(which could occur if the data array is accessed) then the reinstated
-default data type may be different to the data type prior to `dtype`
-being set.
-
-**Examples:**
-
->>> f.dtype
-dtype('float64')
->>> type(f.dtype)
-<type 'numpy.dtype'>
-
->>> print(f.array)
-[0.5 1.5 2.5]
->>> import numpy
->>> f.dtype = numpy.dtype(int)
->>> print(f.array)
-[0 1 2]
->>> f.dtype = bool
->>> print(f.array)
-[False  True  True]
->>> f.dtype = 'float64'
->>> print(f.array)
-[ 0.  1.  1.]
-
->>> print(f.array)
-[0.5 1.5 2.5]
->>> f.dtype = int
->>> f.dtype = bool
->>> f.dtype = float
->>> print(f.array)
-[ 0.5  1.5  2.5]
+    By default this is the data type with the smallest size and
+    smallest scalar kind to which all sub-arrays of the master data
+    array may be safely cast without loss of information. For example,
+    if the sub-arrays have data types 'int64' and 'float32' then the
+    master data array's data type will be 'float64'; or if the
+    sub-arrays have data types 'int64' and 'int32' then the master
+    data array's data type will be 'int64'.
+    
+    Setting the data type to a `numpy.dtype` object, or any object
+    convertible to a `numpy.dtype` object, will cause the master data
+    array elements to be recast to the specified type at the time that
+    they are next accessed, and not before. This does not immediately
+    change the master data array elements, so, for example,
+    reinstating the original data type prior to data access results in
+    no loss of information.
+    
+    Deleting the data type forces the default behaviour. Note that if
+    the data type of any sub-arrays has changed after `dtype` has been
+    set (which could occur if the data array is accessed) then the
+    reinstated default data type may be different to the data type
+    prior to `dtype` being set.
+    
+    **Examples:**
+    
+    >>> f.dtype
+    dtype('float64')
+    >>> type(f.dtype)
+    <type 'numpy.dtype'>
+    
+    >>> print(f.array)
+    [0.5 1.5 2.5]
+    >>> import numpy
+    >>> f.dtype = numpy.dtype(int)
+    >>> print(f.array)
+    [0 1 2]
+    >>> f.dtype = bool
+    >>> print(f.array)
+    [False  True  True]
+    >>> f.dtype = 'float64'
+    >>> print(f.array)
+    [ 0.  1.  1.]
+    
+    >>> print(f.array)
+    [0.5 1.5 2.5]
+    >>> f.dtype = int
+    >>> f.dtype = bool
+    >>> f.dtype = float
+    >>> print(f.array)
+    [ 0.5  1.5  2.5]
 
         '''
         try:
@@ -888,7 +908,6 @@ dtype('float64')
         data = self.get_data(None)
         if data is not None:
             del self.Data.dtype
-
 
     # ----------------------------------------------------------------
     # Methods
@@ -937,7 +956,6 @@ dtype('float64')
             _inplace_enabled_define_and_cleanup(self), 'ceil',
             bounds=bounds, inplace=inplace, i=i)
 
-
     def chunk(self, chunksize=None):
         '''Partition the data array.
 
@@ -964,6 +982,10 @@ dtype('float64')
         if bounds is not None:
             bounds.chunk(chunksize)
 
+        # Chunk the interior ring, if it exists.
+        interior_ring = self.get_interior_ring(None)
+        if interior_ring is not None:
+            interior_ring.chunk(chunksize)
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -1014,9 +1036,8 @@ dtype('float64')
 
         '''
         return self._apply_superclass_data_oper(
-            _inplace_enabled_define_and_cleanup(self), 'clip', a_min, a_max,
-            bounds=bounds, inplace=inplace, i=i, units=units)
-
+            _inplace_enabled_define_and_cleanup(self), 'clip', a_min,
+            a_max, bounds=bounds, inplace=inplace, i=i, units=units)
 
     def close(self):
         '''Close all files referenced by the construct.
@@ -1040,7 +1061,10 @@ dtype('float64')
         bounds = self.get_bounds(None)
         if bounds is not None:
             bounds.close()
-
+            
+        interior_ring = self.get_interior_ring(None)
+        if interior_ring is not None:
+            interior_ring.close()
 
     @classmethod
     def concatenate(cls, variables, axis=0, _preserve=True):
@@ -1070,8 +1094,15 @@ dtype('float64')
                                         _preserve=_preserve)
             out.set_bounds(bounds, copy=False)
 
-        return out
+        interior_ring = variable0.get_interior_ring(None)
+        if interior_ring is not None:
+            interior_ring = interior_ring.concatenate(
+                [v.get_interior_ring() for v in variables],
+                axis=axis,
+                _preserve=_preserve)
+            out.set_interior_ring(interior_ring, copy=False)
 
+        return out
 
 # AT2
 #
@@ -1169,17 +1200,17 @@ dtype('float64')
     <Units: degrees_east>
     >>> print(f.array)
     [[-90 0 90 --]]
-    >>> f.cos()
-    >>> f.Units
+    >>> g = f.cos()
+    >>> g.Units
     <Units: 1>
-    >>> print(f.array)
+    >>> print(g.array)
     [[0.0 1.0 0.0 --]]
 
     >>> f.Units
     <Units: m s-1>
     >>> print(f.array)
     [[1 2 3 --]]
-    >>> f.cos()
+    >>> f.cos(inplace=True)
     >>> f.Units
     <Units: 1>
     >>> print(f.array)
@@ -1189,6 +1220,107 @@ dtype('float64')
         return self._apply_superclass_data_oper(
             _inplace_enabled_define_and_cleanup(self), 'cos', bounds=bounds)
 
+    def creation_commands(self, representative_data=False,
+                          namespace='cf', indent=0, string=True,
+                          name='c', data_name='d', bounds_name='b',
+                          interior_ring_name='i'):
+        '''Return the commands that would create the construct.
+
+    .. versionadded:: 3.2.0
+
+    .. seealso:: `cf.Data.creation_commands`,
+                 `cf.Field.creation_commands`
+
+    :Parameters:
+
+        representative_data: `bool`, optional
+            Return one-line representations of `Data` instances, which
+            are not executable code but prevent the data being
+            converted in its entirety to a string representation.
+
+        namespace: `str`, optional
+            The namespace containing classes of the ``cf``
+            package. This is prefixed to the class name in commands
+            that instantiate instances of ``cf`` objects. By default,
+            *namespace* is ``'cf'``, i.e. it is assumed that ``cf``
+            was imported as ``import cf``.
+
+            *Parameter example:*
+              If ``cf`` was imported as ``import cf as cfp`` then set
+              ``namespace='cfp'``
+
+            *Parameter example:*
+              If ``cf`` was imported as ``from cf import *`` then set
+              ``namespace=''``
+
+        indent: `int`, optional
+            Indent each line by this many spaces. By default no
+            indentation is applied. Ignored if *string* is False.
+
+        string: `bool`, optional
+            If False then return each command as an element of a
+            `list`. By default the commands are concatenated into
+            a string, with a new line inserted between each command.
+
+    :Returns:
+
+        `str` or `list`
+            The commands in a string, with a new line inserted between
+            each command. If *string* is False then the separate
+            commands are returned as each element of a `list`.
+
+    **Examples:**
+
+        TODO
+
+        '''
+        if name in (data_name, bounds_name, interior_ring_name):
+            raise ValueError(
+                "'name' parameter can not have the same value as any of the 'data_name', 'bounds_name', or 'interior_ring_name' parameters: {!r}".format(
+                    name))
+        
+        if data_name in (name, bounds_name, interior_ring_name):
+            raise ValueError(
+                "'data_name' parameter can not have the same value as any of the 'name', 'bounds_name', or 'interior_ring_name'parameters: {!r}".format(
+                    data_name))
+        
+        out = super().creation_commands(
+            representative_data=representative_data, indent=0,
+            namespace=namespace, string=False, name=name,
+            data_name=data_name)
+        
+        namespace0 = namespace
+        if namespace0:
+            namespace = namespace+"."
+        else:
+            namespace = ""
+
+        indent = ' ' * indent
+
+        bounds = self.get_bounds(None)
+        if bounds is not None:
+            out.extend(bounds.creation_commands(
+                representative_data=representative_data, indent=0,
+                namespace=namespace0, string=False, name=bounds_name,
+                data_name=data_name))
+            
+            out.append("{}.set_bounds({})".format(name, bounds_name))
+                    
+        interior_ring = self.get_interior_ring(None)
+        if interior_ring is not None:
+            out.extend(interior_ring.creation_commands(
+                representative_data=representative_data, indent=0,
+                namespace=namespace0, string=False,
+                name=interior_ring_name, data_name=data_name))
+
+            out.append("{}.set_interior_ring({})".format(name,
+                                                         interior_ring_name))
+            
+        if string:
+            out[0] = indent+out[0]
+            out = ('\n'+indent).join(out)
+
+        return out    
 
     def cyclic(self, axes=None, iscyclic=True):
         '''Set the cyclicity of axes of the data array.
@@ -1224,8 +1356,12 @@ dtype('float64')
             axes = self._parse_axes(axes)
             bounds.cyclic(axes, iscyclic)
 
+        interior_ring = self.get_interior_ring(None)
+        if interior_ring is not None:
+            axes = self._parse_axes(axes)            
+            interior_ring.cyclic(axes, iscyclic)
+            
         return out
-
 
     def equivalent(self, other, rtol=None, atol=None, traceback=False):
         '''True if two constructs are equal, False otherwise.
@@ -1272,7 +1408,7 @@ dtype('float64')
         # ------------------------------------------------------------
         # Check the special attributes
         # ------------------------------------------------------------
-        self_special  = self._private['special_attributes']
+        self_special = self._private['special_attributes']
         other_special = other._private['special_attributes']
         if set(self_special) != set(other_special):
             if traceback:
@@ -1303,7 +1439,6 @@ dtype('float64')
             return False
 
         return True
-
 
     def contiguous(self, overlap=True):
         '''Return True if a construct has contiguous cells.
@@ -1366,7 +1501,6 @@ dtype('float64')
 #            return self.monit()#
 #
 #        return False
-
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -1473,6 +1607,63 @@ dtype('float64')
             'convert_reference_time', inplace=inplace, i=i, units=units,
             calendar_months=calendar_months, calendar_years=calendar_years)
 
+    def get_property(self, prop, default=ValueError(), bounds=False):
+        '''Get a CF property.
+    
+    .. versionadded:: 3.2.0
+    
+    .. seealso:: `clear_properties`, `del_property`, `has_property`,
+                 `properties`, `set_property`
+    
+    :Parameters:
+    
+        prop: `str`
+            The name of the CF property.
+    
+            *Parameter example:*
+              ``prop='long_name'``
+    
+        default: optional
+            Return the value of the *default* parameter if the
+            property does not exist. If set to an `Exception` instance
+            then it will be raised instead.
+
+        bounds: `bool`
+            TODO 1.8
+
+    :Returns:
+    
+            The value of the named property or the default value, if
+            set.
+    
+    **Examples:**
+    
+    >>> f.set_property('project', 'CMIP7')
+    >>> f.has_property('project')
+    True
+    >>> f.get_property('project')
+    'CMIP7'
+    >>> f.del_property('project')
+    'CMIP7'
+    >>> f.has_property('project')
+    False
+    >>> print(f.del_property('project', None))
+    None
+    >>> print(f.get_property('project', None))
+    None
+
+        '''
+        out = super().get_property(prop, None)
+        if out is not None:
+            return out
+
+        if bounds and self.has_bounds():
+            out = self.get_bounds().get_property(prop, None)
+            if out is not None:
+                return out
+        # --- End: if
+        
+        return super().get_property(prop, default)
 
     @_inplace_enabled
     def flatten(self, axes=None, inplace=False):
@@ -1535,7 +1726,13 @@ dtype('float64')
             axes = self._parse_axes(axes)
             bounds.flatten(axes, inplace=True)
 
+        interior_ring = v.get_interior_ring(None)
+        if interior_ring is not None:
+            axes = self._parse_axes(axes)            
+            interior_ring.flatten(axes, inplace=True)
+
         return v
+    
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -1580,7 +1777,6 @@ dtype('float64')
             _inplace_enabled_define_and_cleanup(self), 'floor',
             bounds=bounds, inplace=inplace, i=i)
 
-
     def direction(self):
         '''Return None, indicating that it is not specified whether the
     values are increasing or decreasing.
@@ -1599,7 +1795,6 @@ dtype('float64')
             '''
         return
 
-
     def match_by_property(self, *mode, **properties):
         '''Determine whether or not a variable satisfies conditions.
 
@@ -1610,7 +1805,7 @@ dtype('float64')
 
     :Returns:
 
-        out: `bool`
+        `bool`
             Whether or not the variable matches the given criteria.
 
     **Examples:**
@@ -1628,7 +1823,8 @@ dtype('float64')
                 _or = True
             elif x != 'and':
                 raise ValueError(
-                    "Positional argument, if provided, must one of 'or', 'and'")
+                    "Positional argument, if provided, must one of 'or', 'and'"
+                )
         # --- End: if
 
         if not properties:
@@ -1639,7 +1835,7 @@ dtype('float64')
         ok = True
         for name, value0 in properties.items():
             value1 = self_property.get(name)
-            ok = self._matching_values(value0, value1, units=(name=='units'))
+            ok = self._matching_values(value0, value1, units=(name == 'units'))
 
             if _or:
                 if ok:
@@ -1649,7 +1845,6 @@ dtype('float64')
         # --- End: for
 
         return ok
-
 
     def match_by_identity(self, *identities):
         '''Determine whether or not a variable satisfies conditions.
@@ -1688,7 +1883,6 @@ dtype('float64')
         # --- End: for
 
         return ok
-
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -1732,7 +1926,6 @@ dtype('float64')
         return self._apply_superclass_data_oper(
             _inplace_enabled_define_and_cleanup(self), 'override_calendar',
             calendar, inplace=inplace, i=i)
-
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -1787,7 +1980,6 @@ dtype('float64')
             _inplace_enabled_define_and_cleanup(self), 'override_units',
             units, inplace=inplace, i=i)
 
-
     def files(self):
         '''Return the names of any files containing parts of the data array.
 
@@ -1815,8 +2007,11 @@ dtype('float64')
         if bounds is not None:
             out.update(bounds.files())
 
-        return out
+        interior_ring = self.get_interior_ring(None)
+        if bounds is not None:
+            out.update(interior_ring.files())
 
+        return out
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -1859,6 +2054,15 @@ dtype('float64')
         v = _inplace_enabled_define_and_cleanup(self)
         super(PropertiesDataBounds, v).flip(axes=axes, inplace=True)
 
+        interior_ring = v.get_interior_ring(None)
+        if interior_ring is not None:
+            # --------------------------------------------------------
+            # Flip the interior ring. Do this before flipping the
+            # bounds because the axes argument might get changed
+            # during that operation.
+            # --------------------------------------------------------
+            interior_ring.flip(axes, inplace=True)
+
         bounds = v.get_bounds(None)
         if bounds is not None:
             # --------------------------------------------------------
@@ -1870,10 +2074,11 @@ dtype('float64')
             # the variable has 2 or more dimensions then do not flip
             # the trailing dimension.
             # --------------------------------------------------------
-            if not v.ndim:
+            ndim = bounds.ndim
+            if ndim == 1:
                 # Flip the bounds of a 0-d variable
                 axes = (0,)
-            elif v.ndim == 1:
+            elif ndim == 2:
                 # Flip the bounds of a 1-d variable
                 if axes in (0, 1):
                     axes = (0, 1)
@@ -1881,12 +2086,12 @@ dtype('float64')
                     axes = v._parse_axes(axes) + [-1]
             else:
                 # Do not flip the bounds of an N-d variable (N >= 2)
+                # nor a geometry variable
                 axes = v._parse_axes(axes)
 
             bounds.flip(axes, inplace=True)
-
+            
         return v
-
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -1933,7 +2138,6 @@ dtype('float64')
         return self._apply_superclass_data_oper(
             _inplace_enabled_define_and_cleanup(self), 'exp', bounds=bounds,
             inplace=inplace, i=i)
-
 
     def set_bounds(self, bounds, copy=True):
         '''Set the bounds.
@@ -1986,31 +2190,30 @@ dtype('float64')
             bounds = bounds.copy()
 
         # Check units
-        units      = bounds.Units
+        units = bounds.Units
         self_units = self.Units
 
-        if units and not units.equivalent(self_units):
+        if data is not None and units and not units.equivalent(self_units):
             raise ValueError(
-                "Can't set bounds: Bounds units of {!r} are not equivalent to {!r}".format(
-                    bounds.Units, self.Units))
+                "Can't set bounds: Bounds units of {!r} are not equivalent "
+                "to {!r}".format(bounds.Units, self.Units)
+            )
 
             bounds.Units = self_units
 
         if not units:
-           bounds.override_units(self_units, inplace=True)
+            bounds.override_units(self_units, inplace=True)
 
         # Copy selected properties to the bounds
-        #for prop in ('standard_name', 'axis', 'positive',
-        #             'leap_months', 'leap_years', 'month_lengths'):
-        #    value = self.get_property(prop, None)
-        #    if value is not None:
-        #        bounds.set_property(prop, value)
-
+        # for prop in ('standard_name', 'axis', 'positive',
+        #              'leap_months', 'leap_years', 'month_lengths'):
+        #     value = self.get_property(prop, None)
+        #     if value is not None:
+        #         bounds.set_property(prop, value)
 
         self._custom['direction'] = None
 
         super().set_bounds(bounds, copy=False)
-
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -2049,17 +2252,17 @@ dtype('float64')
     <Units: degrees_north>
     >>> print(f.array)
     [[-90 0 90 --]]
-    >>> f.sin()
-    >>> f.Units
+    >>> g = f.sin()
+    >>> g.Units
     <Units: 1>
-    >>> print(f.array)
+    >>> print(g.array)
     [[-1.0 0.0 1.0 --]]
 
     >>> f.Units
     <Units: m s-1>
     >>> print(f.array)
     [[1 2 3 --]]
-    >>> f.sin()
+    >>> f.sin(inplace=True)
     >>> f.Units
     <Units: 1>
     >>> print(f.array)
@@ -2069,7 +2272,6 @@ dtype('float64')
         return self._apply_superclass_data_oper(
             _inplace_enabled_define_and_cleanup(self), 'sin', bounds=bounds,
             inplace=inplace, i=i)
-
 
     # `arctan2`, AT2 seealso
     @_deprecated_kwarg_check('i')
@@ -2098,14 +2300,14 @@ dtype('float64')
 
     **Examples:**
 
-    >>> d = cf.Data([[0, 1, 2], [3, -99, 5]], mask=[[0, 0, 0], [0, 1, 0]])
-    >>> print(d.array)
+    >>> f = cf.Data([[0, 1, 2], [3, -99, 5]], mask=[[0, 0, 0], [0, 1, 0]])
+    >>> print(f.array)
     [[0  1 2]
      [3 -- 5]]
-    >>> e = d.arctan()
-    >>> e
+    >>> g = f.arctan()
+    >>> g
     <CF Data(2, 3): [[0.0, ..., 1.373400766945016]] radians>
-    >>> print(e.array)
+    >>> print(g.array)
     [[0.0                0.7853981633974483 1.1071487177940904]
      [1.2490457723982544                 -- 1.373400766945016 ]]
 
@@ -2203,14 +2405,14 @@ dtype('float64')
 
     **Examples:**
 
-    >>> d = cf.Data([[0, 1, 2], [3, -99, 5]], mask=[[0, 0, 0], [0, 1, 0]])
-    >>> print(d.array)
+    >>> f = cf.Data([[0, 1, 2], [3, -99, 5]], mask=[[0, 0, 0], [0, 1, 0]])
+    >>> print(f.array)
     [[0  1 2]
      [3 -- 5]]
-    >>> e = d.arcsinh()
-    >>> e
+    >>> g = f.arcsinh()
+    >>> g
     <CF Data(2, 3): [[0.0, ..., 2.3124383412727525]] radians>
-    >>> print(e.array)
+    >>> print(g.array)
     [[0.0 0.881373587019543 1.4436354751788103]
      [1.8184464592320668 -- 2.3124383412727525]]
 
@@ -2315,31 +2517,30 @@ dtype('float64')
 
     **Examples:**
 
-    >>> d.Units
+    >>> f.Units
     <Units: degrees_north>
-    >>> print(d.array)
+    >>> print(f.array)
     [[-90 0 90 --]]
-    >>> e = d.tanh()
-    >>> e.Units
+    >>> g = f.tanh()
+    >>> g.Units
     <Units: 1>
-    >>> print(e.array)
+    >>> print(g.array)
     [[-0.9171523356672744 0.0 0.9171523356672744 --]]
 
-    >>> d.Units
+    >>> f.Units
     <Units: m s-1>
-    >>> print(d.array)
+    >>> print(f.array)
     [[1 2 3 --]]
-    >>> d.tanh(inplace=True)
-    >>> d.Units
+    >>> f.tanh(inplace=True)
+    >>> f.Units
     <Units: 1>
-    >>> print(d.array)
+    >>> print(f.array)
     [[0.7615941559557649 0.9640275800758169 0.9950547536867305 --]]
 
         '''
         return self._apply_superclass_data_oper(
             _inplace_enabled_define_and_cleanup(self), 'tanh',
             bounds=bounds, inplace=inplace)
-
 
     @_inplace_enabled
     def sinh(self, bounds=True, inplace=False):
@@ -2372,31 +2573,30 @@ dtype('float64')
 
     **Examples:**
 
-    >>> d.Units
+    >>> f.Units
     <Units: degrees_north>
-    >>> print(d.array)
+    >>> print(f.array)
     [[-90 0 90 --]]
-    >>> d.sinh(inplace=True)
-    >>> d.Units
+    >>> g = f.sinh(inplace=True)
+    >>> g.Units
     <Units: 1>
-    >>> print(d.array)
+    >>> print(g.array)
     [[-2.3012989023072947 0.0 2.3012989023072947 --]]
 
-    >>> d.Units
+    >>> f.Units
     <Units: m s-1>
-    >>> print(d.array)
+    >>> print(f.array)
     [[1 2 3 --]]
-    >>> d.sinh(inplace=True)
-    >>> d.Units
+    >>> f.sinh(inplace=True)
+    >>> f.Units
     <Units: 1>
-    >>> print(d.array)
+    >>> print(f.array)
     [[1.1752011936438014 3.626860407847019 10.017874927409903 --]]
 
         '''
         return self._apply_superclass_data_oper(
             _inplace_enabled_define_and_cleanup(self), 'sinh',
             bounds=bounds, inplace=inplace)
-
 
     @_inplace_enabled
     def cosh(self, bounds=True, inplace=False):
@@ -2428,31 +2628,30 @@ dtype('float64')
 
     **Examples:**
 
-    >>> d.Units
+    >>> f.Units
     <Units: degrees_north>
-    >>> print(d.array)
+    >>> print(f.array)
     [[-90 0 90 --]]
-    >>> e = d.cosh()
-    >>> e.Units
+    >>> g = f.cosh()
+    >>> g.Units
     <Units: 1>
-    >>> print(e.array)
+    >>> print(g.array)
     [[2.5091784786580567 1.0 2.5091784786580567 --]]
 
-    >>> d.Units
+    >>> f.Units
     <Units: m s-1>
-    >>> print(d.array)
+    >>> print(f.array)
     [[1 2 3 --]]
-    >>> d.cosh(inplace=True)
-    >>> d.Units
+    >>> f.cosh(inplace=True)
+    >>> f.Units
     <Units: 1>
-    >>> print(d.array)
+    >>> print(f.array)
     [[1.5430806348152437 3.7621956910836314 10.067661995777765 --]]
 
         '''
         return self._apply_superclass_data_oper(
             _inplace_enabled_define_and_cleanup(self), 'cosh',
             bounds=bounds, inplace=inplace)
-
 
     # `arctan2`, AT2 seealso
     @_deprecated_kwarg_check('i')
@@ -2490,27 +2689,26 @@ dtype('float64')
     <Units: degrees_north>
     >>> print(f.array)
     [[-45 0 45 --]]
-    >>> f.tan(inplace=True)
-    >>> f.Units
+    >>> g = f.tan()
+    >>> g.Units
     <Units: 1>
-    >>> print(f.array)
+    >>> print(g.array)
     [[-1.0 0.0 1.0 --]]
 
     >>> f.Units
     <Units: m s-1>
     >>> print(f.array)
     [[1 2 3 --]]
-    >>> e = f.tan()
-    >>> e.Units
+    >>> f.tan(inplace=True)
+    >>> f.Units
     <Units: 1>
-    >>> print(e.array)
+    >>> print(f.array)
     [[1.55740772465 -2.18503986326 -0.142546543074 --]]
 
         '''
         return self._apply_superclass_data_oper(
             _inplace_enabled_define_and_cleanup(self), 'tan',
             inplace=inplace, i=i)
-
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -2573,46 +2771,62 @@ dtype('float64')
             _inplace_enabled_define_and_cleanup(self), 'log', bounds=bounds,
             inplace=inplace, i=i)
 
-
     @_deprecated_kwarg_check('i')
     def squeeze(self, axes=None, inplace=False, i=False):
-        '''Remove size 1 dimensions from the data array
+        '''Remove size one axes from the data array.
 
-    .. seealso:: `insert_dimension`, `flip`, `transpose`
-
+    By default all size one axes are removed, but particular size one
+    axes may be selected for removal. Corresponding axes are also
+    removed from the bounds data array, if present.
+    
+    .. seealso:: `flip`, `insert_dimension`, `transpose`
+    
     :Parameters:
-
-        axes: (sequence of) `int`, optional
-            The size 1 axes to remove. By default, all size 1 axes are
-            removed. Size 1 axes for removal are identified by their
-            integer positions in the data array.
-
-
+    
+        axes: (sequence of) `int`
+            The positions of the size one axes to be removed. By
+            default all size one axes are removed. Each axis is
+            identified by its original integer position. Negative
+            integers counting from the last position are allowed.
+    
+            *Parameter example:*
+              ``axes=0``
+    
+            *Parameter example:*
+              ``axes=-2``
+    
+            *Parameter example:*
+              ``axes=[2, 0]``
+    
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-
+    
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
 
     :Returns:
-
-            The construct with squeezed data. If the operation was
-            in-place then `None` is returned.
-
+    
+            The new construct with removed data axes. If the operation
+            was in-place then `None` is returned.
+    
     **Examples:**
-
-
-    TODO
-
-    >>> f.squeeze()
-
-    >>> f.squeeze(1)
-
-    >>> f.squeeze([2, -1])
+    
+    >>> f.shape
+    (1, 73, 1, 96)
+    >>> f.squeeze().shape
+    (73, 96)
+    >>> f.squeeze(0).shape
+    (73, 1, 96)
+    >>> g = f.squeeze([-3, 2])
+    >>> g.shape
+    (73, 96)
+    >>> f.bounds.shape
+    (1, 73, 1, 96, 4)
+    >>> g.shape
+    (73, 96, 4)
 
         '''
         return super().squeeze(axes=axes, inplace=inplace)
-
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -2658,7 +2872,6 @@ dtype('float64')
         return self._apply_superclass_data_oper(
             _inplace_enabled_define_and_cleanup(self), 'trunc',
             bounds=bounds, inplace=inplace, i=i)
-
 
     def identities(self):
         '''Return all possible identities.
@@ -2720,7 +2933,6 @@ dtype('float64')
 # TODO ncvar AND?
 
         return identities
-
 
     @_deprecated_kwarg_check('relaxed_identity')
     def identity(self, default='', strict=False, relaxed=False,
@@ -2821,7 +3033,6 @@ dtype('float64')
 
         return default
 
-
     def inspect(self):
         '''Inspect the object for debugging.
 
@@ -2832,8 +3043,7 @@ dtype('float64')
         `None`
 
         '''
-        print(cf_inspect(self)) # pragma: no cover
-
+        print(cf_inspect(self))  # pragma: no cover
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -2875,7 +3085,6 @@ dtype('float64')
         return self._apply_superclass_data_oper(
             _inplace_enabled_define_and_cleanup(self), 'rint', bounds=bounds,
             inplace=inplace, i=i)
-
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -2933,7 +3142,6 @@ dtype('float64')
             _inplace_enabled_define_and_cleanup(self), 'round',
             bounds=bounds, inplace=inplace, i=i, decimals=decimals)
 
-
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def roll(self, iaxis, shift, inplace=False, i=False):
@@ -2963,8 +3171,7 @@ dtype('float64')
         '''
         return self._apply_superclass_data_oper(
             _inplace_enabled_define_and_cleanup(self), 'roll', iaxis,
-            shift, inplace=inplace, i=i)
-
+            shift, interior_ring=True, inplace=inplace, i=i)
 
     # ----------------------------------------------------------------
     # Deprecated attributes and methods
@@ -2976,8 +3183,7 @@ dtype('float64')
         '''
         _DEPRECATION_ERROR_ATTRIBUTE(
             self, 'hasbounds',
-            "Use method 'has_bounds' instead.") # pragma: no cover
-
+            "Use method 'has_bounds' instead.")  # pragma: no cover
 
     def expand_dims(self, position=0, i=False):
         '''Insert a size 1 axis into the data array.
@@ -2988,7 +3194,7 @@ dtype('float64')
         '''
         _DEPRECATION_ERROR_METHOD(
             self, 'expand_dims',
-            "Use method 'insert_dimension' instead.") # pragma: no cover
+            "Use method 'insert_dimension' instead.")  # pragma: no cover
 
 
 # --- End: class

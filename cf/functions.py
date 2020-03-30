@@ -4,7 +4,7 @@ import platform
 import re
 import resource
 import ctypes.util
-#import cPickle
+# import cPickle
 import netCDF4
 import warnings
 
@@ -58,7 +58,10 @@ from .constants import CONSTANTS, _file_to_fh, _stash2standard_name
 from . import mpi_on
 from . import mpi_size
 
-class DeprecationError(Exception) :pass
+
+class DeprecationError(Exception):
+    pass
+
 
 KWARGS_MESSAGE_MAP = {
     "relaxed_identity": "Use keywords 'strict' or 'relaxed' instead.",
@@ -82,7 +85,7 @@ if _linux:
     # is no such file or directory when run on multiple PEs.
     # ----------------------------------------------------------------
     _meminfo_fields = set(('SReclaimable:', 'Cached:', 'Buffers:', 'MemFree:'))
-    _meminfo_file   = open('/proc/meminfo', 'r', 1)
+    _meminfo_file = open('/proc/meminfo', 'r', 1)
 
     def _free_memory():
         '''The amount of available physical memory on GNU/Linux.
@@ -110,7 +113,7 @@ if _linux:
         # (http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/Documentation/filesystems/proc.txt).
         # ----------------------------------------------------------------
         free_KiB = 0.0
-        n=0
+        n = 0
 
         # with open('/proc/meminfo', 'r', 1) as _meminfo_file:
 
@@ -227,7 +230,8 @@ def FREE_MEMORY_FACTOR(*args):
     if args:
         free_memory_factor = float(args[0])
         if free_memory_factor <= 0.0 or free_memory_factor >= 1.0:
-            raise ValueError('Free memory factor must be between 0.0 and 1.0 not inclusive')
+            raise ValueError(
+                'Free memory factor must be between 0.0 and 1.0 not inclusive')
 
         CONSTANTS['FREE_MEMORY_FACTOR'] = free_memory_factor
         CONSTANTS['FM_THRESHOLD'] = free_memory_factor * TOTAL_MEMORY()
@@ -240,7 +244,7 @@ def FREE_MEMORY_FACTOR(*args):
 # --------------------------------------------------------------------
 ATOL = cfdm.ATOL
 RTOL = cfdm.RTOL
-CF   = cfdm.CF
+CF = cfdm.CF
 
 
 def CHUNKSIZE(*args):
@@ -282,7 +286,9 @@ def CHUNKSIZE(*args):
             chunksize = float(args[0])
             if chunksize > upper_chunksize and mpi_size > 1:
                 raise ValueError(
-                    'Specified chunk size is too large for given free memory factor')
+                    'Specified chunk size is too large for given free memory '
+                    'factor'
+                )
             elif chunksize <= 0:
                 raise ValueError('Chunk size must be positive')
 
@@ -355,11 +361,13 @@ def SET_PERFORMANCE(chunksize=None, free_memory_factor=None):
 
     return old
 
+
 def MIN_TOTAL_MEMORY():
     '''The minumum total memory across nodes.
     '''
     return CONSTANTS['MIN_TOTAL_MEMORY']
 # --- End: def
+
 
 def TOTAL_MEMORY():
     '''TODO
@@ -596,39 +604,39 @@ def RELAXED_IDENTITIES(*arg):
     return old
 
 
-#def IGNORE_IDENTITIES(*arg):
-#    '''TODO
+# def IGNORE_IDENTITIES(*arg):
+#     '''TODO
 #
-#    :Parameters:
+#     :Parameters:
 #
-#        arg: `bool`, optional
+#         arg: `bool`, optional
 #
-#    :Returns:
+#     :Returns:
 #
-#        `bool`
-#            The value prior to the change, or the current value if no
-#            new value was specified.
+#         `bool`
+#             The value prior to the change, or the current value if no
+#             new value was specified.
 #
-#    **Examples:**
+#     **Examples:**
 #
-#    >>> org = cf.IGNORE_IDENTITIES()
-#    >>> print(org)
-#    False
-#    >>> cf.IGNORE_IDENTITIES(True)
-#    False
-#    >>> cf.IGNORE_IDENTITIES()
-#    True
-#    >>> cf.IGNORE_IDENTITIES(org)
-#    True
-#    >>> cf.IGNORE_IDENTITIES()
-#    False
+#     >>> org = cf.IGNORE_IDENTITIES()
+#     >>> print(org)
+#     False
+#     >>> cf.IGNORE_IDENTITIES(True)
+#     False
+#     >>> cf.IGNORE_IDENTITIES()
+#     True
+#     >>> cf.IGNORE_IDENTITIES(org)
+#     True
+#     >>> cf.IGNORE_IDENTITIES()
+#     False
 #
-#    '''
-#    old = CONSTANTS['IGNORE_IDENTITIES']
-#    if arg:
-#        CONSTANTS['IGNORE_IDENTITIES'] = bool(arg[0])
+#     '''
+#     old = CONSTANTS['IGNORE_IDENTITIES']
+#     if arg:
+#         CONSTANTS['IGNORE_IDENTITIES'] = bool(arg[0])
 #
-#    return old
+#     return old
 
 
 def dump(x, **kwargs):
@@ -711,7 +719,8 @@ if _linux:
     False
 
         '''
-        return len(listdir(_fd_dir)) > _max_number_of_open_files * OF_FRACTION()
+        return (len(listdir(_fd_dir)) >
+                _max_number_of_open_files * OF_FRACTION())
 
 
 else:
@@ -751,10 +760,11 @@ else:
     False
 
         '''
-        return len(_process.open_files()) > _max_number_of_open_files * OF_FRACTION()
+        return (len(_process.open_files()) >
+                _max_number_of_open_files * OF_FRACTION())
 
 
-#---End: if
+# --- End: if
 
 def close_files(file_format=None):
     '''Close open files containing sub-arrays of data arrays.
@@ -1063,11 +1073,11 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
     [slice(2, 7, 2), slice(0, 8, 1)]
 
     '''
-    parsed_indices     = []
-    roll               = {}
-    flip               = []
+    parsed_indices = []
+    roll = {}
+    flip = []
     compressed_indices = []
-    mask_indices       = []
+    mask_indices = []
 
     if not isinstance(indices, tuple):
         indices = (indices,)
@@ -1105,20 +1115,20 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
         parsed_indices.extend([slice(None)]*(ndim-len_parsed_indices))
 
     if not ndim and parsed_indices:
-        ## If data is scalar then allow it to be indexed with an
-        ## equivalent to [0]
-        #if (len_parsed_indices == 1 and
-        #    parsed_indices[0] in (0,
-        #                          -1,
-        #                          slice(0, 1),
-        #                          slice(-1, None, -1),
-        #                          slice(None, None, None))):
-        #    parsed_indices = []
-        #else:
-        raise IndexError("Scalar array can only be indexed with () or Ellipsis")
+        # # If data is scalar then allow it to be indexed with an
+        # # equivalent to [0]
+        # if (len_parsed_indices == 1 and
+        #     parsed_indices[0] in (0,
+        #                           -1,
+        #                           slice(0, 1),
+        #                           slice(-1, None, -1),
+        #                           slice(None, None, None))):
+        #     parsed_indices = []
+        # else:
+        raise IndexError(
+            "Scalar array can only be indexed with () or Ellipsis")
 
     # --- End: if
-
 
     for i, (index, size) in enumerate(zip(parsed_indices, shape)):
         is_slice = False
@@ -1128,8 +1138,8 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
             # --------------------------------------------------------
             is_slice = True
             start = index.start
-            stop  = index.stop
-            step  = index.step
+            stop = index.stop
+            step = index.step
             if start is None or stop is None:
                 step = 0
             elif step is None:
@@ -1200,8 +1210,8 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
             else:
                 start, stop, step = index.indices(size)
                 if (start == stop or
-                    (start < stop and step < 0) or
-                    (start > stop and step > 0)):
+                        (start < stop and step < 0) or
+                        (start > stop and step > 0)):
                     raise IndexError(
                         "Invalid indices dimension with size {}: {}".format(
                             size, index))
@@ -1221,7 +1231,7 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
         else:
             convert2positve = True
             if (getattr(getattr(index, 'dtype', None), 'kind', None) == 'b' or
-                isinstance(index[0], bool)):
+                    isinstance(index[0], bool)):
                 # ----------------------------------------------------
                 # Index is a sequence of booleans
                 # ----------------------------------------------------
@@ -1230,8 +1240,10 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
                 # has a size attribute.
                 if _numpy_size(index) != size:
                     raise IndexError(
-                        "Incorrect number ({}) of boolean indices for dimension with size {}: {}".format(
-                            _numpy_size(index), size, index))
+                        "Incorrect number ({}) of boolean indices for "
+                        "dimension with size {}: {}".format(
+                            _numpy_size(index), size, index)
+                    )
 
                 index = _numpy_where(index)[0]
                 convert2positve = False
@@ -1273,10 +1285,12 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
                         is_slice = True
                     else:
                         if ((step > 0 and (steps <= 0).any()) or
-                            (step < 0 and (steps >= 0).any()) or
-                            not step):
+                                (step < 0 and (steps >= 0).any()) or
+                                not step):
                             raise ValueError(
-                                "Bad index (not strictly monotonic): {}".format(index))
+                                "Bad index (not strictly monotonic): "
+                                "{}".format(index)
+                            )
 
                         if reverse and step < 0:
                             # The array is strictly monotoniticall
@@ -1330,11 +1344,11 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
                 # a[slice(6, 0, -2)] == list(reversed(a[slice(2, 7, 2)]))
                 # True
                 start, stop, step = index.indices(size)
-                step    *= -1
+                step *= -1
                 div, mod = divmod(start-stop-1, step)
                 div_step = div*step
-                start   -= div_step
-                stop     = start + div_step + 1
+                start -= div_step
+                stop = start + div_step + 1
 
                 index = slice(start, stop, step)
                 flip.append(i)
@@ -1345,8 +1359,8 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
             if cyclic and index.step > 1:
                 start, stop, step = index.indices(size)
                 div, mod = divmod(stop-start-1, step)
-                stop     = start + div*step + 1
-                index    = slice(start, stop, step)
+                stop = start + div*step + 1
+                index = slice(start, stop, step)
             # --- End: if
 
             #
@@ -1354,7 +1368,8 @@ def parse_indices(shape, indices, cyclic=False, reverse=False,
                 # Create an envelope slice for a parsed
                 # index of a numpy array of integers
                 compressed_indices.append(index)
-                index = slice(start, stop, (1 if reverse else _numpy_sign(step)))
+                index = slice(
+                    start, stop, (1 if reverse else _numpy_sign(step)))
         # --- End: if
 
         parsed_indices[i] = index
@@ -1436,6 +1451,8 @@ def get_subspace(array, indices):
 
 
 _equals = cfdm.Data()._equals
+
+
 def equals(x, y, rtol=None, atol=None, ignore_data_type=False,
            **kwargs):
     '''
@@ -1621,7 +1638,7 @@ def load_stash2standard_name(table=None, delimiter='!', merge=True):
 
                     if d.startswith('below_'):
                         cf_info['below'] = re.split(number_regex, d,
-                                                     re.IGNORECASE)[1:4:2]
+                                                    re.IGNORECASE)[1:4:2]
                         if cf_info['below'] == '':
                             cf_info['below'][1] = '1'
 
@@ -1971,7 +1988,7 @@ def hash_array(array):
     # --- End: if
 
     if not array.flags.c_contiguous:
-#        array = array.copy()
+        # array = array.copy()
         array = _numpy_ascontiguousarray(array)
 
     h_update(array)
@@ -2114,12 +2131,12 @@ def allclose(x, y, rtol=None, atol=None):
     allclose = getattr(x, 'allclose', None)
     if callable(allclose):
         # x has a callable allclose method
-       return allclose(y, rtol=rtol, atol=atol)
+        return allclose(y, rtol=rtol, atol=atol)
 
     allclose = getattr(y, 'allclose', None)
     if callable(allclose):
         # y has a callable allclose method
-       return allclose(x, rtol=rtol, atol=atol)
+        return allclose(x, rtol=rtol, atol=atol)
 
     # x nor y has a callable allclose method
     return _numpy_allclose(x, y, rtol=rtol, atol=atol)
@@ -2216,7 +2233,6 @@ def _section(o, axes=None, data=False, stop=None, chunks=False,
                 axis_indices.append(o.get_data_axes().index(key))
             except ValueError:
                 pass
-        # --- End: for
     # --- End: if
 
     # find the size of each dimension
@@ -2248,9 +2264,9 @@ def _section(o, axes=None, data=False, stop=None, chunks=False,
             else:
                 steps[index] = int(axis_size/n_chunks)
                 break
-        # --- End: for
     else:
-        steps = [size if i in axis_indices else 1 for i, size in enumerate(sizes)]
+        steps = [size if i in axis_indices else 1 for i, size in
+                 enumerate(sizes)]
 
     # Use recursion to slice out each section
     if data:
@@ -2261,6 +2277,7 @@ def _section(o, axes=None, data=False, stop=None, chunks=False,
     indices = [slice(None)] * len(sizes)
 
     nl_vars = {'count': 0}
+
     def loop_over_index(current_index):
         # Expects an index to loop over in the list indices. If this is less
         # than 0 the horizontal slice defined by indices is appended to the
@@ -2289,7 +2306,6 @@ def _section(o, axes=None, data=False, stop=None, chunks=False,
                 return
             indices[current_index] = slice(i, i + steps[current_index])
             loop_over_index(current_index - 1)
-
 
     current_index = len(sizes) - 1
     loop_over_index(current_index)
@@ -2363,7 +2379,8 @@ def environment(display=True, paths=True, string=True):
     out.append('Platform: ' + str(platform.platform()))
     out.append('HDF5 library: ' + str(netCDF4. __hdf5libversion__))
     out.append('netcdf library: ' + str(netCDF4.__netcdf4libversion__))
-    out.append('udunits2 library: ' + str(ctypes.util.find_library('udunits2')))
+    out.append(
+        'udunits2 library: ' + str(ctypes.util.find_library('udunits2')))
     out.append('python: ' + str(platform.python_version()))
     if paths:
         out[-1] += ' ' + str(_sys_executable)
@@ -2476,12 +2493,16 @@ def _DEPRECATION_ERROR(message='', version='3.0.0'):
 
 
 def _DEPRECATION_ERROR_ARG(instance, method, arg, message='', version='3.0.0'):
-    raise DeprecationError("Argument {2!r} of method '{0}.{1}' has been deprecated at version {4} and is no longer available. {3}".format(
+    raise DeprecationError(
+        "Argument {2!r} of method '{0}.{1}' has been deprecated at version "
+        "{4} and is no longer available. {3}".format(
             instance.__class__.__name__,
             method,
             arg,
             message,
-            version))
+            version
+        )
+    )
 
 
 def _DEPRECATION_ERROR_FUNCTION_KWARGS(func, kwargs=None, message='',
@@ -2492,16 +2513,21 @@ def _DEPRECATION_ERROR_FUNCTION_KWARGS(func, kwargs=None, message='',
         kwargs = {}
 
     for kwarg, msg in KWARGS_MESSAGE_MAP.items():
-        if kwarg in ('exact', 'traceback') and eval(kwarg):  # safe as this is not a kwarg input by the user
+        # This eval is safe as the kwarg is not a user input
+        if kwarg in ('exact', 'traceback') and eval(kwarg):
             kwargs = {kwarg: None}
             message = msg
 
     for key in kwargs.keys():
-        raise DeprecationError("Keyword {1!r} of function '{0}' has been deprecated at version {3} and is no longer available. {2}".format(
-            func,
-            key,
-            message,
-            version))
+        raise DeprecationError(
+            "Keyword {1!r} of function '{0}' has been deprecated at version "
+            "{3} and is no longer available. {2}".format(
+                func,
+                key,
+                message,
+                version
+            )
+        )
 
 
 def _DEPRECATION_ERROR_KWARGS(instance, method, kwargs=None, message='',
@@ -2518,72 +2544,111 @@ def _DEPRECATION_ERROR_KWARGS(instance, method, kwargs=None, message='',
             message = msg
 
     for key in kwargs.keys():
-        raise DeprecationError("Keyword {2!r} of method '{0}.{1}' has been deprecated at version {4} and is no longer available. {3}".format(
-            instance.__class__.__name__,
+        raise DeprecationError(
+            "Keyword {2!r} of method '{0}.{1}' has been deprecated at "
+            "version {4} and is no longer available. {3}".format(
+                instance.__class__.__name__,
+                method,
+                key,
+                message,
+                version
+            )
+        )
+
+
+def _DEPRECATION_ERROR_KWARG_VALUE(
+        instance, method, kwarg, value, message='', version='3.0.0'):
+    raise DeprecationError(
+        "Value {!r} of keyword {!r} of method '{}.{}' has been deprecated at "
+        "version {} and is no longer available. {}".format(
+            value,
+            kwarg,
             method,
-            key,
-            message,
-            version))
-
-
-def _DEPRECATION_ERROR_KWARG_VALUE(instance, method, kwarg, value,
-                                   message='', version='3.0.0'):
-    raise DeprecationError("Value {!r} of keyword {!r} of method '{}.{}' has been deprecated at version {} and is no longer available. {}".format(
-        value,
-        kwarg,
-        method,
-        instance.__class__.__name__,
-        version,
-        message))
-
+            instance.__class__.__name__,
+            version,
+            message
+        )
+    )
 
 def _DEPRECATION_ERROR_METHOD(instance, method, message='', version='3.0.0'):
-    raise DeprecationError("{} method {!r} has been deprecated at version {} and is no longer available. {}".format(
-        instance.__class__.__name__,
-        method,
-        version,
-        message))
+    raise DeprecationError(
+        "{} method {!r} has been deprecated at version {} and is no longer "
+        "available. {}".format(
+            instance.__class__.__name__,
+            method,
+            version,
+            message
+        )
+    )
 
 
-def _DEPRECATION_ERROR_ATTRIBUTE(instance, attribute, message='', version='3.0.0'):
-    raise DeprecationError("{} attribute {!r} has been deprecate at version {} and is no longer available. {}".format(
-        instance.__class__.__name__,
-        attribute,
-        version,
-        message))
+def _DEPRECATION_ERROR_ATTRIBUTE(
+        instance, attribute, message='', version='3.0.0'):
+    raise DeprecationError(
+        "{} attribute {!r} has been deprecate at version {} and is no longer "
+        "available. {}".format(
+            instance.__class__.__name__,
+            attribute,
+            version,
+            message
+        )
+    )
 
 
 def _DEPRECATION_ERROR_FUNCTION(func, message='', version='3.0.0'):
-    raise DeprecationError("Function {!r} has been deprecated at version {} and is no longer available. {}".format(
-        func,
-        version,
-        message))
+    raise DeprecationError(
+        "Function {!r} has been deprecated at version {} and is no longer "
+        "available. {}".format(
+            func,
+            version,
+            message
+        )
+    )
 
 
 def _DEPRECATION_ERROR_CLASS(cls, message='', version='3.0.0'):
-    raise DeprecationError("Class {!r} has been deprecated at version {} and is no longer available. {}".format(
-        cls,
-        version,
-        message))
+    raise DeprecationError(
+        "Class {!r} has been deprecated at version {} and is no longer "
+        "available. {}".format(
+            cls,
+            version,
+            message
+        )
+    )
 
 
-def _DEPRECATION_WARNING_METHOD(instance, method, message='', new=None, version='3.0.0'):
+def _DEPRECATION_WARNING_METHOD(
+        instance, method, message='', new=None, version='3.0.0'):
     warnings.warn(
-        "{} method {!r} has been deprecated at version {} and will be removed in a future version. {}".format(
-            instance.__class__.__name__, method, version, message),
-        DeprecationWarning)
+        "{} method {!r} has been deprecated at version {} and will be "
+        "removed in a future version. {}".format(
+            instance.__class__.__name__,
+            method,
+            version,
+            message),
+        DeprecationWarning
+    )
 
 
 def _DEPRECATION_ERROR_DICT(message='', version='3.0.0'):
     raise DeprecationError(
-        "Use of a 'dict' to identify constructs has been deprecated at version {} and is no longer available. {}".format(
-            version, message))
+        "Use of a 'dict' to identify constructs has been deprecated at "
+        "version {} and is no longer available. {}".format(
+            version,
+            message
+        )
+    )
 
 
 def _DEPRECATION_ERROR_SEQUENCE(instance, version='3.0.0'):
     raise DeprecationError(
-        "Use of a {!r} to identify constructs has been deprecated at version {} and is no longer available. Use the * operator to unpack the arguments instead.".format(
-            instance.__class__.__name__, version))
+        "Use of a {!r} to identify constructs has been deprecated at version "
+        "{} and is no longer available. Use the * operator to unpack the "
+        "arguments instead.".format(
+            instance.__class__.__name__,
+            version
+        )
+    )
 
 
 # --------------------------------------------------------------------
@@ -2599,7 +2664,7 @@ def default_fillvals():
     _DEPRECATION_ERROR_FUNCTION(
         'default_fillvals',
         "Use function 'cf.default_netCDF_fillvals' instead.",
-        version='3.0.2') # pragma: no cover
+        version='3.0.2')  # pragma: no cover
 
 
 def set_equals(x, y, rtol=None, atol=None, ignore_fill_value=False,
@@ -2607,4 +2672,4 @@ def set_equals(x, y, rtol=None, atol=None, ignore_fill_value=False,
     '''Deprecated at version 3.0.0.
 
     '''
-    _DEPRECATION_ERROR_FUNCTION('cf.set_equals') # pragma: no cover
+    _DEPRECATION_ERROR_FUNCTION('cf.set_equals')  # pragma: no cover

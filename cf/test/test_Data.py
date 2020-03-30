@@ -72,7 +72,8 @@ class DataTest(unittest.TestCase):
 
         self.test_only = []
 #        self.test_only = ['NOTHING!!!!!']
-
+#        self.test_only = ['test_Data_datum']
+        
 #        self.test_only = [
 #                          'test_Data_trigonometric_hyperbolic']
 #                          'test_Data_AUXILIARY_MASK',
@@ -103,14 +104,14 @@ class DataTest(unittest.TestCase):
 
 #        self.test_only = ['test_Data_mean_mean_absolute_value']
 #        self.test_only = ['test_Data_AUXILIARY_MASK']
-        self.test_only = ['test_Data_mean_of_upper_decile']
+#        self.test_only = ['test_Data_mean_of_upper_decile']
 #        self.test_only = ['test_Data__collapse_SHAPE']
 #        self.test_only = ['test_Data__collapse_UNWEIGHTED_MASKED']
 #        self.test_only = ['test_Data__collapse_UNWEIGHTED_UNMASKED']
 #        self.test_only = ['test_Data__collapse_WEIGHTED_UNMASKED']
 #        self.test_only = ['test_Data__collapse_WEIGHTED_MASKED']
 #        self.test_only = ['test_Data_ERROR']
-#        self.test_only = ['test_Data_sample_size']
+#        self.test_only = ['test_Data_diff', 'test_Data_compressed']
 #        self.test_only = ['test_Data__init__dtype_mask']
 #        self.test_only = ['test_Data_section']
 #        self.test_only = ['test_Data_sum_of_weights_sum_of_weights2']
@@ -123,6 +124,93 @@ class DataTest(unittest.TestCase):
 #        self.test_only = ['test_Data__init__dtype_mask']
 
 
+    def test_Data_diff(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        a = numpy.ma.arange(12.).reshape(3, 4)
+        a[1, 1] = 4.5
+        a[2, 2] = 10.5
+        a[1, 2] = numpy.ma.masked
+
+        d = cf.Data(a)
+
+        self.assertTrue((d.array == a).all())
+
+        e = d.copy()
+        x = e.diff(inplace=True)
+        self.assertTrue(x is None)
+        self.assertTrue(e.equals(d.diff()))
+
+        for n in (0, 1, 2):
+            for axis in (0, 1, -1, -2):
+                a_diff = numpy.diff(a, n=n, axis=axis)
+                d_diff = d.diff(n=n, axis=axis)
+            
+                self.assertTrue((a_diff == d_diff).all())
+                self.assertTrue((a_diff.mask == d_diff.mask).all())
+
+                e = d.copy()
+                x = e.diff(n=n, axis=axis, inplace=True)
+                self.assertTrue(x is None)
+                self.assertTrue(e.equals(d_diff))                
+        #--- End: for
+                
+        for chunksize in self.chunk_sizes:
+            cf.CHUNKSIZE(chunksize)
+            
+            d = cf.Data(self.ma, 'km')
+            for n in (0, 1, 2):
+                for axis in (0, 1, 2, 3):
+                    a_diff = numpy.diff(self.ma, n=n, axis=axis)
+                    d_diff = d.diff(n=n, axis=axis)
+                    self.assertTrue((a_diff == d_diff).all())
+                    self.assertTrue((a_diff.mask == d_diff.mask).all())
+        #--- End: for
+        cf.CHUNKSIZE(self.original_chunksize)
+
+        
+    def test_Data_compressed(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        a = numpy.ma.arange(12).reshape(3, 4)
+
+        d = cf.Data(a)
+        self.assertTrue((d.array == a).all())               
+        self.assertTrue((a.compressed() == d.compressed()).all())
+
+        e = d.copy()
+        x = e.compressed(inplace=True)
+        self.assertTrue(x is None)
+        self.assertTrue(e.equals(d.compressed()))
+                
+        a[1, 1] = numpy.ma.masked
+        a[2, 3] = numpy.ma.masked
+
+        d = cf.Data(a)
+        self.assertTrue((d.array == a).all())
+        self.assertTrue((d.mask.array == a.mask).all())
+        self.assertTrue((a.compressed() == d.compressed()).all())
+        
+        e = d.copy()
+        x = e.compressed(inplace=True)
+        self.assertTrue(x is None)
+        self.assertTrue(e.equals(d.compressed()))
+                
+        for chunksize in self.chunk_sizes:
+            cf.CHUNKSIZE(chunksize)            
+            d = cf.Data(self.a, 'km')
+            self.assertTrue((self.a.flatten() == d.compressed()).all())
+
+        for chunksize in self.chunk_sizes:
+            cf.CHUNKSIZE(chunksize)            
+            d = cf.Data(self.ma, 'km')
+            self.assertTrue((self.ma.compressed() == d.compressed()).all())
+
+        cf.CHUNKSIZE(self.original_chunksize)
+
+        
     def test_Data_stats(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -241,7 +329,7 @@ class DataTest(unittest.TestCase):
 
                         self.assertTrue((e.array == b).all())
 
-                        e.where(cf.set([e.min(), e.max()]), cf.masked, e-1, inplace=True)
+                        e.where(cf.set([e.minimum(), e.maximum()]), cf.masked, e-1, inplace=True)
                         f = d.digitize(bins, upper=upper)
                         self.assertTrue(e.equals(f, verbose=True))
         # --- End: for
@@ -1044,24 +1132,24 @@ class DataTest(unittest.TestCase):
         self.assertTrue(d._pmshape == (3,))
         self.assertTrue(d[0].shape  == (1, 4, 5))
         self.assertTrue(d[-1].shape == (1, 4, 5))
-        self.assertTrue(d[0].max()  == 4*5)
-        self.assertTrue(d[-1].max() == 3*4*5)
+        self.assertTrue(d[0].maximum()  == 4*5)
+        self.assertTrue(d[-1].maximum() == 3*4*5)
 
         for i in (2, 1):
             e = d.flip(i)
             self.assertTrue(e._pmshape == (3,))
             self.assertTrue(e[0].shape  == (1, 4, 5))
             self.assertTrue(e[-1].shape == (1, 4, 5))
-            self.assertTrue(e[0].max()  == 4*5)
-            self.assertTrue(e[-1].max() == 3*4*5)
+            self.assertTrue(e[0].maximum()  == 4*5)
+            self.assertTrue(e[-1].maximum() == 3*4*5)
 
         i = 0
         e = d.flip(i)
         self.assertTrue(e._pmshape == (3,))
         self.assertTrue(e[0].shape  == (1, 4, 5))
         self.assertTrue(e[-1].shape == (1, 4, 5))
-        self.assertTrue(e[0].max()  == 3*4*5)
-        self.assertTrue(e[-1].max() == 4*5)
+        self.assertTrue(e[0].maximum()  == 3*4*5)
+        self.assertTrue(e[-1].maximum() == 4*5)
 
 
     def test_Data_max(self):
@@ -1072,12 +1160,12 @@ class DataTest(unittest.TestCase):
             for pp in (False, True):
                 cf.CHUNKSIZE(chunksize)
                 d = cf.Data([[4, 5, 6], [1, 2, 3]], 'metre')
-                self.assertTrue(d.max(_preserve_partitions=pp) == cf.Data(6, 'metre'))
-                self.assertTrue(d.max(_preserve_partitions=pp).datum() == 6)
+                self.assertTrue(d.maximum(_preserve_partitions=pp) == cf.Data(6, 'metre'))
+                self.assertTrue(d.maximum(_preserve_partitions=pp).datum() == 6)
                 d[0, 2] = cf.masked
-                self.assertTrue(d.max(_preserve_partitions=pp) == 5)
-                self.assertTrue(d.max(_preserve_partitions=pp).datum() == 5)
-                self.assertTrue(d.max(_preserve_partitions=pp) == cf.Data(0.005, 'km'))
+                self.assertTrue(d.maximum(_preserve_partitions=pp) == 5)
+                self.assertTrue(d.maximum(_preserve_partitions=pp).datum() == 5)
+                self.assertTrue(d.maximum(_preserve_partitions=pp) == cf.Data(0.005, 'km'))
 
         cf.CHUNKSIZE(self.original_chunksize)
 
@@ -1090,12 +1178,12 @@ class DataTest(unittest.TestCase):
             for pp in (False, True):
                 cf.CHUNKSIZE(chunksize)
                 d = cf.Data([[4, 5, 6], [1, 2, 3]], 'metre')
-                self.assertTrue(d.min(_preserve_partitions=pp) == cf.Data(1, 'metre'))
-                self.assertTrue(d.min(_preserve_partitions=pp).datum() == 1)
+                self.assertTrue(d.minimum(_preserve_partitions=pp) == cf.Data(1, 'metre'))
+                self.assertTrue(d.minimum(_preserve_partitions=pp).datum() == 1)
                 d[1, 0] = cf.masked
-                self.assertTrue(d.min(_preserve_partitions=pp) == 2)
-                self.assertTrue(d.min(_preserve_partitions=pp).datum() == 2)
-                self.assertTrue(d.min(_preserve_partitions=pp) == cf.Data(0.002, 'km'))
+                self.assertTrue(d.minimum(_preserve_partitions=pp) == 2)
+                self.assertTrue(d.minimum(_preserve_partitions=pp).datum() == 2)
+                self.assertTrue(d.minimum(_preserve_partitions=pp) == cf.Data(0.002, 'km'))
 #            print('pmshape =', d._pmshape)
 
         cf.CHUNKSIZE(self.original_chunksize)
@@ -2488,22 +2576,28 @@ class DataTest(unittest.TestCase):
                         )
         # --- End: for
 
-        # Uncomment below to reveal a bug!? When commented the test passes,
-        # but uncommented, changing the chunksize, it fails (adds masking):
-        ### cf.CHUNKSIZE(self.original_chunksize)
+        cf.CHUNKSIZE(self.original_chunksize)  # reset after changes in loop
 
-        # Also test masking behaviour: under-the-hood masking of invalid data
-        # was once observed so we must check that invalid values emerge.
+        # Also test masking behaviour: masking of invalid data occurs for
+        # numpy.ma module by default but we don't want that so there is logic
+        # to workaround it. So check that invalid values do emerge.
         inverse_methods = [method for method in trig_and_hyperbolic_methods
                            if method.startswith('arc')]
         d = cf.Data([2, 1.5, 1, 0.5, 0], mask=[1, 0, 0, 0, 1])
         for method in inverse_methods:
             e = getattr(d, method)()
-            ### print(e.mask.array, d.mask.array)
             self.assertTrue(
                 (e.mask.array == d.mask.array).all(),
-                "{}, {}, {}".format(method, units, e.array-d)
+                "{}, {}".format(method, e.array-d)
             )
+
+        # In addition, test that 'nan', inf' and '-inf' emerge distinctly
+        f = cf.Data([-2, -1, 1, 2], mask=[0, 0, 0, 1])
+        g = f.arctanh().array  # expect [ nan, -inf,  inf,  --]
+        self.assertTrue(numpy.isnan(g[0]))
+        self.assertTrue(numpy.isneginf(g[1]))
+        self.assertTrue(numpy.isposinf(g[2]))
+        self.assertTrue(g[3] is cf.masked)
 
         # AT2
         #

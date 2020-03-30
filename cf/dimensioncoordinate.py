@@ -11,7 +11,7 @@ from .units        import Units
 from .data.data import Data
 
 from . import mixin
-from . import abstract
+#from . import abstract
 
 from .functions import (_DEPRECATION_ERROR_KWARGS,
                         _DEPRECATION_ERROR_ATTRIBUTE)
@@ -21,7 +21,7 @@ from .decorators import (_inplace_enabled,
                          _deprecated_kwarg_check)
 
 
-class DimensionCoordinate(abstract.Coordinate,
+class DimensionCoordinate(mixin.Coordinate,
                           mixin.PropertiesDataBounds,
                           cfdm.DimensionCoordinate):
     '''A dimension coordinate construct of the CF data model.

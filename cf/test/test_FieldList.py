@@ -74,7 +74,9 @@ class FieldTest(unittest.TestCase):
         f = cf.read(self.filename)
         self.assertTrue(f.close() is None)
 
+        _ = repr(f[0])
 
+        
     def test_FieldList__len__(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -259,8 +261,8 @@ class FieldTest(unittest.TestCase):
         g = g + 10
         f.insert(-1, g)
         self.assertTrue(len(f) == 3)
-        self.assertTrue(f[0].max() == (f[1].max() - 10))
-        self.assertIsInstance(f, cf.FieldList)
+        self.assertTrue(f[0].maximum() == (f[1].maximum() - 10))
+        self.assertTrue(isinstance(f, cf.FieldList))
 
         # Pop
         f = cf.read(self.filename)
@@ -464,7 +466,6 @@ class FieldTest(unittest.TestCase):
         with self.assertRaises(Exception):
             g = f.select_field(re.compile('^QWERTY'))
 
-
     def test_FieldList_concatenate(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -478,7 +479,6 @@ class FieldTest(unittest.TestCase):
 
         h = g.concatenate(axis=0, _preserve=False)
         self.assertTrue(f.equals(h, verbose=True))
-
 
     def test_FieldList_index(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

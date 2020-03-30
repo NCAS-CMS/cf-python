@@ -326,9 +326,10 @@ class _Meta:
                                              relaxed_units=relaxed_units)
 
                 info_dim.append(
-                    {'identity': dim_identity,
-                     'key': dim_coord_key,  # axis,
-                     'units': units,
+                    {'identity' : dim_identity,
+                     'key'      : dim_coord_key, #axis,
+                     'units'    : units,
+                     'hasdata'  : dim_coord.has_data(),
                      'hasbounds': dim_coord.has_bounds(),
                      'coordrefs': self.find_coordrefs(axis)}
                 )
@@ -362,9 +363,10 @@ class _Meta:
                                              relaxed_units=relaxed_units)
 
                 info_aux.append(
-                    {'identity': aux_identity,
-                     'key': key,
-                     'units': units,
+                    {'identity' : aux_identity,
+                     'key'      : key,
+                     'units'    : units,
+                     'hasdata'  : aux_coord.has_data(),
                      'hasbounds': aux_coord.has_bounds(),
                      'coordrefs': self.find_coordrefs(key)}
                 )
@@ -412,20 +414,14 @@ class _Meta:
                     ncdim = True
             # --- End: if
 
-            axis_identity_mapping = {
-                 'ids': 'identity',
-                 'keys': 'key',
-                 'units': 'units',
-                 'hasbounds': 'hasbounds',
-                 'coordrefs': 'coordrefs',
-            }
-            #    'size': None} #tuple([i['size'] for i in info_1d_coord])}
-            axis_identity = {}
-            for key, mapping in axis_identity_mapping.items():
-                axis_identity.update({
-                    key: tuple([i[mapping] for i in info_1d_coord])
-                })
-            self.axis[identity] = axis_identity
+            self.axis[identity] = \
+                {'ids'      : tuple([i['identity']  for i in info_1d_coord]),
+                 'keys'     : tuple([i['key']       for i in info_1d_coord]),
+                 'units'    : tuple([i['units']     for i in info_1d_coord]),
+                 'hasdata'  : tuple([i['hasdata']   for i in info_1d_coord]),
+                 'hasbounds': tuple([i['hasbounds'] for i in info_1d_coord]),
+                 'coordrefs': tuple([i['coordrefs'] for i in info_1d_coord])}
+#                 'size'     : None} #tuple([i['size']      for i in info_1d_coord])}
 
             if info_dim:
                 self.axis[identity]['dim_coord_index'] = 0
@@ -469,9 +465,10 @@ class _Meta:
                                          relaxed_units=relaxed_units)
 
             self.nd_aux[identity] = {
-                'key': key,
-                'units': units,
-                'axes': axes,
+                'key'      : key,
+                'units'    : units,
+                'axes'     : axes,
+                'hasdata'  : nd_aux_coord.has_data(),
                 'hasbounds': nd_aux_coord.has_bounds(),
                 'coordrefs': self.find_coordrefs(key)
             }
@@ -757,8 +754,11 @@ class _Meta:
         `Units` or `None`
 
         '''
-        var_units = variable.Units
-
+        if variable.has_data():        
+            var_units = variable.Units
+        elif variable.has_bounds():
+            var_units = variable.bounds.Units
+            
         _canonical_units = self._canonical_units
 
         if identity in _canonical_units:
@@ -1153,11 +1153,9 @@ class _Meta:
         # already been sorted.
         axis = self.axis
         x = [(identity,
-              ('ids', axis[identity]['ids']),
-              ('units', tuple(
-                  [u.formatted(definition=True) for u in
-                   axis[identity]['units']]
-              )),
+              ('ids'      , axis[identity]['ids']),
+              ('units'    , tuple([u.formatted(definition=True) for u in axis[identity]['units']])),
+              ('hasdata'  , axis[identity]['hasdata']),
               ('hasbounds', axis[identity]['hasbounds']),
               ('coordrefs', axis[identity]['coordrefs']),
               ('size', axis[identity]['size']))
@@ -1174,8 +1172,9 @@ class _Meta:
         # N-d auxiliary coordinates
         nd_aux = self.nd_aux
         x = [(identity,
-              ('units', nd_aux[identity]['units'].formatted(definition=True)),
-              ('axes', nd_aux[identity]['axes']),
+              ('units'    , nd_aux[identity]['units'].formatted(definition=True)),
+              ('axes'     , nd_aux[identity]['axes']),
+              ('hasdata'  , nd_aux[identity]['hasdata']),
               ('hasbounds', nd_aux[identity]['hasbounds']),
               ('coordrefs', nd_aux[identity]['coordrefs']))
              for identity in sorted(nd_aux)]
@@ -2209,17 +2208,23 @@ def _create_hash_and_first_values(meta, axes, donotchecknonaggregatingaxes,
 
                 # Get the hash of the data array
                 h = _get_hfl(domain_anc, canonical_units,
-                             sort_indices, False, False, False,
-                             hfl_cache, rtol, atol)
-
+                             sort_indices, null_sort=False,
+                             first_and_last_values=False,
+                             first_and_last_bounds=False,
+                             hfl_cache=hfl_cache, rtol=rtol,
+                             atol=atol)
+                    
                 if domain_anc.has_bounds():
                     # Get the hash of the bounds data array
                     hb = _get_hfl(domain_anc.bounds, canonical_units,
-                                  sort_indices, False, False, False,
-                                  hfl_cache, rtol, atol)
+                                  sort_indices, null_sort=False,
+                                  first_and_last_values=False,
+                                  first_and_last_bounds=False,
+                                  hfl_cache=hfl_cache, rtol=rtol,
+                                  atol=atol)
                     h = (h, hb)
                 else:
-                    h = (h,)
+                    h = (h,)                
 
                 anc['hash_value'] = h
 
@@ -2271,7 +2276,12 @@ def _get_hfl(v, canonical_units, sort_indices, null_sort,
 
     key = None
 
-    d = v.get_data()
+    d = v.get_data(None)
+    if d is None:
+        if create_fl or create_flb:
+            return None, None, None
+
+        return
 
     if d._pmsize == 1:
         partition = d.partitions.matrix.item()
@@ -2996,9 +3006,9 @@ def _aggregate_2_fields(m0, m1,
                 field0.del_property(prop)
     # --- End: for
 
-#    #-----------------------------------------------------------------
+#    # ----------------------------------------------------------------
 #    # Update the attributes in field0
-#    #-----------------------------------------------------------------
+#    # ----------------------------------------------------------------
 #    for attr in m0.attributes | m1.attributes: ppp
 #        value0 = getattr(field0, attr, None)
 #        value1 = getattr(field1, attr, None)

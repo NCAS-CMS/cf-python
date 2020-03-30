@@ -251,7 +251,7 @@ class CInterface:
         """
         c_rec = c_rec_p.contents
 
-        #===============================================================
+        # ============================================================
         # Previous code - causing memory leaks per
         # https://github.com/numpy/numpy/issues/6511
         #
@@ -259,8 +259,11 @@ class CInterface:
         #     # by C without affecting the python object
         #     int_hdr = numpy.copy(numpy.ctypeslib.as_array(c_rec.int_hdr))
         #     real_hdr = numpy.copy(numpy.ctypeslib.as_array(c_rec.real_hdr))
+
+        # ============================================================
+
         #
-        #-------------------------------
+        # -------------------------------
         # Workaround: instead cast to a pointer, obtain the values knowing the length
         #             of the header arrays, and copy into an appropriate numpy array
         #
@@ -269,7 +272,7 @@ class CInterface:
 
         ptr = CT.cast(c_rec.real_hdr, self._real_ptr)
         real_hdr = numpy.array(ptr[:_len_real_hdr], dtype=self.file_data_real_type)
-        #===============================================================
+        # ===============================================================
 
         header_offset = c_rec.header_offset
         data_offset = c_rec.data_offset

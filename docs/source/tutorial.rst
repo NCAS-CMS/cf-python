@@ -19,7 +19,7 @@ script (:download:`download <../source/tutorial.py>`, 36kB).
 
 .. http://docutils.sourceforge.net/docs/ref/rst/directives.html#list-table
   
-.. note:: **This version of cf is for Python 3 only** and there are
+.. important:: **This version of cf is for Python 3 only** and there are
           :ref:`incompatible differences between versions 2.x and 3.x
           <two-to-three-changes>` of cf.
 
@@ -63,7 +63,7 @@ the `cf.CF` function:
    :caption: *Retrieve the version of the CF conventions.*
       
    >>> cf.CF()
-   '1.7'
+   '1.8'
 
 This indicates which version of the CF conventions are represented by
 this release of the cf package, and therefore the version can not be
@@ -78,9 +78,9 @@ Note, however, that datasets of different CF versions may be
 **Field construct**
 -------------------
 
-The central construct (i.e. element) to CF is the :ref:`field
-construct <CF-data-model>`. The field construct, that corresponds to a
-CF-netCDF data variable, includes all of the metadata to describe it:
+The central construct (i.e. element) to CF is the :term:`field
+construct`. The field construct, that corresponds to a CF-netCDF data
+variable, includes all of the metadata to describe it:
 
     * descriptive properties that apply to field construct as a whole
       (e.g. the standard name),
@@ -119,7 +119,7 @@ The following file types can be read:
 ..
 
 * Files in `CDL format
-  <https://www.unidata.ucar.edu/software/netcdf/netcdf/CDL-Syntax.html>`_,
+  <https://www.unidata.ucar.edu/software/netcdf/docs/netcdf_utilities_guide.html>`_,
   with or without the data array values.
 
 ..
@@ -127,8 +127,16 @@ The following file types can be read:
 * :ref:`PP and UM fields files <PP-and-UM-fields-files>`, whose
   contents are mapped into field constructs.
 
-For example, to read the file ``file.nc``, which contains two field
-constructs:
+..
+
+* A future release of cf will include support for :ref:`netCDF4 files
+  containing data organised in hierarchical groups
+  <Hierarchical-groups>`, but this is not available in version
+  |release| (even though it is allowed in CF-|version|).
+
+For example, to read the file ``file.nc`` (found in the :ref:`sample
+datasets <Sample-datasets>`), which contains
+two field constructs:
 
 .. code-block:: python
    :caption: *Read file.nc and show that the result is a two-element
@@ -600,6 +608,18 @@ retrieved with the `~Field.properties` method:
     'standard_name': 'air_temperature',
     'units': 'K'}
    
+.. note::
+
+   From a Python script or using the standard Python shell, the result of
+   methods such as the property methods given here will be returned in
+   condensed form, without linebreaks between items.
+
+   If a "pretty printed" output as displayed in these pages is preferred,
+   use the
+   `ipython shell <https://ipython.readthedocs.io/en/stable/index.html>`_ or
+   wrap calls with a suitable method from Python's dedicated
+   `pprint module <https://docs.python.org/3/library/pprint.html>`_.
+
 Individual properties may be accessed and modified with the
 `~Field.del_property`, `~Field.get_property`, `~Field.has_property`,
 and `~Field.set_property` methods:
@@ -1438,12 +1458,12 @@ A `cf.Data` instance can also assigned values in the same way:
 Masked values
 ^^^^^^^^^^^^^
  
-Data array elements may be set to missing values by assigning them to
+Data array elements may be set to masked values by assigning them to
 the `cf.masked` constant, thereby updating the the :ref:`data mask
 <Data-mask>`.
 
 .. code-block:: python
-   :caption: *Set a column of elements to missing values.*
+   :caption: *Set a column of elements to masked values.*
 	     
    >>> t[0, :, -2] = cf.masked
    >>> print(t.array)
@@ -2425,6 +2445,105 @@ parent coordinate construct, but it may also have its own properties
     'units': 'degrees'}  
    >>> bounds.properties()
    {'units': 'degrees'}
+
+.. _Geometry-cells:
+
+Geometry cells
+~~~~~~~~~~~~~~
+
+For many geospatial applications, cell bounds can not be represented
+by a simple line or polygon, and different cells may have different
+numbers of nodes describing their bounds. For example, if each cell
+describes the areal extent of a watershed, then it is likely that some
+watersheds will require more nodes than others. Such cells are called
+`geometries`_.
+
+If a coordinate construct represents geometries then it will have a
+"geometry" attribute (not a :ref:`CF property
+<Metadata-construct-properties>`) with one of the values ``'point'``,
+'``line'`` or ``'polygon'``.
+
+This is illustrated with the file ``geometry.nc`` (found in the
+:ref:`sample datasets <Sample-datasets>`):
+
+.. code-block:: python
+   :caption: *Read and inspect a dataset containing geometry cell
+             bounds.*
+
+   >>> f = cfdm.read('geometry.nc')[0]
+   >>> print(f)
+   Field: preciptitation_amount (ncvar%pr)
+   ---------------------------------------
+   Data            : preciptitation_amount(cf_role=timeseries_id(2), time(4))
+   Dimension coords: time(4) = [2000-01-02 00:00:00, ..., 2000-01-05 00:00:00]
+   Auxiliary coords: latitude(cf_role=timeseries_id(2)) = [25.0, 7.0] degrees_north
+                   : longitude(cf_role=timeseries_id(2)) = [10.0, 40.0] degrees_east
+                   : altitude(cf_role=timeseries_id(2)) = [5000.0, 20.0] m
+                   : cf_role=timeseries_id(cf_role=timeseries_id(2)) = [b'x1', b'y2']
+   Coord references: grid_mapping_name:latitude_longitude
+   >>> lon = f.auxiliary_coordinate('X')
+   >>> lon.dump()                     
+   Auxiliary coordinate: longitude
+      standard_name = 'longitude'
+      units = 'degrees_east'
+      Data(2) = [10.0, 40.0] degrees_east
+      Geometry: polygon
+      Bounds:axis = 'X'
+      Bounds:standard_name = 'longitude'
+      Bounds:units = 'degrees_east'
+      Bounds:Data(2, 3, 4) = [[[20.0, ..., --]]] degrees_east
+      Interior Ring:Data(2, 3) = [[0, ..., --]]
+   >>> lon.get_geometry()
+   'polygon'
+
+Bounds for geometry cells are also stored in a `Bounds` instance, but
+one that always has *two* extra trailing dimensions (rather than
+one). The fist trailing dimension indexes the distinct parts of a
+geometry, and the second indexes the nodes of each part. When a part
+has fewer nodes than another, its nodes dimension is padded with
+missing data.
+
+
+.. code-block:: python
+   :caption: *Inspect the geometry nodes.*
+ 
+   >>> print(lon.bounds.data.array)
+   [[20.0 10.0  0.0   --]
+    [ 5.0 10.0 15.0 10.0]
+    [20.0 10.0  0.0   --]]
+
+   [[50.0 40.0 30.0   --]
+    [  --   --   --   --]
+    [  --   --   --   --]]]
+
+If a cell is composed of multiple polygon parts, an individual polygon
+may define an "interior ring", i.e. a region that is to be omitted
+from, as opposed to included in, the cell extent. Such cells also have
+an interior ring array that spans the same domain axes as the
+coordinate cells, with the addition of one extra dimension that
+indexes the parts for each cell. This array records whether each
+polygon is to be included or excluded from the cell, with vlaues of
+``1`` or ``0`` respectively.
+
+.. code-block:: python
+   :caption: *Inspect the interior ring information.*
+ 
+   >>> print(lon.get_interior_ring().data.array)
+   [[0  1  0]
+    [0 -- --]]
+
+Note it is preferable to access the data type, number of dimensions,
+dimension sizes and number of elements of the coordinate construct via
+the construct's attributes, rather than the attributes of the
+`cf.Data` instance that provides representative values for each
+cell. This is because the representative cell values for geometries
+are optional, and if they are missing then the construct attributes
+are able to infer these attributes from the bounds.
+  
+When a field construct containing geometries is written to disk, a
+CF-netCDF geometry container variable is automatically created, and
+the cells encoded with the :ref:`compression <Compression>` techniques
+defined in the CF conventions.
 
 .. _Domain-ancillaries:
 		
@@ -4965,6 +5084,36 @@ The new dataset is structured as follows (note, relative to file
    		:project = "research" ;
    }
 
+.. _Strings:
+  
+Strings
+^^^^^^^
+
+String-valued data may be written to netCDF files either as netCDF
+character arrays with a trailing dimension large enough to contain the
+longest value, or as netCDF4 string arrays. The former is allowed for
+all formats of netCDF3 and netCDF4 format files; but string arrays may
+only be written to netCDF4 format files (note that string arrays can
+not be written to netCDF4 classic format files).
+
+By default, netCDF string arrays will be created whenever possible,
+and in all other cases netCDF character arrays will be
+used. Alternatively, netCDF character arrays can be used in all cases
+by setting the *string* keyword of the `cf.write` function.
+
+----
+   
+.. _Hierarchical-groups:
+
+**Hierarchical groups**
+-----------------------
+
+`Hierarchical groups`_ provide a powerful mechanism to structure
+variables within datasets. A future release of cf will include support
+for netCDF4 files containing data organised in hierarchical groups,
+but this is not available in version |release| (even though it is
+allowed in CF-|version|).
+
 ----
 
 .. _External-variables:
@@ -4979,8 +5128,8 @@ however, be incorporated into the field constructs of the dataset, as
 if they had actually been stored in the same file, simply by providing
 the external file names to the `cf.read` function.
 
-This is illustrated with the files ``parent.nc`` (found in the zip
-file of sample files):
+This is illustrated with the files ``parent.nc`` (found in the
+:ref:`sample datasets <Sample-datasets>`):
 
 .. code-block:: console
    :caption: *Inspect the parent dataset with the ncdump command line
@@ -5008,7 +5157,8 @@ file of sample files):
    		:external_variables = "areacella" ;
    }
 
-and ``external.nc`` (found in the zip file of sample files):
+and ``external.nc`` (found in the :ref:`sample datasets
+<Sample-datasets>`):
 
 .. code-block:: console
    :caption: *Inspect the external dataset with the ncdump command
@@ -5351,7 +5501,7 @@ and is accessed with the `~Data.get_index` method of the `cf.Data`
 instance.
 
 The contiguous case is is illustrated with the file ``contiguous.nc``
-(found in the zip file of sample files):
+(found in the :ref:`sample datasets <Sample-datasets>`):
 
 .. code-block:: console
    :caption: *Inspect the compressed dataset with the ncdump command
@@ -5610,8 +5760,8 @@ The list variable that is required to uncompress a gathered array is
 stored in a `cf.List` object and is retrieved with the `~Data.get_list`
 method of the `cf.Data` instance.
 
-This is illustrated with the file ``gathered.nc`` (found in the zip
-file of sample files):
+This is illustrated with the file ``gathered.nc`` (found in the
+:ref:`sample datasets <Sample-datasets>`):
 
 .. code-block:: console
    :caption: *Inspect the compressed dataset with the ncdump command
@@ -5999,10 +6149,13 @@ is straight forward with the `cf.load_stash2standard_name` function.
 
 .. External links to the CF conventions (will need updating with new versions of CF)
    
-.. _External variables:               http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#external-variables
-.. _Discrete sampling geometry (DSG): http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#discrete-sampling-geometries
-.. _incomplete multidimensional form: http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#_incomplete_multidimensional_array_representation
-.. _Compression by gathering:         http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#compression-by-gathering
-.. _contiguous:                       http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#_contiguous_ragged_array_representation
-.. _indexed:                          http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#_indexed_ragged_array_representation
-.. _indexed contiguous:               http://cfconventions.org/Data/cf-conventions/cf-conventions-1.7/cf-conventions.html#_ragged_array_representation_of_time_series_profiles
+.. _External variables:               http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#external-variables
+.. _Discrete sampling geometry (DSG): http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#discrete-sampling-geometries
+.. _incomplete multidimensional form: http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#_incomplete_multidimensional_array_representation
+.. _Compression by gathering:         http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#compression-by-gathering
+.. _contiguous:                       http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#_contiguous_ragged_array_representation
+.. _indexed:                          http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#_indexed_ragged_array_representation
+.. _indexed contiguous:               http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#_ragged_array_representation_of_time_series_profiles
+.. _geometries:                       http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#geometries
+.. _Hierarchical groups:              http://cfconventions.org/Data/cf-conventions/cf-conventions-1.8/cf-conventions.html#groups
+
