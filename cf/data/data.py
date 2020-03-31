@@ -7909,16 +7909,22 @@ False
 
     **Examples:**
 
-    >>> d = cf.Data([[0, 1, 2], [3, -99, 5]], mask=[[0, 0, 0], [0, 1, 0]])
     >>> print(d.array)
-    [[0  1 2]
-     [3 -- 5]]
+    [[0.5 0.7]
+     [0.9 1.1]]
     >>> e = d.arctan()
-    >>> e
-    <CF Data(2, 3): [[0.0, ..., 1.373400766945016]] radians>
+    >>> e.Units
+    <Units: radians>
     >>> print(e.array)
-    [[0.0                0.7853981633974483 1.1071487177940904]
-     [1.2490457723982544                 -- 1.373400766945016 ]]
+    [[0.46364761 0.61072596]
+     [0.7328151  0.83298127]]
+
+    >>> print(d.array)
+    [1.2 1.0 0.8 0.6 --]
+    >>> d.arctan(inplace=True)
+    >>> print(d.array)
+    [0.8760580505981934 0.7853981633974483 0.6747409422235527
+     0.5404195002705842 --]
 
         '''
         d = _inplace_enabled_define_and_cleanup(self)
@@ -7944,7 +7950,7 @@ False
 #
 #    Units are ignored in the calculation. The result has units of radians.
 #
-#    .. versionadded:: 3.1.1
+#    .. versionadded:: 3.2.0
 #
 #    .. seealso:: `arctan`, `tan`
 #
@@ -7976,7 +7982,7 @@ False
 
     Units are ignored in the calculation. The result has units of radians.
 
-    .. versionadded:: 3.1.1
+    .. versionadded:: 3.2.0
 
     .. seealso::  `tanh`, `arcsinh`, `arccosh`, `arctan`
 
@@ -7991,7 +7997,24 @@ False
 
     **Examples:**
 
-    TODO
+    >>> print(d.array)
+    [[0.5 0.7]
+     [0.9 1.1]]
+    >>> e = d.arctanh()
+    >>> e.Units
+    <Units: radians>
+    >>> print(e.array)
+    [[0.54930614 0.86730053]
+     [1.47221949        nan]]
+
+    >>> print(d.array)
+    [1.2 1.0 0.8 0.6 --]
+    >>> d.arctanh(inplace=True)
+    >>> print(d.array)
+    [nan inf 1.0986122886681098 0.6931471805599453 --]
+    >>> d.mask_invalid(inplace=True)
+    >>> print(d.array)
+    [-- -- 1.0986122886681098 0.6931471805599453 --]
 
         '''
         d = _inplace_enabled_define_and_cleanup(self)
@@ -8008,7 +8031,7 @@ False
 
     Units are ignored in the calculation. The result has units of radians.
 
-    .. versionadded:: 3.1.1
+    .. versionadded:: 3.2.0
 
     .. seealso::  `sin`, `arccos`, `arctan`, `arcsinh`
 
@@ -8023,7 +8046,24 @@ False
 
     **Examples:**
 
-    TODO
+    >>> print(d.array)
+    [[0.5 0.7]
+     [0.9 1.1]]
+    >>> e = d.arcsin()
+    >>> e.Units
+    <Units: radians>
+    >>> print(e.array)
+    [[0.52359878 0.7753975 ]
+     [1.11976951        nan]]
+
+    >>> print(d.array)
+    [1.2 1.0 0.8 0.6 --]
+    >>> d.arcsin(inplace=True)
+    >>> print(d.array)
+    [nan 1.5707963267948966 0.9272952180016123 0.6435011087932844 --]
+    >>> d.mask_invalid(inplace=True)
+    >>> print(d.array)
+    [-- 1.5707963267948966 0.9272952180016123 0.6435011087932844 --]
 
         '''
         d = _inplace_enabled_define_and_cleanup(self)
@@ -8055,16 +8095,22 @@ False
 
     **Examples:**
 
-    >>> d = cf.Data([[0, 1, 2], [3, -99, 5]], mask=[[0, 0, 0], [0, 1, 0]])
     >>> print(d.array)
-    [[0  1 2]
-     [3 -- 5]]
+    [[0.5 0.7]
+     [0.9 1.1]]
     >>> e = d.arcsinh()
-    >>> e
-    <CF Data(2, 3): [[0.0, ..., 2.3124383412727525]] radians>
+    >>> e.Units
+    <Units: radians>
     >>> print(e.array)
-    [[0.0 0.881373587019543 1.4436354751788103]
-     [1.8184464592320668 -- 2.3124383412727525]]
+    [[0.48121183 0.65266657]
+     [0.80886694 0.95034693]]
+
+    >>> print(d.array)
+    [1.2 1.0 0.8 0.6 --]
+    >>> d.arcsinh(inplace=True)
+    >>> print(d.array)
+    [1.015973134179692 0.881373587019543 0.732668256045411 0.5688248987322475
+     --]
 
         '''
         d = _inplace_enabled_define_and_cleanup(self)
@@ -8079,7 +8125,7 @@ False
 
     Units are ignored in the calculation. The result has units of radians.
 
-    .. versionadded:: 3.1.1
+    .. versionadded:: 3.2.0
 
     .. seealso:: `cos`, `arcsin`, `arctan`, `arccosh`
 
@@ -8094,7 +8140,24 @@ False
 
     **Examples:**
 
-    TODO
+    >>> print(d.array)
+    [[0.5 0.7]
+     [0.9 1.1]]
+    >>> e = d.arccos()
+    >>> e.Units
+    <Units: radians>
+    >>> print(e.array)
+    [[1.04719755 0.79539883]
+     [0.45102681        nan]]
+
+    >>> print(d.array)
+    [1.2 1.0 0.8 0.6 --]
+    >>> d.arccos(inplace=True)
+    >>> print(d.array)
+    [nan 0.0 0.6435011087932843 0.9272952180016123 --]
+    >>> d.mask_invalid(inplace=True)
+    >>> print(d.array)
+    [-- 0.0 0.6435011087932843 0.9272952180016123 --]
 
         '''
         d = _inplace_enabled_define_and_cleanup(self)
@@ -8111,7 +8174,7 @@ False
 
     Units are ignored in the calculation. The result has units of radians.
 
-    .. versionadded:: 3.1.1
+    .. versionadded:: 3.2.0
 
     .. seealso::  `cosh`, `arcsinh`, `arctanh`, `arccos`
 
@@ -8126,7 +8189,24 @@ False
 
     **Examples:**
 
-    TODO
+    >>> print(d.array)
+    [[0.5 0.7]
+     [0.9 1.1]]
+    >>> e = d.arccosh()
+    >>> e.Units
+    <Units: radians>
+    >>> print(e.array)
+    [[       nan        nan]
+     [       nan 0.44356825]]
+
+    >>> print(d.array)
+    [1.2 1.0 0.8 0.6 --]
+    >>> d.arccosh(inplace=True)
+    >>> print(d.array)
+    [0.6223625037147786 0.0 nan nan --]
+    >>> d.mask_invalid(inplace=True)
+    >>> print(d.array)
+    [0.6223625037147786 0.0 -- -- --]
 
         '''
         d = _inplace_enabled_define_and_cleanup(self)
