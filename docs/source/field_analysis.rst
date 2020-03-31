@@ -2093,7 +2093,7 @@ metadata but changing the construct's units where required.
    <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>
    >>> t.log(base=10)
    <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) lg(re 1 K)>
-   >>> t.exp()                                                # Raises Exception
+   >>> t.exp()  # Raises Exception
    ValueError: Can't take exponential of dimensional quantities: <Units: K>
 
 The "standard_name" and "long_name" properties are removed from the
