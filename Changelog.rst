@@ -1,3 +1,15 @@
+version 3.3.0
+-------------
+----
+
+**2020-??-??**
+
+* Changed the API to `cf.Field.convolution_filter`: renamed the
+  ``weights`` parameter to ``window``.
+* New method: `cf.Field.moving_average`
+* New method: `cf.Data.convolution_filter`
+* New keyword parameter to `cf.Field.weights`: ``axes``.
+
 version 3.2.0
 -------------
 ----
@@ -319,7 +331,7 @@ version 2.2.5
 -------------
 ----
 
-**2018-7-02**
+**2018-07-02**
 
 * Fixed bug with HDF chunk sizes that prevented the writing of large
   files
@@ -492,6 +504,12 @@ version 2.0.4
 * Bug fix in `cf.Field.where`
 * Bug fix when initializing a field with the source parameter
 * Changed default output format to NETCDF4 (from NETCDF3_CLASSIC)
+
+version 2.0.3
+-------------
+----
+
+**2017-08-01**
 
 version 2.0.1.post1
 -------------------

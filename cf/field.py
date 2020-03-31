@@ -101,7 +101,6 @@ _units_radians = Units('radians')
 _units_metres = Units('m')
 _units_1 = Units('1')
 
-
 # --------------------------------------------------------------------
 # Map each allowed input collapse method name to its corresponding
 # Data method. Input collapse methods not in this sictionary are
@@ -4595,8 +4594,15 @@ class Field(mixin.PropertiesData,
             coordinate reference constucts, then the default radius
             taken as 6371229 metres.
 
-        great_circle: `bool`
-            TODO
+        great_circle: `bool`, optional
+            If True then allow, if required, the derivation of i) area
+            weights from polygon geometry cells by assuiming that each
+            cell part is a spherical polygon composed of great circle
+            segments; and ii) and the derivation of line-length
+            weights from line geometry cells by assuming that each
+            line part is composed of great circle segments.
+
+            .. versionadded:: 3.2.0
 
         insert: `bool`, optional
             If True then calculated cell areas are also inserted in
@@ -5124,7 +5130,7 @@ class Field(mixin.PropertiesData,
 
     def weights(self, weights=True, scale=None, measure=False,
                 components=False, methods=False, radius='earth',
-                data=False, great_circle=False, **kwargs):
+                data=False, great_circle=False, axes=None, **kwargs):
         '''Return weights for the data array values.
 
     The weights are those used during a statistical collapse of the
@@ -5143,7 +5149,8 @@ class Field(mixin.PropertiesData,
 
     .. versionadded:: 1.0
 
-    .. seealso:: `bin`, `cell_area`, `collapse`, `radius`
+    .. seealso:: `bin`, `cell_area`, `collapse`, `moving_average`,
+                 `radius`
 
     :Parameters:
 
@@ -5202,7 +5209,8 @@ class Field(mixin.PropertiesData,
 
               `Data`      Explicit weights in a `Data` object that
                           must be broadcastable to the field
-                          construct's data.
+                          construct's data, unless the *axes*
+                          parameter is also set.
 
               `dict`      Explicit weights in a dictionary of the form
                           that is returned from a call to the
@@ -5295,7 +5303,7 @@ class Field(mixin.PropertiesData,
         components: `bool`, optional
             If True then a dictionary of orthogonal weights components
             is returned instead of a field. Each key is a tuple of
-            integers representing axes positions in the field
+            integers representing axis positions in the field
             construct's data, with corresponding values of weights in
             `Data` objects. The axes of weights match the axes of the
             field construct's data array in the order given by their
@@ -5309,9 +5317,35 @@ class Field(mixin.PropertiesData,
             If True then return the weights in a `Data` instance that
             is broadcastable to the original data.
 
-        great_circle: `bool`, optional
-            TODO
+            .. versionadded:: 3.1.0
 
+        great_circle: `bool`, optional
+            If True then allow, if required, the derivation of i) area
+            weights from polygon geometry cells by assuiming that each
+            cell part is a spherical polygon composed of great circle
+            segments; and ii) and the derivation of line-length
+            weights from line geometry cells by assuming that each
+            line part is composed of great circle segments.
+
+            .. versionadded:: 3.2.0
+
+        axes: (sequence of) `int` or `str`, optional
+            If *weights* is a `Data` instance then it is assumed to
+            broadcast to te field condtruct's data. If it does not
+            broadcast then the axes of the *weights* may be specified
+            with the *axes* parameter.
+ 
+            *Parameter example:*
+              ``axes='T'``
+ 
+            *Parameter example:*
+              ``axes=['longitude']``
+
+            *Parameter example:*
+              ``axes=[3, 1]``
+
+            .. versionadded:: 3.3.0
+            
         kwargs: deprecated at version 3.0.0.
 
     :Returns:
@@ -5750,33 +5784,51 @@ class Field(mixin.PropertiesData,
             return True
         #--- End: def
 
-        def _data_weights(self, data, comp, weights_axes):
+        def _data_weights(self, w, comp, weights_axes, axes=None):
             # ------------------------------------------------------------
             # Data weights
             # ------------------------------------------------------------
-            for w in data:
-                if w.ndim > 0:
-                    while w.shape[0] == 1:
-                        w = w.squeeze(0)
-                # --- End: if
+            # If axes for the data have been set then modify the data
+            # to match them
+            if axes is not None:
+                if isinstance(axes, (str, int)):
+                    axes = (axes,)
 
-                if not self._is_broadcastable(w.shape):
-                    raise ValueError("TODO")
+                data_axes = self.get_data_axes()
+                iaxes = [data_axes.index(self.domain_axis(axis, key=True))
+                         for axis in axes]
 
-                axes0 = self.get_data_axes()[self.ndim-w.ndim:]
-
-                for axis0 in axes0:
-                    if axis0 in weights_axes:
-                        raise ValueError(
-                            "Multiple weights specified for {!r} axis".format(
-                                self.constructs.domain_axis_identity(axis0))
-                        )
+                for i in range(self.ndim):
+                    if i not in iaxes:
+                        w = w.insert_dimension(position=i)
+                        iaxes.insert(i, i)
                 # --- End: for
+                        
+                w = w.transpose(iaxes)
+                        
+            if w.ndim > 0:
+                while w.shape[0] == 1:
+                    w = w.squeeze(0)
+            # --- End: if
 
-                comp[tuple(axes0)] = w
+            if not self._is_broadcastable(w.shape):
+                raise ValueError(
+                    "The 'Data' weights (shape {}) are not broadcastable to "
+                    "the field construct's data (shape {}).".format(
+                        w.shape, self.shape))
 
-                weights_axes.update(axes0)
-            #--- End: for
+            axes0 = self.get_data_axes()[self.ndim-w.ndim:]
+
+            for axis0 in axes0:
+                if axis0 in weights_axes:
+                    raise ValueError(
+                        "Multiple weights specified for {!r} axis".format(
+                            self.constructs.domain_axis_identity(axis0)))
+            # --- End: for
+
+            comp[tuple(axes0)] = w
+
+            weights_axes.update(axes0)
         
             return True
         #--- End: def
@@ -6482,7 +6534,8 @@ class Field(mixin.PropertiesData,
             # --------------------------------------------------------
             # Data
             # --------------------------------------------------------
-            _data_weights(self, [weights], comp, weights_axes)
+            _data_weights(self, weights, comp, weights_axes,
+                          axes=axes)
         else:
             # --------------------------------------------------------
             # String or sequence
@@ -6750,7 +6803,7 @@ class Field(mixin.PropertiesData,
       >>> bins = f.percentile([0, 10, 50, 90, 100], squeeze=True)
       >>> i = f.digitize(bins, closed_ends=True)
 
-    The output field contruct is given a ``long_name`` property, and
+    The output field construct is given a ``long_name`` property, and
     some or all of the following properties that define the bins:
 
     =====================  ===========================================
@@ -7217,7 +7270,7 @@ class Field(mixin.PropertiesData,
             construct for the output field construct.
 
             Each digitized field construct must be transformable so
-            that it is broadcastable to the input field contruct's
+            that it is broadcastable to the input field construct's
             data. This is done by using the metadata constructs of the
             to create a mapping of physically compatible dimensions
             between the fields, and then manipulating the dimensions
@@ -7329,8 +7382,15 @@ class Field(mixin.PropertiesData,
             coordinate reference constucts, then the default radius
             taken as 6371229 metres.
 
-        great_circle: `bool`
-            TODO
+        great_circle: `bool`, optional
+            If True then allow, if required, the derivation of i) area
+            weights from polygon geometry cells by assuiming that each
+            cell part is a spherical polygon composed of great circle
+            segments; and ii) and the derivation of line-length
+            weights from line geometry cells by assuming that each
+            line part is composed of great circle segments.
+
+            .. versionadded:: 3.2.0
 
         verbose: `bool`, optional
             If True then print a description of the binned field
@@ -8494,8 +8554,8 @@ class Field(mixin.PropertiesData,
 
     .. versionadded:: 1.0
 
-    .. seealso:: `bin`, `cell_area`, `convolution_filter`, `weights`,
-                 `radius`
+    .. seealso:: `bin`, `cell_area`, `convolution_filter`,
+                 `moving_average`, `weights`, `radius`
 
     :Parameters:
 
@@ -8667,14 +8727,6 @@ class Field(mixin.PropertiesData,
               To specify weights based on cell areas and linearly in
               time you could set ``weights=('area', 'T')``.
 
-            *Parameter example:*
-              To specify weights based on cell areas use
-              ``weights='area'``.
-
-            *Parameter example:*
-              To specify weights based on cell areas and linearly in
-              time you could set ``weights=('area', 'T')``.
-
         measure: `bool`, optional
             Create weights which are cell measures, i.e. which
             describe actual cell sizes (e.g. cell area) with
@@ -8704,6 +8756,8 @@ class Field(mixin.PropertiesData,
                       which requires the field construct to have a
                       "volume" cell measure construct.
 
+            .. versionadded:: 3.0.2
+
         scale: number, optional
             If set to a positive number then scale the weights so that
             they are less than or equal to that number. By default the
@@ -8713,6 +8767,8 @@ class Field(mixin.PropertiesData,
             *Parameter example:*
               To scale all weights so that they lie between 0 and 0.5:
               ``scale=0.5``.
+
+            .. versionadded:: 3.0.2
 
         radius: optional
             Specify the radius used for calculating the areas of cells
@@ -8727,8 +8783,17 @@ class Field(mixin.PropertiesData,
             coordinate reference constucts, then the default radius
             taken as 6371229 metres.
 
-        great_circle: `bool`
-            TODO
+            .. versionadded:: 3.0.2
+
+        great_circle: `bool`, optional
+            If True then allow, if required, the derivation of i) area
+            weights from polygon geometry cells by assuiming that each
+            cell part is a spherical polygon composed of great circle
+            segments; and ii) and the derivation of line-length
+            weights from line geometry cells by assuming that each
+            line part is composed of great circle segments.
+
+            .. versionadded:: 3.2.0
 
         squeeze: `bool`, optional
             If True then size 1 collapsed axes are removed from the
@@ -9529,6 +9594,7 @@ class Field(mixin.PropertiesData,
 
     There are further worked examples
     :ref:`in the tutorial <Statistical-collapses>`
+
         '''
         if _debug:
             _DEPRECATION_ERROR_KWARGS(
@@ -9646,6 +9712,7 @@ class Field(mixin.PropertiesData,
         if group is not None and len(all_axes) > 1:
             raise ValueError(
                 "Can't use the 'group' parameter for multiple collapses")
+
         # ------------------------------------------------------------
         #
         # ------------------------------------------------------------
@@ -9865,12 +9932,12 @@ class Field(mixin.PropertiesData,
                 # ----------------------------------------------------
                 # Update the cell methods
                 # ----------------------------------------------------
-                f._collapse_update_cell_methods(method=method,
-                                                collapse_axes=collapse_axes,
-                                                input_axes=axes_in,
-                                                within=within,
-                                                over=over,
-                                                verbose=verbose)
+                f._update_cell_methods(method=method,
+                                       collapse_axes=collapse_axes,
+                                       input_axes=axes_in,
+                                       within=within,
+                                       over=over,
+                                       verbose=verbose)
                 continue
             elif regroup:
                 raise ValueError(
@@ -10088,11 +10155,11 @@ class Field(mixin.PropertiesData,
             # Update the cell methods
             # --------------------------------------------------------
             if _update_cell_methods:
-                f._collapse_update_cell_methods(
-                    method, collapse_axes=collapse_axes,
-                    input_axes=axes_in, within=within,
-                    over=over, verbose=verbose
-                )
+                f._update_cell_methods(method,
+                                       collapse_axes=collapse_axes,
+                                       input_axes=axes_in,
+                                       within=within, over=over,
+                                       verbose=verbose )
         # --- End: for
 
         # ------------------------------------------------------------
@@ -11319,10 +11386,9 @@ class Field(mixin.PropertiesData,
 
         return self
 
-    def _collapse_update_cell_methods(self, method=None,
-                                      collapse_axes=None,
-                                      input_axes=None, within=None,
-                                      over=None, verbose=False):
+    def _update_cell_methods(self, method=None, collapse_axes=None,
+                             input_axes=None, within=None,
+                             over=None, verbose=False):
         '''Update the cell methods.
 
     :Parameters:
@@ -11330,6 +11396,8 @@ class Field(mixin.PropertiesData,
         method: `str`
 
         collapse_axes: `Constructs`
+
+        verbose: `bool`, optional
 
     :Returns:
 
@@ -11351,8 +11419,6 @@ class Field(mixin.PropertiesData,
             axes = tuple(collapse_axes)
 
         comment = None
-#        if method == 'integral':
-#            comment = 'integral'
 
         method = _collapse_cell_methods.get(method, method)
 
@@ -12011,7 +12077,7 @@ class Field(mixin.PropertiesData,
                 # item is transposed so that it is ordered T Y. For
                 # example, if the field's data array is ordered Z Y X
                 # and the item is ordered X Y T (T is size 1) then
-                # tranpose the item so that it is ordered Y X T.
+                # transpose the item so that it is ordered Y X T.
                 g = self.transpose(data_axes, constructs=True)
 
 #                g = self
@@ -12207,7 +12273,7 @@ class Field(mixin.PropertiesData,
             constructs to the data.
 
             The contents of the *axes* parameter is mapped to domain
-            axis contructs by translating each element into a domain
+            axis constructs by translating each element into a domain
             axis construct key via the `domain_axis` method.
 
             *Parameter example:*
@@ -12771,20 +12837,28 @@ class Field(mixin.PropertiesData,
     @_inplace_enabled
     def moving_average(self, window_size=None, axis=None,
                        weights=False, mode=None, cval=None, origin=0,
-                       update_bounds=True, inplace=False):
-        '''TODO
+                       inplace=False):
+        '''Create a moving averages along an axis.
 
-    .. versionadded:: TODO
+    By default the averages are unweighted, but weights based on the
+    axis cell sizes (or custom weights) may applied to the
+    calculation via the *weights* parameter.
 
-    .. seealso:: `convolution_filter`, `collapse`, `derivative`,
-                 `cf.relative_vorticity`
+    .. versionadded:: 3.2.0
+
+    .. seealso:: `collapse`, `convolution_filter`, `weights`
 
     :Parameters:
         
-        window_sze: `int`
-            TODO
+        window_size: `int`
+            Specify the size of the window used to calculate the
+            moving average.
 
-        axis:
+            *Parameter example:*
+              A 5-point moving average can be computed with
+              ``window_size=5``.
+
+        axis: `str` or `int`
             Select the domain axis over which the filter is to be
             applied, defined by that which would be selected by
             passing the given axis description to a call of the field
@@ -12792,8 +12866,19 @@ class Field(mixin.PropertiesData,
             of ``'X'``, the domain axis construct returned by
             ``f.domain_axis('X')`` is selected.
 
-        weights: `bool`, optional
-            If True then TODO
+        weights: optional
+            Specify the weights for the moving average. The weights
+            are, those that would be returned by this call of the
+            field construct's `weights` method: ``f.weights(weights,
+            axes=axis, data=True, scale=1)``. See the *axis* parameter
+            and `cf.Field.weights` for details.
+
+            .. note:: By default *weights* is `None`, resulting in
+                      unweighted calculations.
+
+            *Parameter example:*
+              To specify weights based linearly in time you could set
+              ``weights='T'``.
 
         mode: `str`, optional
             The *mode* parameter determines how the input array is
@@ -12833,9 +12918,10 @@ class Field(mixin.PropertiesData,
 
         cval: scalar, optional
             Value to fill past the edges of the array if *mode* is
-            ``'constant'``. Defaults to `None`, in which case the
-            edges of the array will be filled with missing data. The
-            only other valid value is ``0``.
+            ``'constant'``. Ignored for other modes. Defaults to
+            `None`, in which case the edges of the array will be
+            filled with missing data. The only other valid value is
+            ``0``.
 
             *Parameter example:*
                To extend the input by filling all values beyond the
@@ -12856,133 +12942,114 @@ class Field(mixin.PropertiesData,
               the average is shifted to include the previous point and
               the and the next three points.
 
-        update_bounds: `bool`, optional
-            If False then the bounds of a dimension coordinate
-            construct that spans the convolved axis are not
-            altered. By default, the bounds of a dimension coordinate
-            construct that spans the convolved axis are updated to
-            reflect the width and origin of the window.
-
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
 
     :Returns:
 
         `Field` or `None`
-            TODO
-        
+            The field construct of moving averages, or `None` if the
+            operation was in-place.
+
     **Examples:**
 
-    >>> f = cf.example_field(2)
+    >>> f = cf.example_field(0)
     >>> print(f)
-    Field: air_potential_temperature (ncvar%air_potential_temperature)
-    ------------------------------------------------------------------
-    Data            : air_potential_temperature(time(36), latitude(5), longitude(8)) K
+    Field: specific_humidity (ncvar%q)
+    ----------------------------------
+    Data            : specific_humidity(latitude(5), longitude(8)) 1
     Cell methods    : area: mean
-    Dimension coords: time(36) = [1959-12-16 12:00:00, ..., 1962-11-16 00:00:00]
-                    : latitude(5) = [-75.0, ..., 75.0] degrees_north
+    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
                     : longitude(8) = [22.5, ..., 337.5] degrees_east
-                    : air_pressure(1) = [850.0] hPa
-    >>> print(f.array[:, 0, 0])
-    [210.7 305.3 249.4 288.9 231.1 200.  234.4 289.2 204.3 203.6 261.8 256.2
-     212.3 231.7 255.1 213.9 255.8 301.2 213.3 200.1 204.6 203.2 244.6 238.4
-     304.5 269.8 267.9 282.4 215.  288.7 217.3 307.1 299.3 215.9 290.2 239.9]
-    >>> print(f.coordinate('T').bounds.dtarray[0])
-    [cftime.DatetimeGregorian(1959-12-01 00:00:00)
-     cftime.DatetimeGregorian(1960-01-01 00:00:00)]
-    >>> print(f.coordinate('T').bounds.dtarray[2])
-    [cftime.DatetimeGregorian(1960-02-01 00:00:00)
-     cftime.DatetimeGregorian(1960-03-01 00:00:00)]
+                    : time(1) = [2019-01-01 00:00:00]
+    >>> print(f.array)
+    [[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]
+     [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
+     [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
+     [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
+     [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]
+    >>> print(f.coordinate('X').bounds.array)
+    [[  0.  45.]
+     [ 45.  90.]
+     [ 90. 135.]
+     [135. 180.]
+     [180. 225.]
+     [225. 270.]
+     [270. 315.]
+     [315. 360.]]
+    >>> f.iscyclic('X')
+    True
 
-    Create a 5-point (non-weighted) running mean:
+    Create an unweighted 3-point running mean for the cyclic "X" axis:
 
-    >>> g = f.convolution_filter([0.2, 0.2, 0.2, 0.2, 0.2], 'T')
+    >>> g = f.moving_average(3, axis='X')
     >>> print(g)
-    Field: air_potential_temperature (ncvar%air_potential_temperature)
-    ------------------------------------------------------------------
-    Data            : air_potential_temperature(time(36), latitude(5), longitude(8)) K
-    Cell methods    : area: mean
-    Dimension coords: time(36) = [1959-12-16 12:00:00, ..., 1962-11-16 00:00:00]
-                    : latitude(5) = [-75.0, ..., 75.0] degrees_north
+    Field: specific_humidity (ncvar%q)
+    ----------------------------------
+    Data            : specific_humidity(latitude(5), longitude(8)) 1
+    Cell methods    : area: mean longitude(8): mean
+    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
                     : longitude(8) = [22.5, ..., 337.5] degrees_east
-                    : air_pressure(1) = [850.0] hPa
-    >>> print(g.array[:, 0, 0])
-    [ -- -- 257.08 254.94 240.76 248.72 231.8 226.3 238.66 243.02 227.64
-     233.12 243.42 233.84 233.76 251.54 247.86 236.86 235.0 224.48 213.16
-     218.18 239.06 252.1 265.04 272.6 267.92 264.76 254.26 262.1 265.48
-     265.66 265.96 270.48 -- --]
-    >>> print(g.coordinate('T').bounds.dtarray[0])
-    [cftime.DatetimeGregorian(1959-12-01 00:00:00)
-     cftime.DatetimeGregorian(1960-03-01 00:00:00)]
-    >>> print(g.coordinate('T').bounds.dtarray[2])
-    [cftime.DatetimeGregorian(1959-12-01 00:00:00)
-     cftime.DatetimeGregorian(1960-05-01 00:00:00)]
+                    : time(1) = [2019-01-01 00:00:00]    
+    >>> print(g.array)
+    [[0.02333 0.01467 0.017   0.01167 0.023   0.02633 0.03    0.02   ]
+     [0.04167 0.03467 0.04767 0.051   0.06033 0.04167 0.04833 0.03167]
+     [0.084   0.12167 0.13367 0.119   0.112   0.08233 0.057   0.05933]
+     [0.035   0.04233 0.056   0.05567 0.06667 0.04633 0.03267 0.01833]
+     [0.01833 0.02033 0.03    0.024   0.03    0.02967 0.028   0.01767]]
+    >>> print(g.coordinate('X').bounds.array)
+    [[-45.  90.]
+     [  0. 135.]
+     [ 45. 180.]
+     [ 90. 225.]
+     [135. 270.]
+     [180. 315.]
+     [225. 360.]
+     [270. 360.]]
 
-    Create a 5-point running sum:
+    Create a weighted 3-point running mean for the cyclic "X" axis:
 
-    >>> g = f.convolution_filter([1, 1, 1, 1, 1], 'T')
-    >>> print(g)
-    Field: air_potential_temperature (ncvar%air_potential_temperature)
-    ------------------------------------------------------------------
-    Data            : air_potential_temperature(time(36), latitude(5), longitude(8)) K
-    Cell methods    : area: mean
-    Dimension coords: time(36) = [1959-12-16 12:00:00, ..., 1962-11-16 00:00:00]
-                    : latitude(5) = [-75.0, ..., 75.0] degrees_north
-                    : longitude(8) = [22.5, ..., 337.5] degrees_east
-                    : air_pressure(1) = [850.0] hPa
-    >>> print(g.array[:, 0, 0])
-    [ -- -- 1285.4 1274.7 1203.8 1243.6 1159.0 1131.5 1193.3 1215.1
-     1138.2 1165.6 1217.1 1169.2 1168.8 1257.7 1239.3 1184.3 1175.0
-     1122.4 1065.8 1090.9 1195.3 1260.5 1325.2 1363.0 1339.6 1323.8
-     1271.3 1310.5 1327.4 1328.3 1329.8 1352.4 -- --]
-    >>> print(g.coordinate('T').bounds.dtarray[0])
-    [cftime.DatetimeGregorian(1959-12-01 00:00:00)
-     cftime.DatetimeGregorian(1960-03-01 00:00:00)]
-    >>> print(g.coordinate('T').bounds.dtarray[2])
-    [cftime.DatetimeGregorian(1959-12-01 00:00:00)
-     cftime.DatetimeGregorian(1960-05-01 00:00:00)]
-
-    Calculate a convolution along the time axis with Gaussian weights,
-    using the "nearest" mode at the border of the edges of the time
-    dimension (note that the weights returned by
-    `scipy.signal.windows` functions do not necessarily sum to 1):
-
-    >>> import scipy.signal.windows
-    >>> gaussian_weights = scipy.signal.windows.gaussian(3, std=0.4)
-    >>> print(gaussian_weights)
-    [0.04393693 1.         0.04393693]
-    >>> g = f.convolution_filter(gaussian_weights, 'T', mode='nearest')
-    >>> print(g.array[:, 0, 0])
-    [233.37145775 325.51538316 275.50732596 310.01169661 252.58076685
-     220.4526426  255.89394793 308.47513278 225.95212089 224.07900476
-     282.00220208 277.03050023 233.73682991 252.23612278 274.67829762
-     236.34737939 278.43191451 321.81081556 235.32558483 218.46124456
-     222.31976533 222.93647058 264.00254989 262.52577025 326.82874967
-     294.94950081 292.16197475 303.61714525 240.09238279 307.69393641
-     243.47762505 329.79781991 322.27901629 241.80082237 310.22645435
-     263.19096851]
-    >>> print(g.coordinate('T').bounds.dtarray[0])
-    [cftime.DatetimeGregorian(1959-12-01 00:00:00)
-     cftime.DatetimeGregorian(1960-02-01 00:00:00)]
-    >>> print(g.coordinate('T').bounds.dtarray[1])
-    [cftime.DatetimeGregorian(1959-12-01 00:00:00)
-     cftime.DatetimeGregorian(1960-03-01 00:00:00)]
+    >>> g = f.moving_average(3, axis='X', weights='X')
 
         '''
-        f = _inplace_enabled_define_and_cleanup(self)
+        if cval is not None and cval != 0:
+            raise ValueError("The cval parameter must be None or 0")
 
-        .... don;t know aht mode is yet .....
-        if mode == 'constant' and cval is not None and cval != 0:
-            raise ValueError("cval parameter must be None or 0")
+        window_size = int(window_size)
+
+        # Construct new field
+        f = _inplace_enabled_define_and_cleanup(self)
         
-        # Retrieve the axis
+        # Find the axis for the moving average
         axis = f.domain_axis(axis, key=True)
+        iaxis = self.get_data_axes().index(axis)                    
+
+        if weights is None or weights is False:
+            weights = None
         
-        if weights:
-            w = f.weights(axis, data=True, scale=1.0)
-            
-            # Divide the weights by their minimum and multiply thre
-            # field by these new weights
+        if weights is not None:
+            axes = None
+            if isinstance(weights, Data):
+                if weights.ndim > 1:
+                    raise ValueError(
+                        "The 'Data' weights (shape {}) do not match the axis "
+                        "being averaged (size {})".format(
+                            weights.shape, f.shape[iaxis]))
+                
+                if weights.ndim == 1:                  
+                    axes = axis
+                    if weights.shape[0] != f.shape[iaxis]:
+                        raise ValueError(
+                            "The 'Data' weights (size {}) do not match the "
+                            "axis being averaged (size {})".format(
+                                weights.size, f.shape[iaxis]))
+            # --- End: if
+
+            # Get the data weights
+            w = f.weights(weights, axes=axes, data=True, scale=1.0)
+
+            # Adjust the data weights by dividing them by their
+            # miniumum
             wmin = w.minimum()
             wmin.dtype = float
             if numpy_can_cast(wmin.dtype, w.dtype):
@@ -12990,58 +13057,66 @@ class Field(mixin.PropertiesData,
             else:
                 w = w / wmin
 
-            f.data *= w
-                        
+            # Divide the field by the adjusted data weights
+            f *= w
+
+        # Create the window weights
         window = numpy_full((window_size,), 1.0)
-        if not weights:
+        if weights is None:
+            # If there is no data weighting, make sure that the sum of
+            # the window weights is 1.
             window /= window.size
-            
+
         f.convolution_filter(window, axis=axis, mode=mode, cval=cval,
-                             origin=origin,
-                             update_bounds=update_bounds,
+                             origin=origin, update_bounds=True,
                              inplace=True)
 
-        if weights:
-            # Divide the field by the running sum of the weights
-            iaxis = self.get_data_axes().index(axis)                    
+        if weights is not None:
+            # Divide the field by the running sum of the adjusted data
+            # weights
             w.convolution_filter(window=window, axis=iaxis, mode=mode,
                                  cval=0, origin=origin, inplace=True)
             f.data /= w
 
+        # Add a cell method
+        f._update_cell_methods(method='mean',
+                               collapse_axes=f.domain_axes(axis),
+                               input_axes=(axis,),
+                               verbose=False)
+            
         return f
 
-    @_deprecated_kwarg_check('i')
     @_inplace_enabled
-    def convolution_filter(self, weights=None, axis=None, mode=None,
+    def convolution_filter(self, window=None, axis=None, mode=None,
                            cval=None, origin=0, update_bounds=True,
-                           inplace=False, i=False):
-        '''Return the field convolved along the given axis with the specified
-    filter.
+                           inplace=False, weights=None, i=False):
+        '''Convolve the field construct along the given axis with the
+    specified filter.
 
     The magnitude of the integral of the filter (i.e. the sum of the
-    weights defined by the *weights* parameter) affects the convolved
-    values. For example, filter weights of ``[0.2, 0.2 0.2, 0.2,
-    0.2]`` will produce a non-weighted 5-point running mean; and
-    weights of ``[1, 1, 1, 1, 1]`` will produce a 5-point running
-    sum. Note that the weights returned by functions of the
-    `scipy.signal.windows` package do not necessarily sum to 1 (see
-    the examples for details).
+    window weights defined by the *window* parameter) affects the
+    convolved values. For example, window weights of ``[0.2, 0.2 0.2,
+    0.2, 0.2]`` will produce a non-weighted 5-point running mean; and
+    window weights of ``[1, 1, 1, 1, 1]`` will produce a 5-point
+    running sum. Note that the window weights returned by functions of
+    the `scipy.signal.windows` package do not necessarily sum to 1
+    (see the examples for details).
 
     .. seealso:: `collapse`, `derivative`, `moving_average`,
                  `cf.relative_vorticity`
 
     :Parameters:
 
-        weights: sequence of numbers
+        window: sequence of numbers
             Specify the window of weights to use for the filter.
 
             *Parameter example:*
               An unweighted 5-point moving average can be computed
-              with ``weights=[0.2, 0.2, 0.2, 0.2, 0.2]``
+              with ``window=[0.2, 0.2, 0.2, 0.2, 0.2]``
 
             Note that the `scipy.signal.windows` package has suite of
-            window functions for creating weights for filtering (see
-            the examples for details).
+            window functions for creating wondow weights for filtering
+            (see the examples for details).
 
         axis:
             Select the domain axis over which the filter is to be
@@ -13089,8 +13164,9 @@ class Field(mixin.PropertiesData,
 
         cval: scalar, optional
             Value to fill past the edges of the array if *mode* is
-            ``'constant'``. Defaults to `None`, in which case the
-            edges of the array will be filled with missing data.
+            ``'constant'``. Ignored for other modes. Defaults to
+            `None`, in which case the edges of the array will be
+            filled with missing data.
 
             *Parameter example:*
                To extend the input by filling all values beyond the
@@ -13124,11 +13200,15 @@ class Field(mixin.PropertiesData,
         i: deprecated at version 3.0.0
             Use the *inplace* parameter instead.
 
+        weights: deprecated at version 3.3.0
+            Use the *window* parameter instead.
+
     :Returns:
 
         `Field` or `None`
-            TODO
-        
+            The convolved field construct, or `None` if the operation
+            was in-place.
+
     **Examples:**
 
     >>> f = cf.example_field(2)
@@ -13200,16 +13280,16 @@ class Field(mixin.PropertiesData,
     [cftime.DatetimeGregorian(1959-12-01 00:00:00)
      cftime.DatetimeGregorian(1960-05-01 00:00:00)]
 
-    Calculate a convolution along the time axis with Gaussian weights,
-    using the "nearest" mode at the border of the edges of the time
-    dimension (note that the weights returned by
+    Calculate a convolution along the time axis with Gaussian window
+    weights, using the "nearest" mode at the border of the edges of
+    the time dimension (note that the window weights returned by
     `scipy.signal.windows` functions do not necessarily sum to 1):
 
     >>> import scipy.signal.windows
-    >>> gaussian_weights = scipy.signal.windows.gaussian(3, std=0.4)
-    >>> print(gaussian_weights)
+    >>> gaussian_window = scipy.signal.windows.gaussian(3, std=0.4)
+    >>> print(gaussian_window)
     [0.04393693 1.         0.04393693]
-    >>> g = f.convolution_filter(gaussian_weights, 'T', mode='nearest')
+    >>> g = f.convolution_filter(gaussian_window, 'T', mode='nearest')
     >>> print(g.array[:, 0, 0])
     [233.37145775 325.51538316 275.50732596 310.01169661 252.58076685
      220.4526426  255.89394793 308.47513278 225.95212089 224.07900476
@@ -13227,82 +13307,49 @@ class Field(mixin.PropertiesData,
      cftime.DatetimeGregorian(1960-03-01 00:00:00)]
 
         '''
-        if isinstance(weights, str):
+        if weights is not None:
+            _DEPRECATION_ERROR_KWARGS(
+                self, 'convolution_filter',
+                {'weights': weights},
+                message="Use keyword 'window' instead.",
+                version='3.3.0')  # pragma: no cover
+            
+        if isinstance(window, str):
             _DEPRECATION_ERROR(
-                "A string-valued 'weights' parameter  has been deprecated "
+                "A string-valued 'window' parameter has been deprecated "
                 "at version 3.0.0 and is no longer available. Provide a "
-                "sequence of numerical weights instead. scipy.signal.windows "
-                "may be used to generate particular window functions."
-            )  # pragma: no cover
-
-        if isinstance(weights[0], str):
-            _DEPRECATION_ERROR(
-                "A string-valued 'weights' parameter element has been "
-                "deprecated at version 3.0.0 and is no longer available. "
-                "Provide a sequence of numerical weights instead. "
+                "sequence of numerical window weights instead. "
                 "scipy.signal.windows may be used to generate particular "
                 "window functions."
             )  # pragma: no cover
 
-#        try:
-#            scipy_convolve1d
-#        except NameError:
-#            raise ImportError(
-#                "Must install scipy to use the convolution_filter method.")
+        if isinstance(window[0], str):
+            _DEPRECATION_ERROR(
+                "A string-valued 'window' parameter element has been "
+                "deprecated at version 3.0.0 and is no longer available. "
+                "Provide a sequence of numerical window weights instead. "
+                "scipy.signal.windows may be used to generate particular "
+                "window functions."
+            )  # pragma: no cover
 
         # Retrieve the axis
         axis_key = self.domain_axis(axis, key=True)
         iaxis = self.get_data_axes().index(axis_key)
         
-#        # Default mode to 'wrap' if the axis is cyclic
-#        if mode is None:
-#            if self.iscyclic(axis_key):
-#                mode = 'wrap'
-#            else:
-#                mode = 'constant'
-#        # --- End: if
-#
-#        # Get the axis index
-#        axis_index = self.get_data_axes().index(axis_key)
-#
-#        # Set cval to NaN if it is currently None, so that the edges
-#        # will be filled with missing data if the mode is 'constant'
-#        if cval is None:
-#            cval = numpy_nan
-#
-#        # Section the data into sections up to a chunk in size
-#        sections = self.data.section([axis_index], chunks=True)
-#
-#        # Filter each section replacing masked points with numpy
-#        # NaNs and then remasking after filtering.
-#        for k in sections:
-#            input_array = sections[k].array
-#            masked = numpy_ma_is_masked(input_array)
-#            if masked:
-#                input_array = input_array.filled(numpy_nan)
-#
-#            output_array = scipy_convolve1d(input_array, weights,
-#                                            axis=axis_index, mode=mode,
-#                                            cval=cval, origin=origin)
-#            if masked or (mode == 'constant' and numpy_isnan(cval)):
-#                with numpy_errstate(invalid='ignore'):
-#                    output_array = numpy_ma_masked_invalid(output_array)
-#            # --- End: if
-#
-#            sections[k] = Data(output_array, units=self.Units)
-#
-#        # Glue the sections back together again
-#        new_data = Data.reconstruct_sectioned_data(sections)
+        # Default mode to 'wrap' if the axis is cyclic
+        if mode is None:
+            if self.iscyclic(axis_key):
+                mode = 'wrap'
+            else:
+                mode = 'constant'
+        # --- End: if
 
         # Construct new field
         f = _inplace_enabled_define_and_cleanup(self)
         
-        f.data.convolution_filter(window=weights, axis=iaxis,
+        f.data.convolution_filter(window=window, axis=iaxis,
                                   mode=mode, cval=cval, origin=origin,
                                   inplace=True)
-
-#        # Insert filtered data into new field
-#        f.set_data(new_data, axes=self.get_data_axes(), copy=False)
 
         # Update the bounds of the convolution axis if necessary
         if update_bounds:
@@ -13311,7 +13358,7 @@ class Field(mixin.PropertiesData,
                 old_bounds = coord.bounds.array
                 length = old_bounds.shape[0]
                 new_bounds = numpy_empty((length, 2))
-                len_weights = len(weights)
+                len_weights = len(window)
                 lower_offset = len_weights//2 + origin
                 upper_offset = len_weights - 1 - lower_offset
                 if mode == 'wrap':
@@ -14376,7 +14423,7 @@ class Field(mixin.PropertiesData,
     may be selected for removal.
 
     Squeezed domain axis constructs are not removed from the metadata
-    contructs, nor from the domain of the field construct.
+    constructs, nor from the domain of the field construct.
 
     .. seealso:: `domain_axis`, `flatten`, `insert_dimension`, `flip`,
                  `remove_axes`, `transpose`, `unsqueeze`
@@ -14512,7 +14559,7 @@ class Field(mixin.PropertiesData,
     be specified by selecting the axes of the output in the required
     order.
 
-    By default metadata constructs are not tranposed, but they may be
+    By default metadata constructs are not transposed, but they may be
     if the *constructs* parmeter is set.
 
     .. seealso:: `domain_axis`, `flatten`, `insert_dimension`, `flip`,
@@ -14535,7 +14582,7 @@ class Field(mixin.PropertiesData,
         constructs: `bool`
             If True then metadata constructs are also transposed so
             that their axes are in the same relative order as in the
-            tranposed data array of the field. By default metadata
+            transposed data array of the field. By default metadata
             constructs are not altered.
 
         inplace: `bool`, optional
@@ -16025,7 +16072,7 @@ class Field(mixin.PropertiesData,
             domain axis constructs to the data.
 
             The contents of the *axes* parameter is mapped to domain
-            axis contructs by translating each element into a domain
+            axis constructs by translating each element into a domain
             axis construct key via the `domain_axis` method.
 
             *Parameter example:*

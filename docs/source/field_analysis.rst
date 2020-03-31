@@ -2116,7 +2116,78 @@ Method          Description
 `~Field.trunc`  Truncate the data, element-wise.
 ==============  ====================================================
 
+Moving averages
+^^^^^^^^^^^^^^^
 
+Moving averages along an axis may be created with the
+`~Field.moving_average` method of the field construct.
+
+By default the averages are unweighted, but weights based on the axis
+cell sizes (or custom weights) may applied to the calculation.
+
+.. code-block:: python
+   :caption: *Calculate a 3-point weighted mean of the 'X' axis. Since
+             the the 'X' axis is cyclic, the average wraps by
+             default.*
+
+   >>> q, t = cf.read('file.nc')
+   >>> print(q)
+   Field: specific_humidity (ncvar%q)
+   ----------------------------------
+   Data            : specific_humidity(latitude(5), longitude(8)) 1
+   Cell methods    : area: mean
+   Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                   : longitude(8) = [22.5, ..., 337.5] degrees_east
+                   : time(1) = [2019-01-01 00:00:00]
+   >>> print(q.array)
+   [[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]
+    [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
+    [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
+    [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
+    [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]
+   >>> print(q.coordinate('X').bounds.array)
+   [[  0.  45.]
+    [ 45.  90.]
+    [ 90. 135.]
+    [135. 180.]
+    [180. 225.]
+    [225. 270.]
+    [270. 315.]
+    [315. 360.]]
+   >>> q.iscyclic('X')
+   True
+   >>> g = f.moving_average(3, axis='X', weights='X')
+   >>> print(g)
+   Field: specific_humidity (ncvar%q)
+   ----------------------------------
+   Data            : specific_humidity(latitude(5), longitude(8)) 1
+   Cell methods    : area: mean longitude(8): mean
+   Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                   : longitude(8) = [22.5, ..., 337.5] degrees_east
+                   : time(1) = [2019-01-01 00:00:00]    
+   >>> print(g.array)
+   [[0.02333 0.01467 0.017   0.01167 0.023   0.02633 0.03    0.02   ]
+    [0.04167 0.03467 0.04767 0.051   0.06033 0.04167 0.04833 0.03167]
+    [0.084   0.12167 0.13367 0.119   0.112   0.08233 0.057   0.05933]
+    [0.035   0.04233 0.056   0.05567 0.06667 0.04633 0.03267 0.01833]
+    [0.01833 0.02033 0.03    0.024   0.03    0.02967 0.028   0.01767]]
+   >>> print(g.coordinate('X').bounds.array)
+   [[-45.  90.]
+    [  0. 135.]
+    [ 45. 180.]
+    [ 90. 225.]
+    [135. 270.]
+    [180. 315.]
+    [225. 360.]
+    [270. 360.]]
+
+.. note:: The `~Field.moving_average` method can not, in general, be
+          emulated by the `~Field.convolution_filter` method, as the
+          window weights of the latter can not change as the filter
+          passes through the axis. Unweighted moving averages,
+          however, can be carried out with the
+          `~Field.convolution_filter` method.
+    
 Convolution filters
 ^^^^^^^^^^^^^^^^^^^
 
@@ -2128,9 +2199,9 @@ filter. Convolution filters are carried with the
 `~Field.convolution_filter` method of the field construct.
 
 .. code-block:: python
-   :caption: *Calculate a 5-point weighted mean of the 'X' axis. Since
-             the the 'X' axis is cyclic, the convolution wraps by
-             default.*
+   :caption: *Calculate a 5-point mean of the 'X' axis with a
+             non-uniform window function. Since the the 'X' axis is
+             cyclic, the convolution wraps by default.*
 
    >>> print(q)
    Field: specific_humidity (ncvar%q)
@@ -2179,7 +2250,7 @@ options to
 * Control the placement position of the filter window.
 
 Note that the `scipy.signal.windows` package has suite of window
-functions for creating weights for filtering:
+functions for creating window weights for filtering:
 
 .. code-block:: python
    :caption: *Calculate a 3-point exponential filter of the 'Y'
@@ -2188,10 +2259,10 @@ functions for creating weights for filtering:
              filter window extends beyond the array.*
 
    >>> from scipy.signal import windows
-   >>> exponential_weights = windows.exponential(3)
-   >>> print(exponential_weights)
+   >>> exponential_window = windows.exponential(3)
+   >>> print(exponential_window)
    [0.36787944 1.         0.36787944]
-   >>> r = q.convolution_filter(exponential_weights, axis='Y')
+   >>> r = q.convolution_filter(exponential_window, axis='Y')
    >>> print(r.array)
    [[--      --      --      --      --      --      --      --     ]
     [0.06604 0.0967  0.09172 0.12086 0.08463 0.1245  0.0358  0.08072]
@@ -2200,13 +2271,20 @@ functions for creating weights for filtering:
     [--      --      --      --      --      --      --      --     ]]
 
 The magnitude of the integral of the filter (i.e. the sum of the
-weights defined by the *weights* parameter) affects the convolved
-values. For example, weights of ``[0.2, 0.2 0.2, 0.2, 0.2]`` will
-produce a non-weighted 5-point running mean; and weights of ``[1, 1,
-1, 1, 1]`` will produce a 5-point running sum. Note that the weights
-returned by functions of the `scipy.signal.windows` package do not
-necessarily sum to 1.
+window weights defined by the *window* parameter) affects the
+convolved values. For example, window weights of ``[0.2, 0.2 0.2, 0.2,
+0.2]`` will produce a non-weighted 5-point running mean; and window
+weights of ``[1, 1, 1, 1, 1]`` will produce a 5-point running
+sum. Note that the window weights returned by functions of the
+`scipy.signal.windows` package do not necessarily sum to 1.
 
+.. note:: The `~Field.moving_average` method can not, in general, be
+          emulated by the `~Field.convolution_filter` method, as the
+          window weights of the latter can not change as the filter
+          passes through the axis. Unweighted moving averages,
+          however, can be carried out with the
+          `~Field.convolution_filter` method.
+    
 Derivatives
 ^^^^^^^^^^^
 
