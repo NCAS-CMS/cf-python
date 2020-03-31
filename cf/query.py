@@ -412,7 +412,7 @@ class Query:
 
 
     def addattr(self, attr):
-        '''Return a `Query` object with a new left-hand side operand attribute
+        '''Return a `Query` object with a new left hand side operand attribute
     to be used during evaluation. TODO
 
     If another attribute has previously been specified, then the new
@@ -553,8 +553,8 @@ class Query:
         return True
 
 
-    def evaluate(self, x, units=False):
-        '''Evaluate the query operation for a given left-hand side operand.
+    def evaluate(self, x):
+        '''Evaluate the query operation for a given left hand side operand.
 
     Note that for the query object ``q`` and any object, ``x``,
     ``x==q`` is equivalent to ``q.evaluate(x)`` and ``x!=q`` is
@@ -563,12 +563,7 @@ class Query:
     :Parameters:
 
         x:
-            The object for the left-hand side operand of the query.
-
-        units: `str` or `Units`, optional
-            The units of the left-hand side operand x. If not specified,
-            the units are assumed to be the same as units specified on the
-            query.
+            The object for the left hand side operand of the query.
 
     :Returns:
 
@@ -581,13 +576,7 @@ class Query:
     >>> q.evaluate(6)
     False
 
-    >>> q = cf.Query('gt', 50, units='second')
-    >>> q.evaluate(1)
-    False
-    >>> q.evaluate(1, units='minute')
-    True
-
-    >>> q = cf.Query('wi', (1, 2))
+    >>> q = cf.Query('wi', (1,2))
     >>> array = numpy.arange(4)
     >>> array
     array([0, 1, 2, 3])
@@ -595,19 +584,10 @@ class Query:
     array([False,  True,  True, False], dtype=bool)
 
         '''
-        output = self._evaluate(x, (), units=units)
-
-        # Ensure the form of the output (cf.Data, numpy.ndarray etc...) is the
-        # same as that of the input, x, since _evaluate may convert to cf.Data
-        # in order to process data with the correct units natively.
-        if ((type(x) is type(output)) or isinstance(x, Data) or
-                isinstance(output, (int, bool))):
-            return output
-        else:
-            return output.array.tolist()  # convert back to pure Python data
+        return self._evaluate(x, ())
 
 
-    def _evaluate(self, x, parent_attr, units=False):
+    def _evaluate(self, x, parent_attr):
         '''Evaluate the query operation for a given object.
 
     .. seealso:: `evaluate`
@@ -619,20 +599,11 @@ class Query:
 
         parent_attr: `tuple`
 
-        units: `str` or `Units`, optional
-            The units of the left-hand side operand x. If not specified,
-            the units are assumed to be the same as units specified on the
-            query.
-
     :Returns:
 
         See `evaluate`.
 
         '''
-        # Recast numpy.ndarray as cf.Data array so units are managed
-        if units is not False:
-            x = Data(x, units)
-
         compound = self._compound
         attr     = parent_attr + self._attr
 
