@@ -13019,25 +13019,24 @@ False
             partition.open(config)
             array = partition.array
 
-            # Steps for masked data when want to presereve invalid values:
+            # Steps for masked data when want to preserve invalid values:
             # Step 1. extract the non-masked data and the mask separately
-            detatch_mask = preserve_invalid and numpy_ma_isMA(array)
-            if detatch_mask:
-                array = array.data
-                # array is an ndarray, partition._subarray is the MaskedArray
-                mask = partition._subarray.mask
+            detach_mask = preserve_invalid and numpy_ma_isMA(array)
+            if detach_mask:
+                mask = array.mask  # must store mask before detach it below
+                array = array.data  # mask detached
 
             if out:
                 f(array, out=array, **kwargs)
             else:
-                # Step 2: apply op to data alone
+                # Step 2: apply operation to data alone
                 array = f(array, **kwargs)
 
             p_datatype = array.dtype
             if datatype != p_datatype:
                 datatype = numpy_result_type(p_datatype, datatype)
 
-            if detatch_mask:
+            if detach_mask:
                 # Step 3: reattach original mask onto the output data
                 array = numpy_ma_array(array, mask=mask)
 

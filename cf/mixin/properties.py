@@ -69,7 +69,7 @@ class Properties:
             return False
 
         if isinstance(value0, Query):
-            return bool(value0.evaluate(value1)) # TODO vectors
+            return bool(value0.evaluate(value1))  # TODO vectors
 
         try:
             # value0 is a re.compile object
@@ -109,6 +109,7 @@ class Properties:
 
     @id.setter
     def id(self, value):   self._custom['id'] = value
+
     @id.deleter
     def id(self):
         try:
@@ -146,9 +147,10 @@ class Properties:
 
     @calendar.setter
     def calendar(self, value): self.set_property('calendar', value)
-    @calendar.deleter
-    def calendar(self):        self.del_property('calendar', default=AttributeError())
 
+    @calendar.deleter
+    def calendar(self):
+        self.del_property('calendar', default=AttributeError())
 
     @property
     def comment(self):
@@ -176,9 +178,10 @@ class Properties:
 
     @comment.setter
     def comment(self, value): self.set_property('comment', value)
-    @comment.deleter
-    def comment(self):        self.del_property('comment', default=AttributeError())
 
+    @comment.deleter
+    def comment(self):
+        self.del_property('comment', default=AttributeError())
 
     @property
     def history(self):
@@ -203,13 +206,14 @@ class Properties:
 
         '''
         return self.get_property('history', default=AttributeError())
+
     @history.setter
     def history(self, value):
         self.set_property('history', value)
+
     @history.deleter
     def history(self):
         self.del_property('history', default=AttributeError())
-
 
     @property
     def leap_month(self):
@@ -235,13 +239,14 @@ class Properties:
 
         '''
         return self.get_property('leap_month', default=AttributeError())
+
     @leap_month.setter
     def leap_month(self, value):
         self.set_property('leap_month', value)
+
     @leap_month.deleter
     def leap_month(self):
         self.del_property('leap_month', default=AttributeError())
-
 
     @property
     def leap_year(self):
@@ -268,13 +273,14 @@ class Properties:
 
         '''
         return self.get_property('leap_year', default=AttributeError())
+
     @leap_year.setter
     def leap_year(self, value):
         self.set_property('leap_year', value)
+
     @leap_year.deleter
     def leap_year(self):
         self.del_property('leap_year', default=AttributeError())
-
 
     @property
     def long_name(self):
@@ -300,13 +306,14 @@ class Properties:
 
         '''
         return self.get_property('long_name', default=AttributeError())
+
     @long_name.setter
     def long_name(self, value):
         self.set_property('long_name', value)
+
     @long_name.deleter
     def long_name(self):
         self.del_property('long_name', default=AttributeError())
-
 
     @property
     def month_lengths(self):
@@ -320,12 +327,14 @@ class Properties:
 
     **Examples:**
 
-    >>> f.month_lengths = numpy.array([34, 31, 32, 30, 29, 27, 28, 28, 28, 32, 32, 34])
+    >>> f.month_lengths = numpy.array(
+    ...     [34, 31, 32, 30, 29, 27, 28, 28, 28, 32, 32, 34])
     >>> f.month_lengths
     (34, 31, 32, 30, 29, 27, 28, 28, 28, 32, 32, 34)
     >>> del f.month_lengths
 
-    >>> f.set_property('month_lengths', [34, 31, 32, 30, 29, 27, 28, 28, 28, 32, 32, 34])
+    >>> f.set_property('month_lengths',
+    ...                [34, 31, 32, 30, 29, 27, 28, 28, 28, 32, 32, 34])
     >>> f.has_property('month_lengths')
     True
     >>> f.get_property('month_lengths')
@@ -336,10 +345,12 @@ class Properties:
         return self.get_property('month_lengths', default=AttributeError())
 
     @month_lengths.setter
-    def month_lengths(self, value): self.set_property('month_lengths', tuple(value))
-    @month_lengths.deleter
-    def month_lengths(self):        self.del_property('month_lengths', default=AttributeError())
+    def month_lengths(self, value):
+        self.set_property('month_lengths', tuple(value))
 
+    @month_lengths.deleter
+    def month_lengths(self):
+        self.del_property('month_lengths', default=AttributeError())
 
     @property
     def standard_name(self):
@@ -369,9 +380,10 @@ class Properties:
 
     @standard_name.setter
     def standard_name(self, value): self.set_property('standard_name', value)
-    @standard_name.deleter
-    def standard_name(self):        self.del_property('standard_name', default=AttributeError())
 
+    @standard_name.deleter
+    def standard_name(self):
+        self.del_property('standard_name', default=AttributeError())
 
     @property
     def units(self):
@@ -401,9 +413,10 @@ class Properties:
 
     @units.setter
     def units(self, value): self.set_property('units', value)
-    @units.deleter
-    def units(self):        self.del_property('units', default=AttributeError())
 
+    @units.deleter
+    def units(self):
+        self.del_property('units', default=AttributeError())
 
     @property
     def valid_max(self):
@@ -431,9 +444,10 @@ class Properties:
 
     @valid_max.setter
     def valid_max(self, value): self.set_property('valid_max', value)
-    @valid_max.deleter
-    def valid_max(self):        self.del_property('valid_max', default=AttributeError())
 
+    @valid_max.deleter
+    def valid_max(self):
+        self.del_property('valid_max', default=AttributeError())
 
     @property
     def valid_min(self):
@@ -461,9 +475,10 @@ class Properties:
 
     @valid_min.setter
     def valid_min(self, value): self.set_property('valid_min', value)
-    @valid_min.deleter
-    def valid_min(self):        self.del_property('valid_min', default=AttributeError())
 
+    @valid_min.deleter
+    def valid_min(self):
+        self.del_property('valid_min', default=AttributeError())
 
     @property
     def valid_range(self):
@@ -489,12 +504,16 @@ class Properties:
     >>> f.del_property('valid_range')
 
         '''
-        return tuple(self.get_property('valid_range'), default=AttributeError())
+        return tuple(
+            self.get_property('valid_range'), default=AttributeError())
 
     @valid_range.setter
-    def valid_range(self, value): self.set_property('valid_range', tuple(value))
+    def valid_range(self, value):
+        self.set_property('valid_range', tuple(value))
+
     @valid_range.deleter
-    def valid_range(self):        self.del_property('valid_range', default=AttributeError())
+    def valid_range(self):
+        self.del_property('valid_range', default=AttributeError())
 
     # ----------------------------------------------------------------
     # Methods
@@ -554,7 +573,6 @@ class Properties:
         # Still here? Then get a non-special property
         return super().get_property(prop, default=default)
 
-
     def has_property(self, prop):
         '''Whether a property has been set.
 
@@ -599,7 +617,6 @@ class Properties:
 
         # Still here? Then get a non-special property
         return super().has_property(prop)
-
 
     def del_property(self, prop, default=ValueError()):
         '''Remove a property.
@@ -656,7 +673,6 @@ class Properties:
 
         # Still here? Then del a non-special attribute
         return super().del_property(prop, default=default)
-
 
     def match_by_identity(self, *identities):
         '''Whether or not the construct identity satisfies conditions.
@@ -727,7 +743,6 @@ class Properties:
 
         return ok
 
-
     def match_by_ncvar(self, *ncvars):
         '''Whether or not the netCDF variable name satisfies conditions.
 
@@ -792,7 +807,6 @@ class Properties:
 
         return ok
 
-
     def match_by_property(self, *mode, **properties):
         '''Whether or not properties satisfy conditions.
 
@@ -851,7 +865,8 @@ class Properties:
 
     >>> f.match_by_property(standard_name='longitude')
 
-    >>> f.match_by_property(standard_name='longitude', foo='cf.set(['bar', 'not_bar'])
+    >>> f.match_by_property(
+    ...     standard_name='longitude', foo='cf.set(['bar', 'not_bar'])
 
     >>> f.match_by_property(long_name=re.compile('^lon'))
 
@@ -861,14 +876,17 @@ class Properties:
         # Parse mode
         if mode:
             if len(mode) > 1:
-                raise ValueError("Can provide at most one positional argument")
+                raise ValueError(
+                    "Can provide at most one positional argument")
 
             x = mode[0]
             if x == 'or':
                 _or = True
             elif x != 'and':
                 raise ValueError(
-                    "Positional argument, if provided, must one of 'or', 'and'")
+                    "Positional argument, if provided, must one of 'or', "
+                    "'and'"
+                )
         # --- End: if
 
         if not properties:
@@ -883,7 +901,7 @@ class Properties:
             else:
                 value1 = self_properties.get(name)
                 ok = self._matching_values(value0, value1,
-                                           units=(name=='units'))
+                                           units=(name == 'units'))
 
             if _or:
                 if ok:
@@ -893,7 +911,6 @@ class Properties:
         # --- End: for
 
         return ok
-
 
     def properties(self):
         '''Return all properties.
@@ -910,7 +927,8 @@ class Properties:
 
     >>> f.properties()
     {}
-    >>> f.set_properties({'standard_name': 'air_pressure', 'long_name': 'Air Pressure'})
+    >>> f.set_properties(
+    ...     {'standard_name': 'air_pressure', 'long_name': 'Air Pressure'})
     >>> f.properties()
     {'standard_name': 'air_pressure',
      'foo': 'bar',
@@ -940,7 +958,6 @@ class Properties:
 
         return out
 
-
     def set_properties(self, properties, copy=True):
         '''Set properties.
 
@@ -969,7 +986,8 @@ class Properties:
 
     >>> f.properties()
     {}
-    >>> f.set_properties({'standard_name': 'air_pressure', 'long_name': 'Air Pressure'})
+    >>> f.set_properties(
+    ...     {'standard_name': 'air_pressure', 'long_name': 'Air Pressure'})
     >>> f.properties()
     {'standard_name': 'air_pressure',
      'foo': 'bar',
@@ -993,7 +1011,6 @@ class Properties:
             value = properties.get(prop)
             if value is not None:
                 setattr(self, prop, value)
-
 
     def set_property(self, prop, value, copy=True):
         '''Set a property.
@@ -1046,7 +1063,6 @@ class Properties:
         # Still here? Then set a non-special property
         return super().set_property(prop, value, copy=copy)
 
-
     # ----------------------------------------------------------------
     # Aliases
     # ----------------------------------------------------------------
@@ -1055,17 +1071,21 @@ class Properties:
 
         '''
         if kwargs:
-            _DEPRECATION_ERROR_KWARGS(self, 'match', kwargs,
-                                      "Use 'match_by_*' methods instead.") # pragma: no cover
+            _DEPRECATION_ERROR_KWARGS(
+                self, 'match', kwargs, "Use 'match_by_*' methods instead."
+            )  # pragma: no cover
 
         if identities and isinstance(identities[0], (list, tuple, set)):
             _DEPRECATION_ERROR(
-                "Use of a {!r} for identities has been deprecated. Use the * operator to unpack the arguments instead.".format(
-                    identities[0].__class__.__name__)) # pragma: no cover
+                "Use of a {!r} for identities has been deprecated. Use the "
+                "* operator to unpack the arguments instead.".format(
+                    identities[0].__class__.__name__)
+            )  # pragma: no cover
 
         for i in identities:
-           if isinstance(i, dict):
-                _DEPRECATION_ERROR_DICT("Use 'match_by_*' methods instead.") # pragma: no cover
+            if isinstance(i, dict):
+                _DEPRECATION_ERROR_DICT(
+                    "Use 'match_by_*' methods instead.")  # pragma: no cover
         # --- End: for
 
         return self.match_by_identity(*identities)
@@ -1079,9 +1099,9 @@ class Properties:
     Deprecated at version 3.0.0. Use method 'set_property' instead.
 
         '''
-        _DEPRECATION_ERROR_METHOD(self, 'setprop',
-                                  "Use method 'set_property' instead") # pragma: no cover
-
+        _DEPRECATION_ERROR_METHOD(
+            self, 'setprop', "Use method 'set_property' instead"
+        )  # pragma: no cover
 
     def delprop(self, prop):
         '''Delete a CF property.
@@ -1089,9 +1109,9 @@ class Properties:
     Deprecated at version 3.0.0. Use method 'del_property' instead.
 
         '''
-        _DEPRECATION_ERROR_METHOD(self, 'delprop',
-                                  "Use method 'del_property' instead") # pragma: no cover
-
+        _DEPRECATION_ERROR_METHOD(
+            self, 'delprop', "Use method 'del_property' instead"
+        )  # pragma: no cover
 
     def hasprop(self, prop):
         '''Whether a property has been set.
@@ -1099,9 +1119,9 @@ class Properties:
     Deprecated at version 3.0.0. Use method 'has_property' instead.
 
         '''
-        _DEPRECATION_ERROR_METHOD(self, 'hasprop',
-                                  "Use method 'has_property' instead") # pragma: no cover
-
+        _DEPRECATION_ERROR_METHOD(
+            self, 'hasprop', "Use method 'has_property' instead"
+        )  # pragma: no cover
 
     def getprop(self, prop):
         '''Get a property.
@@ -1109,8 +1129,9 @@ class Properties:
     Deprecated at version 3.0.0. Use method 'get_property' instead.
 
         '''
-        _DEPRECATION_ERROR_METHOD(self, 'getprop',
-                                  "Use method 'get_property' instead") # pragma: no cover
+        _DEPRECATION_ERROR_METHOD(
+            self, 'getprop', "Use method 'get_property' instead"
+        )  # pragma: no cover
 
 
 # --- End: class

@@ -33,7 +33,6 @@ class Coordinate():
             if getattr(self, t):
                 return t
 
-
     @property
     def T(self):
         '''True if and only if the data are coordinates for a CF 'T' axis.
@@ -69,7 +68,6 @@ class Coordinate():
 
         return False
 
-    
     @property
     def X(self):
         '''True if and only if the data are coordinates for a CF 'X' axis.
@@ -104,9 +102,9 @@ class Coordinate():
 #        if data is not None and data.ndim > 1:
 #            return self.get_property('axis', None) == 'X'
 
-        standard_names =  ('longitude',
-                           'projection_x_coordinate',
-                           'grid_longitude')
+        standard_names = ('longitude',
+                          'projection_x_coordinate',
+                          'grid_longitude')
         units = self.Units
         out = (units.islongitude or
                self.get_property('axis', None) == 'X' or
@@ -123,7 +121,6 @@ class Coordinate():
         # --- End: if
 
         return False
-
 
     @property
     def Y(self):
@@ -174,7 +171,6 @@ class Coordinate():
         # --- End: if
 
         return False
-
 
     @property
     def Z(self):
@@ -238,11 +234,12 @@ class Coordinate():
                           'ocean_s_coordinate_g2',
                           'ocean_sigma_z_coordinate',
                           'ocean_double_sigma_coordinate')
-        
+
         units = self.Units
         out = (
             units.ispressure or
-            str(self.get_property('positive', 'Z')).lower() in ('up', 'down') or
+            (str(self.get_property('positive', 'Z')).lower()
+             in ('up', 'down')) or
             self.get_property('axis', None) == 'Z' or
             (units and units.units in ('level', 'layer' 'sigma_level')) or
             self.get_property('standard_name', None) in standard_names
@@ -259,7 +256,6 @@ class Coordinate():
         # --- End: if
 
         return False
-
 
     # ----------------------------------------------------------------
     # CF properties
@@ -289,9 +285,11 @@ class Coordinate():
 
         '''
         return self.get_property('axis', default=AttributeError())
+
     @axis.setter
     def axis(self, value):
         self.set_property('axis', value)
+
     @axis.deleter
     def axis(self):
         self.del_property('axis')
@@ -325,15 +323,16 @@ class Coordinate():
 
         '''
         return self.get_property('positive', default=AttributeError())
+
     @positive.setter
     def positive(self, value):
         self.set_property('positive', value)
         self._direction = None
+
     @positive.deleter
     def positive(self):
         self.del_property('positive')
         self._direction = None
-
 
     # ----------------------------------------------------------------
     # Methods
@@ -341,43 +340,43 @@ class Coordinate():
 #    def period(self, *value):
 #        '''Set the period for cyclic coordinates.
 #
-#:Parameters:
+#    :Parameters:
 #
-#    value: data-like or `None`, optional
-#        The period. The absolute value is used.
+#        value: data-like or `None`, optional
+#            The period. The absolute value is used.
 #
-#        {+data-like-scalar}
+#            {+data-like-scalar}
 #
-#:Returns:
+#    :Returns:
 #
-#    out: `cf.Data` or `None`
-#        The period prior to the change, or the current period if no
-#        *value* was specified. In either case, None is returned if the
-#        period had not been set previously.
+#        out: `cf.Data` or `None`
+#             The period prior to the change, or the current period if no
+#             *value* was specified. In either case, None is returned if the
+#             period had not been set previously.
 #
-#**Examples:**
+#    **Examples:**
 #
-#>>> print(c.period())
-#None
-#>>> c.Units
-#<CF Units: degrees_east>
-#>>> print(c.period(360))
-#None
-#>>> c.period()
-#<CF Data: 360.0 'degrees_east'>
-#>>> import math
-#>>> c.period(cf.Data(2*math.pi, 'radians'))
-#<CF Data: 360.0 degrees_east>
-#>>> c.period()
-#<CF Data: 6.28318530718 radians>
-#>>> c.period(None)
-#<CF Data: 6.28318530718 radians>
-#>>> print(c.period())
-#None
-#>>> print(c.period(-360))
-#None
-#>>> c.period()
-#<CF Data: 360.0 degrees_east>
+#    >>> print(c.period())
+#    None
+#    >>> c.Units
+#    <CF Units: degrees_east>
+#    >>> print(c.period(360))
+#    None
+#    >>> c.period()
+#    <CF Data: 360.0 'degrees_east'>
+#    >>> import math
+#    >>> c.period(cf.Data(2*math.pi, 'radians'))
+#    <CF Data: 360.0 degrees_east>
+#    >>> c.period()
+#    <CF Data: 6.28318530718 radians>
+#    >>> c.period(None)
+#    <CF Data: 6.28318530718 radians>
+#    >>> print(c.period())
+#    None
+#    >>> print(c.period(-360))
+#    None
+#    >>> c.period()
+#    <CF Data: 360.0 degrees_east>
 #
 #        '''
 #        old = self._period
@@ -399,8 +398,9 @@ class Coordinate():
 #                    value.Units = self.Units
 #                else:
 #                    raise ValueError(
-#"Period units {!r} are not equivalent to coordinate units {!r}".format(
-#    units, self.Units))
+#                        "Period units {!r} are not equivalent to coordinate "
+#                        "units {!r}".format(units, self.Units)
+#                    )
 #            # --- End: if
 #
 #            value = abs(value)
@@ -415,8 +415,9 @@ class Coordinate():
 #
 #            if r >= value.datum(0):
 #                raise ValueError(
-#"The coordinate range {!r} is not less than the period {!r}".format(
-#    range, value))
+#                    "The coordinate range {!r} is not less than the period "
+#                    "{!r}".format(range, value)
+#                )
 #        # --- End: if
 #
 #        self._period = value
