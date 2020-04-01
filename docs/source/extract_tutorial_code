@@ -42,4 +42,8 @@ done
 cat tutorial.py field_analysis.py > $$.py
 mv $$.py tutorial.py  
 
+# The processes above introduce trailing whitespace, so strip it out
+# else will produce an unhelpful diff (as well as resulting in bad style):
+sed -i 's/[ \t]*$//' tutorial.py
+
 cat tutorial.py
