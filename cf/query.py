@@ -218,7 +218,7 @@ class Query:
         # --- End: if
 
         self._operator = operator
-        self._value    = value
+        self._value = value
         self._compound = False
 
         if attr:
@@ -230,13 +230,11 @@ class Query:
 
         self._NotImplemented_RHS_Data_op = True
 
-
     def __deepcopy__(self, memo):
         '''Used if copy.deepcopy is called on the variable.
 
         '''
         return self.copy()
-
 
     def __eq__(self, x):
         '''The rich comparison operator ``==``
@@ -248,7 +246,6 @@ class Query:
         '''
         return self._evaluate(x, ())
 
-
     def __ne__(self, x):
         '''The rich comparison operator ``!=``
 
@@ -258,8 +255,7 @@ class Query:
 
         '''
         # Note that it is important to use the == operator
-        return self._evaluate(x, ()) == False
-
+        return self._evaluate(x, ()) == False  # ignore PEP8 E712 due to above
 
     def __and__(self, other):
         '''The binary bitwise operation ``&``
@@ -270,15 +266,14 @@ class Query:
         Q = type(self)
         new = Q.__new__(Q)
 
-        new._operator         = None
-        new._compound         = (self, other)
+        new._operator = None
+        new._compound = (self, other)
         new._bitwise_operator = operator_and
-        new._attr             = ()
+        new._attr = ()
 
         new._NotImplemented_RHS_Data_op = True
 
         return new
-
 
     def __iand__(self, other):
         '''The augmented bitwise assignment ``&=``
@@ -287,7 +282,6 @@ class Query:
 
         '''
         return self & other
-
 
     def __or__(self, other):
         '''The binary bitwise operation ``|``
@@ -298,15 +292,14 @@ class Query:
         Q = type(self)
         new = Q.__new__(Q)
 
-        new._operator         = None
-        new._compound         = (self, other)
+        new._operator = None
+        new._compound = (self, other)
         new._bitwise_operator = operator_or
-        new._attr             = ()
+        new._attr = ()
 
         new._NotImplemented_RHS_Data_op = True
 
         return new
-
 
     def __ior__(self, other):
         '''The augmented bitwise assignment ``|=``
@@ -316,7 +309,6 @@ class Query:
         '''
         return self | other
 
-
     def __repr__(self):
         '''Called by the `repr` built-in function.
 
@@ -324,7 +316,6 @@ class Query:
 
         '''
         return '<CF {}: {}>'.format(self.__class__.__name__, self)
-
 
     def __str__(self):
         '''Called by the `str` built-in function.
@@ -349,7 +340,6 @@ class Query:
 
         return out
 
-
     @property
     def attr(self):
         '''TODO
@@ -369,7 +359,6 @@ class Query:
         '''
         return self._attr
 
-
     @property
     def operator(self):
         '''TODO
@@ -387,7 +376,6 @@ class Query:
 
         '''
         return self._operator
-
 
     @property
     def value(self):
@@ -410,9 +398,8 @@ class Query:
 
         raise AttributeError("Compound query doesn't have attribute 'value'")
 
-
     def addattr(self, attr):
-        '''Return a `Query` object with a new left-hand side operand attribute
+        '''Return a `Query` object with a new left hand side operand attribute
     to be used during evaluation. TODO
 
     If another attribute has previously been specified, then the new
@@ -458,7 +445,6 @@ class Query:
 
         return new
 
-
     def copy(self):
         '''Return a deep copy.
 
@@ -473,8 +459,7 @@ class Query:
     >>> r = q.copy()
 
         '''
-        return self # TODO
-
+        return self  # TODO
 
     def dump(self, display=True):
         '''Return a string containing a full description of the instance.
@@ -501,7 +486,6 @@ class Query:
         else:
             return(string)
 
-
     @_deprecated_kwarg_check('traceback')
     def equals(self, other, verbose=False, traceback=False):
         '''TODO
@@ -510,51 +494,75 @@ class Query:
         if self._compound:
             if not other._compound:
                 if verbose:
-                    print("{}: Different compound components".format(self.__class__.__name__)) # pragma: no cover
+                    print(
+                        "{}: Different compound components".format(
+                            self.__class__.__name__)
+                    )  # pragma: no cover
                 return False
 
             if self._bitwise_operator != other._bitwise_operator:
                 if verbose:
-                    print("{}: Different compound operators: {!r}, {!r}".format(
-                        self.__class__.__name__, self._bitwise_operator, other._bitwise_operator)) # pragma: no cover
+                    print(
+                        "{}: Different compound operators: {!r}, {!r}".format(
+                            self.__class__.__name__, self._bitwise_operator,
+                            other._bitwise_operator
+                        )
+                    )  # pragma: no cover
                 return False
 
             if not self._compound[0].equals(other._compound[0]):
                 if not self._compound[0].equals(other._compound[1]):
                     if verbose:
-                        print("{}: Different compound components".format(self.__class__.__name__)) # pragma: no cover
+                        print(
+                            "{}: Different compound components".format(
+                                self.__class__.__name__)
+                        )  # pragma: no cover
                     return False
                 if not self._compound[1].equals(other._compound[0]):
                     if verbose:
-                        print("{}: Different compound components".format(self.__class__.__name__)) # pragma: no cover
+                        print(
+                            "{}: Different compound components".format(
+                                self.__class__.__name__)
+                        )  # pragma: no cover
                     return False
             elif not self._compound[1].equals(other._compound[1]):
                 if verbose:
-                    print("{}: Different compound components".format(self.__class__.__name__)) # pragma: no cover
+                    print(
+                        "{}: Different compound components".format(
+                            self.__class__.__name__)
+                    )  # pragma: no cover
                 return False
 
         elif other._compound:
             if verbose:
-                print("{}: Different compound components".format(self.__class__.__name__)) # pragma: no cover
+                print(
+                    "{}: Different compound components".format(
+                        self.__class__.__name__)
+                )  # pragma: no cover
             return False
 
         for attr in ('_NotImplemented_RHS_Data_op',
                      '_attr',
                      '_value',
                      '_operator'):
-            if not _equals(getattr(self, attr, None), getattr(other, attr, None),
+            if not _equals(getattr(self, attr, None),
+                           getattr(other, attr, None),
                            verbose=verbose):
                 if verbose:
-                    print("{}: Different {!r} attributes: {!r}, {!r}".format(self.__class__.__name__,
-                        attr, getattr(self, attr, None), getattr(other, attr, None))) # pragma: no cover
+                    print(
+                        "{}: Different {!r} attributes: {!r}, {!r}".format(
+                            self.__class__.__name__, attr,
+                            getattr(self, attr, None),
+                            getattr(other, attr, None)
+                        )
+                    )  # pragma: no cover
                 return False
         # --- End: for
 
         return True
 
-
-    def evaluate(self, x, units=False):
-        '''Evaluate the query operation for a given left-hand side operand.
+    def evaluate(self, x):
+        '''Evaluate the query operation for a given left hand side operand.
 
     Note that for the query object ``q`` and any object, ``x``,
     ``x==q`` is equivalent to ``q.evaluate(x)`` and ``x!=q`` is
@@ -563,12 +571,7 @@ class Query:
     :Parameters:
 
         x:
-            The object for the left-hand side operand of the query.
-
-        units: `str` or `Units`, optional
-            The units of the left-hand side operand x. If not specified,
-            the units are assumed to be the same as units specified on the
-            query.
+            The object for the left hand side operand of the query.
 
     :Returns:
 
@@ -581,13 +584,7 @@ class Query:
     >>> q.evaluate(6)
     False
 
-    >>> q = cf.Query('gt', 50, units='second')
-    >>> q.evaluate(1)
-    False
-    >>> q.evaluate(1, units='minute')
-    True
-
-    >>> q = cf.Query('wi', (1, 2))
+    >>> q = cf.Query('wi', (1,2))
     >>> array = numpy.arange(4)
     >>> array
     array([0, 1, 2, 3])
@@ -595,19 +592,9 @@ class Query:
     array([False,  True,  True, False], dtype=bool)
 
         '''
-        output = self._evaluate(x, (), units=units)
+        return self._evaluate(x, ())
 
-        # Ensure the form of the output (cf.Data, numpy.ndarray etc...) is the
-        # same as that of the input, x, since _evaluate may convert to cf.Data
-        # in order to process data with the correct units natively.
-        if ((type(x) is type(output)) or isinstance(x, Data) or
-                isinstance(output, (int, bool))):
-            return output
-        else:
-            return output.array.tolist()  # convert back to pure Python data
-
-
-    def _evaluate(self, x, parent_attr, units=False):
+    def _evaluate(self, x, parent_attr):
         '''Evaluate the query operation for a given object.
 
     .. seealso:: `evaluate`
@@ -619,22 +606,13 @@ class Query:
 
         parent_attr: `tuple`
 
-        units: `str` or `Units`, optional
-            The units of the left-hand side operand x. If not specified,
-            the units are assumed to be the same as units specified on the
-            query.
-
     :Returns:
 
         See `evaluate`.
 
         '''
-        # Recast numpy.ndarray as cf.Data array so units are managed
-        if units is not False:
-            x = Data(x, units)
-
         compound = self._compound
-        attr     = parent_attr + self._attr
+        attr = parent_attr + self._attr
 
         # ------------------------------------------------------------
         # Evaluate a compound condition
@@ -652,7 +630,7 @@ class Query:
             x = getattr(x, a)
 
         operator = self._operator
-        value    = self._value
+        value = self._value
 
         if operator == 'eq':
             try:
@@ -661,7 +639,9 @@ class Query:
                 return x == value
             except TypeError:
                 raise ValueError(
-                        "Can't perform regular expression search on a non-string: {!r}".format(x))
+                    "Can't perform regular expression search on a "
+                    "non-string: {!r}".format(x)
+                )
         # --- End: if
 
         if operator == 'ne':
@@ -671,7 +651,9 @@ class Query:
                 return x != value
             except TypeError:
                 raise ValueError(
-                        "Can't perform regular expression search on a non-string: {!r}".format(x))
+                    "Can't perform regular expression search on a "
+                    "non-string: {!r}".format(x)
+                )
         # --- End: if
 
         if operator == 'lt':
@@ -750,7 +732,6 @@ class Query:
                 return out
         # --- End: if
 
-
     def inspect(self):
         '''Inspect the object for debugging.
 
@@ -761,8 +742,7 @@ class Query:
         `None`
 
         '''
-        print(_inspect(self)) # pragma: no cover
-
+        print(_inspect(self))  # pragma: no cover
 
     # ----------------------------------------------------------------
     # Deprecated attributes and methods
@@ -772,10 +752,9 @@ class Query:
         '''TODO Deprecated at version 3.0.0. Use re.compile objects instead.
 
         '''
-        _DEPRECATION_ERROR_ATTRIBUTE(self, 'exact',
-                                     "Use 're.compile' objects instead.") # pragma: no cover
-
-
+        _DEPRECATION_ERROR_ATTRIBUTE(
+            self, 'exact', "Use 're.compile' objects instead."
+        )  # pragma: no cover
 
     def equivalent(self, other, traceback=False):
         '''Deprecated at version 3.0.0.
@@ -1040,7 +1019,8 @@ def eq(value, units=None, attr=None, exact=True):
 
     '''
     if not exact:
-        _DEPRECATION_ERROR_FUNCTION_KWARGS('eq', exact=True) # pragma: no cover
+        _DEPRECATION_ERROR_FUNCTION_KWARGS(
+            'eq', exact=True)  # pragma: no cover
 
     return Query('eq', value, units=units, attr=attr)
 
@@ -1089,7 +1069,8 @@ def ne(value, units=None, attr=None, exact=True):
 
     '''
     if not exact:
-        _DEPRECATION_ERROR_FUNCTION_KWARGS('ne', exact=True) # pragma: no cover
+        _DEPRECATION_ERROR_FUNCTION_KWARGS(
+            'ne', exact=True)  # pragma: no cover
 
     return Query('ne', value, units=units, attr=attr)
 
@@ -1230,7 +1211,8 @@ def set(values, units=None, attr=None, exact=True):
 
     '''
     if not exact:
-        _DEPRECATION_ERROR_FUNCTION_KWARGS('set', exact=True) # pragma: no cover
+        _DEPRECATION_ERROR_FUNCTION_KWARGS(
+            'set', exact=True)  # pragma: no cover
 
     return Query('set', values, units=units, attr=attr)
 
@@ -1989,7 +1971,8 @@ def dtge(*args, **kwargs):
 
     '''
     _DEPRECATION_ERROR_FUNCTION(
-        'dtge', "Use 'cf.ge' with a datetime object value instead.") # pragma: no cover
+        'dtge', "Use 'cf.ge' with a datetime object value instead."
+    )  # pragma: no cover
 
 
 def dtgt(*args, **kwargs):
@@ -1998,7 +1981,8 @@ def dtgt(*args, **kwargs):
 
     '''
     _DEPRECATION_ERROR_FUNCTION(
-        'dtgt', "Use 'cf.gt' with a datetime object value instead.") # pragma: no cover
+        'dtgt', "Use 'cf.gt' with a datetime object value instead."
+    )  # pragma: no cover
 
 
 def dtle(*args, **kwargs):
@@ -2007,7 +1991,8 @@ def dtle(*args, **kwargs):
 
     '''
     _DEPRECATION_ERROR_FUNCTION(
-        'dtle', "Use 'cf.le' with a datetime object value instead.") # pragma: no cover
+        'dtle', "Use 'cf.le' with a datetime object value instead."
+    )  # pragma: no cover
 
 
 def dtlt(*args, **kwargs):
@@ -2016,7 +2001,8 @@ def dtlt(*args, **kwargs):
 
     '''
     _DEPRECATION_ERROR_FUNCTION(
-        'dtlt', "Use 'cf.lt' with a datetime object value instead.") # pragma: no cover
+        'dtlt', "Use 'cf.lt' with a datetime object value instead."
+    )  # pragma: no cover
 
 
 def dteq(*args, **kwargs):
@@ -2025,7 +2011,8 @@ def dteq(*args, **kwargs):
 
     '''
     _DEPRECATION_ERROR_FUNCTION(
-        'dteq', "Use 'cf.eq' with a datetime object value instead.") # pragma: no cover
+        'dteq', "Use 'cf.eq' with a datetime object value instead."
+    )  # pragma: no cover
 
 
 def dtne(*args, **kwargs):
@@ -2034,7 +2021,8 @@ def dtne(*args, **kwargs):
 
     '''
     _DEPRECATION_ERROR_FUNCTION(
-        'dtne', "Use 'cf.ne' with a datetime object value instead.") # pragma: no cover
+        'dtne', "Use 'cf.ne' with a datetime object value instead."
+    )  # pragma: no cover
 
 
 def contain(value, units=None, attr=None):
@@ -2045,4 +2033,4 @@ def contain(value, units=None, attr=None):
     '''
     _DEPRECATION_ERROR_FUNCTION(
         'cf.contain',
-        "Use function 'cf.contains' instead") # pragma: no cover
+        "Use function 'cf.contains' instead")  # pragma: no cover
