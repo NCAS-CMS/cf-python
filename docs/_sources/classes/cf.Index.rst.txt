@@ -211,6 +211,7 @@ Data
    ~cf.Index.chunk
    ~cf.Index.close
    ~cf.Index.convert_reference_time
+   ~cf.Index.creation_commands
    ~cf.Index.cyclic
    ~cf.Index.files
    ~cf.Index.has_bounds
@@ -256,8 +257,13 @@ Mathematical operations
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.Index.arccos
+   ~cf.Index.arccosh
+   ~cf.Index.arcsin
    ~cf.Index.arcsinh
    ~cf.Index.arctan
+   .. ~cf.Index.arctan2  [AT2]
+   ~cf.Index.arctanh
    ~cf.Index.cos
    ~cf.Index.cosh
    ~cf.Index.sin

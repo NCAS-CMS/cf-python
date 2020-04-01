@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
@@ -16,12 +17,11 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <script type="text/javascript" src="../_static/clipboard.min.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cf.Data.dumpd" href="cf.Data.dumpd.html" />
-    <link rel="prev" title="cf.Data.dump" href="cf.Data.dump.html" />
+    <link rel="next" title="cf.Data.sample_size" href="cf.Data.sample_size.html" />
+    <link rel="prev" title="cf.Data.sum_of_squares" href="cf.Data.sum_of_squares.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -36,7 +36,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.1.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.2.0</a></h1>
 
 
 
@@ -55,6 +55,16 @@
 
 
 
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -74,8 +84,8 @@
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
   <li><a href="../classes/cf.Data.html">cf.Data</a><ul>
-      <li>Previous: <a href="cf.Data.dump.html" title="previous chapter">cf.Data.dump</a></li>
-      <li>Next: <a href="cf.Data.dumpd.html" title="next chapter">cf.Data.dumpd</a></li>
+      <li>Previous: <a href="cf.Data.sum_of_squares.html" title="previous chapter">cf.Data.sum_of_squares</a></li>
+      <li>Next: <a href="cf.Data.sample_size.html" title="next chapter">cf.Data.sample_size</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -89,16 +99,6 @@
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="documentwrapper">
@@ -111,7 +111,7 @@
 <h1>cf.Data.digitize<a class="headerlink" href="#cf-data-digitize" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Data.digitize">
-<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">digitize</code><span class="sig-paren">(</span><em class="sig-param">bins</em>, <em class="sig-param">upper=False</em>, <em class="sig-param">open_ends=False</em>, <em class="sig-param">closed_ends=None</em>, <em class="sig-param">return_bins=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.1.0/cf/data/data.py#L2087"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.digitize" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">digitize</code><span class="sig-paren">(</span><em class="sig-param">bins</em>, <em class="sig-param">upper=False</em>, <em class="sig-param">open_ends=False</em>, <em class="sig-param">closed_ends=None</em>, <em class="sig-param">return_bins=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.2.0/cf/data/data.py#L2215"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.digitize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the indices of the bins to which each value belongs.</p>
 <p>Values (including masked values) that do not belong to any bin
 result in masked values in the output data.</p>
@@ -269,7 +269,7 @@ non-contiguous</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, David Hassell.
+      &copy;2020, NCAS | Page built on 2020-04-01.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

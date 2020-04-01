@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
@@ -16,7 +17,6 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <script type="text/javascript" src="../_static/clipboard.min.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -36,7 +36,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.1.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.2.0</a></h1>
 
 
 
@@ -55,6 +55,16 @@
 
 
 
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -87,16 +97,6 @@
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="documentwrapper">
@@ -109,7 +109,7 @@
 <h1>cf.cellgt<a class="headerlink" href="#cf-cellgt" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.cellgt">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">cellgt</code><span class="sig-paren">(</span><em class="sig-param">value</em>, <em class="sig-param">units=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.1.0/cf/query.py#L1601"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.cellgt" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">cellgt</code><span class="sig-paren">(</span><em class="sig-param">value</em>, <em class="sig-param">units=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.2.0/cf/query.py#L1613"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.cellgt" title="Permalink to this definition">¶</a></dt>
 <dd><p>A <a class="reference internal" href="../classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object for a “cell bounds strictly greater than”
 condition.</p>
 <div class="admonition seealso">
@@ -123,10 +123,10 @@ condition.</p>
 <dd class="field-odd"><dl class="simple">
 <dt>value:</dt><dd><p>The query condition’s value.</p>
 </dd>
-<dt>units: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference internal" href="../classes/cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a>, optional</dt><dd><p>The units of <em>value</em>. By default, the same units as the
-operand being tested are assumed, if applicable. If
-<em>units</em> is specified and the already <em>value</em> has units
-(such as a <a class="reference internal" href="../classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object`), then they must be equivalent.</p>
+<dt>units: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference internal" href="../classes/cf.Units.html#cf.Units" title="cf.Units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Units</span></code></a>, optional</dt><dd><p>The units of <em>value</em>. By default, the same units as the operand
+being tested are assumed, if applicable. If <em>units</em> is
+specified and <em>value</em> already has units (such as those attached
+to a <a class="reference internal" href="../classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> object), then the pair of units must be equivalent.</p>
 </dd>
 </dl>
 </dd>
@@ -151,7 +151,7 @@ operand being tested are assumed, if applicable. If
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, David Hassell.
+      &copy;2020, NCAS | Page built on 2020-04-01.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

@@ -1,0 +1,7 @@
+cf.DomainAncillary.arccos
+=========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DomainAncillary.arccos

@@ -420,7 +420,8 @@ are unweighted during the collapse operation.
 To inspect the weights, call the  `~Field.weights` method directly.
 
 .. code-block:: python
-   :caption: *TODO*
+   :caption: *Create and view weights derived from the field construct’s
+             time axis.*
  	     
    >>> w = a.weights(weights='T')
    >>> print(w)
@@ -473,10 +474,7 @@ Specifying weighting by horizontal cell area may also use the special
 
 An alternative technique for specifying weights is to set the
 *weights* keyword to the output of a call to the `~Field.weights`
-method; or set the *weights* keyword to `True`. The latter case is
-equivalent to specifying, by their identities, the axes being
-collapsed, and will raise an exception if weights can't be calculated
-for all collapse axes of size greater than 1.
+method.
 		   
 .. code-block:: python
    :caption: *Alternative syntax for specifying weights.*
@@ -491,17 +489,6 @@ for all collapse axes of size greater than 1.
                    : latitude(1) = [0.0] degrees_north
                    : longitude(1) = [180.0] degrees_east
                    : air_pressure(1) = [850.0] hPa
-   >>> b = a.collapse('area: mean', weights=True)
-   >>> print(b)
-   Field: air_potential_temperature (ncvar%air_potential_temperature)
-   ------------------------------------------------------------------
-   Data            : air_potential_temperature(time(120), latitude(1), longitude(1)) K
-   Cell methods    : area: mean area: mean
-   Dimension coords: time(120) = [1959-12-16 12:00:00, ..., 1969-11-16 00:00:00]
-                   : latitude(1) = [0.0] degrees_north
-                   : longitude(1) = [180.0] degrees_east
-                   : air_pressure(1) = [850.0] hPa
-
 
 See the `~Field.weights` method for full details on how weights may be
 specified.
@@ -1232,58 +1219,89 @@ The following regridding methods are available (in this table,
 being regridded, and the domain that it is being regridded to,
 respectively):
 
-=========================  ==============================================
-Method                     Notes
-=========================  ==============================================
-Linear                     One dimensional linear interpolation (only
-                           available to `Cartesian regridding`_).
-			  
-Bilinear                   Two dimensional variant of linear
-                           interpolation.
-			  
-Trilinear                  Three dimensional variant of linear
-                           interpolation (only available to
-                           `Cartesian-regridding`_).
-			  
-First-order conservative   Preserve the area integral of the data across
-                           the interpolation from source to
-                           destination. It uses the proportion of the
-                           area of the overlapping source and
-                           destination cells to determine appropriate
-                           weights. In particular, the weight of a
-                           source cell is the ratio of the area of
-                           intersection of the source and destination
-                           cells to the area of the whole destination
-                           cell. It does not account for the field gradient
-                           across the source cell, unlike the second-order
-                           conservative method (see below).
-
-Second-order conservative  As with first-order (see above), preserves the
-                           area integral of the field between source and
-                           destination using a weighted sum with weights
-                           based on the proportionate area of intersection.
-                           But unlike first-order, the second-order method
-                           incorporates further terms to take into
-                           consideration the gradient of the field across
-                           the source cell, thereby typically producing a
-                           smoother result of higher accuracy.
-
-Patch                      A second degree polynomial regridding method,
-                           which uses a least squares algorithm to
-                           calculate the polynomial. This method gives
-                           better derivatives in the resulting
-                           destination data than the bilinear method.
-
-Nearest neighbour          Nearest neighbour interpolation that is useful
-                           for extrapolation of categorical data. Either
-                           each destination point is mapped to the
-                           closest source; or each source point is mapped
-                           to the closest destination point. In the
-                           latter case, a given destination point may
-                           receive input from multiple source points, but
-                           no source point will map to more than one
-                           destination point.
-=========================  ==============================================
++--------------------------+-----------------------------------------+
+| Method                   | Notes                                   |
++==========================+=========================================+
+| Linear (``'linear'``,    | Linear interpolation in the number of   |
+| previously called        | dimensions corresponding to the domain. |
+| ``'bilinear'``, which    |                                         |
+| is still supported,      | For example, for 2D domains this        |
+| but you are encouraged   | amounts to *bilinear*                   |
+| to use ``'linear'``      | interpolation (that is, linear          |
+| instead now)             | interpolation in *both* axes) and for   |
+|                          | regridding in 3D (only available with   |
+|                          | `Cartesian-regridding`_) it amounts to  |
+|                          | *trilinear* interpolation over the      |
+|                          | three axes.                             |
++--------------------------+-----------------------------------------+
+| *First-order*            | Preserve the area integral of the data  |
+| conservative             | across the interpolation from source    |
+| (``'conservative'`` or   | to destination. It uses the proportion  |
+| ``'conservative_1st'``)  | of the area of the overlapping source   |
+|                          | and destination cells to determine      |
+|                          | appropriate weights.                    |
+|                          |                                         |
+|                          | In particular, the weight of            |
+|                          | a source cell is the ratio of           |
+|                          | the area of intersection of the source  |
+|                          | and destination cells to the area of    |
+|                          | the whole destination cell.             |
+|                          |                                         |
+|                          | It does not account for the             |
+|                          | field gradient across the source        |
+|                          | cell, unlike the second-order           |
+|                          | conservative method (see below).        |
++--------------------------+-----------------------------------------+
+| *Second-order*           | As with first-order (see above),        |
+| conservative             | preserves the area integral of the      |
+| (``'conservative_2nd'``) | field between source and destination    |
+|                          | using a weighted sum, with weights      |
+|                          | based on the proportionate area of      |
+|                          | intersection.                           |
+|                          |                                         |
+|                          | But unlike first-order, the             |
+|                          | second-order method incorporates        |
+|                          | further terms to take into              |
+|                          | consideration the gradient of the       |
+|                          | field across the source cell,           |
+|                          | thereby typically producing a           |
+|                          | smoother result of higher accuracy.     |
++--------------------------+-----------------------------------------+
+| Higher order patch       | A second degree polynomial regridding   |
+| recovery (``'patch'``)   | method, which uses a least squares      |
+|                          | algorithm to calculate the polynomial.  |
+|                          |                                         |
+|                          | This method gives better                |
+|                          | derivatives in the resulting            |
+|                          | destination data than the linear        |
+|                          | method.                                 |
++--------------------------+-----------------------------------------+
+| Nearest neighbour        | Nearest neighbour interpolation, which  |
+| interpolation mapping    | is useful for extrapolation of          |
+| *destination to nearest* | categorical data. In this variant,      |
+| *source*                 | *each destination point* is mapped      |
+| (``'nearest_stod'``)     | to the *closest source*.                |
+|                          |                                         |
+|                          | See also below for the                  |
+|                          | the other variant of the                |
+|                          | nearest neighbour approach.             |
++--------------------------+-----------------------------------------+
+| Nearest neighbour        | Nearest neighbour interpolation, which  |
+| interpolation mapping    | is useful for extrapolation of          |
+| *source to nearest*      | categorical data. In this variant,      |
+| *destination*            | *each source point* is mapped to the    |
+| (``'nearest_dtos'``)     | *closest destination*.                  |
+|                          |                                         |
+|                          | In this case, a given destination       |
+|                          | point may receive input from multiple   |
+|                          | source points, but no source point      |
+|                          | will map to more than one               |
+|                          | destination point.                      |
+|                          |                                         |
+|                          | See also above for the other            |
+|                          | variant of nearest neighbour            |
+|                          | interpolation.                          |
++--------------------------+-----------------------------------------+
 
 .. _Spherical-regridding:
 
@@ -1320,12 +1338,14 @@ Spherical source domain         Spherical destination domain
 `Tripolar`_                     `Tripolar`_
 ==============================  ==============================
 
-The most convenient usage is for the destination domain to be exist
-in another field construct. In this case, the regridding command is
-very simple:
+The most convenient usage is when the destination domain exists
+in another field construct. In this case, all you need to specify is the
+field construct having the desired destination domain and the
+regridding method to use:
 
 .. code-block:: python
-   :caption: *TODO.*
+   :caption: *Regrid the field construct a conservatively onto a grid
+             contained in field construct b.*
 
    >>> a = cf.read('air_temperature.nc')[0]
    >>> b = cf.read('precipitation_flux.nc')[0]
@@ -1371,12 +1391,13 @@ destination domain may be defined solely by dimension or auxiliary
 coordinate constructs.
 
 .. code-block:: python
-   :caption: *TODO*
+   :caption: *Regrid 'a' onto two-dimensional (curvilinear) dimension
+             coordinates latitude and longitude.*
 
    >>> import numpy
    >>> lat = cf.DimensionCoordinate(data=cf.Data(numpy.arange(-90, 92.5, 2.5), 'degrees_north'))
    >>> lon = cf.DimensionCoordinate(data=cf.Data(numpy.arange(0, 360, 5.0), 'degrees_east'))
-   >>> c = a.regrids({'latitude': lat, 'longitude': lon}, 'bilinear')
+   >>> c = a.regrids({'latitude': lat, 'longitude': lon}, 'linear')
    Field: air_temperature (ncvar%tas)
    ----------------------------------
    Data            : air_temperature(time(2), latitude(73), longitude(72)) K
@@ -1386,7 +1407,7 @@ coordinate constructs.
                    : longitude(72) = [0.0, ..., 355.0] degrees_east
                    : height(1) = [2.0] m
 
-A destination domain defined by two dimensional (curvilinear) latitude
+A destination domain defined by two-dimensional (curvilinear) latitude
 and longitude auxiliary coordinate constructs can also be specified in
 a similar manner.
 
@@ -1428,7 +1449,9 @@ coordinate system can be regridded with Cartesian regridding, which
 will produce similar results to using using spherical regridding.
 
 .. code-block:: python
-   :caption: *TODO*
+   :caption: *Regrid the time axis 'T' of field 'a' with the linear
+             method onto the grid specified in the dimension coordinate
+             time.*
 
    >>> time = cf.DimensionCoordinate()
    >>> time.standard_name='time'
@@ -1436,7 +1459,7 @@ will produce similar results to using using spherical regridding.
    ...                       units='days since 1860-01-01', calendar='360_day'))
    >>> time
    <CF DimensionCoordinate: time(60) days since 1860-01-01 360_day>
-   >>> c = a.regridc({'T': time}, axes='T', method='bilinear')
+   >>> c = a.regridc({'T': time}, axes='T', method='linear')
    Field: air_temperature (ncvar%tas)
    ----------------------------------
    Data            : air_temperature(time(60), latitude(73), longitude(96)) K
@@ -1446,9 +1469,15 @@ will produce similar results to using using spherical regridding.
                    : longitude(96) = [0.0, ..., 356.25] degrees_east
                    : height(1) = [2.0] m
 
+
+Note the requirement for the conservative method of contiguous,
+non-overlapping bounds on the destination domain:
+
 .. code-block:: python
-   :caption: *TODO*
-		   
+   :caption: *Regrid the time axis 'T' of field 'a' conservatively
+             (to first order) onto the grid specified in the dimension
+             coordinate time.*
+
    >>> c = a.regridc({'T': time}, axes='T', method='conservative')  # Raises Exception
    ValueError: Destination coordinates must have contiguous, non-overlapping bounds for conservative regridding.
    >>> bounds = time.create_bounds()
@@ -1495,7 +1524,7 @@ Vertical regridding
 
 The only option for regridding along a vertical axis is to use
 Cartesian regridding. However, care must be taken to ensure that the
-vertical axis is transformed so that it's coordinate values are vary
+vertical axis is transformed so that it's coordinate values vary
 linearly. For example, to regrid data on one set of vertical pressure
 coordinates to another set, the pressure coordinates may first be
 transformed into the logarithm of pressure, and then changed back to
@@ -1527,7 +1556,7 @@ pressure coordinates after the regridding operation.
    >>> _ = v.replace_construct('Z', z_ln_p)
    >>> new_z_p = cf.DimensionCoordinate(data=cf.Data([800, 705, 632, 510, 320.], 'hPa'))
    >>> new_z_ln_p = new_z_p.log()
-   >>> new_v = v.regridc({'Z': new_z_ln_p}, axes='Z', method='bilinear') 
+   >>> new_v = v.regridc({'Z': new_z_ln_p}, axes='Z', method='linear')
    >>> new_v.replace_construct('Z', new_z_p)
    >>> print(new_v)
    Field: eastward_wind (ncvar%ua)
@@ -1580,7 +1609,8 @@ during operations, and if one operand has no units then the units of
 the other are assumed.
 
 .. code-block:: python
-   :caption: *TODO*
+   :caption: *Apply some binary arithmetic operations to combine the
+              data for a pair of field constructs.*
 
    >>> q, t = cf.read('file.nc')
    >>> t.data.stats()   
@@ -1606,7 +1636,10 @@ the other are assumed.
    <CF Data(): 262.6 K>
 
 .. code-block:: python
-   :caption: *TODO*
+   :caption: *Apply a binary addition operation to apply an offset to
+             the units and permute the axes of air temperature data
+             on a field construct. Note the use of augmented
+             assignment to apply an offset to the units.*
 
    >>> u = t.copy()
    >>> u.transpose(inplace=True)
@@ -1618,11 +1651,13 @@ the other are assumed.
 
 If the physical nature of the result differs from both operands, then
 the "standard_name" and "long_name" properties are removed. This is
-the case if the units of the result differ from bother operands, or if
+the case if the units of the result differ from both operands, or if
 they have different standard names.
 
 .. code-block:: python
-   :caption: *TODO*
+   :caption: *Applying a binary operation where the resultant field construct
+             has a different physical nature to the two operands. Note the
+             removal of the 'standard_name' property to account for this.*
 
    >>> t.identities()
    ['air_temperature',
@@ -1631,14 +1666,38 @@ they have different standard names.
     'units=K',
     'standard_name=air_temperature',
     'ncvar%ta']
-   >>> u = t * cf.Data(10, 'ms-1')
+   >>> u = t * cf.Data(10, 'm s-1')
    >>> u.identities()
    ['Conventions=CF-1.7',
     'project=research',
-    'units=1000 s-1.K',
+    'units=m.s-1.K',
     'ncvar%ta']
+	     
+The :ref:`domain <domain>` metadata constructs of the result of a
+successful arithmetical operation between two field constructs are
+unambiguously well defined: The domain metadata constructs of the
+result of a succesful operation are copied from the left hand side
+(LHS) operand, except when a coordinate construct in the LHS operand
+has size 1 and the corresponding coordinate construct in right hand
+side (RHS) field construct operand has size greater than 1. In this
+case the coordinate construct from the RHS operand is used in the
+result, to match up with the data broadcasting that will have occured
+during the operation.
 
-.. note:: Care must be taken when combining a field construct with a
+.. _ambiguous-result:
+
+In circumstances when domain metadata constructs in the result can not
+be inferred unambiguously then an exception will be raised. For
+example, this will be the case if both operands are field constructs
+with corresponding coordinate constructs of size greater than 1 *and
+with different coordinate values*. In such circumstances, the field
+constructs' data instances may be operated on directly, bypassing any
+checks on the metadata. See :ref:`Operating-on-the-field-constructs-data`
+for more details. *(This will be made easier in a future release with
+a new function for combining such field constructs.)*
+
+
+.. warning:: Care must be taken when combining a field construct with a
           `numpy` array or a `Data` instance, due to the ways in which
           both of these objects allow themselves to be combined with
           other types:
@@ -1675,8 +1734,7 @@ they have different standard names.
 	     cf.field.Field
 	     >>> type(cf.Data(b) * t)
 	     cf.data.data.Data
-	     
-
+     
 .. _Unary-operations:
 
 Unary operations
@@ -1688,7 +1746,7 @@ returning a new field construct with modified data values. See the
 <Field-unary-arithmetic>`.
 
 .. code-block:: python
-   :caption: *TODO*
+   :caption: *Apply some unary operations to a field construct's data.*
 
    >>> q, t = cf.read('file.nc')
    >>> print(q.array)  
@@ -1719,7 +1777,7 @@ Relational operations
 A field construct may compared with another field construct, or any
 other object that is broadcastable to its data. See the
 :ref:`comprehensive list of available relational operations
-<Field-comparison>`. The result is a field construct with a boolean
+<Field-comparison>`. The result is a field construct with Boolean
 data values.
 
 When comparing with another field construct, its data is actually
@@ -1738,7 +1796,9 @@ during operations, and if one operand has no units then the units of
 the other are assumed.
 
 .. code-block:: python
-   :caption: *TODO*
+   :caption: *Produce field constructs of Boolean data encapsulating
+             the nature of some relations between a field construct and
+             another operand.*
 
    >>> q, t = cf.read('file.nc')
    >>> print(q.array)         
@@ -1770,7 +1830,10 @@ The "standard_name" and "long_name" properties are removed from the
 result, which also has no units.
 
 .. code-block:: python
-   :caption: *TODO*
+   :caption: *A field construct of Boolean data created from a relational
+             operation on a field construct and another operand will be
+             stripped of its standard_name property (and its long_name
+             property if it has been set, unlike for 'q' here).*
 
    >>> q.identities()
    ['specific_humidity',
@@ -1786,6 +1849,28 @@ result, which also has no units.
     'units=',
     'ncvar%q']
 
+The :ref:`domain <domain>` metadata constructs of the result of a
+successful relational operation between two field constructs are
+unambiguously well defined: The domain metadata constructs of the
+result of a succesful operation are copied from the left hand side
+(LHS) operand, except when a coordinate construct in the LHS operand
+has size 1 and the corresponding coordinate construct in right hand
+side (RHS) field construct operand has size greater than 1. In this
+case the coordinate construct from the RHS operand is used in the
+result, to match up with the data broadcasting that will have occured
+during the operation.
+
+In circumstances when domain metadata constructs in the result can not
+be inferred unambiguously then an exception will be raised. For
+example, this will be the case if both operands are field constructs
+with corresponding coordinate constructs of size greater than 1 *and
+with different coordinate values*. In such circumstances, the field
+constructs' data instances may be operated on directly, bypassing any
+checks on the metadata. See :ref:`Operating-on-the-field-constructs-data`
+for more details. *(This will be made easier in a future release with
+a new function for combining such field constructs.)*
+
+.. _Arithmetical-and-relational-operations-with-insufficient-metadata:
 
 Arithmetical and relational operations with insufficient metadata
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1815,7 +1900,8 @@ compatible dimensions, then there are various techniques that allow
 the operation to proceed:
 
 * **Option 1:** The operation may applied to the field constructs'
-  data instances instead. See below for more details.
+  data instances instead. See
+  :ref:`Operating-on-the-field-constructs-data` for more details.
 
 * **Option 2:** If the mapping is not possible due to the absence of
   `!standard_name` properties (or `!id` attributes) on metadata
@@ -1828,17 +1914,48 @@ the operation to proceed:
 
 * **Option 3:** Add more metadata to the field and metadata constructs.
 
-For **Option 1** the resulting data may then be inserted into a copy
-of one of the field constructs, either with the `~cf.Field.set_data`
-method of the field construct, or with :ref:`indexed assignment
-<Assignment-by-index>`. The former technique is faster and more memory
-efficient, but the latter technique allows
+.. _Operating-on-the-field-constructs-data:
+
+Operating on the field constructs' data
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+:ref:`Arithmetical <Arithmetical-operations>` and :ref:`relational
+<Relational-operations>` operations between may also be carried out on
+their data instances, thereby bypassing any reference to, or checks
+on, the metadata constucts. This can be useful if there
+:ref:`insufficient metadata
+<Arithmetical-and-relational-operations-with-insufficient-metadata>`
+for determining if the two field constructs are compatible; or if the
+domain metadata constructs of the result can not be
+:ref:`unambiguously defined <ambiguous-result>`.
+     
+In such cases the data instances may be operated on instead and the
+result then inserted into one of the field constructs, either with the
+`~cf.Field.set_data` method of the field construct, or with
+:ref:`indexed assignment <Assignment-by-index>`. The former technique
+is faster and more memory efficient, but the latter technique allows
 broadcasting. Alternatively, for augmented assignments, the field
 construct data may be changed in-place.
 
-Note that it is assumed, and not checked, that the dimensions of both
-`~cf.Data` instance operands are already in the correct order for
-physically meaningful broadcasting to occur.
+It is up to the user to ensure that the data instances are consistent
+in terms of size 1 dimensions (to satisfy the `numpy broadcasting
+rules`_), dimension order and dimension direction, and that the
+resulting data is compatible with the metadata of the field constuct
+which will contain it. Automatic units conversions are, however, still
+accounted for when combining the data instances.
+
+
+.. For **Option 1** the resulting data may then be inserted into a copy
+   of one of the field constructs, either with the `~cf.Field.set_data`
+   method of the field construct, or with :ref:`indexed assignment
+   <Assignment-by-index>`. The former technique is faster and more memory
+   efficient, but the latter technique allows
+   broadcasting. Alternatively, for augmented assignments, the field
+   construct data may be changed in-place.
+   
+   Note that it is assumed, and not checked, that the dimensions of both
+   `~cf.Data` instance operands are already in the correct order for
+   physically meaningful broadcasting to occur.
 
 .. code-block:: python
    :caption: *Operate on the data and use 'set_data' to put the
@@ -1869,26 +1986,55 @@ physically meaningful broadcasting to occur.
    >>> t.min()
    <CF Data(): 0.0 K>
     
-Trigonometrical functions
-^^^^^^^^^^^^^^^^^^^^^^^^^
+Trigonometrical and hyperbolic functions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The field construct and metadata constructs have `~Field.cos`,
-`~Field.sin`, and `~Field.tan` methods for applying trigonometrical
-functions element-wise to the data, preserving the metadata but
-changing the construct's units.
+The field construct and metadata constructs have methods to apply
+trigonometric and hyperbolic functions, and their inverses,
+element-wise to the data. These preserve the metadata but
+change the construct's units.
 
-The field construct and metadata constructs the following
+The field construct and metadata constructs support the following
 trigonometrical methods:
 
-===============  ========================================================
-Method           Description
-===============  ========================================================
-`~Field.arctan`  Take the trigonometric inverse tangent of the data
-                 element-wise.
-`~Field.cos`     Take the trigonometric tangent of the data element-wise.
-`~Field.sin`     Take the trigonometric tangent of the data element-wise.
-`~Field.tan`     Take the trigonometric tangent of the data element-wise.
-===============  ========================================================
+================  ========================================================
+Method            Description
+================  ========================================================
+`~Field.arccos`   Take the inverse trigonometric cosine of the data
+                  element-wise.
+`~Field.arcsin`   Take the inverse trigonometric sine of the data
+                  element-wise.
+`~Field.arctan`   Take the inverse trigonometric tangent of the data
+                  element-wise.
+`~Field.cos`      Take the trigonometric cosine of the data element-wise.
+`~Field.sin`      Take the trigonometric sine of the data element-wise.
+`~Field.tan`      Take the trigonometric tangent of the data element-wise.
+================  ========================================================
+
+.. AT2 : As well as `~Field.arctan` there is a method available,
+   `~Field.arctan2`,
+   which takes the inverse trigonometric tangent of data element-wise, but
+   does so instead for two constructs where the inverse tangent of the
+   quotient between corresponding elements is taken, such that the signs of
+   `x` and `y` values are taken into account to determine the correct quadrant
+   (see `here <https://en.wikipedia.org/wiki/Atan2>`_ for further details).
+
+The field construct and metadata constructs also support the following
+hyperbolic methods:
+
+================  ========================================================
+Method            Description
+================  ========================================================
+`~Field.arccosh`  Take the inverse hyperbolic cosine of the data
+                  element-wise.
+`~Field.arcsinh`  Take the inverse hyperbolic sine of the data
+                  element-wise.
+`~Field.arctanh`  Take the inverse hyperbolic tangent of the data
+                  element-wise.
+`~Field.cosh`     Take the hyperbolic cosine of the data element-wise.
+`~Field.sinh`     Take the hyperbolic sine of the data element-wise.
+`~Field.tanh`     Take the hyperbolic tangent of the data element-wise.
+================  ========================================================
 
 .. code-block:: python
    :caption: *Find the sine of each latitude coordinate value.*
@@ -1903,7 +2049,29 @@ Method           Description
 
 The "standard_name" and "long_name" properties are removed from the
 result.
-       
+
+Note that a number of the inverse methods have
+`mathematically restricted domains <https://mathworld.wolfram.com/InverseTrigonometricFunctions.html>`_ (see also
+`here <https://mathworld.wolfram.com/InverseHyperbolicFunctions.html>`_)
+and therefore may return
+`"invalid" values <https://docs.scipy.org/doc/numpy/reference/constants.html>`_
+(`nan` or `inf`). When applying these methods to constructs with masked
+data, you may prefer to output masked values instead of invalid ones. In
+this case, you can use `mask_invalid` to do the conversion afterwards:
+
+.. code-block:: python
+   :caption: *Take the `arctanh` of some masked data and then transform
+             resultant invalid values into masked data values.*
+
+   >>> d = cf.Data([2, 1.5, 1, 0.5, 0], mask=[1, 0, 0, 0, 1])
+   >>> e = d.arctanh()
+   >>> print(e.array)
+   [-- nan inf 0.5493061443340548 --]
+   >>> e.mask_invalid(inplace=True)
+   >>> print(e.array)
+   [-- -- -- 0.5493061443340548 --]
+
+
 Exponential and logarithmic functions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -1925,7 +2093,7 @@ metadata but changing the construct's units where required.
    <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K>
    >>> t.log(base=10)
    <CF Field: air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) lg(re 1 K)>
-   >>> t.exp()                                                # Raises Exception
+   >>> t.exp()  # Raises Exception
    ValueError: Can't take exponential of dimensional quantities: <Units: K>
 
 The "standard_name" and "long_name" properties are removed from the
@@ -2050,7 +2218,10 @@ around; a one-sided difference is calculated at the edges; or missing
 data is inserted.
 
 .. code-block:: python
-   :caption: *TODO*
+   :caption: *Calculate for a field construct's data the derivative along both
+             the 'X' and 'Y' axes, where the former (by default) uses missing
+             values in the calculation, but the latter has been told to use a
+             one-sided finite difference at the boundary.*
 
    >>> r = q.derivative('X')
    >>> r = q.derivative('Y', one_sided_at_boundary=True)
@@ -2072,14 +2243,14 @@ where :math:`x` and :math:`y` are points on along the 'X' and 'Y'
 Cartesian dimensions respectively; and :math:`u` and :math:`v` denote
 the 'X' and 'Y' components of the horizontal winds.
 
-If the wind field field is defined on a spherical latitude-longitude
+If the wind field is defined on a spherical latitude-longitude
 domain then a correction factor is included:
 
 .. math:: \zeta _{spherical} = \frac{\delta v}{\delta x} -
-          \frac{\delta u}{\delta y} + \frac{u}{a}tan(\phi)
+          \frac{\delta u}{\delta y} + \frac{u}{r}tan(\phi)
 
 where :math:`u` and :math:`v` denote the longitudinal and latitudinal
-components of the horizontal wind field; :math:`a` is the radius of
+components of the horizontal wind field; :math:`r` is the radius of
 the Earth; and :math:`\phi` is the latitude at each point.
 
 The `cf.relative_vorticity` function creates a relative vorticity
@@ -2088,7 +2259,9 @@ using finite differences to approximate the derivatives. Dimensions
 other than 'X' and 'Y' remain unchanged by the operation.
 
 .. code-block:: python
-   :caption: *TODO*
+   :caption: *Generate a relative vorticity field construct from wind
+             component field constructs, then round the field's data to
+             8 decimal places.*
    
    >>> u, v = cf.read('wind_components.nc')
    >>> zeta = cf.relative_vorticity(u, v)
@@ -2126,6 +2299,8 @@ derivative wraps around by default.
 .. External links
 
 .. _Tripolar:                 https://doi.org/10.1007%2FBF00211684
+
+.. _numpy broadcasting rules: https://docs.scipy.org/doc/numpy/user/basics.broadcasting.html
 
 .. External links to the CF conventions (will need updating with new versions of CF)
    

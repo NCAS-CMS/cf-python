@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
@@ -16,12 +17,11 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <script type="text/javascript" src="../_static/clipboard.min.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cf.Data.set_calendar" href="cf.Data.set_calendar.html" />
-    <link rel="prev" title="cf.Data.second_element" href="cf.Data.second_element.html" />
+    <link rel="next" title="cf.Data.reconstruct_sectioned_data" href="cf.Data.reconstruct_sectioned_data.html" />
+    <link rel="prev" title="cf.Data.fits_in_one_chunk_in_memory" href="cf.Data.fits_in_one_chunk_in_memory.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -36,7 +36,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.1.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.2.0</a></h1>
 
 
 
@@ -55,6 +55,16 @@
 
 
 
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -74,8 +84,8 @@
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
   <li><a href="../classes/cf.Data.html">cf.Data</a><ul>
-      <li>Previous: <a href="cf.Data.second_element.html" title="previous chapter">cf.Data.second_element</a></li>
-      <li>Next: <a href="cf.Data.set_calendar.html" title="next chapter">cf.Data.set_calendar</a></li>
+      <li>Previous: <a href="cf.Data.fits_in_one_chunk_in_memory.html" title="previous chapter">cf.Data.fits_in_one_chunk_in_memory</a></li>
+      <li>Next: <a href="cf.Data.reconstruct_sectioned_data.html" title="next chapter">cf.Data.reconstruct_sectioned_data</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -89,16 +99,6 @@
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="documentwrapper">
@@ -111,7 +111,7 @@
 <h1>cf.Data.section<a class="headerlink" href="#cf-data-section" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Data.section">
-<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">section</code><span class="sig-paren">(</span><em class="sig-param">axes</em>, <em class="sig-param">stop=None</em>, <em class="sig-param">chunks=False</em>, <em class="sig-param">min_step=1</em>, <em class="sig-param">mode='dictionary'</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.1.0/cf/data/data.py#L13117"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.section" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">section</code><span class="sig-paren">(</span><em class="sig-param">axes</em>, <em class="sig-param">stop=None</em>, <em class="sig-param">chunks=False</em>, <em class="sig-param">min_step=1</em>, <em class="sig-param">mode='dictionary'</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.2.0/cf/data/data.py#L13633"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.section" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a dictionary of Data objects, which are the m dimensional
 sections of this n dimensional Data object, where m &lt;= n. The keys
 of the dictionary are the indicies of the sections in the original
@@ -140,7 +140,7 @@ are being sectioned.</p>
 </dd>
 <dt>min_step: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</dt><dd><p>The minimum step size when making chunks. By default this
 is 1. Can be set higher to avoid size 1 dimensions, which
-are problematic for bilinear regridding.</p>
+are problematic for linear regridding.</p>
 </dd>
 </dl>
 </dd>
@@ -169,7 +169,7 @@ object.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, David Hassell.
+      &copy;2020, NCAS | Page built on 2020-04-01.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

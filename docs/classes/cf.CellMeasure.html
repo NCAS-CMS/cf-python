@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
@@ -16,7 +17,6 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <script type="text/javascript" src="../_static/clipboard.min.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -36,7 +36,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.1.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.2.0</a></h1>
 
 
 
@@ -55,6 +55,16 @@
 
 
 
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -87,16 +97,6 @@
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="documentwrapper">
@@ -110,7 +110,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.CellMeasure">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">CellMeasure</code><span class="sig-paren">(</span><em class="sig-param">measure=None</em>, <em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.1.0/cf/cellmeasure.py#L8"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.CellMeasure" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">CellMeasure</code><span class="sig-paren">(</span><em class="sig-param">measure=None</em>, <em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.2.0/cf/cellmeasure.py#L8"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.CellMeasure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.cellmeasure.CellMeasure</span></code></p>
 <p>A cell measure construct of the CF data model.</p>
 <p>A cell measure construct provides information that is needed about
@@ -569,13 +569,16 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.convert_reference_time.html#cf.CellMeasure.convert_reference_time" title="cf.CellMeasure.convert_reference_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert_reference_time</span></code></a></p></td>
 <td><p>Convert reference time data values to have new units.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.cyclic.html#cf.CellMeasure.cyclic" title="cf.CellMeasure.cyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cyclic</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.creation_commands.html#cf.CellMeasure.creation_commands" title="cf.CellMeasure.creation_commands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">creation_commands</span></code></a></p></td>
+<td><p>Return the commands that would create the cell measure construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.cyclic.html#cf.CellMeasure.cyclic" title="cf.CellMeasure.cyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cyclic</span></code></a></p></td>
 <td><p>Set the cyclicity of an axis.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.files.html#cf.CellMeasure.files" title="cf.CellMeasure.files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">files</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.files.html#cf.CellMeasure.files" title="cf.CellMeasure.files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">files</span></code></a></p></td>
 <td><p>Return the names of any files containing parts of the data array.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.has_bounds.html#cf.CellMeasure.has_bounds" title="cf.CellMeasure.has_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_bounds</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.has_bounds.html#cf.CellMeasure.has_bounds" title="cf.CellMeasure.has_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_bounds</span></code></a></p></td>
 <td><p>Whether or not there are cell bounds.</p></td>
 </tr>
 </tbody>
@@ -639,26 +642,38 @@ initialization. By default arguments are deep copied.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.arcsinh.html#cf.CellMeasure.arcsinh" title="cf.CellMeasure.arcsinh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arcsinh</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.arccos.html#cf.CellMeasure.arccos" title="cf.CellMeasure.arccos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arccos</span></code></a></p></td>
+<td><p>Take the trigonometric inverse cosine of the data element-wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.arccosh.html#cf.CellMeasure.arccosh" title="cf.CellMeasure.arccosh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arccosh</span></code></a></p></td>
+<td><p>Take the inverse hyperbolic cosine of the data element-wise.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.arcsin.html#cf.CellMeasure.arcsin" title="cf.CellMeasure.arcsin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arcsin</span></code></a></p></td>
+<td><p>Take the trigonometric inverse sine of the data element-wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.arcsinh.html#cf.CellMeasure.arcsinh" title="cf.CellMeasure.arcsinh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arcsinh</span></code></a></p></td>
 <td><p>Take the inverse hyperbolic sine of the data element-wise.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.arctan.html#cf.CellMeasure.arctan" title="cf.CellMeasure.arctan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arctan</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.arctan.html#cf.CellMeasure.arctan" title="cf.CellMeasure.arctan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arctan</span></code></a></p></td>
 <td><p>Take the trigonometric inverse tangent of the data element-wise.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.arctanh.html#cf.CellMeasure.arctanh" title="cf.CellMeasure.arctanh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arctanh</span></code></a></p></td>
+<td><p>Take the inverse hyperbolic tangent of the data element-wise.</p></td>
+</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.cos.html#cf.CellMeasure.cos" title="cf.CellMeasure.cos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cos</span></code></a></p></td>
-<td><p>Take the trigonometric cosine of the data, element-wise.</p></td>
+<td><p>Take the trigonometric cosine of the data element-wise.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.cosh.html#cf.CellMeasure.cosh" title="cf.CellMeasure.cosh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cosh</span></code></a></p></td>
-<td><p>Take the hyperbolic cosine of the data array in place.</p></td>
+<td><p>Take the hyperbolic cosine of the data element-wise.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.sin.html#cf.CellMeasure.sin" title="cf.CellMeasure.sin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sin</span></code></a></p></td>
-<td><p>The trigonometric sine of the data, element-wise.</p></td>
+<td><p>Take the trigonometric sine of the data element-wise.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.sinh.html#cf.CellMeasure.sinh" title="cf.CellMeasure.sinh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sinh</span></code></a></p></td>
-<td><p>Take the hyperbolic sine of the data array in place.</p></td>
+<td><p>Take the hyperbolic sine of the data element-wise.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.tan.html#cf.CellMeasure.tan" title="cf.CellMeasure.tan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tan</span></code></a></p></td>
-<td><p>The trigonometric tangent of the data, element-wise.</p></td>
+<td><p>Take the trigonometric tangent of the data element-wise.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.tanh.html#cf.CellMeasure.tanh" title="cf.CellMeasure.tanh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tanh</span></code></a></p></td>
 <td><p>Take the hyperbolic tangent of the data array.</p></td>
@@ -700,7 +715,7 @@ initialization. By default arguments are deep copied.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.max.html#cf.CellMeasure.max" title="cf.CellMeasure.max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max</span></code></a></p></td>
-<td><p>The maximum of the data array.</p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">maximum</span></code>.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.mean.html#cf.CellMeasure.mean" title="cf.CellMeasure.mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean</span></code></a></p></td>
 <td><p>The unweighted mean the data array.</p></td>
@@ -709,7 +724,7 @@ initialization. By default arguments are deep copied.</p>
 <td><p>The unweighted average of the maximum and minimum of the data array.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.CellMeasure.min.html#cf.CellMeasure.min" title="cf.CellMeasure.min"><code class="xref py py-obj docutils literal notranslate"><span class="pre">min</span></code></a></p></td>
-<td><p>The minimum of the data array.</p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">minimum</span></code>.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.CellMeasure.range.html#cf.CellMeasure.range" title="cf.CellMeasure.range"><code class="xref py py-obj docutils literal notranslate"><span class="pre">range</span></code></a></p></td>
 <td><p>The absolute difference between the maximum and minimum of the data array.</p></td>
@@ -1174,7 +1189,7 @@ for augmented assignments, modify the construct’s data in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, David Hassell.
+      &copy;2020, NCAS | Page built on 2020-04-01.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

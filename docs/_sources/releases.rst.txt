@@ -12,6 +12,8 @@
 ----------
 ----
 
+* `version 3.2.0 <https://ncas-cms.github.io/cf-python/3.2.0>`_
+
 
 **CF-1.7**
 ----------

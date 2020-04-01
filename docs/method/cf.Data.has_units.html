@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
@@ -16,12 +17,11 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <script type="text/javascript" src="../_static/clipboard.min.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cf.Data.insert_dimension" href="cf.Data.insert_dimension.html" />
-    <link rel="prev" title="cf.Data.has_fill_value" href="cf.Data.has_fill_value.html" />
+    <link rel="next" title="cf.Data.set_units" href="cf.Data.set_units.html" />
+    <link rel="prev" title="cf.Data.get_units" href="cf.Data.get_units.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -36,7 +36,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.1.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.2.0</a></h1>
 
 
 
@@ -55,6 +55,16 @@
 
 
 
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -74,8 +84,8 @@
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
   <li><a href="../classes/cf.Data.html">cf.Data</a><ul>
-      <li>Previous: <a href="cf.Data.has_fill_value.html" title="previous chapter">cf.Data.has_fill_value</a></li>
-      <li>Next: <a href="cf.Data.insert_dimension.html" title="next chapter">cf.Data.insert_dimension</a></li>
+      <li>Previous: <a href="cf.Data.get_units.html" title="previous chapter">cf.Data.get_units</a></li>
+      <li>Next: <a href="cf.Data.set_units.html" title="next chapter">cf.Data.set_units</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -89,16 +99,6 @@
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="documentwrapper">
@@ -111,33 +111,34 @@
 <h1>cf.Data.has_units<a class="headerlink" href="#cf-data-has-units" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Data.has_units">
-<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">has_units</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.1.0/cf/../../anaconda3/envs/cf-env/lib/python3.8/site-packages/cfdm/core/data/data.py#L559"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.has_units" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO Return the units.</p>
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">has_units</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.0/cfdm/core/data/data.py#L597"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.has_units" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether units have been set.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="cf.Data.del_units.html#cf.Data.del_units" title="cf.Data.del_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_units</span></code></a>, <a class="reference internal" href="cf.Data.set_units.html#cf.Data.set_units" title="cf.Data.set_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_units</span></code></a></p>
+<p><a class="reference internal" href="cf.Data.del_units.html#cf.Data.del_units" title="cf.Data.del_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">del_units</span></code></a>, <a class="reference internal" href="cf.Data.get_units.html#cf.Data.get_units" title="cf.Data.get_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_units</span></code></a>, <a class="reference internal" href="cf.Data.set_units.html#cf.Data.set_units" title="cf.Data.set_units"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_units</span></code></a>, <a class="reference internal" href="cf.Data.has_calendar.html#cf.Data.has_calendar" title="cf.Data.has_calendar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_calendar</span></code></a></p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Returns</dt>
 <dd class="field-odd"><dl class="simple">
-<dt>default: optional</dt><dd><p>Return the value of the <em>default</em> parameter if the units
-has not been set. If set to an <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code></a> instance then
-it will be raised instead.</p>
+<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>True if units have been set, otherwise False.</p>
 </dd>
 </dl>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The units.</p>
 </dd>
 </dl>
 <p><strong>Examples:</strong></p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">set_units</span><span class="p">(</span><span class="s1">&#39;metres&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">has_units</span><span class="p">()</span>
+<span class="go">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">get_units</span><span class="p">()</span>
 <span class="go">&#39;metres&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">del_units</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">has_units</span><span class="p">()</span>
+<span class="go">False</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">get_units</span><span class="p">()</span>
 <span class="go">ValueError: Can&#39;t get non-existent units</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">get_units</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span>
+<span class="go">None</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">del_units</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span>
 <span class="go">None</span>
 </pre></div>
 </div>
@@ -153,7 +154,7 @@ it will be raised instead.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, David Hassell.
+      &copy;2020, NCAS | Page built on 2020-04-01.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

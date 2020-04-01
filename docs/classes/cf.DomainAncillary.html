@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
@@ -16,7 +17,6 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <script type="text/javascript" src="../_static/clipboard.min.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -36,7 +36,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.1.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.2.0</a></h1>
 
 
 
@@ -55,6 +55,16 @@
 
 
 
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -87,16 +97,6 @@
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="documentwrapper">
@@ -110,7 +110,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.DomainAncillary">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">DomainAncillary</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">bounds=None</em>, <em class="sig-param">geometry=None</em>, <em class="sig-param">interior_ring=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.1.0/cf/domainancillary.py#L6"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DomainAncillary" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">DomainAncillary</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">bounds=None</em>, <em class="sig-param">geometry=None</em>, <em class="sig-param">interior_ring=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.2.0/cf/domainancillary.py#L6"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DomainAncillary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.propertiesdatabounds.PropertiesDataBounds</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.domainancillary.DomainAncillary</span></code></p>
 <p>A domain ancillary construct of the CF data model.</p>
 <p>A domain ancillary construct provides information which is needed
@@ -495,7 +495,7 @@ initialization. By default arguments are deep copied.</p>
 <td><p>Roll the data along an axis.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.squeeze.html#cf.DomainAncillary.squeeze" title="cf.DomainAncillary.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></p></td>
-<td><p>Remove size 1 dimensions from the data array</p></td>
+<td><p>Remove size one axes from the data array.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.swapaxes.html#cf.DomainAncillary.swapaxes" title="cf.DomainAncillary.swapaxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">swapaxes</span></code></a></p></td>
 <td><p>Interchange two axes of an array.</p></td>
@@ -588,10 +588,13 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.convert_reference_time.html#cf.DomainAncillary.convert_reference_time" title="cf.DomainAncillary.convert_reference_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert_reference_time</span></code></a></p></td>
 <td><p>Convert reference time data values to have new units.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.cyclic.html#cf.DomainAncillary.cyclic" title="cf.DomainAncillary.cyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cyclic</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.creation_commands.html#cf.DomainAncillary.creation_commands" title="cf.DomainAncillary.creation_commands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">creation_commands</span></code></a></p></td>
+<td><p>Return the commands that would create the construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.cyclic.html#cf.DomainAncillary.cyclic" title="cf.DomainAncillary.cyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cyclic</span></code></a></p></td>
 <td><p>Set the cyclicity of axes of the data array.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.files.html#cf.DomainAncillary.files" title="cf.DomainAncillary.files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">files</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.files.html#cf.DomainAncillary.files" title="cf.DomainAncillary.files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">files</span></code></a></p></td>
 <td><p>Return the names of any files containing parts of the data array.</p></td>
 </tr>
 </tbody>
@@ -634,29 +637,41 @@ initialization. By default arguments are deep copied.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.arcsinh.html#cf.DomainAncillary.arcsinh" title="cf.DomainAncillary.arcsinh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arcsinh</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.arccos.html#cf.DomainAncillary.arccos" title="cf.DomainAncillary.arccos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arccos</span></code></a></p></td>
+<td><p>Take the trigonometric inverse cosine of the data element-wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.arccosh.html#cf.DomainAncillary.arccosh" title="cf.DomainAncillary.arccosh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arccosh</span></code></a></p></td>
+<td><p>Take the inverse hyperbolic cosine of the data element-wise.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.arcsin.html#cf.DomainAncillary.arcsin" title="cf.DomainAncillary.arcsin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arcsin</span></code></a></p></td>
+<td><p>Take the trigonometric inverse sine of the data element-wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.arcsinh.html#cf.DomainAncillary.arcsinh" title="cf.DomainAncillary.arcsinh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arcsinh</span></code></a></p></td>
 <td><p>Take the inverse hyperbolic sine of the data element-wise.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.arctan.html#cf.DomainAncillary.arctan" title="cf.DomainAncillary.arctan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arctan</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.arctan.html#cf.DomainAncillary.arctan" title="cf.DomainAncillary.arctan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arctan</span></code></a></p></td>
 <td><p>Take the trigonometric inverse tangent of the data element-wise.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.arctanh.html#cf.DomainAncillary.arctanh" title="cf.DomainAncillary.arctanh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arctanh</span></code></a></p></td>
+<td><p>Take the inverse hyperbolic tangent of the data element-wise.</p></td>
+</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.cos.html#cf.DomainAncillary.cos" title="cf.DomainAncillary.cos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cos</span></code></a></p></td>
-<td><p>Take the trigonometric cosine of the data, element-wise.</p></td>
+<td><p>Take the trigonometric cosine of the data element-wise.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.cosh.html#cf.DomainAncillary.cosh" title="cf.DomainAncillary.cosh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cosh</span></code></a></p></td>
-<td><p>Take the hyperbolic cosine of the data array in place.</p></td>
+<td><p>Take the hyperbolic cosine of the data element-wise.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.sin.html#cf.DomainAncillary.sin" title="cf.DomainAncillary.sin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sin</span></code></a></p></td>
-<td><p>The trigonometric sine of the data, element-wise.</p></td>
+<td><p>Take the trigonometric sine of the data element-wise.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.sinh.html#cf.DomainAncillary.sinh" title="cf.DomainAncillary.sinh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sinh</span></code></a></p></td>
-<td><p>Take the hyperbolic sine of the data array in place.</p></td>
+<td><p>Take the hyperbolic sine of the data element-wise.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.tan.html#cf.DomainAncillary.tan" title="cf.DomainAncillary.tan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tan</span></code></a></p></td>
-<td><p>The trigonometric tangent of the data, element-wise.</p></td>
+<td><p>Take the trigonometric tangent of the data element-wise.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.tanh.html#cf.DomainAncillary.tanh" title="cf.DomainAncillary.tanh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tanh</span></code></a></p></td>
-<td><p>Take the hyperbolic tangent of the data array.</p></td>
+<td><p>Take the hyperbolic tangent of the data element-wise.</p></td>
 </tr>
 </tbody>
 </table>
@@ -695,7 +710,7 @@ initialization. By default arguments are deep copied.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.max.html#cf.DomainAncillary.max" title="cf.DomainAncillary.max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max</span></code></a></p></td>
-<td><p>The maximum of the data array.</p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">maximum</span></code>.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.mean.html#cf.DomainAncillary.mean" title="cf.DomainAncillary.mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean</span></code></a></p></td>
 <td><p>The unweighted mean the data array.</p></td>
@@ -704,7 +719,7 @@ initialization. By default arguments are deep copied.</p>
 <td><p>The unweighted average of the maximum and minimum of the data array.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.min.html#cf.DomainAncillary.min" title="cf.DomainAncillary.min"><code class="xref py py-obj docutils literal notranslate"><span class="pre">min</span></code></a></p></td>
-<td><p>The minimum of the data array.</p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">minimum</span></code>.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.range.html#cf.DomainAncillary.range" title="cf.DomainAncillary.range"><code class="xref py py-obj docutils literal notranslate"><span class="pre">range</span></code></a></p></td>
 <td><p>The absolute difference between the maximum and minimum of the data array.</p></td>
@@ -1160,7 +1175,7 @@ for augmented assignments, modify the construct’s data in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, David Hassell.
+      &copy;2020, NCAS | Page built on 2020-04-01.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

@@ -213,6 +213,7 @@ Data
    ~cf.Bounds.chunk
    ~cf.Bounds.close
    ~cf.Bounds.convert_reference_time
+   ~cf.Bounds.creation_commands
    ~cf.Bounds.cyclic
    ~cf.Bounds.files
    ~cf.Bounds.has_bounds
@@ -259,8 +260,13 @@ Mathematical operations
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.Bounds.arccos
+   ~cf.Bounds.arccosh
+   ~cf.Bounds.arcsin
    ~cf.Bounds.arcsinh
    ~cf.Bounds.arctan
+   .. ~cf.Bounds.arctan2  [AT2]
+   ~cf.Bounds.arctanh
    ~cf.Bounds.cos
    ~cf.Bounds.cosh
    ~cf.Bounds.sin

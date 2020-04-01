@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
@@ -16,7 +17,6 @@
     <script type="text/javascript" src="_static/language_data.js"></script>
     <script type="text/javascript" src="_static/clipboard.min.js"></script>
     <script type="text/javascript" src="_static/copybutton.js"></script>
-    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -35,7 +35,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.1.0</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.2.0</a></h1>
 
 
 
@@ -54,6 +54,16 @@
 
 
 
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -81,16 +91,6 @@
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="documentwrapper">
@@ -102,6 +102,47 @@
   <div class="section" id="change-log">
 <h1><strong>Change log</strong><a class="headerlink" href="#change-log" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
+<div class="section" id="version-3-2-0">
+<h2>version 3.2.0<a class="headerlink" href="#version-3-2-0" title="Permalink to this headline">¶</a></h2>
+<hr class="docutils" />
+<p><strong>2020-04-01</strong></p>
+<ul class="simple">
+<li><p>First release for CF-1.8 (does not include netCDF hierarchical
+groups functionality).</p></li>
+<li><p>New methods: <a class="reference internal" href="method/cf.Data.compressed.html#cf.Data.compressed" title="cf.Data.compressed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.compressed</span></code></a>, <a class="reference internal" href="method/cf.Data.diff.html#cf.Data.diff" title="cf.Data.diff"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.diff</span></code></a></p></li>
+<li><p>New function: <a class="reference internal" href="function/cf.implementation.html#cf.implementation" title="cf.implementation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.implementation</span></code></a></p></li>
+<li><p>New methods completing coverage of the inverse trigonometric and
+hyperbolic operations: <a class="reference internal" href="method/cf.Data.arccos.html#cf.Data.arccos" title="cf.Data.arccos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.arccos</span></code></a>, <a class="reference internal" href="method/cf.Data.arccosh.html#cf.Data.arccosh" title="cf.Data.arccosh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.arccosh</span></code></a>,
+<a class="reference internal" href="method/cf.Data.arcsin.html#cf.Data.arcsin" title="cf.Data.arcsin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.arcsin</span></code></a>, <a class="reference internal" href="method/cf.Data.arctanh.html#cf.Data.arctanh" title="cf.Data.arctanh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.arctanh</span></code></a>.</p></li>
+<li><p>New keyword parameters to <a class="reference internal" href="method/cf.Field.collapse.html#cf.Field.collapse" title="cf.Field.collapse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.collapse</span></code></a>, <a class="reference internal" href="method/cf.Field.cell_area.html#cf.Field.cell_area" title="cf.Field.cell_area"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.cell_area</span></code></a>,
+<a class="reference internal" href="method/cf.Field.weights.html#cf.Field.weights" title="cf.Field.weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.weights</span></code></a>: <code class="docutils literal notranslate"><span class="pre">radius</span></code>, <code class="docutils literal notranslate"><span class="pre">great_circle</span></code>.</p></li>
+<li><p>Implemented simple geometries for CF-1.8.</p></li>
+<li><p>Implemented string data-types for CF-1.8.</p></li>
+<li><p>Changed minimum cfdm dependency to version 1.8.0.</p></li>
+<li><p>Changed minimum cfunits dependency to version 3.2.5.</p></li>
+<li><p>Changed minimum netCDF4 dependency to version 1.5.3.</p></li>
+<li><p>Changed minimum cftime dependency to version 1.1.1.</p></li>
+<li><p>Renamed the regridding method, i.e. option for the <code class="docutils literal notranslate"><span class="pre">method</span></code> parameter to
+<a class="reference internal" href="method/cf.Field.regridc.html#cf.Field.regridc" title="cf.Field.regridc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.regridc</span></code></a> and <a class="reference internal" href="method/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.regrids</span></code></a>, <code class="docutils literal notranslate"><span class="pre">bilinear</span></code> to <code class="docutils literal notranslate"><span class="pre">linear</span></code>,
+though <code class="docutils literal notranslate"><span class="pre">bilinear</span></code> is still supported (use of it gives a message as such).</p></li>
+<li><p>Made documentation of available <a class="reference internal" href="method/cf.Field.regridc.html#cf.Field.regridc" title="cf.Field.regridc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.regridc</span></code></a> and <a class="reference internal" href="method/cf.Field.regrids.html#cf.Field.regrids" title="cf.Field.regrids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.regrids</span></code></a>
+<code class="docutils literal notranslate"><span class="pre">method</span></code> parameters clearer &amp; documented second-order conservative method.</p></li>
+<li><p>Fixed bug that prevented writing to <code class="docutils literal notranslate"><span class="pre">'NETCDF3_64BIT_OFFSET'</span></code> and
+<code class="docutils literal notranslate"><span class="pre">'NETCDF3_64BIT_DATA'</span></code> format files
+(<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/9">https://github.com/NCAS-CMS/cfdm/issues/9</a>).</p></li>
+<li><p>Fixed bug that prevented the <code class="docutils literal notranslate"><span class="pre">select</span></code> keyword of <a class="reference internal" href="function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a> from
+working with PP and UM files
+(<a class="reference external" href="https://github.com/NCAS-CMS/cf-python/issues/40">https://github.com/NCAS-CMS/cf-python/issues/40</a>).</p></li>
+<li><p>Fixed bug that prevented the reading of PP and UM files with “zero”
+data or validity times.</p></li>
+<li><p>Fixed broken API reference ‘source’ links to code in <code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm</span></code>.</p></li>
+<li><p>Fixed bug in <a class="reference internal" href="method/cf.Field.weights.html#cf.Field.weights" title="cf.Field.weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.weights</span></code></a> with the parameter <code class="docutils literal notranslate"><span class="pre">methods</span></code> set to
+<code class="docutils literal notranslate"><span class="pre">True</span></code> where it would always error before returning dictionary of methods.</p></li>
+<li><p>Fixed bug in <a class="reference internal" href="method/cf.Data.where.html#cf.Data.where" title="cf.Data.where"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.where</span></code></a> that meant the units were not taken into
+account when the condition was a <a class="reference internal" href="classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Query</span></code></a> object with specified units.</p></li>
+<li><p>Addressed many ‘TO DO’ placeholders in the documentation.</p></li>
+</ul>
+</div>
 <div class="section" id="version-3-1-0">
 <h2>version 3.1.0<a class="headerlink" href="#version-3-1-0" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
@@ -1187,7 +1228,7 @@ to Jeff Whitaker).</p></li>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, David Hassell.
+      &copy;2020, NCAS | Page built on 2020-04-01.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

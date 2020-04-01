@@ -1,0 +1,7 @@
+cf.DimensionCoordinate.arctanh
+==============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DimensionCoordinate.arctanh

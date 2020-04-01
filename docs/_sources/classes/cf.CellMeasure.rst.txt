@@ -236,6 +236,7 @@ Data
    ~cf.CellMeasure.chunk
    ~cf.CellMeasure.close
    ~cf.CellMeasure.convert_reference_time
+   ~cf.CellMeasure.creation_commands
    ~cf.CellMeasure.cyclic
    ~cf.CellMeasure.files
    ~cf.CellMeasure.has_bounds
@@ -282,15 +283,19 @@ Mathematical operations
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.CellMeasure.arccos
+   ~cf.CellMeasure.arccosh
+   ~cf.CellMeasure.arcsin
    ~cf.CellMeasure.arcsinh
    ~cf.CellMeasure.arctan
+   .. ~cf.CellMeasure.arctan2  [AT2]
+   ~cf.CellMeasure.arctanh
    ~cf.CellMeasure.cos
    ~cf.CellMeasure.cosh
    ~cf.CellMeasure.sin
    ~cf.CellMeasure.sinh
    ~cf.CellMeasure.tan
    ~cf.CellMeasure.tanh
-
 
 .. rubric:: *Rounding and truncation*
 

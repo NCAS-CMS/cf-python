@@ -212,6 +212,7 @@ Data
    ~cf.FieldAncillary.chunk
    ~cf.FieldAncillary.close
    ~cf.FieldAncillary.convert_reference_time
+   ~cf.FieldAncillary.creation_commands
    ~cf.FieldAncillary.cyclic
    ~cf.FieldAncillary.files
    ~cf.FieldAncillary.has_bounds
@@ -258,8 +259,13 @@ Mathematical operations
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.FieldAncillary.arccos
+   ~cf.FieldAncillary.arccosh
+   ~cf.FieldAncillary.arcsin
    ~cf.FieldAncillary.arcsinh
    ~cf.FieldAncillary.arctan
+   .. ~cf.FieldAncillary.arctan2  [AT2]
+   ~cf.FieldAncillary.arctanh
    ~cf.FieldAncillary.cos
    ~cf.FieldAncillary.cosh
    ~cf.FieldAncillary.sin

@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
@@ -16,7 +17,6 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <script type="text/javascript" src="../_static/clipboard.min.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -36,7 +36,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.1.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.2.0</a></h1>
 
 
 
@@ -55,6 +55,16 @@
 
 
 
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -87,16 +97,6 @@
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="documentwrapper">
@@ -109,7 +109,7 @@
 <h1>cf.CHUNKSIZE<a class="headerlink" href="#cf-chunksize" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.CHUNKSIZE">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">CHUNKSIZE</code><span class="sig-paren">(</span><em class="sig-param">*args</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.1.0/cf/functions.py#L237"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.CHUNKSIZE" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">CHUNKSIZE</code><span class="sig-paren">(</span><em class="sig-param">*args</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.2.0/cf/functions.py#L250"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.CHUNKSIZE" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the chunksize used by LAMA for partitioning the data
 array. This must be smaller than an upper limit determined by the
 free memory factor, which is the fraction of memory kept free as a
@@ -118,12 +118,11 @@ None as the argument then the chunksize is set to its upper
 limit. If called without any arguments the existing chunksize is
 returned.</p>
 <p>The upper limit to the chunksize is given by:</p>
-<dl class="simple">
-<dt>upper_chunksize = ((free_memory_factor * TOTAL_MEMORY()) / ((mpi_size</dt><dd><ul class="simple">
-<li><p>_WORKSPACE_FACTOR_1()) + _WORKSPACE_FACTOR_2()))</p></li>
-</ul>
-</dd>
-</dl>
+<div class="math notranslate nohighlight">
+\[upper\_chunksize = \dfrac{f \cdot total\_memory}{mpi\_size
+\cdot w_1 + w_2}\]</div>
+<p>where <span class="math notranslate nohighlight">\(f\)</span> is the <em>free memory factor</em> and <span class="math notranslate nohighlight">\(w_1\)</span> and
+<span class="math notranslate nohighlight">\(w_2\)</span> the <em>workspace factors</em> <em>1</em> and <em>2</em> respectively.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
@@ -150,7 +149,7 @@ returned.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, David Hassell.
+      &copy;2020, NCAS | Page built on 2020-04-01.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

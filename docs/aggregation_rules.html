@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
@@ -16,12 +17,11 @@
     <script type="text/javascript" src="_static/language_data.js"></script>
     <script type="text/javascript" src="_static/clipboard.min.js"></script>
     <script type="text/javascript" src="_static/copybutton.js"></script>
-    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Performance" href="performance.html" />
-    <link rel="prev" title="cf constants" href="constant.html" />
+    <link rel="prev" title="cf.RaggedIndexedContiguousArray.to_memory" href="method/cf.RaggedIndexedContiguousArray.to_memory.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -36,7 +36,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.1.0</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.2.0</a></h1>
 
 
 
@@ -55,6 +55,16 @@
 
 
 
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -71,7 +81,7 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="constant.html" title="previous chapter"><strong>cf constants</strong></a></li>
+      <li>Previous: <a href="method/cf.RaggedIndexedContiguousArray.to_memory.html" title="previous chapter">cf.RaggedIndexedContiguousArray.to_memory</a></li>
       <li>Next: <a href="performance.html" title="next chapter"><strong>Performance</strong></a></li>
   </ul></li>
 </ul>
@@ -83,16 +93,6 @@
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="documentwrapper">
@@ -105,7 +105,7 @@
 <span id="id1"></span><h1><strong>Aggregation rules</strong><a class="headerlink" href="#aggregation-rules" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
 <p><em>David Hassell and Jonathan Gregory</em></p>
-<p>Version 3.1.0 for version 1.7 of the CF conventions.</p>
+<p>Version 3.2.0 for version 1.8 of the CF conventions.</p>
 <p>Aggregation is the combination of two field constructs to create a new
 field construct that occupies a “larger” domain. In practice, this
 means combining the two field constructs so that their data are
@@ -114,15 +114,15 @@ of their metadata constructs which span those domain axis constructs.</p>
 <p>These rules are be used for deciding whether or not two arbitrary
 field constructs may be aggregated into one, larger field construct.
 The rules are based solely on the field constructs’ metadata as
-recognised by the <a class="reference external" href="https://doi.org/10.5194/gmd-10-4619-2017">CF data model</a>. For example, netCDF
+recognised by the <a class="reference internal" href="cf_data_model.html#cf-data-model"><span class="std std-ref">CF data model</span></a> <a class="footnote-reference brackets" href="#cfdm" id="id2">1</a>. For example, netCDF
 variable names are ignored during the aggregation process, meaning
 that having different netCDF variable names does not preclude the
 aggregation of two field constructs.</p>
 <p>More than two field constructs are aggregated by repeated applications
 of the aggregation algorithm, and aggregations over multiple domain
 axis constructs are similarly possible.</p>
-<p>Aggregation is implemented by the <a class="reference internal" href="function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a> and <a class="reference internal" href="function/cf.aggregate.html#cf.aggregate" title="cf.aggregate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.aggregate</span></code></a>
-functions.</p>
+<p>Aggregation is implemented in the <a class="reference internal" href="function/cf.aggregate.html#cf.aggregate" title="cf.aggregate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.aggregate</span></code></a> function, and is
+applied by default by the <a class="reference internal" href="function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a> function.</p>
 <hr class="docutils" />
 <p>If all of the following statements are true for two arbitrary field
 constructs then the two field constructs may be aggregated to a new
@@ -289,6 +289,15 @@ terms which are domain ancillary constructs form a pair of matching
 domain ancillary constructs.</p></li>
 </ul>
 <hr class="docutils" />
+<dl class="footnote brackets">
+<dt class="label" id="cfdm"><span class="brackets"><a class="fn-backref" href="#id2">1</a></span></dt>
+<dd><p>Hassell, D., Gregory, J., Blower, J., Lawrence, B. N., and
+Taylor, K. E.: A data model of the Climate and Forecast
+metadata conventions (CF-1.6) with a software
+implementation (cf-python v2.1), Geosci. Model Dev., 10,
+4619-4646, <a class="reference external" href="https://doi.org/10.5194/gmd-10-4619-2017">https://doi.org/10.5194/gmd-10-4619-2017</a>, 2017.</p>
+</dd>
+</dl>
 </div>
 
 
@@ -299,7 +308,7 @@ domain ancillary constructs.</p></li>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, David Hassell.
+      &copy;2020, NCAS | Page built on 2020-04-01.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

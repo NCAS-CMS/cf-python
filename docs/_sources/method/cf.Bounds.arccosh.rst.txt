@@ -1,0 +1,7 @@
+cf.Bounds.arccosh
+=================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.arccosh

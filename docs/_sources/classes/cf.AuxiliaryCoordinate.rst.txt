@@ -248,6 +248,7 @@ Data
    ~cf.AuxiliaryCoordinate.chunk
    ~cf.AuxiliaryCoordinate.close
    ~cf.AuxiliaryCoordinate.convert_reference_time
+   ~cf.AuxiliaryCoordinate.creation_commands
    ~cf.AuxiliaryCoordinate.cyclic
    ~cf.AuxiliaryCoordinate.files
 
@@ -281,8 +282,13 @@ Mathematical operations
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.AuxiliaryCoordinate.arccos
+   ~cf.AuxiliaryCoordinate.arccosh
+   ~cf.AuxiliaryCoordinate.arcsin
    ~cf.AuxiliaryCoordinate.arcsinh
    ~cf.AuxiliaryCoordinate.arctan
+   .. ~cf.AuxiliaryCoordinate.arctan2  [AT2]
+   ~cf.AuxiliaryCoordinate.arctanh
    ~cf.AuxiliaryCoordinate.cos
    ~cf.AuxiliaryCoordinate.cosh
    ~cf.AuxiliaryCoordinate.sin

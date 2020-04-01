@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
@@ -16,7 +17,6 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <script type="text/javascript" src="../_static/clipboard.min.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -36,7 +36,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.1.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.2.0</a></h1>
 
 
 
@@ -55,6 +55,16 @@
 
 
 
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -87,16 +97,6 @@
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="documentwrapper">
@@ -110,8 +110,8 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.AuxiliaryCoordinate">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">AuxiliaryCoordinate</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">bounds=None</em>, <em class="sig-param">geometry=None</em>, <em class="sig-param">interior_ring=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.1.0/cf/auxiliarycoordinate.py#L7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.AuxiliaryCoordinate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.abstract.coordinate.Coordinate</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.propertiesdatabounds.PropertiesDataBounds</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.auxiliarycoordinate.AuxiliaryCoordinate</span></code></p>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">AuxiliaryCoordinate</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">bounds=None</em>, <em class="sig-param">geometry=None</em>, <em class="sig-param">interior_ring=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.2.0/cf/auxiliarycoordinate.py#L7"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.AuxiliaryCoordinate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.coordinate.Coordinate</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.propertiesdatabounds.PropertiesDataBounds</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.auxiliarycoordinate.AuxiliaryCoordinate</span></code></p>
 <p>An auxiliary coordinate construct of the CF data model.</p>
 <p>An auxiliary coordinate construct provides information which
 locate the cells of the domain and which depend on a subset of the
@@ -514,7 +514,7 @@ initialization. By default arguments are deep copied.</p>
 <td><p>Roll the data along an axis.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.squeeze.html#cf.AuxiliaryCoordinate.squeeze" title="cf.AuxiliaryCoordinate.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></p></td>
-<td><p>Remove size 1 dimensions from the data array</p></td>
+<td><p>Remove size one axes from the data array.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.swapaxes.html#cf.AuxiliaryCoordinate.swapaxes" title="cf.AuxiliaryCoordinate.swapaxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">swapaxes</span></code></a></p></td>
 <td><p>Interchange two axes of an array.</p></td>
@@ -607,10 +607,13 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.convert_reference_time.html#cf.AuxiliaryCoordinate.convert_reference_time" title="cf.AuxiliaryCoordinate.convert_reference_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert_reference_time</span></code></a></p></td>
 <td><p>Convert reference time data values to have new units.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.cyclic.html#cf.AuxiliaryCoordinate.cyclic" title="cf.AuxiliaryCoordinate.cyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cyclic</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.creation_commands.html#cf.AuxiliaryCoordinate.creation_commands" title="cf.AuxiliaryCoordinate.creation_commands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">creation_commands</span></code></a></p></td>
+<td><p>Return the commands that would create the construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.cyclic.html#cf.AuxiliaryCoordinate.cyclic" title="cf.AuxiliaryCoordinate.cyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cyclic</span></code></a></p></td>
 <td><p>Set the cyclicity of axes of the data array.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.files.html#cf.AuxiliaryCoordinate.files" title="cf.AuxiliaryCoordinate.files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">files</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.files.html#cf.AuxiliaryCoordinate.files" title="cf.AuxiliaryCoordinate.files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">files</span></code></a></p></td>
 <td><p>Return the names of any files containing parts of the data array.</p></td>
 </tr>
 </tbody>
@@ -653,29 +656,41 @@ initialization. By default arguments are deep copied.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.arcsinh.html#cf.AuxiliaryCoordinate.arcsinh" title="cf.AuxiliaryCoordinate.arcsinh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arcsinh</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.arccos.html#cf.AuxiliaryCoordinate.arccos" title="cf.AuxiliaryCoordinate.arccos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arccos</span></code></a></p></td>
+<td><p>Take the trigonometric inverse cosine of the data element-wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.arccosh.html#cf.AuxiliaryCoordinate.arccosh" title="cf.AuxiliaryCoordinate.arccosh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arccosh</span></code></a></p></td>
+<td><p>Take the inverse hyperbolic cosine of the data element-wise.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.arcsin.html#cf.AuxiliaryCoordinate.arcsin" title="cf.AuxiliaryCoordinate.arcsin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arcsin</span></code></a></p></td>
+<td><p>Take the trigonometric inverse sine of the data element-wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.arcsinh.html#cf.AuxiliaryCoordinate.arcsinh" title="cf.AuxiliaryCoordinate.arcsinh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arcsinh</span></code></a></p></td>
 <td><p>Take the inverse hyperbolic sine of the data element-wise.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.arctan.html#cf.AuxiliaryCoordinate.arctan" title="cf.AuxiliaryCoordinate.arctan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arctan</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.arctan.html#cf.AuxiliaryCoordinate.arctan" title="cf.AuxiliaryCoordinate.arctan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arctan</span></code></a></p></td>
 <td><p>Take the trigonometric inverse tangent of the data element-wise.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.arctanh.html#cf.AuxiliaryCoordinate.arctanh" title="cf.AuxiliaryCoordinate.arctanh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arctanh</span></code></a></p></td>
+<td><p>Take the inverse hyperbolic tangent of the data element-wise.</p></td>
+</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.cos.html#cf.AuxiliaryCoordinate.cos" title="cf.AuxiliaryCoordinate.cos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cos</span></code></a></p></td>
-<td><p>Take the trigonometric cosine of the data, element-wise.</p></td>
+<td><p>Take the trigonometric cosine of the data element-wise.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.cosh.html#cf.AuxiliaryCoordinate.cosh" title="cf.AuxiliaryCoordinate.cosh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cosh</span></code></a></p></td>
-<td><p>Take the hyperbolic cosine of the data array in place.</p></td>
+<td><p>Take the hyperbolic cosine of the data element-wise.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.sin.html#cf.AuxiliaryCoordinate.sin" title="cf.AuxiliaryCoordinate.sin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sin</span></code></a></p></td>
-<td><p>The trigonometric sine of the data, element-wise.</p></td>
+<td><p>Take the trigonometric sine of the data element-wise.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.sinh.html#cf.AuxiliaryCoordinate.sinh" title="cf.AuxiliaryCoordinate.sinh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sinh</span></code></a></p></td>
-<td><p>Take the hyperbolic sine of the data array in place.</p></td>
+<td><p>Take the hyperbolic sine of the data element-wise.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.tan.html#cf.AuxiliaryCoordinate.tan" title="cf.AuxiliaryCoordinate.tan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tan</span></code></a></p></td>
-<td><p>The trigonometric tangent of the data, element-wise.</p></td>
+<td><p>Take the trigonometric tangent of the data element-wise.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.tanh.html#cf.AuxiliaryCoordinate.tanh" title="cf.AuxiliaryCoordinate.tanh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tanh</span></code></a></p></td>
-<td><p>Take the hyperbolic tangent of the data array.</p></td>
+<td><p>Take the hyperbolic tangent of the data element-wise.</p></td>
 </tr>
 </tbody>
 </table>
@@ -714,7 +729,7 @@ initialization. By default arguments are deep copied.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.max.html#cf.AuxiliaryCoordinate.max" title="cf.AuxiliaryCoordinate.max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max</span></code></a></p></td>
-<td><p>The maximum of the data array.</p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">maximum</span></code>.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.mean.html#cf.AuxiliaryCoordinate.mean" title="cf.AuxiliaryCoordinate.mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean</span></code></a></p></td>
 <td><p>The unweighted mean the data array.</p></td>
@@ -723,7 +738,7 @@ initialization. By default arguments are deep copied.</p>
 <td><p>The unweighted average of the maximum and minimum of the data array.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.min.html#cf.AuxiliaryCoordinate.min" title="cf.AuxiliaryCoordinate.min"><code class="xref py py-obj docutils literal notranslate"><span class="pre">min</span></code></a></p></td>
-<td><p>The minimum of the data array.</p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">minimum</span></code>.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.AuxiliaryCoordinate.range.html#cf.AuxiliaryCoordinate.range" title="cf.AuxiliaryCoordinate.range"><code class="xref py py-obj docutils literal notranslate"><span class="pre">range</span></code></a></p></td>
 <td><p>The absolute difference between the maximum and minimum of the data array.</p></td>
@@ -1179,7 +1194,7 @@ for augmented assignments, modify the construct’s data in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, David Hassell.
+      &copy;2020, NCAS | Page built on 2020-04-01.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

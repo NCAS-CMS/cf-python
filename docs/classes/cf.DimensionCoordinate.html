@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
@@ -16,7 +17,6 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <script type="text/javascript" src="../_static/clipboard.min.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
-    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -36,7 +36,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.1.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.2.0</a></h1>
 
 
 
@@ -55,6 +55,16 @@
 
 
 
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
@@ -87,16 +97,6 @@
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="documentwrapper">
@@ -110,8 +110,8 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.DimensionCoordinate">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">DimensionCoordinate</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">bounds=None</em>, <em class="sig-param">geometry=None</em>, <em class="sig-param">interior_ring=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.1.0/cf/dimensioncoordinate.py#L25"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DimensionCoordinate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.abstract.coordinate.Coordinate</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.propertiesdatabounds.PropertiesDataBounds</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.dimensioncoordinate.DimensionCoordinate</span></code></p>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">DimensionCoordinate</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">bounds=None</em>, <em class="sig-param">geometry=None</em>, <em class="sig-param">interior_ring=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.2.0/cf/dimensioncoordinate.py#L24"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DimensionCoordinate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.coordinate.Coordinate</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.propertiesdatabounds.PropertiesDataBounds</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.dimensioncoordinate.DimensionCoordinate</span></code></p>
 <p>A dimension coordinate construct of the CF data model.</p>
 <p>A dimension coordinate construct provides information which locate
 the cells of the domain and which depend on a subset of the domain
@@ -527,7 +527,7 @@ initialization. By default arguments are deep copied.</p>
 <td><p>TODO</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.squeeze.html#cf.DimensionCoordinate.squeeze" title="cf.DimensionCoordinate.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a></p></td>
-<td><p>Remove size 1 dimensions from the data array</p></td>
+<td><p>Remove size one axes from the data array.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.swapaxes.html#cf.DimensionCoordinate.swapaxes" title="cf.DimensionCoordinate.swapaxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">swapaxes</span></code></a></p></td>
 <td><p>Interchange two axes of an array.</p></td>
@@ -620,13 +620,16 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.convert_reference_time.html#cf.DimensionCoordinate.convert_reference_time" title="cf.DimensionCoordinate.convert_reference_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert_reference_time</span></code></a></p></td>
 <td><p>Convert reference time data values to have new units.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.cyclic.html#cf.DimensionCoordinate.cyclic" title="cf.DimensionCoordinate.cyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cyclic</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.creation_commands.html#cf.DimensionCoordinate.creation_commands" title="cf.DimensionCoordinate.creation_commands"><code class="xref py py-obj docutils literal notranslate"><span class="pre">creation_commands</span></code></a></p></td>
+<td><p>Return the commands that would create the construct.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.cyclic.html#cf.DimensionCoordinate.cyclic" title="cf.DimensionCoordinate.cyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cyclic</span></code></a></p></td>
 <td><p>Set the cyclicity of axes of the data array.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.files.html#cf.DimensionCoordinate.files" title="cf.DimensionCoordinate.files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">files</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.files.html#cf.DimensionCoordinate.files" title="cf.DimensionCoordinate.files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">files</span></code></a></p></td>
 <td><p>Return the names of any files containing parts of the data array.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.period.html#cf.DimensionCoordinate.period" title="cf.DimensionCoordinate.period"><code class="xref py py-obj docutils literal notranslate"><span class="pre">period</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.period.html#cf.DimensionCoordinate.period" title="cf.DimensionCoordinate.period"><code class="xref py py-obj docutils literal notranslate"><span class="pre">period</span></code></a></p></td>
 <td><p>Set the period for cyclic coordinates.</p></td>
 </tr>
 </tbody>
@@ -669,29 +672,41 @@ initialization. By default arguments are deep copied.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.arcsinh.html#cf.DimensionCoordinate.arcsinh" title="cf.DimensionCoordinate.arcsinh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arcsinh</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.arccos.html#cf.DimensionCoordinate.arccos" title="cf.DimensionCoordinate.arccos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arccos</span></code></a></p></td>
+<td><p>Take the trigonometric inverse cosine of the data element-wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.arccosh.html#cf.DimensionCoordinate.arccosh" title="cf.DimensionCoordinate.arccosh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arccosh</span></code></a></p></td>
+<td><p>Take the inverse hyperbolic cosine of the data element-wise.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.arcsin.html#cf.DimensionCoordinate.arcsin" title="cf.DimensionCoordinate.arcsin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arcsin</span></code></a></p></td>
+<td><p>Take the trigonometric inverse sine of the data element-wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.arcsinh.html#cf.DimensionCoordinate.arcsinh" title="cf.DimensionCoordinate.arcsinh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arcsinh</span></code></a></p></td>
 <td><p>Take the inverse hyperbolic sine of the data element-wise.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.arctan.html#cf.DimensionCoordinate.arctan" title="cf.DimensionCoordinate.arctan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arctan</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.arctan.html#cf.DimensionCoordinate.arctan" title="cf.DimensionCoordinate.arctan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arctan</span></code></a></p></td>
 <td><p>Take the trigonometric inverse tangent of the data element-wise.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.arctanh.html#cf.DimensionCoordinate.arctanh" title="cf.DimensionCoordinate.arctanh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">arctanh</span></code></a></p></td>
+<td><p>Take the inverse hyperbolic tangent of the data element-wise.</p></td>
+</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.cos.html#cf.DimensionCoordinate.cos" title="cf.DimensionCoordinate.cos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cos</span></code></a></p></td>
-<td><p>Take the trigonometric cosine of the data, element-wise.</p></td>
+<td><p>Take the trigonometric cosine of the data element-wise.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.cosh.html#cf.DimensionCoordinate.cosh" title="cf.DimensionCoordinate.cosh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cosh</span></code></a></p></td>
-<td><p>Take the hyperbolic cosine of the data array in place.</p></td>
+<td><p>Take the hyperbolic cosine of the data element-wise.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.sin.html#cf.DimensionCoordinate.sin" title="cf.DimensionCoordinate.sin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sin</span></code></a></p></td>
-<td><p>The trigonometric sine of the data, element-wise.</p></td>
+<td><p>Take the trigonometric sine of the data element-wise.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.sinh.html#cf.DimensionCoordinate.sinh" title="cf.DimensionCoordinate.sinh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sinh</span></code></a></p></td>
-<td><p>Take the hyperbolic sine of the data array in place.</p></td>
+<td><p>Take the hyperbolic sine of the data element-wise.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.tan.html#cf.DimensionCoordinate.tan" title="cf.DimensionCoordinate.tan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tan</span></code></a></p></td>
-<td><p>The trigonometric tangent of the data, element-wise.</p></td>
+<td><p>Take the trigonometric tangent of the data element-wise.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.tanh.html#cf.DimensionCoordinate.tanh" title="cf.DimensionCoordinate.tanh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tanh</span></code></a></p></td>
-<td><p>Take the hyperbolic tangent of the data array.</p></td>
+<td><p>Take the hyperbolic tangent of the data element-wise.</p></td>
 </tr>
 </tbody>
 </table>
@@ -730,7 +745,7 @@ initialization. By default arguments are deep copied.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.max.html#cf.DimensionCoordinate.max" title="cf.DimensionCoordinate.max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max</span></code></a></p></td>
-<td><p>The maximum of the data array.</p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">maximum</span></code>.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.mean.html#cf.DimensionCoordinate.mean" title="cf.DimensionCoordinate.mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean</span></code></a></p></td>
 <td><p>The unweighted mean the data array.</p></td>
@@ -739,7 +754,7 @@ initialization. By default arguments are deep copied.</p>
 <td><p>The unweighted average of the maximum and minimum of the data array.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.min.html#cf.DimensionCoordinate.min" title="cf.DimensionCoordinate.min"><code class="xref py py-obj docutils literal notranslate"><span class="pre">min</span></code></a></p></td>
-<td><p>The minimum of the data array.</p></td>
+<td><p>Alias for <code class="xref py py-obj docutils literal notranslate"><span class="pre">minimum</span></code>.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DimensionCoordinate.range.html#cf.DimensionCoordinate.range" title="cf.DimensionCoordinate.range"><code class="xref py py-obj docutils literal notranslate"><span class="pre">range</span></code></a></p></td>
 <td><p>The absolute difference between the maximum and minimum of the data array.</p></td>
@@ -1195,7 +1210,7 @@ for augmented assignments, modify the construct’s data in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, David Hassell.
+      &copy;2020, NCAS | Page built on 2020-04-01.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
