@@ -1,0 +1,7 @@
+cf.Bounds.arcsin
+================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.arcsin

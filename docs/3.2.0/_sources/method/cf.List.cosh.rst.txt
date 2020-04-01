@@ -1,0 +1,7 @@
+cf.List.cosh
+============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.List.cosh

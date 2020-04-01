@@ -1,0 +1,7 @@
+cf.FieldAncillary.__xor__
+=========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.FieldAncillary.__xor__

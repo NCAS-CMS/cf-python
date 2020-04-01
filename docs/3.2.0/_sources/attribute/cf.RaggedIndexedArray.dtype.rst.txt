@@ -1,0 +1,7 @@
+cf.RaggedIndexedArray.dtype
+===========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.RaggedIndexedArray.dtype

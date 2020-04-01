@@ -1,0 +1,7 @@
+cf.GatheredArray.size
+=====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.GatheredArray.size

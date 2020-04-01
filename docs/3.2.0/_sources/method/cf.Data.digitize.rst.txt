@@ -1,0 +1,7 @@
+cf.Data.digitize
+================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Data.digitize

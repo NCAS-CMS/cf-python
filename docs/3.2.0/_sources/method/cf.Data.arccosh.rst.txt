@@ -1,0 +1,7 @@
+cf.Data.arccosh
+===============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Data.arccosh

@@ -1,0 +1,7 @@
+cf.DomainAncillary.copy
+=======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DomainAncillary.copy

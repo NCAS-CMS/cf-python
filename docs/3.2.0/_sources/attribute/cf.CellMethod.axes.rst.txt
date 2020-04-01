@@ -1,0 +1,7 @@
+cf.CellMethod.axes
+==================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.CellMethod.axes

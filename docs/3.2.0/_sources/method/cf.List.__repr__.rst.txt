@@ -1,0 +1,7 @@
+cf.List.__repr__
+================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.List.__repr__

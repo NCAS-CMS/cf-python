@@ -1,0 +1,7 @@
+cf.Index.sinh
+=============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Index.sinh

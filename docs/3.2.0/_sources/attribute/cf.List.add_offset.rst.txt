@@ -1,0 +1,7 @@
+cf.List.add_offset
+==================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.List.add_offset

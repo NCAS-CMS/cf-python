@@ -1,0 +1,7 @@
+cf.Bounds.match_by_identity
+===========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.match_by_identity

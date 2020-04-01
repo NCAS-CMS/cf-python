@@ -1,0 +1,7 @@
+cf.CellMeasure.measure
+======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.CellMeasure.measure

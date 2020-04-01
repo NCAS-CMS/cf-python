@@ -1,0 +1,7 @@
+cf.RaggedContiguousArray.get_compressed_axes
+============================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.RaggedContiguousArray.get_compressed_axes

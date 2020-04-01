@@ -1,0 +1,7 @@
+cf.FieldAncillary.clip
+======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.FieldAncillary.clip

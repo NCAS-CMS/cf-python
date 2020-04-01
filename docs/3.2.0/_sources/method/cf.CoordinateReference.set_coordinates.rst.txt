@@ -1,0 +1,7 @@
+cf.CoordinateReference.set_coordinates
+======================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CoordinateReference.set_coordinates

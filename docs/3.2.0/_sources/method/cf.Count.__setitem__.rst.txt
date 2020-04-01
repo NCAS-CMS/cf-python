@@ -1,0 +1,7 @@
+cf.Count.__setitem__
+====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Count.__setitem__

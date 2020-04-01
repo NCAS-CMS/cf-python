@@ -1,0 +1,456 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>cf functions &#8212; Documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/customise-alabaster.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="_static/copybutton.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="cf.read" href="function/cf.read.html" />
+    <link rel="prev" title="API reference" href="api_reference.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="index.html">cf 3.2.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="analysis.html"><strong>Analysis</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="releases.html"><strong>Older releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="api_reference.html"><strong>API reference</strong></a><ul>
+      <li>Previous: <a href="api_reference.html" title="previous chapter"><strong>API reference</strong></a></li>
+      <li>Next: <a href="function/cf.read.html" title="next chapter">cf.read</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/function.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="cf-functions">
+<span id="function"></span><h1><strong>cf functions</strong><a class="headerlink" href="#cf-functions" title="Permalink to this headline">¶</a></h1>
+<hr class="docutils" />
+<p>Version 3.2.0 for version 1.8 of the CF conventions.</p>
+<div class="section" id="reading-and-writing">
+<h2><strong>Reading and writing</strong><a class="headerlink" href="#reading-and-writing" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a></p></td>
+<td><p>Read field constructs from netCDF, CDL, PP or UM fields files.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.write.html#cf.write" title="cf.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.write</span></code></a></p></td>
+<td><p>Write field constructs to a netCDF file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.load_stash2standard_name.html#cf.load_stash2standard_name" title="cf.load_stash2standard_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.load_stash2standard_name</span></code></a></p></td>
+<td><p>Load a STASH to standard name conversion table.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="aggregation">
+<h2><strong>Aggregation</strong><a class="headerlink" href="#aggregation" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.aggregate.html#cf.aggregate" title="cf.aggregate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.aggregate</span></code></a></p></td>
+<td><p>Aggregate field constructs into as few field constructs as possible.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="mathematical-operations">
+<span id="functions-mathematical-operations"></span><h2><strong>Mathematical operations</strong><a class="headerlink" href="#mathematical-operations" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.ATOL.html#cf.ATOL" title="cf.ATOL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.ATOL</span></code></a></p></td>
+<td><p>The tolerance on absolute differences when testing for numerically tolerant equality.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.RTOL.html#cf.RTOL" title="cf.RTOL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.RTOL</span></code></a></p></td>
+<td><p>The tolerance on relative differences when testing for numerically tolerant equality.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.default_netCDF_fillvals.html#cf.default_netCDF_fillvals" title="cf.default_netCDF_fillvals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.default_netCDF_fillvals</span></code></a></p></td>
+<td><p>Default data array fill values for each data type.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.histogram.html#cf.histogram" title="cf.histogram"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.histogram</span></code></a></p></td>
+<td><p>Return the distribution of a set of variables in the form of an N-dimensional histogram.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.relative_vorticity.html#cf.relative_vorticity" title="cf.relative_vorticity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.relative_vorticity</span></code></a></p></td>
+<td><p>Calculate the relative vorticity using centred finite differences.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="condition-constructors">
+<h2><strong>Condition constructors</strong><a class="headerlink" href="#condition-constructors" title="Permalink to this headline">¶</a></h2>
+<p class="rubric">General conditions</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.eq.html#cf.eq" title="cf.eq"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.eq</span></code></a></p></td>
+<td><p>A <a class="reference internal" href="classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object for an “equal” condition.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.ge.html#cf.ge" title="cf.ge"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.ge</span></code></a></p></td>
+<td><p>A <a class="reference internal" href="classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object for a “greater than or equal” condition.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.gt.html#cf.gt" title="cf.gt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.gt</span></code></a></p></td>
+<td><p>A <a class="reference internal" href="classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object for a “strictly greater than” condition.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.le.html#cf.le" title="cf.le"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.le</span></code></a></p></td>
+<td><p>A <a class="reference internal" href="classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object for a “less than or equal” condition.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.lt.html#cf.lt" title="cf.lt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.lt</span></code></a></p></td>
+<td><p>A <a class="reference internal" href="classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object for a “strictly less than” condition.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.ne.html#cf.ne" title="cf.ne"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.ne</span></code></a></p></td>
+<td><p>A <a class="reference internal" href="classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object for a “not equal” condition.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.wi.html#cf.wi" title="cf.wi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.wi</span></code></a></p></td>
+<td><p>A <a class="reference internal" href="classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object for a “within a range” condition.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.wo.html#cf.wo" title="cf.wo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.wo</span></code></a></p></td>
+<td><p>A <a class="reference internal" href="classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object for a “without a range” condition.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.set.html#cf.set" title="cf.set"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.set</span></code></a></p></td>
+<td><p>A <a class="reference internal" href="classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object for a “member of set” condition.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Date-time conditions</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.year.html#cf.year" title="cf.year"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.year</span></code></a></p></td>
+<td><p>A <a class="reference internal" href="classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object for a “year” condition.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.month.html#cf.month" title="cf.month"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.month</span></code></a></p></td>
+<td><p>A <a class="reference internal" href="classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object for a “month of the year” condition.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.day.html#cf.day" title="cf.day"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.day</span></code></a></p></td>
+<td><p>A <a class="reference internal" href="classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object for a “day of the month” condition.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.hour.html#cf.hour" title="cf.hour"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.hour</span></code></a></p></td>
+<td><p>A <a class="reference internal" href="classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object for a “hour of the day” condition.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.minute.html#cf.minute" title="cf.minute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.minute</span></code></a></p></td>
+<td><p>A <a class="reference internal" href="classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object for a “minute of the hour” condition.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.second.html#cf.second" title="cf.second"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.second</span></code></a></p></td>
+<td><p>A <a class="reference internal" href="classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object for a “second of the minute” condition.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.jja.html#cf.jja" title="cf.jja"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.jja</span></code></a></p></td>
+<td><p>A <a class="reference internal" href="classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object for a “month of year in June, July or August” condition.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.son.html#cf.son" title="cf.son"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.son</span></code></a></p></td>
+<td><p>A <a class="reference internal" href="classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object for a “month of year in September, October, November” condition.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.djf.html#cf.djf" title="cf.djf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.djf</span></code></a></p></td>
+<td><p>A <a class="reference internal" href="classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object for a “month of year in December, January, February” condition.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.mam.html#cf.mam" title="cf.mam"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.mam</span></code></a></p></td>
+<td><p>A <a class="reference internal" href="classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object for a “month of year in March, April, May” condition.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.seasons.html#cf.seasons" title="cf.seasons"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.seasons</span></code></a></p></td>
+<td><p>A customizable list of <a class="reference internal" href="classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> objects for “seasons in a year” conditions.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Coordinate cell conditions</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.contains.html#cf.contains" title="cf.contains"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.contains</span></code></a></p></td>
+<td><p>A <a class="reference internal" href="classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object for a “cell contains” condition.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.cellsize.html#cf.cellsize" title="cf.cellsize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.cellsize</span></code></a></p></td>
+<td><p>A <a class="reference internal" href="classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object for a “cell size” condition.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.cellgt.html#cf.cellgt" title="cf.cellgt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.cellgt</span></code></a></p></td>
+<td><p>A <a class="reference internal" href="classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object for a “cell bounds strictly greater than” condition.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.cellge.html#cf.cellge" title="cf.cellge"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.cellge</span></code></a></p></td>
+<td><p>A <a class="reference internal" href="classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object for a “cell bounds greater than or equal” condition.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.cellle.html#cf.cellle" title="cf.cellle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.cellle</span></code></a></p></td>
+<td><p>A <a class="reference internal" href="classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object for a “cell bounds less than or equal” condition.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.celllt.html#cf.celllt" title="cf.celllt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.celllt</span></code></a></p></td>
+<td><p>A <a class="reference internal" href="classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object for a “cell bounds strictly less than” condition.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.cellwi.html#cf.cellwi" title="cf.cellwi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.cellwi</span></code></a></p></td>
+<td><p>A <a class="reference internal" href="classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object for a “cell bounds lie within range” condition.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.cellwo.html#cf.cellwo" title="cf.cellwo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.cellwo</span></code></a></p></td>
+<td><p>A <a class="reference internal" href="classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object for a “cell bounds lie without range” condition.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="date-time-and-time-duration">
+<h2><strong>Date-time and time duration</strong><a class="headerlink" href="#date-time-and-time-duration" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.dt.html#cf.dt" title="cf.dt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.dt</span></code></a></p></td>
+<td><p>Return a date-time object for a date and time according to a calendar.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.dt_vector.html#cf.dt_vector" title="cf.dt_vector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.dt_vector</span></code></a></p></td>
+<td><p>Return a scalar or 1-d array of date-time objects.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.Y.html#cf.Y" title="cf.Y"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Y</span></code></a></p></td>
+<td><p>Return a time duration of calendar years in a <a class="reference internal" href="classes/cf.TimeDuration.html#cf.TimeDuration" title="cf.TimeDuration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.TimeDuration</span></code></a> object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.M.html#cf.M" title="cf.M"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.M</span></code></a></p></td>
+<td><p>Return a time duration of calendar months in a <a class="reference internal" href="classes/cf.TimeDuration.html#cf.TimeDuration" title="cf.TimeDuration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.TimeDuration</span></code></a> object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.D.html#cf.D" title="cf.D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.D</span></code></a></p></td>
+<td><p>Return a time duration of days in a <a class="reference internal" href="classes/cf.TimeDuration.html#cf.TimeDuration" title="cf.TimeDuration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.TimeDuration</span></code></a> object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.h.html#cf.h" title="cf.h"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.h</span></code></a></p></td>
+<td><p>Return a time duration of hours in a <a class="reference internal" href="classes/cf.TimeDuration.html#cf.TimeDuration" title="cf.TimeDuration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.TimeDuration</span></code></a> object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.m.html#cf.m" title="cf.m"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.m</span></code></a></p></td>
+<td><p>Return a time duration of minutes in a <a class="reference internal" href="classes/cf.TimeDuration.html#cf.TimeDuration" title="cf.TimeDuration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.TimeDuration</span></code></a> object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.s.html#cf.s" title="cf.s"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.s</span></code></a></p></td>
+<td><p>Return a time duration of seconds in a <a class="reference internal" href="classes/cf.TimeDuration.html#cf.TimeDuration" title="cf.TimeDuration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.TimeDuration</span></code></a> object.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="resource-management">
+<h2><strong>Resource management</strong><a class="headerlink" href="#resource-management" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.CHUNKSIZE.html#cf.CHUNKSIZE" title="cf.CHUNKSIZE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.CHUNKSIZE</span></code></a></p></td>
+<td><p>Set the chunksize used by LAMA for partitioning the data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.COLLAPSE_PARALLEL_MODE.html#cf.COLLAPSE_PARALLEL_MODE" title="cf.COLLAPSE_PARALLEL_MODE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.COLLAPSE_PARALLEL_MODE</span></code></a></p></td>
+<td><p>Which mode to use when collapse is run in parallel.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.FREE_MEMORY.html#cf.FREE_MEMORY" title="cf.FREE_MEMORY"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.FREE_MEMORY</span></code></a></p></td>
+<td><p>The available physical memory.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.FREE_MEMORY_FACTOR.html#cf.FREE_MEMORY_FACTOR" title="cf.FREE_MEMORY_FACTOR"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.FREE_MEMORY_FACTOR</span></code></a></p></td>
+<td><p>Set the fraction of memory kept free as a temporary workspace.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.FM_THRESHOLD.html#cf.FM_THRESHOLD" title="cf.FM_THRESHOLD"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.FM_THRESHOLD</span></code></a></p></td>
+<td><p>The amount of memory which is kept free as a temporary work space.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.MINNCFM</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.OF_FRACTION.html#cf.OF_FRACTION" title="cf.OF_FRACTION"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.OF_FRACTION</span></code></a></p></td>
+<td><p>The amount of concurrently open files above which files containing data arrays may be automatically closed.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.REGRID_LOGGING.html#cf.REGRID_LOGGING" title="cf.REGRID_LOGGING"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.REGRID_LOGGING</span></code></a></p></td>
+<td><p>Whether or not to enable ESMPy logging.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.SET_PERFORMANCE.html#cf.SET_PERFORMANCE" title="cf.SET_PERFORMANCE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.SET_PERFORMANCE</span></code></a></p></td>
+<td><p>Tune performance of parallelisation by setting chunksize and free memory factor.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.TEMPDIR.html#cf.TEMPDIR" title="cf.TEMPDIR"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.TEMPDIR</span></code></a></p></td>
+<td><p>The directory for internally generated temporary files.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.TOTAL_MEMORY.html#cf.TOTAL_MEMORY" title="cf.TOTAL_MEMORY"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.TOTAL_MEMORY</span></code></a></p></td>
+<td><p>TODO</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.close_files.html#cf.close_files" title="cf.close_files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.close_files</span></code></a></p></td>
+<td><p>Close open files containing sub-arrays of data arrays.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.close_one_file.html#cf.close_one_file" title="cf.close_one_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.close_one_file</span></code></a></p></td>
+<td><p>Close an arbitrary open file containing a sub-array of a data array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.open_files.html#cf.open_files" title="cf.open_files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.open_files</span></code></a></p></td>
+<td><p>Return the open files containing sub-arrays of master data arrays.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.open_files_threshold_exceeded.html#cf.open_files_threshold_exceeded" title="cf.open_files_threshold_exceeded"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.open_files_threshold_exceeded</span></code></a></p></td>
+<td><p>Return True if the total number of open files is greater than the current threshold.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="miscellaneous">
+<h2><strong>Miscellaneous</strong><a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.CF.html#cf.CF" title="cf.CF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.CF</span></code></a></p></td>
+<td><p>The version of the CF conventions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.RELAXED_IDENTITIES.html#cf.RELAXED_IDENTITIES" title="cf.RELAXED_IDENTITIES"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.RELAXED_IDENTITIES</span></code></a></p></td>
+<td><p>Use ‘relaxed’ mode when getting a construct identity.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.abspath.html#cf.abspath" title="cf.abspath"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.abspath</span></code></a></p></td>
+<td><p>Return a normalized absolute version of a file name.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.dirname.html#cf.dirname" title="cf.dirname"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.dirname</span></code></a></p></td>
+<td><p>Return the directory name of a file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.dump.html#cf.dump" title="cf.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.dump</span></code></a></p></td>
+<td><p>Print a description of an object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.environment.html#cf.environment" title="cf.environment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.environment</span></code></a></p></td>
+<td><p>Return the names and versions of the cf package and its dependencies.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.example_field.html#cf.example_field" title="cf.example_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.example_field</span></code></a></p></td>
+<td><p>Return an example field construct.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.flat.html#cf.flat" title="cf.flat"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.flat</span></code></a></p></td>
+<td><p>Return an iterator over an arbitrarily nested sequence.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.hash_array.html#cf.hash_array" title="cf.hash_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.hash_array</span></code></a></p></td>
+<td><p>Return the hash value of a numpy array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.implementation.html#cf.implementation" title="cf.implementation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.implementation</span></code></a></p></td>
+<td><p>Return a container for the CF data model implementation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="function/cf.inspect.html#cf.inspect" title="cf.inspect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.inspect</span></code></a></p></td>
+<td><p>Inspect the attributes of an object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.pathjoin.html#cf.pathjoin" title="cf.pathjoin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.pathjoin</span></code></a></p></td>
+<td><p>Join two file path components intelligently.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.pickle</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="function/cf.relpath.html#cf.relpath" title="cf.relpath"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.relpath</span></code></a></p></td>
+<td><p>Return a relative filepath to a file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.unpickle</span></code></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2020, NCAS | Page built on 2020-04-01.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/function.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

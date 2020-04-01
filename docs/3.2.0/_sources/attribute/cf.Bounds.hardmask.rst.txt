@@ -1,0 +1,7 @@
+cf.Bounds.hardmask
+==================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.Bounds.hardmask

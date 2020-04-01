@@ -1,0 +1,7 @@
+cf.FieldAncillary.insert_dimension
+==================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.FieldAncillary.insert_dimension

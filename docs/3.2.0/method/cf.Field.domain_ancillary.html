@@ -1,0 +1,235 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>cf.Field.domain_ancillary &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cf.Field.domain_axis" href="cf.Field.domain_axis.html" />
+    <link rel="prev" title="cf.Field.dimension_coordinate" href="cf.Field.dimension_coordinate.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.2.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../class.html"><strong>cf classes</strong></a><ul>
+  <li><a href="../classes/cf.Field.html">cf.Field</a><ul>
+      <li>Previous: <a href="cf.Field.dimension_coordinate.html" title="previous chapter">cf.Field.dimension_coordinate</a></li>
+      <li>Next: <a href="cf.Field.domain_axis.html" title="next chapter">cf.Field.domain_axis</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/method/cf.Field.domain_ancillary.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="cf-field-domain-ancillary">
+<h1>cf.Field.domain_ancillary<a class="headerlink" href="#cf-field-domain-ancillary" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="cf.Field.domain_ancillary">
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">domain_ancillary</code><span class="sig-paren">(</span><em class="sig-param">identity=None</em>, <em class="sig-param">default=ValueError()</em>, <em class="sig-param">key=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.2.0/cf/field.py#L14603"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.domain_ancillary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a domain ancillary construct, or its key.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.0.0.</span></p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="cf.Field.construct.html#cf.Field.construct" title="cf.Field.construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">construct</span></code></a>, <a class="reference internal" href="cf.Field.auxiliary_coordinate.html#cf.Field.auxiliary_coordinate" title="cf.Field.auxiliary_coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">auxiliary_coordinate</span></code></a>, <a class="reference internal" href="cf.Field.cell_measure.html#cf.Field.cell_measure" title="cf.Field.cell_measure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cell_measure</span></code></a>,
+<a class="reference internal" href="cf.Field.cell_method.html#cf.Field.cell_method" title="cf.Field.cell_method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cell_method</span></code></a>, <a class="reference internal" href="cf.Field.coordinate.html#cf.Field.coordinate" title="cf.Field.coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinate</span></code></a>, <a class="reference internal" href="cf.Field.coordinate_reference.html#cf.Field.coordinate_reference" title="cf.Field.coordinate_reference"><code class="xref py py-obj docutils literal notranslate"><span class="pre">coordinate_reference</span></code></a>,
+<a class="reference internal" href="cf.Field.dimension_coordinate.html#cf.Field.dimension_coordinate" title="cf.Field.dimension_coordinate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dimension_coordinate</span></code></a>, <a class="reference internal" href="../attribute/cf.Field.domain_ancillaries.html#cf.Field.domain_ancillaries" title="cf.Field.domain_ancillaries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_ancillaries</span></code></a>,
+<a class="reference internal" href="cf.Field.domain_axis.html#cf.Field.domain_axis" title="cf.Field.domain_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">domain_axis</span></code></a>, <a class="reference internal" href="cf.Field.field_ancillary.html#cf.Field.field_ancillary" title="cf.Field.field_ancillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">field_ancillary</span></code></a></p>
+</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt>identity: optional</dt><dd><p>Select the domain ancillary construct by one of:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>. This is the default, which selects the domain
+ancillary construct when there is only one of them.</p></li>
+<li><p>The identity or key of a domain ancillary construct.</p></li>
+<li><p>The identity or key of a domain axis construct that is
+spanned by a unique 1-d domain ancillary construct’s data.</p></li>
+<li><p>The position, in the field construct’s data, of a domain
+axis construct that is spanned by a unique 1-d domain
+ancillary construct’s data.</p></li>
+</ul>
+</div></blockquote>
+<p>A construct identity is specified by a string
+(e.g. <code class="docutils literal notranslate"><span class="pre">'latitude'</span></code>, <code class="docutils literal notranslate"><span class="pre">'long_name=time'</span></code>,
+<code class="docutils literal notranslate"><span class="pre">'ncvar%lat'</span></code>, etc.); a <a class="reference internal" href="../classes/cf.Query.html#cf.Query" title="cf.Query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></a> object
+(e.g. <code class="docutils literal notranslate"><span class="pre">cf.eq('longitude')</span></code>); or a compiled regular
+expression (e.g. <code class="docutils literal notranslate"><span class="pre">re.compile('^atmosphere')</span></code>) that
+selects the relevant constructs whose identities match via
+<a class="reference external" href="https://docs.python.org/3/library/re.html#re.search" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">re.search</span></code></a>.</p>
+<p>A construct has a number of identities, and is selected if
+any of them match any of those provided. A construct’s
+identities are those returned by its <code class="xref py py-obj docutils literal notranslate"><span class="pre">identities</span></code>
+method. In the following example, the construct <code class="docutils literal notranslate"><span class="pre">x</span></code> has
+six identities:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">identities</span><span class="p">()</span>
+<span class="go">[&#39;time&#39;,</span>
+<span class="go"> &#39;long_name=Time&#39;,</span>
+<span class="go"> &#39;foo=bar&#39;,</span>
+<span class="go"> &#39;standard_name=time&#39;,</span>
+<span class="go"> &#39;ncvar%t&#39;,</span>
+<span class="go"> &#39;T&#39;]</span>
+</pre></div>
+</div>
+<p>A construct key may optionally have the <code class="docutils literal notranslate"><span class="pre">'key%'</span></code>
+prefix. For example <code class="docutils literal notranslate"><span class="pre">'domainancillary2'</span></code> and
+<code class="docutils literal notranslate"><span class="pre">'key%domainancillary2'</span></code> are both acceptable keys.</p>
+<p>A position of a domain axis construct in the field
+construct’s data is specified by an integer index.</p>
+<p>Note that in the output of a <a class="reference external" href="https://docs.python.org/3/library/functions.html#print" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">print</span></code></a> call or <code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code>
+method, a construct is always described by one of its
+identities, and so this description may always be used as
+an <em>identity</em> argument.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">identity='Y'</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">identity='latitude'</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">identity='long_name=Latitude'</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">identity='domainancillary1'</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">identity='ncdim%y'</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">identity='domainaxis2'</span></code></p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p><code class="docutils literal notranslate"><span class="pre">identity=0</span></code></p>
+</dd>
+</dl>
+</dd>
+<dt>key: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then return the selected construct key. By
+default the construct itself is returned.</p>
+</dd>
+<dt>default: optional</dt><dd><p>Return the value of the <em>default</em> parameter if a construct
+can not be found. If set to an <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Exception</span></code></a> instance then
+it will be raised instead.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference internal" href="../classes/cf.DomainAncillary.html#cf.DomainAncillary" title="cf.DomainAncillary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DomainAncillary</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>The selected domain ancillary coordinate construct, or its
+key.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples:</strong></p>
+<p>TODO</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2020, NCAS | Page built on 2020-04-01.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/method/cf.Field.domain_ancillary.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

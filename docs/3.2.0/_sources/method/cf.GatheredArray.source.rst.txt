@@ -1,0 +1,7 @@
+cf.GatheredArray.source
+=======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.GatheredArray.source
