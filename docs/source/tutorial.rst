@@ -2470,7 +2470,7 @@ This is illustrated with the file ``geometry.nc`` (found in the
    :caption: *Read and inspect a dataset containing geometry cell
              bounds.*
 
-   >>> f = cfdm.read('geometry.nc')[0]
+   >>> f = cf.read('geometry.nc')[0]
    >>> print(f)
    Field: preciptitation_amount (ncvar%pr)
    ---------------------------------------
