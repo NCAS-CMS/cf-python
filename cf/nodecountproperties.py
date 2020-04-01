@@ -8,11 +8,11 @@ class NodeCountProperties(mixin.Properties,
     '''Properties for a netCDF node count variable.
 
     **NetCDF interface**
-    
+
     The netCDF node count variable name may be accessed with the
     `nc_set_variable`, `nc_get_variable`, `nc_del_variable` and
     `nc_has_variable` methods.
-    
+
     .. versionadded:: 3.2.0
 
     '''
