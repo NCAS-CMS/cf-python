@@ -2116,19 +2116,18 @@ Method          Description
 `~Field.trunc`  Truncate the data, element-wise.
 ==============  ====================================================
 
-Moving averages
-^^^^^^^^^^^^^^^
+Moving means
+^^^^^^^^^^^^
 
-Moving averages along an axis may be created with the
+Moving means along an axis may be created with the
 `~Field.moving_mean` method of the field construct.
 
-By default the averages are unweighted, but weights based on the axis
+By default the means are unweighted, but weights based on the axis
 cell sizes (or custom weights) may applied to the calculation.
 
 .. code-block:: python
    :caption: *Calculate a 3-point weighted mean of the 'X' axis. Since
-             the the 'X' axis is cyclic, the average wraps by
-             default.*
+             the the 'X' axis is cyclic, the mean wraps by default.*
 
    >>> q, t = cf.read('file.nc')
    >>> print(q)
