@@ -1,8 +1,8 @@
 cf-python
 =========
 
-The Python cf package is an Earth science data analysis library that
-is built on a complete implementation of the CF data model
+The Python `cf` package is an Earth Science data analysis library that
+is built on a complete implementation of the CF data model.
 
 
 Documentation
@@ -10,10 +10,12 @@ Documentation
 
 http://ncas-cms.github.io/cf-python
 
+
 Tutorial
 ========
 
 https://ncas-cms.github.io/cf-python/tutorial.html
+
 
 Installation
 ============
@@ -49,50 +51,74 @@ inspecting it:
 
 The `cf` package can:
 
-* read field constructs from netCDF, PP and UM datasets,
+* read field constructs from netCDF, CDL, PP and UM datasets,
+
 * create new field constructs in memory,
+
 * inspect field constructs,
+
 * test whether two field constructs are the same,
+
 * modify field construct metadata and data,
+
 * create subspaces of field constructs,
+
 * write field constructs to netCDF datasets on disk,
-* incorporate, and create, metadata stored in external files,
+
+* incorporate, and create, metadata stored in external files (*new in
+  version 3.0.0*),
+
 * read, write, and create data that have been compressed by convention
   (i.e. ragged or gathered arrays), whilst presenting a view of the
   data in its uncompressed form,
-* read, write, and create coordinates defined by geometry cells,
+
+* read, write, and create coordinates defined by geometry cells (**new
+  in version 3.2.0**),
+
 * combine field constructs arithmetically,
+
 * manipulate field construct data by arithmetical and trigonometrical
   operations,
+
 * perform statistical collapses on field constructs,
+
 * perform histogram, percentile and binning operations on field
-  constructs,
-* regrid field constructs with (multi-)linear, nearest neighbour, first-
-  and second-order conservative and higher order patch recovery methods,
+  constructs (*new in version 3.0.3*),
+
+* regrid field constructs with (multi-)linear, nearest neighbour,
+  first- and second-order conservative and higher order patch recovery
+  methods,
+
 * apply convolution filters to field constructs,
+
 * calculate derivatives of field constructs,
+
 * create field constructs to create derived quantities (such as
   vorticity).
+
+All of the above use LAMA functionality, which allows multiple
+fields larger than the available memory to exist and be manipulated.
+
 
 Hierarchical groups
 -------------------
 
 Hierarchical groups provide a powerful mechanism to structure
-variables within datasets. A future release of cf will include support
+variables within datasets. A future release of `cf` will include support
 for netCDF4 files containing data organised in hierarchical groups,
 but this is not available in version 3.2.0 (even though it is allowed
 in CF-1.8).
 
-> **This version of cf is for Python 3 only** and there are
+> **This version of `cf` is for Python 3 only** and there are
 > [incompatible differences between versions 2.x and
 > 3.x](https://ncas-cms.github.io/cf-python/2_to_3_changes.html) of
-> cf.
+> `cf`.
 >
 > Scripts written for version 2.x but running under version
 > 3.x should either work as expected, or provide informative
 > error messages on the new API usage. However, it is advised
 > that the outputs of older scripts be checked when running
-> with Python 3 versions of the cf library.
+> with Python 3 versions of the `cf` library.
 >
 > For version 2.x documentation, see the [older
 >  releases](https://ncas-cms.github.io/cf-python/releases.html) page.
@@ -109,7 +135,7 @@ See the cf-plot gallery
 (http://ajheaps.github.io/cf-plot/gallery.html) for the full range
 range plotting possibilities with example code.
 
-![Example output of cf-plot displaying a cf field construct](docs/source/images/cfplot_example.png)
+![Example output of cf-plot displaying a `cf` field construct](docs/source/images/cfplot_example.png)
 
 Command line utilities
 ======================
