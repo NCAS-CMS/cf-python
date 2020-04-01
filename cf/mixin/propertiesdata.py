@@ -2535,7 +2535,7 @@ class PropertiesData(Properties):
 #    The "standard_name" and "long_name" properties are removed from
 #    the result.
 #
-#    .. versionadded:: 3.1.1
+#    .. versionadded:: 3.2.0
 #
 #    .. seealso:: `arctan`, `tan`
 #
@@ -3927,14 +3927,21 @@ class PropertiesData(Properties):
     **Examples:**
 
     >>> print(f.array)
-    [[0  1 2]
-     [3 -- 5]]
+    [[0.5 0.7]
+     [0.9 1.1]]
     >>> g = f.arctan()
-    >>> g
-    <CF Data(2, 3): [[0.0, ..., 1.373400766945016]] radians>
+    >>> g.Units
+    <Units: radians>
     >>> print(g.array)
-    [[0.0                0.7853981633974483 1.1071487177940904]
-     [1.2490457723982544                 -- 1.373400766945016 ]]
+    [[0.46364761 0.61072596]
+     [0.7328151  0.83298127]]
+
+    >>> print(f.array)
+    [1.2 1.0 0.8 0.6 --]
+    >>> f.arctan(inplace=True)
+    >>> print(f.array)
+    [0.8760580505981934 0.7853981633974483 0.6747409422235527
+     0.5404195002705842 --]
 
         '''
         return self._apply_data_oper(
@@ -3951,7 +3958,7 @@ class PropertiesData(Properties):
     The "standard_name" and "long_name" properties are removed from
     the result.
 
-    .. versionadded:: 3.1.1
+    .. versionadded:: 3.2.0
 
     .. seealso:: `tanh`, `arcsinh`, `arccosh`, `arctan`
 
@@ -3967,7 +3974,24 @@ class PropertiesData(Properties):
 
     **Examples:**
 
-    TODO
+    >>> print(f.array)
+    [[0.5 0.7]
+     [0.9 1.1]]
+    >>> g = f.arctanh()
+    >>> g.Units
+    <Units: radians>
+    >>> print(g.array)
+    [[0.54930614 0.86730053]
+     [1.47221949        nan]]
+
+    >>> print(f.array)
+    [1.2 1.0 0.8 0.6 --]
+    >>> f.arctanh(inplace=True)
+    >>> print(f.array)
+    [nan inf 1.0986122886681098 0.6931471805599453 --]
+    >>> f.mask_invalid(inplace=True)
+    >>> print(f.array)
+    [-- -- 1.0986122886681098 0.6931471805599453 --]
 
         '''
         return self._apply_data_oper(
@@ -3984,7 +4008,7 @@ class PropertiesData(Properties):
     The "standard_name" and "long_name" properties are removed from
     the result.
 
-    .. versionadded:: 3.1.1
+    .. versionadded:: 3.2.0
 
     .. seealso:: `sin`, `arccos`, `arctan`, `arcsinh`
 
@@ -4000,7 +4024,24 @@ class PropertiesData(Properties):
 
     **Examples:**
 
-    TODO
+    >>> print(f.array)
+    [[0.5 0.7]
+     [0.9 1.1]]
+    >>> g = f.arcsin()
+    >>> g.Units
+    <Units: radians>
+    >>> print(g.array)
+    [[0.52359878 0.7753975 ]
+     [1.11976951        nan]]
+
+    >>> print(f.array)
+    [1.2 1.0 0.8 0.6 --]
+    >>> f.arcsin(inplace=True)
+    >>> print(f.array)
+    [nan 1.5707963267948966 0.9272952180016123 0.6435011087932844 --]
+    >>> f.mask_invalid(inplace=True)
+    >>> print(f.array)
+    [-- 1.5707963267948966 0.9272952180016123 0.6435011087932844 --]
 
         '''
         return self._apply_data_oper(
@@ -4033,16 +4074,22 @@ class PropertiesData(Properties):
 
     **Examples:**
 
-    >>> f = cf.Data([[0, 1, 2], [3, -99, 5]], mask=[[0, 0, 0], [0, 1, 0]])
     >>> print(f.array)
-    [[0  1 2]
-     [3 -- 5]]
+    [[0.5 0.7]
+     [0.9 1.1]]
     >>> g = f.arcsinh()
-    >>> g
-    <CF Data(2, 3): [[0.0, ..., 2.3124383412727525]] radians>
+    >>> g.Units
+    <Units: radians>
     >>> print(g.array)
-    [[0.0 0.881373587019543 1.4436354751788103]
-     [1.8184464592320668 -- 2.3124383412727525]]
+    [[0.48121183 0.65266657]
+     [0.80886694 0.95034693]]
+
+    >>> print(f.array)
+    [1.2 1.0 0.8 0.6 --]
+    >>> f.arcsinh(inplace=True)
+    >>> print(f.array)
+    [1.015973134179692 0.881373587019543 0.732668256045411 0.5688248987322475
+     --]
 
         '''
         return self._apply_data_oper(
@@ -4059,7 +4106,7 @@ class PropertiesData(Properties):
     The "standard_name" and "long_name" properties are removed from
     the result.
 
-    .. versionadded:: 3.1.1
+    .. versionadded:: 3.2.0
 
     .. seealso:: `cos`, `arcsin`, `arctan`, `arccosh`
 
@@ -4075,7 +4122,24 @@ class PropertiesData(Properties):
 
     **Examples:**
 
-    TODO
+    >>> print(f.array)
+    [[0.5 0.7]
+     [0.9 1.1]]
+    >>> g = f.arccos()
+    >>> g.Units
+    <Units: radians>
+    >>> print(g.array)
+    [[1.04719755 0.79539883]
+     [0.45102681        nan]]
+
+    >>> print(f.array)
+    [1.2 1.0 0.8 0.6 --]
+    >>> f.arccos(inplace=True)
+    >>> print(f.array)
+    [nan 0.0 0.6435011087932843 0.9272952180016123 --]
+    >>> f.mask_invalid(inplace=True)
+    >>> print(f.array)
+    [-- 0.0 0.6435011087932843 0.9272952180016123 --]
 
         '''
         return self._apply_data_oper(
@@ -4092,7 +4156,7 @@ class PropertiesData(Properties):
     The "standard_name" and "long_name" properties are removed from
     the result.
 
-    .. versionadded:: 3.1.1
+    .. versionadded:: 3.2.0
 
     .. seealso:: `cosh`, `arcsinh`, `arctanh`, `arccos`
 
@@ -4108,7 +4172,24 @@ class PropertiesData(Properties):
 
     **Examples:**
 
-    TODO
+    >>> print(f.array)
+    [[0.5 0.7]
+     [0.9 1.1]]
+    >>> g = f.arccosh()
+    >>> g.Units
+    <Units: radians>
+    >>> print(g.array)
+    [[       nan        nan]
+     [       nan 0.44356825]]
+
+    >>> print(f.array)
+    [1.2 1.0 0.8 0.6 --]
+    >>> f.arccosh(inplace=True)
+    >>> print(f.array)
+    [0.6223625037147786 0.0 nan nan --]
+    >>> f.mask_invalid(inplace=True)
+    >>> print(f.array)
+    [0.6223625037147786 0.0 -- -- --]
 
         '''
         return self._apply_data_oper(

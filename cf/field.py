@@ -224,7 +224,7 @@ conservative_regridding_methods = [
     'conservative_2nd'
 ]
 regridding_methods = [
-    'linear',  # prefer over 'bilinear' as of v3.1.1
+    'linear',  # prefer over 'bilinear' as of v3.2.0
     'bilinear',  # only for backward compatibility, use & document 'linear'
     'patch',
     'nearest_stod',

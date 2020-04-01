@@ -50,6 +50,16 @@ do
     # all pages referencing these resources must be added to this list
 done
 
+# Copy over our custom stylesheet. It is referenced in the HTML docs files but
+# Sphinx with alabaster theme doesn't seem to (?) provide a means to transfer
+# it to the created _static dir via the build itself *when* the output dir is
+# the top-level one (hence copy works for 'dev' & 'archive' builds to sub-dirs).
+# Seemingly relates to the build warning:
+#   WARNING: html_static_path entry '_static' is placed inside outdir
+if [[ $2 = "latest" ]] ; then
+  cp source/_static/customise-alabaster.css _static/customise-alabaster.css
+fi
+
 # --------------------------------------------------------------------
 # Add and commit the latest
 # --------------------------------------------------------------------

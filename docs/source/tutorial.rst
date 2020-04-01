@@ -186,7 +186,7 @@ with the *ignore_read_error* keyword.
 .. code-block:: python
    :caption: *Read all of the files in the current working directory.*
 
-   >>> y = cf.read('$PWD')                                    # Raises Exception
+   >>> y = cf.read('$PWD')  # Raises Exception
    Traceback (most recent call last):
        ...
    Exception: Can't determine format of file cf_tutorial_files.zip
@@ -1091,7 +1091,7 @@ any other date-time object that has an equivalent API.
    ['2004-02-29' '2004-03-01' '2004-03-02']
    >>> f.Units
    <Units: >
-   >>> print(f.datetime_array)                                # Raises Exception
+   >>> print(f.datetime_array)  # Raises Exception
    Traceback (most recent call last):
        ...
    ValueError: Can't create date-time array from units <Units: >
@@ -2027,7 +2027,7 @@ raising a customised exception:
              unique construct that meets the criteria. Alternatively,
              the value of the "default" parameter is returned.*
 
-   >>> t.construct('measure:volume')                          # Raises Exception
+   >>> t.construct('measure:volume')  # Raises Exception
    Traceback (most recent call last):
        ...
    ValueError: Can't return zero constructs
@@ -2036,20 +2036,20 @@ raising a customised exception:
    >>> c = t.constructs.filter_by_measure('volume')
    >>> len(c)
    0
-   >>> c.value()                                              # Raises Exception
+   >>> c.value()  # Raises Exception
    Traceback (most recent call last):
        ...
    ValueError: Can't return zero constructs
    >>> c.value(default='No construct')
    'No construct'
-   >>> c.value(default=KeyError('My message'))                # Raises Exception
+   >>> c.value(default=KeyError('My message'))  # Raises Exception
    Traceback (most recent call last):
        ...
    KeyError: 'My message'
    >>> d = t.constructs('units=degrees')
    >>> len(d)
    2
-   >>> d.value()                                              # Raises Exception
+   >>> d.value()  # Raises Exception
    Traceback (most recent call last):
        ...
    ValueError: Can't return 2 constructs 
