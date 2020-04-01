@@ -90,7 +90,7 @@ needs_sphinx = '2.3.1'
 extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.autosummary',
 #              'sphinx.ext.viewcode',
-#              'sphinx.ext.linkcode',
+              'sphinx.ext.linkcode',
               'sphinx.ext.mathjax',
               'sphinx.ext.graphviz',
 #              'sphinx.ext.inheritance_diagram',
@@ -471,7 +471,6 @@ def linkcode_resolve(domain, info):
 
     if lineno:
         linespec = "#L{0}".format(lineno+1)
-        # Can add range when jump-to feature is enable in bitbucket
     else:
         linespec = ""
 
@@ -479,7 +478,7 @@ def linkcode_resolve(domain, info):
     # NOTE: You need to touch the .rst files to get the change in
     # ----------------------------------------------------------------
     if online_source_code:
-        if 'cfdm/cfdm/' in fn:
+        if 'cfdm/' in fn:
             # Point to on-line cfdm
             # code. E.g. https://github.com/NCAS-CMS/cfdm/blob/v1.7.8/cfdm/field.py#L619
             fn = re.sub('^.*(cfdm/.*)', '\\1', fn)
