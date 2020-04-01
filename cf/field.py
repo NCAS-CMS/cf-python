@@ -4596,7 +4596,7 @@ class Field(mixin.PropertiesData,
 
         great_circle: `bool`, optional
             If True then allow, if required, the derivation of i) area
-            weights from polygon geometry cells by assuiming that each
+            weights from polygon geometry cells by assuming that each
             cell part is a spherical polygon composed of great circle
             segments; and ii) and the derivation of line-length
             weights from line geometry cells by assuming that each
@@ -5149,7 +5149,7 @@ class Field(mixin.PropertiesData,
 
     .. versionadded:: 1.0
 
-    .. seealso:: `bin`, `cell_area`, `collapse`, `moving_average`,
+    .. seealso:: `bin`, `cell_area`, `collapse`, `moving_mean`,
                  `radius`
 
     :Parameters:
@@ -5321,7 +5321,7 @@ class Field(mixin.PropertiesData,
 
         great_circle: `bool`, optional
             If True then allow, if required, the derivation of i) area
-            weights from polygon geometry cells by assuiming that each
+            weights from polygon geometry cells by assuming that each
             cell part is a spherical polygon composed of great circle
             segments; and ii) and the derivation of line-length
             weights from line geometry cells by assuming that each
@@ -7384,7 +7384,7 @@ class Field(mixin.PropertiesData,
 
         great_circle: `bool`, optional
             If True then allow, if required, the derivation of i) area
-            weights from polygon geometry cells by assuiming that each
+            weights from polygon geometry cells by assuming that each
             cell part is a spherical polygon composed of great circle
             segments; and ii) and the derivation of line-length
             weights from line geometry cells by assuming that each
@@ -8555,7 +8555,7 @@ class Field(mixin.PropertiesData,
     .. versionadded:: 1.0
 
     .. seealso:: `bin`, `cell_area`, `convolution_filter`,
-                 `moving_average`, `weights`, `radius`
+                 `moving_mean`, `weights`, `radius`
 
     :Parameters:
 
@@ -8787,7 +8787,7 @@ class Field(mixin.PropertiesData,
 
         great_circle: `bool`, optional
             If True then allow, if required, the derivation of i) area
-            weights from polygon geometry cells by assuiming that each
+            weights from polygon geometry cells by assuming that each
             cell part is a spherical polygon composed of great circle
             segments; and ii) and the derivation of line-length
             weights from line geometry cells by assuming that each
@@ -8852,13 +8852,16 @@ class Field(mixin.PropertiesData,
                              there are no bounds). This is the
                              default.
 
-            ``'min'``        An output coordinate is the minimum of
+            ``'minimum'``    An output coordinate is the minimum of
                              the input coordinates.
 
-            ``'max'``        An output coordinate is the maximum of
+            ``'maximum'``    An output coordinate is the maximum of
                              the input coordinates.
             ===============  =========================================
 
+            *Parameter example:*
+              ``coordinate='minimum'``
+            
         group: optional
             A grouped collapse is one for which an axis is not
             collapsed completely to size 1. Instead, the collapse axis
@@ -10132,12 +10135,21 @@ class Field(mixin.PropertiesData,
 
                 units = dim.Units
 
+                if coordinate == 'min':
+                    coordinate = 'minimum'
+                    print("WARNING: coordinate='min' has been deprecated. "
+                          "Use coordinate='minimum' instead.")
+                elif coordinate == 'max':
+                    coordinate = 'maximum'
+                    print("WARNING: coordinate='max' has been deprecated. "
+                          "Use coordinate='maximum' instead.")
+
                 if coordinate == 'mid_range':
                     data = Data(
                         [(bounds_data[0] + bounds_data[1])*0.5], units=units)
-                elif coordinate == 'min':
+                elif coordinate == 'minimum':
                     data = dim.data.min()
-                elif coordinate == 'max':
+                elif coordinate == 'maximum':
                     data = dim.data.max()
                 else:
                     raise ValueError(
@@ -10858,7 +10870,7 @@ class Field(mixin.PropertiesData,
                         )
                 # --- End: if
 
-                coordinate = 'min'
+                coordinate = 'minimum'
 
                 classification = numpy_empty((axis_size,), int)
                 classification.fill(-1)
@@ -10975,7 +10987,7 @@ class Field(mixin.PropertiesData,
                         )
                 # --- End: if
 
-                coordinate = 'min'
+                coordinate = 'minimum'
 
                 classification = numpy_empty((axis_size,), int)
                 classification.fill(-1)
@@ -12835,18 +12847,28 @@ class Field(mixin.PropertiesData,
         return False
 
     @_inplace_enabled
-    def moving_average(self, window_size=None, axis=None,
-                       weights=False, mode=None, cval=None, origin=0,
-                       inplace=False):
+    def moving_mean(self, window_size=None, axis=None, weights=False,
+                    mode=None, cval=None, origin=0, radius='earth',
+                    great_circle=False, inplace=False):
         '''Create a moving averages along an axis.
 
     By default the averages are unweighted, but weights based on the
     axis cell sizes (or custom weights) may applied to the
     calculation via the *weights* parameter.
 
-    .. versionadded:: 3.2.0
+    When appropriate, a new cell method construct is created to
+    describe the averaging.
 
-    .. seealso:: `collapse`, `convolution_filter`, `weights`
+    .. note:: The `moving_mean` method can not, in general, be
+              emulated by the `convolution_filter` method, as the
+              latter i) can not change the window weights as the
+              filter passes through the axis; and ii) does not update
+              the cell method constructs.
+
+    .. versionadded:: 3.3.0
+
+    .. seealso:: `bin`, `cell_area`, `collapse`, `convolution_filter`,
+                 `weights`, `radius`
 
     :Parameters:
         
@@ -12942,6 +12964,27 @@ class Field(mixin.PropertiesData,
               the average is shifted to include the previous point and
               the and the next three points.
 
+        radius: optional
+            Specify the radius used for calculating the areas of cells
+            defined in spherical polar coordinates. The radius is that
+            which would be returned by this call of the field
+            construct's `~cf.Field.radius` method:
+            ``f.radius(radius)``. See the `cf.Field.radius` for
+            details.
+
+            By default *radius* is ``'earth'`` which means that if and
+            only if the radius can not found from the datums of any
+            coordinate reference constucts, then the default radius
+            taken as 6371229 metres.
+
+        great_circle: `bool`, optional
+            If True then allow, if required, the derivation of i) area
+            weights from polygon geometry cells by assuming that each
+            cell part is a spherical polygon composed of great circle
+            segments; and ii) and the derivation of line-length
+            weights from line geometry cells by assuming that each
+            line part is composed of great circle segments.
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
 
@@ -12982,7 +13025,7 @@ class Field(mixin.PropertiesData,
 
     Create an unweighted 3-point running mean for the cyclic "X" axis:
 
-    >>> g = f.moving_average(3, axis='X')
+    >>> g = f.moving_mean(3, axis='X')
     >>> print(g)
     Field: specific_humidity (ncvar%q)
     ----------------------------------
@@ -13009,7 +13052,7 @@ class Field(mixin.PropertiesData,
 
     Create a weighted 3-point running mean for the cyclic "X" axis:
 
-    >>> g = f.moving_average(3, axis='X', weights='X')
+    >>> g = f.moving_mean(3, axis='X', weights='X')
 
         '''
         if cval is not None and cval != 0:
@@ -13046,7 +13089,8 @@ class Field(mixin.PropertiesData,
             # --- End: if
 
             # Get the data weights
-            w = f.weights(weights, axes=axes, data=True, scale=1.0)
+            w = f.weights(weights, axes=axes, data=True, scale=1.0,
+                          radius=radius, great_circle=great_circle)
 
             # Adjust the data weights by dividing them by their
             # miniumum
@@ -13057,7 +13101,7 @@ class Field(mixin.PropertiesData,
             else:
                 w = w / wmin
 
-            # Divide the field by the adjusted data weights
+            # Multiply the field by the adjusted data weights
             f *= w
 
         # Create the window weights
@@ -13086,6 +13130,7 @@ class Field(mixin.PropertiesData,
             
         return f
 
+    @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def convolution_filter(self, window=None, axis=None, mode=None,
                            cval=None, origin=0, update_bounds=True,
@@ -13102,7 +13147,13 @@ class Field(mixin.PropertiesData,
     the `scipy.signal.windows` package do not necessarily sum to 1
     (see the examples for details).
 
-    .. seealso:: `collapse`, `derivative`, `moving_average`,
+    .. note:: The `moving_mean` method can not, in general, be
+              emulated by the `convolution_filter` method, as the
+              latter i) can not change the window weights as the
+              filter passes through the axis; and ii) does not update
+              the cell method constructs.
+
+    .. seealso:: `collapse`, `derivative`, `moving_mean`,
                  `cf.relative_vorticity`
 
     :Parameters:
@@ -13514,11 +13565,12 @@ class Field(mixin.PropertiesData,
 
     .. versionadded:: 3.0.0
 
-    .. seealso:: `collapse`, `convolution_filter`, `sum`
+    .. seealso:: `collapse`, `convolution_filter`, `moving_mean`,
+                 `sum`
 
     :Parameters:
 
-        axis:g
+        axis:
             Select the domain axis over which the cumulative sums are
             to be calculated, defined by that which would be selected
             by passing the given axis description to a call of the
@@ -13534,9 +13586,27 @@ class Field(mixin.PropertiesData,
         coordinate: `str`, optional
             Set how the cell coordinate values for the summed axis are
             defined. By default they are unchanged from the original
-            field construct, but if *coordinate* is set to
-            ``'mid_range'`` then the each coordinate value is replaced
-            by the mid_range of the updated cell bounds.
+            field construct. The *coordinate* parameter may be one of:
+
+            ===============  =========================================
+            *coordinate*     Description
+            ===============  =========================================
+            `None`           This is the default.
+
+                             Output coordinates are unchanged.
+
+            ``'mid_range'``  An output coordinate is the average of
+                             its output coordinate bounds.
+
+            ``'minimum'``    An output coordinate is the minimum of
+                             its output coordinate bounds.
+
+            ``'maximum'``    An output coordinate is the maximum of
+                             its output coordinate bounds.
+            ===============  =========================================
+
+            *Parameter Example:*
+              ``coordinate='maximum'``
 
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
@@ -13620,15 +13690,20 @@ class Field(mixin.PropertiesData,
                 bounds = coord.get_bounds()
                 bounds[:, 0] = bounds[0, 0]
 
-                if coordinate is not None:
-                    if coordinate != 'mid_range':
-                        raise ValueError("TODO")
+                data = coord.get_data(None)
 
-                    data = coord.get_data(None)
-                    if data is not None:
-                        bounds = bounds.array
-                        data = data.varray
-                        data[...] = (bounds[:, 0] + bounds[:, 1])*0.5
+                if coordinate is not None and data is not None:
+                    if coordinate == 'mid_range':
+                        data[...] = ((bounds[:, 0] + bounds[:, 1])*0.5).squeeze()
+                    elif coordinate == 'minimum':
+                        data[...] = coord.lower_bounds
+                    elif coordinate == 'maximum':
+                        data[...] = coord.upper_bounds
+                    else:
+                        raise ValueError(
+                            "'coordinate' parameter must be one of "
+                            "(None, 'mid_range', 'minimum', 'maximum'). "
+                            "Got {!r}".format(coordinate))
             # --- End: if
 
             # Update the cell methods

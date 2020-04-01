@@ -6,9 +6,11 @@ version 3.3.0
 
 * Changed the API to `cf.Field.convolution_filter`: renamed the
   ``weights`` parameter to ``window``.
-* New method: `cf.Field.moving_average`
+* New method: `cf.Field.moving_mean`
 * New method: `cf.Data.convolution_filter`
-* New keyword parameter to `cf.Field.weights`: ``axes``.
+* New keyword parameter to `cf.Field.weights`: ``axes``
+* New permitted values to ``coordinate`` keyword parameter
+  `cf.Field.cumsum`: ``'minimum'``, ``'maximum'``
 
 version 3.2.0
 -------------

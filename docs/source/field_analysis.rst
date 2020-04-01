@@ -2120,7 +2120,7 @@ Moving averages
 ^^^^^^^^^^^^^^^
 
 Moving averages along an axis may be created with the
-`~Field.moving_average` method of the field construct.
+`~Field.moving_mean` method of the field construct.
 
 By default the averages are unweighted, but weights based on the axis
 cell sizes (or custom weights) may applied to the calculation.
@@ -2156,7 +2156,7 @@ cell sizes (or custom weights) may applied to the calculation.
     [315. 360.]]
    >>> q.iscyclic('X')
    True
-   >>> g = f.moving_average(3, axis='X', weights='X')
+   >>> g = f.moving_mean(3, axis='X', weights='X')
    >>> print(g)
    Field: specific_humidity (ncvar%q)
    ----------------------------------
@@ -2181,13 +2181,12 @@ cell sizes (or custom weights) may applied to the calculation.
     [225. 360.]
     [270. 360.]]
 
-.. note:: The `~Field.moving_average` method can not, in general, be
+.. note:: The `~Field.moving_mean` method can not, in general, be
           emulated by the `~Field.convolution_filter` method, as the
-          window weights of the latter can not change as the filter
-          passes through the axis. Unweighted moving averages,
-          however, can be carried out with the
-          `~Field.convolution_filter` method.
-    
+          latter i) can not change the window weights as the filter
+          passes through the axis; and ii) does not update the cell
+          method constructs.
+        
 Convolution filters
 ^^^^^^^^^^^^^^^^^^^
 
@@ -2278,13 +2277,12 @@ weights of ``[1, 1, 1, 1, 1]`` will produce a 5-point running
 sum. Note that the window weights returned by functions of the
 `scipy.signal.windows` package do not necessarily sum to 1.
 
-.. note:: The `~Field.moving_average` method can not, in general, be
+.. note:: The `~Field.moving_mean` method can not, in general, be
           emulated by the `~Field.convolution_filter` method, as the
-          window weights of the latter can not change as the filter
-          passes through the axis. Unweighted moving averages,
-          however, can be carried out with the
-          `~Field.convolution_filter` method.
-    
+          latter i) can not change the window weights as the filter
+          passes through the axis; and ii) does not update the cell
+          method constructs.
+        
 Derivatives
 ^^^^^^^^^^^
 

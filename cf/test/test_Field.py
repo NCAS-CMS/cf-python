@@ -41,7 +41,7 @@ class FieldTest(unittest.TestCase):
 
         self.test_only = []
 #        self.test_only = ['NOTHING!!!!']
-#        self.test_only = ['test_Field_convolution_filter', 'test_Field_derivative', 'test_Field_moving_average']
+#        self.test_only = ['test_Field_convolution_filter', 'test_Field_derivative', 'test_Field_moving_mean']
 #        self.test_only = ['test_Field_weights']
 #        self.test_only = ['test_Field_collapse']
 #        self.test_only = ['test_Field_radius']
@@ -1602,7 +1602,7 @@ class FieldTest(unittest.TestCase):
             self.assertTrue((g.array == convolve1d(f.array, window, axis=-1,
                                                    mode=mode)).all())
         
-    def test_Field_moving_average(self):
+    def test_Field_moving_mean(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
@@ -1610,7 +1610,7 @@ class FieldTest(unittest.TestCase):
 
         f = cf.example_field(0)
 
-        g = f.moving_average(window_size=3, axis='X', inplace=True)
+        g = f.moving_mean(window_size=3, axis='X', inplace=True)
         self.assertTrue(g is None)
         
         f = cf.example_field(0)
@@ -1621,11 +1621,11 @@ class FieldTest(unittest.TestCase):
         # ------------------------------------------------------------
         for mode in ('constant', 'wrap', 'reflect', 'nearest',
                      'mirror'):
-            g = f.moving_average(window_size=3, axis='X',
+            g = f.moving_mean(window_size=3, axis='X',
                                  weights=weights, mode=mode)
 
             with self.assertRaises(ValueError):
-                g = f.moving_average(window_size=3, axis='X',
+                g = f.moving_mean(window_size=3, axis='X',
                                      mode=mode, cval=39)
 
             for i in range(1, 7):            
@@ -1635,7 +1635,7 @@ class FieldTest(unittest.TestCase):
         
         # Test 'wrap'
         for mode in (None, 'wrap'):
-            g = f.moving_average(window_size=3, axis='X',
+            g = f.moving_mean(window_size=3, axis='X',
                                  weights=weights, mode=mode)
             
             for i, ii in zip([0, -1], ([0, 1, -1], [0, -2, -1])):
@@ -1648,7 +1648,7 @@ class FieldTest(unittest.TestCase):
         # ------------------------------------------------------------
         for mode in ('constant', 'wrap', 'reflect', 'nearest',
                      'mirror'):
-            g = f.moving_average(window_size=3, axis='X',
+            g = f.moving_mean(window_size=3, axis='X',
                                  weights=weights, mode=mode, origin=1)
 
             for i in range(0, 6):
@@ -1659,7 +1659,7 @@ class FieldTest(unittest.TestCase):
 
         # Test 'wrap'
         for mode in (None, 'wrap'):
-            g = f.moving_average(window_size=3, axis='X',
+            g = f.moving_mean(window_size=3, axis='X',
                                  weights=weights, mode=mode, origin=1)
             
             for i, ii in zip([-2, -1], ([0, -2, -1], [0, 1, -1])):
@@ -1671,7 +1671,7 @@ class FieldTest(unittest.TestCase):
         # Constant
         # ------------------------------------------------------------
         for constant in (None, 0):
-            g = f.moving_average(window_size=3, axis='X',
+            g = f.moving_mean(window_size=3, axis='X',
                                  weights=weights, mode='constant',
                                  cval=constant)            
             for i, ii in zip([0, -1], ([0, 1], [-2, -1])):
@@ -1683,10 +1683,10 @@ class FieldTest(unittest.TestCase):
         # Weights broadcasting
         # ------------------------------------------------------------
         weights = cf.Data(numpy.arange(1, 6.)) / 2
-        g = f.moving_average(window_size=3, axis='Y', weights=weights)
+        g = f.moving_mean(window_size=3, axis='Y', weights=weights)
 
         with self.assertRaises(ValueError):
-            _ = f.moving_average(window_size=3, axis='X', weights=weights)
+            _ = f.moving_mean(window_size=3, axis='X', weights=weights)
 
 
         self.assertTrue(len(g.cell_methods) == len(f.cell_methods) + 1)
