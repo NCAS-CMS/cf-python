@@ -45,16 +45,17 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         cfa = (g['cfa'] and
                ncvar not in g['external_variables'] and
-               g['variable_attributes'][ncvar].get('cf_role') == 'cfa_variable')
+               g['variable_attributes'][ncvar].get('cf_role') ==
+               'cfa_variable')
 
         if not cfa:
             return super()._ncdimensions(ncvar)
 
         # Still here?
-        ncdimensions = g['variable_attributes'][ncvar].get('cfa_dimensions', '').split()
+        ncdimensions = g['variable_attributes'][ncvar].get(
+            'cfa_dimensions', '').split()
 
         return list(map(str, ncdimensions))
-
 
     def _get_domain_axes(self, ncvar, allow_external=False):
         '''Return the domain axis identifiers that correspond to a netCDF
@@ -89,21 +90,22 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         cfa = (g['cfa'] and
                ncvar not in g['external_variables'] and
-               g['variable_attributes'][ncvar].get('cf_role') == 'cfa_variable')
+               g['variable_attributes'][ncvar].get('cf_role') ==
+               'cfa_variable')
 
         if not cfa:
             return super()._get_domain_axes(ncvar=ncvar,
                                             allow_external=allow_external)
 
         # Still here?
-        cfa_dimensions = g['variable_attributes'][ncvar].get('cfa_dimensions', '').split()
+        cfa_dimensions = g['variable_attributes'][ncvar].get(
+            'cfa_dimensions', '').split()
 
         ncdim_to_axis = g['ncdim_to_axis']
         axes = [ncdim_to_axis[ncdim] for ncdim in cfa_dimensions
                 if ncdim in ncdim_to_axis]
 
         return axes
-
 
     def _create_data(self, ncvar, construct=None,
                      unpacked_dtype=False, uncompress_override=None,
@@ -113,7 +115,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
     .. versionadded:: 3.0.0
 
     :Parameters:
-        
+
 
     :Returns:
 
@@ -130,30 +132,34 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             # --------------------------------------------------------
             # Create data for a normal netCDF variable
             # --------------------------------------------------------
-            return super()._create_data(ncvar=ncvar,
-                                        construct=construct,
-                                        unpacked_dtype=unpacked_dtype,
-                                        uncompress_override=uncompress_override,
-                                        parent_ncvar=parent_ncvar)
+            return super()._create_data(
+                ncvar=ncvar,
+                construct=construct,
+                unpacked_dtype=unpacked_dtype,
+                uncompress_override=uncompress_override,
+                parent_ncvar=parent_ncvar
+            )
 
         # ------------------------------------------------------------
         # Still here? Then create data for a CFA netCDF variable
         # ------------------------------------------------------------
-#        print ('    Creating data from CFA variable', repr(ncvar), repr(construct))
+#        print ('    Creating data from CFA variable', repr(ncvar),
+#               repr(construct))
         try:
             cfa_data = json.loads(construct.get_property('cfa_array'))
         except ValueError as error:
             raise ValueError(
-                "Error during JSON-decoding of netCDF attribute 'cfa_array': {}".format(
-                    error))
+                "Error during JSON-decoding of netCDF attribute 'cfa_array': "
+                "{}".format(error)
+            )
 
         variable = g['variables'][ncvar]
 
-        cfa_data['file']       = g['filename']
-        cfa_data['Units']      = construct.Units
+        cfa_data['file'] = g['filename']
+        cfa_data['Units'] = construct.Units
         cfa_data['fill_value'] = construct.fill_value()
-        cfa_data['_pmshape']   = cfa_data.pop('pmshape', ())
-        cfa_data['_pmaxes']    = cfa_data.pop('pmdimensions', ())
+        cfa_data['_pmshape'] = cfa_data.pop('pmshape', ())
+        cfa_data['_pmaxes'] = cfa_data.pop('pmdimensions', ())
 
         base = cfa_data.get('base', None)
         if base is not None:
@@ -167,9 +173,10 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
             # to be reset as a numpy.dtype, but we don't know what
             # without reading the data, so set it to None for now.
             dtype = None
-                    
-        if self._is_char(ncvar) and dtype.kind in 'SU' and ncdimensions: # UNICODE???? TODO
-#            strlen = len(nc.dimensions[ncdimensions[-1]])
+
+        # UNICODE???? TODO
+        if self._is_char(ncvar) and dtype.kind in 'SU' and ncdimensions:
+            # strlen = len(nc.dimensions[ncdimensions[-1]])
             strlen = g['nc'].dimensions[ncdimensions[-1]].size
             if strlen > 1:
                 ncdimensions.pop()
@@ -196,7 +203,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 attrs['subarray']['dtype'] = numpy_dtype(dtype)
 
             # UNITS and CALENDAR
-            units    = attrs.pop('punits', None)
+            units = attrs.pop('punits', None)
             calendar = attrs.pop('pcalendar', None)
             if units is not None or calendar is not None:
                 attrs['Units'] = Units(units, calendar)
@@ -244,7 +251,6 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         return out
 
-
     def _create_Data(self, array=None, units=None, calendar=None,
                      ncvar=None, loadd=None, **kwargs):
         '''TODO
@@ -253,7 +259,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         '''
         try:
-            compressed = array.get_compression_type() # TODO
+            compressed = array.get_compression_type()  # TODO
         except AttributeError:
             compressed = False
 
@@ -266,7 +272,6 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         return super()._create_Data(array=array, units=units,
                                     calendar=calendar, ncvar=ncvar,
                                     loadd=loadd, **kwargs)
-
 
     def _customize_read_vars(self):
         '''TODO
@@ -281,19 +286,21 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         # ------------------------------------------------------------
         # Find out if this is a CFA file
         # ------------------------------------------------------------
-        g['cfa'] = 'CFA' in g['global_attributes'].get('Conventions', ()) # TODO
+        g['cfa'] = 'CFA' in g['global_attributes'].get(
+            'Conventions', ())  # TODO
 
         # ------------------------------------------------------------
         # Do not create fields from CFA private variables
         # ------------------------------------------------------------
         if g['cfa']:
             for ncvar in g['variables']:
-                if g['variable_attributes'][ncvar].get('cf_role', None) == 'cfa_private':
+                if (g['variable_attributes'][ncvar].get('cf_role', None) ==
+                        'cfa_private'):
                     g['do_not_create_field'].add(ncvar)
         # --- End: if
 
         # ------------------------------------------------------------
-        # 
+        #
         # ------------------------------------------------------------
         if g['cfa']:
             for ncvar, ncdims in tuple(g['variable_dimensions'].items()):
@@ -301,14 +308,16 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                     continue
 
                 if not (ncvar not in g['external_variables'] and
-                        g['variable_attributes'][ncvar].get('cf_role') == 'cfa_variable'):
+                        g['variable_attributes'][ncvar].get('cf_role') ==
+                        'cfa_variable'):
                     continue
 
-                ncdimensions = g['variable_attributes'][ncvar].get('cfa_dimensions', '').split()
+                ncdimensions = g['variable_attributes'][ncvar].get(
+                    'cfa_dimensions', '').split()
                 if ncdimensions:
-                    g['variable_dimensions'][ncvar] = tuple(map(str, ncdimensions))
+                    g['variable_dimensions'][ncvar] = tuple(
+                        map(str, ncdimensions))
 
-                            
     def file_open(self, filename):
         '''Open the netCDf file for reading.
 
@@ -328,4 +337,3 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
         return out
 
 # --- End: class
-
