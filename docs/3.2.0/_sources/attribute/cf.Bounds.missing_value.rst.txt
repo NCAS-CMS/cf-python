@@ -1,0 +1,7 @@
+cf.Bounds.missing_value
+=======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.Bounds.missing_value

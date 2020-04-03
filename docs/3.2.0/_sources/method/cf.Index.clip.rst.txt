@@ -1,0 +1,7 @@
+cf.Index.clip
+=============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Index.clip

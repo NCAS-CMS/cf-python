@@ -1,0 +1,7 @@
+cf.Index.__rrshift__
+====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Index.__rrshift__

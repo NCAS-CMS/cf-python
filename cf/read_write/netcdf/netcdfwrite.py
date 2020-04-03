@@ -41,7 +41,6 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
         return True
 
-
     def _customize_createVariable(self, cfvar, kwargs):
         '''TODO
 
@@ -61,7 +60,6 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             kwargs['chunksizes'] = None
 
         return kwargs
-
 
     def _write_data(self, data, cfvar, ncvar, ncdimensions,
                     unset_values=(), compressed=False):
@@ -114,11 +112,13 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
 
                 if numpy.intersect1d(unset_values, temp_array).size:
                     raise ValueError(
-                        "ERROR: Can't write field when array has _FillValue or missing_value at unmasked point: {!r}".format(ncvar))
+                        "ERROR: Can't write field when array has _FillValue or"
+                        " missing_value at unmasked point: {!r}".format(ncvar)
+                    )
             # --- End: if
-            
+
             if (g['fmt'] == 'NETCDF4' and array.dtype.kind in 'SU' and
-                numpy.ma.isMA(array)):
+                    numpy.ma.isMA(array)):
                 # VLEN variables can not be assigned to by masked arrays
                 # https://github.com/Unidata/netcdf4-python/pull/465
                 array = array.filled('')
@@ -127,7 +127,6 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             g['nc'][ncvar][partition.indices] = array
 
             partition.close()
-
 
     def _write_dimension_coordinate(self, f, key, coord):
         '''Write a coordinate variable and its bound variable to the file.
@@ -152,7 +151,6 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         coord = self._change_reference_datetime(coord)
 
         return super()._write_dimension_coordinate(f, key, coord)
-
 
     def _write_scalar_coordinate(self, f, key, coord_1d, axis,
                                  coordinates, extra=None):
@@ -192,7 +190,6 @@ then the input coordinate is not written.
                                                 axis, coordinates,
                                                 extra=extra)
 
-
     def _write_auxiliary_coordinate(self, f, key, coord, coordinates):
         '''Write auxiliary coordinates and bounds to the netCDF file.
 
@@ -224,7 +221,6 @@ then the input coordinate is not written.
 
         return super()._write_auxiliary_coordinate(f, key, coord, coordinates)
 
-
     def _change_reference_datetime(self, coord):
         '''TODO
 
@@ -248,11 +244,11 @@ then the input coordinate is not written.
             coord2.reference_datetime = reference_datetime
         except ValueError:
             raise ValueError(
-                "Can't override coordinate reference date-time {0!r} with {1!r}".format(
-                    coord.reference_datetime, reference_datetime))
+                "Can't override coordinate reference date-time {0!r} with "
+                "{1!r}".format(coord.reference_datetime, reference_datetime)
+            )
         else:
             return coord2
-
 
     def _write_cfa_data(self, ncvar, ncdimensions, data, cfvar):
         '''Write a CFA variable to the netCDF file.
@@ -278,8 +274,10 @@ then the input coordinate is not written.
         '''
         g = self.write_vars
 
-        netcdf_attrs = {'cf_role'       : 'cfa_variable',
-                        'cfa_dimensions': ' '.join(ncdimensions)}
+        netcdf_attrs = {
+            'cf_role': 'cfa_variable',
+            'cfa_dimensions': ' '.join(ncdimensions)
+        }
 
         # Create a dictionary representation of the data object
         data = data.copy()
@@ -351,7 +349,8 @@ then the input coordinate is not written.
                         # Convert to an array of characters
                         array = _character_array(array)
                         # Get the netCDF dimension for the string length
-                        ncdim_strlen = [_string_length_dimension(strlen, g=None)]
+                        ncdim_strlen = [
+                            _string_length_dimension(strlen, g=None)]
                 # --- End: if
 
                 # Create a name for the netCDF variable to contain the array
@@ -376,18 +375,20 @@ then the input coordinate is not written.
                 # Create the private CFA variable and write the array to it
 #                v = g['netcdf'].createVariable(p_ncvar, self._datatype(array),
 #                                               cfa_dimensions + ncdim_strlen,
-##                                               fill_value=fill_value,
+# #                                              fill_value=fill_value,
 #                                               fill_value=False,
 #                                               least_significant_digit=None,
 #                                               endian=g['endian'],
 #                                               **g['netcdf_compression'])
 
-                kwargs = {'varname': p_ncvar,
-                          'datatype': self._datatype(array),
-                          'dimensions': cfa_dimensions + ncdim_strlen,
-                          'fill_value': None, #False,
-                          'least_significant_digit': None,
-                          'endian': g['endian']}
+                kwargs = {
+                    'varname': p_ncvar,
+                    'datatype': self._datatype(array),
+                    'dimensions': cfa_dimensions + ncdim_strlen,
+                    'fill_value': None,  # False,
+                    'least_significant_digit': None,
+                    'endian': g['endian']
+                }
                 kwargs.update(g['netcdf_compression'])
 
                 self._createVariable(**kwargs)
@@ -403,8 +404,8 @@ then the input coordinate is not written.
                 # 'calendar', 'dimensions' and 'reverse' since the
                 # partition's in-memory data array always matches up with
                 # the master data array.
-                attrs['subarray'] = {'shape' : shape,
-                                     'ncvar' : p_ncvar}
+                attrs['subarray'] = {'shape': shape,
+                                     'ncvar': p_ncvar}
 
             else:
                 # --------------------------------------------------------
@@ -432,7 +433,8 @@ then the input coordinate is not written.
                 dtype = attrs['subarray'].pop('dtype', None)
                 if dtype is not None:
                     if dtype.kind != 'S':
-                        attrs['subarray']['dtype'] = _convert_to_netCDF_datatype(dtype)
+                        attrs['subarray']['dtype'] = (
+                            _convert_to_netCDF_datatype(dtype))
 
                 # FORMAT:
                 sfmt = attrs.pop('format', None)
@@ -479,7 +481,6 @@ then the input coordinate is not written.
         self._write_attributes(parent=None, ncvar=ncvar,
                                extra=netcdf_attrs)
 
-
     def _random_hex_string(self, size=10):
         '''Return a random hexadecimal string with the given number of
     characters.
@@ -503,7 +504,6 @@ then the input coordinate is not written.
 
         '''
         return ''.join(random.choice(hexdigits) for i in range(size))
-
 
     def _convert_to_builtin_type(self, x):
         '''Convert a non-JSON-encodable object to a JSON-encodable built-in
@@ -548,8 +548,9 @@ then the input coordinate is not written.
             return float(x)
 
         raise TypeError(
-            "{!r} object can't be converted to a JSON serializable type: {!r}".format(
-                type(x), x))
+            "{!r} object can't be converted to a JSON serializable type: "
+            "{!r}".format(type(x), x)
+        )
 
 
 # --- End: class

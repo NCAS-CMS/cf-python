@@ -16,18 +16,28 @@ version 3.2.0
 -------------
 ----
 
-**2020-??-??**
+**2020-04-01**
 
 * First release for CF-1.8 (does not include netCDF hierarchical
   groups functionality).
 * New methods: `cf.Data.compressed`, `cf.Data.diff`
 * New function: `cf.implementation`
+* New methods completing coverage of the inverse trigonometric and
+  hyperbolic operations: `cf.Data.arccos`, `cf.Data.arccosh`,
+  `cf.Data.arcsin`, `cf.Data.arctanh`.
+* New keyword parameters to `cf.Field.collapse`, `cf.Field.cell_area`,
+  `cf.Field.weights`: ``radius``, ``great_circle``.
 * Implemented simple geometries for CF-1.8.
 * Implemented string data-types for CF-1.8.
 * Changed minimum cfdm dependency to version 1.8.0.
 * Changed minimum cfunits dependency to version 3.2.5.
 * Changed minimum netCDF4 dependency to version 1.5.3.
 * Changed minimum cftime dependency to version 1.1.1.
+* Renamed the regridding method, i.e. option for the ``method`` parameter to
+  `cf.Field.regridc` and `cf.Field.regrids`, ``bilinear`` to ``linear``,
+  though ``bilinear`` is still supported (use of it gives a message as such).
+* Made documentation of available `cf.Field.regridc` and `cf.Field.regrids`
+  ``method`` parameters clearer & documented second-order conservative method.
 * Fixed bug that prevented writing to ``'NETCDF3_64BIT_OFFSET'`` and
   ``'NETCDF3_64BIT_DATA'`` format files
   (https://github.com/NCAS-CMS/cfdm/issues/9).
@@ -36,7 +46,13 @@ version 3.2.0
   (https://github.com/NCAS-CMS/cf-python/issues/40).
 * Fixed bug that prevented the reading of PP and UM files with "zero"
   data or validity times.
-  
+* Fixed broken API reference 'source' links to code in `cfdm`.
+* Fixed bug in `cf.Field.weights` with the parameter ``methods`` set to
+  ``True`` where it would always error before returning dictionary of methods.
+* Fixed bug in `cf.Data.where` that meant the units were not taken into
+  account when the condition was a `cf.Query` object with specified units.
+* Addressed many 'TO DO' placeholders in the documentation.
+
 version 3.1.0
 -------------
 ----

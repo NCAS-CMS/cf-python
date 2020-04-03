@@ -1,0 +1,7 @@
+cf.Count.mask_invalid
+=====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.Count.mask_invalid

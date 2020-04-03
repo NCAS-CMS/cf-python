@@ -1,0 +1,7 @@
+cf.CellMeasure.ceil
+===================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CellMeasure.ceil

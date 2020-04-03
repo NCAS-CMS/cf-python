@@ -1,0 +1,7 @@
+cf.FieldAncillary.long_name
+===========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.FieldAncillary.long_name

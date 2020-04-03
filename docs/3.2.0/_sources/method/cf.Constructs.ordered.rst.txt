@@ -1,0 +1,7 @@
+cf.Constructs.ordered
+=====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Constructs.ordered

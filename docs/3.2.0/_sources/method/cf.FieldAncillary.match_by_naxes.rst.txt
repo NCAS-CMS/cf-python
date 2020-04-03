@@ -1,0 +1,7 @@
+cf.FieldAncillary.match_by_naxes
+================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.FieldAncillary.match_by_naxes

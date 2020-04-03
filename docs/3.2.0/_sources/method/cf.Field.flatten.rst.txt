@@ -1,0 +1,7 @@
+cf.Field.flatten
+================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Field.flatten

@@ -1,0 +1,7 @@
+cf.Field.get_property
+=====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Field.get_property

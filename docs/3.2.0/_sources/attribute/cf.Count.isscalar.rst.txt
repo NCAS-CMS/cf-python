@@ -1,0 +1,7 @@
+cf.Count.isscalar
+=================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.Count.isscalar

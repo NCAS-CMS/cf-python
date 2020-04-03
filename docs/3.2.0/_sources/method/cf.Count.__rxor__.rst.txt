@@ -1,0 +1,7 @@
+cf.Count.__rxor__
+=================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Count.__rxor__

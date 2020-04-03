@@ -1,0 +1,7 @@
+cf.CoordinateConversion.has_domain_ancillary
+============================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CoordinateConversion.has_domain_ancillary

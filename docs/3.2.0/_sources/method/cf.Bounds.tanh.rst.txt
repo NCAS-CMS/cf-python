@@ -1,0 +1,7 @@
+cf.Bounds.tanh
+==============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.tanh

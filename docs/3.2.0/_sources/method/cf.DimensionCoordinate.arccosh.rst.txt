@@ -1,0 +1,7 @@
+cf.DimensionCoordinate.arccosh
+==============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DimensionCoordinate.arccosh

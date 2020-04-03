@@ -1,0 +1,7 @@
+cf.FieldAncillary.sinh
+======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.FieldAncillary.sinh

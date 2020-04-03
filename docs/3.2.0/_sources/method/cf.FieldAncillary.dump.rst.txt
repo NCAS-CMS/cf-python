@@ -1,0 +1,7 @@
+cf.FieldAncillary.dump
+======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.FieldAncillary.dump

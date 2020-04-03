@@ -1,0 +1,7 @@
+cf.AuxiliaryCoordinate.__ixor__
+===============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.AuxiliaryCoordinate.__ixor__

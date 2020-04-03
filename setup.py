@@ -205,7 +205,7 @@ Tests are run from within the ``cf/test`` directory:
     python run_tests.py
 """
 
-setup(name = "cf",
+setup(name = "cf-python",
       long_description = long_description,
       version      = version,
       description  = "Python interface to the CF conventions",

@@ -1,20 +1,20 @@
 import datetime
 import os
-from random import randrange, shuffle
+from random import choice, shuffle
 import unittest
 
 import cf
 
 
 def randomise_test_order(*_args):
-    '''Return a random choice from -1, 0 or 1.
+    '''Return a random choice from 1 or -1.
 
     When set as the test loader method for standard (merge)sort comparison
     to order all methods in a test case (see 'sortTestMethodsUsing'), ensures
     they run in a random order, meaning implicit reliance on setup or state,
     i.e. test dependencies, become evident over repeated runs.
     '''
-    return randrange(-1, 2)
+    return choice([1, -1])
 
 
 # Build the test suite from the tests found in the test files.

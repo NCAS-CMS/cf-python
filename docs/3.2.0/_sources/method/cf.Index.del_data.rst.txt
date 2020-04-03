@@ -1,0 +1,7 @@
+cf.Index.del_data
+=================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Index.del_data

@@ -1,0 +1,7 @@
+cf.DimensionCoordinate.arcsin
+=============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DimensionCoordinate.arcsin

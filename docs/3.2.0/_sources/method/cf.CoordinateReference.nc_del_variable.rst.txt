@@ -1,0 +1,7 @@
+cf.CoordinateReference.nc_del_variable
+======================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CoordinateReference.nc_del_variable

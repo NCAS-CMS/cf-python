@@ -1,0 +1,7 @@
+cf.Data.asdata
+==============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Data.asdata

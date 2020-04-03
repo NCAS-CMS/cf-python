@@ -1,0 +1,7 @@
+cf.implementation
+=================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autofunction:: cf.implementation

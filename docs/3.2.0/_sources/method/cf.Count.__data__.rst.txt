@@ -1,0 +1,7 @@
+cf.Count.__data__
+=================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Count.__data__

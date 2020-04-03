@@ -1,0 +1,7 @@
+cf.Bounds.arctan
+================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.arctan

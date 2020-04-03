@@ -1,0 +1,7 @@
+cf.FieldAncillary.leap_year
+===========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.FieldAncillary.leap_year

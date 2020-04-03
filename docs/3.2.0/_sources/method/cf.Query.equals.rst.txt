@@ -1,0 +1,7 @@
+cf.Query.equals
+===============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Query.equals

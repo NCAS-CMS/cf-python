@@ -32,7 +32,7 @@ do
   sed 's/^\(.*\)\# Raises Exception/try:\n    \1\nexcept:\n    pass\nelse:\n    raise Exception("This should have failed!")/' $test > $temp_file
   cp $temp_file $test
   
-  # Process code block instructsions
+  # Process code block instructions
   sed 's/^\.\. Code Block \(.*\)/raise Exception("To proceeed, insert code block \1")/' $test > $temp_file
   cp $temp_file $test
   
@@ -41,5 +41,9 @@ done
 
 cat tutorial.py field_analysis.py > $$.py
 mv $$.py tutorial.py  
+
+# The processes above introduce trailing whitespace, so strip it out
+# else will produce an unhelpful diff (as well as resulting in bad style):
+sed -i 's/[ \t]*$//' tutorial.py
 
 cat tutorial.py

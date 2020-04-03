@@ -1,0 +1,7 @@
+cf.DomainAncillary.arctan
+=========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DomainAncillary.arctan

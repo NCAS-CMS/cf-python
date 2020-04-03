@@ -1,0 +1,7 @@
+cf.Bounds.__array__
+===================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.__array__
