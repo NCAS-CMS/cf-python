@@ -1,0 +1,7 @@
+cf.AuxiliaryCoordinate.__rshift__
+=================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.AuxiliaryCoordinate.__rshift__

@@ -1,0 +1,7 @@
+cf.DomainAncillary.sum
+======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DomainAncillary.sum

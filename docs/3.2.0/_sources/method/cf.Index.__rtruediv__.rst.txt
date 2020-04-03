@@ -1,0 +1,7 @@
+cf.Index.__rtruediv__
+=====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Index.__rtruediv__

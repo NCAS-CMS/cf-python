@@ -1,0 +1,7 @@
+cf.Count.flatten
+================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Count.flatten

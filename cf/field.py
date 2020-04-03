@@ -4595,8 +4595,15 @@ class Field(mixin.PropertiesData,
             coordinate reference constucts, then the default radius
             taken as 6371229 metres.
 
-        great_circle: `bool`
-            TODO
+        great_circle: `bool`, optional
+            If True then allow, if required, the derivation of i) area
+            weights from polygon geometry cells by assuming that each
+            cell part is a spherical polygon composed of great circle
+            segments; and ii) and the derivation of line-length
+            weights from line geometry cells by assuming that each
+            line part is composed of great circle segments.
+
+            .. versionadded:: 3.2.0
 
         insert: `bool`, optional
             If True then calculated cell areas are also inserted in
@@ -5310,7 +5317,14 @@ class Field(mixin.PropertiesData,
             is broadcastable to the original data.
 
         great_circle: `bool`, optional
-            TODO
+            If True then allow, if required, the derivation of i) area
+            weights from polygon geometry cells by assuming that each
+            cell part is a spherical polygon composed of great circle
+            segments; and ii) and the derivation of line-length
+            weights from line geometry cells by assuming that each
+            line part is composed of great circle segments.
+
+            .. versionadded:: 3.2.0
 
         kwargs: deprecated at version 3.0.0.
 
@@ -7324,8 +7338,15 @@ class Field(mixin.PropertiesData,
             coordinate reference constucts, then the default radius
             taken as 6371229 metres.
 
-        great_circle: `bool`
-            TODO
+        great_circle: `bool`, optional
+            If True then allow, if required, the derivation of i) area
+            weights from polygon geometry cells by assuming that each
+            cell part is a spherical polygon composed of great circle
+            segments; and ii) and the derivation of line-length
+            weights from line geometry cells by assuming that each
+            line part is composed of great circle segments.
+
+            .. versionadded:: 3.2.0
 
         verbose: `bool`, optional
             If True then print a description of the binned field
@@ -8722,8 +8743,15 @@ class Field(mixin.PropertiesData,
             coordinate reference constucts, then the default radius
             taken as 6371229 metres.
 
-        great_circle: `bool`
-            TODO
+        great_circle: `bool`, optional
+            If True then allow, if required, the derivation of i) area
+            weights from polygon geometry cells by assuming that each
+            cell part is a spherical polygon composed of great circle
+            segments; and ii) and the derivation of line-length
+            weights from line geometry cells by assuming that each
+            line part is composed of great circle segments.
+
+            .. versionadded:: 3.2.0
 
         squeeze: `bool`, optional
             If True then size 1 collapsed axes are removed from the

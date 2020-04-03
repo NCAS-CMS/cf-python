@@ -1,0 +1,7 @@
+cf.Index.has_property
+=====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Index.has_property

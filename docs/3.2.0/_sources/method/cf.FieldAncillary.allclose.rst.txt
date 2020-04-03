@@ -1,0 +1,7 @@
+cf.FieldAncillary.allclose
+==========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.FieldAncillary.allclose

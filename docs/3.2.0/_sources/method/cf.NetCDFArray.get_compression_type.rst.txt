@@ -1,0 +1,7 @@
+cf.NetCDFArray.get_compression_type
+===================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.NetCDFArray.get_compression_type

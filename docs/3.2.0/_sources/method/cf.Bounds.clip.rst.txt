@@ -1,0 +1,7 @@
+cf.Bounds.clip
+==============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.clip

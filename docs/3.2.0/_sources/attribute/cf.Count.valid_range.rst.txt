@@ -1,0 +1,7 @@
+cf.Count.valid_range
+====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.Count.valid_range

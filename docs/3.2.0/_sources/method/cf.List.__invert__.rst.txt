@@ -1,0 +1,7 @@
+cf.List.__invert__
+==================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.List.__invert__

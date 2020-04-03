@@ -1,0 +1,7 @@
+cf.Bounds.standard_name
+=======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.Bounds.standard_name

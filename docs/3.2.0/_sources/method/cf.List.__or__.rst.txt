@@ -1,0 +1,7 @@
+cf.List.__or__
+==============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.List.__or__

@@ -1,0 +1,7 @@
+cf.FieldAncillary.cos
+=====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.FieldAncillary.cos

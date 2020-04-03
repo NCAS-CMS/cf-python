@@ -1,0 +1,7 @@
+cf.FieldAncillary.arccos
+========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.FieldAncillary.arccos

@@ -1,0 +1,7 @@
+cf.CellMeasure.max
+==================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CellMeasure.max

@@ -1,0 +1,7 @@
+cf.CoordinateConversion.copy
+============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CoordinateConversion.copy

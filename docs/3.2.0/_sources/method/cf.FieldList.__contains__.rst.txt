@@ -1,0 +1,7 @@
+cf.FieldList.__contains__
+=========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.FieldList.__contains__

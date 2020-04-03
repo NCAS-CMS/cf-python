@@ -1,0 +1,7 @@
+cf.Bounds.log
+=============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.log

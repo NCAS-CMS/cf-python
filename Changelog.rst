@@ -11,6 +11,8 @@ version 3.2.0
 * New methods completing coverage of the inverse trigonometric and
   hyperbolic operations: `cf.Data.arccos`, `cf.Data.arccosh`,
   `cf.Data.arcsin`, `cf.Data.arctanh`.
+* New keyword parameters to `cf.Field.collapse`, `cf.Field.cell_area`,
+  `cf.Field.weights`: ``radius``, ``great_circle``.
 * Implemented simple geometries for CF-1.8.
 * Implemented string data-types for CF-1.8.
 * Changed minimum cfdm dependency to version 1.8.0.

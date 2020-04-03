@@ -1,0 +1,7 @@
+cf.FieldAncillary.__getitem__
+=============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.FieldAncillary.__getitem__

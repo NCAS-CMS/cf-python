@@ -1,0 +1,7 @@
+cf.CellMethod.del_method
+========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CellMethod.del_method

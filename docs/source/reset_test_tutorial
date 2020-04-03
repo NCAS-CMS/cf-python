@@ -3,7 +3,11 @@
 sample_files=sample_files
 test_tutorial=test_tutorial
 
-rm $test_tutorial/*
+if [[ -d "$test_tutorial" ]] ; then
+  rm $test_tutorial/*
+else
+  mkdir $test_tutorial
+fi
 
 cp $sample_files/* $test_tutorial
 

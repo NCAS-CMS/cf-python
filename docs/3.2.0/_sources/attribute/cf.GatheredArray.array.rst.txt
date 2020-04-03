@@ -1,0 +1,7 @@
+cf.GatheredArray.array
+======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.GatheredArray.array

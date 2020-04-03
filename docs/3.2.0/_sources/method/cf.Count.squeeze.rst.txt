@@ -1,0 +1,7 @@
+cf.Count.squeeze
+================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Count.squeeze

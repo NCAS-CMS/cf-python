@@ -1,0 +1,7 @@
+cf.Field.del_construct
+======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Field.del_construct

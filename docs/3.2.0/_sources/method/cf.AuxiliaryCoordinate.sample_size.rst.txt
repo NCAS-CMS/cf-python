@@ -1,0 +1,7 @@
+cf.AuxiliaryCoordinate.sample_size
+==================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.AuxiliaryCoordinate.sample_size

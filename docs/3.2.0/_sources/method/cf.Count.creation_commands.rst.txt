@@ -1,0 +1,7 @@
+cf.Count.creation_commands
+==========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Count.creation_commands

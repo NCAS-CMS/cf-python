@@ -1,0 +1,7 @@
+cf.Count.unique
+===============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Count.unique

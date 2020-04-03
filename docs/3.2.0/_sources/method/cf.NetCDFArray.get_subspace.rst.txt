@@ -1,0 +1,7 @@
+cf.NetCDFArray.get_subspace
+===========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.NetCDFArray.get_subspace

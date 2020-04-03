@@ -1,0 +1,7 @@
+cf.Index.leap_year
+==================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.Index.leap_year

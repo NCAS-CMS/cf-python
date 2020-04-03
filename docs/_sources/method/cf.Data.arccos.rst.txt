@@ -1,0 +1,7 @@
+cf.Data.arccos
+==============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Data.arccos

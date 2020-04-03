@@ -1,0 +1,7 @@
+cf.Data.loads
+=============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Data.loads

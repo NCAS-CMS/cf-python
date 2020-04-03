@@ -1,0 +1,7 @@
+cf.DomainAncillary.dump
+=======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DomainAncillary.dump

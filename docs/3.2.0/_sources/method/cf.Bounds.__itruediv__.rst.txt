@@ -1,0 +1,7 @@
+cf.Bounds.__itruediv__
+======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.__itruediv__

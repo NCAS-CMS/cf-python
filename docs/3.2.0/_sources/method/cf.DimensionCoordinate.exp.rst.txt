@@ -1,0 +1,7 @@
+cf.DimensionCoordinate.exp
+==========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DimensionCoordinate.exp

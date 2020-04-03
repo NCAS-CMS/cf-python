@@ -1,0 +1,7 @@
+cf.Bounds.history
+=================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.Bounds.history

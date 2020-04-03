@@ -1,0 +1,7 @@
+cf.CellMeasure.arcsin
+=====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CellMeasure.arcsin
