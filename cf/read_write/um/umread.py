@@ -46,10 +46,10 @@ from ...data              import UMArray
 from ...data.functions    import _open_um_file, _close_um_file
 from ...umread_lib.umfile import UMFileException
 
-_cached_runid      = {}
-_cached_latlon     = {}
-_cached_time       = {}
-_cached_ctime      = {}
+_cached_runid = {}
+_cached_latlon = {}
+_cached_time = {}
+_cached_ctime = {}
 _cached_size_1_height_coordinate = {}
 _cached_z_coordinate = {}
 _cached_date2num = {}
@@ -69,50 +69,54 @@ _pstar = 1.0e5
 # --------------------------------------------------------------------
 # Characters used in decoding LBEXP into a runid
 # --------------------------------------------------------------------
-_characters = ('a','b','c','d','e','f','g','h','i','j','k','l','m',
-               'n','o','p','q','r','s','t','u','v','w','x','y','z',
-               '0','1','2','3','4','5','6','7','8','9')
+_characters = (
+    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+    'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
+)
 
 _n_characters = len(_characters)
 
-## --------------------------------------------------------------------
-## Number matching regular expression
-## --------------------------------------------------------------------
-#_number_regex = '([-+]?\d*\.?\d+(e[-+]?\d+)?)'
+# # --------------------------------------------------------------------
+# # Number matching regular expression
+# # --------------------------------------------------------------------
+# _number_regex = '([-+]?\d*\.?\d+(e[-+]?\d+)?)'
 
 _Units = {
-    None                  : Units(),
-    ''                    : Units(''),
-    '1'                   : Units('1'),
-    'Pa'                  : Units('Pa'),
-    'm'                   : Units('m'),
-    'hPa'                 : Units('hPa'),
-    'K'                   : Units('K'),
-    'degrees'             : Units('degrees'),
-    'degrees_east'        : Units('degrees_east'),
-    'degrees_north'       : Units('degrees_north'),
-    'days'                : Units('days'),
+    None: Units(),
+    '': Units(''),
+    '1': Units('1'),
+    'Pa': Units('Pa'),
+    'm': Units('m'),
+    'hPa': Units('hPa'),
+    'K': Units('K'),
+    'degrees': Units('degrees'),
+    'degrees_east': Units('degrees_east'),
+    'degrees_north': Units('degrees_north'),
+    'days': Units('days'),
     'gregorian 1752-09-13': Units('days since 1752-09-13', 'gregorian'),
-    '365_day 1752-09-13'  : Units('days since 1752-09-13', '365_day'),
-    '360_day 0-1-1'       : Units('days since 0-1-1', '360_day'),
+    '365_day 1752-09-13': Units('days since 1752-09-13', '365_day'),
+    '360_day 0-1-1': Units('days since 0-1-1', '360_day'),
 }
 
 # --------------------------------------------------------------------
 # Names of PP integer and real header items
 # --------------------------------------------------------------------
-_header_names = ('LBYR', 'LBMON', 'LBDAT', 'LBHR', 'LBMIN', 'LBDAY',
-                 'LBYRD', 'LBMOND', 'LBDATD', 'LBHRD', 'LBMIND',
-                 'LBDAYD', 'LBTIM', 'LBFT', 'LBLREC', 'LBCODE', 'LBHEM',
-                 'LBROW', 'LBNPT', 'LBEXT', 'LBPACK', 'LBREL', 'LBFC',
-                 'LBCFC', 'LBPROC', 'LBVC', 'LBRVC', 'LBEXP', 'LBEGIN',
-                 'LBNREC', 'LBPROJ', 'LBTYP', 'LBLEV', 'LBRSVD1',
-                 'LBRSVD2', 'LBRSVD3', 'LBRSVD4', 'LBSRCE', 'LBUSER1',
-                 'LBUSER2', 'LBUSER3', 'LBUSER4', 'LBUSER5', 'LBUSER6',
-                 'LBUSER7',
-                 'BRSVD1', 'BRSVD2', 'BRSVD3', 'BRSVD4',
-                 'BDATUM', 'BACC', 'BLEV', 'BRLEV', 'BHLEV', 'BHRLEV',
-                 'BPLAT', 'BPLON', 'BGOR',
-                 'BZY', 'BDY', 'BZX', 'BDX', 'BMDI', 'BMKS')
+_header_names = (
+    'LBYR', 'LBMON', 'LBDAT', 'LBHR', 'LBMIN', 'LBDAY',
+    'LBYRD', 'LBMOND', 'LBDATD', 'LBHRD', 'LBMIND',
+    'LBDAYD', 'LBTIM', 'LBFT', 'LBLREC', 'LBCODE', 'LBHEM',
+    'LBROW', 'LBNPT', 'LBEXT', 'LBPACK', 'LBREL', 'LBFC',
+    'LBCFC', 'LBPROC', 'LBVC', 'LBRVC', 'LBEXP', 'LBEGIN',
+    'LBNREC', 'LBPROJ', 'LBTYP', 'LBLEV', 'LBRSVD1',
+    'LBRSVD2', 'LBRSVD3', 'LBRSVD4', 'LBSRCE', 'LBUSER1',
+    'LBUSER2', 'LBUSER3', 'LBUSER4', 'LBUSER5', 'LBUSER6',
+    'LBUSER7',
+    'BRSVD1', 'BRSVD2', 'BRSVD3', 'BRSVD4',
+    'BDATUM', 'BACC', 'BLEV', 'BRLEV', 'BHLEV', 'BHRLEV',
+    'BPLAT', 'BPLON', 'BGOR',
+    'BZY', 'BDY', 'BZX', 'BDX', 'BMDI', 'BMKS'
+)
 
 # --------------------------------------------------------------------
 # Positions of PP header items in their arrays
@@ -140,30 +144,32 @@ _header_names = ('LBYR', 'LBMON', 'LBDAT', 'LBHR', 'LBMIN', 'LBDAY',
 # http://cms.ncas.ac.uk/html_umdocs/wave/@header.)
 # --------------------------------------------------------------------
 _coord_standard_name = {
-    0  : None, # Sigma (or eta, for hybrid coordinate data).
-    1  : 'air_pressure', # Pressure (mb).
-    2  : 'height', # Height above sea level (km).
-    3  : 'atmosphere_hybrid_sigma_pressure_coordinate', # Eta (U.M. hybrid coordinates) only.
-    4  : 'depth', # Depth below sea level (m)
-    5  : 'model_level_number', # Model level.
-    6  : 'air_potential_temperature', # Theta
-    7  : 'atmosphere_sigma_coordinate', # Sigma only.
-    8  : None, # Sigma-theta
-    10 : 'latitude',  # Latitude (degrees N).
-    11 : 'longitude', # Longitude (degrees E).
-    13 : 'region', # Site number (set of parallel rows or columns e.g.Time series)
-    14 : 'atmosphere_hybrid_height_coordinate',
-    15 : 'height',
-    20 : 'time', # Time (days) (Gregorian calendar (not 360 day year))
-    21 : 'time', # Time (months)
-    22 : 'time', # Time (years)
-    23 : 'time', # Time (model days with 360 day model calendar)
-    40 : None,   # pseudolevel
-    99 : None,   # Other
-    -10: 'grid_latitude',  # Rotated latitude (degrees).
-    -11: 'grid_longitude', # Rotated longitude (degrees).
+    0: None,                  # Sigma (or eta, for hybrid coordinate data).
+    1: 'air_pressure',        # Pressure (mb).
+    2: 'height',              # Height above sea level (km)
+    # Eta (U.M. hybrid coordinates) only:
+    3: 'atmosphere_hybrid_sigma_pressure_coordinate',
+    4: 'depth',               # Depth below sea level (m)
+    5: 'model_level_number',  # Model level.
+    6: 'air_potential_temperature',    # Theta
+    7: 'atmosphere_sigma_coordinate',  # Sigma only.
+    8: None,                  # Sigma-theta
+    10: 'latitude',           # Latitude (degrees N).
+    11: 'longitude',          # Longitude (degrees E).
+    # Site number (set of parallel rows or columns e.g.Time series):
+    13: 'region',
+    14: 'atmosphere_hybrid_height_coordinate',
+    15: 'height',
+    20: 'time',          # Time (days) (Gregorian calendar (not 360 day year))
+    21: 'time',               # Time (months)
+    22: 'time',               # Time (years)
+    23: 'time',               # Time (model days with 360 day model calendar)
+    40: None,                 # pseudolevel
+    99: None,                 # Other
+    -10: 'grid_latitude',     # Rotated latitude (degrees).
+    -11: 'grid_longitude',    # Rotated longitude (degrees).
     -20: 'radiation_wavelength',
-    }
+}
 
 # --------------------------------------------------------------------
 # Map PP axis codes to CF long names
@@ -173,142 +179,143 @@ _coord_long_name = {}
 # --------------------------------------------------------------------
 # Map PP axis codes to UDUNITS strings
 # --------------------------------------------------------------------
-#_coord_units = {
+# _coord_units = {
 _axiscode_to_units = {
-    0  : '1',             # Sigma (or eta, for hybrid coordinate data)
-    1  : 'hPa',           # air_pressure
-    2  : 'm',             # altitude
-    3  : '1',             # atmosphere_hybrid_sigma_pressure_coordinate
-    4  : 'm',             # depth
-    5  : '1',             # model_level_number
-    6  : 'K',             # air_potential_temperature
-    7  : '1',             # atmosphere_sigma_coordinate
-    10 : 'degrees_north', # latitude
-    11 : 'degrees_east',  # longitude
-    13 : '',              # region
-    14 : '1',             # atmosphere_hybrid_height_coordinate
-    15 : 'm',             # height
-    20 : 'days',          # time (gregorian)
-    23 : 'days',          # time (360_day)
-    40 : '1',             # pseudolevel
-    -10: 'degrees', # rotated latitude  (not an official axis code)
-    -11: 'degrees', # rotated longitude (not an official axis code)
+    0: '1',               # Sigma (or eta, for hybrid coordinate data)
+    1: 'hPa',             # air_pressure
+    2: 'm',               # altitude
+    3: '1',               # atmosphere_hybrid_sigma_pressure_coordinate
+    4: 'm',               # depth
+    5: '1',               # model_level_number
+    6: 'K',               # air_potential_temperature
+    7: '1',               # atmosphere_sigma_coordinate
+    10: 'degrees_north',  # latitude
+    11: 'degrees_east',   # longitude
+    13: '',               # region
+    14: '1',              # atmosphere_hybrid_height_coordinate
+    15: 'm',              # height
+    20: 'days',           # time (gregorian)
+    23: 'days',           # time (360_day)
+    40: '1',              # pseudolevel
+    -10: 'degrees',  # rotated latitude  (not an official axis code)
+    -11: 'degrees',  # rotated longitude (not an official axis code)
 }
 
 # --------------------------------------------------------------------
 # Map PP axis codes to Units objects
 # --------------------------------------------------------------------
 _axiscode_to_Units = {
-    0  : _Units['1'],             # Sigma (or eta, for hybrid coordinate data)
-    1  : _Units['hPa'],           # air_pressure
-    2  : _Units['m'],             # altitude
-    3  : _Units['1'],             # atmosphere_hybrid_sigma_pressure_coordinate
-    4  : _Units['m'],             # depth
-    5  : _Units['1'],             # model_level_number
-    6  : _Units['K'],             # air_potential_temperature
-    7  : _Units['1'],             # atmosphere_sigma_coordinate
-    10 : _Units['degrees_north'], # latitude
-    11 : _Units['degrees_east'],  # longitude
-    13 : _Units[''],              # region
-    14 : _Units['1'],             # atmosphere_hybrid_height_coordinate
-    15 : _Units['m'],             # height
-    20 : _Units['days'],          # time (gregorian)
-    23 : _Units['days'],          # time (360_day)
-    40 : _Units['1'],             # pseudolevel
-    -10: _Units['degrees'], # rotated latitude  (not an official axis code)
-    -11: _Units['degrees'], # rotated longitude (not an official axis code)
-    }
+    0: _Units['1'],               # Sigma (or eta, for hybrid coordinate data)
+    1: _Units['hPa'],             # air_pressure
+    2: _Units['m'],               # altitude
+    3: _Units['1'],          # atmosphere_hybrid_sigma_pressure_coordinate
+    4: _Units['m'],               # depth
+    5: _Units['1'],               # model_level_number
+    6: _Units['K'],               # air_potential_temperature
+    7: _Units['1'],               # atmosphere_sigma_coordinate
+    10: _Units['degrees_north'],  # latitude
+    11: _Units['degrees_east'],   # longitude
+    13: _Units[''],               # region
+    14: _Units['1'],              # atmosphere_hybrid_height_coordinate
+    15: _Units['m'],              # height
+    20: _Units['days'],           # time (gregorian)
+    23: _Units['days'],           # time (360_day)
+    40: _Units['1'],              # pseudolevel
+    -10: _Units['degrees'],  # rotated latitude  (not an official axis code)
+    -11: _Units['degrees'],  # rotated longitude (not an official axis code)
+}
 
 # --------------------------------------------------------------------
 # Map PP axis codes to CF axis attributes
 # --------------------------------------------------------------------
 _coord_axis = {
-    1  : 'Z',   # air_pressure
-    2  : 'Z',   # altitude
-    3  : 'Z',   # atmosphere_hybrid_sigma_pressure_coordinate
-    4  : 'Z',   # depth
-    5  : 'Z',   # model_level_number
-    6  : 'Z',   # air_potential_temperature
-    7  : 'Z',   # atmosphere_sigma_coordinate
-    10 : 'Y',   # latitude
-    11 : 'X',   # longitude
-    13 : None,  # region
-    14 : 'Z',   # atmosphere_hybrid_height_coordinate
-    15 : 'Z',   # height
-    20 : 'T',   # time (gregorian)
-    23 : 'T',   # time (360_day)
-    40 : None,  # pseudolevel
-    -10: 'Y', # rotated latitude  (not an official axis code)
-    -11: 'X', # rotated longitude (not an official axis code)
-    }
+    1: 'Z',    # air_pressure
+    2: 'Z',    # altitude
+    3: 'Z',    # atmosphere_hybrid_sigma_pressure_coordinate
+    4: 'Z',    # depth
+    5: 'Z',    # model_level_number
+    6: 'Z',    # air_potential_temperature
+    7: 'Z',    # atmosphere_sigma_coordinate
+    10: 'Y',   # latitude
+    11: 'X',   # longitude
+    13: None,  # region
+    14: 'Z',   # atmosphere_hybrid_height_coordinate
+    15: 'Z',   # height
+    20: 'T',   # time (gregorian)
+    23: 'T',   # time (360_day)
+    40: None,  # pseudolevel
+    -10: 'Y',  # rotated latitude  (not an official axis code)
+    -11: 'X',  # rotated longitude (not an official axis code)
+}
 
 # --------------------------------------------------------------------
 # Map PP axis codes to CF positive attributes
 # --------------------------------------------------------------------
 _coord_positive = {
-    1  : 'down',  # air_pressure
-    2  : 'up',    # altitude
-    3  : 'down',  # atmosphere_hybrid_sigma_pressure_coordinate
-    4  : 'down',  # depth
-    5  : None,    # model_level_number
-    6  : 'up',    # air_potential_temperature
-    7  : 'down',  # atmosphere_sigma_coordinate
-    10 : None,    # latitude
-    11 : None,    # longitude
-    13 : None,    # region
-    14 : 'up',    # atmosphere_hybrid_height_coordinate
-    15 : 'up',    # height
-    20 : None,    # time (gregorian)
-    23 : None,    # time (360_day)
-    40 : None,    # pseudolevel
-    -10: None, # rotated latitude  (not an official axis code)
-    -11: None, # rotated longitude (not an official axis code)
-    }
+    1: 'down',  # air_pressure
+    2: 'up',    # altitude
+    3: 'down',  # atmosphere_hybrid_sigma_pressure_coordinate
+    4: 'down',  # depth
+    5: None,    # model_level_number
+    6: 'up',    # air_potential_temperature
+    7: 'down',  # atmosphere_sigma_coordinate
+    10: None,   # latitude
+    11: None,   # longitude
+    13: None,   # region
+    14: 'up',   # atmosphere_hybrid_height_coordinate
+    15: 'up',   # height
+    20: None,   # time (gregorian)
+    23: None,   # time (360_day)
+    40: None,   # pseudolevel
+    -10: None,  # rotated latitude  (not an official axis code)
+    -11: None,  # rotated longitude (not an official axis code)
+}
 
 # --------------------------------------------------------------------
 # Map LBVC codes to PP axis codes. The full list of field code keys
 # may be found at http://cms.ncas.ac.uk/html_umdocs/wave/@fcodes
 # --------------------------------------------------------------------
 _lbvc_to_axiscode = {
-    1  :  2,   # altitude (Height)
-    2  :  4,   # depth (Depth)
-    3  : None, # (Geopotential (= g*height))
-    4  : None, # (ICAO height)
-    6  :  4,   # model_level_number  # Changed from 5 !!!
-    7  : None, # (Exner pressure)
-    8  :  1,   # air_pressure  (Pressure)
-    9  :  3,   # atmosphere_hybrid_sigma_pressure_coordinate (Hybrid pressure)
-    10 :  7,   # atmosphere_sigma_coordinate (Sigma (= p/surface p))   ## dch check
-    16 : None, # (Temperature T)
-    19 :  6,   # air_potential_temperature (Potential temperature)
-    27 : None, # (Atmospheric) density
-    28 : None, # (d(p*)/dt .  p* = surface pressure)
-    44 : None, # (Time in seconds)
-    65 : 14,   # atmosphere_hybrid_height_coordinate (Hybrid height)
-    129: None, # Surface
-    176: 10,   # latitude    (Latitude)
-    177: 11,   # longitude   (Longitude)
-    }
+    1: 2,       # altitude (Height)
+    2: 4,       # depth (Depth)
+    3: None,    # (Geopotential (= g*height))
+    4: None,    # (ICAO height)
+    6: 4,       # model_level_number  # Changed from 5 !!!
+    7: None,    # (Exner pressure)
+    8: 1,       # air_pressure  (Pressure)
+    9: 3,       # atmosphere_hybrid_sigma_pressure_coordinate (Hybrid pressure)
+    # dch check:
+    10: 7,      # atmosphere_sigma_coordinate (Sigma (= p/surface p))
+    16: None,   # (Temperature T)
+    19: 6,      # air_potential_temperature (Potential temperature)
+    27: None,   # (Atmospheric) density
+    28: None,   # (d(p*)/dt .  p* = surface pressure)
+    44: None,   # (Time in seconds)
+    65: 14,     # atmosphere_hybrid_height_coordinate (Hybrid height)
+    129: None,  # Surface
+    176: 10,    # latitude    (Latitude)
+    177: 11,    # longitude   (Longitude)
+}
 
 # --------------------------------------------------------------------
 # Map model identifier codes to model names. The model identifier code
 # is the last four digits of LBSRCE.
 # --------------------------------------------------------------------
-_lbsrce_model_codes = {1111 : 'UM'}
+_lbsrce_model_codes = {1111: 'UM'}
 
 # --------------------------------------------------------------------
 # Names of PP extra data codes
 # --------------------------------------------------------------------
 _extra_data_name = {
-    1 : 'x',
-    2 : 'y',
-    3 : 'y_domain_lower_bound',
-    4 : 'x_domain_lower_bound',
-    5 : 'y_domain_upper_bound',
-    6 : 'x_domain_upper_bound',
-    7 : 'z_domain_lower_bound',
-    8 : 'x_domain_upper_bound',
-    9 : 'title',
+    1: 'x',
+    2: 'y',
+    3: 'y_domain_lower_bound',
+    4: 'x_domain_lower_bound',
+    5: 'y_domain_upper_bound',
+    6: 'x_domain_upper_bound',
+    7: 'z_domain_lower_bound',
+    8: 'x_domain_upper_bound',
+    9: 'title',
     10: 'domain_title',
     11: 'x_lower_bound',
     12: 'x_upper_bound',
@@ -326,14 +333,14 @@ _true_latitude_longitude_lbcodes = set((1, 2))
 # --------------------------------------------------------------------
 _rotated_latitude_longitude_lbcodes = set((101, 102, 111))
 
-#_axis = {'t'   : 'dim0',
-#         'z'   : 'dim1',
-#         'y'   : 'dim2',
-#         'x'   : 'dim3',
-#         'r'   : 'dim4',
-#         'p'   : 'dim5',
-#         'area': None,
-#     }
+# _axis = {'t'   : 'dim0',
+#          'z'   : 'dim1',
+#          'y'   : 'dim2',
+#          'x'   : 'dim3',
+#          'r'   : 'dim4',
+#          'p'   : 'dim5',
+#          'area': None,
+#      }
 
 _axis = {'area': None}
 
@@ -380,17 +387,17 @@ class UMField:
 
         self.verbose = verbose
 
-        self.fmt                    = fmt
+        self.fmt = fmt
         self.height_at_top_of_model = height_at_top_of_model
-        self.byte_ordering          = byte_ordering
-        self.word_size              = word_size
+        self.byte_ordering = byte_ordering
+        self.word_size = word_size
 
         self.atol = ATOL()
 
         self.field = self.implementation.initialise_Field()
 
         cf_properties = {}
-        attributes    = {}
+        attributes = {}
 
         self.fields = []
 
@@ -415,14 +422,15 @@ class UMField:
                 group_size = len(group)
                 if group_size == 1:
                     # There is only one record in this group
-                    split_group= False
+                    split_group = False
                     nz = 1
                 elif group_size > 1:
                     # There are multiple records in this group
                     # Find the lengths of runs of identical times
-                    times   = [(self.header_vtime(rec), self.header_dtime(rec))
-                               for rec in group]
-                    lengths = [len(tuple(g)) for k, g in itertools.groupby(times)]
+                    times = [(self.header_vtime(rec), self.header_dtime(rec))
+                             for rec in group]
+                    lengths = [len(tuple(g)) for k, g in
+                               itertools.groupby(times)]
                     if len(set(lengths)) == 1:
                         # Each run of identical times has the same
                         # length, so it is possible that this group
@@ -467,36 +475,36 @@ class UMField:
         int_hdr = rec0.int_hdr
         self.int_hdr_dtype = int_hdr.dtype
 
-        int_hdr  = int_hdr.tolist()
+        int_hdr = int_hdr.tolist()
         real_hdr = rec0.real_hdr.tolist()
-        self.int_hdr  = int_hdr
+        self.int_hdr = int_hdr
         self.real_hdr = real_hdr
 
         # ------------------------------------------------------------
         # Set some metadata quantities which are guaranteed to be the
         # same for all records in a variable
         # ------------------------------------------------------------
-        LBNPT   = int_hdr[lbnpt]
-        LBROW   = int_hdr[lbrow]
-        LBTIM   = int_hdr[lbtim]
-        LBCODE  = int_hdr[lbcode]
-        LBPROC  = int_hdr[lbproc]
-        LBVC    = int_hdr[lbvc]
+        LBNPT = int_hdr[lbnpt]
+        LBROW = int_hdr[lbrow]
+        LBTIM = int_hdr[lbtim]
+        LBCODE = int_hdr[lbcode]
+        LBPROC = int_hdr[lbproc]
+        LBVC = int_hdr[lbvc]
         LBUSER5 = int_hdr[lbuser5]
         BPLAT = real_hdr[bplat]
         BPLON = real_hdr[bplon]
-        BDX   = real_hdr[bdx]
-        BDY   = real_hdr[bdy]
+        BDX = real_hdr[bdx]
+        BDY = real_hdr[bdy]
 
-        self.lbnpt   = LBNPT
-        self.lbrow   = LBROW
-        self.lbtim   = LBTIM
-        self.lbproc  = LBPROC
-        self.lbvc    = LBVC
+        self.lbnpt = LBNPT
+        self.lbrow = LBROW
+        self.lbtim = LBTIM
+        self.lbproc = LBPROC
+        self.lbvc = LBVC
         self.bplat = BPLAT
         self.bplon = BPLON
-        self.bdx   = BDX
-        self.bdy   = BDY
+        self.bdx = BDX
+        self.bdy = BDY
 
         # ------------------------------------------------------------
         # Set some derived metadata quantities which are (as good as)
@@ -519,10 +527,10 @@ class UMField:
 
         if header_um_version > 0 and int(um_version) == um_version:
             model_um_version = header_um_version
-            self.um_version  = header_um_version
+            self.um_version = header_um_version
         else:
             model_um_version = None
-            self.um_version  = um_version
+            self.um_version = um_version
 
         # Set source
         source = _lbsrce_model_codes.setdefault(source, None)
@@ -574,7 +582,7 @@ class UMField:
 
         # Set a identifying name based on the submodel and STASHcode
         # (or field code).
-        stash    = int_hdr[lbuser4]
+        stash = int_hdr[lbuser4]
         submodel = int_hdr[lbuser7]
         self.stash = stash
 
@@ -582,10 +590,10 @@ class UMField:
         # its standard_name from the conversion table
         stash_records = stash2standard_name.get((submodel, stash), None)
 
-        um_Units     = None
+        um_Units = None
         um_condition = None
 
-        long_name     = None
+        long_name = None
         standard_name = None
 
         if stash_records:
@@ -624,7 +632,7 @@ class UMField:
                     _Units[units] = um_Units
 
                 self.um_Units = um_Units
-                self.cf_info  = cf_info
+                self.cf_info = cf_info
 
                 break
         # --- End: if
@@ -661,7 +669,7 @@ class UMField:
 #            self.cell_method_axis_name = {'area': 'area'}
 
             self.down_axes = set()
-            self.z_axis    = 'z'
+            self.z_axis = 'z'
 
             # ------------------------------------------------------------
             # Get the extra data for this group
@@ -673,7 +681,7 @@ class UMField:
             # Set some derived metadata quantities
             # ------------------------------------------------------------
             if self.verbose:
-                print(self.__dict__) # pragma: no cover
+                print(self.__dict__)  # pragma: no cover
                 self.printfdr()      # pragma: no cover
 
             # ------------------------------------------------------------
@@ -690,7 +698,8 @@ class UMField:
             if axiscode is not None:
                 # Get 'Z' coordinate from LBVC
                 if axiscode == 3:
-                    c = self.atmosphere_hybrid_sigma_pressure_coordinate(axiscode)
+                    c = self.atmosphere_hybrid_sigma_pressure_coordinate(
+                        axiscode)
                 elif axiscode == 2 and 'height' in self.cf_info:
                     # Create the height coordinate from the information
                     # given in the STASH to standard_name conversion table
@@ -703,7 +712,7 @@ class UMField:
 
                 # Create a model_level_number auxiliary coordinate
                 LBLEV = int_hdr[lblev]
-                if LBVC in (2, 9, 65) or LBLEV in (7777, 8888): # CHECK!
+                if LBVC in (2, 9, 65) or LBLEV in (7777, 8888):  # CHECK!
                     self.LBLEV = LBLEV
                     c = self.model_level_number_coordinate(aux=bool(c))
             # --- End: if
@@ -717,13 +726,14 @@ class UMField:
                 if axiscode in (20, 23):
                     # 'Y' axis is time-since-reference-date
                     if extra.get('y', None) is not None:
-                        c = self.time_coordinate_from_extra_data(axiscode, 'y')
+                        c = self.time_coordinate_from_extra_data(
+                            axiscode, 'y')
                     else:
                         LBUSER3 = int_hdr[lbuser3]
                         if LBUSER3 == LBROW:
                             self.lbuser3 = LBUSER3
-                            c = self.time_coordinate_from_um_timeseries(axiscode,
-                                                                       'y')
+                            c = self.time_coordinate_from_um_timeseries(
+                                axiscode, 'y')
                 else:
                     ykey, yc = self.xy_coordinate(axiscode, 'y')
             # --- End: if
@@ -742,7 +752,8 @@ class UMField:
                         LBUSER3 = int_hdr[lbuser3]
                         if LBUSER3 == LBNPT:
                             self.lbuser3 = LBUSER3
-                            c = self.time_coordinate_from_um_timeseries(axiscode, 'x')
+                            c = self.time_coordinate_from_um_timeseries(
+                                axiscode, 'x')
                 else:
                     xkey, xc = self.xy_coordinate(axiscode, 'x')
             # --- End: if
@@ -758,19 +769,23 @@ class UMField:
                 ref = self.implementation.initialise_CoordinateReference()
 
                 cc = self.implementation.initialise_CoordinateConversion(
-                    parameters={'grid_mapping_name': 'rotated_latitude_longitude',
-                                'grid_north_pole_latitude': BPLAT,
-                                'grid_north_pole_longitude': BPLON})
+                    parameters={
+                        'grid_mapping_name': 'rotated_latitude_longitude',
+                        'grid_north_pole_latitude': BPLAT,
+                        'grid_north_pole_longitude': BPLON
+                    })
 
                 self.implementation.set_coordinate_conversion(ref, cc)
 
-                self.implementation.set_coordinate_reference(self.field, ref, copy=False)
+                self.implementation.set_coordinate_reference(
+                    self.field, ref, copy=False)
 
                 # --------------------------------------------------------
                 # Create UNROTATED, 2-D LATITUDE and LONGITUDE auxiliary
                 # coordinates
                 # --------------------------------------------------------
-                self.latitude_longitude_2d_aux_coordinates(yc, xc) #, rotated_pole)
+                self.latitude_longitude_2d_aux_coordinates(
+                    yc, xc)  # , rotated_pole)
 
             # ------------------------------------------------------------
             # Create a RADIATION WAVELENGTH dimension coordinate
@@ -794,17 +809,17 @@ class UMField:
             if LBUSER5 != 0:
                 self.pseudolevel_coordinate(LBUSER5)
 
-            attributes['int_hdr']  = int_hdr[:]
+            attributes['int_hdr'] = int_hdr[:]
             attributes['real_hdr'] = real_hdr[:]
-            attributes['file']     = filename
-            attributes['id']       = identity
+            attributes['file'] = filename
+            attributes['id'] = identity
 
             cf_properties['Conventions'] = __Conventions__
-            cf_properties['runid']       = self.decode_lbexp()
-            cf_properties['lbproc']      = str(LBPROC)
-            cf_properties['lbtim']       = str(LBTIM)
-            cf_properties['stash_code']  = str(stash)
-            cf_properties['submodel']    = str(submodel)
+            cf_properties['runid'] = self.decode_lbexp()
+            cf_properties['lbproc'] = str(LBPROC)
+            cf_properties['lbtim'] = str(LBTIM)
+            cf_properties['stash_code'] = str(stash)
+            cf_properties['submodel'] = str(submodel)
 
             # ------------------------------------------------------------
             # Set the data and extra data
@@ -828,7 +843,8 @@ class UMField:
             # Add kwargs to the CF properties
             cf_properties.update(kwargs)
 
-            self.implementation.set_properties(field, cf_properties, copy=False)
+            self.implementation.set_properties(
+                field, cf_properties, copy=False)
 
             field.id = identity
 
@@ -847,7 +863,7 @@ class UMField:
             # Check for decreasing axes that aren't decreasing
             down_axes = self.down_axes
             if self.verbose:
-                print('down_axes =', down_axes) # pragma: no cover
+                print('down_axes =', down_axes)  # pragma: no cover
 
             if down_axes:
                 field.flip(down_axes, inplace=True)
@@ -861,20 +877,17 @@ class UMField:
 
         self._bool = True
 
-
     def __bool__(self):
         '''x.__bool__() <==> bool(x)
 
         '''
         return self._bool
 
-
     def __repr__(self):
         '''x.__repr__() <==> repr(x)
 
         '''
         return self.fdr()
-
 
     def __str__(self):
         '''x.__str__() <==> str(x)
@@ -895,7 +908,6 @@ class UMField:
         out.append('')
 
         return '\n'.join(out)
-
 
     def atmosphere_hybrid_height_coordinate(self, axiscode):
         '''TODO
@@ -947,12 +959,15 @@ class UMField:
         field = self.field
 
         # "a" domain ancillary
-        array = numpy_array([rec.real_hdr[blev] for rec in self.z_recs],  # Zsea
-                            dtype=float)
-        bounds0 = numpy_array([rec.real_hdr[brlev] for rec in self.z_recs], #Zsea lower
-                              dtype=float)
-        bounds1 = numpy_array([rec.real_hdr[brsvd1] for rec in self.z_recs], #Zsea upper
-                              dtype=float)
+        array = numpy_array(
+            [rec.real_hdr[blev] for rec in self.z_recs],  # Zsea
+            dtype=float)
+        bounds0 = numpy_array(
+            [rec.real_hdr[brlev] for rec in self.z_recs],  # Zsea lower
+            dtype=float)
+        bounds1 = numpy_array(
+            [rec.real_hdr[brsvd1] for rec in self.z_recs],  # Zsea upper
+            dtype=float)
         bounds = numpy_column_stack((bounds0, bounds1))
 
         # Insert new Z axis
@@ -963,8 +978,10 @@ class UMField:
         ac = self.implementation.initialise_DomainAncillary()
         ac = self.coord_data(ac, array, bounds, units=_Units['m'])
         ac.id = 'UM_atmosphere_hybrid_height_coordinate_a'
-        self.implementation.set_properties(ac, {'long_name': 'height based hybrid coeffient a'})
-        key_a =  self.implementation.set_domain_ancillary(field, ac, axes=[_axis['z']], copy=False)
+        self.implementation.set_properties(
+            ac, {'long_name': 'height based hybrid coeffient a'})
+        key_a = self.implementation.set_domain_ancillary(
+            field, ac, axes=[_axis['z']], copy=False)
 
         # atmosphere_hybrid_height_coordinate dimension coordinate
         TOA_height = bounds1.max()
@@ -974,13 +991,15 @@ class UMField:
         if not TOA_height:
             dc = None
         else:
-            array  = array / TOA_height
+            array = array / TOA_height
             dc = self.implementation.initialise_DimensionCoordinate()
             dc = self.coord_data(dc, array, bounds, units=_Units[''])
-            self.implementation.set_properties(dc, {'standard_name': 'atmosphere_hybrid_height_coordinate'})
+            self.implementation.set_properties(
+                dc, {'standard_name': 'atmosphere_hybrid_height_coordinate'})
             dc = self.coord_axis(dc, axiscode)
             dc = self.coord_positive(dc, axiscode, _axis['z'])
-            self.implementation.set_dimension_coordinate(field, dc, axes=[_axis['z']], copy=False)
+            self.implementation.set_dimension_coordinate(
+                field, dc, axes=[_axis['z']], copy=False)
 
         # "b" domain ancillary
         array = numpy_array([rec.real_hdr[bhlev] for rec in self.z_recs],
@@ -994,21 +1013,29 @@ class UMField:
         ac = self.implementation.initialise_DomainAncillary()
         ac = self.coord_data(ac, array, bounds, units=_Units['1'])
         ac.id = 'UM_atmosphere_hybrid_height_coordinate_b'
-        self.implementation.set_properties(ac, {'long_name': 'height based hybrid coeffient b'})
-        key_b = self.implementation.set_domain_ancillary(field, ac, axes=[_axis['z']], copy=False)
+        self.implementation.set_properties(
+            ac, {'long_name': 'height based hybrid coeffient b'})
+        key_b = self.implementation.set_domain_ancillary(
+            field, ac, axes=[_axis['z']], copy=False)
 
         if bool(dc):
             # atmosphere_hybrid_height_coordinate coordinate reference
             ref = self.implementation.initialise_CoordinateReference()
             cc = self.implementation.initialise_CoordinateConversion(
-                parameters={'standard_name': 'atmosphere_hybrid_height_coordinate'},
-                domain_ancillaries={'a': key_a, 'b': key_b, 'orog': None})
+                parameters={
+                    'standard_name': 'atmosphere_hybrid_height_coordinate'
+                },
+                domain_ancillaries={
+                    'a': key_a,
+                    'b': key_b,
+                    'orog': None
+                })
             self.implementation.set_coordinate_conversion(ref, cc)
-            #TODO set coordinates?
-            self.implementation.set_coordinate_reference(field, ref, copy=False)
+            # TODO set coordinates?
+            self.implementation.set_coordinate_reference(
+                field, ref, copy=False)
 
         return dc
-
 
     def depth_coordinate(self, axiscode):
         '''TODO
@@ -1039,14 +1066,14 @@ class UMField:
         axisZ = self.implementation.set_domain_axis(self.field, da)
         _axis['z'] = axisZ
 
-        #ac = AuxiliaryCoordinate()
+        # ac = AuxiliaryCoordinate()
         ac = self.implementation.initialise_AuxiliaryCoordinate()
         ac = self.coord_data(ac, array, bounds, units=_Units['m'])
-        ac.id        = 'UM_atmosphere_hybrid_height_coordinate_ak'
+        ac.id = 'UM_atmosphere_hybrid_height_coordinate_ak'
         ac.long_name = 'atmosphere_hybrid_height_coordinate_ak'
 #        field.insert_aux(ac, axes=[zdim], copy=False)
-        self.implementation.set_auxiliary_coordinate(self.field, ac,
-                                                     axes=[_axis['z']], copy=False)
+        self.implementation.set_auxiliary_coordinate(
+            self.field, ac, axes=[_axis['z']], copy=False)
 
         array = numpy_array([rec.real_hdr[bhlev] for rec in self.z_recs],
                             dtype=float)
@@ -1056,16 +1083,15 @@ class UMField:
                               dtype=float)
         bounds = numpy_column_stack((bounds0, bounds1))
 
-        #ac = AuxiliaryCoordinate()
+        # ac = AuxiliaryCoordinate()
         ac = self.implementation.initialise_AuxiliaryCoordinate()
         ac = self.coord_data(ac, array, bounds, units=_Units['1'])
-        ac.id        = 'UM_atmosphere_hybrid_height_coordinate_bk'
+        ac.id = 'UM_atmosphere_hybrid_height_coordinate_bk'
         ac.long_name = 'atmosphere_hybrid_height_coordinate_bk'
-        self.implementation.set_auxiliary_coordinate(self.field, ac,
-                                                     axes=[_axis['z']], copy=False)
+        self.implementation.set_auxiliary_coordinate(
+            self.field, ac, axes=[_axis['z']], copy=False)
 
         return dc
-
 
     def atmosphere_hybrid_sigma_pressure_coordinate(self, axiscode):
         '''atmosphere_hybrid_sigma_pressure_coordinate when not an array axis
@@ -1095,11 +1121,11 @@ class UMField:
         `DimensionCoordinate`
 
         '''
-        array     = []
-        bounds    = []
-        ak_array  = []
+        array = []
+        bounds = []
+        ak_array = []
         ak_bounds = []
-        bk_array  = []
+        bk_array = []
         bk_bounds = []
 
         for rec in self.z_recs:
@@ -1112,13 +1138,13 @@ class UMField:
             ak_bounds.append((BHRLEV, BHULEV))
 
             bk_array.append(BLEV)
-            bk_bounds.append((BRLEV , BULEV))
+            bk_bounds.append((BRLEV, BULEV))
 
-        array     = numpy_array(array    , dtype=float)
-        bounds    = numpy_array(bounds   , dtype=float)
-        ak_array  = numpy_array(ak_array , dtype=float)
+        array = numpy_array(array, dtype=float)
+        bounds = numpy_array(bounds, dtype=float)
+        ak_array = numpy_array(ak_array, dtype=float)
         ak_bounds = numpy_array(ak_bounds, dtype=float)
-        bk_array  = numpy_array(bk_array , dtype=float)
+        bk_array = numpy_array(bk_array, dtype=float)
         bk_bounds = numpy_array(bk_bounds, dtype=float)
 
         # Insert new Z axis
@@ -1142,13 +1168,12 @@ class UMField:
 
         ac = self.implementation.initialise_AuxiliaryCoordinate()
         ac = self.coord_data(ac, ak_array, ak_bounds, units=_Units['Pa'])
-        ac.id        = 'UM_atmosphere_hybrid_sigma_pressure_coordinate_ak'
+        ac.id = 'UM_atmosphere_hybrid_sigma_pressure_coordinate_ak'
         ac.long_name = 'atmosphere_hybrid_sigma_pressure_coordinate_ak'
 
         self.implementation.set_auxiliary_coordinate(self.field, ac,
                                                      axes=[_axis['z']],
                                                      copy=False)
-
 
         ac = self.implementation.initialise_AuxiliaryCoordinate()
         ac = self.coord_data(ac, bk_array, bk_bounds, units=_Units['1'])
@@ -1157,11 +1182,10 @@ class UMField:
                                                      axes=[_axis['z']],
                                                      copy=False)
 
-        ac.id        = 'UM_atmosphere_hybrid_sigma_pressure_coordinate_bk'
+        ac.id = 'UM_atmosphere_hybrid_sigma_pressure_coordinate_bk'
         ac.long_name = 'atmosphere_hybrid_sigma_pressure_coordinate_bk'
 
         return dc
-
 
     def create_cell_methods(self):
         '''Create the cell methods
@@ -1185,7 +1209,8 @@ class UMField:
         # ------------------------------------------------------------
         # -10: rotated latitude  (not an official axis code)
         # -11: rotated longitude (not an official axis code)
-        if self.ix in (10, 11, 12, -10, -11) and self.iy in (10, 11, 12, -10, -11):
+        if self.ix in (10, 11, 12, -10, -11) and self.iy in (
+                10, 11, 12, -10, -11):
             cf_info = self.cf_info
 
             if 'where' in cf_info:
@@ -1194,10 +1219,10 @@ class UMField:
                 cell_methods.append(cf_info['where'])
                 if 'over' in cf_info:
                     cell_methods.append(cf_info['over'])
-             # --- End: if
+            # --- End: if
 
             if LBPROC == 64:
-               cell_methods.append('x: mean')
+                cell_methods.append('x: mean')
 
             # dch : do special zonal mean as as in pp_cfwrite
 
@@ -1214,7 +1239,7 @@ class UMField:
             axis = 't'
         else:
             axis = 'time'
-            
+
         if LBTIM_IB == 0 or LBTIM_IB == 1:
             if axis == 't':
                 cell_methods.append(axis+': point')
@@ -1241,7 +1266,6 @@ class UMField:
 
         return cell_methods
 
-
     def coord_axis(self, c, axiscode):
         '''TODO
 
@@ -1251,7 +1275,6 @@ class UMField:
             c.axis = axis
 
         return c
-
 
     def coord_data(self, c, array=None, bounds=None, units=None,
                    fill_value=None, climatology=False):
@@ -1293,7 +1316,6 @@ class UMField:
 
         return c
 
-
     def coord_names(self, coord, axiscode):
         '''TODO
 
@@ -1320,7 +1342,6 @@ class UMField:
 
         return coord
 
-
     def coord_positive(self, c, axiscode, domain_axis_key):
         '''TODO
 
@@ -1345,7 +1366,6 @@ class UMField:
         # --- End: if
 
         return c
-
 
     def ctime(self, rec):
         '''TODO
@@ -1372,7 +1392,6 @@ class UMField:
 
         return ctime
 
-
     def header_vtime(self, rec):
         '''Return the list [LBYR, LBMON, LBDAT, LBHR, LBMIN] for the given
     record.
@@ -1392,7 +1411,6 @@ class UMField:
 
         '''
         return rec.int_hdr[lbyr:lbmin+1]
-
 
     def header_dtime(self, rec):
         '''Return the list [LBYRD, LBMOND, LBDATD, LBHRD, LBMIND] for the
@@ -1414,7 +1432,6 @@ class UMField:
         '''
         return rec.int_hdr[lbyrd:lbmind+1]
 
-
     def header_bz(self, rec):
         '''Return the list [BLEV, BRLEV, BHLEV, BHRLEV, BULEV, BHULEV] for the
     given record.
@@ -1433,9 +1450,10 @@ class UMField:
 
         '''
         real_hdr = rec.real_hdr
-        return (real_hdr[blev:bhrlev+1].tolist()    +  # BLEV, BRLEV, BHLEV, BHRLEV
-                real_hdr[brsvd1:brsvd2+1].tolist())    # BULEV, BHULEV
-
+        return (
+            real_hdr[blev:bhrlev+1].tolist() +  # BLEV, BRLEV, BHLEV, BHRLEV
+            real_hdr[brsvd1:brsvd2+1].tolist()  # BULEV, BHULEV
+        )
 
     def header_lz(self, rec):
         '''Return the list [LBLEV, LBUSER5] for the given record.
@@ -1455,7 +1473,6 @@ class UMField:
         '''
         int_hdr = rec.int_hdr
         return [int_hdr.item(lblev,), int_hdr.item(lbuser5,)]
-
 
     def header_z(self, rec):
         '''Return the list [LBLEV, LBUSER5, BLEV, BRLEV, BHLEV, BHRLEV, BULEV,
@@ -1479,7 +1496,6 @@ class UMField:
         '''
         return self.header_lz + self.header_bz
 
-
     def create_data(self):
         '''Sets the data and data axes.
 
@@ -1489,16 +1505,16 @@ class UMField:
 
         '''
         if self.verbose:
-            print('Creating data:') # pragma: no cover
+            print('Creating data:')  # pragma: no cover
 
         LBROW = self.lbrow
         LBNPT = self.lbnpt
 
         yx_shape = (LBROW, LBNPT)
-        yx_size  = LBROW * LBNPT
+        yx_size = LBROW * LBNPT
 
-        nz   = self.nz
-        nt   = self.nt
+        nz = self.nz
+        nt = self.nt
         recs = self.recs
 
         units = self.um_Units
@@ -1529,7 +1545,10 @@ class UMField:
                         fill_value=rec.real_hdr[bmdi])
 
             if self.verbose:
-                print('    location =',yx_shape,'subarray[...].max() =', data.partitions[()].subarray[...].max()) # pragma: no cover
+                print(
+                    '    location =', yx_shape, 'subarray[...].max() =',
+                    data.partitions[()].subarray[...].max()
+                )  # pragma: no cover
         else:
             # --------------------------------------------------------
             # 1-d or 2-d partition matrix
@@ -1539,7 +1558,7 @@ class UMField:
 
             # Find the partition matrix shape
             pmshape = [n for n in (nt, nz) if n > 1]
-            pmndim  = len(pmshape)
+            pmndim = len(pmshape)
 
             partitions = []
             empty_list = []
@@ -1556,15 +1575,15 @@ class UMField:
                 if nz > 1:
                     pmaxes = [_axis[self.z_axis]]
                     data_shape = (nz, LBROW, LBNPT)
-                    data_size  = nz * yx_size
+                    data_size = nz * yx_size
                 else:
                     pmaxes = [_axis['t']]
                     data_shape = (nt, LBROW, LBNPT)
-                    data_size  = nt * yx_size
+                    data_size = nt * yx_size
 
                 partition_shape = [1, LBROW, LBNPT]
 
-                for i, rec  in enumerate(recs):
+                for i, rec in enumerate(recs):
                     # Find the data type of the array in the file
                     file_data_type = data_type_in_file(rec)
                     file_data_types.add(file_data_type)
@@ -1584,16 +1603,21 @@ class UMField:
                     location = [(i, i+1), zero_to_LBROW, zero_to_LBNPT]
 
                     partitions_append(Partition(
-                        subarray = subarray,
-                        location = location,
-                        shape    = partition_shape,
-                        axes     = data_axes,
-                        flip     = empty_list,
-                        part     = empty_list,
-                        Units    = units))
+                        subarray=subarray,
+                        location=location,
+                        shape=partition_shape,
+                        axes=data_axes,
+                        flip=empty_list,
+                        part=empty_list,
+                        Units=units
+                    ))
 
                     if self.verbose:
-                        print('    header_offset =', rec.hdr_offset, 'location =',location,'subarray[...].max() =', subarray[...].max()) # pragma: no cover
+                        print(
+                            '    header_offset =', rec.hdr_offset,
+                            'location =', location, 'subarray[...].max() =',
+                            subarray[...].max()
+                        )  # pragma: no cover
                 # --- End: for
 
                 # Populate the 1-d partition matrix
@@ -1604,12 +1628,12 @@ class UMField:
                 # ----------------------------------------------------
                 pmaxes = [_axis['t'], _axis[self.z_axis]]
                 data_shape = (nt, nz, LBROW, LBNPT)
-                data_size  = nt * nz * yx_size
-                data_ndim  = 4
+                data_size = nt * nz * yx_size
+                data_ndim = 4
 
                 partition_shape = [1, 1, LBROW, LBNPT]
 
-                for i, rec  in enumerate(recs):
+                for i, rec in enumerate(recs):
                     # Find T and Z axis indices
                     t, z = divmod(i, nz)
 
@@ -1629,7 +1653,8 @@ class UMField:
                                        word_size=self.word_size,
                                        byte_ordering=self.byte_ordering)
 
-                    location = [(t, t+1), (z, z+1), zero_to_LBROW, zero_to_LBNPT]
+                    location = [(t, t+1), (z, z+1), zero_to_LBROW,
+                                zero_to_LBNPT]
 
                     partitions_append(Partition(
                         subarray=subarray,
@@ -1641,7 +1666,10 @@ class UMField:
                         Units=units))
 
                     if self.verbose:
-                        print('    location =',location,'subarray[...].max() =', subarray[...].max()) # pragma: no cover
+                        print(
+                            '    location =', location,
+                            'subarray[...].max() =', subarray[...].max()
+                        )  # pragma: no cover
                 # --- End: for
 
                 # Populate the 2-d partition matrix
@@ -1654,19 +1682,18 @@ class UMField:
             # Set the data array
             data = Data(units=units, fill_value=recs[0].real_hdr.item(bmdi,))
 
-            data._axes      = data_axes
-            data._shape     = data_shape
-            data._ndim      = data_ndim
-            data._size      = data_size
+            data._axes = data_axes
+            data._shape = data_shape
+            data._ndim = data_ndim
+            data._size = data_size
             data.partitions = PartitionMatrix(matrix, pmaxes)
-            data.dtype      = numpy_result_type(*file_data_types)
+            data.dtype = numpy_result_type(*file_data_types)
         # --- End: if
 
-        self.data      = data
+        self.data = data
         self.data_axes = data_axes
 
         return data
-
 
     def decode_lbexp(self):
         '''Decode the integer value of LBEXP in the PP header into a runid.
@@ -1708,7 +1735,7 @@ class UMField:
             # a decimal integer, which is used as an index to the characters
             # lookup list.
             runid = []
-            for i in range(0,30,6):
+            for i in range(0, 30, 6):
                 index = int(bits[i:i+6], 2)
                 if index < _n_characters:
                     runid.append(_characters[index])
@@ -1721,7 +1748,6 @@ class UMField:
 
         # Return the runid
         return runid
-
 
     def dtime(self, rec):
         '''Return the elapsed time since the data time of the given record.
@@ -1741,7 +1767,7 @@ class UMField:
 
         '''
         reftime = self.refUnits
-        units    = self.refunits
+        units = self.refunits
         calendar = self.calendar
 
         LBDTIME = tuple(self.header_dtime(rec))
@@ -1760,11 +1786,10 @@ class UMField:
 
                 _cached_date2num[key] = time
             except ValueError:
-                time = numpy_nan # ppp
+                time = numpy_nan  # ppp
         # --- End: if
 
         return time
-
 
     def fdr(self):
         '''Return a the contents of PP field headers as strings.
@@ -1803,7 +1828,6 @@ class UMField:
 
         return out2
 
-
     def latitude_longitude_2d_aux_coordinates(self, yc, xc):
         '''TODO
 
@@ -1818,8 +1842,8 @@ class UMField:
         `None`
 
         '''
-        BDX   = self.bdx
-        BDY   = self.bdy
+        BDX = self.bdx
+        BDY = self.bdy
         LBNPT = self.lbnpt
         LBROW = self.lbrow
         BPLAT = self.bplat
@@ -1839,20 +1863,21 @@ class UMField:
                 _cached_latlon[cache_key] = (lat, lon)
         # --- End: if
 
-        if xc.has_bounds() and yc.has_bounds(): # TODO push to  implementation
+        if xc.has_bounds() and yc.has_bounds():  # TODO push to implementation
             cache_key = ('bounds',) + cache_key
-            lat_bounds, lon_bounds = _cached_latlon.get(cache_key, (None, None))
+            lat_bounds, lon_bounds = _cached_latlon.get(
+                cache_key, (None, None))
             if lat_bounds is None:
                 xb = numpy_empty(xc.size+1)
                 xb[:-1] = xc.bounds.subspace[:, 0].squeeze(1).array
-                xb[-1]  = xc.bounds.datum(-1, 1)
+                xb[-1] = xc.bounds.datum(-1, 1)
 
                 yb = numpy_empty(yc.size+1)
                 yb[:-1] = yc.bounds.subspace[:, 0].squeeze(1).array
-                yb[-1]  = yc.bounds.datum(-1, 1)
+                yb[-1] = yc.bounds.datum(-1, 1)
 
-                temp_lat_bounds, temp_lon_bounds = self.unrotated_latlon(yb, xb,
-                                                                         BPLAT, BPLON)
+                temp_lat_bounds, temp_lon_bounds = self.unrotated_latlon(
+                    yb, xb, BPLAT, BPLON)
 
                 lat_bounds = numpy_empty(lat.shape + (4,))
                 lon_bounds = numpy_empty(lon.shape + (4,))
@@ -1860,14 +1885,14 @@ class UMField:
                 lat_bounds[..., 0] = temp_lat_bounds[0:-1, 0:-1]
                 lon_bounds[..., 0] = temp_lon_bounds[0:-1, 0:-1]
 
-                lat_bounds[..., 1] = temp_lat_bounds[1:  , 0:-1]
-                lon_bounds[..., 1] = temp_lon_bounds[1:  , 0:-1]
+                lat_bounds[..., 1] = temp_lat_bounds[1:, 0:-1]
+                lon_bounds[..., 1] = temp_lon_bounds[1:, 0:-1]
 
-                lat_bounds[..., 2] = temp_lat_bounds[1:  , 1:  ]
-                lon_bounds[..., 2] = temp_lon_bounds[1:  , 1:  ]
+                lat_bounds[..., 2] = temp_lat_bounds[1:, 1:]
+                lon_bounds[..., 2] = temp_lon_bounds[1:, 1:]
 
-                lat_bounds[..., 3] = temp_lat_bounds[0:-1, 1:  ]
-                lon_bounds[..., 3] = temp_lon_bounds[0:-1, 1:  ]
+                lat_bounds[..., 3] = temp_lat_bounds[0:-1, 1:]
+                lon_bounds[..., 3] = temp_lon_bounds[0:-1, 1:]
 
                 atol = self.atol
                 if abs(BDX) >= atol and abs(BDY) >= atol:
@@ -1878,19 +1903,19 @@ class UMField:
 
         axes = [_axis['y'], _axis['x']]
 
-        for axiscode, array, bounds in zip((10        , 11),
-                                           (lat       , lon),
-                                           (lat_bounds, lon_bounds)):
-            #ac = AuxiliaryCoordinate()
+        for axiscode, array, bounds in zip(
+                (10, 11), (lat, lon), (lat_bounds, lon_bounds)):
+            # ac = AuxiliaryCoordinate()
             ac = self.implementation.initialise_AuxiliaryCoordinate()
-            ac = self.coord_data(ac, array, bounds=bounds,
-                                 units=_axiscode_to_Units.setdefault(axiscode, None))
+            ac = self.coord_data(
+                ac, array, bounds=bounds,
+                units=_axiscode_to_Units.setdefault(axiscode, None)
+            )
             ac = self.coord_names(ac, axiscode)
 
             key = self.implementation.set_auxiliary_coordinate(self.field, ac,
                                                                axes=axes,
                                                                copy=False)
-
 
     def model_level_number_coordinate(self, aux=False):
         '''model_level_number dimension or auxiliary coordinate
@@ -1912,20 +1937,18 @@ class UMField:
         if c is not None:
             if aux:
                 self.field.insert_aux(c, axes=[_axis['z']], copy=True)
-                self.implementation.set_auxiliary_coordinate(self.field, c,
-                                                             axes=[_axis['z']],
-                                                             copy=True)
+                self.implementation.set_auxiliary_coordinate(
+                    self.field, c, axes=[_axis['z']], copy=True)
             else:
-                self.implementation.set_dimension_coordinate(self.field, c,
-                                                             axes=[_axis['z']],
-                                                             copy=True)
+                self.implementation.set_dimension_coordinate(
+                    self.field, c, axes=[_axis['z']], copy=True)
         else:
             array = numpy_array(array, dtype=self.int_hdr_dtype)
 
             if array.min() < 0:
                 return
 
-            array = numpy_where(array==9999, 0, array)
+            array = numpy_where(array == 9999, 0, array)
 
             axiscode = 5
 
@@ -1933,23 +1956,20 @@ class UMField:
                 ac = self.implementation.initialise_AuxiliaryCoordinate()
                 ac = self.coord_data(ac, array, units=Units('1'))
                 ac = self.coord_names(ac, axiscode)
-                self.implementation.set_auxiliary_coordinate(self.field,
-                                                             ac, axes=[_axis['z']],
-                                                             copy=False)
+                self.implementation.set_auxiliary_coordinate(
+                    self.field, ac, axes=[_axis['z']], copy=False)
 
             else:
                 dc = self.implementation.initialise_DimensionCoordinate()
                 dc = self.coord_data(dc, array, units=Units('1'))
                 dc = self.coord_names(dc, axiscode)
                 dc = self.coord_axis(dc, axiscode)
-                self.implementation.set_dimension_coordinate(self.field, dc,
-                                                             axes=[_axis['z']],
-                                                             copy=False)
+                self.implementation.set_dimension_coordinate(
+                    self.field, dc, axes=[_axis['z']], copy=False)
 
             _cached_model_level_number_coordinate[key] = c
 
         return c
-
 
     def data_type_in_file(self, rec):
         '''Return the data type of the data array.
@@ -1971,8 +1991,9 @@ class UMField:
             # Int or float
             return rec.get_type_and_num_words()[0]
 #            rec_file = rec.file
-##            data_type = rec_file.c_interface.get_type_and_length(
-#            data_type = rec_file.c_interface.get_type_and_num_words(rec.int_hdr)[0]
+#            # data_type = rec_file.c_interface.get_type_and_length(
+#            data_type = rec_file.c_interface.get_type_and_num_words(
+#                rec.int_hdr)[0]
 #            if data_type == 'int':
 #                # Integer
 #                data_type = 'int%d' % (rec_file.word_size * 8)
@@ -1982,7 +2003,6 @@ class UMField:
 #        # --- End: if
 #
 #        return numpy_dtype(data_type)
-
 
     def printfdr(self):
         '''Print out the contents of PP field headers.
@@ -1996,7 +2016,6 @@ class UMField:
         '''
         for header in self.fdr():
             print(header)
-
 
     def pseudolevel_coordinate(self, LBUSER5):
         '''TODO
@@ -2014,8 +2033,8 @@ class UMField:
         axiscode = 40
 
         dc = self.implementation.initialise_DimensionCoordinate()
-        dc = self.coord_data(dc, array,
-                             units=_axiscode_to_Units.setdefault(axiscode, None))
+        dc = self.coord_data(
+            dc, array, units=_axiscode_to_Units.setdefault(axiscode, None))
         self.implementation.set_properties(dc, {'long_name': 'pseudolevel'})
         dc.id = 'UM_pseudolevel'
 
@@ -2023,17 +2042,16 @@ class UMField:
         axisP = self.implementation.set_domain_axis(self.field, da)
         _axis['p'] = axisP
 
-        self.implementation.set_dimension_coordinate(self.field, dc,
-                                                     axes=[_axis['p']], copy=False)
+        self.implementation.set_dimension_coordinate(
+            self.field, dc, axes=[_axis['p']], copy=False)
 
         return dc
-
 
     def radiation_wavelength_coordinate(self, rwl, rwl_units):
         '''TODO
 
         '''
-        array  = numpy_array((rwl,), dtype=float)
+        array = numpy_array((rwl,), dtype=float)
         bounds = numpy_array(((0.0, rwl)), dtype=float)
 
         units = _Units.get(rwl_units, None)
@@ -2050,8 +2068,8 @@ class UMField:
         axisR = self.implementation.set_domain_axis(self.field, da)
         _axis['r'] = axisR
 
-        self.implementation.set_dimension_coordinate(self.field, dc,
-                                                     axes=[_axis['r']], copy=False)
+        self.implementation.set_dimension_coordinate(
+            self.field, dc, axes=[_axis['r']], copy=False)
 
         return dc
 
@@ -2143,8 +2161,7 @@ class UMField:
 
             # Check pole location in case of incorrect LBCODE
             atol = self.atol
-            if (abs(BPLAT-90.0) <= atol + RTOL()*90.0 and
-                abs(BPLON) <= atol):
+            if (abs(BPLAT-90.0) <= atol + RTOL()*90.0 and abs(BPLON) <= atol):
                 return True
 
         elif um_condition == 'rotated_latitude_longitude':
@@ -2159,12 +2176,12 @@ class UMField:
 
         else:
             raise ValueError(
-                "Unknown UM condition in STASH code conversion table: {!r}".format(
-                    um_condition))
+                "Unknown UM condition in STASH code conversion table: "
+                "{!r}".format(um_condition)
+            )
 
         # Still here? Then the condition has not been satisfied.
         return
-
 
     def test_um_version(self, valid_from, valid_to, um_version):
         '''Return `True` if the UM version applicable to this field is within
@@ -2209,7 +2226,6 @@ class UMField:
 
         return False
 
-
     def time_coordinate(self, axiscode):
         '''Return the T dimension coordinate
 
@@ -2228,23 +2244,23 @@ class UMField:
         dtimes = numpy_array([self.dtime(rec) for rec in recs], dtype=float)
 
         if numpy_isnan(vtimes.sum()) or numpy_isnan(dtimes.sum()):
-           return # ppp
-        
+            return  # ppp
+
         IB = self.lbtim_ib
 
         if IB <= 1 or vtimes.item(0,) >= dtimes.item(0,):
-            array  = vtimes
+            array = vtimes
             bounds = None
             climatology = False
         elif IB == 3:
             # The field is a time mean from T1 to T2 for each year
             # from LBYR to LBYRD
             ctimes = numpy_array([self.ctime(rec) for rec in recs])
-            array  = 0.5*(vtimes + ctimes)
+            array = 0.5*(vtimes + ctimes)
             bounds = numpy_column_stack((vtimes, dtimes))
             climatology = True
         else:
-            array  = 0.5*(vtimes + dtimes)
+            array = 0.5*(vtimes + dtimes)
             bounds = numpy_column_stack((vtimes, dtimes))
             climatology = False
 
@@ -2263,7 +2279,6 @@ class UMField:
                                                      axes=[_axis['t']],
                                                      copy=False)
         return dc
-
 
     def time_coordinate_from_extra_data(self, axiscode, axis):
         '''TODO
@@ -2293,7 +2308,6 @@ class UMField:
 
         return dc
 
-
     def time_coordinate_from_um_timeseries(self, axiscode, axis):
         '''TODO
 
@@ -2305,7 +2319,7 @@ class UMField:
         vtime = self.vtime(rec)
         dtime = self.dtime(rec)
 
-        size  = self.lbuser3 - 1.0
+        size = self.lbuser3 - 1.0
         delta = (dtime - vtime)/size
 
         array = numpy_arange(vtime, vtime+delta*size, size, dtype=float)
@@ -2318,7 +2332,6 @@ class UMField:
                                                      axes=[_axis[axis]],
                                                      copy=False)
         return dc
-
 
     def vtime(self, rec):
         '''Return the elapsed time since the validity time of the given
@@ -2338,8 +2351,8 @@ class UMField:
     31.5
 
         '''
-        reftime  = self.refUnits
-        units    = self.refunits
+        reftime = self.refUnits
+        units = self.refunits
         calendar = self.calendar
 
         LBVTIME = tuple(self.header_vtime(rec))
@@ -2353,64 +2366,58 @@ class UMField:
                 if self.calendar == 'gregorian':
                     time = netCDF4_date2num(
                         datetime(*LBVTIME), units, calendar)
-                else:                
+                else:
                     time = netCDF4_date2num(cftime.datetime(*LBVTIME),
                                             units, calendar)
-                    
+
                 _cached_date2num[key] = time
             except ValueError:
-                time = numpy_nan # ppp
+                time = numpy_nan  # ppp
         # --- End: if
-        
+
         return time
 
     def dddd(self):
         '''TODO
 
         '''
-        for axis_code, extra_type in zip((11 , 10 ),
-                                         ('x', 'y')):
+        for axis_code, extra_type in zip((11, 10), ('x', 'y')):
             coord_type = extra_type + '_domain_bounds'
 
             if coord_type in p.extra:
                 p.extra[coord_type]
-                # Create, from extra data, an auxiliary coordinate should
-                # with 1) data and bounds, if the upper and lower  be
-                # bounds have no missing values; or 2) data but no the
-                # bounds, if the upper bound has missing values  axis
-                # but the lower bound does not.                  # which
-                file_position = ppfile.tell()                                             # has
-                bounds = p.extra[coord_type][...]                                         # axis_code
-                # Reset the file pointer after reading the extra                          # 13
+                # Create, from extra data, an auxiliary coordinate
+                # with 1) data and bounds, if the upper and lower
+                # bounds have no missing values; or 2) data but no
+                # bounds, if the upper bound has missing values
+                # but the lower bound does not.
+
+                # Should be the axis which has axis_code 13
+                file_position = ppfile.tell()
+                bounds = p.extra[coord_type][...]
+
+                # Reset the file pointer after reading the extra
                 # data into a numpy array
                 ppfile.seek(file_position, os.SEEK_SET)
                 data = None
-                if numpy_any(bounds[..., 1] == _pp_rmdi): # dch also test in bmdi?
-                    if not numpy_any(bounds[...,0] == _pp_rmdi): # dch also test in bmdi?
-                        data = bounds[...,0]
+                # dch also test in bmdi?:
+                if numpy_any(bounds[..., 1] == _pp_rmdi):
+                    # dch also test in bmdi?:
+                    if not numpy_any(bounds[..., 0] == _pp_rmdi):
+                        data = bounds[..., 0]
                     bounds = None
                 else:
                     data = numpy_mean(bounds, axis=1)
 
                 if (data, bounds) != (None, None):
-                    aux   = 'aux%(auxN)d' % locals()
-                    auxN += 1                        # Increment auxiliary number
+                    aux = 'aux%(auxN)d' % locals()
+                    auxN += 1  # Increment auxiliary number
 
-                    coord = _create_Coordinate(domain, aux, axis_code, p=p,
-                                               array        = data,
-                                               aux=True,
-                                               bounds_array = bounds,
-                                               pubattr      = {'axis': None},
-                                               dimensions   = [xdim]) # DCH
-                                                                    # xdim?
-                                                                    # should
-                                                                    # be
-                                                                    # the
-                                                                    # axis
-                                                                    # which
-                                                                    # has
-                                                                    # axis_code
-                                                                    # 13
+                    coord = _create_Coordinate(
+                        domain, aux, axis_code, p=p, array=data, aux=True,
+                        bounds_array=bounds, pubattr={'axis': None},
+                        # DCH xdim? should be the axis which has axis_code 13:
+                        dimensions=[xdim])
             else:
                 coord_type = '{0}_domain_lower_bound'.format(extra_type)
                 if coord_type in p.extra:
@@ -2422,16 +2429,16 @@ class UMField:
                     # Reset the file pointer after reading the
                     # extra data into a numpy array
                     ppfile.seek(file_position, os.SEEK_SET)
-                    if not numpy_any(data == _pp_rmdi): # dch also test in bmdi?
-                        aux   = 'aux%(auxN)d' % locals()
-                        auxN += 1                        # Increment auxiliary number
-                        coord = _create_Coordinate(domain, aux, axis_code, p=p,
-                                                   aux=True,
-                                                   array=numpy_array(data),
-                                                   pubattr={'axis': None},
-                                                   dimensions=[xdim])# DCH xdim?
-           # --- End: if
-       # --- End: for
+                    if not numpy_any(data == _pp_rmdi):  # dch + test in bmdi
+                        aux = 'aux%(auxN)d' % locals()
+                        auxN += 1  # Increment auxiliary number
+                        coord = _create_Coordinate(
+                            domain, aux, axis_code, p=p, aux=True,
+                            array=numpy_array(data), pubattr={'axis': None},
+                            dimensions=[xdim]
+                        )  # DCH xdim?
+            # --- End: if
+        # --- End: for
 
     def unrotated_latlon(self, rotated_lat, rotated_lon, pole_lat, pole_lon):
         '''Create 2-d arrays of unrotated latitudes and longitudes.
@@ -2474,7 +2481,7 @@ class UMField:
         nlon = rot_lon.size
         rot_lon = numpy_resize(numpy_deg2rad(rot_lon), (nlat, nlon))
         rot_lat = numpy_resize(numpy_deg2rad(rot_lat), (nlon, nlat))
-        rot_lat = numpy_transpose(rot_lat, axes=(1,0))
+        rot_lat = numpy_transpose(rot_lat, axes=(1, 0))
 
         # Find unrotated latitudes
         CPART = numpy_cos(rot_lon) * numpy_cos(rot_lat)
@@ -2485,9 +2492,9 @@ class UMField:
 
         # Find unrotated longitudes
         x = -cos_pole_lat*sin_rot_lat + sin_pole_lat*CPART
-        x /= numpy_cos(unrotated_lat)   # dch /0 or overflow here? surely
-                                        # lat could be ~+-pi/2? if so,
-                                        # does x ~ cos(lat)?
+        x /= numpy_cos(unrotated_lat)
+        # dch /0 or overflow here? surely lat could be ~+-pi/2? if so,
+        # does x ~ cos(lat)?
         x = numpy_clip(x, -1.0, 1.0)
         unrotated_lon = -numpy_arccos(x)
 
@@ -2506,7 +2513,6 @@ class UMField:
         # Return unrotated latitudes and longitudes
         return (unrotated_lat, unrotated_lon)
 
-
     def xy_coordinate(self, axiscode, axis):
         '''Create an X or Y dimension coordinate from header entries or extra
     data.
@@ -2524,17 +2530,17 @@ class UMField:
 
         '''
         if axis == 'y':
-            delta  = self.bdy
+            delta = self.bdy
             origin = self.real_hdr[bzy]
-            size   = self.lbrow
+            size = self.lbrow
 
             da = self.implementation.initialise_DomainAxis(size=size)
             axis_key = self.implementation.set_domain_axis(self.field, da)
             _axis['y'] = axis_key
         else:
-            delta  = self.bdx
+            delta = self.bdx
             origin = self.real_hdr[bzx]
-            size   = self.lbnpt
+            size = self.lbnpt
 
             da = self.implementation.initialise_DomainAxis(size=size)
             axis_key = self.implementation.set_domain_axis(self.field, da)
@@ -2569,13 +2575,15 @@ class UMField:
                 bounds[:, 1] = array + delta_by_2
         else:
             # Create coordinate from extra data
-            array  = self.extra.get(axis, None)
+            array = self.extra.get(axis, None)
             bounds = self.extra.get(axis+'_bounds', None)
 
         dc = self.implementation.initialise_DimensionCoordinate()
-        dc = self.coord_data(dc, array, bounds,
-                             units=_axiscode_to_Units.setdefault(axiscode, None))
-        dc = self.coord_positive(dc, axiscode, axis_key) #_axis[axis])
+        dc = self.coord_data(
+            dc, array, bounds,
+            units=_axiscode_to_Units.setdefault(axiscode, None)
+        )
+        dc = self.coord_positive(dc, axiscode, axis_key)  # _axis[axis])
         dc = self.coord_axis(dc, axiscode)
         dc = self.coord_names(dc, axiscode)
 
@@ -2584,7 +2592,6 @@ class UMField:
                                                            copy=False)
 
         return key, dc
-
 
     def z_coordinate(self, axiscode):
         '''Create a Z dimension coordinate from BLEV
@@ -2599,12 +2606,16 @@ class UMField:
 
         '''
         if self.verbose:
-            print('Creating Z coordinates and bounds from BLEV, BRLEV and BRSVD1:') # pragma: no cover
+            print(
+                'Creating Z coordinates and bounds from BLEV, BRLEV and '
+                'BRSVD1:'
+            )  # pragma: no cover
 
         z_recs = self.z_recs
-        array   = tuple([rec.real_hdr.item(blev,) for rec in z_recs])
-        bounds0 = tuple([rec.real_hdr[brlev]      for rec in z_recs]) # lower level boundary
-        bounds1 = tuple([rec.real_hdr[brsvd1]     for rec in z_recs]) # bulev
+        array = tuple([rec.real_hdr.item(blev,) for rec in z_recs])
+        bounds0 = tuple(
+            [rec.real_hdr[brlev] for rec in z_recs])  # lower level boundary
+        bounds1 = tuple([rec.real_hdr[brsvd1] for rec in z_recs])  # bulev
         if _coord_positive.get(axiscode, None) == 'down':
             bounds0, bounds1 = bounds1, bounds0
 
@@ -2615,10 +2626,10 @@ class UMField:
 #            copy = True
 #        else:
         copy = False
-        array   = numpy_array(array, dtype=float)
+        array = numpy_array(array, dtype=float)
         bounds0 = numpy_array(bounds0, dtype=float)
         bounds1 = numpy_array(bounds1, dtype=float)
-        bounds  = numpy_column_stack((bounds0, bounds1))
+        bounds = numpy_column_stack((bounds0, bounds1))
 
         if (bounds0 == bounds1).all():
             bounds = None
@@ -2630,18 +2641,19 @@ class UMField:
         _axis['z'] = axisZ
 
         dc = self.implementation.initialise_DimensionCoordinate()
-        dc = self.coord_data(dc, array,
-                             bounds=bounds,
-                             units=_axiscode_to_Units.setdefault(axiscode, None))
+        dc = self.coord_data(
+            dc, array, bounds=bounds,
+            units=_axiscode_to_Units.setdefault(axiscode, None)
+        )
         dc = self.coord_positive(dc, axiscode, _axis['z'])
         dc = self.coord_axis(dc, axiscode)
         dc = self.coord_names(dc, axiscode)
 
-        self.implementation.set_dimension_coordinate(self.field, dc,
-                                                     axes=[_axis['z']], copy=copy)
+        self.implementation.set_dimension_coordinate(
+            self.field, dc, axes=[_axis['z']], copy=copy)
 
         if self.verbose:
-            print('    '+dc.dump(display=False)) # pragma: no cover
+            print('    '+dc.dump(display=False))  # pragma: no cover
 
         return dc
 
@@ -2650,7 +2662,9 @@ class UMField:
 
         '''
         if self.verbose:
-            print('Creating Z reference coordinates from BRLEV') # pragma: no cover
+            print(
+                'Creating Z reference coordinates from BRLEV'
+            )  # pragma: no cover
 
         array = numpy_array([rec.real_hdr.item(brlev,) for rec in self.z_recs],
                             dtype=float)
@@ -2666,7 +2680,7 @@ class UMField:
             if not 128 <= LBVC <= 139:
                 bounds = []
                 for rec in self.z_recs:
-                    BRLEV  = rec.real_hdr.item(brlev,)
+                    BRLEV = rec.real_hdr.item(brlev,)
                     BRSVD1 = rec.real_hdr.item(brsvd1,)
 
                     if abs(BRSVD1-BRLEV) >= ATOL:
@@ -2681,12 +2695,14 @@ class UMField:
                 bounds = numpy_array((bounds,), dtype=float)
 
             dc = self.implementation.initialise_DimensionCoordinate()
-            dc = self.coord_data(dc, array, bounds,
-                                 units=_axiscode_to_Units.setdefault(axiscode, None))
+            dc = self.coord_data(
+                dc, array, bounds,
+                units=_axiscode_to_Units.setdefault(axiscode, None)
+            )
             dc = self.coord_axis(dc, axiscode)
             dc = self.coord_names(dc, axiscode)
 
-            if not dc.get('positive', True): # ppp
+            if not dc.get('positive', True):  # ppp
                 dc.flip(i=True)
 
             _cached_z_reference_coordinate[key] = dc
@@ -2701,137 +2717,139 @@ class UMField:
 
 # --- End: class
 
-#_stash2standard_name = {}
+# _stash2standard_name = {}
 #
-#def load_stash2standard_name(table=None, delimiter='!', merge=True):
-#    '''Load a STASH to standard name conversion table.
+# def load_stash2standard_name(table=None, delimiter='!', merge=True):
+#     '''Load a STASH to standard name conversion table.
 #
-#:Parameters:
+# :Parameters:
 #
-#    table: `str`, optional
-#        Use the conversion table at this file location. By default the
-#        table will be looked for at
-#        ``os.path.join(os.path.dirname(cf.__file__),'etc/STASH_to_CF.txt')``
+#     table: `str`, optional
+#         Use the conversion table at this file location. By default the
+#         table will be looked for at
+#         ``os.path.join(os.path.dirname(cf.__file__),'etc/STASH_to_CF.txt')``
 #
-#    delimiter: `str`, optional
-#        The delimiter of the table columns. By default, ``!`` is taken
-#        as the delimiter.
+#     delimiter: `str`, optional
+#         The delimiter of the table columns. By default, ``!`` is taken
+#         as the delimiter.
 #
-#    merge: `bool`, optional
-#        If *table* is None then *merge* is taken as False, regardless
-#        of its given value.
+#     merge: `bool`, optional
+#         If *table* is None then *merge* is taken as False, regardless
+#         of its given value.
 #
-#:Returns:
+# :Returns:
 #
-#    `None`
+#     `None`
 #
-#*Examples:*
+# *Examples:*
 #
-#>>> load_stash2standard_name()
-#>>> load_stash2standard_name('my_table.txt')
-#>>> load_stash2standard_name('my_table2.txt', ',')
-#>>> load_stash2standard_name('my_table3.txt', merge=True)
-#>>> load_stash2standard_name('my_table4.txt', merge=False)
+# >>> load_stash2standard_name()
+# >>> load_stash2standard_name('my_table.txt')
+# >>> load_stash2standard_name('my_table2.txt', ',')
+# >>> load_stash2standard_name('my_table3.txt', merge=True)
+# >>> load_stash2standard_name('my_table4.txt', merge=False)
 #
-#    '''
-#    # 0  Model
-#    # 1  STASH code
-#    # 2  STASH name
-#    # 3  units
-#    # 4  valid from UM vn
-#    # 5  valid to   UM vn
-#    # 6  standard_name
-#    # 7  CF extra info
-#    # 8  PP extra info
+#     '''
+#     # 0  Model
+#     # 1  STASH code
+#     # 2  STASH name
+#     # 3  units
+#     # 4  valid from UM vn
+#     # 5  valid to   UM vn
+#     # 6  standard_name
+#     # 7  CF extra info
+#     # 8  PP extra info
 #
-#    if table is None:
-#        # Use default conversion table
-#        merge = False
-#        package_path = os.path.dirname(__file__)
-#        table = os.path.join(package_path, 'etc/STASH_to_CF.txt')
+#     if table is None:
+#         # Use default conversion table
+#         merge = False
+#         package_path = os.path.dirname(__file__)
+#         table = os.path.join(package_path, 'etc/STASH_to_CF.txt')
 #
-#    lines = csv.reader(open(table, 'r'),
-#                       delimiter=delimiter, skipinitialspace=True)
+#     lines = csv.reader(open(table, 'r'),
+#                        delimiter=delimiter, skipinitialspace=True)
 #
-#    raw_list = []
-#    [raw_list.append(line) for line in lines]
+#     raw_list = []
+#     [raw_list.append(line) for line in lines]
 #
-#    # Get rid of comments
-#    for line in raw_list[:]:
-#        if line[0].startswith('#'):
-#            raw_list.pop(0)
-#            continue
-#        break
+#     # Get rid of comments
+#     for line in raw_list[:]:
+#         if line[0].startswith('#'):
+#             raw_list.pop(0)
+#             continue
+#         break
 #
-#    # Convert to a dictionary which is keyed by (submodel, STASHcode)
-#    # tuples
+#     # Convert to a dictionary which is keyed by (submodel, STASHcode)
+#     # tuples
 #
-#    (model, stash, name,
-#     units,
-#     valid_from, valid_to,
-#     standard_name, cf, pp) = list(range(9))
+#     (model, stash, name,
+#      units,
+#      valid_from, valid_to,
+#      standard_name, cf, pp) = list(range(9))
 #
-#    stash2sn = {}
-#    for x in raw_list:
-#        key = (int(x[model]), int(x[stash]))
+#     stash2sn = {}
+#     for x in raw_list:
+#         key = (int(x[model]), int(x[stash]))
 #
-#        if not x[units]:
-#            x[units] = None
+#         if not x[units]:
+#             x[units] = None
 #
-#        try:
-#            cf_info = {}
-#            if x[cf]:
-#                for d in x[7].split():
-#                    if d.startswith('height='):
-#                        cf_info['height'] = re.split(_number_regex, d,
-#                                                     re.IGNORECASE)[1:4:2]
-#                        if cf_info['height'] == '':
-#                            cf_info['height'][1] = '1'
+#         try:
+#             cf_info = {}
+#             if x[cf]:
+#                 for d in x[7].split():
+#                     if d.startswith('height='):
+#                         cf_info['height'] = re.split(_number_regex, d,
+#                                                      re.IGNORECASE)[1:4:2]
+#                         if cf_info['height'] == '':
+#                             cf_info['height'][1] = '1'
 #
-#                    if d.startswith('below_'):
-#                        cf_info['below'] = re.split(_number_regex, d,
-#                                                     re.IGNORECASE)[1:4:2]
+#                     if d.startswith('below_'):
+#                         cf_info['below'] = re.split(_number_regex, d,
+#                                                      re.IGNORECASE)[1:4:2]
 #                        if cf_info['below'] == '':
-#                            cf_info['below'][1] = '1'
+#                             cf_info['below'][1] = '1'
 #
-#                    if d.startswith('where_'):
-#                        cf_info['where'] = d.replace('where_', 'where ', 1)
-#                    if d.startswith('over_'):
-#                        cf_info['over'] = d.replace('over_', 'over ', 1)
+#                     if d.startswith('where_'):
+#                         cf_info['where'] = d.replace('where_', 'where ', 1)
+#                     if d.startswith('over_'):
+#                         cf_info['over'] = d.replace('over_', 'over ', 1)
 #
-#            x[cf] = cf_info
-#        except IndexError:
-#            pass
+#             x[cf] = cf_info
+#         except IndexError:
+#             pass
 #
-#        try:
-#            x[valid_from] = float(x[valid_from])
-#        except ValueError:
-#            x[valid_from] = None
+#         try:
+#             x[valid_from] = float(x[valid_from])
+#         except ValueError:
+#             x[valid_from] = None
 #
-#        try:
-#            x[valid_to] = float(x[valid_to])
-#        except ValueError:
-#            x[valid_to] = None
+#         try:
+#             x[valid_to] = float(x[valid_to])
+#         except ValueError:
+#             x[valid_to] = None
 #
-#        x[pp] = x[pp].rstrip()
+#         x[pp] = x[pp].rstrip()
 #
-#        line = (x[name:],)
+#         line = (x[name:],)
 #
-#        if key in stash2sn:
-#            stash2sn[key] += line
-#        else:
-#            stash2sn[key] = line
-#    # --- End: for
+#         if key in stash2sn:
+#             stash2sn[key] += line
+#         else:
+#             stash2sn[key] = line
+#     # --- End: for
 #
-#    if not merge:
-#        _stash2standard_name.clear()
+#     if not merge:
+#         _stash2standard_name.clear()
 #
-#    _stash2standard_name.update(stash2sn)
+#     _stash2standard_name.update(stash2sn)
+
 
 # ---------------------------------------------------------------------
 # Create the STASH code to standard_name conversion dictionary
 # ---------------------------------------------------------------------
 stash2standard_name = load_stash2standard_name()
+
 
 class UMRead(cfdm.read_write.IORead):
     '''TODO
@@ -2882,10 +2900,12 @@ class UMRead(cfdm.read_write.IORead):
         else:
             byte_ordering = None
 
-        self.read_vars = {'filename'     : filename,
-                          'byte_ordering': byte_ordering,
-                          'word_size'    : word_size,
-                          'fmt'          : fmt}
+        self.read_vars = {
+            'filename': filename,
+            'byte_ordering': byte_ordering,
+            'word_size': word_size,
+            'fmt': fmt
+        }
 
         history = 'Converted from UM/PP by cf-python v{}'.format(__version__)
 
@@ -2904,7 +2924,6 @@ class UMRead(cfdm.read_write.IORead):
               for var in f.vars]
 
         return [field for x in um for field in x.fields if field]
-
 
     def is_um_file(self, filename):
         '''Return True if a file is a PP file or UM fields file.
@@ -2945,7 +2964,6 @@ class UMRead(cfdm.read_write.IORead):
 
         return True
 
-
     def file_close(self):
         '''Close the file that has been read.
 
@@ -2955,7 +2973,6 @@ class UMRead(cfdm.read_write.IORead):
 
         '''
         _close_um_file(self.read_vars['filename'])
-
 
     def file_open(self, filename):
         '''Open the file for reading.
