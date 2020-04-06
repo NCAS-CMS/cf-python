@@ -21,7 +21,7 @@ from ..functions import _DEPRECATION_ERROR_FUNCTION_KWARGS
 # --------------------------------------------------------------------
 _implementation = implementation()
 netcdf = NetCDFRead(_implementation)
-UM     = UMRead(_implementation)
+UM = UMRead(_implementation)
 
 
 def read(files, external=None, verbose=False, warnings=False,
@@ -263,8 +263,8 @@ def read(files, external=None, verbose=False, warnings=False,
             If True then insert size 1 axes from each field
             construct's domain into its data array.
 
-        select: (sequence of) str, optional 
-            Only return field constructs which have given identities ,
+        select: (sequence of) str, optional
+            Only return field constructs which have given identities,
             i.e. those that satisfy
             ``f.match_by_identity(*select)``. See
             `cf.Field.match_by_identity` for details.
@@ -423,22 +423,26 @@ def read(files, external=None, verbose=False, warnings=False,
 
     '''
     if field:
-        _DEPRECATION_ERROR_FUNCTION_KWARGS('cf.read', {'field': field},
-                                           "Use keyword 'extra' instead") # pragma: no cover
+        _DEPRECATION_ERROR_FUNCTION_KWARGS(
+            'cf.read', {'field': field}, "Use keyword 'extra' instead"
+        )  # pragma: no cover
 
     if select_options:
-        _DEPRECATION_ERROR_FUNCTION_KWARGS('cf.read',
-                                           {'select_options': select_options}) # pragma: no cover
+        _DEPRECATION_ERROR_FUNCTION_KWARGS(
+            'cf.read', {'select_options': select_options}
+        )  # pragma: no cover
 
     if follow_symlinks:
-        _DEPRECATION_ERROR_FUNCTION_KWARGS('cf.read',
-                                           {'follow_symlinks': follow_symlinks},
-                                           "Use keyword 'followlink' instead.") # pragma: no cover
+        _DEPRECATION_ERROR_FUNCTION_KWARGS(
+            'cf.read', {'follow_symlinks': follow_symlinks},
+            "Use keyword 'followlink' instead."
+        )  # pragma: no cover
 
     if height_at_top_of_model is not None:
-        _DEPRECATION_ERROR_FUNCTION_KWARGS('cf.read',
-                                           {'height_at_top_of_model': height_at_top_of_model},
-                                           "Use keyword 'um' instead.") # pragma: no cover
+        _DEPRECATION_ERROR_FUNCTION_KWARGS(
+            'cf.read', {'height_at_top_of_model': height_at_top_of_model},
+            "Use keyword 'um' instead."
+        )  # pragma: no cover
 
     # Parse select
     if isinstance(select, str):
@@ -457,7 +461,7 @@ def read(files, external=None, verbose=False, warnings=False,
 
     if isinstance(aggregate, dict):
         aggregate_options = aggregate.copy()
-        aggregate         = True
+        aggregate = True
     else:
         aggregate_options = {}
 
@@ -470,11 +474,11 @@ def read(files, external=None, verbose=False, warnings=False,
         extra = (extra,)
 
     ftypes = set()
-        
+
     # Count the number of fields (in all files) and the number of
     # files
     field_counter = -1
-    file_counter  = 0
+    file_counter = 0
 
     for file_glob in flat(files):
         # Expand variables
@@ -494,7 +498,8 @@ def read(files, external=None, verbose=False, warnings=False,
             for x in files2:
                 if isdir(x):
                     # Walk through directories, possibly recursively
-                    for path, subdirs, filenames in os.walk(x, followlinks=followlinks):
+                    for path, subdirs, filenames in os.walk(
+                            x, followlinks=followlinks):
                         files3.extend(os.path.join(path, f) for f in filenames)
                         if not recursive:
                             break
@@ -506,8 +511,8 @@ def read(files, external=None, verbose=False, warnings=False,
 
         for filename in files2:
             if verbose:
-                print('File: {0}'.format(filename)) # pragma: no cover
-                
+                print('File: {0}'.format(filename))  # pragma: no cover
+
             if um:
                 ftype = 'UM'
             else:
@@ -516,9 +521,9 @@ def read(files, external=None, verbose=False, warnings=False,
                 except Exception as error:
                     if not ignore_read_error:
                         raise Exception(error)
-                    
+
                     if verbose:
-                        print('WARNING: {}'.format(error)) # pragma: no cover
+                        print('WARNING: {}'.format(error))  # pragma: no cover
 
                     continue
             # --- End: if
@@ -528,20 +533,22 @@ def read(files, external=None, verbose=False, warnings=False,
             # --------------------------------------------------------
             # Read the file into fields
             # --------------------------------------------------------
-            fields = _read_a_file(filename, ftype=ftype,
-                                  external=external,
-                                  ignore_read_error=ignore_read_error,
-                                  verbose=verbose, warnings=warnings,
-                                  aggregate=aggregate,
-                                  aggregate_options=aggregate_options,
-                                  selected_fmt=fmt, um=um,
-                                  extra=extra,
-                                  height_at_top_of_model=height_at_top_of_model,
-                                  chunk=chunk)
+            fields = _read_a_file(
+                filename, ftype=ftype,
+                external=external,
+                ignore_read_error=ignore_read_error,
+                verbose=verbose, warnings=warnings,
+                aggregate=aggregate,
+                aggregate_options=aggregate_options,
+                selected_fmt=fmt, um=um,
+                extra=extra,
+                height_at_top_of_model=height_at_top_of_model,
+                chunk=chunk
+            )
 
             # --------------------------------------------------------
-            # Select matching fields (not from UM files) 
-            # --------------------------------------------------------            
+            # Select matching fields (not from UM files)
+            # --------------------------------------------------------
             if select and ftype != 'UM':
                 fields = fields.select_by_identity(*select)
 
@@ -558,24 +565,27 @@ def read(files, external=None, verbose=False, warnings=False,
 
     # Print some informative messages
     if verbose:
-        print("Read {0} field{1} from {2} file{3}".format(
-            field_counter, _plural(field_counter),
-            file_counter , _plural(file_counter))) # pragma: no cover
+        print(
+            "Read {0} field{1} from {2} file{3}".format(
+                field_counter, _plural(field_counter), file_counter,
+                _plural(file_counter)
+            )
+        )  # pragma: no cover
 
     # ----------------------------------------------------------------
     # Aggregate the output fields
     # ----------------------------------------------------------------
     if aggregate and len(field_list) > 1:
         if verbose:
-            org_len = len(field_list) # pragma: no cover
+            org_len = len(field_list)  # pragma: no cover
 
         field_list = cf_aggregate(field_list, **aggregate_options)
 
         if verbose:
-            n = len(field_list) # pragma: no cover
+            n = len(field_list)  # pragma: no cover
             print('{0} input field{1} aggregated into {2} field{3}'.format(
                 org_len, _plural(org_len),
-                n, _plural(n))) # pragma: no cover
+                n, _plural(n)))  # pragma: no cover
     # --- End: if
 
     # ----------------------------------------------------------------
@@ -600,7 +610,7 @@ def read(files, external=None, verbose=False, warnings=False,
     # ----------------------------------------------------------------
     if select and 'UM' in ftypes:
         field_list = field_list.select_by_identity(*select)
-                
+
     # ----------------------------------------------------------------
     # Squeeze size one dimensions from the data arrays. Do one of:
     #
@@ -623,16 +633,19 @@ def read(files, external=None, verbose=False, warnings=False,
     if nfields is not None and len(field_list) != nfields:
         raise ValueError(
             "{} field{} requested but {} fields found in file{}".format(
-                nfields, _plural(nfields), len(field_list), _plural(file_counter)))
+                nfields, _plural(nfields), len(field_list),
+                _plural(file_counter)
+            )
+        )
 
     return field_list
 
 
-def _plural(n): # pragma: no cover
+def _plural(n):  # pragma: no cover
     '''Return a suffix which reflects a word's plural.
 
     '''
-    return 's' if n !=1 else '' # pragma: no cover
+    return 's' if n != 1 else ''  # pragma: no cover
 
 
 def _read_a_file(filename, ftype=None, aggregate=True,
@@ -673,18 +686,18 @@ def _read_a_file(filename, ftype=None, aggregate=True,
     if aggregate_options is None:
         aggregate_options = {}
     # Find this file's type
-    fmt                    = None
-    word_size              = None
-    endian                 = None
+    fmt = None
+    word_size = None
+    endian = None
     height_at_top_of_model = None
-    umversion              = 405
+    umversion = 405
 
     if um:
-#        ftype = 'UM'
-        fmt                    = um.get('fmt')
-        word_size              = um.get('word_size')
-        endian                 = um.get('endian')
-        umversion              = um.get('version')
+        # ftype = 'UM'
+        fmt = um.get('fmt')
+        word_size = um.get('word_size')
+        endian = um.get('endian')
+        umversion = um.get('version')
         height_at_top_of_model = um.get('height_at_top_of_model')
         if fmt in ('PP', 'pp', 'pP', 'Pp'):
             fmt = fmt.upper()
@@ -706,19 +719,20 @@ def _read_a_file(filename, ftype=None, aggregate=True,
 #                raise Exception(error)
 #
 #            if verbose:
-#                print('WARNING: {}'.format(error)) # pragma: no cover
+#                print('WARNING: {}'.format(error))  # pragma: no cover
 #
 #            return FieldList()
     # --- End: if
 
-    extra_read_vars = {'chunk'            : chunk,
-                       'fmt'              : selected_fmt,
-                       'ignore_read_error': ignore_read_error,
-                       # 'cfa' defaults to False. If the file has
-                       # "CFA" in its Conventions global attribute
-                       # then 'cfa' will be changed to True in
-                       # netcdf.read
-                       'cfa'              : False,
+    extra_read_vars = {
+        'chunk': chunk,
+        'fmt': selected_fmt,
+        'ignore_read_error': ignore_read_error,
+        # 'cfa' defaults to False. If the file has
+        # "CFA" in its Conventions global attribute
+        # then 'cfa' will be changed to True in
+        # netcdf.read
+        'cfa': False,
     }
 
     # ----------------------------------------------------------------
@@ -734,14 +748,17 @@ def _read_a_file(filename, ftype=None, aggregate=True,
         if not netcdf.is_netcdf_file(filename):
             if ignore_read_error:
                 if verbose:
-                    print("WARNING: Can't determine format of file {} generated from CDL file {}".format(
-                        filename, cdl_filename)) # pragma: no cover
+                    print(
+                        "WARNING: Can't determine format of file {} generated "
+                        "from CDL file {}".format(filename, cdl_filename)
+                    )  # pragma: no cover
 
                 return FieldList()
             else:
                 raise IOError(
-                    "Can't determine format of file {} generated from CDL file {}".format(
-                        filename, cdl_filename))
+                    "Can't determine format of file {} generated from CDL "
+                    "file {}".format(filename, cdl_filename)
+                )
     # --- End: if
 
     if ftype == 'netCDF' and extra_read_vars['fmt'] in (None, 'NETCDF', 'CFA'):
@@ -775,6 +792,7 @@ def _read_a_file(filename, ftype=None, aggregate=True,
     # Return the fields
     # ----------------------------------------------------------------
     return FieldList(fields)
+
 
 def file_type(filename):
     '''Return the file format.

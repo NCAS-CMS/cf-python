@@ -8,7 +8,7 @@ from ..functions import flat
 from ..functions import _DEPRECATION_ERROR_FUNCTION_KWARGS
 
 
-#from . import mpi_on
+# from . import mpi_on
 mpi_on = False
 if mpi_on:
     from . import mpi_comm
@@ -17,6 +17,7 @@ if mpi_on:
 
 
 netcdf = NetCDFWrite(implementation())
+
 
 def write(fields, filename, fmt='NETCDF4', overwrite=True,
           global_attributes=None, file_descriptors=None,
@@ -372,7 +373,7 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
 
             This parameter replaces the deprecated *no_shuffle*
             parameter.
-    
+
         datatype: `dict`, optional
             Specify data type conversions to be applied prior to
             writing data to disk. This may be useful as a means of
@@ -452,17 +453,23 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
 
     '''
     if unlimited is not None:
-        _DEPRECATION_ERROR_FUNCTION_KWARGS('cf.write', {'unlimited': unlimited},
-                                           "Use method 'DomainAxis.nc_set_unlimited' instead.") # pragma: no cover
+        _DEPRECATION_ERROR_FUNCTION_KWARGS(
+            'cf.write', {'unlimited': unlimited},
+            "Use method 'DomainAxis.nc_set_unlimited' instead."
+        )  # pragma: no cover
 
     if no_shuffle is not None:
-        _DEPRECATION_ERROR_FUNCTION_KWARGS('cf.write', {'no_shuffle': no_shuffle},
-                                           "Use keyword 'shuffle' instead.") # pragma: no cover
+        _DEPRECATION_ERROR_FUNCTION_KWARGS(
+            'cf.write', {'no_shuffle': no_shuffle},
+            "Use keyword 'shuffle' instead."
+        )  # pragma: no cover
 
     if HDF_chunksizes is not None:
         _DEPRECATION_ERROR_FUNCTION_KWARGS(
             'cf.write', {'HDF_chunksizes': HDF_chunksizes},
-            "HDF chunk sizes may be set for individual field constructs prior to writing, instead.") # pragma: no cover
+            "HDF chunk sizes may be set for individual field constructs "
+            "prior to writing, instead."
+        )  # pragma: no cover
 
     # Flatten the sequence of intput fields
     fields = tuple(flat(fields))
@@ -478,7 +485,10 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
         elif n_unique_paths == mpi_size:
             write_only_on_pe0 = False
         else:
-            raise RuntimeError('write expects either 1 unique filename or as many as there are PEs')
+            raise RuntimeError(
+                "write expects either one unique filename or as many as "
+                "there are PEs"
+            )
 
         if write_only_on_pe0 and not mpi_rank == 0:
             mpi_comm.Barrier()
@@ -486,9 +496,10 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
     # --- End: if
 
     if fields:
-        extra_write_vars = {'cfa'               : False,
-                            'cfa_options'       : {},
-                            'reference_datetime': reference_datetime,
+        extra_write_vars = {
+            'cfa': False,
+            'cfa_options': {},
+            'reference_datetime': reference_datetime,
         }
 
         # CFA options
