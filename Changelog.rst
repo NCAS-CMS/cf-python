@@ -6,11 +6,15 @@ version 3.3.0
 
 * Changed the API to `cf.Field.convolution_filter`: renamed the
   ``weights`` parameter to ``window``.
-* New method: `cf.Field.moving_mean`
+* Reinstated `True` as a permitted value of the ``weights`` keyword of
+  `cf.Field.collapse`.
+* New method: `cf.Field.moving_window`
+  (https://github.com/NCAS-CMS/cf-python/issues/44)
 * New method: `cf.Data.convolution_filter`
 * New keyword parameter to `cf.Field.weights`: ``axes``
-* New permitted values to ``coordinate`` keyword parameter
-  `cf.Field.cumsum`: ``'minimum'``, ``'maximum'``
+* New permitted values to ``coordinate`` keyword parameter of
+  `cf.Field.collapse` and `cf.Field.cumsum`: ``'minimum'``,
+  ``'maximum'``
 
 version 3.2.0
 -------------
@@ -20,6 +24,8 @@ version 3.2.0
 
 * First release for CF-1.8 (does not include netCDF hierarchical
   groups functionality).
+* Deprecated `True` as a permitted value of the ``weights`` keyword of
+  `cf.Field.collapse`.
 * New methods: `cf.Data.compressed`, `cf.Data.diff`
 * New function: `cf.implementation`
 * New methods completing coverage of the inverse trigonometric and
@@ -51,7 +57,7 @@ version 3.2.0
   ``True`` where it would always error before returning dictionary of methods.
 * Fixed bug in `cf.Data.where` that meant the units were not taken into
   account when the condition was a `cf.Query` object with specified units.
-* Addressed many 'TO DO' placeholders in the documentation.
+* Addressed many 'TODO' placeholders in the documentation.
 
 version 3.1.0
 -------------

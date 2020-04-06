@@ -450,6 +450,7 @@ Mathematical operations
    :template: method.rst
 
    ~cf.Field.collapse
+   ~cf.Field.moving_window
    ~cf.Field.cell_area
    ~cf.Field.max
    ~cf.Field.mean
@@ -489,7 +490,7 @@ Mathematical operations
    :template: method.rst
 
    ~cf.Field.convolution_filter
-   ~cf.Field.moving_mean
+   ~cf.Field.moving_window
 
 .. rubric:: Cumulative sums
 

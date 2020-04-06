@@ -400,7 +400,7 @@ are unweighted during the collapse operation.
 .. code-block:: python
    :caption: *Create a weighted time average.*
  	     
-   >>> b = a.collapse('T: mean', weights='T')
+   >>> b = a.collapse('T: mean', weights=True)
    >>> print(b)
    Field: air_potential_temperature (ncvar%air_potential_temperature)
    ------------------------------------------------------------------
@@ -423,7 +423,7 @@ To inspect the weights, call the  `~Field.weights` method directly.
    :caption: *Create and view weights derived from the field construct’s
              time axis.*
  	     
-   >>> w = a.weights(weights='T')
+   >>> w = a.weights(True)
    >>> print(w)
    Field: long_name=weights (ncvar%air_potential_temperature)
    ----------------------------------------------------------
@@ -461,7 +461,7 @@ Specifying weighting by horizontal cell area may also use the special
 .. code-block:: python
    :caption: *Alternative syntax for specifying area weights.*
  	     
-   >>> b = a.collapse('area: mean', weights='area')
+   >>> b = a.collapse('area: mean', weights=True)
    >>> print(b)
    Field: air_potential_temperature (ncvar%air_potential_temperature)
    ------------------------------------------------------------------
@@ -506,7 +506,7 @@ each interim field construct.
    :caption: *Calculate the temporal maximum of the weighted areal
              means using two independent calls.*
 
-   >>> b = a.collapse('area: mean', weights='area').collapse('T: maximum')
+   >>> b = a.collapse('area: mean', weights=True).collapse('T: maximum')
    >>> print(b)
    Field: air_potential_temperature (ncvar%air_potential_temperature)
    ------------------------------------------------------------------
@@ -530,7 +530,7 @@ collapses).
              means in a single call, using the cf-netCDF cell
              methods-like syntax.*
 
-   >>> b = a.collapse('area: mean T: maximum', weights='area')
+   >>> b = a.collapse('area: mean T: maximum', weights=True)
    >>> print(b.array)
    [[[271.77199724]]]
 
@@ -683,7 +683,7 @@ method is to be applied.
    :caption: *Calculate the multiannual average of the seasonal means.*
 	     
    >>> b = a.collapse('T: mean within years T: mean over years',
-   ...                within_years=cf.seasons(), weights='T')
+   ...                within_years=cf.seasons(), weights=True)
    >>> print(b)
    Field: air_potential_temperature (ncvar%air_potential_temperature)
    ------------------------------------------------------------------
@@ -705,7 +705,7 @@ method is to be applied.
              changed from 'K' to 'K2'.*
 	     
    >>> b = a.collapse('T: minimum within years T: variance over years',
-   ...                within_years=cf.seasons(), weights='T')
+   ...                within_years=cf.seasons(), weights=True)
    >>> print(b)
    Field: air_potential_temperature (ncvar%air_potential_temperature)
    ------------------------------------------------------------------
@@ -731,7 +731,7 @@ chunks, with the *over_years* keyword to `~Field.collapse`.
    :caption: *Calculate the multiannual average of the seasonal means
              in 5 year chunks.*
 	     
-   >>> b = a.collapse('T: mean within years T: mean over years', weights='T',
+   >>> b = a.collapse('T: mean within years T: mean over years', weights=True,
    ...                within_years=cf.seasons(), over_years=cf.Y(5))
    >>> print(b)
    Field: air_potential_temperature (ncvar%air_potential_temperature)
@@ -757,7 +757,7 @@ chunks, with the *over_years* keyword to `~Field.collapse`.
    :caption: *Calculate the multiannual average of the seasonal means,
              restricting the years from 1963 to 1968.*
 
-   >>> b = a.collapse('T: mean within years T: mean over years', weights='T',
+   >>> b = a.collapse('T: mean within years T: mean over years', weights=True,
    ...                within_years=cf.seasons(), over_years=cf.year(cf.wi(1963, 1968)))
    >>> print(b)
    Field: air_potential_temperature (ncvar%air_potential_temperature)
@@ -790,7 +790,7 @@ method constructs.
              standard deviations with two separate collapse calls.*
 
    >>> b = a.collapse('T: standard_deviation within years',
-   ...                within_years=cf.seasons(), weights='T')
+   ...                within_years=cf.seasons(), weights=True)
    >>> print(b)
    Field: air_potential_temperature (ncvar%air_potential_temperature)
    ------------------------------------------------------------------
@@ -1058,7 +1058,7 @@ N-dimensional bins of the other set of variables.
                    : time(1) = [2019-01-01 00:00:00]
    >>> t_indices = t.digitize(4)
    >>> p_indices = p.digitize(6)
-   >>> b = q.bin('mean', digitized=[t_indices, p_indices], weights='area')  
+   >>> b = q.bin('mean', digitized=[t_indices, p_indices], weights='area')
    >>> print(b)
    Field: specific_humidity
    ------------------------
@@ -1137,7 +1137,7 @@ with the `~Field.percentile` method of the field construct.
     [0.11 0.131 0.124 0.146 0.087 0.103 -- --]
     [  --    --    --    --    -- 0.072 -- --]
     [  --    --    --    --    --    -- -- --]]
-   >>> g.collapse('standard_deviation', weights='area').data
+   >>> g.collapse('standard_deviation', weights=True).data
    <CF Data(1, 1): [[0.024609938742357642]] 1>
 
 .. code-block:: python
@@ -1158,7 +1158,7 @@ with the `~Field.percentile` method of the field construct.
     [0.11 0.131 0.124 0.146    --    --    --    --]
     [  -- 0.059    -- 0.07  0.058 0.072    --    --]
     [  -- 0.036    -- 0.035   --  0.037 0.034    --]]
-   >>> print(g.collapse('X: mean', weights='X').array)
+   >>> print(g.collapse('X: mean', weights=True).array)
    [[0.031  ]
     [0.06175]
     [0.12775]
@@ -2116,13 +2116,15 @@ Method          Description
 `~Field.trunc`  Truncate the data, element-wise.
 ==============  ====================================================
 
-Moving means
-^^^^^^^^^^^^
+Moving windows
+^^^^^^^^^^^^^^
 
-Moving means along an axis may be created with the
-`~Field.moving_mean` method of the field construct.
+Moving window calculations along an axis may be created with the
+`~Field.moving_window` method of the field construct.
 
-By default the means are unweighted, but weights based on the axis
+Moving mean, sum, and integral calculations are possible.
+
+By default moving means are unweighted, but weights based on the axis
 cell sizes (or custom weights) may applied to the calculation.
 
 .. code-block:: python
@@ -2155,7 +2157,7 @@ cell sizes (or custom weights) may applied to the calculation.
     [315. 360.]]
    >>> q.iscyclic('X')
    True
-   >>> g = f.moving_mean(3, axis='X', weights='X')
+   >>> g = f.moving_window('mean', 3, axis='X', weights=True)
    >>> print(g)
    Field: specific_humidity (ncvar%q)
    ----------------------------------
@@ -2180,7 +2182,7 @@ cell sizes (or custom weights) may applied to the calculation.
     [225. 360.]
     [270. 360.]]
 
-.. note:: The `~Field.moving_mean` method can not, in general, be
+.. note:: The `~Field.moving_window` method can not, in general, be
           emulated by the `~Field.convolution_filter` method, as the
           latter i) can not change the window weights as the filter
           passes through the axis; and ii) does not update the cell
@@ -2276,7 +2278,7 @@ weights of ``[1, 1, 1, 1, 1]`` will produce a 5-point running
 sum. Note that the window weights returned by functions of the
 `scipy.signal.windows` package do not necessarily sum to 1.
 
-.. note:: The `~Field.moving_mean` method can not, in general, be
+.. note:: The `~Field.moving_window` method can not, in general, be
           emulated by the `~Field.convolution_filter` method, as the
           latter i) can not change the window weights as the filter
           passes through the axis; and ii) does not update the cell

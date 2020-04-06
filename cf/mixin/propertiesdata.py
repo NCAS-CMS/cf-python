@@ -3502,7 +3502,7 @@ class PropertiesData(Properties):
                     ok = Units(value0).equals(self_units)
                 else:
                     ok = Units(value0).equivalent(self_units)
-            # --- End: if
+            # --- End: try
 
             if ok:
                 break
