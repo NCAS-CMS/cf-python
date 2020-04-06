@@ -1395,6 +1395,8 @@ def aggregate(fields,
               their long_name properties:
               ``field_identity='long_name'``
 
+            .. versionadded:: 3.1.0
+
         ncvar_identities: `bool`, optional
             If True then force field and metadata constructs to be
             identified by their netCDF file variable names See also the

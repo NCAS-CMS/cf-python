@@ -153,6 +153,8 @@ The `cf` package can:
   (i.e. ragged or gathered arrays), whilst presenting a view of the
   data in its uncompressed form,
 
+* read, write, and create coordinates defined by geometry cells,
+
 * combine field constructs arithmetically,
 
 * manipulate field construct data by arithmetical and trigonometrical
@@ -165,7 +167,7 @@ The `cf` package can:
 
 * regrid field constructs,
 
-* apply convolution filters to field constructs,
+* apply convolution filters and moving means to field constructs,
 
 * calculate derivatives of field constructs,
 

@@ -2329,6 +2329,8 @@ def environment(display=True, paths=True, string=True):
         paths: `bool`, optional
             If False then do not output the locations of each package.
 
+            .. versionadded:: 3.0.6
+
     :Returns:
 
         `None` or `str`

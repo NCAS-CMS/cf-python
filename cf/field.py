@@ -5,9 +5,7 @@ from operator    import mul as operator_mul
 from operator    import itemgetter
 
 try:
-    from scipy.ndimage.filters import convolve1d
-    from scipy.signal          import get_window
-    from matplotlib.path       import Path
+    from matplotlib.path import Path
 except ImportError:
     pass
 
@@ -19,8 +17,9 @@ from numpy import asanyarray  as numpy_asanyarray
 from numpy import can_cast    as numpy_can_cast
 from numpy import diff        as numpy_diff
 from numpy import empty       as numpy_empty
-from numpy import errstate    as numpy_errstate
+#from numpy import errstate    as numpy_errstate
 from numpy import finfo       as numpy_finfo
+from numpy import full        as numpy_full
 from numpy import isnan       as numpy_isnan
 from numpy import nan         as numpy_nan
 from numpy import ndarray     as numpy_ndarray
@@ -100,7 +99,6 @@ _debug = False
 _units_radians = Units('radians')
 _units_metres = Units('m')
 _units_1 = Units('1')
-
 
 # --------------------------------------------------------------------
 # Map each allowed input collapse method name to its corresponding
@@ -4930,13 +4928,9 @@ class Field(mixin.PropertiesData,
                                     axis=axis,
                                     _preserve=_preserve)
 
-#        out = super(cls, field0).concatenate(fields, axis=axis,
-#                                             _preserve=_preserve)
-
         # Change the domain axis size
         dim = out.get_data_axes()[axis]
         out.set_construct(DomainAxis(size=new_data.shape[axis]), key=dim)
-#        out.insert_axis(DomainAxis(out.shape[axis]), key=dim, replace=True)
 
         # Insert the concatenated data
         out.set_data(new_data, set_axes=False, copy=False)
@@ -4948,8 +4942,8 @@ class Field(mixin.PropertiesData,
             construct_axes = field0.get_data_axes(key)
 
             if dim not in construct_axes:
-                # This construct does not span the concatenating axis in
-                # the first field
+                # This construct does not span the concatenating axis
+                # in the first field
                 continue
 
             constructs = [construct]
@@ -4963,8 +4957,8 @@ class Field(mixin.PropertiesData,
                 constructs.append(c)
 
             if not constructs:
-                # Not every field has this construct, so remove it from the
-                # output field.
+                # Not every field has this construct, so remove it
+                # from the output field.
                 out.del_construct(key)
                 continue
 
@@ -4985,49 +4979,6 @@ class Field(mixin.PropertiesData,
                 out.set_construct(construct, key=key,
                                   axes=construct_axes, copy=False)
         # --- End: for
-
-#        for role in ('d', 'a', 'm', 'f', 'c'):
-#            for key, item in field0.items(role=role).items():
-#                item_axes = field0.get_data_axes(key)
-#
-#                if dim not in item_axes:
-#                    # This item does not span the concatenating axis in
-#                    # the first field
-#                    continue
-#
-#                items = [item]
-#                for f in fields[1:]:
-#                    i = f.item(key)
-#                    if i is not None:
-#                        items.append(i)
-#                    else:
-#                        # This field does not have this item
-#                        items = None
-#                        break
-#                # --- End: for
-#
-#                if not items:
-#                    # Not every field has this item, so remove it from the
-#                    # output field.
-#                    out.remove_item(key)
-#                    continue
-#
-#                # Still here? Then try concatenating the items from
-#                # each field.
-#                try:
-#                    item = item.concatenate(items, axis=item_axes.index(dim),
-#                                            _preserve=_preserve)
-#                except ValueError:
-#                    # Couldn't concatenate this item, so remove it from
-#                    # the output field.
-#                    out.remove_item(key)
-#                else:
-#                    # Successfully concatenated this item, so insert
-#                    # it into the output field.
-#                    out.insert_item(role, item, key=key, axes=item_axes,
-#                                    copy=False, replace=True)
-#            # --- End: for
-#        # --- End: for
 
         return out
 
@@ -5131,7 +5082,7 @@ class Field(mixin.PropertiesData,
 
     def weights(self, weights=True, scale=None, measure=False,
                 components=False, methods=False, radius='earth',
-                data=False, great_circle=False, **kwargs):
+                data=False, great_circle=False, axes=None, **kwargs):
         '''Return weights for the data array values.
 
     The weights are those used during a statistical collapse of the
@@ -5150,7 +5101,8 @@ class Field(mixin.PropertiesData,
 
     .. versionadded:: 1.0
 
-    .. seealso:: `bin`, `cell_area`, `collapse`, `radius`
+    .. seealso:: `bin`, `cell_area`, `collapse`, `moving_window`,
+                 `radius`
 
     :Parameters:
 
@@ -5179,9 +5131,11 @@ class Field(mixin.PropertiesData,
                           find out how the weights were actually
                           created.
 
-                          In weights components are created for all
-                          axes of the field by one or more of the
-                          following methods, in order of preference,
+                          The weights components are created for all
+                          axes (or a subset of them, see the *axes*
+                          parameter) of the field by one or more of
+                          the following methods, in order of
+                          preference,
 
                             1. Volume cell measures
                             2. Area cell measures
@@ -5209,7 +5163,8 @@ class Field(mixin.PropertiesData,
 
               `Data`      Explicit weights in a `Data` object that
                           must be broadcastable to the field
-                          construct's data.
+                          construct's data, unless the *axes*
+                          parameter is also set.
 
               `dict`      Explicit weights in a dictionary of the form
                           that is returned from a call to the
@@ -5286,6 +5241,12 @@ class Field(mixin.PropertiesData,
                       which requires the field construct to have a
                       "volume" cell measure construct.
 
+                      If ``weights=True`` then care also needs to be
+                      taken, as a "volume" cell measure construct will
+                      be used if present, othewise the cell volumes
+                      will be calculated using the size of the
+                      vertical coordinate cells.
+
         radius: optional
             Specify the radius used for calculating the areas of cells
             defined in spherical polar coordinates. The radius is that
@@ -5302,7 +5263,7 @@ class Field(mixin.PropertiesData,
         components: `bool`, optional
             If True then a dictionary of orthogonal weights components
             is returned instead of a field. Each key is a tuple of
-            integers representing axes positions in the field
+            integers representing axis positions in the field
             construct's data, with corresponding values of weights in
             `Data` objects. The axes of weights match the axes of the
             field construct's data array in the order given by their
@@ -5316,6 +5277,8 @@ class Field(mixin.PropertiesData,
             If True then return the weights in a `Data` instance that
             is broadcastable to the original data.
 
+            .. versionadded:: 3.1.0
+
         great_circle: `bool`, optional
             If True then allow, if required, the derivation of i) area
             weights from polygon geometry cells by assuming that each
@@ -5326,6 +5289,34 @@ class Field(mixin.PropertiesData,
 
             .. versionadded:: 3.2.0
 
+        axes: (sequence of) `int` or `str`, optional
+            Modify the behaviour when *weights* is `True` or a `Data`
+            instance. Ignored for any other value the *weights*
+            parameter.
+
+            If *weights* is `True` then weights are created only for
+            the specified axes (as opposed to all
+            axes). I.e. ``weight=True, axes=axes`` is identical to
+            ``weights=axes``.
+
+            If *weights* is a `Data` instance then the specified axes
+            identify each dimension of the given weights. If the
+            weights do not broadcast to the field construct's data
+            then setting the *axes* parameter is required so that the
+            braodcasting can be inferred, otherwise setting the *axes*
+            is not required.
+ 
+            *Parameter example:*
+              ``axes='T'``
+ 
+            *Parameter example:*
+              ``axes=['longitude']``
+
+            *Parameter example:*
+              ``axes=[3, 1]``
+
+            .. versionadded:: 3.3.0
+            
         kwargs: deprecated at version 3.0.0.
 
     :Returns:
@@ -5764,36 +5755,69 @@ class Field(mixin.PropertiesData,
             return True
         #--- End: def
 
-        def _data_weights(self, data, comp, weights_axes):
-            # ------------------------------------------------------------
+        def _data_weights(self, w, comp, weights_axes, axes=None,
+                          data=False, components=False, methods=False):
+            # --------------------------------------------------------
             # Data weights
-            # ------------------------------------------------------------
-            for w in data:
-                if w.ndim > 0:
-                    while w.shape[0] == 1:
-                        w = w.squeeze(0)
-                # --- End: if
+            # --------------------------------------------------------
+            field_data_axes = self.get_data_axes()
 
+            if axes is not None:
+                if isinstance(axes, (str, int)):
+                    axes = (axes,)                
+
+                if len(axes) != w.ndim:
+                    raise ValueError(
+                        "'axes' parameter must provide an axis identifier "
+                        "for each weights data dimension. Got {!r} for {} "
+                        "dimension(s).".format(axes, w.ndim))
+                    
+                iaxes = [field_data_axes.index(self.domain_axis(axis, key=True))
+                         for axis in axes]
+
+                if data:
+                    for i in range(self.ndim):
+                        if i not in iaxes:
+                            w = w.insert_dimension(position=i)
+                            iaxes.insert(i, i)
+                    # --- End: for
+                        
+                    w = w.transpose(iaxes)
+
+                    if w.ndim > 0:
+                        while w.shape[0] == 1:
+                            w = w.squeeze(0)
+                            
+            else:
+                iaxes = list(range(self.ndim-w.ndim, self.ndim))
+            
+            if not (components or methods):
                 if not self._is_broadcastable(w.shape):
-                    raise ValueError("TODO")
+                    raise ValueError(
+                        "The 'Data' weights (shape {}) are not broadcastable "
+                        "to the field construct's data (shape {}).".format(
+                            w.shape, self.shape))
 
-                axes0 = self.get_data_axes()[self.ndim-w.ndim:]
+                axes0 = field_data_axes[self.ndim-w.ndim:]
+            else:
+                axes0 = [field_data_axes[i] for i in iaxes]
+                
+            for axis0 in axes0:
+                if axis0 in weights_axes:
+                    raise ValueError(
+                        "Multiple weights specified for {!r} axis".format(
+                            self.constructs.domain_axis_identity(axis0)))
+            # --- End: for
 
-                for axis0 in axes0:
-                    if axis0 in weights_axes:
-                        raise ValueError(
-                            "Multiple weights specified for {!r} axis".format(
-                                self.constructs.domain_axis_identity(axis0))
-                        )
-                # --- End: for
-
+            if methods:
+                comp[tuple(axes0)] = 'custom data'
+            else:                
                 comp[tuple(axes0)] = w
 
-                weights_axes.update(axes0)
-            #--- End: for
-        
+            weights_axes.update(axes0)
+            
             return True
-        #--- End: def
+        # --- End: def
 
         def _scale(w, scale):
             '''Scale the weights so that they are <= scale.
@@ -5806,7 +5830,7 @@ class Field(mixin.PropertiesData,
                     "Got {}".format(scale)
                 )
 
-            wmax = w.max()
+            wmax = w.maximum()
             factor = wmax / scale
             factor.dtype = float
             if numpy_can_cast(factor.dtype, w.dtype):
@@ -5863,9 +5887,13 @@ class Field(mixin.PropertiesData,
             cos_delta_lambda = delta_lambda.cos()
             sin_delta_lambda = delta_lambda.sin()
 
-            numerator = ((cos_phi_2*sin_delta_lambda)**2 + (cos_phi_1*sin_phi_2 - sin_phi_1*cos_phi_2*cos_delta_lambda)**2)**0.5
+            numerator = (
+                (cos_phi_2*sin_delta_lambda)**2 +
+                (cos_phi_1*sin_phi_2 - sin_phi_1*cos_phi_2*cos_delta_lambda)**2
+            )**0.5
             
-            denominator = sin_phi_1*sin_phi_2 + cos_phi_1*cos_phi_2*cos_delta_lambda
+            denominator = (sin_phi_1*sin_phi_2 +
+                           cos_phi_1*cos_phi_2*cos_delta_lambda)
 
 # TODO RuntimeWarning: overflow encountered in true_divide comes from
 # numerator/denominator with missing values
@@ -5876,7 +5904,6 @@ class Field(mixin.PropertiesData,
             
             return interior_angle
         
-
         def _yyy(self, geometry_type, auto=False):
             '''TODO
 
@@ -5914,16 +5941,15 @@ class Field(mixin.PropertiesData,
                 elif aux.Z:
                     aux_Z = aux.copy()
                     z_axis = self.get_data_axes(key)[0]                    
-            #--- End: for
+            # --- End: for
                         
             if aux_X is None or aux_Y is None:
                 if auto:
                     return (None,) * 4
-
-                
                 
                 raise ValueError(
-                    "Can't create weights: Need both X and Y nodes to calculate {} geometry weights".format(
+                    "Can't create weights: Need both X and Y nodes to "
+                    "calculate {} geometry weights".format(
                         geometry_type))
                     
 
@@ -5931,7 +5957,9 @@ class Field(mixin.PropertiesData,
                 if auto:
                     return (None,) * 4
                 
-                raise ValueError("Can't create weights: X and Y nodes span different domain axes")
+                raise ValueError(
+                    "Can't create weights: X and Y nodes span different "
+                    "domain axes")
 
             axis = x_axis
              
@@ -5947,22 +5975,25 @@ class Field(mixin.PropertiesData,
                     return (None,) * 4    
                 
                 raise ValueError(
-                    "Can't find weights: X and Y geometry coordinate bounds must have the same shape. Got {} and {}".format(
+                    "Can't find weights: X and Y geometry coordinate bounds "
+                    "must have the same shape. Got {} and {}".format(
                         aux_X.bounds.shape, aux_Y.bounds.shape))
 
             if not methods:
-                if aux_X.bounds.data.fits_in_one_chunk_in_memory(aux_X.bounds.dtype.itemsize):
+                if aux_X.bounds.data.fits_in_one_chunk_in_memory(
+                        aux_X.bounds.dtype.itemsize):
                     aux_X.bounds.varray
-                if aux_X.bounds.data.fits_in_one_chunk_in_memory(aux_Y.bounds.dtype.itemsize):
+                if aux_X.bounds.data.fits_in_one_chunk_in_memory(
+                        aux_Y.bounds.dtype.itemsize):
                     aux_X.bounds.varray
-            #--- End: if
+            # --- End: if
 
             if aux_Z is None:
                 for key, aux in self.auxiliary_coordinates.filter_by_naxes(1).items():
                     if aux.Z:
                         aux_Z = aux.copy()
                         z_axis = self.get_data_axes(key)[0]                    
-            #--- End: if
+            # --- End: if
                         
             # Check Z coordinates
             if aux_Z is not None:
@@ -5970,11 +6001,13 @@ class Field(mixin.PropertiesData,
                     if auto:
                         return (None,) * 4
                     
-                    raise ValueError("Z coordinates spans different dimension to X and Y geometry coordinates")
-            #--- End_if
+                    raise ValueError(
+                        "Z coordinates spans different dimension to X and Y "
+                        "geometry coordinates")
+            # --- End_if
 
             return axis, aux_X, aux_Y, aux_Z
-        #--- End: def
+        # --- End: def
             
         def _area_weights_geometry(self, comp, weights_axes,
                                    auto=False, measure=False,
@@ -6005,20 +6038,24 @@ class Field(mixin.PropertiesData,
                 interior_ring = None
             elif interior_ring_X is None:
                 raise ValueError(
-                    "Can't find weights: X coordinates have missing interior ring variable")
+                    "Can't find weights: X coordinates have missing "
+                    "interior ring variable")
             elif interior_ring_Y is None:
                 raise ValueError(
-                    "Can't find weights: Y coordinates have missing interior ring variable")
+                    "Can't find weights: Y coordinates have missing "
+                    "interior ring variable")
             elif not interior_ring_X.data.equals(interior_ring_Y.data):
                 raise ValueError(
-                    "Can't find weights: Interior ring variables for X and Y coordinates have different data values")
+                    "Can't find weights: Interior ring variables for X and Y "
+                    "coordinates have different data values")
             else:
                 interior_ring = interior_ring_X.data
                 if interior_ring.shape != aux_X.bounds.shape[:-1]:
                     raise ValueError(
-                        "Can't find weights: Interior ring variables have incorrect shape. Got {}, expected {}".format(
+                        "Can't find weights: Interior ring variables have "
+                        "incorrect shape. Got {}, expected {}".format(
                             interior_ring.shape, aux_X.bounds.shape[:-1]))
-            #--- End: if
+            # --- End: if
             
             x = aux_X.bounds.data
             y = aux_Y.bounds.data
@@ -6057,7 +6094,7 @@ class Field(mixin.PropertiesData,
                             # for the "last" edge of the polygon that
                             # joins the first and last points.
                             all_areas[i, j] += x[-1]*y[0] - x[0]*y[-1]
-                #--- End: for
+                # --- End: for
                 
                 all_areas = all_areas.abs() * 0.5
                     
@@ -6080,7 +6117,9 @@ class Field(mixin.PropertiesData,
                 
                 if not great_circle:
                     raise ValueError(
-                        "Must set great_circle=True to derive area weights from spherical polygons composed from great circle segments.")
+                        "Must set great_circle=True to allow the derivation of "
+                        "area weights from spherical polygons composed from "
+                        "great circle segments.")
 
                 if methods:
                     comp[(axis,)] = 'area spherical polygon geometry'
@@ -6144,7 +6183,10 @@ class Field(mixin.PropertiesData,
                     r = radius
                 else:
                     if not z.Units.equivalent(_units_metres):
-                        raise ValueError("Z coordinates must have units equivalent to metres for area calculations. Got {!r}".format(z.Units))
+                        raise ValueError(
+                            "Z coordinates must have units equivalent to "
+                            "metres for area calculations. Got {!r}".format(
+                                z.Units))
                     
                     positive = aux_Z.get_property('positive', None)
                     if positive is None:
@@ -6156,8 +6198,8 @@ class Field(mixin.PropertiesData,
                         r = radius - z
                     else:
                         raise ValueError(
-                            "Bad value of Z coordinate 'positive' property: {!r}.".format(
-                                positve))
+                            "Bad value of Z coordinate 'positive' "
+                            "property: {!r}.".format(positve))
                 #--- End: if
 
                 areas *= r**2
@@ -6230,7 +6272,8 @@ class Field(mixin.PropertiesData,
                 # ----------------------------------------------------
                 if not great_circle:
                     raise ValueError(
-                        "Must set great_circle=True to derive line-length weights from great circle segments.")
+                        "Must set great_circle=True to allow the derivation "
+                        "of line-length weights from great circle segments.")
                 
                 if methods:
                     comp[(axis,)] = 'linear spherical line geometry'
@@ -6242,9 +6285,10 @@ class Field(mixin.PropertiesData,
                 interior_angle = _interior_angle(x, y)
                 if interior_angle.min() < 0:
                     raise ValueError(
-                        "A spherical line geometry segment has negative length: {!r}".format(
+                        "A spherical line geometry segment has "
+                        "negative length: {!r}".format(
                             interior_angle.min()*radius))
-                        
+                
                 all_lengths = interior_angle.sum(-1, squeeze=True)
                 
                 if measure:
@@ -6338,7 +6382,9 @@ class Field(mixin.PropertiesData,
                 # ----------------------------------------------------
                 if not great_circle:
                     raise ValueError(
-                        "Must set great_circle=True to derive volume weights from spherical polygons composed from great circle segments.")
+                        "Must set great_circle=True to allow the derivation "
+                        "of volume weights from spherical polygons composed "
+                        "from great circle segments.")
 
                 if methods:
                     comp[(axis,)] = 'volume spherical polygon geometry'
@@ -6384,7 +6430,7 @@ class Field(mixin.PropertiesData,
                 self, 'weights', kwargs)  # pragma: no cover
 
         if measure and scale is not None:
-            raise ValueError("Can't set scale and measure=True")
+            raise ValueError("Can't set measure=True and scale")
 
         if components and data:
             raise ValueError("Can't set components=True and data=True")
@@ -6397,6 +6443,10 @@ class Field(mixin.PropertiesData,
                 # Return an empty components dictionary
                 return {}
 
+            if data:
+                # Return an scalar Data instance
+                return Data(1.0, '1')
+
             # Return a field containing a single weight of 1
             return _scalar_field_of_weights(Data(1.0, '1'))
 
@@ -6405,7 +6455,7 @@ class Field(mixin.PropertiesData,
             components = True
 
         comp = {}
-        data_axes = self.get_data_axes()
+        field_data_axes = self.get_data_axes()
 
         # All axes which have weights
         weights_axes = set()
@@ -6413,7 +6463,13 @@ class Field(mixin.PropertiesData,
         if radius is not None:
             radius = self.radius(default=radius)
 
-        if weights is True: #isinstance(weights, str) and weights == True: # 'auto':
+        if weights is True and axes is not None:
+            # --------------------------------------------------------
+            # Restrict weights to the specified axes
+            # --------------------------------------------------------
+            weights = axes
+
+        if weights is True:
             # --------------------------------------------------------
             # Auto-detect all weights
             # --------------------------------------------------------
@@ -6474,19 +6530,25 @@ class Field(mixin.PropertiesData,
             for key, value in weights.items():
                 key = [self.domain_axis(i, key=True) for i in key]
                 for k in key:
-                    if k not in data_axes:
+                    if k not in field_data_axes:
                         raise ValueError("TODO {!r} domain axis".format(k))
                 # --- End: for
 
                 multiple_weights = weights_axes.intersection(key)
                 if multiple_weights:
                     raise ValueError(
-                        "Can't find weights: Multiple specifications for {!r} domain axis".format(
-                            self.constructs.domain_axis_identity(multiple_weights.pop())))
+                        "Can't find weights: Multiple specifications for {!r} "
+                        "domain axis".format(
+                            self.constructs.domain_axis_identity(
+                                multiple_weights.pop())))
 
                 weights_axes.update(key)
 
-                comp[tuple(key)] = value.copy()
+                if methods:
+                    comp[tuple(key)] = 'custom data'
+                else:
+                    comp[tuple(key)] = value.copy()
+
         elif isinstance(weights, self.__class__):
             # --------------------------------------------------------
             # Field
@@ -6497,7 +6559,9 @@ class Field(mixin.PropertiesData,
             # --------------------------------------------------------
             # Data
             # --------------------------------------------------------
-            _data_weights(self, [weights], comp, weights_axes)
+            _data_weights(self, weights, comp, weights_axes,
+                          axes=axes, data=data, components=components,
+                          methods=methods)
         else:
             # --------------------------------------------------------
             # String or sequence
@@ -6637,10 +6701,11 @@ class Field(mixin.PropertiesData,
             # --- End: if
 
             for w in comp.values():
-                mn = w.min()
+                mn = w.minimum()
                 if mn <= 0:
                     raise ValueError(
-                        "All weights must be positive. Got a weight of {}".format(mn))
+                        "All weights must be positive. "
+                        "Got a weight of {}".format(mn))
         # --- End: if
 
         if components or methods:
@@ -6650,7 +6715,7 @@ class Field(mixin.PropertiesData,
             # --------------------------------------------------------
             components = {}
             for key, v in comp.items():
-                key = [data_axes.index(axis) for axis in key]
+                key = [field_data_axes.index(axis) for axis in key]
                 if not key:
                     continue
 
@@ -6700,6 +6765,12 @@ class Field(mixin.PropertiesData,
         wdata = wdata.transpose(transpose)
         waxes = [waxes[i] for i in transpose]
 
+        # Set cyclicity
+        for axis in self.get_data_axes():
+            if axis in waxes and self.iscyclic(axis):
+                wdata.cyclic(waxes.index(axis), iscyclic=True)
+        # --- End: for
+        
         if data:
             # Insert missing size one dimensions for broadcasting
             for i, axis in enumerate(self.get_data_axes()):
@@ -6759,7 +6830,7 @@ class Field(mixin.PropertiesData,
       >>> bins = f.percentile([0, 10, 50, 90, 100], squeeze=True)
       >>> i = f.digitize(bins, closed_ends=True)
 
-    The output field contruct is given a ``long_name`` property, and
+    The output field construct is given a ``long_name`` property, and
     some or all of the following properties that define the bins:
 
     =====================  ===========================================
@@ -6777,9 +6848,9 @@ class Field(mixin.PropertiesData,
                            *open_ends* parameters) is deduced from the
                            ``bin_count`` property. If the
                            ``bin_bounds`` vector has 2N elements then
-                           the ``bin_count`` property will be N if
-                           there are no left-unbounded and
-                           right-unbounded bins or N+2 if such bins
+                           the ``bin_count`` property will be N+2 if
+                           there are left-unbounded and
+                           right-unbounded bins, or N if no such bins
                            are present.
 
     ``bin_interval_type``  A string that specifies the nature of the
@@ -7091,8 +7162,8 @@ class Field(mixin.PropertiesData,
         '''Collapse the data values that lie in N-dimensional bins.
 
     The data values of the field construct are binned according to how
-    they correspond to the N-dimensional histogram bins of another
-    set of variables (see `cf.histogram` for details), and each bin of
+    they correspond to the N-dimensional histogram bins of another set
+    of variables (see `cf.histogram` for details), and each bin of
     values is collapsed with one of the collapse methods allowed by
     the *method* parameter.
 
@@ -7131,8 +7202,9 @@ class Field(mixin.PropertiesData,
         method: `str`
             The collapse method used to combine values that map to
             each cell of the output field construct. The following
-            methods are available (see :ref:`this table <Collapse-methods>`
-            for more precise definitions):
+            methods are available (see
+            https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
+            for precise definitions):
 
             ============================  ============================  ========
             *method*                      Description                   Weighted
@@ -7226,7 +7298,7 @@ class Field(mixin.PropertiesData,
             construct for the output field construct.
 
             Each digitized field construct must be transformable so
-            that it is broadcastable to the input field contruct's
+            that it is broadcastable to the input field construct's
             data. This is done by using the metadata constructs of the
             to create a mapping of physically compatible dimensions
             between the fields, and then manipulating the dimensions
@@ -7238,14 +7310,20 @@ class Field(mixin.PropertiesData,
             weights are those that would be returned by this call of
             the field construct's `~cf.Field.weights` method:
             ``f.weights(weights, measure=measure, scale=scale,
-            components=True)``. See the *measure* and *scale*
-            parameters and `cf.Field.weights` for details.
+            radius=radius, great_circle=great_circle,
+            components=True)``. See the *measure, *scale*, *radius*
+            and *great_circle* parameters and `cf.Field.weights` for
+            details.
 
             .. note:: By default *weights* is `None`, resulting in
                       unweighted calculations.
 
             If *weights* is the boolean `True` then weights are
             calculated for all of the domain axis constructs.
+
+            *Parameter example:*
+              To specify weights based on the field construct's
+              metadata for all axes use ``weights=True``.
 
             *Parameter example:*
               To specify weights based on cell areas use
@@ -7285,6 +7363,12 @@ class Field(mixin.PropertiesData,
                       ``weights='volume'`` should be used instead,
                       which requires the field construct to have a
                       "volume" cell measure construct.
+
+                      If ``weights=True`` then care also needs to be
+                      taken, as a "volume" cell measure construct will
+                      be used if present, othewise the cell volumes
+                      will be calculated using the size of the
+                      vertical coordinate cells.
 
         scale: number, optional
             If set to a positive number then scale the weights, as
@@ -7653,10 +7737,10 @@ class Field(mixin.PropertiesData,
             if not measure and scale is None:
                 scale = 1.0
 
-            weights = self.weights(weights, components=True,
-                                   scale=scale, measure=measure,
-                                   radius=radius,
-                                   great_circle=great_circle)
+            weights = self.weights(weights, scale=scale,
+                                   measure=measure, radius=radius,
+                                   great_circle=great_circle,
+                                   components=True)
 
         # ------------------------------------------------------------
         # Find the unique multi-dimensional bin indices (TODO: can I
@@ -7741,7 +7825,7 @@ class Field(mixin.PropertiesData,
     **This has moved to** `cf.histogram`
 
         '''
-        raise RuntimeError("Use cf.histogram instead")
+        raise RuntimeError("Use cf.histogram instead.")
 
     def del_construct(self, identity, default=ValueError()):
         '''Remove a metadata construct.
@@ -8223,7 +8307,8 @@ class Field(mixin.PropertiesData,
     **Collapse methods**
 
     The following collapse methods are available (see
-    :ref:`this table <Collapse-methods>` for precise definitions):
+    https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
+    for precise definitions):
 
     ============================  ============================
     Method                        Description
@@ -8326,7 +8411,7 @@ class Field(mixin.PropertiesData,
     *Example:*
       Create a weighted time average:
 
-      >>> b = a.collapse('T: mean', weights='T')
+      >>> b = a.collapse('T: mean', weights=True)
 
     *Example:*
       Calculate the mean over the time and latitude axes, with
@@ -8337,7 +8422,7 @@ class Field(mixin.PropertiesData,
     *Example*
       Alternative syntax for specifying area weights:
 
-      >>> b = a.collapse('area: mean', weights='area')
+      >>> b = a.collapse('area: mean', weights=True)
 
     An alternative technique for specifying weights is to set the
     *weights* keyword to the output of a call to the `weights` method.
@@ -8357,7 +8442,7 @@ class Field(mixin.PropertiesData,
       Calculate the temporal maximum of the weighted areal means
       using two independent calls:
 
-      >>> b = a.collapse('area: mean', weights='area').collapse('T: maximum')
+      >>> b = a.collapse('area: mean', weights=True).collapse('T: maximum')
 
     If preferred, multiple collapses may be carried out in a single
     call by using the CF-netCDF cell methods-like syntax (note that
@@ -8368,17 +8453,20 @@ class Field(mixin.PropertiesData,
       Calculate the temporal maximum of the weighted areal means in
       a single call, using the cf-netCDF cell methods-like syntax:
 
-      >>> b =a.collapse('area: mean T: maximum', weights='area')
+      >>> b =a.collapse('area: mean T: maximum', weights=True)
 
 
     **Grouped collapses**
 
     A grouped collapse is one for which as axis is not collapsed
     completely to size 1. Instead the collapse axis is partitioned
-    into groups and each group is collapsed to size 1. The resulting
-    axis will generally have more than one element. For example,
-    creating 12 annual means from a timeseries of 120 months would be
-    a grouped collapse.
+    into non-overlapping groups and each group is collapsed to size
+    1. The resulting axis will generally have more than one
+    element. For example, creating 12 annual means from a timeseries
+    of 120 months would be a grouped collapse.
+
+    Selected statistics for overalapping groups can be calculated with
+    the `moving_window` method.
 
     The *group* keyword defines the size of the groups. Groups can be
     defined in a variety of ways, including with `Query`,
@@ -8455,7 +8543,7 @@ class Field(mixin.PropertiesData,
       Calculate the multiannual average of the seasonal means:
 
       >>> b = a.collapse('T: mean within years T: mean over years',
-      ...                within_years=cf.seasons(), weights='T')
+      ...                within_years=cf.seasons(), weights=True)
 
     *Example:*
       Calculate the multiannual variance of the seasonal
@@ -8463,7 +8551,7 @@ class Field(mixin.PropertiesData,
       from 'K' to 'K2':
 
       >>> b = a.collapse('T: minimum within years T: variance over years',
-      ...                within_years=cf.seasons(), weights='T')
+      ...                within_years=cf.seasons(), weights=True)
 
     When collapsing over years, it is assumed by default that the each
     portion of the annual cycle is collapsed over all years that are
@@ -8476,7 +8564,7 @@ class Field(mixin.PropertiesData,
       year chunks:
 
       >>> b = a.collapse(
-      ...     'T: mean within years T: mean over years', weights='T',
+      ...     'T: mean within years T: mean over years', weights=True,
       ...     within_years=cf.seasons(), over_years=cf.Y(5)
       ... )
 
@@ -8485,7 +8573,7 @@ class Field(mixin.PropertiesData,
       restricting the years from 1963 to 1968:
 
       >>> b = a.collapse(
-      ...     'T: mean within years T: mean over years', weights='T',
+      ...     'T: mean within years T: mean over years', weights=True,
       ...     within_years=cf.seasons(),
       ...     over_years=cf.year(cf.wi(1963, 1968))
       ... )
@@ -8505,13 +8593,13 @@ class Field(mixin.PropertiesData,
       deviations with two separate collapse calls:
 
       >>> b = a.collapse('T: standard_deviation within years',
-      ...                within_years=cf.seasons(), weights='T')
+      ...                within_years=cf.seasons(), weights=True)
 
 
     .. versionadded:: 1.0
 
-    .. seealso:: `bin`, `cell_area`, `convolution_filter`, `weights`,
-                 `radius`
+    .. seealso:: `bin`, `cell_area`, `convolution_filter`,
+                 `moving_window`, `weights`, `radius`
 
     :Parameters:
 
@@ -8520,7 +8608,8 @@ class Field(mixin.PropertiesData,
             the *axes* parameter are collapsed simultaneously by this
             method. The method is given by one of the following
             strings (see
-            :ref:`this table <Collapse-methods>` for precise definitions):
+            https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
+            for precise definitions):
 
             ============================  ============================  ========
             *method*                      Description                   Weighted
@@ -8668,20 +8757,35 @@ class Field(mixin.PropertiesData,
             Specify the weights for the collapse. The weights are, in
             general, those that would be returned by this call of the
             field construct's `weights` method: ``f.weights(weights,
-            measure=measure, scale=scale, components=True)``. See the
-            *measure* and *scale* parameters and `cf.Field.weights`
-            for details.
+            axes=axes, measure=measure, scale=scale, radius=radius,
+            great_circle=great_circle, components=True)``. See the
+            *axes*, *measure*, *scale*, *radius* and *great_circle*
+            parameters and `cf.Field.weights` for details.
 
             .. note:: By default *weights* is `None`, resulting in
-                      unweighted calculations.
+                      unweighted calculations.            
+
+            .. note:: Setting *weights* to `True` is the best way to
+                      ensure that all collapses are appropriately
+                      weighted according to the feild construct's
+                      metadata. In this case, if it is not possible to
+                      create weights for any axis then an exception
+                      will be raised.
+
+            If the alternative form of providing the collapse method
+            and axes combined as a CF cell methods-like string via the
+            *method* parameter has been used, then the *axes*
+            parameter is ignored and the axes are derived from the
+            *method* parameter. For example, if *method* is ``'T:
+            area: minumum'`` then this defines axes of ``['T',
+            'area']``. If *method* specifies multiple collapses,
+            e.g. ``'T: minumum area: mean'`` then this implies axes of
+            ``'T'`` for the first collapse, and axes of ``'area'`` for
+            the second collapse.
 
             *Parameter example:*
-              To specify weights based on cell areas use
-              ``weights='area'``.
-
-            *Parameter example:*
-              To specify weights based on cell areas and linearly in
-              time you could set ``weights=('area', 'T')``.
+              To specify weights based on the field construct's
+              metadata for all collapse axes use ``weights=True``.
 
             *Parameter example:*
               To specify weights based on cell areas use
@@ -8720,6 +8824,14 @@ class Field(mixin.PropertiesData,
                       which requires the field construct to have a
                       "volume" cell measure construct.
 
+                      If ``weights=True`` then care also needs to be
+                      taken, as a "volume" cell measure construct will
+                      be used if present, othewise the cell volumes
+                      will be calculated using the size of the
+                      vertical coordinate cells.
+
+            .. versionadded:: 3.0.2
+
         scale: number, optional
             If set to a positive number then scale the weights so that
             they are less than or equal to that number. By default the
@@ -8729,6 +8841,8 @@ class Field(mixin.PropertiesData,
             *Parameter example:*
               To scale all weights so that they lie between 0 and 0.5:
               ``scale=0.5``.
+
+            .. versionadded:: 3.0.2
 
         radius: optional
             Specify the radius used for calculating the areas of cells
@@ -8742,6 +8856,8 @@ class Field(mixin.PropertiesData,
             only if the radius can not found from the datums of any
             coordinate reference constucts, then the default radius
             taken as 6371229 metres.
+
+            .. versionadded:: 3.0.2
 
         great_circle: `bool`, optional
             If True then allow, if required, the derivation of i) area
@@ -8810,20 +8926,29 @@ class Field(mixin.PropertiesData,
                              there are no bounds). This is the
                              default.
 
-            ``'min'``        An output coordinate is the minimum of
+            ``'minimum'``    An output coordinate is the minimum of
                              the input coordinates.
 
-            ``'max'``        An output coordinate is the maximum of
+            ``'maximum'``    An output coordinate is the maximum of
                              the input coordinates.
             ===============  =========================================
 
+            *Parameter example:*
+              ``coordinate='minimum'``
+            
         group: optional
             A grouped collapse is one for which an axis is not
             collapsed completely to size 1. Instead, the collapse axis
-            is partitioned into groups and each group is collapsed to
-            size 1, independently of the other groups. The results of
-            the collapses are concatenated so that the output axis has
-            a size equal to the number of groups.
+            is partitioned into non-overalpping groups and each group
+            is collapsed to size 1, independently of the other
+            groups. The results of the collapses are concatenated so
+            that the output axis has a size equal to the number of
+            groups.
+
+            An element of the collapse axis can not be a member of
+            more than one group, and may be a member of no
+            groups. Elements that are not selected by the *group*
+            parameter are excluded from the result.
 
             The *group* parameter defines how the axis elements are
             partitioned into groups, and may be one of:
@@ -9550,8 +9675,9 @@ class Field(mixin.PropertiesData,
 
     **Examples:**
 
-    There are further worked examples
-    :ref:`in the tutorial <Statistical-collapses>`
+    There are further worked examples in
+    https://ncas-cms.github.io/cf-python/analysis.html#statistical-collapses
+
         '''
         if _debug:
             _DEPRECATION_ERROR_KWARGS(
@@ -9562,10 +9688,6 @@ class Field(mixin.PropertiesData,
         if kwargs:
             _DEPRECATION_ERROR_KWARGS(
                 self, 'collapse', kwargs)  # pragma: no cover
-
-        if weights is True:
-            _DEPRECATION_ERROR_KWARG_VALUE(self, 'collapse', 'weights',
-                                           True, version='3.2.0') # pragma: no cover
                    
         if inplace:
             f = self
@@ -9669,6 +9791,7 @@ class Field(mixin.PropertiesData,
         if group is not None and len(all_axes) > 1:
             raise ValueError(
                 "Can't use the 'group' parameter for multiple collapses")
+
         # ------------------------------------------------------------
         #
         # ------------------------------------------------------------
@@ -9847,10 +9970,12 @@ class Field(mixin.PropertiesData,
 #                        weights = tuple(collapse_axes.keys())
 
                     g_weights = f.weights(weights, components=True,
+                                          axes=list(collapse_axes.keys()),
                                           scale=scale,
                                           measure=measure,
                                           radius=radius,
                                           great_circle=great_circle)
+
                     if not g_weights:
                         g_weights = None
                 # --- End: if
@@ -9888,12 +10013,11 @@ class Field(mixin.PropertiesData,
                 # ----------------------------------------------------
                 # Update the cell methods
                 # ----------------------------------------------------
-                f._collapse_update_cell_methods(method=method,
-                                                collapse_axes=collapse_axes,
-                                                input_axes=axes_in,
-                                                within=within,
-                                                over=over,
-                                                verbose=verbose)
+                f._update_cell_methods(method=method,
+                                       domain_axes=collapse_axes,
+                                       input_axes=axes_in,
+                                       within=within, over=over,
+                                       verbose=verbose)
                 continue
             elif regroup:
                 raise ValueError(
@@ -9962,12 +10086,18 @@ class Field(mixin.PropertiesData,
                     raise ValueError("TODO")
 
                 d_weights = f.weights(weights, components=True,
+                                      axes=list(collapse_axes.keys()),
                                       scale=scale, measure=measure,
                                       radius=radius,
                                       great_circle=great_circle)
 
                 if d_weights:
                     d_kwargs['weights'] = d_weights
+
+                if verbose:
+                    print(
+                        '    Output weights          =', repr(d_weights)
+                    )  # pragma: no cover
             # --- End: if
 
             if method in _collapse_ddof_methods:
@@ -10088,12 +10218,21 @@ class Field(mixin.PropertiesData,
 
                 units = dim.Units
 
+                if coordinate == 'min':
+                    coordinate = 'minimum'
+                    print("WARNING: coordinate='min' has been deprecated. "
+                          "Use coordinate='minimum' instead.")
+                elif coordinate == 'max':
+                    coordinate = 'maximum'
+                    print("WARNING: coordinate='max' has been deprecated. "
+                          "Use coordinate='maximum' instead.")
+
                 if coordinate == 'mid_range':
                     data = Data(
                         [(bounds_data[0] + bounds_data[1])*0.5], units=units)
-                elif coordinate == 'min':
+                elif coordinate == 'minimum':
                     data = dim.data.min()
-                elif coordinate == 'max':
+                elif coordinate == 'maximum':
                     data = dim.data.max()
                 else:
                     raise ValueError(
@@ -10111,11 +10250,11 @@ class Field(mixin.PropertiesData,
             # Update the cell methods
             # --------------------------------------------------------
             if _update_cell_methods:
-                f._collapse_update_cell_methods(
-                    method, collapse_axes=collapse_axes,
-                    input_axes=axes_in, within=within,
-                    over=over, verbose=verbose
-                )
+                f._update_cell_methods(method,
+                                       domain_axes=collapse_axes,
+                                       input_axes=axes_in,
+                                       within=within, over=over,
+                                       verbose=verbose )
         # --- End: for
 
         # ------------------------------------------------------------
@@ -10814,7 +10953,7 @@ class Field(mixin.PropertiesData,
                         )
                 # --- End: if
 
-                coordinate = 'min'
+                coordinate = 'minimum'
 
                 classification = numpy_empty((axis_size,), int)
                 classification.fill(-1)
@@ -10931,7 +11070,7 @@ class Field(mixin.PropertiesData,
                         )
                 # --- End: if
 
-                coordinate = 'min'
+                coordinate = 'minimum'
 
                 classification = numpy_empty((axis_size,), int)
                 classification.fill(-1)
@@ -11342,17 +11481,18 @@ class Field(mixin.PropertiesData,
 
         return self
 
-    def _collapse_update_cell_methods(self, method=None,
-                                      collapse_axes=None,
-                                      input_axes=None, within=None,
-                                      over=None, verbose=False):
+    def _update_cell_methods(self, method=None, domain_axes=None,
+                             input_axes=None, within=None, over=None,
+                             verbose=False):
         '''Update the cell methods.
 
     :Parameters:
 
         method: `str`
 
-        collapse_axes: `Constructs`
+        domain_axes: `Constructs`
+
+        verbose: `bool`, optional
 
     :Returns:
 
@@ -11371,11 +11511,9 @@ class Field(mixin.PropertiesData,
         if input_axes and tuple(input_axes) == ('area',):
             axes = ('area',)
         else:
-            axes = tuple(collapse_axes)
+            axes = tuple(domain_axes)
 
         comment = None
-#        if method == 'integral':
-#            comment = 'integral'
 
         method = _collapse_cell_methods.get(method, method)
 
@@ -11390,9 +11528,9 @@ class Field(mixin.PropertiesData,
 
         if original_cell_methods:
             # There are already some cell methods
-            if len(collapse_axes) == 1:
+            if len(domain_axes) == 1:
                 # Only one axis has been collapsed
-                key, original_domain_axis = tuple(collapse_axes.items())[0]
+                key, original_domain_axis = tuple(domain_axes.items())[0]
 
                 lastcm = tuple(original_cell_methods.values())[-1]
                 lastcm_method = _collapse_cell_methods.get(
@@ -12034,7 +12172,7 @@ class Field(mixin.PropertiesData,
                 # item is transposed so that it is ordered T Y. For
                 # example, if the field's data array is ordered Z Y X
                 # and the item is ordered X Y T (T is size 1) then
-                # tranpose the item so that it is ordered Y X T.
+                # transpose the item so that it is ordered Y X T.
                 g = self.transpose(data_axes, constructs=True)
 
 #                g = self
@@ -12230,7 +12368,7 @@ class Field(mixin.PropertiesData,
             constructs to the data.
 
             The contents of the *axes* parameter is mapped to domain
-            axis contructs by translating each element into a domain
+            axis constructs by translating each element into a domain
             axis construct key via the `domain_axis` method.
 
             *Parameter example:*
@@ -12791,51 +12929,385 @@ class Field(mixin.PropertiesData,
 
         return False
 
-    @_deprecated_kwarg_check('i')
+#    @_inplace_enabled
+#    def moving_mean(self, window_size=None, axis=None, weights=None,
+#                    mode=None, cval=None, origin=0, radius='earth',
+#                    great_circle=False, inplace=False):
+#        '''Create a moving averages along an axis.
+#
+#    By default the averages are unweighted, but weights based on the
+#    axis cell sizes (or custom weights) may applied to the
+#    calculation via the *weights* parameter.
+#
+#    When appropriate, a new cell method construct is created to
+#    describe the averaging.
+#
+#    .. note:: The `moving_mean` method can not, in general, be
+#              emulated by the `convolution_filter` method, as the
+#              latter i) can not change the window weights as the
+#              filter passes through the axis; and ii) does not update
+#              the cell method constructs.
+#
+#    .. versionadded:: 3.3.0
+#
+#    .. seealso:: `bin`, `cell_area`, `collapse`, `convolution_filter`,
+#                 `weights`, `radius`
+#
+#    :Parameters:
+#        
+#        window_size: `int`
+#            Specify the size of the window used to calculate the
+#            moving average.
+#
+#            *Parameter example:*
+#              A 5-point moving average can be computed with
+#              ``window_size=5``.
+#
+#        axis: `str` or `int`
+#            Select the domain axis over which the filter is to be
+#            applied, defined by that which would be selected by
+#            passing the given axis description to a call of the field
+#            construct's `domain_axis` method. For example, for a value
+#            of ``'X'``, the domain axis construct returned by
+#            ``f.domain_axis('X')`` is selected.
+#
+#        weights: optional
+#            Specify the weights for the moving average. The weights
+#            are, those that would be returned by this call of the
+#            field construct's `weights` method: ``f.weights(weights,
+#            axes=axis, radius=radius, great_circle=great_circle,
+#            data=True, scale=1)``. See the *axis*, *radius* and
+#            *great_circle* parameters and `cf.Field.weights` for
+#            details.
+#
+#            .. note:: By default *weights* is `None`, resulting in
+#                      unweighted calculations.
+#
+#            *Parameter example:*
+#              To specify weights on the cell sizes of the selected
+#              axis: ``weights=True``.
+#
+#        mode: `str`, optional
+#            The *mode* parameter determines how the input array is
+#            extended when the filter overlaps an array border. The
+#            default value is ``'constant'`` or, if the dimension being
+#            convolved is cyclic (as ascertained by the `iscyclic`
+#            method), ``'wrap'``. The valid values and their behaviours
+#            are as follows:
+#
+#            ==============  ==========================  =================================
+#            *mode*          Description                 Behaviour
+#            ==============  ==========================  =================================
+#            ``'reflect'``   The input is extended by    ``(d c b a | a b c d | d c b a)``
+#                            reflecting about the edge
+#
+#            ``'constant'``  The input is extended by    ``(k k k k | a b c d | k k k k)``
+#                            filling all values beyond
+#                            the edge with the same
+#                            constant value (``k``),
+#                            defined by the *cval*
+#                            parameter.
+#
+#            ``'nearest'``   The input is extended by    ``(a a a a | a b c d | d d d d)``
+#                            replicating the last point
+#
+#            ``'mirror'``    The input is extended by    ``(d c b | a b c d | c b a)``
+#                            reflecting about the
+#                            centre of the last point.
+#
+#            ``'wrap'``      The input is extended by    ``(a b c d | a b c d | a b c d)``
+#                            wrapping around to the
+#                            opposite edge.
+#            ==============  ==========================  =================================
+#
+#            The position of the window realtive to each value can be
+#            changed by using the *origin* parameter.
+#
+#        cval: scalar, optional
+#            Value to fill past the edges of the array if *mode* is
+#            ``'constant'``. Ignored for other modes. Defaults to
+#            `None`, in which case the edges of the array will be
+#            filled with missing data. The only other valid value is
+#            ``0``.
+#
+#            *Parameter example:*
+#               To extend the input by filling all values beyond the
+#               edge with zero: ``cval=0``
+#
+#        origin: `int`, optional
+#            Controls the placement of the filter. Defaults to 0, which
+#            is the centre of the window. If the window has an even
+#            number weights then then a value of 0 defines the index
+#            defined by ``width/2 -1``.
+#
+#            *Parameter example:*
+#              For a weighted moving average computed with a weights
+#              window of ``[0.1, 0.15, 0.5, 0.15, 0.1]``, if
+#              ``origin=0`` then the average is centred on each
+#              point. If ``origin=-2`` then the average is shifted to
+#              inclued the previous four points. If ``origin=1`` then
+#              the average is shifted to include the previous point and
+#              the and the next three points.
+#
+#        radius: optional
+#            Specify the radius used for calculating the areas of cells
+#            defined in spherical polar coordinates. The radius is that
+#            which would be returned by this call of the field
+#            construct's `~cf.Field.radius` method:
+#            ``f.radius(radius)``. See the `cf.Field.radius` for
+#            details.
+#
+#            By default *radius* is ``'earth'`` which means that if and
+#            only if the radius can not found from the datums of any
+#            coordinate reference constucts, then the default radius
+#            taken as 6371229 metres.
+#
+#        great_circle: `bool`, optional
+#            If True then allow, if required, the derivation of i) area
+#            weights from polygon geometry cells by assuming that each
+#            cell part is a spherical polygon composed of great circle
+#            segments; and ii) and the derivation of line-length
+#            weights from line geometry cells by assuming that each
+#            line part is composed of great circle segments.
+#
+#        inplace: `bool`, optional
+#            If True then do the operation in-place and return `None`.
+#
+#    :Returns:
+#
+#        `Field` or `None`
+#            The field construct of moving averages, or `None` if the
+#            operation was in-place.
+#
+#    **Examples:**
+#
+#    >>> f = cf.example_field(0)
+#    >>> print(f)
+#    Field: specific_humidity (ncvar%q)
+#    ----------------------------------
+#    Data            : specific_humidity(latitude(5), longitude(8)) 1
+#    Cell methods    : area: mean
+#    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+#                    : longitude(8) = [22.5, ..., 337.5] degrees_east
+#                    : time(1) = [2019-01-01 00:00:00]
+#    >>> print(f.array)
+#    [[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]
+#     [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
+#     [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
+#     [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
+#     [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]
+#    >>> print(f.coordinate('X').bounds.array)
+#    [[  0.  45.]
+#     [ 45.  90.]
+#     [ 90. 135.]
+#     [135. 180.]
+#     [180. 225.]
+#     [225. 270.]
+#     [270. 315.]
+#     [315. 360.]]
+#    >>> f.iscyclic('X')
+#    True
+#
+#    Create a weighted 3-point running mean for the cyclic 'X' axis:
+#
+#    >>> g = f.moving_mean(3, axis='X', weights=True)
+#    >>> print(g)
+#    Field: specific_humidity (ncvar%q)
+#    ----------------------------------
+#    Data            : specific_humidity(latitude(5), longitude(8)) 1
+#    Cell methods    : area: mean longitude(8): mean
+#    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+#                    : longitude(8) = [22.5, ..., 337.5] degrees_east
+#                    : time(1) = [2019-01-01 00:00:00]    
+#    >>> print(g.array)
+#    [[0.02333 0.01467 0.017   0.01167 0.023   0.02633 0.03    0.02   ]
+#     [0.04167 0.03467 0.04767 0.051   0.06033 0.04167 0.04833 0.03167]
+#     [0.084   0.12167 0.13367 0.119   0.112   0.08233 0.057   0.05933]
+#     [0.035   0.04233 0.056   0.05567 0.06667 0.04633 0.03267 0.01833]
+#     [0.01833 0.02033 0.03    0.024   0.03    0.02967 0.028   0.01767]]
+#    >>> print(g.coordinate('X').bounds.array)
+#    [[-45.  90.]
+#     [  0. 135.]
+#     [ 45. 180.]
+#     [ 90. 225.]
+#     [135. 270.]
+#     [180. 315.]
+#     [225. 360.]
+#     [270. 360.]]
+#
+#    Create an unweighted 3-point running mean for the cyclic 'X' axis:
+#
+#    >>> g = f.moving_mean(3, axis='X')
+#
+#        '''
+#        if cval is not None and cval != 0:
+#            raise ValueError("The cval parameter must be None or 0")
+#
+#        window_size = int(window_size)
+#
+#        # Construct new field
+#        f = _inplace_enabled_define_and_cleanup(self)
+#        
+#        # Find the axis for the moving average
+#        axis = f.domain_axis(axis, key=True)
+#        iaxis = self.get_data_axes().index(axis)                    
+#
+#        if weights is None or weights is False:
+#            weights = None
+#        
+#        if weights is not None:
+#            if isinstance(weights, Data):
+#                if weights.ndim > 1:
+#                    raise ValueError(
+#                        "The 'Data' weights (shape {}) do not match the axis "
+#                        "being averaged (size {})".format(
+#                            weights.shape, f.shape[iaxis]))
+#                
+#                if weights.ndim == 1:                  
+#                    if weights.shape[0] != f.shape[iaxis]:
+#                        raise ValueError(
+#                            "The 'Data' weights (size {}) do not match the "
+#                            "axis being averaged (size {})".format(
+#                                weights.size, f.shape[iaxis]))
+#            # --- End: if
+#
+#            # Get the data weights
+#            w = f.weights(weights, axes=axis, data=True, scale=1.0,
+#                          radius=radius, great_circle=great_circle)
+#
+#            # Adjust the data weights by dividing them by their
+#            # miniumum
+#            wmin = w.minimum()
+#            wmin.dtype = float
+#            if numpy_can_cast(wmin.dtype, w.dtype):
+#                w /= wmin
+#            else:
+#                w = w / wmin
+#
+#            # Multiply the field by the adjusted data weights
+#            f *= w
+#
+#        # Create the window weights
+#        window = numpy_full((window_size,), 1.0)
+#        if weights is None:
+#            # If there is no data weighting, make sure that the sum of
+#            # the window weights is 1.
+#            window /= window.size
+#
+#        f.convolution_filter(window, axis=axis, mode=mode, cval=cval,
+#                             origin=origin, update_bounds=True,
+#                             inplace=True)
+#
+#        if weights is not None:
+#            # Divide the field by the running sum of the adjusted data
+#            # weights
+#            w.convolution_filter(window=window, axis=iaxis, mode=mode,
+#                                 cval=0, origin=origin, inplace=True)
+#            f.data /= w
+#
+#        # Add a cell method
+#        f._update_cell_methods(method='mean',
+#                               domain_axes=f.domain_axes(axis),
+#                               input_axes=(axis,), verbose=False)
+#            
+#        return f
+
     @_inplace_enabled
-    def convolution_filter(self, weights, axis=None, mode=None,
-                           cval=None, origin=0, update_bounds=True,
-                           inplace=False, i=False, _bounds=True):
-        '''Return the field convolved along the given axis with the specified
-    filter.
+    def moving_window(self, method, window_size=None, axis=None,
+                      weights=None, mode=None, cval=None, origin=0,
+                      radius='earth', great_circle=False,
+                      inplace=False):
+        '''Perform moving window calculations along an axis.
 
-    The magnitude of the integral of the filter (i.e. the sum of the
-    weights defined by the *weights* parameter) affects the convolved
-    values. For example, filter weights of ``[0.2, 0.2 0.2, 0.2,
-    0.2]`` will produce a 5-point (non-weighted) running mean; and
-    weights of ``[1, 1, 1, 1, 1]`` will produce a 5-point running
-    sum. Note that the weights returned by functions of the
-    `scipy.signal.windows` package do not necessarily sum to 1.
+    Moving mean, sum, and integral calculations are possible.
 
-    .. seealso:: `collapse`, `derivative`, `cf.relative_vorticity`
+    By default moving means are unweighted, but weights based on the
+    axis cell sizes (or custom weights) may applied to the calculation
+    via the *weights* parameter.
+
+    When appropriate, a new cell method construct is created to
+    describe the calculation.
+
+    .. note:: The `moving_window` method can not, in general, be
+              emulated by the `convolution_filter` method, as the
+              latter i) can not change the window weights as the
+              filter passes through the axis; and ii) does not update
+              the cell method constructs.
+
+    .. versionadded:: 3.3.0
+
+    .. seealso:: `bin`, `cell_area`, `collapse`, `convolution_filter`,
+                 `weights`, `radius`
 
     :Parameters:
+        
+        method: `str`
+            Define the collapse method. All of the axes specified by
+            the *axes* parameter are collapsed simultaneously by this
+            method. The method is given by one of the following
+            strings (see
+            https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
+            for precise definitions):
 
-        weights: sequence of numbers
-            Specify the window of weights to use for the filter.
+            ====================  ============================  ========
+            *method*              Description                   Weighted
+            ====================  ============================  ========
+            ``'sum'``             The sum of the values.        Never
+
+            ``'mean'``            The weighted or unweighted    May be
+                                  mean of the values.
+
+            ``'integral'``        The integral of values.       Always
+            ====================  ============================  ========
+
+            * Methods that are "Never" weighted ignore the *weights*
+              parameter, even if it is set.
+
+            * Methods that "May be" weighted will only be weighted if
+              the *weights* parameter is set.
+
+            * Methods that are "Always" weighted require the *weights*
+              parameter to be set.
+            
+        window_size: `int`
+            Specify the size of the window used to calculate the
+            moving average.
 
             *Parameter example:*
-              An unweighted 5-point moving average can be computed
-              with ``weights=[0.2, 0.2, 0.2, 0.2, 0.2]``
+              A 5-point moving average can be computed with
+              ``window_size=5``.
 
-            Note that the `scipy.signal.windows` package has suite of
-            window functions for creating weights for filtering.
-
-        axis:
+        axis: `str` or `int`
             Select the domain axis over which the filter is to be
             applied, defined by that which would be selected by
             passing the given axis description to a call of the field
             construct's `domain_axis` method. For example, for a value
             of ``'X'``, the domain axis construct returned by
-            ``f.domain_axis('X'))`` is selected.
+            ``f.domain_axis('X')`` is selected.
+
+        weights: optional
+            Specify the weights for the moving average. The weights
+            are, those that would be returned by this call of the
+            field construct's `weights` method: ``f.weights(weights,
+            axes=axis, radius=radius, great_circle=great_circle,
+            data=True, scale=1)``. See the *axis*, *radius* and
+            *great_circle* parameters and `cf.Field.weights` for
+            details.
+
+            .. note:: By default *weights* is `None`, resulting in
+                      unweighted calculations.
+
+            *Parameter example:*
+              To specify weights on the cell sizes of the selected
+              axis: ``weights=True``.
 
         mode: `str`, optional
             The *mode* parameter determines how the input array is
             extended when the filter overlaps an array border. The
             default value is ``'constant'`` or, if the dimension being
             convolved is cyclic (as ascertained by the `iscyclic`
-            method), ``'wrap'``. The valid values and their behaviour
-            is as follows:
+            method), ``'wrap'``. The valid values and their behaviours
+            are as follows:
 
             ==============  ==========================  =================================
             *mode*          Description                 Behaviour
@@ -12844,30 +13316,33 @@ class Field(mixin.PropertiesData,
                             reflecting about the edge
 
             ``'constant'``  The input is extended by    ``(k k k k | a b c d | k k k k)``
-                            filling  ll values beyond
+                            filling all values beyond
                             the edge with the same
-                            constant value, defined
-                            by the *cval* parameter.
+                            constant value (``k``),
+                            defined by the *cval*
+                            parameter.
 
             ``'nearest'``   The input is extended by    ``(a a a a | a b c d | d d d d)``
                             replicating the last point
 
             ``'mirror'``    The input is extended by    ``(d c b | a b c d | c b a)``
                             reflecting about the
-                            center of the last point.
+                            centre of the last point.
 
             ``'wrap'``      The input is extended by    ``(a b c d | a b c d | a b c d)``
                             wrapping around to the
                             opposite edge.
             ==============  ==========================  =================================
 
-            The position of the window can be changed by using the
-            *origin* parameter.
+            The position of the window realtive to each value can be
+            changed by using the *origin* parameter.
 
         cval: scalar, optional
             Value to fill past the edges of the array if *mode* is
-            ``'constant'``. Defaults to `None`, in which case the
-            edges of the array will be filled with missing data.
+            ``'constant'``. Ignored for other modes. Defaults to
+            `None`, in which case the edges of the array will be
+            filled with missing data. The only other valid value is
+            ``0``.
 
             *Parameter example:*
                To extend the input by filling all values beyond the
@@ -12877,6 +13352,304 @@ class Field(mixin.PropertiesData,
             Controls the placement of the filter. Defaults to 0, which
             is the centre of the window. If the window has an even
             number weights then then a value of 0 defines the index
+            defined by ``width/2 -1``.
+
+            *Parameter example:*
+              For a weighted moving average computed with a weights
+              window of ``[0.1, 0.15, 0.5, 0.15, 0.1]``, if
+              ``origin=0`` then the average is centred on each
+              point. If ``origin=-2`` then the average is shifted to
+              inclued the previous four points. If ``origin=1`` then
+              the average is shifted to include the previous point and
+              the and the next three points.
+
+        radius: optional
+            Specify the radius used for calculating the areas of cells
+            defined in spherical polar coordinates. The radius is that
+            which would be returned by this call of the field
+            construct's `~cf.Field.radius` method:
+            ``f.radius(radius)``. See the `cf.Field.radius` for
+            details.
+
+            By default *radius* is ``'earth'`` which means that if and
+            only if the radius can not found from the datums of any
+            coordinate reference constucts, then the default radius
+            taken as 6371229 metres.
+
+        great_circle: `bool`, optional
+            If True then allow, if required, the derivation of i) area
+            weights from polygon geometry cells by assuming that each
+            cell part is a spherical polygon composed of great circle
+            segments; and ii) and the derivation of line-length
+            weights from line geometry cells by assuming that each
+            line part is composed of great circle segments.
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+
+    :Returns:
+
+        `Field` or `None`
+            The field construct of moving averages, or `None` if the
+            operation was in-place.
+
+    **Examples:**
+
+    >>> f = cf.example_field(0)
+    >>> print(f)
+    Field: specific_humidity (ncvar%q)
+    ----------------------------------
+    Data            : specific_humidity(latitude(5), longitude(8)) 1
+    Cell methods    : area: mean
+    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(8) = [22.5, ..., 337.5] degrees_east
+                    : time(1) = [2019-01-01 00:00:00]
+    >>> print(f.array)
+    [[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]
+     [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
+     [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
+     [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
+     [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]
+    >>> print(f.coordinate('X').bounds.array)
+    [[  0.  45.]
+     [ 45.  90.]
+     [ 90. 135.]
+     [135. 180.]
+     [180. 225.]
+     [225. 270.]
+     [270. 315.]
+     [315. 360.]]
+    >>> f.iscyclic('X')
+    True
+
+    Create a weighted 3-point running mean for the cyclic 'X' axis:
+
+    >>> g = f.moving_window('mean', 3, axis='X', weights=True)
+    >>> print(g)
+    Field: specific_humidity (ncvar%q)
+    ----------------------------------
+    Data            : specific_humidity(latitude(5), longitude(8)) 1
+    Cell methods    : area: mean longitude(8): mean
+    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(8) = [22.5, ..., 337.5] degrees_east
+                    : time(1) = [2019-01-01 00:00:00]    
+    >>> print(g.array)
+    [[0.02333 0.01467 0.017   0.01167 0.023   0.02633 0.03    0.02   ]
+     [0.04167 0.03467 0.04767 0.051   0.06033 0.04167 0.04833 0.03167]
+     [0.084   0.12167 0.13367 0.119   0.112   0.08233 0.057   0.05933]
+     [0.035   0.04233 0.056   0.05567 0.06667 0.04633 0.03267 0.01833]
+     [0.01833 0.02033 0.03    0.024   0.03    0.02967 0.028   0.01767]]
+    >>> print(g.coordinate('X').bounds.array)
+    [[-45.  90.]
+     [  0. 135.]
+     [ 45. 180.]
+     [ 90. 225.]
+     [135. 270.]
+     [180. 315.]
+     [225. 360.]
+     [270. 360.]]
+
+    Create an unweighted 3-point running mean for the cyclic 'X' axis:
+
+    >>> g = f.moving_window('mean', 3, axis='X')
+
+        '''
+        method_values = ('mean', 'sum', 'integral')
+        if method not in method_values:
+            raise ValueError(
+                "Non-valid 'method' parameter value. Got {!r}. "
+                "Expected one of {!r}".format(method, method_values))
+
+        if cval is not None and cval != 0:
+            raise ValueError("The cval parameter must be None or 0")
+
+        window_size = int(window_size)
+
+        # Construct new field
+        f = _inplace_enabled_define_and_cleanup(self)
+        
+        # Find the axis for the moving average
+        axis = f.domain_axis(axis, key=True)
+        iaxis = self.get_data_axes().index(axis)                    
+
+        if method == 'sum' or weights is False:
+            weights = None
+        
+        if method == 'integral':
+            measure = True
+            if weights is None:
+                raise ValueError(
+                    "Must set weights parameter for 'integral' method")       
+        else:
+            measure = False
+                
+        if weights is not None:
+            if isinstance(weights, Data):
+                if weights.ndim > 1:
+                    raise ValueError(
+                        "The 'Data' weights (shape {}) do not match the axis "
+                        "being averaged (size {})".format(
+                            weights.shape, f.shape[iaxis]))
+                
+                if weights.ndim == 1:                  
+                    if weights.shape[0] != f.shape[iaxis]:
+                        raise ValueError(
+                            "The 'Data' weights (size {}) do not match the "
+                            "axis being averaged (size {})".format(
+                                weights.size, f.shape[iaxis]))
+            # --- End: if
+
+            # Get the data weights
+            w = f.weights(weights, axes=axis, data=True,
+                          measure=measure, radius=radius,
+                          great_circle=great_circle)
+
+            if method == 'mean':
+                # Adjust the data weights by dividing them by their
+                # miniumum
+                wmin = w.minimum()
+                wmin.dtype = float
+                if numpy_can_cast(wmin.dtype, w.dtype):
+                    w /= wmin
+                else:
+                    w = w / wmin
+            # --- End: if
+            
+            # Multiply the field by the (possibly adjusted) weights
+            if numpy_can_cast(w.dtype, f.dtype):
+                f *= w
+            else:
+                f = f * w
+        # --- End: if
+        
+        # Create the window weights
+        window = numpy_full((window_size,), 1.0)
+        if weights is None and method == 'mean':
+            # If there is no data weighting, make sure that the sum of
+            # the window weights is 1.
+            window /= window.size
+
+        f.convolution_filter(window, axis=axis, mode=mode, cval=cval,
+                             origin=origin, update_bounds=True,
+                             inplace=True)
+
+        if weights is not None and method == 'mean':
+            # Divide the field by the running sum of the adjusted data
+            # weights
+            w.convolution_filter(window=window, axis=iaxis, mode=mode,
+                                 cval=0, origin=origin, inplace=True)
+            if numpy_can_cast(w.dtype, f.dtype):
+                f /= w
+            else:
+                f = f / w
+
+        # Add a cell method
+        f._update_cell_methods(method=method,
+                               domain_axes=f.domain_axes(axis),
+                               input_axes=(axis,), verbose=False)
+            
+        return f
+
+    @_deprecated_kwarg_check('i')
+    @_inplace_enabled
+    def convolution_filter(self, window=None, axis=None, mode=None,
+                           cval=None, origin=0, update_bounds=True,
+                           inplace=False, weights=None, i=False):
+        '''Convolve the field construct along the given axis with the
+    specified filter.
+
+    The magnitude of the integral of the filter (i.e. the sum of the
+    window weights defined by the *window* parameter) affects the
+    convolved values. For example, window weights of ``[0.2, 0.2 0.2,
+    0.2, 0.2]`` will produce a non-weighted 5-point running mean; and
+    window weights of ``[1, 1, 1, 1, 1]`` will produce a 5-point
+    running sum. Note that the window weights returned by functions of
+    the `scipy.signal.windows` package do not necessarily sum to 1
+    (see the examples for details).
+
+    .. note:: The `moving_window` method can not, in general, be
+              emulated by the `convolution_filter` method, as the
+              latter i) can not change the window weights as the
+              filter passes through the axis; and ii) does not update
+              the cell method constructs.
+
+    .. seealso:: `collapse`, `derivative`, `moving_window`,
+                 `cf.relative_vorticity`
+
+    :Parameters:
+
+        window: sequence of numbers
+            Specify the window weights to use for the filter.
+
+            *Parameter example:*
+              An unweighted 5-point moving average can be computed
+              with ``window=[0.2, 0.2, 0.2, 0.2, 0.2]``
+
+            Note that the `scipy.signal.windows` package has suite of
+            window functions for creating wondow weights for filtering
+            (see the examples for details).
+
+            .. versionadded:: 3.3.0 (replaces the old weights
+                              parameter)
+
+        axis:
+            Select the domain axis over which the filter is to be
+            applied, defined by that which would be selected by
+            passing the given axis description to a call of the field
+            construct's `domain_axis` method. For example, for a value
+            of ``'X'``, the domain axis construct returned by
+            ``f.domain_axis('X')`` is selected.
+
+        mode: `str`, optional
+            The *mode* parameter determines how the input array is
+            extended when the filter overlaps an array border. The
+            default value is ``'constant'`` or, if the dimension being
+            convolved is cyclic (as ascertained by the `iscyclic`
+            method), ``'wrap'``. The valid values and their behaviours
+            are as follows:
+
+            ==============  ==========================  =================================
+            *mode*          Description                 Behaviour
+            ==============  ==========================  =================================
+            ``'reflect'``   The input is extended by    ``(d c b a | a b c d | d c b a)``
+                            reflecting about the edge
+
+            ``'constant'``  The input is extended by    ``(k k k k | a b c d | k k k k)``
+                            filling all values beyond
+                            the edge with the same
+                            constant value (``k``),
+                            defined by the *cval*
+                            parameter.
+
+            ``'nearest'``   The input is extended by    ``(a a a a | a b c d | d d d d)``
+                            replicating the last point
+
+            ``'mirror'``    The input is extended by    ``(d c b | a b c d | c b a)``
+                            reflecting about the
+                            centre of the last point.
+
+            ``'wrap'``      The input is extended by    ``(a b c d | a b c d | a b c d)``
+                            wrapping around to the
+                            opposite edge.
+            ==============  ==========================  =================================
+
+            The position of the window realtive to each value can be
+            changed by using the *origin* parameter.
+
+        cval: scalar, optional
+            Value to fill past the edges of the array if *mode* is
+            ``'constant'``. Ignored for other modes. Defaults to
+            `None`, in which case the edges of the array will be
+            filled with missing data.
+
+            *Parameter example:*
+               To extend the input by filling all values beyond the
+               edge with zero: ``cval=0``
+
+        origin: `int`, optional
+            Controls the placement of the filter. Defaults to 0, which
+            is the centre of the window. If the window has an even
+            number of weights then then a value of 0 defines the index
             defined by ``width/2 -1``.
 
             *Parameter example:*
@@ -12900,6 +13673,15 @@ class Field(mixin.PropertiesData,
 
         i: deprecated at version 3.0.0
             Use the *inplace* parameter instead.
+
+        weights: deprecated at version 3.3.0
+            Use the *window* parameter instead.
+
+    :Returns:
+
+        `Field` or `None`
+            The convolved field construct, or `None` if the operation
+            was in-place.
 
     **Examples:**
 
@@ -12972,16 +13754,16 @@ class Field(mixin.PropertiesData,
     [cftime.DatetimeGregorian(1959-12-01 00:00:00)
      cftime.DatetimeGregorian(1960-05-01 00:00:00)]
 
-    Calculate a convolution along the time axis with Gaussian weights,
-    using the "nearest" mode at the border of the edges of the time
-    dimension (note that the weights returned by
+    Calculate a convolution along the time axis with Gaussian window
+    weights, using the "nearest" mode at the border of the edges of
+    the time dimension (note that the window weights returned by
     `scipy.signal.windows` functions do not necessarily sum to 1):
 
     >>> import scipy.signal.windows
-    >>> gaussian_weights = scipy.signal.windows.gaussian(3, std=0.4)
-    >>> print(gaussian_weights)
+    >>> gaussian_window = scipy.signal.windows.gaussian(3, std=0.4)
+    >>> print(gaussian_window)
     [0.04393693 1.         0.04393693]
-    >>> g = f.convolution_filter(gaussian_weights, 'T', mode='nearest')
+    >>> g = f.convolution_filter(gaussian_window, 'T', mode='nearest')
     >>> print(g.array[:, 0, 0])
     [233.37145775 325.51538316 275.50732596 310.01169661 252.58076685
      220.4526426  255.89394793 308.47513278 225.95212089 224.07900476
@@ -12999,33 +13781,35 @@ class Field(mixin.PropertiesData,
      cftime.DatetimeGregorian(1960-03-01 00:00:00)]
 
         '''
-        if isinstance(weights, str):
+        if weights is not None:
+            _DEPRECATION_ERROR_KWARGS(
+                self, 'convolution_filter',
+                {'weights': weights},
+                message="Use keyword 'window' instead.",
+                version='3.3.0')  # pragma: no cover
+            
+        if isinstance(window, str):
             _DEPRECATION_ERROR(
-                "A string-valued 'weights' parameter  has been deprecated "
+                "A string-valued 'window' parameter has been deprecated "
                 "at version 3.0.0 and is no longer available. Provide a "
-                "sequence of numerical weights instead. scipy.signal.windows "
-                "may be used to generate particular window functions."
-            )  # pragma: no cover
-
-        if isinstance(weights[0], str):
-            _DEPRECATION_ERROR(
-                "A string-valued 'weights' parameter element has been "
-                "deprecated at version 3.0.0 and is no longer available. "
-                "Provide a sequence of numerical weights instead. "
+                "sequence of numerical window weights instead. "
                 "scipy.signal.windows may be used to generate particular "
                 "window functions."
             )  # pragma: no cover
 
-        try:
-            get_window
-            convolve1d
-        except NameError:
-            raise ImportError(
-                "Must install scipy to use the convolution_filter method.")
+        if isinstance(window[0], str):
+            _DEPRECATION_ERROR(
+                "A string-valued 'window' parameter element has been "
+                "deprecated at version 3.0.0 and is no longer available. "
+                "Provide a sequence of numerical window weights instead. "
+                "scipy.signal.windows may be used to generate particular "
+                "window functions."
+            )  # pragma: no cover
 
         # Retrieve the axis
         axis_key = self.domain_axis(axis, key=True)
-
+        iaxis = self.get_data_axes().index(axis_key)
+        
         # Default mode to 'wrap' if the axis is cyclic
         if mode is None:
             if self.iscyclic(axis_key):
@@ -13034,78 +13818,50 @@ class Field(mixin.PropertiesData,
                 mode = 'constant'
         # --- End: if
 
-        # Get the axis index
-        axis_index = self.get_data_axes().index(axis_key)
-
-        # Set cval to NaN if it is currently None, so that the edges
-        # will be filled with missing data if the mode is 'constant'
-        if cval is None:
-            cval = numpy_nan
-
-        # Section the data into sections up to a chunk in size
-        sections = self.data.section([axis_index], chunks=True)
-
-        # Filter each section replacing masked points with numpy
-        # NaNs and then remasking after filtering.
-        for k in sections:
-            input_array = sections[k].array
-            masked = numpy_ma_is_masked(input_array)
-            if masked:
-                input_array = input_array.filled(numpy_nan)
-
-            output_array = convolve1d(input_array, weights, axis=axis_index,
-                                      mode=mode, cval=cval, origin=origin)
-            if masked or (mode == 'constant' and numpy_isnan(cval)):
-                with numpy_errstate(invalid='ignore'):
-                    output_array = numpy_ma_masked_invalid(output_array)
-            # --- End: if
-
-            sections[k] = Data(output_array, units=self.Units)
-
-        # Glue the sections back together again
-        new_data = Data.reconstruct_sectioned_data(sections)
-
         # Construct new field
         f = _inplace_enabled_define_and_cleanup(self)
-
-        # Insert filtered data into new field
-        f.set_data(new_data, axes=self.get_data_axes(), copy=False)
+        
+        f.data.convolution_filter(window=window, axis=iaxis,
+                                  mode=mode, cval=cval, origin=origin,
+                                  inplace=True)
 
         # Update the bounds of the convolution axis if necessary
-        coord = f.dimension_coordinate(axis_key, default=None)
-        if _bounds and coord is not None and coord.has_bounds():
-            old_bounds = coord.bounds.array
-            length = old_bounds.shape[0]
-            new_bounds = numpy_empty((length, 2))
-            len_weights = len(weights)
-            lower_offset = len_weights//2 + origin
-            upper_offset = len_weights - 1 - lower_offset
-            if mode == 'wrap':
-                if coord.direction():
-                    new_bounds[:, 0] = (
-                        coord.roll(0,  upper_offset).bounds.array[:, 0])
-                    new_bounds[:, 1] = (
-                        coord.roll(0, -lower_offset).bounds.array[:, 1] +
-                        coord.period()
-                    )
+        if update_bounds:
+            coord = f.dimension_coordinate(axis_key, default=None)
+            if coord is not None and coord.has_bounds():
+                old_bounds = coord.bounds.array
+                length = old_bounds.shape[0]
+                new_bounds = numpy_empty((length, 2))
+                len_weights = len(window)
+                lower_offset = len_weights//2 + origin
+                upper_offset = len_weights - 1 - lower_offset
+                if mode == 'wrap':
+                    if coord.direction():
+                        new_bounds[:, 0] = (
+                            coord.roll(0,  upper_offset).bounds.array[:, 0])
+                        new_bounds[:, 1] = (
+                            coord.roll(0, -lower_offset).bounds.array[:, 1] +
+                            coord.period()
+                        )
+                    else:
+                        new_bounds[:, 0] = (
+                            coord.roll(0,  upper_offset).bounds.array[:, 0] +
+                            2*coord.period()
+                        )
+                        new_bounds[:, 1] = coord.roll(
+                            0, -lower_offset).bounds.array[:, 1] + coord.period()
                 else:
-                    new_bounds[:, 0] = (
-                        coord.roll(0,  upper_offset).bounds.array[:, 0] +
-                        2*coord.period()
-                    )
-                    new_bounds[:, 1] = coord.roll(
-                        0, -lower_offset).bounds.array[:, 1] + coord.period()
-            else:
-                new_bounds[upper_offset:length, 0] = old_bounds[
-                    0:length - upper_offset, 0]
-                new_bounds[0:upper_offset, 0] = old_bounds[0, 0]
-                new_bounds[0:length - lower_offset, 1] = old_bounds[
-                    lower_offset:length, 1]
-                new_bounds[length - lower_offset:length, 1] = old_bounds[
-                    length - 1, 1]
-
-            coord.set_bounds(Bounds(data=Data(new_bounds, units=coord.Units)))
-
+                    new_bounds[upper_offset:length, 0] = old_bounds[
+                        0:length - upper_offset, 0]
+                    new_bounds[0:upper_offset, 0] = old_bounds[0, 0]
+                    new_bounds[0:length - lower_offset, 1] = old_bounds[
+                        lower_offset:length, 1]
+                    new_bounds[length - lower_offset:length, 1] = old_bounds[
+                        length - 1, 1]
+                
+                coord.set_bounds(Bounds(data=Data(new_bounds, units=coord.Units)))
+        # --- End: if
+        
         return f
 
     def convert(self, identity, full_domain=True, cellsize=False):
@@ -13232,11 +13988,12 @@ class Field(mixin.PropertiesData,
 
     .. versionadded:: 3.0.0
 
-    .. seealso:: `collapse`, `convolution_filter`, `sum`
+    .. seealso:: `collapse`, `convolution_filter`, `moving_window`,
+                 `sum`
 
     :Parameters:
 
-        axis:g
+        axis:
             Select the domain axis over which the cumulative sums are
             to be calculated, defined by that which would be selected
             by passing the given axis description to a call of the
@@ -13252,9 +14009,27 @@ class Field(mixin.PropertiesData,
         coordinate: `str`, optional
             Set how the cell coordinate values for the summed axis are
             defined. By default they are unchanged from the original
-            field construct, but if *coordinate* is set to
-            ``'mid_range'`` then the each coordinate value is replaced
-            by the mid_range of the updated cell bounds.
+            field construct. The *coordinate* parameter may be one of:
+
+            ===============  =========================================
+            *coordinate*     Description
+            ===============  =========================================
+            `None`           This is the default.
+
+                             Output coordinates are unchanged.
+
+            ``'mid_range'``  An output coordinate is the average of
+                             its output coordinate bounds.
+
+            ``'minimum'``    An output coordinate is the minimum of
+                             its output coordinate bounds.
+
+            ``'maximum'``    An output coordinate is the maximum of
+                             its output coordinate bounds.
+            ===============  =========================================
+
+            *Parameter Example:*
+              ``coordinate='maximum'``
 
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
@@ -13338,15 +14113,20 @@ class Field(mixin.PropertiesData,
                 bounds = coord.get_bounds()
                 bounds[:, 0] = bounds[0, 0]
 
-                if coordinate is not None:
-                    if coordinate != 'mid_range':
-                        raise ValueError("TODO")
+                data = coord.get_data(None)
 
-                    data = coord.get_data(None)
-                    if data is not None:
-                        bounds = bounds.array
-                        data = data.varray
-                        data[...] = (bounds[:, 0] + bounds[:, 1])*0.5
+                if coordinate is not None and data is not None:
+                    if coordinate == 'mid_range':
+                        data[...] = ((bounds[:, 0] + bounds[:, 1])*0.5).squeeze()
+                    elif coordinate == 'minimum':
+                        data[...] = coord.lower_bounds
+                    elif coordinate == 'maximum':
+                        data[...] = coord.upper_bounds
+                    else:
+                        raise ValueError(
+                            "'coordinate' parameter must be one of "
+                            "(None, 'mid_range', 'minimum', 'maximum'). "
+                            "Got {!r}".format(coordinate))
             # --- End: if
 
             # Update the cell methods
@@ -14141,7 +14921,7 @@ class Field(mixin.PropertiesData,
     may be selected for removal.
 
     Squeezed domain axis constructs are not removed from the metadata
-    contructs, nor from the domain of the field construct.
+    constructs, nor from the domain of the field construct.
 
     .. seealso:: `domain_axis`, `flatten`, `insert_dimension`, `flip`,
                  `remove_axes`, `transpose`, `unsqueeze`
@@ -14277,7 +15057,7 @@ class Field(mixin.PropertiesData,
     be specified by selecting the axes of the output in the required
     order.
 
-    By default metadata constructs are not tranposed, but they may be
+    By default metadata constructs are not transposed, but they may be
     if the *constructs* parmeter is set.
 
     .. seealso:: `domain_axis`, `flatten`, `insert_dimension`, `flip`,
@@ -14300,7 +15080,7 @@ class Field(mixin.PropertiesData,
         constructs: `bool`
             If True then metadata constructs are also transposed so
             that their axes are in the same relative order as in the
-            tranposed data array of the field. By default metadata
+            transposed data array of the field. By default metadata
             constructs are not altered.
 
         inplace: `bool`, optional
@@ -15790,7 +16570,7 @@ class Field(mixin.PropertiesData,
             domain axis constructs to the data.
 
             The contents of the *axes* parameter is mapped to domain
-            axis contructs by translating each element into a domain
+            axis constructs by translating each element into a domain
             axis construct key via the `domain_axis` method.
 
             *Parameter example:*
@@ -16106,7 +16886,7 @@ class Field(mixin.PropertiesData,
      [0.11 0.131 0.124 0.146 0.087 0.103 -- --]
      [  --    --    --    --    -- 0.072 -- --]
      [  --    --    --    --    --    -- -- --]]
-    >>> g.collapse('standard_deviation', weights='area').data
+    >>> g.collapse('standard_deviation', weights=True).data
     <CF Data(1, 1): [[0.024609938742357642]] 1>
 
     Find the mean of the values above the 45th percentile along the
@@ -16126,7 +16906,7 @@ class Field(mixin.PropertiesData,
      [0.11 0.131 0.124 0.146    --    --    --    --]
      [  -- 0.059    -- 0.07  0.058 0.072    --    --]
      [  -- 0.036    -- 0.035   --  0.037 0.034    --]]
-    >>> print(g.collapse('X: mean', weights='X').array)
+    >>> print(g.collapse('X: mean', weights=True).array)
     [[0.031  ]
      [0.06175]
      [0.12775]
@@ -17734,13 +18514,6 @@ class Field(mixin.PropertiesData,
 
         # If dst is a dictionary set flag
         dst_dict = not isinstance(dst, f.__class__)
-#        if isinstance(dst, f.__class__):
-#            dst_dict = False
-#            # If dst is a field list use the first field
-#            if isinstance(dst, FieldList):
-#                dst = dst[0]
-#        else:
-#            dst_dict = True
 
         # Retrieve the source field's latitude and longitude coordinates
         src_axis_keys, src_axis_sizes, src_coord_keys, src_coords, \
@@ -18603,6 +19376,12 @@ class Field(mixin.PropertiesData,
                 "Use the 'wrap' keyword instead"
             )  # pragma: no cover
 
+#        try:
+#            scipy_convolve1d
+#        except NameError:
+#            raise ImportError(
+#                "Must install scipy to use the derivative method.")
+
         # Retrieve the axis
         axis = self.domain_axis(axis, key=True, default=None)
         if axis is None:
@@ -18636,27 +19415,32 @@ class Field(mixin.PropertiesData,
 
         # Find the finite difference of the field
         f.convolution_filter([1, 0, -1], axis=axis, mode=mode,
-                             update_bounds=False, inplace=True,
-                             _bounds=False)
+                             update_bounds=False, inplace=True)
 
         # Find the finite difference of the axis
-        d = convolve1d(coord, [1, 0, -1], mode=mode, cval=numpy_nan)
-        if not cyclic and not one_sided_at_boundary:
-            with numpy_errstate(invalid='ignore'):
-                d = numpy_ma_masked_invalid(d)
-        # --- End: if
+        d = coord.data.convolution_filter(window=[1, 0, -1], axis=0,
+                                          mode=mode, cval=numpy_nan)
+#        d = scipy_convolve1d(coord, [1, 0, -1], mode=mode,
+#                             cval=numpy_nan)
+#        if not cyclic and not one_sided_at_boundary:
+#            with numpy_errstate(invalid='ignore'):
+#                d = numpy_ma_masked_invalid(d)
+#        # --- End: if
 
         # Reshape the finite difference of the axis for broadcasting
-        shape = [1] * self.ndim
-        shape[axis_index] = d.size
-        d = d.reshape(shape)
-
+#        shape = [1] * self.ndim
+#        shape[axis_index] = d.size
+#        d = d.reshape(shape)
+        for _ in range(self.ndim - 1 - axis_index):
+            d.insert_dimension(position=1, inplace=True)
+        
         # Find the derivative
-        f.data /= Data(d, coord.units)
+#        f.data /= Data(d, coord.units)
+        f.data /= d
 
         # Update the standard name and long name
-        standard_name = getattr(f, 'standard_name', None)
-        long_name = getattr(f, 'long_name', None)
+        standard_name = f.get_property('standard_name', None)
+        long_name = f.get_property('long_name', None)
         if standard_name is not None:
             del f.standard_name
             f.long_name = 'derivative of {}'.format(standard_name)
