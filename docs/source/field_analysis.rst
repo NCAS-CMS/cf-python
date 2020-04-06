@@ -541,12 +541,15 @@ Grouped collapses
 
 A grouped collapse is one for which an axis is not collapsed
 completely to size 1. Instead the collapse axis is partitioned into
-groups and each group is collapsed to size 1. The resulting axis will
-generally have more than one element. For example, creating 12 annual
-means from a timeseries of 120 months would be a grouped collapse. The
-groups do not need to be created from adjacent cells, as would be the
-case when creating 12 multi-annual monthly means from a timeseries of
-120 months.
+non-overlapping groups and each group is collapsed to size 1. The
+resulting axis will generally have more than one element. For example,
+creating 12 annual means from a timeseries of 120 months would be a
+grouped collapse. The groups do not need to be created from adjacent
+cells, as would be the case when creating 12 multi-annual monthly
+means from a timeseries of 120 months.
+
+Selected statistics for overalapping groups can be calculated with the
+`~cf.Field.moving_window` method of the field construct.
 
 The *group* keyword of `~Field.collapse` defines the size of the
 groups. Groups can be defined in a variety of ways, including with
@@ -645,7 +648,6 @@ groups whose actual span is not equal to a given value) and the
 *group_contiguous* (to include non-contiguous groups, or any
 contiguous group containing overlapping cells) keywords of
 `~Field.collapse`.
-
 
 .. _Climatological-statistics:
 

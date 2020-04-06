@@ -8508,10 +8508,13 @@ ppp            identify each dimension of the given weights. If the
 
     A grouped collapse is one for which as axis is not collapsed
     completely to size 1. Instead the collapse axis is partitioned
-    into groups and each group is collapsed to size 1. The resulting
-    axis will generally have more than one element. For example,
-    creating 12 annual means from a timeseries of 120 months would be
-    a grouped collapse.
+    into non-overlapping groups and each group is collapsed to size
+    1. The resulting axis will generally have more than one
+    element. For example, creating 12 annual means from a timeseries
+    of 120 months would be a grouped collapse.
+
+    Selected statistics for overalapping groups can be calculated with
+    the `moving_window` method.
 
     The *group* keyword defines the size of the groups. Groups can be
     defined in a variety of ways, including with `Query`,
@@ -8984,10 +8987,16 @@ ppp            identify each dimension of the given weights. If the
         group: optional
             A grouped collapse is one for which an axis is not
             collapsed completely to size 1. Instead, the collapse axis
-            is partitioned into groups and each group is collapsed to
-            size 1, independently of the other groups. The results of
-            the collapses are concatenated so that the output axis has
-            a size equal to the number of groups.
+            is partitioned into non-overalpping groups and each group
+            is collapsed to size 1, independently of the other
+            groups. The results of the collapses are concatenated so
+            that the output axis has a size equal to the number of
+            groups.
+
+            An element of the collapse axis can not be a member of
+            more than one group, and may be a member of no
+            groups. Elements that are not selected by the *group*
+            parameter are excluded from the result.
 
             The *group* parameter defines how the axis elements are
             partitioned into groups, and may be one of:
