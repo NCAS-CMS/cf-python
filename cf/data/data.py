@@ -3243,7 +3243,7 @@ place.
     @_inplace_enabled
     def convolution_filter(self, window=None, axis=None, mode=None,
                            cval=None, origin=0, inplace=False):
-        '''TODO Return the field convolved along the given axis with the specified
+        '''Return the data convolved along the given axis with the specified
     filter.
 
     The magnitude of the integral of the filter (i.e. the sum of the
@@ -3255,7 +3255,7 @@ place.
     `scipy.signal.windows` package do not necessarily sum to 1 (see
     the examples for details).
 
-    .. versionadded:: TODO
+    .. versionadded:: 3.3.0
 
     :Parameters:
 
@@ -3270,13 +3270,17 @@ place.
             window functions for creating weights for filtering (see
             the examples for details).
 
-        axis:
-            Select the domain axis over which the filter is to be
-            applied, defined by that which would be selected by
-            passing the given axis description to a call of the field
-            construct's `domain_axis` method. For example, for a value
-            of ``'X'``, the domain axis construct returned by
-            ``f.domain_axis('X')`` is selected.
+        axis: `int`
+            Select the axis over which the filter is to be applied.
+            removed. The *axis* parameter is an integer that selects
+            the axis corresponding to the given position in the list
+            of axes of the data.
+
+            *Parameter example:*
+              Convolve the second axis: ``axis=1``.
+
+            *Parameter example:*
+              Convolve the last axis: ``axis=-1``.
 
         mode: `str`, optional
             The *mode* parameter determines how the input array is
@@ -3338,28 +3342,48 @@ place.
               the average is shifted to include the previous point and
               the and the next three points.
 
-        update_bounds: `bool`, optional
-            If False then the bounds of a dimension coordinate
-            construct that spans the convolved axis are not
-            altered. By default, the bounds of a dimension coordinate
-            construct that spans the convolved axis are updated to
-            reflect the width and origin of the window.
-
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
 
-        i: deprecated at version 3.0.0
-            Use the *inplace* parameter instead.
-
     :Returns:
 
-        `Field` or `None`
-            TODO
+        `Data` or `None`
+            The convolved data, or `None` if the operation was
+            in-place.
         
     **Examples:**
 
-    >>> f = cf.example_field(2)
-    >>> print(f)
+    >>> d = cf.Data(numpy.arange(12).reshape(3, 4), 'metres')
+    >>> print(d.array)
+    [[ 0,  1,  2,  3],
+     [ 4,  5,  6,  7],
+     [ 8,  9, 10, 11]])
+    >>> d.cyclic()
+    set()    
+    >>> e = d.convolution_filter([0.1, 0.5, 0.25], axis=1)
+    >>> print(e.array)
+    [[-- 0.7 1.55 --]
+     [-- 4.1 4.95 --]
+     [-- 7.5 8.35 --]]
+    >>> e = d.convolution_filter([0.1, 0.5, 0.25], axis=1, cval=0)
+    >>> print(e.array)
+    [[0.1  0.7  1.55 2.  ]
+     [2.5  4.1  4.95 5.  ]
+     [4.9  7.5  8.35 8.  ]]
+    >>> e = d.convolution_filter([0.1, 0.5, 0.25], axis=1, mode='wrap')
+    >>> print(e.array)
+    [[0.85 0.7  1.55 2.  ]
+     [4.25 4.1  4.95 5.4 ]
+     [7.65 7.5  8.35 8.8 ]]
+    >>> d.cyclic(1)
+    set()
+    >>> d.cyclic(1)
+    {1}
+    >>> e = d.convolution_filter([0.1, 0.5, 0.25], axis=1)
+    >>> print(e.array)
+    [[0.85 0.7  1.55 2.  ]
+     [4.25 4.1  4.95 5.4 ]
+     [7.65 7.5  8.35 8.8 ]]
 
         '''
         try:
@@ -3395,6 +3419,7 @@ place.
         # Filter each section replacing masked points with numpy
         # NaNs and then remasking after filtering.
         for key, data in sections.items():
+            data.dtype = float
             input_array = data.array
             masked = numpy_ma_is_masked(input_array)
             if masked:
@@ -3412,8 +3437,9 @@ place.
                                        fill_value=self.fill_value)
 
         # Glue the sections back together again
-        out = self.__class__.reconstruct_sectioned_data(sections)
-
+        out = self.reconstruct_sectioned_data(sections, 
+                                              cyclic=self.cyclic())
+        
         if inplace:
             d.__dict__ = out.__dict__
         else:
@@ -3499,7 +3525,9 @@ place.
                                        fill_value=self.fill_value)
 
         # Glue the sections back together again
-        out = self.reconstruct_sectioned_data(sections)
+        out = self.reconstruct_sectioned_data(sections,
+                                              cyclic=self.cyclic())
+        
         return out
 
     def _chunk_add_partitions(self, d, axes):
@@ -8615,7 +8643,8 @@ False
             return data_list[0]
 
     @classmethod
-    def reconstruct_sectioned_data(cls, sections):
+    def reconstruct_sectioned_data(cls, sections, cyclic=(),
+                                   hardmask=None):
         '''Expects a dictionary of Data objects with ordering information as
     keys, as output by the section method when called with a Data
     object. Returns a reconstructed cf.Data object with the sections
@@ -8656,7 +8685,13 @@ False
                     for k in keys:
                         data_list.append(sections[k])
 
-                    return cls.concatenate_data(data_list, i)
+                    out = cls.concatenate_data(data_list, i)
+
+                    out.cyclic(cyclic)
+                    if hardmask is not None:
+                        out.hardmask = hardmask
+                        
+                    return out
             # --- End: if
 
             if keys[0][i] is not None:

@@ -4928,13 +4928,9 @@ class Field(mixin.PropertiesData,
                                     axis=axis,
                                     _preserve=_preserve)
 
-#        out = super(cls, field0).concatenate(fields, axis=axis,
-#                                             _preserve=_preserve)
-
         # Change the domain axis size
         dim = out.get_data_axes()[axis]
         out.set_construct(DomainAxis(size=new_data.shape[axis]), key=dim)
-#        out.insert_axis(DomainAxis(out.shape[axis]), key=dim, replace=True)
 
         # Insert the concatenated data
         out.set_data(new_data, set_axes=False, copy=False)
@@ -4946,8 +4942,8 @@ class Field(mixin.PropertiesData,
             construct_axes = field0.get_data_axes(key)
 
             if dim not in construct_axes:
-                # This construct does not span the concatenating axis in
-                # the first field
+                # This construct does not span the concatenating axis
+                # in the first field
                 continue
 
             constructs = [construct]
@@ -4961,8 +4957,8 @@ class Field(mixin.PropertiesData,
                 constructs.append(c)
 
             if not constructs:
-                # Not every field has this construct, so remove it from the
-                # output field.
+                # Not every field has this construct, so remove it
+                # from the output field.
                 out.del_construct(key)
                 continue
 
@@ -4983,49 +4979,6 @@ class Field(mixin.PropertiesData,
                 out.set_construct(construct, key=key,
                                   axes=construct_axes, copy=False)
         # --- End: for
-
-#        for role in ('d', 'a', 'm', 'f', 'c'):
-#            for key, item in field0.items(role=role).items():
-#                item_axes = field0.get_data_axes(key)
-#
-#                if dim not in item_axes:
-#                    # This item does not span the concatenating axis in
-#                    # the first field
-#                    continue
-#
-#                items = [item]
-#                for f in fields[1:]:
-#                    i = f.item(key)
-#                    if i is not None:
-#                        items.append(i)
-#                    else:
-#                        # This field does not have this item
-#                        items = None
-#                        break
-#                # --- End: for
-#
-#                if not items:
-#                    # Not every field has this item, so remove it from the
-#                    # output field.
-#                    out.remove_item(key)
-#                    continue
-#
-#                # Still here? Then try concatenating the items from
-#                # each field.
-#                try:
-#                    item = item.concatenate(items, axis=item_axes.index(dim),
-#                                            _preserve=_preserve)
-#                except ValueError:
-#                    # Couldn't concatenate this item, so remove it from
-#                    # the output field.
-#                    out.remove_item(key)
-#                else:
-#                    # Successfully concatenated this item, so insert
-#                    # it into the output field.
-#                    out.insert_item(role, item, key=key, axes=item_axes,
-#                                    copy=False, replace=True)
-#            # --- End: for
-#        # --- End: for
 
         return out
 
@@ -5337,40 +5290,22 @@ class Field(mixin.PropertiesData,
             .. versionadded:: 3.2.0
 
         axes: (sequence of) `int` or `str`, optional
-
             Modify the behaviour when *weights* is `True` or a `Data`
-            instance.
-ppp
+            instance. Ignored for any other value the *weights*
+            parameter.
+
             If *weights* is `True` then weights are created only for
-            the specified axes (as opposed to all axes).
+            the specified axes (as opposed to all
+            axes). I.e. ``weight=True, axes=axes`` is identical to
+            ``weights=axes``.
 
-            If *weights* is a `Data` instance that the specified axes
-            identify each dimension of the given weightsdoes not broadcast to the field
-            construct's data, then all of the given `Data` instance
-            axes must be identified with the specified axes, so that
-            broadcasting can be inferred.
- 
-            *Parameter example:*
-              ``axes='T'``
- 
-            *Parameter example:*
-              ``axes=['longitude']``
-
-            *Parameter example:*
-              ``axes=[3, 1]``
-
-            .. versionadded:: 3.3.0
-            
-        data_axes: (sequence of) `int` or `str`, optional
             If *weights* is a `Data` instance then the specified axes
-ppp            identify each dimension of the given weights. If the
-            weights broadcast to the field construct's data, then it
-            is not necessary to set the *data_axes* parameter. If,
-            however, the weights do not broadcast to the field
-            construct's data, then setting the *data_axes* parameter
-            allows the weights to be transformed so that broadcasting
-            can be inferred.
-
+            identify each dimension of the given weights. If the
+            weights do not broadcast to the field construct's data
+            then setting the *axes* parameter is required so that the
+            braodcasting can be inferred, otherwise setting the *axes*
+            is not required.
+ 
             *Parameter example:*
               ``axes='T'``
  
@@ -5820,43 +5755,53 @@ ppp            identify each dimension of the given weights. If the
             return True
         #--- End: def
 
-        def _data_weights(self, w, comp, weights_axes, axes=None):
-            # ------------------------------------------------------------
+        def _data_weights(self, w, comp, weights_axes, axes=None,
+                          data=False, components=False, methods=False):
+            # --------------------------------------------------------
             # Data weights
-            # ------------------------------------------------------------
-            # If axes for the data have been set then modify the data
-            # to match them
+            # --------------------------------------------------------
             field_data_axes = self.get_data_axes()
 
             if axes is not None:
                 if isinstance(axes, (str, int)):
-                    axes = (axes,)
+                    axes = (axes,)                
 
+                if len(axes) != w.ndim:
+                    raise ValueError(
+                        "'axes' parameter must provide an axis identifier "
+                        "for each weights data dimension. Got {!r} for {} "
+                        "dimension(s).".format(axes, w.ndim))
+                    
                 iaxes = [field_data_axes.index(self.domain_axis(axis, key=True))
                          for axis in axes]
 
-                for i in range(self.ndim):
-                    if i not in iaxes:
-                        w = w.insert_dimension(position=i)
-                        iaxes.insert(i, i)
-                # --- End: for
+                if data:
+                    for i in range(self.ndim):
+                        if i not in iaxes:
+                            w = w.insert_dimension(position=i)
+                            iaxes.insert(i, i)
+                    # --- End: for
                         
-                w = w.transpose(iaxes)
-                        
-            if w.ndim > 0:
-                while w.shape[0] == 1:
-                    w = w.squeeze(0)
-            # --- End: if
+                    w = w.transpose(iaxes)
 
-            if not self._is_broadcastable(w.shape):
-                raise ValueError(
-                    "The 'Data' weights (shape {}) are not broadcastable to "
-                    "the field construct's data (shape {}).".format(
-                        w.shape, self.shape))
+                    if w.ndim > 0:
+                        while w.shape[0] == 1:
+                            w = w.squeeze(0)
+                            
+            else:
+                iaxes = list(range(self.ndim-w.ndim, self.ndim))
+            
+            if not (components or methods):
+                if not self._is_broadcastable(w.shape):
+                    raise ValueError(
+                        "The 'Data' weights (shape {}) are not broadcastable "
+                        "to the field construct's data (shape {}).".format(
+                            w.shape, self.shape))
 
-#            axes0 = self.get_data_axes()[self.ndim-w.ndim:]
-            axes0 = field_data_axes[self.ndim-w.ndim:]
-
+                axes0 = field_data_axes[self.ndim-w.ndim:]
+            else:
+                axes0 = [field_data_axes[i] for i in iaxes]
+                
             for axis0 in axes0:
                 if axis0 in weights_axes:
                     raise ValueError(
@@ -5864,12 +5809,15 @@ ppp            identify each dimension of the given weights. If the
                             self.constructs.domain_axis_identity(axis0)))
             # --- End: for
 
-            comp[tuple(axes0)] = w
+            if methods:
+                comp[tuple(axes0)] = 'custom data'
+            else:                
+                comp[tuple(axes0)] = w
 
             weights_axes.update(axes0)
-        
+            
             return True
-        #--- End: def
+        # --- End: def
 
         def _scale(w, scale):
             '''Scale the weights so that they are <= scale.
@@ -5993,7 +5941,7 @@ ppp            identify each dimension of the given weights. If the
                 elif aux.Z:
                     aux_Z = aux.copy()
                     z_axis = self.get_data_axes(key)[0]                    
-            #--- End: for
+            # --- End: for
                         
             if aux_X is None or aux_Y is None:
                 if auto:
@@ -6038,14 +5986,14 @@ ppp            identify each dimension of the given weights. If the
                 if aux_X.bounds.data.fits_in_one_chunk_in_memory(
                         aux_Y.bounds.dtype.itemsize):
                     aux_X.bounds.varray
-            #--- End: if
+            # --- End: if
 
             if aux_Z is None:
                 for key, aux in self.auxiliary_coordinates.filter_by_naxes(1).items():
                     if aux.Z:
                         aux_Z = aux.copy()
                         z_axis = self.get_data_axes(key)[0]                    
-            #--- End: if
+            # --- End: if
                         
             # Check Z coordinates
             if aux_Z is not None:
@@ -6056,10 +6004,10 @@ ppp            identify each dimension of the given weights. If the
                     raise ValueError(
                         "Z coordinates spans different dimension to X and Y "
                         "geometry coordinates")
-            #--- End_if
+            # --- End_if
 
             return axis, aux_X, aux_Y, aux_Z
-        #--- End: def
+        # --- End: def
             
         def _area_weights_geometry(self, comp, weights_axes,
                                    auto=False, measure=False,
@@ -6107,7 +6055,7 @@ ppp            identify each dimension of the given weights. If the
                         "Can't find weights: Interior ring variables have "
                         "incorrect shape. Got {}, expected {}".format(
                             interior_ring.shape, aux_X.bounds.shape[:-1]))
-            #--- End: if
+            # --- End: if
             
             x = aux_X.bounds.data
             y = aux_Y.bounds.data
@@ -6146,7 +6094,7 @@ ppp            identify each dimension of the given weights. If the
                             # for the "last" edge of the polygon that
                             # joins the first and last points.
                             all_areas[i, j] += x[-1]*y[0] - x[0]*y[-1]
-                #--- End: for
+                # --- End: for
                 
                 all_areas = all_areas.abs() * 0.5
                     
@@ -6596,7 +6544,10 @@ ppp            identify each dimension of the given weights. If the
 
                 weights_axes.update(key)
 
-                comp[tuple(key)] = value.copy()
+                if methods:
+                    comp[tuple(key)] = 'custom data'
+                else:
+                    comp[tuple(key)] = value.copy()
 
         elif isinstance(weights, self.__class__):
             # --------------------------------------------------------
@@ -6609,7 +6560,8 @@ ppp            identify each dimension of the given weights. If the
             # Data
             # --------------------------------------------------------
             _data_weights(self, weights, comp, weights_axes,
-                          axes=axes)
+                          axes=axes, data=data, components=components,
+                          methods=methods)
         else:
             # --------------------------------------------------------
             # String or sequence
@@ -13627,7 +13579,7 @@ ppp            identify each dimension of the given weights. If the
     :Parameters:
 
         window: sequence of numbers
-            Specify the window of weights to use for the filter.
+            Specify the window weights to use for the filter.
 
             *Parameter example:*
               An unweighted 5-point moving average can be computed
@@ -13636,6 +13588,9 @@ ppp            identify each dimension of the given weights. If the
             Note that the `scipy.signal.windows` package has suite of
             window functions for creating wondow weights for filtering
             (see the examples for details).
+
+            .. versionadded:: 3.3.0 (replaces the old weights
+                              parameter)
 
         axis:
             Select the domain axis over which the filter is to be
@@ -18559,13 +18514,6 @@ ppp            identify each dimension of the given weights. If the
 
         # If dst is a dictionary set flag
         dst_dict = not isinstance(dst, f.__class__)
-#        if isinstance(dst, f.__class__):
-#            dst_dict = False
-#            # If dst is a field list use the first field
-#            if isinstance(dst, FieldList):
-#                dst = dst[0]
-#        else:
-#            dst_dict = True
 
         # Retrieve the source field's latitude and longitude coordinates
         src_axis_keys, src_axis_sizes, src_coord_keys, src_coords, \
