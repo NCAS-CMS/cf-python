@@ -29,19 +29,62 @@ jobs:
 
     # Provide a notification message
     - name: Notify about setup
-      run: echo Now setting up the cf-python test suite...
+      run: echo Now setting up the environment for the cf-python test suite...
 
-    # Run the test-suite on different versions of Python 3:
+    # Prepare to run the test-suite on different versions of Python 3:
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v1
       with:
         python-version: ${{ matrix.python-version }}
 
-    # Install cf-python dependencies pre-testing
-    - name: Install dependencies
+    # NOTE: for installing dependencies, it may be easier to get an Action to
+    # get conda, & install the dependencies, esp. UDUNITS, from there. See
+    # e.g. https://github.com/goanpeca/setup-miniconda pre-existing Action.
+    #
+    # Setup conda
+    - name: Setup a conda environment for installing dependencies painlessly.
+      uses: goanpeca/setup-miniconda@enh/channels
+      with:
+        miniconda-version: 'latest'
+        activate-environment: cf-py3-all-deps
+        python-version: ${{ matrix.python-version }}
+        channels: ncas, conda-forge  # cross-reference with next step
+      - shell: bash -l {0}
+        run: |
+          conda info
+          conda list
+
+    # Install prerequisite to cf-python C dependency (the Expat library)
+    # name: Download and install Expat prereq to C-based dependency UDUNITS
+    # wget --no-check-certificate --content-disposition https://github.com/libexpat/libexpat/releases/download/R_2_2_9/expat-2.2.9.tar.gz
+    # tar xvzf expat-2.2.9.tar.gz
+    # cd expat-2.2.9
+    # ./configure
+    # make
+    # make install
+
+    # Install one C-based cf-python dependency pre-testing
+    # - name: Download and install C-based dependency (UDUNITS)
+    #  # Steps following (roughly) the 'Autoconf-based Installation' install
+    #  # instructions in the official docs (see:
+    #  # https://www.unidata.ucar.edu/software/udunits/udunits-current/doc/ ...
+    #  # ... udunits/udunits2.html#Installation ).
+    #  run: |
+    #    wget - ftp://ftp.unidata.ucar.edu/pub/udunits/udunits-2.2.26.tar.gz
+    #    tar xvzf udunits-2.2.26.tar.gz
+    #    cd udunits-2.2.26
+    #    make distclean  # possibly not needed, may be fresh GH workspace?
+    #    ./configure --disable-shared
+    #    make
+    #    make check  # verify if worked, debug step but comment out
+    #    make install
+
+    # Install cf-python Python-based dependencies pre-testing
+    # We do so with conda which was setup in a previous step.
+    - name: Install Python-based dependencies
       run: |
-        python -m pip install --upgrade pip setuptools wheel
-        pip install -r requirements.txt
+        conda install -c ncas -c conda-forge cf-python cf-plot udunits2=2.2.20
+        conda install -c conda-forge mpich esmpy
 
     # Provide another notification message
     - name: Notify about starting testing
