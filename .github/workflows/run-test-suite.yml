@@ -43,16 +43,17 @@ jobs:
     #
     # Setup conda
     - name: Setup a conda environment for installing dependencies painlessly.
-      uses: goanpeca/setup-miniconda@enh/channels
+    - uses: actions/checkout@v2
+    - uses: goanpeca/setup-miniconda@enh/channels
       with:
         miniconda-version: 'latest'
         activate-environment: cf-py3-all-deps
         python-version: ${{ matrix.python-version }}
-        channels: ncas, conda-forge  # cross-reference with next step
-      - shell: bash -l {0}
-        run: |
-          conda info
-          conda list
+        channels: ncas, conda-forge
+    - shell: bash -l {0}
+      run: |
+        conda info
+        conda list
 
     # Install prerequisite to cf-python C dependency (the Expat library)
     # name: Download and install Expat prereq to C-based dependency UDUNITS
