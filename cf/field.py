@@ -13244,8 +13244,11 @@ class Field(mixin.PropertiesData,
                 raise ValueError(
                     "Can't set the 'scale' parameter for moving integrals")
         else:
+            if scale is None:
+                scale = 1.0
+                
             measure = False
-
+            
         if weights is not None:
             if isinstance(weights, Data):
                 if weights.ndim > 1:
@@ -13263,6 +13266,7 @@ class Field(mixin.PropertiesData,
             # --- End: if
 
             # Get the data weights
+            print ('scale=', scale)
             w = f.weights(weights, axes=axis, measure=measure,
                           scale=scale, radius=radius,
                           great_circle=great_circle, data=True)
