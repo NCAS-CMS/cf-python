@@ -7374,8 +7374,7 @@ class Field(mixin.PropertiesData,
             If set to a positive number then scale the weights, as
             defined by the *weights* parameter, so that they are less
             than or equal to that number. By default the weights are
-            scaled to lie between 0 and 1 (i.e.  *scale* is 1), and
-            have arbitrary units.
+            scaled to lie between 0 and 1 (i.e.  *scale* is 1).
 
             *Parameter example:*
               To scale all weights so that they lie between 0 and 0.5:
@@ -8599,7 +8598,7 @@ class Field(mixin.PropertiesData,
     .. versionadded:: 1.0
 
     .. seealso:: `bin`, `cell_area`, `convolution_filter`,
-                 `moving_window`, `weights`, `radius`
+                 `moving_window`, `radius`, `weights`
 
     :Parameters:
 
@@ -8767,7 +8766,7 @@ class Field(mixin.PropertiesData,
 
             .. note:: Setting *weights* to `True` is the best way to
                       ensure that all collapses are appropriately
-                      weighted according to the feild construct's
+                      weighted according to the field construct's
                       metadata. In this case, if it is not possible to
                       create weights for any axis then an exception
                       will be raised.
@@ -8836,7 +8835,7 @@ class Field(mixin.PropertiesData,
             If set to a positive number then scale the weights so that
             they are less than or equal to that number. By default the
             weights are scaled to lie between 0 and 1 (i.e.  *scale*
-            is 1), and have arbitrary units.
+            is 1).
 
             *Parameter example:*
               To scale all weights so that they lie between 0 and 0.5:
@@ -8920,7 +8919,7 @@ class Field(mixin.PropertiesData,
                              assume a value of ``'min'``, otherwise
                              assume value of ``'mid_range'``.
 
-            ``'mid_range'``  An output coordinate is the average of
+            ``'mid_range'``  An output coordinate is the mean of
                              first and last input coordinate bounds
                              (or the first and last coordinates if
                              there are no bounds). This is the
@@ -12929,293 +12928,10 @@ class Field(mixin.PropertiesData,
 
         return False
 
-#    @_inplace_enabled
-#    def moving_mean(self, window_size=None, axis=None, weights=None,
-#                    mode=None, cval=None, origin=0, radius='earth',
-#                    great_circle=False, inplace=False):
-#        '''Create a moving averages along an axis.
-#
-#    By default the averages are unweighted, but weights based on the
-#    axis cell sizes (or custom weights) may applied to the
-#    calculation via the *weights* parameter.
-#
-#    When appropriate, a new cell method construct is created to
-#    describe the averaging.
-#
-#    .. note:: The `moving_mean` method can not, in general, be
-#              emulated by the `convolution_filter` method, as the
-#              latter i) can not change the window weights as the
-#              filter passes through the axis; and ii) does not update
-#              the cell method constructs.
-#
-#    .. versionadded:: 3.3.0
-#
-#    .. seealso:: `bin`, `cell_area`, `collapse`, `convolution_filter`,
-#                 `weights`, `radius`
-#
-#    :Parameters:
-#        
-#        window_size: `int`
-#            Specify the size of the window used to calculate the
-#            moving average.
-#
-#            *Parameter example:*
-#              A 5-point moving average can be computed with
-#              ``window_size=5``.
-#
-#        axis: `str` or `int`
-#            Select the domain axis over which the filter is to be
-#            applied, defined by that which would be selected by
-#            passing the given axis description to a call of the field
-#            construct's `domain_axis` method. For example, for a value
-#            of ``'X'``, the domain axis construct returned by
-#            ``f.domain_axis('X')`` is selected.
-#
-#        weights: optional
-#            Specify the weights for the moving average. The weights
-#            are, those that would be returned by this call of the
-#            field construct's `weights` method: ``f.weights(weights,
-#            axes=axis, radius=radius, great_circle=great_circle,
-#            data=True, scale=1)``. See the *axis*, *radius* and
-#            *great_circle* parameters and `cf.Field.weights` for
-#            details.
-#
-#            .. note:: By default *weights* is `None`, resulting in
-#                      unweighted calculations.
-#
-#            *Parameter example:*
-#              To specify weights on the cell sizes of the selected
-#              axis: ``weights=True``.
-#
-#        mode: `str`, optional
-#            The *mode* parameter determines how the input array is
-#            extended when the filter overlaps an array border. The
-#            default value is ``'constant'`` or, if the dimension being
-#            convolved is cyclic (as ascertained by the `iscyclic`
-#            method), ``'wrap'``. The valid values and their behaviours
-#            are as follows:
-#
-#            ==============  ==========================  =================================
-#            *mode*          Description                 Behaviour
-#            ==============  ==========================  =================================
-#            ``'reflect'``   The input is extended by    ``(d c b a | a b c d | d c b a)``
-#                            reflecting about the edge
-#
-#            ``'constant'``  The input is extended by    ``(k k k k | a b c d | k k k k)``
-#                            filling all values beyond
-#                            the edge with the same
-#                            constant value (``k``),
-#                            defined by the *cval*
-#                            parameter.
-#
-#            ``'nearest'``   The input is extended by    ``(a a a a | a b c d | d d d d)``
-#                            replicating the last point
-#
-#            ``'mirror'``    The input is extended by    ``(d c b | a b c d | c b a)``
-#                            reflecting about the
-#                            centre of the last point.
-#
-#            ``'wrap'``      The input is extended by    ``(a b c d | a b c d | a b c d)``
-#                            wrapping around to the
-#                            opposite edge.
-#            ==============  ==========================  =================================
-#
-#            The position of the window realtive to each value can be
-#            changed by using the *origin* parameter.
-#
-#        cval: scalar, optional
-#            Value to fill past the edges of the array if *mode* is
-#            ``'constant'``. Ignored for other modes. Defaults to
-#            `None`, in which case the edges of the array will be
-#            filled with missing data. The only other valid value is
-#            ``0``.
-#
-#            *Parameter example:*
-#               To extend the input by filling all values beyond the
-#               edge with zero: ``cval=0``
-#
-#        origin: `int`, optional
-#            Controls the placement of the filter. Defaults to 0, which
-#            is the centre of the window. If the window has an even
-#            number weights then then a value of 0 defines the index
-#            defined by ``width/2 -1``.
-#
-#            *Parameter example:*
-#              For a weighted moving average computed with a weights
-#              window of ``[0.1, 0.15, 0.5, 0.15, 0.1]``, if
-#              ``origin=0`` then the average is centred on each
-#              point. If ``origin=-2`` then the average is shifted to
-#              inclued the previous four points. If ``origin=1`` then
-#              the average is shifted to include the previous point and
-#              the and the next three points.
-#
-#        radius: optional
-#            Specify the radius used for calculating the areas of cells
-#            defined in spherical polar coordinates. The radius is that
-#            which would be returned by this call of the field
-#            construct's `~cf.Field.radius` method:
-#            ``f.radius(radius)``. See the `cf.Field.radius` for
-#            details.
-#
-#            By default *radius* is ``'earth'`` which means that if and
-#            only if the radius can not found from the datums of any
-#            coordinate reference constucts, then the default radius
-#            taken as 6371229 metres.
-#
-#        great_circle: `bool`, optional
-#            If True then allow, if required, the derivation of i) area
-#            weights from polygon geometry cells by assuming that each
-#            cell part is a spherical polygon composed of great circle
-#            segments; and ii) and the derivation of line-length
-#            weights from line geometry cells by assuming that each
-#            line part is composed of great circle segments.
-#
-#        inplace: `bool`, optional
-#            If True then do the operation in-place and return `None`.
-#
-#    :Returns:
-#
-#        `Field` or `None`
-#            The field construct of moving averages, or `None` if the
-#            operation was in-place.
-#
-#    **Examples:**
-#
-#    >>> f = cf.example_field(0)
-#    >>> print(f)
-#    Field: specific_humidity (ncvar%q)
-#    ----------------------------------
-#    Data            : specific_humidity(latitude(5), longitude(8)) 1
-#    Cell methods    : area: mean
-#    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
-#                    : longitude(8) = [22.5, ..., 337.5] degrees_east
-#                    : time(1) = [2019-01-01 00:00:00]
-#    >>> print(f.array)
-#    [[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]
-#     [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
-#     [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
-#     [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
-#     [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]
-#    >>> print(f.coordinate('X').bounds.array)
-#    [[  0.  45.]
-#     [ 45.  90.]
-#     [ 90. 135.]
-#     [135. 180.]
-#     [180. 225.]
-#     [225. 270.]
-#     [270. 315.]
-#     [315. 360.]]
-#    >>> f.iscyclic('X')
-#    True
-#
-#    Create a weighted 3-point running mean for the cyclic 'X' axis:
-#
-#    >>> g = f.moving_mean(3, axis='X', weights=True)
-#    >>> print(g)
-#    Field: specific_humidity (ncvar%q)
-#    ----------------------------------
-#    Data            : specific_humidity(latitude(5), longitude(8)) 1
-#    Cell methods    : area: mean longitude(8): mean
-#    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
-#                    : longitude(8) = [22.5, ..., 337.5] degrees_east
-#                    : time(1) = [2019-01-01 00:00:00]    
-#    >>> print(g.array)
-#    [[0.02333 0.01467 0.017   0.01167 0.023   0.02633 0.03    0.02   ]
-#     [0.04167 0.03467 0.04767 0.051   0.06033 0.04167 0.04833 0.03167]
-#     [0.084   0.12167 0.13367 0.119   0.112   0.08233 0.057   0.05933]
-#     [0.035   0.04233 0.056   0.05567 0.06667 0.04633 0.03267 0.01833]
-#     [0.01833 0.02033 0.03    0.024   0.03    0.02967 0.028   0.01767]]
-#    >>> print(g.coordinate('X').bounds.array)
-#    [[-45.  90.]
-#     [  0. 135.]
-#     [ 45. 180.]
-#     [ 90. 225.]
-#     [135. 270.]
-#     [180. 315.]
-#     [225. 360.]
-#     [270. 360.]]
-#
-#    Create an unweighted 3-point running mean for the cyclic 'X' axis:
-#
-#    >>> g = f.moving_mean(3, axis='X')
-#
-#        '''
-#        if cval is not None and cval != 0:
-#            raise ValueError("The cval parameter must be None or 0")
-#
-#        window_size = int(window_size)
-#
-#        # Construct new field
-#        f = _inplace_enabled_define_and_cleanup(self)
-#        
-#        # Find the axis for the moving average
-#        axis = f.domain_axis(axis, key=True)
-#        iaxis = self.get_data_axes().index(axis)                    
-#
-#        if weights is None or weights is False:
-#            weights = None
-#        
-#        if weights is not None:
-#            if isinstance(weights, Data):
-#                if weights.ndim > 1:
-#                    raise ValueError(
-#                        "The 'Data' weights (shape {}) do not match the axis "
-#                        "being averaged (size {})".format(
-#                            weights.shape, f.shape[iaxis]))
-#                
-#                if weights.ndim == 1:                  
-#                    if weights.shape[0] != f.shape[iaxis]:
-#                        raise ValueError(
-#                            "The 'Data' weights (size {}) do not match the "
-#                            "axis being averaged (size {})".format(
-#                                weights.size, f.shape[iaxis]))
-#            # --- End: if
-#
-#            # Get the data weights
-#            w = f.weights(weights, axes=axis, data=True, scale=1.0,
-#                          radius=radius, great_circle=great_circle)
-#
-#            # Adjust the data weights by dividing them by their
-#            # miniumum
-#            wmin = w.minimum()
-#            wmin.dtype = float
-#            if numpy_can_cast(wmin.dtype, w.dtype):
-#                w /= wmin
-#            else:
-#                w = w / wmin
-#
-#            # Multiply the field by the adjusted data weights
-#            f *= w
-#
-#        # Create the window weights
-#        window = numpy_full((window_size,), 1.0)
-#        if weights is None:
-#            # If there is no data weighting, make sure that the sum of
-#            # the window weights is 1.
-#            window /= window.size
-#
-#        f.convolution_filter(window, axis=axis, mode=mode, cval=cval,
-#                             origin=origin, update_bounds=True,
-#                             inplace=True)
-#
-#        if weights is not None:
-#            # Divide the field by the running sum of the adjusted data
-#            # weights
-#            w.convolution_filter(window=window, axis=iaxis, mode=mode,
-#                                 cval=0, origin=origin, inplace=True)
-#            f.data /= w
-#
-#        # Add a cell method
-#        f._update_cell_methods(method='mean',
-#                               domain_axes=f.domain_axes(axis),
-#                               input_axes=(axis,), verbose=False)
-#            
-#        return f
-
     @_inplace_enabled
     def moving_window(self, method, window_size=None, axis=None,
                       weights=None, mode=None, cval=None, origin=0,
-                      radius='earth', great_circle=False,
+                      scale=None, radius='earth', great_circle=False,
                       inplace=False):
         '''Perform moving window calculations along an axis.
 
@@ -13224,6 +12940,8 @@ class Field(mixin.PropertiesData,
     By default moving means are unweighted, but weights based on the
     axis cell sizes (or custom weights) may applied to the calculation
     via the *weights* parameter.
+
+    By default moving integrals must be weighted.
 
     When appropriate, a new cell method construct is created to
     describe the calculation.
@@ -13236,16 +12954,14 @@ class Field(mixin.PropertiesData,
 
     .. versionadded:: 3.3.0
 
-    .. seealso:: `bin`, `cell_area`, `collapse`, `convolution_filter`,
-                 `weights`, `radius`
+    .. seealso:: `bin`, `collapse`, `convolution_filter`, `radius`,
+                 `weights`
 
     :Parameters:
         
         method: `str`
-            Define the collapse method. All of the axes specified by
-            the *axes* parameter are collapsed simultaneously by this
-            method. The method is given by one of the following
-            strings (see
+            Define the moving window method. The method is given by
+            one of the following strings (see
             https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
             for precise definitions):
 
@@ -13271,11 +12987,10 @@ class Field(mixin.PropertiesData,
             
         window_size: `int`
             Specify the size of the window used to calculate the
-            moving average.
+            moving window.
 
             *Parameter example:*
-              A 5-point moving average can be computed with
-              ``window_size=5``.
+              A 5-point moving window is set with ``window_size=5``.
 
         axis: `str` or `int`
             Select the domain axis over which the filter is to be
@@ -13286,16 +13001,22 @@ class Field(mixin.PropertiesData,
             ``f.domain_axis('X')`` is selected.
 
         weights: optional
-            Specify the weights for the moving average. The weights
+            Specify the weights for the moving window. The weights
             are, those that would be returned by this call of the
             field construct's `weights` method: ``f.weights(weights,
             axes=axis, radius=radius, great_circle=great_circle,
-            data=True, scale=1)``. See the *axis*, *radius* and
-            *great_circle* parameters and `cf.Field.weights` for
-            details.
+            data=True)``. See the *axis*, *radius* and *great_circle*
+            parameters and `cf.Field.weights` for details.
 
             .. note:: By default *weights* is `None`, resulting in
                       unweighted calculations.
+
+            .. note:: Setting *weights* to `True` is the best way to
+                      ensure that all the moving window calculations
+                      are appropriately weighted according to the
+                      field construct's metadata. In this case, if it
+                      is not possible to create weights for the axis
+                      then an exception will be raised.
 
             *Parameter example:*
               To specify weights on the cell sizes of the selected
@@ -13350,18 +13071,18 @@ class Field(mixin.PropertiesData,
 
         origin: `int`, optional
             Controls the placement of the filter. Defaults to 0, which
-            is the centre of the window. If the window has an even
-            number weights then then a value of 0 defines the index
-            defined by ``width/2 -1``.
+            is the centre of the window. If the window size, defined
+            by the *window_size* parameter, has an even number weights
+            then then a value of 0 defines the index defined by
+            ``window_size/2 -1``.
 
             *Parameter example:*
-              For a weighted moving average computed with a weights
-              window of ``[0.1, 0.15, 0.5, 0.15, 0.1]``, if
-              ``origin=0`` then the average is centred on each
-              point. If ``origin=-2`` then the average is shifted to
-              inclued the previous four points. If ``origin=1`` then
-              the average is shifted to include the previous point and
-              the and the next three points.
+              For a window size of 5, if ``origin=0`` then the window
+              is centred on each point. If ``origin=-2`` then the
+              window is shifted to inclued the previous four
+              points. If ``origin=1`` then the window is shifted to
+              include the previous point and the and the next three
+              points.
 
         radius: optional
             Specify the radius used for calculating the areas of cells
@@ -13384,14 +13105,27 @@ class Field(mixin.PropertiesData,
             weights from line geometry cells by assuming that each
             line part is composed of great circle segments.
 
+        scale: number, optional
+            If set to a positive number then scale the weights so that
+            they are less than or equal to that number. By default the
+            weights are scaled to lie between 0 and 1 (i.e.  *scale*
+            is 1).
+
+            Ignored if the moving window method is not weighted. The
+            *scale* parameter can not be set for moving integrals.
+
+            *Parameter example:*
+              To scale all weights so that they lie between 0 and 0.5:
+              ``scale=0.5``.
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
 
     :Returns:
 
         `Field` or `None`
-            The field construct of moving averages, or `None` if the
-            operation was in-place.
+            The field construct of moving window values, or `None` if
+            the operation was in-place.
 
     **Examples:**
 
@@ -13447,17 +13181,42 @@ class Field(mixin.PropertiesData,
      [135. 270.]
      [180. 315.]
      [225. 360.]
-     [270. 360.]]
+     [270. 405.]]
 
     Create an unweighted 3-point running mean for the cyclic 'X' axis:
 
     >>> g = f.moving_window('mean', 3, axis='X')
 
+    Create an weighted 4-point running integral for the non-cyclic 'Y' axis:
+
+    >>> g = f.moving_window('integral', 4, axis='Y', weights=True)
+    >>> g.Units
+    <Units: 0.0174532925199433 rad>
+    >>> print(g.array)
+    [[   --    --    --    --   --    --   --   --]
+     [ 8.37 11.73 10.05 13.14 8.88 11.64 4.59 4.02]
+     [ 8.34 11.79 10.53 13.77 8.88 11.64 4.89 3.54]
+     [   --    --    --    --   --    --   --   --]
+     [   --    --    --    --   --    --   --   --]]
+    >>> print(g.coordinate('Y').bounds.array)
+    [[-90.  30.]
+     [-90.  60.]
+     [-60.  90.]
+     [-30.  90.]
+     [ 30.  90.]]
+    >>> g = f.moving_window('integral', 4, axis='Y', weights=True, cval=0)
+    >>> print(g.array)
+    [[ 7.5   9.96  8.88 11.04  7.14  9.48  4.32  3.51]
+     [ 8.37 11.73 10.05 13.14  8.88 11.64  4.59  4.02]
+     [ 8.34 11.79 10.53 13.77  8.88 11.64  4.89  3.54]
+     [ 7.65 10.71  9.18 11.91  7.5   9.45  4.71  1.56]
+     [ 1.05  2.85  1.74  3.15  2.28  3.27  1.29  0.9 ]]
+
         '''
         method_values = ('mean', 'sum', 'integral')
         if method not in method_values:
             raise ValueError(
-                "Non-valid 'method' parameter value. Got {!r}. "
+                "Non-valid 'method' parameter value: {!r}. "
                 "Expected one of {!r}".format(method, method_values))
 
         if cval is not None and cval != 0:
@@ -13468,7 +13227,7 @@ class Field(mixin.PropertiesData,
         # Construct new field
         f = _inplace_enabled_define_and_cleanup(self)
         
-        # Find the axis for the moving average
+        # Find the axis for the moving window
         axis = f.domain_axis(axis, key=True)
         iaxis = self.get_data_axes().index(axis)                    
 
@@ -13480,41 +13239,34 @@ class Field(mixin.PropertiesData,
             if weights is None:
                 raise ValueError(
                     "Must set weights parameter for 'integral' method")       
+
+            if scale is not None:
+                raise ValueError(
+                    "Can't set the 'scale' parameter for moving integrals")
         else:
             measure = False
-                
+
         if weights is not None:
             if isinstance(weights, Data):
                 if weights.ndim > 1:
                     raise ValueError(
-                        "The 'Data' weights (shape {}) do not match the axis "
-                        "being averaged (size {})".format(
+                        "The input weights (shape {}) do not match the "
+                        "selected axis (size {})".format(
                             weights.shape, f.shape[iaxis]))
                 
                 if weights.ndim == 1:                  
                     if weights.shape[0] != f.shape[iaxis]:
                         raise ValueError(
-                            "The 'Data' weights (size {}) do not match the "
-                            "axis being averaged (size {})".format(
+                            "The input weights (size {}) do not match "
+                            "the selected axis (size {})".format(
                                 weights.size, f.shape[iaxis]))
             # --- End: if
 
             # Get the data weights
-            w = f.weights(weights, axes=axis, data=True,
-                          measure=measure, radius=radius,
-                          great_circle=great_circle)
+            w = f.weights(weights, axes=axis, measure=measure,
+                          scale=scale, radius=radius,
+                          great_circle=great_circle, data=True)
 
-            if method == 'mean':
-                # Adjust the data weights by dividing them by their
-                # miniumum
-                wmin = w.minimum()
-                wmin.dtype = float
-                if numpy_can_cast(wmin.dtype, w.dtype):
-                    w /= wmin
-                else:
-                    w = w / wmin
-            # --- End: if
-            
             # Multiply the field by the (possibly adjusted) weights
             if numpy_can_cast(w.dtype, f.dtype):
                 f *= w
