@@ -1,0 +1,60 @@
+# A GitHub Action to run the cf-python test suite upon push or PR to master.
+name: Run test suite
+
+# Triggers the workflow on push or PR events for the master branch (only)
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+# Note a workflow can have 1+ jobs that can run sequentially or in parallel.
+jobs:
+  # TODO: setup parallel runs (-job-2 etc.) of sub-tests for speed-up
+  test-suite-job-0:
+    # The type of runner that the job will run on (this value is standard)
+    # TODO: also run with older Linux 'ubuntu-16.04', and Mac, 'macos-latest'.
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        # TODO: extend to 3.5, 3.6, 3.8 once have got this Action working
+        python-version: [3.7]
+
+    # A sequence of tasks that will be executed as part of this job:
+    steps:
+    # Checks out the repository under $GITHUB_WORKSPACE so job can access it
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    # Provide a notification message
+    - name: Notify about setup
+      run: echo Now setting up the cf-python test suite...
+
+    # Run the test-suite on different versions of Python 3:
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    # Install cf-python dependencies pre-testing
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip setuptools wheel
+        pip install -r requirements.txt
+
+    # Provide another notification message
+    - name: Notify about starting testing
+      run: echo Now starting to run the cf-python test suite...
+
+    # Finally run the test suite!
+    - name: Run test suite
+      run: |
+        cd cf/test
+        python run_tests.py
+
+    # End with a message indicating the suite has completed its run
+    - name: Notify about a completed run
+      run: |
+        echo The cf-python test-suite has completed and you may now
+        echo inspect the results.

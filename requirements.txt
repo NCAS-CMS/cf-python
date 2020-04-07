@@ -1,0 +1,11 @@
+netCDF4>=1.5.3
+cftime>=1.1.1
+numpy>=1.15
+cfdm>=1.8.0
+psutil>=0.6.0
+cfunits>=3.2.5
+udunits2==2.2.25
+scipy>=1.1.0
+matplotlib>=3.0.0
+mpi4py>=3.0.0
+ESMF>=8.0
