@@ -137,8 +137,8 @@ class Query:
     ======================  ==============================================
     Query interface method  Description
     ======================  ==============================================
-    `__query_lt__`          Called when an ``'lt'`` condition is evaulated
-    `__query_le__`          Called when an ``'le'`` condition is evaulated
+    `__query_lt__`          Called when a ``'lt'`` condition is evaulated
+    `__query_le__`          Called when a ``'le'`` condition is evaulated
     `__query_gt__`          Called when a ``'gt'`` condition is evaulated
     `__query_ge__`          Called when a ``'ge'`` condition is evaulated
     `__query_eq__`          Called when an ``'eq'`` condition is evaulated
