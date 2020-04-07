@@ -41,7 +41,7 @@ class FieldTest(unittest.TestCase):
 
         self.test_only = []
 #        self.test_only = ['NOTHING!!!!']
-#        self.test_only = ['test_Field_convolution_filter', 'test_Field_derivative', 'test_Field_moving_window']
+        self.test_only = ['test_Field_convolution_filter', 'test_Field_derivative', 'test_Field_moving_window']
 #        self.test_only = ['test_Field_weights']
 #        self.test_only = ['test_Field_collapse']
 #        self.test_only = ['test_Field_radius']
@@ -1695,11 +1695,12 @@ class FieldTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        weights = cf.Data(numpy.arange(1, 9.0)) / 2
+        weights = cf.Data([1, 2, 3, 10, 5, 6, 7, 8]) / 2
 
         f = cf.example_field(0)
 
-        g = f.moving_window('mean', window_size=3, axis='X', inplace=True)
+        g = f.moving_window('mean', window_size=3, axis='X',
+                            inplace=True)
         self.assertTrue(g is None)
         
         with self.assertRaises(ValueError):
@@ -1708,7 +1709,6 @@ class FieldTest(unittest.TestCase):
     
         f = cf.example_field(0)
         a = f.array
-
 
         # ------------------------------------------------------------
         # Origin = 0

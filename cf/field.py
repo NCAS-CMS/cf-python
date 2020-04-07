@@ -13236,16 +13236,14 @@ class Field(mixin.PropertiesData,
 
     .. versionadded:: 3.3.0
 
-    .. seealso:: `bin`, `cell_area`, `collapse`, `convolution_filter`,
-                 `weights`, `radius`
+    .. seealso:: `bin`, `collapse`, `convolution_filter`, `radius`,
+                 `weights`
 
     :Parameters:
         
         method: `str`
-            Define the collapse method. All of the axes specified by
-            the *axes* parameter are collapsed simultaneously by this
-            method. The method is given by one of the following
-            strings (see
+            Define the moving window method. The method is given by
+            one of the following strings (see
             https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
             for precise definitions):
 
@@ -13477,43 +13475,45 @@ class Field(mixin.PropertiesData,
         
         if method == 'integral':
             measure = True
+            scale = None
             if weights is None:
                 raise ValueError(
                     "Must set weights parameter for 'integral' method")       
         else:
             measure = False
-                
+            scale = 1.0
+
         if weights is not None:
             if isinstance(weights, Data):
                 if weights.ndim > 1:
                     raise ValueError(
-                        "The 'Data' weights (shape {}) do not match the axis "
-                        "being averaged (size {})".format(
+                        "The input weights (shape {}) do not match the "
+                        "selected axis (size {})".format(
                             weights.shape, f.shape[iaxis]))
                 
                 if weights.ndim == 1:                  
                     if weights.shape[0] != f.shape[iaxis]:
                         raise ValueError(
-                            "The 'Data' weights (size {}) do not match the "
-                            "axis being averaged (size {})".format(
+                            "The input weights (size {}) do not match "
+                            "the selected axis (size {})".format(
                                 weights.size, f.shape[iaxis]))
             # --- End: if
 
             # Get the data weights
-            w = f.weights(weights, axes=axis, data=True,
-                          measure=measure, radius=radius,
-                          great_circle=great_circle)
+            w = f.weights(weights, axes=axis, measure=measure,
+                          scale=scale, radius=radius,
+                          great_circle=great_circle, data=True)
 
-            if method == 'mean':
-                # Adjust the data weights by dividing them by their
-                # miniumum
-                wmin = w.minimum()
-                wmin.dtype = float
-                if numpy_can_cast(wmin.dtype, w.dtype):
-                    w /= wmin
-                else:
-                    w = w / wmin
-            # --- End: if
+#            if method == 'mean':
+#                # Adjust the data weights by dividing them by their
+#                # miniumum
+#                wmin = w.minimum()
+#                wmin.dtype = float
+#                if numpy_can_cast(wmin.dtype, w.dtype):
+#                    w /= wmin
+#                else:
+#                    w = w / wmin
+#            # --- End: if
             
             # Multiply the field by the (possibly adjusted) weights
             if numpy_can_cast(w.dtype, f.dtype):
