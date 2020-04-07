@@ -14,6 +14,7 @@ if _found_ESMF:
     except Exception as error:
         print("WARNING: Can not import ESMF for regridding: {0}".format(error))
 
+
 class Regrid:
     '''Class containing all the methods required for accessing ESMF
     regridding through ESMPY and the associated utility methods.
@@ -86,13 +87,11 @@ class Regrid:
             unmapped_action=ESMF.UnmappedAction.IGNORE,
             ignore_degenerate=ignore_degenerate)
 
-
     def destroy(self):
         '''Free the memory associated with the ESMF.Regrid instance.
 
         '''
         self.regridSrc2Dst.destroy()
-
 
     @staticmethod
     def initialize():
@@ -108,12 +107,12 @@ class Regrid:
 
         '''
         if not _found_ESMF:
-            raise ImportError('The ESMF package is needed to support regridding.')
+            raise ImportError(
+                'The ESMF package is needed to support regridding.')
 
         manager = ESMF.Manager(debug=REGRID_LOGGING())
 
         return manager
-
 
     @staticmethod
     def create_grid(coords, use_bounds, mask=None, cartesian=False,
@@ -175,8 +174,10 @@ class Regrid:
                 # Get the shape of the grid
                 shape = lon.transpose(x_order).shape
                 if lat.transpose(y_order).shape != shape:
-                    raise ValueError('The longitude and latitude coordinates' +
-                                     ' must have the same shape.')
+                    raise ValueError(
+                        'The longitude and latitude coordinates'
+                        ' must have the same shape.'
+                    )
             # --- End: if
 
             if use_bounds:
@@ -202,16 +203,16 @@ class Regrid:
                     y_bounds = y_bounds.array
 
                     tmp_x = numpy_empty((n + 1, m + 1))
-                    tmp_x[:n,:m] = x_bounds[:,:,0]
-                    tmp_x[:n,m] = x_bounds[:,-1,1]
-                    tmp_x[n,:m] = x_bounds[-1,:,3]
-                    tmp_x[n,m] = x_bounds[-1,-1,2]
+                    tmp_x[:n, :m] = x_bounds[:, :, 0]
+                    tmp_x[:n, m] = x_bounds[:, -1, 1]
+                    tmp_x[n, :m] = x_bounds[-1, :, 3]
+                    tmp_x[n, m] = x_bounds[-1, -1, 2]
 
                     tmp_y = numpy_empty((n + 1, m + 1))
-                    tmp_y[:n,:m] = y_bounds[:,:,0]
-                    tmp_y[:n,m] = y_bounds[:,-1,1]
-                    tmp_y[n,:m] = y_bounds[-1,:,3]
-                    tmp_y[n,m] = y_bounds[-1,-1,2]
+                    tmp_y[:n, :m] = y_bounds[:, :, 0]
+                    tmp_y[:n, m] = y_bounds[:, -1, 1]
+                    tmp_y[n, :m] = y_bounds[-1, :, 3]
+                    tmp_y[n, m] = y_bounds[-1, -1, 2]
 
                     x_bounds = tmp_x
                     y_bounds = tmp_y
@@ -222,9 +223,9 @@ class Regrid:
                     if cyclic is None:
                         try:
                             x_bounds = lon.get_bounds()
-                            cyclic = abs(x_bounds.datum(-1)
-                                         - x_bounds.datum(0)) == Data(360,
-                                                                      'degrees')
+                            cyclic = abs(x_bounds.datum(-1) -
+                                         x_bounds.datum(0)) == Data(
+                                             360, 'degrees')
                         except ValueError:
                             pass
             # --- End: if
@@ -258,26 +259,27 @@ class Regrid:
                 gridCorner = grid.coords[ESMF.StaggerLoc.CORNER]
                 if not coords_2D:
                     if cyclic:
-                        gridCorner[x][...] = x_bounds[:, 0].reshape(lon.size, 1)
+                        gridCorner[x][...] = x_bounds[:, 0].reshape(
+                            lon.size, 1)
                     else:
                         n = x_bounds.shape[0]
                         tmp_x = numpy_empty(n + 1)
-                        tmp_x[:n] = x_bounds[:,0]
-                        tmp_x[n] = x_bounds[-1,1]
+                        tmp_x[:n] = x_bounds[:, 0]
+                        tmp_x[n] = x_bounds[-1, 1]
                         gridCorner[x][...] = tmp_x.reshape(lon.size + 1, 1)
 
                     n = y_bounds.shape[0]
                     tmp_y = numpy_empty(n + 1)
-                    tmp_y[:n] = y_bounds[:,0]
-                    tmp_y[n] = y_bounds[-1,1]
+                    tmp_y[:n] = y_bounds[:, 0]
+                    tmp_y[n] = y_bounds[-1, 1]
                     gridCorner[y][...] = tmp_y.reshape(1, lat.size + 1)
                 else:
                     gridCorner = grid.coords[ESMF.StaggerLoc.CORNER]
                     x_bounds = x_bounds.transpose(x_order)
                     y_bounds = y_bounds.transpose(y_order)
                     if cyclic:
-                        x_bounds = x_bounds[:-1,:]
-                        y_bounds = y_bounds[:-1,:]
+                        x_bounds = x_bounds[:-1, :]
+                        y_bounds = y_bounds[:-1, :]
                     gridCorner[x][...] = x_bounds
                     gridCorner[y][...] = y_bounds
             # --- End: if
@@ -285,21 +287,24 @@ class Regrid:
             # Test the dimensionality of the list of coordinates
             ndim = len(coords)
             if ndim < 1 or ndim > 3:
-                raise ValueError('Cartesian grid must have between 1 and 3 ' +
-                                 'dimensions.')
+                raise ValueError(
+                    'Cartesian grid must have between 1 and 3 dimensions.'
+                )
 
             # For 1D conservative regridding add an extra dimension of size 1
             if ndim == 1:
                 if not use_bounds:
                     # For 1D nonconservative regridding the extra dimension
                     # should already have been added in cf.Field.regridc.
-                    raise ValueError('Cannot create a Cartesian grid from ' +
-                                     'one dimension coordinate with no bounds.')
+                    raise ValueError(
+                        'Cannot create a Cartesian grid from '
+                        'one dimension coordinate with no bounds.'
+                    )
                 coords = [DimensionCoordinate(data=Data(0),
                           bounds=Data([numpy_finfo('float32').epsneg,
                                        numpy_finfo('float32').eps]))] + coords
                 if mask is not None:
-                    mask = mask[None,:]
+                    mask = mask[None, :]
                 ndim = 2
 
             shape = list()
@@ -327,11 +332,11 @@ class Regrid:
             # Populate the grid centres
             for d in range(0, ndim):
                 if ndim < 3:
-                    gridCentre = grid.get_coords(d,
-                                     staggerloc=ESMF.StaggerLoc.CENTER)
+                    gridCentre = grid.get_coords(
+                        d, staggerloc=ESMF.StaggerLoc.CENTER)
                 else:
-                    gridCentre = grid.get_coords(d,
-                                     staggerloc=ESMF.StaggerLoc.CENTER_VCENTER)
+                    gridCentre = grid.get_coords(
+                        d, staggerloc=ESMF.StaggerLoc.CENTER_VCENTER)
                 gridCentre[...] = coords[d].array.reshape(
                     [shape[d] if x == d else 1 for x in range(0, ndim)])
             # --- End: for
@@ -344,7 +349,7 @@ class Regrid:
                     gridCorner = grid.coords[ESMF.StaggerLoc.CORNER_VFACE]
 
                 for d in range(0, ndim):
-#                    boundsD = coords[d].get_bounds(create=True).array
+                    # boundsD = coords[d].get_bounds(create=True).array
                     boundsD = coords[d].get_bounds(None)
                     if boundsD is None:
                         boundsD = coords[d].create_bounds()
@@ -370,7 +375,6 @@ class Regrid:
             gmask[mask] = 0
 
         return grid
-
 
     @staticmethod
     def create_field(grid, name):
@@ -403,7 +407,6 @@ class Regrid:
                                       zero_region=ESMF.Region.SELECT)
         return dstfield
 
-
     @staticmethod
     def concatenate_data(data_list, axis):
         '''Concatenates a list of Data objects into a single Data object along
@@ -434,7 +437,6 @@ class Regrid:
             assert len(data_list) == 1
             return data_list[0]
 
-
     @staticmethod
     def reconstruct_sectioned_data(sections):
         '''Expects a dictionary of Data objects with ordering information as
@@ -457,7 +459,7 @@ class Regrid:
         ndims = len(sections.keys()[0])
         for i in range(ndims - 1, -1, -1):
             keys = sorted(sections.keys())
-            if i==0:
+            if i == 0:
                 if keys[0][i] is None:
                     assert len(keys) == 1
                     return sections.values()[0]
@@ -479,19 +481,20 @@ class Regrid:
                         if k[:i] == new_key:
                             data_list.append(sections[k])
                         else:
-                            new_sections[new_key] = Regrid.concatenate_data(data_list, i)
+                            new_sections[new_key] = Regrid.concatenate_data(
+                                data_list, i)
                             new_key = k[:i]
                             data_list = [sections[k]]
-                     # --- End: for
+                    # --- End: for
 
-                    new_sections[new_key] = Regrid.concatenate_data(data_list, i)
+                    new_sections[new_key] = Regrid.concatenate_data(
+                        data_list, i)
                     sections = new_sections
         # --- End: for
 
-
     @staticmethod
     def compute_mass_grid(valuefield, areafield, dofrac=False, fracfield=None,
-                      uninitval=422397696.):
+                          uninitval=422397696.):
         '''Compute the mass of a data field.
 
     :Parameters:
@@ -526,7 +529,10 @@ class Regrid:
         ind = numpy_where(valuefield.data != uninitval)
 
         if dofrac:
-            mass = numpy_sum(areafield.data[ind] * valuefield.data[ind] * fracfield.data[ind])
+            mass = numpy_sum(
+                areafield.data[ind] * valuefield.data[ind] *
+                fracfield.data[ind]
+            )
         else:
             mass = numpy_sum(areafield.data[ind] * valuefield.data[ind])
 

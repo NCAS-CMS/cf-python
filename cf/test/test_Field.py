@@ -7,6 +7,8 @@ import unittest
 
 import numpy
 
+from scipy.ndimage import convolve1d
+
 import cf
 
 def axes_combinations(f):
@@ -28,6 +30,9 @@ class FieldTest(unittest.TestCase):
         self.indexed_contiguous = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                                'DSG_timeSeriesProfile_indexed_contiguous.nc')
 
+        self.filename1 = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                      'regrid_file1.nc')
+        
         self.chunk_sizes = (100000, 300, 34, 17)
         self.original_chunksize = cf.CHUNKSIZE()
         self.atol = cf.ATOL()
@@ -36,7 +41,7 @@ class FieldTest(unittest.TestCase):
 
         self.test_only = []
 #        self.test_only = ['NOTHING!!!!']
-#        self.test_only = ['test_Field__gt__']
+#        self.test_only = ['test_Field_convolution_filter', 'test_Field_derivative', 'test_Field_moving_window']
 #        self.test_only = ['test_Field_weights']
 #        self.test_only = ['test_Field_collapse']
 #        self.test_only = ['test_Field_radius']
@@ -167,7 +172,6 @@ class FieldTest(unittest.TestCase):
             self.assertTrue(g.shape == tuple(shape))
             self.assertTrue(g.ndim == f.ndim-len(axes)+1)
             self.assertTrue(g.size == f.size)
-        # --- End: for
 
         self.assertTrue(f.equals(f.flatten([]), verbose=True))
         self.assertTrue(f.flatten(inplace=True) is None)
@@ -344,7 +348,7 @@ class FieldTest(unittest.TestCase):
                     self.assertTrue(a.equals(b, rtol=1e-05, atol=1e-08, verbose=True),
                                     '{} weights={}, axes={}, {!r}, {!r}'.format(
                                         method, weights, axes, a, b))
-            #--- End: for
+            # --- End: for
 
             for method in ('mean',
                            'mean_absolute_value',
@@ -1584,6 +1588,274 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(f.constructs.filter_by_data().equals(f.items(), verbose=True))
         self.assertTrue(f.constructs('X', 'Y').equals(f.items(*['X', 'Y']), verbose=True))
 
+    def test_Field_convolution_filter(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        window = [0.1, 0.15, 0.5, 0.15, 0.1]
+
+        f = cf.read(self.filename1)[0]
+
+        # Test user weights in different modes
+        for mode in ('reflect', 'constant', 'nearest', 'mirror', 'wrap'):
+            g = f.convolution_filter(window, axis=-1, mode=mode, cval=0.0)
+            self.assertTrue((g.array == convolve1d(f.array, window, axis=-1,
+                                                   mode=mode)).all())
+        
+#    def test_Field_moving_mean(self):
+#        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+#            return
+#
+#        weights = cf.Data(numpy.arange(1, 9.0)) / 2
+#
+#        f = cf.example_field(0)
+#
+#        g = f.moving_mean(window_size=3, axis='X', inplace=True)
+#        self.assertTrue(g is None)
+#        
+#        f = cf.example_field(0)
+#        a = f.array
+#
+#        # ------------------------------------------------------------
+#        # Origin = 0
+#        # ------------------------------------------------------------
+#        for mode in ('constant', 'wrap', 'reflect', 'nearest',
+#                     'mirror'):
+#            g = f.moving_mean(window_size=3, axis='X',
+#                              weights=weights, mode=mode)
+#
+#            with self.assertRaises(ValueError):
+#                g = f.moving_mean(window_size=3, axis='X', mode=mode,
+#                                  cval=39)
+#
+#            for i in range(1, 7):            
+#                x = (a[:, i-1:i+2] * weights[i-1:i+2]).sum(axis=1) / weights[i-1:i+2].sum()
+#                numpy.testing.assert_allclose(x, g.array[:, i])
+#        # --- End: for
+#        
+#        # Test 'wrap'
+#        for mode in (None, 'wrap'):
+#            g = f.moving_mean(window_size=3, axis='X',
+#                              weights=weights, mode=mode)
+#            
+#            for i, ii in zip([0, -1], ([0, 1, -1], [0, -2, -1])):
+#                x = (a[:, ii] * weights[ii]).sum(axis=1) / weights[ii].sum()
+#                numpy.testing.assert_allclose(x, g.array[:, i])
+#        # --- End: for
+#
+#        # ------------------------------------------------------------
+#        # Origin = 1
+#        # ------------------------------------------------------------
+#        for mode in ('constant', 'wrap', 'reflect', 'nearest',
+#                     'mirror'):
+#            g = f.moving_mean(window_size=3, axis='X',
+#                              weights=weights, mode=mode, origin=1)
+#
+#            for i in range(0, 6):
+#                ii = slice(i, i+3)
+#                x = (a[:, ii] * weights[ii]).sum(axis=1) / weights[ii].sum()
+#                numpy.testing.assert_allclose(x, g.array[:, i])
+#        # --- End: for
+#
+#        # Test 'wrap'
+#        for mode in (None, 'wrap'):
+#            g = f.moving_mean(window_size=3, axis='X',
+#                              weights=weights, mode=mode, origin=1)
+#            
+#            for i, ii in zip([-2, -1], ([0, -2, -1], [0, 1, -1])):
+#                x = (a[:, ii] * weights[ii]).sum(axis=1) / weights[ii].sum()
+#                numpy.testing.assert_allclose(x, g.array[:, i])
+#        # --- End: for
+#
+#        # ------------------------------------------------------------
+#        # Constant
+#        # ------------------------------------------------------------
+#        for constant in (None, 0):
+#            g = f.moving_mean(window_size=3, axis='X',
+#                              weights=weights, mode='constant',
+#                              cval=constant)            
+#            for i, ii in zip([0, -1], ([0, 1], [-2, -1])):
+#                x = (a[:, ii] * weights[ii]).sum(axis=1) / weights[ii].sum()
+#                numpy.testing.assert_allclose(x, g.array[:, i])
+#        # --- End: for
+#        
+#        # ------------------------------------------------------------
+#        # Weights broadcasting
+#        # ------------------------------------------------------------
+#        weights = cf.Data(numpy.arange(1, 6.)) / 2
+#        g = f.moving_mean(window_size=3, axis='Y', weights=weights)
+#
+#        with self.assertRaises(ValueError):
+#            _ = f.moving_mean(window_size=3, axis='X', weights=weights)
+#
+#
+#        self.assertTrue(len(g.cell_methods) == len(f.cell_methods) + 1)
+
+    def test_Field_moving_window(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        weights = cf.Data(numpy.arange(1, 9.0)) / 2
+
+        f = cf.example_field(0)
+
+        g = f.moving_window('mean', window_size=3, axis='X', inplace=True)
+        self.assertTrue(g is None)
+        
+        with self.assertRaises(ValueError):
+            _ = f.moving_window('mean', window_size=3, axis='X',
+                                cval=39)
+    
+        f = cf.example_field(0)
+        a = f.array
+
+
+        # ------------------------------------------------------------
+        # Origin = 0
+        # ------------------------------------------------------------
+        for method in ('mean', 'sum', 'integral'):
+            for mode in ('constant', 'wrap', 'reflect', 'nearest',
+                         'mirror'):
+                g = f.moving_window(method, window_size=3, axis='X',
+                                    weights=weights, mode=mode)
+    
+                for i in range(1, 7):
+                    if method in ('mean', 'integral'):                
+                        x = (a[:, i-1:i+2] * weights[i-1:i+2]).sum(axis=1)
+                        
+                    if method == 'sum':
+                        x = a[:, i-1:i+2].sum(axis=1)
+                        
+                    if method == 'mean':
+                        x /= weights[i-1:i+2].sum()
+                        
+                    numpy.testing.assert_allclose(x, g.array[:, i])
+            # --- End: for
+        
+            # Test 'wrap'
+            for mode in (None, 'wrap'):
+                g = f.moving_window(method, window_size=3, axis='X',
+                                    weights=weights, mode=mode)
+                
+                for i, ii in zip([0, -1], ([0, 1, -1], [0, -2, -1])):
+                    if method in ('mean', 'integral'):                
+                        x = (a[:, ii] * weights[ii]).sum(axis=1)
+                        
+                    if method == 'sum':
+                        x = a[:, ii].sum(axis=1)
+                        
+                    if method == 'mean':
+                        x /=  weights[ii].sum()
+                            
+                    numpy.testing.assert_allclose(x, g.array[:, i])
+            # --- End: for
+
+            # ------------------------------------------------------------
+            # Origin = 1
+            # ------------------------------------------------------------
+            for mode in ('constant', 'wrap', 'reflect', 'nearest',
+                         'mirror'):
+                g = f.moving_window(method, window_size=3, axis='X',
+                                    weights=weights, mode=mode, origin=1)
+    
+                for i in range(0, 6):
+                    ii = slice(i, i+3)
+    
+                    if method in ('mean', 'integral'):                
+                        x = (a[:, ii] * weights[ii]).sum(axis=1)
+                        
+                    if method == 'sum':
+                        x = a[:, ii].sum(axis=1)
+                        
+                    if method == 'mean':
+                        x /=  weights[ii].sum()
+                                                        
+                    numpy.testing.assert_allclose(x, g.array[:, i])
+            # --- End: for
+    
+            # Test 'wrap'
+            for mode in (None, 'wrap'):
+                g = f.moving_window(method, window_size=3, axis='X',
+                                    weights=weights, mode=mode,
+                                    origin=1)
+                
+                for i, ii in zip([-2, -1], ([0, -2, -1], [0, 1, -1])):
+                    if method in ('mean', 'integral'):                
+                        x = (a[:, ii] * weights[ii]).sum(axis=1)
+                            
+                    if method == 'sum':
+                        x = a[:, ii].sum(axis=1)
+                    
+                    if method == 'mean':
+                        x /=  weights[ii].sum()
+                    
+                    numpy.testing.assert_allclose(x, g.array[:, i])
+            # --- End: for
+    
+            # ------------------------------------------------------------
+            # Constant
+            # ------------------------------------------------------------
+            for constant in (None, 0):
+                g = f.moving_window(method, window_size=3, axis='X',
+                                    weights=weights, mode='constant',
+                                    cval=constant)            
+                for i, ii in zip([0, -1], ([0, 1], [-2, -1])):
+                    if method in ('mean', 'integral'):                
+                        x = (a[:, ii] * weights[ii]).sum(axis=1)
+                        
+                    if method == 'sum':
+                        x = a[:, ii].sum(axis=1)
+                        
+                    if method == 'mean':
+                        x /=  weights[ii].sum()
+                        
+                    numpy.testing.assert_allclose(x, g.array[:, i])
+        # --- End: for
+        
+        # ------------------------------------------------------------
+        # Weights broadcasting
+        # ------------------------------------------------------------
+        weights = cf.Data(numpy.arange(1, 6.)) / 2
+        g = f.moving_window('mean', window_size=3, axis='Y',
+                            weights=weights)
+
+        with self.assertRaises(ValueError):
+            _ = f.moving_window('mean', window_size=3, axis='X',
+                                weights=weights)
+
+
+        self.assertTrue(len(g.cell_methods) == len(f.cell_methods) + 1)
+
+    def test_Field_derivative(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        x_min = 0.0
+        x_max = 359.0
+        dx = 1.0
+
+        x_1d = numpy.arange(x_min, x_max, dx)
+
+        data_1d = x_1d*2.0 + 1.0
+
+        dim_x = cf.DimensionCoordinate(data=cf.Data(x_1d, 's'),
+                                       properties={'axis': 'X'})
+
+        f = cf.Field()
+        f.set_construct(cf.DomainAxis(size=x_1d.size))
+        f.set_construct(dim_x)
+        f.set_data(cf.Data(data_1d, 'm'), axes='X')
+        f.cyclic('X', period=360.0)
+
+        g = f.derivative('X')
+        self.assertTrue((g.array == 2.0).all())
+
+        g = f.derivative('X', one_sided_at_boundary=True)
+        self.assertTrue((g.array == 2.0).all())
+
+        g = f.derivative('X', wrap=True)
+        self.assertTrue((g.array == 2.0).all())
+
     def test_Field_convert(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -2054,7 +2326,7 @@ class FieldTest(unittest.TestCase):
         g = f.mask_invalid()
         self.assertTrue(f.mask_invalid(inplace=True) is None)
 
-#--- End: class
+# --- End: class
 
 if __name__ == '__main__':
     print('Run date:', datetime.datetime.now())

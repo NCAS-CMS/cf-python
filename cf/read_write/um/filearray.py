@@ -65,9 +65,9 @@ class UMFileArray(FileArray):
 ...                 dtype=numpy.dtype('float32'), shape=(30, 24),
 ...                 size=720, ndim=2, disk_length=0)
 
->>> a = UMFileArray(file='packed_file.pp', header_offset=3156, data_offset=3420,
-...                 dtype=numpy.dtype('float32'), shape=(30, 24),
-...                 size=720, ndim=2, disk_length=423)
+>>> a = UMFileArray(file='packed_file.pp', header_offset=3156,
+...                 data_offset=3420, dtype=numpy.dtype('float32'),
+...                 shape=(30, 24), size=720, ndim=2, disk_length=423)
 
     '''
     def __getitem__(self, indices):
@@ -87,7 +87,7 @@ Returns a numpy array.
                                         self.data_offset,
                                         self.disk_length)
 
-        int_hdr  = rec.int_hdr
+        int_hdr = rec.int_hdr
         real_hdr = rec.real_hdr
 
         array = rec.get_data().reshape(int_hdr.item(17,), int_hdr.item(18,))
@@ -193,10 +193,11 @@ Open the file containing the data array.
 >>> f.open()
 
 '''
-        return _open_um_file(self.file,
-                             fmt=getattr(self, 'fmt', None),
-                             word_size=getattr(self, 'word_size', None),
-                             byte_ordering=getattr(self, 'byte_ordering', None))
+        return _open_um_file(
+            self.file, fmt=getattr(self, 'fmt', None),
+            word_size=getattr(self, 'word_size', None),
+            byte_ordering=getattr(self, 'byte_ordering', None)
+        )
     # --- End: def
 
 # --- End: class

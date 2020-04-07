@@ -22,5 +22,5 @@ Version |release| for version |version| of the CF conventions.
    :maxdepth: 2
 
    function
-   constant
    class
+   constant
