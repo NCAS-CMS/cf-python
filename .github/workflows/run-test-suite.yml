@@ -43,13 +43,13 @@ jobs:
     #
     # Setup conda
     - name: Setup a conda environment for installing dependencies painlessly.
-    - uses: actions/checkout@v2
-    - uses: goanpeca/setup-miniconda@enh/channels
+      uses: goanpeca/setup-miniconda@enh/channels
       with:
         miniconda-version: 'latest'
         activate-environment: cf-py3-all-deps
         python-version: ${{ matrix.python-version }}
         channels: ncas, conda-forge
+    # Ensure shell is configured with conda activated:
     - shell: bash -l {0}
       run: |
         conda info
