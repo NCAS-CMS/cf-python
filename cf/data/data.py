@@ -7,6 +7,7 @@ except ImportError:
     pass
 
 import numpy
+from numpy import arange            as numpy_arange
 from numpy import arccos            as numpy_arccos
 from numpy import arccosh           as numpy_arccosh
 from numpy import arcsin            as numpy_arcsin
@@ -3447,7 +3448,8 @@ place.
 
         return d
 
-    def cumsum(self, axis, masked_as_zero=False):
+    @_inplace_enabled
+    def cumsum(self, axis, masked_as_zero=False, inplace=False):
         '''Return the data cumulatively summed along the given axis.
 
     .. versionadded:: 3.0.0
@@ -3465,10 +3467,21 @@ place.
             calculating the cumulative sum. By default the output data
             will be masked at the same locations as the original data.
 
+            .. note:: Sums produced entirely from masked elements will
+                      always result in masked values in the output
+                      data, regardless of the setting of
+                      *masked_as_zero*.
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+
+            .. verisionadded:: 3.3.0
+
     :Returns:
 
          `Data`
-            The data with the cumulatively summed dimension.
+            The data with the cumulatively summed axis, or `None` if
+            the operation was in-place.
 
     **Examples:**
 
@@ -3477,27 +3490,30 @@ place.
     [[ 0  1  2  3]
      [ 4  5  6  7]
      [ 8  9 10 11]]
-    >>> print(d.cumsum(0).array)
+    >>> print(d.cumsum(axis=0).array)
     [[ 0  1  2  3]
      [ 4  6  8 10]
      [12 15 18 21]]
-    >>> print(d.cumsum(1).array)
+    >>> print(d.cumsum(axis=1).array)
     [[ 0  1  3  6]
      [ 4  9 15 22]
      [ 8 17 27 38]]
+
+    >>> d[0, 0] = cf.masked
     >>> d[1, 1] = cf.masked
+    >>> d[2, 0:2] = cf.masked
     >>> print(d.array)
-    [[0 1 2 3]
-     [4 -- 6 7]
-     [8 9 10 11]]
-    >>> print(d.cumsum(1).array)
-    [[0 1 3 6]
-     [4 -- 10 17]
-     [8 17 27 38]]
-    >>> print(d.cumsum(1, masked_as_zero=True).array)
-    [[ 0  1  3  6]
+    [[--  1  3  6]
+     [ 4 -- 10 17]
+     [-- -- 10 21]]
+     >>> print(d.cumsum(axis=1).array)
+    [[--  1  3  6]
+     [ 4 -- 10 17]
+     [-- -- 10 21]]
+    >>> print(d.cumsum(axis=1, masked_as_zero=True).array)
+    [[--  1  3  6]
      [ 4  4 10 17]
-     [ 8 17 27 38]]
+     [-- -- 10 21]]
 
         '''
         # Parse axis
@@ -3511,23 +3527,45 @@ place.
                     ndim, axis)
             )
 
+        d = _inplace_enabled_define_and_cleanup(self)
+
         sections = self.section(axis, chunks=True)
 
         # Cumulatively sum each section
         for key, data in sections.items():
             array = data.array
 
+            filled = False
             if masked_as_zero and numpy_ma_is_masked(array):
+                mask = array.mask
                 array = array.filled(0)
+                filled = True
 
-            output_array = numpy_cumsum(array, axis=axis)
-            sections[key] = type(self)(output_array, units=self.Units,
+            array = numpy_cumsum(array, axis=axis)
+
+            if filled:
+                size = array.shape[axis]
+                shape = [1] * array.ndim
+                shape[axis] = size
+                new_mask = (numpy_cumsum(mask, axis=axis) ==
+                            numpy_arange(1, size+1).reshape(shape))
+                array = numpy.ma.array(array, mask=new_mask,
+                                       copy=False)
+               
+            sections[key] = type(self)(array, units=self.Units,
                                        fill_value=self.fill_value)
 
         # Glue the sections back together again
         out = self.reconstruct_sectioned_data(sections,
                                               cyclic=self.cyclic())
         
+        if inplace:
+            d.__dict__ = out.__dict__
+        else:
+            d = out
+
+        return d
+
         return out
 
     def _chunk_add_partitions(self, d, axes):

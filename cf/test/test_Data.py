@@ -74,7 +74,7 @@ class DataTest(unittest.TestCase):
 
         self.test_only = []
 #        self.test_only = ['NOTHING!!!!!']
-#        self.test_only = ['test_Data_convolution_filter']
+#        self.test_only = ['test_Data_cumsum']
         
 #        self.test_only = [
 #                          'test_Data_trigonometric_hyperbolic']
@@ -85,7 +85,7 @@ class DataTest(unittest.TestCase):
 #                          'test_Data_varray',
 #                          'test_Data_stats',
 #                          'test_Data_datetime_array',
-##                         'test_Data_cumsum',
+#                          'test_Data_cumsum',
 #                          'test_Data_dumpd_loadd_dumps',
 #                          'test_Data_root_mean_square',
 #                          'test_Data_mean_mean_absolute_value',
@@ -364,6 +364,12 @@ class DataTest(unittest.TestCase):
     def test_Data_cumsum(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
+
+        d = cf.Data(self.a)
+        e = d.copy()
+        f = d.cumsum(axis=0)
+        self.assertTrue(e.cumsum(axis=0, inplace=True) is None)
+        self.assertTrue(e.equals(f, verbose=True))
 
         for chunksize in self.chunk_sizes:
             cf.CHUNKSIZE(chunksize)

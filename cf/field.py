@@ -13761,6 +13761,11 @@ class Field(mixin.PropertiesData,
             calculating the cumulative sum. By default the output data
             will be masked at the same locations as the original data.
 
+            .. note:: Sums produced entirely from masked elements will
+                      always result in masked values in the output
+                      data, regardless of the setting of
+                      *masked_as_zero*.
+
         coordinate: `str`, optional
             Set how the cell coordinate values for the summed axis are
             defined. By default they are unchanged from the original
@@ -13792,8 +13797,8 @@ class Field(mixin.PropertiesData,
     :Returns:
 
         `Field` or `None`
-            The field construct with the cumulatively summed
-            dimension, or `None` if the operation was in-place.
+            The field construct with the cumulatively summed axis, or
+            `None` if the operation was in-place.
 
     **Examples:**
 
@@ -13850,16 +13855,19 @@ class Field(mixin.PropertiesData,
         if axis_key is None:
             raise ValueError('Invalid axis specifier: {!r}'.format(axis))
 
-        # Get the axis index
-        axis_index = self.get_data_axes().index(axis_key)
-
-        new_data = self.data.cumsum(axis_index, masked_as_zero=masked_as_zero)
-
         # Construct new field
         f = _inplace_enabled_define_and_cleanup(self)
 
-        # Insert new data into field
-        f.set_data(new_data, set_axes=False, copy=False)
+        # Get the axis index
+        axis_index = f.get_data_axes().index(axis_key)
+
+#        new_data = self.data.cumsum(axis_index, masked_as_zero=masked_as_zero)
+
+        f.data.cumsum(axis_index, masked_as_zero=masked_as_zero,
+                      inplace=True)
+
+#        # Insert new data into field
+#        f.set_data(new_data, set_axes=False, copy=False)
 
         if self.domain_axis(axis_key).get_size() > 1:
             # Update the bounds of the summed axis if necessary
@@ -13884,7 +13892,7 @@ class Field(mixin.PropertiesData,
                             "Got {!r}".format(coordinate))
             # --- End: if
 
-            # Update the cell methods
+#ppp            # Update the cell methods
             cell_method = CellMethod(axes=[axis_key], method='sum')
             f.set_construct(cell_method, copy=False)
 

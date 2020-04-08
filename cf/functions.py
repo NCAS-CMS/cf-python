@@ -944,7 +944,7 @@ def ufunc(name, x, *args, **kwargs):
     return x
 
 
-def _numpy_allclose(a, b, rtol=None, atol=None):
+def _numpy_allclose(a, b, rtol=None, atol=None, verbose=False):
     '''Returns True if two broadcastable arrays have equal values to
     within numerical tolerance, False otherwise.
 
@@ -1004,9 +1004,21 @@ def _numpy_allclose(a, b, rtol=None, atol=None):
     else:
         if a_is_masked and b_is_masked:
             if (a.mask != b.mask).any():
+                if verbose:
+                    print('Different masks (A)')
+
                 return False
         else:
-            return False
+            if _numpy_ma_is_masked(a) or _numpy_ma_is_masked(b):
+                if verbose:
+                    print('Different masks (B)')
+                    
+                return False
+            
+#            if verbose:
+#                print('Different masks 4')
+#                    
+#            return False
 
         try:
             return _numpy_ma_allclose(a, b, rtol=rtol, atol=atol)
