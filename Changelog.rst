@@ -15,6 +15,7 @@ version 3.3.0
 * New permitted values to ``coordinate`` keyword parameter of
   `cf.Field.collapse` and `cf.Field.cumsum`: ``'minimum'``,
   ``'maximum'``
+* New keyword parameter to `cf.Data.cumsum`: ``inplace``
 
 version 3.2.0
 -------------

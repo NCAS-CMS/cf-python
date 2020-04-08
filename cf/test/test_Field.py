@@ -41,6 +41,7 @@ class FieldTest(unittest.TestCase):
 
         self.test_only = []
 #        self.test_only = ['NOTHING!!!!']
+#        self.test_only = ['test_Field_cumsum']
 #        self.test_only = ['test_Field_convolution_filter', 'test_Field_derivative', 'test_Field_moving_window']
 #        self.test_only = ['test_Field_weights']
 #        self.test_only = ['test_Field_collapse']
@@ -787,25 +788,34 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(g.cumsum(2, inplace=True) is None)
         self.assertTrue(g.equals(h, verbose=True))
 
-        for i in range(f.ndim):
-            a = numpy.cumsum(f.array, axis=i)
-            self.assertTrue((f.cumsum(i).array == a).all())
+        for axis in range(f.ndim):
+            a = numpy.cumsum(f.array, axis=axis)
+            self.assertTrue((f.cumsum(axis=axis).array == a).all())
 
         f[0, 0, 3] = cf.masked
         f[0, 2, 7] = cf.masked
 
-        for i in range(f.ndim):
+        for axis in range(f.ndim):
             a = f.array
-            a = numpy.cumsum(a, axis=i)
-            g = f.cumsum(i)
+            a = numpy.cumsum(a, axis=axis)
+            g = f.cumsum(axis=axis)
             self.assertTrue(cf.functions._numpy_allclose(g.array, a))
 
-        for i in range(f.ndim):
+        for axis in range(f.ndim):
+            g = f.cumsum(axis=axis, masked_as_zero=True)
+
             a = f.array
+            mask = a.mask
             a = a.filled(0)
-            a = numpy.cumsum(a, axis=i)
-            g = f.cumsum(i, masked_as_zero=True)
-            self.assertTrue(cf.functions._numpy_allclose(g.array, a))
+            a = numpy.cumsum(a, axis=axis)
+            size = a.shape[axis]
+            shape = [1] * a.ndim
+            shape[axis] = size
+            new_mask = (numpy.cumsum(mask, axis=axis) ==
+                        numpy.arange(1, size+1).reshape(shape))
+            a = numpy.ma.array(a, mask=new_mask, copy=False)
+            self.assertTrue(cf.functions._numpy_allclose(g.array, a,
+                                                         verbose=True))
 
     def test_Field_flip(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
