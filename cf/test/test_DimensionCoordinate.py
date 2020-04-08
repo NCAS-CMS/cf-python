@@ -110,6 +110,23 @@ class DimensionCoordinateTest(unittest.TestCase):
         _ = x._centre(360)
         _ = x.flip()._centre(360)
 
+        # Test roll on coordinate without bounds:
+        g = f.copy()
+        g.dimension_coordinate('X').del_bounds()
+
+        for shift_by in [1, -1, g.shape[2]]:  # vary roll direction and extent
+            g_rolled = g.roll('X', shift=shift_by)
+
+            if shift_by == g.shape[2]:  # shift_by equal to the roll axis size
+                g_rolled_0 = g.roll('X', shift=0)
+                # A roll of the axes size, or 0, should not change the array:
+                self.assertTrue((g_rolled.array == g.array).all())
+                self.assertTrue((g_rolled.array == g_rolled_0.array).all())
+
+            for index in range(0, 10):  # check all elements are rolled
+                self.assertTrue(
+                    g_rolled.array[0, index, 0] == g.array[0, index, -shift_by]
+                )
 
     def test_DimensionCoordinate_cellsize(self):
         d = self.dim.copy()
