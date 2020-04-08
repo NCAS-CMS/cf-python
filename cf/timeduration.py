@@ -40,6 +40,7 @@ _relational_methods = ('__eq__', '__ne__',
                        '__lt__', '__le__',
                        '__gt__', '__ge__')
 
+
 class TimeDuration:
     '''A duration of time.
 
@@ -103,7 +104,8 @@ class TimeDuration:
     >>> t.interval(cf.dt(2004, 3, 2, calendar='360_day'), end=True)
     (cftime.Datetime360Day(2004-02-27 00:00:00),
      cftime.Datetime360Day(2004-03-02 00:00:00))
-    >>> t.interval(cf.dt(2004, 3, 2, calendar='360_day'), end=True, iso='start and duration')
+    >>> t.interval(cf.dt(2004, 3, 2, calendar='360_day'), end=True,
+    ...     iso='start and duration')
     '2004-02-27 00:00:00/P5D'
 
     **Comparison operations**
@@ -111,9 +113,11 @@ class TimeDuration:
     Comparison operations are defined for `cf.TimeDuration` objects,
     `cf.Data` objects, `numpy` arrays and numbers:
 
-    >>> cf.TimeDuration(2, 'calendar_years') > cf.TimeDuration(1, 'calendar_years')
+    >>> cf.TimeDuration(2, 'calendar_years') > cf.TimeDuration(
+    ...     1, 'calendar_years')
     True
-    >>> cf.TimeDuration(2, 'calendar_years') < cf.TimeDuration(25, 'calendar_months')
+    >>> cf.TimeDuration(2, 'calendar_years') < cf.TimeDuration(
+    ...     25, 'calendar_months')
     True
     >>> cf.TimeDuration(2, 'hours') <= cf.TimeDuration(1, 'days')
     True
@@ -142,7 +146,8 @@ class TimeDuration:
     <CF Data(1): [True]>
     >>> cf.Data([[60]], 'seconds') < cf.TimeDuration(2, 'days')
     <CF Data(1, 1): [[True]]>
-    >>> cf.Data([1, 12], 'calendar_months') < cf.TimeDuration(6, 'calendar_months')
+    >>> cf.Data([1, 12], 'calendar_months') < cf.TimeDuration(
+    ...     6, 'calendar_months')
     <CF Data(2): [True, False]>
 
     **Arithmetic operations**
@@ -158,7 +163,8 @@ class TimeDuration:
     <CF TimeDuration: P65.0D (Y-M-D 00:00:00)>
     >>> cf.TimeDuration(64, 'days') + cf.TimeDuration(24, 'hours')
     <CF TimeDuration: P64.5D (Y-M-D 00:00:00)>
-    >>> cf.TimeDuration(64, 'calendar_years') + cf.TimeDuration(21, 'calendar_months')
+    >>> cf.TimeDuration(64, 'calendar_years') + cf.TimeDuration(
+    ...     21, 'calendar_months')
     <CF TimeDuration: P65.75Y (Y-01-01 00:00:00)>
 
     >>> cf.TimeDuration(30, 'days') + 2
@@ -267,13 +273,17 @@ class TimeDuration:
             duration are used.
 
             *Parameter example:*
-              >>> cf.TimeDuration(1, 'calendar_month').bounds(cf.dt('2000-1-8'))
+              >>> cf.TimeDuration(1, 'calendar_month').bounds(
+              ...     cf.dt('2000-1-8'))
               (cftime.DatetimeGregorian(2000-01-01 00:00:00),
                cftime.DatetimeGregorian(2000-02-01 00:00:00))
-              >>> cf.TimeDuration(1, 'calendar_month', day=15).bounds(cf.dt('2000-1-8'))
+              >>> cf.TimeDuration(1, 'calendar_month', day=15).bounds(
+              ...     cf.dt('2000-1-8'))
               (cftime.DatetimeGregorian(1999-12-15 00:00:00),
                cftime.DatetimeGregorian(2000-01-15 00:00:00))
-              >>> cf.TimeDuration(1, 'calendar_month', month=4, day=30).bounds(cf.dt('2000-1-8'))
+              >>> cf.TimeDuration(
+              ...     1, 'calendar_month', month=4, day=30).bounds(
+              ...         cf.dt('2000-1-8'))
               (cftime.DatetimeGregorian(1999-12-30 00:00:00),
                cftime.DatetimeGregorian(2000-01-30 00:00:00))
 
@@ -302,7 +312,9 @@ class TimeDuration:
 
         if not (units.iscalendartime or units.istime):
             raise ValueError(
-                "Can't create {0} of {1}".format(self.__class__.__name__, self.duration))
+                "Can't create {0} of {1}".format(
+                    self.__class__.__name__, self.duration)
+            )
 
         duration = self.duration
 
@@ -328,7 +340,6 @@ class TimeDuration:
 
         self._NotImplemented_RHS_Data_op = True
 
-
     def __abs__(self):
         '''x.__abs__() <==> abs(x)
 
@@ -339,12 +350,10 @@ class TimeDuration:
         out.duration = abs(self.duration)
         return out
 
-
     def __array__(self, *dtype):
         '''TODO
         '''
         return self.duration.__array__(*dtype)
-
 
     def __data__(self):
         '''Returns a new reference to the `!duration` attribute.
@@ -352,13 +361,11 @@ class TimeDuration:
         '''
         return self.duration
 
-
     def __deepcopy__(self, memo):
         '''Used if copy.deepcopy is called
 
         '''
         return self.copy()
-
 
     def __neg__(self):
         '''x.__neg__() <==> -x
@@ -370,7 +377,6 @@ class TimeDuration:
         out.duration *= -1
         return out
 
-
     def __bool__(self):
         '''Truth value testing and the built-in operation `bool`
 
@@ -379,20 +385,17 @@ class TimeDuration:
         '''
         return bool(self.duration)
 
-
     def __int__(self):
         '''x.__int__() <==> int(x)
 
         '''
         return int(self.duration)
 
-
     def __repr__(self):
         '''x.__repr__() <==> repr(x)
 
         '''
         return '<CF {0}: {1}>'.format(self.__class__.__name__, str(self))
-
 
     def __str__(self):
         '''x.__str__() <==> str(x)
@@ -403,7 +406,6 @@ class TimeDuration:
                                self.offset)]
 
         return '{0} ({1}-{2}-{3} {4}:{5}:{6})'.format(self.iso, *yyy)
-
 
     def __ge__(self, other):
         '''The rich comparison operator ``>=``
@@ -420,7 +422,6 @@ class TimeDuration:
 
         return NotImplemented
 
-
     def __gt__(self, other):
         '''The rich comparison operator ``>``
 
@@ -436,7 +437,6 @@ class TimeDuration:
 
         return NotImplemented
 
-
     def __le__(self, other):
         '''The rich comparison operator ``<=``
 
@@ -450,7 +450,6 @@ class TimeDuration:
             return self._data_binary_operation(other, '__le__')
 
         return NotImplemented
-
 
     def __lt__(self, other):
         '''The rich comparison operator ``<``
@@ -466,7 +465,6 @@ class TimeDuration:
 
         return NotImplemented
 
-
     def __eq__(self, other):
         '''The rich comparison operator ``==``
 
@@ -480,7 +478,6 @@ class TimeDuration:
             return self._data_binary_operation(other, '__eq__')
 
         return NotImplemented
-
 
     def __ne__(self, other):
         '''The rich comparison operator ``!=``
@@ -519,7 +516,6 @@ class TimeDuration:
 
         return NotImplemented
 
-
     def __sub__(self, other):
         '''The binary arithmetic operation ``-``
 
@@ -536,7 +532,6 @@ class TimeDuration:
 
         return NotImplemented
 
-
     def __mul__(self, other):
         '''The binary arithmetic operation ``*``
 
@@ -550,7 +545,6 @@ class TimeDuration:
             return self._data_arithmetic(other, '__mul__')
 
         return NotImplemented
-
 
     def __div__(self, other):
         '''The binary arithmetic operation ``/``
@@ -566,7 +560,6 @@ class TimeDuration:
 
         return NotImplemented
 
-
     def __floordiv__(self, other):
         '''The binary arithmetic operation ``//``
 
@@ -580,7 +573,6 @@ class TimeDuration:
             return self._data_arithmetic(other, '__floordiv__')
 
         return NotImplemented
-
 
     def __truediv__(self, other):
         '''The binary arithmetic operation ``/`` (true division)
@@ -596,7 +588,6 @@ class TimeDuration:
 
         return NotImplemented
 
-
     def __iadd__(self, other):
         '''The augmented arithmetic assignment ``+=``
 
@@ -607,7 +598,6 @@ class TimeDuration:
             return self._binary_operation(other, '__iadd__', True)
 
         return NotImplemented
-
 
     def __idiv__(self, other):
         '''The augmented arithmetic assignment ``/=``
@@ -623,7 +613,6 @@ class TimeDuration:
 
         return NotImplemented
 
-
     def __itruediv__(self, other):
         '''The augmented arithmetic assignment ``/=`` (true division)
 
@@ -634,7 +623,6 @@ class TimeDuration:
             return self._binary_operation(other, '__itruediv__', True)
 
         return NotImplemented
-
 
     def __ifloordiv__(self, other):
         '''The augmented arithmetic assignment ``//=``
@@ -647,7 +635,6 @@ class TimeDuration:
 
         return NotImplemented
 
-
     def __imul__(self, other):
         '''The augmented arithmetic assignment ``*=``
 
@@ -659,7 +646,6 @@ class TimeDuration:
 
         return NotImplemented
 
-
     def __isub__(self, other):
         '''The augmented arithmetic assignment ``-=``
 
@@ -670,7 +656,6 @@ class TimeDuration:
             return self._binary_operation(other, '__isub__', True)
 
         return NotImplemented
-
 
     def __imod__(self, other):
         '''The augmented arithmetic assignment ``%=``
@@ -686,7 +671,6 @@ class TimeDuration:
 
         return NotImplemented
 
-
     def __radd__(self, other):
         '''The binary arithmetic operation ``+`` with reflected operands
 
@@ -695,7 +679,6 @@ class TimeDuration:
         '''
         return self + other
 
-
     def __rmul__(self, other):
         '''The binary arithmetic operation ``*`` with reflected operands
 
@@ -703,7 +686,6 @@ class TimeDuration:
 
         '''
         return self * other
-
 
     def __rsub__(self, other):
         '''The binary arithmetic operation ``-`` with reflected operands
@@ -725,7 +707,6 @@ class TimeDuration:
 
         return NotImplemented
 
-
     def __mod__(self, other):
         '''The binary arithmetic operation ``%``
 
@@ -740,7 +721,6 @@ class TimeDuration:
 
         return NotImplemented
 
-
     def __rmod__(self, other):
         '''The binary arithmetic operation ``%`` with reflected operands
 
@@ -751,7 +731,6 @@ class TimeDuration:
             return self._binary_operation(other, '__rmod__')
 
         return NotImplemented
-
 
     # ----------------------------------------------------------------
     # Private methods
@@ -784,7 +763,7 @@ class TimeDuration:
                     self.__class__.__name__, duration))
 
         if (not duration.Units.equals(self.duration.Units) and
-            method not in _relational_methods):
+                method not in _relational_methods):
             # Operator is not one of ==, !=, >=, >, <=, <
             raise ValueError("Can't create {} of {!r}".format(
                 self.__class__.__name__, duration.Units))
@@ -797,7 +776,6 @@ class TimeDuration:
 
         return new
 
-
     def _data_binary_operation(self, other, method, inplace=False):
         '''TODO
 
@@ -809,7 +787,6 @@ class TimeDuration:
 
         return getattr(self.duration, method)(other)
 
-
     def _datetime_arithmetic(self, other, op):
         '''TODO
 
@@ -817,29 +794,31 @@ class TimeDuration:
 
         '''
         def _dHMS(duration, other, calendar, op):
-            units = Units('{0} since {1}'.format(duration.Units.units, other),
-                          calendar)
+            units = Units(
+                '{0} since {1}'.format(duration.Units.units, other), calendar)
             d = op(Data(0.0, units), duration)
             return d.datetime_array.item(())
         # --- End: def
 
         duration = self.duration
-        units    = duration.Units
+        units = duration.Units
 
         if units == _calendar_years:
             months0 = duration.datum() * 12
             months = int(months0)
             if months != months0:
                 raise ValueError(
-                    "Fractional months not supported for date calculations: {}".format(
-                        months0))
+                    "Fractional months not supported for date calculations: "
+                    "{}".format(months0)
+                )
         elif units == _calendar_months:
             months0 = duration.datum()
             months = int(months0)
             if months != months0:
                 raise ValueError(
-                    "Fractional months not supported for date calculations: {}".format(
-                        months0))
+                    "Fractional months not supported for date calculations: "
+                    "{}".format(months0)
+                )
         else:
             months = None
 
@@ -864,7 +843,6 @@ class TimeDuration:
         else:
             return _dHMS(duration, other, calendar, op)
 
-
     def _data_arithmetic(self, other, method, inplace=False):
         '''TODO
 
@@ -886,7 +864,6 @@ class TimeDuration:
 
             return Data(dt, units=other.Units)
 
-
     def _offset(self, dt):
         '''TODO
 
@@ -904,7 +881,6 @@ class TimeDuration:
         return cf_dt(*[(i if j is None else j)
                        for i, j in zip(elements(dt), self.offset)],
                      calendar=getattr(dt, 'calendar', None))
-
 
     # ----------------------------------------------------------------
     # Attributes
@@ -928,7 +904,7 @@ class TimeDuration:
 
         '''
         duration = self.duration
-        units    = duration.Units
+        units = duration.Units
 
         if units.equals(_calendar_months):
             return 'P{0}M'.format(duration.datum())
@@ -945,7 +921,6 @@ class TimeDuration:
 
         raise ValueError(
             "Bad {0} units: {1!r}".format(self.__class__.__name__, units))
-
 
     @property
     def isint(self):
@@ -971,7 +946,6 @@ class TimeDuration:
         duration = duration.datum()
         return int(duration) == float(duration)
 
-
     @property
     def Units(self):
         '''The units of the time duration.
@@ -995,15 +969,14 @@ class TimeDuration:
         '''
         return self.duration.Units
 
-
     @Units.setter
     def Units(self, value):
         duration = getattr(self, 'duration', None)
         if duration is None:
-            raise AttributeError("Can't set units when there is no duration attribute")
+            raise AttributeError(
+                "Can't set units when there is no duration attribute")
 
         self.duration.Units = Units(value)
-
 
     # ----------------------------------------------------------------
     # Methods
@@ -1028,7 +1001,6 @@ class TimeDuration:
         new.__dict__ = self.__dict__.copy()
         new.duration = self.duration.copy()
         return new
-
 
     @classmethod
     def days_in_month(cls, year, month, calendar=None, leap_month=2,
@@ -1069,14 +1041,16 @@ class TimeDuration:
         if month_lengths is None:
             month_lengths = _default_month_lengths
         elif len(month_lengths) != 12:
-            raise ValueError("month_lengths must be a sequence of 12 elements")
+            raise ValueError(
+                "month_lengths must be a sequence of 12 elements")
 
         month1 = month - 1
 
-        if calendar in [None, 'standard', 'gregorian', 'proleptic_gregorian', '']:
+        if calendar in [
+                None, 'standard', 'gregorian', 'proleptic_gregorian', '']:
             length = month_lengths[month1]
             if (month == leap_month and
-                (year % 400 == 0 or (year % 100 != 0 and year % 4 == 0))):
+                    (year % 400 == 0 or (year % 100 != 0 and year % 4 == 0))):
                 length += 1
         elif calendar == '360_day':
             length = 30
@@ -1092,7 +1066,6 @@ class TimeDuration:
                 length += 1
 
         return length
-
 
     @_deprecated_kwarg_check('traceback')
     def equals(self, other, rtol=None, atol=None, verbose=False,
@@ -1142,32 +1115,37 @@ class TimeDuration:
 
         # Check that each instance is the same type
         if self.__class__ != other.__class__:
-            if verbose: # pragma: no cover
-                print("%s: Different type: %s" %
-                      (self.__class__.__name__, other.__class__.__name__)) # pragma: no cover
+            if verbose:  # pragma: no cover
+                print(
+                    "%s: Different type: %s" % (
+                        self.__class__.__name__, other.__class__.__name__)
+                )  # pragma: no cover
             return False
 
-        self__dict__  = self.__dict__.copy()
+        self__dict__ = self.__dict__.copy()
         other__dict__ = other.__dict__.copy()
 
         d0 = self__dict__.pop('duration', None)
         d1 = other__dict__.pop('duration', None)
 
         if not d0.equals(d1):
-            if verbose: # pragma: no cover
-                print("%s: Different durations: %r, %r" %
-                      (self.__class__.__name__, d0, d1)) # pragma: no cover
+            if verbose:  # pragma: no cover
+                print(
+                    "%s: Different durations: %r, %r" % (
+                        self.__class__.__name__, d0, d1)
+                )  # pragma: no cover
             return False
 
         if self__dict__ != other__dict__:
-            if verbose: # pragma: no cover
-                print("%s: Different The default date-time elements: %r != %r" %
-                      (self.__class__.__name__, self__dict__, other__dict__)) # pragma: no cover
+            if verbose:  # pragma: no cover
+                print(
+                    "%s: Different The default date-time elements: "
+                    "%r != %r" % (
+                        self.__class__.__name__, self__dict__, other__dict__)
+                )  # pragma: no cover
             return False
 
-
         return True
-
 
     @_deprecated_kwarg_check('traceback')
     def equivalent(self, other, rtol=None, atol=None, verbose=True,
@@ -1219,30 +1197,36 @@ class TimeDuration:
 
         # Check that each instance is the same type
         if self.__class__ != other.__class__:
-            if verbose: # pragma: no cover
-                print("%s: Different type: %s" %
-                      (self.__class__.__name__, other.__class__.__name__)) # pragma: no cover
+            if verbose:  # pragma: no cover
+                print(
+                    "%s: Different type: %s" % (
+                        self.__class__.__name__, other.__class__.__name__)
+                )  # pragma: no cover
             return False
 
-        self__dict__  = self.__dict__.copy()
+        self__dict__ = self.__dict__.copy()
         other__dict__ = other.__dict__.copy()
 
         d0 = self__dict__.pop('duration', None)
         d1 = other__dict__.pop('duration', None)
         if d0 != d0:
-            if verbose: # pragma: no cover
-                print("%s: Non-equivalent durations: %r, %r" %
-                      (self.__class__.__name__, d0, d1)) # pragma: no cover
+            if verbose:  # pragma: no cover
+                print(
+                    "%s: Non-equivalent durations: %r, %r" % (
+                        self.__class__.__name__, d0, d1)
+                )  # pragma: no cover
             return False
 
         if self__dict__ != other__dict__:
-            if verbose: # pragma: no cover
-                print("%s: Non-equivalent default date-time elements: %r != %r" %
-                      (self.__class__.__name__, self__dict__, other__dict__)) # pragma: no cover
+            if verbose:  # pragma: no cover
+                print(
+                    "%s: Non-equivalent default date-time elements: "
+                    "%r != %r" % (
+                        self.__class__.__name__, self__dict__, other__dict__)
+                )  # pragma: no cover
             return False
 
         return True
-
 
     def inspect(self):
         '''Inspect the attributes.
@@ -1256,10 +1240,9 @@ class TimeDuration:
         `None`
 
         '''
-        print(cf_inspect(self)) # pragma: no cover
+        print(cf_inspect(self))  # pragma: no cover
 
-
-    def interval(self, dt, end=False, iso=None): # calendar=None,
+    def interval(self, dt, end=False, iso=None):  # calendar=None,
         '''Return a time interval of exactly the time duration.
 
     The start (or end, if the *end* parameter is True) date-time of
@@ -1329,7 +1312,8 @@ class TimeDuration:
     >>> t.interval(cf.dt(2004, 3, 2, calendar='360_day'), end=True)
     (cftime.Datetime360Day(2004-02-27 00:00:00),
      cftime.Datetime360Day(2004-03-02 00:00:00))
-    >>> t.interval(cf.dt(2004, 3, 2, calendar='360_day'), end=True, iso='start and duration')
+    >>> t.interval(cf.dt(2004, 3, 2, calendar='360_day'),
+    ...            end=True, iso='start and duration')
     '2004-02-27 00:00:00/P5D'
 
     Create `cf.Query` objects for a time interval - one including both
@@ -1379,9 +1363,9 @@ class TimeDuration:
             dt1 = dt1.datetime_array.item(())
 
             if not end:
-                return dt, dt1 #dt.copy(), dt1
+                return dt, dt1  # dt.copy(), dt1
             else:
-                return dt1, dt # dt1, dt.copy()
+                return dt1, dt  # dt1, dt.copy()
         # --- End: def
 
         calendar = getattr(dt, 'calendar', _default_calendar)
@@ -1391,22 +1375,24 @@ class TimeDuration:
         dt = cf_dt(dt, calendar=calendar)
 
         duration = self.duration
-        units    = duration.Units
+        units = duration.Units
 
         if units == _calendar_years:
             months = duration.datum() * 12
             int_months = int(months)
             if int_months != months:
                 raise ValueError(
-                    "Can't create a time interval of a non-integer number of calendar months: {0}".format(
-                        months))
+                    "Can't create a time interval of a non-integer number "
+                    "of calendar months: {0}".format(months)
+                )
         elif units == _calendar_months:
             months = duration.datum()
             int_months = int(months)
             if int_months != months:
                 raise ValueError(
-                    "Can't create a time interval of a non-integer number of calendar months: {0}".format(
-                        months))
+                    "Can't create a time interval of a non-integer number "
+                    "of calendar months: {0}".format(months)
+                )
         else:
             int_months = None
 
@@ -1418,7 +1404,7 @@ class TimeDuration:
                     y -= 1
                     month1 = 12
 
-                year1  = dt.year + y
+                year1 = dt.year + y
 
                 max_days = self.days_in_month(year1, month1, calendar)
 
@@ -1426,7 +1412,7 @@ class TimeDuration:
                 if day1 > max_days:
                     day1 = max_days
 
-                dt0 = dt #.copy()
+                dt0 = dt  # .copy()
                 dt1 = dt.replace(year=year1, month=month1, day=day1)
             else:
                 y, month0 = divmod(dt.month - int_months, 12)
@@ -1435,7 +1421,7 @@ class TimeDuration:
                     y -= 1
                     month0 = 12
 
-                year0  = dt.year + y
+                year0 = dt.year + y
 
                 max_days = self.days_in_month(year0, month0, calendar)
                 day0 = dt.day
@@ -1443,7 +1429,7 @@ class TimeDuration:
                     day0 = max_days
 
                 dt0 = dt.replace(year=year0, month=month0, day=day0)
-                dt1 = dt #0.copy()
+                dt1 = dt  # 0.copy()
         else:
             dt0, dt1 = _dHMS(duration, dt, end)
 
@@ -1456,7 +1442,6 @@ class TimeDuration:
             return '{0}/{1}'.format(dt0, self.iso)
         if iso == 'duration and end':
             return '{0}/{1}'.format(self.iso, dt1)
-
 
     def bounds(self, dt, direction=True):
         '''Return a time interval containing a date-time.
@@ -1538,10 +1523,9 @@ class TimeDuration:
         else:
             return (dt1, dt0)
 
-
     def is_day_factor(self):
-        '''Return True if an integer multiple of the time duration is equal to
-    one day.
+        '''Return True if an integer multiple of the time duration is equal
+    to one day.
 
     .. versionadded:: 1.0
 
