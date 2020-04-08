@@ -13266,7 +13266,6 @@ class Field(mixin.PropertiesData,
             # --- End: if
 
             # Get the data weights
-            print ('scale=', scale)
             w = f.weights(weights, axes=axis, measure=measure,
                           scale=scale, radius=radius,
                           great_circle=great_circle, data=True)
