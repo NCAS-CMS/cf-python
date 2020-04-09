@@ -454,10 +454,15 @@ def linkcode_resolve(domain, info):
         except:
             return None
 
+    # Get the object wrapped by obj. This makes sure that the actual
+    # code, rather that the decorator's code, get used.
+    obj = inspect.unwrap(obj)
+    
     try:
         fn = inspect.getsourcefile(obj)
     except:
         fn = None
+    
     if not fn:
         return None
 
