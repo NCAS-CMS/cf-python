@@ -12965,16 +12965,16 @@ class Field(mixin.PropertiesData,
             https://ncas-cms.github.io/cf-python/analysis.html#collapse-methods
             for precise definitions):
 
-            ====================  ============================  ========
-            *method*              Description                   Weighted
-            ====================  ============================  ========
-            ``'sum'``             The sum of the values.        Never
+            ==================  ============================  ========
+            *method*            Description                   Weighted
+            ==================  ============================  ========
+            ``'sum'``           The sum of the values.        Never
 
-            ``'mean'``            The weighted or unweighted    May be
-                                  mean of the values.
+            ``'mean'``          The weighted or unweighted    May be
+                                mean of the values.
 
-            ``'integral'``        The integral of values.       Always
-            ====================  ============================  ========
+            ``'integral'``      The integral of values.       Always
+            ==================  ============================  ========
 
             * Methods that are "Never" weighted ignore the *weights*
               parameter, even if it is set.
@@ -13012,11 +13012,11 @@ class Field(mixin.PropertiesData,
                       unweighted calculations.
 
             .. note:: Setting *weights* to `True` is the best way to
-                      ensure that all the moving window calculations
-                      are appropriately weighted according to the
-                      field construct's metadata. In this case, if it
-                      is not possible to create weights for the axis
-                      then an exception will be raised.
+                      ensure that the moving window calculations are
+                      appropriately weighted according to the field
+                      construct's metadata. In this case, if it is not
+                      possible to create weights for the axis then an
+                      exception will be raised.
 
             *Parameter example:*
               To specify weights on the cell sizes of the selected
@@ -13030,32 +13030,32 @@ class Field(mixin.PropertiesData,
             method), ``'wrap'``. The valid values and their behaviours
             are as follows:
 
-            ==============  ==========================  =================================
+            ==============  ==========================  ===========================
             *mode*          Description                 Behaviour
-            ==============  ==========================  =================================
-            ``'reflect'``   The input is extended by    ``(d c b a | a b c d | d c b a)``
+            ==============  ==========================  ===========================
+            ``'reflect'``   The input is extended by    ``(c b a | a b c | c b a)``
                             reflecting about the edge
 
-            ``'constant'``  The input is extended by    ``(k k k k | a b c d | k k k k)``
+            ``'constant'``  The input is extended by    ``(k k k | a b c | k k k)``
                             filling all values beyond
                             the edge with the same
                             constant value (``k``),
                             defined by the *cval*
                             parameter.
 
-            ``'nearest'``   The input is extended by    ``(a a a a | a b c d | d d d d)``
+            ``'nearest'``   The input is extended by    ``(a a a | a b c | c c c)``
                             replicating the last point
 
-            ``'mirror'``    The input is extended by    ``(d c b | a b c d | c b a)``
+            ``'mirror'``    The input is extended by    ``(c b | a b c | b a)``
                             reflecting about the
                             centre of the last point.
 
-            ``'wrap'``      The input is extended by    ``(a b c d | a b c d | a b c d)``
+            ``'wrap'``      The input is extended by    ``(a b c | a b c | a b c)``
                             wrapping around to the
                             opposite edge.
-            ==============  ==========================  =================================
+            ==============  ==========================  ===========================
 
-            The position of the window realtive to each value can be
+            The position of the window relative to each value can be
             changed by using the *origin* parameter.
 
         cval: scalar, optional
@@ -13072,9 +13072,8 @@ class Field(mixin.PropertiesData,
         origin: `int`, optional
             Controls the placement of the filter. Defaults to 0, which
             is the centre of the window. If the window size, defined
-            by the *window_size* parameter, has an even number weights
-            then then a value of 0 defines the index defined by
-            ``window_size/2 -1``.
+            by the *window_size* parameter, is even then then a value
+            of 0 defines the index defined by ``window_size/2 -1``.
 
             *Parameter example:*
               For a window size of 5, if ``origin=0`` then the window
@@ -13155,6 +13154,8 @@ class Field(mixin.PropertiesData,
      [315. 360.]]
     >>> f.iscyclic('X')
     True
+    >>> f.iscyclic('Y')
+    False
 
     Create a weighted 3-point running mean for the cyclic 'X' axis:
 
@@ -13299,9 +13300,10 @@ class Field(mixin.PropertiesData,
                 f = f / w
 
         # Add a cell method
-        f._update_cell_methods(method=method,
-                               domain_axes=f.domain_axes(axis),
-                               input_axes=(axis,), verbose=False)
+        if f.domain_axis(axis).get_size() > 1 or method == 'integral':
+            f._update_cell_methods(method=method,
+                                   domain_axes=f.domain_axes(axis),
+                                   verbose=False)
             
         return f
 
@@ -13363,32 +13365,32 @@ class Field(mixin.PropertiesData,
             method), ``'wrap'``. The valid values and their behaviours
             are as follows:
 
-            ==============  ==========================  =================================
+            ==============  ==========================  ===========================
             *mode*          Description                 Behaviour
-            ==============  ==========================  =================================
-            ``'reflect'``   The input is extended by    ``(d c b a | a b c d | d c b a)``
+            ==============  ==========================  ===========================
+            ``'reflect'``   The input is extended by    ``(c b a | a b c | c b a)``
                             reflecting about the edge
 
-            ``'constant'``  The input is extended by    ``(k k k k | a b c d | k k k k)``
+            ``'constant'``  The input is extended by    ``(k k k | a b c | k k k)``
                             filling all values beyond
                             the edge with the same
                             constant value (``k``),
                             defined by the *cval*
                             parameter.
 
-            ``'nearest'``   The input is extended by    ``(a a a a | a b c d | d d d d)``
+            ``'nearest'``   The input is extended by    ``(a a a | a b c | d d d)``
                             replicating the last point
 
-            ``'mirror'``    The input is extended by    ``(d c b | a b c d | c b a)``
+            ``'mirror'``    The input is extended by    ``(c b | a b c | b a)``
                             reflecting about the
                             centre of the last point.
 
-            ``'wrap'``      The input is extended by    ``(a b c d | a b c d | a b c d)``
+            ``'wrap'``      The input is extended by    ``(a b c | a b c | a b c)``
                             wrapping around to the
                             opposite edge.
-            ==============  ==========================  =================================
+            ==============  ==========================  ===========================
 
-            The position of the window realtive to each value can be
+            The position of the window relative to each value can be
             changed by using the *origin* parameter.
 
         cval: scalar, optional
@@ -13768,8 +13770,9 @@ class Field(mixin.PropertiesData,
 
         coordinate: `str`, optional
             Set how the cell coordinate values for the summed axis are
-            defined. By default they are unchanged from the original
-            field construct. The *coordinate* parameter may be one of:
+            defined, realtive to the new cell bounds. By default they
+            are unchanged from the original field construct. The
+            *coordinate* parameter may be one of:
 
             ===============  =========================================
             *coordinate*     Description
@@ -13861,13 +13864,8 @@ class Field(mixin.PropertiesData,
         # Get the axis index
         axis_index = f.get_data_axes().index(axis_key)
 
-#        new_data = self.data.cumsum(axis_index, masked_as_zero=masked_as_zero)
-
         f.data.cumsum(axis_index, masked_as_zero=masked_as_zero,
                       inplace=True)
-
-#        # Insert new data into field
-#        f.set_data(new_data, set_axes=False, copy=False)
 
         if self.domain_axis(axis_key).get_size() > 1:
             # Update the bounds of the summed axis if necessary
@@ -13892,10 +13890,12 @@ class Field(mixin.PropertiesData,
                             "Got {!r}".format(coordinate))
             # --- End: if
 
-#ppp            # Update the cell methods
-            cell_method = CellMethod(axes=[axis_key], method='sum')
-            f.set_construct(cell_method, copy=False)
-
+            # Add a cell method
+            f._update_cell_methods(method='sum',
+                                   domain_axes=f.domain_axes(axis_key),
+                                   verbose=False)
+        # --- End: if                    
+            
         return f
 
     def creation_commands(self, representative_data=False,
