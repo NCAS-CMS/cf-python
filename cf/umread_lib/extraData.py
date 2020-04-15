@@ -3,22 +3,22 @@ import string
 import numpy
 
 
-_codes =  {
-    1  : ('x', float),
-    2  : ('y', float),
-    3  : ('y_domain_lower_bound', float),
-    4  : ('x_domain_lower_bound', float),
-    5  : ('y_domain_upper_bound', float),
-    6  : ('x_domain_upper_bound', float),
-    7  : ('z_domain_lower_bound', float),
-    8  : ('x_domain_upper_bound', float),
-    10 : ('title', str),
-    11 : ('domain_title', str),
-    12 : ('x_lower_bound', float),
-    13 : ('x_upper_bound', float),
-    14 : ('y_lower_bound', float),
-    15 : ('y_upper_bound', float),
-    }
+_codes = {
+    1: ('x', float),
+    2: ('y', float),
+    3: ('y_domain_lower_bound', float),
+    4: ('x_domain_lower_bound', float),
+    5: ('y_domain_upper_bound', float),
+    6: ('x_domain_upper_bound', float),
+    7: ('z_domain_lower_bound', float),
+    8: ('x_domain_upper_bound', float),
+    10: ('title', str),
+    11: ('domain_title', str),
+    12: ('x_lower_bound', float),
+    13: ('x_upper_bound', float),
+    14: ('y_lower_bound', float),
+    15: ('y_upper_bound', float),
+}
 
 
 class ExtraData(dict):
@@ -41,8 +41,10 @@ class ExtraData(dict):
         if a == b:
             return 0
         delta = abs(b * tolerance)
-        if a < b - delta: return -1
-        if a > b + delta: return 1
+        if a < b - delta:
+            return -1
+        if a > b + delta:
+            return 1
         return 0
 
     def _cmp_float_arrays(self, avals, bvals):
@@ -56,7 +58,6 @@ class ExtraData(dict):
             if c != 0:
                 return c
         return 0
-
 
     def __cmp__(self, other):
         """Compare two extra data dictionaries returned by unpacker
@@ -115,7 +116,7 @@ class ExtraDataUnpacker:
         """
         if self.is_swapped:
             # concatenate backwards substrings
-            st = string.join([st[pos : pos + self.ws][::-1]
+            st = string.join([st[pos: pos + self.ws][::-1]
                               for pos in range(0, len(st), self.ws)], "")
         while st.endswith("\x00"):
             st = st[:-1]

@@ -17,8 +17,8 @@ class File:
     sets of PP records combined into variables
 
     '''
-    def __init__(self, path, byte_ordering = None, word_size = None,
-                 format = None, parse = True):
+    def __init__(self, path, byte_ordering=None, word_size=None,
+                 format=None, parse=True):
         '''Open and parse a UM file.  The following optional arguments specify
     the file type. If all three are set, then this forces the file
     type; otherwise, the file type is autodetected and any of them
@@ -55,13 +55,13 @@ class File:
         else:
             self._detect_file_type()
         self.path = path
-        file_type_obj = c.create_file_type(self.format, self.byte_ordering, self.word_size)
+        file_type_obj = c.create_file_type(
+            self.format, self.byte_ordering, self.word_size)
         c.set_word_size(file_type_obj)
         if parse:
             info = c.parse_file(self.fd, file_type_obj)
             self.vars = info["vars"]
             self._add_back_refs()
-
 
     def open_fd(self):
         '''(Re)open the low-level file descriptor.
@@ -71,7 +71,6 @@ class File:
             self.fd = os.open(self.path, os.O_RDONLY)
         return self.fd
 
-
     def close_fd(self):
         '''Close the low-level file descriptor.
 
@@ -79,7 +78,6 @@ class File:
         if self.fd:
             os.close(self.fd)
         self.fd = None
-
 
     def _detect_file_type(self):
         c = self._c_interface
@@ -93,7 +91,6 @@ class File:
         self.format = d["format"]
         self.byte_ordering = d["byte_ordering"]
         self.word_size = d["word_size"]
-
 
     def _add_back_refs(self):
         '''Add file attribute to Var objects, and both file and var
@@ -122,7 +119,6 @@ class Var:
         self.nt = nt
         self.supervar_index = supervar_index
 
-
     @staticmethod
     def _compare(x, y):
         '''Method equivalent to the Python 2 'cmp'. Note that (x > y) - (x <
@@ -137,14 +133,11 @@ class Var:
         else:
             return -1
 
-
     def _compare_recs_by_extra_data(self, a, b):
         return self._compare(a.get_extra_data(), b.get_extra_data())
 
-
     def _compare_recs_by_orig_order(self, a, b):
         return self._compare(self.recs.index(a), self.recs.index(b))
-
 
     def group_records_by_extra_data(self):
         '''Returns a list of (sub)lists of records where each records within
@@ -190,7 +183,7 @@ class Rec:
 
     '''
     def __init__(self, int_hdr, real_hdr, hdr_offset, data_offset, disk_length,
-                 file = None):
+                 file=None):
         '''Default instantiation, which stores the supplied headers and
     offsets.  The 'file' argument, used to set the 'file' attribute,
     does not need to be supplied, but if it is not then it will have
@@ -208,7 +201,6 @@ class Rec:
         if file:
             self.file = file
 
-
     @classmethod
     def from_file_and_offsets(cls, file, hdr_offset, data_offset, disk_length):
         '''Instantiate a Rec object from the file object and the header and
@@ -217,12 +209,14 @@ class Rec:
 
         '''
         c = file._c_interface
-        int_hdr, real_hdr = c.read_header(file.fd,
-                                          hdr_offset,
-                                          file.byte_ordering,
-                                          file.word_size)
-        return cls(int_hdr, real_hdr, hdr_offset, data_offset, disk_length, file=file)
-
+        int_hdr, real_hdr = c.read_header(
+            file.fd,
+            hdr_offset,
+            file.byte_ordering,
+            file.word_size
+        )
+        return cls(
+            int_hdr, real_hdr, hdr_offset, data_offset, disk_length, file=file)
 
     def read_extra_data(self):
         '''Read the extra data associated with the record
@@ -231,20 +225,27 @@ class Rec:
         c = self.file._c_interface
         file = self.file
 
-        extra_data_offset, extra_data_length = \
-            c.get_extra_data_offset_and_length(self.int_hdr,
-                                               self.data_offset,
-                                               self.disk_length)
+        extra_data_offset, extra_data_length = (
+            c.get_extra_data_offset_and_length(
+                self.int_hdr,
+                self.data_offset,
+                self.disk_length
+            )
+        )
 
-        raw_extra_data = c.read_extra_data(file.fd,
-                                           extra_data_offset,
-                                           extra_data_length,
-                                           file.byte_ordering,
-                                           file.word_size)
+        raw_extra_data = c.read_extra_data(
+            file.fd,
+            extra_data_offset,
+            extra_data_length,
+            file.byte_ordering,
+            file.word_size
+        )
 
-        edu = ExtraDataUnpacker(raw_extra_data,
-                                file.word_size,
-                                file.byte_ordering)
+        edu = ExtraDataUnpacker(
+            raw_extra_data,
+            file.word_size,
+            file.byte_ordering
+        )
 
         return edu.get_data()
 
@@ -258,7 +259,6 @@ class Rec:
 
         return self._extra_data
 
-
     def get_type_and_num_words(self):
         '''Get the data type (as numpy type) and number of words as 2-tuple
 
@@ -271,7 +271,6 @@ class Rec:
             dtype = numpy.dtype(c.file_data_real_type)
         return dtype, num_words
 
-
     def get_data(self):
         '''Get the data array associated with the record
 
@@ -280,15 +279,17 @@ class Rec:
         file = self.file
         data_type, nwords = c.get_type_and_num_words(self.int_hdr)
 
-        return c.read_record_data(file.fd,
-                                  self.data_offset,
-                                  self.disk_length,
-                                  file.byte_ordering,
-                                  file.word_size,
-                                  self.int_hdr,
-                                  self.real_hdr,
-                                  data_type,
-                                  nwords)
+        return c.read_record_data(
+            file.fd,
+            self.data_offset,
+            self.disk_length,
+            file.byte_ordering,
+            file.word_size,
+            self.int_hdr,
+            self.real_hdr,
+            data_type,
+            nwords
+        )
 
 
 # --- End: class
@@ -320,7 +321,8 @@ if __name__ == '__main__':
             print("-----------------------")
 
         print("all records", var.recs)
-        print("records grouped by extra data ", var.group_records_by_extra_data())
+        print("records grouped by extra data ",
+              var.group_records_by_extra_data())
         print("===============================")
 
     f.close_fd()
@@ -338,13 +340,16 @@ if __name__ == '__main__':
 
         del(f)
 
-        fnew = File(path,
-                    format = format,
-                    byte_ordering = byte_ordering,
-                    word_size = word_size,
-                    parse = False)
+        fnew = File(
+            path,
+            format=format,
+            byte_ordering=byte_ordering,
+            word_size=word_size,
+            parse=False
+        )
 
-        rnew = Rec.from_file_and_offsets(fnew, hdr_offset, data_offset, disk_length)
+        rnew = Rec.from_file_and_offsets(
+            fnew, hdr_offset, data_offset, disk_length)
         print("record read using saved file type and offsets:")
         print("int hdr: %s" % rnew.int_hdr)
         print("real hdr: %s" % rnew.real_hdr)
