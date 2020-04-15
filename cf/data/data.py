@@ -5904,12 +5904,12 @@ place.
     [['dim0', 'dim0'],
      ['dim1', 'dim0', 'dim2']]
     >>> d._all_axis_names()
-    set(['dim2', dim0', 'dim1'])
+    ['dim2', dim0', 'dim1']
 
         '''
         all_axes = self._all_axes
         if not all_axes:
-            return self._axes[:]
+            return list(self._axes)
         else:
             return list(all_axes)
 
@@ -5928,7 +5928,7 @@ place.
             d = set(all_axes).difference(axis_map)
             if d:
                 axis_map = axis_map.copy()
-                existing_axes = all_axes[:]
+                existing_axes = list(all_axes)
                 for axis in d:
                     if axis in axis_map.values():
                         axis_map[axis] = self._new_axis_identifier(
@@ -5936,7 +5936,6 @@ place.
                         existing_axes.append(axis)
                     else:
                         axis_map[axis] = axis
-                # --- End: for
         # --- End: if
 
         if all([axis0 == axis1 for axis0, axis1 in axis_map.items()]):
