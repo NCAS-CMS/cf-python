@@ -5496,7 +5496,7 @@ class Field(mixin.PropertiesData,
             weights_axes.add(da_key)
 
             return True
-        #--- End: def
+        # --- End: def
 
         def _area_weights_XY(self, comp, weights_axes, auto=False,
                              measure=False, radius=None):
@@ -5598,8 +5598,7 @@ class Field(mixin.PropertiesData,
                     comp[(xaxis,)] = cells
 
                 weights_axes.add(xaxis)
-#                out.add(xaxis)
-            #--- End: if
+            # --- End: if
 
             if measure or ycoord.size > 1:
                 if not ycoord.has_bounds():
@@ -5632,11 +5631,10 @@ class Field(mixin.PropertiesData,
                 # --- End: if
 
                 weights_axes.add(yaxis)
-#                out.add(yaxis)
-            #--- End: if
+            # --- End: if
 
             return True #out
-        #--- End: def
+        # --- End: def
 
         def _field_weights(self, fields, comp, weights_axes):
             # ------------------------------------------------------------
@@ -5750,10 +5748,10 @@ class Field(mixin.PropertiesData,
                 comp[tuple(axes0)] = w.data
 
                 weights_axes.update(axes0)
-            #--- End: for
+            # --- End: for
             
             return True
-        #--- End: def
+        # --- End: def
 
         def _data_weights(self, w, comp, weights_axes, axes=None,
                           data=False, components=False, methods=False):
@@ -6152,7 +6150,7 @@ class Field(mixin.PropertiesData,
                                                              nodes_y[[0, -1]])
 
                             all_areas[i, j] += interior_angle + numpy_pi
-                #--- End: for
+                # --- End: for
 
                 area_min = all_areas.min()
                 if area_min < 0:
@@ -6200,17 +6198,17 @@ class Field(mixin.PropertiesData,
                         raise ValueError(
                             "Bad value of Z coordinate 'positive' "
                             "property: {!r}.".format(positve))
-                #--- End: if
+                # --- End: if
 
                 areas *= r**2
-            #--- End: if
+            # --- End: if
             
             comp[(axis,)] = areas
             
             weights_axes.add(axis)
             
             return True
-        #--- End: def
+        # --- End: def
         
         def _line_weights_geometry(self, comp, weights_axes,
                                    auto=False, measure=False,
@@ -6304,7 +6302,7 @@ class Field(mixin.PropertiesData,
             comp[(axis,)] = lengths
             
             weights_axes.add(axis)
-        #--- End: def
+        # --- End: def
             
         def _volume_weights_geometry(self, comp, weights_axes,
                                      auto=False, measure=False,
@@ -6374,7 +6372,8 @@ class Field(mixin.PropertiesData,
                 # The area of such a spherical polygon is given by the
                 # sum of the interior angles minus (N-2)pi, where N is
                 # the number of sides (Todhunter):
-                # https://en.wikipedia.org/wiki/Spherical_trigonometry#Spherical_polygons
+                #
+                # https://en.wikipedia.org/wiki/Spherical_trigonometry#Area_and_spherical_excess
                 #
                 # The interior angle of a side is calculated with a
                 # special case of the Vincenty formula:
@@ -6390,8 +6389,10 @@ class Field(mixin.PropertiesData,
                     comp[(axis,)] = 'volume spherical polygon geometry'
                     return True
                     
-                all_volumes = (delta_z + radius)**3 - radius**3
-                        
+#                all_volumes = (delta_z + radius)**3 - radius**3
+
+                r = radius
+
                 if measure:
                     all_areas = _area_weights_geometry(self, comp,
                                                        weights_axes,
@@ -6401,7 +6402,15 @@ class Field(mixin.PropertiesData,
                                                        great_circle=great_circle,
                                                        return_areas=True)
                         
-                    all_volumes = all_areas * (all_volumes / (3 * numpy_pi))
+                    all_volumes = all_areas * (delta_z**3/(3*r**2)
+                                               + delta_z**2/r
+                                               + delta_z)
+                else:
+#                    all_volumes = (delta_z + radius)**3 - radius**3
+                    all_volumes = (delta_z**3
+                                   + 3*r*delta_z**2
+                                   + 3*delta_z*radius**2)
+
             else:
                 raise ValueError("TODO")
                         
@@ -6409,12 +6418,12 @@ class Field(mixin.PropertiesData,
             # each cell
             volumes = all_volumes.sum(-1, squeeze=True)
 
-            comp[(axis,)] = areas
+            comp[(axis,)] = volumes
                 
             weights_axes.add(axis)
 
             return True
-        #--- End: def
+        # --- End: def
 
         # ============================================================
         # Start of main code (weights)
@@ -6487,13 +6496,6 @@ class Field(mixin.PropertiesData,
                                   auto=True):
                 # Area weights from X and Y dimension coordinates
                 pass
-#            elif _volume_weights_geometry(self, comp, weights_axes,
-#                                          measure=measure,
-#                                          radius=radius,
-#                                          great_circle=great_circle,
-#                                          auto=True):
-#                # Area weights from polygon geometries
-#                pass
             elif _area_weights_geometry(self, comp, weights_axes,
                                         measure=measure,
                                         radius=radius,
@@ -6598,7 +6600,7 @@ class Field(mixin.PropertiesData,
 #                    da_key_x = da_key
 #                elif da_key == yaxis:
 #                    da_key_y = da_key
-#            #--- End: if
+#            # --- End: if
 #
 #            if da_key_x and da_key_y:
 #                xdim = self.dimension_coordinate(xaxis, default=None)
@@ -6610,7 +6612,7 @@ class Field(mixin.PropertiesData,
 #                    ydim = ydim.clip(-90, 90, units=Units('degrees'))
 #                    ydim.sin(inplace=True)
 #                    comp[(yaxis,)] = ydim.cellsize
-#            #--- End: if
+#            # --- End: if
 
             # Field weights
             _field_weights(self, fields, comp, weights_axes)
@@ -6627,7 +6629,7 @@ class Field(mixin.PropertiesData,
 #                                             radius=radius,
 #                                             great_circle=great_circle,
 #                                             auto=False)
-            #--- End: if
+            # --- End: if
             
             # Area weights
             if 'area' in cell_measures:
@@ -6647,7 +6649,7 @@ class Field(mixin.PropertiesData,
                                            radius=radius,
                                            great_circle=great_circle,
                                            auto=False)
-            #--- End: if
+            # --- End: if
 
             for axis in axes:
                 da_key = self.domain_axis(axis, key=True, default=None)
@@ -6675,7 +6677,7 @@ class Field(mixin.PropertiesData,
                                         auto=False, measure=measure)
                     # Linear weights from dimension coordinates
                     pass
-            #--- End: for
+            # --- End: for
 
             # Check for area weights specified by X and Y axes
             # separately and replace them with area weights
@@ -6722,10 +6724,6 @@ class Field(mixin.PropertiesData,
                 components[tuple(key)] = v
 
             return components
-
-#        # Still here?
-#        if methods:
-#            return components
 
         # Still here?
         if not comp:
@@ -7318,6 +7316,24 @@ class Field(mixin.PropertiesData,
             .. note:: By default *weights* is `None`, resulting in
                       unweighted calculations.
 
+            .. note:: Setting *weights* to `True` is generally a good
+                      way to ensure that all collapses are
+                      appropriately weighted according to the field
+                      construct's metadata. In this case, if it is not
+                      possible to create weights for any axis then an
+                      exception will be raised.
+
+                      However, care needs to be taken when cell volume
+                      weights are desired, as setting ``weights=True``
+                      will utilize a "volume" cell measure construct
+                      if one exists, otherwise the cell volumes will
+                      be calculated as being proportional to the sizes
+                      of one-dimensional vertical coordinate cells,
+                      and **if the vertical dimension coordinates do
+                      not define the actual height or depth thickness
+                      of every cell in the domain then the weights
+                      will be incorrect**.
+
             If *weights* is the boolean `True` then weights are
             calculated for all of the domain axis constructs.
 
@@ -7326,12 +7342,13 @@ class Field(mixin.PropertiesData,
               metadata for all axes use ``weights=True``.
 
             *Parameter example:*
-              To specify weights based on cell areas use
-              ``weights='area'``.
+              To specify weights based on cell areas, leaving all
+              other axes unweighted, use ``weights='area'``.
 
             *Parameter example:*
               To specify weights based on cell areas and linearly in
-              time you could set ``weights=('area', 'T')``.
+              time, leaving all other axes unweighted, you could set
+              ``weights=('area', 'T')``.
 
         measure: `bool`, optional
             Create weights, as defined by the *weights* parameter,
@@ -7661,7 +7678,7 @@ class Field(mixin.PropertiesData,
 
             if bin_count is None:
                 raise ValueError(
-                    "Digitized field {!r} construct must have a 'bin_count' "
+                    "Digitized field construct {!r} must have a 'bin_count' "
                     "property.".format(f)
                 )
 
