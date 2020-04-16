@@ -35,7 +35,7 @@ class read_writeTest(unittest.TestCase):
 
     string_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                    'string_char.nc')
-    
+
 
     chunk_sizes = (17, 34, 300, 100000)[::-1]
     original_chunksize = cf.CHUNKSIZE()
@@ -188,7 +188,7 @@ class read_writeTest(unittest.TestCase):
                     g = cf.read(tmpfile, verbose=0)
                     self.assertTrue(len(g) == 1, 'g = '+repr(g))
                     g0 = g[0]
-    
+
                     self.assertTrue(f0.equals(g0, verbose=1),
                                     'Bad read/write of format {!r}'.format(fmt))
 
@@ -327,7 +327,7 @@ class read_writeTest(unittest.TestCase):
 
         with self.assertRaises(Exception):
             x = cf.read('test_read_write.py')
-            
+
     def test_read_write_string(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -337,14 +337,14 @@ class read_writeTest(unittest.TestCase):
         n = int(len(f)/2)
 
         for i in range(0, n):
-            
+
             j = i + n
             self.assertTrue(f[i].data.equals(f[j].data, verbose=1),
                             "{!r} {!r}".format(f[i], f[j]))
             self.assertTrue(f[j].data.equals(f[i].data, verbose=1),
                             "{!r} {!r}".format(f[j], f[i]))
-    
-        for string0 in (True, False):        
+
+        for string0 in (True, False):
             for fmt0 in ('NETCDF4',
                          'NETCDF3_CLASSIC',
                          'NETCDF4_CLASSIC',
@@ -354,8 +354,8 @@ class read_writeTest(unittest.TestCase):
 #                print ('fmt0=', fmt0)
                 f0 = cf.read(self.string_filename)
                 cf.write(f0, tmpfile0, fmt=fmt0, string=string0)
-                
-                for string1 in (True, False):        
+
+                for string1 in (True, False):
                     for fmt1 in ('NETCDF4',
                                  'NETCDF3_CLASSIC',
                                  'NETCDF4_CLASSIC',
@@ -365,11 +365,11 @@ class read_writeTest(unittest.TestCase):
 #                        print ('fmt1=', fmt1)
                         f1 = cf.read(self.string_filename)
                         cf.write(f0, tmpfile1, fmt=fmt1, string=string1)
-                        
+
                         for i, j in zip(cf.read(tmpfile1), cf.read(tmpfile0)):
                             self.assertTrue(i.equals(j, verbose=1))
         # --- End: for
-        
+
 # --- End: class
 
 if __name__ == "__main__":

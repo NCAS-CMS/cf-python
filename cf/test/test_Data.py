@@ -75,7 +75,7 @@ class DataTest(unittest.TestCase):
         self.test_only = []
 #        self.test_only = ['NOTHING!!!!!']
 #        self.test_only = ['test_Data_cumsum']
-        
+
 #        self.test_only = [
 #                          'test_Data_trigonometric_hyperbolic']
 #                          'test_Data_AUXILIARY_MASK',
@@ -129,19 +129,19 @@ class DataTest(unittest.TestCase):
     def test_Data_convolution_filter(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
-        
+
         d = cf.Data(self.ma, units='m')
 
         window = [0.1, 0.15, 0.5, 0.15, 0.1]
 
         e = d.convolution_filter(window=window, axis=-1, inplace=True)
         self.assertTrue(e is None)
-        
+
         d = cf.Data(self.ma, units='m')
-        
+
         for chunksize in self.chunk_sizes:
             cf.CHUNKSIZE(chunksize)
-                    
+
             # Test user weights in different modes
             for mode in ('reflect', 'constant', 'nearest', 'mirror', 'wrap'):
                 b = convolve1d(d.array, window, axis=-1, mode=mode)
@@ -149,9 +149,9 @@ class DataTest(unittest.TestCase):
                                          mode=mode, cval=0.0)
                 self.assertTrue((e.array == b).all())
         # --- End: for
-        
+
         cf.CHUNKSIZE(self.original_chunksize)
-               
+
     def test_Data_diff(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -174,19 +174,19 @@ class DataTest(unittest.TestCase):
             for axis in (0, 1, -1, -2):
                 a_diff = numpy.diff(a, n=n, axis=axis)
                 d_diff = d.diff(n=n, axis=axis)
-            
+
                 self.assertTrue((a_diff == d_diff).all())
                 self.assertTrue((a_diff.mask == d_diff.mask).all())
 
                 e = d.copy()
                 x = e.diff(n=n, axis=axis, inplace=True)
                 self.assertTrue(x is None)
-                self.assertTrue(e.equals(d_diff))                
+                self.assertTrue(e.equals(d_diff))
         # --- End: for
-                
+
         for chunksize in self.chunk_sizes:
             cf.CHUNKSIZE(chunksize)
-            
+
             d = cf.Data(self.ma, 'km')
             for n in (0, 1, 2):
                 for axis in (0, 1, 2, 3):
@@ -195,9 +195,9 @@ class DataTest(unittest.TestCase):
                     self.assertTrue((a_diff == d_diff).all())
                     self.assertTrue((a_diff.mask == d_diff.mask).all())
         # --- End: for
-        
+
         cf.CHUNKSIZE(self.original_chunksize)
-        
+
     def test_Data_compressed(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -205,14 +205,14 @@ class DataTest(unittest.TestCase):
         a = numpy.ma.arange(12).reshape(3, 4)
 
         d = cf.Data(a)
-        self.assertTrue((d.array == a).all())               
+        self.assertTrue((d.array == a).all())
         self.assertTrue((a.compressed() == d.compressed()).all())
 
         e = d.copy()
         x = e.compressed(inplace=True)
         self.assertTrue(x is None)
         self.assertTrue(e.equals(d.compressed()))
-                
+
         a[1, 1] = numpy.ma.masked
         a[2, 3] = numpy.ma.masked
 
@@ -220,24 +220,24 @@ class DataTest(unittest.TestCase):
         self.assertTrue((d.array == a).all())
         self.assertTrue((d.mask.array == a.mask).all())
         self.assertTrue((a.compressed() == d.compressed()).all())
-        
+
         e = d.copy()
         x = e.compressed(inplace=True)
         self.assertTrue(x is None)
         self.assertTrue(e.equals(d.compressed()))
-                
+
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)            
+            cf.CHUNKSIZE(chunksize)
             d = cf.Data(self.a, 'km')
             self.assertTrue((self.a.flatten() == d.compressed()).all())
 
         for chunksize in self.chunk_sizes:
-            cf.CHUNKSIZE(chunksize)            
+            cf.CHUNKSIZE(chunksize)
             d = cf.Data(self.ma, 'km')
             self.assertTrue((self.ma.compressed() == d.compressed()).all())
 
         cf.CHUNKSIZE(self.original_chunksize)
-    
+
     def test_Data_stats(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -2548,7 +2548,7 @@ class DataTest(unittest.TestCase):
             'arc' + method for method in trig_methods_root]
         trig_and_hyperbolic_methods = trig_methods + [
             method + 'h' for method in trig_methods]
-        
+
         for method in trig_and_hyperbolic_methods:
             for x in (1, -1):
                 a = 0.9 * x * self.ma

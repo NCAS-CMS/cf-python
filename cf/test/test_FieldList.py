@@ -76,7 +76,7 @@ class FieldTest(unittest.TestCase):
 
         _ = repr(f[0])
 
-        
+
     def test_FieldList__len__(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return

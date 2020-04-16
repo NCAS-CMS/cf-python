@@ -1,5 +1,5 @@
 from functools import reduce
-from operator  import mul    
+from operator  import mul
 
 from numpy import size as numpy_size
 
@@ -96,11 +96,11 @@ class PropertiesDataBounds(PropertiesData):
         if data is not None:
             new.set_data(data[findices], copy=False)
 
-        # Subspace the interior ring array, if there is one. 
-        interior_ring = self.get_interior_ring(None) 
+        # Subspace the interior ring array, if there is one.
+        interior_ring = self.get_interior_ring(None)
         if interior_ring is not None:
-             new.set_interior_ring(interior_ring[tuple(indices)], copy=False) 
- 
+             new.set_interior_ring(interior_ring[tuple(indices)], copy=False)
+
         # Subspace the bounds, if there are any
         bounds = self.get_bounds(None)
         if bounds is not None:
@@ -521,17 +521,17 @@ class PropertiesDataBounds(PropertiesData):
                 getattr(bounds, oper_name)(*oper_args, inplace=True,
                                            **oper_kwargs)
         # --- End: if
-        
+
         if interior_ring:
             interior_ring = v.get_interior_ring(None)
             if interior_ring is not None:
                 getattr(interior_ring, oper_name)(*oper_args, inplace=True,
                                                   **oper_kwargs)
         # --- End: if
-        
+
         return v
 
-    
+
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
@@ -843,7 +843,7 @@ class PropertiesDataBounds(PropertiesData):
     master data array's data type will be 'float64'; or if the
     sub-arrays have data types 'int64' and 'int32' then the master
     data array's data type will be 'int64'.
-    
+
     Setting the data type to a `numpy.dtype` object, or any object
     convertible to a `numpy.dtype` object, will cause the master data
     array elements to be recast to the specified type at the time that
@@ -851,20 +851,20 @@ class PropertiesDataBounds(PropertiesData):
     change the master data array elements, so, for example,
     reinstating the original data type prior to data access results in
     no loss of information.
-    
+
     Deleting the data type forces the default behaviour. Note that if
     the data type of any sub-arrays has changed after `dtype` has been
     set (which could occur if the data array is accessed) then the
     reinstated default data type may be different to the data type
     prior to `dtype` being set.
-    
+
     **Examples:**
-    
+
     >>> f.dtype
     dtype('float64')
     >>> type(f.dtype)
     <type 'numpy.dtype'>
-    
+
     >>> print(f.array)
     [0.5 1.5 2.5]
     >>> import numpy
@@ -877,7 +877,7 @@ class PropertiesDataBounds(PropertiesData):
     >>> f.dtype = 'float64'
     >>> print(f.array)
     [ 0.  1.  1.]
-    
+
     >>> print(f.array)
     [0.5 1.5 2.5]
     >>> f.dtype = int
@@ -1061,7 +1061,7 @@ class PropertiesDataBounds(PropertiesData):
         bounds = self.get_bounds(None)
         if bounds is not None:
             bounds.close()
-            
+
         interior_ring = self.get_interior_ring(None)
         if interior_ring is not None:
             interior_ring.close()
@@ -1278,17 +1278,17 @@ class PropertiesDataBounds(PropertiesData):
             raise ValueError(
                 "'name' parameter can not have the same value as any of the 'data_name', 'bounds_name', or 'interior_ring_name' parameters: {!r}".format(
                     name))
-        
+
         if data_name in (name, bounds_name, interior_ring_name):
             raise ValueError(
                 "'data_name' parameter can not have the same value as any of the 'name', 'bounds_name', or 'interior_ring_name'parameters: {!r}".format(
                     data_name))
-        
+
         out = super().creation_commands(
             representative_data=representative_data, indent=0,
             namespace=namespace, string=False, name=name,
             data_name=data_name)
-        
+
         namespace0 = namespace
         if namespace0:
             namespace = namespace+"."
@@ -1303,9 +1303,9 @@ class PropertiesDataBounds(PropertiesData):
                 representative_data=representative_data, indent=0,
                 namespace=namespace0, string=False, name=bounds_name,
                 data_name=data_name))
-            
+
             out.append("{}.set_bounds({})".format(name, bounds_name))
-                    
+
         interior_ring = self.get_interior_ring(None)
         if interior_ring is not None:
             out.extend(interior_ring.creation_commands(
@@ -1315,12 +1315,12 @@ class PropertiesDataBounds(PropertiesData):
 
             out.append("{}.set_interior_ring({})".format(name,
                                                          interior_ring_name))
-            
+
         if string:
             out[0] = indent+out[0]
             out = ('\n'+indent).join(out)
 
-        return out    
+        return out
 
     def cyclic(self, axes=None, iscyclic=True):
         '''Set the cyclicity of axes of the data array.
@@ -1358,9 +1358,9 @@ class PropertiesDataBounds(PropertiesData):
 
         interior_ring = self.get_interior_ring(None)
         if interior_ring is not None:
-            axes = self._parse_axes(axes)            
+            axes = self._parse_axes(axes)
             interior_ring.cyclic(axes, iscyclic)
-            
+
         return out
 
     def equivalent(self, other, rtol=None, atol=None, traceback=False):
@@ -1609,20 +1609,20 @@ class PropertiesDataBounds(PropertiesData):
 
     def get_property(self, prop, default=ValueError(), bounds=False):
         '''Get a CF property.
-    
+
     .. versionadded:: 3.2.0
-    
+
     .. seealso:: `clear_properties`, `del_property`, `has_property`,
                  `properties`, `set_property`
-    
+
     :Parameters:
-    
+
         prop: `str`
             The name of the CF property.
-    
+
             *Parameter example:*
               ``prop='long_name'``
-    
+
         default: optional
             Return the value of the *default* parameter if the
             property does not exist. If set to an `Exception` instance
@@ -1632,12 +1632,12 @@ class PropertiesDataBounds(PropertiesData):
             TODO 1.8
 
     :Returns:
-    
+
             The value of the named property or the default value, if
             set.
-    
+
     **Examples:**
-    
+
     >>> f.set_property('project', 'CMIP7')
     >>> f.has_property('project')
     True
@@ -1662,7 +1662,7 @@ class PropertiesDataBounds(PropertiesData):
             if out is not None:
                 return out
         # --- End: if
-        
+
         return super().get_property(prop, default)
 
     @_inplace_enabled
@@ -1728,11 +1728,11 @@ class PropertiesDataBounds(PropertiesData):
 
         interior_ring = v.get_interior_ring(None)
         if interior_ring is not None:
-            axes = self._parse_axes(axes)            
+            axes = self._parse_axes(axes)
             interior_ring.flatten(axes, inplace=True)
 
         return v
-    
+
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -2090,7 +2090,7 @@ class PropertiesDataBounds(PropertiesData):
                 axes = v._parse_axes(axes)
 
             bounds.flip(axes, inplace=True)
-            
+
         return v
 
     @_deprecated_kwarg_check('i')
@@ -2858,39 +2858,39 @@ class PropertiesDataBounds(PropertiesData):
     By default all size one axes are removed, but particular size one
     axes may be selected for removal. Corresponding axes are also
     removed from the bounds data array, if present.
-    
+
     .. seealso:: `flip`, `insert_dimension`, `transpose`
-    
+
     :Parameters:
-    
+
         axes: (sequence of) `int`
             The positions of the size one axes to be removed. By
             default all size one axes are removed. Each axis is
             identified by its original integer position. Negative
             integers counting from the last position are allowed.
-    
+
             *Parameter example:*
               ``axes=0``
-    
+
             *Parameter example:*
               ``axes=-2``
-    
+
             *Parameter example:*
               ``axes=[2, 0]``
-    
+
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
-    
+
         i: deprecated at version 3.0.0
             Use *inplace* parameter instead.
 
     :Returns:
-    
+
             The new construct with removed data axes. If the operation
             was in-place then `None` is returned.
-    
+
     **Examples:**
-    
+
     >>> f.shape
     (1, 73, 1, 96)
     >>> f.squeeze().shape

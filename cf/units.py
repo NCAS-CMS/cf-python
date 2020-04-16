@@ -4,7 +4,7 @@ if _libpath is None:
     raise FileNotFoundError(
         "cf requires UNIDATA UDUNITS-2. Can't find the 'udunits2' library.")
 
-from  cfunits import Units as cfUnits
+from cfunits import Units as cfUnits
 
 
 class Units:
