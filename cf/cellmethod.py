@@ -534,7 +534,7 @@ class CellMethod(cfdm.CellMethod):
         axes = self.get_axes(None)
         if axes is not None:
             out.append("{}.set_axes({!r})".format(name, axes))
-            
+
         for term, value in self.qualifiers().items():
             if term == 'interval':
                 value = deepcopy(value)
@@ -546,7 +546,7 @@ class CellMethod(cfdm.CellMethod):
                     else:
                         value[i] = str(data)
                 # --- End: for
-                
+
                 value = ', '.join(value)
                 value = "["+value+"]"
             else:

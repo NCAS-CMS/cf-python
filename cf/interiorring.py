@@ -20,19 +20,19 @@ class InteriorRing(mixin.PropertiesData,
     the outer boundary of the land area; the other, recorded as an
     interior ring, is the lake boundary, defining the inner boundary
     of the land area.
-    
+
     **NetCDF interface**
-    
+
     The netCDF variable name of the interior ring variable may be
     accessed with the `nc_set_variable`, `nc_get_variable`,
     `nc_del_variable` and `nc_has_variable` methods.
-    
+
     The name of the netCDF dimension spanned by the interior ring
     variable's data (which does not correspond to a domain axis
     construct) may be accessed with the `nc_set_dimension`,
     `nc_get_dimension`, `nc_del_dimension` and `nc_has_dimension`
     methods.
-    
+
     .. versionadded:: 3.2.0
 
     '''

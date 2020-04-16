@@ -32,7 +32,7 @@ class FieldTest(unittest.TestCase):
 
         self.filename1 = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                       'regrid_file1.nc')
-        
+
         self.chunk_sizes = (100000, 300, 34, 17)
         self.original_chunksize = cf.CHUNKSIZE()
         self.atol = cf.ATOL()
@@ -1611,7 +1611,7 @@ class FieldTest(unittest.TestCase):
             g = f.convolution_filter(window, axis=-1, mode=mode, cval=0.0)
             self.assertTrue((g.array == convolve1d(f.array, window, axis=-1,
                                                    mode=mode)).all())
-        
+
 #    def test_Field_moving_mean(self):
 #        if self.test_only and inspect.stack()[0][3] not in self.test_only:
 #            return
@@ -1622,7 +1622,7 @@ class FieldTest(unittest.TestCase):
 #
 #        g = f.moving_mean(window_size=3, axis='X', inplace=True)
 #        self.assertTrue(g is None)
-#        
+#
 #        f = cf.example_field(0)
 #        a = f.array
 #
@@ -1638,16 +1638,16 @@ class FieldTest(unittest.TestCase):
 #                g = f.moving_mean(window_size=3, axis='X', mode=mode,
 #                                  cval=39)
 #
-#            for i in range(1, 7):            
+#            for i in range(1, 7):
 #                x = (a[:, i-1:i+2] * weights[i-1:i+2]).sum(axis=1) / weights[i-1:i+2].sum()
 #                numpy.testing.assert_allclose(x, g.array[:, i])
 #        # --- End: for
-#        
+#
 #        # Test 'wrap'
 #        for mode in (None, 'wrap'):
 #            g = f.moving_mean(window_size=3, axis='X',
 #                              weights=weights, mode=mode)
-#            
+#
 #            for i, ii in zip([0, -1], ([0, 1, -1], [0, -2, -1])):
 #                x = (a[:, ii] * weights[ii]).sum(axis=1) / weights[ii].sum()
 #                numpy.testing.assert_allclose(x, g.array[:, i])
@@ -1671,7 +1671,7 @@ class FieldTest(unittest.TestCase):
 #        for mode in (None, 'wrap'):
 #            g = f.moving_mean(window_size=3, axis='X',
 #                              weights=weights, mode=mode, origin=1)
-#            
+#
 #            for i, ii in zip([-2, -1], ([0, -2, -1], [0, 1, -1])):
 #                x = (a[:, ii] * weights[ii]).sum(axis=1) / weights[ii].sum()
 #                numpy.testing.assert_allclose(x, g.array[:, i])
@@ -1683,12 +1683,12 @@ class FieldTest(unittest.TestCase):
 #        for constant in (None, 0):
 #            g = f.moving_mean(window_size=3, axis='X',
 #                              weights=weights, mode='constant',
-#                              cval=constant)            
+#                              cval=constant)
 #            for i, ii in zip([0, -1], ([0, 1], [-2, -1])):
 #                x = (a[:, ii] * weights[ii]).sum(axis=1) / weights[ii].sum()
 #                numpy.testing.assert_allclose(x, g.array[:, i])
 #        # --- End: for
-#        
+#
 #        # ------------------------------------------------------------
 #        # Weights broadcasting
 #        # ------------------------------------------------------------
@@ -1712,11 +1712,11 @@ class FieldTest(unittest.TestCase):
         g = f.moving_window('mean', window_size=3, axis='X',
                             inplace=True)
         self.assertTrue(g is None)
-        
+
         with self.assertRaises(ValueError):
             _ = f.moving_window('mean', window_size=3, axis='X',
                                 cval=39)
-    
+
         f = cf.example_field(0)
         a = f.array
 
@@ -1728,35 +1728,35 @@ class FieldTest(unittest.TestCase):
                          'mirror'):
                 g = f.moving_window(method, window_size=3, axis='X',
                                     weights=weights, mode=mode)
-    
+
                 for i in range(1, 7):
-                    if method in ('mean', 'integral'):                
+                    if method in ('mean', 'integral'):
                         x = (a[:, i-1:i+2] * weights[i-1:i+2]).sum(axis=1)
-                        
+
                     if method == 'sum':
                         x = a[:, i-1:i+2].sum(axis=1)
-                        
+
                     if method == 'mean':
                         x /= weights[i-1:i+2].sum()
-                        
+
                     numpy.testing.assert_allclose(x, g.array[:, i])
             # --- End: for
-        
+
             # Test 'wrap'
             for mode in (None, 'wrap'):
                 g = f.moving_window(method, window_size=3, axis='X',
                                     weights=weights, mode=mode)
-                
+
                 for i, ii in zip([0, -1], ([0, 1, -1], [0, -2, -1])):
-                    if method in ('mean', 'integral'):                
+                    if method in ('mean', 'integral'):
                         x = (a[:, ii] * weights[ii]).sum(axis=1)
-                        
+
                     if method == 'sum':
                         x = a[:, ii].sum(axis=1)
-                        
+
                     if method == 'mean':
                         x /=  weights[ii].sum()
-                            
+
                     numpy.testing.assert_allclose(x, g.array[:, i])
             # --- End: for
 
@@ -1767,61 +1767,61 @@ class FieldTest(unittest.TestCase):
                          'mirror'):
                 g = f.moving_window(method, window_size=3, axis='X',
                                     weights=weights, mode=mode, origin=1)
-    
+
                 for i in range(0, 6):
                     ii = slice(i, i+3)
-    
-                    if method in ('mean', 'integral'):                
+
+                    if method in ('mean', 'integral'):
                         x = (a[:, ii] * weights[ii]).sum(axis=1)
-                        
+
                     if method == 'sum':
                         x = a[:, ii].sum(axis=1)
-                        
+
                     if method == 'mean':
                         x /=  weights[ii].sum()
-                                                        
+
                     numpy.testing.assert_allclose(x, g.array[:, i])
             # --- End: for
-    
+
             # Test 'wrap'
             for mode in (None, 'wrap'):
                 g = f.moving_window(method, window_size=3, axis='X',
                                     weights=weights, mode=mode,
                                     origin=1)
-                
+
                 for i, ii in zip([-2, -1], ([0, -2, -1], [0, 1, -1])):
-                    if method in ('mean', 'integral'):                
+                    if method in ('mean', 'integral'):
                         x = (a[:, ii] * weights[ii]).sum(axis=1)
-                            
+
                     if method == 'sum':
                         x = a[:, ii].sum(axis=1)
-                    
+
                     if method == 'mean':
                         x /=  weights[ii].sum()
-                    
+
                     numpy.testing.assert_allclose(x, g.array[:, i])
             # --- End: for
-    
+
             # ------------------------------------------------------------
             # Constant
             # ------------------------------------------------------------
             for constant in (None, 0):
                 g = f.moving_window(method, window_size=3, axis='X',
                                     weights=weights, mode='constant',
-                                    cval=constant)            
+                                    cval=constant)
                 for i, ii in zip([0, -1], ([0, 1], [-2, -1])):
-                    if method in ('mean', 'integral'):                
+                    if method in ('mean', 'integral'):
                         x = (a[:, ii] * weights[ii]).sum(axis=1)
-                        
+
                     if method == 'sum':
                         x = a[:, ii].sum(axis=1)
-                        
+
                     if method == 'mean':
                         x /=  weights[ii].sum()
-                        
+
                     numpy.testing.assert_allclose(x, g.array[:, i])
         # --- End: for
-        
+
         # ------------------------------------------------------------
         # Weights broadcasting
         # ------------------------------------------------------------

@@ -754,11 +754,11 @@ class _Meta:
         `Units` or `None`
 
         '''
-        if variable.has_data():        
+        if variable.has_data():
             var_units = variable.Units
         elif variable.has_bounds():
             var_units = variable.bounds.Units
-            
+
         _canonical_units = self._canonical_units
 
         if identity in _canonical_units:
@@ -2215,7 +2215,7 @@ def _create_hash_and_first_values(meta, axes, donotchecknonaggregatingaxes,
                              first_and_last_bounds=False,
                              hfl_cache=hfl_cache, rtol=rtol,
                              atol=atol)
-                    
+
                 if domain_anc.has_bounds():
                     # Get the hash of the bounds data array
                     hb = _get_hfl(domain_anc.bounds, canonical_units,
@@ -2226,7 +2226,7 @@ def _create_hash_and_first_values(meta, axes, donotchecknonaggregatingaxes,
                                   atol=atol)
                     h = (h, hb)
                 else:
-                    h = (h,)                
+                    h = (h,)
 
                 anc['hash_value'] = h
 

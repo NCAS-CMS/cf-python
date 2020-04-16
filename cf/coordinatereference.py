@@ -817,7 +817,7 @@ class CoordinateReference(cfdm.CoordinateReference):
         if coordinates:
             out.append("{}.set_coordinates({})".format(name,
                                                        coordinates))
-            
+
         for term, value in self.datum.parameters().items():
             if isinstance(value, Data):
                 value = value.creation_commands(name=None,

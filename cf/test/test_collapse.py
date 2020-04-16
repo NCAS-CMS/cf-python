@@ -44,7 +44,7 @@ class Field_collapseTest(unittest.TestCase):
         g = f.collapse('T: max within years time: minimum over years', within_years=cf.seasons())
         expected_shape = list(f.shape)
         expected_shape[0] = 4
-        
+
         if verbose:
             print('\n',f)
             print(g)
@@ -55,7 +55,7 @@ class Field_collapseTest(unittest.TestCase):
                        within_years=cf.M())
         expected_shape = list(f.shape)
         expected_shape[0] = 12
-        
+
         if verbose:
             print('\n',f)
             print(g)
@@ -65,7 +65,7 @@ class Field_collapseTest(unittest.TestCase):
         g = f.collapse('T: max within years time: minimum over years', within_years=cf.M())
         expected_shape = list(f.shape)
         expected_shape[0] = 12
-  
+
         if verbose:
             print('\n',f)
             print(g)
@@ -76,7 +76,7 @@ class Field_collapseTest(unittest.TestCase):
                             within_years=cf.seasons())
         expected_shape = list(f.shape)
         expected_shape[0] = 4
-        
+
         if verbose:
             print('\n',f[:12])
             print(g)
@@ -313,7 +313,7 @@ class Field_collapseTest(unittest.TestCase):
         verbose = False
 
         f = cf.example_field(2)
-        
+
         if verbose:
             print(f)
 
@@ -329,11 +329,11 @@ class Field_collapseTest(unittest.TestCase):
         verbose = False
 
         f = cf.example_field(2)
-        
+
         g = f.collapse('T: mean', group=cf.M(12), group_span=cf.Y())
         expected_shape = list(f.shape)
         expected_shape[0] = 2
-        
+
         if verbose:
             print(f)
             print(g)
@@ -343,7 +343,7 @@ class Field_collapseTest(unittest.TestCase):
         g = f.collapse('T: mean', group=cf.M(12, month=12), group_span=cf.Y())
         expected_shape = list(f.shape)
         expected_shape[0] = 3
-        
+
         if verbose:
             print(f)
             print(g)
@@ -353,7 +353,7 @@ class Field_collapseTest(unittest.TestCase):
         g = f.collapse('T: mean', group=cf.M(12, day=16), group_span=cf.Y())
         expected_shape = list(f.shape)
         expected_shape[0] = 2
-        
+
         if verbose:
             print(f)
             print(g)
@@ -380,7 +380,7 @@ class Field_collapseTest(unittest.TestCase):
             print(g.dimension_coordinates('T').value().bounds.data.datetime_array)
             print(g.constructs)
         self.assertTrue(list(g.shape) == expected_shape, g.shape)
-        
+
         g = f.collapse('T: mean', group=cf.M(5, month=12), group_span=cf.M(5), group_contiguous=1)
         expected_shape = list(f.shape)
         expected_shape[0] = 7
@@ -391,7 +391,7 @@ class Field_collapseTest(unittest.TestCase):
             print(g.dimension_coordinates('T').value().bounds.data.datetime_array)
             print(g.constructs)
         self.assertTrue(list(g.shape) == expected_shape, g.shape)
-        
+
         g = f.collapse('T: mean', group=cf.M(5, month=12), group_span=cf.M(5), group_contiguous=1)
         expected_shape = list(f.shape)
         expected_shape[0] = 7
@@ -438,7 +438,7 @@ class Field_collapseTest(unittest.TestCase):
             print(g.dimension_coordinates('T').value().bounds.data.datetime_array)
             print(g.constructs)
         self.assertTrue(list(g.shape) == expected_shape, g.shape)
-        
+
         g = f.collapse('T: mean', group=cf.M(5, month=3))
         expected_shape = list(f.shape)
         expected_shape[0] = 7

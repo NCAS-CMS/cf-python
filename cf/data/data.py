@@ -2148,7 +2148,7 @@ place.
      [ 0.5 -1. ]]
     >>> print(d.diff(axis=0).array)
     [[4.  3.5 4.  4. ]
-     [4.  4.5 4.5 4. ]]    
+     [4.  4.5 4.5 4. ]]
     >>> print(d.diff(axis=0, n=2).array)
     [[0.  1.  0.5 0. ]]
     >>> d[1, 2] = cf.masked
@@ -2179,14 +2179,14 @@ place.
         out = d
         for _ in range(n):
             sections = out.section(axis, chunks=True)
-            
+
             # Diff each section
             for key, data in sections.items():
                 output_array = numpy_diff(data.array, axis=axis)
-                
+
                 sections[key] = type(self)(output_array, units=self.Units,
                                            fill_value=self.fill_value)
-                
+
             # Glue the sections back together again
             out = self.__class__.reconstruct_sectioned_data(sections)
 
@@ -2194,7 +2194,7 @@ place.
             d.__dict__ = out.__dict__
         else:
             d = out
-            
+
         return d
 
     def dumps(self):
@@ -3351,7 +3351,7 @@ place.
         `Data` or `None`
             The convolved data, or `None` if the operation was
             in-place.
-        
+
     **Examples:**
 
     >>> d = cf.Data(numpy.arange(12).reshape(3, 4), 'metres')
@@ -3360,7 +3360,7 @@ place.
      [ 4,  5,  6,  7],
      [ 8,  9, 10, 11]])
     >>> d.cyclic()
-    set()    
+    set()
     >>> e = d.convolution_filter([0.1, 0.5, 0.25], axis=1)
     >>> print(e.array)
     [[-- 0.7 1.55 --]
@@ -3400,7 +3400,7 @@ place.
             raise ValueError("TODO")
 
         iaxis = iaxis[0]
-                
+
         # Default mode to 'wrap' if the axis is cyclic
         if mode is None:
             if iaxis in d.cyclic():
@@ -3438,9 +3438,9 @@ place.
                                        fill_value=self.fill_value)
 
         # Glue the sections back together again
-        out = self.reconstruct_sectioned_data(sections, 
+        out = self.reconstruct_sectioned_data(sections,
                                               cyclic=self.cyclic())
-        
+
         if inplace:
             d.__dict__ = out.__dict__
         else:
@@ -3551,14 +3551,14 @@ place.
                             numpy_arange(1, size+1).reshape(shape))
                 array = numpy.ma.array(array, mask=new_mask,
                                        copy=False)
-               
+
             sections[key] = type(self)(array, units=self.Units,
                                        fill_value=self.fill_value)
 
         # Glue the sections back together again
         out = self.reconstruct_sectioned_data(sections,
                                               cyclic=self.cyclic())
-        
+
         if inplace:
             d.__dict__ = out.__dict__
         else:
@@ -4870,7 +4870,7 @@ place.
             namespace = ""
 
         indent = ' ' * indent
-        
+
         mask = self.mask
         if mask.any():
             masked = True
@@ -4912,7 +4912,7 @@ place.
             name = ''
         else:
             name = name + " = "
-            
+
         out = []
         out.append("{0}{1}{2}({3}{4}{5}, dtype={6!r}{7}{8})".format(
             name,
@@ -7177,19 +7177,19 @@ dimensions.
             partition = next(flat)
             datatype = partition.subarray.dtype
             if datatype is None:
-                partition.open(config)                    
+                partition.open(config)
                 datatype = partition.array.dtype
                 partition.close()
 
             for partition in flat:
                 array = partition.subarray
                 if array.dtype is None:
-                    partition.open(config)                    
+                    partition.open(config)
                     array = partition.array
                     partition.close()
 
                 datatype = numpy_result_type(datatype, array)
-                
+
             self._dtype = datatype
 
         return datatype
@@ -8727,7 +8727,7 @@ False
                     out.cyclic(cyclic)
                     if hardmask is not None:
                         out.hardmask = hardmask
-                        
+
                     return out
             # --- End: if
 
@@ -9716,10 +9716,10 @@ False
     >>> print(d.array)
     [[0  1  2  3]
      [4 --  6  7]
-     [8  9 10 --]]    
+     [8  9 10 --]]
     >>> print(d.compressed().array)
     [ 0  1  2  3  4  6  7  8  9 10]
-    
+
     >>> d = cf.Data(9)
     >>> print(d.array)
     9
@@ -9730,10 +9730,10 @@ False
         d = _inplace_enabled_define_and_cleanup(self)
 
         ndim = d.ndim
-        
+
         if ndim != 1:
             d.flatten(inplace=True)
-        
+
         n_non_missing = d.count()
         if n_non_missing == d.size:
             return d
@@ -9751,13 +9751,13 @@ False
         for _ in range(1 + d.size//n):
             if i >= d.size:
                 break
-            
+
             array = d[i:i+n].array
             if numpy_ma_isMA(array):
                 array = array.compressed()
 
             size = array.size
-            if size >= 1:            
+            if size >= 1:
                 end  = start + size
                 comp[start:end] = array
                 start = end
@@ -9766,12 +9766,12 @@ False
 
         if not d.ndim:
             comp.squeeze(inplace=True)
-            
+
         if inplace:
             d.__dict__ = comp.__dict__
         else:
             d = comp
-            
+
         return d
 
     @_deprecated_kwarg_check('i')
@@ -10170,9 +10170,9 @@ False
         * Ragged arrays for discrete sampling geometries (DSG). Three
           different types of ragged array representation are
           supported.
-        
+
         ..
-        
+
         * Compression by gathering.
 
     .. versionadded:: 3.0.6
@@ -11177,7 +11177,7 @@ False
             'update': True,
             'serial': True,
         }
-        
+
         if kwargs:
             config.update(kwargs)
 

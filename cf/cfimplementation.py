@@ -36,7 +36,7 @@ class CFImplementation(cfdm.CFDMImplementation):
 
     .. versionadded:: 3.0.0
 
-    '''    
+    '''
 # --- End: class
 
 
@@ -76,16 +76,16 @@ def implementation():
     '''Return a container for the CF data model implementation.
 
     .. versionadded:: 3.1.0
-    
+
     .. seealso:: `cf.example_field`, `cf.read`, `cf.write`
-    
+
     :Returns:
-    
+
         `CFImplementation`
             A container for the CF data model implementation.
-    
+
     **Examples:**
-    
+
     >>> i = cf.implementation()
     >>> i
     <CFDMImplementation: >
@@ -114,7 +114,7 @@ def implementation():
      'Index': cf.index.Index,
      'NodeCountProperties': cf.nodecountproperties.NodeCountProperties,
      'PartNodeCountProperties': cf.partnodecountproperties.PartNodeCountProperties}
-    
+
     '''
     return _implementation.copy()
 

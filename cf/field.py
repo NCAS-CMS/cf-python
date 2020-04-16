@@ -5305,10 +5305,10 @@ class Field(mixin.PropertiesData,
             then setting the *axes* parameter is required so that the
             braodcasting can be inferred, otherwise setting the *axes*
             is not required.
- 
+
             *Parameter example:*
               ``axes='T'``
- 
+
             *Parameter example:*
               ``axes=['longitude']``
 
@@ -5316,7 +5316,7 @@ class Field(mixin.PropertiesData,
               ``axes=[3, 1]``
 
             .. versionadded:: 3.3.0
-            
+
         kwargs: deprecated at version 3.0.0.
 
     :Returns:
@@ -5370,7 +5370,7 @@ class Field(mixin.PropertiesData,
             w.set_data(data, copy=False)
             w.long_name = 'weight'
             w.comment   = 'Weights for {!r}'.format(self)
-            
+
             return w
         # --- End: def
 
@@ -5515,7 +5515,7 @@ class Field(mixin.PropertiesData,
 
             '''
             out = set()
-            
+
             xdims = dict(self.dimension_coordinates('X'))
             ydims = dict(self.dimension_coordinates('Y'))
 
@@ -5751,7 +5751,7 @@ class Field(mixin.PropertiesData,
 
                 weights_axes.update(axes0)
             #--- End: for
-            
+
             return True
         #--- End: def
 
@@ -5764,14 +5764,14 @@ class Field(mixin.PropertiesData,
 
             if axes is not None:
                 if isinstance(axes, (str, int)):
-                    axes = (axes,)                
+                    axes = (axes,)
 
                 if len(axes) != w.ndim:
                     raise ValueError(
                         "'axes' parameter must provide an axis identifier "
                         "for each weights data dimension. Got {!r} for {} "
                         "dimension(s).".format(axes, w.ndim))
-                    
+
                 iaxes = [field_data_axes.index(self.domain_axis(axis, key=True))
                          for axis in axes]
 
@@ -5781,16 +5781,16 @@ class Field(mixin.PropertiesData,
                             w = w.insert_dimension(position=i)
                             iaxes.insert(i, i)
                     # --- End: for
-                        
+
                     w = w.transpose(iaxes)
 
                     if w.ndim > 0:
                         while w.shape[0] == 1:
                             w = w.squeeze(0)
-                            
+
             else:
                 iaxes = list(range(self.ndim-w.ndim, self.ndim))
-            
+
             if not (components or methods):
                 if not self._is_broadcastable(w.shape):
                     raise ValueError(
@@ -5801,7 +5801,7 @@ class Field(mixin.PropertiesData,
                 axes0 = field_data_axes[self.ndim-w.ndim:]
             else:
                 axes0 = [field_data_axes[i] for i in iaxes]
-                
+
             for axis0 in axes0:
                 if axis0 in weights_axes:
                     raise ValueError(
@@ -5811,11 +5811,11 @@ class Field(mixin.PropertiesData,
 
             if methods:
                 comp[tuple(axes0)] = 'custom data'
-            else:                
+            else:
                 comp[tuple(axes0)] = w
 
             weights_axes.update(axes0)
-            
+
             return True
         # --- End: def
 
@@ -5858,7 +5858,7 @@ class Field(mixin.PropertiesData,
               }
 
     :Parameters:
-            
+
         data_lambda: `Data`
             Longitudes. Must have units of radians, which is not
             checked.
@@ -5868,22 +5868,22 @@ class Field(mixin.PropertiesData,
             checked.
 
     :Returns:
-            
+
         `Data`
             The interior angles in units of radians.
 
             '''
             delta_lambda = data_lambda.diff(axis=-1)
-            
+
             cos_phi = data_phi.cos()
             sin_phi = data_phi.sin()
-            
+
             cos_phi_1 = cos_phi[...,  :-1]
             cos_phi_2 = cos_phi[..., 1:]
-            
+
             sin_phi_1 = sin_phi[...,  :-1]
             sin_phi_2 = sin_phi[..., 1:]
-                            
+
             cos_delta_lambda = delta_lambda.cos()
             sin_delta_lambda = delta_lambda.sin()
 
@@ -5891,7 +5891,7 @@ class Field(mixin.PropertiesData,
                 (cos_phi_2*sin_delta_lambda)**2 +
                 (cos_phi_1*sin_phi_2 - sin_phi_1*cos_phi_2*cos_delta_lambda)**2
             )**0.5
-            
+
             denominator = (sin_phi_1*sin_phi_2 +
                            cos_phi_1*cos_phi_2*cos_delta_lambda)
 
@@ -5901,9 +5901,9 @@ class Field(mixin.PropertiesData,
             interior_angle = (numerator/denominator).arctan()
 
             interior_angle.override_units(_units_1, inplace=True)
-            
+
             return interior_angle
-        
+
         def _yyy(self, geometry_type, auto=False):
             '''TODO
 
@@ -5917,9 +5917,9 @@ class Field(mixin.PropertiesData,
         auto: `bool`
 
     :Returns:
-            
+
         `tuple`
-            
+
             '''
             aux_X = None
             aux_Y = None
@@ -5927,7 +5927,7 @@ class Field(mixin.PropertiesData,
             x_axis = None
             y_axis = None
             z_axis = None
-            
+
             for key, aux in self.auxiliary_coordinates.filter_by_naxes(1).items():
                 if aux.get_geometry(None) != geometry_type:
                     continue
@@ -5940,40 +5940,40 @@ class Field(mixin.PropertiesData,
                     y_axis = self.get_data_axes(key)[0]
                 elif aux.Z:
                     aux_Z = aux.copy()
-                    z_axis = self.get_data_axes(key)[0]                    
+                    z_axis = self.get_data_axes(key)[0]
             # --- End: for
-                        
+
             if aux_X is None or aux_Y is None:
                 if auto:
                     return (None,) * 4
-                
+
                 raise ValueError(
                     "Can't create weights: Need both X and Y nodes to "
                     "calculate {} geometry weights".format(
                         geometry_type))
-                    
+
 
             if x_axis != y_axis:
                 if auto:
                     return (None,) * 4
-                
+
                 raise ValueError(
                     "Can't create weights: X and Y nodes span different "
                     "domain axes")
 
             axis = x_axis
-             
+
             if aux_X.get_bounds(None) is None or aux_Y.get_bounds(None) is None:
                 # Not both coordinates have bounds
                 if auto:
-                    return (None,) * 4    
-                
+                    return (None,) * 4
+
                 raise ValueError("Not both X and Y coordinates have bounds")
-            
+
             if aux_X.bounds.shape != aux_Y.bounds.shape:
                 if auto:
-                    return (None,) * 4    
-                
+                    return (None,) * 4
+
                 raise ValueError(
                     "Can't find weights: X and Y geometry coordinate bounds "
                     "must have the same shape. Got {} and {}".format(
@@ -5992,15 +5992,15 @@ class Field(mixin.PropertiesData,
                 for key, aux in self.auxiliary_coordinates.filter_by_naxes(1).items():
                     if aux.Z:
                         aux_Z = aux.copy()
-                        z_axis = self.get_data_axes(key)[0]                    
+                        z_axis = self.get_data_axes(key)[0]
             # --- End: if
-                        
+
             # Check Z coordinates
             if aux_Z is not None:
                 if z_axis != x_axis:
                     if auto:
                         return (None,) * 4
-                    
+
                     raise ValueError(
                         "Z coordinates spans different dimension to X and Y "
                         "geometry coordinates")
@@ -6008,7 +6008,7 @@ class Field(mixin.PropertiesData,
 
             return axis, aux_X, aux_Y, aux_Z
         # --- End: def
-            
+
         def _area_weights_geometry(self, comp, weights_axes,
                                    auto=False, measure=False,
                                    radius=None, great_circle=False,
@@ -6021,16 +6021,16 @@ class Field(mixin.PropertiesData,
             axis, aux_X, aux_Y, aux_Z = _yyy(self, 'polygon', auto=auto)
 
             if axis is None and auto:
-                return False              
+                return False
 
             if axis in weights_axes:
                 if auto:
                     return False
-                
+
                 raise ValueError(
                     "Multiple weights specifications for {!r} axis".format(
                         self.constructs.domain_axis_identity(axis)))
-            
+
             # Check for interior rings
             interior_ring_X = aux_X.get_interior_ring(None)
             interior_ring_Y = aux_Y.get_interior_ring(None)
@@ -6056,7 +6056,7 @@ class Field(mixin.PropertiesData,
                         "incorrect shape. Got {}, expected {}".format(
                             interior_ring.shape, aux_X.bounds.shape[:-1]))
             # --- End: if
-            
+
             x = aux_X.bounds.data
             y = aux_Y.bounds.data
 
@@ -6072,13 +6072,13 @@ class Field(mixin.PropertiesData,
                 # polygons, which require the great circle assumption.
                 # ----------------------------------------------------
                 spherical = False
-                
+
                 if methods:
                     comp[(axis,)] = 'area plane polygon geometry'
                     return True
 
                 y.Units = x.Units
-                
+
                 all_areas = ((x[...,:-1] * y[..., 1:]).sum(-1, squeeze=True) -
                              (x[..., 1:] * y[...,:-1]).sum(-1, squeeze=True))
 
@@ -6086,7 +6086,7 @@ class Field(mixin.PropertiesData,
                     for j, (nodes_x, nodes_y) in enumerate(zip(parts_x, parts_y)):
                         nodes_x = nodes_x.compressed()
                         nodes_y = nodes_y.compressed()
-                        
+
                         if ((nodes_x.size and nodes_x[0] != nodes_x[-1]) or
                             (nodes_y.size and nodes_y[0] != nodes_y[-1])):
                             # First and last nodes of this polygon
@@ -6095,9 +6095,9 @@ class Field(mixin.PropertiesData,
                             # joins the first and last points.
                             all_areas[i, j] += x[-1]*y[0] - x[0]*y[-1]
                 # --- End: for
-                
+
                 all_areas = all_areas.abs() * 0.5
-                    
+
             elif (x.Units.equivalent(_units_radians) and
                   y.Units.equivalent(_units_radians)):
                 # ----------------------------------------------------
@@ -6114,7 +6114,7 @@ class Field(mixin.PropertiesData,
                 # where A_{n} denotes the n-th interior angle.
                 # ----------------------------------------------------
                 spherical = True
-                
+
                 if not great_circle:
                     raise ValueError(
                         "Must set great_circle=True to allow the derivation of "
@@ -6124,7 +6124,7 @@ class Field(mixin.PropertiesData,
                 if methods:
                     comp[(axis,)] = 'area spherical polygon geometry'
                     return True
-                    
+
                 x.Units = _units_radians
                 y.Units = _units_radians
 
@@ -6160,24 +6160,24 @@ class Field(mixin.PropertiesData,
                         "A spherical polygon geometry part has negative area")
 
             else:
-                # 
+                #
                 return
-            
+
             # Change the sign of areas for polygons that are interior
             # rings
             if interior_ring is not None:
                 all_areas.where(interior_ring, -all_areas, inplace=True)
-                
+
             if return_areas:
                 return all_areas
-            
+
             # Sum the areas of each part to get the total area of each
             # cell
             areas = all_areas.sum(-1, squeeze=True)
 
-            if measure and spherical and aux_Z is not None:           
+            if measure and spherical and aux_Z is not None:
                 # Multiply by radius squared, accounting for any Z
-                # coordinates, to get the actual area                
+                # coordinates, to get the actual area
                 z = aux_Z.get_data(None)
                 if z is None:
                     r = radius
@@ -6187,7 +6187,7 @@ class Field(mixin.PropertiesData,
                             "Z coordinates must have units equivalent to "
                             "metres for area calculations. Got {!r}".format(
                                 z.Units))
-                    
+
                     positive = aux_Z.get_property('positive', None)
                     if positive is None:
                         raise ValueError("TODO")
@@ -6204,38 +6204,38 @@ class Field(mixin.PropertiesData,
 
                 areas *= r**2
             #--- End: if
-            
+
             comp[(axis,)] = areas
-            
+
             weights_axes.add(axis)
-            
+
             return True
         #--- End: def
-        
+
         def _line_weights_geometry(self, comp, weights_axes,
                                    auto=False, measure=False,
                                    radius=None, great_circle=False):
             '''TODO
-            
+
     .. versionadded:: 3.2.0
 
             '''
             axis, aux_X, aux_Y, aux_Z = _yyy(self, 'line', auto=auto)
 
             if axis is None and auto:
-                return False              
-            
+                return False
+
             if axis in weights_axes:
                 if auto:
                     return False
-                
+
                 raise ValueError(
                     "Multiple weights specifications for {!r} axis".format(
                         self.constructs.domain_axis_identity(axis)))
 
             x = aux_X.bounds.data
             y = aux_Y.bounds.data
-            
+
             if (x.Units.equivalent(_units_metres) and
                 y.Units.equivalent(_units_metres)):
                 # ----------------------------------------------------
@@ -6247,15 +6247,15 @@ class Field(mixin.PropertiesData,
                 if methods:
                     comp[(axis,)] = 'linear plane line geometry'
                     return True
-                
+
                 y.Units = x.Units
-                
+
                 delta_x = x.diff(axis=-1)
                 delta_y = y.diff(axis=-1)
-                
+
                 all_lengths = (delta_x**2 + delta_y**2)**0.5
                 all_lengths = all_lengths.sum(-1, squeeze=True)
-                
+
             elif (x.Units.equivalent(_units_radians) and
                   y.Units.equivalent(_units_radians)):
                 # ----------------------------------------------------
@@ -6274,43 +6274,43 @@ class Field(mixin.PropertiesData,
                     raise ValueError(
                         "Must set great_circle=True to allow the derivation "
                         "of line-length weights from great circle segments.")
-                
+
                 if methods:
                     comp[(axis,)] = 'linear spherical line geometry'
                     return True
-                
+
                 x.Units = _units_radians
                 y.Units = _units_radians
-                
+
                 interior_angle = _interior_angle(x, y)
                 if interior_angle.min() < 0:
                     raise ValueError(
                         "A spherical line geometry segment has "
                         "negative length: {!r}".format(
                             interior_angle.min()*radius))
-                
+
                 all_lengths = interior_angle.sum(-1, squeeze=True)
-                
+
                 if measure:
                     all_lengths *= radius
             else:
-                # 
+                #
                 return
-                        
+
             # Sum the lengths of each part to get the total length of
             # each cell
             lengths = all_lengths.sum(-1, squeeze=True)
-            
+
             comp[(axis,)] = lengths
-            
+
             weights_axes.add(axis)
         #--- End: def
-            
+
         def _volume_weights_geometry(self, comp, weights_axes,
                                      auto=False, measure=False,
                                      radius=None, great_circle=False):
             '''TODO
-            
+
     .. versionadded:: 3.2.0
 
             '''
@@ -6318,17 +6318,17 @@ class Field(mixin.PropertiesData,
                                              auto=auto)
 
             if axis is None and auto:
-                return False              
-            
+                return False
+
 
             if axis in weights_axes:
                 if auto:
                     return False
-                
+
                 raise ValueError(
                     "Multiple weights specifications for {!r} axis".format(
                         self.constructs.domain_axis_identity(axis)))
-        
+
             x = aux_X.bounds.data
             y = aux_Y.bounds.data
             z = aux_Z.bounds.data
@@ -6336,11 +6336,11 @@ class Field(mixin.PropertiesData,
             if not z.Units.equivalent(_units_metres):
                 if auto:
                     return
-                
+
                 raise ValueError("TODO")
 
             delta_z = abs(z[..., 1] - z[ ..., 0])
-            
+
             if (x.Units.equivalent(_units_metres) and
                 y.Units.equivalent(_units_metres)):
                 # ----------------------------------------------------
@@ -6352,9 +6352,9 @@ class Field(mixin.PropertiesData,
                 if methods:
                     comp[(axis,)] = 'volume plane polygon geometry'
                     return True
-                
+
                 all_volumes = delta_z
-                        
+
                 if measure:
                     all_areas = _area_weights_geometry(self, comp,
                                                        weights_axes,
@@ -6363,7 +6363,7 @@ class Field(mixin.PropertiesData,
                                                        radius=radius,
                                                        great_circle=great_circle,
                                                        return_areas=True)
-                        
+
                     all_volumes = all_areas * all_volumes
 
             elif (x.Units.equivalent(_units_radians) and
@@ -6389,9 +6389,9 @@ class Field(mixin.PropertiesData,
                 if methods:
                     comp[(axis,)] = 'volume spherical polygon geometry'
                     return True
-                    
+
                 all_volumes = (delta_z + radius)**3 - radius**3
-                        
+
                 if measure:
                     all_areas = _area_weights_geometry(self, comp,
                                                        weights_axes,
@@ -6400,17 +6400,17 @@ class Field(mixin.PropertiesData,
                                                        radius=radius,
                                                        great_circle=great_circle,
                                                        return_areas=True)
-                        
+
                     all_volumes = all_areas * (all_volumes / (3 * numpy_pi))
             else:
                 raise ValueError("TODO")
-                        
+
             # Sum the volumes of each part to get the total volume of
             # each cell
             volumes = all_volumes.sum(-1, squeeze=True)
 
             comp[(axis,)] = areas
-                
+
             weights_axes.add(axis)
 
             return True
@@ -6507,7 +6507,7 @@ class Field(mixin.PropertiesData,
                 axis = self.get_data_axes(dc_key)[0]
                 _linear_weights(self, axis, comp, weights_axes,
                                 auto=True, measure=measure)
-            
+
             weights_axes = []
             for key in comp:
                 weights_axes.extend(key)
@@ -6569,7 +6569,7 @@ class Field(mixin.PropertiesData,
             fields = []
             axes = []
             cell_measures = []
-            
+
             if isinstance(weights, str):
                 if weights in ('area', 'volume'):
                     cell_measures = (weights,)
@@ -6628,7 +6628,7 @@ class Field(mixin.PropertiesData,
 #                                             great_circle=great_circle,
 #                                             auto=False)
             #--- End: if
-            
+
             # Area weights
             if 'area' in cell_measures:
                 if _measure_weights(self, 'area', comp,
@@ -6655,7 +6655,7 @@ class Field(mixin.PropertiesData,
                     raise ValueError(
                         "Can't create weights: Can't find axis matching {!r}".format(
                             axis))
-                
+
                 if _area_weights_geometry(self, comp, weights_axes,
                                           measure=measure,
                                           radius=radius,
@@ -6770,7 +6770,7 @@ class Field(mixin.PropertiesData,
             if axis in waxes and self.iscyclic(axis):
                 wdata.cyclic(waxes.index(axis), iscyclic=True)
         # --- End: for
-        
+
         if data:
             # Insert missing size one dimensions for broadcasting
             for i, axis in enumerate(self.get_data_axes()):
@@ -8762,7 +8762,7 @@ class Field(mixin.PropertiesData,
             parameters and `cf.Field.weights` for details.
 
             .. note:: By default *weights* is `None`, resulting in
-                      unweighted calculations.            
+                      unweighted calculations.
 
             .. note:: Setting *weights* to `True` is the best way to
                       ensure that all collapses are appropriately
@@ -8934,7 +8934,7 @@ class Field(mixin.PropertiesData,
 
             *Parameter example:*
               ``coordinate='minimum'``
-            
+
         group: optional
             A grouped collapse is one for which an axis is not
             collapsed completely to size 1. Instead, the collapse axis
@@ -9687,7 +9687,7 @@ class Field(mixin.PropertiesData,
         if kwargs:
             _DEPRECATION_ERROR_KWARGS(
                 self, 'collapse', kwargs)  # pragma: no cover
-                   
+
         if inplace:
             f = self
         else:
@@ -12439,7 +12439,7 @@ class Field(mixin.PropertiesData,
         '''
         if axes is None and not self.domain_axes:
             set_axes = False
-            
+
         if not set_axes:
             if not data.Units:
                 units = getattr(self, 'Units', None)
@@ -12958,7 +12958,7 @@ class Field(mixin.PropertiesData,
                  `weights`
 
     :Parameters:
-        
+
         method: `str`
             Define the moving window method. The method is given by
             one of the following strings (see
@@ -12984,7 +12984,7 @@ class Field(mixin.PropertiesData,
 
             * Methods that are "Always" weighted require the *weights*
               parameter to be set.
-            
+
         window_size: `int`
             Specify the size of the window used to calculate the
             moving window.
@@ -13167,7 +13167,7 @@ class Field(mixin.PropertiesData,
     Cell methods    : area: mean longitude(8): mean
     Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
                     : longitude(8) = [22.5, ..., 337.5] degrees_east
-                    : time(1) = [2019-01-01 00:00:00]    
+                    : time(1) = [2019-01-01 00:00:00]
     >>> print(g.array)
     [[0.02333 0.01467 0.017   0.01167 0.023   0.02633 0.03    0.02   ]
      [0.04167 0.03467 0.04767 0.051   0.06033 0.04167 0.04833 0.03167]
@@ -13227,19 +13227,19 @@ class Field(mixin.PropertiesData,
 
         # Construct new field
         f = _inplace_enabled_define_and_cleanup(self)
-        
+
         # Find the axis for the moving window
         axis = f.domain_axis(axis, key=True)
-        iaxis = self.get_data_axes().index(axis)                    
+        iaxis = self.get_data_axes().index(axis)
 
         if method == 'sum' or weights is False:
             weights = None
-        
+
         if method == 'integral':
             measure = True
             if weights is None:
                 raise ValueError(
-                    "Must set weights parameter for 'integral' method")       
+                    "Must set weights parameter for 'integral' method")
 
             if scale is not None:
                 raise ValueError(
@@ -13247,9 +13247,9 @@ class Field(mixin.PropertiesData,
         else:
             if scale is None:
                 scale = 1.0
-                
+
             measure = False
-            
+
         if weights is not None:
             if isinstance(weights, Data):
                 if weights.ndim > 1:
@@ -13257,8 +13257,8 @@ class Field(mixin.PropertiesData,
                         "The input weights (shape {}) do not match the "
                         "selected axis (size {})".format(
                             weights.shape, f.shape[iaxis]))
-                
-                if weights.ndim == 1:                  
+
+                if weights.ndim == 1:
                     if weights.shape[0] != f.shape[iaxis]:
                         raise ValueError(
                             "The input weights (size {}) do not match "
@@ -13277,7 +13277,7 @@ class Field(mixin.PropertiesData,
             else:
                 f = f * w
         # --- End: if
-        
+
         # Create the window weights
         window = numpy_full((window_size,), 1.0)
         if weights is None and method == 'mean':
@@ -13304,7 +13304,7 @@ class Field(mixin.PropertiesData,
             f._update_cell_methods(method=method,
                                    domain_axes=f.domain_axes(axis),
                                    verbose=False)
-            
+
         return f
 
     @_deprecated_kwarg_check('i')
@@ -13544,7 +13544,7 @@ class Field(mixin.PropertiesData,
                 {'weights': weights},
                 message="Use keyword 'window' instead.",
                 version='3.3.0')  # pragma: no cover
-            
+
         if isinstance(window, str):
             _DEPRECATION_ERROR(
                 "A string-valued 'window' parameter has been deprecated "
@@ -13566,7 +13566,7 @@ class Field(mixin.PropertiesData,
         # Retrieve the axis
         axis_key = self.domain_axis(axis, key=True)
         iaxis = self.get_data_axes().index(axis_key)
-        
+
         # Default mode to 'wrap' if the axis is cyclic
         if mode is None:
             if self.iscyclic(axis_key):
@@ -13577,7 +13577,7 @@ class Field(mixin.PropertiesData,
 
         # Construct new field
         f = _inplace_enabled_define_and_cleanup(self)
-        
+
         f.data.convolution_filter(window=window, axis=iaxis,
                                   mode=mode, cval=cval, origin=origin,
                                   inplace=True)
@@ -13615,10 +13615,10 @@ class Field(mixin.PropertiesData,
                         lower_offset:length, 1]
                     new_bounds[length - lower_offset:length, 1] = old_bounds[
                         length - 1, 1]
-                
+
                 coord.set_bounds(Bounds(data=Data(new_bounds, units=coord.Units)))
         # --- End: if
-        
+
         return f
 
     def convert(self, identity, full_domain=True, cellsize=False):
@@ -13894,8 +13894,8 @@ class Field(mixin.PropertiesData,
             f._update_cell_methods(method='sum',
                                    domain_axes=f.domain_axes(axis_key),
                                    verbose=False)
-        # --- End: if                    
-            
+        # --- End: if
+
         return f
 
     def creation_commands(self, representative_data=False,
@@ -14106,12 +14106,12 @@ class Field(mixin.PropertiesData,
             raise ValueError(
                 "'name' parameter can not have the value {!r}".format(
                     name))
-        
+
         out = super().creation_commands(
             representative_data=representative_data, indent=indent,
             namespace=namespace, string=False, name=name,
             data_name='d')
-        
+
         namespace0 = namespace
         if namespace0:
             namespace = namespace+"."
@@ -19196,7 +19196,7 @@ class Field(mixin.PropertiesData,
 #        d = d.reshape(shape)
         for _ in range(self.ndim - 1 - axis_index):
             d.insert_dimension(position=1, inplace=True)
-        
+
         # Find the derivative
 #        f.data /= Data(d, coord.units)
         f.data /= d

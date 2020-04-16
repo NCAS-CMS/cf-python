@@ -1012,12 +1012,12 @@ def _numpy_allclose(a, b, rtol=None, atol=None, verbose=False):
             if _numpy_ma_is_masked(a) or _numpy_ma_is_masked(b):
                 if verbose:
                     print('Different masks (B)')
-                    
+
                 return False
-            
+
 #            if verbose:
 #                print('Different masks 4')
-#                    
+#
 #            return False
 
         try:

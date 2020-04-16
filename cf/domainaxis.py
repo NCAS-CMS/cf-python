@@ -218,15 +218,15 @@ class DomainAxis(cfdm.DomainAxis):
 
         size = self.get_size(None)
         if size is not None:
-            out.append("{}.set_size({})".format(name, size))        
-              
+            out.append("{}.set_size({})".format(name, size))
+
         nc = self.nc_get_dimension(None)
         if nc is not None:
             out.append("{}.nc_set_dimension({!r})".format(name, nc))
 
         if self.nc_is_unlimited():
             out.append("c.nc_set_unlimited({})".format(True))
-            
+
         if string:
             out[0] = indent+out[0]
             out = ('\n'+indent).join(out)
