@@ -2,6 +2,8 @@ import datetime
 import os
 from random import choice, shuffle
 import unittest
+import doctest
+import pkgutil
 
 import cf
 
@@ -42,6 +44,13 @@ all_test_cases = test_loader().discover('.', pattern='test_*.py')
 shuffle(all_test_cases._tests)
 testsuite.addTests(all_test_cases)
 
+# Add a test suite for doctests
+# https://docs.python.org/3/library/doctest.html#unittest-api
+testsuite_doctests = unittest.TestSuite()
+for importer, name, ispkg in \
+        pkgutil.walk_packages(cf.__path__, cf.__name__ + '.'):
+    testsuite_doctests.addTests(doctest.DocTestSuite(name))
+
 # Run the test suite's first set-up stage.
 def run_test_suite_setup_0(verbosity=2):
     runner = unittest.TextTestRunner(verbosity=verbosity)
@@ -52,6 +61,12 @@ def run_test_suite_setup_0(verbosity=2):
 def run_test_suite_setup_1(verbosity=2):
     runner = unittest.TextTestRunner(verbosity=verbosity)
     runner.run(testsuite_setup_1)
+
+
+# Run the doctest test suite.
+def run_test_suite_doctests(verbosity=2):
+    runner = unittest.TextTestRunner(verbosity=verbosity)
+    runner.run(testsuite_doctests)
 
 
 # Run the test suite.
@@ -74,6 +89,7 @@ if __name__ == '__main__':
 
     run_test_suite_setup_0()
     run_test_suite_setup_1()
+    run_test_suite_doctests()
     run_test_suite()
 
     cf.CHUNKSIZE(original_chunksize)
