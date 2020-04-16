@@ -72,7 +72,7 @@ class CellMethod(cfdm.CellMethod):
 
     **Examples:**
 
-    TODO
+    c = CellMethod.create('lat: mean (interval: 1 hour)')
 
         '''
         incorrect_interval = 'Cell method interval is incorrectly formatted'
@@ -389,7 +389,7 @@ class CellMethod(cfdm.CellMethod):
     <CF CellMethod: lat: lon: mean (interval: 0.1 degree_N interval: 0.2 degree_E)>
 
         '''
-        self.get_qualifier('interval', default=AttributeError())
+        return self.get_qualifier('interval', default=AttributeError())
 
     @intervals.setter
     def intervals(self, value):
