@@ -5950,7 +5950,6 @@ class Field(mixin.PropertiesData,
                     "calculate {} geometry weights".format(
                         geometry_type))
 
-
             if x_axis != y_axis:
                 if auto:
                     return (None,) * 4
@@ -5962,7 +5961,7 @@ class Field(mixin.PropertiesData,
             axis = x_axis
 
             if aux_X.get_bounds(None) is None or aux_Y.get_bounds(None) is None:
-                # Not both coordinates have bounds
+                # Not both X and Y coordinates have bounds
                 if auto:
                     return (None,) * 4
 
@@ -6010,7 +6009,7 @@ class Field(mixin.PropertiesData,
         def _area_weights_geometry(self, comp, weights_axes,
                                    auto=False, measure=False,
                                    radius=None, great_circle=False,
-                                   return_areas=False):
+                                   return_areas=False, methods=False):
             '''TODO
 
     .. versionadded:: 3.2.0
@@ -6157,6 +6156,8 @@ class Field(mixin.PropertiesData,
                     raise ValueError(
                         "A spherical polygon geometry part has negative area")
 
+
+                
             else:
                 #
                 return
@@ -6165,9 +6166,6 @@ class Field(mixin.PropertiesData,
             # rings
             if interior_ring is not None:
                 all_areas.where(interior_ring, -all_areas, inplace=True)
-
-            if return_areas:
-                return all_areas
 
             # Sum the areas of each part to get the total area of each
             # cell
@@ -6203,6 +6201,9 @@ class Field(mixin.PropertiesData,
                 areas *= r**2
             # --- End: if
 
+            if return_areas:
+                return areas
+
             comp[(axis,)] = areas
 
             weights_axes.add(axis)
@@ -6212,7 +6213,8 @@ class Field(mixin.PropertiesData,
 
         def _line_weights_geometry(self, comp, weights_axes,
                                    auto=False, measure=False,
-                                   radius=None, great_circle=False):
+                                   radius=None, great_circle=False,
+                                   methods=False):
             '''TODO
 
     .. versionadded:: 3.2.0
@@ -6306,7 +6308,8 @@ class Field(mixin.PropertiesData,
 
         def _volume_weights_geometry(self, comp, weights_axes,
                                      auto=False, measure=False,
-                                     radius=None, great_circle=False):
+                                     radius=None, great_circle=False,
+                                     methods=False):
             '''TODO
 
     .. versionadded:: 3.2.0
@@ -6317,7 +6320,6 @@ class Field(mixin.PropertiesData,
 
             if axis is None and auto:
                 return False
-
 
             if axis in weights_axes:
                 if auto:
@@ -6333,12 +6335,26 @@ class Field(mixin.PropertiesData,
 
             if not z.Units.equivalent(_units_metres):
                 if auto:
-                    return
+                    return False
 
                 raise ValueError("TODO")
 
-            delta_z = abs(z[..., 1] - z[ ..., 0])
-
+            if not methods:
+                # Initialise cell volumes as the cell areas
+                volumes = _area_weights_geometry(self, comp,
+                                                 weights_axes,
+                                                 auto=auto,
+                                                 measure=measure,
+                                                 radius=radius,
+                                                 great_circle=great_circle,
+                                                 methods=False,
+                                                 return_areas=True)
+                        
+                if measure:
+                    delta_z = abs(z[..., 1] - z[ ..., 0])
+                    delta_z.squeeze(axis=-1, inplace=True)
+            # --- End: if
+            
             if (x.Units.equivalent(_units_metres) and
                 y.Units.equivalent(_units_metres)):
                 # ----------------------------------------------------
@@ -6351,18 +6367,8 @@ class Field(mixin.PropertiesData,
                     comp[(axis,)] = 'volume plane polygon geometry'
                     return True
 
-                all_volumes = delta_z
-
                 if measure:
-                    all_areas = _area_weights_geometry(self, comp,
-                                                       weights_axes,
-                                                       auto=auto,
-                                                       measure=True,
-                                                       radius=radius,
-                                                       great_circle=great_circle,
-                                                       return_areas=True)
-
-                    all_volumes = all_areas * all_volumes
+                    volumes *= delta_z
 
             elif (x.Units.equivalent(_units_radians) and
                   y.Units.equivalent(_units_radians)):
@@ -6388,36 +6394,18 @@ class Field(mixin.PropertiesData,
                 if methods:
                     comp[(axis,)] = 'volume spherical polygon geometry'
                     return True
-
-                r = radius
-
-                all_volumes = (delta_z + radius)**3 - radius**3
-
+                
                 if measure:
-                    all_areas = _area_weights_geometry(self, comp,
-                                                       weights_axes,
-                                                       auto=auto,
-                                                       measure=False,
-                                                       radius=radius,
-                                                       great_circle=great_circle,
-                                                       return_areas=True)
-                        
-                    all_volumes = all_areas * (delta_z**3/(3*r**2)
-                                               + delta_z**2/r
-                                               + delta_z)
-                else:
-#                    all_volumes = (delta_z + radius)**3 - radius**3
-                    all_volumes = (delta_z**3
-                                   + 3*r*delta_z**2
-                                   + 3*delta_z*radius**2)
+                    r = radius
 
-                    all_volumes = all_areas * (all_volumes / (3 * numpy_pi))
+                    # actual_volume =
+                    #    [actual_area/(4*pi*r**2)]
+                    #    * (4/3)*pi*[(r+delta_z)**3 - r**3)]
+                    volumes *= (delta_z**3 / (3*r**2)
+                                + delta_z**2 / r
+                                + delta_z)
             else:
                 raise ValueError("TODO")
-
-            # Sum the volumes of each part to get the total volume of
-            # each cell
-            volumes = all_volumes.sum(-1, squeeze=True)
 
             comp[(axis,)] = volumes
 
@@ -6486,23 +6474,31 @@ class Field(mixin.PropertiesData,
             # Volume weights
             if _measure_weights(self, 'volume', comp,
                                 weights_axes,auto=True):
-                # Volume weights from cell measures
+                # Found volume weights from cell measures
                 pass
+#            elif _volume_weights_geometry(self, comp, weights_axes,
+#                                          measure=measure,
+#                                          radius=radius,
+#                                          great_circle=great_circle,
+#                                          , methods=methods, auto=True):
+#                # Found volume weights from polygon geometries
+#                pass
             elif _measure_weights(self, 'area', comp, weights_axes,
                                   auto=True):
-                # Area weights from cell measures
+                # Found area weights from cell measures
                 pass
             elif _area_weights_XY(self, comp, weights_axes,
                                   measure=measure, radius=radius,
                                   auto=True):
-                # Area weights from X and Y dimension coordinates
+                # Found area weights from X and Y dimension
+                # coordinates
                 pass
             elif _area_weights_geometry(self, comp, weights_axes,
                                         measure=measure,
                                         radius=radius,
                                         great_circle=great_circle,
-                                        auto=True):
-                # Area weights from polygon geometries
+                                        methods=methods, auto=True):
+                # Found area weights from polygon geometries
                 pass
 
             # 1-d linear weights from dimension coordinates
@@ -6629,26 +6625,28 @@ class Field(mixin.PropertiesData,
 #                                             measure=measure,
 #                                             radius=radius,
 #                                             great_circle=great_circle,
-#                                             auto=False)
+#                                             auto=False, methods=methods)
             # --- End: if
 
             # Area weights
             if 'area' in cell_measures:
                 if _measure_weights(self, 'area', comp,
                                         weights_axes, auto=True):
-                    # Area weights from cell measures
+                    # Found area weights from cell measures
                     pass
                 elif _area_weights_XY(self, comp, weights_axes,
                                       measure=measure,
                                       radius=radius, auto=True):
-                    # Area weights from X and Y dimension coordinates
+                    # Found area weights from X and Y dimension
+                    # coordinates
                     pass
                 else:
-                    # Area weights from polygon geometries
+                    # Found area weights from polygon geometries
                     _area_weights_geometry(self, comp, weights_axes,
                                            measure=measure,
                                            radius=radius,
                                            great_circle=great_circle,
+                                           methods=methods,
                                            auto=False)
             # --- End: if
 
@@ -6663,20 +6661,21 @@ class Field(mixin.PropertiesData,
                                           measure=measure,
                                           radius=radius,
                                           great_circle=great_circle,
-                                          auto=True):
-                    # Area weights from polygon geometries
+                                          methods=methods, auto=True):
+                    # Found area weights from polygon geometries
                     pass
                 elif _line_weights_geometry(self, comp, weights_axes,
                                             measure=measure,
                                             radius=radius,
                                             great_circle=great_circle,
+                                            methods=methods,
                                             auto=True):
-                    # Linear weights from line geometries
+                    # Found linear weights from line geometries
                     pass
                 else:
                     _linear_weights(self, axis, comp, weights_axes,
                                         auto=False, measure=measure)
-                    # Linear weights from dimension coordinates
+                    # Found linear weights from dimension coordinates
                     pass
             # --- End: for
 
