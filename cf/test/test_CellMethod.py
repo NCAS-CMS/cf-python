@@ -140,7 +140,7 @@ class CellMethodTest(unittest.TestCase):
     def test_CellMethod_intervals(self):
         cm, = cf.CellMethod.create('lat: mean (interval: 1 hour)')
 
-        self.assertEquals('1 hour', str(cm.intervals[0]))
+        self.assertEqual('1 hour', str(cm.intervals[0]))
 
 
 # --- End: class
