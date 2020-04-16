@@ -373,7 +373,7 @@ class CellMethod(cfdm.CellMethod):
     <CF CellMethod: time: minimum (interval: 1 hr)>
     >>> c.intervals
     (<CF Data: 1 hr>,)
-    >>> c.intervals = [cf.Data(7.5 'minutes')]
+    >>> c.intervals = [cf.Data(7.5, 'minutes')]
     >>> c
     <CF CellMethod: time: minimum (interval: 7.5 minutes)>
     >>> c.intervals
