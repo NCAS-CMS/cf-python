@@ -1,0 +1,92 @@
+# A GitHub Action to run the cf-python test suite after events on master.
+name: Run test suite
+
+# Triggers the workflow on push or PR events for the master branch (only)
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    # default (from docs) is just on [opened, synchronize, reopened]
+    types: [opened, reopened, ready_for_review, edited]
+    branches:
+      - master
+
+# Note a workflow can have 1+ jobs that can run sequentially or in parallel.
+jobs:
+  # TODO: setup parallel runs (-job-2 etc.) of sub-tests for speed-up
+  test-suite-job-0:
+
+    # Set-up the build matrix. We run on different distros and Python versions.
+    strategy:
+      matrix:
+        os: [ubuntu-latest, ubuntu-16.04, macos-latest, macos-10.15]
+        # Note: only 3.7 supported at the moment, but matrix tested to work
+        # e.g. can specify [3.5, 3.6, 3.7, 3.8] and all 4 run in parallel
+        python-version: [3.7]
+
+    # Run on new and old(er) versions of the distros we support (Linux, Mac OS)
+    runs-on: ${{ matrix.os }}
+
+    # The sequence of tasks that will be executed as part of this job:
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    # Provide a notification message
+    - name: Notify about setup
+      run: echo Now setting up the environment for the cf-python test suite...
+
+    # Prepare to run the test-suite on different versions of Python 3:
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    # Setup conda, which is the simplest way to access all dependencies,
+    # especially as some are C-based so otherwise difficult to setup.
+    - name: Setup Miniconda
+      uses: goanpeca/setup-miniconda@v1.1.2
+      with:
+        miniconda-version: 'latest'
+        activate-environment: cf-latest
+        python-version: ${{ matrix.python-version }}
+        channels: ncas, conda-forge
+
+    # Ensure shell is configured with conda activated:
+    - name: Check conda config
+      shell: bash -l {0}
+      run: |
+        conda info
+        conda list
+        conda config --show-sources
+        conda config --show
+
+    # Install cf-python dependencies pre-testing
+    # We do so with conda which was setup in a previous step.
+    - name: Install dependencies
+      shell: bash -l {0}
+      run: |
+        conda install -c ncas -c conda-forge udunits2=2.2.20
+        conda install -c conda-forge mpich esmpy
+        conda install scipy matplotlib
+        # Important! Must install our development version of cf-python to test:
+        pip install -e .
+
+    # Provide another notification message
+    - name: Notify about starting testing
+      run: echo Setup complete. Now starting to run the cf-python test suite...
+
+    # Finally run the test suite!
+    - name: Run test suite
+      shell: bash -l {0}
+      run: |
+        cd cf/test
+        python run_tests.py
+
+    # End with a message indicating the suite has completed its run
+    - name: Notify about a completed run
+      run: |
+        echo The cf-python test-suite has completed and you may now
+        echo inspect the results.

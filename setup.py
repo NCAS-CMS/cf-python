@@ -245,7 +245,7 @@ setup(name = "cf-python",
       install_requires = ['netCDF4>=1.5.3',
                           'cftime>=1.1.1',
                           'numpy>=1.15',
-                          'cfdm>=1.8.0',
+                          'cfdm>=1.8.1',
                           'psutil>=0.6.0',
                           'cfunits>=3.2.5'
 #                          'scipy>=1.1.0',
@@ -256,4 +256,3 @@ setup(name = "cf-python",
                       ],
       cmdclass     = {'build': build_umread}, #https://docs.python.org/2/distutils/apiref.html
   )
-
