@@ -57,7 +57,11 @@ def run_test_suite_setup_1(verbosity=2):
 # Run the test suite.
 def run_test_suite(verbosity=2):
     runner = unittest.TextTestRunner(verbosity=verbosity)
-    runner.run(testsuite)
+    outcome = runner.run(testsuite)
+    # Note unittest.TextTestRunner().run() does not set an exit code, so (esp.
+    # for CI / GH Actions workflows) we need $? = 1 set if any sub-test fails:
+    if not outcome.wasSuccessful():
+        exit(1)  # else is zero for sucess as standard
 
 
 if __name__ == '__main__':
