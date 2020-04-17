@@ -1276,12 +1276,16 @@ class PropertiesDataBounds(PropertiesData):
         '''
         if name in (data_name, bounds_name, interior_ring_name):
             raise ValueError(
-                "'name' parameter can not have the same value as any of the 'data_name', 'bounds_name', or 'interior_ring_name' parameters: {!r}".format(
+                "'name' parameter can not have the same value as "
+                "any of the 'data_name', 'bounds_name', or "
+                "'interior_ring_name' parameters: {!r}".format(
                     name))
 
         if data_name in (name, bounds_name, interior_ring_name):
             raise ValueError(
-                "'data_name' parameter can not have the same value as any of the 'name', 'bounds_name', or 'interior_ring_name'parameters: {!r}".format(
+                "'data_name' parameter can not have the same value as "
+                "any of the 'name', 'bounds_name', or "
+                "'interior_ring_name'parameters: {!r}".format(
                     data_name))
 
         out = super().creation_commands(
@@ -1297,6 +1301,11 @@ class PropertiesDataBounds(PropertiesData):
 
         indent = ' ' * indent
 
+        # Geometry type
+        geometry = self.get_geometry(None)
+        if geometry is not None:
+            out.append("{}.set_geometry({!r})".format(name, geometry))
+        
         bounds = self.get_bounds(None)
         if bounds is not None:
             out.extend(bounds.creation_commands(
@@ -1305,7 +1314,7 @@ class PropertiesDataBounds(PropertiesData):
                 data_name=data_name))
 
             out.append("{}.set_bounds({})".format(name, bounds_name))
-
+            
         interior_ring = self.get_interior_ring(None)
         if interior_ring is not None:
             out.extend(interior_ring.creation_commands(
