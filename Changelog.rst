@@ -16,6 +16,8 @@ version 3.3.0
   `cf.Field.collapse` and `cf.Field.cumsum`: ``'minimum'``,
   ``'maximum'``
 * New keyword parameter to `cf.Data.cumsum`: ``inplace``
+* Fixed bug that prevented omitted the geometry type when creating
+  creation commands (https://github.com/NCAS-CMS/cf-python/issues/59).
 
 version 3.2.0
 -------------

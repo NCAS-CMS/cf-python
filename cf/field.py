@@ -14102,7 +14102,7 @@ class Field(mixin.PropertiesData,
         f.set_construct(c)
 
         '''
-        if name in 'bcdi':
+        if name in ('b', 'c', 'd', 'i'):
             raise ValueError(
                 "'name' parameter can not have the value {!r}".format(
                     name))
