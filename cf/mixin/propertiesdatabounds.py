@@ -3016,7 +3016,7 @@ class PropertiesDataBounds(PropertiesData):
 
     @_deprecated_kwarg_check('relaxed_identity')
     def identity(self, default='', strict=False, relaxed=False,
-                 nc_only=False, relaxed_identity=None):
+                 nc_only=False, relaxed_identity=None, _ctype=True):
         '''Return the canonical identity.
 
     By default the identity is the first found of the following:
@@ -3097,8 +3097,11 @@ class PropertiesDataBounds(PropertiesData):
 
         '''
         identity = super().identity(default=None, strict=strict,
-                                    relaxed=relaxed, nc_only=nc_only)
+                                    relaxed=relaxed, nc_only=nc_only,
+                                    _ctype=_ctype)
 
+# TODO: when coord has no standard name but bounds do - that standard name needs to be picked up.
+        
         if identity is not None:
             return identity
 

@@ -43,7 +43,7 @@ class FieldTest(unittest.TestCase):
 #        self.test_only = ['NOTHING!!!!']
 #        self.test_only = ['test_Field_cumsum']
 #        self.test_only = ['test_Field_convolution_filter', 'test_Field_derivative', 'test_Field_moving_window']
-        self.test_only = ['test_Field_weights']
+#        self.test_only = ['test_Field_weights']
 #        self.test_only = ['test_Field_collapse']
 #        self.test_only = ['test_Field_radius']
 #        self.test_only = ['test_Field_field_ancillary']

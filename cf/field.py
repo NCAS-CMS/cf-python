@@ -6091,7 +6091,7 @@ class Field(mixin.PropertiesData,
             TODO
 
         '''
-        if isinstance(fields, self.__class__):
+        if isinstance(fields, cls):
             return fields.copy()
 
         field0 = fields[0]

@@ -4557,7 +4557,7 @@ class PropertiesData(Properties):
 
     @_deprecated_kwarg_check('relaxed_identity')
     def identity(self, default='', strict=False, relaxed=False,
-                 nc_only=False, relaxed_identity=None):
+                 nc_only=False, relaxed_identity=None, _ctype=True):
         '''Return the canonical identity.
 
     By default the identity is the first found of the following:
@@ -4593,6 +4593,8 @@ class PropertiesData(Properties):
         nc_only: `bool`, optional
             If True then only take the identity from the netCDF
             variable name.
+
+        relaxed_identity: deprecated at version 3.0.0
 
     :Returns:
 
@@ -4670,14 +4672,15 @@ class PropertiesData(Properties):
                 return '{0}={1}'.format(prop, n)
         # --- End: for
 
+        if _ctype:
+            for ctype in ('X', 'Y', 'Z', 'T'):
+                if getattr(self, ctype, False):
+                    return ctype
+        # --- End: if
+
         n = self.nc_get_variable(None)
         if n is not None:
             return 'ncvar%{0}'.format(n)
-
-        for ctype in ('X', 'Y', 'Z', 'T'):
-            if getattr(self, ctype, False):
-                return ctype
-        # --- End: for
 
         return default
 
@@ -4731,8 +4734,9 @@ class PropertiesData(Properties):
                 out = [i]
             else:
                 out0 = out[0]
-                if ('=' in out0 or '%' in out0 or
-                        True in [a == out0 for a in 'XYZT']):
+                if ('=' in out0
+                    or '%' in out0
+                    or True in [a == out0 for a in 'XYZT']):
                     out.insert(0, i)
                 else:
                     out.insert(1, i)
