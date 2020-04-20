@@ -18,7 +18,9 @@ version 3.3.0
 * New keyword parameter to `cf.Data.cumsum`: ``inplace``
 * Fixed bug that prevented omitted the geometry type when creating
   creation commands (https://github.com/NCAS-CMS/cf-python/issues/59).
-
+* Fixed bug that caused a failure when rolling a dimension coordinate
+  construct without bounds.
+  
 version 3.2.0
 -------------
 ----
