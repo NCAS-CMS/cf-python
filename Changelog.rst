@@ -2,12 +2,12 @@ version 3.3.0
 -------------
 ----
 
-**2020-??-??**
+**2020-04-20**
 
 * Changed the API to `cf.Field.convolution_filter`: renamed the
   ``weights`` parameter to ``window``.
 * Reinstated `True` as a permitted value of the ``weights`` keyword of
-  `cf.Field.collapse`.
+  `cf.Field.collapse` (which was deprecated at version 3.2.0).
 * New method: `cf.Field.moving_window`
   (https://github.com/NCAS-CMS/cf-python/issues/44)
 * New method: `cf.Data.convolution_filter`

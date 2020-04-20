@@ -13,7 +13,8 @@
 * Check external links to the CF conventions are up to date in
   `docs/source/tutorial.rst` and `docs/source/field_analysis.rst`
 
-* Create a link to the new documentation in `docs/source/releases.rst`
+* Create a link to the new documentation in
+  `docs/source/releases.rst`, including the release date.
 
 * If groups are ready then remove the Hierarchical Groups placeholders
   in the documentation files: `setup.py`, `README.md`,

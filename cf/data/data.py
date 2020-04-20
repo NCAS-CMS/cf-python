@@ -3231,6 +3231,7 @@ place.
 
     **Examples:**
 
+    >>> d = cf.Data([-1.9, -1.5, -1.1, -1, 0, 1, 1.1, 1.5 , 1.9])
     >>> print(d.array)
     [-1.9 -1.5 -1.1 -1.   0.   1.   1.1  1.5  1.9]
     >>> print(d.ceil().array)
@@ -3291,30 +3292,30 @@ place.
             method), ``'wrap'``. The valid values and their behaviours
             are as follows:
 
-            ==============  ==========================  =================================
+            ==============  ==========================  ============================
             *mode*          Description                 Behaviour
-            ==============  ==========================  =================================
-            ``'reflect'``   The input is extended by    ``(d c b a | a b c d | d c b a)``
+            ==============  ==========================  ============================
+            ``'reflect'``   The input is extended by    ``(c b a | a b c | c b a)``
                             reflecting about the edge
 
-            ``'constant'``  The input is extended by    ``(k k k k | a b c d | k k k k)``
+            ``'constant'``  The input is extended by    ``(k k k | a b c | k k k)``
                             filling all values beyond
                             the edge with the same
                             constant value (``k``),
                             defined by the *cval*
                             parameter.
 
-            ``'nearest'``   The input is extended by    ``(a a a a | a b c d | d d d d)``
+            ``'nearest'``   The input is extended by    ``(a a a | a b c | c c c )``
                             replicating the last point
 
-            ``'mirror'``    The input is extended by    ``(d c b | a b c d | c b a)``
+            ``'mirror'``    The input is extended by    ``(c b | a b c | b a)``
                             reflecting about the
                             centre of the last point.
 
-            ``'wrap'``      The input is extended by    ``(a b c d | a b c d | a b c d)``
+            ``'wrap'``      The input is extended by    ``(a b c | a b c | a b c)``
                             wrapping around to the
                             opposite edge.
-            ==============  ==========================  =================================
+            ==============  ==========================  ============================
 
             The position of the window realtive to each value can be
             changed by using the *origin* parameter.
@@ -3378,7 +3379,7 @@ place.
      [7.65 7.5  8.35 8.8 ]]
     >>> d.cyclic(1)
     set()
-    >>> d.cyclic(1)
+    >>> d.cyclic()
     {1}
     >>> e = d.convolution_filter([0.1, 0.5, 0.25], axis=1)
     >>> print(e.array)
@@ -10830,7 +10831,11 @@ False
 
     :Parameters:
 
-        TODO
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+
+        i: deprecated at version 3.0.0
+            Use *inplace* parameter instead.
 
     :Returns:
 
@@ -10838,6 +10843,7 @@ False
 
     **Examples:**
 
+    >>> d = cf.Data([-1.9, -1.5, -1.1, -1, 0, 1, 1.1, 1.5 , 1.9])
     >>> print(d.array)
     [-1.9 -1.5 -1.1 -1.   0.   1.   1.1  1.5  1.9]
     >>> print(d.floor().array)
@@ -11712,6 +11718,7 @@ False
 
     **Examples:**
 
+    >>> d = cf.Data([-1.9, -1.5, -1.1, -1, 0, 1, 1.1, 1.5 , 1.9])
     >>> print(d.array)
     [-1.9 -1.5 -1.1 -1.   0.   1.   1.1  1.5  1.9]
     >>> print(d.rint().array)
@@ -11831,8 +11838,9 @@ False
 
     **Examples:**
 
+    >>> d = cf.Data([-1.81, -1.41, -1.01, -0.91, 0.09, 1.09, 1.19, 1.59, 1.99])
     >>> print(d.array)
-    [-1.81, -1.41, -1.01, -0.91,  0.09,  1.09,  1.19,  1.59,  1.99])
+    [-1.81 -1.41 -1.01 -0.91  0.09  1.09  1.19  1.59  1.99]
     >>> print(d.round().array)
     [-2., -1., -1., -1.,  0.,  1.,  1.,  2.,  2.]
     >>> print(d.round(1).array)
@@ -13204,6 +13212,7 @@ False
 
     **Examples:**
 
+    >>> d = cf.Data([-1.9, -1.5, -1.1, -1, 0, 1, 1.1, 1.5 , 1.9])
     >>> print(d.array)
     [-1.9 -1.5 -1.1 -1.   0.   1.   1.1  1.5  1.9]
     >>> print(d.trunc().array)

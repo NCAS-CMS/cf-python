@@ -14,11 +14,11 @@ fi
 vn=$1
 
 mkdir -p ~/tmp
-cp dist/cf-$vn.tar.gz ~/tmp
+cp dist/cf-python-$vn.tar.gz ~/tmp
 cd ~/tmp
-rm -fr ~/tmp/test ~/tmp/bin ~/tmp/lib ~/tmp/cf-$vn
-tar zxvf cf-$vn.tar.gz
-cd cf-$vn
+rm -fr ~/tmp/test ~/tmp/bin ~/tmp/lib ~/tmp/cf-python-$vn
+tar zxvf cf-python-$vn.tar.gz
+cd cf-python-$vn
 python setup.py install --home=~/tmp
 
 export PYTHONPATH=~/tmp/lib/python:$PYTHONPATH

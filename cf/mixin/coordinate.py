@@ -84,24 +84,30 @@ class Coordinate():
 
     **Examples:**
 
-    >>> c.Units
-    <CF Units: degreeE>
+    >>> f = cf.example_field(0)
+    >>> print(f)
+    Field: specific_humidity (ncvar%q)
+    ----------------------------------
+    Data            : specific_humidity(latitude(5), longitude(8)) 1
+    Cell methods    : area: mean
+    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(8) = [22.5, ..., 337.5] degrees_east
+                    : time(1) = [2019-01-01 00:00:00]
+    >>> c = f.coordinate('longitude')
+    >>> c.dump()
+    Dimension coordinate: longitude
+        standard_name = 'longitude'
+        units = 'degrees_east'
+        Data(8) = [22.5, ..., 337.5] degrees_east
+        Bounds:units = 'degrees_east'
+        Bounds:Data(8, 2) = [[0.0, ..., 360.0]] degrees_east
+
     >>> c.X
     True
-
-    >>> c.standard_name
-    'longitude'
-    >>> c.X
-    True
-
-    >>> c.axis == 'X' and c.X
-    True
+    >>> c.Y
+    False
 
         '''
-#        data  = self.get_data(None)
-#        if data is not None and data.ndim > 1:
-#            return self.get_property('axis', None) == 'X'
-
         standard_names = ('longitude',
                           'projection_x_coordinate',
                           'grid_longitude')
@@ -148,9 +154,6 @@ class Coordinate():
     True
 
         '''
-#        if self.ndim > 1:
-#            return self.get_property('axis', None) == 'Y'
-
         standard_names = ('latitude',
                           'projection_y_coordinate',
                           'grid_latitude')
@@ -221,8 +224,6 @@ class Coordinate():
     True
 
         '''
-#        if self.ndim > 1:
-#            return self.get_property('axis', None) == 'Z'
         standard_names = ('atmosphere_ln_pressure_coordinate',
                           'atmosphere_sigma_coordinate',
                           'atmosphere_hybrid_sigma_pressure_coordinate',

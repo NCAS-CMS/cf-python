@@ -4,17 +4,18 @@ import os
 import unittest
 import atexit
 import inspect
+import shutil
 import subprocess
 
 import numpy
 
 import cf
 
-tmpfile   = tempfile.mktemp('.cf_test')
-tmpfileh  = tempfile.mktemp('.cf_test')
-tmpfilec  = tempfile.mktemp('.cf_test')
-tmpfile0  = tempfile.mktemp('.cf_test')
-tmpfile1  = tempfile.mktemp('.cf_test')
+tmpfile = tempfile.mktemp('.cf_test')
+tmpfileh = tempfile.mktemp('.cf_test')
+tmpfilec = tempfile.mktemp('.cf_test')
+tmpfile0 = tempfile.mktemp('.cf_test')
+tmpfile1 = tempfile.mktemp('.cf_test')
 tmpfiles = [tmpfile, tmpfileh, tmpfilec, tmpfile0, tmpfile1]
 
 def _remove_tmpfiles():
@@ -25,7 +26,8 @@ def _remove_tmpfiles():
             os.remove(f)
         except OSError:
             pass
-
+    # --- End: for
+    
 atexit.register(_remove_tmpfiles)
 
 
@@ -106,6 +108,8 @@ class read_writeTest(unittest.TestCase):
         f = cf.read(subdir, recursive=True, aggregate=False)
         self.assertTrue(len(f) == 2, f)
 
+        shutil.rmtree(dir)
+        
     def test_read_select(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return

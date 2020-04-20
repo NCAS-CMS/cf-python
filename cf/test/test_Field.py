@@ -257,15 +257,36 @@ class FieldTest(unittest.TestCase):
         f += 1
 
         w = f.weights()
+        self.assertTrue(isinstance(w, cf.Field))
 
+        w = f.weights(None)
+        self.assertTrue(isinstance(w, cf.Field))
+        self.assertTrue(w.data.equals(cf.Data(1.0, '1'), verbose=True))
+
+        w = f.weights(data=True)
+        self.assertTrue(isinstance(w, cf.Data))
+
+        w = f.weights(None, data=True)
+        self.assertTrue(isinstance(w, cf.Data))
+        self.assertTrue(w.equals(cf.Data(1.0, '1'), verbose=True))
+
+        w = f.weights(components=True)
+        self.assertTrue(isinstance(w, dict))
+
+        w = f.weights(None, components=True)
+        self.assertTrue(isinstance(w, dict))
+        self.assertTrue(w == {})
+
+        w = f.weights(methods=True)
+        self.assertTrue(isinstance(w, dict))
+
+        w = f.weights(None, methods=True)
+        self.assertTrue(isinstance(w, dict))
+        self.assertTrue(w == {})
+
+        w = f.weights()
         x = f.weights(w)
         self.assertTrue(x.equals(w, verbose=True))
-
-        self.assertIsInstance(f.weights(), cf.Field)
-        self.assertIsInstance(f.weights(True), cf.Field)
-        self.assertIsInstance(f.weights(data=True), cf.Data)
-        self.assertIsInstance(f.weights(components=True), dict)
-        self.assertIsInstance(f.weights(methods=True), dict)
 
         for components in (False, True):
             for m in (False, True):
