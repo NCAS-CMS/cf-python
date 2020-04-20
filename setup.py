@@ -210,7 +210,7 @@ Tests are run from within the ``cf/test`` directory:
 setup(name = "cf-python",
       long_description = long_description,
       version      = version,
-      description  = "Python interface to the CF conventions",
+      description  = "A CF-compliant earth science data analysis library",
       author       = "David Hassell",
       maintainer   = "David Hassell",
       maintainer_email  = "david.hassell@ncas.ac.uk",
