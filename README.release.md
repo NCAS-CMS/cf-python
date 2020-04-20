@@ -67,7 +67,11 @@
   ./release_docs <vn> latest # E.g. ./release_docs 3.3.0 latest
   ```
   
-* Create a source tarball: `python setup.py sdist`
+* Create a source tarball:
+
+  ```bash
+  python setup.py sdist
+  ```
 
 * Test the tarball release using
 
