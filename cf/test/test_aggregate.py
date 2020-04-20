@@ -4,17 +4,17 @@ import unittest
 
 import cf
 
+
 class aggregateTest(unittest.TestCase):
-    filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                            'test_file.nc')
-    file = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                        'file.nc')
-    file2 = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                         'file2.nc')
+    filename = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
+    file = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), 'file.nc')
+    file2 = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), 'file2.nc')
 
     chunk_sizes = (17, 34, 300, 100000)[::-1]
     original_chunksize = cf.CHUNKSIZE()
-
 
     def test_aggregate(self):
         for chunksize in self.chunk_sizes:
@@ -37,33 +37,62 @@ class aggregateTest(unittest.TestCase):
 
             self.assertTrue(len(h) == 1)
 
-            self.assertTrue(h[0].shape == (10, 9), 'h[0].shape = '+repr(h[0].shape)+' != (10, 9)')
+            self.assertTrue(
+                h[0].shape == (10, 9),
+                'h[0].shape = ' + repr(h[0].shape) + ' != (10, 9)'
+            )
 
-            self.assertTrue(g.equals(g0, verbose=True), 'g != itself after aggregation')
+            self.assertTrue(
+                g.equals(g0, verbose=True),
+                'g != itself after aggregation'
+            )
 
             self.assertTrue(h[0].equals(f, verbose=True), 'h[0] != f')
 
             i = cf.aggregate(g, info=1)
 
-            self.assertTrue(i.equals(h, verbose=True), 'The second aggregation != the first')
+            self.assertTrue(
+                i.equals(h, verbose=True),
+                'The second aggregation != the first'
+            )
 
-            self.assertTrue(g.equals(g0, verbose=True), 'g != itself after the second aggregation')
+            self.assertTrue(
+                g.equals(g0, verbose=True),
+                'g != itself after the second aggregation'
+            )
 
             i = cf.aggregate(g, info=1, axes='grid_latitude')
 
-            self.assertTrue(i.equals(h, verbose=True), 'The third aggregation != the first')
+            self.assertTrue(
+                i.equals(h, verbose=True),
+                'The third aggregation != the first'
+            )
 
-            self.assertTrue(g.equals(g0, verbose=True), 'g !=itself after the third aggregation')
+            self.assertTrue(
+                g.equals(g0, verbose=True),
+                'g !=itself after the third aggregation'
+            )
 
-            self.assertTrue(i[0].shape == (10,9), 'i[0].shape is '+repr(i[0].shape))
+            self.assertTrue(
+                i[0].shape == (10, 9), 'i[0].shape is ' + repr(i[0].shape))
 
-            i = cf.aggregate(g, info=1, axes='grid_latitude', donotchecknonaggregatingaxes=1)
+            i = cf.aggregate(
+                g, info=1, axes='grid_latitude',
+                donotchecknonaggregatingaxes=1
+            )
 
-            self.assertTrue(i.equals(h, verbose=True), 'The fourth aggregation != the first')
+            self.assertTrue(
+                i.equals(h, verbose=True),
+                'The fourth aggregation != the first'
+            )
 
-            self.assertTrue(g.equals(g0, verbose=True), 'g != itself after the fourth aggregation')
+            self.assertTrue(
+                g.equals(g0, verbose=True),
+                'g != itself after the fourth aggregation'
+            )
 
-            self.assertTrue(i[0].shape == (10,9), 'i[0].shape is '+repr(i[0].shape))
+            self.assertTrue(
+                i[0].shape == (10, 9), 'i[0].shape is ' + repr(i[0].shape))
 
             #
             q, t = cf.read(self.file)
@@ -80,7 +109,10 @@ class aggregateTest(unittest.TestCase):
             x = cf.read(['file.nc', 'file2.nc'], aggregate=False)
             self.assertTrue(len(x) == 3)
 
-            x = cf.read(['file.nc', 'file2.nc'], aggregate={'relaxed_identities': True})
+            x = cf.read(
+                ['file.nc', 'file2.nc'],
+                aggregate={'relaxed_identities': True}
+            )
             self.assertTrue(len(x) == 2)
 
             del t.standard_name
