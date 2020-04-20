@@ -1,0 +1,7 @@
+cf.DomainAncillary.ndim
+=======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.DomainAncillary.ndim

@@ -1,0 +1,7 @@
+cf.Constructs.new_identifier
+============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Constructs.new_identifier

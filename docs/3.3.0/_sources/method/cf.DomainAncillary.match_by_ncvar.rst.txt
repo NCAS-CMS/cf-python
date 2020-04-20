@@ -1,0 +1,7 @@
+cf.DomainAncillary.match_by_ncvar
+=================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DomainAncillary.match_by_ncvar

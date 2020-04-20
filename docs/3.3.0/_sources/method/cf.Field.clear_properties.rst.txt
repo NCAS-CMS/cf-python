@@ -1,0 +1,7 @@
+cf.Field.clear_properties
+=========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Field.clear_properties

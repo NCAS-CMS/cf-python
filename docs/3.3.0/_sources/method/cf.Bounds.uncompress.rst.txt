@@ -1,0 +1,7 @@
+cf.Bounds.uncompress
+====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.uncompress

@@ -1,0 +1,7 @@
+cf.Field.dataset_compliance
+===========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Field.dataset_compliance

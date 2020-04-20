@@ -1,0 +1,7 @@
+cf.Bounds.sin
+=============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.sin

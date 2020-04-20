@@ -1,0 +1,7 @@
+cf.Index.count
+==============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.Index.count

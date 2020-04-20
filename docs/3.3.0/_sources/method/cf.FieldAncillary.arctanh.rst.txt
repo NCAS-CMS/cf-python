@@ -1,0 +1,7 @@
+cf.FieldAncillary.arctanh
+=========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.FieldAncillary.arctanh

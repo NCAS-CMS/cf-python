@@ -1,0 +1,7 @@
+cf.DimensionCoordinate.datetime_array
+=====================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.DimensionCoordinate.datetime_array

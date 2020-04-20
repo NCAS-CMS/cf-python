@@ -1,0 +1,7 @@
+cf.CellMeasure.log
+==================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CellMeasure.log

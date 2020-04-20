@@ -36,34 +36,61 @@
 * Test tutorial code:
 
   ```bash
+  d=$PWD
   cd docs/source
   ./extract_tutorial_code
   ./reset_test_tutorial
   cd test_tutorial
   python ../tutorial.py
+  cd $d
   ```
 
-* Build a development copy of the documentation using `./release_docs
-  <vn> dev` (e.g. `./release_docs 3.2.0 dev`) to check API pages for any
-  new methods are present & correct, & that the overall formatting has
-  not been adversely affected for comprehension by any updates in the
-  latest Sphinx or theme etc. (Do not manually commit the dev build.)
+* Build a development copy of the documentation using to check API
+  pages for any new methods are present & correct, & that the overall
+  formatting has not been adversely affected for comprehension by any
+  updates in the latest Sphinx or theme etc. (Do not manually commit
+  the dev build.)
 
-* Create an archived copy of the documentation using `./release_docs
-  <vn> archive` (e.g. `./release_docs 3.2.0 archive`)
+  ```bash
+  ./release_docs <vn> dev-clean # E.g. ./release_docs 3.3.0 dev-clean
+  ```
+  
+* Create an archived copy of the documentation:
 
-* Update the latest documentation using `./release_docs <vn> latest`
-  (e.g. `./release_docs 3.2.0 latest`)
+  ```bash
+  ./release_docs <vn> archive # E.g. ./release_docs 3.3.0 archive
+  ```
 
-* Push recent commits using `git push origin master`
+* Update the latest documentation:
 
+  ```bash
+  ./release_docs <vn> latest # E.g. ./release_docs 3.3.0 latest
+  ```
+  
 * Create a source tarball: `python setup.py sdist`
 
-* Test the tarball release using `test_release <vn>`
-  (e.g. `./test_release 3.2.0`).
+* Test the tarball release using
 
-* Tag the release using `./tag <vn>` (e.g. `./tag 3.2.0`)
+  ```bash
+  test_release <vn> # E.g. ./test_release 3.3.0
+  ```
 
-* Upload the source tarball to PyPi via `./upload_to_pypi <vn>` (e.g.
-  `./upload_to_pypi 3.2.0`). Note this requires the `twine` library (which
-  can be installed via `pip`) and relevant project privileges on PyPi.
+* Push recent commits using
+
+  ```bash
+  git push origin master
+  ```
+  
+* Tag the release:
+
+  ```bash
+  ./tag <vn> # E.g. ./tag 3.3.0
+  ```
+  
+* Upload the source tarball to PyPi. Note this requires the `twine`
+  library (which can be installed via `pip`) and relevant project
+  privileges on PyPi.
+
+  ```bash
+  ./upload_to_pypi <vn> # E.g. ./upload_to_pypi 3.3.0
+  ```

@@ -1,0 +1,7 @@
+cf.DomainAncillary.clear_properties
+===================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DomainAncillary.clear_properties

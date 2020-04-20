@@ -1,0 +1,7 @@
+cf.Field.construct_type
+=======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.Field.construct_type

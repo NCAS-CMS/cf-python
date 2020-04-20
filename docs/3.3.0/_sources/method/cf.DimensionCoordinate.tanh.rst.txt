@@ -1,0 +1,7 @@
+cf.DimensionCoordinate.tanh
+===========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DimensionCoordinate.tanh

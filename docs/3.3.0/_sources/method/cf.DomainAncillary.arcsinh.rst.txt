@@ -1,0 +1,7 @@
+cf.DomainAncillary.arcsinh
+==========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DomainAncillary.arcsinh

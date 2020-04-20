@@ -1,0 +1,210 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>cf.CellMethod.equals &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cf.CellMethod.equivalent" href="cf.CellMethod.equivalent.html" />
+    <link rel="prev" title="cf.CellMethod.create" href="cf.CellMethod.create.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.3.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../class.html"><strong>cf classes</strong></a><ul>
+  <li><a href="../classes/cf.CellMethod.html">cf.CellMethod</a><ul>
+      <li>Previous: <a href="cf.CellMethod.create.html" title="previous chapter">cf.CellMethod.create</a></li>
+      <li>Next: <a href="cf.CellMethod.equivalent.html" title="next chapter">cf.CellMethod.equivalent</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/method/cf.CellMethod.equals.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="cf-cellmethod-equals">
+<h1>cf.CellMethod.equals<a class="headerlink" href="#cf-cellmethod-equals" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="cf.CellMethod.equals">
+<code class="sig-prename descclassname">CellMethod.</code><code class="sig-name descname">equals</code><span class="sig-paren">(</span><em class="sig-param">other</em>, <em class="sig-param">rtol=None</em>, <em class="sig-param">atol=None</em>, <em class="sig-param">verbose=False</em>, <em class="sig-param">ignore_qualifiers=()</em>, <em class="sig-param">ignore_type=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.1/cfdm/cellmethod.py#L293-L459"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.CellMethod.equals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether two cell method constructs are the same.</p>
+<p>Equality is strict by default. This means that:</p>
+<ul class="simple">
+<li><p>the descriptive qualifiers must be the same (see the
+<em>ignore_qualifiers</em> parameter).</p></li>
+</ul>
+<p>The axes of the cell method constructs are <em>not</em> considered,
+because they may only be correctly interpreted by the field
+constructs that contain the cell method constructs in
+question. They are, however, taken into account when two fields
+constructs are tested for equality.</p>
+<p>Two real numbers <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> are considered equal if
+<code class="docutils literal notranslate"><span class="pre">|x-y|&lt;=atol+rtol|y|</span></code>, where <code class="docutils literal notranslate"><span class="pre">atol</span></code> (the tolerance on absolute
+differences) and <code class="docutils literal notranslate"><span class="pre">rtol</span></code> (the tolerance on relative differences)
+are positive, typically very small numbers. The data type of the
+numbers is not taken into consideration. See the <em>atol</em> and <em>rtol</em>
+parameters.</p>
+<p>Any type of object may be tested but, in general, equality is only
+possible with another cell method construct, or a subclass of
+one. See the <em>ignore_type</em> parameter.</p>
+<p>NetCDF elements, such as netCDF variable and dimension names, do
+not constitute part of the CF data model and so are not checked.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 1.7.0.</span></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt>other: </dt><dd><p>The object to compare for equality.</p>
+</dd>
+<dt>atol: float, optional</dt><dd><p>The tolerance on absolute differences between real
+numbers. The default value is set by the <a class="reference external" href="https://ncas-cms.github.io/cfdm/function/cfdm.ATOL.html#cfdm.ATOL" title="(in Python cfdm package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.ATOL</span></code></a>
+function.</p>
+</dd>
+<dt>rtol: float, optional</dt><dd><p>The tolerance on relative differences between real
+numbers. The default value is set by the <a class="reference external" href="https://ncas-cms.github.io/cfdm/function/cfdm.RTOL.html#cfdm.RTOL" title="(in Python cfdm package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.RTOL</span></code></a>
+function.</p>
+</dd>
+<dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then print information about differences that lead
+to inequality.</p>
+</dd>
+<dt>ignore_qualifiers: sequence of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></a>, optional</dt><dd><p>The names of qualifiers to omit from the comparison.</p>
+</dd>
+<dt>ignore_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Any type of object may be tested but, in general, equality
+is only possible with another cell method construct, or a
+subclass of one. If <em>ignore_type</em> is True then
+<code class="docutils literal notranslate"><span class="pre">CellMethod(source=other)</span></code> is tested, rather than the
+<code class="docutils literal notranslate"><span class="pre">other</span></code> defined by the <em>other</em> parameter.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>Whether the two cell method constructs are equal.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>Examples:</strong></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="s1">&#39;not a cell method&#39;</span><span class="p">)</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2020, NCAS | Page built on 2020-04-20.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      
+      |
+      <a href="../_sources/method/cf.CellMethod.equals.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

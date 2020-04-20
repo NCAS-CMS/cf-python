@@ -1,0 +1,7 @@
+cf.RaggedIndexedArray.size
+==========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.RaggedIndexedArray.size

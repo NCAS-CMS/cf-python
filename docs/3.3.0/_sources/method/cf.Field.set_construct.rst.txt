@@ -1,0 +1,7 @@
+cf.Field.set_construct
+======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Field.set_construct

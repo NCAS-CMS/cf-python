@@ -1,0 +1,7 @@
+cf.FieldList.__iadd__
+=====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.FieldList.__iadd__

@@ -1,0 +1,7 @@
+cf.AuxiliaryCoordinate.tanh
+===========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.AuxiliaryCoordinate.tanh

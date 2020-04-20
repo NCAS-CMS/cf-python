@@ -1,0 +1,7 @@
+cf.Datum.clear_parameters
+=========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Datum.clear_parameters

@@ -1,0 +1,7 @@
+cf.List.all
+===========
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.List.all

@@ -1,0 +1,7 @@
+cf.Index.__iadd__
+=================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Index.__iadd__

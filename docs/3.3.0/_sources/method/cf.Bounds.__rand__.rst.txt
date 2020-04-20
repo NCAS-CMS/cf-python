@@ -1,0 +1,7 @@
+cf.Bounds.__rand__
+==================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.__rand__

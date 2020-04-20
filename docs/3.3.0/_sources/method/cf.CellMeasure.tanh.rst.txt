@@ -1,0 +1,7 @@
+cf.CellMeasure.tanh
+===================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CellMeasure.tanh

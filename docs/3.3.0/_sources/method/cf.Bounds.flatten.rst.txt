@@ -1,0 +1,7 @@
+cf.Bounds.flatten
+=================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.flatten

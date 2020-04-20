@@ -1,0 +1,7 @@
+cf.DomainAncillary.tanh
+=======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DomainAncillary.tanh

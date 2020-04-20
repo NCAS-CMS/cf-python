@@ -1,0 +1,7 @@
+cf.Bounds.cosh
+==============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.cosh

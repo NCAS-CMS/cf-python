@@ -1,0 +1,194 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>cf.RaggedIndexedArray.get_subspace &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cf.RaggedIndexedArray.source" href="cf.RaggedIndexedArray.source.html" />
+    <link rel="prev" title="cf.RaggedIndexedArray.get_index" href="cf.RaggedIndexedArray.get_index.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.3.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../class.html"><strong>cf classes</strong></a><ul>
+  <li><a href="../classes/cf.RaggedIndexedArray.html">cf.RaggedIndexedArray</a><ul>
+      <li>Previous: <a href="cf.RaggedIndexedArray.get_index.html" title="previous chapter">cf.RaggedIndexedArray.get_index</a></li>
+      <li>Next: <a href="cf.RaggedIndexedArray.source.html" title="next chapter">cf.RaggedIndexedArray.source</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/method/cf.RaggedIndexedArray.get_subspace.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="cf-raggedindexedarray-get-subspace">
+<h1>cf.RaggedIndexedArray.get_subspace<a class="headerlink" href="#cf-raggedindexedarray-get-subspace" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="cf.RaggedIndexedArray.get_subspace">
+<em class="property">classmethod </em><code class="sig-prename descclassname">RaggedIndexedArray.</code><code class="sig-name descname">get_subspace</code><span class="sig-paren">(</span><em class="sig-param">array</em>, <em class="sig-param">indices</em>, <em class="sig-param">copy=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.1/cfdm/data/abstract/array.py#L118-L220"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.RaggedIndexedArray.get_subspace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a subspace, defined by indices, of a numpy array.</p>
+<p>Only certain type of indices are allowed. See the <em>indices</em>
+parameter for details.</p>
+<p>Indexing is similar to numpy indexing. Given the restrictions on
+the type of indices allowed - see the <em>indicies</em> parameter - the
+only difference to numpy indexing is</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>When two or more dimension’s indices are sequences of integers
+then these indices work independently along each dimension
+(similar to the way vector subscripts work in Fortran).</p></li>
+</ul>
+</div></blockquote>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 1.7.0.</span></p>
+</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt>array: <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></dt><dd><p>The array to be subspaced.</p>
+</dd>
+<dt>indices: </dt><dd><p>The indices that define the subspace.</p>
+<p>Must be either <a class="reference external" href="https://docs.python.org/3/library/constants.html#Ellipsis" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Ellipsis</span></code></a> or a sequence that contains an
+index for each dimension. In the latter case, each
+dimension’s index must either be a <a class="reference external" href="https://docs.python.org/3/library/functions.html#slice" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">slice</span></code></a> object or a
+sequence of two or more integers.</p>
+<blockquote>
+<div><dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p>indices=Ellipsis</p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p>indices=[[5, 7, 8]]</p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p>indices=[slice(4, 7)]</p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p>indices=[slice(None), [5, 7, 8]]</p>
+</dd>
+<dt><em>Parameter example:</em></dt><dd><p>indices=[[2, 5, 6], slice(15, 4, -2), [8, 7, 5]]</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd>
+<dt>copy: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a></dt><dd><p>If <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> then the returned subspace may (or may not) be
+independent of the input <em>array</em>. By default the returned
+subspace is independent of the input <em>array</em>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2020, NCAS | Page built on 2020-04-20.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      
+      |
+      <a href="../_sources/method/cf.RaggedIndexedArray.get_subspace.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

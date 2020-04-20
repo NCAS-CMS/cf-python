@@ -1,0 +1,7 @@
+cf.Bounds.creation_commands
+===========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.creation_commands

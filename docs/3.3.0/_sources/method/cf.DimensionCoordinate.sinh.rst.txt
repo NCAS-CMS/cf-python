@@ -1,0 +1,7 @@
+cf.DimensionCoordinate.sinh
+===========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DimensionCoordinate.sinh

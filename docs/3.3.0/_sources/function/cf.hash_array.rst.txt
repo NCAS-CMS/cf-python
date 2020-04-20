@@ -1,0 +1,7 @@
+cf.hash_array
+=============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autofunction:: cf.hash_array

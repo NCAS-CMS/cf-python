@@ -1,0 +1,7 @@
+cf.List.arcsinh
+===============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.List.arcsinh

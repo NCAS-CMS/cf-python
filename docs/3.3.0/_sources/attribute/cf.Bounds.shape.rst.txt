@@ -1,0 +1,7 @@
+cf.Bounds.shape
+===============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.Bounds.shape

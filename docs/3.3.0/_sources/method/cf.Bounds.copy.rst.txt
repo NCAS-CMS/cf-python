@@ -1,0 +1,7 @@
+cf.Bounds.copy
+==============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.copy

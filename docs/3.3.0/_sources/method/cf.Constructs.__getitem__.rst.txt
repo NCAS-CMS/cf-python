@@ -1,0 +1,7 @@
+cf.Constructs.__getitem__
+=========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Constructs.__getitem__

@@ -1,0 +1,7 @@
+cf.CellMeasure.__and__
+======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CellMeasure.__and__

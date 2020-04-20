@@ -1,0 +1,7 @@
+cf.RaggedIndexedContiguousArray.to_memory
+=========================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.RaggedIndexedContiguousArray.to_memory

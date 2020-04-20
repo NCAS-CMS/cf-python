@@ -3,7 +3,7 @@
 set -x
 
 if [[ ! $1 ]] ; then 
-  echo "No version \$1 (e.g. 3.1.0)"
+  echo "No version \$1 (e.g. 3.3.0)"
   exit 1
 fi
 
@@ -11,14 +11,21 @@ version=$1
 
 if [[ $2 = "latest" ]] ; then 
   dir=$PWD/docs
-elif [[ $2 = "dev" ]] ; then
-  # For testing: creates separate dir and does not (git) commit
-  mkdir -p $PWD/docs/dev/_downloads
-  dir=$PWD/docs/dev
 elif [[ $2 = "archive" ]] ; then
   dir=$PWD/docs/$version
+elif [[ $2 = "dev" ]] ; then
+  # For testing: creates separate dir and does not (git) commit. DOES
+  # NOT deletes an existing .doctrees subdirectory, meaning that
+  # untouched source files (.py or .rst) might not get rebuilt, even
+  # if conf.py or other styling files have been modified.
+  dir=$PWD/docs/dev
+elif [[ $2 = "dev-clean" ]] ; then
+  # For testing: creates separate dir and does not (git) commit and
+  # also deletes an existing .doctrees subdirectory
+  dir=$PWD/docs/dev
 else
-  echo "\$2 must be 'latest', 'dev' or 'archive'"
+  set +x
+  echo "\$2 must be one of 'latest', 'archive', 'dev' or 'dev-clean'"
   exit 2
 fi
 
@@ -31,12 +38,13 @@ cd -
 # Make the latest docs    
 # --------------------------------------------------------------------
 cd docs
-if [[ $2 = "latest" ]] || [[ $2 = "archive" ]] ; then
-  rm -fr $dir/.doctrees
+if [[ $2 = "latest" ]] || [[ $2 = "archive" ]] || [[ $2 = "dev-clean" ]] ; then
+  echo  rm -fr $dir/.doctrees
 fi
 
 make html $dir
 
+mkdir -p $dir/_downloads
 cp -pv source/sample_files/cf_tutorial_files.zip source/tutorial.py $dir/_downloads
 
 for download_file in cf_tutorial_files.zip tutorial.py
@@ -50,11 +58,12 @@ do
     # all pages referencing these resources must be added to this list
 done
 
-# Copy over our custom stylesheet. It is referenced in the HTML docs files but
-# Sphinx with alabaster theme doesn't seem to (?) provide a means to transfer
-# it to the created _static dir via the build itself *when* the output dir is
-# the top-level one (hence copy works for 'dev' & 'archive' builds to sub-dirs).
-# Seemingly relates to the build warning:
+# Copy over our custom stylesheet. It is referenced in the HTML docs
+# files but Sphinx with alabaster theme doesn't seem to (?) provide a
+# means to transfer it to the created _static dir via the build itself
+# *when* the output dir is the top-level one (hence copy works for
+# 'dev' & 'archive' builds to sub-dirs).  Seemingly relates to the
+# build warning:
 #   WARNING: html_static_path entry '_static' is placed inside outdir
 if [[ $2 = "latest" ]] ; then
   cp source/_static/customise-alabaster.css _static/customise-alabaster.css
@@ -83,6 +92,7 @@ if [[ $2 = "latest" ]] || [[ $2 = "archive" ]] ; then
   git commit -a -m "v$version $2 documentation"
 fi
 
+set +x
+
 echo PYTHONATH=$PYTHONPATH
 
-set +x
