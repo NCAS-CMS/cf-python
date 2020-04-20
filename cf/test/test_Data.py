@@ -125,7 +125,6 @@ class DataTest(unittest.TestCase):
 #        self.test_only = ['test_Data_clip']
 #        self.test_only = ['test_Data__init__dtype_mask']
 
-
     def test_Data_convolution_filter(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -988,6 +987,7 @@ class DataTest(unittest.TestCase):
                 self.assertTrue(d.equals(e, verbose=True))
                 self.assertTrue(d.shape == c.shape)
                 self.assertTrue((d.array == c).all())
+        # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
 
@@ -1007,6 +1007,7 @@ class DataTest(unittest.TestCase):
                 self.assertTrue(d.equals(e, verbose=True))
                 self.assertTrue(d.shape == c.shape)
                 self.assertTrue((d.array == c).all())
+        # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
 
@@ -1026,6 +1027,7 @@ class DataTest(unittest.TestCase):
                 self.assertTrue(d.equals(e, verbose=True))
                 self.assertTrue(d.shape == c.shape)
                 self.assertTrue((d.array == c).all())
+        # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
 
@@ -1050,6 +1052,7 @@ class DataTest(unittest.TestCase):
                 self.assertTrue(d.equals(e, verbose=True))
                 self.assertTrue(d.shape == c.shape)
                 self.assertTrue((d.array == c).all())
+        # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
 
@@ -1069,6 +1072,7 @@ class DataTest(unittest.TestCase):
                 self.assertTrue(d.equals(e, verbose=True))
                 self.assertTrue(d.shape == c.shape)
                 self.assertTrue((d.array == c).all())
+        # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
 
@@ -1174,6 +1178,7 @@ class DataTest(unittest.TestCase):
                 self.assertTrue(d.maximum(_preserve_partitions=pp) == 5)
                 self.assertTrue(d.maximum(_preserve_partitions=pp).datum() == 5)
                 self.assertTrue(d.maximum(_preserve_partitions=pp) == cf.Data(0.005, 'km'))
+        # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
 
@@ -1192,6 +1197,7 @@ class DataTest(unittest.TestCase):
                 self.assertTrue(d.minimum(_preserve_partitions=pp).datum() == 2)
                 self.assertTrue(d.minimum(_preserve_partitions=pp) == cf.Data(0.002, 'km'))
 #            print('pmshape =', d._pmshape)
+        # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
 
@@ -1207,7 +1213,6 @@ class DataTest(unittest.TestCase):
                       ):
                 for i, j in zip(d.ndindex(), numpy.ndindex(d.shape)):
                     self.assertTrue(i == j)
-            # --- End: for
         # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
@@ -1390,21 +1395,30 @@ class DataTest(unittest.TestCase):
                     x = cf.Data(a1, 'metre')
 
                     message = 'Failed in {!r}+{!r}'.format(d, x)
-                    self.assertTrue((d +  x).equals(cf.Data(a0 +  a1, 'm' ), verbose=1), message)
+                    self.assertTrue((d +  x).equals(
+                        cf.Data(a0 +  a1, 'm' ), verbose=1), message)
                     message = 'Failed in {!r}*{!r}'.format(d, x)
-                    self.assertTrue((d *  x).equals(cf.Data(a0 *  a1, 'm2'), verbose=1), message)
+                    self.assertTrue((d *  x).equals(
+                        cf.Data(a0 *  a1, 'm2'), verbose=1), message)
                     message = 'Failed in {!r}/{!r}'.format(d, x)
-                    self.assertTrue((d /  x).equals(cf.Data(a0 /  a1, '1' ), verbose=1), message)
+                    self.assertTrue((d /  x).equals(
+                        cf.Data(a0 /  a1, '1' ), verbose=1), message)
                     message = 'Failed in {!r}-{!r}'.format(d, x)
-                    self.assertTrue((d -  x).equals(cf.Data(a0 -  a1, 'm' ), verbose=1), message)
+                    self.assertTrue((d -  x).equals(
+                        cf.Data(a0 -  a1, 'm' ), verbose=1), message)
                     message = 'Failed in {!r}//{!r}'.format(d, x)
-                    self.assertTrue((d // x).equals(cf.Data(a0 // a1, '1' ), verbose=1), message)
+                    self.assertTrue((d // x).equals(
+                        cf.Data(a0 // a1, '1' ), verbose=1), message)
 
                     message = 'Failed in {!r}.__truediv__//{!r}'.format(d, x)
-                    self.assertTrue(d.__truediv__(x).equals(cf.Data(array.__truediv__(array), '1'), verbose=1), message)
+                    self.assertTrue(d.__truediv__(x).equals(
+                        cf.Data(array.__truediv__(array), '1'), verbose=1),
+                                    message)
 
                     message = 'Failed in {!r}__rtruediv__{!r}'.format(d, x)
-                    self.assertTrue(d.__rtruediv__(x).equals(cf.Data(array.__rtruediv__(array), '1'), verbose=1) , message)
+                    self.assertTrue(d.__rtruediv__(x).equals(
+                        cf.Data(array.__rtruediv__(array), '1'), verbose=1) ,
+                                    message)
 
                     try:
                         d ** x
@@ -1419,33 +1433,60 @@ class DataTest(unittest.TestCase):
                 d = cf.Data(a0, 'metre')
                 for x in (2, 2.0,):
                     message = 'Failed in {!r}+{}'.format(d, x)
-                    self.assertTrue((d +  x).equals(cf.Data(a0 +  x, 'm' ), verbose=1), message)
+                    self.assertTrue((d +  x).equals(
+                        cf.Data(a0 +  x, 'm' ), verbose=1),
+                                    message)
                     message = 'Failed in {!r}*{}'.format(d, x)
-                    self.assertTrue((d *  x).equals(cf.Data(a0 *  x, 'm' ), verbose=1), message)
+                    self.assertTrue((d *  x).equals(
+                        cf.Data(a0 *  x, 'm' ), verbose=1),
+                                    message)
                     message = 'Failed in {!r}/{}'.format(d, x)
-                    self.assertTrue((d /  x).equals(cf.Data(a0 /  x, 'm' ), verbose=1), message)
+                    self.assertTrue((d /  x).equals(
+                        cf.Data(a0 /  x, 'm' ), verbose=1),
+                                    message)
                     message = 'Failed in {!r}-{}'.format(d, x)
-                    self.assertTrue((d -  x).equals(cf.Data(a0 -  x, 'm' ), verbose=1), message)
+                    self.assertTrue((d -  x).equals(
+                        cf.Data(a0 -  x, 'm' ), verbose=1),
+                                    message)
                     message = 'Failed in {!r}//{}'.format(d, x)
-                    self.assertTrue((d // x).equals(cf.Data(a0 // x, 'm' ), verbose=1), message)
+                    self.assertTrue((d // x).equals(
+                        cf.Data(a0 // x, 'm' ), verbose=1),
+                                    message)
                     message = 'Failed in {!r}**{}'.format(d, x)
-                    self.assertTrue((d ** x).equals(cf.Data(a0 ** x, 'm2'), verbose=1), message)
+                    self.assertTrue((d ** x).equals(
+                        cf.Data(a0 ** x, 'm2'), verbose=1),
+                                    message)
                     message = 'Failed in {!r}.__truediv__{}'.format(d, x)
-                    self.assertTrue(d.__truediv__(x).equals(cf.Data(a0.__truediv__(x), 'm'), verbose=1), message)
+                    self.assertTrue(d.__truediv__(x).equals(
+                        cf.Data(a0.__truediv__(x), 'm'), verbose=1),
+                                    message)
                     message = 'Failed in {!r}.__rtruediv__{}'.format(d, x)
-                    self.assertTrue(d.__rtruediv__(x).equals(cf.Data(a0.__rtruediv__(x), 'm-1'), verbose=1), message)
-
+                    self.assertTrue(d.__rtruediv__(x).equals(
+                        cf.Data(a0.__rtruediv__(x),'m-1'), verbose=1)
+                                    message)
+                    
                     message = 'Failed in {}+{!r}'.format(x, d)
-                    self.assertTrue((x +  d).equals(cf.Data(x +  a0, 'm'  ), verbose=1), message)
+                    self.assertTrue((x +  d).equals(
+                        cf.Data(x +  a0, 'm'  ), verbose=1),
+                                    message)
                     message = 'Failed in {}*{!r}'.format(x, d)
-                    self.assertTrue((x *  d).equals(cf.Data(x *  a0, 'm'  ), verbose=1), message)
+                    self.assertTrue((x *  d).equals(
+                        cf.Data(x *  a0, 'm'  ), verbose=1),
+                                    message)
                     message = 'Failed in {}/{!r}'.format(x, d)
-                    self.assertTrue((x /  d).equals(cf.Data(x /  a0, 'm-1'), verbose=1), message)
+                    self.assertTrue((x /  d).equals(
+                        cf.Data(x /  a0, 'm-1'), verbose=1),
+                                    message)
                     message = 'Failed in {}-{!r}'.format(x, d)
-                    self.assertTrue((x -  d).equals(cf.Data(x -  a0, 'm'  ), verbose=1), message)
-                    message = 'Failed in {}//{!r}\n{!r}\n{!r}'.format(x, d, x//d, x//a0)
-                    self.assertTrue((x // d).equals(cf.Data(x // a0, 'm-1'), verbose=1), message)
-
+                    self.assertTrue((x -  d).equals(
+                        cf.Data(x -  a0, 'm'  ), verbose=1),
+                                    message)
+                    message = 'Failed in {}//{!r}\n{!r}\n{!r}'.format(
+                        x, d, x//d, x//a0)
+                    self.assertTrue((x // d).equals(
+                        cf.Data(x // a0, 'm-1'), verbose=1),
+                                    message)
+                    
                     try:
                         x ** d
                     except:
@@ -1463,7 +1504,8 @@ class DataTest(unittest.TestCase):
                         e = d.copy()
                         e += x
                         message = 'Failed in {!r}+={}'.format(d, x)
-                        self.assertTrue(e.equals(cf.Data(a, 'm'), verbose=1), message)
+                        self.assertTrue(e.equals(cf.Data(a, 'm'), verbose=1),
+                                        message)
 
                     a = a0.copy()
                     try:
@@ -1473,7 +1515,9 @@ class DataTest(unittest.TestCase):
                     else:
                         e = d.copy()
                         e *= x
-                        self.assertTrue(e.equals(cf.Data(a, 'm'), verbose=1)), '%s*=%s' % (repr(d), x)
+                        message = 'Failed in {!r}*={}'.format(d, x)
+                        self.assertTrue(e.equals(cf.Data(a, 'm'), verbose=1),
+                                        message)
 
                     a = a0.copy()
                     try:
@@ -1483,7 +1527,9 @@ class DataTest(unittest.TestCase):
                     else:
                         e = d.copy()
                         e /= x
-                        self.assertTrue(e.equals(cf.Data(a, 'm'), verbose=1)),'%s/=%s' % (repr(d), x)
+                        message = 'Failed in {!r}/={}'.format(d, x)
+                        self.assertTrue(e.equals(cf.Data(a, 'm'), verbose=1),
+                                        message)
 
                     a = a0.copy()
                     try:
@@ -1493,7 +1539,9 @@ class DataTest(unittest.TestCase):
                     else:
                         e = d.copy()
                         e -= x
-                        self.assertTrue(e.equals(cf.Data(a, 'm'), verbose=1)), '%s-=%s' % (repr(d), x)
+                        message = 'Failed in {!r}-={}'.format(d, x)
+                        self.assertTrue(e.equals(cf.Data(a, 'm'), verbose=1),
+                                        message)
 
                     a = a0.copy()
                     try:
@@ -1503,7 +1551,9 @@ class DataTest(unittest.TestCase):
                     else:
                         e = d.copy()
                         e //= x
-                        self.assertTrue(e.equals(cf.Data(a, 'm'), verbose=1)), '%s//=%s' % (repr(d), x)
+                        message = 'Failed in {!r}//={}'.format(d, x)
+                        self.assertTrue(e.equals(cf.Data(a, 'm'), verbose=1),
+                                        message)
 
                     a = a0.copy()
                     try:
@@ -1513,7 +1563,9 @@ class DataTest(unittest.TestCase):
                     else:
                         e = d.copy()
                         e **= x
-                        self.assertTrue(e.equals(cf.Data(a, 'm2'), verbose=1)), '%s**=%s' % (repr(d), x)
+                        message = 'Failed in {!r}**={}'.format(d, x)
+                        self.assertTrue(e.equals(cf.Data(a, 'm2'), verbose=1),
+                                        message)
 
                     a = a0.copy()
                     try:
@@ -1523,15 +1575,22 @@ class DataTest(unittest.TestCase):
                     else:
                         e = d.copy()
                         e.__itruediv__(x)
-                        self.assertTrue(e.equals(cf.Data(a, 'm'), verbose=1)), '%s.__itruediv__(%s)' % (d, x)
+                        message = 'Failed in {!r}.__itruediv__({})'.format(d, x)
+                        self.assertTrue(e.equals(cf.Data(a, 'm'), verbose=1),
+                                        message)
                 # --- End: for
 
                 for x in (cf.Data(2, 'metre'), cf.Data(2.0, 'metre')):
-                    self.assertTrue((d +  x).equals(cf.Data(a0 +  x.datum(), 'm' ), verbose=1))
-                    self.assertTrue((d *  x).equals(cf.Data(a0 *  x.datum(), 'm2'), verbose=1))
-                    self.assertTrue((d /  x).equals(cf.Data(a0 /  x.datum(), '1' ), verbose=1))
-                    self.assertTrue((d -  x).equals(cf.Data(a0 -  x.datum(), 'm' ), verbose=1))
-                    self.assertTrue((d // x).equals(cf.Data(a0 // x.datum(), '1' ), verbose=1))
+                    self.assertTrue((d +  x).equals(
+                        cf.Data(a0 +  x.datum(), 'm' ), verbose=1))
+                    self.assertTrue((d *  x).equals(
+                        cf.Data(a0 *  x.datum(), 'm2'), verbose=1))
+                    self.assertTrue((d /  x).equals(
+                        cf.Data(a0 /  x.datum(), '1' ), verbose=1))
+                    self.assertTrue((d -  x).equals(
+                        cf.Data(a0 -  x.datum(), 'm' ), verbose=1))
+                    self.assertTrue((d // x).equals(
+                        cf.Data(a0 // x.datum(), '1' ), verbose=1))
 
                     try:
                        d ** x
@@ -1540,11 +1599,11 @@ class DataTest(unittest.TestCase):
                     else:
                         self.assertTrue((x**d).all(), '%s**%s' % (x, repr(d)))
 
-                    self.assertTrue(d.__truediv__(x).equals(cf.Data(a0.__truediv__(x.datum()), ''), verbose=1))
+                    self.assertTrue(d.__truediv__(x).equals(
+                        cf.Data(a0.__truediv__(x.datum()), ''), verbose=1))
         # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
-
 
     def test_Data_BROADCASTING(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -1578,7 +1637,6 @@ class DataTest(unittest.TestCase):
         # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
-
 
     def test_Data_ERROR(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -1632,7 +1690,6 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(Exception):
             _ = len(cf.Data(1))
 
-
     def test_Data__float__(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -1643,7 +1700,6 @@ class DataTest(unittest.TestCase):
 
         with self.assertRaises(Exception):
             _ = float(cf.Data([1, 2]))
-
 
     def test_Data__int__(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -1656,19 +1712,20 @@ class DataTest(unittest.TestCase):
         with self.assertRaises(Exception):
             _ = int(cf.Data([1, 2]))
 
-
     def test_Data__round__(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
         for ndigits in ([], [0], [1], [2], [3]):
-            for x in (-1.9123, -1.5789, -1.4123, -1.789, 0, 1.123, 1.0234, 1.412, 1.9345):
-                self.assertTrue(round(cf.Data(x), *ndigits) == round(x, *ndigits))
-                self.assertTrue(round(cf.Data(x), *ndigits) == round(x, *ndigits))
+            for x in (-1.9123, -1.5789, -1.4123, -1.789,
+                      0, 1.123, 1.0234, 1.412, 1.9345):
+                self.assertTrue(
+                    round(cf.Data(x), *ndigits) == round(x, *ndigits))
+                self.assertTrue(
+                    round(cf.Data(x), *ndigits) == round(x, *ndigits))
 
         with self.assertRaises(Exception):
             _ = round(cf.Data([1, 2]))
-
 
     def test_Data_argmax(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -1684,10 +1741,10 @@ class DataTest(unittest.TestCase):
 
             e = d.argmax(axis=1)
             self.assertTrue(e.shape == (40, 6))
-            self.assertTrue(e.equals(cf.Data.full(shape=(40, 6), fill_value=4, dtype=int)))
+            self.assertTrue(e.equals(
+                cf.Data.full(shape=(40, 6), fill_value=4, dtype=int)))
 
         cf.CHUNKSIZE(self.original_chunksize)
-
 
     def test_Data__collapse_SHAPE(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -1731,9 +1788,10 @@ class DataTest(unittest.TestCase):
                     shape[i] = 1
 
                 shape = tuple(shape)
-                self.assertTrue(e.shape == shape,
-                                "{}, axes={}, not squeezed bad shape: {} != {}".format(
-                                h, axes, e.shape, shape))
+                self.assertTrue(
+                    e.shape == shape,
+                    "{}, axes={}, not squeezed bad shape: {} != {}".format(
+                        h, axes, e.shape, shape))
 
             for axes in self.axes_combinations:
                 e = getattr(d, h)(axes=axes, squeeze=True,
@@ -1743,9 +1801,10 @@ class DataTest(unittest.TestCase):
                     shape.pop(i)
 
                 shape = tuple(shape)
-                self.assertTrue(e.shape == shape,
-                                "{}, axes={}, squeezed bad shape: {} != {}".format(
-                                    h, axes, e.shape, shape))
+                self.assertTrue(
+                    e.shape == shape,
+                    "{}, axes={}, squeezed bad shape: {} != {}".format(
+                        h, axes, e.shape, shape))
 
             e = getattr(d, h)(squeeze=True,
                               _preserve_partitions=False)
@@ -1762,7 +1821,6 @@ class DataTest(unittest.TestCase):
                     h, None, e.shape, shape))
         # --- End: for
 
-
     def test_Data_max_min_sum_sum_of_squares(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -1773,8 +1831,9 @@ class DataTest(unittest.TestCase):
 
                 # unweighted, unmasked
                 d = cf.Data(self.a)
-                for np, h in zip((numpy.sum, numpy.amin, numpy.amax,         numpy.sum),
-                                 (     'sum',      'min',      'max', 'sum_of_squares')):
+                for np, h in zip(
+                        (numpy.sum, numpy.amin, numpy.amax,         numpy.sum),
+                        (     'sum',      'min',      'max', 'sum_of_squares')):
                     for axes in self.axes_combinations:
                         b = reshape_array(self.a, axes)
                         if h == 'sum_of_squares':
@@ -1791,8 +1850,9 @@ class DataTest(unittest.TestCase):
 
                 # unweighted, masked
                 d = cf.Data(self.ma)
-                for np, h in zip((numpy.ma.sum, numpy.ma.amin, numpy.ma.amax, numpy.ma.sum),
-                                 (     'sum',     'min',     'max',       'sum_of_squares')):
+                for np, h in zip(
+                        (numpy.ma.sum, numpy.ma.amin, numpy.ma.amax, numpy.ma.sum),
+                        (     'sum',     'min',     'max',       'sum_of_squares')):
                     for axes in self.axes_combinations:
                         b = reshape_array(self.ma, axes)
                         if h == 'sum_of_squares':
@@ -1815,7 +1875,6 @@ class DataTest(unittest.TestCase):
         # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
-
 
     def test_Data_median(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -1865,7 +1924,6 @@ class DataTest(unittest.TestCase):
         # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
-
 
     def test_Data_mean_of_upper_decile(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -1927,7 +1985,6 @@ class DataTest(unittest.TestCase):
 
         cf.CHUNKSIZE(self.original_chunksize)
 
-
     def test_Data_range_mid_range(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -1986,7 +2043,6 @@ class DataTest(unittest.TestCase):
 
         cf.CHUNKSIZE(self.original_chunksize)
 
-
     def test_Data_integral(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -2035,7 +2091,6 @@ class DataTest(unittest.TestCase):
         # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
-
 
     def test_Data_sum_of_weights_sum_of_weights2(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -2121,7 +2176,6 @@ class DataTest(unittest.TestCase):
 
         cf.CHUNKSIZE(self.original_chunksize)
 
-
     def test_Data_mean_mean_absolute_value(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -2198,7 +2252,8 @@ class DataTest(unittest.TestCase):
                     self.assertTrue(
                         (e.mask.array == b.mask).all(),
                         "%s weighted, masked axis=%s, \ne.mask=%s, \nb.mask=%s, \ne.mask==b.mask=%s" %
-                        (method, axes, e.mask.array, b.mask, e.mask.array==b.mask))
+                        (method, axes, e.mask.array, b.mask,
+                         e.mask.array==b.mask))
 
                     self.assertTrue(
                         e.allclose(b, rtol=1e-05, atol=1e-08),
@@ -2207,7 +2262,6 @@ class DataTest(unittest.TestCase):
         # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
-
 
     def test_Data_root_mean_square(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -2285,7 +2339,6 @@ class DataTest(unittest.TestCase):
 
         cf.CHUNKSIZE(self.original_chunksize)
 
-
     def test_Data_sample_size(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -2320,7 +2373,6 @@ class DataTest(unittest.TestCase):
             # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
-
 
     def test_Data_sd_var(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -2381,9 +2433,10 @@ class DataTest(unittest.TestCase):
                                                   returned=True)
 
                             if ddof == 1:
-                                # Calculate the weighted unbiased variance. The unbiased
-                                # variance weighted with _reliability_ weights is
-                                # [V1**2/(V1**2-V2)]*var.
+                                # Calculate the weighted unbiased
+                                # variance. The unbiased variance
+                                # weighted with _reliability_ weights
+                                # is [V1**2/(V1**2-V2)]*var.
                                 V2 = numpy.asanyarray((v * v).sum(axis=-1))
                                 b *= (V1*V1/(V1*V1 - V2))
                             elif ddof == 0:
@@ -2419,15 +2472,18 @@ class DataTest(unittest.TestCase):
                             if numpy.ndim(avg) < b.ndim:
                                 avg = numpy.expand_dims(avg, -1)
 
-                            b, V1 = numpy.ma.average((b-avg)**2, axis=-1, weights=v,
-                                                     returned=True)
+                            b, V1 = numpy.ma.average(
+                                (b-avg)**2, axis=-1, weights=v,
+                                returned=True)
 
-                            b = numpy.ma.where(not_enough_data, numpy.ma.masked, b)
+                            b = numpy.ma.where(
+                                not_enough_data, numpy.ma.masked, b)
 
                             if ddof == 1:
-                                # Calculate the weighted unbiased variance. The unbiased
-                                # variance weighted with _reliability_ weights is
-                                # [V1**2/(V1**2-V2)]*var.
+                                # Calculate the weighted unbiased
+                                # variance. The unbiased variance
+                                # weighted with _reliability_ weights
+                                # is [V1**2/(V1**2-V2)]*var.
                                 V2 = numpy.asanyarray((v * v).sum(axis=-1))
                                 b *= (V1*V1/(V1*V1 - V2))
                             elif ddof == 0:
@@ -2448,7 +2504,8 @@ class DataTest(unittest.TestCase):
                             self.assertTrue(
                                 (e.mask.array == b.mask).all(),
                                 "%s, axis=%s, \ne.mask=%s, \nb.mask=%s, \ne.mask==b.mask=%s" %
-                                (h, axes, e.mask.array, b.mask, e.mask.array==b.mask))
+                                (h, axes, e.mask.array, b.mask,
+                                 e.mask.array==b.mask))
 
                             self.assertTrue(
                                 e.allclose(b, rtol=1e-05, atol=1e-08),
@@ -2457,7 +2514,6 @@ class DataTest(unittest.TestCase):
         # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
-
 
     def test_Data_dumpd_loadd_dumps(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -2477,7 +2533,6 @@ class DataTest(unittest.TestCase):
 
         cf.CHUNKSIZE(self.original_chunksize)
 
-
     def test_Data_section(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -2495,7 +2550,6 @@ class DataTest(unittest.TestCase):
 
         cf.CHUNKSIZE(self.original_chunksize)
 
-
     def test_Data_count(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -2512,7 +2566,6 @@ class DataTest(unittest.TestCase):
             self.assertTrue(d.count_masked() == 0)
 
         cf.CHUNKSIZE(self.original_chunksize)
-
 
     def test_Data_exp(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -2536,7 +2589,6 @@ class DataTest(unittest.TestCase):
         d = cf.Data(a, 'm')
         with self.assertRaises(Exception):
             _ = d.exp()
-
 
     def test_Data_trigonometric_hyperbolic(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -2625,7 +2677,6 @@ class DataTest(unittest.TestCase):
         #            self.assertTrue((d1.mask.array == c.mask).all())
 
         cf.CHUNKSIZE(self.original_chunksize)
-
 
 # --- End: class
 
