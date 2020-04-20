@@ -29,6 +29,8 @@ else
   exit 2
 fi
 
+export PYTHONPATH=$PWD:$PYTHONPATH
+
 # Make zip file
 cd docs/source/sample_files
 zip cf_tutorial_files.zip *.nc *.pp

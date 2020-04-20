@@ -26,16 +26,10 @@
   the individual tests are un-commented so as to override this in the
   commented listing beneath).
 
-* Make sure that the correct path to the cf library is in the
-  `PYTHONPATH` environment variable:
-
-   ```bash
-   export PYTHONPATH=$PWD:$PYTHONPATH
-   ```
-
 * Test tutorial code:
 
   ```bash
+  export PYTHONPATH=$PWD:$PYTHONPATH
   d=$PWD
   cd docs/source
   ./extract_tutorial_code
@@ -76,7 +70,7 @@
 * Test the tarball release using
 
   ```bash
-  test_release <vn> # E.g. ./test_release 3.3.0
+  ./test_release <vn> # E.g. ./test_release 3.3.0
   ```
 
 * Push recent commits using
