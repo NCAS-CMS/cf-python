@@ -7,6 +7,7 @@ import numpy
 
 import cf
 
+
 class create_fieldTest(unittest.TestCase):
     filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                             'test_file.nc')
@@ -14,19 +15,24 @@ class create_fieldTest(unittest.TestCase):
 
     def test_create_field(self):
         # Dimension coordinates
-        dim1 = cf.DimensionCoordinate(data=cf.Data(numpy.arange(10.), 'degrees'))
+        dim1 = cf.DimensionCoordinate(
+            data=cf.Data(numpy.arange(10.), 'degrees'))
         dim1.standard_name = 'grid_latitude'
 
-        dim0 = cf.DimensionCoordinate(data=cf.Data(numpy.arange(9.) + 20, 'degrees'))
+        dim0 = cf.DimensionCoordinate(
+            data=cf.Data(numpy.arange(9.) + 20, 'degrees'))
         dim0.standard_name = 'grid_longitude'
         dim0.data[-1] += 5
-        bounds = cf.Data(numpy.array([dim0.data.array-0.5, dim0.data.array+0.5]).transpose((1,0)))
-        bounds[-2,1] = 30
-        bounds[-1,:] = [30, 36]
+        bounds = cf.Data(numpy.array(
+            [dim0.data.array-0.5, dim0.data.array+0.5]).transpose((1, 0)))
+        bounds[-2, 1] = 30
+        bounds[-1, :] = [30, 36]
         dim0.set_bounds(cf.Bounds(data=bounds))
 
-        dim2 = cf.DimensionCoordinate(data=cf.Data([1.5]),
-                                      bounds=cf.Bounds(data=cf.Data([[1, 2.]])))
+        dim2 = cf.DimensionCoordinate(
+            data=cf.Data([1.5]),
+            bounds=cf.Bounds(data=cf.Data([[1, 2.]]))
+        )
         dim2.standard_name = 'atmosphere_hybrid_height_coordinate'
 
         # Auxiliary coordinates
@@ -51,11 +57,14 @@ class create_fieldTest(unittest.TestCase):
         aux3.standard_name = 'longitude'
 
         aux4 = cf.AuxiliaryCoordinate(
-            data=cf.Data(numpy.array(['alpha','beta','gamma','delta','epsilon',
-                                      'zeta','eta','theta','iota','kappa'], dtype='S')))
+            data=cf.Data(numpy.array(
+                ['alpha', 'beta', 'gamma', 'delta', 'epsilon',
+                 'zeta', 'eta', 'theta', 'iota', 'kappa'],
+                dtype='S'
+            ))
+        )
         aux4.standard_name = 'greek_letters'
         aux4[0] = cf.masked
-
 
         # Cell measures
         msr0 = cf.CellMeasure(
@@ -87,13 +96,14 @@ class create_fieldTest(unittest.TestCase):
         bk = f.set_construct(bk, axes=[axisZ])
 
         # Coordinate references
-        coordinate_conversion =cf.CoordinateConversion(
+        coordinate_conversion = cf.CoordinateConversion(
             parameters={'grid_mapping_name': 'rotated_latitude_longitude',
                         'grid_north_pole_latitude': 38.0,
                         'grid_north_pole_longitude': 190.0})
-        ref0 = cf.CoordinateReference(coordinate_conversion=coordinate_conversion,
-                                      coordinates=[x, y, lat, lon])
-
+        ref0 = cf.CoordinateReference(
+            coordinate_conversion=coordinate_conversion,
+            coordinates=[x, y, lat, lon]
+        )
 
         f.set_construct(msr0, axes=[axisX, 'Y'])
 
@@ -107,11 +117,17 @@ class create_fieldTest(unittest.TestCase):
         orog_key = f.set_construct(orog, axes=['X', axisY])
 
         coordinate_conversion = cf.CoordinateConversion(
-            parameters={'standard_name': 'atmosphere_hybrid_height_coordinate'},
-            domain_ancillaries={'orog': orog_key, 'a': ak, 'b': bk})
-        ref1 = cf.CoordinateReference(coordinate_conversion=coordinate_conversion,
-                                      coordinates=[z])
-
+            parameters={
+                'standard_name': 'atmosphere_hybrid_height_coordinate'
+            },
+            domain_ancillaries={
+                'orog': orog_key,
+                'a': ak,
+                'b': bk
+            }
+        )
+        ref1 = cf.CoordinateReference(
+            coordinate_conversion=coordinate_conversion, coordinates=[z])
 
         f.set_construct(ref1)
 
@@ -143,11 +159,11 @@ class create_fieldTest(unittest.TestCase):
         g *= 0.001
         f.set_construct(g)
 
-
-        f.flag_values = [1,2,4]
+        f.flag_values = [1, 2, 4]
         f.flag_meanings = ['a', 'bb', 'ccc']
 
-        for cm in cf.CellMethod.create('grid_longitude: mean grid_latitude: max'):
+        for cm in cf.CellMethod.create(
+                'grid_longitude: mean grid_latitude: max'):
             f.set_construct(cm)
 
 
@@ -163,7 +179,8 @@ class create_fieldTest(unittest.TestCase):
 
         g = cf.read(self.filename, squeeze=True, verbose=False)[0]
 
-        self.assertTrue(g.equals(f, verbose=False), "Field not equal to itself read back in")
+        self.assertTrue(g.equals(f, verbose=False),
+                        "Field not equal to itself read back in")
 
         x = g.dump(display=False)
         x = f.dump(display=False)

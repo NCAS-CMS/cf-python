@@ -42,6 +42,7 @@ all_test_cases = test_loader().discover('.', pattern='test_*.py')
 shuffle(all_test_cases._tests)
 testsuite.addTests(all_test_cases)
 
+
 # Run the test suite's first set-up stage.
 def run_test_suite_setup_0(verbosity=2):
     runner = unittest.TextTestRunner(verbosity=verbosity)
