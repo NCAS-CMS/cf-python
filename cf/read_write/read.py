@@ -64,20 +64,23 @@ def read(files, external=None, verbose=False, warnings=False,
     well as optionally displayed when the dataset is read by setting
     the warnings parameter.
 
+
     **CDL files**
 
     A file is considered to be a CDL representation of a netCDF
-    dataset
-    (https://www.unidata.ucar.edu/software/netcdf/netcdf/CDL-Syntax.html)
-    if it is a text file that starts with the seven characters "netcdf
-    " (six letters followed by a space). It is converted to a
-    temporary netCDF4 file using the external ``ncgen`` command, and
-    the temporary file persists until the end of the Python session,
-    at which time it is automatically deleted. The CDL file may omit
-    data array values (as would be the case, for example, if the file
-    was created with the ``-h`` or ``-c`` option to ``ncdump``), in
-    which case the relevant constructs in memory will be created
-    with data containing missing values.
+    dataset if it is a text file whose first non-comment line starts
+    with the seven characters "netcdf " (six letters followed by a
+    space). A comment line is identified as one which starts with any
+    amount white space (including none) followed by "//" (two
+    slashes). It is converted to a temporary netCDF4 file using the
+    external ``ncgen`` command, and the temporary file persists until
+    the end of the Python session, at which time it is automatically
+    deleted. The CDL file may omit data array values (as would be the
+    case, for example, if the file was created with the ``-h`` or
+    ``-c`` option to ``ncdump``), in which case the the relevant
+    constructs in memory will be created with data containing missing
+    values.
+
 
     **PP and UM fields files**
 
