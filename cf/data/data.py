@@ -3231,6 +3231,7 @@ place.
 
     **Examples:**
 
+    >>> d = cf.Data([-1.9, -1.5, -1.1, -1, 0, 1, 1.1, 1.5 , 1.9])
     >>> print(d.array)
     [-1.9 -1.5 -1.1 -1.   0.   1.   1.1  1.5  1.9]
     >>> print(d.ceil().array)
@@ -10830,7 +10831,11 @@ False
 
     :Parameters:
 
-        TODO
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+
+        i: deprecated at version 3.0.0
+            Use *inplace* parameter instead.
 
     :Returns:
 
@@ -10838,6 +10843,7 @@ False
 
     **Examples:**
 
+    >>> d = cf.Data([-1.9, -1.5, -1.1, -1, 0, 1, 1.1, 1.5 , 1.9])
     >>> print(d.array)
     [-1.9 -1.5 -1.1 -1.   0.   1.   1.1  1.5  1.9]
     >>> print(d.floor().array)
@@ -11712,6 +11718,7 @@ False
 
     **Examples:**
 
+    >>> d = cf.Data([-1.9, -1.5, -1.1, -1, 0, 1, 1.1, 1.5 , 1.9])
     >>> print(d.array)
     [-1.9 -1.5 -1.1 -1.   0.   1.   1.1  1.5  1.9]
     >>> print(d.rint().array)
@@ -11831,8 +11838,9 @@ False
 
     **Examples:**
 
+    >>> d = cf.Data([-1.81, -1.41, -1.01, -0.91, 0.09, 1.09, 1.19, 1.59, 1.99])
     >>> print(d.array)
-    [-1.81, -1.41, -1.01, -0.91,  0.09,  1.09,  1.19,  1.59,  1.99])
+    [-1.81 -1.41 -1.01 -0.91  0.09  1.09  1.19  1.59  1.99]
     >>> print(d.round().array)
     [-2., -1., -1., -1.,  0.,  1.,  1.,  2.,  2.]
     >>> print(d.round(1).array)
@@ -13204,6 +13212,7 @@ False
 
     **Examples:**
 
+    >>> d = cf.Data([-1.9, -1.5, -1.1, -1, 0, 1, 1.1, 1.5 , 1.9])
     >>> print(d.array)
     [-1.9 -1.5 -1.1 -1.   0.   1.   1.1  1.5  1.9]
     >>> print(d.trunc().array)
