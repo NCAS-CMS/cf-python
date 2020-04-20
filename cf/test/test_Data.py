@@ -1462,7 +1462,7 @@ class DataTest(unittest.TestCase):
                                     message)
                     message = 'Failed in {!r}.__rtruediv__{}'.format(d, x)
                     self.assertTrue(d.__rtruediv__(x).equals(
-                        cf.Data(a0.__rtruediv__(x),'m-1'), verbose=1)
+                        cf.Data(a0.__rtruediv__(x),'m-1'), verbose=1),
                                     message)
                     
                     message = 'Failed in {}+{!r}'.format(x, d)
