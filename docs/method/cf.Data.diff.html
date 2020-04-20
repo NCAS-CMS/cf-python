@@ -17,6 +17,7 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <script type="text/javascript" src="../_static/clipboard.min.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -36,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.2.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.3.0</a></h1>
 
 
 
@@ -111,7 +112,7 @@
 <h1>cf.Data.diff<a class="headerlink" href="#cf-data-diff" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Data.diff">
-<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">diff</code><span class="sig-paren">(</span><em class="sig-param">axis=-1</em>, <em class="sig-param">n=1</em>, <em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.2.0/cf/decorators.py#L23"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.diff" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">diff</code><span class="sig-paren">(</span><em class="sig-param">axis=-1</em>, <em class="sig-param">n=1</em>, <em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.3.0/cf/data/data.py#L2096-L2198"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.diff" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the n-th discrete difference along the given axis.</p>
 <p>The first difference is given by <code class="docutils literal notranslate"><span class="pre">x[i+1]</span> <span class="pre">-</span> <span class="pre">x[i]</span></code> along the given
 axis, higher differences are calculated by using <a class="reference internal" href="#cf.Data.diff" title="cf.Data.diff"><code class="xref py py-obj docutils literal notranslate"><span class="pre">diff</span></code></a>
@@ -164,7 +165,7 @@ in-place.</p>
 <span class="go"> [ 0.5 -1. ]]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[4.  3.5 4.  4. ]</span>
-<span class="go"> [4.  4.5 4.5 4. ]]    </span>
+<span class="go"> [4.  4.5 4.5 4. ]]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[0.  1.  0.5 0. ]]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">masked</span>
@@ -199,11 +200,11 @@ in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-04-01.
+      &copy;2020, NCAS | Page built on 2020-04-20.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cf.Data.diff.rst.txt"

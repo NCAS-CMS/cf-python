@@ -356,9 +356,17 @@ Sums, products, differences
    ~cf.Data.diff
    ~cf.Data.sum
 
+.. rubric:: Convolution filters
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../method/
+   :template: method.rst
+
+   ~cf.Data.convolution_filter
+
 Exponents and logarithms
 ^^^^^^^^^^^^^^^^^^^^^^^^
-
 
 .. autosummary::
    :nosignatures:

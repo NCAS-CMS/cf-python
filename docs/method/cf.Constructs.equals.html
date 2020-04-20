@@ -17,6 +17,7 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <script type="text/javascript" src="../_static/clipboard.min.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -36,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.2.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.3.0</a></h1>
 
 
 
@@ -111,7 +112,7 @@
 <h1>cf.Constructs.equals<a class="headerlink" href="#cf-constructs-equals" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Constructs.equals">
-<code class="sig-prename descclassname">Constructs.</code><code class="sig-name descname">equals</code><span class="sig-paren">(</span><em class="sig-param">other</em>, <em class="sig-param">rtol=None</em>, <em class="sig-param">atol=None</em>, <em class="sig-param">verbose=False</em>, <em class="sig-param">ignore_data_type=False</em>, <em class="sig-param">ignore_fill_value=False</em>, <em class="sig-param">ignore_compression=True</em>, <em class="sig-param">_ignore_type=False</em>, <em class="sig-param">_return_axis_map=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.0/cfdm/constructs.py#L594"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Constructs.equals" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Constructs.</code><code class="sig-name descname">equals</code><span class="sig-paren">(</span><em class="sig-param">other</em>, <em class="sig-param">rtol=None</em>, <em class="sig-param">atol=None</em>, <em class="sig-param">verbose=False</em>, <em class="sig-param">ignore_data_type=False</em>, <em class="sig-param">ignore_fill_value=False</em>, <em class="sig-param">ignore_compression=True</em>, <em class="sig-param">_ignore_type=False</em>, <em class="sig-param">_return_axis_map=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.1/cfdm/constructs.py#L594-L842"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Constructs.equals" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether two <a class="reference internal" href="../classes/cf.Constructs.html#cf.Constructs" title="cf.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs</span></code></a> instances are the same.</p>
 <p>Two real numbers <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> are considered equal if
 <code class="docutils literal notranslate"><span class="pre">|x-y|&lt;=atol+rtol|y|</span></code>, where <code class="docutils literal notranslate"><span class="pre">atol</span></code> (the tolerance on absolute
@@ -186,11 +187,11 @@ the arrays in their uncompressed forms are compared.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-04-01.
+      &copy;2020, NCAS | Page built on 2020-04-20.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cf.Constructs.equals.rst.txt"

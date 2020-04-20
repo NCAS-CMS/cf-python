@@ -17,6 +17,7 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <script type="text/javascript" src="../_static/clipboard.min.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -36,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.2.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.3.0</a></h1>
 
 
 
@@ -111,7 +112,7 @@
 <h1>cf.Field.digitize<a class="headerlink" href="#cf-field-digitize" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.digitize">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">digitize</code><span class="sig-paren">(</span><em class="sig-param">bins</em>, <em class="sig-param">upper=False</em>, <em class="sig-param">open_ends=False</em>, <em class="sig-param">closed_ends=None</em>, <em class="sig-param">return_bins=False</em>, <em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.2.0/cf/decorators.py#L23"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.digitize" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">digitize</code><span class="sig-paren">(</span><em class="sig-param">bins</em>, <em class="sig-param">upper=False</em>, <em class="sig-param">open_ends=False</em>, <em class="sig-param">closed_ends=None</em>, <em class="sig-param">return_bins=False</em>, <em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.3.0/cf/field.py#L6968-L7310"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.digitize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the indices of the bins to which each value belongs.</p>
 <p>Values (including masked values) that do not belong to any bin
 result in masked values in the output field construct of indices.</p>
@@ -126,7 +127,7 @@ percentiles:</p>
 </div>
 </dd>
 </dl>
-<p>The output field contruct is given a <code class="docutils literal notranslate"><span class="pre">long_name</span></code> property, and
+<p>The output field construct is given a <code class="docutils literal notranslate"><span class="pre">long_name</span></code> property, and
 some or all of the following properties that define the bins:</p>
 <table class="docutils align-default">
 <colgroup>
@@ -153,9 +154,9 @@ right-unbounded bins (see the <em>bins</em> and
 <em>open_ends</em> parameters) is deduced from the
 <code class="docutils literal notranslate"><span class="pre">bin_count</span></code> property. If the
 <code class="docutils literal notranslate"><span class="pre">bin_bounds</span></code> vector has 2N elements then
-the <code class="docutils literal notranslate"><span class="pre">bin_count</span></code> property will be N if
-there are no left-unbounded and
-right-unbounded bins or N+2 if such bins
+the <code class="docutils literal notranslate"><span class="pre">bin_count</span></code> property will be N+2 if
+there are left-unbounded and
+right-unbounded bins, or N if no such bins
 are present.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bin_interval_type</span></code></p></td>
@@ -425,11 +426,11 @@ their 2-d form.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-04-01.
+      &copy;2020, NCAS | Page built on 2020-04-20.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cf.Field.digitize.rst.txt"

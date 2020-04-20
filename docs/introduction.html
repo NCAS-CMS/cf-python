@@ -17,6 +17,7 @@
     <script type="text/javascript" src="_static/language_data.js"></script>
     <script type="text/javascript" src="_static/clipboard.min.js"></script>
     <script type="text/javascript" src="_static/copybutton.js"></script>
+    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -36,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.2.0</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.3.0</a></h1>
 
 
 
@@ -104,7 +105,7 @@
   <style> .red {color:red} </style><style> .blue {color:blue} </style><div class="section" id="introduction">
 <h1><strong>Introduction</strong><a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
-<p>Version 3.2.0 for version 1.8 of the CF conventions.</p>
+<p>Version 3.3.0 for version 1.8 of the CF conventions.</p>
 <p>The Python <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf</span></code> package is an Earth Science data analysis library that
 is built on a complete implementation of the <a class="reference internal" href="cf_data_model.html#cf-data-model"><span class="std std-ref">CF data model</span></a>.</p>
 <div class="section" id="functionality">
@@ -160,8 +161,8 @@ version 3.0.0</em>),</p></li>
 <li><p>read, write, and create data that have been compressed by convention
 (i.e. ragged or gathered arrays), whilst presenting a view of the
 data in its uncompressed form,</p></li>
-<li><p>read, write, and create coordinates defined by geometry cells (<strong>new
-in version 3.2.0</strong>),</p></li>
+<li><p>read, write, and create coordinates defined by geometry cells (<em>new
+in version 3.2.0</em>),</p></li>
 <li><p>combine field constructs arithmetically,</p></li>
 <li><p>manipulate field construct data by arithmetical and trigonometrical
 operations,</p></li>
@@ -172,6 +173,8 @@ constructs (<em>new in version 3.0.3</em>),</p></li>
 first- and second-order conservative and higher order patch recovery
 methods,</p></li>
 <li><p>apply convolution filters to field constructs,</p></li>
+<li><p>create moving means from field constructs (<strong>new in version
+3.3.0</strong>),</p></li>
 <li><p>calculate derivatives of field constructs,</p></li>
 <li><p>create field constructs to create derived quantities (such as
 vorticity).</p></li>
@@ -183,7 +186,7 @@ fields larger than the available memory to exist and be manipulated.</p>
 <p>Hierarchical groups provide a powerful mechanism to structure
 variables within datasets. A future release of <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf</span></code> will include support
 for netCDF4 files containing data organised in hierarchical groups,
-but this is not available in version 3.2.0 (even though it is
+but this is not available in version 3.3.0 (even though it is
 allowed in CF-1.8).</p>
 </div>
 </div>
@@ -220,11 +223,11 @@ implementation (cf-python v2.1), Geosci. Model Dev., 10,
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-04-01.
+      &copy;2020, NCAS | Page built on 2020-04-20.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="_sources/introduction.rst.txt"

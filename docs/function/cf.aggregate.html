@@ -17,6 +17,7 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <script type="text/javascript" src="../_static/clipboard.min.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -36,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.2.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.3.0</a></h1>
 
 
 
@@ -109,7 +110,7 @@
 <h1>cf.aggregate<a class="headerlink" href="#cf-aggregate" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.aggregate">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">aggregate</code><span class="sig-paren">(</span><em class="sig-param">fields</em>, <em class="sig-param">info=0</em>, <em class="sig-param">relaxed_units=False</em>, <em class="sig-param">overlap=True</em>, <em class="sig-param">contiguous=False</em>, <em class="sig-param">relaxed_identities=False</em>, <em class="sig-param">ncvar_identities=False</em>, <em class="sig-param">respect_valid=False</em>, <em class="sig-param">equal_all=False</em>, <em class="sig-param">exist_all=False</em>, <em class="sig-param">equal=None</em>, <em class="sig-param">exist=None</em>, <em class="sig-param">ignore=None</em>, <em class="sig-param">exclude=False</em>, <em class="sig-param">dimension=()</em>, <em class="sig-param">concatenate=True</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">axes=None</em>, <em class="sig-param">donotchecknonaggregatingaxes=False</em>, <em class="sig-param">allow_no_identity=False</em>, <em class="sig-param">atol=None</em>, <em class="sig-param">rtol=None</em>, <em class="sig-param">no_overlap=False</em>, <em class="sig-param">shared_nc_domain=False</em>, <em class="sig-param">field_identity=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.2.0/cf/aggregate.py#L1280"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.aggregate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">aggregate</code><span class="sig-paren">(</span><em class="sig-param">fields</em>, <em class="sig-param">info=0</em>, <em class="sig-param">relaxed_units=False</em>, <em class="sig-param">overlap=True</em>, <em class="sig-param">contiguous=False</em>, <em class="sig-param">relaxed_identities=False</em>, <em class="sig-param">ncvar_identities=False</em>, <em class="sig-param">respect_valid=False</em>, <em class="sig-param">equal_all=False</em>, <em class="sig-param">exist_all=False</em>, <em class="sig-param">equal=None</em>, <em class="sig-param">exist=None</em>, <em class="sig-param">ignore=None</em>, <em class="sig-param">exclude=False</em>, <em class="sig-param">dimension=()</em>, <em class="sig-param">concatenate=True</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">axes=None</em>, <em class="sig-param">donotchecknonaggregatingaxes=False</em>, <em class="sig-param">allow_no_identity=False</em>, <em class="sig-param">atol=None</em>, <em class="sig-param">rtol=None</em>, <em class="sig-param">no_overlap=False</em>, <em class="sig-param">shared_nc_domain=False</em>, <em class="sig-param">field_identity=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.3.0/cf/aggregate.py#L1280-L1893"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.aggregate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Aggregate field constructs into as few field constructs as
 possible.</p>
 <p>Aggregation is the combination of field constructs to create a new
@@ -186,6 +187,9 @@ their long_name properties:
 <code class="docutils literal notranslate"><span class="pre">field_identity='long_name'</span></code></p>
 </dd>
 </dl>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.1.0.</span></p>
+</div>
 </dd>
 <dt>ncvar_identities: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then force field and metadata constructs to be
 identified by their netCDF file variable names See also the
@@ -320,11 +324,11 @@ and for three different atmospheric heights for each time:</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-04-01.
+      &copy;2020, NCAS | Page built on 2020-04-20.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/function/cf.aggregate.rst.txt"

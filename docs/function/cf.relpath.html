@@ -17,10 +17,11 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <script type="text/javascript" src="../_static/clipboard.min.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cf constants" href="../constant.html" />
+    <link rel="next" title="cf classes" href="../class.html" />
     <link rel="prev" title="cf.pathjoin" href="cf.pathjoin.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -36,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.2.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.3.0</a></h1>
 
 
 
@@ -84,7 +85,7 @@
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../function.html"><strong>cf functions</strong></a><ul>
       <li>Previous: <a href="cf.pathjoin.html" title="previous chapter">cf.pathjoin</a></li>
-      <li>Next: <a href="../constant.html" title="next chapter"><strong>cf constants</strong></a></li>
+      <li>Next: <a href="../class.html" title="next chapter"><strong>cf classes</strong></a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -109,7 +110,7 @@
 <h1>cf.relpath<a class="headerlink" href="#cf-relpath" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.relpath">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">relpath</code><span class="sig-paren">(</span><em class="sig-param">filename</em>, <em class="sig-param">start=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.2.0/cf/functions.py#L1802"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.relpath" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">relpath</code><span class="sig-paren">(</span><em class="sig-param">filename</em>, <em class="sig-param">start=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.3.0/cf/functions.py#L1814-L1855"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.relpath" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a relative filepath to a file.</p>
 <p>The filepath is relative either from the current directory or from
 an optional start point.</p>
@@ -156,11 +157,11 @@ current directoty is used.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-04-01.
+      &copy;2020, NCAS | Page built on 2020-04-20.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/function/cf.relpath.rst.txt"

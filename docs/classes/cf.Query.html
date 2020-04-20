@@ -17,6 +17,7 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <script type="text/javascript" src="../_static/clipboard.min.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -36,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.2.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.3.0</a></h1>
 
 
 
@@ -110,7 +111,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.Query">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Query</code><span class="sig-paren">(</span><em class="sig-param">operator</em>, <em class="sig-param">value</em>, <em class="sig-param">units=None</em>, <em class="sig-param">attr=None</em>, <em class="sig-param">exact=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.2.0/cf/query.py#L17"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Query" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Query</code><span class="sig-paren">(</span><em class="sig-param">operator</em>, <em class="sig-param">value</em>, <em class="sig-param">units=None</em>, <em class="sig-param">attr=None</em>, <em class="sig-param">exact=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.3.0/cf/query.py#L17-L763"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Query" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Encapsulate a condition.</p>
 <p>A condition that may be applied to any object may be stored in a
@@ -263,10 +264,10 @@ instead of the equivalent built-in Python operator.</p>
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__query_lt__</span></code></p></td>
-<td><p>Called when an <code class="docutils literal notranslate"><span class="pre">'lt'</span></code> condition is evaulated</p></td>
+<td><p>Called when a <code class="docutils literal notranslate"><span class="pre">'lt'</span></code> condition is evaulated</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__query_le__</span></code></p></td>
-<td><p>Called when an <code class="docutils literal notranslate"><span class="pre">'le'</span></code> condition is evaulated</p></td>
+<td><p>Called when a <code class="docutils literal notranslate"><span class="pre">'le'</span></code> condition is evaulated</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">__query_gt__</span></code></p></td>
 <td><p>Called when a <code class="docutils literal notranslate"><span class="pre">'gt'</span></code> condition is evaulated</p></td>
@@ -405,11 +406,11 @@ also the <a class="reference internal" href="../method/cf.Query.addattr.html#cf.
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-04-01.
+      &copy;2020, NCAS | Page built on 2020-04-20.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/classes/cf.Query.rst.txt"

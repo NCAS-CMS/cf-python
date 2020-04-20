@@ -18,6 +18,7 @@
     <script type="text/javascript" src="_static/language_data.js"></script>
     <script type="text/javascript" src="_static/clipboard.min.js"></script>
     <script type="text/javascript" src="_static/copybutton.js"></script>
+    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" />
@@ -35,7 +36,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.2.0</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.3.0</a></h1>
 
 
 
@@ -2397,8 +2398,6 @@
         <li><a href="method/cf.List.concatenate.html#cf.List.concatenate">(cf.List class method)</a>
 </li>
       </ul></li>
-      <li><a href="method/cf.Data.concatenate_data.html#cf.Data.concatenate_data">concatenate_data() (cf.Data class method)</a>
-</li>
       <li><a href="method/cf.Domain.construct.html#cf.Domain.construct">construct() (cf.Domain method)</a>
 
       <ul>
@@ -2483,8 +2482,12 @@
         <li><a href="method/cf.List.convert_reference_time.html#cf.List.convert_reference_time">(cf.List method)</a>
 </li>
       </ul></li>
-      <li><a href="method/cf.Field.convolution_filter.html#cf.Field.convolution_filter">convolution_filter() (cf.Field method)</a>
+      <li><a href="method/cf.Data.convolution_filter.html#cf.Data.convolution_filter">convolution_filter() (cf.Data method)</a>
+
+      <ul>
+        <li><a href="method/cf.Field.convolution_filter.html#cf.Field.convolution_filter">(cf.Field method)</a>
 </li>
+      </ul></li>
       <li><a href="method/cf.Field.coord.html#cf.Field.coord">coord() (cf.Field method)</a>
 </li>
       <li><a href="cf_data_model.html#term-coordinate-reference-constructs"><strong>coordinate reference constructs</strong></a>
@@ -3118,8 +3121,6 @@
 </li>
         <li><a href="method/cf.Count.dump.html#cf.Count.dump">(cf.Count method)</a>
 </li>
-        <li><a href="method/cf.Data.dump.html#cf.Data.dump">(cf.Data method)</a>
-</li>
         <li><a href="method/cf.DimensionCoordinate.dump.html#cf.DimensionCoordinate.dump">(cf.DimensionCoordinate method)</a>
 </li>
         <li><a href="method/cf.Domain.dump.html#cf.Domain.dump">(cf.Domain method)</a>
@@ -3263,8 +3264,6 @@
         <li><a href="method/cf.List.exp.html#cf.List.exp">(cf.List method)</a>
 </li>
       </ul></li>
-      <li><a href="method/cf.Data.expand_dims.html#cf.Data.expand_dims">expand_dims() (cf.Data method)</a>
-</li>
       <li><a href="method/cf.CellMethod.expand_intervals.html#cf.CellMethod.expand_intervals">expand_intervals() (cf.CellMethod method)</a>
 </li>
       <li><a href="method/cf.FieldList.extend.html#cf.FieldList.extend">extend() (cf.FieldList method)</a>
@@ -3492,8 +3491,6 @@
       <li><a href="method/cf.Domain.fromconstructs.html#cf.Domain.fromconstructs">fromconstructs() (cf.Domain class method)</a>
 </li>
       <li><a href="method/cf.Data.full.html#cf.Data.full">full() (cf.Data class method)</a>
-</li>
-      <li><a href="method/cf.Data.func.html#cf.Data.func">func() (cf.Data method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -4024,8 +4021,6 @@
 </li>
         <li><a href="method/cf.CoordinateReference.inspect.html#cf.CoordinateReference.inspect">(cf.CoordinateReference method)</a>
 </li>
-        <li><a href="method/cf.Data.inspect.html#cf.Data.inspect">(cf.Data method)</a>
-</li>
         <li><a href="method/cf.DimensionCoordinate.inspect.html#cf.DimensionCoordinate.inspect">(cf.DimensionCoordinate method)</a>
 </li>
         <li><a href="method/cf.DomainAncillary.inspect.html#cf.DomainAncillary.inspect">(cf.DomainAncillary method)</a>
@@ -4486,8 +4481,6 @@
 </li>
         <li><a href="method/cf.Count.max.html#cf.Count.max">(cf.Count method)</a>
 </li>
-        <li><a href="method/cf.Data.max.html#cf.Data.max">(cf.Data method)</a>
-</li>
         <li><a href="method/cf.DimensionCoordinate.max.html#cf.DimensionCoordinate.max">(cf.DimensionCoordinate method)</a>
 </li>
         <li><a href="method/cf.DomainAncillary.max.html#cf.DomainAncillary.max">(cf.DomainAncillary method)</a>
@@ -4575,8 +4568,6 @@
         <li><a href="method/cf.CellMeasure.min.html#cf.CellMeasure.min">(cf.CellMeasure method)</a>
 </li>
         <li><a href="method/cf.Count.min.html#cf.Count.min">(cf.Count method)</a>
-</li>
-        <li><a href="method/cf.Data.min.html#cf.Data.min">(cf.Data method)</a>
 </li>
         <li><a href="method/cf.DimensionCoordinate.min.html#cf.DimensionCoordinate.min">(cf.DimensionCoordinate method)</a>
 </li>
@@ -4691,6 +4682,8 @@
         <li><a href="attribute/cf.List.month_lengths.html#cf.List.month_lengths">(cf.List attribute)</a>
 </li>
       </ul></li>
+      <li><a href="method/cf.Field.moving_window.html#cf.Field.moving_window">moving_window() (cf.Field method)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -5281,8 +5274,6 @@
         <li><a href="method/cf.List.sample_size.html#cf.List.sample_size">(cf.List method)</a>
 </li>
       </ul></li>
-      <li><a href="method/cf.Data.save_to_disk.html#cf.Data.save_to_disk">save_to_disk() (cf.Data method)</a>
-</li>
       <li><a href="attribute/cf.AuxiliaryCoordinate.scale_factor.html#cf.AuxiliaryCoordinate.scale_factor">scale_factor (cf.AuxiliaryCoordinate attribute)</a>
 
       <ul>
@@ -5313,8 +5304,6 @@
         <li><a href="method/cf.CellMeasure.sd.html#cf.CellMeasure.sd">(cf.CellMeasure method)</a>
 </li>
         <li><a href="method/cf.Count.sd.html#cf.Count.sd">(cf.Count method)</a>
-</li>
-        <li><a href="method/cf.Data.sd.html#cf.Data.sd">(cf.Data method)</a>
 </li>
         <li><a href="method/cf.DimensionCoordinate.sd.html#cf.DimensionCoordinate.sd">(cf.DimensionCoordinate method)</a>
 </li>
@@ -6144,8 +6133,6 @@
 </li>
         <li><a href="method/cf.Count.var.html#cf.Count.var">(cf.Count method)</a>
 </li>
-        <li><a href="method/cf.Data.var.html#cf.Data.var">(cf.Data method)</a>
-</li>
         <li><a href="method/cf.DimensionCoordinate.var.html#cf.DimensionCoordinate.var">(cf.DimensionCoordinate method)</a>
 </li>
         <li><a href="method/cf.DomainAncillary.var.html#cf.DomainAncillary.var">(cf.DomainAncillary method)</a>
@@ -6363,11 +6350,11 @@
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-04-01.
+      &copy;2020, NCAS | Page built on 2020-04-20.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
     </div>
 

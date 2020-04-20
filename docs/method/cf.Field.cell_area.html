@@ -17,11 +17,12 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <script type="text/javascript" src="../_static/clipboard.min.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="cf.Field.max" href="cf.Field.max.html" />
-    <link rel="prev" title="cf.Field.collapse" href="cf.Field.collapse.html" />
+    <link rel="prev" title="cf.Field.moving_window" href="cf.Field.moving_window.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -36,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.2.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.3.0</a></h1>
 
 
 
@@ -84,7 +85,7 @@
   <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
   <li><a href="../classes/cf.Field.html">cf.Field</a><ul>
-      <li>Previous: <a href="cf.Field.collapse.html" title="previous chapter">cf.Field.collapse</a></li>
+      <li>Previous: <a href="cf.Field.moving_window.html" title="previous chapter">cf.Field.moving_window</a></li>
       <li>Next: <a href="cf.Field.max.html" title="next chapter">cf.Field.max</a></li>
   </ul></li>
   </ul></li>
@@ -111,7 +112,7 @@
 <h1>cf.Field.cell_area<a class="headerlink" href="#cf-field-cell-area" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.cell_area">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">cell_area</code><span class="sig-paren">(</span><em class="sig-param">radius='earth'</em>, <em class="sig-param">great_circle=False</em>, <em class="sig-param">insert=False</em>, <em class="sig-param">force=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.2.0/cf/field.py#L4575"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.cell_area" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">cell_area</code><span class="sig-paren">(</span><em class="sig-param">radius='earth'</em>, <em class="sig-param">great_circle=False</em>, <em class="sig-param">insert=False</em>, <em class="sig-param">force=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.3.0/cf/field.py#L5750-L5847"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.cell_area" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a field containing horizontal cell areas.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 1.0.</span></p>
@@ -182,11 +183,11 @@ values.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-04-01.
+      &copy;2020, NCAS | Page built on 2020-04-20.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cf.Field.cell_area.rst.txt"

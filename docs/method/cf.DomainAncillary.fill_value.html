@@ -17,6 +17,7 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <script type="text/javascript" src="../_static/clipboard.min.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -36,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.2.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.3.0</a></h1>
 
 
 
@@ -111,7 +112,7 @@
 <h1>cf.DomainAncillary.fill_value<a class="headerlink" href="#cf-domainancillary-fill-value" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.DomainAncillary.fill_value">
-<code class="sig-prename descclassname">DomainAncillary.</code><code class="sig-name descname">fill_value</code><span class="sig-paren">(</span><em class="sig-param">default=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.2.0/cf/mixin/propertiesdata.py#L3678"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DomainAncillary.fill_value" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">DomainAncillary.</code><code class="sig-name descname">fill_value</code><span class="sig-paren">(</span><em class="sig-param">default=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.3.0/cf/mixin/propertiesdata.py#L3678-L3755"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DomainAncillary.fill_value" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the data array missing data value.</p>
 <p>This is the value of the <a class="reference internal" href="../attribute/cf.DomainAncillary.missing_value.html#cf.DomainAncillary.missing_value" title="cf.DomainAncillary.missing_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">missing_value</span></code></a> CF property, or if that
 is not set, the value of the <a class="reference internal" href="../attribute/cf.DomainAncillary._FillValue.html#cf.DomainAncillary._FillValue" title="cf.DomainAncillary._FillValue"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_FillValue</span></code></a> CF property, else if
@@ -132,19 +133,20 @@ value <code class="docutils literal notranslate"><span class="pre">'netCDF'</spa
 appropriate to the data array’s data type is used. These
 may be found with the <a class="reference internal" href="../function/cf.default_netCDF_fillvals.html#cf.default_netCDF_fillvals" title="cf.default_netCDF_fillvals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.default_netCDF_fillvals</span></code></a>
 function. For example:</p>
-<pre class="doctest literal-block">&gt;&gt;&gt; cf.default_netCDF_fillvals()
-{'S1': '',
- 'i1': -127,
- 'u1': 255,
- 'i2': -32767,
- 'u2': 65535,
- 'i4': -2147483647,
- 'u4': 4294967295,
- 'i8': -9223372036854775806,
- 'u8': 18446744073709551614,
- 'f4': 9.969209968386869e+36,
- 'f8': 9.969209968386869e+36}
-</pre>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cf</span><span class="o">.</span><span class="n">default_netCDF_fillvals</span><span class="p">()</span>
+<span class="go">{&#39;S1&#39;: &#39; &#39;,</span>
+<span class="go"> &#39;i1&#39;: -127,</span>
+<span class="go"> &#39;u1&#39;: 255,</span>
+<span class="go"> &#39;i2&#39;: -32767,</span>
+<span class="go"> &#39;u2&#39;: 65535,</span>
+<span class="go"> &#39;i4&#39;: -2147483647,</span>
+<span class="go"> &#39;u4&#39;: 4294967295,</span>
+<span class="go"> &#39;i8&#39;: -9223372036854775806,</span>
+<span class="go"> &#39;u8&#39;: 18446744073709551614,</span>
+<span class="go"> &#39;f4&#39;: 9.969209968386869e+36,</span>
+<span class="go"> &#39;f8&#39;: 9.969209968386869e+36}</span>
+</pre></div>
+</div>
 </dd>
 </dl>
 </dd>
@@ -189,11 +191,11 @@ value specified by <em>default</em></p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-04-01.
+      &copy;2020, NCAS | Page built on 2020-04-20.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cf.DomainAncillary.fill_value.rst.txt"

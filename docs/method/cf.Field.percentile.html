@@ -17,6 +17,7 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <script type="text/javascript" src="../_static/clipboard.min.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -36,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.2.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.3.0</a></h1>
 
 
 
@@ -111,7 +112,7 @@
 <h1>cf.Field.percentile<a class="headerlink" href="#cf-field-percentile" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Field.percentile">
-<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">percentile</code><span class="sig-paren">(</span><em class="sig-param">ranks</em>, <em class="sig-param">axes=None</em>, <em class="sig-param">interpolation='linear'</em>, <em class="sig-param">squeeze=False</em>, <em class="sig-param">mtol=1</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.2.0/cf/field.py#L15971"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.percentile" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Field.</code><code class="sig-name descname">percentile</code><span class="sig-paren">(</span><em class="sig-param">ranks</em>, <em class="sig-param">axes=None</em>, <em class="sig-param">interpolation='linear'</em>, <em class="sig-param">squeeze=False</em>, <em class="sig-param">mtol=1</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.3.0/cf/field.py#L16701-L17009"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Field.percentile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute percentiles of the data along the specified axes.</p>
 <p>The default is to compute the percentiles along a flattened
 version of the data.</p>
@@ -264,7 +265,7 @@ missing data: <code class="docutils literal notranslate"><span class="pre">mtol=
 <span class="go"> [0.11 0.131 0.124 0.146 0.087 0.103 -- --]</span>
 <span class="go"> [  --    --    --    --    -- 0.072 -- --]</span>
 <span class="go"> [  --    --    --    --    --    -- -- --]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;standard_deviation&#39;</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="s1">&#39;area&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;standard_deviation&#39;</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">data</span>
 <span class="go">&lt;CF Data(1, 1): [[0.024609938742357642]] 1&gt;</span>
 </pre></div>
 </div>
@@ -284,7 +285,7 @@ X axis:</p>
 <span class="go"> [0.11 0.131 0.124 0.146    --    --    --    --]</span>
 <span class="go"> [  -- 0.059    -- 0.07  0.058 0.072    --    --]</span>
 <span class="go"> [  -- 0.036    -- 0.035   --  0.037 0.034    --]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;X: mean&#39;</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="s1">&#39;X&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">collapse</span><span class="p">(</span><span class="s1">&#39;X: mean&#39;</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[0.031  ]</span>
 <span class="go"> [0.06175]</span>
 <span class="go"> [0.12775]</span>
@@ -318,11 +319,11 @@ percentiles, and digitize the data based on these bins:</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-04-01.
+      &copy;2020, NCAS | Page built on 2020-04-20.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cf.Field.percentile.rst.txt"

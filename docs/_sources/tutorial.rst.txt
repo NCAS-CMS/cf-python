@@ -5648,8 +5648,8 @@ metadata constructs as required.
  
    # Compress the data 
    T.compress('contiguous',
-              count_properties={'long_name': 'number of obs for this timeseries'},
-              inplace=True)
+          count_properties={'long_name': 'number of obs for this timeseries'},
+          inplace=True)
 				
 The new compressed field construct can now be inspected and written to
 a netCDF file:
@@ -5726,7 +5726,8 @@ array that is stored in one of three special array objects:
 
    # Create the count variable
    count_variable = cf.Count(data=cf.Data(count_array))
-   count_variable.set_property('long_name', 'number of obs for this timeseries')
+   count_variable.set_property('long_name',
+                               'number of obs for this timeseries')
 
    # Create the contiguous ragged array object, specifying the
    # uncompressed shape

@@ -17,6 +17,7 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <script type="text/javascript" src="../_static/clipboard.min.js"></script>
     <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -36,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.2.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.3.0</a></h1>
 
 
 
@@ -111,13 +112,13 @@
 <h1>cf.Data.sum_of_weights<a class="headerlink" href="#cf-data-sum-of-weights" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Data.sum_of_weights">
-<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">sum_of_weights</code><span class="sig-paren">(</span><em class="sig-param">axes=None</em>, <em class="sig-param">squeeze=False</em>, <em class="sig-param">mtol=1</em>, <em class="sig-param">weights=None</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">i=False</em>, <em class="sig-param">_preserve_partitions=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.2.0/cf/decorators.py#L90"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.sum_of_weights" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">sum_of_weights</code><span class="sig-paren">(</span><em class="sig-param">axes=None</em>, <em class="sig-param">squeeze=False</em>, <em class="sig-param">mtol=1</em>, <em class="sig-param">weights=None</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">i=False</em>, <em class="sig-param">_preserve_partitions=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.3.0/cf/data/data.py#L13611-L13660"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.sum_of_weights" title="Permalink to this definition">¶</a></dt>
 <dd><p>TODO</p>
 <p>Missing data array elements are omitted from the calculation.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="cf.Data.max.html#cf.Data.max" title="cf.Data.max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max</span></code></a>, <a class="reference internal" href="cf.Data.mean.html#cf.Data.mean" title="cf.Data.mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean</span></code></a>, <a class="reference internal" href="cf.Data.mid_range.html#cf.Data.mid_range" title="cf.Data.mid_range"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mid_range</span></code></a>, <a class="reference internal" href="cf.Data.min.html#cf.Data.min" title="cf.Data.min"><code class="xref py py-obj docutils literal notranslate"><span class="pre">min</span></code></a>, <a class="reference internal" href="cf.Data.range.html#cf.Data.range" title="cf.Data.range"><code class="xref py py-obj docutils literal notranslate"><span class="pre">range</span></code></a>,
-<a class="reference internal" href="cf.Data.sample_size.html#cf.Data.sample_size" title="cf.Data.sample_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_size</span></code></a>, <a class="reference internal" href="cf.Data.sd.html#cf.Data.sd" title="cf.Data.sd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sd</span></code></a>, <a class="reference internal" href="cf.Data.sum.html#cf.Data.sum" title="cf.Data.sum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sum</span></code></a>, <a class="reference internal" href="cf.Data.sum_of_weights2.html#cf.Data.sum_of_weights2" title="cf.Data.sum_of_weights2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sum_of_weights2</span></code></a>, <a class="reference internal" href="cf.Data.var.html#cf.Data.var" title="cf.Data.var"><code class="xref py py-obj docutils literal notranslate"><span class="pre">var</span></code></a></p>
+<p><a class="reference external" href="https://docs.python.org/3/library/functions.html#max" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max</span></code></a>, <a class="reference internal" href="cf.Data.mean.html#cf.Data.mean" title="cf.Data.mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean</span></code></a>, <a class="reference internal" href="cf.Data.mid_range.html#cf.Data.mid_range" title="cf.Data.mid_range"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mid_range</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#min" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">min</span></code></a>, <a class="reference internal" href="cf.Data.range.html#cf.Data.range" title="cf.Data.range"><code class="xref py py-obj docutils literal notranslate"><span class="pre">range</span></code></a>,
+<a class="reference internal" href="cf.Data.sample_size.html#cf.Data.sample_size" title="cf.Data.sample_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_size</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">sd</span></code>, <a class="reference internal" href="cf.Data.sum.html#cf.Data.sum" title="cf.Data.sum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sum</span></code></a>, <a class="reference internal" href="cf.Data.sum_of_weights2.html#cf.Data.sum_of_weights2" title="cf.Data.sum_of_weights2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sum_of_weights2</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">var</span></code></p>
 </div>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -150,11 +151,11 @@
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-04-01.
+      &copy;2020, NCAS | Page built on 2020-04-20.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
       
       |
       <a href="../_sources/method/cf.Data.sum_of_weights.rst.txt"

@@ -8,9 +8,6 @@
 
 Version |release| for version |version| of the CF conventions.
 
-**Data**
---------
-
 .. data:: cf.masked
 
     The :attr:`cf.masked` constant allows data array values to be
