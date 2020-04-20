@@ -39,7 +39,7 @@ cd -
 # --------------------------------------------------------------------
 cd docs
 if [[ $2 = "latest" ]] || [[ $2 = "archive" ]] || [[ $2 = "dev-clean" ]] ; then
-  echo  rm -fr $dir/.doctrees
+  rm -fr $dir/.doctrees
 fi
 
 make html $dir
