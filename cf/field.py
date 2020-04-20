@@ -4257,7 +4257,8 @@ class Field(mixin.PropertiesData,
 
         return True
 
-    def _weights_field(self, fields, comp, weights_axes):
+    def _weights_field(self, fields, comp, weights_axes,
+                       methods=False):
         '''TODO'''
         s = self.analyse_items()
 
@@ -4371,7 +4372,7 @@ class Field(mixin.PropertiesData,
 
         return True
     
-    def _weights_field_scalar(self):
+    def _weights_field_scalar(self, methods=False):
         '''Return a scalar field of weights with long_name ``'weight'``.
 
     :Returns:
@@ -6284,18 +6285,26 @@ class Field(mixin.PropertiesData,
 
         weights: *optional*
             Specify the weights to be created. There are three
-            distinct methods: **type 1** will create weights for all
-            axes of size greater thn 1, raising an exception if this
-            is not possible (this is the default); **type 2** will
-            always succeed in creating weights for all axes of the
-            field, even if some of those weights are null; and **type
-            3** allows particular types of weights to be defined for
-            particular axes, and an exception will be raised if it is
-            not possible to the create weights.
+            distinct methods:
+
+            * **Type 1** will create weights for all axes of size
+              greater than 1, raising an exception if this is not
+              possible (this is the default).;
+
+            * **Type 2** will always succeed in creating weights for
+              all axes of the field, even if some of those weights are
+              null.
+
+            * **Type 3** allows particular types of weights to be
+              defined for particular axes, and an exception will be
+              raised if it is not possible to the create weights.
+
+        .. 
 
             **Type 1** and **Type 2** come at the expense of not
             always being able to control exactly how the weights are
-            created (see the *methods* parameter)
+            created (although which methods were used can be inspected
+            with use of the *methods* parameter).
 
             * **Type 1**: *weights* may be:
 
@@ -6303,15 +6312,14 @@ class Field(mixin.PropertiesData,
               *weights*   Description
               ==========  ============================================
               `True`      This is the default. Weights are created for
-                          all axes. Set the *methods* parameter to
-                          find out how the weights were actually
-                          created.
+                          all axes (or a subset of them, see the
+                          *axes* parameter). Set the *methods*
+                          parameter to find out how the weights were
+                          actually created.
 
-                          The weights components are created for all
-                          axes (or a subset of them, see the *axes*
-                          parameter) of the field by one or more of
-                          the following methods, in order of
-                          preference,
+                          The weights components are created for axes
+                          of the field by one or more of the following
+                          methods, in order of preference,
 
                             1. Volume cell measures
                             2. Area cell measures
@@ -6795,8 +6803,8 @@ class Field(mixin.PropertiesData,
                 da_key = self.domain_axis(axis, key=True, default=None)
                 if da_key is None:
                     raise ValueError(
-                        "Can't create weights: Can't find axis matching {!r}".format(
-                            axis))
+                        "Can't create weights: "
+                        "Can't find axis matching {!r}".format(axis))
 
                 if self._weights_geometry_area(da_key, comp,
                                                weights_axes,
@@ -7461,7 +7469,7 @@ class Field(mixin.PropertiesData,
             details.
 
             .. note:: By default *weights* is `None`, resulting in
-                      unweighted calculations.
+                      **unweighted calculations**.
 
             .. note:: Setting *weights* to `True` is generally a good
                       way to ensure that all collapses are
@@ -8918,16 +8926,28 @@ class Field(mixin.PropertiesData,
               'Z']``.
 
         weights: optional
-            Specify the weights for the collapse. The weights are, in
-            general, those that would be returned by this call of the
-            field construct's `weights` method: ``f.weights(weights,
-            axes=axes, measure=measure, scale=scale, radius=radius,
-            great_circle=great_circle, components=True)``. See the
-            *axes*, *measure*, *scale*, *radius* and *great_circle*
-            parameters and `cf.Field.weights` for details.
+            Specify the weights for the collapse axes. The weights
+            are, in general, those that would be returned by this call
+            of the field construct's `weights` method:
+            ``f.weights(weights, axes=axes, measure=measure,
+            scale=scale, radius=radius, great_circle=great_circle,
+            components=True)``. See the *axes*, *measure*, *scale*,
+            *radius* and *great_circle* parameters and
+            `cf.Field.weights` for details.
 
             .. note:: By default *weights* is `None`, resulting in
-                      unweighted calculations.
+                      **unweighted calculations**.
+
+            If the alternative form of providing the collapse method
+            and axes combined as a CF cell methods-like string via the
+            *method* parameter has been used, then the *axes*
+            parameter is ignored and the axes are derived from the
+            *method* parameter. For example, if *method* is ``'T:
+            area: minumum'`` then this defines axes of ``['T',
+            'area']``. If *method* specifies multiple collapses,
+            e.g. ``'T: minumum area: mean'`` then this implies axes of
+            ``'T'`` for the first collapse, and axes of ``'area'`` for
+            the second collapse.
 
             .. note:: Setting *weights* to `True` is generally a good
                       way to ensure that all collapses are
@@ -8947,17 +8967,6 @@ class Field(mixin.PropertiesData,
                       define the actual height or depth thickness of
                       every cell in the domain then the weights will
                       be incorrect**.
-
-            If the alternative form of providing the collapse method
-            and axes combined as a CF cell methods-like string via the
-            *method* parameter has been used, then the *axes*
-            parameter is ignored and the axes are derived from the
-            *method* parameter. For example, if *method* is ``'T:
-            area: minumum'`` then this defines axes of ``['T',
-            'area']``. If *method* specifies multiple collapses,
-            e.g. ``'T: minumum area: mean'`` then this implies axes of
-            ``'T'`` for the first collapse, and axes of ``'area'`` for
-            the second collapse.
 
             *Parameter example:*
               To specify weights based on the field construct's
@@ -13186,7 +13195,7 @@ class Field(mixin.PropertiesData,
             parameters and `cf.Field.weights` for details.
 
             .. note:: By default *weights* is `None`, resulting in
-                      unweighted calculations.
+                      **unweighted calculations**.
 
             .. note:: Setting *weights* to `True` is generally a good
                       way to ensure that the moving window

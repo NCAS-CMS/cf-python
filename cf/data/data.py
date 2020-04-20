@@ -3292,30 +3292,30 @@ place.
             method), ``'wrap'``. The valid values and their behaviours
             are as follows:
 
-            ==============  ==========================  =================================
+            ==============  ==========================  ============================
             *mode*          Description                 Behaviour
-            ==============  ==========================  =================================
-            ``'reflect'``   The input is extended by    ``(d c b a | a b c d | d c b a)``
+            ==============  ==========================  ============================
+            ``'reflect'``   The input is extended by    ``(c b a | a b c | c b a)``
                             reflecting about the edge
 
-            ``'constant'``  The input is extended by    ``(k k k k | a b c d | k k k k)``
+            ``'constant'``  The input is extended by    ``(k k k | a b c | k k k)``
                             filling all values beyond
                             the edge with the same
                             constant value (``k``),
                             defined by the *cval*
                             parameter.
 
-            ``'nearest'``   The input is extended by    ``(a a a a | a b c d | d d d d)``
+            ``'nearest'``   The input is extended by    ``(a a a | a b c | c c c )``
                             replicating the last point
 
-            ``'mirror'``    The input is extended by    ``(d c b | a b c d | c b a)``
+            ``'mirror'``    The input is extended by    ``(c b | a b c | b a)``
                             reflecting about the
                             centre of the last point.
 
-            ``'wrap'``      The input is extended by    ``(a b c d | a b c d | a b c d)``
+            ``'wrap'``      The input is extended by    ``(a b c | a b c | a b c)``
                             wrapping around to the
                             opposite edge.
-            ==============  ==========================  =================================
+            ==============  ==========================  ============================
 
             The position of the window realtive to each value can be
             changed by using the *origin* parameter.
@@ -3379,7 +3379,7 @@ place.
      [7.65 7.5  8.35 8.8 ]]
     >>> d.cyclic(1)
     set()
-    >>> d.cyclic(1)
+    >>> d.cyclic()
     {1}
     >>> e = d.convolution_filter([0.1, 0.5, 0.25], axis=1)
     >>> print(e.array)

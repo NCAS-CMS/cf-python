@@ -2,7 +2,7 @@ version 3.3.0
 -------------
 ----
 
-**2020-??-??**
+**2020-04-20**
 
 * Changed the API to `cf.Field.convolution_filter`: renamed the
   ``weights`` parameter to ``window``.
