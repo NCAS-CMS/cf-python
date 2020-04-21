@@ -30,7 +30,7 @@ def read(files, external=None, verbose=False, warnings=False,
          squeeze=False, unsqueeze=False, fmt=None, select=None,
          extra=None, recursive=False, followlinks=False, um=None,
          chunk=True, field=None, height_at_top_of_model=None,
-         select_options=None, follow_symlinks=False):
+         select_options=None, follow_symlinks=False, mask=True):
     '''Read field constructs from netCDF, CDL, PP or UM fields files.
 
     NetCDF files may be on disk or on an OPeNDAP server.
@@ -79,9 +79,8 @@ def read(files, external=None, verbose=False, warnings=False,
     deleted. The CDL file may omit data array values (as would be the
     case, for example, if the file was created with the ``-h`` or
     ``-c`` option to ``ncdump``), in which case the the relevant
-    constructs in memory will be created with data containing missing
+    constructs in memory will be created with data with all missing
     values.
-
 
     **PP and UM fields files**
 
@@ -290,6 +289,17 @@ def read(files, external=None, verbose=False, warnings=False,
 
             This parameter replaces the deprecated *follow_symlinks*
             parameter.
+
+        mask: `bool`, optional
+            If False then do not mask by convention when reading data
+            from disk. By default data is masked by convention.
+
+            Note that a netCDF array is masked by convention depending
+            on the values of any of the netCDF variable attributes
+            ``valid_min``, ``valid_max``, ``valid_range``,
+            ``_FillValue`` and ``missing_value``.
+    
+            .. versionadded:: 3.3.1
 
         um: `dict`, optional
             For Met Office (UK) PP files and Met Office (UK) fields
@@ -559,7 +569,8 @@ def read(files, external=None, verbose=False, warnings=False,
                 selected_fmt=fmt, um=um,
                 extra=extra,
                 height_at_top_of_model=height_at_top_of_model,
-                chunk=chunk
+                chunk=chunk,
+                mask=mask,
             )
 
             # --------------------------------------------------------
@@ -656,19 +667,17 @@ def read(files, external=None, verbose=False, warnings=False,
 
     return field_list
 
-
 def _plural(n):  # pragma: no cover
     '''Return a suffix which reflects a word's plural.
 
     '''
     return 's' if n != 1 else ''  # pragma: no cover
 
-
 def _read_a_file(filename, ftype=None, aggregate=True,
                  aggregate_options=None, ignore_read_error=False,
                  verbose=False, warnings=False, external=None,
                  selected_fmt=None, um=None, extra=None,
-                 height_at_top_of_model=None, chunk=True):
+                 height_at_top_of_model=None, chunk=True, mask=True):
     '''Read the contents of a single file into a field list.
 
     :Parameters:
@@ -690,6 +699,12 @@ def _read_a_file(filename, ftype=None, aggregate=True,
             empty file, unknown file format, etc. By default the
             IOError is raised.
 
+        mask: `bool`, optional
+            If False then do not mask by convention when reading data
+            from disk. By default data is masked by convention.
+
+            .. versionadded:: 3.3.1
+
         verbose: `bool`, optional
             If True then print information to stdout.
 
@@ -701,6 +716,7 @@ def _read_a_file(filename, ftype=None, aggregate=True,
     '''
     if aggregate_options is None:
         aggregate_options = {}
+
     # Find this file's type
     fmt = None
     word_size = None
@@ -721,6 +737,7 @@ def _read_a_file(filename, ftype=None, aggregate=True,
             # endian-ness
             if word_size is None:
                 word_size = 4
+                
             if endian is None:
                 endian = 'big'
         # --- End: if
@@ -780,14 +797,15 @@ def _read_a_file(filename, ftype=None, aggregate=True,
     if ftype == 'netCDF' and extra_read_vars['fmt'] in (None, 'NETCDF', 'CFA'):
         fields = netcdf.read(filename, external=external, extra=extra,
                              verbose=verbose, warnings=warnings,
-                             extra_read_vars=extra_read_vars)
+                             extra_read_vars=extra_read_vars,
+                             mask=mask)
 
     elif ftype == 'UM' and extra_read_vars['fmt'] in (None, 'UM'):
         fields = UM.read(filename, um_version=umversion,
                          verbose=verbose, set_standard_name=False,
                          height_at_top_of_model=height_at_top_of_model,
                          fmt=fmt, word_size=word_size, endian=endian,
-                         chunk=chunk)
+                         chunk=chunk) #, mask=mask)
 
         # PP fields are aggregated intrafile prior to interfile
         # aggregation
@@ -808,7 +826,6 @@ def _read_a_file(filename, ftype=None, aggregate=True,
     # Return the fields
     # ----------------------------------------------------------------
     return FieldList(fields)
-
 
 def file_type(filename):
     '''Return the file format.

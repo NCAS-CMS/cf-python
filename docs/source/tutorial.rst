@@ -209,6 +209,8 @@ The `cf.read` function has optional parameters to
   referenced from CF-netCDF data variables, but which are not regarded
   by default as data variables in their own right;
 
+* request that masking is not applied by convention to data elements;
+
 * display information and warnings about the mapping of the netCDF
   file contents to CF data model constructs;
 

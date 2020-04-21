@@ -81,8 +81,8 @@ documentation, installation and source code.
 '''
 __Conventions__  = 'CF-1.8'
 __author__       = 'David Hassell'
-__date__         = '2020-04-20'
-__version__      = '3.3.0'
+__date__         = '2020-??-??'
+__version__      = '3.3.1'
 
 _requires = (
     'numpy',
@@ -199,7 +199,7 @@ if LooseVersion(cfunits.__version__) < LooseVersion(_minimum_vn):
     )
 
 # Check the version of cfdm
-_minimum_vn = '1.8.1'
+_minimum_vn = '1.8.2'
 if LooseVersion(cfdm.__version__) < LooseVersion(_minimum_vn):
     raise ValueError(
         "Bad cfdm version: cf requires cfdm version {} or later. Got {} "
