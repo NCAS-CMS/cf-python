@@ -1,7 +1,8 @@
 import os
 
-from glob    import glob
-from os.path import isdir
+from ctypes.util import find_library
+from glob        import glob
+from os.path     import isdir
 
 from .netcdf import NetCDFRead
 from .um     import UMRead
@@ -521,9 +522,21 @@ def read(files, external=None, verbose=False, warnings=False,
             else:
                 try:
                     ftype = file_type(filename)
-                except Exception as error:
-                    if not ignore_read_error:
-                        raise Exception(error)
+                except Exception:
+                    if not find_library("umfile"):
+                        raise OSError(
+                            "Unable to detect the UM read C library needed "
+                            "to recognise and read PP and UM fields files. "
+                            "This indicates a compilation problem during the "
+                            "cf installation (though note it does not affect "
+                            "any other cf functionality, notably netCDF file "
+                            "processing). If processing of PP and FF files is "
+                            "required, ensure 'GNU make' is available and "
+                            "reinstall cf-python to try to build the library. "
+                            "Note a warning will be given if the build fails."
+                        )
+                    elif not ignore_read_error:
+                        raise
 
                     if verbose:
                         print('WARNING: {}'.format(error))  # pragma: no cover
