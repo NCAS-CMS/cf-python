@@ -139,6 +139,10 @@ if mpi_on:
     from mpi4py.MPI import SUM as mpi_sum
 # --- End: if
 
+
+# --------------------------------------------------------------------
+# Constants
+# --------------------------------------------------------------------
 _year_length = 365.242198781
 _month_length = _year_length / 12
 
@@ -8648,7 +8652,93 @@ False
 
         return False
 
-    # 0
+    @_inplace_enabled
+    def apply_masking(self, valid_min=None, valid_max=None,
+                      valid_range=None, inplace=False):
+        '''TODO DCH
+
+    .. versionadded:: 3.3.1
+
+    .. seealso:: `get_fill_value`,`set_fill_value`, `hardmask`, `mask`
+                 
+    :Parameters:
+
+        valid_min: number, optional
+            A scalar specifying the minimum valid value. Values
+            strictly less than this number will be set to missing
+            data.
+
+        valid_max: number, optional
+            A scalar specifying the maximum valid value. Values
+            strictly greater than this number will be set to missing
+            data.
+
+        valid_range: (number, number), optional
+            A vector of two numbers specifying the minimum and maximum
+            valid values, equivalent to specifying values for both
+            *valid_min* and *valid_max* parameters. The *valid_range*
+            parameter must not be set if either *valid_min* or
+            *valid_max* is defined.
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+    :Returns:
+    
+        `Data` or `None`
+            The data with masked values. If the operation was in-place
+            then `None` is returned.
+
+    **Examples:**
+
+        TODO DCH
+
+        '''
+        if valid_range is not None:
+            if valid_min is not None or valid_max is not None:
+                raise ValueError(
+                    "Can't set 'valid_range' parameter with either the "
+                    "'valid_min' nor 'valid_max' parameters")
+
+            try:
+                if len(valid_range) != 2:
+                    raise ValueError(
+                        "'valid_range' parameter must be a vector of "
+                        "two elements")
+            except TypeError:                
+                raise ValueError(
+                    "'valid_range' parameter must be a vector of "
+                    "two elements")
+            
+            valid_min, valid_max = valid_range
+
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        mask = None
+        
+        fill_value = d.get_fill_value(None)
+        if fill_value is not None:
+            mask = (d == fill_value)
+            
+        if valid_min is not None:
+            if mask is None:
+                mask = d < valid_min
+            else:
+                mask |= d < valid_min
+        # --- End: if
+
+        if valid_max is not None:
+            if mask is None:
+                mask = d > valid_max
+            else:
+                mask |= d > valid_max
+        # --- End: if
+        
+        if mask is not None:
+            d.where(mask, cf_masked, inplace=True)
+
+        return d
+
     @classmethod
     def concatenate_data(cls, data_list, axis):
         '''Concatenates a list of Data objects into a single Data object along

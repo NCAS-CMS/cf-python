@@ -271,6 +271,7 @@ Mask support
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.Data.apply_masking
    ~cf.Data.count
    ~cf.Data.count_masked
    ~cf.Data.compressed

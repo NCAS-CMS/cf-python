@@ -1,3 +1,16 @@
+version 3.3.1
+-------------
+----
+
+**2020-??-??**
+
+* New method: `cf.Field.apply_masking`
+  (https://github.com/NCAS-CMS/cf-python/issues/??)
+* New method: `cf.Data.apply_masking`
+  (https://github.com/NCAS-CMS/cf-python/issues/??)
+* New keyword parameter to `cf.read`: ``mask``
+  (https://github.com/NCAS-CMS/cf-python/issues/??)
+
 version 3.3.0
 -------------
 ----
