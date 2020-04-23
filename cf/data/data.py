@@ -8653,23 +8653,54 @@ False
         return False
 
     @_inplace_enabled
-    def apply_masking(self, valid_min=None, valid_max=None,
-                      valid_range=None, inplace=False):
-        '''TODO DCH
+    def apply_masking(self, fill_values=None, valid_min=None,
+                      valid_max=None, valid_range=None, inplace=False):
+        '''Apply masking.
+
+    Masking is applied according to the values of the keyword
+    parameters.
+
+    Elements that are already masked remain so.
 
     .. versionadded:: 3.3.1
 
-    .. seealso:: `get_fill_value`,`set_fill_value`, `hardmask`, `mask`
+    .. seealso:: `get_fill_value`, `hardmask`, `mask`, `where`
                  
     :Parameters:
 
+        fill_values: `bool` or sequence of scalars, optional
+            Specify values that will be set to missing data. Data
+            elements exactly equal to any of the values are set to
+            missing data.
+
+            If True then the value returned by the `get_fill_value`
+            method, if such a value exists, is used.
+
+            Zero or more values may be provided in a sequence of
+            scalars.
+
+            *Parameter example:*
+              Specify a fill value of 999: ``fill_values=[999]``
+         
+            *Parameter example:*
+              Specify fill values of 999 and -1.0e30:
+              ``fill_values=[999, -1.0e30]``
+         
+            *Parameter example:*
+              Use the fill value already set for the data:
+              ``fill_values=True``
+         
+            *Parameter example:*
+              Use no fill values: ``fill_values=False`` or
+              ``fill_value=[]``
+         
         valid_min: number, optional
-            A scalar specifying the minimum valid value. Values
+            A scalar specifying the minimum valid value. Data elements
             strictly less than this number will be set to missing
             data.
 
         valid_max: number, optional
-            A scalar specifying the maximum valid value. Values
+            A scalar specifying the maximum valid value. Data elements
             strictly greater than this number will be set to missing
             data.
 
@@ -8679,6 +8710,10 @@ False
             *valid_min* and *valid_max* parameters. The *valid_range*
             parameter must not be set if either *valid_min* or
             *valid_max* is defined.
+
+            *Parameter example:*
+              ``valid_range=[-999, 10000]`` is equivalent to setting
+              ``valid_min=-999, valid_max=10000``
 
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
@@ -8691,7 +8726,50 @@ False
 
     **Examples:**
 
-        TODO DCH
+    >>> import numpy
+    >>> d = Data(numpy.arange(12).reshape(3, 4), 'm')
+    >>> d[1, 1] = masked
+    >>> print(d.array)
+    [[0  1  2  3]
+     [4 --  6  7]
+     [8  9 10 11]]
+
+    >>>  print(d.apply_masking().array)
+    [[0  1  2  3]
+     [4 --  6  7]
+     [8  9 10 11]]
+    >>> print(d.apply_masking(fill_values=[0]).array)
+    [[--  1  2  3]
+     [ 4 --  6  7]
+     [ 8  9 10 11]]    
+    >>> print(d.apply_masking(fill_values=[0, 11]).array)
+    [[--  1  2  3]
+     [ 4 --  6  7]
+     [ 8  9 10 --]]
+    
+    >>> print(d.apply_masking(valid_min=3).array)
+    [[-- -- --  3]
+     [ 4 --  6  7]
+     [ 8  9 10 11]]
+    >>> print(d.apply_masking(valid_max=6).array)
+    [[ 0  1  2  3]
+     [ 4 --  6 --]
+     [-- -- -- --]]
+    >>> print(d.apply_masking(valid_range=[2, 8]).array)
+    [[-- --  2  3]
+     [ 4 --  6  7]
+     [ 8 -- -- --]]
+    
+    >>> d.set_fill_value(7)
+    >>> print(d.apply_masking(fill_values=True).array)
+    [[0  1  2  3]
+     [4 --  6 --]
+     [8  9 10 11]]
+    >>> print(d.apply_masking(fill_values=True,
+    ...                       valid_range=[2, 8]).array)
+    [[-- --  2  3]
+     [ 4 --  6 --]
+     [ 8 -- -- --]]
 
         '''
         if valid_range is not None:
@@ -8714,11 +8792,40 @@ False
 
         d = _inplace_enabled_define_and_cleanup(self)
 
+        if fill_values is None:
+            fill_values = False
+        
+        if isinstance(fill_values, bool):
+            if fill_values:
+                fill_value = self.get_fill_value(None)
+                if fill_value is not None:
+                    fill_values = (fill_value,)
+                else:
+                    fill_values = ()
+            else:
+                fill_values = ()
+        else:            
+            try:
+                _ = iter(fill_values)
+            except TypeError:
+                raise TypeError(
+                    "'fill_values' parameter must be a sequence or "
+                    "of type bool. Got type {}".format(type(fill_values)))
+            else:
+                if isinstance(fill_values, str):
+                    raise TypeError(
+                        "'fill_values' parameter must be a sequence or "
+                        "of type bool. Got type {}".format(type(fill_values)))
+        # --- End: if
+        
         mask = None
         
-        fill_value = d.get_fill_value(None)
-        if fill_value is not None:
-            mask = (d == fill_value)
+        if fill_values:
+            mask = (d == fill_values[0])
+
+            for fill_value in fill_values[1:]:
+                mask |= (d == fill_value)
+        # --- End: for
             
         if valid_min is not None:
             if mask is None:
@@ -12246,8 +12353,8 @@ False
     **Missing data**
 
     Data array elements may be set to missing values by assigning them
-    to the cf.masked constant, or by assignment missing data elements
-    of array-valued *x* and *y* parameters.
+    to the `cf.masked` constant, or by assignment missing data
+    elements of array-valued *x* and *y* parameters.
 
     By default the data mask is "hard", meaning that masked values can
     not be changed by assigning them to another value. This behaviour

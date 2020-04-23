@@ -210,6 +210,9 @@ Data
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.DimensionCoordinate.apply_masking
+   ~cf.DimensionCoordinate.count
+   ~cf.DimensionCoordinate.count_masked
    ~cf.DimensionCoordinate.fill_value
 
 .. autosummary::
@@ -218,8 +221,6 @@ Data
    :template: attribute.rst
 
    ~cf.DimensionCoordinate.binary_mask
-   ~cf.DimensionCoordinate.count
-   ~cf.DimensionCoordinate.count_masked
    ~cf.DimensionCoordinate.hardmask
    ~cf.DimensionCoordinate.mask
    ~cf.DimensionCoordinate.mask_invalid

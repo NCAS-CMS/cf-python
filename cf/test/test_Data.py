@@ -74,7 +74,7 @@ class DataTest(unittest.TestCase):
 
         self.test_only = []
 #        self.test_only = ['NOTHING!!!!!']
-#        self.test_only = ['test_Data_cumsum']
+        self.test_only = ['test_Data_apply_masking']
 
 #        self.test_only = [
 #                          'test_Data_trigonometric_hyperbolic']
@@ -125,6 +125,67 @@ class DataTest(unittest.TestCase):
 #        self.test_only = ['test_Data_clip']
 #        self.test_only = ['test_Data__init__dtype_mask']
 
+    def test_Data_apply_masking(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        a = self.ma
+        
+        for chunksize in self.chunk_sizes:
+            cf.CHUNKSIZE(chunksize)
+
+            d = cf.Data(a, units='m')
+
+            self.assertTrue((a == d.array).all())
+            self.assertTrue((a.mask == d.mask.array).all())
+    
+            b = a.copy()
+            e = d.apply_masking()
+            self.assertTrue((b == e.array).all())
+            self.assertTrue((b.mask == e.mask.array).all())
+    
+            b = numpy.ma.where(a==0, numpy.ma.masked, a)
+            e = d.apply_masking(fill_values=[0])
+            self.assertTrue((b == e.array).all())
+            self.assertTrue((b.mask == e.mask.array).all())
+    
+            b = numpy.ma.where((a==0) | (a==11), numpy.ma.masked, a)
+            e = d.apply_masking(fill_values=[0, 11])
+            self.assertTrue((b == e.array).all())
+            self.assertTrue((b.mask == e.mask.array).all())
+    
+            b = numpy.ma.where(a<30, numpy.ma.masked, a)
+            e = d.apply_masking(valid_min=30)
+            self.assertTrue((b == e.array).all())
+            self.assertTrue((b.mask == e.mask.array).all())
+    
+            b = numpy.ma.where(a>-60, numpy.ma.masked, a)
+            e = d.apply_masking(valid_max=-60)
+            self.assertTrue((b == e.array).all())
+            self.assertTrue((b.mask == e.mask.array).all())
+    
+            b = numpy.ma.where((a<-20) | (a>80), numpy.ma.masked, a)
+            e = d.apply_masking(valid_range=[-20, 80])
+            self.assertTrue((b == e.array).all())
+            self.assertTrue((b.mask == e.mask.array).all())
+    
+            d.set_fill_value(70)
+    
+            b = numpy.ma.where(a==70, numpy.ma.masked, a)
+            e = d.apply_masking(fill_values=True)
+            self.assertTrue((b == e.array).all())
+            self.assertTrue((b.mask == e.mask.array).all())
+    
+            b = numpy.ma.where((a==70) | (a<20) | (a>80),
+                               numpy.ma.masked, a)
+            e = d.apply_masking(fill_values=True,
+                                valid_range=[20, 80])
+            self.assertTrue((b == e.array).all())
+            self.assertTrue((b.mask == e.mask.array).all())
+            
+        cf.CHUNKSIZE(self.original_chunksize)
+
+        
     def test_Data_convolution_filter(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return

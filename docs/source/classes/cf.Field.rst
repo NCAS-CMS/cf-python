@@ -188,6 +188,7 @@ Data
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.Field.apply_masking
    ~cf.Field.count
    ~cf.Field.count_masked
    ~cf.Field.fill_value
@@ -210,6 +211,7 @@ Data
    :template: method.rst
 
    ~cf.Field.__setitem__
+   ~cf.Field.apply_masking
    ~cf.Field.indices
    ~cf.Field.mask_invalid
    ~cf.Field.subspace

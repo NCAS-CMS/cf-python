@@ -206,6 +206,9 @@ Data
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.AuxiliaryCoordinate.apply_masking
+   ~cf.AuxiliaryCoordinate.count
+   ~cf.AuxiliaryCoordinate.count_masked
    ~cf.AuxiliaryCoordinate.fill_value
 
 .. autosummary::
@@ -214,8 +217,6 @@ Data
    :template: attribute.rst
 
    ~cf.AuxiliaryCoordinate.binary_mask
-   ~cf.AuxiliaryCoordinate.count
-   ~cf.AuxiliaryCoordinate.count_masked
    ~cf.AuxiliaryCoordinate.hardmask
    ~cf.AuxiliaryCoordinate.mask
    ~cf.AuxiliaryCoordinate.mask_invalid

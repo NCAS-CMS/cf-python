@@ -912,6 +912,7 @@ class PropertiesDataBounds(PropertiesData):
     # ----------------------------------------------------------------
     # Methods
     # ----------------------------------------------------------------
+     
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def ceil(self, bounds=True, inplace=False, i=False):

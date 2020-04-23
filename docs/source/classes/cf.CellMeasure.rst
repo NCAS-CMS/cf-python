@@ -194,6 +194,9 @@ Data
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.CellMeasure.apply_masking
+   ~cf.CellMeasure.count
+   ~cf.CellMeasure.count_masked
    ~cf.CellMeasure.fill_value
 
 .. autosummary::
@@ -202,8 +205,6 @@ Data
    :template: attribute.rst
 
    ~cf.CellMeasure.binary_mask
-   ~cf.CellMeasure.count
-   ~cf.CellMeasure.count_masked
    ~cf.CellMeasure.hardmask
    ~cf.CellMeasure.mask
    ~cf.CellMeasure.mask_invalid
