@@ -1026,9 +1026,8 @@ class PropertiesData(Properties):
     def binary_mask(self):
         '''A binary (0 and 1) missing data mask of the data array.
 
-    The binary mask's data array comprises dimensionless 32-bit
-    integers and has 0 where the data array has missing data and 1
-    otherwise.
+    The binary mask's data comprises dimensionless 32-bit integers
+    that are 0 where the data has missing values and 1 otherwise.
 
     **Examples:**
 

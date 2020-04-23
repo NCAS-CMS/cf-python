@@ -74,7 +74,7 @@ class DataTest(unittest.TestCase):
 
         self.test_only = []
 #        self.test_only = ['NOTHING!!!!!']
-        self.test_only = ['test_Data_apply_masking']
+#        self.test_only = ['test_Data_apply_masking']
 
 #        self.test_only = [
 #                          'test_Data_trigonometric_hyperbolic']
@@ -184,7 +184,6 @@ class DataTest(unittest.TestCase):
             self.assertTrue((b.mask == e.mask.array).all())
             
         cf.CHUNKSIZE(self.original_chunksize)
-
         
     def test_Data_convolution_filter(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

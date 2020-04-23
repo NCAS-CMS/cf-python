@@ -51,6 +51,44 @@ class read_writeTest(unittest.TestCase):
 #    test_only = ['test_read_string']
 #    test_only = ['test_read_write_netCDF4_compress_shuffle']
 
+    def test_read_mask(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return        
+
+        f = cf.example_field(0)
+
+        N = f.size
+        
+        f.data[1, 1] = cf.masked
+        f.data[2, 2] = cf.masked
+
+        f.del_property('_FillValue', None)
+        f.del_property('missing_value', None)
+        
+        cf.write(f, tmpfile)
+
+        g = cf.read(tmpfile)[0]
+        self.assertTrue(numpy.ma.count(g.data.array) == N - 2)
+        
+        g = cf.read(tmpfile, mask=False)[0]
+        self.assertTrue(numpy.ma.count(g.data.array) == N)
+
+        g.apply_masking(inplace=True)
+        self.assertTrue(numpy.ma.count(g.data.array) == N - 2)
+        
+        f.set_property('_FillValue', 999)
+        f.set_property('missing_value', -111)
+        cf.write(f, tmpfile)
+        
+        g = cf.read(tmpfile)[0]
+        self.assertTrue(numpy.ma.count(g.data.array) == N - 2)
+        
+        g = cf.read(tmpfile, mask=False)[0]
+        self.assertTrue(numpy.ma.count(g.data.array) == N)
+
+        g.apply_masking(inplace=True)
+        self.assertTrue(numpy.ma.count(g.data.array) == N - 2)
+
     def test_read_directory(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return

@@ -2474,7 +2474,6 @@ def environment(display=True, paths=True, string=True):
     else:
         return(out)
 
-
 def default_netCDF_fillvals():
     '''Default data array fill values for each data type.
 
@@ -2501,10 +2500,8 @@ def default_netCDF_fillvals():
     '''
     return netCDF4.default_fillvals
 
-
 def _DEPRECATION_ERROR(message='', version='3.0.0'):
     raise DeprecationError("{}".format(message))
-
 
 def _DEPRECATION_ERROR_ARG(instance, method, arg, message='', version='3.0.0'):
     raise DeprecationError(
@@ -2517,7 +2514,6 @@ def _DEPRECATION_ERROR_ARG(instance, method, arg, message='', version='3.0.0'):
             version
         )
     )
-
 
 def _DEPRECATION_ERROR_FUNCTION_KWARGS(func, kwargs=None, message='',
                                        exact=False, traceback=False,
