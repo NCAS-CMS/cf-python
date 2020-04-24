@@ -209,7 +209,8 @@ The `cf.read` function has optional parameters to
   referenced from CF-netCDF data variables, but which are not regarded
   by default as data variables in their own right;
 
-* request that masking is not applied by convention to data elements;
+* request that masking is *not* applied by convention to data elements
+  (see :ref:`data masking <Data-mask>`); and
 
 * display information and warnings about the mapping of the netCDF
   file contents to CF data model constructs;
@@ -1233,7 +1234,38 @@ of the field construct should be used instead.
    False
    >>> q.mask.any()
    True
-	  
+
+The mask of a netCDF dataset array is implied by array values that
+meet the criteria implied by the ``missing_value``, ``_FillValue``,
+``valid_min``, ``valid_max``, and ``valid_range`` properties, and is
+usually applied automatically. However, this automatic masking may be
+bypassed by setting the *mask* keyword of the `cf.read` function to
+`False`. The mask, as defined in the dataset, may subsequently be
+applied manually with the `~Field.apply_masking` mthod of the field
+construct.
+   
+.. code-block:: python
+   :caption: *Read a dataset from disk without automatic masking, and
+             then manually apply the mask*
+
+   >>> cf.write(q, 'masked_q.nc')
+   >>> no_mask_q = cf.read('masked_q.nc', mask=False)[0]
+   >>> print(no_mask_q.data.array)
+   [9.96920997e+36, 9.96920997e+36, 9.96920997e+36, 9.96920997e+36,
+    9.96920997e+36, 9.96920997e+36, 9.96920997e+36, 9.96920997e+36],
+    [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
+    [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
+    [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
+   [9.96920997e+36, 9.96920997e+36, 9.96920997e+36, 9.96920997e+36,
+    9.96920997e+36, 9.96920997e+36, 9.96920997e+36, 9.96920997e+36]])
+   >>> masked_q = no_mask_q.apply_masking()
+   >>> print(masked_q.data.array)
+   [[   --    --    --    --    --    --    --    --]
+    [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
+    [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
+    [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
+    [   --    --    --    --    --    --    --    --]]
+     
 ----
 
 .. _Subspacing-by-index:

@@ -81,7 +81,7 @@ documentation, installation and source code.
 '''
 __Conventions__  = 'CF-1.8'
 __author__       = 'David Hassell'
-__date__         = '2020-??-??'
+__date__         = '2020-04-??'
 __version__      = '3.3.1'
 
 _requires = (
@@ -199,11 +199,11 @@ if LooseVersion(cfunits.__version__) < LooseVersion(_minimum_vn):
     )
 
 # Check the version of cfdm
-_minimum_vn = '1.8.2'
-if LooseVersion(cfdm.__version__) < LooseVersion(_minimum_vn):
+_exact_vn = '1.8.2'
+if LooseVersion(cfdm.__version__) != LooseVersion(_exact_vn):
     raise ValueError(
         "Bad cfdm version: cf requires cfdm version {} or later. Got {} "
-        "at {}".format(_minimum_vn, cfdm.__version__, cfdm.__file__))
+        "at {}".format(_exact_vn, cfdm.__version__, cfdm.__file__))
 
 from .constructs import Constructs
 
