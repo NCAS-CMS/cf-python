@@ -155,7 +155,8 @@ class read_writeTest(unittest.TestCase):
         # select on field list
         f = cf.read(self.filename, select='eastward_wind')
         g = cf.read(self.filename)
-        self.assertTrue(f.equals(g, verbose=True), 'Bad read with select keyword')
+        self.assertTrue(f.equals(g, verbose=True),
+                        'Bad read with select keyword')
 
     def test_read_squeeze(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -197,11 +198,15 @@ class read_writeTest(unittest.TestCase):
         f = cf.read(filename, extra='domain_ancillary', verbose=0)
         self.assertTrue(len(f) == 4, '\n'+str(f))
 
-        f = cf.read(filename, extra=['field_ancillary', 'auxiliary_coordinate'])
+        f = cf.read(filename, extra=['field_ancillary',
+                                     'auxiliary_coordinate'])
         self.assertTrue(len(f) == 8, '\n'+str(f))
 
-        self.assertTrue(len(cf.read(filename, extra=['domain_ancillary', 'auxiliary_coordinate'])) == 7)
-        f = cf.read(filename, extra=['domain_ancillary', 'cell_measure', 'auxiliary_coordinate'])
+        self.assertTrue(len(cf.read(filename,
+                                    extra=['domain_ancillary',
+                                           'auxiliary_coordinate'])) == 7)
+        f = cf.read(filename, extra=['domain_ancillary', 'cell_measure',
+                                     'auxiliary_coordinate'])
         self.assertTrue(len(f) == 8, '\n'+str(f))
 
         f = cf.read(filename, extra=('field_ancillary', 'dimension_coordinate',
@@ -231,8 +236,9 @@ class read_writeTest(unittest.TestCase):
                     self.assertTrue(len(g) == 1, 'g = '+repr(g))
                     g0 = g[0]
 
-                    self.assertTrue(f0.equals(g0, verbose=1),
-                                    'Bad read/write of format {!r}'.format(fmt))
+                    self.assertTrue(
+                        f0.equals(g0, verbose=1),
+                        'Bad read/write of format {!r}'.format(fmt))
 
     def test_read_write_netCDF4_compress_shuffle(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -254,7 +260,8 @@ class read_writeTest(unittest.TestCase):
                         g = cf.read(tmpfile)[0]
                         self.assertTrue(
                             f.equals(g, verbose=True),
-                            'Bad read/write with lossless compression: {0}, {1}, {2}'.format(
+                            "Bad read/write with lossless compression: "
+                            "{0}, {1}, {2}".format(
                                 fmt, compress, shuffle))
         # --- End: for
         cf.CHUNKSIZE(self.original_chunksize)
@@ -283,16 +290,20 @@ class read_writeTest(unittest.TestCase):
             for chunksize in self.chunk_sizes:
                 cf.CHUNKSIZE(chunksize)
                 f = cf.read(self.filename)[0]
-                t = cf.DimensionCoordinate(data=cf.Data(123, 'days since 1750-1-1'))
+                t = cf.DimensionCoordinate(data=cf.Data(
+                    123, 'days since 1750-1-1'))
 
                 t.standard_name = 'time'
                 axisT = f.set_construct(cf.DomainAxis(1))
                 f.set_construct(t, axes=[axisT])
-                cf.write(f, tmpfile, fmt='NETCDF4', reference_datetime=reference_datetime)
+                cf.write(f, tmpfile, fmt='NETCDF4',
+                         reference_datetime=reference_datetime)
                 g = cf.read(tmpfile)[0]
                 t = g.dimension_coordinate('T')
-                self.assertTrue(t.Units == cf.Units('days since '+reference_datetime),
-                                'Units written were '+repr(t.Units.reftime)+' not '+repr(reference_datetime))
+                self.assertTrue(
+                    t.Units == cf.Units('days since '+reference_datetime),
+                    ('Units written were '+repr(t.Units.reftime)
+                     +' not '+repr(reference_datetime)))
         # --- End: for
         cf.CHUNKSIZE(self.original_chunksize)
 
@@ -350,12 +361,15 @@ class read_writeTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        subprocess.run(' '.join(['ncdump', self.filename, '>', tmpfile]),
-                       shell=True, check=True)
-        subprocess.run(' '.join(['ncdump', '-h', self.filename, '>', tmpfileh]),
-                                shell=True, check=True)
-        subprocess.run(' '.join(['ncdump', '-c', self.filename, '>', tmpfilec]),
-                       shell=True, check=True)
+        subprocess.run(
+            ' '.join(['ncdump', self.filename, '>', tmpfile]),
+            shell=True, check=True)
+        subprocess.run(
+            ' '.join(['ncdump', '-h', self.filename, '>', tmpfileh]),
+            shell=True, check=True)
+        subprocess.run(
+            ' '.join(['ncdump', '-c', self.filename, '>', tmpfilec]),
+            shell=True, check=True)
 
         f0 = cf.read(self.filename)[0]
         f = cf.read(tmpfile)[0]
@@ -364,8 +378,10 @@ class read_writeTest(unittest.TestCase):
 
         self.assertTrue(f0.equals(f, verbose=True))
 
-        self.assertTrue(f.construct('grid_latitude').equals(c.construct('grid_latitude'), verbose=True))
-        self.assertTrue(f0.construct('grid_latitude').equals(c.construct('grid_latitude'), verbose=True))
+        self.assertTrue(f.construct('grid_latitude').equals(
+            c.construct('grid_latitude'), verbose=True))
+        self.assertTrue(f0.construct('grid_latitude').equals(
+            c.construct('grid_latitude'), verbose=True))
 
         with self.assertRaises(Exception):
             x = cf.read('test_read_write.py')

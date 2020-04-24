@@ -49,16 +49,16 @@ mones = numpy.ma.array(ones, mask=ma.mask)
 
 class DataTest(unittest.TestCase):
     def setUp(self):
-        self.filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                    'test_file.nc')
+        self.filename = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
 
         self.TEMPDIR = os.path.dirname(os.path.abspath(__file__))
 
         self.chunk_sizes = (17, 34, 300, 100000)[::-1]
         self.original_chunksize = cf.CHUNKSIZE()
 
-        self.filename6 = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                      'test_file2.nc')
+        self.filename6 = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), 'test_file2.nc')
 
         self.a = a
         self.w = w
@@ -119,7 +119,6 @@ class DataTest(unittest.TestCase):
 #        self.test_only = ['test_Data_sum_of_weights_sum_of_weights2']
 #        self.test_only = ['test_Data_max_min_sum_sum_of_squares']
 #        self.test_only = ['test_Data___setitem__']
-#        self.test_only = ['test_Data_ceil', 'test_Data_floor', 'test_Data_trunc', 'test_Data_rint', 'test_Data_round' ]
 #        self.test_only = ['test_Data_year_month_day_hour_minute_second']
 #        self.test_only = ['test_Data_BINARY_AND_UNARY_OPERATORS']
 #        self.test_only = ['test_Data_clip']
@@ -414,7 +413,8 @@ class DataTest(unittest.TestCase):
 
                         self.assertTrue((e.array == b).all())
 
-                        e.where(cf.set([e.minimum(), e.maximum()]), cf.masked, e-1, inplace=True)
+                        e.where(cf.set([e.minimum(), e.maximum()]),
+                                cf.masked, e-1, inplace=True)
                         f = d.digitize(bins, upper=upper)
                         self.assertTrue(e.equals(f, verbose=True))
         # --- End: for
@@ -479,7 +479,11 @@ class DataTest(unittest.TestCase):
                     shape  = d.shape
                 else:
                     shape = [n for i, n in enumerate(d.shape) if i not in axes]
-                    shape.insert(sorted(axes)[0], numpy.prod([n for i, n in enumerate(d.shape) if i in axes]))
+                    shape.insert(
+                        sorted(axes)[0],
+                        numpy.prod([n
+                                    for i, n in enumerate(d.shape)
+                                    if i in axes]))
 
                 self.assertTrue(e.shape == tuple(shape))
                 self.assertTrue(e.ndim == d.ndim-len(axes)+1)
@@ -665,10 +669,15 @@ class DataTest(unittest.TestCase):
             self.assertFalse(d.asdata(d, dtype=d.dtype, copy=True) is d)
             self.assertFalse(cf.Data.asdata(d, dtype=d.dtype, copy=True) is d)
 
-            self.assertTrue(cf.Data.asdata(cf.Data([1, 2, 3]), dtype=float, copy=True).equals(cf.Data([1.0, 2, 3]), verbose=True))
+            self.assertTrue(
+                cf.Data.asdata(
+                    cf.Data([1, 2, 3]), dtype=float, copy=True).equals(
+                        cf.Data([1.0, 2, 3]), verbose=True))
 
-            self.assertTrue(cf.Data.asdata([1, 2, 3]).equals(cf.Data([1, 2, 3]), verbose=True))
-            self.assertTrue(cf.Data.asdata([1, 2, 3], dtype=float).equals(cf.Data([1.0, 2, 3]), verbose=True))
+            self.assertTrue(cf.Data.asdata([1, 2, 3]).equals(
+                cf.Data([1, 2, 3]), verbose=True))
+            self.assertTrue(cf.Data.asdata([1, 2, 3], dtype=float).equals(
+                cf.Data([1.0, 2, 3]), verbose=True))
 
         cf.CHUNKSIZE(self.original_chunksize)
 
@@ -747,13 +756,22 @@ class DataTest(unittest.TestCase):
                                             (slice(None), Ellipsis),
                                         )):
                     n = -n-1
-                    for dvalue, avalue in ((n, n), (cf.masked, numpy.ma.masked), (n, n)):
-                        message = "hardmask={}, cf.Data[{}, {}]]={}={} failed".format(hardmask, j, i, dvalue, avalue)
+                    for dvalue, avalue in ((n, n),
+                                           (cf.masked, numpy.ma.masked),
+                                           (n, n)):
+                        message = ("hardmask={}, "
+                                   "cf.Data[{}, {}]]={}={} failed".format(
+                                       hardmask, j, i, dvalue, avalue))
                         d[j, i] = dvalue
                         a[j, i] = avalue
-                        self.assertTrue((d.array == a).all() in (True, numpy.ma.masked), message)
-                        self.assertTrue((d.mask.array == numpy.ma.getmaskarray(a)).all(),
-                                        'd.mask.array='+repr(d.mask.array)+'\nnumpy.ma.getmaskarray(a)='+repr(numpy.ma.getmaskarray(a)))
+                        self.assertTrue(
+                            (d.array == a).all() in (True,
+                                                     numpy.ma.masked), message)
+                        self.assertTrue(
+                            (d.mask.array == numpy.ma.getmaskarray(a)).all(),
+                            ('d.mask.array='+repr(d.mask.array)
+                             +'\nnumpy.ma.getmaskarray(a)='
+                             +repr(numpy.ma.getmaskarray(a))))
                 # --- End: for
 
                 a = numpy.ma.arange(3000).reshape(50, 60)
@@ -773,10 +791,12 @@ class DataTest(unittest.TestCase):
                     message = 'cf.Data[%s, %s]=%s failed' % (j, i, dvalue)
                     d[j, i] = dvalue
                     a[j, i] = dvalue
-                    self.assertTrue((d.array == a).all() in (True, numpy.ma.masked), message)
-                    self.assertTrue((d.mask.array == numpy.ma.getmaskarray(a)).all(), message)
-                # --- End: for
-#                print('hardmask =',hardmask,', pmshape =', d._pmshape)
+                    self.assertTrue(
+                        (d.array == a).all() in (True, numpy.ma.masked),
+                        message)
+                    self.assertTrue(
+                        (d.mask.array == numpy.ma.getmaskarray(a)).all(),
+                        message)
             # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
@@ -873,7 +893,8 @@ class DataTest(unittest.TestCase):
             self.assertTrue((a2 == b).all())
             self.assertFalse((a2 == a).all())
 
-            d = cf.Data([['2000-12-3 12:00']], 'days since 2000-12-01', dt=True)
+            d = cf.Data([['2000-12-3 12:00']],
+                        'days since 2000-12-01', dt=True)
             a = d.array
             self.assertTrue((a == numpy.array([[2.5]])).all())
 
@@ -936,34 +957,41 @@ class DataTest(unittest.TestCase):
             return
 
         calendar = '360_day'
-        d = cf.Data([1., 2], units=cf.Units('months since 2000-1-1', calendar=calendar))
+        d = cf.Data([1., 2], units=cf.Units('months since 2000-1-1',
+                                            calendar=calendar))
         self.assertTrue((d.array == numpy.array([1., 2])).all())
         a = numpy.array([cf.dt(2000,2,1, 10,29,3,831223, calendar=calendar),
                          cf.dt(2000,3,1, 20,58,7,662447, calendar=calendar)])
         self.assertTrue((d.datetime_array == a).all(), d.datetime_array)
 
         calendar = 'standard'
-        d = cf.Data([1., 2], units=cf.Units('months since 2000-1-1', calendar=calendar))
+        d = cf.Data([1., 2], units=cf.Units('months since 2000-1-1',
+                                            calendar=calendar))
         self.assertTrue((d.array == numpy.array([1., 2])).all())
         a = numpy.array([cf.dt(2000,1,31, 10,29,3,831203, calendar=calendar),
                          cf.dt(2000,3, 1, 20,58,7,662447, calendar=calendar)])
         self.assertTrue((d.datetime_array == a).all(), d.datetime_array)
 
         calendar = '360_day'
-        d = cf.Data([1., 2], units=cf.Units('years since 2000-1-1', calendar=calendar))
+        d = cf.Data([1., 2], units=cf.Units('years since 2000-1-1',
+                                            calendar=calendar))
         self.assertTrue((d.array == numpy.array([1., 2])).all())
         a = numpy.array([cf.dt(2001,1, 6,  5,48,45,974677, calendar=calendar),
                          cf.dt(2002,1,11, 11,37,31,949355, calendar=calendar)])
         self.assertTrue((d.datetime_array == a).all(), d.datetime_array)
 
         calendar = 'standard'
-        d = cf.Data([1., 2], units=cf.Units('years since 2000-1-1', calendar=calendar))
+        d = cf.Data([1., 2], units=cf.Units('years since 2000-1-1',
+                                            calendar=calendar))
         self.assertTrue((d.array == numpy.array([1., 2])).all())
-        a = numpy.array([cf.dt(2000,12,31,  5,48,45,974687, calendar=calendar),
-                         cf.dt(2001,12,31, 11,37,31,949375, calendar=calendar)])
+        a = numpy.array([cf.dt(2000,12,31,  5,48,45,974687,
+                               calendar=calendar),
+                         cf.dt(2001,12,31, 11,37,31,949375,
+                               calendar=calendar)])
         self.assertTrue((d.datetime_array == a).all(), d.datetime_array)
 
-        d = cf.Data([1., 2], units=cf.Units('years since 2000-1-1', calendar='360_day'))
+        d = cf.Data([1., 2], units=cf.Units('years since 2000-1-1',
+                                            calendar='360_day'))
         e = d * 31
         d *= 31
 
@@ -972,11 +1000,13 @@ class DataTest(unittest.TestCase):
             return
 
         # Scalar array
-        for d, x in zip([cf.Data(11292.5, 'days since 1970-1-1'), cf.Data('2000-12-1 12:00', dt=True)],
+        for d, x in zip([cf.Data(11292.5, 'days since 1970-1-1'),
+                         cf.Data('2000-12-1 12:00', dt=True)],
                         [11292.5, 0]):
             a = d.datetime_array
             self.assertTrue(a.shape == ())
-            self.assertTrue(a == numpy.array(cf.dt('2000-12-1 12:00', calendar='standard')))
+            self.assertTrue(a == numpy.array(cf.dt('2000-12-1 12:00',
+                                                   calendar='standard')))
 
             a = d.array
             self.assertTrue(a.shape == ())
@@ -989,7 +1019,8 @@ class DataTest(unittest.TestCase):
 
         # Non-scalar array
         for d, x in zip([cf.Data([[11292.5, 11293.5]], 'days since 1970-1-1'),
-                         cf.Data([['2000-12-1 12:00', '2000-12-2 12:00']], dt=True)],
+                         cf.Data([['2000-12-1 12:00', '2000-12-2 12:00']],
+                                 dt=True)],
                         ([[11292.5, 11293.5]],
                          [[0, 1]])):
             a = d.datetime_array
@@ -999,8 +1030,9 @@ class DataTest(unittest.TestCase):
             a = d.array
             self.assertTrue((a == x).all())
             a = d.datetime_array
-            self.assertTrue((a == numpy.array([[cf.dt('2000-12-1 12:00', calendar='standard'),
-                                                cf.dt('2000-12-2 12:00', calendar='standard')]])).all())
+            self.assertTrue((a == numpy.array(
+                [[cf.dt('2000-12-1 12:00', calendar='standard'),
+                  cf.dt('2000-12-2 12:00', calendar='standard')]])).all())
 
     def test_Data__asdatetime__asreftime__isdatetime(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -1128,7 +1160,8 @@ class DataTest(unittest.TestCase):
                 cf.CHUNKSIZE(chunksize)
                 d = cf.Data(a)
                 e = d.round(decimals=decimals)
-                self.assertTrue(d.round(decimals=decimals, inplace=True) is None)
+                self.assertTrue(
+                    d.round(decimals=decimals, inplace=True) is None)
                 self.assertTrue(d.equals(e, verbose=True))
                 self.assertTrue(d.shape == c.shape)
                 self.assertTrue((d.array == c).all())
@@ -1153,8 +1186,10 @@ class DataTest(unittest.TestCase):
                 self.assertTrue(d.datum(-1) == 3)
                 for index in d.ndindex():
                     self.assertTrue(d.datum(index)  == d.array[index].item())
-                    self.assertTrue(d.datum(*index) == d.array[index].item(),
-                                    '{}, {}'.format(d.datum(*index), d.array[index].item()))
+                    self.assertTrue(
+                        d.datum(*index) == d.array[index].item(),
+                        '{}, {}'.format(
+                            d.datum(*index), d.array[index].item()))
             # --- End: for
 
             d = cf.Data(5, 'metre')
@@ -1232,12 +1267,16 @@ class DataTest(unittest.TestCase):
             for pp in (False, True):
                 cf.CHUNKSIZE(chunksize)
                 d = cf.Data([[4, 5, 6], [1, 2, 3]], 'metre')
-                self.assertTrue(d.maximum(_preserve_partitions=pp) == cf.Data(6, 'metre'))
-                self.assertTrue(d.maximum(_preserve_partitions=pp).datum() == 6)
+                self.assertTrue(
+                    d.maximum(_preserve_partitions=pp) == cf.Data(6, 'metre'))
+                self.assertTrue(
+                    d.maximum(_preserve_partitions=pp).datum() == 6)
                 d[0, 2] = cf.masked
                 self.assertTrue(d.maximum(_preserve_partitions=pp) == 5)
-                self.assertTrue(d.maximum(_preserve_partitions=pp).datum() == 5)
-                self.assertTrue(d.maximum(_preserve_partitions=pp) == cf.Data(0.005, 'km'))
+                self.assertTrue(
+                    d.maximum(_preserve_partitions=pp).datum() == 5)
+                self.assertTrue(
+                    d.maximum(_preserve_partitions=pp) == cf.Data(0.005, 'km'))
         # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
@@ -1250,12 +1289,16 @@ class DataTest(unittest.TestCase):
             for pp in (False, True):
                 cf.CHUNKSIZE(chunksize)
                 d = cf.Data([[4, 5, 6], [1, 2, 3]], 'metre')
-                self.assertTrue(d.minimum(_preserve_partitions=pp) == cf.Data(1, 'metre'))
-                self.assertTrue(d.minimum(_preserve_partitions=pp).datum() == 1)
+                self.assertTrue(
+                    d.minimum(_preserve_partitions=pp) == cf.Data(1, 'metre'))
+                self.assertTrue(
+                    d.minimum(_preserve_partitions=pp).datum() == 1)
                 d[1, 0] = cf.masked
                 self.assertTrue(d.minimum(_preserve_partitions=pp) == 2)
-                self.assertTrue(d.minimum(_preserve_partitions=pp).datum() == 2)
-                self.assertTrue(d.minimum(_preserve_partitions=pp) == cf.Data(0.002, 'km'))
+                self.assertTrue(
+                    d.minimum(_preserve_partitions=pp).datum() == 2)
+                self.assertTrue(
+                    d.minimum(_preserve_partitions=pp) == cf.Data(0.002, 'km'))
 #            print('pmshape =', d._pmshape)
         # --- End: for
 
@@ -1357,7 +1400,9 @@ class DataTest(unittest.TestCase):
                 for axes in itertools.permutations(indices):
                     a = numpy.transpose(a, axes)
                     d.transpose(axes, inplace=True)
-                    message = 'cf.Data.transpose(%s) failed: d.shape=%s, a.shape=%s' % (axes, d.shape, a.shape)
+                    message = ("cf.Data.transpose(%s) failed: "
+                               "d.shape=%s, a.shape=%s" % (
+                                   axes, d.shape, a.shape))
                     self.assertTrue(d.shape == a.shape, message)
                     self.assertTrue((d.array == a).all(), message)
         # --- End: for
@@ -1372,9 +1417,11 @@ class DataTest(unittest.TestCase):
         for chunksize in self.chunk_sizes:
             cf.CHUNKSIZE(chunksize)
             d = cf.Data([[4, 2, 1], [1, 2, 3]], 'metre')
-            self.assertTrue((d.unique() == cf.Data([1, 2, 3, 4], 'metre')).all())
+            self.assertTrue(
+                (d.unique() == cf.Data([1, 2, 3, 4], 'metre')).all())
             d[1, -1] = cf.masked
-            self.assertTrue((d.unique() == cf.Data([1, 2, 4], 'metre')).all())
+            self.assertTrue(
+                (d.unique() == cf.Data([1, 2, 4], 'metre')).all())
 
         cf.CHUNKSIZE(self.original_chunksize)
 
@@ -1635,7 +1682,8 @@ class DataTest(unittest.TestCase):
                     else:
                         e = d.copy()
                         e.__itruediv__(x)
-                        message = 'Failed in {!r}.__itruediv__({})'.format(d, x)
+                        message = 'Failed in {!r}.__itruediv__({})'.format(
+                            d, x)
                         self.assertTrue(e.equals(cf.Data(a, 'm'), verbose=1),
                                         message)
                 # --- End: for
@@ -1892,8 +1940,8 @@ class DataTest(unittest.TestCase):
                 # unweighted, unmasked
                 d = cf.Data(self.a)
                 for np, h in zip(
-                        (numpy.sum, numpy.amin, numpy.amax,         numpy.sum),
-                        (     'sum',      'min',      'max', 'sum_of_squares')):
+                        (numpy.sum, numpy.amin, numpy.amax, numpy.sum),
+                        ('sum', 'min', 'max', 'sum_of_squares')):
                     for axes in self.axes_combinations:
                         b = reshape_array(self.a, axes)
                         if h == 'sum_of_squares':
@@ -1904,15 +1952,18 @@ class DataTest(unittest.TestCase):
                                           _preserve_partitions=pp)
                         self.assertTrue(
                             e.allclose(b, rtol=1e-05, atol=1e-08),
-                            "%s, axis=%s, unweighted, unmasked \ne=%s, \nb=%s, \ne-b=%s" %
-                            (h, axes, e.array, b, e.array-b))
+                            ("%s, axis=%s, unweighted, unmasked "
+                             "\ne=%s, \nb=%s, \ne-b=%s" %
+                            (h, axes, e.array, b, e.array-b)))
                 # --- End: for
 
                 # unweighted, masked
                 d = cf.Data(self.ma)
                 for np, h in zip(
-                        (numpy.ma.sum, numpy.ma.amin, numpy.ma.amax, numpy.ma.sum),
-                        (     'sum',     'min',     'max',       'sum_of_squares')):
+                        (numpy.ma.sum, numpy.ma.amin, numpy.ma.amax,
+                         numpy.ma.sum),
+                        (     'sum',     'min',     'max',
+                              'sum_of_squares')):
                     for axes in self.axes_combinations:
                         b = reshape_array(self.ma, axes)
                         if h == 'sum_of_squares':
@@ -1925,13 +1976,16 @@ class DataTest(unittest.TestCase):
 
                         self.assertTrue(
                             (e.mask.array == b.mask).all(),
-                            "%s, axis=%s, \ne.mask=%s, \nb.mask=%s, \ne.mask==b.mask=%s" %
-                            (h, axes, e.mask.array, b.mask, e.mask.array==b.mask))
+                            ("%s, axis=%s, \ne.mask=%s, \nb.mask=%s, "
+                            "\ne.mask==b.mask=%s" %
+                            (h, axes, e.mask.array,
+                             b.mask, e.mask.array==b.mask)))
 
                         self.assertTrue(
                             e.allclose(b, rtol=1e-05, atol=1e-08),
-                            "%s, axis=%s, unweighted, masked \ne=%s, \nb=%s, \ne-b=%s" %
-                            (h, axes, e.array, b, e.array-b))
+                            ("%s, axis=%s, unweighted, masked "
+                             "\ne=%s, \nb=%s, \ne-b=%s" %
+                             (h, axes, e.array, b, e.array-b)))
         # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
@@ -1954,8 +2008,9 @@ class DataTest(unittest.TestCase):
                                  _preserve_partitions=pp)
                     self.assertTrue(
                         e.allclose(b, rtol=1e-05, atol=1e-08),
-                        "median, axis=%s, unweighted, unmasked \ne=%s, \nb=%s, \ne-b=%s" %
-                        (axes, e.array, b, e.array-b))
+                        ("median, axis=%s, unweighted, unmasked "
+                         "\ne=%s, \nb=%s, \ne-b=%s" %
+                         (axes, e.array, b, e.array-b)))
 
                 # unweighted, masked
                 d = cf.Data(self.ma)
@@ -1963,7 +2018,8 @@ class DataTest(unittest.TestCase):
                     b = reshape_array(self.ma, axes)
                     b = numpy.ma.filled(b, numpy.nan)
                     with numpy.testing.suppress_warnings() as sup:
-                        sup.filter(RuntimeWarning, message='.*All-NaN slice encountered')
+                        sup.filter(RuntimeWarning,
+                                   message='.*All-NaN slice encountered')
                         b = numpy.nanpercentile(b, 50, axis=-1)
 
                     b = numpy.ma.masked_where(numpy.isnan(b), b, copy=False)
@@ -1974,13 +2030,15 @@ class DataTest(unittest.TestCase):
 
                     self.assertTrue(
                         (e.mask.array == b.mask).all(),
-                        "median, axis=%s, \ne.mask=%s, \nb.mask=%s, \ne.mask==b.mask=%s" %
-                        (axes, e.mask.array, b.mask, e.mask.array==b.mask))
+                        ("median, axis=%s, \ne.mask=%s, \nb.mask=%s, "
+                         "\ne.mask==b.mask=%s" %
+                         (axes, e.mask.array, b.mask, e.mask.array==b.mask)))
 
                     self.assertTrue(
                         e.allclose(b, rtol=1e-05, atol=1e-08),
-                        "median, axis=%s, unweighted, masked \ne=%s, \nb=%s, \ne-b=%s" %
-                        (axes, e.array, b, e.array-b))
+                        ("median, axis=%s, unweighted, masked "
+                         "\ne=%s, \nb=%s, \ne-b=%s" %
+                         (axes, e.array, b, e.array-b)))
         # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
@@ -2006,8 +2064,9 @@ class DataTest(unittest.TestCase):
 
                     self.assertTrue(
                         e.allclose(b, rtol=1e-05, atol=1e-08),
-                        "mean_of_upper_decile, axis=%s, unweighted, unmasked \ne=%s, \nb=%s, \ne-b=%s" %
-                        (axes, e.array, b, e.array-b))
+                        ("mean_of_upper_decile, axis=%s, unweighted, "
+                         "unmasked \ne=%s, \nb=%s, \ne-b=%s" %
+                         (axes, e.array, b, e.array-b)))
 
                 # unweighted, masked
                 d = cf.Data(self.ma)
@@ -2015,7 +2074,8 @@ class DataTest(unittest.TestCase):
                     b = reshape_array(self.ma, axes)
                     b = numpy.ma.filled(b, numpy.nan)
                     with numpy.testing.suppress_warnings() as sup:
-                        sup.filter(RuntimeWarning, message='.*All-NaN slice encountered')
+                        sup.filter(RuntimeWarning,
+                                   message='.*All-NaN slice encountered')
                         p = numpy.nanpercentile(b, 90, axis=-1, keepdims=True)
 
                     b = numpy.ma.masked_where(numpy.isnan(b), b, copy=False)
@@ -2023,7 +2083,9 @@ class DataTest(unittest.TestCase):
                     p = numpy.where(numpy.isnan(p), b.max() + 1, p)
 
                     with numpy.testing.suppress_warnings() as sup:
-                        sup.filter(RuntimeWarning, message='.*invalid value encountered in less')
+                        sup.filter(
+                            RuntimeWarning,
+                            message='.*invalid value encountered in less')
                         b = numpy.ma.where(b < p, numpy.ma.masked, b)
 
                     b = numpy.ma.average(b, axis=-1)
@@ -2034,13 +2096,15 @@ class DataTest(unittest.TestCase):
 
                     self.assertTrue(
                         (e.mask.array == b.mask).all(),
-                        "mean_of_upper_decile, axis=%s, \ne.mask=%s, \nb.mask=%s, \ne.mask==b.mask=%s" %
-                        (axes, e.mask.array, b.mask, e.mask.array==b.mask))
-
+                        ("mean_of_upper_decile, axis=%s, \ne.mask=%s, "
+                         "\nb.mask=%s, \ne.mask==b.mask=%s" %
+                         (axes, e.mask.array, b.mask, e.mask.array==b.mask)))
+                    
                     self.assertTrue(
                         e.allclose(b, rtol=1e-05, atol=1e-08),
-                        "mean_of_upper_decile, axis=%s, unweighted, masked \ne=%s, \nb=%s, \ne-b=%s" %
-                        (axes, e.array, b, e.array-b))
+                        ("mean_of_upper_decile, axis=%s, unweighted, masked "
+                         "\ne=%s, \nb=%s, \ne-b=%s" %
+                         (axes, e.array, b, e.array-b)))
         # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
@@ -2069,8 +2133,9 @@ class DataTest(unittest.TestCase):
                                           _preserve_partitions=pp)
                         self.assertTrue(
                             e.allclose(b, rtol=1e-05, atol=1e-08),
-                            "%s, axis=%s, unweighted, unmasked \ne=%s, \nb=%s, \ne-b=%s" %
-                            (h, axes, e.array, b, e.array-b))
+                            ("%s, axis=%s, unweighted, unmasked "
+                             "\ne=%s, \nb=%s, \ne-b=%s" %
+                             (h, axes, e.array, b, e.array-b)))
                 # --- End: for
 
                 # unweighted, masked
@@ -2092,13 +2157,16 @@ class DataTest(unittest.TestCase):
 
                         self.assertTrue(
                             (e.mask.array == b.mask).all(),
-                            "%s, axis=%s, \ne.mask=%s, \nb.mask=%s, \ne.mask==b.mask=%s" %
-                            (h, axes, e.mask.array, b.mask, e.mask.array==b.mask))
+                            ("%s, axis=%s, \ne.mask=%s, \nb.mask=%s, "
+                             "\ne.mask==b.mask=%s" %
+                             (h, axes, e.mask.array, b.mask,
+                              e.mask.array==b.mask)))
 
                         self.assertTrue(
                             e.allclose(b, rtol=1e-05, atol=1e-08),
-                            "%s, axis=%s, unweighted, masked \ne=%s, \nb=%s, \ne-b=%s" %
-                            (h, axes, e.array, b, e.array-b))
+                            ("%s, axis=%s, unweighted, masked "
+                             "\ne=%s, \nb=%s, \ne-b=%s" %
+                             (h, axes, e.array, b, e.array-b)))
         # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
@@ -2141,8 +2209,10 @@ class DataTest(unittest.TestCase):
 
                     self.assertTrue(
                         (e.mask.array == b.mask).all(),
-                        "axis={} masked, \ne.mask={}, \nb.mask={}, \ne.mask==b.mask={}".format(
-                            axes, e.mask.array, b.mask, e.mask.array==b.mask))
+                        ("axis={} masked, \ne.mask={}, \nb.mask={}, "
+                         "\ne.mask==b.mask={}".format(
+                             axes, e.mask.array, b.mask,
+                             e.mask.array==b.mask)))
 
                     self.assertTrue(
                         e.allclose(b, rtol=1e-05, atol=1e-08),
@@ -2170,7 +2240,9 @@ class DataTest(unittest.TestCase):
 
                         self.assertTrue(
                             e.allclose(b, rtol=1e-05, atol=1e-08),
-                            "%s, axis=%s, unweighted, unmasked, pp=%s, \ne=%s, \nb=%s, \ne-b=%s" % (h, axes, pp, e.array, b, e.array-b))
+                            ("%s, axis=%s, unweighted, unmasked, pp=%s, "
+                             "\ne=%s, \nb=%s, \ne-b=%s" % (
+                                 h, axes, pp, e.array, b, e.array-b)))
                 # --- End: for
 
                 # unweighted, masked
@@ -2185,14 +2257,18 @@ class DataTest(unittest.TestCase):
 
                         self.assertTrue(
                             (e.mask.array == b.mask).all(),
-                            "%s, axis=%s, unweighted, masked, pp=%s, \ne.mask=%s, \nb.mask=%s, \ne.mask==b.mask=%s" % (h, axes, pp, e.mask.array, b.mask, e.mask.array==b.mask))
+                            ("%s, axis=%s, unweighted, masked, pp=%s, "
+                             "\ne.mask=%s, \nb.mask=%s, "
+                             "\ne.mask==b.mask=%s" % (
+                                 h, axes, pp, e.mask.array, b.mask,
+                                 e.mask.array==b.mask)))
 
                         self.assertTrue(
                             e.allclose(b, rtol=1e-05, atol=1e-08),
-                            "%s, axis=%s, unweighted, masked, pp=%s, \ne=%s, \nb=%s, \ne-b=%s" %
-                            (h, axes, pp, e.array, b, e.array-b))
+                            ("%s, axis=%s, unweighted, masked, pp=%s, "
+                             "\ne=%s, \nb=%s, \ne-b=%s" %
+                             (h, axes, pp, e.array, b, e.array-b)))
                 # --- End: for
-
 
                 # weighted, masked
                 d = cf.Data(self.ma)
@@ -2209,8 +2285,10 @@ class DataTest(unittest.TestCase):
                                           _preserve_partitions=pp)
                         self.assertTrue(
                             (e.mask.array == b.mask).all(),
-                            "%s, axis=%s, \ne.mask=%s, \nb.mask=%s, \ne.mask==b.mask=%s" %
-                            (h, axes, e.mask.array, b.mask, e.mask.array==b.mask))
+                            ("%s, axis=%s, \ne.mask=%s, \nb.mask=%s, "
+                             "\ne.mask==b.mask=%s" %
+                             (h, axes, e.mask.array, b.mask,
+                              e.mask.array==b.mask)))
 
                         self.assertTrue(
                             e.allclose(b, rtol=1e-05, atol=1e-08),
@@ -2261,8 +2339,9 @@ class DataTest(unittest.TestCase):
 
                     self.assertTrue(
                         e.allclose(b, rtol=1e-05, atol=1e-08),
-                        "{} axis={}, unweighted, unmasked \ne={}, \nb={}, \ne-b={}".format(
-                            method, axes, e.array, b, e.array-b))
+                        ("{} axis={}, unweighted, unmasked \ne={}, "
+                         "\nb={}, \ne-b={}".format(
+                             method, axes, e.array, b, e.array-b)))
                 # --- End: for
 
                 # weighted, unmasked
@@ -2276,8 +2355,9 @@ class DataTest(unittest.TestCase):
 
                     self.assertTrue(
                         e.allclose(b, rtol=1e-05, atol=1e-08),
-                        "%s weighted, unmasked axis=%s, \ne=%s, \nb=%s, \ne-b=%s" %
-                        (method, axes, e.array, b, e.array-b))
+                        ("%s weighted, unmasked axis=%s, \ne=%s, "
+                         "\nb=%s, \ne-b=%s" %
+                         (method, axes, e.array, b, e.array-b)))
                 # --- End: for
 
                 # unweighted, masked
@@ -2291,13 +2371,16 @@ class DataTest(unittest.TestCase):
 
                     self.assertTrue(
                         (e.mask.array == b.mask).all(),
-                        "%s unweighted, masked axis=%s, \ne.mask=%s, \nb.mask=%s, \ne.mask==b.mask=%s" %
-                        (method, axes, e.mask.array, b.mask, e.mask.array==b.mask))
+                        ("%s unweighted, masked axis=%s, \ne.mask=%s, "
+                         "\nb.mask=%s, \ne.mask==b.mask=%s" %
+                         (method, axes, e.mask.array, b.mask,
+                          e.mask.array==b.mask)))
 
                     self.assertTrue(
                         e.allclose(b, rtol=1e-05, atol=1e-08),
-                        "%s unweighted, masked axis=%s, \ne=%s, \nb=%s, \ne-b=%s" %
-                        (method, axes, e.array, b, e.array-b))
+                        ("%s unweighted, masked axis=%s, \ne=%s, \nb=%s, "
+                         "\ne-b=%s" %
+                         (method, axes, e.array, b, e.array-b)))
                 # --- End: for
 
                 # weighted, masked
@@ -2311,14 +2394,16 @@ class DataTest(unittest.TestCase):
 
                     self.assertTrue(
                         (e.mask.array == b.mask).all(),
-                        "%s weighted, masked axis=%s, \ne.mask=%s, \nb.mask=%s, \ne.mask==b.mask=%s" %
-                        (method, axes, e.mask.array, b.mask,
-                         e.mask.array==b.mask))
+                        ("%s weighted, masked axis=%s, \ne.mask=%s, "
+                         "\nb.mask=%s, \ne.mask==b.mask=%s" %
+                         (method, axes, e.mask.array, b.mask,
+                          e.mask.array==b.mask)))
 
                     self.assertTrue(
                         e.allclose(b, rtol=1e-05, atol=1e-08),
-                        "%s weighted, masked axis=%s, \ne=%s, \nb=%s, \ne-b=%s" %
-                        (method, axes, e.array, b, e.array-b))
+                        ("%s weighted, masked axis=%s, \ne=%s, \nb=%s, "
+                         "\ne-b=%s" %
+                         (method, axes, e.array, b, e.array-b)))
         # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
@@ -2338,8 +2423,9 @@ class DataTest(unittest.TestCase):
                 e = d.root_mean_square(axes=axes, squeeze=True)
                 self.assertTrue(
                     e.allclose(b, rtol=1e-05, atol=1e-08),
-                    "axis={}, unweighted, unmasked \ne={}, \nb={}, \ne-b={}".format(
-                        axes, e.array, b, e.array-b))
+                    ("axis={}, unweighted, unmasked \ne={}, "
+                     "\nb={}, \ne-b={}".format(
+                         axes, e.array, b, e.array-b)))
             # --- End: for
 
             # weighted, unmasked
@@ -2353,8 +2439,9 @@ class DataTest(unittest.TestCase):
 
                 self.assertTrue(
                     e.allclose(b, rtol=1e-05, atol=1e-08),
-                    "axis={}, weighted, unmasked \ne={}, \nb={}, \ne-b={}".format(
-                        axes, e.array, b, e.array-b))
+                    ("axis={}, weighted, unmasked \ne={}, "
+                     "\nb={}, \ne-b={}".format(
+                         axes, e.array, b, e.array-b)))
             # --- End: for
 
             # unweighted, masked
@@ -2368,13 +2455,15 @@ class DataTest(unittest.TestCase):
 
                 self.assertTrue(
                     (e.mask.array == b.mask).all(),
-                    "axis={}, unweighted, masked \ne.mask={}, \nb.mask={}, \ne.mask==b.mask={}".format(
-                        axes, e.mask.array, b.mask, e.mask.array==b.mask))
+                    ("axis={}, unweighted, masked \ne.mask={}, \nb.mask={}, "
+                     "\ne.mask==b.mask={}".format(
+                         axes, e.mask.array, b.mask, e.mask.array==b.mask)))
 
                 self.assertTrue(
                     e.allclose(b, rtol=1e-05, atol=1e-08),
-                    "axis={}, unweighted, masked \ne={}, \nb={}, \ne-b={}".format(
-                        axes, e.array, b, e.array-b))
+                    ("axis={}, unweighted, masked \ne={}, \nb={}, "
+                     "\ne-b={}".format(
+                         axes, e.array, b, e.array-b)))
             # --- End: for
 
             # weighted, masked
@@ -2388,13 +2477,15 @@ class DataTest(unittest.TestCase):
 
                 self.assertTrue(
                     (e.mask.array == b.mask).all(),
-                    "axis={}, weighted, masked \ne.mask={}, \nb.mask={}, \ne.mask==b.mask={}".format(
-                        axes, e.mask.array, b.mask, e.mask.array==b.mask))
-
+                    ("axis={}, weighted, masked \ne.mask={}, \nb.mask={}, "
+                     "\ne.mask==b.mask={}".format(
+                         axes, e.mask.array, b.mask, e.mask.array==b.mask)))
+                
                 self.assertTrue(
                     e.allclose(b, rtol=1e-05, atol=1e-08),
-                    "axis={}, weighted, masked \ne={}, \nb={}, \ne-b={}".format(
-                        axes, e.array, b, e.array-b))
+                    ("axis={}, weighted, masked \ne={}, \nb={}, "
+                     "\ne-b={}".format(
+                         axes, e.array, b, e.array-b)))
         # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
@@ -2453,11 +2544,13 @@ class DataTest(unittest.TestCase):
                             b = reshape_array(self.a, axes)
                             b = np(b, axis=-1, ddof=ddof)
                             e = getattr(d, h)(axes=axes, squeeze=True,
-                                              ddof=ddof, _preserve_partitions=pp)
+                                              ddof=ddof,
+                                              _preserve_partitions=pp)
                             self.assertTrue(
                                 e.allclose(b, rtol=1e-05, atol=1e-08),
-                                "%s, axis=%s, unweighted, unmasked pp=%s, \ne=%s, \nb=%s, \ne-b=%s" %
-                                (h, axes, pp, e.array, b, e.array-b))
+                                ("%s, axis=%s, unweighted, unmasked pp=%s, "
+                                 "\ne=%s, \nb=%s, \ne-b=%s" %
+                                 (h, axes, pp, e.array, b, e.array-b)))
                 # --- End: for
 
                 # unweighted, masked
@@ -2469,11 +2562,13 @@ class DataTest(unittest.TestCase):
                             b = reshape_array(self.ma, axes)
                             b = np(b, axis=-1, ddof=ddof)
                             e = getattr(d, h)(axes=axes, squeeze=True,
-                                              ddof=ddof, _preserve_partitions=pp)
+                                              ddof=ddof,
+                                              _preserve_partitions=pp)
                             self.assertTrue(
                                 e.allclose(b, rtol=1e-05, atol=1e-08),
-                                "%s, axis=%s, unweighted, masked, pp=%s, \ne=%s, \nb=%s, \ne-b=%s" %
-                                (h, axes, pp, e.array, b, e.array-b))
+                                ("%s, axis=%s, unweighted, masked, pp=%s, "
+                                 "\ne=%s, \nb=%s, \ne-b=%s" %
+                                 (h, axes, pp, e.array, b, e.array-b)))
                 # --- End: for
 
                 # weighted, unmasked
@@ -2489,8 +2584,8 @@ class DataTest(unittest.TestCase):
                             if numpy.ndim(avg) < b.ndim:
                                 avg = numpy.expand_dims(avg, -1)
 
-                            b, V1 = numpy.average((b-avg)**2, axis=-1, weights=v,
-                                                  returned=True)
+                            b, V1 = numpy.average(
+                                (b-avg)**2, axis=-1, weights=v, returned=True)
 
                             if ddof == 1:
                                 # Calculate the weighted unbiased
@@ -2513,8 +2608,9 @@ class DataTest(unittest.TestCase):
 
                             self.assertTrue(
                                 e.allclose(b, rtol=1e-05, atol=1e-08) ,
-                                "%s, axis=%s, weighted, unmasked, pp=%s, ddof=%s, \ne=%s, \nb=%s, \ne-b=%s" %
-                                (h, axes, pp, ddof, e.array, b, e.array-b))
+                                ("%s, axis=%s, weighted, unmasked, pp=%s, "
+                                 "ddof=%s, \ne=%s, \nb=%s, \ne-b=%s" %
+                                 (h, axes, pp, ddof, e.array, b, e.array-b)))
                 # --- End: for
 
                 # weighted, masked
@@ -2526,7 +2622,9 @@ class DataTest(unittest.TestCase):
                             b = reshape_array(self.ma, axes)
                             v = reshape_array(self.mw, axes)
 
-                            not_enough_data = numpy.ma.count(b, axis=-1) <= ddof
+                            not_enough_data = (
+                                numpy.ma.count(b, axis=-1) <= ddof
+                            )
 
                             avg = numpy.ma.average(b, axis=-1, weights=v)
                             if numpy.ndim(avg) < b.ndim:
@@ -2563,14 +2661,16 @@ class DataTest(unittest.TestCase):
 
                             self.assertTrue(
                                 (e.mask.array == b.mask).all(),
-                                "%s, axis=%s, \ne.mask=%s, \nb.mask=%s, \ne.mask==b.mask=%s" %
-                                (h, axes, e.mask.array, b.mask,
-                                 e.mask.array==b.mask))
+                                ("%s, axis=%s, \ne.mask=%s, \nb.mask=%s, "
+                                 "\ne.mask==b.mask=%s" %
+                                 (h, axes, e.mask.array, b.mask,
+                                  e.mask.array==b.mask)))
 
                             self.assertTrue(
                                 e.allclose(b, rtol=1e-05, atol=1e-08),
-                                "%s, axis=%s, weighted, masked, pp=%s, ddof=%s, \ne=%s, \nb=%s, \ne-b=%s" %
-                                (h, axes, pp, ddof, e.array, b, e.array-b))
+                                ("%s, axis=%s, weighted, masked, pp=%s, "
+                                 "ddof=%s, \ne=%s, \nb=%s, \ne-b=%s" %
+                                 (h, axes, pp, ddof, e.array, b, e.array-b)))
         # --- End: for
 
         cf.CHUNKSIZE(self.original_chunksize)
@@ -2677,7 +2777,8 @@ class DataTest(unittest.TestCase):
                     for units in (None, '', '1', 'radians', 'K'):
                         d = cf.Data(a, units=units)
                         e = getattr(d, method)()
-                        self.assertTrue(getattr(d, method)(inplace=True) is None)
+                        self.assertTrue(
+                            getattr(d, method)(inplace=True) is None)
                         self.assertTrue(
                             d.equals(e, verbose=True), "{}".format(method))
                         self.assertTrue(d.shape == c.shape)
