@@ -135,9 +135,9 @@ class CellMethodTest(unittest.TestCase):
             'time: minimum within days time: sum over years')
 
         self.assertTrue(cm0.within == 'days')
-        self.assertTrue(cm1.get_qualifier('within', None) is None)
-        self.assertTrue(cm0.get_qualifier('where', None) is None)
-        self.assertTrue(cm0.get_qualifier('over', None) is None)
+        self.assertIsNone(cm1.get_qualifier('within', None))
+        self.assertIsNone(cm0.get_qualifier('where', None))
+        self.assertIsNone(cm0.get_qualifier('over', None))
         self.assertTrue(cm1.over == 'years')
         self.assertTrue(cm0.method == 'minimum')
         self.assertTrue(cm1.method == 'sum')

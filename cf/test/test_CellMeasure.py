@@ -29,7 +29,7 @@ class CellMeasureTest(unittest.TestCase):
 
         self.assertTrue(x.measure == 'area')
         del x.measure
-        self.assertTrue(getattr(x, 'measure', None) is None)
+        self.assertIsNone(getattr(x, 'measure', None))
         x.measure = 'qwerty'
         self.assertTrue(x.measure == 'qwerty')
 

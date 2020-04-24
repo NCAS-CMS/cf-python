@@ -325,7 +325,7 @@ class DSGTest(unittest.TestCase):
 
         f = cf.read(self.geometry_interior_ring_file, verbose=False)[0]
 
-        self.assertTrue(f.close() is None)
+        self.assertIsNone(f.close())
 
 
     def test_geometry_interior_ring_files(self):

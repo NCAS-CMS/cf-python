@@ -72,7 +72,7 @@ class FieldTest(unittest.TestCase):
             return
 
         f = cf.read(self.filename)
-        self.assertTrue(f.close() is None)
+        self.assertIsNone(f.close())
 
         _ = repr(f[0])
 
@@ -455,7 +455,7 @@ class FieldTest(unittest.TestCase):
         with self.assertRaises(Exception):
             _ = f.select_field('not this one')
 
-        self.assertTrue(f.select_field('not this one', None) is None)
+        self.assertIsNone(f.select_field('not this one', None))
 
         g = f.select_field('eastward_wind')
         self.assertIsInstance(g, cf.Field)

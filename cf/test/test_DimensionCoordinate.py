@@ -41,7 +41,7 @@ class DimensionCoordinateTest(unittest.TestCase):
         self.assertTrue((d.array == [1., 2, 3]).all())
 
         e = d.copy()
-        self.assertTrue(e.convert_reference_time(calendar_months=True, inplace=True) is None)
+        self.assertIsNone(e.convert_reference_time(calendar_months=True, inplace=True))
 
         f = d.convert_reference_time(calendar_months=True)
 
@@ -57,7 +57,7 @@ class DimensionCoordinateTest(unittest.TestCase):
         d = cf.DimensionCoordinate()
         d.set_data(cf.Data([1, 2, 3], 'months since 2004-1-1', calendar='360_day'))
         e = d.copy()
-        self.assertTrue(e.convert_reference_time(calendar_months=True, inplace=True) is None)
+        self.assertIsNone(e.convert_reference_time(calendar_months=True, inplace=True))
 
         f = d.convert_reference_time(calendar_months=True)
 
@@ -73,7 +73,7 @@ class DimensionCoordinateTest(unittest.TestCase):
         d = cf.DimensionCoordinate()
         d.set_data(cf.Data([1, 2, 3], 'months since 2004-1-1', calendar='noleap'))
         e = d.copy()
-        self.assertTrue(e.convert_reference_time(calendar_months=True, inplace=True) is None)
+        self.assertIsNone(e.convert_reference_time(calendar_months=True, inplace=True))
 
         f = d.convert_reference_time(calendar_months=True)
 
@@ -101,11 +101,11 @@ class DimensionCoordinateTest(unittest.TestCase):
 
         a = x[0]
         _ = a.roll(0, 3)
-        self.assertTrue(a.roll(0, 3, inplace=True) is None)
+        self.assertIsNone(a.roll(0, 3, inplace=True))
 
         _ = x.roll(0, 0)
         _ = x.roll(0, 3, inplace=True)
-        self.assertTrue(x.roll(0, 0, inplace=True) is None)
+        self.assertIsNone(x.roll(0, 0, inplace=True))
 
         _ = x._centre(360)
         _ = x.flip()._centre(360)

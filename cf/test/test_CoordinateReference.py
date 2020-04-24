@@ -178,15 +178,15 @@ class CoordinateReferenceTest(unittest.TestCase):
     def test_CoordinateReference_canonical_units(self):
         f = cf.read(self.filename)[0]
 
-        self.assertTrue(
-            cf.CoordinateReference.canonical_units('qwerty') is None)
+        self.assertIsNone(
+            cf.CoordinateReference.canonical_units('qwerty'))
         self.assertTrue(
             cf.CoordinateReference.canonical_units('earth_radius') ==
             cf.Units('m')
         )
 
         cr = f.construct('standard_name:atmosphere_hybrid_height_coordinate')
-        self.assertTrue(cr.canonical_units('qwerty') is None)
+        self.assertIsNone(cr.canonical_units('qwerty'))
         self.assertTrue(cr.canonical_units('earth_radius') == cf.Units('m'))
 
     def test_CoordinateReference_match(self):
@@ -221,9 +221,9 @@ class CoordinateReferenceTest(unittest.TestCase):
             self.vcr.get('earth_radius') is
             self.datum.get_parameter('earth_radius')
         )
-        self.assertTrue(self.vcr.get('orog') is None)
+        self.assertIsNone(self.vcr.get('orog'))
         self.assertTrue(self.vcr.get('orog', 'qwerty') == 'qwerty')
-        self.assertTrue(self.vcr.get('qwerty') is None)
+        self.assertIsNone(self.vcr.get('qwerty'))
         self.assertTrue(
             self.vcr['standard_name'] ==
             self.vconversion.get_parameter('standard_name')
@@ -251,7 +251,7 @@ class CoordinateReferenceTest(unittest.TestCase):
             self.hcr.get('grid_north_pole_latitude', 'qwerty') is
             self.hconversion.get_parameter('grid_north_pole_latitude')
         )
-        self.assertTrue(self.hcr.get('qwerty') is None)
+        self.assertIsNone(self.hcr.get('qwerty'))
         self.assertTrue(self.hcr.get('qwerty', 12) == 12)
         with self.assertRaises(Exception):
             _ = self.hcr['qwerty']
