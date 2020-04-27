@@ -62,7 +62,7 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
         return kwargs
 
     def _write_data(self, data, cfvar, ncvar, ncdimensions,
-                    unset_values=(), compressed=False):
+                    unset_values=(), compressed=False, attributes={}):
         '''TODO
 
     :Parameters:
@@ -90,6 +90,8 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
             # Write data in its compressed form
             # --------------------------------------------------------
             data = data.source().source()
+
+        warned_valid = False
 
         config = data.partition_configuration(readonly=True)
 
@@ -122,6 +124,10 @@ class NetCDFWrite(cfdm.read_write.netcdf.NetCDFWrite):
                 # VLEN variables can not be assigned to by masked arrays
                 # https://github.com/Unidata/netcdf4-python/pull/465
                 array = array.filled('')
+                
+            if not warned_valid and g['warn_valid']:
+                # Check for out-of-range values
+                warned_valid = self._check_valid(cfvar, array, attributes)
 
             # Copy the array into the netCDF variable
             g['nc'][ncvar][partition.indices] = array

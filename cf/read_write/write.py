@@ -26,7 +26,8 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
           fletcher32=False, shuffle=True, reference_datetime=None,
           verbose=False, cfa_options=None, mode='w', single=False,
           double=False, variable_attributes=None, string=True,
-          HDF_chunksizes=None, no_shuffle=None, unlimited=None):
+          warn_valid=True, HDF_chunksizes=None, no_shuffle=None,
+          unlimited=None):
     '''Write field constructs to a netCDF file.
 
     **File format**
@@ -535,6 +536,7 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
                      endian=endian, compress=compress,
                      shuffle=shuffle, fletcher32=fletcher32,
                      verbose=verbose, string=string,
+                     warn_valid=warn_valid,
                      extra_write_vars=extra_write_vars)
     # --- End: if
 

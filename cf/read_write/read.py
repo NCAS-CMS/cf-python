@@ -291,15 +291,15 @@ def read(files, external=None, verbose=False, warnings=False,
             parameter.
 
         mask: `bool`, optional
-            If False then do not mask by convention when reading data
-            from disk. By default data is masked by convention.
+            If False then do not mask by convention when reading the
+            data of field or metadata constructs from disk. By default
+            data is masked by convention.
 
             The masking by convention of a netCDF array depends on the
             values of any of the netCDF variable attributes
-            ``valid_min``, ``valid_max``, ``valid_range``,
-            ``_FillValue`` and ``missing_value``. See the CF
-            conventions for details.
-
+            ``_FillValue``,``missing_value``,``valid_min``,
+            ``valid_max`` and ``valid_range``.
+    
             The masking by convention of a PP or UM array depends on
             the value of the BMDI header element.
     

@@ -199,10 +199,10 @@ if LooseVersion(cfunits.__version__) < LooseVersion(_minimum_vn):
     )
 
 # Check the version of cfdm
-_exact_vn = '1.8.2'
+_exact_vn = '1.8.3'
 if LooseVersion(cfdm.__version__) != LooseVersion(_exact_vn):
     raise ValueError(
-        "Bad cfdm version: cf requires cfdm version {} or later. Got {} "
+        "Bad cfdm version: cf requires cfdm version {}. Got {} "
         "at {}".format(_exact_vn, cfdm.__version__, cfdm.__file__))
 
 from .constructs import Constructs
