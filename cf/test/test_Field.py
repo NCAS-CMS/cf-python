@@ -1581,7 +1581,7 @@ class FieldTest(unittest.TestCase):
 
         f = self.f.copy()
 
-        self.assertTrue(f.autocyclic() is False)
+        self.assertFalse(f.autocyclic())
         f.dimension_coordinate('X').del_bounds()
         f.autocyclic()
 

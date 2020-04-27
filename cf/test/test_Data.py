@@ -574,15 +574,15 @@ class DataTest(unittest.TestCase):
         for chunksize in self.chunk_sizes:
             cf.CHUNKSIZE(chunksize)
             d = cf.Data([[0.0, 1,  2], [3, 4, 5]], units='m')
-            self.assertTrue(4 in d)
-            self.assertFalse(40 in d)
-            self.assertTrue(cf.Data(3) in d)
-            self.assertTrue(cf.Data([[[[3]]]]) in d)
+            self.assertIn(4, d)
+            self.assertNotIn(40, d)
+            self.assertIn(cf.Data(3), d)
+            self.assertIn(cf.Data([[[[3]]]]), d)
             value = d[1, 2]
             value.Units *= 2
             value.squeeze(0)
-            self.assertTrue(value in d)
-            self.assertTrue(numpy.array([[[2]]]) in d)
+            self.assertIn(value, d)
+            self.assertIn(numpy.array([[[2]]]), d)
 
         cf.CHUNKSIZE(self.original_chunksize)
 
@@ -595,15 +595,15 @@ class DataTest(unittest.TestCase):
 
             d = cf.Data(self.ma)
 
-            self.assertTrue(d.asdata(d) is d)
-            self.assertTrue(cf.Data.asdata(d) is d)
-            self.assertTrue(d.asdata(d, dtype=d.dtype) is d)
-            self.assertTrue(cf.Data.asdata(d, dtype=d.dtype) is d)
+            self.assertIs(d.asdata(d), d)
+            self.assertIs(cf.Data.asdata(d), d)
+            self.assertIs(d.asdata(d, dtype=d.dtype), d)
+            self.assertIs(cf.Data.asdata(d, dtype=d.dtype), d)
 
-            self.assertFalse(d.asdata(d, dtype='float32') is d)
-            self.assertFalse(cf.Data.asdata(d, dtype='float32') is d)
-            self.assertFalse(d.asdata(d, dtype=d.dtype, copy=True) is d)
-            self.assertFalse(cf.Data.asdata(d, dtype=d.dtype, copy=True) is d)
+            self.assertIsNot(d.asdata(d, dtype='float32'), d)
+            self.assertIsNot(cf.Data.asdata(d, dtype='float32'), d)
+            self.assertIsNot(d.asdata(d, dtype=d.dtype, copy=True), d)
+            self.assertIsNot(cf.Data.asdata(d, dtype=d.dtype, copy=True), d)
 
             self.assertTrue(cf.Data.asdata(cf.Data([1, 2, 3]), dtype=float, copy=True).equals(cf.Data([1.0, 2, 3]), verbose=True))
 
@@ -691,7 +691,7 @@ class DataTest(unittest.TestCase):
                         message = "hardmask={}, cf.Data[{}, {}]]={}={} failed".format(hardmask, j, i, dvalue, avalue)
                         d[j, i] = dvalue
                         a[j, i] = avalue
-                        self.assertTrue((d.array == a).all() in (True, numpy.ma.masked), message)
+                        self.assertIn((d.array == a).all(), (True, numpy.ma.masked), message)
                         self.assertTrue((d.mask.array == numpy.ma.getmaskarray(a)).all(),
                                         'd.mask.array='+repr(d.mask.array)+'\nnumpy.ma.getmaskarray(a)='+repr(numpy.ma.getmaskarray(a)))
                 # --- End: for
@@ -713,7 +713,7 @@ class DataTest(unittest.TestCase):
                     message = 'cf.Data[%s, %s]=%s failed' % (j, i, dvalue)
                     d[j, i] = dvalue
                     a[j, i] = dvalue
-                    self.assertTrue((d.array == a).all() in (True, numpy.ma.masked), message)
+                    self.assertIn((d.array == a).all(), (True, numpy.ma.masked), message)
                     self.assertTrue((d.mask.array == numpy.ma.getmaskarray(a)).all(), message)
                 # --- End: for
 #                print('hardmask =',hardmask,', pmshape =', d._pmshape)
@@ -798,7 +798,7 @@ class DataTest(unittest.TestCase):
         d[...] = cf.masked
         a = d.array
         self.assertTrue(a.shape == ())
-        self.assertTrue(a[()] is numpy.ma.masked)
+        self.assertIs(a[()], numpy.ma.masked)
 
         # Non-scalar numeric array
         b = numpy.arange(10*15*19).reshape(10, 1, 15, 19)
@@ -1099,20 +1099,20 @@ class DataTest(unittest.TestCase):
 
             d = cf.Data(5, 'metre')
             d[()] = cf.masked
-            self.assertTrue(d.datum()   is cf.masked)
-            self.assertTrue(d.datum(0)  is cf.masked)
-            self.assertTrue(d.datum(-1) is cf.masked)
+            self.assertIs(d.datum(), cf.masked)
+            self.assertIs(d.datum(0), cf.masked)
+            self.assertIs(d.datum(-1), cf.masked)
 
             d = cf.Data([[5]], 'metre')
             d[0, 0] = cf.masked
-            self.assertTrue(d.datum()        is cf.masked)
-            self.assertTrue(d.datum(0)       is cf.masked)
-            self.assertTrue(d.datum(-1)      is cf.masked)
-            self.assertTrue(d.datum(0, 0)    is cf.masked)
-            self.assertTrue(d.datum(-1, 0)   is cf.masked)
-            self.assertTrue(d.datum((0, 0))  is cf.masked)
-            self.assertTrue(d.datum([0, -1]) is cf.masked)
-            self.assertTrue(d.datum(-1, -1)  is cf.masked)
+            self.assertIs(d.datum(), cf.masked)
+            self.assertIs(d.datum(0), cf.masked)
+            self.assertIs(d.datum(-1), cf.masked)
+            self.assertIs(d.datum(0, 0), cf.masked)
+            self.assertIs(d.datum(-1, 0), cf.masked)
+            self.assertIs(d.datum((0, 0)), cf.masked)
+            self.assertIs(d.datum([0, -1]), cf.masked)
+            self.assertIs(d.datum(-1, -1), cf.masked)
 
         cf.CHUNKSIZE(self.original_chunksize)
 
@@ -1332,7 +1332,7 @@ class DataTest(unittest.TestCase):
         d[...] = cf.masked
         a = d.varray
         self.assertTrue(a.shape == ())
-        self.assertTrue(a[()] is numpy.ma.masked)
+        self.assertIs(a[()], numpy.ma.masked)
         a[()] = 18
         self.assertTrue(a == numpy.array(18))
 
@@ -2652,7 +2652,7 @@ class DataTest(unittest.TestCase):
         self.assertTrue(numpy.isnan(g[0]))
         self.assertTrue(numpy.isneginf(g[1]))
         self.assertTrue(numpy.isposinf(g[2]))
-        self.assertTrue(g[3] is cf.masked)
+        self.assertIs(g[3], cf.masked)
 
         # AT2
         #
