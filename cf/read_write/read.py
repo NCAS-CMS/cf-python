@@ -300,8 +300,19 @@ def read(files, external=None, verbose=False, warnings=False,
             ``_FillValue``,``missing_value``,``valid_min``,
             ``valid_max`` and ``valid_range``.
     
-            The masking by convention of a PP or UM array depends on
-            the value of the BMDI header element.
+            .. versionadded:: 3.3.1
+            
+        warn_valid: `bool`, optional
+            If False then do not print a warning for the presence of
+            ``valid_min``, ``valid_max`` or ``valid_range`` properties
+            on field contructs and metadata constructs that have
+            data. By default a warning is printed if any such a
+            construct has any of these properties.
+
+            "Out-of-range" data values in the file, as defined by any
+            of these properties, are by default automatically masked.
+            See the *mask* parameter for turning off all automatic
+            masking.
     
             .. versionadded:: 3.3.1
 

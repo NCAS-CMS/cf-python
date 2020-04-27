@@ -6,13 +6,17 @@ version 3.3.1
 
 * New method: `cf.Field.apply_masking`
 * New method: `cf.Data.apply_masking`
-* New keyword parameter to `cf.read`: ``mask``
+* New keyword parameters to `cf.read`: ``warn_valid``, ``mask``
+* New keyword parameter to `cf.write`: ``warn_valid``
 * New keyword parameter to `cf.Field.nc_global_attributes`: ``values``
 * Added time coordinate bounds to the polygon geometry example field
   ``6`` returned by `cf.example_field`.
 * Fixed bug in `cf.write` that caused (what are effectively)
   string-valued scalar auxiliary coordinates to not be written to disk
   as such, or even an exception to be raised.
+* Fixed bug in `cf.write` that caused the ``single`` and ``double``
+  keyword parameters to have no effect. This bug was introduced at
+  version 3.0.0 (https://github.com/NCAS-CMS/cf-python/issues/65).
   
 version 3.3.0
 -------------

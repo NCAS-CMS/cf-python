@@ -46,7 +46,7 @@ class read_writeTest(unittest.TestCase):
 #    test_only = ['NOTHING!!!!!']
 #    test_only = ['test_write_reference_datetime']
 #    test_only = ['test_read_write_unlimited']
-#    test_only = ['test_read_write_format']
+#    test_only = ['test_write_datatype']
 #    test_only = ['test_read_directory']
 #    test_only = ['test_read_string']
 #    test_only = ['test_read_write_netCDF4_compress_shuffle']
@@ -279,9 +279,38 @@ class read_writeTest(unittest.TestCase):
             g = cf.read(tmpfile)[0]
             self.assertTrue(g.dtype == numpy.dtype('float32'),
                             'datatype read in is '+str(g.dtype))
-        # --- End: for
+
         cf.CHUNKSIZE(self.original_chunksize)
 
+        # Keyword single
+        f = cf.read(self.filename)[0]
+        self.assertTrue(f.dtype == numpy.dtype(float))
+        cf.write(f, tmpfile, fmt='NETCDF4', single=True)
+        g = cf.read(tmpfile)[0]
+        self.assertTrue(g.dtype == numpy.dtype('float32'),
+                        'datatype read in is '+str(g.dtype))
+
+        # Keyword double
+        f = g
+        self.assertTrue(f.dtype == numpy.dtype('float32'))
+        cf.write(f, tmpfile, fmt='NETCDF4', double=True)
+        g = cf.read(tmpfile)[0]
+        self.assertTrue(g.dtype == numpy.dtype(float),
+                        'datatype read in is '+str(g.dtype))
+
+        for single in (True, False):
+            for double in (True, False):
+                with self.assertRaises(Exception):
+                    _ = cf.write(g, double=double, single=single)
+        # --- End: for
+        
+        datatype = {numpy.dtype(float): numpy.dtype('float32')}
+        with self.assertRaises(Exception):
+            _ = cf.write(g, datatype=datatype, single=True)
+        
+        with self.assertRaises(Exception):
+            _ = cf.write(g, datatype=datatype, double=True)
+        
     def test_write_reference_datetime(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -384,7 +413,7 @@ class read_writeTest(unittest.TestCase):
             c.construct('grid_latitude'), verbose=True))
 
         with self.assertRaises(Exception):
-            x = cf.read('test_read_write.py')
+            _ = cf.read('test_read_write.py')
 
     def test_read_write_string(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
