@@ -15,71 +15,65 @@ from .umread.umfile import Rec
 _filename_to_file = _file_to_fh.setdefault('UM', {})
 
 
-# ====================================================================
-#
-# UMFileArray object
-#
-# ====================================================================
-
 class UMFileArray(FileArray):
     '''A sub-array stored in a PP or UM fields file.
 
-**Initialization**
-
-:Parameters:
-
-    file : str
-        The file name in normalized, absolute form.
-
-    dtype : numpy.dtype
-        The data type of the data array on disk.
-
-    ndim : int
-        The number of dimensions in the unpacked data array.
-
-    shape : tuple
-        The shape of the unpacked data array.
-
-    size : int
-        The number of elements in the unpacked data array.
-
-    header_offset : int
-        The start position in the file of the header.
-
-    data_offset : int
-        The start position in the file of the data array.
-
-    disk_length : int
-        The number of words on disk for the data array, usually
-        LBLREC-LBEXT. If set to 0 then `!size` is used.
-
-    fmt: `str`, optional
-
-    word_size: `int`, optional
-
-    byte_ordering: `str`, optional
-
-:Examples:
-
->>> a = UMFileArray(file='file.pp', header_offset=3156, data_offset=3420,
-...                 dtype=numpy.dtype('float32'), shape=(30, 24),
-...                 size=720, ndim=2, disk_length=0)
-
->>> a = UMFileArray(file='packed_file.pp', header_offset=3156,
-...                 data_offset=3420, dtype=numpy.dtype('float32'),
-...                 shape=(30, 24), size=720, ndim=2, disk_length=423)
+    **Initialization**
+    
+    :Parameters:
+    
+        file: `str`
+            The file name in normalized, absolute form.
+    
+        dtype: `numpy.dtype`
+            The data type of the data array on disk.
+    
+        ndim: `int`
+            The number of dimensions in the unpacked data array.
+    
+        shape: `tuple`
+            The shape of the unpacked data array.
+    
+        size: `int`
+            The number of elements in the unpacked data array.
+    
+        header_offset: `int`
+            The start position in the file of the header.
+    
+        data_offset: `int`
+            The start position in the file of the data array.
+    
+        disk_length: `int`
+            The number of words on disk for the data array, usually
+            LBLREC-LBEXT. If set to 0 then `!size` is used.
+    
+        fmt: `str`, optional
+    
+        word_size: `int`, optional
+    
+        byte_ordering: `str`, optional
+    
+    **Examples:**
+    
+    >>> a = UMFileArray(file='file.pp', header_offset=3156,
+    ...                 data_offset=3420,
+    ...                 dtype=numpy.dtype('float32'), shape=(30, 24),
+    ...                 size=720, ndim=2, disk_length=0)
+    
+    >>> a = UMFileArray(file='packed_file.pp', header_offset=3156,
+    ...                 data_offset=3420, dtype=numpy.dtype('float32'),
+    ...                 shape=(30, 24), size=720, ndim=2,
+    ...                 disk_length=423)
 
     '''
     def __getitem__(self, indices):
+        '''Implement indexing
+
+    x.__getitem__(indices) <==> x[indices]
+
+    Returns a numpy array.
+
         '''
-
-Implement indexing
-
-x.__getitem__(indices) <==> x[indices]
-
-Returns a numpy array.
-
-'''
         f = self.open()
 
         rec = Rec.from_file_and_offsets(f,
@@ -142,62 +136,52 @@ Returns a numpy array.
 
         # Return the numpy array
         return array
-    # --- End: def
 
     def __str__(self):
+        '''x.__str__() <==> str(x)
+
         '''
-
-x.__str__() <==> str(x)
-
-'''
         return "%s%s in %s" % (self.header_offset, self.shape, self.file)
-    # --- End: def
 
     @property
     def file_pointer(self):
+        '''TODO
+
         '''
-'''
         return (self.file, self.header_offset)
-    # --- End: def
 
     def close(self):
+        '''Close the file containing the data array.
+
+    If the file is not open then no action is taken.
+    
+    :Returns:
+    
+        `None`
+
+    **Examples:**
+        
+    >>> f.close()
+
         '''
-
-Close the file containing the data array.
-
-If the file is not open then no action is taken.
-
-:Returns:
-
-    None
-
-:Examples:
-
->>> f.close()
-
-'''
         _close_um_file(self.file)
-    # --- End: def
 
     def open(self):
+        '''Open the file containing the data array.
+
+    :Returns:
+    
+        `um.umread.umfile.File`
+    
+    **Examples:**
+    
+    >>> f.open()
+
         '''
-
-Open the file containing the data array.
-
-:Returns:
-
-    out : um.umread.umfile.File
-
-:Examples:
-
->>> f.open()
-
-'''
         return _open_um_file(
             self.file, fmt=getattr(self, 'fmt', None),
             word_size=getattr(self, 'word_size', None),
             byte_ordering=getattr(self, 'byte_ordering', None)
         )
-    # --- End: def
 
 # --- End: class
