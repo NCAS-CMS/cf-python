@@ -10,7 +10,7 @@ https://github.com/NCAS-CMS/cf-python/issues
 # Versioning
 
 A three-level ``major.minor.trivial`` numeric version scheme is used,
-e.g. ``3.3.1``.
+e.g. ``3.3.1``
 
 **Major** changes include
   * comprehensive backwards-incompatible changes to the API;
@@ -18,7 +18,7 @@ e.g. ``3.3.1``.
   * support for major-version upgrades to the CF conventions (e.g
     upgrading from CF-0.9 to CF-1.0);
   * support for major version changes to the Python language (e.g
-    upgrading from python 2 to Python 3).
+    upgrading from Python 2 to Python 3).
 
 **Minor** changes include
   * support for minor-version upgrades to the CF conventions (e.g
@@ -35,6 +35,6 @@ e.g. ``3.3.1``.
     - introducing a new function or method;
     - introducing a new keyword parameter;
     - introducing new permitted values of a keyword parameter;
-  * changes to dependecies;
+  * changes to required versions of the dependencies;
   * changes to the documentation;
   * code tidying.
