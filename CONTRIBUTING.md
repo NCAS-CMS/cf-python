@@ -4,13 +4,13 @@ cf-python package.
 # General Guidelines
 
 All questions, reports of bugs, and suggestions for enhancements
-should be raised as GitHub issues:
+should be raised initially as GitHub issue at
 https://github.com/NCAS-CMS/cf-python/issues
 
 # Versioning
 
 A three-level ``major.minor.trivial`` numeric version scheme is used,
-e.g. ``3.3.1``
+e.g. ``3.4.1``
 
 **Major** changes include
   * comprehensive backwards-incompatible changes to the API;
