@@ -29,7 +29,7 @@ e.g. ``3.4.1``
     - changing the name of an existing keyword parameter;
     - changing the permitted values of an existing keyword parameter.
 
-**trivial** changes include
+**Trivial** changes include
   * bug fixes;
   * backwards-compatible changes to the API, such as
     - introducing a new function or method;
@@ -38,3 +38,7 @@ e.g. ``3.4.1``
   * changes to required versions of the dependencies;
   * changes to the documentation;
   * code tidying.
+
+See the change log
+(https://github.com/NCAS-CMS/cf-python/blob/master/Changelog.rst) for
+the changes introduced in each version.
