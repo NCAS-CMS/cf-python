@@ -15,10 +15,11 @@ e.g. ``3.3.1``.
 **Major** changes include
   * comprehensive backwards-incompatible changes to the API;
   * comprehensive refactoring of the code base;
+  * support for major-version upgrades to the CF conventions;
   * support for major version changes to the Python language.
 
 **Minor** changes include
-  * upgrades to new versions of the CF conventions;
+  * support for minor-version upgrades to the CF conventions;
   * limited backwards-incompatible changes to the API, such as
     - changing the name of an existing function or method;
     - changing the behaviour of an existing function or method;
