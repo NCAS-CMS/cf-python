@@ -30,7 +30,8 @@ def read(files, external=None, verbose=False, warnings=False,
          squeeze=False, unsqueeze=False, fmt=None, select=None,
          extra=None, recursive=False, followlinks=False, um=None,
          chunk=True, field=None, height_at_top_of_model=None,
-         select_options=None, follow_symlinks=False, mask=True):
+         select_options=None, follow_symlinks=False, mask=True,
+         warn_valid=False):
     '''Read field constructs from netCDF, CDL, PP or UM fields files.
 
     NetCDF files may be on disk or on an OPeNDAP server.
@@ -297,25 +298,28 @@ def read(files, external=None, verbose=False, warnings=False,
 
             The masking by convention of a netCDF array depends on the
             values of any of the netCDF variable attributes
-            ``_FillValue``,``missing_value``,``valid_min``,
+            ``_FillValue``, ``missing_value``, ``valid_min``,
             ``valid_max`` and ``valid_range``.
+    
+            The masking by convention of a PP of UM array depends on
+            the value of the BMDI lookup header value. A value other
+            than ``-1.0e30`` indicates the value to be masked.
     
             .. versionadded:: 3.3.1
             
         warn_valid: `bool`, optional
-            If False then do not print a warning for the presence of
+            If True then print a warning for the presence of
             ``valid_min``, ``valid_max`` or ``valid_range`` properties
             on field contructs and metadata constructs that have
-            data. By default a warning is printed if any such a
-            construct has any of these properties.
+            data. By default no such warning is issued.
 
             "Out-of-range" data values in the file, as defined by any
-            of these properties, are by default automatically masked.
-            See the *mask* parameter for turning off all automatic
-            masking.
+            of these properties, are by default automatically masked,
+            which may not be as intended. See the *mask* parameter for
+            turning off all automatic masking.
     
             .. versionadded:: 3.3.1
-
+            
         um: `dict`, optional
             For Met Office (UK) PP files and Met Office (UK) fields
             files only, provide extra decoding instructions. This
@@ -586,6 +590,7 @@ def read(files, external=None, verbose=False, warnings=False,
                 height_at_top_of_model=height_at_top_of_model,
                 chunk=chunk,
                 mask=mask,
+                warn_valid=warn_valid,
             )
 
             # --------------------------------------------------------
@@ -692,7 +697,8 @@ def _read_a_file(filename, ftype=None, aggregate=True,
                  aggregate_options=None, ignore_read_error=False,
                  verbose=False, warnings=False, external=None,
                  selected_fmt=None, um=None, extra=None,
-                 height_at_top_of_model=None, chunk=True, mask=True):
+                 height_at_top_of_model=None, chunk=True, mask=True,
+                 warn_valid=False):
     '''Read the contents of a single file into a field list.
 
     :Parameters:
@@ -813,14 +819,14 @@ def _read_a_file(filename, ftype=None, aggregate=True,
         fields = netcdf.read(filename, external=external, extra=extra,
                              verbose=verbose, warnings=warnings,
                              extra_read_vars=extra_read_vars,
-                             mask=mask)
+                             mask=mask, warn_valid=warn_valid)
 
     elif ftype == 'UM' and extra_read_vars['fmt'] in (None, 'UM'):
         fields = UM.read(filename, um_version=umversion,
                          verbose=verbose, set_standard_name=False,
                          height_at_top_of_model=height_at_top_of_model,
                          fmt=fmt, word_size=word_size, endian=endian,
-                         chunk=chunk) #, mask=mask)
+                         chunk=chunk) #, mask=mask, warn_valid=warn_valid)
 
         # PP fields are aggregated intrafile prior to interfile
         # aggregation

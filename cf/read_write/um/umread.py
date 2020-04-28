@@ -63,6 +63,9 @@ _pi_over_180 = numpy_pi/180.0
 # PP missing data indicator
 _pp_rmdi = -1.0e+30
 
+# No no-missing-data value of BMDI (as described in UMDP F3 v805)
+_BMDI_no_missing_data_value = -1.0e+30
+
 # Reference surface pressure in Pascals
 _pstar = 1.0e5
 
@@ -671,29 +674,29 @@ class UMField:
             self.down_axes = set()
             self.z_axis = 'z'
 
-            # ------------------------------------------------------------
+            # --------------------------------------------------------
             # Get the extra data for this group
-            # ------------------------------------------------------------
+            # --------------------------------------------------------
             extra = recs[0].get_extra_data()
             self.extra = extra
 
-            # ------------------------------------------------------------
+            # --------------------------------------------------------
             # Set some derived metadata quantities
-            # ------------------------------------------------------------
+            # --------------------------------------------------------
             if self.verbose:
                 print(self.__dict__)  # pragma: no cover
                 self.printfdr()      # pragma: no cover
 
-            # ------------------------------------------------------------
+            # --------------------------------------------------------
             # Create the 'T' dimension coordinate
-            # ------------------------------------------------------------
+            # --------------------------------------------------------
             axiscode = it
             if axiscode is not None:
                 c = self.time_coordinate(axiscode)
 
-            # ------------------------------------------------------------
+            # --------------------------------------------------------
             # Create the 'Z' dimension coordinate
-            # ------------------------------------------------------------
+            # --------------------------------------------------------
             axiscode = iz
             if axiscode is not None:
                 # Get 'Z' coordinate from LBVC
@@ -717,9 +720,9 @@ class UMField:
                     c = self.model_level_number_coordinate(aux=bool(c))
             # --- End: if
 
-            # ------------------------------------------------------------
+            # --------------------------------------------------------
             # Create the 'Y' dimension coordinate
-            # ------------------------------------------------------------
+            # --------------------------------------------------------
             axiscode = iy
             yc = None
             if axiscode is not None:
@@ -738,9 +741,9 @@ class UMField:
                     ykey, yc = self.xy_coordinate(axiscode, 'y')
             # --- End: if
 
-            # ------------------------------------------------------------
+            # --------------------------------------------------------
             # Create the 'X' dimension coordinate
-            # ------------------------------------------------------------
+            # --------------------------------------------------------
             axiscode = ix
             xc = None
             if axiscode is not None:
@@ -780,16 +783,16 @@ class UMField:
                 self.implementation.set_coordinate_reference(
                     self.field, ref, copy=False)
 
-                # --------------------------------------------------------
-                # Create UNROTATED, 2-D LATITUDE and LONGITUDE auxiliary
-                # coordinates
-                # --------------------------------------------------------
+                # ----------------------------------------------------
+                # Create UNROTATED, 2-D LATITUDE and LONGITUDE
+                # auxiliary coordinates
+                # ----------------------------------------------------
                 self.latitude_longitude_2d_aux_coordinates(
                     yc, xc)  # , rotated_pole)
 
-            # ------------------------------------------------------------
+            # --------------------------------------------------------
             # Create a RADIATION WAVELENGTH dimension coordinate
-            # ------------------------------------------------------------
+            # --------------------------------------------------------
             try:
                 rwl, rwl_units = self.cf_info['below']
             except (KeyError, TypeError):
@@ -801,11 +804,11 @@ class UMField:
                 # pseudolevel
                 LBUSER5 = 0
 
-            # ------------------------------------------------------------
+            # --------------------------------------------------------
             # Create a PSEUDOLEVEL dimension coordinate. This must be
             # done *after* the possible creation of a radiation
             # wavelength dimension coordinate.
-            # ------------------------------------------------------------
+            # --------------------------------------------------------
             if LBUSER5 != 0:
                 self.pseudolevel_coordinate(LBUSER5)
 
@@ -821,24 +824,26 @@ class UMField:
             cf_properties['stash_code'] = str(stash)
             cf_properties['submodel'] = str(submodel)
 
-            # ------------------------------------------------------------
+            # --------------------------------------------------------
             # Set the data and extra data
-            # ------------------------------------------------------------
+            # --------------------------------------------------------
             data = self.create_data()
 
-            # ------------------------------------------------------------
+            # --------------------------------------------------------
             # Insert data into the field
-            # ------------------------------------------------------------
+            # --------------------------------------------------------
             field = self.field
 
             self.implementation.set_data(field, self.data,
                                          axes=self.data_axes,
                                          copy=False)
 
-            # ------------------------------------------------------------
+            # --------------------------------------------------------
             # Insert attributes and CF properties into the field
-            # ------------------------------------------------------------
-            cf_properties['_FillValue'] = data.fill_value
+            # --------------------------------------------------------
+            fill_value = data.fill_value
+            if fill_value is not None:
+                cf_properties['_FillValue'] = data.fill_value
 
             # Add kwargs to the CF properties
             cf_properties.update(kwargs)
@@ -853,9 +858,9 @@ class UMField:
 
             self.implementation.nc_set_variable(field, identity)
 
-            # ------------------------------------------------------------
+            # --------------------------------------------------------
             # Create and insert cell methods
-            # ------------------------------------------------------------
+            # --------------------------------------------------------
             cell_methods = self.create_cell_methods()
             for cm in cell_methods:
                 self.implementation.set_cell_method(field, cm)
@@ -1530,6 +1535,11 @@ class UMField:
             # 0-d partition matrix
             # --------------------------------------------------------
             rec = recs[0]
+
+            fill_value = rec.real_hdr.item(bmdi,)
+            if fill_value == _BMDI_no_missing_data_value:
+                fill_value = None
+            
             data = Data(UMArray(filename=filename,
                                 ndim=2,
                                 shape=yx_shape,
@@ -1542,7 +1552,7 @@ class UMField:
                                 word_size=self.word_size,
                                 byte_ordering=self.byte_ordering),
                         units=units,
-                        fill_value=rec.real_hdr[bmdi])
+                        fill_value=fill_value)
 
             if self.verbose:
                 print(
@@ -1680,7 +1690,11 @@ class UMField:
             data_axes = pmaxes + data_axes
 
             # Set the data array
-            data = Data(units=units, fill_value=recs[0].real_hdr.item(bmdi,))
+            fill_value = recs[0].real_hdr.item(bmdi,)
+            if fill_value == _BMDI_no_missing_data_value:
+                fill_value = None
+                
+            data = Data(units=units, fill_value=fill_value)
 
             data._axes = data_axes
             data._shape = data_shape

@@ -447,23 +447,25 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
             If True then print a summary of how constructs map to output
             netCDF dimensions, variables and attributes.
     
-       warn_valid: `bool`, optional         
+       warn_valid: `bool`, optional
             If False then do not print a warning when writing
-            "out-of-range" data, as defined by the presence of
-            ``valid_min``, ``valid_max`` or ``valid_range`` properties
-            on field and metadata constructs that have data. By
-            default a warning is printed if any such construct has any
-            of these properties.
+            "out-of-range" data, as indicated by the values, if
+            present, of any of the ``valid_min``, ``valid_max`` or
+            ``valid_range`` properties on field and metadata
+            constructs that have data. By default a warning is printed
+            if any such construct has any of these properties in
+            combination with out-of-range data.
 
             The consequence of writing out-of-range data values is
-            that by default these values they will be masked when the
+            that, by default, these values will be masked when the
             file is subsequently read.
 
             *Parameter example:*
-              If a field construct has ``valid_max`` property with
-              value ``100`` and data with maximum value ``999``, then
-              a warning will be printed if ``warn_valid=True``.
-         
+              If a construct has ``valid_max`` property with value
+              ``100`` and data with maximum value ``999``, then the
+              resulting warning may be suppressed by setting
+              ``warn_valid=False``.
+
             .. versionadded:: 3.3.1
 
         HDF_chunksizes: deprecated at version 3.0.0

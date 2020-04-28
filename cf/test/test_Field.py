@@ -133,6 +133,56 @@ class FieldTest(unittest.TestCase):
                     self.assertTrue(bool(c.data.get_compression_type()), message)
                     self.assertTrue(f.equals(c, verbose=True), message)
         # --- End: for
+        
+    def test_Field_apply_masking(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = cf.example_field(0)
+
+        for prop in ('missing_value', '_FillValue', 'valid_min',
+                     'valid_max', 'valid_range'):            
+            f.del_property(prop, None)
+
+        d = f.data.copy()
+        g = f.copy()        
+        self.assertTrue(f.apply_masking(inplace=True) is None)
+        self.assertTrue(f.equals(g, verbose=1))
+
+        x = 0.11        
+        y = 0.1
+        z = 0.2
+        
+        f.set_property('_FillValue', x)
+        d = f.data.copy()
+        
+        g = f.apply_masking()
+        e = d.apply_masking(fill_values=[x])
+        self.assertTrue(e.equals(g.data, verbose=1))
+        self.assertTrue(g.data.array.count() == g.data.size - 1)
+
+        f.set_property('valid_range', [y, z])
+        d = f.data.copy()
+        g = f.apply_masking()
+        e = d.apply_masking(fill_values=[x], valid_range=[y, z])
+        self.assertTrue(e.equals(g.data, verbose=1))
+
+        f.del_property('valid_range')
+        f.set_property('valid_min', y)
+        g = f.apply_masking()
+        e = d.apply_masking(fill_values=[x], valid_min=y)
+        self.assertTrue(e.equals(g.data, verbose=1))
+
+        f.del_property('valid_min')
+        f.set_property('valid_max', z)
+        g = f.apply_masking()
+        e = d.apply_masking(fill_values=[x], valid_max=z)
+        self.assertTrue(e.equals(g.data, verbose=1))
+
+        f.set_property('valid_min', y)
+        g = f.apply_masking()
+        e = d.apply_masking(fill_values=[x], valid_min=y, valid_max=z)
+        self.assertTrue(e.equals(g.data, verbose=1))
 
     def test_Field_flatten(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
