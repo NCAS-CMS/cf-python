@@ -40,5 +40,5 @@ e.g. ``3.4.1``
   * code tidying.
 
 See the change log
-(https://github.com/NCAS-CMS/cf-python/Changelog.rst) for
-the changes introduced by  each version.
+(https://github.com/NCAS-CMS/cf-python/blob/master/Changelog.rst)
+for the changes introduced by  each version.
