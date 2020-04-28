@@ -301,10 +301,14 @@ def read(files, external=None, verbose=False, warnings=False,
             ``_FillValue``, ``missing_value``, ``valid_min``,
             ``valid_max`` and ``valid_range``.
     
-            The masking by convention of a PP of UM array depends on
-            the value of the BMDI lookup header value. A value other
-            than ``-1.0e30`` indicates the value to be masked.
+            The masking by convention of a PP or UM array depends on
+            the value of BMDI in the lookup header. A value other than
+            ``-1.0e30`` indicates the data value to be masked.
     
+            See
+            https://ncas-cms.github.io/cf-python/tutorial.html#data-mask
+            for details.
+
             .. versionadded:: 3.3.1
             
         warn_valid: `bool`, optional
@@ -314,10 +318,14 @@ def read(files, external=None, verbose=False, warnings=False,
             data. By default no such warning is issued.
 
             "Out-of-range" data values in the file, as defined by any
-            of these properties, are by default automatically masked,
+            of these properties, are automatically masked by default,
             which may not be as intended. See the *mask* parameter for
             turning off all automatic masking.
     
+            See
+            https://ncas-cms.github.io/cf-python/tutorial.html#data-mask
+            for details.
+
             .. versionadded:: 3.3.1
             
         um: `dict`, optional
@@ -408,6 +416,7 @@ def read(files, external=None, verbose=False, warnings=False,
             Use the *followlinks* parameter instead.
 
         select_options: deprecated at version 3.0.0
+            Use methods on the returned `FieldList` instead.
 
     :Returns:
 
