@@ -26,6 +26,9 @@ version 3.4.0
 * Fixed bug in `cf.write` that caused the ``single`` and ``double``
   keyword parameters to have no effect. This bug was introduced at
   version 3.0.0 (https://github.com/NCAS-CMS/cf-python/issues/65).
+* Fixed bug in `cf.Field.has_construct` that caused it to always
+  return `False` unless a construct key was used as the construct
+  identity (https://github.com/NCAS-CMS/cf-python/issues/67).
   
 version 3.3.0
 -------------
