@@ -51,7 +51,7 @@ class NetCDFArray(cfdm.NetCDFArray,
             ``valid_max``, ``valid_range``, ``_FillValue`` and
             ``missing_value``.
     
-            .. versionadded:: 3.3.1
+            .. versionadded:: 3.4.0
 
     **Examples:**
 

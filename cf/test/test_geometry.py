@@ -17,20 +17,27 @@ VN = cf.CF()
 
 class DSGTest(unittest.TestCase):
     def setUp(self):
-        self.geometry_1_file = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                            'geometry_1.nc')
-        self.geometry_2_file = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                            'geometry_2.nc')
-        self.geometry_3_file = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                            'geometry_3.nc')
-        self.geometry_4_file = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                            'geometry_4.nc')
-        self.geometry_interior_ring_file = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                                        'geometry_interior_ring.nc')
-        self.geometry_interior_ring_file_2 = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                                          'geometry_interior_ring_2.nc')
+        self.geometry_1_file = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            'geometry_1.nc')
+        self.geometry_2_file = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            'geometry_2.nc')
+        self.geometry_3_file = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            'geometry_3.nc')
+        self.geometry_4_file = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            'geometry_4.nc')
+        self.geometry_interior_ring_file = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            'geometry_interior_ring.nc')
+        self.geometry_interior_ring_file_2 = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            'geometry_interior_ring_2.nc')
 
-        (fd, self.tempfilename) = tempfile.mkstemp(suffix='.nc', prefix='cf_', dir='.')
+        (fd, self.tempfilename) = tempfile.mkstemp(
+            suffix='.nc', prefix='cf_', dir='.')
         os.close(fd)
 #        self.tempfilename = 'delme.nc'
 
@@ -39,10 +46,8 @@ class DSGTest(unittest.TestCase):
 #        self.test_only = ['test_node_count']
 #        self.test_only = ['test_geometry_interior_ring']
 
-
     def tearDown(self):
         os.remove(self.tempfilename)
-
 
     def test_node_count(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -91,7 +96,6 @@ class DSGTest(unittest.TestCase):
         self.assertTrue(c.del_node_count(None).equals(n, verbose=True))
         self.assertFalse(c.has_node_count())
 
-
     def test_geometry_2(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -129,7 +133,6 @@ class DSGTest(unittest.TestCase):
         nc.nc_set_variable('new_var_name')
         cf.write(f, self.tempfilename, verbose=False)
 
-
     def test_geometry_3(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -157,7 +160,6 @@ class DSGTest(unittest.TestCase):
 
         for a, b in zip(f, f2):
             self.assertTrue(a.equals(b, verbose=True))
-
 
     def test_geometry_4(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -195,7 +197,6 @@ class DSGTest(unittest.TestCase):
         nc.nc_set_variable('new_var_name')
         cf.write(f, self.tempfilename, verbose=False)
 
-
     def test_geometry_interior_ring(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -229,7 +230,8 @@ class DSGTest(unittest.TestCase):
             # Interior ring component
             c = g.construct('longitude')
 
-            self.assertTrue(c.interior_ring.equals(g.construct('longitude').get_interior_ring()))
+            self.assertTrue(c.interior_ring.equals(
+                g.construct('longitude').get_interior_ring()))
             self.assertTrue(c.interior_ring.data.ndim == c.data.ndim + 1)
             self.assertTrue(c.interior_ring.data.shape[0] == c.data.shape[0])
 
@@ -237,21 +239,26 @@ class DSGTest(unittest.TestCase):
 
             d = c.insert_dimension(0)
             self.assertTrue(d.data.shape == (1,) + c.data.shape)
-            self.assertTrue(d.interior_ring.data.shape == (1,) + c.interior_ring.data.shape)
+            self.assertTrue(
+                d.interior_ring.data.shape == (1,) + c.interior_ring.data.shape)
 
             e = d.squeeze(0)
             self.assertTrue(e.data.shape == c.data.shape)
-            self.assertTrue(e.interior_ring.data.shape == c.interior_ring.data.shape)
+            self.assertTrue(
+                e.interior_ring.data.shape == c.interior_ring.data.shape)
 
             t = d.transpose()
-            self.assertTrue(t.data.shape == d.data.shape[::-1], (t.data.shape, c.data.shape[::-1]))
-            self.assertTrue(t.interior_ring.data.shape == d.interior_ring.data.shape[-2::-1] + (d.interior_ring.data.shape[-1],))
+            self.assertTrue(
+                t.data.shape == d.data.shape[::-1], (t.data.shape, c.data.shape[::-1]))
+            self.assertTrue(
+                t.interior_ring.data.shape == d.interior_ring.data.shape[-2::-1] + (d.interior_ring.data.shape[-1],))
 
             # Subspacing
             g = g[1, ...]
             c = g.construct('longitude')
 
-            self.assertTrue(c.interior_ring.data.shape[0] == 1, c.interior_ring.data.shape)
+            self.assertTrue(
+                c.interior_ring.data.shape[0] == 1, c.interior_ring.data.shape)
             self.assertTrue(c.interior_ring.data.ndim == c.data.ndim + 1)
             self.assertTrue(c.interior_ring.data.shape[0] == c.data.shape[0])
 
@@ -276,7 +283,6 @@ class DSGTest(unittest.TestCase):
             pnc.nc_set_dimension('new_dim_name')
             cf.write(f, self.tempfilename)
 
-
     def test_geometry_interior_ring_roll(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -296,7 +302,6 @@ class DSGTest(unittest.TestCase):
             h = f.roll(0, r)
             self.assertFalse(f.equals(h))
 
-
     def test_geometry_interior_ring_flip(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -308,7 +313,6 @@ class DSGTest(unittest.TestCase):
         h = g.flip(0)
         self.assertTrue(f.equals(h))
 
-
     def test_geometry_interior_ring_flatten(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -318,7 +322,6 @@ class DSGTest(unittest.TestCase):
         for i in (0, 1):
             self.assertTrue(f.equals(f.flatten(i), verbose=1))
 
-
     def test_geometry_interior_ring_close(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -327,14 +330,13 @@ class DSGTest(unittest.TestCase):
 
         self.assertTrue(f.close() is None)
 
-
     def test_geometry_interior_ring_files(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
         f = cf.read(self.geometry_interior_ring_file, verbose=False)[0]
 
-        self.assertTrue(isinstance(f.files(), set))
+        self.assertTrue(isinstance(f.get_filenames(), set))
 
 # --- End: class
 

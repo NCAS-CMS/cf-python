@@ -309,7 +309,7 @@ def read(files, external=None, verbose=False, warnings=False,
             https://ncas-cms.github.io/cf-python/tutorial.html#data-mask
             for details.
 
-            .. versionadded:: 3.3.1
+            .. versionadded:: 3.4.0
             
         warn_valid: `bool`, optional
             If True then print a warning for the presence of
@@ -326,7 +326,7 @@ def read(files, external=None, verbose=False, warnings=False,
             https://ncas-cms.github.io/cf-python/tutorial.html#data-mask
             for details.
 
-            .. versionadded:: 3.3.1
+            .. versionadded:: 3.4.0
             
         um: `dict`, optional
             For Met Office (UK) PP files and Met Office (UK) fields
@@ -733,7 +733,7 @@ def _read_a_file(filename, ftype=None, aggregate=True,
             If False then do not mask by convention when reading data
             from disk. By default data is masked by convention.
 
-            .. versionadded:: 3.3.1
+            .. versionadded:: 3.4.0
 
         verbose: `bool`, optional
             If True then print information to stdout.

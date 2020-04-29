@@ -3644,35 +3644,35 @@ class PropertiesData(Properties):
 
         return False
 
-    def files(self):
-        '''Return the names of any files containing parts of the data array.
-
-    .. seealso:: `close`
-
-    :Returns:
-
-        `!set`
-            The file names in normalized, absolute form.
-
-    **Examples:**
-
-    >>> f = cf.read_field('../file[123].nc')
-    >>> f.files()
-    {'/data/user/file1.nc',
-     '/data/user/file2.nc',
-     '/data/user/file3.nc'}
-    >>> a = f.array
-    >>> f.files()
-    set()
-
-        '''
-        data = self.get_data(None)
-        if data is None:
-            out = set()
-        else:
-            out = data.files()
-
-        return out
+#    def files(self):
+#        '''Return the names of any files containing parts of the data array.
+#
+#    .. seealso:: `close`
+#
+#    :Returns:
+#
+#        `!set`
+#            The file names in normalized, absolute form.
+#
+#    **Examples:**
+#
+#    >>> f = cf.read_field('../file[123].nc')
+#    >>> f.files()
+#    {'/data/user/file1.nc',
+#     '/data/user/file2.nc',
+#     '/data/user/file3.nc'}
+#    >>> a = f.array
+#    >>> f.files()
+#    set()
+#
+#        '''
+#        data = self.get_data(None)
+#        if data is None:
+#            out = set()
+#        else:
+#            out = data.files()
+#
+#        return out
 
     def fill_value(self, default=None):
         '''Return the data array missing data value.

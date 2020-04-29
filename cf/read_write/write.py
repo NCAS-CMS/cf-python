@@ -466,7 +466,7 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
               resulting warning may be suppressed by setting
               ``warn_valid=False``.
 
-            .. versionadded:: 3.3.1
+            .. versionadded:: 3.4.0
 
         HDF_chunksizes: deprecated at version 3.0.0
             HDF chunk sizes may be set for individual constructs prior

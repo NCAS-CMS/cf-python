@@ -1990,39 +1990,67 @@ class PropertiesDataBounds(PropertiesData):
             _inplace_enabled_define_and_cleanup(self), 'override_units',
             units, inplace=inplace, i=i)
 
-    def files(self):
-        '''Return the names of any files containing parts of the data array.
+    def get_filenames(self):
+        '''Return the name of the file or files containing the data.
 
-    .. seealso:: `close`
-
+    The names of the file or files containing the bounds data are also
+    returned.
+    
     :Returns:
-
+    
         `set`
-            The file names in normalized, absolute form.
-
-    **Examples:**
-
-    >>> c.files()
-    {'/data/user/file1.nc',
-     '/data/user/file2.nc',
-     '/data/user/file3.nc'}
-    >>> a = c.array
-    >>> f.files()
-    set()
+            The file names in normalized, absolute form. If all of the
+            data are in memory then an empty `set` is returned.
 
         '''
-        out = super().files()
-
-        bounds = self.get_bounds(None)
-        if bounds is not None:
-            out.update(bounds.files())
+        out = super().get_filenames()
+        
+        data = self.get_bounds_data(None)
+        if data is not None:            
+            out.update(data.get_filenames())
 
         interior_ring = self.get_interior_ring(None)
-        if bounds is not None:
-            out.update(interior_ring.files())
+        if interior_ring is not None:
+            data = interior_ring.get_data(None)
+            if data is not None:
+                out.update(interior_ring.get_filenames())
+        # --- End: if
 
         return out
-
+    
+#   def files(self):
+#        '''Return the names of any files containing parts of the data array.
+#
+#    .. seealso:: `close`
+#
+#    :Returns:
+#
+#        `set`
+#            The file names in normalized, absolute form.
+#
+#    **Examples:**
+#
+#    >>> c.files()
+#    {'/data/user/file1.nc',
+#     '/data/user/file2.nc',
+#     '/data/user/file3.nc'}
+#    >>> a = c.array
+#    >>> f.files()
+#    set()
+#
+#        '''
+#        out = super().files()
+#
+#        bounds = self.get_bounds(None)
+#        if bounds is not None:
+#            out.update(bounds.files())
+#
+#        interior_ring = self.get_interior_ring(None)
+#        if bounds is not None:
+#            out.update(interior_ring.files())
+#
+#        return out
+   
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def flip(self, axes=None, inplace=False, i=False):
@@ -3289,5 +3317,16 @@ class PropertiesDataBounds(PropertiesData):
             self, 'expand_dims',
             "Use method 'insert_dimension' instead.")  # pragma: no cover
 
+    def files(self):
+        '''Return the names of any files containing parts of the data array.
 
+    Deprecated at version 3.4.0. Use method 'get_filenames' instead.
+
+        '''
+        _DEPRECATION_ERROR_METHOD(
+            self, 'expand_dims',
+            "Use method 'get_filenames' instead.",
+            version='3.4.0'
+        )  # pragma: no cover
+        
 # --- End: class

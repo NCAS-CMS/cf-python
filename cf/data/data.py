@@ -8663,7 +8663,7 @@ False
 
     Elements that are already masked remain so.
 
-    .. versionadded:: 3.3.1
+    .. versionadded:: 3.4.0
 
     .. seealso:: `get_fill_value`, `hardmask`, `mask`, `where`
                  
@@ -14241,12 +14241,12 @@ False
     def files(self):
         '''Return the names of files containing parts of the data array.
         
-    Deprecated at version 3.3.1. Use method 'get_filenames' instead.
+    Deprecated at version 3.4.0. Use method 'get_filenames' instead.
 
         '''
         _DEPRECATION_ERROR_METHOD(
             self, 'files', "Use method 'get_filenames' instead.",
-            version='3.3.1'
+            version='3.4.0'
         )  # pragma: no cover
 
         
