@@ -7991,6 +7991,94 @@ class Field(mixin.PropertiesData,
 #            return out, d
         return out
 
+    def has_construct(self, identity=None):
+        '''Whether a metadata construct exists.
+
+    .. versionadded:: 3.4.0
+    
+    .. seealso:: `construct`, `del_construct`, `get_construct`,
+                 `set_construct`
+    
+    :Parameters:
+    
+        identity: optional
+            Select the construct. Must be
+
+              * The identity or key of a metadata construct.
+
+            A construct identity is specified by a string
+            (e.g. ``'latitude'``, ``'long_name=time'``,
+            ``'ncvar%lat'``, etc.); a `Query` object
+            (e.g. ``cf.eq('longitude')``); or a compiled regular
+            expression (e.g. ``re.compile('^atmosphere')``) that
+            selects the relevant constructs whose identities match via
+            `re.search`.
+
+            A construct has a number of identities, and is selected if
+            any of them match any of those provided. A construct's
+            identities are those returned by its `!identities`
+            method. In the following example, the construct ``x`` has
+            six identities:
+
+               >>> x.identities()
+               ['time',
+                'long_name=Time',
+                'foo=bar',
+                'standard_name=time',
+                'ncvar%t',
+                'T']
+
+            A construct key may optionally have the ``'key%'``
+            prefix. For example ``'dimensioncoordinate2'`` and
+            ``'key%dimensioncoordinate2'`` are both acceptable keys.
+
+            Note that in the output of a `print` call or `!dump`
+            method, a construct is always described by one of its
+            identities, and so this description may always be used as
+            an *identity* argument.
+
+            *Parameter example:*
+              ``identity='T'
+
+            *Parameter example:*
+              ``identity='measure:area'``
+
+            *Parameter example:*
+              ``identity='cell_area'``
+
+            *Parameter example:*
+              ``identity='long_name=Cell Area'``
+
+            *Parameter example:*
+              ``identity='cellmeasure1'``
+
+    :Returns:
+    
+        `bool` 
+            `True` if the construct exists, otherwise `False`.
+    
+    **Examples:**
+    
+    >>> f = cf.example_field(0)
+    >>> print(f)
+    Field: specific_humidity (ncvar%q)
+    ----------------------------------
+    Data            : specific_humidity(latitude(5), longitude(8)) 1
+    Cell methods    : area: mean
+    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(8) = [22.5, ..., 337.5] degrees_east
+                    : time(1) = [2019-01-01 00:00:00]
+
+    >>> f.has_construct('T')
+    True
+    >>> f.has_construct('longitude')
+    True    
+    >>> f.has_construct('Z')
+    False
+
+        '''
+        return bool(self.construct(identity, default=False))
+
     def histogram(self, digitized):
         '''Return a multi-dimensional histogram of the data.
 
@@ -15318,7 +15406,117 @@ class Field(mixin.PropertiesData,
     def construct(self, identity=None, default=ValueError(), key=False):
         '''Select a metadata construct by its identity.
 
-    TODO
+    .. seealso:: `del_construct`, `get_construct`, `has_construct`,
+                 `set_construct`
+    
+    :Parameters:
+    
+        identity: optional
+            Select the construct. Must be
+
+              * The identity or key of a metadata construct.
+
+            A construct identity is specified by a string
+            (e.g. ``'latitude'``, ``'long_name=time'``,
+            ``'ncvar%lat'``, etc.); a `Query` object
+            (e.g. ``cf.eq('longitude')``); or a compiled regular
+            expression (e.g. ``re.compile('^atmosphere')``) that
+            selects the relevant constructs whose identities match via
+            `re.search`.
+
+            A construct has a number of identities, and is selected if
+            any of them match any of those provided. A construct's
+            identities are those returned by its `!identities`
+            method. In the following example, the construct ``x`` has
+            six identities:
+
+               >>> x.identities()
+               ['time',
+                'long_name=Time',
+                'foo=bar',
+                'standard_name=time',
+                'ncvar%t',
+                'T']
+
+            A construct key may optionally have the ``'key%'``
+            prefix. For example ``'dimensioncoordinate2'`` and
+            ``'key%dimensioncoordinate2'`` are both acceptable keys.
+
+            Note that in the output of a `print` call or `!dump`
+            method, a construct is always described by one of its
+            identities, and so this description may always be used as
+            an *identity* argument.
+
+            *Parameter example:*
+              ``identity='T'
+
+            *Parameter example:*
+              ``identity='measure:area'``
+
+            *Parameter example:*
+              ``identity='cell_area'``
+
+            *Parameter example:*
+              ``identity='long_name=Cell Area'``
+
+            *Parameter example:*
+              ``identity='cellmeasure1'``
+
+        default: optional
+            Return the value of the *default* parameter if a construct
+            can not be found. If set to an `Exception` instance then
+            it will be raised instead.
+
+        key: `bool`, optional
+            If True then return the selected construct key. By
+            default the construct itself is returned.
+
+    :Returns:
+
+            The selected coordinate construct, or its key.
+
+    **Examples:**
+
+    >>> f = cf.example_field(1)
+    >>> print(f)
+    Field: air_temperature (ncvar%ta)
+    ---------------------------------
+    Data            : air_temperature(atmosphere_hybrid_height_coordinate(1), grid_latitude(10), grid_longitude(9)) K
+    Cell methods    : grid_latitude(10): grid_longitude(9): mean where land (interval: 0.1 degrees) time(1): maximum
+    Field ancils    : air_temperature standard_error(grid_latitude(10), grid_longitude(9)) = [[0.76, ..., 0.32]] K
+    Dimension coords: atmosphere_hybrid_height_coordinate(1) = [1.5]
+                    : grid_latitude(10) = [2.2, ..., -1.76] degrees
+                    : grid_longitude(9) = [-4.7, ..., -1.18] degrees
+                    : time(1) = [2019-01-01 00:00:00]
+    Auxiliary coords: latitude(grid_latitude(10), grid_longitude(9)) = [[53.941, ..., 50.225]] degrees_N
+                    : longitude(grid_longitude(9), grid_latitude(10)) = [[2.004, ..., 8.156]] degrees_E
+                    : long_name=Grid latitude name(grid_latitude(10)) = [--, ..., b'kappa']
+    Cell measures   : measure:area(grid_longitude(9), grid_latitude(10)) = [[2391.9657, ..., 2392.6009]] km2
+    Coord references: grid_mapping_name:rotated_latitude_longitude
+                    : standard_name:atmosphere_hybrid_height_coordinate
+    Domain ancils   : ncvar%a(atmosphere_hybrid_height_coordinate(1)) = [10.0] m
+                    : ncvar%b(atmosphere_hybrid_height_coordinate(1)) = [20.0]
+                    : surface_altitude(grid_latitude(10), grid_longitude(9)) = [[0.0, ..., 270.0]] m
+    
+    >>> f.construct('long_name=Grid latitude name')
+    <CF AuxiliaryCoordinate: long_name=Grid latitude name(10) >
+    >>> f.construct('ncvar%a')
+    <CF DomainAncillary: ncvar%a(1) m>
+    >>> f.construct('measure:area')
+    <CF CellMeasure: measure:area(9, 10) km2>    
+    >>> f.construct('domainaxis0')
+    <CF DomainAxis: size(1)>
+    >>> f.construct('height')
+    Traceback (most recent call last):
+        ...
+    ValueError: Can't return zero constructs
+    >>> f.construct('height', default=False)
+    False
+    >>> f.construct('height', default=TypeError("No height coordinates"))
+    Traceback (most recent call last):
+        ...
+    TypeError: No height coordinates
+
         '''
         c = self.constructs
 

@@ -91,6 +91,20 @@ class FieldTest(unittest.TestCase):
                                                     string=s)
         # --- End: for
 
+    def test_Field_has_construct(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+        
+        f = cf.example_field(1)
+
+        self.assertTrue(f.has_construct('T'))
+        self.assertTrue(f.has_construct('long_name=Grid latitude name'))
+        self.assertTrue(f.has_construct('ncvar%a'))
+        self.assertTrue(f.has_construct('measure:area'))
+        self.assertTrue(f.has_construct('domainaxis0'))
+        
+        self.assertFalse(f.has_construct('height'))
+
     def test_Field_compress_uncompress(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
