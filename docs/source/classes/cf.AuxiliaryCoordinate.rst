@@ -251,7 +251,7 @@ Data
    ~cf.AuxiliaryCoordinate.convert_reference_time
    ~cf.AuxiliaryCoordinate.creation_commands
    ~cf.AuxiliaryCoordinate.cyclic
-   ~cf.AuxiliaryCoordinate.files
+   ~cf.AuxiliaryCoordinate.get_filenames
 
 Miscellaneous
 -------------

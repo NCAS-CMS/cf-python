@@ -44,13 +44,31 @@ class read_writeTest(unittest.TestCase):
 
     test_only = []
 #    test_only = ['NOTHING!!!!!']
-#    test_only = ['test_write_reference_datetime']
+#    test_only = ['test_write_filename']
 #    test_only = ['test_read_write_unlimited']
 #    test_only = ['test_write_datatype']
 #    test_only = ['test_read_directory']
 #    test_only = ['test_read_string']
 #    test_only = ['test_read_write_netCDF4_compress_shuffle']
 
+    def test_write_filename(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        tmpfile = tempfile.mktemp('.cf_test')
+        tmpfiles.append(tmpfile)
+        
+        f = cf.example_field(0)
+        a = f.array
+        
+        cf.write(f, tmpfile)
+        g = cf.read(tmpfile)
+
+        with self.assertRaises(Exception):
+            cf.write(g, tmpfile)
+
+        self.assertTrue((a == g[0].array).all())
+            
     def test_read_mask(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return        
@@ -244,7 +262,8 @@ class read_writeTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
-        tmpfile = tempfile.mktemp('.cf-python_test')
+        tmpfile = tempfile.mktemp('.cf_test')
+        tmpfiles.append(tmpfile)
 
         for chunksize in self.chunk_sizes:
             cf.CHUNKSIZE(chunksize)
@@ -270,6 +289,9 @@ class read_writeTest(unittest.TestCase):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
 
+        tmpfile = tempfile.mktemp('.cf_test')
+        tmpfiles.append(tmpfile)
+        
         for chunksize in self.chunk_sizes:
             cf.CHUNKSIZE(chunksize)
             f = cf.read(self.filename)[0]
@@ -290,16 +312,19 @@ class read_writeTest(unittest.TestCase):
         self.assertTrue(g.dtype == numpy.dtype('float32'),
                         'datatype read in is '+str(g.dtype))
 
+        tmpfile2 = tempfile.mktemp('.cf_test')
+        tmpfiles.append(tmpfile2)
+        
         # Keyword double
         f = g
         self.assertTrue(f.dtype == numpy.dtype('float32'))
-        cf.write(f, tmpfile, fmt='NETCDF4', double=True)
-        g = cf.read(tmpfile)[0]
+        cf.write(f, tmpfile2, fmt='NETCDF4', double=True)
+        g = cf.read(tmpfile2)[0]
         self.assertTrue(g.dtype == numpy.dtype(float),
                         'datatype read in is '+str(g.dtype))
 
         for single in (True, False):
-            for double in (True, False):
+            for dousble in (True, False):
                 with self.assertRaises(Exception):
                     _ = cf.write(g, double=double, single=single)
         # --- End: for

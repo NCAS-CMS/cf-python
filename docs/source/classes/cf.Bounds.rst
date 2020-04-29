@@ -216,7 +216,7 @@ Data
    ~cf.Bounds.convert_reference_time
    ~cf.Bounds.creation_commands
    ~cf.Bounds.cyclic
-   ~cf.Bounds.files
+   ~cf.Bounds.get_filenames
    ~cf.Bounds.has_bounds
 
 Miscellaneous

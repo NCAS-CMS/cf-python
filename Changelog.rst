@@ -1,4 +1,4 @@
-version 3.3.1
+version 3.4.0
 -------------
 ----
 
@@ -6,6 +6,10 @@ version 3.3.1
 
 * New method: `cf.Field.apply_masking`
 * New method: `cf.Data.apply_masking`
+* New method: `cf.Field.get_filenames` (replaces deprecated
+  `cf.Field.files`)
+* New method: `cf.Data.get_filenames` (replaces deprecated
+  `cf.Data.files`)
 * New keyword parameter to `cf.read`: ``mask``
 * New keyword parameter to `cf.read`: ``warn_valid``
   (https://github.com/NCAS-CMS/cfdm/issues/30)

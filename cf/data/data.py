@@ -105,7 +105,8 @@ from ..functions import (CHUNKSIZE, FM_THRESHOLD, RTOL, ATOL,
                          FREE_MEMORY, COLLAPSE_PARALLEL_MODE,
                          parse_indices, _numpy_allclose,
                          _numpy_isclose, pathjoin, hash_array,
-                         broadcast_array, default_netCDF_fillvals)
+                         broadcast_array, default_netCDF_fillvals,
+                         abspath)
 
 from ..functions import (_DEPRECATION_ERROR_METHOD,
                          _DEPRECATION_ERROR_ATTRIBUTE)
@@ -10753,29 +10754,33 @@ False
 
         return d
 
-    def files(self):
+    def get_filenames(self):
         '''Return the names of files containing parts of the data array.
 
     :Returns:
 
         `set`
-            The file names in normalized, absolute form.
+            The file names in normalized, absolute form. If the data
+            is are memory then an empty `set` is returned.
 
     **Examples:**
 
-    >>> f = cf.read('../file[123]')
-    >>> f[0].files()
+    >>> f = cf.read('../file[123]')[0]
+    >>> f.get_filenames()
     {'/data/user/file1',
      '/data/user/file2',
      '/data/user/file3'}
-    >>> a = f[0].array
-    >>> f[0].files()
+    >>> a = f.array
+    >>> f.get_filenames()
     set()
 
         '''
-        out = set([p.subarray.get_filename()
-                   for p in self.partitions.matrix.flat if p.in_file])
+        out = set(
+            [abspath(p.subarray.get_filename())
+             for p in self.partitions.matrix.flat if p.in_file]
+        )
         out.discard(None)
+
         return out
 
     @_inplace_enabled
@@ -14233,6 +14238,18 @@ False
         '''
         _DEPRECATION_ERROR_ATTRIBUTE(self, 'dtvarray')  # pragma: no cover
 
+    def files(self):
+        '''Return the names of files containing parts of the data array.
+        
+    Deprecated at version 3.3.1. Use method 'get_filenames' instead.
+
+        '''
+        _DEPRECATION_ERROR_METHOD(
+            self, 'files', "Use method 'get_filenames' instead.",
+            version='3.3.1'
+        )  # pragma: no cover
+
+        
     @property
     def unsafe_array(self):
         '''A numpy array of the data.
@@ -14253,7 +14270,8 @@ False
 
         '''
         _DEPRECATION_ERROR_METHOD(
-            self, 'expand_dims', "Use method 'insert_dimension' instead."
+            self, 'expand_dims', "Use method 'insert_dimension' instead.",
+            version='3.0.0'
         )  # pragma: no cover
 
 # --- End: class

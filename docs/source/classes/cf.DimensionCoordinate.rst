@@ -255,7 +255,7 @@ Data
    ~cf.DimensionCoordinate.convert_reference_time
    ~cf.DimensionCoordinate.creation_commands
    ~cf.DimensionCoordinate.cyclic
-   ~cf.DimensionCoordinate.files
+   ~cf.DimensionCoordinate.get_filenames
    ~cf.DimensionCoordinate.period
 
 Miscellaneous

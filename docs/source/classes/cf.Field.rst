@@ -230,7 +230,7 @@ Miscellaneous data operations
    ~cf.Field.chunk
    ~cf.Field.close
    ~cf.Field.cyclic
-   ~cf.Field.files
+   ~cf.Field.get_filenames
 
 Metadata constructs
 -------------------

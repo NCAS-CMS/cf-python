@@ -239,7 +239,7 @@ Data
    ~cf.CellMeasure.convert_reference_time
    ~cf.CellMeasure.creation_commands
    ~cf.CellMeasure.cyclic
-   ~cf.CellMeasure.files
+   ~cf.CellMeasure.get_filenames
    ~cf.CellMeasure.has_bounds
 
 Miscellaneous

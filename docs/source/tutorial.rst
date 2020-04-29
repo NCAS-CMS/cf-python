@@ -1257,7 +1257,7 @@ in the dataset, may subsequently be applied manually with the
 
    >>> cf.write(q, 'masked_q.nc')
    >>> no_mask_q = cf.read('masked_q.nc', mask=False)[0]
-   >>> print(no_mask_q.data.array)
+   >>> print(no_mask_q.array)
    [9.96920997e+36, 9.96920997e+36, 9.96920997e+36, 9.96920997e+36,
     9.96920997e+36, 9.96920997e+36, 9.96920997e+36, 9.96920997e+36],
     [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
@@ -1266,7 +1266,7 @@ in the dataset, may subsequently be applied manually with the
    [9.96920997e+36, 9.96920997e+36, 9.96920997e+36, 9.96920997e+36,
     9.96920997e+36, 9.96920997e+36, 9.96920997e+36, 9.96920997e+36]])
    >>> masked_q = no_mask_q.apply_masking()
-   >>> print(masked_q.data.array)
+   >>> print(masked_q.array)
    [[   --    --    --    --    --    --    --    --]
     [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
     [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]

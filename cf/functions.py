@@ -1776,20 +1776,22 @@ def flat(x):
 def abspath(filename):
     '''Return a normalized absolute version of a file name.
 
-    If a string containing URL is provided then it is returned
-    unchanged.
+    If `None` or a string containing URL is provided then it is
+    returned unchanged.
 
     .. seealso:: `cf.dirname`, `cf.pathjoin`, `cf.relpath`
 
     :Parameters:
 
-        filename: `str`
-            The name of the file.
+        filename: `str` or `None`
+            The name of the file, or `None`
 
     :Returns:
 
         `str`
-            The normalized absolutized version of *filename*.
+
+            The normalized absolutized version of *filename*, or
+            `None`.
 
     **Examples:**
 
@@ -1804,6 +1806,9 @@ def abspath(filename):
     'http://data/archive/file.nc'
 
     '''
+    if filename is None:
+        return
+    
     u = urllib.parse.urlparse(filename)
     if u.scheme != '':
         return filename
