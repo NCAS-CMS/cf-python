@@ -20,7 +20,7 @@ class DomainAxisTest(unittest.TestCase):
 
         self.assertTrue(x.size == 111)
         del x.size
-        self.assertTrue(getattr(x, 'size', None) is None)
+        self.assertIsNone(getattr(x, 'size', None))
         x.size = 56
         self.assertTrue(x.size == 56)
 

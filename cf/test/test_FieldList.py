@@ -63,8 +63,8 @@ class FieldTest(unittest.TestCase):
         f.append(f[0].copy())
         f[1] *= 10
         g = cf.read(self.filename)[0] * 10
-        self.assertTrue(g in f)
-        self.assertFalse(34.6 in f)
+        self.assertIn(g, f)
+        self.assertNotIn(34.6, f)
 
 
     def test_FieldList_close(self):
@@ -72,7 +72,7 @@ class FieldTest(unittest.TestCase):
             return
 
         f = cf.read(self.filename)
-        self.assertTrue(f.close() is None)
+        self.assertIsNone(f.close())
 
         _ = repr(f[0])
 
@@ -271,12 +271,12 @@ class FieldTest(unittest.TestCase):
         f.append(h)
 
         z = f.pop(0)
-        self.assertTrue(z is g)
+        self.assertIs(z, g)
         self.assertTrue(len(f) == 1)
         self.assertIsInstance(f, cf.FieldList)
 
         z = f.pop(-1)
-        self.assertTrue(z is h)
+        self.assertIs(z, h)
         self.assertTrue(len(f) == 0)
         self.assertIsInstance(f, cf.FieldList)
 
@@ -309,14 +309,14 @@ class FieldTest(unittest.TestCase):
         h = f[0] + 10
         f.append(h)
 
-        self.assertTrue(g is f[0])
-        self.assertTrue(h is f[1])
+        self.assertIs(g, f[0])
+        self.assertIs(h, f[1])
 
         f.reverse()
         self.assertIsInstance(f, cf.FieldList)
         self.assertTrue(len(f) == 2)
-        self.assertTrue(g is f[1])
-        self.assertTrue(h is f[0])
+        self.assertIs(g, f[1])
+        self.assertIs(h, f[0])
 
 
     def test_FieldList_select(self):
@@ -455,7 +455,7 @@ class FieldTest(unittest.TestCase):
         with self.assertRaises(Exception):
             _ = f.select_field('not this one')
 
-        self.assertTrue(f.select_field('not this one', None) is None)
+        self.assertIsNone(f.select_field('not this one', None))
 
         g = f.select_field('eastward_wind')
         self.assertIsInstance(g, cf.Field)

@@ -140,6 +140,20 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(g.get_filenames() == set(),
                         g.get_filenames())
         
+    def test_Field_has_construct(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+        
+        f = cf.example_field(1)
+
+        self.assertTrue(f.has_construct('T'))
+        self.assertTrue(f.has_construct('long_name=Grid latitude name'))
+        self.assertTrue(f.has_construct('ncvar%a'))
+        self.assertTrue(f.has_construct('measure:area'))
+        self.assertTrue(f.has_construct('domainaxis0'))
+        
+        self.assertFalse(f.has_construct('height'))
+
     def test_Field_compress_uncompress(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -274,7 +288,7 @@ class FieldTest(unittest.TestCase):
             self.assertTrue(g.size == f.size)
 
         self.assertTrue(f.equals(f.flatten([]), verbose=True))
-        self.assertTrue(f.flatten(inplace=True) is None)
+        self.assertIsNone(f.flatten(inplace=True))
 
     def test_Field_bin(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -874,7 +888,7 @@ class FieldTest(unittest.TestCase):
         f.standard_name= 'qwerty'
         g = f * f
 
-        self.assertTrue(g.get_property('standard_name', None) is None)
+        self.assertIsNone(g.get_property('standard_name', None))
 
     def test_Field__gt__(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -886,7 +900,7 @@ class FieldTest(unittest.TestCase):
         g = f > f.mean()
 
         self.assertTrue(g.Units.equals(cf.Units()))
-        self.assertTrue(g.get_property('standard_name', None) is None)
+        self.assertIsNone(g.get_property('standard_name', None))
 
     def test_Field_domain_mask(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -905,7 +919,7 @@ class FieldTest(unittest.TestCase):
 
         g = f.copy()
         h = g.cumsum(2)
-        self.assertTrue(g.cumsum(2, inplace=True) is None)
+        self.assertIsNone(g.cumsum(2, inplace=True))
         self.assertTrue(g.equals(h, verbose=True))
 
         for axis in range(f.ndim):
@@ -962,7 +976,7 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(h.equals(g, verbose=1))
 
         g = f.subspace(grid_longitude=slice(None, None, -1))
-        self.assertTrue(f.flip('X', inplace=True) is None)
+        self.assertIsNone(f.flip('X', inplace=True))
         self.assertTrue(f.equals(g, verbose=1))
 
     def test_Field_close(self):
@@ -970,7 +984,7 @@ class FieldTest(unittest.TestCase):
             return
 
         f = cf.read(self.filename)[0]
-        self.assertTrue(f.close() is None)
+        self.assertIsNone(f.close())
 
         _ = repr(f.data)
         for c in f.constructs.filter_by_data().values():
@@ -984,7 +998,7 @@ class FieldTest(unittest.TestCase):
 
         f = self.f.copy()
         f.cyclic('grid_longitude', period=45)
-        self.assertTrue(f.anchor('grid_longitude', 32, inplace=True) is None)
+        self.assertIsNone(f.anchor('grid_longitude', 32, inplace=True))
         self.assertIsInstance(f.anchor('grid_longitude', 32, dry_run=True), dict)
 
         g = f.subspace(grid_longitude=[0])
@@ -1142,15 +1156,15 @@ class FieldTest(unittest.TestCase):
         f = self.f.copy()
         _ = f.del_data_axes()
         self.assertFalse(f.has_data_axes())
-        self.assertTrue(f.del_data_axes(default=None) is None)
+        self.assertIsNone(f.del_data_axes(default=None))
 
         f = self.f.copy()
         for key in f.constructs.filter_by_data():
             self.assertTrue(f.has_data_axes(key))
             _ = f.get_data_axes(key)
             _ = f.del_data_axes(key)
-            self.assertTrue(f.del_data_axes(key, default=None) is None)
-            self.assertTrue(f.get_data_axes(key, default=None) is None)
+            self.assertIsNone(f.del_data_axes(key, default=None))
+            self.assertIsNone(f.get_data_axes(key, default=None))
             self.assertFalse(f.has_data_axes(key))
 
         g = cf.Field()
@@ -1212,7 +1226,7 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(f.get_data_axes() == ())
 
         f.del_data_axes()
-        self.assertTrue(f.get_data_axes(default=None) is None)
+        self.assertIsNone(f.get_data_axes(default=None))
 
 
     def test_Field_equals(self):
@@ -1237,7 +1251,7 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(f.ndim == 2)
         g = f.copy()
 
-        self.assertTrue(g.insert_dimension('Z', inplace=True) is None)
+        self.assertIsNone(g.insert_dimension('Z', inplace=True))
 
         self.assertTrue(g.ndim == f.ndim + 1)
         self.assertTrue(g.get_data_axes()[1:] == f.get_data_axes())
@@ -1666,13 +1680,13 @@ class FieldTest(unittest.TestCase):
         f = self.f.copy()
         f.dimension_coordinate('X').period(None)
         f.cyclic('X', False)
-        self.assertTrue(f.period('X') is None)
+        self.assertIsNone(f.period('X'))
         f.cyclic('X', period=360)
         self.assertTrue(f.period('X') == cf.Data(360, 'degrees'))
         f.cyclic('X', False)
         self.assertTrue(f.period('X') == cf.Data(360, 'degrees'))
         f.dimension_coordinate('X').period(None)
-        self.assertTrue(f.period('X') is None)
+        self.assertIsNone(f.period('X'))
 
     def test_Field_autocyclic(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -1680,7 +1694,7 @@ class FieldTest(unittest.TestCase):
 
         f = self.f.copy()
 
-        self.assertTrue(f.autocyclic() is False)
+        self.assertFalse(f.autocyclic())
         f.dimension_coordinate('X').del_bounds()
         f.autocyclic()
 
@@ -1741,7 +1755,7 @@ class FieldTest(unittest.TestCase):
 #        f = cf.example_field(0)
 #
 #        g = f.moving_mean(window_size=3, axis='X', inplace=True)
-#        self.assertTrue(g is None)
+#        self.assertIsNone(g)
 #
 #        f = cf.example_field(0)
 #        a = f.array
@@ -1831,7 +1845,7 @@ class FieldTest(unittest.TestCase):
 
         g = f.moving_window('mean', window_size=3, axis='X',
                             inplace=True)
-        self.assertTrue(g is None)
+        self.assertIsNone(g)
 
         with self.assertRaises(ValueError):
             _ = f.moving_window('mean', window_size=3, axis='X',
@@ -2039,14 +2053,14 @@ class FieldTest(unittest.TestCase):
 
         f = self.f.copy()
 
-        self.assertTrue(f.squeeze(inplace=True) is None)
+        self.assertIsNone(f.squeeze(inplace=True))
         g = f.copy()
         h = f.copy()
         h.squeeze(inplace=True)
         self.assertTrue(f.equals(h))
 
         f = self.f.copy()
-        self.assertTrue(f.squeeze(0, inplace=True) is None)
+        self.assertIsNone(f.squeeze(0, inplace=True))
 
     def test_Field_unsqueeze(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
@@ -2059,7 +2073,7 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(f.ndim == 2)
 
         g = f.copy()
-        self.assertTrue(g.unsqueeze(inplace=True) is None)
+        self.assertIsNone(g.unsqueeze(inplace=True))
         self.assertTrue(g.ndim == 3)
 
         g = f.unsqueeze()
@@ -2094,7 +2108,7 @@ class FieldTest(unittest.TestCase):
         c = f.auxiliary_coordinates(identities[0])
         self.assertTrue(f.auxs(identities[0]).equals(c, verbose=True))
 
-        self.assertTrue(f.aux('long_name=qwerty:asd', None) is None)
+        self.assertIsNone(f.aux('long_name=qwerty:asd', None))
         self.assertTrue(len(f.auxs('long_name=qwerty:asd')) == 0)
 
         with self.assertRaises(Exception):
@@ -2132,7 +2146,7 @@ class FieldTest(unittest.TestCase):
             c = f.coordinates(identities[0])
             self.assertTrue(f.coords(identities[0]).equals(c, verbose=True))
 
-        self.assertTrue(f.coord('long_name=qwerty:asd', None) is None)
+        self.assertIsNone(f.coord('long_name=qwerty:asd', None))
         self.assertTrue(len(f.coords('long_name=qwerty:asd')) == 0)
 
         with self.assertRaises(Exception):
@@ -2169,7 +2183,7 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(f.coordinate_reference('rotated_latitude_longitude', key=True) == key)
 
         # Delete
-        self.assertTrue(f.del_coordinate_reference('qwerty', default=None) is None)
+        self.assertIsNone(f.del_coordinate_reference('qwerty', default=None))
 
         self.assertTrue(len(f.coordinate_references) == 2)
         self.assertTrue(len(f.domain_ancillaries) == 3)
@@ -2238,7 +2252,7 @@ class FieldTest(unittest.TestCase):
             c = f.dimension_coordinates(identities[0])
             self.assertTrue(f.dims(identities[0]).equals(c, verbose=True))
 
-        self.assertTrue(f.dim('long_name=qwerty:asd', None) is None)
+        self.assertIsNone(f.dim('long_name=qwerty:asd', None))
         self.assertTrue(len(f.dims('long_name=qwerty:asd')) == 0)
 
         with self.assertRaises(Exception):
@@ -2267,7 +2281,7 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(len(f.measures('measure:area')) == 1)
         self.assertTrue(len(f.measures(*['measure:area'])) == 1)
 
-        self.assertTrue(f.measure('long_name=qwerty:asd', None) is None)
+        self.assertIsNone(f.measure('long_name=qwerty:asd', None))
         self.assertTrue(len(f.measures('long_name=qwerty:asd')) == 0)
 
         with self.assertRaises(Exception):
@@ -2313,7 +2327,7 @@ class FieldTest(unittest.TestCase):
         c = f.domain_ancillaries(identities[0])
         self.assertTrue(f.domain_ancs(identities[0]).equals(c, verbose=True))
 
-        self.assertTrue(f.domain_anc('long_name=qwerty:asd', None) is None)
+        self.assertIsNone(f.domain_anc('long_name=qwerty:asd', None))
         self.assertTrue(len(f.domain_ancs('long_name=qwerty:asd')) == 0)
 
         with self.assertRaises(Exception):
@@ -2350,7 +2364,7 @@ class FieldTest(unittest.TestCase):
         c = f.field_ancillaries(identities[0])
         self.assertTrue(f.field_ancs(identities[0]).equals(c, verbose=True))
 
-        self.assertTrue(f.field_anc('long_name=qwerty:asd', None) is None)
+        self.assertIsNone(f.field_anc('long_name=qwerty:asd', None))
         self.assertTrue(len(f.field_ancs('long_name=qwerty:asd')) == 0)
 
         with self.assertRaises(Exception):
@@ -2370,7 +2384,7 @@ class FieldTest(unittest.TestCase):
         g = f.transpose([0, 1, 2])
 
         self.assertTrue(f0.equals(g, verbose=True))
-        self.assertTrue(f.transpose([0, 1, 2], inplace=True) is None)
+        self.assertIsNone(f.transpose([0, 1, 2], inplace=True))
         self.assertTrue(f0.equals(f))
 
         f = cf.read(self.filename)[0]
@@ -2420,7 +2434,7 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(g.data.count() == 9*6, g.data.count())
 
         self.assertTrue(f.equals(f.where(None), verbose=True))
-        self.assertTrue(f.where(None, inplace=True) is None)
+        self.assertIsNone(f.where(None, inplace=True))
         self.assertTrue(f.equals(f0, verbose=True))
 
         g = f.where(cf.wi(25, 31), -99, 11,               construct='grid_longitude')
@@ -2444,7 +2458,7 @@ class FieldTest(unittest.TestCase):
         self.assertTrue(g[0].minimum() == 35)
         self.assertTrue(g[0].maximum() == 89)
 
-        self.assertTrue(f.where(cf.le(34), cf.masked, 45, inplace=True) is None)
+        self.assertIsNone(f.where(cf.le(34), cf.masked, 45, inplace=True))
         self.assertTrue(f[0].minimum() == 45)
         self.assertTrue(f[0].maximum() == 45)
 
@@ -2454,7 +2468,7 @@ class FieldTest(unittest.TestCase):
 
         f = self.f.copy()
         g = f.mask_invalid()
-        self.assertTrue(f.mask_invalid(inplace=True) is None)
+        self.assertIsNone(f.mask_invalid(inplace=True))
 
 # --- End: class
 

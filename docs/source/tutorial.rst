@@ -2804,9 +2804,9 @@ Rolling a cyclic axis
 
 The field construct may be "rolled" along a cyclic axis with the
 `~cf.Field.roll` method of the field construct. This means that the
-data along that axis so that a given number of elements from one edge
-of the dimension are removed and re-introduced at the other edge. All
-metadata constructs whose data spans the cyclic axis are also rolled.
+data along that axis are shifted so that a given number of elements from
+one edge of the dimension are removed and re-introduced at the other edge.
+All metadata constructs whose data spans the cyclic axis are also rolled.
 
 .. code-block:: python
    :caption: *Roll the data along the 'X' axis one element to the

@@ -7,10 +7,11 @@ import numpy
 
 import cf
 
+
 class CellMeasureTest(unittest.TestCase):
     def setUp(self):
-        self.filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                     'test_file.nc')
+        self.filename = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), 'test_file.nc')
 
     def test_CellMeasure__repr__str__dump(self):
         f = cf.read(self.filename)[0]
@@ -22,17 +23,15 @@ class CellMeasureTest(unittest.TestCase):
 
         self.assertTrue(x.ismeasure)
 
-
     def test_CellMeasure_measure(self):
         f = cf.read(self.filename)[0]
         x = f.cell_measures('measure:area').value()
 
         self.assertTrue(x.measure == 'area')
         del x.measure
-        self.assertTrue(getattr(x, 'measure', None) is None)
+        self.assertIsNone(getattr(x, 'measure', None))
         x.measure = 'qwerty'
         self.assertTrue(x.measure == 'qwerty')
-
 
     def test_CellMeasure_identity(self):
         f = cf.read(self.filename)[0]
