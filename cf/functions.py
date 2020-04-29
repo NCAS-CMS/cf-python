@@ -1776,20 +1776,22 @@ def flat(x):
 def abspath(filename):
     '''Return a normalized absolute version of a file name.
 
-    If a string containing URL is provided then it is returned
-    unchanged.
+    If `None` or a string containing URL is provided then it is
+    returned unchanged.
 
     .. seealso:: `cf.dirname`, `cf.pathjoin`, `cf.relpath`
 
     :Parameters:
 
-        filename: `str`
-            The name of the file.
+        filename: `str` or `None`
+            The name of the file, or `None`
 
     :Returns:
 
         `str`
-            The normalized absolutized version of *filename*.
+
+            The normalized absolutized version of *filename*, or
+            `None`.
 
     **Examples:**
 
@@ -1804,6 +1806,9 @@ def abspath(filename):
     'http://data/archive/file.nc'
 
     '''
+    if filename is None:
+        return
+    
     u = urllib.parse.urlparse(filename)
     if u.scheme != '':
         return filename
@@ -2474,7 +2479,6 @@ def environment(display=True, paths=True, string=True):
     else:
         return(out)
 
-
 def default_netCDF_fillvals():
     '''Default data array fill values for each data type.
 
@@ -2501,10 +2505,8 @@ def default_netCDF_fillvals():
     '''
     return netCDF4.default_fillvals
 
-
 def _DEPRECATION_ERROR(message='', version='3.0.0'):
     raise DeprecationError("{}".format(message))
-
 
 def _DEPRECATION_ERROR_ARG(instance, method, arg, message='', version='3.0.0'):
     raise DeprecationError(
@@ -2517,7 +2519,6 @@ def _DEPRECATION_ERROR_ARG(instance, method, arg, message='', version='3.0.0'):
             version
         )
     )
-
 
 def _DEPRECATION_ERROR_FUNCTION_KWARGS(func, kwargs=None, message='',
                                        exact=False, traceback=False,

@@ -10,7 +10,8 @@ class NetCDFArray(cfdm.NetCDFArray,
     '''A sub-array stored in a netCDF file.
     '''
     def __init__(self, filename=None, ncvar=None, varid=None,
-                 dtype=None, ndim=None, shape=None, size=None):
+                 dtype=None, ndim=None, shape=None, size=None,
+                 mask=True):
         '''**Initialization**
 
     :Parameters:
@@ -41,6 +42,17 @@ class NetCDFArray(cfdm.NetCDFArray,
         ndim: `int`
             The number of array dimensions in the netCDF file.
 
+        mask: `bool`, optional
+            If False then do not mask by convention when reading data
+            from disk. By default data is masked by convention.
+
+            A netCDF array is masked depending on the values of any of
+            the netCDF variable attributes ``valid_min``,
+            ``valid_max``, ``valid_range``, ``_FillValue`` and
+            ``missing_value``.
+    
+            .. versionadded:: 3.4.0
+
     **Examples:**
 
     >>> import netCDF4
@@ -52,7 +64,7 @@ class NetCDFArray(cfdm.NetCDFArray,
         '''
         super().__init__(filename=filename, ncvar=ncvar, varid=varid,
                          dtype=dtype, ndim=ndim, shape=shape,
-                         size=size)
+                         size=size, mask=mask)
 
         # By default, keep the netCDF file open after data array
         # access
@@ -100,7 +112,6 @@ class NetCDFArray(cfdm.NetCDFArray,
 
         '''
         return _open_netcdf_file(self.get_filename(), 'r')
-
 
 # --- End: class
 

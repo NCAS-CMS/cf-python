@@ -170,6 +170,9 @@ Data
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.FieldAncillary.apply_masking
+   ~cf.FieldAncillary.count
+   ~cf.FieldAncillary.count_masked
    ~cf.FieldAncillary.fill_value
 
 .. autosummary::
@@ -178,8 +181,6 @@ Data
    :template: attribute.rst
 
    ~cf.FieldAncillary.binary_mask
-   ~cf.FieldAncillary.count
-   ~cf.FieldAncillary.count_masked
    ~cf.FieldAncillary.hardmask
    ~cf.FieldAncillary.mask
    ~cf.FieldAncillary.mask_invalid
@@ -214,7 +215,7 @@ Data
    ~cf.FieldAncillary.convert_reference_time
    ~cf.FieldAncillary.creation_commands
    ~cf.FieldAncillary.cyclic
-   ~cf.FieldAncillary.files
+   ~cf.FieldAncillary.get_filenames
    ~cf.FieldAncillary.has_bounds
 
 Miscellaneous

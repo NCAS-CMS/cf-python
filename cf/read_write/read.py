@@ -30,7 +30,8 @@ def read(files, external=None, verbose=False, warnings=False,
          squeeze=False, unsqueeze=False, fmt=None, select=None,
          extra=None, recursive=False, followlinks=False, um=None,
          chunk=True, field=None, height_at_top_of_model=None,
-         select_options=None, follow_symlinks=False):
+         select_options=None, follow_symlinks=False, mask=True,
+         warn_valid=False):
     '''Read field constructs from netCDF, CDL, PP or UM fields files.
 
     NetCDF files may be on disk or on an OPeNDAP server.
@@ -79,9 +80,8 @@ def read(files, external=None, verbose=False, warnings=False,
     deleted. The CDL file may omit data array values (as would be the
     case, for example, if the file was created with the ``-h`` or
     ``-c`` option to ``ncdump``), in which case the the relevant
-    constructs in memory will be created with data containing missing
+    constructs in memory will be created with data with all missing
     values.
-
 
     **PP and UM fields files**
 
@@ -291,6 +291,43 @@ def read(files, external=None, verbose=False, warnings=False,
             This parameter replaces the deprecated *follow_symlinks*
             parameter.
 
+        mask: `bool`, optional
+            If False then do not mask by convention when reading the
+            data of field or metadata constructs from disk. By default
+            data is masked by convention.
+
+            The masking by convention of a netCDF array depends on the
+            values of any of the netCDF variable attributes
+            ``_FillValue``, ``missing_value``, ``valid_min``,
+            ``valid_max`` and ``valid_range``.
+    
+            The masking by convention of a PP or UM array depends on
+            the value of BMDI in the lookup header. A value other than
+            ``-1.0e30`` indicates the data value to be masked.
+    
+            See
+            https://ncas-cms.github.io/cf-python/tutorial.html#data-mask
+            for details.
+
+            .. versionadded:: 3.4.0
+            
+        warn_valid: `bool`, optional
+            If True then print a warning for the presence of
+            ``valid_min``, ``valid_max`` or ``valid_range`` properties
+            on field contructs and metadata constructs that have
+            data. By default no such warning is issued.
+
+            "Out-of-range" data values in the file, as defined by any
+            of these properties, are automatically masked by default,
+            which may not be as intended. See the *mask* parameter for
+            turning off all automatic masking.
+    
+            See
+            https://ncas-cms.github.io/cf-python/tutorial.html#data-mask
+            for details.
+
+            .. versionadded:: 3.4.0
+            
         um: `dict`, optional
             For Met Office (UK) PP files and Met Office (UK) fields
             files only, provide extra decoding instructions. This
@@ -379,6 +416,7 @@ def read(files, external=None, verbose=False, warnings=False,
             Use the *followlinks* parameter instead.
 
         select_options: deprecated at version 3.0.0
+            Use methods on the returned `FieldList` instead.
 
     :Returns:
 
@@ -559,7 +597,9 @@ def read(files, external=None, verbose=False, warnings=False,
                 selected_fmt=fmt, um=um,
                 extra=extra,
                 height_at_top_of_model=height_at_top_of_model,
-                chunk=chunk
+                chunk=chunk,
+                mask=mask,
+                warn_valid=warn_valid,
             )
 
             # --------------------------------------------------------
@@ -656,19 +696,18 @@ def read(files, external=None, verbose=False, warnings=False,
 
     return field_list
 
-
 def _plural(n):  # pragma: no cover
     '''Return a suffix which reflects a word's plural.
 
     '''
     return 's' if n != 1 else ''  # pragma: no cover
 
-
 def _read_a_file(filename, ftype=None, aggregate=True,
                  aggregate_options=None, ignore_read_error=False,
                  verbose=False, warnings=False, external=None,
                  selected_fmt=None, um=None, extra=None,
-                 height_at_top_of_model=None, chunk=True):
+                 height_at_top_of_model=None, chunk=True, mask=True,
+                 warn_valid=False):
     '''Read the contents of a single file into a field list.
 
     :Parameters:
@@ -690,6 +729,12 @@ def _read_a_file(filename, ftype=None, aggregate=True,
             empty file, unknown file format, etc. By default the
             IOError is raised.
 
+        mask: `bool`, optional
+            If False then do not mask by convention when reading data
+            from disk. By default data is masked by convention.
+
+            .. versionadded:: 3.4.0
+
         verbose: `bool`, optional
             If True then print information to stdout.
 
@@ -701,6 +746,7 @@ def _read_a_file(filename, ftype=None, aggregate=True,
     '''
     if aggregate_options is None:
         aggregate_options = {}
+
     # Find this file's type
     fmt = None
     word_size = None
@@ -721,6 +767,7 @@ def _read_a_file(filename, ftype=None, aggregate=True,
             # endian-ness
             if word_size is None:
                 word_size = 4
+                
             if endian is None:
                 endian = 'big'
         # --- End: if
@@ -780,14 +827,15 @@ def _read_a_file(filename, ftype=None, aggregate=True,
     if ftype == 'netCDF' and extra_read_vars['fmt'] in (None, 'NETCDF', 'CFA'):
         fields = netcdf.read(filename, external=external, extra=extra,
                              verbose=verbose, warnings=warnings,
-                             extra_read_vars=extra_read_vars)
+                             extra_read_vars=extra_read_vars,
+                             mask=mask, warn_valid=warn_valid)
 
     elif ftype == 'UM' and extra_read_vars['fmt'] in (None, 'UM'):
         fields = UM.read(filename, um_version=umversion,
                          verbose=verbose, set_standard_name=False,
                          height_at_top_of_model=height_at_top_of_model,
                          fmt=fmt, word_size=word_size, endian=endian,
-                         chunk=chunk)
+                         chunk=chunk) #, mask=mask, warn_valid=warn_valid)
 
         # PP fields are aggregated intrafile prior to interfile
         # aggregation
@@ -808,7 +856,6 @@ def _read_a_file(filename, ftype=None, aggregate=True,
     # Return the fields
     # ----------------------------------------------------------------
     return FieldList(fields)
-
 
 def file_type(filename):
     '''Return the file format.

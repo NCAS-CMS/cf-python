@@ -1,5 +1,7 @@
 from os.path import abspath
 
+import numpy
+
 from .netcdf import NetCDFWrite
 
 from ..cfimplementation import implementation
@@ -24,9 +26,10 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
           external=None, Conventions=None, datatype=None,
           least_significant_digit=None, endian='native', compress=0,
           fletcher32=False, shuffle=True, reference_datetime=None,
-          verbose=False, cfa_options=None, mode='w', single=False,
-          double=False, variable_attributes=None, string=True,
-          HDF_chunksizes=None, no_shuffle=None, unlimited=None):
+          verbose=False, cfa_options=None, mode='w', single=None,
+          double=None, variable_attributes=None, string=True,
+          warn_valid=True, HDF_chunksizes=None, no_shuffle=None,
+          unlimited=None):
     '''Write field constructs to a netCDF file.
 
     **File format**
@@ -394,20 +397,40 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
               numpy.dtype('int32')}``.
 
         single: `bool`, optional
-            Write 64-bit floats as 32-bit floats and 64-bit integers
-            as 32-bit integers. By default, input data types are
-            preserved. Note that ``single=True`` is exactly equivalent
-            to ``datatype={numpy.dtype('float64'):
-            numpy.dtype('float32'), numpy.dtype('int64'):
-            numpy.dtype('int32')}``.
+            If True then write 64-bit floats as 32-bit floats and
+            64-bit integers as 32-bit integers.
+
+            If False then write 32-bit floats as 64-bit floats and
+            32-bit integers as 64-bit integers.
+
+            By default, input data types are preserved.
+
+            .. note:: ``single=True`` is exactly equivalent to
+                      ``double=False``, as well as
+                      ``datatype={numpy.dtype(float):
+                      numpy.dtype('float32'), numpy.dtype(int):
+                      numpy.dtype('int32')}``.
+
+                      ``single=False`` is exactly equivalent to
+                      ``double=True``.
 
         double: `bool`, optional
-            Write 32-bit floats as 64-bit floats and 32-bit integers
-            as 64-bit integers. By default, input data types are
-            preserved. Note that ``double=True`` is exactly equivalent
-            to ``datatype={numpy.dtype('float32'):
-            numpy.dtype('float64'), numpy.dtype('int32'):
-            numpy.dtype('int64')}``.
+            If True then write 32-bit floats as 64-bit floats and
+            32-bit integers as 64-bit integers.
+
+            If False then write 64-bit floats as 32-bit floats and
+            64-bit integers as 32-bit integers.
+
+            By default, input data types are preserved.
+
+            .. note:: ``double=True`` is exactly equivalent to
+                      ``single=False``, as well as
+                      ``datatype={numpy.dtype('float32'):
+                      numpy.dtype(float), numpy.dtype('int32'):
+                      numpy.dtype(int)}``.
+
+                      ``double=False`` is exactly equivalent to
+                      ``single=True``.
 
        string: `bool`, optional
            By default string-valued construct data are written as
@@ -423,6 +446,27 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
         verbose: `bool`, optional
             If True then print a summary of how constructs map to output
             netCDF dimensions, variables and attributes.
+    
+       warn_valid: `bool`, optional
+            If False then do not print a warning when writing
+            "out-of-range" data, as indicated by the values, if
+            present, of any of the ``valid_min``, ``valid_max`` or
+            ``valid_range`` properties on field and metadata
+            constructs that have data. By default a warning is printed
+            if any such construct has any of these properties in
+            combination with out-of-range data.
+
+            The consequence of writing out-of-range data values is
+            that, by default, these values will be masked when the
+            file is subsequently read.
+
+            *Parameter example:*
+              If a construct has ``valid_max`` property with value
+              ``100`` and data with maximum value ``999``, then the
+              resulting warning may be suppressed by setting
+              ``warn_valid=False``.
+
+            .. versionadded:: 3.4.0
 
         HDF_chunksizes: deprecated at version 3.0.0
             HDF chunk sizes may be set for individual constructs prior
@@ -496,6 +540,32 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
     # --- End: if
 
     if fields:
+        # double and single
+        if datatype:
+            if single is not None:
+                raise ValueError("Can't set datatype and single")
+            if double is not None:
+                raise ValueError("Can't set datatype and double")
+        # --- End: if
+
+        if single is not None and double is not None:
+            raise ValueError("Can't set both the single and double "
+                             "parameters")
+
+        if single is not None and not single:
+            double = True
+            
+        if double is not None and not double:
+            single = True
+
+        if single:
+            datatype = {numpy.dtype(float): numpy.dtype('float32'),
+                        numpy.dtype(int): numpy.dtype('int32')}
+
+        if double:
+            datatype = {numpy.dtype('float32'): numpy.dtype(float),
+                        numpy.dtype('int32'): numpy.dtype(int)}
+        
         extra_write_vars = {
             'cfa': False,
             'cfa_options': {},
@@ -535,6 +605,7 @@ def write(fields, filename, fmt='NETCDF4', overwrite=True,
                      endian=endian, compress=compress,
                      shuffle=shuffle, fletcher32=fletcher32,
                      verbose=verbose, string=string,
+                     warn_valid=warn_valid,
                      extra_write_vars=extra_write_vars)
     # --- End: if
 

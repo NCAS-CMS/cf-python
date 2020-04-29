@@ -1,3 +1,35 @@
+version 3.4.0
+-------------
+----
+
+**2020-04-??**
+
+* New method: `cf.Field.apply_masking`
+* New method: `cf.Data.apply_masking`
+* New method: `cf.Field.get_filenames` (replaces deprecated
+  `cf.Field.files`)
+* New method: `cf.Data.get_filenames` (replaces deprecated
+  `cf.Data.files`)
+* New keyword parameter to `cf.read`: ``mask``
+* New keyword parameter to `cf.read`: ``warn_valid``
+  (https://github.com/NCAS-CMS/cfdm/issues/30)
+* New keyword parameter to `cf.write`: ``warn_valid``
+  (https://github.com/NCAS-CMS/cfdm/issues/30)
+* New keyword parameter to `cf.Field.nc_global_attributes`: ``values``
+* Added time coordinate bounds to the polygon geometry example field
+  ``6`` returned by `cf.example_field`.
+* Changed exact cfdm dependency to version 1.8.3.
+* Changed minimum cfunits dependency to version 3.2.6.
+* Fixed bug in `cf.write` that caused (what are effectively)
+  string-valued scalar auxiliary coordinates to not be written to disk
+  as such, or even an exception to be raised.
+* Fixed bug in `cf.write` that caused the ``single`` and ``double``
+  keyword parameters to have no effect. This bug was introduced at
+  version 3.0.0 (https://github.com/NCAS-CMS/cf-python/issues/65).
+* Fixed bug in `cf.Field.has_construct` that caused it to always
+  return `False` unless a construct key was used as the construct
+  identity (https://github.com/NCAS-CMS/cf-python/issues/67).
+  
 version 3.3.0
 -------------
 ----

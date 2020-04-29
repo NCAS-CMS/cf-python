@@ -81,8 +81,8 @@ documentation, installation and source code.
 '''
 __Conventions__  = 'CF-1.8'
 __author__       = 'David Hassell'
-__date__         = '2020-04-20'
-__version__      = '3.3.0'
+__date__         = '2020-04-??'
+__version__      = '3.4.0'
 
 _requires = (
     'numpy',
@@ -93,7 +93,8 @@ _requires = (
     'psutil',
 )
 
-_error0 = 'cf v{} requires the modules {}. '.format(__version__, ', '.join(_requires))
+_error0 = "cf v{} requires the modules {}. ".format(
+    __version__, ', '.join(_requires))
 
 try:
     import cfdm
@@ -164,7 +165,8 @@ except ImportError as error1:
 _minimum_vn = '0.6.0'
 if LooseVersion(psutil.__version__) < LooseVersion(_minimum_vn):
     raise RuntimeError(
-        "Bad psutil version: cf requires psutil version {} or later. Got {} at {}".format(
+        "Bad psutil version: cf requires psutil version {} or later. "
+        "Got {} at {}".format(
             _minimum_vn, psutil.__version__, psutil.__file__))
 
 # Check the version of netCDF4
@@ -179,7 +181,8 @@ if LooseVersion(netCDF4.__version__) < LooseVersion(_minimum_vn):
 _minimum_vn = '1.1.1'
 if LooseVersion(cftime.__version__) < LooseVersion(_minimum_vn):
     raise RuntimeError(
-        "Bad cftime version: cf requires cftime version {} or later. Got {} at {}".format(
+        "Bad cftime version: cf requires cftime version {} or later. "
+        "Got {} at {}".format(
             _minimum_vn, cftime.__version__, cftime.__file__))
 
 # Check the version of numpy
@@ -191,7 +194,7 @@ if LooseVersion(numpy.__version__) < LooseVersion(_minimum_vn):
     )
 
 # Check the version of cfunits
-_minimum_vn = '3.2.5'
+_minimum_vn = '3.2.6'
 if LooseVersion(cfunits.__version__) < LooseVersion(_minimum_vn):
     raise ValueError(
         "Bad cfunits version: cf requires cfunits version {} or later. Got {} "
@@ -199,11 +202,11 @@ if LooseVersion(cfunits.__version__) < LooseVersion(_minimum_vn):
     )
 
 # Check the version of cfdm
-_minimum_vn = '1.8.1'
-if LooseVersion(cfdm.__version__) < LooseVersion(_minimum_vn):
+_exact_vn = '1.8.3'
+if LooseVersion(cfdm.__version__) != LooseVersion(_exact_vn):
     raise ValueError(
-        "Bad cfdm version: cf requires cfdm version {} or later. Got {} "
-        "at {}".format(_minimum_vn, cfdm.__version__, cfdm.__file__))
+        "Bad cfdm version: cf requires cfdm version {}. Got {} "
+        "at {}".format(_exact_vn, cfdm.__version__, cfdm.__file__))
 
 from .constructs import Constructs
 

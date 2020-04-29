@@ -271,6 +271,7 @@ Mask support
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.Data.apply_masking
    ~cf.Data.count
    ~cf.Data.count_masked
    ~cf.Data.compressed
@@ -538,7 +539,7 @@ Miscellaneous
    :template: method.rst
 
    ~cf.Data.creation_commands
-   ~cf.Data.files
+   ~cf.Data.get_filenames
    ~cf.Data.get_data
    ~cf.Data.source
 

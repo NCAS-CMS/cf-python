@@ -137,7 +137,7 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
                 construct=construct,
                 unpacked_dtype=unpacked_dtype,
                 uncompress_override=uncompress_override,
-                parent_ncvar=parent_ncvar
+                parent_ncvar=parent_ncvar,
             )
 
         # ------------------------------------------------------------
@@ -176,7 +176,6 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         # UNICODE???? TODO
         if self._is_char(ncvar) and dtype.kind in 'SU' and ncdimensions:
-            # strlen = len(nc.dimensions[ncdimensions[-1]])
             strlen = g['nc'].dimensions[ncdimensions[-1]].size
             if strlen > 1:
                 ncdimensions.pop()
@@ -185,13 +184,10 @@ class NetCDFRead(cfdm.read_write.netcdf.NetCDFRead):
 
         cfa_data['dtype'] = dtype
         cfa_data['_axes'] = ncdimensions
-#        cfa_data['shape'] = [len(nc.dimensions[ncdim])
-#                             for ncdim in ncdimensions]
         cfa_data['shape'] = [g['nc'].dimensions[ncdim].size
                              for ncdim in ncdimensions]
 
         for attrs in cfa_data['Partitions']:
-
             # FORMAT
             sformat = attrs.get('subarray', {}).pop('format', 'netCDF')
             if sformat is not None:

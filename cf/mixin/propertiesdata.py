@@ -1026,9 +1026,8 @@ class PropertiesData(Properties):
     def binary_mask(self):
         '''A binary (0 and 1) missing data mask of the data array.
 
-    The binary mask's data array comprises dimensionless 32-bit
-    integers and has 0 where the data array has missing data and 1
-    otherwise.
+    The binary mask's data comprises dimensionless 32-bit integers
+    that are 0 where the data has missing values and 1 otherwise.
 
     **Examples:**
 
@@ -3645,35 +3644,35 @@ class PropertiesData(Properties):
 
         return False
 
-    def files(self):
-        '''Return the names of any files containing parts of the data array.
-
-    .. seealso:: `close`
-
-    :Returns:
-
-        `!set`
-            The file names in normalized, absolute form.
-
-    **Examples:**
-
-    >>> f = cf.read_field('../file[123].nc')
-    >>> f.files()
-    {'/data/user/file1.nc',
-     '/data/user/file2.nc',
-     '/data/user/file3.nc'}
-    >>> a = f.array
-    >>> f.files()
-    set()
-
-        '''
-        data = self.get_data(None)
-        if data is None:
-            out = set()
-        else:
-            out = data.files()
-
-        return out
+#    def files(self):
+#        '''Return the names of any files containing parts of the data array.
+#
+#    .. seealso:: `close`
+#
+#    :Returns:
+#
+#        `!set`
+#            The file names in normalized, absolute form.
+#
+#    **Examples:**
+#
+#    >>> f = cf.read_field('../file[123].nc')
+#    >>> f.files()
+#    {'/data/user/file1.nc',
+#     '/data/user/file2.nc',
+#     '/data/user/file3.nc'}
+#    >>> a = f.array
+#    >>> f.files()
+#    set()
+#
+#        '''
+#        data = self.get_data(None)
+#        if data is None:
+#            out = set()
+#        else:
+#            out = data.files()
+#
+#        return out
 
     def fill_value(self, default=None):
         '''Return the data array missing data value.

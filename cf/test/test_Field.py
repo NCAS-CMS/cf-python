@@ -1,8 +1,10 @@
+import atexit
 import datetime
 import inspect
 import itertools
 import os
 import re
+import tempfile
 import unittest
 
 import numpy
@@ -10,6 +12,19 @@ import numpy
 from scipy.ndimage import convolve1d
 
 import cf
+
+tmpfile  = tempfile.mktemp('.cfdm_test')
+tmpfiles = [tmpfile]
+def _remove_tmpfiles():
+    '''
+    '''
+    for f in tmpfiles:
+        try:
+            os.remove(f)
+        except OSError:
+            pass
+        
+atexit.register(_remove_tmpfiles)
 
 def axes_combinations(f):
     return [axes
@@ -41,7 +56,7 @@ class FieldTest(unittest.TestCase):
 
         self.test_only = []
 #        self.test_only = ['NOTHING!!!!']
-#        self.test_only = ['test_Field_cumsum']
+#        self.test_only = ['test_Field_get_filenames']
 #        self.test_only = ['test_Field_convolution_filter', 'test_Field_derivative', 'test_Field_moving_window']
 #        self.test_only = ['test_Field_weights']
 #        self.test_only = ['test_Field_collapse']
@@ -91,6 +106,40 @@ class FieldTest(unittest.TestCase):
                                                     string=s)
         # --- End: for
 
+    def test_Field_get_filenames(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = cf.example_field(0)
+
+        tmpfile = 'cfdm_test_Field_get_filenames.nc'
+        tmpfiles.append(tmpfile)
+        
+        cf.write(f, tmpfile)
+        g = cf.read(tmpfile)[0]
+
+        abspath_tmpfile = os.path.abspath(tmpfile)
+        self.assertTrue(g.get_filenames() == set([abspath_tmpfile]),
+                        g.get_filenames())
+
+        g.data[...] = -99
+        self.assertTrue(g.get_filenames() == set([abspath_tmpfile]),
+                        g.get_filenames())
+
+        for c in g.constructs.filter_by_data().values():
+            c.data[...] = -99
+
+        self.assertTrue(g.get_filenames() == set([abspath_tmpfile]),
+                        g.get_filenames())
+        
+        for c in g.constructs.filter_by_data().values():
+            if c.has_bounds():                
+                c.bounds.data[...] = -99
+        # --- End: for
+        
+        self.assertTrue(g.get_filenames() == set(),
+                        g.get_filenames())
+        
     def test_Field_has_construct(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:
             return
@@ -147,6 +196,56 @@ class FieldTest(unittest.TestCase):
                     self.assertTrue(bool(c.data.get_compression_type()), message)
                     self.assertTrue(f.equals(c, verbose=True), message)
         # --- End: for
+        
+    def test_Field_apply_masking(self):
+        if self.test_only and inspect.stack()[0][3] not in self.test_only:
+            return
+
+        f = cf.example_field(0)
+
+        for prop in ('missing_value', '_FillValue', 'valid_min',
+                     'valid_max', 'valid_range'):            
+            f.del_property(prop, None)
+
+        d = f.data.copy()
+        g = f.copy()        
+        self.assertTrue(f.apply_masking(inplace=True) is None)
+        self.assertTrue(f.equals(g, verbose=1))
+
+        x = 0.11        
+        y = 0.1
+        z = 0.2
+        
+        f.set_property('_FillValue', x)
+        d = f.data.copy()
+        
+        g = f.apply_masking()
+        e = d.apply_masking(fill_values=[x])
+        self.assertTrue(e.equals(g.data, verbose=1))
+        self.assertTrue(g.data.array.count() == g.data.size - 1)
+
+        f.set_property('valid_range', [y, z])
+        d = f.data.copy()
+        g = f.apply_masking()
+        e = d.apply_masking(fill_values=[x], valid_range=[y, z])
+        self.assertTrue(e.equals(g.data, verbose=1))
+
+        f.del_property('valid_range')
+        f.set_property('valid_min', y)
+        g = f.apply_masking()
+        e = d.apply_masking(fill_values=[x], valid_min=y)
+        self.assertTrue(e.equals(g.data, verbose=1))
+
+        f.del_property('valid_min')
+        f.set_property('valid_max', z)
+        g = f.apply_masking()
+        e = d.apply_masking(fill_values=[x], valid_max=z)
+        self.assertTrue(e.equals(g.data, verbose=1))
+
+        f.set_property('valid_min', y)
+        g = f.apply_masking()
+        e = d.apply_masking(fill_values=[x], valid_min=y, valid_max=z)
+        self.assertTrue(e.equals(g.data, verbose=1))
 
     def test_Field_flatten(self):
         if self.test_only and inspect.stack()[0][3] not in self.test_only:

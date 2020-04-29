@@ -105,7 +105,8 @@ from ..functions import (CHUNKSIZE, FM_THRESHOLD, RTOL, ATOL,
                          FREE_MEMORY, COLLAPSE_PARALLEL_MODE,
                          parse_indices, _numpy_allclose,
                          _numpy_isclose, pathjoin, hash_array,
-                         broadcast_array, default_netCDF_fillvals)
+                         broadcast_array, default_netCDF_fillvals,
+                         abspath)
 
 from ..functions import (_DEPRECATION_ERROR_METHOD,
                          _DEPRECATION_ERROR_ATTRIBUTE)
@@ -139,6 +140,10 @@ if mpi_on:
     from mpi4py.MPI import SUM as mpi_sum
 # --- End: if
 
+
+# --------------------------------------------------------------------
+# Constants
+# --------------------------------------------------------------------
 _year_length = 365.242198781
 _month_length = _year_length / 12
 
@@ -8648,7 +8653,200 @@ False
 
         return False
 
-    # 0
+    @_inplace_enabled
+    def apply_masking(self, fill_values=None, valid_min=None,
+                      valid_max=None, valid_range=None, inplace=False):
+        '''Apply masking.
+
+    Masking is applied according to the values of the keyword
+    parameters.
+
+    Elements that are already masked remain so.
+
+    .. versionadded:: 3.4.0
+
+    .. seealso:: `get_fill_value`, `hardmask`, `mask`, `where`
+                 
+    :Parameters:
+
+        fill_values: `bool` or sequence of scalars, optional
+            Specify values that will be set to missing data. Data
+            elements exactly equal to any of the values are set to
+            missing data.
+
+            If True then the value returned by the `get_fill_value`
+            method, if such a value exists, is used.
+
+            Zero or more values may be provided in a sequence of
+            scalars.
+
+            *Parameter example:*
+              Specify a fill value of 999: ``fill_values=[999]``
+         
+            *Parameter example:*
+              Specify fill values of 999 and -1.0e30:
+              ``fill_values=[999, -1.0e30]``
+         
+            *Parameter example:*
+              Use the fill value already set for the data:
+              ``fill_values=True``
+         
+            *Parameter example:*
+              Use no fill values: ``fill_values=False`` or
+              ``fill_value=[]``
+         
+        valid_min: number, optional
+            A scalar specifying the minimum valid value. Data elements
+            strictly less than this number will be set to missing
+            data.
+
+        valid_max: number, optional
+            A scalar specifying the maximum valid value. Data elements
+            strictly greater than this number will be set to missing
+            data.
+
+        valid_range: (number, number), optional
+            A vector of two numbers specifying the minimum and maximum
+            valid values, equivalent to specifying values for both
+            *valid_min* and *valid_max* parameters. The *valid_range*
+            parameter must not be set if either *valid_min* or
+            *valid_max* is defined.
+
+            *Parameter example:*
+              ``valid_range=[-999, 10000]`` is equivalent to setting
+              ``valid_min=-999, valid_max=10000``
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+    
+    :Returns:
+    
+        `Data` or `None`
+            The data with masked values. If the operation was in-place
+            then `None` is returned.
+
+    **Examples:**
+
+    >>> import numpy
+    >>> d = Data(numpy.arange(12).reshape(3, 4), 'm')
+    >>> d[1, 1] = masked
+    >>> print(d.array)
+    [[0  1  2  3]
+     [4 --  6  7]
+     [8  9 10 11]]
+
+    >>>  print(d.apply_masking().array)
+    [[0  1  2  3]
+     [4 --  6  7]
+     [8  9 10 11]]
+    >>> print(d.apply_masking(fill_values=[0]).array)
+    [[--  1  2  3]
+     [ 4 --  6  7]
+     [ 8  9 10 11]]    
+    >>> print(d.apply_masking(fill_values=[0, 11]).array)
+    [[--  1  2  3]
+     [ 4 --  6  7]
+     [ 8  9 10 --]]
+    
+    >>> print(d.apply_masking(valid_min=3).array)
+    [[-- -- --  3]
+     [ 4 --  6  7]
+     [ 8  9 10 11]]
+    >>> print(d.apply_masking(valid_max=6).array)
+    [[ 0  1  2  3]
+     [ 4 --  6 --]
+     [-- -- -- --]]
+    >>> print(d.apply_masking(valid_range=[2, 8]).array)
+    [[-- --  2  3]
+     [ 4 --  6  7]
+     [ 8 -- -- --]]
+    
+    >>> d.set_fill_value(7)
+    >>> print(d.apply_masking(fill_values=True).array)
+    [[0  1  2  3]
+     [4 --  6 --]
+     [8  9 10 11]]
+    >>> print(d.apply_masking(fill_values=True,
+    ...                       valid_range=[2, 8]).array)
+    [[-- --  2  3]
+     [ 4 --  6 --]
+     [ 8 -- -- --]]
+
+        '''
+        if valid_range is not None:
+            if valid_min is not None or valid_max is not None:
+                raise ValueError(
+                    "Can't set 'valid_range' parameter with either the "
+                    "'valid_min' nor 'valid_max' parameters")
+
+            try:
+                if len(valid_range) != 2:
+                    raise ValueError(
+                        "'valid_range' parameter must be a vector of "
+                        "two elements")
+            except TypeError:                
+                raise ValueError(
+                    "'valid_range' parameter must be a vector of "
+                    "two elements")
+            
+            valid_min, valid_max = valid_range
+
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        if fill_values is None:
+            fill_values = False
+        
+        if isinstance(fill_values, bool):
+            if fill_values:
+                fill_value = self.get_fill_value(None)
+                if fill_value is not None:
+                    fill_values = (fill_value,)
+                else:
+                    fill_values = ()
+            else:
+                fill_values = ()
+        else:            
+            try:
+                _ = iter(fill_values)
+            except TypeError:
+                raise TypeError(
+                    "'fill_values' parameter must be a sequence or "
+                    "of type bool. Got type {}".format(type(fill_values)))
+            else:
+                if isinstance(fill_values, str):
+                    raise TypeError(
+                        "'fill_values' parameter must be a sequence or "
+                        "of type bool. Got type {}".format(type(fill_values)))
+        # --- End: if
+        
+        mask = None
+        
+        if fill_values:
+            mask = (d == fill_values[0])
+
+            for fill_value in fill_values[1:]:
+                mask |= (d == fill_value)
+        # --- End: for
+            
+        if valid_min is not None:
+            if mask is None:
+                mask = d < valid_min
+            else:
+                mask |= d < valid_min
+        # --- End: if
+
+        if valid_max is not None:
+            if mask is None:
+                mask = d > valid_max
+            else:
+                mask |= d > valid_max
+        # --- End: if
+        
+        if mask is not None:
+            d.where(mask, cf_masked, inplace=True)
+
+        return d
+
     @classmethod
     def concatenate_data(cls, data_list, axis):
         '''Concatenates a list of Data objects into a single Data object along
@@ -10556,29 +10754,33 @@ False
 
         return d
 
-    def files(self):
+    def get_filenames(self):
         '''Return the names of files containing parts of the data array.
 
     :Returns:
 
         `set`
-            The file names in normalized, absolute form.
+            The file names in normalized, absolute form. If the data
+            is are memory then an empty `set` is returned.
 
     **Examples:**
 
-    >>> f = cf.read('../file[123]')
-    >>> f[0].files()
+    >>> f = cf.read('../file[123]')[0]
+    >>> f.get_filenames()
     {'/data/user/file1',
      '/data/user/file2',
      '/data/user/file3'}
-    >>> a = f[0].array
-    >>> f[0].files()
+    >>> a = f.array
+    >>> f.get_filenames()
     set()
 
         '''
-        out = set([p.subarray.get_filename()
-                   for p in self.partitions.matrix.flat if p.in_file])
+        out = set(
+            [abspath(p.subarray.get_filename())
+             for p in self.partitions.matrix.flat if p.in_file]
+        )
         out.discard(None)
+
         return out
 
     @_inplace_enabled
@@ -12156,8 +12358,8 @@ False
     **Missing data**
 
     Data array elements may be set to missing values by assigning them
-    to the cf.masked constant, or by assignment missing data elements
-    of array-valued *x* and *y* parameters.
+    to the `cf.masked` constant, or by assignment missing data
+    elements of array-valued *x* and *y* parameters.
 
     By default the data mask is "hard", meaning that masked values can
     not be changed by assigning them to another value. This behaviour
@@ -14036,6 +14238,18 @@ False
         '''
         _DEPRECATION_ERROR_ATTRIBUTE(self, 'dtvarray')  # pragma: no cover
 
+    def files(self):
+        '''Return the names of files containing parts of the data array.
+        
+    Deprecated at version 3.4.0. Use method 'get_filenames' instead.
+
+        '''
+        _DEPRECATION_ERROR_METHOD(
+            self, 'files', "Use method 'get_filenames' instead.",
+            version='3.4.0'
+        )  # pragma: no cover
+
+        
     @property
     def unsafe_array(self):
         '''A numpy array of the data.
@@ -14056,7 +14270,8 @@ False
 
         '''
         _DEPRECATION_ERROR_METHOD(
-            self, 'expand_dims', "Use method 'insert_dimension' instead."
+            self, 'expand_dims', "Use method 'insert_dimension' instead.",
+            version='3.0.0'
         )  # pragma: no cover
 
 # --- End: class
