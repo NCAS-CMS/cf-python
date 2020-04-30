@@ -531,7 +531,6 @@ class PropertiesDataBounds(PropertiesData):
 
         return v
 
-
     # ----------------------------------------------------------------
     # Attributes
     # ----------------------------------------------------------------
@@ -2018,39 +2017,32 @@ class PropertiesDataBounds(PropertiesData):
 
         return out
     
-#   def files(self):
-#        '''Return the names of any files containing parts of the data array.
-#
-#    .. seealso:: `close`
-#
-#    :Returns:
-#
-#        `set`
-#            The file names in normalized, absolute form.
-#
-#    **Examples:**
-#
-#    >>> c.files()
-#    {'/data/user/file1.nc',
-#     '/data/user/file2.nc',
-#     '/data/user/file3.nc'}
-#    >>> a = c.array
-#    >>> f.files()
-#    set()
-#
-#        '''
-#        out = super().files()
-#
-#        bounds = self.get_bounds(None)
-#        if bounds is not None:
-#            out.update(bounds.files())
-#
-#        interior_ring = self.get_interior_ring(None)
-#        if bounds is not None:
-#            out.update(interior_ring.files())
-#
-#        return out
-   
+    @_inplace_enabled
+    def halo(self, size, axes=None, tripolar=False, inplace=False):
+        '''TODO
+
+    :Parameters:
+
+        TODO
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+
+    :Returns:
+
+            The expanded construct, or `None` if the operation was
+            in-place.
+
+    **Examples:**
+
+        TODO
+
+        '''
+        # Set bounds to True to bypass 'if bounds' check in call:
+        return self._apply_superclass_data_oper(
+            _inplace_enabled_define_and_cleanup(self), 'halo',
+            bounds=True, interior_ring=True, inplace=inplace)
+        
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def flip(self, axes=None, inplace=False, i=False):

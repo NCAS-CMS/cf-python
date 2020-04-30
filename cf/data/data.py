@@ -93,8 +93,8 @@ import operator
 from json import dumps as json_dumps
 from json import loads as json_loads
 
-from operator  import mul as operator_mul
-from math      import ceil as math_ceil
+from operator import mul as operator_mul
+from math import ceil as math_ceil
 from itertools import product as itertools_product
 
 from ..cfdatetime import dt2rt, rt2dt, st2rt
@@ -10783,6 +10783,135 @@ False
 
         return out
 
+    @_inplace_enabled
+    def halo(self, size, axes=None, tripolar=False, inplace=False):
+        '''TODO
+
+    :Parameters:
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+
+    :Returns:
+
+        `Data` or `None`
+            The expanded data, or `None` if the operation was
+            in-place.
+
+    **Examples:**
+
+        '''
+        d = _inplace_enabled_define_and_cleanup(self)
+
+        ndim = self.ndim
+        shape0 = self.shape
+
+        # Set the halo size for each axis.
+        if isinstance(size, dict):
+            if axes is not None:
+                raise ValueError("can't set axes when size is a dict TODO")
+            
+            axes = self._parse_axes(sorted(size))
+            size = [size[i] if i in axes else 0
+                    for i in range(ndim)]
+        else:
+            if axes is None:
+                axes = list(range(ndim))
+                            
+            axes = self._parse_axes(axes)
+            size = [size if i in axes else 0
+                    for i in range(ndim)]
+
+        # Remove axes with a size 0 halo
+        axes = [i for i in axes if size[i]]
+
+        if not axes:
+            # Return now if all halos are of size 0
+            return d
+
+        # Check that the halos are not too large
+        for i, (h, n) in enumerate(zip(size, shape0)):
+            if h > n:
+                raise ValueError("Halo too big for this axis. TODO")
+        # --- End: for
+
+        # Initialise the expanded data
+        shape1 = [n + size[i] * 2 if i in axes else n
+                  for i, n in enumerate(shape0)]
+        out = type(d).empty(shape1, dtype=d.dtype, units=d.Units)
+
+        # ------------------------------------------------------------
+        # Body (not edges nor corners)
+        # ------------------------------------------------------------
+        indices = [slice(h, h + n) if (i in axes and h) else slice(None)
+                   for i, (h, n) in enumerate(zip(size, shape0))]
+#        print(indices)
+        out[tuple(indices)] = d
+
+        if not tripolar:
+            # ------------------------------------------------------------
+            # Edges (not corners)
+            # ------------------------------------------------------------
+            for i in axes:
+                size_i = size[i]
+                
+                for edge in ('first', 'last'):
+                    indices1 = [slice(None)] * ndim
+                    if edge == 'first':
+                        indices1[i] = slice(0, size_i)
+                    else:
+                        indices1[i] = slice(-size_i, None)
+    
+                    indices0 = indices1[:]
+    
+                    for j in axes:
+                        if j == i:
+                            continue
+    
+                        size_j = size[j]            
+                        indices1[j] = slice(size_j, size_j + shape0[j])
+    
+    #                print(i, indices1, indices0, shape1, shape0)
+                    out[tuple(indices1)] = d[tuple(indices0)]
+            # --- End: for
+    
+            # ------------------------------------------------------------
+            # Corners
+            # ------------------------------------------------------------
+            if len(axes) > 1:
+                for indices in itertools_product(
+                        *[(slice(0, size[i]), slice(-size[i], None))
+                          for i in axes]
+                ):
+    #                print (indices,shape1, shape0)
+                    out[indices] = d[indices]
+        else:
+            pass
+#ny2=ny+2
+#nx2=nx+2
+#gout=np.zeros([nt,ny2,nx2],dtype=res2.dtype)
+#gout[:,1:ny2-1,1:nx2-1]=res2       # Centre
+
+#gout[:,1:ny2-1,0]=res2[:,:,nx-1]   # Left
+#gout[:,1:ny2-1:,nx2-1]=res2[:,:,0] # Right
+#gout[:,0,1:nx2-1]=res2[:,0,:]      # Bottom
+#gout[:,ny2-1,1:nx2-1]=res2[:,ny-1,::-1]  # Tricky tripole top
+## Corners
+#gout[:,0,0]=gout[:,0,1]
+#gout[:,ny2-1,0]=gout[:,ny2-1,1]
+#gout[:,0,nx2-1]=gout[:,0,nx2-2]
+#gout[:,ny2-1,nx2-1]=gout[:,ny2-1,nx2-2]
+
+
+        out.set_fill_value = d.get_fill_value(None)
+
+        if inplace:
+            d.__dict__ = out.__dict__
+        else:
+            d = out
+
+        return d
+    
     @_inplace_enabled
     def filled(self, fill_value=None, inplace=False):
         '''TODO

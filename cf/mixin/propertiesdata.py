@@ -4804,6 +4804,36 @@ class PropertiesData(Properties):
         '''
         return super().get_data(default=default, _units=False)
 
+    @_inplace_enabled
+    def halo(self, size, axes=None, tripolar=False, inplace=False):
+        '''TODO
+
+    :Parameters:
+
+        TODO
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+
+    :Returns:
+
+            The expanded construct, or `None` if the operation was
+            in-place.
+
+    **Examples:**
+
+        TODO
+
+        '''
+        v = _inplace_enabled_define_and_cleanup(self)
+
+        data = d.get_data(None)
+        if data is not None:
+            d.halo(size=size, axes=axes, tripolar=tripolar,
+                   inplace=True)
+            
+        return d
+        
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
     def override_calendar(self, calendar, inplace=False,  i=False):

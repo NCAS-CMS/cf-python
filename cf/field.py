@@ -16896,6 +16896,75 @@ class Field(mixin.PropertiesData,
 
         return super().get_data_axes(key=key, default=default)
 
+    @_inplace_enabled
+    def halo(self, size, axes=None, tripolar=False, inplace=False):
+        '''TODOg
+
+    :Parameters:
+
+        TODO
+
+        inplace: `bool`, optional
+            If True then do the operation in-place and return `None`.
+
+    :Returns:
+
+        `Field` or `None`
+            The expanded field construct, or `None` if the operation
+            was in-place.
+
+    **Examples:**
+
+        TODO
+
+        '''
+        f = _inplace_enabled_define_and_cleanup(self)
+
+        # Set the halo size for each axis.
+        data_axes = f.get_data_axes(default=())
+        if isinstance(size, dict):
+            if axes is not None:
+                raise ValueError("can't set axes when size is a dict TODO")
+            
+            axis_halo = {self.domain_axis(k, key=True): v
+                         for k, v in size.items()}
+
+            if not set(data_axes).issuperset(axis_halo):
+                raise ValueError(
+                    "Can't apply halo: Bad axis specification: {!r}".format(
+                        size))
+        else:
+            if axes is None:
+                axes = data_axes
+                
+            if isinstance(axes, (str, int)):
+                axes = (axes,)
+             
+            axis_halo = {self.domain_axis(k, key=True): size
+                         for k in axes}
+    
+        # Add halos to the field construct's data
+        size = {data_axes.index(axis): h
+                for axis, h, in axis_halo.items()}
+
+        f.data.halo(size=size, tripolar=tripolar, inplace=True)
+        
+        # Change domain axis sizes
+        for axis, h in axis_halo.items():
+            d = f.domain_axis(axis)
+            d.set_size(d.get_size() + 2 * h)
+                        
+        # Add halos to metadata constructs
+        for key, c in f.constructs.filter_by_data().items():
+            construct_axes = f.get_data_axes(key)
+            construct_size = {construct_axes.index(axis): h
+                              for axis, h in axis_halo.items()
+                              if axis in construct_axes}
+            c.data.halo(size=construct_size, tripolar=tripolar,
+                        inplace=True)
+        
+        return f
+    
     def percentile(self, ranks, axes=None, interpolation='linear',
                    squeeze=False, mtol=1):
         '''Compute percentiles of the data along the specified axes.
