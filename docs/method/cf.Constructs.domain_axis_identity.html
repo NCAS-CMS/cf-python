@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.3.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.4.0</a></h1>
 
 
 
@@ -112,16 +112,17 @@
 <h1>cf.Constructs.domain_axis_identity<a class="headerlink" href="#cf-constructs-domain-axis-identity" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Constructs.domain_axis_identity">
-<code class="sig-prename descclassname">Constructs.</code><code class="sig-name descname">domain_axis_identity</code><span class="sig-paren">(</span><em class="sig-param">key</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.1/cfdm/constructs.py#L497-L591"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Constructs.domain_axis_identity" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Constructs.</code><code class="sig-name descname">domain_axis_identity</code><span class="sig-paren">(</span><em class="sig-param">key</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.3/cfdm/constructs.py#L503-L598"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Constructs.domain_axis_identity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the canonical identity for a domain axis construct.</p>
 <p>The identity is the first found of the following:</p>
 <ol class="arabic simple">
-<li><p>The canonical identity of a dimension coordinate contruct that span
-the domain axis construct.</p></li>
-<li><p>The identity of a one-dimensional auxiliary coordinate construct
-that spans the domain axis construct. This will either be the value
-of a “standard_name”, “cf_role” (preceeded by <code class="docutils literal notranslate"><span class="pre">'cf_role='</span></code>) or
-“axis” (preceeded by <code class="docutils literal notranslate"><span class="pre">'axis='</span></code>) property, as appropriate.</p></li>
+<li><p>The canonical identity of a dimension coordinate construct that
+span the domain axis construct.</p></li>
+<li><p>The identity of a one-dimensional auxiliary coordinate
+construct that spans the domain axis construct. This will
+either be the value of a <code class="docutils literal notranslate"><span class="pre">standard_name</span></code>, <code class="docutils literal notranslate"><span class="pre">cf_role</span></code>
+(preceeded by <code class="docutils literal notranslate"><span class="pre">'cf_role='</span></code>) or <code class="docutils literal notranslate"><span class="pre">axis</span></code> (preceeded by
+<code class="docutils literal notranslate"><span class="pre">'axis='</span></code>) property, as appropriate.</p></li>
 <li><p>The netCDF dimension name, preceeded by ‘ncdim%’.</p></li>
 <li><p>The domain axis construct key, preceeded by ‘key%’.</p></li>
 </ol>
@@ -166,7 +167,7 @@ of a “standard_name”, “cf_role” (preceeded by <code class="docutils lite
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-04-20.
+      &copy;2020, NCAS | Page built on 2020-04-30.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

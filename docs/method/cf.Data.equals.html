@@ -21,7 +21,7 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cf.Data.count" href="cf.Data.count.html" />
+    <link rel="next" title="cf.Data.apply_masking" href="cf.Data.apply_masking.html" />
     <link rel="prev" title="cf.Data.isclose" href="cf.Data.isclose.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.3.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.4.0</a></h1>
 
 
 
@@ -86,7 +86,7 @@
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
   <li><a href="../classes/cf.Data.html">cf.Data</a><ul>
       <li>Previous: <a href="cf.Data.isclose.html" title="previous chapter">cf.Data.isclose</a></li>
-      <li>Next: <a href="cf.Data.count.html" title="next chapter">cf.Data.count</a></li>
+      <li>Next: <a href="cf.Data.apply_masking.html" title="next chapter">cf.Data.apply_masking</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -112,7 +112,7 @@
 <h1>cf.Data.equals<a class="headerlink" href="#cf-data-equals" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Data.equals">
-<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">equals</code><span class="sig-paren">(</span><em class="sig-param">other</em>, <em class="sig-param">rtol=None</em>, <em class="sig-param">atol=None</em>, <em class="sig-param">ignore_fill_value=False</em>, <em class="sig-param">ignore_data_type=False</em>, <em class="sig-param">ignore_type=False</em>, <em class="sig-param">verbose=False</em>, <em class="sig-param">traceback=False</em>, <em class="sig-param">ignore_compression=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.3.0/cf/data/data.py#L10345-L10445"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.equals" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">equals</code><span class="sig-paren">(</span><em class="sig-param">other</em>, <em class="sig-param">rtol=None</em>, <em class="sig-param">atol=None</em>, <em class="sig-param">ignore_fill_value=False</em>, <em class="sig-param">ignore_data_type=False</em>, <em class="sig-param">ignore_type=False</em>, <em class="sig-param">verbose=False</em>, <em class="sig-param">traceback=False</em>, <em class="sig-param">ignore_compression=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.4.0/cf/data/data.py#L10543-L10643"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.equals" title="Permalink to this definition">¶</a></dt>
 <dd><p>True if two data arrays are logically equal, False otherwise.</p>
 <p>Two real numbers <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> are considered equal if
 <code class="docutils literal notranslate"><span class="pre">|x-y|&lt;=atol+rtol|y|</span></code>, where <code class="docutils literal notranslate"><span class="pre">atol</span></code> (the tolerance on absolute
@@ -166,7 +166,7 @@ to inequality.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-04-20.
+      &copy;2020, NCAS | Page built on 2020-04-30.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

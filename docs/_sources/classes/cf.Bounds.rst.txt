@@ -171,6 +171,9 @@ Data
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.Bounds.apply_masking
+   ~cf.Bounds.count
+   ~cf.Bounds.count_masked
    ~cf.Bounds.fill_value
 
 .. autosummary::
@@ -179,8 +182,6 @@ Data
    :template: attribute.rst
 
    ~cf.Bounds.binary_mask
-   ~cf.Bounds.count
-   ~cf.Bounds.count_masked
    ~cf.Bounds.hardmask
    ~cf.Bounds.mask
    ~cf.Bounds.mask_invalid
@@ -215,7 +216,7 @@ Data
    ~cf.Bounds.convert_reference_time
    ~cf.Bounds.creation_commands
    ~cf.Bounds.cyclic
-   ~cf.Bounds.files
+   ~cf.Bounds.get_filenames
    ~cf.Bounds.has_bounds
 
 Miscellaneous

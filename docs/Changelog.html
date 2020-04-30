@@ -36,7 +36,7 @@
 
 
 
-<h1 class="logo"><a href="index.html">cf 3.3.0</a></h1>
+<h1 class="logo"><a href="index.html">cf 3.4.0</a></h1>
 
 
 
@@ -103,6 +103,38 @@
   <div class="section" id="change-log">
 <h1><strong>Change log</strong><a class="headerlink" href="#change-log" title="Permalink to this headline">¶</a></h1>
 <hr class="docutils" />
+<div class="section" id="version-3-4-0">
+<h2>version 3.4.0<a class="headerlink" href="#version-3-4-0" title="Permalink to this headline">¶</a></h2>
+<hr class="docutils" />
+<p><strong>2020-04-30</strong></p>
+<ul class="simple">
+<li><p>New method: <a class="reference internal" href="method/cf.Field.apply_masking.html#cf.Field.apply_masking" title="cf.Field.apply_masking"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.apply_masking</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cf.Data.apply_masking.html#cf.Data.apply_masking" title="cf.Data.apply_masking"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.apply_masking</span></code></a></p></li>
+<li><p>New method: <a class="reference internal" href="method/cf.Field.get_filenames.html#cf.Field.get_filenames" title="cf.Field.get_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.get_filenames</span></code></a> (replaces deprecated
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.files</span></code>)</p></li>
+<li><p>New method: <a class="reference internal" href="method/cf.Data.get_filenames.html#cf.Data.get_filenames" title="cf.Data.get_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.get_filenames</span></code></a> (replaces deprecated
+<a class="reference internal" href="method/cf.Data.files.html#cf.Data.files" title="cf.Data.files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.files</span></code></a>)</p></li>
+<li><p>New keyword parameter to <a class="reference internal" href="function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a>: <code class="docutils literal notranslate"><span class="pre">mask</span></code></p></li>
+<li><p>New keyword parameter to <a class="reference internal" href="function/cf.read.html#cf.read" title="cf.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.read</span></code></a>: <code class="docutils literal notranslate"><span class="pre">warn_valid</span></code>
+(<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/30">https://github.com/NCAS-CMS/cfdm/issues/30</a>)</p></li>
+<li><p>New keyword parameter to <a class="reference internal" href="function/cf.write.html#cf.write" title="cf.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.write</span></code></a>: <code class="docutils literal notranslate"><span class="pre">warn_valid</span></code>
+(<a class="reference external" href="https://github.com/NCAS-CMS/cfdm/issues/30">https://github.com/NCAS-CMS/cfdm/issues/30</a>)</p></li>
+<li><p>New keyword parameter to <a class="reference internal" href="method/cf.Field.nc_global_attributes.html#cf.Field.nc_global_attributes" title="cf.Field.nc_global_attributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.nc_global_attributes</span></code></a>: <code class="docutils literal notranslate"><span class="pre">values</span></code></p></li>
+<li><p>Added time coordinate bounds to the polygon geometry example field
+<code class="docutils literal notranslate"><span class="pre">6</span></code> returned by <a class="reference internal" href="function/cf.example_field.html#cf.example_field" title="cf.example_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.example_field</span></code></a>.</p></li>
+<li><p>Changed exact cfdm dependency to version 1.8.3.</p></li>
+<li><p>Changed minimum cfunits dependency to version 3.2.6.</p></li>
+<li><p>Fixed bug in <a class="reference internal" href="function/cf.write.html#cf.write" title="cf.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.write</span></code></a> that caused (what are effectively)
+string-valued scalar auxiliary coordinates to not be written to disk
+as such, or even an exception to be raised.</p></li>
+<li><p>Fixed bug in <a class="reference internal" href="function/cf.write.html#cf.write" title="cf.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.write</span></code></a> that caused the <code class="docutils literal notranslate"><span class="pre">single</span></code> and <code class="docutils literal notranslate"><span class="pre">double</span></code>
+keyword parameters to have no effect. This bug was introduced at
+version 3.0.0 (<a class="reference external" href="https://github.com/NCAS-CMS/cf-python/issues/65">https://github.com/NCAS-CMS/cf-python/issues/65</a>).</p></li>
+<li><p>Fixed bug in <a class="reference internal" href="method/cf.Field.has_construct.html#cf.Field.has_construct" title="cf.Field.has_construct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.has_construct</span></code></a> that caused it to always
+return <a class="reference external" href="https://docs.python.org/3/library/constants.html#False" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code></a> unless a construct key was used as the construct
+identity (<a class="reference external" href="https://github.com/NCAS-CMS/cf-python/issues/67">https://github.com/NCAS-CMS/cf-python/issues/67</a>).</p></li>
+</ul>
+</div>
 <div class="section" id="version-3-3-0">
 <h2>version 3.3.0<a class="headerlink" href="#version-3-3-0" title="Permalink to this headline">¶</a></h2>
 <hr class="docutils" />
@@ -840,7 +872,7 @@ coordinates</p></li>
 <p><strong>2016-06-17</strong></p>
 <ul class="simple">
 <li><p>New methods <code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Variable.files</span></code> and <a class="reference internal" href="method/cf.Data.files.html#cf.Data.files" title="cf.Data.files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.files</span></code></a>,
-<a class="reference internal" href="method/cf.Field.files.html#cf.Field.files" title="cf.Field.files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.files</span></code></a> which report which files are referenced by the data
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Field.files</span></code> which report which files are referenced by the data
 array.</p></li>
 <li><p>Fix to stop partitions return <code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.bool_</span></code> instead of
 <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.17)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p></li>
@@ -1259,7 +1291,7 @@ to Jeff Whitaker).</p></li>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-04-20.
+      &copy;2020, NCAS | Page built on 2020-04-30.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

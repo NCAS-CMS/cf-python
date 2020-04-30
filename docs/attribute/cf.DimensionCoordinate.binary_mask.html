@@ -21,7 +21,7 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cf.DimensionCoordinate.count" href="cf.DimensionCoordinate.count.html" />
+    <link rel="next" title="cf.DimensionCoordinate.hardmask" href="cf.DimensionCoordinate.hardmask.html" />
     <link rel="prev" title="cf.DimensionCoordinate.fill_value" href="../method/cf.DimensionCoordinate.fill_value.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.3.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.4.0</a></h1>
 
 
 
@@ -86,7 +86,7 @@
   <li><a href="../class.html"><strong>cf classes</strong></a><ul>
   <li><a href="../classes/cf.DimensionCoordinate.html">cf.DimensionCoordinate</a><ul>
       <li>Previous: <a href="../method/cf.DimensionCoordinate.fill_value.html" title="previous chapter">cf.DimensionCoordinate.fill_value</a></li>
-      <li>Next: <a href="cf.DimensionCoordinate.count.html" title="next chapter">cf.DimensionCoordinate.count</a></li>
+      <li>Next: <a href="cf.DimensionCoordinate.hardmask.html" title="next chapter">cf.DimensionCoordinate.hardmask</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -114,9 +114,8 @@
 <dt id="cf.DimensionCoordinate.binary_mask">
 <code class="sig-prename descclassname">DimensionCoordinate.</code><code class="sig-name descname">binary_mask</code><a class="headerlink" href="#cf.DimensionCoordinate.binary_mask" title="Permalink to this definition">¶</a></dt>
 <dd><p>A binary (0 and 1) missing data mask of the data array.</p>
-<p>The binary mask’s data array comprises dimensionless 32-bit
-integers and has 0 where the data array has missing data and 1
-otherwise.</p>
+<p>The binary mask’s data comprises dimensionless 32-bit integers
+that are 0 where the data has missing values and 1 otherwise.</p>
 <p><strong>Examples:</strong></p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">array</span><span class="p">)</span>
 <span class="go">[[ True  False  True False]]</span>
@@ -137,7 +136,7 @@ otherwise.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-04-20.
+      &copy;2020, NCAS | Page built on 2020-04-30.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

@@ -1,0 +1,7 @@
+cf.FieldAncillary.get_filenames
+===============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.FieldAncillary.get_filenames

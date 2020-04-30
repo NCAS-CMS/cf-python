@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.3.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.4.0</a></h1>
 
 
 
@@ -111,7 +111,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.DomainAncillary">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">DomainAncillary</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">bounds=None</em>, <em class="sig-param">geometry=None</em>, <em class="sig-param">interior_ring=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.3.0/cf/domainancillary.py#L6-L52"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DomainAncillary" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">DomainAncillary</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">bounds=None</em>, <em class="sig-param">geometry=None</em>, <em class="sig-param">interior_ring=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.4.0/cf/domainancillary.py#L6-L52"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.DomainAncillary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.propertiesdatabounds.PropertiesDataBounds</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.domainancillary.DomainAncillary</span></code></p>
 <p>A domain ancillary construct of the CF data model.</p>
 <p>A domain ancillary construct provides information which is needed
@@ -513,7 +513,16 @@ initialization. By default arguments are deep copied.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.fill_value.html#cf.DomainAncillary.fill_value" title="cf.DomainAncillary.fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fill_value</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.apply_masking.html#cf.DomainAncillary.apply_masking" title="cf.DomainAncillary.apply_masking"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply_masking</span></code></a></p></td>
+<td><p>Apply masking as defined by the CF conventions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.count.html#cf.DomainAncillary.count" title="cf.DomainAncillary.count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count</span></code></a></p></td>
+<td><p>Count the non-masked elements of the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.count_masked.html#cf.DomainAncillary.count_masked" title="cf.DomainAncillary.count_masked"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count_masked</span></code></a></p></td>
+<td><p>Count the masked elements of the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.fill_value.html#cf.DomainAncillary.fill_value" title="cf.DomainAncillary.fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fill_value</span></code></a></p></td>
 <td><p>Return the data array missing data value.</p></td>
 </tr>
 </tbody>
@@ -526,12 +535,6 @@ initialization. By default arguments are deep copied.</p>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.DomainAncillary.binary_mask.html#cf.DomainAncillary.binary_mask" title="cf.DomainAncillary.binary_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_mask</span></code></a></p></td>
 <td><p>A binary (0 and 1) missing data mask of the data array.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.DomainAncillary.count.html#cf.DomainAncillary.count" title="cf.DomainAncillary.count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count</span></code></a></p></td>
-<td><p>Count the non-masked elements of the data.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.DomainAncillary.count_masked.html#cf.DomainAncillary.count_masked" title="cf.DomainAncillary.count_masked"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count_masked</span></code></a></p></td>
-<td><p>Count the masked elements of the data.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.DomainAncillary.hardmask.html#cf.DomainAncillary.hardmask" title="cf.DomainAncillary.hardmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></a></p></td>
 <td><p>Whether the mask is hard (True) or soft (False).</p></td>
@@ -595,8 +598,8 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.cyclic.html#cf.DomainAncillary.cyclic" title="cf.DomainAncillary.cyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cyclic</span></code></a></p></td>
 <td><p>Set the cyclicity of axes of the data array.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.files.html#cf.DomainAncillary.files" title="cf.DomainAncillary.files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">files</span></code></a></p></td>
-<td><p>Return the names of any files containing parts of the data array.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.DomainAncillary.get_filenames.html#cf.DomainAncillary.get_filenames" title="cf.DomainAncillary.get_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filenames</span></code></a></p></td>
+<td><p>Return the name of the file or files containing the data.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1176,7 +1179,7 @@ for augmented assignments, modify the construct’s data in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-04-20.
+      &copy;2020, NCAS | Page built on 2020-04-30.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

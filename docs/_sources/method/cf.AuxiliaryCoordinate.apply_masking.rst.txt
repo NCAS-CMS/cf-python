@@ -1,0 +1,7 @@
+cf.AuxiliaryCoordinate.apply_masking
+====================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.AuxiliaryCoordinate.apply_masking

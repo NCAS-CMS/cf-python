@@ -203,6 +203,9 @@ Data
    :toctree: ../method/
    :template: method.rst
 
+   ~cf.DomainAncillary.apply_masking
+   ~cf.DomainAncillary.count
+   ~cf.DomainAncillary.count_masked
    ~cf.DomainAncillary.fill_value
 
 .. autosummary::
@@ -211,8 +214,6 @@ Data
    :template: attribute.rst
 
    ~cf.DomainAncillary.binary_mask
-   ~cf.DomainAncillary.count
-   ~cf.DomainAncillary.count_masked
    ~cf.DomainAncillary.hardmask
    ~cf.DomainAncillary.mask
    ~cf.DomainAncillary.mask_invalid
@@ -247,7 +248,7 @@ Data
    ~cf.DomainAncillary.convert_reference_time
    ~cf.DomainAncillary.creation_commands
    ~cf.DomainAncillary.cyclic
-   ~cf.DomainAncillary.files
+   ~cf.DomainAncillary.get_filenames
 
 Miscellaneous
 -------------

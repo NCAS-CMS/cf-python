@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.3.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.4.0</a></h1>
 
 
 
@@ -110,7 +110,7 @@
 <h1>cf.write<a class="headerlink" href="#cf-write" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="cf.write">
-<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param">fields</em>, <em class="sig-param">filename</em>, <em class="sig-param">fmt='NETCDF4'</em>, <em class="sig-param">overwrite=True</em>, <em class="sig-param">global_attributes=None</em>, <em class="sig-param">file_descriptors=None</em>, <em class="sig-param">external=None</em>, <em class="sig-param">Conventions=None</em>, <em class="sig-param">datatype=None</em>, <em class="sig-param">least_significant_digit=None</em>, <em class="sig-param">endian='native'</em>, <em class="sig-param">compress=0</em>, <em class="sig-param">fletcher32=False</em>, <em class="sig-param">shuffle=True</em>, <em class="sig-param">reference_datetime=None</em>, <em class="sig-param">verbose=False</em>, <em class="sig-param">cfa_options=None</em>, <em class="sig-param">mode='w'</em>, <em class="sig-param">single=False</em>, <em class="sig-param">double=False</em>, <em class="sig-param">variable_attributes=None</em>, <em class="sig-param">string=True</em>, <em class="sig-param">HDF_chunksizes=None</em>, <em class="sig-param">no_shuffle=None</em>, <em class="sig-param">unlimited=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.3.0/cf/read_write/write.py#L22-L542"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.write" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">cf.</code><code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param">fields</em>, <em class="sig-param">filename</em>, <em class="sig-param">fmt='NETCDF4'</em>, <em class="sig-param">overwrite=True</em>, <em class="sig-param">global_attributes=None</em>, <em class="sig-param">file_descriptors=None</em>, <em class="sig-param">external=None</em>, <em class="sig-param">Conventions=None</em>, <em class="sig-param">datatype=None</em>, <em class="sig-param">least_significant_digit=None</em>, <em class="sig-param">endian='native'</em>, <em class="sig-param">compress=0</em>, <em class="sig-param">fletcher32=False</em>, <em class="sig-param">shuffle=True</em>, <em class="sig-param">reference_datetime=None</em>, <em class="sig-param">verbose=False</em>, <em class="sig-param">cfa_options=None</em>, <em class="sig-param">mode='w'</em>, <em class="sig-param">single=None</em>, <em class="sig-param">double=None</em>, <em class="sig-param">variable_attributes=None</em>, <em class="sig-param">string=True</em>, <em class="sig-param">warn_valid=True</em>, <em class="sig-param">HDF_chunksizes=None</em>, <em class="sig-param">no_shuffle=None</em>, <em class="sig-param">unlimited=None</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.4.0/cf/read_write/write.py#L24-L613"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write field constructs to a netCDF file.</p>
 <p><strong>File format</strong></p>
 <p>See the <em>fmt</em> parameter for details on which output netCDF file
@@ -464,19 +464,37 @@ with values of output data types.</p>
 </dd>
 </dl>
 </dd>
-<dt>single: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Write 64-bit floats as 32-bit floats and 64-bit integers
-as 32-bit integers. By default, input data types are
-preserved. Note that <code class="docutils literal notranslate"><span class="pre">single=True</span></code> is exactly equivalent
-to <code class="docutils literal notranslate"><span class="pre">datatype={numpy.dtype('float64'):</span>
-<span class="pre">numpy.dtype('float32'),</span> <span class="pre">numpy.dtype('int64'):</span>
+<dt>single: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then write 64-bit floats as 32-bit floats and
+64-bit integers as 32-bit integers.</p>
+<p>If False then write 32-bit floats as 64-bit floats and
+32-bit integers as 64-bit integers.</p>
+<p>By default, input data types are preserved.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">single=True</span></code> is exactly equivalent to
+<code class="docutils literal notranslate"><span class="pre">double=False</span></code>, as well as
+<code class="docutils literal notranslate"><span class="pre">datatype={numpy.dtype(float):</span>
+<span class="pre">numpy.dtype('float32'),</span> <span class="pre">numpy.dtype(int):</span>
 <span class="pre">numpy.dtype('int32')}</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">single=False</span></code> is exactly equivalent to
+<code class="docutils literal notranslate"><span class="pre">double=True</span></code>.</p>
+</div>
 </dd>
-<dt>double: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>Write 32-bit floats as 64-bit floats and 32-bit integers
-as 64-bit integers. By default, input data types are
-preserved. Note that <code class="docutils literal notranslate"><span class="pre">double=True</span></code> is exactly equivalent
-to <code class="docutils literal notranslate"><span class="pre">datatype={numpy.dtype('float32'):</span>
-<span class="pre">numpy.dtype('float64'),</span> <span class="pre">numpy.dtype('int32'):</span>
-<span class="pre">numpy.dtype('int64')}</span></code>.</p>
+<dt>double: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then write 32-bit floats as 64-bit floats and
+32-bit integers as 64-bit integers.</p>
+<p>If False then write 64-bit floats as 32-bit floats and
+64-bit integers as 32-bit integers.</p>
+<p>By default, input data types are preserved.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">double=True</span></code> is exactly equivalent to
+<code class="docutils literal notranslate"><span class="pre">single=False</span></code>, as well as
+<code class="docutils literal notranslate"><span class="pre">datatype={numpy.dtype('float32'):</span>
+<span class="pre">numpy.dtype(float),</span> <span class="pre">numpy.dtype('int32'):</span>
+<span class="pre">numpy.dtype(int)}</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">double=False</span></code> is exactly equivalent to
+<code class="docutils literal notranslate"><span class="pre">single=True</span></code>.</p>
+</div>
 </dd>
 </dl>
 </div></blockquote>
@@ -496,6 +514,31 @@ file format.</p>
 <dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then print a summary of how constructs map to output
 netCDF dimensions, variables and attributes.</p>
 </dd>
+</dl>
+</dd>
+<dt>warn_valid: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><blockquote>
+<div><p>If False then do not print a warning when writing
+“out-of-range” data, as indicated by the values, if
+present, of any of the <code class="docutils literal notranslate"><span class="pre">valid_min</span></code>, <code class="docutils literal notranslate"><span class="pre">valid_max</span></code> or
+<code class="docutils literal notranslate"><span class="pre">valid_range</span></code> properties on field and metadata
+constructs that have data. By default a warning is printed
+if any such construct has any of these properties in
+combination with out-of-range data.</p>
+<p>The consequence of writing out-of-range data values is
+that, by default, these values will be masked when the
+file is subsequently read.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p>If a construct has <code class="docutils literal notranslate"><span class="pre">valid_max</span></code> property with value
+<code class="docutils literal notranslate"><span class="pre">100</span></code> and data with maximum value <code class="docutils literal notranslate"><span class="pre">999</span></code>, then the
+resulting warning may be suppressed by setting
+<code class="docutils literal notranslate"><span class="pre">warn_valid=False</span></code>.</p>
+</dd>
+</dl>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 3.4.0.</span></p>
+</div>
+</div></blockquote>
+<dl class="simple">
 <dt>HDF_chunksizes: deprecated at version 3.0.0</dt><dd><p>HDF chunk sizes may be set for individual constructs prior
 to writing, instead. See <a class="reference internal" href="../method/cf.Data.nc_set_hdf5_chunksizes.html#cf.Data.nc_set_hdf5_chunksizes" title="cf.Data.nc_set_hdf5_chunksizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cf.Data.nc_set_hdf5_chunksizes</span></code></a>.</p>
 </dd>
@@ -538,7 +581,7 @@ to writing, instead. See <a class="reference internal" href="../method/cf.Data.n
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-04-20.
+      &copy;2020, NCAS | Page built on 2020-04-30.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

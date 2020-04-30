@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.3.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.4.0</a></h1>
 
 
 
@@ -112,7 +112,7 @@
 <h1>cf.Constructs.filter_by_property<a class="headerlink" href="#cf-constructs-filter-by-property" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Constructs.filter_by_property">
-<code class="sig-prename descclassname">Constructs.</code><code class="sig-name descname">filter_by_property</code><span class="sig-paren">(</span><em class="sig-param">*mode</em>, <em class="sig-param">**properties</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.1/cfdm/constructs.py#L1660-L1778"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Constructs.filter_by_property" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Constructs.</code><code class="sig-name descname">filter_by_property</code><span class="sig-paren">(</span><em class="sig-param">*mode</em>, <em class="sig-param">**properties</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.3/cfdm/constructs.py#L1681-L1801"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Constructs.filter_by_property" title="Permalink to this definition">¶</a></dt>
 <dd><p>Select metadata constructs by property.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 1.7.0.</span></p>
@@ -161,22 +161,22 @@ or could have properties, with any values, are selected.</p>
 </dd>
 </dl>
 <p><strong>Examples:</strong></p>
-<p>Select constructs that have a “standard_name” of ‘latitude’:</p>
+<p>Select constructs that have a <code class="docutils literal notranslate"><span class="pre">standard_name</span></code> of ‘latitude’:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_property</span><span class="p">(</span><span class="n">standard_name</span><span class="o">=</span><span class="s1">&#39;latitude&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Select constructs that have a “long_name” of ‘height’ <em>and</em>
-“units” of ‘m’:</p>
+<p>Select constructs that have a <code class="docutils literal notranslate"><span class="pre">long_name</span></code> of ‘height’ <em>and</em>
+<code class="docutils literal notranslate"><span class="pre">units</span></code> of ‘m’:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_property</span><span class="p">(</span><span class="n">long_name</span><span class="o">=</span><span class="s1">&#39;height&#39;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;m&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Select constructs that have a “long_name” of ‘height’ <em>or</em> a “foo”
-of ‘bar’:</p>
+<p>Select constructs that have a <code class="docutils literal notranslate"><span class="pre">long_name</span></code> of ‘height’ <em>or</em> a
+<code class="docutils literal notranslate"><span class="pre">foo</span></code> of ‘bar’:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_property</span><span class="p">(</span><span class="s1">&#39;or&#39;</span><span class="p">,</span> <span class="n">long_name</span><span class="o">=</span><span class="s1">&#39;height&#39;</span><span class="p">,</span> <span class="n">foo</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Select constructs that have a “standard_name” which contains start
-with the string ‘air’:</p>
+<p>Select constructs that have a <code class="docutils literal notranslate"><span class="pre">standard_name</span></code> which contains
+start with the string ‘air’:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">re</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">filter_by_property</span><span class="p">(</span><span class="n">standard_name</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">&#39;^air&#39;</span><span class="p">))</span>
 </pre></div>
@@ -193,7 +193,7 @@ with the string ‘air’:</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-04-20.
+      &copy;2020, NCAS | Page built on 2020-04-30.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

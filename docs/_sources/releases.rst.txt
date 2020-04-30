@@ -12,6 +12,7 @@
 ----------
 ----
 
+* `version 3.4.0 <https://ncas-cms.github.io/cf-python/3.4.0>`_ (2020-04-30)
 * `version 3.3.0 <https://ncas-cms.github.io/cf-python/3.3.0>`_ (2020-04-20)
 * `version 3.2.0 <https://ncas-cms.github.io/cf-python/3.2.0>`_ (2020-04-01)
 

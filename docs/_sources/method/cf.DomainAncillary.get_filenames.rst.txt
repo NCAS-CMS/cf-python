@@ -1,0 +1,7 @@
+cf.DomainAncillary.get_filenames
+================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DomainAncillary.get_filenames

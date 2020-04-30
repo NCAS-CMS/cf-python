@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.3.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.4.0</a></h1>
 
 
 
@@ -111,7 +111,7 @@
 <hr class="docutils" />
 <dl class="class">
 <dt id="cf.Bounds">
-<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Bounds</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.3.0/cf/bounds.py#L8-L176"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Bounds" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">cf.</code><code class="sig-name descname">Bounds</code><span class="sig-paren">(</span><em class="sig-param">properties=None</em>, <em class="sig-param">data=None</em>, <em class="sig-param">source=None</em>, <em class="sig-param">copy=True</em>, <em class="sig-param">_use_data=True</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.4.0/cf/bounds.py#L8-L176"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.coordinate.Coordinate</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cf.mixin.propertiesdata.PropertiesData</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">cfdm.bounds.Bounds</span></code></p>
 <p>A cell bounds component of a coordinate or domain ancillary
 construct of the CF data model.</p>
@@ -453,7 +453,16 @@ initialization. By default arguments are deep copied.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Bounds.fill_value.html#cf.Bounds.fill_value" title="cf.Bounds.fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fill_value</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Bounds.apply_masking.html#cf.Bounds.apply_masking" title="cf.Bounds.apply_masking"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply_masking</span></code></a></p></td>
+<td><p>Apply masking as defined by the CF conventions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Bounds.count.html#cf.Bounds.count" title="cf.Bounds.count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count</span></code></a></p></td>
+<td><p>Count the non-masked elements of the data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Bounds.count_masked.html#cf.Bounds.count_masked" title="cf.Bounds.count_masked"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count_masked</span></code></a></p></td>
+<td><p>Count the masked elements of the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Bounds.fill_value.html#cf.Bounds.fill_value" title="cf.Bounds.fill_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fill_value</span></code></a></p></td>
 <td><p>Return the data array missing data value.</p></td>
 </tr>
 </tbody>
@@ -466,12 +475,6 @@ initialization. By default arguments are deep copied.</p>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Bounds.binary_mask.html#cf.Bounds.binary_mask" title="cf.Bounds.binary_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">binary_mask</span></code></a></p></td>
 <td><p>A binary (0 and 1) missing data mask of the data array.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Bounds.count.html#cf.Bounds.count" title="cf.Bounds.count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count</span></code></a></p></td>
-<td><p>Count the non-masked elements of the data.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../attribute/cf.Bounds.count_masked.html#cf.Bounds.count_masked" title="cf.Bounds.count_masked"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count_masked</span></code></a></p></td>
-<td><p>Count the masked elements of the data.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../attribute/cf.Bounds.hardmask.html#cf.Bounds.hardmask" title="cf.Bounds.hardmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hardmask</span></code></a></p></td>
 <td><p>Whether the mask is hard (True) or soft (False).</p></td>
@@ -535,8 +538,8 @@ initialization. By default arguments are deep copied.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Bounds.cyclic.html#cf.Bounds.cyclic" title="cf.Bounds.cyclic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cyclic</span></code></a></p></td>
 <td><p>Set the cyclicity of an axis.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Bounds.files.html#cf.Bounds.files" title="cf.Bounds.files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">files</span></code></a></p></td>
-<td><p>Return the names of any files containing parts of the data array.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../method/cf.Bounds.get_filenames.html#cf.Bounds.get_filenames" title="cf.Bounds.get_filenames"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filenames</span></code></a></p></td>
+<td><p>Return the name of the file or files containing the data.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../method/cf.Bounds.has_bounds.html#cf.Bounds.has_bounds" title="cf.Bounds.has_bounds"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_bounds</span></code></a></p></td>
 <td><p>Whether or not there are cell bounds.</p></td>
@@ -1155,7 +1158,7 @@ for augmented assignments, modify the construct’s data in-place.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-04-20.
+      &copy;2020, NCAS | Page built on 2020-04-30.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

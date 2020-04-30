@@ -1,0 +1,7 @@
+cf.DimensionCoordinate.apply_masking
+====================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DimensionCoordinate.apply_masking

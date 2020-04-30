@@ -21,8 +21,6 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="cf.Count.has_bounds" href="cf.Count.has_bounds.html" />
-    <link rel="prev" title="cf.Count.cyclic" href="cf.Count.cyclic.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -37,7 +35,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.3.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.4.0</a></h1>
 
 
 
@@ -66,13 +64,13 @@
     </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
 <li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
@@ -82,14 +80,6 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
-  <li><a href="../class.html"><strong>cf classes</strong></a><ul>
-  <li><a href="../classes/cf.Count.html">cf.Count</a><ul>
-      <li>Previous: <a href="cf.Count.cyclic.html" title="previous chapter">cf.Count.cyclic</a></li>
-      <li>Next: <a href="cf.Count.has_bounds.html" title="next chapter">cf.Count.has_bounds</a></li>
-  </ul></li>
-  </ul></li>
-  </ul></li>
   </ul></li>
 </ul>
 </div>
@@ -110,35 +100,6 @@
             
   <div class="section" id="cf-count-files">
 <h1>cf.Count.files<a class="headerlink" href="#cf-count-files" title="Permalink to this headline">¶</a></h1>
-<dl class="method">
-<dt id="cf.Count.files">
-<code class="sig-prename descclassname">Count.</code><code class="sig-name descname">files</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.3.0/cf/mixin/propertiesdata.py#L3648-L3676"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Count.files" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the names of any files containing parts of the data array.</p>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<p><a class="reference internal" href="cf.Count.close.html#cf.Count.close" title="cf.Count.close"><code class="xref py py-obj docutils literal notranslate"><span class="pre">close</span></code></a></p>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">set</span></code></dt><dd><p>The file names in normalized, absolute form.</p>
-</dd>
-</dl>
-</dd>
-</dl>
-<p><strong>Examples:</strong></p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">read_field</span><span class="p">(</span><span class="s1">&#39;../file[123].nc&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">files</span><span class="p">()</span>
-<span class="go">{&#39;/data/user/file1.nc&#39;,</span>
-<span class="go"> &#39;/data/user/file2.nc&#39;,</span>
-<span class="go"> &#39;/data/user/file3.nc&#39;}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">array</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="o">.</span><span class="n">files</span><span class="p">()</span>
-<span class="go">set()</span>
-</pre></div>
-</div>
-</dd></dl>
-
 </div>
 
 
@@ -149,7 +110,7 @@
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-04-20.
+      &copy;2020, NCAS | Page built on 2020-04-30.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>

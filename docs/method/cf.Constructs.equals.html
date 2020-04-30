@@ -37,7 +37,7 @@
 
 
 
-<h1 class="logo"><a href="../index.html">cf 3.3.0</a></h1>
+<h1 class="logo"><a href="../index.html">cf 3.4.0</a></h1>
 
 
 
@@ -112,21 +112,21 @@
 <h1>cf.Constructs.equals<a class="headerlink" href="#cf-constructs-equals" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="cf.Constructs.equals">
-<code class="sig-prename descclassname">Constructs.</code><code class="sig-name descname">equals</code><span class="sig-paren">(</span><em class="sig-param">other</em>, <em class="sig-param">rtol=None</em>, <em class="sig-param">atol=None</em>, <em class="sig-param">verbose=False</em>, <em class="sig-param">ignore_data_type=False</em>, <em class="sig-param">ignore_fill_value=False</em>, <em class="sig-param">ignore_compression=True</em>, <em class="sig-param">_ignore_type=False</em>, <em class="sig-param">_return_axis_map=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.1/cfdm/constructs.py#L594-L842"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Constructs.equals" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">Constructs.</code><code class="sig-name descname">equals</code><span class="sig-paren">(</span><em class="sig-param">other</em>, <em class="sig-param">rtol=None</em>, <em class="sig-param">atol=None</em>, <em class="sig-param">verbose=False</em>, <em class="sig-param">ignore_data_type=False</em>, <em class="sig-param">ignore_fill_value=False</em>, <em class="sig-param">ignore_compression=True</em>, <em class="sig-param">_ignore_type=False</em>, <em class="sig-param">_return_axis_map=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cfdm/blob/v1.8.3/cfdm/constructs.py#L600-L864"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Constructs.equals" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether two <a class="reference internal" href="../classes/cf.Constructs.html#cf.Constructs" title="cf.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs</span></code></a> instances are the same.</p>
 <p>Two real numbers <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> are considered equal if
 <code class="docutils literal notranslate"><span class="pre">|x-y|&lt;=atol+rtol|y|</span></code>, where <code class="docutils literal notranslate"><span class="pre">atol</span></code> (the tolerance on absolute
-differences) and <code class="docutils literal notranslate"><span class="pre">rtol</span></code> (the tolerance on relative differences) are
-positive, typically very small numbers. See the <em>atol</em> and <em>rtol</em>
-parameters.</p>
+differences) and <code class="docutils literal notranslate"><span class="pre">rtol</span></code> (the tolerance on relative differences)
+are positive, typically very small numbers. See the <em>atol</em> and
+<em>rtol</em> parameters.</p>
 <p>Any compression is ignored by default, with only the arrays in
 their uncompressed forms being compared. See the
 <em>ignore_compression</em> parameter.</p>
-<p>Any type of object may be tested but equality is only possible with
-another <a class="reference internal" href="../classes/cf.Constructs.html#cf.Constructs" title="cf.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs</span></code></a> construct, or a subclass of one.</p>
-<p>NetCDF elements, such as netCDF variable and dimension names, do not
-constitute part of the CF data model and so are not checked on any
-construct.</p>
+<p>Any type of object may be tested but equality is only possible
+with another <a class="reference internal" href="../classes/cf.Constructs.html#cf.Constructs" title="cf.Constructs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Constructs</span></code></a> construct, or a subclass of one.</p>
+<p>NetCDF elements, such as netCDF variable and dimension names, do
+not constitute part of the CF data model and so are not checked on
+any construct.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 1.7.0.</span></p>
 </div>
@@ -136,21 +136,24 @@ construct.</p>
 <dt>other: </dt><dd><p>The object to compare for equality.</p>
 </dd>
 <dt>atol: float, optional</dt><dd><p>The tolerance on absolute differences between real
-numbers. The default value is set by the <a class="reference external" href="https://ncas-cms.github.io/cfdm/function/cfdm.ATOL.html#cfdm.ATOL" title="(in Python cfdm package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.ATOL</span></code></a> function.</p>
+numbers. The default value is set by the <a class="reference external" href="https://ncas-cms.github.io/cfdm/function/cfdm.ATOL.html#cfdm.ATOL" title="(in Python cfdm package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.ATOL</span></code></a>
+function.</p>
 </dd>
 <dt>rtol: float, optional</dt><dd><p>The tolerance on relative differences between real
-numbers. The default value is set by the <a class="reference external" href="https://ncas-cms.github.io/cfdm/function/cfdm.RTOL.html#cfdm.RTOL" title="(in Python cfdm package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.RTOL</span></code></a> function.</p>
+numbers. The default value is set by the <a class="reference external" href="https://ncas-cms.github.io/cfdm/function/cfdm.RTOL.html#cfdm.RTOL" title="(in Python cfdm package v1.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cfdm.RTOL</span></code></a>
+function.</p>
 </dd>
-<dt>ignore_fill_value: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then the “_FillValue” and “missing_value” properties
-are omitted from the comparison for the metadata constructs.</p>
+<dt>ignore_fill_value: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then the <code class="docutils literal notranslate"><span class="pre">_FillValue</span></code> and <code class="docutils literal notranslate"><span class="pre">missing_value</span></code>
+properties are omitted from the comparison for the
+metadata constructs.</p>
 </dd>
-<dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then print information about differences that lead to
-inequality.</p>
+<dt>verbose: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then print information about differences that lead
+to inequality.</p>
 </dd>
 <dt>ignore_data_type: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then ignore the data types in all numerical
-comparisons. By default different numerical data types imply
-inequality, regardless of whether the elements are within the
-tolerance for equality.</p>
+comparisons. By default different numerical data types
+imply inequality, regardless of whether the elements are
+within the tolerance for equality.</p>
 </dd>
 <dt>ignore_compression: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If False then the compression type and, if applicable, the
 underlying compressed arrays must be the same, as well as
@@ -187,7 +190,7 @@ the arrays in their uncompressed forms are compared.</p>
     <div class="clearer"></div>
   </div>
     <div class="footer">
-      &copy;2020, NCAS | Page built on 2020-04-20.
+      &copy;2020, NCAS | Page built on 2020-04-30.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
