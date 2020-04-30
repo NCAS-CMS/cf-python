@@ -12009,7 +12009,7 @@ class Field(mixin.PropertiesData,
                 "Can't identify a unique axis to insert"))
 
         # Expand the dims in the field construct's data array
-        super(f.__class__, f).insert_dimension(
+        super(Field, f).insert_dimension(
             axis=axis, position=position, inplace=True)
 
         return f
@@ -14518,7 +14518,7 @@ class Field(mixin.PropertiesData,
 
         # Flip the requested axes in the field's data array
         f = _inplace_enabled_define_and_cleanup(self)
-        super(f.__class__, f).flip(iaxes, inplace=True)
+        super(Field, f).flip(iaxes, inplace=True)
 
         # Flip any constructs which span the flipped axes
         for key, construct in f.constructs.filter_by_data().items():
@@ -15076,7 +15076,7 @@ class Field(mixin.PropertiesData,
         axis1 = data_axes.index(da_key1)
 
         f = _inplace_enabled_define_and_cleanup(self)
-        super(f.__class__, f).swapaxes(axis0, axis1, inplace=True)
+        super(Field, f).swapaxes(axis0, axis1, inplace=True)
 
         if data_axes is not None:
             data_axes = list(data_axes)
@@ -17562,7 +17562,7 @@ class Field(mixin.PropertiesData,
         new_data_axes.insert(iaxes[0], new_axis)
 
         # Flatten the field's data
-        super(f.__class__, f).flatten(iaxes, inplace=True)
+        super(Field, f).flatten(iaxes, inplace=True)
 
         # Set the new data axes
         f.set_data_axes(new_data_axes)
@@ -17715,7 +17715,7 @@ class Field(mixin.PropertiesData,
                 f = None
             return f
 
-        super(f.__class__, f).roll(iaxis, shift, inplace=True)
+        super(Field, f).roll(iaxis, shift, inplace=True)
 
         for key, construct in f.constructs.filter_by_data().items():
             axes = f.get_data_axes(key, default=())

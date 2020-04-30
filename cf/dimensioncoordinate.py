@@ -656,7 +656,7 @@ class DimensionCoordinate(mixin.Coordinate,
         '''TODO
         '''
         d = _inplace_enabled_define_and_cleanup(self)
-        super(d.__class__, d).flip(axes=axes, inplace=True)
+        super(DimensionCoordinate, d).flip(axes=axes, inplace=True)
 
         direction = d._custom.get('direction')
         if direction is not None:
@@ -894,7 +894,7 @@ class DimensionCoordinate(mixin.Coordinate,
                 "Can't roll axis {} when there is only one axis".format(axis))
 
         c = _inplace_enabled_define_and_cleanup(self)
-        super(c.__class__, c).roll(axis, shift, inplace=True)
+        super(DimensionCoordinate, c).roll(axis, shift, inplace=True)
 
         c.dtype = numpy_result_type(c.dtype, period.dtype)
 
