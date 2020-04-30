@@ -1,0 +1,7 @@
+cf.List.log
+===========
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.List.log

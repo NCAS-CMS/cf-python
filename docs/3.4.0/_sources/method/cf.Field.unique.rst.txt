@@ -1,0 +1,7 @@
+cf.Field.unique
+===============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Field.unique

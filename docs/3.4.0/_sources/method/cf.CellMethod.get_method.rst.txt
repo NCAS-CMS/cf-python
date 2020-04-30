@@ -1,0 +1,7 @@
+cf.CellMethod.get_method
+========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CellMethod.get_method

@@ -1,0 +1,7 @@
+cf.Bounds.unique
+================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.unique

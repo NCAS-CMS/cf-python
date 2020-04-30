@@ -1,0 +1,7 @@
+cf.DimensionCoordinate.construct_type
+=====================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.DimensionCoordinate.construct_type

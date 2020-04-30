@@ -1,0 +1,7 @@
+cf.Index.valid_range
+====================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.Index.valid_range

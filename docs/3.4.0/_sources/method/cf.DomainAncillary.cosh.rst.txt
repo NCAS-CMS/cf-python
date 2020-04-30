@@ -1,0 +1,7 @@
+cf.DomainAncillary.cosh
+=======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DomainAncillary.cosh

@@ -1,0 +1,7 @@
+cf.DomainAncillary.count
+========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DomainAncillary.count

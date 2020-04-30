@@ -1,0 +1,7 @@
+cf.List.arctan
+==============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.List.arctan

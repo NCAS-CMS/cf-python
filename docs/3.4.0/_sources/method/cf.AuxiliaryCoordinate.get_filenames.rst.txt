@@ -1,0 +1,7 @@
+cf.AuxiliaryCoordinate.get_filenames
+====================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.AuxiliaryCoordinate.get_filenames

@@ -1,0 +1,7 @@
+cf.DimensionCoordinate.create_bounds
+====================================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DimensionCoordinate.create_bounds

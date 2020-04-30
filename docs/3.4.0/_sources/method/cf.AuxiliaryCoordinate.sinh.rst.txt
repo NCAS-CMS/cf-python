@@ -1,0 +1,7 @@
+cf.AuxiliaryCoordinate.sinh
+===========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.AuxiliaryCoordinate.sinh

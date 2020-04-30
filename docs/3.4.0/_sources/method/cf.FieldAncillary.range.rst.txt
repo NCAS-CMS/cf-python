@@ -1,0 +1,7 @@
+cf.FieldAncillary.range
+=======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.FieldAncillary.range

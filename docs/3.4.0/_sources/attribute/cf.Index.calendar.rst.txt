@@ -1,0 +1,7 @@
+cf.Index.calendar
+=================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.Index.calendar

@@ -1,0 +1,7 @@
+cf.CellMeasure.__idiv__
+=======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.CellMeasure.__idiv__

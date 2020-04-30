@@ -81,7 +81,7 @@ documentation, installation and source code.
 '''
 __Conventions__  = 'CF-1.8'
 __author__       = 'David Hassell'
-__date__         = '2020-04-??'
+__date__         = '2020-04-30'
 __version__      = '3.4.0'
 
 _requires = (

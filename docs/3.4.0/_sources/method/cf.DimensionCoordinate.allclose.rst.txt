@@ -1,0 +1,7 @@
+cf.DimensionCoordinate.allclose
+===============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.DimensionCoordinate.allclose

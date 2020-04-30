@@ -1,0 +1,7 @@
+cf.Data.mean_of_upper_decile
+============================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Data.mean_of_upper_decile

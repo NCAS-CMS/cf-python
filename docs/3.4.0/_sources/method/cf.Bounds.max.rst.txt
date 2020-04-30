@@ -1,0 +1,7 @@
+cf.Bounds.max
+=============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Bounds.max

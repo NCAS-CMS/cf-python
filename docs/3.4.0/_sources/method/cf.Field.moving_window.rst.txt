@@ -1,0 +1,7 @@
+cf.Field.moving_window
+======================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Field.moving_window

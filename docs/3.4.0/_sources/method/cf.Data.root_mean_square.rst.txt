@@ -1,0 +1,7 @@
+cf.Data.root_mean_square
+========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Data.root_mean_square

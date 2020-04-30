@@ -1,0 +1,7 @@
+cf.FieldList.__ge__
+===================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.FieldList.__ge__

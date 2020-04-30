@@ -1,0 +1,7 @@
+cf.environment
+==============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autofunction:: cf.environment

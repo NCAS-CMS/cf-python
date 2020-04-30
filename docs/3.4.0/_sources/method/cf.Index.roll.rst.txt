@@ -1,0 +1,7 @@
+cf.Index.roll
+=============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Index.roll

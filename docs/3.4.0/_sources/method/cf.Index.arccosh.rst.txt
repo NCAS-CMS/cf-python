@@ -1,0 +1,7 @@
+cf.Index.arccosh
+================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Index.arccosh

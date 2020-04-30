@@ -1,0 +1,7 @@
+cf.Domain.__str__
+=================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Domain.__str__

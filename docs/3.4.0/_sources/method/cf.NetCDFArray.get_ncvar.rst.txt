@@ -1,0 +1,7 @@
+cf.NetCDFArray.get_ncvar
+========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.NetCDFArray.get_ncvar

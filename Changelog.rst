@@ -2,7 +2,7 @@ version 3.4.0
 -------------
 ----
 
-**2020-04-??**
+**2020-04-30**
 
 * New method: `cf.Field.apply_masking`
 * New method: `cf.Data.apply_masking`

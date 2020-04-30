@@ -1,0 +1,7 @@
+cf.Datum.__str__
+================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Datum.__str__

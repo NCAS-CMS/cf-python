@@ -329,7 +329,7 @@ def histogram(*digitized):
     >>> g.standard_name = 'air_temperature'
     >>> import numpy
     >>> g[...] = numpy.random.normal(loc=290, scale=10, size=40).reshape(5, 8)
-    >>> g.overide_units('K', inplace=True)
+    >>> g.override_units('K', inplace=True)
     >>> print(g)
     Field: air_temperature (ncvar%q)
     --------------------------------

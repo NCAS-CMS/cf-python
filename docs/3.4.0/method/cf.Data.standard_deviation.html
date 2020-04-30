@@ -1,0 +1,289 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>cf.Data.standard_deviation &#8212; Documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/customise-alabaster.css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script type="text/javascript" src="../_static/clipboard.min.js"></script>
+    <script type="text/javascript" src="../_static/copybutton.js"></script>
+    <script type="text/javascript">var copybuttonSkipText = '>>> ';</script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="cf.Data.variance" href="cf.Data.variance.html" />
+    <link rel="prev" title="cf.Data.root_mean_square" href="cf.Data.root_mean_square.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+
+
+<h1 class="logo"><a href="../index.html">cf 3.4.0</a></h1>
+
+
+
+<p class="blurb">A CF-compliant earth science data analysis library</p>
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=NCAS-CMS&repo=cf-python&type=star&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html"><strong>Introduction</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cf_data_model.html"><strong>CF data model</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html"><strong>Installation</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html"><strong>Tutorial</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../analysis.html"><strong>Analysis</strong></a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api_reference.html"><strong>API reference</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../aggregation_rules.html"><strong>Aggregation rules</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../performance.html"><strong>Performance</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases.html"><strong>Older releases</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Changelog.html"><strong>Change log</strong></a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api_reference.html"><strong>API reference</strong></a><ul>
+  <li><a href="../class.html"><strong>cf classes</strong></a><ul>
+  <li><a href="../classes/cf.Data.html">cf.Data</a><ul>
+      <li>Previous: <a href="cf.Data.root_mean_square.html" title="previous chapter">cf.Data.root_mean_square</a></li>
+      <li>Next: <a href="cf.Data.variance.html" title="next chapter">cf.Data.variance</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/method/cf.Data.standard_deviation.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="cf-data-standard-deviation">
+<h1>cf.Data.standard_deviation<a class="headerlink" href="#cf-data-standard-deviation" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="cf.Data.standard_deviation">
+<code class="sig-prename descclassname">Data.</code><code class="sig-name descname">standard_deviation</code><span class="sig-paren">(</span><em class="sig-param">axes=None</em>, <em class="sig-param">squeeze=False</em>, <em class="sig-param">mtol=1</em>, <em class="sig-param">weights=None</em>, <em class="sig-param">ddof=0</em>, <em class="sig-param">inplace=False</em>, <em class="sig-param">i=False</em>, <em class="sig-param">_preserve_partitions=False</em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/NCAS-CMS/cf-python/blob/v3.4.0/cf/data/data.py#L13915-L14067"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cf.Data.standard_deviation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Collapse axes by calculating their standard deviation.</p>
+<blockquote>
+<div><p>The standard deviation may be adjusted for the number of degrees of
+freedom and may be calculated with weighted values.</p>
+<p>Missing data array elements and those with zero weight are omitted
+from the calculation.</p>
+<p>The unweighted standard deviation, <span class="math notranslate nohighlight">\(s\)</span>, of <span class="math notranslate nohighlight">\(N\)</span> values
+<span class="math notranslate nohighlight">\(x_i\)</span> with mean <span class="math notranslate nohighlight">\(m\)</span> and with <span class="math notranslate nohighlight">\(N-ddof\)</span> degrees of
+freedom (<span class="math notranslate nohighlight">\(ddof\ge0\)</span>) is</p>
+<div class="math notranslate nohighlight">
+\[s=\sqrt{\]</div>
+</div></blockquote>
+<p>rac{1}{N-ddof} sum_{i=1}^{N} (x_i - m)^2}</p>
+<blockquote>
+<div><p>The weighted standard deviation, :math:`    ilde{s}_N`, of <span class="math notranslate nohighlight">\(N\)</span>
+values <span class="math notranslate nohighlight">\(x_i\)</span> with corresponding weights <span class="math notranslate nohighlight">\(w_i\)</span>, weighted
+mean :math:`        ilde{m}` and with <span class="math notranslate nohighlight">\(N\)</span> degrees of freedom is</p>
+<div class="math notranslate nohighlight">
+\[ilde{s}_N=\sqrt{\]</div>
+</div></blockquote>
+<dl>
+<dt>rac{1}{sum_{i=1}^{N} w_i}</dt><dd><blockquote>
+<div><p>sum_{i=1}^{N} w_i(x_i -      ilde{m})^2}</p>
+</div></blockquote>
+<p>The weighted standard deviation, :math:`    ilde{s}`, of <span class="math notranslate nohighlight">\(N\)</span>
+values <span class="math notranslate nohighlight">\(x_i\)</span> with corresponding weights <span class="math notranslate nohighlight">\(w_i\)</span> and with
+<span class="math notranslate nohighlight">\(N-ddof\)</span> degrees of freedom (<span class="math notranslate nohighlight">\(ddof&gt;0\)</span>) is</p>
+<div class="math notranslate nohighlight">
+\[ilde{s} = \sqrt{\]</div>
+</dd>
+<dt>rac{f sum_{i=1}^{N} w_i}{f</dt><dd><blockquote>
+<div><p>sum_{i=1}^{N} w_i - ddof}}   ilde{s}_N</p>
+</div></blockquote>
+<p>where <span class="math notranslate nohighlight">\(f\)</span> is the smallest positive number whose product with
+each weight is an integer. <span class="math notranslate nohighlight">\(f \sum_{i=1}^{N} w_i\)</span> is the
+size of a new sample created by each <span class="math notranslate nohighlight">\(x_i\)</span> having
+<span class="math notranslate nohighlight">\(fw_i\)</span> repeats. In practice, <span class="math notranslate nohighlight">\(f\)</span> may not exist or may
+be difficult to calculate, so <span class="math notranslate nohighlight">\(f\)</span> is either set to a
+predetermined value or an approximate value is calculated. The
+approximation is the smallest positive number whose products with
+the smallest and largest weights and the sum of the weights are
+all integers, where a positive number is considered to be an
+integer if its decimal part is sufficiently small (no greater than
+<span class="math notranslate nohighlight">\(10^{-8}\)</span> plus <span class="math notranslate nohighlight">\(10^{-5}\)</span> times its integer part). This
+approximation will never overestimate <span class="math notranslate nohighlight">\(f\)</span>, so
+:math:`     ilde{s}` will never be underestimated when the
+approximation is used. If the weights are all integers which are
+collectively coprime then setting <span class="math notranslate nohighlight">\(f=1\)</span> will guarantee that
+:math:`     ilde{s}` is exact.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt>axes<span class="classifier">(sequence of) <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></a>, optional</span></dt><dd><p>The axes to be collapsed. By default flattened input is
+used. Each axis is identified by its integer position. No
+axes are collapsed if <em>axes</em> is an empty sequence.</p>
+</dd>
+<dt>squeeze<span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</span></dt><dd><p>If True then collapsed axes are removed. By default the
+axes which are collapsed are left in the result as axes
+with size 1. When the collapsed axes are retained, the
+result is guaranteed to broadcast correctly against the
+original array.</p>
+<dl class="simple">
+<dt><em>Paameter example:</em></dt><dd><p>Suppose that an array, <code class="docutils literal notranslate"><span class="pre">d</span></code>, has shape (2, 3, 4) and
+<code class="docutils literal notranslate"><span class="pre">e</span> <span class="pre">=</span> <span class="pre">d.sd(axis=1)</span></code>. Then <code class="docutils literal notranslate"><span class="pre">e</span></code> has shape (2, 1, 4)
+and, for example, <code class="docutils literal notranslate"><span class="pre">d/e</span></code> is allowed. If <code class="docutils literal notranslate"><span class="pre">e</span> <span class="pre">=</span>
+<span class="pre">d.sd(axis=1,</span> <span class="pre">squeeze=True)</span></code> then <code class="docutils literal notranslate"><span class="pre">e</span></code> will have shape
+(2, 4) and <code class="docutils literal notranslate"><span class="pre">d/e</span></code> is an illegal operation.</p>
+</dd>
+</dl>
+</dd>
+<dt>weights<span class="classifier">data-like or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a>, optional</span></dt><dd><p>Weights associated with values of the array. By default
+all non-missing elements of the array are assumed to have
+equal weights of 1. If <em>weights</em> is a data-like object
+then it must have either the same shape as the array or,
+if that is not the case, the same shape as the axes being
+collapsed. If <em>weights</em> is a dictionary then each key is
+axes of the array (an int or tuple of ints) with a
+corresponding data-like value of weights for those
+axes. In this case, the implied weights array is the outer
+product of the dictionary’s values it may be used in
+conjunction wih any value of <em>axes</em>, because the axes to
+which the weights apply are given explicitly.</p>
+<dl class="simple">
+<dt><em>Parameter example:</em></dt><dd><p>Suppose that the original array being collapsed has
+shape (2, 3, 4) and <em>weights</em> is set to a data-like
+object, <code class="docutils literal notranslate"><span class="pre">w</span></code>. If <code class="docutils literal notranslate"><span class="pre">axes=None</span></code> then <code class="docutils literal notranslate"><span class="pre">w</span></code> must have
+shape (2, 3, 4). If <code class="docutils literal notranslate"><span class="pre">axes=(0,</span> <span class="pre">1,</span> <span class="pre">2)</span></code> then <code class="docutils literal notranslate"><span class="pre">w</span></code> must
+have shape (2, 3, 4). If <code class="docutils literal notranslate"><span class="pre">axes=(2,</span> <span class="pre">0,</span> <span class="pre">1)</span></code> then <code class="docutils literal notranslate"><span class="pre">w</span></code>
+must either have shape (2, 3, 4) or else (4, 2, 3). If
+<code class="docutils literal notranslate"><span class="pre">axes=1</span></code> then <code class="docutils literal notranslate"><span class="pre">w</span></code> must either have shape (2, 3, 4)
+or else (3,). If <code class="docutils literal notranslate"><span class="pre">axes=(2,</span> <span class="pre">0)</span></code> then <code class="docutils literal notranslate"><span class="pre">w</span></code> must either
+have shape (2, 3, 4) or else (4, 2). Suppose <em>weights</em>
+is a dictionary. If <code class="docutils literal notranslate"><span class="pre">weights={1:</span> <span class="pre">x}</span></code> then <code class="docutils literal notranslate"><span class="pre">x</span></code> must
+have shape (3,). If <code class="docutils literal notranslate"><span class="pre">weights={1:</span> <span class="pre">x,</span> <span class="pre">(2,</span> <span class="pre">0):</span> <span class="pre">y}</span></code> then
+<code class="docutils literal notranslate"><span class="pre">x</span></code> must have shape (3,) and <code class="docutils literal notranslate"><span class="pre">y</span></code> must have shape (4,
+2). The last example is equivalent to <code class="docutils literal notranslate"><span class="pre">weights={(1,</span> <span class="pre">2,</span>
+<span class="pre">0):</span> <span class="pre">x.outerproduct(y)}</span></code> (see <a class="reference internal" href="cf.Data.outerproduct.html#cf.Data.outerproduct" title="cf.Data.outerproduct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">outerproduct</span></code></a> for
+details).</p>
+</dd>
+</dl>
+</dd>
+<dt>mtol<span class="classifier">number, optional</span></dt><dd><p>For each element in the output data array, the fraction of
+contributing input array elements which is allowed to
+contain missing data. Where this fraction exceeds <em>mtol</em>,
+missing data is returned. The default is 1, meaning a
+missing datum in the output array only occurs when its
+contributing input array elements are all missing data. A
+value of 0 means that a missing datum in the output array
+occurs whenever any of its contributing input array
+elements are missing data. Any intermediate value is
+permitted.</p>
+</dd>
+<dt>ddof<span class="classifier">number, optional</span></dt><dd><p>The delta degrees of freedom. The number of degrees of
+freedom used in the calculation is (N-<em>ddof</em>) where N
+represents the number of elements. By default <em>ddof</em> is 0</p>
+</dd>
+<dt>inplace: <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></a>, optional</dt><dd><p>If True then do the operation in-place and return <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p>
+</dd>
+<dt>i: deprecated at version 3.0.0</dt><dd><p>Use <em>inplace</em> parameter instead.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><a class="reference internal" href="../classes/cf.Data.html#cf.Data" title="cf.Data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.8)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></p>
+</dd>
+</dl>
+<p><strong>Examples:</strong></p>
+<p>Some, not wholly comprehensive, examples:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">e</span> <span class="o">=</span> <span class="n">cf</span><span class="o">.</span><span class="n">Data</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">sd</span><span class="p">(</span><span class="n">squeeze</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="go">&lt;CF Data: [1.06262254195] &gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">sd</span><span class="p">()</span>
+<span class="go">&lt;CF Data: 1.06262254195 &gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">e</span><span class="o">.</span><span class="n">sd</span><span class="p">(</span><span class="n">weights</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+<span class="go">&lt;CF Data: 1.09991882817 &gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">e</span><span class="o">.</span><span class="n">sd</span><span class="p">(</span><span class="n">weights</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="n">f</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">&lt;CF Data: 1.06262254195 &gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="o">.</span><span class="n">sd</span><span class="p">(</span><span class="n">ddof</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">&lt;CF Data: 1.02887985207 &gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">e</span><span class="o">.</span><span class="n">sd</span><span class="p">(</span><span class="n">ddof</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+<span class="go">&lt;CF Data: 1.02887985207 &gt;</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;2020, NCAS | Page built on 2020-04-30.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      
+      |
+      <a href="../_sources/method/cf.Data.standard_deviation.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,7 @@
+cf.Domain.fromconstructs
+========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Domain.fromconstructs

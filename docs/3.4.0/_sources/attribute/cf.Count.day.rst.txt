@@ -1,0 +1,7 @@
+cf.Count.day
+============
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. autoattribute:: cf.Count.day

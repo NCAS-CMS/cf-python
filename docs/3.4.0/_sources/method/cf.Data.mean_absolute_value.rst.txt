@@ -1,0 +1,7 @@
+cf.Data.mean_absolute_value
+===========================
+
+.. currentmodule:: cf
+.. default-role:: obj
+
+.. automethod:: cf.Data.mean_absolute_value
