@@ -83,8 +83,8 @@ git tag
 
 # Push tag from a user account to the root cf-python repo (note the
 # the command run gives the name of the current branch, to push from):
-git push --tags upstream $(git rev-parse --abbrev-ref HEAD):master
+#git push --tags upstream $(git rev-parse --abbrev-ref HEAD):master
 # Alternatively, push tag to repo from cf-python directly, via (uncomment):
-# git push origin v$version
+git push origin v$version
 
 set +x
