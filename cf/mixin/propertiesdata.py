@@ -4805,7 +4805,8 @@ class PropertiesData(Properties):
         return super().get_data(default=default, _units=False)
 
     @_inplace_enabled
-    def halo(self, size, axes=None, tripolar=False, inplace=False):
+    def halo(self, size, axes=None, tripolar=False, inplace=False,
+             verbose=False):
         '''TODO
 
     :Parameters:
@@ -4825,14 +4826,23 @@ class PropertiesData(Properties):
         TODO
 
         '''
+        if verbose:
+#            _kwargs = ["{}={!r}".format(k, v) for k, v in locals().items()]
+#            print("{}.halo({})".format(self.__class__.__name__,
+#                                       ', '.join(_kwargs)))
+            _kwargs = ["{}={!r}".format(k, v) for k, v in locals().items()]
+            _ = "{}.halo(".format(self.__class__.__name__)
+            print("{}{}".format(_,
+                                (',\n' + ' '*len(_)).join(_kwargs)))
+            
         v = _inplace_enabled_define_and_cleanup(self)
 
-        data = d.get_data(None)
+        data = v.get_data(None)
         if data is not None:
-            d.halo(size=size, axes=axes, tripolar=tripolar,
-                   inplace=True)
+            data.halo(size=size, axes=axes, tripolar=tripolar,
+                      inplace=True)
             
-        return d
+        return v
         
     @_deprecated_kwarg_check('i')
     @_inplace_enabled

@@ -8813,7 +8813,7 @@ class Field(mixin.PropertiesData,
       >>> b = a.collapse('T: minimum within years T: variance over years',
       ...                within_years=cf.seasons(), weights=True)
 
-    When collapsing over years, it is assumed by default that the each
+    When collapsing over years, it is assumed by default that each
     portion of the annual cycle is collapsed over all years that are
     present. This is the case in the above two examples. It is
     possible, however, to restrict the years to be included, or group
@@ -8839,8 +8839,8 @@ class Field(mixin.PropertiesData,
       ... )
 
     Similarly for collapses over days, it is assumed by default that
-    the each portion of the diurnal cycle is collapsed over all days
-    that are present, But it is possible to restrict the days to be
+    each portion of the diurnal cycle is collapsed over all days that
+    are present, But it is possible to restrict the days to be
     included, or group them into chunks, with the *over_days* keyword.
 
     The calculation can be done with multiple collapse calls, which
@@ -14467,7 +14467,7 @@ class Field(mixin.PropertiesData,
 
         axes: (sequence of) `str` or `int`, optional
             Select the domain axes to flip, defined by the domain axes
-            that would be selected by passing the each given axis
+            that would be selected by passing each given axis
             description to a call of the field construct's
             `domain_axis` method. For example, for a value of ``'X'``,
             the domain axis construct returned by
@@ -14968,7 +14968,7 @@ class Field(mixin.PropertiesData,
 
         axes: (sequence of) `str` or `int`, optional
             Select the domain axes to squeeze, defined by the domain
-            axes that would be selected by passing the each given axis
+            axes that would be selected by passing each given axis
             description to a call of the field construct's
             `domain_axis` method. For example, for a value of ``'X'``,
             the domain axis construct returned by
@@ -15105,7 +15105,7 @@ class Field(mixin.PropertiesData,
 
         axes: (sequence of) `str` or `int`, optional
             Select the domain axis order, defined by the domain axes
-            that would be selected by passing the each given axis
+            that would be selected by passing each given axis
             description to a call of the field construct's
             `domain_axis` method. For example, for a value of ``'X'``,
             the domain axis construct returned by
@@ -16431,7 +16431,7 @@ class Field(mixin.PropertiesData,
         if da_key is None:
             return self._default(
                 default,
-                "No unique domain axis construct is identiable from "
+                "No unique domain axis construct is identifable from "
                 "{!r}".format(identity)
             )
 
@@ -16897,12 +16897,43 @@ class Field(mixin.PropertiesData,
         return super().get_data_axes(key=key, default=default)
 
     @_inplace_enabled
-    def halo(self, size, axes=None, tripolar=False, inplace=False):
-        '''TODOg
+    def halo(self, size, axes=None, tripolar=False, inplace=False,
+             verbose=False):
+        '''TODO
 
     :Parameters:
+        
+        size: optional
 
-        TODO
+        axes: (sequence of) `str` or `int`, optional
+            Select the domain axes to be expanded, defined by the
+            domain axes that would be selected by passing each given
+            axis description to a call of the field construct's
+            `domain_axis` method. For example, for a value of ``'X'``,
+            the domain axis construct returned by
+            ``f.domain_axis('X'))`` is selected.
+
+            By default, or if *axes* is `None`, all axes are selected.
+        
+            *Parameter example:*
+              ``axes='X'``
+
+            *Parameter example:*
+              ``axes=['Y']``
+
+            *Parameter example:*
+              ``axes=['X', 'Y']``
+
+            *Parameter example:*
+              ``axes='longitude'``
+
+            *Parameter example:*
+              ``axes=2``
+
+            *Parameter example:*
+              ``axes='ncdim%i'``
+
+        tripolar: `dict`, optional
 
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
@@ -16915,9 +16946,92 @@ class Field(mixin.PropertiesData,
 
     **Examples:**
 
-        TODO
+    >>> f = cf.example_field(0)
+    >>> print(f)
+    Field: specific_humidity (ncvar%q)
+    ----------------------------------
+    Data            : specific_humidity(latitude(5), longitude(8)) 1
+    Cell methods    : area: mean
+    Dimension coords: latitude(5) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(8) = [22.5, ..., 337.5] degrees_east
+                    : time(1) = [2019-01-01 00:00:00]
+    >>> print(f.array)
+    [[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]
+     [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
+     [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
+     [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
+     [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]
+    >>> print(f.coordinate('X').array)
+    [ 22.5  67.5 112.5 157.5 202.5 247.5 292.5 337.5]
+
+    >>> g = f.halo(1)
+    >>> print(g)
+    Field: specific_humidity (ncvar%q)
+    ----------------------------------
+    Data            : specific_humidity(latitude(7), longitude(10)) 1
+    Cell methods    : area: mean
+    Dimension coords: latitude(7) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(10) = [22.5, ..., 337.5] degrees_east
+                    : time(1) = [2019-01-01 00:00:00]
+    >>> print(g.array)
+    [[0.007 0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029 0.029]
+     [0.007 0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029 0.029]
+     [0.023 0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066 0.066]
+     [0.11  0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011 0.011]
+     [0.029 0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017 0.017]
+     [0.006 0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013 0.013]
+     [0.006 0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013 0.013]]
+    >>> print(g.coordinate('X').array)
+    [ 22.5  22.5  67.5 112.5 157.5 202.5 247.5 292.5 337.5 337.5]
+    
+    >>> g = f.halo(1, axes='Y')
+    >>> print(g)
+    Field: specific_humidity (ncvar%q)
+    ----------------------------------
+    Data            : specific_humidity(latitude(7), longitude(8)) 1
+    Cell methods    : area: mean
+    Dimension coords: latitude(7) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(8) = [22.5, ..., 337.5] degrees_east
+                    : time(1) = [2019-01-01 00:00:00]
+    >>> print(g.array)
+    [[0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]
+     [0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029]
+     [0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066]
+     [0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011]
+     [0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017]
+     [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]
+     [0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013]]
+    >>> h = f.halo({'Y': 1})
+    >>> h.equals(g)
+    True
+
+    >>> g = f.halo({'Y': 2, 'X': 1})
+    >>> print(g)
+    Field: specific_humidity (ncvar%q)
+    ----------------------------------
+    Data            : specific_humidity(latitude(9), longitude(10)) 1
+    Cell methods    : area: mean
+    Dimension coords: latitude(9) = [-75.0, ..., 75.0] degrees_north
+                    : longitude(10) = [22.5, ..., 337.5] degrees_east
+                    : time(1) = [2019-01-01 00:00:00]
+    >>> print(g.array)
+    [[0.007 0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029 0.029]
+     [0.023 0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066 0.066]
+     [0.007 0.007 0.034 0.003 0.014 0.018 0.037 0.024 0.029 0.029]
+     [0.023 0.023 0.036 0.045 0.062 0.046 0.073 0.006 0.066 0.066]
+     [0.11  0.11  0.131 0.124 0.146 0.087 0.103 0.057 0.011 0.011]
+     [0.029 0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017 0.017]
+     [0.006 0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013 0.013]
+     [0.029 0.029 0.059 0.039 0.07  0.058 0.072 0.009 0.017 0.017]
+     [0.006 0.006 0.036 0.019 0.035 0.018 0.037 0.034 0.013 0.013]]
 
         '''
+        if verbose:
+            _kwargs = ["{}={!r}".format(k, v) for k, v in locals().items()]
+            _ = "{}.halo(".format(self.__class__.__name__)
+            print("{}{}".format(_,
+                                (',\n' + ' '*len(_)).join(_kwargs)))
+            
         f = _inplace_enabled_define_and_cleanup(self)
 
         # Set the halo size for each axis.
@@ -16928,7 +17042,7 @@ class Field(mixin.PropertiesData,
             
             axis_halo = {self.domain_axis(k, key=True): v
                          for k, v in size.items()}
-
+            
             if not set(data_axes).issuperset(axis_halo):
                 raise ValueError(
                     "Can't apply halo: Bad axis specification: {!r}".format(
@@ -16942,27 +17056,90 @@ class Field(mixin.PropertiesData,
              
             axis_halo = {self.domain_axis(k, key=True): size
                          for k in axes}
-    
+
+        if tripolar:
+            # Find the X and Y axes of a tripolar grid
+            tripolar = tripolar.copy()
+            X_axis = tripolar.pop('X', None)
+            Y_axis = tripolar.pop('Y', None)
+            
+            if tripolar:
+                raise ValueError("TODO 3")
+             
+            if X_axis is None:
+                raise ValueError("TODO 1")
+        
+            if Y_axis is None:
+                raise ValueError("TODO 2")
+
+            X = self.domain_axis(X_axis, key=True)
+            Y = self.domain_axis(Y_axis, key=True)
+
+            if X not in axis_halo:
+                raise ValueError("TODO 4 {}".format(X_axis))
+        
+            if Y not in axis_halo:
+                raise ValueError("TODO 5 {}".format(Y_axis))
+
+            if X == Y:
+                raise ValueError("TODO 6 {} {}".format(Y_axis, X_axis))
+
+            tripolar = {'X': data_axes.index(X),
+                        'Y': data_axes.index(Y)
+            }
+
+            tripolar_axes = {X: 'X', Y: 'Y'}
+            
         # Add halos to the field construct's data
         size = {data_axes.index(axis): h
                 for axis, h, in axis_halo.items()}
 
-        f.data.halo(size=size, tripolar=tripolar, inplace=True)
+#        if verbose:
+#            print('  size =', size)  # pragma: no cover
+#            print('  tripolar =', tripolar)  # pragma: no cover
+        
+        f.data.halo(size=size, tripolar=tripolar, inplace=True,
+                    verbose=verbose)
         
         # Change domain axis sizes
         for axis, h in axis_halo.items():
             d = f.domain_axis(axis)
             d.set_size(d.get_size() + 2 * h)
-                        
+
         # Add halos to metadata constructs
         for key, c in f.constructs.filter_by_data().items():
+#            if verbose:
+#                print(" ",repr(c))  # pragma: no cover
+#                
             construct_axes = f.get_data_axes(key)
             construct_size = {construct_axes.index(axis): h
                               for axis, h in axis_halo.items()
                               if axis in construct_axes}
-            c.data.halo(size=construct_size, tripolar=tripolar,
-                        inplace=True)
+
+            if not construct_size:
+                # This construct does not span an expanded axis
+                continue
+            
+            construct_tripolar = False
+            if (tripolar
+                and set(construct_axes).issuperset(tripolar_axes)):
+                construct_tripolar = {
+                    axis_type: construct_axes.index(axis)
+                    for axis, axis_type in tripolar_axes.items()
+                }
+
+#            if verbose:
+#                print("    size = ", construct_size)  # pragma: no cover
+#                print("    tripolar = ", construct_tripolar
+#                )  # pragma: no cover
+                
+            c.halo(size=construct_size, tripolar=construct_tripolar,
+                   inplace=True, verbose=verbose)
+        # --- End: for
         
+        if verbose:
+            print("Result:\n{!r}\n".format(f))  # pragma: no cover
+
         return f
     
     def percentile(self, ranks, axes=None, interpolation='linear',
@@ -16998,12 +17175,12 @@ class Field(mixin.PropertiesData,
         axes: (sequence of) `str` or `int`, optional
             Select the domain axes over which to calculate the
             percentiles, defined by the domain axes that would be
-            selected by passing the each given axis description to a
-            call of the field construct's `domain_axis` method. For
+            selected by passing each given axis description to a call
+            of the field construct's `domain_axis` method. For
             example, for a value of ``'X'``, the domain axis construct
             returned by ``f.domain_axis('X'))`` is selected.
 
-             By default, of *axes* is `None`, all axes are selected.
+            By default, or if *axes* is `None`, all axes are selected.
 
         interpolation: `str`, optional
             Specify the interpolation method to use when the desired
@@ -17477,8 +17654,8 @@ class Field(mixin.PropertiesData,
 
         axes: (sequence of) `str` or `int`, optional
             Select the domain axes to be flattened, defined by the
-            domain axes that would be selected by passing the each
-            given axis description to a call of the field construct's
+            domain axes that would be selected by passing each given
+            axis description to a call of the field construct's
             `domain_axis` method. For example, for a value of ``'X'``,
             the domain axis construct returned by
             ``f.domain_axis('X'))`` is selected.

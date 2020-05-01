@@ -227,10 +227,11 @@ Miscellaneous data operations
    :toctree: ../method/
    :template: method.rst
 	      
-   ~cf.Field.chunk
-   ~cf.Field.close
    ~cf.Field.cyclic
    ~cf.Field.get_filenames
+   ~cf.Field.halo
+   ~cf.Field.chunk
+   ~cf.Field.close
 
 Metadata constructs
 -------------------

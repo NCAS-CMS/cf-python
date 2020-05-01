@@ -1,8 +1,17 @@
+version 3.4.1
+-------------
+----
+
+**2020-05-??**
+
+* New method: `cf.Field.halo`
+* New method: `cf.Data.halo`
+  
 version 3.4.0
 -------------
 ----
 
-**2020-04-??**
+**2020-04-30**
 
 * New method: `cf.Field.apply_masking`
 * New method: `cf.Data.apply_masking`

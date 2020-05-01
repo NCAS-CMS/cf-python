@@ -10784,10 +10784,20 @@ False
         return out
 
     @_inplace_enabled
-    def halo(self, size, axes=None, tripolar=False, inplace=False):
+    def halo(self, size, axes=None, tripolar=None, inplace=False,
+             verbose=False):
         '''TODO
 
     :Parameters:
+
+        size:
+            TODO
+
+        axes: optional
+            TODO
+
+        tripolar: `dict`, optional
+            TODO
 
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.
@@ -10800,27 +10810,66 @@ False
 
     **Examples:**
 
+    TODO
+
         '''
+        if verbose:
+            _kwargs = ["{}={!r}".format(k, v) for k, v in locals().items()]
+            print("{}.halo({})".format(self.__class__.__name__,
+                                       ', '.join(_kwargs)))
+            
         d = _inplace_enabled_define_and_cleanup(self)
 
-        ndim = self.ndim
-        shape0 = self.shape
+        ndim = d.ndim
+        shape0 = d.shape
 
         # Set the halo size for each axis.
         if isinstance(size, dict):
             if axes is not None:
                 raise ValueError("can't set axes when size is a dict TODO")
             
-            axes = self._parse_axes(sorted(size))
+            axes = self._parse_axes(tuple(size))
             size = [size[i] if i in axes else 0
                     for i in range(ndim)]
         else:
             if axes is None:
                 axes = list(range(ndim))
                             
-            axes = self._parse_axes(axes)
+            axes = d._parse_axes(axes)
             size = [size if i in axes else 0
                     for i in range(ndim)]
+
+        if tripolar:
+            # Find the X and Y axes of a tripolar grid
+            tripolar = tripolar.copy()
+            X_axis = tripolar.pop('X', None)
+            Y_axis = tripolar.pop('Y', None)
+            
+            if tripolar:
+                raise ValueError("TODO 3")
+             
+            if X_axis is None:
+                raise ValueError("TODO 1")
+        
+            if Y_axis is None:
+                raise ValueError("TODO 2")
+
+            X = d._parse_axes(X_axis)
+            Y = d._parse_axes(Y_axis)
+
+            if len(X) != 1 or X[0] not in axes:
+                raise ValueError("TODO 4 {}".format(X_axis))
+        
+            if len(Y) != 1 or Y[0] not in axes:
+                raise ValueError("TODO 5 {}".format(Y_axis))
+
+            X_axis = X[0]
+            Y_axis = Y[0]
+            
+            if X_axis == Y_axis:
+                raise ValueError("TODO 6 {}".format(Y_axis))
+
+            tripolar = True
 
         # Remove axes with a size 0 halo
         axes = [i for i in axes if size[i]]
@@ -10843,67 +10892,61 @@ False
         # ------------------------------------------------------------
         # Body (not edges nor corners)
         # ------------------------------------------------------------
-        indices = [slice(h, h + n) if (i in axes and h) else slice(None)
+        indices = [slice(h, h + n) if (h and i in axes) else slice(None)
                    for i, (h, n) in enumerate(zip(size, shape0))]
 #        print(indices)
         out[tuple(indices)] = d
 
-        if not tripolar:
-            # ------------------------------------------------------------
-            # Edges (not corners)
-            # ------------------------------------------------------------
-            for i in axes:
-                size_i = size[i]
+        # ------------------------------------------------------------
+        # Edges (not corners)
+        # ------------------------------------------------------------
+        for i in axes:
+            size_i = size[i]
+            
+            for edge in ('first', 'last'):
+                indices1 = [slice(None)] * ndim
+#                 if edge == 'first':
+#                     indices1[i] = slice(0, size_i)
+#                 else:
+#                     indices1[i] = slice(-size_i, None)
+                    
+                if edge == 'last':
+                    indices1[i] = slice(-size_i, None)
+                else:
+                    indices1[i] = slice(0, size_i)
+                        
+                indices0 = indices1[:]
+                if (tripolar
+                    and edge == 'last'
+                    and i == Y_axis and j == X_axis):
+                    # Special case for tripolar "top row"
+                    indices0[X_axis] = slice(None, None, -1)
                 
-                for edge in ('first', 'last'):
-                    indices1 = [slice(None)] * ndim
-                    if edge == 'first':
-                        indices1[i] = slice(0, size_i)
-                    else:
-                        indices1[i] = slice(-size_i, None)
-    
-                    indices0 = indices1[:]
-    
-                    for j in axes:
-                        if j == i:
-                            continue
-    
-                        size_j = size[j]            
-                        indices1[j] = slice(size_j, size_j + shape0[j])
-    
-    #                print(i, indices1, indices0, shape1, shape0)
-                    out[tuple(indices1)] = d[tuple(indices0)]
-            # --- End: for
-    
-            # ------------------------------------------------------------
-            # Corners
-            # ------------------------------------------------------------
-            if len(axes) > 1:
-                for indices in itertools_product(
-                        *[(slice(0, size[i]), slice(-size[i], None))
-                          for i in axes]
-                ):
-    #                print (indices,shape1, shape0)
-                    out[indices] = d[indices]
-        else:
-            pass
-#ny2=ny+2
-#nx2=nx+2
-#gout=np.zeros([nt,ny2,nx2],dtype=res2.dtype)
-#gout[:,1:ny2-1,1:nx2-1]=res2       # Centre
+                for j in axes:
+                    if j == i:
+                        continue
+                    
+                    size_j = size[j]            
+                    indices1[j] = slice(size_j, size_j + shape0[j])
 
-#gout[:,1:ny2-1,0]=res2[:,:,nx-1]   # Left
-#gout[:,1:ny2-1:,nx2-1]=res2[:,:,0] # Right
-#gout[:,0,1:nx2-1]=res2[:,0,:]      # Bottom
-#gout[:,ny2-1,1:nx2-1]=res2[:,ny-1,::-1]  # Tricky tripole top
-## Corners
-#gout[:,0,0]=gout[:,0,1]
-#gout[:,ny2-1,0]=gout[:,ny2-1,1]
-#gout[:,0,nx2-1]=gout[:,0,nx2-2]
-#gout[:,ny2-1,nx2-1]=gout[:,ny2-1,nx2-2]
+#                print(i, indices1, indices0, shape1, shape0)
+                out[tuple(indices1)] = d[tuple(indices0)]
+        # --- End: for
 
+        # ------------------------------------------------------------
+        # Corners
+        # ------------------------------------------------------------
+        if len(axes) > 1:
+            for indices in itertools_product(
+                    *[(slice(0, size[i]), slice(-size[i], None))
+                      if i in axes else
+                      (slice(None),)
+                      for i in range(ndim)]
+            ):
+#                    print (indices,shape1, shape0)
+                out[indices] = d[indices]
 
-        out.set_fill_value = d.get_fill_value(None)
+        out.set_fill_value(d.get_fill_value(None))
 
         if inplace:
             d.__dict__ = out.__dict__

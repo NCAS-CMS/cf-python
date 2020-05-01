@@ -2018,7 +2018,8 @@ class PropertiesDataBounds(PropertiesData):
         return out
     
     @_inplace_enabled
-    def halo(self, size, axes=None, tripolar=False, inplace=False):
+    def halo(self, size, axes=None, tripolar=False, inplace=False,
+             verbose=False):
         '''TODO
 
     :Parameters:
@@ -2041,7 +2042,8 @@ class PropertiesDataBounds(PropertiesData):
         # Set bounds to True to bypass 'if bounds' check in call:
         return self._apply_superclass_data_oper(
             _inplace_enabled_define_and_cleanup(self), 'halo',
-            bounds=True, interior_ring=True, inplace=inplace)
+            bounds=True, interior_ring=True, inplace=inplace,
+            size=size, axes=axes, tripolar=tripolar, verbose=verbose)
         
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
@@ -2166,8 +2168,8 @@ class PropertiesDataBounds(PropertiesData):
 
         '''
         return self._apply_superclass_data_oper(
-            _inplace_enabled_define_and_cleanup(self), 'exp', bounds=bounds,
-            inplace=inplace, i=i)
+            _inplace_enabled_define_and_cleanup(self), 'exp',
+            bounds=bounds, inplace=inplace, i=i)
 
     def set_bounds(self, bounds, copy=True):
         '''Set the bounds.
@@ -2300,8 +2302,8 @@ class PropertiesDataBounds(PropertiesData):
 
         '''
         return self._apply_superclass_data_oper(
-            _inplace_enabled_define_and_cleanup(self), 'sin', bounds=bounds,
-            inplace=inplace, i=i)
+            _inplace_enabled_define_and_cleanup(self), 'sin',
+            bounds=bounds, inplace=inplace, i=i)
 
     # `arctan2`, AT2 seealso
     @_deprecated_kwarg_check('i')
@@ -2878,8 +2880,8 @@ class PropertiesDataBounds(PropertiesData):
         '''
         # TODO: 'base' kwarg not used? why?
         return self._apply_superclass_data_oper(
-            _inplace_enabled_define_and_cleanup(self), 'log', bounds=bounds,
-            inplace=inplace, i=i)
+            _inplace_enabled_define_and_cleanup(self), 'log',
+            bounds=bounds, inplace=inplace, i=i)
 
     @_deprecated_kwarg_check('i')
     def squeeze(self, axes=None, inplace=False, i=False):
@@ -3196,8 +3198,8 @@ class PropertiesDataBounds(PropertiesData):
 
         '''
         return self._apply_superclass_data_oper(
-            _inplace_enabled_define_and_cleanup(self), 'rint', bounds=bounds,
-            inplace=inplace, i=i)
+            _inplace_enabled_define_and_cleanup(self), 'rint',
+            bounds=bounds, inplace=inplace, i=i)
 
     @_deprecated_kwarg_check('i')
     @_inplace_enabled
