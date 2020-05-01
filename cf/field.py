@@ -16899,11 +16899,19 @@ class Field(mixin.PropertiesData,
     @_inplace_enabled
     def halo(self, size, axes=None, tripolar=False, inplace=False,
              verbose=False):
-        '''TODO
+        '''Expand the field construct by adding a halo to its data.
+
+    The halo may be applied over a subset of the data dimensions and
+    each dimension may have a a different halo size. The halo region
+    is populated with a copy of the proximate values from the original
+    data.
+
+    The metadata constructs are similary extended where appropriate.
 
     :Parameters:
         
         size: optional
+            TODO
 
         axes: (sequence of) `str` or `int`, optional
             Select the domain axes to be expanded, defined by the
@@ -16934,6 +16942,7 @@ class Field(mixin.PropertiesData,
               ``axes='ncdim%i'``
 
         tripolar: `dict`, optional
+            TODO
 
         inplace: `bool`, optional
             If True then do the operation in-place and return `None`.

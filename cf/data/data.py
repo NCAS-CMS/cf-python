@@ -10894,8 +10894,11 @@ False
         # ------------------------------------------------------------
         indices = [slice(h, h + n) if (h and i in axes) else slice(None)
                    for i, (h, n) in enumerate(zip(size, shape0))]
-#        print(indices)
+        print(indices)
+#        print(d[-1, 0:180].array, d.shape, d[-1].array.shape)
         out[tuple(indices)] = d
+#        for k in range(360):            
+#            print(d[-1, k], out[-2, k+1])
 
         # ------------------------------------------------------------
         # Edges (not corners)
@@ -10927,9 +10930,10 @@ False
                         continue
                     
                     size_j = size[j]            
-                    indices1[j] = slice(size_j, size_j + shape0[j])
+#                    indices1[j] = slice(size_j, size_j + shape0[j])
+                    indices1[j] = slice(size_j, -size_j)
 
-#                print(i, indices1, indices0, shape1, shape0)
+                print(i, indices1, indices0, shape1, shape0)
                 out[tuple(indices1)] = d[tuple(indices0)]
         # --- End: for
 
