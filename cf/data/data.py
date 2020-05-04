@@ -10786,7 +10786,12 @@ False
     @_inplace_enabled
     def halo(self, size, axes=None, tripolar=None, inplace=False,
              verbose=False):
-        '''TODO
+        '''Expand the field construct by adding a halo to its data.
+
+    The halo may be applied over a subset of the data dimensions and
+    each dimension may have a a different halo size. The halo region
+    is populated with a copy of the proximate values from the original
+    data.
 
     :Parameters:
 
@@ -10826,6 +10831,47 @@ False
         ndim = d.ndim
         shape0 = d.shape
 
+        if tripolar:
+            # Find the X and Y axes of a tripolar grid
+            tripolar = tripolar.copy()
+            X_axis = tripolar.pop('X', None)
+            Y_axis = tripolar.pop('Y', None)
+            
+            if tripolar:
+                raise ValueError("Must provide a tripolar 'X' axis.")
+             
+            if X_axis is None:
+                raise ValueError("Must provide a tripolar 'X' axis.")
+        
+            if Y_axis is None:
+                raise ValueError("Must provide a tripolar 'Y' axis.")
+
+            X = d._parse_axes(X_axis)
+            Y = d._parse_axes(Y_axis)
+
+            if len(X) != 1:
+                raise ValueError(
+                    "Must provide exactly one tripolar 'X' axis. "
+                    "Got {!r}".format(
+                        X_axis))
+        
+            if len(Y) != 1:
+                raise ValueError(
+                    "Must provide exactly one tripolar 'Y' axis. "
+                    "Got {!r}".format(
+                        Y_axis))
+
+            X_axis = X[0]
+            Y_axis = Y[0]
+            
+            if X_axis == Y_axis:
+                raise ValueError(
+                    "Tripolar 'X' and 'Y' axes must be different. "
+                    "Got {!r}, {!r}".format(
+                        X_axis, Y_axis))
+
+            tripolar = True
+
         # Set the halo size for each axis.
         if isinstance(size, dict):
             if axes is not None:
@@ -10836,43 +10882,27 @@ False
                     for i in range(ndim)]
         else:
             if axes is None:
-                axes = list(range(ndim))
-                            
+                if tripolar:
+                    axes = (Y_axis, X_axis)
+                else:
+                    axes = list(range(ndim))
+            # --- End: if
+            
             axes = d._parse_axes(axes)
             size = [size if i in axes else 0
                     for i in range(ndim)]
 
         if tripolar:
-            # Find the X and Y axes of a tripolar grid
-            tripolar = tripolar.copy()
-            X_axis = tripolar.pop('X', None)
-            Y_axis = tripolar.pop('Y', None)
-            
-            if tripolar:
-                raise ValueError("TODO 3")
-             
-            if X_axis is None:
-                raise ValueError("TODO 1")
+            if X_axis not in axes:
+                raise ValueError(
+                    "Tripolar 'X' axis ({!r}) is not specified by the "
+                    "size nor axes parameters")
         
-            if Y_axis is None:
-                raise ValueError("TODO 2")
-
-            X = d._parse_axes(X_axis)
-            Y = d._parse_axes(Y_axis)
-
-            if len(X) != 1 or X[0] not in axes:
-                raise ValueError("TODO 4 {}".format(X_axis))
-        
-            if len(Y) != 1 or Y[0] not in axes:
-                raise ValueError("TODO 5 {}".format(Y_axis))
-
-            X_axis = X[0]
-            Y_axis = Y[0]
-            
-            if X_axis == Y_axis:
-                raise ValueError("TODO 6 {}".format(Y_axis))
-
-            tripolar = True
+            if Y_axis not in axes:
+                raise ValueError(
+                    "Tripolar 'Y' axis ({!r}) is not specified by the "
+                    "size nor axes parameters")
+        # --- End: if
 
         # Remove axes with a size 0 halo
         axes = [i for i in axes if size[i]]
@@ -10884,7 +10914,9 @@ False
         # Check that the halos are not too large
         for i, (h, n) in enumerate(zip(size, shape0)):
             if h > n:
-                raise ValueError("Halo too big for this axis. TODO")
+                raise ValueError(
+                    "Halo size {!r} is too big for axis of size {!r}".format(
+                        h, n)
         # --- End: for
 
         # Initialise the expanded data
@@ -10918,14 +10950,7 @@ False
 
                 # Initialise indices to the original data
                 indices0 = indices1[:]
-#                if (tripolar
-#                    and edge == 'last'
-#                    and i == Y_axis and j == X_axis):
-#                    # Special case for tripolar "top": halo contains
-#                    # the values that have been flipped in the X
-#                    # direction.
-#                    indices0[X_axis] = slice(None, None, -1)
-                
+               
                 for j in axes:
                     if j == i:
                         continue
@@ -10950,9 +10975,9 @@ False
 
         hardmask = d.hardmask
         
-        if tripolar:
-            # Special case for tripolar: The "top" halo contains the
-            # values that have been flipped in the X direction.
+        if tripolar and size[Y_axis]:
+            # Special case for tripolar: The northern halo contains
+            # the values that have been flipped in the X direction.
             indices1 = [slice(None)] * ndim
             indices1[Y_axis] = slice(-size[Y_axis], None)
             
@@ -10962,11 +10987,12 @@ False
             out.hardmask = False
             out[tuple(indices1)] = out[tuple(indices2)]
 
-        out.hardmask = hardmask            
+        out.hardmask = True
         out.set_fill_value(d.get_fill_value(None))
-
+                    
         if inplace:
             d.__dict__ = out.__dict__
+            d.hardmask = hardmask
         else:
             d = out
 
